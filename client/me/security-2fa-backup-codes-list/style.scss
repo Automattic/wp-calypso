@@ -105,7 +105,6 @@ button.security-2fa-backups-codes-list__generate-button {
 }
 
 .security-2fa-backup-codes-list__warning {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 75%;
 
 	.gridicon {
@@ -117,5 +116,14 @@ button.security-2fa-backups-codes-list__generate-button {
 			position: relative;
 			top: 1px;
 		}
+	}
+}
+
+.security-2fa-backup-codes-list__buttons {
+	display: flex;
+	justify-content: flex-end;
+
+	.security-2fa-backup-codes-list__next {
+		margin-left: 10px;
 	}
 }

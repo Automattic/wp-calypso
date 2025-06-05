@@ -68,8 +68,12 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 		'elements.h1.typography.fontWeight'
 	);
 	const [ textColor = 'black' ] = useGlobalStyle( 'color.text' );
-	const [ headingColor = textColor ] = useGlobalStyle( 'elements.h1.color.text' );
 	const [ backgroundColor = 'white' ] = useGlobalStyle( 'color.background' );
+	const [ headingColor = textColor ] = useGlobalStyle( 'elements.h1.color.text' );
+	const [ linkColor = headingColor ] = useGlobalStyle( 'elements.link.color.text' );
+	const [ buttonBackgroundColor = linkColor ] = useGlobalStyle(
+		'elements.button.color.background'
+	);
 	const [ gradientValue ] = useGlobalStyle( 'color.gradient' );
 	const disableMotion = useReducedMotion();
 	const [ coreColors ] = useGlobalSetting( 'color.palette.core' );
@@ -81,12 +85,23 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 	const paletteColors = ( themeColors ?? [] )
 		.concat( customColors ?? [] )
 		.concat( coreColors ?? [] );
-	const highlightedColors = paletteColors
+	const textColorObject = paletteColors.filter(
+		( { color }: { color: Color } ) => color === textColor
+	);
+	const buttonBackgroundColorObject = paletteColors.filter(
+		( { color }: { color: Color } ) => color === buttonBackgroundColor
+	);
+
+	// Prefer the text & button background (or link) color, then look through the full palette.
+	const highlightedColors = textColorObject
+		.concat( buttonBackgroundColorObject )
+		.concat( paletteColors )
 		.filter(
-			// we exclude these two colors because they are already visible in the preview.
-			( { color }: { color: Color } ) => color !== backgroundColor && color !== headingColor
+			// we exclude this background color because it is already visible in the preview.
+			( { color }: { color: Color } ) => color !== backgroundColor
 		)
 		.slice( 0, 2 );
+
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }
@@ -139,7 +154,7 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 							{ highlightedColors.map(
 								( { slug, color }: { slug: string; color: string }, index: number ) => (
 									<motion.div
-										key={ slug }
+										key={ `${ slug }-${ index }` }
 										style={ {
 											height: normalizedColorSwatchSize * ratio,
 											width: normalizedColorSwatchSize * ratio,

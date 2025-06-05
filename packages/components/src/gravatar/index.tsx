@@ -26,6 +26,7 @@ type Props = {
 		| false; // or false if the temp image does not exist
 	alt?: string;
 	title?: string;
+	role?: 'presentation' | 'img' | 'button' | 'link';
 };
 
 export class Gravatar extends Component< Props > {
@@ -67,14 +68,20 @@ export class Gravatar extends Component< Props > {
 	onError = () => this.setState( { failedToLoad: true } );
 
 	render() {
-		const { alt, title, size, tempImage, user } = this.props;
+		const { alt, title, size, tempImage, user, role } = this.props;
 
 		if ( ! user ) {
-			return <span className="gravatar is-placeholder" style={ { width: size, height: size } } />;
+			return (
+				<span
+					className="gravatar is-placeholder"
+					style={ { width: size, height: size } }
+					role={ role }
+				/>
+			);
 		}
 
 		if ( this.state.failedToLoad && ! tempImage ) {
-			return <span className="gravatar is-missing" />;
+			return <span className="gravatar is-missing" role={ role } />;
 		}
 
 		const altText = alt || user.display_name || user.name;
@@ -90,6 +97,7 @@ export class Gravatar extends Component< Props > {
 				width={ size }
 				height={ size }
 				onError={ this.onError }
+				role={ role }
 			/>
 		);
 	}

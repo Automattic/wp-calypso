@@ -1,8 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
-	BILLING_RECEIPT_EMAIL_SEND,
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -11,7 +8,6 @@ import {
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import individualTransactions from './individual-transactions/reducer';
 import { billingTransactionsSchema } from './schema';
-import ui from './ui/reducer';
 import type { BillingTransactionsState, BillingTransactionsStateItems } from './types';
 import type { AnyAction } from 'redux';
 
@@ -25,7 +21,7 @@ export const items = withSchemaValidation(
 		switch ( action.type ) {
 			case BILLING_TRANSACTIONS_RECEIVE: {
 				const { past, upcoming } = action;
-				const update: BillingTransactionsStateItems = {};
+				const update: BillingTransactionsStateItems = { ...state };
 				if ( past ) {
 					update.past = past;
 				}
@@ -60,52 +56,12 @@ export const requesting = (
 	return state;
 };
 
-/**
- * Returns the updated sending email requests state after an action has been dispatched.
- * The state contains whether a request for sending a receipt email is in progress.
- */
-export const sendingReceiptEmail = (
-	state: BillingTransactionsState[ 'sendingReceiptEmail' ] = {},
-	action: AnyAction
-) => {
-	switch ( action.type ) {
-		case BILLING_RECEIPT_EMAIL_SEND: {
-			const { receiptId } = action;
-
-			return {
-				...state,
-				[ receiptId ]: true,
-			};
-		}
-		case BILLING_RECEIPT_EMAIL_SEND_FAILURE: {
-			const { receiptId } = action;
-
-			return {
-				...state,
-				[ receiptId ]: false,
-			};
-		}
-		case BILLING_RECEIPT_EMAIL_SEND_SUCCESS: {
-			const { receiptId } = action;
-
-			return {
-				...state,
-				[ receiptId ]: false,
-			};
-		}
-	}
-
-	return state;
-};
-
 const combinedReducer = combineReducers( {
 	items,
 	requesting,
-	sendingReceiptEmail,
 	//individual transactions contains transactions that are not part of the items tree.
 	//TODO: if pagination is implemented, address potential data duplication between individualTransactions and items
 	individualTransactions,
-	ui,
 } );
 
 export default withStorageKey( 'billingTransactions', combinedReducer );

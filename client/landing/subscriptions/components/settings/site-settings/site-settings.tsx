@@ -49,9 +49,10 @@ const SiteSettings = ( {
 		<div className="settings site-settings">
 			{ isLoggedIn && (
 				<EmailMeNewPostsToggle
+					className="setting-item"
 					value={ emailMeNewPosts }
 					onChange={ onEmailMeNewPostsChange }
-					isUpdating={ updatingEmailMeNewPosts }
+					isDisabled={ updatingEmailMeNewPosts }
 				/>
 			) }
 			{ emailMeNewPosts && (
@@ -63,16 +64,19 @@ const SiteSettings = ( {
 			) }
 			{ isLoggedIn && (
 				<EmailMeNewCommentsToggle
+					className="setting-item"
 					value={ emailMeNewComments }
 					onChange={ onEmailMeNewCommentsChange }
-					isUpdating={ updatingEmailMeNewComments }
+					isDisabled={ updatingEmailMeNewComments }
 				/>
 			) }
 			{ isLoggedIn && (
 				<NotifyMeOfNewPostsToggle
+					className="setting-item setting-item__last"
 					value={ notifyMeOfNewPosts }
 					onChange={ onNotifyMeOfNewPostsChange }
-					isUpdating={ updatingNotifyMeOfNewPosts }
+					isDisabled={ updatingNotifyMeOfNewPosts }
+					showJetpackAppHint
 				/>
 			) }
 		</div>

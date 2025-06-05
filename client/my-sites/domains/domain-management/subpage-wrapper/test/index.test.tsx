@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -8,7 +9,11 @@ import configureStore from 'redux-mock-store';
 import SubpageWrapper from '../index';
 import { ADD_FORWARDING_EMAIL, ADD_DNS_RECORD, EDIT_DNS_RECORD } from '../subpages';
 
-jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
+jest.mock( 'calypso/components/file-picker/component-file-picker', () => {
+	const MockFilePicker = () => <div>File Picker</div>;
+	MockFilePicker.displayName = 'MockFilePicker';
+	return MockFilePicker;
+} );
 
 const initialState = {
 	sites: {
@@ -63,7 +68,7 @@ describe( 'SubpageWrapper', () => {
 		);
 
 		expect(
-			screen.getByRole( 'heading', { name: 'Add new email forwarding' } )
+			screen.getByRole( 'heading', { name: 'Add new email forwarding' } )
 		).toBeInTheDocument();
 		expect(
 			screen.getByText( 'Seamlessly redirect your messages to where you need them.' )

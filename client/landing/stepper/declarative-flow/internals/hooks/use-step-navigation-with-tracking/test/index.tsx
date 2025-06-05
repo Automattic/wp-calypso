@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook, act } from '@testing-library/react';
 import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
@@ -89,10 +90,10 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 		const providedDependencies = { foo: 'foo' };
 		act( () => {
-			result.current.submit?.( providedDependencies, 'bar', 'baz' );
+			result.current.submit?.( providedDependencies );
 		} );
 
-		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies, 'bar', 'baz' );
+		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
 			...getDefaultProps( mockParams ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,

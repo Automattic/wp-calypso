@@ -10,7 +10,7 @@
 	right: 0;
 	padding: 6px;
 	color: var(--color-text-inverted);
-	background: rgba(var(--color-neutral-70-rgb), 0.8);
+	background: color-mix(in srgb, var(--color-neutral-70) 80%, transparent);
 	text-align: center;
 	z-index: z-index("root", ".wpcom-site__global-noscript");
 }
@@ -52,6 +52,13 @@ body {
 	line-height: 1.5;
 
 	-ms-overflow-style: scrollbar;
+
+	&.theme-default.is-global,
+	&.theme-default.is-section-stepper,
+	&.theme-default.is-section-login,
+	&.theme-default.is-section-signup {
+		background: var( --color-main-background );
+	}
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
@@ -140,11 +147,13 @@ h4,
 h5,
 h6 {
 	clear: both;
-	text-wrap: balance;
+	text-wrap: balance; // TODO: remove this fallback once `pretty` is globally supported.
+	text-wrap: pretty;
 }
 caption,
 figcaption {
 	text-wrap: balance;
+	text-wrap: pretty;
 }
 hr {
 	background: var(--color-neutral-10);
@@ -219,7 +228,6 @@ code,
 kbd,
 tt,
 var {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font: 15px $code;
 }
 abbr,
@@ -235,11 +243,9 @@ ins {
 	text-decoration: none;
 }
 small {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 75%;
 }
 big {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 125%;
 }
 figure {
@@ -259,10 +265,6 @@ th {
 }
 
 /* Links */
-a {
-	text-decoration: none;
-}
-
 a,
 a:visited {
 	color: var(--color-link);

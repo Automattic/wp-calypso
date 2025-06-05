@@ -87,7 +87,7 @@ export class StartSiteFlow {
 		if ( ( await this.page.locator( selectors.designChoicesStepContainer ).count() ) > 0 ) {
 			return 'designChoices';
 		}
-		throw new Error( `Unknown or invalid step` );
+		throw new Error( 'Unknown or invalid step' );
 	}
 
 	/**

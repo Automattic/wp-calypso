@@ -94,7 +94,7 @@ export function ConsolidatedStatsCard( {
 	const cardRef = useRef< HTMLDivElement | null >( null );
 
 	return (
-		<Card compact ref={ cardRef }>
+		<Card compact ref={ cardRef } className="consolidated-stats-card">
 			<div className="consolidated-stats-card__value">
 				{ isLoading ? <TextPlaceholder /> : value }
 			</div>

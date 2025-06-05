@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { CALYPSO_HELP_WITH_HELP_CENTER } from '@automattic/urls';
+import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -50,6 +51,8 @@ function DomainTransferOrConnect( {
 		domainInboundTransferStatusInfo
 	);
 	const [ isFetching, setIsFetching ] = useState( false );
+
+	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -137,9 +140,11 @@ function DomainTransferOrConnect( {
 						{ createInterpolateElement(
 							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
 							{
-								a: createElement( 'a', {
-									target: '_blank',
-									href: CALYPSO_HELP_WITH_HELP_CENTER,
+								a: createElement( 'button', {
+									onClick: () => {
+										setNavigateToRoute( '/odie' );
+										setShowHelpCenter( true );
+									},
 								} ),
 							}
 						) }

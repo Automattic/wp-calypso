@@ -1,6 +1,8 @@
-import path from 'path';
+import { parse } from 'path';
 import config from '@automattic/calypso-config';
+import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
@@ -17,11 +19,9 @@ import EnvironmentBadge, {
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
@@ -52,7 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
-			disableHelpCenterAutoOpen,
+			isSSP,
 			isWooDna,
 			lang,
 			languageRevisions,
@@ -68,11 +68,12 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
+			showStepContainerV2Loader,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
-			.map( ( chunk ) => path.parse( chunk ).name );
+			.map( ( chunk ) => parse( chunk ).name );
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -80,7 +81,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
-			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
+			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -102,12 +103,11 @@ class Document extends Component {
 
 		const theme = config( 'theme' );
 
-		const LoadingLogo = chooseLoadingLogo( this.props, app?.isWpMobileApp, app?.isWcMobileApp );
-
 		const isRTL = isLocaleRtl( lang );
 
 		let headTitle = head.title;
 		let headFaviconUrl;
+		let isWCCOM = false;
 
 		// To customize the page title and favicon for Gravatar-related login pages.
 		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
@@ -115,25 +115,26 @@ class Document extends Component {
 			// To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
 			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
 
-			if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-				headTitle = oauth2Client.title;
-				headFaviconUrl = oauth2Client.favicon;
-			} else if ( query?.gravatar_flow ) {
-				// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
-				headTitle = gravatarClientData.title;
-				headFaviconUrl = gravatarClientData.favicon;
+			switch ( true ) {
+				case isGravPoweredOAuth2Client( oauth2Client ):
+					headTitle = oauth2Client.title;
+					headFaviconUrl = oauth2Client.favicon;
+					break;
+				case query?.gravatar_flow:
+					// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
+					headTitle = gravatarClientData.title;
+					headFaviconUrl = gravatarClientData.favicon;
+					break;
+				case isWooOAuth2Client( oauth2Client ):
+					isWCCOM = true;
+					headTitle = oauth2Client.title;
+					headFaviconUrl = oauth2Client.favicon;
+					break;
 			}
 		}
 
-		const shouldNotShowLoadingLogo =
-			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
-
 		return (
-			<html
-				lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ clsx( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
-			>
+			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
 					title={ headTitle }
 					branchName={ branchName }
@@ -182,11 +183,12 @@ class Document extends Component {
 								} ) }
 							>
 								<div className="layout__content">
-									{ shouldNotShowLoadingLogo ? (
-										<Loading className="wpcom-loading__boot" />
-									) : (
-										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									) }
+									<LoadingPlaceholder
+										app={ app }
+										sectionName={ sectionName }
+										isWCCOM={ isWCCOM }
+										showStepContainerV2Loader={ showStepContainerV2Loader }
+									/>
 								</div>
 							</div>
 						</div>
@@ -291,13 +293,28 @@ class Document extends Component {
 		);
 	}
 }
+function LoadingPlaceholder( { app, sectionName, isWCCOM, showStepContainerV2Loader } ) {
+	const shouldNotShowLoadingLogo =
+		sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
 
-function chooseLoadingLogo( { useLoadingEllipsis }, isWpMobileApp, isWcMobileApp ) {
-	if ( useLoadingEllipsis ) {
-		return LoadingEllipsis;
+	if ( shouldNotShowLoadingLogo ) {
+		return showStepContainerV2Loader ? (
+			<Step.Loading />
+		) : (
+			<Loading className="wpcom-loading__boot" />
+		);
 	}
 
-	if ( isWcMobileApp ) {
+	const LoadingLogo = chooseLoadingLogo( {
+		isWpMobileApp: app?.isWpMobileApp,
+		isWcMobileApp: app?.isWcMobileApp,
+		isWCCOM,
+	} );
+	return <LoadingLogo size={ 72 } className="wpcom-site__logo" />;
+}
+
+function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
+	if ( isWcMobileApp || isWCCOM ) {
 		return WooCommerceLogo;
 	}
 

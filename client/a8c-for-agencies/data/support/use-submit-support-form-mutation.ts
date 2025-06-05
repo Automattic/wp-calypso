@@ -4,6 +4,7 @@ import type { APIError, SubmitContactSupportParams } from './types';
 
 interface APIResponse {
 	success: boolean;
+	ticket_id?: number;
 }
 
 function mutationSubmitSupportForm( params: SubmitContactSupportParams ): Promise< APIResponse > {

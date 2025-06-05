@@ -85,7 +85,7 @@ export const transferDomainAction: AuthCodeValidationHandler =
 					const message =
 						transferDomainError.GENERIC_ERROR +
 						' ' +
-						__( 'Error message: ' ) +
+						__( 'Error message:' ) +
 						`"${ errorMessage }"`;
 					onDone( { message } );
 				}

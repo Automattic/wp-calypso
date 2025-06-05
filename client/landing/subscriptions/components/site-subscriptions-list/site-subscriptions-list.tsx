@@ -85,6 +85,9 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="email-frequency-cell" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
+				<span className="unsubscribe-action-cell" role="columnheader">
+					{ translate( 'Action' ) }
+				</span>
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 			{ subscriptions.map( ( siteSubscription ) => (

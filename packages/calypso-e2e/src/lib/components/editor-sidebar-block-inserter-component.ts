@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 
@@ -74,7 +74,7 @@ export class EditorSidebarBlockInserterComponent {
 			type = 'block',
 			blockFallBackName = '',
 		}: { type?: 'block' | 'pattern'; blockFallBackName?: string } = {}
-	): Promise< void > {
+	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 		let locator;
 
@@ -88,7 +88,7 @@ export class EditorSidebarBlockInserterComponent {
 				// The DOM structure that hold the block options changes a LOT dependent on whether there's a search.
 				// This combined selector is not the slickest, but capture both cases.
 				// There's not an easy way to use "getByRole" to capture two cases without a lot of promise racing.
-				.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
+				.locator( '.block-editor-inserter__block-list,.block-editor-block-types-list' )
 				.getByRole( 'option', {
 					name: optionName,
 					exact: true,
@@ -98,5 +98,7 @@ export class EditorSidebarBlockInserterComponent {
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
 		await locator.click();
+
+		return locator;
 	}
 }

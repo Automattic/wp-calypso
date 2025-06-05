@@ -34,7 +34,7 @@ class SharingButtonsPreviewButton extends Component {
 			tumblr: 'tumblr-alt',
 			'jetpack-whatsapp': 'whatsapp',
 			'press-this': 'wordpress',
-			twitter: 'twitter-alt',
+			twitter: 'x',
 			more: 'share',
 		};
 		if ( ! this.props.button.custom ) {

@@ -31,7 +31,6 @@ export type UpgradePlanProps = {
 	onFreeTrialClick?: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: ( planSlug: PlanSlug ) => void;
-	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
 	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
 	showVariants?: boolean;

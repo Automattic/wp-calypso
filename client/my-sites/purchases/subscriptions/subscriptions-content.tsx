@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
@@ -20,6 +19,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -36,7 +36,7 @@ function SubscriptionsContent( {
 	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
 } ) {
-	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = ( siteSlug, purchaseId ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 
@@ -64,7 +64,6 @@ function SubscriptionsContent( {
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					key={ selectedSite.ID }
 					siteId={ selectedSite.ID }
-					name={ selectedSite.name }
 					slug={ selectedSite.slug }
 					purchases={ purchases }
 					cards={ cards }
@@ -143,7 +142,6 @@ function NoPurchasesMessage() {
 					line={ translate( 'You have made no purchases for this site.' ) }
 					action={ translate( 'Upgrade now' ) }
 					actionURL={ url }
-					illustration={ noSitesIllustration }
 					actionCallback={ () => {
 						recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
 					} }

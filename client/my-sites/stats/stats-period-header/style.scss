@@ -20,7 +20,8 @@
 		padding: 0 32px;
 	}
 
-	.period {
+	.period,
+	.prefix {
 		font-family: $brand-serif;
 	}
 
@@ -33,11 +34,6 @@
 
 			@media (max-width: $break-large) {
 				margin: 0;
-			}
-
-			@media (max-width: $break-medium) {
-				padding: 0;
-				justify-content: flex-end;
 			}
 
 			@media (max-width: 660px) {

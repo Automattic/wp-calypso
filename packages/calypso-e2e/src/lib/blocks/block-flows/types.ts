@@ -9,6 +9,7 @@ export interface BlockFlow {
 	blockTestName?: string;
 	blockTestFallBackName?: string;
 	blockEditorSelector: string;
+	blockInsertedPopupConfirmButtonSelector?: string;
 	noSearch?: boolean;
 	configure?( context: EditorContext ): Promise< void >;
 	validateAfterPublish?( context: PublishedPostContext ): Promise< void >;

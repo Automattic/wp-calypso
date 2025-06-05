@@ -1,13 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 
 .invoices-list-row__header {
 	display: none;
 
 	* {
-		font-weight: 400;
-		font-size: 0.875rem;
+		@include body-medium;
 		color: var(--color-neutral-70);
 	}
 
@@ -21,7 +20,7 @@
 	grid-template-columns: calc(34% - 16px) calc(34% - 16px) calc(34% - 16px);
 	align-items: center;
 	grid-gap: 24px;
-	font-size: 1.25rem;
+	@include body-x-large;
 
 	@include break-xlarge() {
 		grid-template-columns: 160px 1fr 100px 100px 128px;

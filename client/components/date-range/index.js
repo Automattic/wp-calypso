@@ -516,10 +516,12 @@ export class DateRange extends Component {
 						{ this.props.overlay && (
 							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
 						) }
-						{ this.props.renderHeader( headerProps ) }
-						{ this.props.renderInputs( inputsProps ) }
-						{ this.renderDatePicker() }
-						{ this.props.renderFooter( footerProps ) }
+						<div { ...( this.props.overlay && { 'aria-hidden': true, inert: '' } ) }>
+							{ this.props.renderHeader( headerProps ) }
+							{ this.props.renderInputs( inputsProps ) }
+							{ this.renderDatePicker() }
+							{ this.props.renderFooter( footerProps ) }
+						</div>
 					</div>
 					{ /* Render shortcuts to the right of the calendar */ }
 					{ this.props.displayShortcuts && (

@@ -27,12 +27,6 @@ jest.mock( 'calypso/my-sites/media-library', () => ( {
 } ) );
 jest.mock( 'calypso/blocks/image-editor', () => () => <div data-testid="image-editor" /> );
 jest.mock( '../detail', () => () => <div data-testid="media-modal-detail-base" /> );
-
-const mockV4 = jest.fn();
-jest.mock( 'uuid', () => ( {
-	v4: () => mockV4(),
-} ) );
-
 /**
  * Module variables
  */
@@ -276,8 +270,11 @@ describe( 'EditorMediaModal', () => {
 
 		test( 'should copy external media after loading WordPress library if 1 or more media are selected and button is pressed', async () => {
 			const user = userEvent.setup();
-			mockV4.mockImplementationOnce( () => '1' );
-			mockV4.mockImplementationOnce( () => '2' );
+			const originalRandomUUID = global.crypto.randomUUID;
+			global.crypto.randomUUID = jest
+				.fn()
+				.mockImplementationOnce( () => '1' )
+				.mockImplementationOnce( () => '2' );
 
 			const addExternalMedia = jest.fn();
 
@@ -310,11 +307,14 @@ describe( 'EditorMediaModal', () => {
 				undefined,
 				'external'
 			);
+
+			global.crypto.randomUUID = originalRandomUUID;
 		} );
 
 		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', async () => {
 			const user = userEvent.setup();
-			mockV4.mockImplementationOnce( () => '3' );
+			const originalRandomUUID = global.crypto.randomUUID;
+			global.crypto.randomUUID = jest.fn().mockImplementationOnce( () => '3' );
 
 			const addExternalMedia = jest.fn();
 
@@ -346,6 +346,7 @@ describe( 'EditorMediaModal', () => {
 				undefined,
 				'external'
 			);
+			global.crypto.randomUUID = originalRandomUUID;
 		} );
 	} );
 } );

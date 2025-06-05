@@ -53,12 +53,13 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useActionHooks();
 
-	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
+	const openingCoordinates = useOpeningCoordinates( ! isHelpCenterShown, isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
 		portalParent.classList.add( ...classes );
 
+		portalParent.setAttribute( 'role', 'dialog' );
 		portalParent.setAttribute( 'aria-modal', 'true' );
 		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
 

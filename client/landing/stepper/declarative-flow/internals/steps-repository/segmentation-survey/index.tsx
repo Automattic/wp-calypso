@@ -3,12 +3,17 @@ import Main from 'calypso/components/main';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { useHash } from 'calypso/landing/stepper/hooks/use-hash';
-import type { ProvidedDependencies, Step } from '../../types';
+import type { Step } from '../../types';
 import './style.scss';
 
 export const ENTREPRENEUR_TRIAL_SURVEY_KEY = 'entrepreneur-trial';
 const WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY = 'what-would-you-like-to-do';
 const MIGRATE_MY_STORE_ANSWER_KEY = 'migrate-my-store';
+
+type ProvidedDependencies = {
+	isMigrationFlow: boolean;
+	lastQuestionPath?: string;
+};
 
 type NavigationDecision = {
 	proceedWithNavigation: boolean;
@@ -48,7 +53,7 @@ const useShouldNavigate = () => {
 	return { shouldNavigate };
 };
 
-const SegmentationSurveyStep: Step = ( { navigation } ) => {
+const SegmentationSurveyStep: Step< { submits: ProvidedDependencies } > = ( { navigation } ) => {
 	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
 		ENTREPRENEUR_TRIAL_SURVEY_KEY
 	);

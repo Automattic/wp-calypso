@@ -52,7 +52,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 					Object.assign(
 						{
 							...query,
-							apiVersion: '1.2',
+							apiNamespace: 'wpcom/v2',
 							// We should keep the blank-canvas-3 stay hidden according to below discussion
 							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
 							// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list

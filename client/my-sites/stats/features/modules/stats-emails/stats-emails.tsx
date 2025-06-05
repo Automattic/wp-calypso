@@ -2,8 +2,8 @@ import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_URL_SUBSCRIBERS } from '../../../const';
+import { EMAILS_SUPPORT_URL, JETPACK_SUPPORT_URL_SUBSCRIBERS } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
@@ -41,7 +41,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_SUBSCRIBERS }#emails-section`
-		: `${ SUPPORT_URL }#emails`;
+		: EMAILS_SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -51,6 +51,11 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
+
+	// The period unit is not used in the Email Stats Summary because it always fetches the all-time period.
+	// To make the Email Stats module work with the Stats module component and route for Email Stats Summary,
+	// we need to force the period to be `day`.
+	const forcedDailyPeriodForStatsModule = Object.assign( {}, period, { period: 'day' } );
 
 	return (
 		<>
@@ -89,7 +94,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 								<TooltipWrapper
 									value={
 										hasUniques
-											? `${ numberFormat( item.opens_rate, {
+											? `${ formatNumber( item.opens_rate, {
 													numberFormatOptions: {
 														maximumFractionDigits: 2,
 													},
@@ -103,7 +108,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						},
 					} }
 					moduleStrings={ moduleStrings }
-					period={ period }
+					period={ forcedDailyPeriodForStatsModule }
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }
@@ -120,7 +125,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							<TooltipWrapper
 								value={
 									hasUniques
-										? `${ numberFormat( item.clicks_rate, {
+										? `${ formatNumber( item.clicks_rate, {
 												numberFormatOptions: {
 													maximumFractionDigits: 2,
 												},
@@ -139,7 +144,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ translate( 'Emails' ) }
 					isEmpty
 					emptyMessage={

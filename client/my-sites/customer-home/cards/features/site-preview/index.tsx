@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -9,9 +9,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
+import './style.scss';
 
 interface ThumbnailWrapperProps {
 	showEditSite: boolean;
@@ -64,6 +66,10 @@ const SitePreview = ( {
 	);
 	const isMobile = useMobileBreakpoint();
 
+	const customDomains = useSelector( ( state ) =>
+		getDomainsBySiteId( state, selectedSite?.ID ?? 0 )
+	);
+
 	if ( isMobile ) {
 		return <></>;
 	}
@@ -77,13 +83,18 @@ const SitePreview = ( {
 		  } )
 		: '#';
 
+	const domains = customDomains.map( createSiteDomainObject );
+
+	const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
+
+	const siteDomain = nonWpcomDomains?.length ? nonWpcomDomains[ 0 ].domain : selectedSite?.slug;
+
 	// We use an iframe rather than mShot to not cache changes.
 	const iframeSrcKeepHomepage = selectedSite
 		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true`
 		: '#';
 
 	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
-	const selectedSiteSlug = selectedSite ? selectedSite.slug : '...';
 	const selectedSiteName = selectedSite ? selectedSite.name : '&nbsp;';
 
 	return (
@@ -112,13 +123,13 @@ const SitePreview = ( {
 				<div className="home-site-preview__action-bar">
 					<div className="home-site-preview__site-info">
 						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
-						<a
+						<ExternalLink
 							href={ selectedSiteURL }
-							title={ selectedSiteURL }
 							className="home-site-preview__info-domain"
+							localizeUrl={ false }
 						>
-							<Truncated>{ selectedSiteSlug }</Truncated>
-						</a>
+							<Truncated>{ siteDomain }</Truncated>
+						</ExternalLink>
 					</div>
 					<SitePreviewEllipsisMenu />
 				</div>

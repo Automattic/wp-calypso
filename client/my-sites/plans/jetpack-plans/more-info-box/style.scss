@@ -23,7 +23,7 @@
 
 .is-section-jetpack-cloud-pricing {
 	.more-info-box__more-container {
-		background-color: rgba(var(--studio-jetpack-green-10-rgb), 0.1);
+		background-color: color-mix(in srgb, var(--studio-jetpack-green-10) 10%, transparent);
 	}
 
 	.more-info-box__more-button.button {

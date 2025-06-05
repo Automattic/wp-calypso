@@ -21,7 +21,6 @@
 		text-decoration: none;
 		vertical-align: top;
 		box-sizing: border-box;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
 		line-height: 21px;
 		border-radius: 4px;
@@ -57,7 +56,6 @@
 		&.is-compact {
 			padding: 7px;
 			color: var(--color-neutral-40);
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 11px;
 			line-height: 1;
 			text-transform: uppercase;

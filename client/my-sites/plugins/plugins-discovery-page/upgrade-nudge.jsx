@@ -127,22 +127,24 @@ const UpgradeNudge = ( {
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
 				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }
+				isOneClickCheckoutEnabled={ false }
 			/>
 		);
 	}
 
-	const title = translate(
-		'You need to upgrade to a %(businessPlanName)s Plan to install plugins. Get a free domain with an annual plan.',
-		{ args: { businessPlanName: getPlan( plan )?.getTitle() } }
-	);
+	const title = translate( 'Access thousands of plugins with the %(businessPlanName)s Plan', {
+		args: { businessPlanName: getPlan( plan )?.getTitle() },
+	} );
+
+	const description = translate( 'Free domain included.' );
 	// This banner upsells the ability to install free and paid plugins on a Business plan.
 	return (
 		<UpsellNudge
+			compactButton={ false }
+			description={ description }
 			event="calypso_plugins_browser_upgrade_nudge"
 			className="plugins-discovery-page__upsell"
-			callToAction={ translate( 'Upgrade to %(planName)s', {
-				args: { planName: getPlan( plan )?.getTitle() },
-			} ) }
+			callToAction={ translate( 'Upgrade' ) }
 			icon="notice-outline"
 			showIcon
 			onClick={ handleUpsellNudgeClick }
@@ -152,7 +154,7 @@ const UpgradeNudge = ( {
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
-			isOneClickCheckoutEnabled
+			isOneClickCheckoutEnabled={ false }
 		/>
 	);
 };

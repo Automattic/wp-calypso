@@ -51,6 +51,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	com_vs_org: {
+		link: 'https://wordpress.com/support/com-vs-org/',
+		post_id: 38,
+	},
 	dashboard: {
 		link: 'https://wordpress.com/support/dashboard/',
 		post_id: 137,
@@ -186,6 +190,10 @@ const contextLinks = {
 	'invite-people': {
 		link: 'https://wordpress.com/support/invite-people/',
 		post_id: 1221,
+	},
+	'jabber-subscription-updates': {
+		link: 'https://wordpress.com/support/jabber',
+		post_id: 3228,
 	},
 	'manage-profile': {
 		link: 'https://wordpress.com/support/manage-my-profile/',
@@ -336,6 +344,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/vat-gst-other-taxes/#other-tax-exempt-customers',
 		post_id: 234670,
 	},
+	'business-tax-rates-in-ohio-and-connecticut': {
+		link: 'https://wordpress.com/support/vat-gst-other-taxes/#business-tax-rates-in-ohio-and-connecticut',
+		post_id: 234670,
+	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',
 		post_id: 1221,
@@ -448,9 +460,9 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/transfer-domain-registration/#before-you-get-started',
 		post_id: 41298,
 	},
-	'public-vs-private-registration-and-gdpr': {
-		link: 'https://wordpress.com/support/domains/register-domain/#public-versus-private-registration-and-gdpr',
-		post_id: 2784,
+	'domain-registrations-and-privacy': {
+		link: 'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection',
+		post_id: 143935,
 	},
 	'https-ssl': {
 		link: 'https://wordpress.com/support/domains/https-ssl/',

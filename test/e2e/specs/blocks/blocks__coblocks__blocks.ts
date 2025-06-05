@@ -125,14 +125,14 @@ describe( 'CoBlocks: Blocks', function () {
 		${ HeroBlock }         | ${ [ heroBlockHeading ] }
 		${ ClicktoTweetBlock } | ${ [ clicktoTweetBlockTweet ] }
 	`(
-		`Confirm $block.blockName block is visible in published post`,
+		'Confirm $block.blockName block is visible in published post',
 		async ( { block, content } ) => {
 			// Pass the Block object class here then call the static method to validate.
 			await block.validatePublishedContent( page, content );
 		}
 	);
 
-	it( `Confirm Logos block is visible in published post`, async () => {
+	it( 'Confirm Logos block is visible in published post', async () => {
 		await LogosBlock.validatePublishedContent( page, [ logoImage.filename ] );
 	} );
 } );

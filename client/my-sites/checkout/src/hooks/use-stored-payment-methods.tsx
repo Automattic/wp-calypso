@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { ComponentType } from 'react';
@@ -53,6 +53,7 @@ export function useStoredPaymentMethods( {
 	type = 'all',
 	expired = false,
 	isLoggedOut = false,
+	isForBusiness = false,
 }: {
 	/**
 	 * If there is no logged-in user, we will not try to fetch anything.
@@ -72,6 +73,13 @@ export function useStoredPaymentMethods( {
 	 * Defaults to false.
 	 */
 	expired?: boolean;
+
+	/**
+	 * Optionally filter methods by business use status
+	 *
+	 * Defaults to 'false'
+	 */
+	isForBusiness?: boolean | null;
 } = {} ): StoredPaymentMethodsState {
 	const queryClient = useQueryClient();
 
@@ -85,7 +93,15 @@ export function useStoredPaymentMethods( {
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
-	const paymentMethods = isDataValid ? data : [];
+	const filteredPaymentMethods = useMemo( () => {
+		if ( ! isDataValid ) {
+			return [];
+		}
+
+		return isForBusiness
+			? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
+			: data;
+	}, [ isForBusiness, data, isDataValid ] );
 
 	const mutation = useMutation<
 		StoredPaymentMethod[ 'stored_details_id' ],
@@ -128,7 +144,7 @@ export function useStoredPaymentMethods( {
 	} )();
 
 	return {
-		paymentMethods,
+		paymentMethods: filteredPaymentMethods,
 		isLoading: isLoggedOut ? false : isLoading,
 		isDeleting: mutation.isPending,
 		error: errorMessage,

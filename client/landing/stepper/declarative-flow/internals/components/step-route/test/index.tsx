@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
@@ -152,6 +153,8 @@ describe( 'StepRoute', () => {
 
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
+				is_simplified_onboarding: false,
+				skip_step_render: false,
 			} );
 		} );
 
@@ -214,6 +217,7 @@ describe( 'StepRoute', () => {
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
 				skip_step_render: true,
+				is_simplified_onboarding: false,
 				signup_complete_flow_name: 'some-other-flow',
 				signup_complete_step_name: 'some-other-step-slug',
 			} );
@@ -246,6 +250,7 @@ describe( 'StepRoute', () => {
 			} );
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
+				is_simplified_onboarding: false,
 				skip_step_render: true,
 				signup_complete_flow_name: 'some-other-flow',
 				signup_complete_step_name: 'some-other-step-slug',

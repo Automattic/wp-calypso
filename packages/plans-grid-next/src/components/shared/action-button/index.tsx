@@ -6,8 +6,9 @@ import {
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useSelect } from '@wordpress/data';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';

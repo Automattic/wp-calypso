@@ -27,19 +27,19 @@ export default function (): void {
 	page( '/plans', '/pricing' );
 
 	jetpackStoragePlans(
-		`/:lang/pricing`,
+		'/:lang/pricing',
 		setLocaleMiddleware(),
 		loggedInSiteSelection,
 		jetpackPricingContext
 	);
 	jetpackStoragePlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
 	jetpackUpsell(
-		`/:lang/pricing`,
+		'/:lang/pricing',
 		setLocaleMiddleware(),
 		loggedInSiteSelection,
 		jetpackPricingContext
 	);
 	jetpackUpsell( '/pricing', loggedInSiteSelection, jetpackPricingContext );
-	jetpackPlans( `/:lang/pricing`, setLocaleMiddleware(), jetpackPricingContext );
+	jetpackPlans( '/:lang/pricing', setLocaleMiddleware(), jetpackPricingContext );
 	jetpackPlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
 }

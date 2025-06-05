@@ -86,7 +86,7 @@ export function PatternLibraryToggle( {
 			const lastSelectionCoords = prevOptionRef.current.getBoundingClientRect();
 			const offset = lastSelectionCoords.left - activeCoords.left;
 
-			backdrop?.animate( [ { transform: `translateX(${ offset }px)` }, { transform: `none` } ], {
+			backdrop?.animate( [ { transform: `translateX(${ offset }px)` }, { transform: 'none' } ], {
 				easing: 'ease',
 				duration: 200,
 			} );

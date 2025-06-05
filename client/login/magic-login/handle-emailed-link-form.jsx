@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import WordPressLogo from 'calypso/components/wordpress-logo';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {
@@ -179,6 +179,7 @@ class HandleEmailedLinkForm extends Component {
 			wccomFrom,
 			isWCCOM,
 			isA4A,
+			isJetpack,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
@@ -194,6 +195,7 @@ class HandleEmailedLinkForm extends Component {
 					emailAddress={ emailAddress }
 					postId={ postId }
 					activate={ activate }
+					isJetpack={ isJetpack }
 				/>
 			);
 		}
@@ -261,9 +263,6 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
-		const illustration =
-			isWCCOM || isWooDna ? '/calypso/images/illustrations/illustration-woo-magic-link.svg' : '';
-
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		if ( isGravPoweredClient ) {
@@ -276,15 +275,19 @@ class HandleEmailedLinkForm extends Component {
 					<img src={ oauth2Client.icon } width={ 32 } height={ 32 } alt={ oauth2Client.title } />
 					<EmptyContent
 						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
-						illustration=""
 						title=""
 					/>
 				</div>
 			);
 		}
 
+		const showLoadingLogo = isFetching || transition || this.state.isRedirecting;
 		// transition is a GET parameter for when the user is transitioning from email user to WPCom user
-		if ( isFetching || transition || this.state.isRedirecting ) {
+		if ( showLoadingLogo ) {
+			if ( isWCCOM ) {
+				return <WooCommerceLogo size={ 72 } className="wpcom-site__logo" />;
+			}
+
 			return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 		}
 
@@ -295,8 +298,6 @@ class HandleEmailedLinkForm extends Component {
 					className={ clsx( 'magic-login__handle-link', {
 						'magic-login__is-fetching-auth': isFetching,
 					} ) }
-					illustration={ illustration }
-					illustrationWidth={ 500 }
 					line={ line }
 					title={ title }
 				/>

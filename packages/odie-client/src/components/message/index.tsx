@@ -13,6 +13,7 @@ export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
 	displayChatWithSupportLabel?: boolean;
+	displayChatWithSupportEndedLabel?: boolean;
 	isNextMessageFromSameSender: boolean;
 };
 
@@ -37,6 +38,7 @@ const ChatMessage = ( {
 	message,
 	currentUser,
 	displayChatWithSupportLabel,
+	displayChatWithSupportEndedLabel,
 	isNextMessageFromSameSender,
 }: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
@@ -83,6 +85,7 @@ const ChatMessage = ( {
 				messageHeader={ messageHeader }
 				isDisliked={ isDisliked }
 				displayChatWithSupportLabel={ displayChatWithSupportLabel }
+				displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
 				isNextMessageFromSameSender={ isNextMessageFromSameSender }
 			/>
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }

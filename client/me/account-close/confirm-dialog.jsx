@@ -9,6 +9,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { clearStore, disablePersistence } from 'calypso/lib/user/store';
+import { domainManagementSelectSite } from 'calypso/my-sites/domains/paths';
 import { closeAccount } from 'calypso/state/account/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -73,7 +74,7 @@ class AccountCloseConfirmDialog extends Component {
 						{
 							englishText: "Change your site's address",
 							text: translate( "Change your site's address" ),
-							href: '/settings/general',
+							href: domainManagementSelectSite(),
 							supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
 							supportPostId: 11280,
 						},

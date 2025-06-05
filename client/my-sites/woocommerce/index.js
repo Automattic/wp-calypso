@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { createElement } from 'react';
-import { makeLayout } from 'calypso/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import {
@@ -13,8 +13,15 @@ import Main from './main';
 import './style.scss';
 
 export default function ( router ) {
-	router( '/woocommerce-installation', siteSelection, sites, makeLayout );
-	router( '/woocommerce-installation/:site', siteSelection, navigation, setup, makeLayout );
+	router( '/woocommerce-installation', siteSelection, sites, makeLayout, clientRender );
+	router(
+		'/woocommerce-installation/:site',
+		siteSelection,
+		navigation,
+		setup,
+		makeLayout,
+		clientRender
+	);
 }
 
 function setup( context, next ) {

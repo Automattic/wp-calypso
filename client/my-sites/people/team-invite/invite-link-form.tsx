@@ -83,7 +83,7 @@ export function InviteLinkForm( props: Props ) {
 		<>
 			<div className="invite-people__link-instructions">
 				{ translate(
-					'Use this link to onboard your team members without having to invite them one by one. ' +
+					'Use this link to onboard your users without having to invite them one by one. ' +
 						'{{strong}}Anybody visiting this URL will be able to sign up to your organization,{{/strong}} ' +
 						'even if they received the link from somebody else, so make sure that you share it with trusted people.',
 					{ components: { strong: <strong /> } }

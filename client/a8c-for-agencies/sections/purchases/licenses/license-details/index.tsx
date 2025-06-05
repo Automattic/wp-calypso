@@ -20,6 +20,7 @@ interface Props {
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
 	referral?: ReferralAPIResponse | null;
+	isDevSite?: boolean;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -31,6 +32,7 @@ export default function LicenseDetails( {
 	licenseType,
 	isChildLicense,
 	referral,
+	isDevSite,
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const product = license.product;
@@ -40,12 +42,13 @@ export default function LicenseDetails( {
 	const issuedAt = license.issuedAt;
 	const attachedAt = license.attachedAt;
 	const revokedAt = license.revokedAt;
+	const productId = license.productId;
 
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 
-	const pressablePlan = useGetPressablePlanByProductId( { product_id: license.productId } );
+	const pressablePlan = useGetPressablePlanByProductId( { product_id: productId } );
 
 	return (
 		<Card
@@ -128,6 +131,8 @@ export default function LicenseDetails( {
 				hasDownloads={ hasDownloads }
 				isChildLicense={ isChildLicense }
 				isClientLicense={ !! referral }
+				isDevSite={ isDevSite }
+				productId={ productId }
 			/>
 		</Card>
 	);

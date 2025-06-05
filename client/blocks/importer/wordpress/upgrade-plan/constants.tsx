@@ -17,7 +17,7 @@ export const UpgradePlanHostingTestimonials = [
 		customerImage: customerImageAjitBohra,
 		customerName: 'Ajit Bohra',
 		customerTestimonial: translate(
-			`"We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com."`
+			'"We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com."'
 		),
 		customerInfo: 'WordPress.com News',
 	},
@@ -25,7 +25,7 @@ export const UpgradePlanHostingTestimonials = [
 		customerImage: customerImageChrisCoyier,
 		customerName: 'Chris Coyier',
 		customerTestimonial: translate(
-			`"With WordPress.com, you’re in good hands. Your site has the speed it needs. It won’t go offline. And it’s not going to be hacked. When it comes to the difficult stuff — it’s all taken care of."`
+			'"With WordPress.com, you’re in good hands. Your site has the speed it needs. It won’t go offline. And it’s not going to be hacked. When it comes to the difficult stuff — it’s all taken care of."'
 		),
 		customerInfo: 'chriscoyier.net',
 	},
@@ -33,7 +33,7 @@ export const UpgradePlanHostingTestimonials = [
 		customerImage: customerImageEmmaLucasCopley,
 		customerName: 'Emma Lucas-Copley',
 		customerTestimonial: translate(
-			`"7 years ago I decided to FINALLY begin my book blog, and I opened my Wordpress account after reading so many great reviews. I've never looked back. With their easy to use website features, fantastic support team and great collection of themes to choose from, my website was simple to build, update and maintain."`
+			'"7 years ago I decided to FINALLY begin my book blog, and I opened my Wordpress account after reading so many great reviews. I\'ve never looked back. With their easy to use website features, fantastic support team and great collection of themes to choose from, my website was simple to build, update and maintain."'
 		),
 		customerInfo: 'papyrusandpeppermint.com',
 	},
@@ -41,7 +41,7 @@ export const UpgradePlanHostingTestimonials = [
 		customerImage: customerImageAntonyAgnel,
 		customerName: 'Antony Agnel',
 		customerTestimonial: translate(
-			`"After moving my website to WordPress.com, my site never crashed due to WordPress upgrades. Thanks to their rigorous testing and quality assurance – I could proudly say that my site never went down due to any WordPress upgrade."`
+			'"After moving my website to WordPress.com, my site never crashed due to WordPress upgrades. Thanks to their rigorous testing and quality assurance – I could proudly say that my site never went down due to any WordPress upgrade."'
 		),
 		customerInfo: 'AntonyAgnel.com',
 	},

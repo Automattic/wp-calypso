@@ -1,0 +1,77 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../variables";
+@import "../shared";
+
+$header-compact-height: 114px;
+$header-compact-height-mobile: 128px;
+
+.products-overview.main.hosting-dashboard-layout {
+	.hosting-dashboard-layout__container {
+		height: auto;
+		overflow-y: scroll;
+		display: block;
+	}
+
+	.products-overview__top {
+		max-height: auto;
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg ) no-repeat top right $header-background-color;
+		border-block-end: none;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		overflow: hidden;
+		box-sizing: border-box;
+	}
+
+	.hosting-dashboard-layout__header > * {
+		z-index: 10;
+	}
+
+	.hosting-dashboard-layout__header-breadcrumb {
+		color: var(--color-neutral-40);
+		fill: var(--color-neutral-40);
+
+		a {
+			color: var(--color-primary-5);
+		}
+	}
+
+	.hosting-dashboard-layout__header-actions {
+		background-color: var(--color-surface);
+		border-radius: 8px; /* stylelint-disable-line */
+		padding: 8px 24px 8px 20px;
+
+		.shopping-cart {
+			margin: 0;
+		}
+	}
+
+	.components-button:is(.is-primary, .is-secondary) {
+		min-height: 40px;
+	}
+
+	.product-category-menu {
+		transition: height .25s ease-out;
+		opacity: 1;
+		height: 156px;
+	}
+
+	.products-overview__action-panel-wrapper {
+		position: sticky;
+		z-index: 2;
+	}
+}
+
+.products-overview.main.hosting-dashboard-layout.is-compact {
+	.product-category-menu {
+		overflow: hidden;
+		height: 0;
+		opacity: 0;
+		margin: 0;
+	}
+
+	.products-overview__action-panel-wrapper {
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
+	}
+}

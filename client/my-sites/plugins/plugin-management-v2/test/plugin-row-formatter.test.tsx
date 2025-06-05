@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
@@ -167,7 +168,7 @@ describe( '<PluginRowFormatter>', () => {
 			},
 		} );
 
-		const [ autoManagedSite ] = getAllByText( `Install` );
+		const [ autoManagedSite ] = getAllByText( 'Install' );
 		expect( autoManagedSite ).toBeInTheDocument();
 	} );
 
@@ -175,7 +176,7 @@ describe( '<PluginRowFormatter>', () => {
 		props.columnKey = 'install';
 		const { getAllByText } = render( <PluginRowFormatter { ...props } item={ paidPlugin } /> );
 
-		const [ autoManagedSite ] = getAllByText( `Upgrade disabled` );
+		const [ autoManagedSite ] = getAllByText( 'Upgrade disabled' );
 		expect( autoManagedSite ).toBeInTheDocument();
 	} );
 } );

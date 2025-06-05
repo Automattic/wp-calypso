@@ -1,5 +1,6 @@
 import { Badge } from '@automattic/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { LogType, PHPLog, ServerLog } from 'calypso/data/hosting/use-site-logs-query';
@@ -98,6 +99,9 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'name',
 					type: 'text',
 					label: translate( 'Source' ),
+					render: ( { item }: { item: PHPLog } ) => {
+						return <span className="site-logs-table__name">{ item.name }</span>;
+					},
 					enableSorting: false,
 				},
 				{
@@ -113,7 +117,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'line',
 					type: 'integer',
 					label: translate( 'Line' ),
-					render: ( { item }: { item: PHPLog } ) => numberFormat( item.line ),
+					render: ( { item }: { item: PHPLog } ) => formatNumber( item.line ),
 					enableSorting: false,
 				},
 			] as Field< PHPLog | ServerLog >[];
@@ -167,7 +171,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'body_bytes_sent',
 				type: 'integer',
 				label: translate( 'Body bytes sent' ),
-				render: ( { item }: { item: ServerLog } ) => numberFormat( item.body_bytes_sent ),
+				render: ( { item }: { item: ServerLog } ) => formatNumber( item.body_bytes_sent ),
 				enableSorting: false,
 			},
 			{

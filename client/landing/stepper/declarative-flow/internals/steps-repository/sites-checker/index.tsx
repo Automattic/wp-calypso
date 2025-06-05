@@ -15,7 +15,11 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
+const SitesChecker: Step< {
+	submits: {
+		filteredSitesCount: number;
+	};
+} > = function SitePicker( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const { submit } = navigation;
 	const hasAllSitesFetched = useSelector( hasAllSitesList );

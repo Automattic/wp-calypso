@@ -6,7 +6,6 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate, localize } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -15,6 +14,7 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
@@ -150,7 +150,6 @@ const PurchasesList: React.FC<
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
-							name={ site.name }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite

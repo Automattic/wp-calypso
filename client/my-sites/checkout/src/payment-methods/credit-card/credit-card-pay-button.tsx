@@ -37,11 +37,18 @@ export default function CreditCardPayButton( {
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
 	);
+
 	const useForAllSubscriptions = useSelect(
 		( select ) =>
 			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
 		[]
 	);
+
+	const useForBusiness = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
+		[]
+	);
+
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
@@ -53,7 +60,7 @@ export default function CreditCardPayButton( {
 	useEffect( () => {
 		if ( displayFieldsError ) {
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
-			reduxDispatch( errorNotice( displayFieldsError ) );
+			reduxDispatch( errorNotice( displayFieldsError, { ariaLive: 'assertive', role: 'alert' } ) );
 			setDisplayFieldsError( '' );
 		}
 	}, [ displayFieldsError, reduxDispatch ] );
@@ -107,6 +114,7 @@ export default function CreditCardPayButton( {
 							organization: fields?.organization?.value,
 							address: fields?.address1?.value,
 							useForAllSubscriptions,
+							useForBusiness,
 							eventSource: 'checkout',
 						} );
 						return;

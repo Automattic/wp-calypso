@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
@@ -14,27 +15,39 @@ const BudgetSelector = ( { setBudget, budgetLowerRange }: Props ) => {
 			value: '0',
 		},
 		{
-			label: '$500',
+			label: formatCurrency( 500, 'USD', {
+				stripZeros: true,
+			} ),
 			value: '500',
 		},
 		{
-			label: '$5000',
+			label: formatCurrency( 5000, 'USD', {
+				stripZeros: true,
+			} ),
 			value: '5000',
 		},
 		{
-			label: '$10000',
+			label: formatCurrency( 10000, 'USD', {
+				stripZeros: true,
+			} ),
 			value: '10000',
 		},
 		{
-			label: '$20000',
+			label: formatCurrency( 20000, 'USD', {
+				stripZeros: true,
+			} ),
 			value: '20000',
 		},
 		{
-			label: '$30000',
+			label: formatCurrency( 30000, 'USD', {
+				stripZeros: true,
+			} ),
 			value: '30000',
 		},
 		{
-			label: '$45000',
+			label: formatCurrency( 45000, 'USD', {
+				stripZeros: true,
+			} ),
 			value: '45000',
 		},
 	];

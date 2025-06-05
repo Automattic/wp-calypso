@@ -40,24 +40,7 @@ describe( 'Test onboard utils', () => {
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
-			expectedIntent: SiteIntent.Write,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: false,
-			},
-		},
-		{
-			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: true,
-			},
-		},
-		{
-			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
-			expectedIntent: SiteIntent.Sell,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: false,
-			},
 		},
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Courses ],
@@ -69,9 +52,6 @@ describe( 'Test onboard utils', () => {
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: true,
-			},
 		},
 	] )(
 		'Should map the $goals to $expectedIntent intent ($featureFlags)',

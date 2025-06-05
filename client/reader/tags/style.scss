@@ -16,7 +16,7 @@
 	}
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 60px;
 		font-weight: 400;
 		margin-bottom: 4px;
 
@@ -179,12 +179,12 @@
 			padding-right: 2px;
 
 			@media (max-width: $break-medium) {
-				font-size: 28px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 28px;
 				line-height: 32px;
 			}
 		}
 		.trending-tags__count {
-			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 16px;
 			color: var(--studio-gray-50);
 		}
 	}
@@ -208,7 +208,7 @@
 	}
 
 	h2 {
-		font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 16px;
 		color: var(--studio-gray-50);
 		font-weight: 500;
 		width: 100%;
@@ -227,7 +227,7 @@
 			width: 50%;
 		}
 		button {
-			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 16px;
 			color: var(--studio-gray-50);
 			text-decoration: none;
 			font-weight: 500;
@@ -284,7 +284,7 @@
 	padding-left: 35px;
 
 	.alphabetic-tags__letter-title {
-		font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 32px;
 		margin-bottom: 22px;
 		font-weight: 500;
 

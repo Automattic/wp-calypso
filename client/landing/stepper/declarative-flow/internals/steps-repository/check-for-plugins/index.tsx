@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { bundleStepsSettings } from 'calypso/landing/stepper/declarative-flow/plugin-bundle-data';
+import { bundleStepsSettings } from 'calypso/landing/stepper/declarative-flow/flows/plugin-bundle-flow/plugin-bundle-data';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import type { Step, PluginsResponse } from '../../types';
 import './styles.scss';
 
-const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
+const CheckForPlugins: Step< { submits: { hasPlugins: boolean } } > = function CheckForPlugins( {
+	navigation,
+} ) {
 	const { submit } = navigation;
 	const site = useSite();
 	const pluginSlug = useSitePluginSlug();

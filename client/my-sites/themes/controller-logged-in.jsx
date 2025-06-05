@@ -29,11 +29,11 @@ export function loggedIn( context, next ) {
 export function upload( context, next ) {
 	// Store previous path to return to only if it was main showcase page
 	if (
-		context.prevPath &&
-		context.prevPath.startsWith( '/themes' ) &&
-		! context.prevPath.startsWith( '/themes/upload' )
+		context.previousPath &&
+		context.previousPath.startsWith( '/themes' ) &&
+		! context.previousPath.startsWith( '/themes/upload' )
 	) {
-		context.store.dispatch( setBackPath( context.prevPath ) );
+		context.store.dispatch( setBackPath( context.previousPath ) );
 	}
 
 	const noticeType = context.query.notice;

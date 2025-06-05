@@ -3,6 +3,11 @@ export const getManagePurchaseUrlFor = (
 	targetPurchaseId: string | number
 ): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
 
+export const getMyPurchaseUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+): string => `/me/purchases/${ targetSiteSlug }/${ targetPurchaseId }`;
+
 export const getConfirmCancelDomainUrlFor = (
 	targetSiteSlug: string,
 	targetPurchaseId: string | number
@@ -14,7 +19,12 @@ export const getCancelPurchaseUrlFor = (
 	targetPurchaseId: string | number
 ): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/cancel`;
 
-export const getPurchaseListUrlFor = ( targetSiteSlug: string ): string =>
+export const getDowngradeUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/downgrade`;
+
+export const getPurchaseListUrlFor = ( targetSiteSlug: string | number ): string =>
 	`/purchases/subscriptions/${ targetSiteSlug }`;
 
 export const getAddPaymentMethodUrlFor = (
@@ -43,3 +53,8 @@ export const getReceiptUrlFor = (
 
 export const getBillingHistoryUrlFor = ( targetSiteSlug: string ): string =>
 	`/purchases/billing-history/${ targetSiteSlug }`;
+
+export const getCrmDownloadsUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+): string => `/purchases/crm-downloads/${ targetSiteSlug }/${ targetPurchaseId }`;

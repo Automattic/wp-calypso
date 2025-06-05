@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,20 +22,43 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
-import type { StepProps } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
 
-interface ProcessingStepProps extends StepProps {
-	title?: string;
-	subtitle?: string;
-}
-
-const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
+const ProcessingStep: StepType< {
+	submits:
+		| {
+				processingResult: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+		  }
+		| ( {
+				// The processing step is impossible to type precisely because it submits whatever the pendingAction resolves to.
+				// But the most common outcome is the site-creation return value. This is technically incorrect, but it's practical.
+				// We should find a way to type the processing step more precisely in the future.
+				processingResult: ProcessingResult.SUCCESS;
+				siteCreated?: boolean;
+				siteId?: number;
+				siteSlug?: string;
+				goToCheckout?: boolean;
+				goToHome?: boolean;
+				skipMigration?: undefined;
+				path?: string;
+				intent?: SiteIntent;
+				previousStep?: string;
+				nextStep?: string;
+				// The processing step is impossible to type precisely because it submits whatever the pendingAction resolves to.
+		  } & Record< string, unknown > );
+	accepts: {
+		title?: string;
+		subtitle?: string;
+	};
+} > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 
@@ -44,7 +68,9 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
-	const [ destinationState, setDestinationState ] = useState( {} );
+	const [ destinationState, setDestinationState ] = useState<
+		{ siteCreated?: boolean } | undefined
+	>( {} );
 
 	/**
 	 * There is a long-term bug here that the `submit` function will be called multiple times if we
@@ -117,7 +143,9 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
 					setSiteSetupError( e.error || e.code, e.message );
-					submit?.( {}, ProcessingResult.FAILURE );
+					submit?.( {
+						processingResult: ProcessingResult.FAILURE,
+					} );
 				}
 			} else {
 				setHasEmptyActionRun( true );
@@ -132,7 +160,9 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			// Let's ensure the submit function is called only once,
 			// but only for the onboarding flow to mitigate risks.
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
-			submit?.( {}, ProcessingResult.NO_ACTION );
+			submit?.( {
+				processingResult: ProcessingResult.NO_ACTION,
+			} );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasEmptyActionRun ] );
@@ -141,7 +171,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	useEffect( () => {
 		if ( hasActionSuccessfullyRun && ! isSubmittedRef.current ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
-			if ( availableFlows[ flow ] ) {
+
+			if ( availableFlows[ flow ] && ! isNewSiteMigrationFlow( flow ) ) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
 					if ( flowExport.default.isSignupFlow ) {
 						recordSignupComplete( { ...destinationState } );
@@ -150,7 +181,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
-				submit?.( { ...destinationState, ...props.data }, ProcessingResult.SUCCESS );
+				submit?.( {
+					...destinationState,
+					...props.data,
+					processingResult: ProcessingResult.SUCCESS,
+				} );
 				return;
 			}
 
@@ -166,7 +201,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 
 			// Default processing handler.
-			submit?.( destinationState, ProcessingResult.SUCCESS );
+			submit?.( {
+				...destinationState,
+				processingResult: ProcessingResult.SUCCESS,
+			} );
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,7 +215,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	};
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -191,6 +228,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ __( 'Processing' ) } />
+				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+			</>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
@@ -202,7 +248,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
-				showJetpackPowered={ isJetpackPowered }
 			/>
 		</>
 	);

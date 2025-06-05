@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .migrations-process__cards {
 	display: grid;
@@ -36,9 +37,9 @@
 }
 
 .migrations-process__card-number {
-	@include a4a-font-heading-xxl;
+	@include heading-2x-large;
 }
 
 .migrations-process__card-text {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 }

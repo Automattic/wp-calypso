@@ -23,6 +23,7 @@ export interface CardStoreState {
 	cardDataErrors: Record< string, string | null >;
 	cardDataComplete: CardDataCompleteState;
 	useForAllSubscriptions: boolean;
+	useForBusiness: boolean | undefined;
 }
 
 export type CardStoreType = CardStore< CardStoreState, CardStoreAction >;
@@ -39,6 +40,7 @@ export type CardStoreAction =
 	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }
 	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
 	| { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET'; payload: boolean }
+	| { type: 'USE_FOR_BUSINESS_SET'; payload: boolean }
 	| { type: 'TOUCH_ALL_FIELDS' }
 	| { type: 'RESET_FIELDS' };
 

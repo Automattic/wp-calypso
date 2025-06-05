@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/variables";
+
+.plan-price-wrapper {
+	display: flex;
+	align-items: center;
+}
+
+.plan-price-loading-placeholder {
+	display: flex;
+}
+
+.plan-price--inline {
+	font-size: inherit;
+
+	.plan-price__currency-symbol {
+		font-size: inherit;
+		vertical-align: initial;
+	}
+}
+
+.plan-price-info {
+	color: var(--studio-gray-80);
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+	margin-bottom: 4px;
+
+	&.is-expired {
+		color: #ea303f;
+	}
+}
+
+.plan-price-info-loading-placeholder {
+	margin-bottom: 4px;
+}
+
+.plan-price-cta {
+	margin-top: 8px;
+}

@@ -30,7 +30,7 @@ class PostBlocked extends Component {
 				<p className="reader-post-card__blocked-description">
 					{ translate( 'You have blocked %(site_name)s.', {
 						args: { site_name: post.site_name },
-					} ) }
+					} ) }{ ' ' }
 					<button onClick={ this.unblock } className="reader-post-card__blocked-undo">
 						{ translate( 'Undo?' ) }
 					</button>

@@ -1,8 +1,8 @@
 import { Card, Spinner } from '@automattic/components';
-import { numberFormatCompact } from 'i18n-calypso';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { ReactNode } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
-import '@automattic/components/src/highlight-cards/style.scss';
+import 'calypso/my-sites/stats/components/highlight-cards/style.scss';
 import './style.scss';
 
 type SubscriberStatsCardProps = {
@@ -42,7 +42,7 @@ const SubscriberStatsCardValue = ( {
 			className="highlight-card-count-value subscriber-stats-card__value"
 			title={ String( value ) }
 		>
-			{ typeof value === 'number' ? numberFormatCompact( value ) : '-' }
+			{ typeof value === 'number' ? formatNumberCompact( value ) : '-' }
 		</span>
 	);
 };

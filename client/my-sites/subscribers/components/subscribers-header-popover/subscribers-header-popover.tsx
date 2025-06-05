@@ -1,4 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, Button } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -14,7 +15,7 @@ import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
-	siteId: number | undefined;
+	siteId: number | null;
 	openMigrateSubscribersModal: () => void;
 };
 
@@ -30,7 +31,7 @@ const SubscribersHeaderPopover = ( {
 		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
-	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
+	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
 	const hasSubscribers = subscribersTotals?.email_subscribers ?? 0 > 0;
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
@@ -53,16 +54,16 @@ const SubscribersHeaderPopover = ( {
 	}
 
 	return (
-		<div className="subscriber-popover__container">
-			<button
+		<div>
+			<Button
 				className={ clsx( 'subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }
 				ref={ buttonRef }
-			>
-				<Gridicon icon="ellipsis" size={ 24 } />
-			</button>
+				icon={ <Icon icon={ moreVertical } size={ 18 } /> }
+				size="compact"
+			/>
 
 			<PopoverMenu
 				position="bottom left"

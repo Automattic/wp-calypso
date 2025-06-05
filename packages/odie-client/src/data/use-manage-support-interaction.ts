@@ -68,7 +68,7 @@ export const useManageSupportInteraction = () => {
 				setCurrentSupportInteraction( newSupportInteraction );
 			}
 		},
-	} ).mutate;
+	} );
 
 	/**
 	 * Resolve a support interaction.

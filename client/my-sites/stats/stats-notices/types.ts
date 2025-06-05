@@ -24,6 +24,7 @@ export interface StatsNoticeProps {
 	hasSignificantViews?: boolean;
 	isOverLimit?: boolean;
 	isNearLimit?: boolean;
+	hasWpcomUpsell?: boolean;
 }
 
 export interface NoticeBodyProps {

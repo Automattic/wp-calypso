@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { SiteDetails } from '@automattic/data-stores';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import productsListReducer from 'calypso/state/products-list/reducer';

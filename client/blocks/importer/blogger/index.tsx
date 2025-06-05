@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -28,6 +27,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		startImport,
 		resetImport,
 		stepNavigator,
+		renderHeading,
 	} = props;
 
 	/**
@@ -65,7 +65,6 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 
 	function onTryAgainClick() {
 		job?.importerId && resetImport( siteId, job.importerId );
-		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {
@@ -85,13 +84,8 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 	}
 
 	function onSiteViewClick() {
-		if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
-			recordTracksEvent( 'calypso_site_importer_pick_a_design' );
-			stepNavigator?.navigate?.( 'design-setup' );
-		} else {
-			recordTracksEvent( 'calypso_site_importer_view_site' );
-			stepNavigator?.goToSiteViewPage?.();
-		}
+		recordTracksEvent( 'calypso_site_importer_pick_a_design' );
+		stepNavigator?.navigate?.( 'design-setup' );
 	}
 
 	return (
@@ -125,6 +119,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 							site={ site }
 							importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 							importerStatus={ job }
+							renderHeading={ renderHeading }
 						/>
 					);
 				} )() }

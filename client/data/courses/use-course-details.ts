@@ -19,13 +19,13 @@ const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined =
 
 	if ( courseSlug === COURSE_SLUGS.BLOGGING_QUICK_START ) {
 		return {
-			headerTitle: translate( 'Watch five videos.' ),
-			headerSubtitle: translate( 'Save yourself hours.' ),
+			headerTitle: translate( 'Start your blog.' ),
+			headerSubtitle: translate( 'Share your voice.' ),
 			headerSummary: [
-				translate( 'Learn the basics of blogging' ),
-				translate( 'Familiarize yourself with WordPress' ),
-				translate( 'Upskill and save hours' ),
-				translate( 'Set yourself up for blogging success' ),
+				translate( 'Find the perfect look for your blog' ),
+				translate( 'Craft posts that express your ideas' ),
+				translate( 'Keep your content clear and organized' ),
+				translate( 'Grow your audience and engage readers' ),
 			],
 		};
 	} else if ( courseSlug === COURSE_SLUGS.PAYMENTS_FEATURES ) {
@@ -41,13 +41,13 @@ const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined =
 		};
 	} else if ( courseSlug === COURSE_SLUGS.SITE_EDITOR_QUICK_START ) {
 		return {
-			headerTitle: translate( 'Watch four videos.' ),
-			headerSubtitle: translate( 'Save yourself hours.' ),
+			headerTitle: translate( 'Build your website.' ),
+			headerSubtitle: translate( 'Launch your dream.' ),
 			headerSummary: [
-				translate( 'Master the building blocks of a WordPress site' ),
-				translate( 'Understand how to add your style to your site' ),
-				translate( 'Upskill now to save hours later' ),
-				translate( 'Set yourself up for creative success' ),
+				translate( 'Choose a theme to suit your vision' ),
+				translate( 'Set up your site’s essential pages' ),
+				translate( 'Customize the design to suit your needs' ),
+				translate( 'Share your website with the world' ),
 			],
 		};
 	}

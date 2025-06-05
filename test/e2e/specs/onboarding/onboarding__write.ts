@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 		} );
 
-		it( `Select WordPress.com Free plan`, async function () {
+		it( 'Select WordPress.com Free plan', async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			await signupPickPlanPage.selectPlan( 'Free' );
 		} );

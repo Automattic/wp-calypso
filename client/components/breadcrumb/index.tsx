@@ -20,6 +20,11 @@ const StyledLi = styled.li`
 	font-size: 13px;
 	font-weight: 400;
 	--color-link: var( --studio-gray-50 );
+
+	a {
+		text-decoration: none;
+	}
+
 	& .info-popover {
 		align-self: flex-start;
 	}
@@ -90,6 +95,7 @@ const renderHelpBubble = ( item: Item ) => {
 };
 
 export type Item = {
+	id?: string;
 	label: string;
 	href?: string;
 	helpBubble?: React.ReactElement;

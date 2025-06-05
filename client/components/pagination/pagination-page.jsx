@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -48,7 +49,6 @@ class PaginationPage extends Component {
 			translate,
 			currentPage,
 			nextLabel,
-			numberFormat,
 			pageNumber,
 			prevLabel,
 			totalPages,
@@ -107,7 +107,7 @@ class PaginationPage extends Component {
 				return (
 					<li className={ listClass }>
 						<Button className="pagination__list-button" borderless onClick={ this.clickHandler }>
-							{ numberFormat( pageNumber ) }
+							{ formatNumber( pageNumber ) }
 						</Button>
 					</li>
 				);

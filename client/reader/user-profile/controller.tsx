@@ -1,11 +1,7 @@
-import page, { Context } from '@automattic/calypso-router';
+import { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
-import {
-	trackPageLoad,
-	trackScrollPage,
-	shouldShowBackButton,
-} from 'calypso/reader/controller-helper';
+import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
 import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
 
 interface UserPostsContext extends Context {
@@ -28,10 +24,6 @@ export function userPosts( ctx: Context, next: () => void ): void {
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	function goBack() {
-		page.back( context.lastRoute );
-	}
-
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/user-profile"
@@ -45,8 +37,6 @@ export function userPosts( ctx: Context, next: () => void ): void {
 				analyticsPageTitle,
 				mcKey
 			) }
-			showBack={ shouldShowBackButton( context ) }
-			handleBack={ goBack }
 			path={ context.path }
 		/>
 	);
@@ -62,18 +52,12 @@ export function userLists( ctx: Context, next: () => void ): void {
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	function goBack() {
-		page.back( context.lastRoute );
-	}
-
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/user-profile"
 			key={ 'user-lists-' + userLogin }
 			userLogin={ userLogin }
 			path={ context.path }
-			showBack={ shouldShowBackButton( context ) }
-			handleBack={ goBack }
 		/>
 	);
 

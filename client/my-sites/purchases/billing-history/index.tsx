@@ -29,8 +29,6 @@ import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-hist
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 import type { IAppState } from 'calypso/state/types';
 
-import './style.scss';
-
 function useLogBillingHistoryError( message: string ) {
 	return useCallback(
 		( error: Error ) => {

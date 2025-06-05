@@ -11,6 +11,16 @@ type Props = {
 	className?: string;
 };
 
+export function PageBodyPlaceholder() {
+	return (
+		<div className="a4a-page-placeholder__section-placeholder">
+			<div className="a4a-page-placeholder__section-placeholder-title"></div>
+			<div className="a4a-page-placeholder__section-placeholder-body"></div>
+			<div className="a4a-page-placeholder__section-placeholder-footer"></div>
+		</div>
+	);
+}
+
 export default function PagePlaceholder( { title, className }: Props ) {
 	return (
 		<Layout className={ clsx( 'a4a-page-placeholder', className ) } title={ title } wide>
@@ -22,11 +32,7 @@ export default function PagePlaceholder( { title, className }: Props ) {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<div className="a4a-page-placeholder__section-placeholder">
-					<div className="a4a-page-placeholder__section-placeholder-title"></div>
-					<div className="a4a-page-placeholder__section-placeholder-body"></div>
-					<div className="a4a-page-placeholder__section-placeholder-footer"></div>
-				</div>
+				<PageBodyPlaceholder />
 			</LayoutBody>
 		</Layout>
 	);

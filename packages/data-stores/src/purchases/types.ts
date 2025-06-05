@@ -322,6 +322,7 @@ export interface PurchasePayment {
 	storedDetailsId: string | number | undefined | null;
 	expiryDate?: string;
 	creditCard?: PurchasePaymentCreditCard;
+	paymentPartner?: string;
 }
 
 /**

@@ -24,12 +24,23 @@
 
 .email-verification-dialog__confirmation-dialog-email {
 	margin-bottom: 16px;
-	color: var(--color-neutral-40);
-	font-size: $font-body-small;
+	color: var(--color-neutral-60);
 	a,
 	button {
 		color: inherit;
 		text-decoration: underline;
+	}
+}
+
+.email-verification-dialog__buttons-container {
+	gap: 25px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.email-verification-dialog__confirmation-dialog {
+	button.button-plain {
+		color: var(--color-accent);
 		cursor: pointer;
 	}
 }

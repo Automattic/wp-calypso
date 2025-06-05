@@ -4,7 +4,8 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { isWithinIntroductoryOfferPeriod } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactNode } from 'react';

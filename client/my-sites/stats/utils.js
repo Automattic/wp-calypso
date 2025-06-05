@@ -2,7 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import moment from 'moment';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
+import { getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 
 /**
  * Update query for current page or passed in URL
@@ -63,9 +67,7 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 
 /**
  * Parse a date string into a Date object in the timezone of browser.
- *
  * @param {string|number} dateString YYYY-MM-DD format or a timestamp
- *
  * @returns {Date} A Date object in the timezone of the browser.
  */
 export const parseLocalDate = ( dateString ) => {
@@ -89,4 +91,88 @@ export const parseLocalDate = ( dateString ) => {
 	date.setMinutes( date.getMinutes() + date.getTimezoneOffset() );
 
 	return date;
+};
+
+/**
+ * The chart range parameters include the chart start date, chart end date, and chart period.
+ * @typedef {Object} ChartRangeParams
+ * @property {string} chartStart The start date of the chart range.
+ * @property {string} chartEnd The end date of the chart range.
+ * @property {string} chartPeriod The period of the chart range.
+ */
+
+/**
+ * Process the start date and from period to determine the target chart range parameters.
+ * @param {string} startDate The start date of the chart range.
+ * @param {string} fromPeriod The period of the chart where the action comes from.
+ * @returns {ChartRangeParams} The chart range parameters for navigating the chart.
+ */
+export const getChartRangeParams = ( startDate, fromPeriod ) => {
+	const chartStart = startDate;
+	let chartEnd = moment( chartStart )
+		.endOf( fromPeriod === 'week' ? 'isoWeek' : fromPeriod )
+		.format( DATE_FORMAT );
+
+	// Do not go beyond the current date.
+	if ( moment().isBefore( chartEnd ) ) {
+		chartEnd = moment().format( DATE_FORMAT );
+	}
+
+	let chartPeriod = 'day';
+	if ( fromPeriod === 'day' ) {
+		chartPeriod = 'hour';
+	} else if ( fromPeriod === 'year' ) {
+		chartPeriod = 'month';
+	}
+
+	return {
+		chartStart,
+		chartEnd,
+		chartPeriod,
+	};
+};
+
+/**
+ * Get the preview URL for a post.
+ * When a site has a mapped domain, ensures the preview URL uses the unmapped domain
+ * to avoid potential SSL/proxy issues during preview.
+ * @param {Object} state - The Redux state object
+ * @param {number} siteId - The site ID
+ * @param {number} postId - The post ID
+ * @returns {string|null} The preview URL with appropriate domain, or null if unavailable
+ */
+export const getMappedPreviewUrl = ( state, siteId, postId ) => {
+	const basePreviewUrl = getPostPreviewUrl( state, siteId, postId );
+	if ( ! basePreviewUrl ) {
+		return basePreviewUrl;
+	}
+
+	const site = getSite( state, siteId );
+	if ( ! site ) {
+		return basePreviewUrl;
+	}
+
+	try {
+		const previewUrl = new URL( basePreviewUrl );
+
+		// Ensure HTTPS if the site uses HTTPS
+		if ( site.URL ) {
+			const siteUrl = new URL( site.URL );
+			if ( siteUrl.protocol === 'https:' ) {
+				previewUrl.protocol = 'https:';
+			}
+		}
+
+		// Use unmapped domain if this is a mapped domain site
+		const shouldUseUnmappedDomain = site.options?.is_mapped_domain && site.options?.unmapped_url;
+		if ( shouldUseUnmappedDomain ) {
+			const unmappedUrl = new URL( site.options.unmapped_url );
+			previewUrl.protocol = unmappedUrl.protocol;
+			previewUrl.host = unmappedUrl.host;
+		}
+
+		return previewUrl.toString();
+	} catch ( error ) {
+		return basePreviewUrl;
+	}
 };

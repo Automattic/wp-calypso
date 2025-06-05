@@ -156,7 +156,7 @@ export function GetReportForm( {
 										checked={ isTermsChecked }
 										onChange={ handleTermsChange }
 										label={ translate(
-											`By submitting your details, you agree to WordPress.com‘s Privacy Policy and Terms of Service. You also consent to receiving occasional updates and offers. You can unsubscribe from these communications at any time through the instructions.`
+											'By submitting your details, you agree to WordPress.com‘s Privacy Policy and Terms of Service. You also consent to receiving occasional updates and offers. You can unsubscribe from these communications at any time through the instructions.'
 										) }
 									/>
 									{ errors?.termsAccepted && (

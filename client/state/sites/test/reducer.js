@@ -18,6 +18,7 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import { resetSite } from '../actions';
 import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../reducer';
 
 describe( 'reducer', () => {
@@ -721,6 +722,28 @@ describe( 'reducer', () => {
 
 			const state = deserialize( items, original );
 			expect( state ).toBeNull();
+		} );
+
+		test( 'should reset site info', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'Test Blog',
+				},
+				77203074: {
+					ID: 77203074,
+					name: 'Another Test Blog',
+				},
+			} );
+
+			const state = items( original, resetSite( 2916284 ) );
+
+			expect( state ).toEqual( {
+				77203074: {
+					ID: 77203074,
+					name: 'Another Test Blog',
+				},
+			} );
 		} );
 	} );
 } );

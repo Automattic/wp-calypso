@@ -169,8 +169,6 @@
 
 .purchase-item__link,
 a.purchase-item__link {
-	color: var(--color-link);
-
 	&.purchase-item__link--error {
 		color: var(--color-error-50);
 	}

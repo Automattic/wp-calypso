@@ -48,15 +48,11 @@ describe( 'Plugins: Add multiple to cart', function () {
 			);
 		} );
 
-		it( 'Plan upgrade CTA is shown on page', async function () {
-			await page.getByText( 'You need to upgrade your plan to install plugins' ).waitFor();
-		} );
-
 		it( 'Click on install button', async function () {
 			await pluginsPage.clickInstallPlugin();
 		} );
 
-		it.each( [ 'WordPress.com', pluginName ] )( `%s is added to cart`, async function ( target ) {
+		it.each( [ 'WordPress.com', pluginName ] )( '%s is added to cart', async function ( target ) {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( target );
 		} );

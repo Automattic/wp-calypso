@@ -113,6 +113,10 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
+export function domainManagementSelectSite( siteName = '' ) {
+	return '/domains/manage/select-site/' + siteName;
+}
+
 /**
  * @param {string|undefined} siteName
  * @param {string|undefined} relativeTo
@@ -441,15 +445,6 @@ export function domainTransferIn( siteName, domain, useStandardBack ) {
 	const queryString = stringify( params );
 	if ( queryString ) {
 		path += '?' + queryString;
-	}
-
-	return path;
-}
-
-export function domainUseYourDomain( siteName, domain ) {
-	let path = `/domains/add/use-your-domain/${ siteName }`;
-	if ( domain ) {
-		path += `?initialQuery=${ domain }`;
 	}
 
 	return path;

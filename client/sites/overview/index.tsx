@@ -22,7 +22,7 @@ import {
 	EDIT_CONTACT_INFO,
 } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
 import emailController from 'calypso/my-sites/email/controller';
-import { DOTCOM_OVERVIEW } from 'calypso/sites/components/site-preview-pane/constants';
+import { OVERVIEW } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
 import { overview } from './controller';
 
@@ -55,7 +55,7 @@ export default function () {
 		redirectIfJetpackNonAtomic,
 		navigation,
 		overview,
-		siteDashboard( DOTCOM_OVERVIEW ),
+		siteDashboard( OVERVIEW ),
 		makeLayout,
 		clientRender
 	);

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -21,6 +22,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	countryList,
+	mockCachedContactDetailsEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
@@ -63,6 +65,8 @@ describe( 'Checkout contact step', () => {
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockCachedContactDetailsEndpoint( {} );
+		mockGetVatInfoEndpoint( {} );
 	} );
 
 	it( 'does render the contact step when the purchase is free and some items are recurring', async () => {

@@ -77,7 +77,7 @@ export class ImageCompareFlow implements BlockFlow {
 		const newBoundingBox = await slider.boundingBox();
 
 		if ( ! originalBoundingBox || ! newBoundingBox ) {
-			throw new Error( `Image Compare: Failed to obtain at least one or both bounding boxes.` );
+			throw new Error( 'Image Compare: Failed to obtain at least one or both bounding boxes.' );
 		}
 		// The slider should have moved.
 		if ( originalBoundingBox.x === newBoundingBox.x ) {

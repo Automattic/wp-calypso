@@ -1,6 +1,10 @@
 @import '@wordpress/base-styles/mixins';
 
 .checkout__pending-content {
+	&.wpcom__loading {
+		margin: calc( 32vh + 60px)  auto 0;
+	}
+
 	.wpcom__loading-title {
 		@extend .wp-brand-font;
 		line-height: 40px;

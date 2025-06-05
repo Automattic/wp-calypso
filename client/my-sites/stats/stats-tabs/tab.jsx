@@ -1,11 +1,12 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { TooltipContent } from '@automattic/components/src/highlight-cards/count-card';
-import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import Popover from '@automattic/components/src/popover';
+import { formatNumberCompact, formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { localize, numberFormatCompact } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
+import TooltipContent from 'calypso/my-sites/stats/components/highlight-cards/tooltip-content';
+import TrendComparison from 'calypso/my-sites/stats/components/highlight-cards/trend-comparison';
 
 class StatsTabsTab extends Component {
 	static displayName = 'StatsTabsTab';
@@ -38,10 +39,10 @@ class StatsTabsTab extends Component {
 	};
 
 	ensureValue = ( value ) => {
-		const { loading, format, numberFormat } = this.props;
+		const { loading, format } = this.props;
 
 		if ( ! loading && ( value || value === 0 ) ) {
-			return format ? format( value ) : numberFormat( value );
+			return format ? format( value ) : formatNumber( value );
 		}
 
 		return String.fromCharCode( 8211 );
@@ -88,6 +89,18 @@ class StatsTabsTab extends Component {
 				className={ clsx( tabClass, { 'tab-disabled': ! hasClickAction } ) }
 				onClick={ this.clickHandler }
 			>
+				{ /* Invisible element for tooltip positioning */ }
+				<div
+					ref={ this.tooltipRef }
+					style={ {
+						display: 'inline-block',
+						width: 50,
+						height: '100%',
+						position: 'absolute',
+						left: 0,
+						opacity: 0,
+					} }
+				/>
 				<a
 					href={ href }
 					onMouseEnter={ () => this.toggleTooltip( true ) }
@@ -103,9 +116,8 @@ class StatsTabsTab extends Component {
 								className={ clsx( 'stats-tabs__highlight-value', {
 									'stats-tabs__highlight-loading': loading,
 								} ) }
-								ref={ this.tooltipRef }
 							>
-								{ loading ? <LoadingPlaceholder height="30px" /> : numberFormatCompact( value ) }
+								{ loading ? <LoadingPlaceholder height="30px" /> : formatNumberCompact( value ) }
 							</span>
 							<TrendComparison count={ value } previousCount={ previousValue } />
 							<Popover

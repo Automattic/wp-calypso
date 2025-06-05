@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 
 .is-section-themes {
 	&.theme-default.color-scheme {
@@ -9,8 +9,6 @@
 	}
 
 	&.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		.layout__content {
 			min-height: 100vh;
 			@media screen and (min-width: 782px) {
@@ -21,10 +19,14 @@
 		.layout__primary > * {
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			padding-bottom: 0;
+
+			@include break-small {
+				border: 1px solid $gray-200;
+			}
+
 			@media (max-width: $break-mobile), (max-height: $break-mobile) {
 				overflow-y: auto;
 				overflow-x: hidden;
@@ -103,7 +105,7 @@
 		}
 	}
 
-	.main > .notice.is-error {
+	.main > .calypso-notice.is-error {
 		margin-top: 24px;
 		margin-bottom: 0;
 	}
@@ -160,6 +162,24 @@
 				padding: 0 32px;
 			}
 		}
+
+		.theme__search {
+			.theme__search-input {
+				.components-input-control__container {
+					background-color: #fff;
+				}
+
+				.components-input-base {
+					height: 55px;
+				}
+			}
+
+			.theme__tier-select {
+				.components-input-control__container {
+					height: 55px;
+				}
+			}
+		}
 	}
 
 	.search-themes-card {
@@ -198,7 +218,7 @@
 		}
 
 		.keyed-suggestions__value.is-selected {
-			background-color: rgba(var(--studio-blue-rgb), 0.1);
+			background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 		}
 	}
 
@@ -218,8 +238,12 @@
 		&:not(.is-pressed) {
 			color: var(--studio-blue-90);
 
+			&::before {
+				background-color: transparent;
+			}
+
 			&:hover::before {
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 
@@ -298,7 +322,7 @@
 
 			.select-dropdown__item:not(.is-selected):hover {
 				color: var(--studio-blue-90);
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 	}
@@ -396,79 +420,6 @@
 		margin: 0 -16px;
 	}
 
-	.themes__content .upsell-nudge {
-		background-color: rgba(var(--color-primary-30-rgb), 0.1);
-		border: none;
-		box-shadow: none;
-		margin-top: 32px;
-		margin-bottom: 32px;
-		padding: 24px 30px;
-		border-radius: 4px;
-
-		&.is-wooexpress-or-free-trial-plan {
-			margin-bottom: 32px;
-		}
-
-		&.is-dismissible {
-			.dismissible-card__close-button {
-				height: 16px;
-				width: 16px;
-
-				svg {
-					height: 16px;
-					width: 16px;
-				}
-			}
-		}
-
-		.banner__content {
-			gap: 16px;
-
-			@include breakpoint-deprecated( ">660px" ) {
-				gap: 32px;
-			}
-		}
-
-		.banner__title,
-		.banner__description {
-			color: var(--color-neutral-80);
-			font-size: $font-body-small;
-			line-height: 20px;
-		}
-
-		.banner__title {
-			font-weight: 500;
-		}
-
-		.banner__icon {
-			background-color: var(--color-primary);
-			display: none;
-		}
-
-		.banner__icon-circle {
-			background-color: var(--color-primary);
-		}
-
-		.banner__action .button {
-			background-color: var(--color-primary);
-			border: none;
-			font-size: $font-body-small;
-			font-weight: 400;
-			line-height: 22px;
-			padding: 8px 14px;
-			white-space: nowrap;
-
-			&:hover {
-				background-color: var(--color-primary-60);
-			}
-
-			.accessible-focus &:focus {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-				outline: 0;
-			}
-		}
-	}
-
 	.themes__install-theme-button-container {
 		margin: 0;
 
@@ -482,6 +433,20 @@
 			line-height: 20px;
 			padding: 8px 16px;
 			white-space: nowrap;
+		}
+	}
+
+	.theme__tier-select {
+		min-width: 220px;
+		width: 220px;
+
+		@media ( max-width: $break-small ) {
+			width: 100%;
+			min-width: auto;
+		}
+
+		.components-custom-select-control__item.is-selected {
+			background-color: var(--wp-components-color-gray-300, #ddd);
 		}
 	}
 }

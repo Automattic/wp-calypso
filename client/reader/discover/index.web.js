@@ -12,12 +12,11 @@ import {
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sectionify } from 'calypso/lib/route';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
-	shouldShowBackButton,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -81,7 +80,6 @@ const discover = ( context, next ) => {
 				useCompactCards
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
-				showBack={ shouldShowBackButton( context ) }
 				query={ context.query }
 			/>
 		</>
@@ -96,7 +94,6 @@ export default function ( router ) {
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		updateLastRoute,
 		sidebar,
 		discover,
 		makeLayout,

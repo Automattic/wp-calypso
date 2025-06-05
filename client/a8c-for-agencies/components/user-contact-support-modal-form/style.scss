@@ -1,11 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-contact-support-modal-form {
 	width: 827px;
 	max-height: 100%;
 	margin: 0;
-	@include a4a-font-body-lg;
+	@include body-large;
 	color: var(--color-neutral-100);
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -35,8 +36,7 @@
 
 	.form-field-description {
 		margin-top: -20px;
-		font-size: rem(14px);
-		font-weight: 400;
+		@include body-small;
 		color: var(--color-neutral-50);
 	}
 
@@ -57,7 +57,7 @@
 }
 
 .a4a-contact-support-modal-form__title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 	margin: 0;
 	padding: 0;
 }

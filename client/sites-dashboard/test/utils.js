@@ -5,6 +5,7 @@ describe( 'isMigrationInProgress', () => {
 		{ site: {} },
 		{ site: { site_migration: { migration_status: 'migration-completed-diy' } } },
 		{ site: { site_migration: { migration_status: 'migration-completed-difm' } } },
+		{ site: { site_migration: { migration_status: 'migration-cancelled-difm' } } },
 	] )( 'returns false when the migration is not in progress', ( { site } ) => {
 		expect( isMigrationInProgress( site ) ).toBe( false );
 	} );

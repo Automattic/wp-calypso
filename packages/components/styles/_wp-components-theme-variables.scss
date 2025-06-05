@@ -1,0 +1,9 @@
+/**
+ * Makes the `$components-color-*` variables from `@wordpress/components` available
+ * for local overrides.
+ *
+ * Remember to import this file with `@use` (not `@import`) so it doesn't pollute the global namespace.
+ */
+
+@import '@wordpress/base-styles/colors'; // TODO: The theme-variables.scss file itself should import this.
+@import '@wordpress/components/src/utils/theme-variables';

@@ -1,7 +1,8 @@
 import { Card, Spinner } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { createSelector } from '@automattic/state-utils';
 import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -158,13 +159,13 @@ export const StatsV2 = ( {
 							{ showViews && (
 								<div className="stats__data-item">
 									<div className="stats__data-label">{ translate( 'Total views' ) }</div>
-									<div className="stats__data-value">{ numberFormat( views ) }</div>
+									<div className="stats__data-value">{ formatNumber( views ) }</div>
 								</div>
 							) }
 							{ showVisitors && (
 								<div className="stats__data-item">
 									<div className="stats__data-label">{ translate( 'Total visitors' ) }</div>
-									<div className="stats__data-value">{ numberFormat( visitors ) }</div>
+									<div className="stats__data-value">{ formatNumber( visitors ) }</div>
 								</div>
 							) }
 						</div>

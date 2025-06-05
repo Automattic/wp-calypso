@@ -514,7 +514,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post .reader-post-card__tag-link {
 	color: var( --color-neutral-80 );
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	margin-top: 2px;
 	white-space: nowrap;
@@ -527,6 +526,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post__header {
 	margin-bottom: 23px;
+
+	a {
+		text-decoration: none;
+	}
 }
 
 .reader-full-post__featured-image {
@@ -838,6 +841,27 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 						display: inline-block;
 					}
 				}
+			}
+		}
+	}
+}
+
+.reader-full-post.is-reddit-post {
+	.reader-full-post__story-content {
+		// Remove Reddit table styles
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			display: block;
+
+			tr, td {
+				display: block;
+				width: 100%;
+			}
+
+			// Add a margin above the submitted by meta
+			td .md {
+				margin-bottom: 24px;
 			}
 		}
 	}

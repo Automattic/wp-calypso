@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTotalLineItemFromCart,
@@ -10,8 +11,12 @@ import {
 	isBillingInfoEmpty,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
@@ -95,23 +100,27 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
-	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart );
-	const discountLineItem: LineItemType = {
-		id: 'total-discount',
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+
+	const totalAdjustments = getTotalDiscountsWithoutCredits( responseCart );
+	const adjustmentLineItem: LineItemType = {
+		id: 'total-adjustments',
 		type: 'subtotal',
-		label: translate( 'Discounts' ),
-		formattedAmount: formatCurrency( totalDiscount, responseCart.currency, {
+		label: totalAdjustments < 0 ? translate( 'Discounts' ) : translate( 'Additional charges' ),
+		formattedAmount: formatCurrency( totalAdjustments, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
 	};
 
-	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
+	const subtotalBeforeAdjustments = getSubtotalWithoutDiscounts( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label: totalDiscount !== 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
-		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+		label:
+			totalAdjustments < 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
+		formattedAmount: formatCurrency( subtotalBeforeAdjustments, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
@@ -122,22 +131,27 @@ export default function BeforeSubmitCheckoutHeader() {
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
-			<WPOrderReviewSection>
-				<NonTotalPrices>
-					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-					{ totalDiscount !== 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
-					{ taxLineItems.map( ( taxLineItem ) => (
-						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-					) ) }
-					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-					) }
-				</NonTotalPrices>
-				<TotalPrice>
-					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-				</TotalPrice>
-				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
-			</WPOrderReviewSection>
+			{ ! isStreamlinedPriceExperimentLoading &&
+				! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+					<WPOrderReviewSection>
+						<NonTotalPrices>
+							<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+							{ totalAdjustments !== 0 && (
+								<NonProductLineItem subtotal lineItem={ adjustmentLineItem } />
+							) }
+							{ taxLineItems.map( ( taxLineItem ) => (
+								<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+							) ) }
+							{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+								<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+							) }
+						</NonTotalPrices>
+						<TotalPrice>
+							<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+						</TotalPrice>
+						{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
+					</WPOrderReviewSection>
+				) }
 		</>
 	);
 }

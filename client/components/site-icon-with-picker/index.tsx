@@ -86,12 +86,11 @@ export function SiteIconWithPicker( {
 						}
 						setImageEditorOpen( false );
 					} }
-					doneButtonText={ __( ' Apply ' ) }
+					doneButtonText={ __( 'Apply' ) }
 					displayOnlyIcon
 					widthLimit={ 512 }
 				/>
 			</Dialog>
-
 			<FormFieldset
 				className={ clsx( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
 				disabled={ disabled }

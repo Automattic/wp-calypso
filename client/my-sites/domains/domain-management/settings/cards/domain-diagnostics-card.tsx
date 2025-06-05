@@ -20,7 +20,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `domain-diagnostics-notification`,
+	id: 'domain-diagnostics-notification',
 };
 
 export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDomain } ) {

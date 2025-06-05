@@ -30,7 +30,6 @@ import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shoppi
 import type { ManagedContactDetails, ManagedValue, VatDetails } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/types/payment-processors';
 import type { SiteSlug } from 'calypso/types';
-
 import './style.scss';
 
 type PurchaseModalProps = {
@@ -200,6 +199,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				id: storedCard.tax_location?.vat_id,
 				name: storedCard.tax_location?.organization,
 				address: storedCard.tax_location?.address,
+				isForBusiness: storedCard?.tax_location?.is_for_business,
 			};
 			const contactInfo: ManagedContactDetails = {
 				state: wrapValueInManagedValue( storedCard.tax_location?.subdivision_code ),

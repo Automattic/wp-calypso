@@ -6,7 +6,7 @@
 		display: inline-block;
 		fill: currentColor;
 	}
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		font-size: $font-body-small;
 		margin-bottom: 24px;
 	}
@@ -17,14 +17,13 @@
 	vertical-align: top;
 
 	.jetpack-logo {
-		vertical-align: inherit;
-		margin-top: -5px;
-		margin-left: 4px;
+		vertical-align: middle;
+		margin-inline: 0.25em;
 	}
 }
 
 .jetpack-colophon__grayscale {
-	color: var(--color-neutral-40);
+	color: var( --color-neutral-40 );
 	.jetpack-logo__icon-circle {
 		fill: currentColor;
 	}

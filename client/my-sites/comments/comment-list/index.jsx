@@ -216,8 +216,6 @@ export class CommentList extends Component {
 					{ showEmptyContent && (
 						<CommentTransition>
 							<EmptyContent
-								illustration="/calypso/images/comments/illustration_comments_gray.svg"
-								illustrationWidth={ 150 }
 								key="comment-list-empty"
 								line={ emptyMessageLine }
 								title={ emptyMessageTitle }

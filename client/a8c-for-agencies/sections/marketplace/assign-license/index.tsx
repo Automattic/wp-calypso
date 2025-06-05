@@ -4,6 +4,8 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -11,6 +13,7 @@ import {
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
+	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
@@ -28,12 +31,13 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
 import { Site } from '../../sites/types';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
-import useAssignLicensesToSite from '../products-overview-v2/hooks/use-assign-licenses-to-site';
+import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
 
 import './styles.scss';
@@ -47,13 +51,42 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const user = useSelector( getCurrentUser );
+
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
+
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
 	const [ currentPage, setCurrentPage ] = useState< number >( initialPage );
 	const [ search, setSearch ] = useState< string >( initialSearch );
 	const [ totalSites, setTotalSites ] = useState< number >( 0 );
 
 	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
-		onError: ( error: Error ) => {
+		onError: ( error: any ) => {
+			if ( error.code === 'partner_not_connected_to_site' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'Connect your WordPress.com user (%(username)s) as a site admin to continue. {{a}}How to connect {{/a}}↗',
+							{
+								args: {
+									username: user?.display_name ?? '',
+								},
+								components: {
+									a: (
+										<a
+											href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#limitations-for-the-team-member-role"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						),
+						{ isPersistent: true }
+					)
+				);
+				return;
+			}
 			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
@@ -173,12 +206,19 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		}
 
 		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
-		if ( fromDashboard ) {
-			return page.redirect( A4A_SITES_LINK );
-		}
-
-		return page.redirect( A4A_LICENSES_LINK );
-	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
+		const redirectUrl = fromDashboard ? A4A_SITES_LINK : A4A_LICENSES_LINK;
+		return isFeedbackShown
+			? page.redirect( redirectUrl )
+			: page.redirect(
+					addQueryArgs(
+						{
+							redirectUrl: redirectUrl,
+							type: FeedbackType.PurchaseCompleted,
+						},
+						A4A_FEEDBACK_LINK
+					)
+			  );
+	}, [ assignLicensesToSite, dispatch, isFeedbackShown, licenseKeysArray, selectedSite?.ID ] );
 
 	return (
 		<Layout

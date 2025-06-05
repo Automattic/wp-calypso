@@ -13,8 +13,8 @@ const selectors = {
 	launchSiteButton: 'a:text("Launch site")',
 
 	// Site Tools
-	deleteSiteLinkItem: `p:text-is("Delete your site permanently")`,
-	deleteSiteConfirmInput: `input[id="confirmDomainChangeInput"]`,
+	deleteSiteLinkItem: 'p:text-is("Delete your site permanently")',
+	deleteSiteConfirmInput: 'input[id="confirmDomainChangeInput"]',
 	deleteSiteConfirmationSpan: 'span:has-text("is being deleted")',
 };
 

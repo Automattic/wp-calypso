@@ -57,7 +57,7 @@ async function downloadPrevBuild( appSlug, dir ) {
 	const { body, status } = await fetch( prevBuildUrl );
 	if ( status !== 200 ) {
 		throw new Error(
-			`Could not fetch previous build for ${ appSlug }! Response code ${ status }.`
+			`Could not fetch previous build for ${ appSlug } (response code ${ status })! You can ignore this error when first adding a new app — just add a \`teamcity:build-app\` package script so it's ready for subsequent PRs, and add your app to the \`keepReleaseBuilds\` and \`artifactRules\` lists in \`.teamcity/_self/projects/WPComPlugins.kt\`.`
 		);
 	}
 

@@ -48,7 +48,7 @@ const CityZipRow = styled.div`
 `;
 
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, submit } = navigation;
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
@@ -260,6 +260,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							} }
 							options={ countriesAsOptions }
 							className={ errors[ 'store_country' ] ? 'is-error' : '' }
+							__next40pxDefaultSize
 						/>
 						<ControlError error={ errors[ 'store_country' ] || '' } />
 					</FormFieldset>
@@ -309,7 +310,6 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 		<StepContainer
 			stepName="store-address"
 			className={ `is-step-${ intent }` }
-			goNext={ goNext }
 			goBack={ goBack }
 			isHorizontalLayout
 			formattedHeader={
@@ -325,7 +325,6 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			intent={ intent }
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
-			hideSkip
 			hideBack={ ! comingFromThemeActivation }
 		/>
 	);

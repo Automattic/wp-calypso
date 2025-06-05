@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/sites/components/site-preview-pane/constants';
+import { DEPLOYMENTS } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import {
 	deploymentCreation,
@@ -19,7 +19,7 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentsList,
-		siteDashboard( DOTCOM_GITHUB_DEPLOYMENTS ),
+		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
 	);
@@ -30,7 +30,7 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentCreation,
-		siteDashboard( DOTCOM_GITHUB_DEPLOYMENTS ),
+		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
 	);
@@ -41,7 +41,7 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentManagement,
-		siteDashboard( DOTCOM_GITHUB_DEPLOYMENTS ),
+		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
 	);
@@ -52,7 +52,7 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentRunLogs,
-		siteDashboard( DOTCOM_GITHUB_DEPLOYMENTS ),
+		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
 	);

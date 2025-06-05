@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
 import { Card, CardHeader, CardBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -13,9 +14,12 @@ import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getLastMessage } from './utils';
-import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
-
 import './help-center-chat-history.scss';
+import type {
+	Conversations,
+	SupportInteraction,
+	ZendeskConversation,
+} from '@automattic/odie-client';
 
 // temporarily we want to show a simplified version of the chat history
 // this bool controls it.
@@ -28,16 +32,15 @@ const TAB_STATES = {
 
 const Conversations = ( {
 	conversations,
-	supportInteractions,
 	isLoadingInteractions,
 }: {
-	conversations: ZendeskConversation[];
+	conversations: Conversations;
 	supportInteractions: SupportInteraction[];
 	isLoadingInteractions?: boolean;
 } ) => {
 	const { __ } = useI18n();
 
-	if ( isLoadingInteractions ) {
+	if ( isLoadingInteractions && ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
 				<Spinner />
@@ -45,7 +48,7 @@ const Conversations = ( {
 		);
 	}
 
-	if ( ! conversations || ! conversations.length ) {
+	if ( ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
 				{ __( 'Nothing found…', __i18n_text_domain__ ) }
@@ -56,23 +59,24 @@ const Conversations = ( {
 	return (
 		<>
 			{ conversations.map( ( conversation ) => {
+				const { numberOfUnreadMessages } = calculateUnread( [
+					conversation as ZendeskConversation,
+				] );
 				const lastMessage = getLastMessage( { conversation } );
-				const lastSupportInteraction = supportInteractions.find(
-					( interaction ) => interaction.uuid === conversation?.metadata.supportInteractionId
-				);
 
-				if ( lastMessage ) {
-					return (
-						<HelpCenterSupportChatMessage
-							sectionName="chat_history"
-							navigateTo="/odie"
-							supportInteraction={ lastSupportInteraction }
-							key={ conversation.id }
-							message={ lastMessage }
-							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
-						/>
-					);
+				if ( ! lastMessage ) {
+					return null;
 				}
+
+				return (
+					<HelpCenterSupportChatMessage
+						sectionName="chat_history"
+						key={ conversation.id }
+						message={ lastMessage }
+						conversation={ conversation }
+						numberOfUnreadMessages={ numberOfUnreadMessages }
+					/>
+				);
 			} ) }
 		</>
 	);

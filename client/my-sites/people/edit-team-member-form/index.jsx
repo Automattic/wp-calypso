@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import useUserQuery from 'calypso/data/users/use-user-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useProtectForm } from 'calypso/lib/protect-form';
@@ -59,17 +58,8 @@ export const EditTeamMemberForm = ( {
 
 	return (
 		<Main className="edit-team-member-form">
-			<PageViewTracker path="people/edit/:site/:user" title="People > View Team Member" />
-			{ isEnabled( 'user-management-revamp' ) && (
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ translate( 'Users' ) }
-					subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
-				/>
-			) }
-			<HeaderCake onClick={ goBack } isCompact>
-				{ translate( 'User Details' ) }
-			</HeaderCake>
+			<PageViewTracker path="people/edit/:site/:user" title="People > View User" />
+			<HeaderCake onClick={ goBack }>{ translate( 'User Details' ) }</HeaderCake>
 			<Card className="edit-team-member-form__user-profile">
 				<PeopleProfile siteId={ siteId } user={ user } />
 				{ user && (

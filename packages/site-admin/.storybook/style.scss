@@ -1,2 +1,14 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 @import '@wordpress/components/build-style/style';
-@import '@automattic/calypso-color-schemes';
+
+/*
+ * Themes
+ */
+.theme-admin-app {
+	height: 100%;
+	background: $gray-900;
+	color: $gray-400;
+	font-family: $default-font;
+}

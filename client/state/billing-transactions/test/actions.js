@@ -1,12 +1,10 @@
 import {
-	BILLING_RECEIPT_EMAIL_SEND,
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useNock from 'calypso/test-helpers/use-nock';
 import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 
@@ -112,20 +110,15 @@ describe( 'actions', () => {
 					.reply( 200, { success: true } );
 			} );
 
-			test( 'should dispatch send action when thunk triggered', () => {
-				sendBillingReceiptEmail( receiptId )( spy );
-
-				expect( spy ).toHaveBeenCalledWith( {
-					type: BILLING_RECEIPT_EMAIL_SEND,
-					receiptId,
-				} );
-			} );
-
 			test( 'should dispatch send success action when request completes', () => {
+				const { notice, type } = successNotice( 'Your receipt was sent by email successfully.' );
 				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
-						type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-						receiptId,
+						notice: {
+							...notice,
+							noticeId: expect.any( String ),
+						},
+						type,
 					} );
 				} );
 			} );
@@ -146,13 +139,16 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch send failure action when request fails', () => {
+				const { notice, type } = errorNotice(
+					'There was a problem sending your receipt. Please try again later or contact support.'
+				);
 				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
-						type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-						receiptId,
-						error: expect.objectContaining( {
-							message,
-						} ),
+						notice: {
+							...notice,
+							noticeId: expect.any( String ),
+						},
+						type,
 					} );
 				} );
 			} );

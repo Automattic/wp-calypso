@@ -1,0 +1,63 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.reports-overview {
+	.hosting-dashboard-layout__header-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+		justify-content: normal;
+	}
+
+	.hosting-dashboard-layout__body-wrapper {
+		max-width: unset;
+		padding-inline: 0;
+		margin: 0;
+	}
+
+	.hosting-dashboard-layout__body {
+		padding-block-end: 0;
+	}
+}
+
+.reports-overview__content {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	img {
+		width: max-content;
+	}
+}
+
+.reports-overview__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.reports-overview__description {
+	@include body-large;
+
+	> div {
+		margin-block-end: 16px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+}
+
+button.components-button.reports-overview__button.is-secondary {
+	&,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: var( --color-primary-60 );
+		background-color: var( --color-surface );
+		border: none;
+		outline: none;
+		box-shadow: none;
+		text-decoration: none;
+	}
+}

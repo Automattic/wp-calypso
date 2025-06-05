@@ -6,7 +6,6 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -25,12 +24,7 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-type LaunchpadProps = {
-	navigation: NavigationControls;
-	flow: string;
-};
-
-const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
+const Launchpad: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const verifiedParam = useQuery().get( 'verified' );

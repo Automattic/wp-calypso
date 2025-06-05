@@ -17,6 +17,12 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	isDIFMProduct: jest.fn( () => false ),
 } ) );
 
+jest.unmock( '@automattic/help-center/src/hooks' );
+jest.mock( '@automattic/help-center/src/hooks', () => ( {
+	...jest.requireActual( '@automattic/help-center/src/hooks' ),
+	useProductsWithPremiumSupport: jest.fn( () => false ),
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
@@ -24,18 +30,19 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tra
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
 );
+// eslint-disable-next-line react/display-name
 jest.mock( 'calypso/components/happiness-support', () => () => (
 	<div data-testid="happiness-support" />
 ) );
-jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wordpress-logo" /> );
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
+// eslint-disable-next-line react/display-name
 jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 	<div data-testid="component--plan-only-thank-you" />
 ) );
+// eslint-disable-next-line react/display-name
 jest.mock( '../redesign-v2/pages/generic', () => () => (
 	<div data-testid="component--generic-thank-you" />
 ) );
-jest.mock( '@wordpress/api-fetch' );
 
 const translate = ( x ) => x;
 
@@ -86,12 +93,13 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Show WordPressLogo when there are no purchase but a receipt is present', () => {
-			render(
+			const { container } = render(
 				<Provider store={ store }>
 					<CheckoutThankYou { ...defaultProps } receiptId={ 12 } />
 				</Provider>
 			);
-			expect( screen.getByTestId( 'wordpress-logo' ) ).toBeVisible();
+			// TODO: `WordPressLogo` should probably be updated to pass through props like `data-testid`
+			expect( container.querySelector( '.checkout-thank-you__logo' ) ).toBeVisible();
 		} );
 	} );
 

@@ -26,7 +26,7 @@ export default function recordGTMDatalayerEvent( stepName = '' ) {
 
 			window.dataLayer.push( trackEventMeta );
 
-			debug( `recordGTMDatalayerEvent: Record Woo Express Stepper Event`, trackEventMeta );
+			debug( 'recordGTMDatalayerEvent: Record Woo Express Stepper Event', trackEventMeta );
 		} )
 		.catch( ( error ) => {
 			debug( 'recordGTMDatalayerEvent: Error loading GTM container', error );

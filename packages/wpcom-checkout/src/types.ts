@@ -457,6 +457,7 @@ export interface VatDetails {
 	id?: string | null;
 	name?: string | null;
 	address?: string | null;
+	isForBusiness?: boolean | null;
 }
 
 /*
@@ -656,4 +657,4 @@ export interface CountryListItemWithVat extends CountryListItemBase {
 }
 export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
 
-export type SitelessCheckoutType = 'jetpack' | 'akismet' | 'marketplace' | undefined;
+export type SitelessCheckoutType = 'jetpack' | 'akismet' | 'marketplace' | 'a4a' | undefined;

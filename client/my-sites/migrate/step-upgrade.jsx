@@ -144,6 +144,7 @@ class StepUpgrade extends Component {
 							</div>
 						</div>
 					</div>
+					{ /* TODO: is the following "import everything" behaviour up to date? */ }
 					<MigrateButton
 						onClick={ this.props.startMigration }
 						targetSiteDomain={ targetSiteDomain }

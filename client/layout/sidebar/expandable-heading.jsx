@@ -1,5 +1,6 @@
 import { Count, Gridicon, MaterialIcon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, chevronDownSmall } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -58,11 +59,11 @@ const ExpandableSidebarHeading = ( {
 						} }
 						aria-label={ expanded ? translate( 'Collapse menu' ) : translate( 'Expand menu' ) }
 						icon={
-							<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+							<Icon icon={ chevronDownSmall } className="sidebar__expandable-arrow" size={ 24 } />
 						}
 					/>
 				) : (
-					<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+					<Icon icon={ chevronDownSmall } className="sidebar__expandable-arrow" size={ 24 } />
 				) ) }
 		</SidebarHeading>
 	);

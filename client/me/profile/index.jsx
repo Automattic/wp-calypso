@@ -7,17 +7,18 @@ import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
+import { CompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import DomainUpsell from 'calypso/me/domain-upsell';
+import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -28,6 +29,8 @@ import WPAndGravatarLogo from './wp-and-gravatar-logo';
 import './style.scss';
 
 class Profile extends Component {
+	initiallyLoadedWithTaskCompletionHash = window.location.hash === '#complete-your-profile';
+
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}
@@ -50,6 +53,12 @@ class Profile extends Component {
 			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<CompleteLaunchpadTaskWithNoticeOnLoad
+					enabled={ this.initiallyLoadedWithTaskCompletionHash }
+					taskSlug="complete_profile"
+					noticeId="tasklist_complete_your_profile"
+					noticeText={ this.props.translate( 'Explored profile settings' ) }
+				/>
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ this.props.translate( 'My Profile' ) }
@@ -64,7 +73,7 @@ class Profile extends Component {
 						}
 					) }
 				/>
-
+				<EmailVerificationBanner />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
 					<EditGravatar />
@@ -106,9 +115,6 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
 								value={ this.props.getSetting( 'display_name' ) }
 							/>
-							<FormSettingExplanation>
-								{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
-							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
@@ -125,26 +131,6 @@ class Profile extends Component {
 								placeholder="https://example.com"
 								value={ this.props.getSetting( 'user_URL' ) }
 							/>
-							<FormSettingExplanation>
-								{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
-							</FormSettingExplanation>
-						</FormFieldset>
-
-						<FormFieldset>
-							<div className="form-label">{ this.props.translate( 'Public profile' ) }</div>
-							<FormSettingExplanation>
-								<span>
-									{ this.props.translate(
-										'You can find your public profile at {{a}}{{url/}}{{/a}}',
-										{
-											components: {
-												a: <a href={ relativeProfileUrl }></a>,
-												url: <>{ absoluteProfileUrl }</>,
-											},
-										}
-									) }
-								</span>
-							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
@@ -159,11 +145,20 @@ class Profile extends Component {
 							/>
 						</FormFieldset>
 
+						<p className="profile__public-url">
+							{ this.props.translate( 'View your public profile at {{a}}{{url/}}{{/a}}.', {
+								components: {
+									a: <ExternalLink href={ relativeProfileUrl } />,
+									url: <>{ absoluteProfileUrl }</>,
+								},
+							} ) }
+						</p>
+
 						<p className="profile__gravatar-profile-description">
 							<span>
 								{ this.props.translate(
-									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
-										' To manage your Gravatar profile, profile links, and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
+									'Your WordPress.com profile is linked to Gravatar, making your Gravatar public by default. It may appear on sites using Gravatar when logged in with {{strong}}%(email)s{{/strong}}.' +
+										' Any changes you make here will be synced to your {{a}}Gravatar profile{{/a}}.',
 									{
 										components: {
 											strong: <strong />,

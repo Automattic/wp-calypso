@@ -84,7 +84,7 @@ describe( 'EmailVerificationBanner', () => {
 		await act( async () => await screen.getByText( 'Verify email' ).click() );
 		// Check for dialog modal copy to ensure it appeared.
 		expect(
-			screen.queryByText( /Verify your email to secure your account and access more features./ )
+			screen.queryByText( /Secure your account and access more features./ )
 		).toBeInTheDocument();
 	} );
 } );

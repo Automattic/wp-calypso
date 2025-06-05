@@ -2,8 +2,8 @@ import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import './style.scss';
 import SitePreview from '../../../../components/site-preview';
+import './style.scss';
 
 type RTPreviewProps = {
 	isLoading?: boolean;

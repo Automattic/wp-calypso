@@ -8,6 +8,7 @@ import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
 import PaymentMethodOverview from '../purchases/payment-methods/payment-method-overview';
 import ClientLanding from './client-landing';
 import ClientCheckout from './primary/checkout';
+import ClientCheckoutV2 from './primary/checkout-v2';
 import SubscriptionsList from './primary/subscriptions-list';
 
 export const clientLandingContext: Callback = ( context, next ) => {
@@ -30,7 +31,7 @@ export const clientSubscriptionsContext: Callback = ( context, next ) => {
 export const clientPaymentMethodsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
-			<PageViewTracker title="Client > Payment Methods" path={ context.path } />
+			<PageViewTracker title="Client > Payment methods" path={ context.path } />
 			<PaymentMethodOverview />
 		</>
 	);
@@ -43,7 +44,7 @@ export const clientPaymentMethodsAddContext: Callback = ( context, next ) => {
 	const agencyId = query && query.return && getQueryArg( query.return, 'agency_id' );
 	context.primary = (
 		<>
-			<PageViewTracker title="Client > Payment Methods > Add" path={ context.path } />
+			<PageViewTracker title="Client > Payment methods > Add" path={ context.path } />
 			<PaymentMethodAdd isClientCheckout={ agencyId } />
 		</>
 	);
@@ -70,6 +71,16 @@ export const clientCheckoutContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Client > Checkout" path={ context.path } />
 			<ClientCheckout />
+		</>
+	);
+	next();
+};
+
+export const clientCheckoutV2Context: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker title="Client > Checkout V2" path="/client/checkout/v2" />
+			<ClientCheckoutV2 />
 		</>
 	);
 	next();

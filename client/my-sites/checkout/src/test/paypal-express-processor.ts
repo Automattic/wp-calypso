@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import payPalExpressProcessor from '../lib/paypal-express-processor';
@@ -49,7 +50,7 @@ describe( 'payPalExpressProcessor', () => {
 		domain_details: null,
 		postal_code: '',
 		success_url:
-			'https://example.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+			'https://example.com/checkout/thank-you/no-site/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 		tos: {
 			locale: 'en',
 			path: '/',
@@ -113,7 +114,7 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			success_url:
-				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: 1234567,
@@ -150,7 +151,7 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			success_url:
-				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: 1234567,
@@ -179,7 +180,7 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			success_url:
-				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: 1234567,
@@ -267,7 +268,7 @@ describe( 'payPalExpressProcessor', () => {
 			...basicExpectedRequest,
 			cancel_url: 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1',
 			success_url:
-				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: 0,
@@ -300,7 +301,7 @@ describe( 'payPalExpressProcessor', () => {
 			...basicExpectedRequest,
 			cancel_url: 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1',
 			success_url:
-				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: 0,

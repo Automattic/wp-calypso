@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -37,12 +36,12 @@ const HostingOverview: FC = () => {
 				title={ translate( 'Overview' ) }
 				subtitle={ subtitle }
 			/>
-			{ isEnabled( 'domain-to-plan-credit' ) && <PlanCreditNotice /> }
+			<PlanCreditNotice />
 			<PlanCard />
 			<QuickActionsCard />
+			<ActiveDomainsCard />
 			<SiteBackupCard />
 			<SupportCard />
-			<ActiveDomainsCard />
 		</div>
 	);
 };

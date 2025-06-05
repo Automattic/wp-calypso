@@ -9,21 +9,22 @@ It is meant to be helpful for projects developed inside the [Calypso monorepo](h
 To use stores from the package, import the store object and use it directly. The store will be registered on import.
 
 ```tsx
-import { Analyzer } from '@automattic/data-stores';
+import { ProductsList } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 
-export const LinkColors = ( { url } ) => {
-	const colorsData = useSelect(
-		// Selecting the store itself provides automatic type inference for the selectors.
-		( select ) => select( Analyzer.store ).getSiteColors( url ),
-		[ url ] // Be sure to include any data dependencies used by the selector!
+export const RenderProducts = ( { url } ) => {
+	const { productsList } = useSelect(
+		( select ) => ( {
+			productsList: select( ProductsList.store ).getProductsList(),
+		} ),
+		[]
 	);
 
 	return (
 		<ul>
-			{ colorsData?.link.map( ( linkColors ) => (
-				<li key={ color.hex }>
-					Name: { color.name }. Hex: { color.hex }.
+			{ Object.entries( productsList?.data ?? {} ).map( ( [ productSlug, product ] ) => (
+				<li key={ productSlug }>
+					Name: { product.name }
 				</li>
 			) ) }
 		</ul>

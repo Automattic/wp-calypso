@@ -274,10 +274,10 @@ const RecommendedSiteWithConnectedSite = ( {
 		return <RecommendedSitePlaceholder />;
 	}
 
-	const siteTitle = getSiteName( { site, feed } );
-	const siteDescription = getSiteDescription( { site, feed } );
-	const siteDomain = getSiteDomain( { site, feed } );
-	const siteUrl = getSiteUrl( { site, feed } );
+	const siteTitle = getSiteName( { site, feed } ) ?? '';
+	const siteDescription = getSiteDescription( { site, feed } ) ?? '';
+	const siteDomain = getSiteDomain( { site, feed } ) ?? '';
+	const siteUrl = getSiteUrl( { site, feed } ) ?? '';
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const siteIcon = site.icon?.img;
 	const feedIcon = feed?.image;

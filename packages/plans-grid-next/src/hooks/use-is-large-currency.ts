@@ -1,5 +1,5 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useMemo } from '@wordpress/element';
-import { formatCurrency } from 'i18n-calypso';
 const LARGE_ADD_ON_CURRENCY_CHAR_THRESHOLD = 7;
 const LARGE_CURRENCY_CHAR_THRESHOLD = 6;
 const LARGE_CURRENCY_COMBINED_CHAR_THRESHOLD = 9;

@@ -7,7 +7,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
-import { generateUUID } from '../utils';
+import { generateUUID, getOdieIdFromInteraction } from '../utils';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
 
@@ -20,10 +20,7 @@ export const useSendOdieMessage = () => {
 	const { currentSupportInteraction, odieId } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		const currentSupportInteraction = store.getCurrentSupportInteraction();
-		// Get the current odie chat
-		const odieId =
-			currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
-				?.event_external_id ?? null;
+		const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
 		return {
 			currentSupportInteraction: store.getCurrentSupportInteraction(),
@@ -44,13 +41,20 @@ export const useSendOdieMessage = () => {
 		odieBroadcastClientId,
 		setChatStatus,
 		setExperimentVariationName,
+		chat,
 		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
 	} = useOdieAssistantContext();
 
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
 		if ( ! Array.isArray( message ) ) {
 			const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-			if ( isRequestingHumanSupport && isUserEligibleForPaidSupport ) {
+			if (
+				! chat.conversationId &&
+				isRequestingHumanSupport &&
+				canConnectToZendesk &&
+				isUserEligibleForPaidSupport
+			) {
 				newConversation( { createdFrom: 'automatic_escalation' } );
 				return;
 			}
@@ -111,7 +115,7 @@ export const useSendOdieMessage = () => {
 			}
 
 			if ( ! odieId ) {
-				addEventToInteraction( {
+				addEventToInteraction.mutate( {
 					interactionId: currentSupportInteraction!.uuid,
 					eventData: {
 						event_external_id: returnedChat.chat_id.toString(),

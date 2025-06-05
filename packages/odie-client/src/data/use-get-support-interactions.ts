@@ -9,15 +9,15 @@ import type { SupportProvider } from '../types';
 export const useGetSupportInteractions = (
 	provider: SupportProvider | null = null,
 	per_page = 10,
-	status = 'open',
+	status: string | string[] = 'open',
 	page = 1,
-	enabled = true
+	enabled = true,
+	freshness = 0
 ) => {
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
-
 	return useQuery( {
 		// eslint-disable-next-line
-		queryKey: [ 'support-interactions', 'get-interactions', provider, status ],
+		queryKey: [ 'support-interactions', 'get-interactions', provider, status, freshness ],
 		queryFn: async () => {
 			const response = await handleSupportInteractionsFetch( 'GET', path );
 
@@ -34,5 +34,6 @@ export const useGetSupportInteractions = (
 			return response;
 		},
 		enabled,
+		staleTime: 1000 * 30, // 30 seconds
 	} );
 };

@@ -1,0 +1,91 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.page-section-columns {
+	padding: 32px 16px;
+	background-repeat: no-repeat;
+	background-position: top right;
+
+	&.is-dark-background *:not(button) {
+		color: var(--color-text-inverted);
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding-inline: 64px;
+	}
+
+	@include break-large {
+		padding: 80px 64px;
+	}
+
+	> * {
+		@include break-medium {
+			max-width: 1500px;
+			margin-inline: auto;
+		}
+	}
+}
+
+.page-section-columns__heading {
+	@include heading-x-large;
+	margin-block-end: 32px;
+	display: flex;
+	gap: 8px;
+	flex-direction: column;
+
+	@include break-large {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	button.components-button.is-tertiary {
+		color: var(--color-text);
+	}
+}
+
+
+.page-section-columns__content {
+	background-repeat: no-repeat;
+	background-position: top right;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 32px;
+
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.page-section-column {
+	&.is-align-center {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		img {
+			width: 400px;
+		}
+	}
+}
+
+
+.page-section-column__content {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+
+	button, a {
+		&.components-button {
+			white-space: normal;
+			min-height: 40px;
+			height: auto;
+			text-align: center;
+			width: 100%;
+
+			@include break-large {
+				width: fit-content;
+			}
+		}
+	}
+}

@@ -15,6 +15,7 @@ import {
 	transferRevertingInProgress,
 } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
 import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -59,9 +60,6 @@ export const StagingSiteCard = ( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const [ syncError, setSyncError ] = useState( null );
-	// eslint-disable-next-line no-unused-vars
-	const [ _, setIsErrorValidQuota ] = useState( false );
-	const [ progress, setProgress ] = useState( 0.1 );
 
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
@@ -111,13 +109,11 @@ export const StagingSiteCard = ( {
 				removeAllNotices();
 			},
 			onSuccess: ( response ) => {
-				setProgress( 0.1 );
 				queryClient.invalidateQueries( [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] );
 				dispatch( fetchAutomatedTransferStatus( response.id ) );
 			},
 			onError: ( error ) => {
 				queryClient.invalidateQueries( [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] );
-				setProgress( 0.1 );
 				dispatch(
 					recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
 						code: error.code,
@@ -136,22 +132,12 @@ export const StagingSiteCard = ( {
 		}
 	);
 
-	const {
-		data: lock,
-		isError: isErrorLockQuery,
-		isLoading: isLoadingLockQuery,
-	} = useGetLockQuery( siteId, {
+	const { data: lock, isLoading: isLoadingLockQuery } = useGetLockQuery( siteId, {
 		enabled: ! disabled,
 		refetchInterval: () => {
 			return isLoadingAddStagingSite ? 5000 : 0;
 		},
 	} );
-
-	useEffect( () => {
-		if ( isErrorLockQuery ) {
-			setIsErrorValidQuota( true );
-		}
-	}, [ isErrorLockQuery, siteId ] );
 
 	const hasCompletedInitialLoading =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && ! isLoadingLockQuery;
@@ -184,7 +170,6 @@ export const StagingSiteCard = ( {
 			removeAllNotices();
 		},
 		onError: ( error ) => {
-			setProgress( 0.1 );
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure', {
 					code: error.code,
@@ -199,9 +184,6 @@ export const StagingSiteCard = ( {
 					}
 				)
 			);
-		},
-		onSuccess: () => {
-			setProgress( 0.1 );
 		},
 	} );
 
@@ -248,30 +230,13 @@ export const StagingSiteCard = ( {
 		// If we are done with the transfer, and we have not errored we want to set the action to NONE, and display a success notice.
 		if ( stagingSiteStatus === StagingSiteStatus.REVERTED ) {
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
+			// Refetch the sites to remove the deleted staging site from the list
+			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
 			dispatch(
 				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, siteId, stagingSiteStatus ] );
-
-	useEffect( () => {
-		setProgress( ( prevProgress ) => {
-			switch ( stagingSiteStatus ) {
-				case null:
-					return 0.1;
-				case transferStates.RELOCATING_REVERT:
-				case transferStates.ACTIVE:
-					return 0.2;
-				case transferStates.PROVISIONED:
-					return 0.6;
-				case transferStates.REVERTED:
-				case transferStates.RELOCATING:
-					return 0.85;
-				default:
-					return prevProgress + 0.05;
-			}
-		} );
-	}, [ stagingSiteStatus ] );
+	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
 
 	const handleNullTransferStatus = useCallback( () => {
 		// When a revert is finished, the status after deletion becomes null, as the API doesn't return any value ( returns an error ) due to the staging site's deletion.
@@ -390,13 +355,11 @@ export const StagingSiteCard = ( {
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-		setProgress( 0.1 );
 		addStagingSite();
 	}, [ dispatch, siteId, addStagingSite ] );
 
 	const initiateDelete = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
-		setProgress( 0.1 );
 		deleteStagingSite();
 	}, [ dispatch, siteId, deleteStagingSite ] );
 
@@ -449,11 +412,10 @@ export const StagingSiteCard = ( {
 						StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
 						isReverting
 					}
-					progress={ progress }
 				/>
 			</>
 		);
-	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting, progress ] );
+	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting ] );
 
 	let stagingSiteCardContent;
 
@@ -542,6 +504,13 @@ export const StagingSiteCard = ( {
 	} else if ( ! hasCompletedInitialLoading ) {
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
+
+	// Get the fresh jetpack connection health status
+	useEffect( () => {
+		if ( isJetpack && siteId ) {
+			dispatch( requestJetpackConnectionHealthStatus( siteId ) );
+		}
+	}, [ dispatch, isJetpack, siteId ] );
 
 	return (
 		<CardContentWrapper>

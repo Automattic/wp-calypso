@@ -63,11 +63,13 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 	};
 
-	handleSiteSelect = ( targetSiteId: number ): void => {
+	handleSiteSelect = ( targetSiteId: number ) => {
 		this.setState( {
 			targetSiteId,
 			showConfirmationDialog: true,
 		} );
+		// Return true to let the site selector know we'll take care of the navigation
+		return true;
 	};
 
 	handleConfirmTransfer = (

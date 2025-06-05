@@ -1,0 +1,74 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.a4a-provide-feedback__modal .a4a-modal__main {
+	height: auto;
+
+	.a4a-modal__title {
+		@include heading-x-large;
+	}
+}
+
+.a4a-provide-feedback__form {
+	padding-block: 16px 68px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	flex: 1 1 auto;
+
+	.form-fieldset {
+		margin-block-end: 0;
+	}
+
+	.file-picker {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		button {
+			width: fit-content;
+		}
+	}
+}
+
+.form-label.a4a-provide-feedback__form-label {
+	@include heading-small;
+	text-transform: uppercase;
+	margin-block-end: 0;
+}
+
+.a4a-provide-feedback__form-select .components-input-control__container {
+	width: fit-content;
+}
+
+.a4a-provide-feedback__form-file-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.a4a-provide-feedback__form-file-name {
+	@include body-small;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 30vw;
+}
+
+.a4a-provide-feedback__form-file-instructions {
+	@include body-small;
+	color: var(--color-accent-50);
+}
+
+.a4a-provide-feedback__form-file-error {
+	@include body-small;
+	color: var(--color-scary-50);
+}
+
+.a4a-provide-feedback__form-fieldset {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}

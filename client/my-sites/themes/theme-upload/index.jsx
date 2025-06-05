@@ -28,7 +28,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import {
 	getEligibility,
@@ -300,7 +299,6 @@ class Upload extends Component {
 				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
 				action={ this.props.translate( 'Open WP Admin' ) }
 				actionURL={ this.props.siteAdminUrl }
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}
@@ -327,7 +325,7 @@ class Upload extends Component {
 		}
 
 		return (
-			<Main className="theme-upload" wideLayout>
+			<Main className="theme-upload">
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<DocumentHead title={ translate( 'Install Theme' ) } />
 
@@ -335,7 +333,6 @@ class Upload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
-				<ActivationModal source="upload" />
 				<NavigationHeader
 					title={ translate( 'Themes' ) }
 					subtitle={ translate(

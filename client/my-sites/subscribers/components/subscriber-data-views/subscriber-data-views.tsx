@@ -1,16 +1,21 @@
-import { Gravatar, TimeSince } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Gravatar } from '@automattic/components';
+import { Locale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { Tooltip } from '@wordpress/components';
-import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
+import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { translate } from 'i18n-calypso';
+import { trash } from '@wordpress/icons';
+import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
+import { getSubscriptionIdFromSubscriber } from '../../helpers';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
 	useSubscribersQuery,
@@ -24,19 +29,20 @@ import {
 	useRecordSubscriberSort,
 } from '../../tracks';
 import { Subscriber } from '../../types';
-import { EmptyListView } from '../empty-list-view';
+import { JetpackEmptyListView } from '../jetpack-empty-list-view';
 import { SubscriberDetails } from '../subscriber-details';
+import { SubscriberDetailsSkeleton } from '../subscriber-details/skeleton';
 import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
 import { SubscribersHeader } from '../subscribers-header';
 import { UnsubscribeModal } from '../unsubscribe-modal';
-
 import './style.scss';
 
 type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
+	subscriberId?: string;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -53,43 +59,67 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
-const defaultView: View = {
+const getFormattedSubscriptionDate = ( subscriber: Subscriber, locale: Locale = 'en-US' ) => {
+	// The timestamp returned is UTC, but there is no timezone label adding the gmt offset to help with conversion.
+	const subscribedDate =
+		( subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed ) + '+00:00';
+
+	// Format - May 5, 2025
+	return new Date( subscribedDate ).toLocaleDateString( locale, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	} );
+};
+
+const getSubscriptionId = ( subscriber: Subscriber ): number => {
+	return Number( getSubscriptionIdFromSubscriber( subscriber ) );
+};
+
+const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
+	return String( getSubscriptionIdFromSubscriber( subscriber ) );
+};
+
+const defaultView: ViewTable = {
 	type: 'table',
 	titleField: 'name',
 	mediaField: 'media',
 	showTitle: true,
 	showMedia: true,
-	fields: [ 'plan', 'is_email_subscriber', 'date_subscribed' ],
+	fields: [ 'plan', 'subscription_status', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
 			name: { width: '55%', minWidth: '195px' },
 			plan: { width: '15%' },
-			is_email_subscriber: { width: '15%' },
+			subscription_status: { width: '15%' },
 			date_subscribed: { width: '15%' },
 		},
 	},
 };
 
-const SubscriberDataViews = ( {
+export default function SubscriberDataViews( {
 	siteId,
 	onGiftSubscription,
 	isUnverified,
-}: SubscriberDataViewsProps ) => {
+	subscriberId,
+}: SubscriberDataViewsProps ) {
+	const dispatch = useDispatch();
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
 	const recordSubscriberFilter = useRecordSubscriberFilter();
 	const recordSubscriberSort = useRecordSubscriberSort();
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const locale = useSelector( getCurrentUserLocale );
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const { isSimple, isAtomic, isStaging } = useSelector( ( state ) => ( {
-		isSimple: isSimpleSite( state ),
-		isAtomic: isAtomicSite( state, siteId ),
-		isStaging: isSiteWpcomStaging( state, siteId ),
-	} ) );
+
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, siteId )
 	);
@@ -115,10 +145,10 @@ const SubscriberDataViews = ( {
 	} );
 
 	const {
-		currentSubscriber,
-		onClickUnsubscribe: handleUnsubscribe,
+		currentSubscribers,
+		onSetUnsubscribers: handleUnsubscribe,
 		onConfirmModal,
-		resetSubscriber,
+		resetSubscribers,
 	} = useUnsubscribeModal(
 		siteId ?? null,
 		{
@@ -131,23 +161,46 @@ const SubscriberDataViews = ( {
 		},
 		false,
 		() => {
-			setSelectedSubscriber( null );
+			page.show( `/subscribers/${ siteSlug }` );
 		}
 	);
 
-	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
+	// Fetch subscriber details.
+	const { data: subscriberDetails, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		siteId ?? null,
-		selectedSubscriber?.subscription_id,
-		selectedSubscriber?.user_id
+		// Only pass subscriberId if it's a valid number
+		subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
+			? parseInt( subscriberId, 10 )
+			: undefined,
+		undefined // We only need the subscriberId to fetch details
 	);
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: siteId as number,
-			subscriptionId: selectedSubscriber?.subscription_id,
-			userId: selectedSubscriber?.user_id,
-			enabled: !! selectedSubscriber,
+			subscriptionId:
+				subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
+					? parseInt( subscriberId, 10 )
+					: undefined,
+			userId: subscriberDetails?.user_id,
+			enabled: !! subscriberId && !! siteId,
 		} );
+
+	// Single effect to handle all subscriber selection scenarios
+	useEffect( () => {
+		// If no subscriberId in URL, immediately clear selection
+		if ( ! subscriberId ) {
+			setSelectedSubscriber( null );
+			return;
+		}
+
+		// If we have details and they match the current URL, use them
+		if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
+			setSelectedSubscriber( subscriberDetails );
+		}
+		// Don't clear selectedSubscriber - let it keep showing the previous subscriber while loading
+		// The SubscriberDetailsSkeleton will show because subscriberDetails won't match subscriberId
+	}, [ subscriberId, subscriberDetails ] );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
 	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
@@ -163,37 +216,84 @@ const SubscriberDataViews = ( {
 		total: 0,
 	};
 
-	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
+	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : JetpackEmptyListView;
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
+
+	/**
+	 * Read page from URL when component mounts or URL changes.
+	 *
+	 * URL Parameters:
+	 * - /subscribers/{siteSlug}/{subscriberId} - View specific subscriber
+	 * - ?page={number} - Navigate to specific page (preserved across views)
+	 */
+	useEffect( () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const pageFromUrl = urlParams.get( 'page' );
+		if ( pageFromUrl && ! isNaN( parseInt( pageFromUrl, 10 ) ) ) {
+			setCurrentView( ( prev ) => ( {
+				...prev,
+				page: parseInt( pageFromUrl, 10 ),
+			} ) );
+		}
+	}, [] );
 
 	const handleSubscriberSelection = useCallback(
 		( input: Subscriber | string[] ) => {
 			if ( Array.isArray( input ) ) {
 				if ( input.length === 0 ) {
 					setSelectedSubscriber( null );
+					page.show( `/subscribers/${ siteSlug }` );
 					return;
 				}
-				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
+				const subscriber = subscribersQueryResult?.subscribers.find(
+					( s ) => getSubscriptionIdString( s ) === input[ 0 ]
+				);
 				if ( subscriber ) {
 					recordSubscriberClicked( 'list', {
 						site_id: siteId,
-						subscription_id: subscriber.subscription_id,
+						subscription_id: getSubscriptionId( subscriber ),
 						user_id: subscriber.user_id,
 					} );
-					setSelectedSubscriber( subscriber );
+					page.show(
+						`/subscribers/${ siteSlug }/${ getSubscriptionIdString( subscriber ) }?page=${
+							currentView.page
+						}`
+					);
 				}
 			} else {
 				recordSubscriberClicked( 'row', {
 					site_id: siteId,
-					subscription_id: input.subscription_id,
+					subscription_id: getSubscriptionId( input ),
 					user_id: input.user_id,
 				} );
-				setSelectedSubscriber( input );
+				page.show(
+					`/subscribers/${ siteSlug }/${ getSubscriptionIdString( input ) }?page=${
+						currentView.page
+					}`
+				);
 			}
 		},
-		[ subscribers, recordSubscriberClicked, siteId ]
+		[
+			subscribersQueryResult?.subscribers,
+			recordSubscriberClicked,
+			siteId,
+			siteSlug,
+			currentView.page,
+		]
 	);
+
+	// Modify the onClose handler to clear selection before navigation
+	const handleClose = useCallback( () => {
+		setSelectedSubscriber( null );
+		const urlParams = new URLSearchParams( window.location.search );
+		const pageParam = urlParams.get( 'page' );
+		if ( pageParam ) {
+			page.show( `/subscribers/${ siteSlug }?page=${ pageParam }` );
+		} else {
+			page.show( `/subscribers/${ siteSlug }` );
+		}
+	}, [ siteSlug ] );
 
 	const fields = useMemo(
 		() => [
@@ -224,7 +324,7 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'plan',
-				label: translate( 'Plan' ),
+				label: translate( 'Subscription type' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
@@ -239,23 +339,31 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 			{
-				id: 'is_email_subscriber',
-				label: translate( 'Email subscriber' ),
-				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
-				render: ( { item }: { item: Subscriber } ) => {
-					const noTooltip = (
-						<Tooltip text={ translate( 'Reader only subscriber' ) }>
-							<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
-						</Tooltip>
-					);
-
-					return <div>{ item.is_email_subscriber ? translate( 'Yes' ) : noTooltip }</div>;
-				},
+				id: 'subscription_status',
+				label: translate( 'Email subscription' ),
+				getValue: ( { item }: { item: Subscriber } ) => item.subscription_status,
+				render: ( { item }: { item: Subscriber } ) => (
+					<div>
+						{ SubscribersStatus[ item.subscription_status as keyof typeof SubscribersStatus ] ??
+							item.subscription_status }
+					</div>
+				),
 				elements: [
-					{ label: translate( 'True' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
-						label: translate( 'False' ),
+						label: SubscribersStatus[ 'Subscribed' ],
+						value: SubscribersFilterBy.EmailSubscriber,
+					},
+					{
+						label: SubscribersStatus[ 'Not subscribed' ],
 						value: SubscribersFilterBy.ReaderSubscriber,
+					},
+					{
+						label: SubscribersStatus[ 'Not confirmed' ],
+						value: SubscribersFilterBy.UnconfirmedSubscriber,
+					},
+					{
+						label: SubscribersStatus[ 'Not sending' ],
+						value: SubscribersFilterBy.BlockedSubscriber,
 					},
 				],
 				filterBy: {
@@ -266,14 +374,19 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'date_subscribed',
-				label: translate( 'Since' ),
-				getValue: ( { item }: { item: Subscriber } ) => item.date_subscribed,
-				render: ( { item }: { item: Subscriber } ) => <TimeSince date={ item.date_subscribed } />,
+				label: fixMe( {
+					text: 'Date subscribed',
+					newCopy: translate( 'Date subscribed' ),
+					oldCopy: translate( 'Since' ),
+				} ) as string,
+				getValue: ( { item }: { item: Subscriber } ) =>
+					getFormattedSubscriptionDate( item, locale ),
+				render: ( { item }: { item: Subscriber } ) => getFormattedSubscriptionDate( item, locale ),
 				enableHiding: false,
 				enableSorting: true,
 			},
 		],
-		[]
+		[ locale ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -296,8 +409,10 @@ const SubscriberDataViews = ( {
 			{
 				id: 'remove',
 				label: translate( 'Remove' ),
-				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				callback: handleUnsubscribe,
 				isPrimary: false,
+				supportsBulk: true,
+				icon: trash,
 			},
 		];
 
@@ -306,9 +421,24 @@ const SubscriberDataViews = ( {
 				id: 'gift',
 				label: translate( 'Gift a subscription' ),
 				callback: ( items: Subscriber[] ) => {
-					if ( items[ 0 ] && items[ 0 ].user_id ) {
-						onGiftSubscription( items[ 0 ] );
+					const subscriber = items[ 0 ];
+					if ( ! subscriber ) {
+						return;
 					}
+
+					if ( ! subscriber.user_id ) {
+						dispatch(
+							errorNotice(
+								translate(
+									'This subscriber needs to create a WordPress.com account before they can receive a gift subscription.'
+								),
+								{ duration: 10000 }
+							)
+						);
+						return;
+					}
+
+					onGiftSubscription( subscriber );
 				},
 				isPrimary: false,
 			} );
@@ -321,8 +451,7 @@ const SubscriberDataViews = ( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
-		recordSubscriberClicked,
-		siteId,
+		dispatch,
 	] );
 
 	const handleViewChange = useCallback(
@@ -360,6 +489,14 @@ const SubscriberDataViews = ( {
 					sort_field: newView.sort?.field as SubscribersSortBy,
 					sort_direction: newView.sort?.direction as 'asc' | 'desc',
 				} );
+			}
+
+			// Update URL when page changes
+			if ( newView.page !== currentView.page ) {
+				const currentPath = window.location.pathname;
+				const urlParams = new URLSearchParams( window.location.search );
+				urlParams.set( 'page', String( newView.page ) );
+				page.show( `${ currentPath }?${ urlParams.toString() }` );
 			}
 
 			setCurrentView( newView );
@@ -431,9 +568,10 @@ const SubscriberDataViews = ( {
 		>
 			<section className="subscriber-data-views__list">
 				<SubscribersHeader
-					selectedSiteId={ siteId || undefined }
+					siteId={ siteId }
 					disableCta={ isUnverified || isStaging }
 					hideSubtitle={ !! selectedSubscriber }
+					hideAddButtonLabel={ isMobile || !! selectedSubscriber }
 				/>
 				{ shouldShowLaunchpad ? (
 					<EmptyComponent />
@@ -451,14 +589,17 @@ const SubscriberDataViews = ( {
 							fields={ fields }
 							view={ currentView }
 							onClickItem={ handleSubscriberSelection }
+							isItemClickable={ () => true }
 							onChangeView={ handleViewChange }
 							selection={
-								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
+								selectedSubscriber ? [ getSubscriptionIdString( selectedSubscriber ) ] : undefined
 							}
-							onChangeSelection={ handleSubscriberSelection }
+							onChangeSelection={
+								currentView.type === 'list' ? handleSubscriberSelection : undefined
+							}
 							isLoading={ isLoading }
 							paginationInfo={ paginationInfo }
-							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
+							getItemId={ ( item: Subscriber ) => getSubscriptionIdString( item ) }
 							defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
 							actions={ actions }
 							search
@@ -467,30 +608,31 @@ const SubscriberDataViews = ( {
 					</>
 				) }
 			</section>
-			{ selectedSubscriber &&
-				siteId &&
-				! isLoadingNewsletterCategories &&
-				! isLoadingDetails &&
-				subscriber && (
-					<section className="subscriber-data-views__details">
+			{ subscriberId && siteId && (
+				<section className="subscriber-data-views__details">
+					{ isLoadingNewsletterCategories ||
+					isLoadingDetails ||
+					! subscriberDetails ||
+					getSubscriptionIdString( subscriberDetails ) !== subscriberId ? (
+						<SubscriberDetailsSkeleton />
+					) : (
 						<SubscriberDetails
-							subscriber={ subscriber }
+							subscriber={ subscriberDetails }
 							siteId={ siteId }
-							subscriptionId={ selectedSubscriber.subscription_id }
-							onClose={ () => setSelectedSubscriber( null ) }
-							onUnsubscribe={ handleUnsubscribe }
+							subscriptionId={ getSubscriptionId( subscriberDetails ) }
+							onClose={ handleClose }
+							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>
-					</section>
-				) }
+					) }
+				</section>
+			) }
 			<UnsubscribeModal
-				subscriber={ currentSubscriber }
-				onCancel={ resetSubscriber }
+				subscribers={ currentSubscribers }
+				onCancel={ resetSubscribers }
 				onConfirm={ onConfirmModal }
 			/>
 		</div>
 	);
-};
-
-export default SubscriberDataViews;
+}

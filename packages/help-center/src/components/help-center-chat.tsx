@@ -17,19 +17,21 @@ import './help-center-chat.scss';
 
 export function HelpCenterChat( {
 	isUserEligibleForPaidSupport,
+	userFieldFlowName,
 }: {
 	isUserEligibleForPaidSupport: boolean;
+	userFieldFlowName?: string;
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
+	const { currentUser, site, canConnectToZendesk, isLoadingCanConnectToZendesk } =
+		useHelpCenterContext();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
-	const userFieldFlowName = params.get( 'userFieldFlowName' );
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -45,10 +47,11 @@ export function HelpCenterChat( {
 		<OdieAssistantProvider
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
+			isLoadingCanConnectToZendesk={ isLoadingCanConnectToZendesk }
 			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
-			userFieldFlowName={ userFieldFlowName }
+			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />

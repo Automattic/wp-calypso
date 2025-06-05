@@ -81,7 +81,6 @@ Sample debug output:
 GET /theme/mood 200 1054.730 ms - 142380
 GET /calypso/style-debug.css?v=4743a0b522 200 18.408 ms - 1290419
 GET /calypso/vendor.development.js?v=147ad937b5 200 78.293 ms - 1778120
-HEAD /version?1485514730526 200 1.057 ms - 20
   calypso:server-render cache access for key +5s /theme/mood1485514728996
   calypso:server-render Server render time (ms) +1ms 1
 GET /theme/mood 200 198.760 ms - 140909

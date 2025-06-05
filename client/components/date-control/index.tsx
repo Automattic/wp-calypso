@@ -37,7 +37,7 @@ const DateControl = ( {
 			localizedStartDate.isSame( moment(), 'year' )
 		) {
 			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format(
-				`MMM D, YYYY`
+				'MMM D, YYYY'
 			) }`;
 		}
 
@@ -70,6 +70,7 @@ const DateControl = ( {
 									onTriggerClick();
 								} }
 								ref={ buttonRef }
+								__next40pxDefaultSize
 							>
 								{ getButtonLabel() }
 								<Icon className="gridicon" icon={ calendar } />

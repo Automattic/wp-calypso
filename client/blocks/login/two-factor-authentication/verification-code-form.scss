@@ -1,11 +1,33 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "two-factor-content";
+
 .two-factor-authentication__small-print {
 	clear: both;
-	font-size: $font-body-extra-small;
-	padding: 1em 0;
+	font-size: $font-body-small;
+	padding-top: 8px;
+	color: $studio-gray-40;
+
+	a {
+		color: $studio-gray-40;
+		text-decoration: underline;
+	}
 }
 
-.two-factor-authentication__verification-code-form .button {
-	width: 100%;
+.two-factor-authentication__verification-code-form {
+	.button {
+		width: 100%;
+	}
+
+	.form-label {
+		text-transform: uppercase;
+		font-size: $font-body-extra-small;
+		margin-bottom: 12px;
+	}
+
+	.verification-code-form__help-text {
+		margin-top: 16px;
+		min-height: 50px;
+	}
 }
 
 .woo .two-factor-authentication__verification-code-form-wrapper {
@@ -83,6 +105,12 @@
 			max-width: 404px;
 		}
 	}
+
+	.two-factor-authentication__small-print {
+		a {
+			color: var(--woo-purple-40);
+		}
+	}
 }
 
 .security-key-form__add-wait-for-key {
@@ -99,4 +127,16 @@
 
 .security-key-form__add-wait-for-key-heading {
 	font-weight: 600;
+}
+
+.layout.is-white-login {
+	.wp-login__main.is-social-first {
+		.login__form-header {
+			width: $login-container-width;
+			margin: 0 auto;
+			padding: 0 24px;
+			text-align: left;
+			line-height: 40px;
+		}
+	}
 }

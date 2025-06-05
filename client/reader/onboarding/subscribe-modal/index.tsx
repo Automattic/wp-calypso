@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -290,27 +290,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		handleClose();
 	}, [ dispatch, handleClose, queryClient ] );
 
-	const headerActions = (
-		<>
-			<Button onClick={ handleClose } variant="link">
-				{ __( 'Cancel' ) }
-			</Button>
-			<Button onClick={ handleContinue } variant="primary" disabled={ promptVerification }>
-				{ __( 'Continue' ) }
-			</Button>
-		</>
-	);
-
 	return (
 		isOpen && (
 			<Modal
 				onRequestClose={ handleClose }
-				isFullScreen
+				size="fill"
 				className={ clsx( 'subscribe-modal', {
 					'is-disabled': promptVerification,
 				} ) }
-				headerActions={ headerActions }
-				isDismissible={ false }
 			>
 				<div className="subscribe-modal__container">
 					{ promptVerification && <SubscribeVerificationNudge /> }
@@ -381,6 +368,22 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 									</>
 								) }
 							</div>
+						</div>
+						<div className="reader-onboarding-modal__footer">
+							<HStack justify="right" className="reader-onboarding-modal__footer-actions">
+								<Button __next40pxDefaultSize variant="tertiary" onClick={ handleClose }>
+									{ __( 'Cancel' ) }
+								</Button>
+								<Button
+									__next40pxDefaultSize
+									onClick={ handleContinue }
+									variant="primary"
+									disabled={ promptVerification }
+									accessibleWhenDisabled
+								>
+									{ __( 'Continue' ) }
+								</Button>
+							</HStack>
 						</div>
 					</div>
 				</div>

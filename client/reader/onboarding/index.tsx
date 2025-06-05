@@ -14,12 +14,13 @@ import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
+import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
+import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import './style.scss';
 
 const ReaderOnboarding = ( {
@@ -39,7 +40,7 @@ const ReaderOnboarding = ( {
 	const followedTags = useSelector( getReaderFollowedTags );
 	const follows = useSelector( getReaderFollows );
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
-	const userSettings = useSelector( getUserSettings );
+	const hasUserGravatar = useSelector( hasGravatar );
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
@@ -137,6 +138,11 @@ const ReaderOnboarding = ( {
 		}
 	}, [] );
 
+	// Fetch gravatar info when component mounts
+	useEffect( () => {
+		dispatch( requestGravatarDetails() );
+	}, [ hasGravatar, dispatch ] );
+
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
 
@@ -161,7 +167,7 @@ const ReaderOnboarding = ( {
 		},
 		{
 			id: 'account-profile',
-			title: userSettings?.has_gravatar
+			title: hasUserGravatar
 				? translate( 'Fill out your profile' )
 				: translate( 'Add your avatar and fill out your profile' ),
 			actionDispatch: navToAccountProfile,

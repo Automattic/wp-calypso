@@ -64,6 +64,7 @@ const incompatiblePlugins = new Set( [
 	'comet-cache',
 	'hyper-cache',
 	'jch-optimize',
+	'object-cache-pro',
 	'performance-lab',
 	'powered-cache',
 	'quick-cache',
@@ -125,7 +126,6 @@ const incompatiblePlugins = new Set( [
 
 	// cloning/staging
 	'flo-launch',
-	'wp-staging',
 
 	// misc
 	'adult-mass-photos-downloader',

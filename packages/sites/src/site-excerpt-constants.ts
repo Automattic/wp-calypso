@@ -21,6 +21,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'user_interactions',
 	'lang',
 	'site_owner',
+	'is_a8c',
 ] as const;
 
 export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
@@ -31,6 +32,7 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'is_redirect',
 	'is_wpforteams_site',
 	'launchpad_screen',
+	'site_creation_flow',
 	'site_intent',
 	'unmapped_url',
 	'updated_at',

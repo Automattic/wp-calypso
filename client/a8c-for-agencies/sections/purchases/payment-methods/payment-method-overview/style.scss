@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .payment-method-overview-empty-state {
 	margin-block-start: 60px;
@@ -43,14 +44,13 @@
 		}
 
 		.payment-method-overview-empty-state__card-title {
-			font-size: rem(18px);
-			font-weight: 600;
+			@include heading-x-large;
 			margin-block-end: 8px;
 		}
 
 		.payment-method-overview-empty-state__card-description {
 			color: var(--color-neutral-60);
-			font-size: rem(14px);
+			@include body-medium;
 		}
 
 		@include break-medium {
@@ -109,10 +109,8 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		display: block;
-		font-size: 1rem;
+		@include body-large;
 		color: var(--color-neutral-60);
-		font-weight: 400;
-		line-height: 1.2;
 	}
 }
 

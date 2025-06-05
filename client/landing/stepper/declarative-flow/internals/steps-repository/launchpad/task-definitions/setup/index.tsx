@@ -46,7 +46,7 @@ export const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => 
 	return {
 		...task,
 		disabled: false,
-		calypso_path: addQueryArgs( `/setup/update-options/options`, {
+		calypso_path: addQueryArgs( '/setup/update-options/options', {
 			...getSiteIdOrSlug( flow, site, siteSlug ),
 			flowToReturnTo: flow,
 		} ),

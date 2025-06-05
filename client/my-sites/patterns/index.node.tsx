@@ -116,8 +116,8 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 		[
 			`/${ langParam }/patterns/:category?`,
 			`/${ langParam }/patterns/:type(layouts)/:category?`,
-			`/patterns/:category?`,
-			`/patterns/:type(layouts)/:category?`,
+			'/patterns/:category?',
+			'/patterns/:type(layouts)/:category?',
 		],
 		ssrSetupLocale,
 		excludeSearchFromCanonicalUrlAndHrefLangLinks,

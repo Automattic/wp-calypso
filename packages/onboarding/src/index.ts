@@ -19,6 +19,7 @@ export { default as IntentScreen } from './intent-screen';
 export { default as SelectItems } from './select-items';
 export { default as SelectItemsAlt } from './select-items-alt';
 export { default as StepContainer } from './step-container';
+export * as Step from './step-container-v2';
 export { default as StepNavigationLink } from './step-navigation-link';
 export { default as MShotsImage } from './mshots-image';
 export { useStepPersistedState, clearStepPersistedState } from './hooks/use-persisted-state';

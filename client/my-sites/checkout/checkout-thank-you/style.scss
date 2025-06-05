@@ -296,7 +296,7 @@
 				color: var(--color-text);
 				background-color: var(--color-surface);
 				box-shadow:
-					0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+					0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 					0 1px 2px var(--color-neutral-0);
 			}
 		}
@@ -305,7 +305,7 @@
 	.thank-you-card__header {
 		color: var(--color-text);
 		background-color: var(--color-surface);
-		box-shadow: 0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5);
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	}
 
 	.thank-you-card__description {
@@ -593,11 +593,16 @@
 }
 
 .is-section-checkout-thank-you {
-	background: var(--studio-white);
-
 	.layout__content {
 		padding-right: 0;
 		padding-left: 0;
+	}
+}
+
+.is-section-checkout-pending,
+.is-section-checkout-thank-you {
+	&:not( :has( .step-container-v2 ) ) {
+		background: var( --studio-white, #fff );
 	}
 }
 
@@ -611,6 +616,21 @@
 .is-section-checkout-thank-you .empty-content__line {
 	font-size: $font-body;
 	font-weight: normal;
+}
+
+.is-section-checkout-pending {
+	&.has-no-sidebar {
+		.layout__content {
+			padding: 0;
+			overflow: hidden;
+		}
+	
+		.checkout-thank-you__pending {
+			.wpcom__loading.checkout__pending-content {
+				margin: calc( 60px + 32vh) auto 0;
+			}
+		}
+	}
 }
 
 .checkout-thank-you__wordpress-logo {
@@ -828,7 +848,7 @@ main.akismet-checkout-thank-you {
 	}
 
 	.akismet-checkout-thank-you__emoji {
-		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 40px;
 	}
 
 	.akismet-checkout-thank-you__card {
@@ -959,5 +979,11 @@ main.checkout-thank-you__pending {
 	}
 	.wpcom__loading-title {
 		height: auto;
+	}
+
+	.checkout__pending-content {
+		&.wpcom__loading {
+			margin: calc( 32vh - 19px ) auto 0;
+		}
 	}
 }

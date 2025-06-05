@@ -10,7 +10,7 @@ $horizontal-padding: 20px;
 $cookie-banner-bg-color: #fff;
 $cookie-banner-text-color: #000;
 $cookie-banner-text-muted-color: #000;
-$cookie-banner-link-color: #117ac9;
+$cookie-banner-link-color: var(--studio-blue-50);
 
 // Buttons
 $cookie-banner-main-button-color: $cookie-banner-link-color;

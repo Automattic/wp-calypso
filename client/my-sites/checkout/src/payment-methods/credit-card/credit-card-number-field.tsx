@@ -62,7 +62,11 @@ export default function CreditCardNumberField( {
 	return (
 		<Label>
 			<LabelText>{ __( 'Card number' ) }</LabelText>
-			<StripeFieldWrapper className="number" hasError={ !! cardNumberError }>
+			<StripeFieldWrapper
+				className="number"
+				hasError={ !! cardNumberError }
+				isDisabled={ isDisabled }
+			>
 				<CardNumberElement
 					options={ {
 						style: stripeElementStyle,

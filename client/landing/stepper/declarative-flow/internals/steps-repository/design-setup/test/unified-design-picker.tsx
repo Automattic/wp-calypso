@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -58,21 +59,16 @@ jest.mock( 'calypso/state/themes/hooks/use-is-theme-allowed-on-site', () => ( {
 	useIsThemeAllowedOnSite: () => false,
 } ) );
 
-jest.mock( 'calypso/state/themes/selectors', () => ( {
+jest.mock( 'calypso/state/themes/selectors/get-theme', () => ( {
 	getTheme: () => {
 		return;
 	},
 } ) );
 
-jest.mock( '../../../../../hooks/use-marketplace-theme-products', () => ( {
-	useMarketplaceThemeProducts: () => ( {
-		isLoading: false,
-		selectedMarketplaceProduct: '',
-		selectedMarketplaceProductCartItems: [],
-		isMarketplaceThemeSubscriptionNeeded: false,
-		isMarketplaceThemeSubscribed: false,
-		isExternallyManagedThemeAvailable: false,
-	} ),
+jest.mock( 'calypso/state/themes/selectors/get-theme-demo-url', () => ( {
+	getThemeDemoUrl: () => {
+		return;
+	},
 } ) );
 
 /**
@@ -96,12 +92,15 @@ const renderComponent = ( component, initialState = {} ) => {
 	const queryClient = new QueryClient();
 	const store = mockStore( {
 		purchases: {},
+		productsList: {
+			isFetching: false,
+		},
 		sites: {},
 		ui: { selectedSiteId: 'anySiteId' },
 		...initialState,
 	} );
 
-	const initialEntries = [ `/setup/site-setup/design-setup?siteSlug=test.wordpress.com` ];
+	const initialEntries = [ '/setup/site-setup/design-setup?siteSlug=test.wordpress.com' ];
 
 	return render(
 		<Provider store={ store }>

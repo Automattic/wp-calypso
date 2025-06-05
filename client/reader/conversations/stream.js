@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { get } from 'lodash';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -41,7 +41,11 @@ export default function ( props ) {
 				<ConversationTitle title={ props.title } />
 				<NavigationHeader
 					title={ translate( 'Conversations' ) }
-					subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
+					subtitle={ fixMe( {
+						text: 'Check in on your open discussions.',
+						newCopy: translate( 'Check in on your open discussions.' ),
+						oldCopy: translate( 'Monitor all of your ongoing discussions.' ),
+					} ) }
 					className="conversations__header"
 				/>
 			</Stream>

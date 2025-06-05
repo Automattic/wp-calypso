@@ -33,6 +33,9 @@ export const actions = {
 	setUseForAllSubscriptions( payload: boolean ): CardStoreAction {
 		return { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET', payload };
 	},
+	setForBusinessUse( payload: boolean ): CardStoreAction {
+		return { type: 'USE_FOR_BUSINESS_SET', payload };
+	},
 	touchAllFields(): CardStoreAction {
 		return { type: 'TOUCH_ALL_FIELDS' };
 	},
@@ -58,6 +61,9 @@ export const selectors = {
 	},
 	useForAllSubscriptions( state: CardStoreState ) {
 		return state.useForAllSubscriptions;
+	},
+	useForBusiness( state: CardStoreState ) {
+		return state.useForBusiness;
 	},
 };
 
@@ -161,6 +167,15 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
+	function forBusinessReducer( state: boolean | undefined, action?: CardStoreAction ) {
+		switch ( action?.type ) {
+			case 'USE_FOR_BUSINESS_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function getInitialUseForAllSubscriptionsValue() {
 		if ( ! allowUseForAllSubscriptions ) {
 			return false;
@@ -180,6 +195,7 @@ export function createCreditCardPaymentMethodStore( {
 					cardDataComplete: cardDataCompleteReducer(),
 					brand: brandReducer(),
 					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
+					useForBusiness: forBusinessReducer( undefined ),
 				},
 				action: AnyAction
 			) {
@@ -194,6 +210,7 @@ export function createCreditCardPaymentMethodStore( {
 					useForAllSubscriptions: allowUseForAllSubscriptions
 						? allSubscriptionsReducer( state.useForAllSubscriptions, action as CardStoreAction )
 						: false,
+					useForBusiness: forBusinessReducer( state.useForBusiness, action as CardStoreAction ),
 				};
 			},
 			actions,

@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';

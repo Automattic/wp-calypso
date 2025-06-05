@@ -1,6 +1,6 @@
 import { Icon, check } from '@wordpress/icons';
 import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
-
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 type Props = Omit< PageSectionProps, 'children' > & {
@@ -8,7 +8,7 @@ type Props = Omit< PageSectionProps, 'children' > & {
 	items: {
 		title: string;
 		description: string;
-		benefits: string[];
+		benefits: ( string | TranslateResult )[];
 	}[];
 };
 

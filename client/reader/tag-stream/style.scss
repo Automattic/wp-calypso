@@ -60,7 +60,7 @@
 .tag-stream__header-controls {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	padding-top: 3px;
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -96,12 +96,6 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 16px 16px;
-	}
-}
-
-.is-reader-page .reader-feed-header.has-back-button .card.header-cake {
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 32px 0;
 	}
 }
 

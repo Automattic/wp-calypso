@@ -9,9 +9,6 @@
 		flex-shrink: 0;
 	}
 
-	.site-logs-toolbar__toggle {
-		border-color: var( --color-neutral-10 );
-	}
 	.site-logs-toolbar__toggle-option {
 		white-space: nowrap;
 	}
@@ -54,6 +51,7 @@
 
 // Long fields in PHP Errors.
 .site-logs-table__file,
+.site-logs-table__name,
 // Long fields in Web Errors.
 .site-logs-table__request-url,
 .site-logs-table__http-referer {

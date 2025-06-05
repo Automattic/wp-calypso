@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable import/no-nodejs-modules */
 /**
  * Build a single language file for each language to `dist/languages` folder.
  */
@@ -7,7 +5,6 @@
 const fs = require( 'fs' );
 const resolve = require( 'path' ).resolve;
 const languages = require( '@automattic/languages' );
-const fetch = require( 'node-fetch' );
 
 const outputPath = './dist/languages';
 const bundleFile = './dist/block-editor.min.js';

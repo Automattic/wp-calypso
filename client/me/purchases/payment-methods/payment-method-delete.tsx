@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isPaymentAgreement, PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -32,12 +32,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 		closeDialog();
 		deletePaymentMethod( card.stored_details_id )
 			.then( () => {
-				if ( isPaymentAgreement( card ) ) {
-					reduxDispatch( successNotice( translate( 'Payment method deleted successfully' ) ) );
-				} else {
-					reduxDispatch( successNotice( translate( 'Card deleted successfully' ) ) );
-				}
-
+				reduxDispatch( successNotice( translate( 'Payment method removed' ) ) );
 				recordTracksEvent( 'calypso_purchases_delete_payment_method' );
 			} )
 			.catch( ( error: Error ) => {
@@ -46,14 +41,14 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	}, [ deletePaymentMethod, closeDialog, card, translate, reduxDispatch ] );
 
 	/* translators: %s is the name of the payment method (usually the last 4 digits of the card but could be a proper name for PayPal). */
-	const deleteText = translate( 'Delete the "%s" payment method', {
+	const deleteText = translate( 'Remove the "%s" payment method', {
 		textOnly: true,
 		args: [ 'card_last_4' in card ? card.card_last_4 : card.name ],
 	} );
 
 	const renderDeleteButton = () => {
-		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete this payment method' );
-		const ariaText = isDeleting ? translate( 'Deleting…' ) : deleteText;
+		const text = isDeleting ? translate( 'Removing…' ) : translate( 'Remove payment method' );
+		const ariaText = isDeleting ? translate( 'Removing…' ) : deleteText;
 
 		return (
 			<Button

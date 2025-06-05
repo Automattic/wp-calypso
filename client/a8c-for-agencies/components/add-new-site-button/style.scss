@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .site-selector-and-importer__button {
 	.gridicon {
@@ -69,8 +70,7 @@
 
 .site-selector-and-importer__popover-column-heading {
 	color: var(--color-accent-40);
-	font-size: rem(12px);
-	font-weight: 500;
+	@include heading-small;
 	margin-block-end: 8px;
 }
 
@@ -151,20 +151,18 @@
 	}
 
 	.site-selector-and-importer__popover-button-heading {
-		font-size: rem(14px);
-		font-weight: 600;
+		@include heading-medium;
 	}
 
 	.site-selector-and-importer__popover-button-description {
-		font-size: rem(12px);
-		line-height: 1.33;
+		@include body-small;
 		color: var(--color-accent);
 		padding-top: 4px;
 	}
 }
 
 .site-selector-and-importer__popover-site-count {
-	font-size: rem(12px);
+	@include body-small;
 	font-style: italic;
 	color: var(--color-accent-100);
 	padding-top: 4px;
@@ -172,8 +170,7 @@
 
 .site-selector-and-importer__popover-development-site-cta {
 	padding-top: 12px;
-	font-size: rem(12px);
-	font-weight: 600;
+	@include heading-small;
 
 	&.disabled {
 		color: var(--color-accent-20);

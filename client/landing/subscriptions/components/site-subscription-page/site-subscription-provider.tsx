@@ -27,7 +27,7 @@ export const SiteSubscriptionProvider: React.FC< { children: React.ReactNode } >
 		( path: Path ) => {
 			switch ( path ) {
 				case Path.ManageAllSubscriptions:
-					reactRouterNavigate( `/subscriptions/sites` );
+					reactRouterNavigate( '/subscriptions/sites' );
 					return;
 			}
 		},

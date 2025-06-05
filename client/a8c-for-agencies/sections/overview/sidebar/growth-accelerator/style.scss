@@ -1,10 +1,13 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .overview__growth-accelerator {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 	border-radius: 4px;
-    background-color: var(--color-primary-0);
-    border-color: var(--color-primary-5);
+	background-color: var(--color-primary-0);
+	border-color: var(--color-primary-5);
 
 	&::after {
 		display: none;
@@ -12,11 +15,11 @@
 }
 
 .overview__growth-accelerator-header {
-	@include a4a-font-heading-md;
+	@include heading-large;
 }
 
 .overview__growth-accelerator-body {
-	@include a4a-font-body-md;
+	@include body-medium;
 	margin: 0;
 }
 

@@ -26,9 +26,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	const query = params.get( 'query' );
 	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
-
+	const query = params.get( 'query' );
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
 
@@ -70,7 +69,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 					post_id: result.post_id,
 					blog_id: result.blog_id,
 				};
-				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				recordTracksEvent( 'calypso_inlinehelp_article_no_postid_redirect', tracksData );
 				window.open( result.link, '_blank' );
 				return;
 			}

@@ -1,6 +1,4 @@
-import page from '@automattic/calypso-router';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
@@ -14,42 +12,44 @@ import {
 } from 'calypso/landing/subscriptions/tracks';
 import { resemblesUrl } from 'calypso/lib/url';
 import { RecommendedSites } from '../recommended-sites';
+import { getUrlQuerySearchTerm, SEARCH_QUERY_PARAM, setUrlQuery } from '../utils';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
-
-const SEARCH_KEY = 's';
-
-function getUrlQuerySearchTerm(): string {
-	const queryArgs = getQueryArgs( window.location.href );
-	return ( queryArgs[ SEARCH_KEY ] as string ) ?? '';
-}
-
-const setUrlQuery = ( key: string, value: string ) => {
-	const path = window.location.pathname + window.location.search;
-	const nextPath = ! value
-		? removeQueryArgs( path, key )
-		: addQueryArgs( path, { [ key ]: value } );
-
-	// Only trigger a page show when path has changed.
-	if ( nextPath !== path ) {
-		page.replace( nextPath );
-	}
-};
 
 const ReaderSiteSubscriptions = () => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery();
-	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
+	const {
+		data: { subscriptions },
+		isFetching,
+	} = SubscriptionManager.useSiteSubscriptionsQuery() ?? {};
+	const { feedItems: unsubscribedFeedItems, searchQueryResult } =
+		Reader.useUnsubscribedFeedsSearch() ?? {};
+	const { isPending: isUnsubscribing } = SubscriptionManager.useSiteUnsubscribeMutation();
 
-	const hasSomeSubscriptions = siteSubscriptionsQuery.data.subscriptions.length > 0;
-	const hasSomeUnsubscribedSearchResults = ( unsubscribedFeedsSearch?.feedItems.length ?? 0 ) > 0;
+	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
+	const filteredUnsubscribedFeedItems = unsubscribedFeedItems?.filter(
+		( feedItem: Reader.FeedItem ): boolean => {
+			const isDuplicate = subscriptions.find(
+				( subscription ): boolean =>
+					! subscription.isDeleted &&
+					// For match either compare feed_ID or URL.
+					( subscription.feed_ID === feedItem.feed_ID ||
+						subscription.URL === feedItem.subscribe_URL )
+			);
+
+			return ! isDuplicate;
+		}
+	);
+
+	const hasSomeSubscriptions = subscriptions.length > 0;
+	const hasSomeUnsubscribedSearchResults = ( filteredUnsubscribedFeedItems?.length ?? 0 ) > 0;
 
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
 
 	// Update url query when search term changes
 	useEffect( () => {
-		setUrlQuery( SEARCH_KEY, searchTerm );
+		setUrlQuery( SEARCH_QUERY_PARAM, searchTerm );
 	}, [ searchTerm ] );
 
 	useEffect( () => {
@@ -60,6 +60,11 @@ const ReaderSiteSubscriptions = () => {
 			}
 		}
 	}, [ searchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
+
+	const shouldShowUnsubcribedFeedsListLoader =
+		isFetching || // If site subscriptions are still fetching.
+		( searchQueryResult?.isFetching ?? false ) || // If unsubscribed feeds are still fetching.
+		isUnsubscribing; // If user is unsubscribing from subscriptions table.
 
 	return (
 		<>
@@ -72,7 +77,13 @@ const ReaderSiteSubscriptions = () => {
 					{ translate( 'Here are some other sites that match your search.' ) }
 				</div>
 			) }
-			<UnsubscribedFeedsSearchList />
+
+			{ hasSomeUnsubscribedSearchResults && (
+				<UnsubscribedFeedsSearchList
+					feedItems={ filteredUnsubscribedFeedItems }
+					isLoading={ shouldShowUnsubcribedFeedsListLoader }
+				/>
+			) }
 		</>
 	);
 };

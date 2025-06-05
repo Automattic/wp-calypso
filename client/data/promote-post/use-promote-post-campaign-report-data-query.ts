@@ -16,7 +16,8 @@ const useCampaignReportDataQuery = (
 				`/stats/${ campaignId }/report/${ reportId }`,
 				'GET',
 				undefined,
-				'1.1'
+				'1.1',
+				true
 			);
 			return response;
 		},

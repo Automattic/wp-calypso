@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .import-from-wpcom-modal {
 	max-width: 827px;
@@ -37,13 +38,13 @@
 }
 
 .import-from-wpcom-modal__title {
-	@include a4a-font-heading-lg;
+	@include heading-x-large;
 	margin: 0;
 	padding: 0;
 }
 
 p.import-from-wpcom-modal__instruction {
-	@include a4a-font-body-sm;
+	@include body-small;
 	margin: 0;
 	color: var(--color-accent-60);
 }
@@ -154,7 +155,7 @@ p.import-from-wpcom-modal__instruction {
 	}
 
 	span {
-		@include a4a-font-body-sm;
+		@include body-small;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

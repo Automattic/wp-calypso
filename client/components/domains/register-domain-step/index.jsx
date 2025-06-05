@@ -2,13 +2,13 @@ import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-product
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import {
+	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
 } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -27,11 +27,9 @@ import {
 	snakeCase,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
+import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { v4 as uuid } from 'uuid';
-import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
@@ -81,7 +79,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
-import tip from './tip';
 
 import './style.scss';
 
@@ -320,7 +317,7 @@ class RegisterDomainStep extends Component {
 	// created a site by skipping the domain step. In these cases, fire the initial search
 	// with the subdomain name.
 	getInitialQueryInLaunchFlow() {
-		if ( ! this.props.isInLaunchFlow ) {
+		if ( ! this.props.isInLaunchFlow || this.props.selectedSite === null ) {
 			return;
 		}
 
@@ -337,9 +334,26 @@ class RegisterDomainStep extends Component {
 		return strippedHostname ?? hostname;
 	}
 
+	getInitialQueryFromSiteName() {
+		// fallback to siteTitle in query string if there is no selected site in the props
+		// This usually happens the first time this step is loaded for a free trial site
+		const queryParams = parse( window.location.search.substring( 1 ) );
+		const siteTitle = queryParams.siteTitle;
+		return this.props.selectedSite?.name || siteTitle;
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
+		let query = this.state.lastQuery || storedQuery;
+
+		// Flow specific query fallbacks.
+		if ( ! query && this.props.flowName === AI_SITE_BUILDER_FLOW ) {
+			query = this.getInitialQueryFromSiteName();
+		}
+
+		if ( ! query && this.props.isInLaunchFlow ) {
+			query = this.getInitialQueryInLaunchFlow();
+		}
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );
@@ -409,7 +423,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	getNewRailcarId() {
-		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
+		return `${ crypto.randomUUID().replace( /-/g, '' ) }-domain-suggestion`;
 	}
 
 	focusSearchCard = () => {
@@ -523,7 +537,6 @@ class RegisterDomainStep extends Component {
 						/>
 					) }
 					{ this.renderFilterContent() }
-					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
 				</div>
 				{ showAlreadyOwnADomain && (
@@ -583,7 +596,8 @@ class RegisterDomainStep extends Component {
 			return { key: `${ tld }`, text: `.${ tld }` };
 		} );
 
-		items.unshift( { key: 'all', text: 'All' } );
+		// translators: filter label displayed when all TLDs are enabled
+		items.unshift( { key: 'all', text: this.props.translate( 'All' ) } );
 
 		const handleClick = ( index ) => {
 			const option = items[ index ].key;
@@ -736,30 +750,8 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				{ this.renderBestNamesPrompt() }
-				<EmptyContent
-					title=""
-					className="register-domain-step__placeholder"
-					illustration={ Illustration }
-					illustrationWidth={ 280 }
-				/>
+				<EmptyContent title="" className="register-domain-step__placeholder" />
 			</>
-		);
-	}
-
-	renderDomainExplanationImage() {
-		return (
-			<div className="register-domain-step__domain-side-content-container-domain-explanation-image">
-				<span></span>
-				<span></span>
-				<span className="register-domain-step__domain-side-content-container-domain-explanation-image-url">
-					https://
-					{ this.props.translate( 'yoursitename', {
-						comment: 'example url used to explain what a domain is.',
-					} ) }
-					.com
-				</span>
-				<span></span>
-			</div>
 		);
 	}
 
@@ -1538,7 +1530,6 @@ class RegisterDomainStep extends Component {
 		const { translate, promptText } = this.props;
 		return (
 			<div className="register-domain-step__example-prompt">
-				<Icon icon={ tip } size={ 20 } />
 				{ promptText ?? translate( 'The best names are short and memorable' ) }
 			</div>
 		);
@@ -1568,6 +1559,7 @@ class RegisterDomainStep extends Component {
 
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
+		const rootVendor = get( suggestion, 'vendor' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
 		const {
@@ -1604,7 +1596,8 @@ class RegisterDomainStep extends Component {
 						domain,
 						status,
 						this.props.analyticsSection,
-						this.props.flowName
+						this.props.flowName,
+						rootVendor
 					);
 
 					const skipAvailabilityErrors =
@@ -1713,7 +1706,6 @@ class RegisterDomainStep extends Component {
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
 				hideMatchReasons={ this.props.isOnboarding }
-				showDomainTransferSuggestion={ this.props.isOnboarding }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }

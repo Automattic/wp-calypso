@@ -77,11 +77,15 @@ const Launchpad = ( {
 	if ( ! launchpadContext ) {
 		return null;
 	}
-
+	const shareSiteTask = checklist?.find( ( task: Task ) => task.id === 'share_site' ) ?? null;
 	return (
 		<>
 			{ shareSiteModalIsOpen && site && (
-				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
+				<ShareSiteModal
+					setModalIsOpen={ setShareSiteModalIsOpen }
+					site={ site }
+					task={ shareSiteTask }
+				/>
 			) }
 			<LaunchpadInternal
 				site={ site }

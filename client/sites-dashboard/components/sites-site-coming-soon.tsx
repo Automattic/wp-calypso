@@ -13,7 +13,7 @@ const Root = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	backgroundColor: '#117ac9',
+	backgroundColor: 'var(--studio-blue-50)',
 	borderRadius: 4,
 	boxSizing: 'border-box',
 	border: '1px solid rgb(238, 238, 238)',

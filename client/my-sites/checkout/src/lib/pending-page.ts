@@ -21,6 +21,11 @@ export interface PendingPageRedirectOptions {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	/**
+	 * `fromExternalCheckout` is a boolean that indicates if the checkout is coming from an external checkout (e.g. A4A client checkout).
+	 *  If this is true, we will force to use https://wordpress.com as the origin for the pending page.
+	 */
+	fromExternalCheckout?: boolean;
 }
 
 export interface RedirectInstructions {
@@ -52,9 +57,9 @@ export interface RedirectForTransactionStatusArgs {
  * Redirect to a checkout pending page and from there to a (relative or absolute) url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -95,9 +100,9 @@ function isRelativeUrl( url: string ): boolean {
  * Redirect to a checkout pending page and from there to a relative url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -130,9 +135,9 @@ export function relativeRedirectThroughPending(
  * Redirect to a checkout pending page and from there to an absolute url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -160,9 +165,9 @@ export function absoluteRedirectThroughPending(
  * Add a relative or absolute url to the checkout pending page url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -175,6 +180,9 @@ export function absoluteRedirectThroughPending(
  *
  * If `receiptId` is provided, it means the transaction is already complete and
  * may cause the pending page to redirect immediately to the `url`.
+ *
+ * If `fromExternalCheckout` is true, it means the checkout is coming from an external checkout (e.g. A4A client checkout).
+ * In this case, we will force to use https://wordpress.com as the origin for the pending page.
  *
  * You should always specify `urlType` as either 'absolute' or 'relative' but
  * it will default to 'absolute'.
@@ -189,20 +197,23 @@ export function addUrlToPendingPageRedirect(
 		urlType = 'absolute',
 		receiptId = ':receiptId',
 		fromSiteSlug,
+		fromExternalCheckout,
 	} = options;
 
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
 	const successUrlPath =
 		`/checkout/thank-you/${ siteSlug || 'no-site' }/pending/` +
 		( orderId ? `${ orderId }` : ':orderId' );
-	const successUrlBase = `${ origin }${ successUrlPath }`;
+	const successUrlBase = `${
+		fromExternalCheckout ? 'https://wordpress.com' : origin
+	}${ successUrlPath }`;
 	const successUrlObject = new URL( successUrlBase );
-	successUrlObject.searchParams.set( 'redirectTo', url );
+	successUrlObject.searchParams.set( 'redirect_to', url );
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
 	if ( fromSiteSlug ) {
 		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
 	}
-	if ( urlType === 'relative' ) {
+	if ( urlType === 'relative' && ! fromExternalCheckout ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
 	return successUrlObject.href;
@@ -236,7 +247,7 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
 /**
  * Return false for absolute URLs which are on unknown hosts.
  *
- * Because the `redirectTo` query param on the pending page is the target of
+ * Because the `redirect_to` query param on the pending page is the target of
  * that page's redirect, we want to make sure we do not create an open redirect
  * security hole that could go anywhere. This function will disallow a URL
  * which is absolute and on an unknown host.
@@ -255,6 +266,8 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'cloud.jetpack.com',
 		'jetpack.com',
 		'akismet.com',
+		'agencies.automattic.com',
+		'agencies.localhost',
 		siteSlug,
 	];
 
@@ -299,7 +312,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 /**
  * Guard against redirecting to absolute URLs which are on unknown hosts.
  *
- * Because the `redirectTo` query param on the pending page is the target of
+ * Because the `redirect_to` query param on the pending page is the target of
  * that page's redirect, we want to make sure we do not create an open redirect
  * security hole that could go anywhere. This function will disallow a URL
  * which is absolute and on an unknown host, returning the `fallbackUrl` instead.
@@ -334,7 +347,7 @@ function getDefaultSuccessUrl(
  * is no receipt and no order (meaning we have to guess what to do).
  *
  * If a redirect is appropriate, the returned URL will usually be the
- * `redirectTo` option, but only if it is a relative URL or in a list of
+ * `redirect_to` option, but only if it is a relative URL or in a list of
  * allowed hosts to prevent having an open redirect. Otherwise it may be a
  * generic thank-you page.
  *
@@ -357,7 +370,7 @@ export function getRedirectFromPendingPage( {
 	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/checkout/no-site';
-	const errorUrl = `/checkout/failed-purchases`;
+	const errorUrl = '/checkout/failed-purchases';
 
 	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
 	// we can redirect user immediately to vendor application.

@@ -1,12 +1,12 @@
 import debugFactory from 'debug';
 import { useContext, useMemo } from 'react';
-import CheckoutContext from '../checkout-context';
+import { PaymentMethodProviderContext } from '../payment-method-provider-context';
 import type { PaymentMethod, TogglePaymentMethod } from '../../types';
 
 const debug = debugFactory( 'composite-checkout:payment-methods' );
 
-export function usePaymentMethodId(): [ string | null, ( id: string ) => void ] {
-	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+export function usePaymentMethodId(): [ string | null | undefined, ( id: string ) => void ] {
+	const { paymentMethodId, setPaymentMethodId } = useContext( PaymentMethodProviderContext );
 	if ( ! setPaymentMethodId ) {
 		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
 	}
@@ -14,7 +14,7 @@ export function usePaymentMethodId(): [ string | null, ( id: string ) => void ] 
 }
 
 export function usePaymentMethod(): PaymentMethod | null {
-	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	const { paymentMethodId, setPaymentMethodId } = useContext( PaymentMethodProviderContext );
 	const allPaymentMethods = useAllPaymentMethods();
 	if ( ! setPaymentMethodId ) {
 		throw new Error( 'usePaymentMethod can only be used inside a CheckoutProvider' );
@@ -31,7 +31,7 @@ export function usePaymentMethod(): PaymentMethod | null {
 }
 
 export function useAllPaymentMethods() {
-	const { allPaymentMethods } = useContext( CheckoutContext );
+	const { allPaymentMethods } = useContext( PaymentMethodProviderContext );
 	if ( ! allPaymentMethods ) {
 		throw new Error( 'useAllPaymentMethods cannot be used outside of CheckoutProvider' );
 	}
@@ -39,7 +39,9 @@ export function useAllPaymentMethods() {
 }
 
 export function useAvailablePaymentMethodIds(): string[] {
-	const { allPaymentMethods, disabledPaymentMethodIds } = useContext( CheckoutContext );
+	const { allPaymentMethods, disabledPaymentMethodIds } = useContext(
+		PaymentMethodProviderContext
+	);
 	if ( ! allPaymentMethods ) {
 		throw new Error( 'useAvailablePaymentMethodIds cannot be used outside of CheckoutProvider' );
 	}
@@ -53,8 +55,9 @@ export function useAvailablePaymentMethodIds(): string[] {
 }
 
 export function useTogglePaymentMethod(): TogglePaymentMethod {
-	const { allPaymentMethods, disabledPaymentMethodIds, setDisabledPaymentMethodIds } =
-		useContext( CheckoutContext );
+	const { allPaymentMethods, disabledPaymentMethodIds, setDisabledPaymentMethodIds } = useContext(
+		PaymentMethodProviderContext
+	);
 	if ( ! allPaymentMethods ) {
 		throw new Error( 'useTogglePaymentMethod cannot be used outside of CheckoutProvider' );
 	}

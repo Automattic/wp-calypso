@@ -19,10 +19,12 @@ type Props = {
 };
 
 const BlueprintFormRadio = ( {
+	id,
 	label,
 	checked,
 	onChange,
 }: {
+	id?: string;
 	label: string;
 	checked: boolean;
 	onChange: () => void;
@@ -39,7 +41,13 @@ const BlueprintFormRadio = ( {
 				}
 			} }
 		>
-			<FormRadio label={ label } checked={ checked } onChange={ onChange } />
+			<FormRadio
+				id={ id }
+				htmlFor={ id }
+				label={ label }
+				checked={ checked }
+				onChange={ onChange }
+			/>
 		</div>
 	);
 };
@@ -98,6 +106,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 					{ workModelOptions.map( ( option ) => (
 						<BlueprintFormRadio
 							key={ `work-model-option-${ option.value }` }
+							id={ `work-model-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.workWithClients === option.value }
 							onChange={ () => {
@@ -120,7 +129,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 
 			<FormField
 				label={ translate(
-					`Is there anything specific about your agency's approach or any challenges you face that you would like us to consider when creating your blueprint?`
+					"Is there anything specific about your agency's approach or any challenges you face that you would like us to consider when creating your blueprint?"
 				) }
 			>
 				<FormTextarea

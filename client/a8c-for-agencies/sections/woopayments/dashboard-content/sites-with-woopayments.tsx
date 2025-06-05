@@ -81,7 +81,7 @@ export default function SitesWithWooPayments() {
 				label: translate( 'WooPayments Status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
-					<WooPaymentsStatusColumn state={ item.state } siteUrl={ item.siteUrl } />
+					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
 				),
 				enableHiding: false,
 				enableSorting: false,
@@ -108,6 +108,9 @@ export default function SitesWithWooPayments() {
 						: `${ siteUrl }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term`;
 					window.open( url, '_blank' );
 					dispatch( recordTracksEvent( 'calypso_a4a_woopayments_visit_wp_admin' ) );
+				},
+				isEligible( item: SitesWithWooPaymentsState ) {
+					return item.state !== 'disconnected';
 				},
 			},
 		],

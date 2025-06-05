@@ -61,7 +61,7 @@ export class SignupPickPlanPage {
 
 		if ( ! body.blog_details.blogid ) {
 			console.error( body );
-			throw new Error( `Failed to locate blog ID for the created site.` );
+			throw new Error( 'Failed to locate blog ID for the created site.' );
 		}
 
 		// Cast the blogID value to a number, in case it comes in as a string.

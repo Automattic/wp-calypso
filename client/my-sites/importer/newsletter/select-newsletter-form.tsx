@@ -61,15 +61,9 @@ export default function SelectNewsletterForm( {
 			) }
 			{ ! hasError && (
 				<p className="select-newsletter-form__help">
-					{ i18n.fixMe( {
-						text: "Enter your Substack URL. We'll create a link where you can download your newsletter content.",
-						newCopy: i18n.translate(
-							"Enter your Substack URL. We'll create a link where you can download your newsletter content."
-						),
-						oldCopy: i18n.translate(
-							'Enter the URL of the Substack newsletter that you wish to import.'
-						),
-					} ) }
+					{ i18n.translate(
+						"Enter your Substack URL. We'll create a link where you can download your newsletter content."
+					) }
 				</p>
 			) }
 		</Card>

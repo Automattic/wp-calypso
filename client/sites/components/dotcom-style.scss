@@ -283,6 +283,12 @@
 		}
 	}
 
+	&:has(.hosting-dashboard-item-view__navigation.is-hidden) {
+		.hosting-dashboard-item-view__content {
+			padding-top: 15px;
+		}
+	}
+
 	.is-staging-site {
 		position: relative;
 
@@ -320,6 +326,7 @@
 	.hosting-dashboard-item-view__content {
 		> *:not(.site-logs) {
 			max-width: 1400px;
+			overflow-wrap: break-word;
 		}
 	}
 }
@@ -329,7 +336,7 @@
 	&.hosting-dashboard-layout,
 	.hosting-dashboard-layout-column,
 	.hosting-dashboard-layout-with-columns__container {
-		overflow: visible;
+		overflow: hidden;
 		height: calc(100vh - 32px - var(--masterbar-height));
 	}
 

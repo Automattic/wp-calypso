@@ -13,7 +13,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
-type Site = {
+export type Site = {
 	ID?: number;
 	icon?: {
 		img: string;
@@ -47,6 +47,7 @@ export function SiteIcon( {
 	title = '',
 	onClick = () => {},
 }: SiteIconProps ) {
+	iconUrl = iconUrl?.replace( /\/$/, '' ); // Remove trailing slash from URL as it may lead to 404 errors when adding size parameters.
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
 	const classes = clsx( 'site-icon', {

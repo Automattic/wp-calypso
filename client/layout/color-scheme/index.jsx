@@ -2,13 +2,15 @@ import config from '@automattic/calypso-config';
 import { getAdminColor } from 'calypso/state/admin-color/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export function getColorScheme( { state, isGlobalSidebarVisible, sectionName } ) {
-	if ( isGlobalSidebarVisible ) {
-		return 'global';
-	}
+export function getColorScheme( { state, isGlobalSidebarVisible, sidebarIsHidden, sectionName } ) {
 	if ( sectionName === 'checkout' ) {
 		return null;
 	}
+
+	if ( isGlobalSidebarVisible || sidebarIsHidden ) {
+		return 'global';
+	}
+
 	const siteId = getSelectedSiteId( state );
 	const siteColorScheme = getAdminColor( state, siteId );
 

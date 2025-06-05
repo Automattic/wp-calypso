@@ -14,6 +14,7 @@ import StatsDateControl from 'calypso/components/stats-date-control';
 import {
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_INTERVAL_DROPDOWN,
+	NAVIGATION_METHOD_ARROW,
 } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -241,9 +242,15 @@ class StatsPeriodNavigation extends PureComponent {
 		const chartEnd = navigationEnd.format( 'YYYY-MM-DD' );
 
 		const path = `/stats/${ period }/${ slug }`;
-		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
+		const url = getPathWithUpdatedQueryString(
+			{ chartStart, chartEnd, navigation: NAVIGATION_METHOD_ARROW },
+			path
+		);
 
-		page( url );
+		// Redirect to the page by replacing the current history entry,
+		// rather than pushing a new one. This ensures the navigation
+		// does not create an additional entry in the browser's history stack.
+		page.redirect( url );
 	};
 
 	queryParamsForPreviousDate = ( previousDay ) => {

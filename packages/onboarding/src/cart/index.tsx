@@ -10,7 +10,6 @@ import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
-	isImportFocusedFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
 } from '../';
@@ -65,17 +64,8 @@ const getBlogNameGenerationParams = ( {
 	isPurchasingDomainItem,
 }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
-		const blog_name = siteUrl.replace( '.wordpress.com', '' );
-
-		if ( isImportFocusedFlow( flowToCheck ) ) {
-			return {
-				blog_name,
-				find_available_url: true,
-			};
-		}
-
 		return {
-			blog_name,
+			blog_name: siteUrl.replace( '.wordpress.com', '' ),
 			find_available_url: !! isPurchasingDomainItem,
 		};
 	}

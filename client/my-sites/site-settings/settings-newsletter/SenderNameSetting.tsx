@@ -19,7 +19,7 @@ function replyToExampleEmail( replyToEmail?: string ) {
 		return 'author-name@example.com';
 	}
 	if ( replyToEmail === 'comment' ) {
-		return `comment-reply@wordpress.com'`;
+		return "comment-reply@wordpress.com'";
 	}
 
 	return 'donotreply@wordpress.com';

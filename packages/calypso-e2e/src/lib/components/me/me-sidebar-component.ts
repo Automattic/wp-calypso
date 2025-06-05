@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import envVariables from '../../../env-variables';
 
 const selectors = {
 	// Menu items
@@ -22,14 +23,20 @@ export class MeSidebarComponent {
 	}
 
 	/**
+	 * Opens the menu on mobile.
+	 */
+	async openMobileMenu() {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.page.getByTitle( 'Menu' ).click();
+		}
+	}
+
+	/**
 	 * Given a string, navigate to the menu on the sidebar.
 	 *
 	 * @param {string} menu Menu item label or href to navigate to.
 	 */
 	async navigate( menu: string ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.menuItem( menu ) ),
-		] );
+		await this.page.click( selectors.menuItem( menu ) );
 	}
 }

@@ -4,7 +4,7 @@
 	position: fixed;
 	right: 16px;
 	top: calc(var(--masterbar-height) + 16px);
-	background: rgba(var(--color-accent-rgb), 0.96);
+	background: color-mix(in srgb, var(--color-accent) 96%, transparent);
 	padding: 8px 18px 8px 34px;
 	border-radius: 24px; /* stylelint-disable-line scales/radii */
 	color: var(--color-text-inverted);

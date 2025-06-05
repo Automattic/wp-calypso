@@ -13,28 +13,6 @@ const noop = () => {};
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
 
-const getP2Flows = () => {
-	return isEnabled( 'p2-enabled' )
-		? [
-				{
-					// When adding steps, make sure that signup campaign ref's continue to work.
-					name: 'p2',
-					steps: [
-						'user',
-						'p2-confirm-email',
-						'p2-complete-profile',
-						'p2-join-workspace',
-						'p2-site',
-					],
-					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-					description: 'New P2 signup flow',
-					lastModified: '2021-12-27',
-					showRecaptcha: true,
-				},
-		  ]
-		: [];
-};
-
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
@@ -47,10 +25,8 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
-	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
-	const p2Flows = getP2Flows();
 
 	const flows = [
 		{
@@ -76,7 +52,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2025-02-18',
@@ -194,8 +170,7 @@ export function generateFlows( {
 		{
 			name: 'import',
 			steps: [ userSocialStep, 'domains', 'plans-import' ],
-			destination: ( dependencies ) =>
-				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
+			destination: ( dependencies ) => `/setup/site-migration?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
@@ -286,7 +261,6 @@ export function generateFlows( {
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},
-		...p2Flows,
 		{
 			name: 'domain',
 			steps: [
@@ -334,7 +308,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: '/reader',
 			description: 'Signup for an account and land on Reader.',
 			lastModified: '2025-02-18',
@@ -430,7 +404,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to' ],
@@ -457,7 +431,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
@@ -472,11 +446,12 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			lastModified: '2025-03-04',
 			enabledHelpCenterGeos: [ 'US' ],
+			hideProgressIndicator: true,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 		},
 
@@ -578,17 +553,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
-			name: 'entrepreneur',
-			steps: [ userSocialStep ],
-			destination: getEntrepreneurFlowDestination,
-			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
-			lastModified: '2024-05-29',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
-			optionalDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-affiliate',
 			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
 			destination: getSignupDestination,
@@ -599,6 +563,14 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
+			props: {
+				[ 'plans-affiliate' ]: {
+					offeringFreePlan: false,
+				},
+				domains: {
+					allowSkipWithoutSearch: true,
+				},
+			},
 		},
 	];
 

@@ -108,13 +108,13 @@ class TwoFactorActions extends Component {
 
 					{ isAuthenticatorAvailable && (
 						<Button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
-							{ translate( 'Continue with your authenticator\u00A0app' ) }
+							{ translate( 'Use authenticator\u00A0app instead' ) }
 						</Button>
 					) }
 
 					{ isBackupCodeAvailable && (
 						<Button onClick={ this.recordBackupLinkClick }>
-							{ translate( 'Continue with a backup code' ) }
+							{ translate( 'Use a backup code instead' ) }
 						</Button>
 					) }
 				</Card>

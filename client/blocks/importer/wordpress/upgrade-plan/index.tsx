@@ -33,7 +33,6 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 	const {
 		site,
 		navigateToVerifyEmailStep,
-		onContentOnlyClick,
 		ctaText,
 		subTitleText,
 		hideTitleAndSubTitle = false,
@@ -77,8 +76,8 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
 		pricing[ visiblePlan ]?.introOffer &&
-		pricing[ visiblePlan ]?.introOffer.rawPrice &&
-		! pricing[ visiblePlan ]?.introOffer.isOfferComplete &&
+		pricing[ visiblePlan ]?.introOffer?.rawPrice &&
+		! pricing[ visiblePlan ]?.introOffer?.isOfferComplete &&
 		pricing[ visiblePlan ]?.originalPrice &&
 		pricing[ visiblePlan ]?.originalPrice.monthly &&
 		pricing[ visiblePlan ]?.originalPrice.full &&
@@ -200,17 +199,6 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 										},
 									}
 							  ) }
-						<br />
-						{ ! isEligibleForTrialPlan &&
-							onContentOnlyClick &&
-							translate(
-								'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
-								{
-									components: {
-										link: <Button borderless onClick={ onContentOnlyClick } />,
-									},
-								}
-							) }
 					</SubTitle>
 				</div>
 			) }

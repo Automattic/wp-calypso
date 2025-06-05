@@ -82,8 +82,11 @@ const getDisplayableFeaturedProducts = (
 ) => {
 	const featuredProductSlugs = [
 		'woocommerce-woopayments',
-		'jetpack-security-t1',
-		'woocommerce-subscriptions',
+		'woocommerce-constellation',
+		'woocommerce-dynamic-pricing',
+		'woocommerce-rental-products',
+		'woocommerce-smart-coupons',
+		'woocommerce-variation-swatches-and-photos',
 	]; // For now, we hardcode this until we understand how we want pick featured products.
 
 	// We do it this way to ensure we follow the same order as the featuredProductSlugs.

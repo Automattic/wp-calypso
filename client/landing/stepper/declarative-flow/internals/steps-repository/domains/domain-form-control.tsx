@@ -168,7 +168,6 @@ export function DomainFormControl( {
 						initialMode={ inputMode.domainInput }
 						onNextStep={ null }
 						isSignupStep
-						showHeader={ false }
 						onTransfer={ onAddTransfer }
 						onConnect={ ( { domain } ) => onAddMapping( domain ) }
 					/>

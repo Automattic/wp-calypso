@@ -68,7 +68,6 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 					/>
 				</div>
 			</div>
-
 			<div className="status">
 				<div className={ clsx( 'status-badge', { [ status ]: true } ) }>{ statusText }</div>
 				<div className="recommendations-text">
@@ -97,7 +96,6 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 						  ) }
 				</div>
 			</div>
-
 			<div className="disclaimer">
 				{ translate(
 					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}See calculator ↗{{/link}}',

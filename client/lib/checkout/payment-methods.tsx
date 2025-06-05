@@ -104,6 +104,7 @@ export interface StoredPaymentMethodTaxLocation {
 	organization?: string;
 	address?: string;
 	city?: string;
+	is_for_business?: boolean | undefined;
 }
 
 export const isPaymentAgreement = (

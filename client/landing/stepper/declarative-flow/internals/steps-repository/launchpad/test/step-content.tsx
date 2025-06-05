@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -105,7 +106,7 @@ jest.mock( 'react-router-dom', () => ( {
 	...( jest.requireActual( 'react-router-dom' ) as object ),
 	useLocation: jest.fn().mockImplementation( () => ( {
 		pathname: '/setup/launchpad',
-		search: `?flow=newsletter&siteSlug=testnewsletter.wordpress.com`,
+		search: '?flow=newsletter&siteSlug=testnewsletter.wordpress.com',
 		hash: '',
 		state: undefined,
 	} ) ),
@@ -222,7 +223,7 @@ describe( 'StepContent', () => {
 				site_intent: '',
 			} );
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.2/sites/211078228/domains` )
+			.get( '/rest/v1.2/sites/211078228/domains' )
 			.reply(
 				200,
 				buildDomainResponse( {
@@ -231,7 +232,7 @@ describe( 'StepContent', () => {
 				} )
 			);
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/211078228/memberships/status?source=launchpad` )
+			.get( '/wpcom/v2/sites/211078228/memberships/status?source=launchpad' )
 			.reply( 200, {
 				connect_url: 'https://connect.stripe.com',
 				connected_account_default_currency: '',

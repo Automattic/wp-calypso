@@ -13,5 +13,5 @@ type UserProfileSubPage = '' | 'lists';
  * Return the base path of the user profile page.
  */
 export function getUserProfileBasePath( subPage: UserProfileSubPage = '' ): string {
-	return subPage ? `/reader/users/:user_login/${ subPage }` : `/reader/users/:user_login`;
+	return subPage ? `/reader/users/:user_login/${ subPage }` : '/reader/users/:user_login';
 }

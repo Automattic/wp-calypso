@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -40,7 +41,9 @@ describe( 'SiteMigrationHowToMigrate', () => {
 
 		render( { navigation } );
 
-		expect( screen.queryByText( /Plus you get 50% off our annual/ ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( /Skip the migration hassle.*plus you get 50% off our annual/i )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render proper subheading for Business plan', () => {

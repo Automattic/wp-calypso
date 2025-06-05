@@ -10,7 +10,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal Dependencies
  */
@@ -55,8 +54,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { sectionName } = useHelpCenterContext();
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { data } = useSupportStatus();
-	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
-		useGetSupportInteractions( 'help-center' );
+	const { data: openSupportInteractions, isLoading: isLoadingOpenSupportInteractions } =
+		useGetSupportInteractions( null, 1, 'open' );
+	const { data: resolvedSupportInteractions, isLoading: isLoadingResolvedSupportInteractions } =
+		useGetSupportInteractions( null, 1, 'resolved' );
 
 	const { currentSupportInteraction, navigateToRoute, isMinimized, allowPremiumSupport } =
 		useSelect( ( select ) => {
@@ -71,6 +72,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const isUserEligibleForPaidSupport =
 		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
 
+	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
@@ -83,20 +86,45 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
+		if ( isLoadingOpenSupportInteractions || isLoadingResolvedSupportInteractions ) {
+			return;
+		}
+
 		if (
-			! isLoadingOpenSupportInteractions &&
-			openSupportInteraction === null &&
+			openSupportInteractions === null &&
+			resolvedSupportInteractions === null &&
 			! currentSupportInteraction
 		) {
 			startNewInteraction( {
 				event_source: 'help-center',
-				event_external_id: uuidv4(),
+				event_external_id: crypto.randomUUID(),
 			} );
-		} else if ( openSupportInteraction && ! currentSupportInteraction ) {
-			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );
+			recordTracksEvent( 'calypso_helpcenter_new_interaction_started', {
+				pathname: location.pathname,
+				search: location.search,
+				section: sectionName,
+				location: 'help-center',
+				event_source: 'help-center',
+				is_free_user: ! isUserEligibleForPaidSupport,
+				user_field_flow_name: userFieldFlowName,
+			} );
+		} else if (
+			( openSupportInteractions || resolvedSupportInteractions ) &&
+			! currentSupportInteraction
+		) {
+			if ( resolvedSupportInteractions?.length ) {
+				setCurrentSupportInteraction( resolvedSupportInteractions[ 0 ] );
+			} else if ( openSupportInteractions?.length ) {
+				setCurrentSupportInteraction( openSupportInteractions[ 0 ] );
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ openSupportInteraction, isLoadingOpenSupportInteractions ] );
+	}, [
+		openSupportInteractions,
+		resolvedSupportInteractions,
+		isLoadingOpenSupportInteractions,
+		isLoadingResolvedSupportInteractions,
+	] );
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
@@ -132,7 +160,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<HelpCenterChat isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport } />
+							<HelpCenterChat
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								userFieldFlowName={ userFieldFlowName }
+							/>
 						}
 					/>
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />

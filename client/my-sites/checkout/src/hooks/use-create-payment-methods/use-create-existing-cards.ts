@@ -8,7 +8,7 @@ import type {
 	StoredPaymentMethodCard,
 } from 'calypso/lib/checkout/payment-methods';
 
-export const existingCardPrefix = `existingCard-`;
+export const existingCardPrefix = 'existingCard-';
 
 export default function useCreateExistingCards( {
 	isStripeLoading,

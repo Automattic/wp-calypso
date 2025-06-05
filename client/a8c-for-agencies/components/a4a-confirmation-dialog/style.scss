@@ -1,8 +1,10 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-confirmation-dialog {
 	&__heading {
 		padding-bottom: 16px;
-		@include a4a-font-heading-lg;
+		@include heading-large;
 	}
 
 	& .dialog__action-buttons {

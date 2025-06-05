@@ -28,7 +28,6 @@ suffixes.forEach( ( suffix ) => {
 	);
 
 	printEntry( propertyName, variableName );
-	printEntry( propertyName + '-rgb', variableName + '-rgb' );
 } );
 
 function determineShadeIndex( suffix ) {

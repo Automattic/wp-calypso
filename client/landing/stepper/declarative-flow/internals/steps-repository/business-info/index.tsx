@@ -149,9 +149,9 @@ const BusinessInfo: Step = function ( props ) {
 							options={ [
 								{ value: '', label: '' },
 								{ value: '0', label: __( "I don't have any products yet." ) },
-								{ value: '1-10', label: __( '1-10' ) },
-								{ value: '11-100', label: __( '11-101' ) },
-								{ value: '101-1000', label: __( '101-1000' ) },
+								{ value: '1-10', label: __( '1–10' ) },
+								{ value: '11-100', label: __( '11–101' ) },
+								{ value: '101-1000', label: __( '101–1000' ) },
 								{ value: '1000+', label: __( '1000+' ) },
 							] }
 							onChange={ updateProductCount }

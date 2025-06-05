@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
 .partner-directory-agency-cta__footer {
 	display: flex;
 	flex-direction: row;
@@ -20,16 +23,16 @@
 
 .partner-directory__body {
 	.searchable-dropdown input.components-combobox-control__input[type="text"] {
-		font-size: rem(14px);
+		@include body-medium;
 	}
 
 	.searchable-dropdown .components-form-token-field__suggestions-list li {
-		font-size: rem(14px);
+		@include body-medium;
 	}
 }
 
 .partner-directory-agency-cta__required-information {
-	font-size: rem(14px);
+	@include body-medium;
 	color: var(--color-neutral-50);
 	margin-block-start: -32px;
 }

@@ -2,7 +2,7 @@ import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
+import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,

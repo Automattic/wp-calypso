@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// eslint-disable-next-line import/no-nodejs-modules
 import { webcrypto } from 'node:crypto';
 import { generatePassword, DIGITS, SPECIAL_CHARS, EXTRA_SPECIAL_CHARS } from '../';
 
@@ -14,7 +13,7 @@ describe( 'generatePassword', () => {
 		},
 	} );
 
-	describe( `.length`, () => {
+	describe( '.length', () => {
 		test( 'should use default length of 24', () => {
 			expect( generatePassword() ).toHaveLength( 24 );
 		} );

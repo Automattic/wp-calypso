@@ -115,12 +115,12 @@ export async function fetchExperimentAssignment(
 
 	if ( fetchedExperimentAssignment.experimentName !== experimentName ) {
 		throw new Error(
-			`Newly fetched ExperimentAssignment's experiment name does not match request.`
+			"Newly fetched ExperimentAssignment's experiment name does not match request."
 		);
 	}
 
 	if ( ! ExperimentAssignments.isAlive( fetchedExperimentAssignment ) ) {
-		throw new Error( `Newly fetched experiment isn't alive.` );
+		throw new Error( "Newly fetched experiment isn't alive." );
 	}
 
 	return fetchedExperimentAssignment;

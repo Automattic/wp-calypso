@@ -16,7 +16,7 @@ import BackupSupportLinks from './backup-support-links';
 import cloudErrorIcon from './icons/cloud-error.svg';
 import './style.scss';
 
-const BackupFailed = ( { backup } ) => {
+const BackupFailed = ( { backup, status = null } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
@@ -42,8 +42,12 @@ const BackupFailed = ( { backup } ) => {
 	}, [ dispatch, mayBeBlockedByHost ] );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_failed_view' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_failed_view', {
+				backup_status: status,
+			} )
+		);
+	}, [ dispatch, backup.status, status ] );
 
 	return (
 		<>

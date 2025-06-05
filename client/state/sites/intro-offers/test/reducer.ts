@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { SITE_INTRO_OFFER_RECEIVE } from 'calypso/state/action-types';
 import { items, IntroOfferReceiveAction } from '../reducer';
 

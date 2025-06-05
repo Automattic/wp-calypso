@@ -13,12 +13,23 @@
 
 	&__site-select-wrapper {
 		margin-bottom: 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		gap: 10px;
 
-		.sites-dropdown__wrapper {
+		.sites-dropdown {
+			flex: 0 1 300px;
+
+			.sites-dropdown__wrapper {
+				border-color: var( --color-border-subtle );
+				border-radius: 6px 6px 0 0;
+			}
+		}
+
+		.site-selector {
 			border-color: var( --color-border-subtle );
-			border-style: solid;
-			border-radius: 6px;
-			border-width: 1px;
+			border-radius: 0 0 6px 6px;
 		}
 	}
 
@@ -26,10 +37,6 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 8px;
-	}
-
-	&__cancel {
-		color: var( --color-text-subtle );
 	}
 
 	&__success-message {
@@ -69,5 +76,10 @@
 			border-width: 1px;
 			border-top-width: 0;
 		}
+	}
+
+	.verbum-editor-wrapper .editor__main,
+	.verbum-editor-wrapper .editor__main iframe {
+		min-height: 80px;
 	}
 }

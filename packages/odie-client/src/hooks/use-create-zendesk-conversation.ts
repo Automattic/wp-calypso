@@ -52,17 +52,22 @@ export const useCreateZendeskConversation = (): ( ( {
 		createdFrom?: string;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
-		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
+		if (
+			isSubmittingZendeskUserFields ||
+			chat.conversationId ||
+			chat.status === 'transfer' ||
+			chat.provider === 'zendesk'
+		) {
 			return;
 		}
 
-		if ( ! avoidTransfer ) {
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				messages: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
-				status: 'transfer',
-			} ) );
-		}
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			messages: avoidTransfer
+				? prevChat.messages
+				: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
+			status: 'transfer',
+		} ) );
 
 		await submitUserFields( {
 			messaging_initial_message: userFieldMessage || undefined,
@@ -72,7 +77,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_flow: userFieldFlowName || null,
 			messaging_source: section,
 		} );
-
+		setHelpCenterZendeskConversationStarted();
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
@@ -80,7 +85,6 @@ export const useCreateZendeskConversation = (): ( ( {
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
-		setHelpCenterZendeskConversationStarted();
 
 		trackEvent( 'new_zendesk_conversation', {
 			support_interaction: currentInteractionID,
@@ -90,10 +94,18 @@ export const useCreateZendeskConversation = (): ( ( {
 		} );
 
 		setWaitAnswerToFirstMessageFromHumanSupport( true );
-		addEventToInteraction( {
+		const updatedInteraction = await addEventToInteraction.mutateAsync( {
 			interactionId: currentInteractionID,
 			eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 		} );
+		const eventAddedToNewInteraction = updatedInteraction.uuid !== currentInteractionID;
+		if ( eventAddedToNewInteraction ) {
+			await Smooch.updateConversation( conversation.id, {
+				metadata: {
+					supportInteractionId: updatedInteraction.uuid,
+				},
+			} );
+		}
 
 		setChat( ( prevChat ) => ( {
 			...prevChat,

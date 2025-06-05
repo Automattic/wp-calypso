@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-request-wp-admin-access {
 	display: flex;
@@ -23,12 +24,12 @@
 	}
 
 	.a4a-request-wp-admin-access__heading {
-		@include a4a-font-heading-lg;
+		@include heading-x-large;
 		padding-block-end: 16px;
 	}
 
 	.a4a-request-wp-admin-access__description {
-		@include a4a-font-body-lg;
+		@include body-large;
 		padding-block-end: 24px;
 	}
 }
@@ -43,7 +44,7 @@
 }
 
 a.components-button.a4a-request-wp-admin-access__learn-more-button {
-	@include a4a-font-body-md;
+	@include body-medium;
 	color: var(--color-primary);
 	justify-content: flex-start;
 	background: none;

@@ -23,6 +23,7 @@
 }
 
 .help-result {
+	text-decoration: none;
 	&:hover {
 		.help-result__wrapper {
 			background-color: var(--color-primary-0);

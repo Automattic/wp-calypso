@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 
 /**
@@ -32,8 +33,21 @@ export class SiteSettingsPage {
 	 * Start the site launch process.
 	 */
 	async launchSite(): Promise< void > {
-		const launchSite = this.page.getByRole( 'link', { name: 'Launch site' } );
+		const launchSite = this.page.getByRole( 'button', { name: 'Launch site' } ).first();
 		await launchSite.click();
+	}
+
+	/**
+	 * Navigates to a given item in the sidebar.
+	 *
+	 * @param {string} item Item to navigate to.
+	 */
+	async navigateToSubmenu( item: string ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.page.getByRole( 'button', { name: 'General' } ).click();
+		}
+
+		await this.page.getByRole( 'link', { name: item } ).click();
 	}
 
 	/**

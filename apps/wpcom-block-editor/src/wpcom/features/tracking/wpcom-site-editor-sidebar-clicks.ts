@@ -66,7 +66,7 @@ export const wpcomSiteEditorSidebarTemplatesClick = (): DelegateEventHandler => 
 	return {
 		id: 'wpcom_site_editor_sidebar_templates_click',
 		// \2f is the encoded slash.
-		selector: `#\\2fwp_template`,
+		selector: '#\\2fwp_template',
 		type: 'click',
 		handler: () =>
 			tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_main_item_click', {

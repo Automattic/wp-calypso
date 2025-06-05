@@ -1,8 +1,15 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { A4A_SITES_LINK_DEVELOPMENT } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import {
+	A4A_SITES_LINK_DEVELOPMENT,
+	A4A_FEEDBACK_LINK,
+	A4A_SITES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
 import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -27,8 +34,10 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 			siteId: site?.features.wpcom_atomic.blog_id,
 			siteSlug,
 		},
-		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
+		'https://wordpress.com/setup/site-migration'
 	);
+
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const readySiteMessage = development
 		? translate(
@@ -58,9 +67,26 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 		onDismiss?.();
 	};
 
+	const handleRedirectToFeedback = () => {
+		if ( isFeedbackShown ) {
+			return;
+		}
+		onClose();
+		page.redirect(
+			addQueryArgs(
+				{
+					type: FeedbackType.PurchaseCompleted,
+					redirectUrl: A4A_SITES_LINK,
+				},
+				A4A_FEEDBACK_LINK
+			)
+		);
+	};
+
 	return (
 		showBanner && (
-			<NoticeBanner
+			<LayoutBanner
+				isFullWidth
 				level={ isReady ? 'success' : 'warning' }
 				hideCloseButton={ ! isReady }
 				onClose={ onClose }
@@ -77,7 +103,13 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 										{ translate( 'Migrate to this site' ) }
 									</Button>
 								) : (
-									<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
+									<Button
+										onClick={ handleRedirectToFeedback }
+										href={ wpOverviewUrl }
+										target="_blank"
+										rel="noreferrer"
+										primary
+									>
 										{ translate( 'Set up your site' ) }
 									</Button>
 								),
@@ -90,7 +122,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 					: translate(
 							"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 					  ) }
-			</NoticeBanner>
+			</LayoutBanner>
 		)
 	);
 }

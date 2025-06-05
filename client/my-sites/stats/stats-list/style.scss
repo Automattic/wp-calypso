@@ -33,7 +33,7 @@
 		}
 	}
 
-	border-top: 1px solid rgba(var(--color-surface-rgb), 0);
+	border-top: 1px solid color-mix(in srgb, var(--color-surface) 0%, transparent);
 
 	// Increase touch targets on mobile
 	@include breakpoint-deprecated( "<480px" ) {
@@ -41,7 +41,7 @@
 		border-top: 1px solid var(--color-neutral-0);
 
 		&:first-child {
-			border-top-color: rgba(var(--color-surface-rgb), 0);
+			border-top-color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 		}
 
 		// Darken color for sublists
@@ -125,7 +125,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient(to right, rgba(var(--color-neutral-0-rgb), 0) 0%, var(--color-neutral-0) 90%);
+			background-image: linear-gradient(to right, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 0%, var(--color-neutral-0) 90%);
 		}
 
 		// Display hidden actions
@@ -159,7 +159,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient(to right, rgba(var(--color-neutral-0-rgb), 0) 0%, var(--color-neutral-0) 90%);
+		background-image: linear-gradient(to right, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 0%, var(--color-neutral-0) 90%);
 	}
 
 	// Display hidden actions
@@ -321,7 +321,7 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
+		@include stats-fade-text( color-mix(in srgb, var(--color-surface) 0%, transparent), var( --color-surface ) );
 	}
 }
 
@@ -791,7 +791,7 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient(to right, rgba(var(--color-neutral-0-rgb), 0) 0%, var(--color-neutral-0) 90%);
+		background-image: linear-gradient(to right, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 0%, var(--color-neutral-0) 90%);
 	}
 
 	// Rotate toggle icon
@@ -806,7 +806,7 @@ ul.module-content-list-legend {
 
 	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: rgba(var(--color-surface-rgb), 0);
+		border-top-color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 	}
 
 	// Hover changes
@@ -819,7 +819,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient(to right, rgba(var(--color-surface-rgb), 0) 0%, var(--color-surface) 90%);
+				background-image: linear-gradient(to right, color-mix(in srgb, var(--color-surface) 0%, transparent) 0%, var(--color-surface) 90%);
 			}
 		}
 	}
@@ -846,7 +846,7 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient(to right, rgba(var(--color-neutral-rgb), 0) 0%, var(--color-neutral-0) 90%);
+		background-image: linear-gradient(to right, color-mix(in srgb, var(--color-neutral) 0%, transparent) 0%, var(--color-neutral-0) 90%);
 	}
 
 	// Hover changes
@@ -860,7 +860,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient(to right, rgba(var(--color-surface-rgb), 0) 0%, var(--color-surface) 90%);
+				background-image: linear-gradient(to right, color-mix(in srgb, var(--color-surface) 0%, transparent) 0%, var(--color-surface) 90%);
 			}
 		}
 	}

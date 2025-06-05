@@ -64,13 +64,14 @@ describe( 'RestAPIClient: getMyAccountInformation', function () {
 	test.each( [
 		{
 			code: 'invalid_token',
-			message: `The OAuth2 token is invalid`,
+			message: 'The OAuth2 token is invalid',
 		},
 		{
 			code: 'invalid_username',
-			message: `We don't seem to have an account with that name. Double-check the spelling and try again!`,
+			message:
+				"We don't seem to have an account with that name. Double-check the spelling and try again!",
 		},
-	] )( `Throws error with expected code and message ($code)`, async function ( { code, message } ) {
+	] )( 'Throws error with expected code and message ($code)', async function ( { code, message } ) {
 		nock( requestURL.origin )
 			.get( requestURL.pathname )
 			.reply( 400, { error: code, message: message } );
@@ -113,9 +114,9 @@ describe( 'RestAPIClient: getAllDomains', function () {
 	test.each( [
 		{
 			code: 'invalid_token',
-			message: `The OAuth2 token is invalid`,
+			message: 'The OAuth2 token is invalid',
 		},
-	] )( `Throws error with expected code and message ($code)`, async function ( { code, message } ) {
+	] )( 'Throws error with expected code and message ($code)', async function ( { code, message } ) {
 		nock( requestURL.origin )
 			.get( requestURL.pathname )
 			.reply( 400, { error: code, message: message } );

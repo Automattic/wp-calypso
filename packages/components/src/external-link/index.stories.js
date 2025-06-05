@@ -1,7 +1,7 @@
 import { Card } from '..';
 import ExternalLink from '.';
 
-export default { title: 'packages/components/ExternalLink' };
+export default { title: 'Unaudited/ExternalLink' };
 
 export const Default = () => (
 	<Card>

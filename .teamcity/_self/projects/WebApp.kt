@@ -23,6 +23,8 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
+	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
+	buildType(e2ePreReleaseBuildType("mobile", "2d7f6910-92cf-44b4-a719-e4b2029ea36c"))
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
 })
@@ -454,6 +456,35 @@ object RunAllUnitTests : BuildType({
 			""".trimIndent()
 		}
 		bashNodeScript {
+			name = "Check DataViews changelog"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -e
+
+				# List files affected by the branch's commits
+				CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+
+				# If there are changes within the DataViews package (excluding package.json),
+				# ensure CHANGELOG.automattic.md has been updated too.
+				if grep ^packages/dataviews/ <<< "${'$'}CHANGES" | grep -vq ^packages/dataviews/package.json; then
+					if ! grep -q ^packages/dataviews/CHANGELOG.automattic.md <<< "${'$'}CHANGES"; then
+						echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
+						echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
+						exit 1
+					fi
+				fi
+
+				# If there are changes on the CHANGELOG.md prevent the PR from merging.
+				# In this case, we want to merge via specific instructions on the CLI.
+				if grep -q ^packages/dataviews/CHANGELOG.md <<< "${'$'}CHANGES"; then
+					echo "ERROR: changes to 'packages/dataviews/CHANGELOG.md detected'."
+					echo "PRs that sync changes from upstream cannot be merged via GitHub UI."
+					echo "Please, check packages/dataviews/SYNC.md to merge via the CLI commands."
+					exit 1
+				fi
+			""".trimIndent()
+		}
+		bashNodeScript {
 			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
@@ -571,32 +602,97 @@ object CheckCodeStyleBranch : BuildType({
 			name = "Run eslint"
 			scriptContent = """
 				set -x
+
 				export NODE_ENV="test"
 
-				# Find files to lint
-				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '(\.[jt]sx?|\.json|\.md)${'$'}' || true)
+				# Find lintable files touched in this branch, except those deleted
+				function _find_files_to_lint() {
+					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
+						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' \
+						|| true
+				}
 
-				# Avoid running more than 16 parallel eslint tasks as it could OOM
-				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
+				# Create temporary output directory. Export the variable so that it is
+				# available in the batch runs.
+				export RESULTS_DIR=checkstyle_results/eslint
+				mkdir -p "${'$'}RESULTS_DIR"
+
+				if [ "%run_full_eslint%" = true ]; then
 					echo "Linting all files"
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+					yarn run eslint --format checkstyle --output-file "${'$'}RESULTS_DIR/results.xml" .
 				else
-					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
-					# instead of passing the full list of files to eslint directly.
-					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' || true); do
-						( echo "Linting ${'$'}file"
-						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
-					done
-					wait
+					echo "Linting affected files"
+
+					# When linting a large set of files we have to guard against two errors:
+					#
+					# - ENAMETOOLONG: we cannot pass ESLint too many files as arguments, lest we exceed
+					# the maximum command line length.
+					# - OOM (Out Of Memory): we cannot spawn too many processes in parallel.
+					#
+					# Thus, we'll process the files in batches.
+					#
+					# In an ideal scenario, we'd simply pipe the list of target files to `xargs`:
+					#
+					# _find_files | xargs -n3 -P5 yarn run eslint...
+					#
+					# where -n3 is the batch size and -P5 the number of parallel runs. However, we
+					# want to know which batch we are currently in -- a concept that I don't think
+					# xargs has -- so that each ESLint run can write to a separate file.
+					#
+					# So we resort to a little bit of AWK magic to reshape our list of files into
+					# rows of BATCH_SIZE. Then, we use `nl` to prepend each row with an index.
+					#
+					# The output of the `awk | nl` chain now looks like:
+					#
+					#     1 file1 file2 file3
+					#     2 file4 file5 file6
+					#     3 file7
+					#
+					# - `xargs` must now use the `-L1` option to process one line at a time
+					# - instead of calling `yarn` directly, we use `bash` to split the arguments
+					#
+					# CAVEAT: ASSUMES NO SPACES IN FILENAMES.
+
+					BATCH_SIZE=15 # Number of files handled by each ESLint process
+					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
+
+					_find_files_to_lint \
+						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%%s%%s", $0, (NR%%n?"\t":"\n")}' \
+						| nl \
+						| xargs -L1 -P"${'$'}MAX_PARALLEL_BATCHES" bash -c '
+							BATCH_NUM="${'$'}1"; shift
+							BATCH_FILES="${'$'}@"
+							yarn run eslint \
+								--format checkstyle \
+								--output-file "${'$'}RESULTS_DIR/batch_${'$'}{BATCH_NUM}.xml" \
+								${'$'}BATCH_FILES
+
+							# xargs will return 123 if any run returns a non-zero value. Ensure we
+							# only catch relevant issues. ESLint exit codes seem to be:
+							# - 0 for no errors
+							# - 1 for linting errors (should ignore)
+							# - 2 for other errors (should propagate)
+							status=${'$'}?
+							if [ ${'$'}status -gt 1 ]; then
+								exit ${'$'}status
+							fi
+						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
 		}
-
+		bashNodeScript {
+			name = "Run code quality linters"
+			scriptContent = """
+				yarn run lint:unused-state-action-types
+				yarn run lint:config-defaults
+			"""
+		}
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
 				# In the future, we may add the stylelint cache here.
 				yarn run lint:css
+				yarn run lint:mixedindent
 			"""
 		}
 	}
@@ -993,6 +1089,86 @@ object PreReleaseE2ETests : BuildType({
 	}
 })
 
+fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+	return E2EBuildType(
+		buildId = "calypso_WebApp_Calypso_E2E_Pre_Release_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Pre-Release E2E Tests ($targetDevice)",
+		buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production. Will run on $targetDevice size.",
+		testGroup = "calypso-release",
+		buildParams = {
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+			param("env.ALLURE_RESULTS_PATH", "allure-results")
+		},
+		buildSteps = {
+			bashNodeScript {
+				name = "Collect Allure results"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					mkdir -p allure-results
+					find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
+				""".trimIndent()
+				dockerImage = "%docker_image_e2e%"
+			}
+
+			bashNodeScript {
+				name = "Upload Allure results to S3"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+					aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+					# Need to use -C to avoid creation of an unnecessary top level directory.
+					tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
+
+					aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+				""".trimIndent()
+				conditions {
+					exists("env.ALLURE_RESULTS_PATH")
+					equals("teamcity.build.branch", "trunk")
+				}
+				dockerImage = "%docker_image_e2e%"
+			}
+
+			bashNodeScript {
+				name = "Send webhook to GitHub Actions"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					# Issue call as matticbot.
+					# The GitHub Action workflow expects the filename of the most recent Allure report
+					# as param.
+					curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/generate-report.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
+				""".trimIndent()
+				conditions {
+					exists("env.ALLURE_RESULTS_PATH")
+					equals("teamcity.build.branch", "trunk")
+				}
+				dockerImage = "%docker_image_e2e%"
+			}
+		},
+		buildFeatures = {
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#e2eflowtesting-notif"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
+		},
+		enableCommitStatusPublisher = true,
+	)
+}
+
 object AuthenticationE2ETests : E2EBuildType(
 	buildId = "calypso_WebApp_Calypso_E2E_Authentication",
 	buildUuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
@@ -1058,4 +1234,3 @@ object QuarantinedE2ETests: E2EBuildType(
 	buildTriggers = {
 	}
 )
-

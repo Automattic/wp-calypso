@@ -62,7 +62,7 @@ function SubscribersTeam( props: Props ) {
 				navigationItems={ [] }
 				title={ translate( 'Users' ) }
 				subtitle={ translate(
-					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}',
+					'Invite users to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}',
 					{
 						components: {
 							learnMore: (
@@ -105,10 +105,7 @@ function SubscribersTeam( props: Props ) {
 						case 'team':
 							return (
 								<>
-									<PageViewTracker
-										path="/people/team/:site"
-										title="People > Team Members / Invites"
-									/>
+									<PageViewTracker path="/people/team/:site" title="People > Users / Invites" />
 
 									<TeamInvites singleInviteView />
 									<TeamMembers

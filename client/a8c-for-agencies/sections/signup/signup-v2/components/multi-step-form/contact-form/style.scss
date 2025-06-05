@@ -1,10 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .contact-form__phone-input {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 
 	@include break-xlarge {
 		flex-direction: row;
@@ -19,7 +20,7 @@
 }
 
 .signup-contact-form__tos  p {
-	@include a4a-font-body-sm;
+	@include body-small;
 
 	.signup-contact-form__tos-link {
 		cursor: pointer;
@@ -35,22 +36,22 @@
 }
 
 .signup-multi-step-form__name-fields {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 	gap: 16px;
 
 	@include break-small {
 		flex-direction: row;
 	}
 
-    > * {
-        flex-grow: 1;
-    }
+	> * {
+		flex-grow: 1;
+	}
 }
 
 .signup-multi-step-form__terms {
 	text-align: center;
-	font-size: 0.875rem;
+	@include body-medium;
 	color: var(--color-neutral-40);
 	margin-top: 16px;
 

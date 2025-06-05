@@ -23,6 +23,7 @@ export class SitesDropdown extends PureComponent {
 		filter: PropTypes.func,
 		isPlaceholder: PropTypes.bool,
 		hasMultipleSites: PropTypes.bool,
+		disabled: PropTypes.bool,
 
 		// connected props
 		selectedSite: PropTypes.object,
@@ -34,6 +35,7 @@ export class SitesDropdown extends PureComponent {
 		onSiteSelect: noop,
 		isPlaceholder: false,
 		hasMultipleSites: false,
+		disabled: false,
 	};
 
 	constructor( props ) {
@@ -72,24 +74,49 @@ export class SitesDropdown extends PureComponent {
 		this.props.onClose && this.props.onClose( e );
 	}
 
+	handleKeyDown = ( event ) => {
+		if ( event.key === 'Enter' || event.keyCode === 13 ) {
+			// Without this event.preventDefault, this keydown event will
+			// somehow trigger the site selector to navigate to /me/?
+			// though it's unclear why. This seems related to the
+			// fact that pressing Enter while focused on a blank search input
+			// on the /me/account page will also cause navigation to happen.
+			// We can remove this once we find out how to prevent that
+			// erroneous navigation from happening with the search input.
+			if ( ! this.state.open ) {
+				event.preventDefault();
+			}
+			this.toggleOpen( event );
+		}
+	};
+
 	render() {
 		return (
 			<div
 				className={ clsx(
 					'sites-dropdown',
 					{ 'is-open': this.state.open },
+					{ 'is-disabled': this.props.disabled },
 					{ 'has-multiple-sites': this.props.hasMultipleSites }
 				) }
 			>
 				<div className="sites-dropdown__wrapper">
 					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
-					<div className="sites-dropdown__selected" onClick={ this.toggleOpen }>
+					<div
+						className="sites-dropdown__selected"
+						onClick={ this.toggleOpen }
+						onKeyDown={ this.handleKeyDown }
+						// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+						tabIndex={ 0 }
+					>
 						{ this.props.isPlaceholder ? (
 							<SitePlaceholder />
 						) : (
 							<Site siteId={ this.state.selectedSiteId } indicator={ false } />
 						) }
-						{ this.props.hasMultipleSites && <Gridicon icon="chevron-down" /> }
+						{ this.props.hasMultipleSites && (
+							<Gridicon icon="chevron-down" height={ 16 } width={ 16 } />
+						) }
 					</div>
 					{ this.props.hasMultipleSites && this.state.open && (
 						<SiteSelector

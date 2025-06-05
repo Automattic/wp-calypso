@@ -38,7 +38,7 @@ const JetpackCancellationOfferAccepted: FC< Props > = ( props ) => {
 				subHeaderText={
 					/* Translators: %(headline)s is already translated text; %(percentDiscount)d%% should be a percentage like 15% or 20% */
 					translate(
-						`%(headline)s Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.`,
+						'%(headline)s Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.',
 						{
 							args: {
 								headline: isAkismet ? akismetHeadline : jetpackHeadline,

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import FormData from 'form-data';
-import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -45,7 +44,6 @@ import type {
 	Subscriber,
 	SitePostState,
 } from './types';
-import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
 /* Internal types and interfaces */
 
@@ -58,11 +56,8 @@ type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 /**
  * Interface defining the request structure to be sent to the API.
  */
-interface RequestParams {
-	method: 'post' | 'get';
-	headers?: HeadersInit;
-	body?: BodyInit;
-}
+
+type RequestParams = Pick< RequestInit, 'method' | 'headers' | 'body' >;
 
 /* Constants */
 
@@ -506,7 +501,7 @@ export class RestAPIClient {
 			body: JSON.stringify( details ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', `/me/settings` ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/settings' ), params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -875,7 +870,7 @@ export class RestAPIClient {
 					Authorization: await this.getAuthorizationHeader( 'bearer' ),
 					...data.getHeaders(),
 				},
-				body: data,
+				body: data.getBuffer(),
 			};
 		}
 		if ( mediaURL ) {

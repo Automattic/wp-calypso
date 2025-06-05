@@ -1,17 +1,21 @@
+import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,6 +26,7 @@ import PageViewTracker from '../../stats-page-view-tracker';
 import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
 import StatsModuleListing from '../shared/stats-module-listing';
+import type { Context } from '@automattic/calypso-router';
 import type { Moment } from 'moment';
 
 function StatsSubscribersPageError() {
@@ -54,6 +59,7 @@ interface StatsSubscribersPageProps {
 		startOf: Moment;
 		endOf: Moment;
 	};
+	context: Context;
 }
 
 type TranslationStringType = {
@@ -63,8 +69,7 @@ type TranslationStringType = {
 	empty: string;
 };
 
-const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
-	const translate = useTranslate();
+const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) => {
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -83,35 +88,58 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
-		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
+		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribed );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
 
-	const emptyComponent = isSimple ? (
-		<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-	) : (
-		<EmptyListView />
-	);
+	useEffect(
+		() =>
+			// Necessary to properly configure the fixed navigation headers.
+			sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' ),
+		[]
+	); // Track the last viewed tab.
 
-	// Track the last viewed tab.
-	// Necessary to properly configure the fixed navigation headers.
-	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
+	useEffect( () => {
+		const query = context.query;
+		recordCurrentScreen(
+			'subscribers',
+			{
+				queryParams: query,
+				period: period.period,
+			},
+			true
+		);
+	}, [ context.query, period?.period ] );
 
 	const summaryUrl = `/stats/${ period?.period }/emails/${ siteSlug }?startDate=${ period?.startOf?.format(
 		'YYYY-MM-DD'
 	) }`;
 
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
+	const emptyComponent =
+		isSimple && ! isWPAdmin ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
+
+	// If the subscriptions module is inactive, redirect to the stats page.
+	const isSubscriptionsModuleActive = useSelector( ( state ) =>
+		siteId ? isJetpackModuleActive( state, siteId, 'subscriptions', true ) : false
+	);
+
+	if ( ! isSimple && ! isSubscriptionsModuleActive ) {
+		page.redirect( `/stats/day/${ siteSlug }` );
+		return;
+	}
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
-			<div className="stats">
-				<NavigationHeader
-					className="stats__section-header modernized-header"
-					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
-					screenReader={ navItems.subscribers?.label }
-					navigationItems={ [] }
-				></NavigationHeader>
+			<div className={ subscribersPageClasses }>
+				<PageHeader />
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ isError && <StatsSubscribersPageError /> }

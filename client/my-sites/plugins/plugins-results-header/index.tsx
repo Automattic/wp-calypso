@@ -33,7 +33,7 @@ export default function PluginsResultsHeader( {
 			{ ( title || subtitle ) && (
 				<div className="plugins-results-header__titles">
 					{ title && <TitleTag className="plugins-results-header__title">{ title }</TitleTag> }
-					{ subtitle && <div className="plugins-results-header__subtitle">{ subtitle }</div> }
+					{ subtitle && <p className="plugins-results-header__subtitle">{ subtitle }</p> }
 				</div>
 			) }
 			{ ( browseAllLink || resultCount ) && (
@@ -50,7 +50,7 @@ export default function PluginsResultsHeader( {
 								} );
 							} }
 						>
-							{ __( 'Browse All' ) }
+							{ __( 'Browse all' ) }
 						</a>
 					) }
 					{ resultCount && <span className="plugins-results-header__action">{ resultCount }</span> }

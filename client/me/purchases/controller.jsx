@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -21,15 +22,22 @@ import {
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
+import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
+import { useSelector } from 'calypso/state';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
+import { Downgrade } from './downgrade';
 import ManagePurchase from './manage-purchase';
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesList from './purchases-list';
+import PurchasesListDataView from './purchases-list-in-dataviews';
 import titles from './titles';
 import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
+
+const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
 function useLogPurchasesError( message ) {
 	return useCallback(
@@ -92,6 +100,24 @@ export function cancelPurchase( context, next ) {
 	next();
 }
 
+export function downgradePurchase( context, next ) {
+	const DowngradePurchaseWrapper = localize( () => {
+		return (
+			<PurchasesWrapper title={ titles.downgradeSubscription() }>
+				<Main wideLayout className="purchases__cancel">
+					<Downgrade
+						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+						siteSlug={ context.params.site }
+					/>
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <DowngradePurchaseWrapper />;
+	next();
+}
+
 export function confirmCancelDomain( context, next ) {
 	const state = context.store.getState();
 
@@ -123,7 +149,11 @@ export function list( context, next ) {
 	const ListWrapper = localize( () => {
 		return (
 			<PurchasesWrapper>
-				<PurchasesList userId={ userId } noticeType={ context.params.noticeType } />
+				{ useDataViewPurchasesList ? (
+					<PurchasesListDataView userId={ userId } noticeType={ context.params.noticeType } />
+				) : (
+					<PurchasesList userId={ userId } noticeType={ context.params.noticeType } />
+				) }
 			</PurchasesWrapper>
 		);
 	} );
@@ -172,6 +202,8 @@ export function vatDetails( context, next ) {
 export function managePurchase( context, next ) {
 	const ManagePurchasesWrapper = localize( () => {
 		const classes = 'manage-purchase';
+		const previousRoute = useSelector( getPreviousRoute );
+		const purchaseListUrl = previousRoute.includes( '/purchases' ) ? previousRoute : undefined;
 
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
@@ -184,6 +216,7 @@ export function managePurchase( context, next ) {
 					<ManagePurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
+						purchaseListUrl={ purchaseListUrl }
 					/>
 				</Main>
 			</PurchasesWrapper>
@@ -248,5 +281,10 @@ export function changePaymentMethod( context, next ) {
 	};
 
 	context.primary = <ChangePaymentMethodWrapper />;
+	next();
+}
+
+export function crmDownloads( context, next ) {
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 }

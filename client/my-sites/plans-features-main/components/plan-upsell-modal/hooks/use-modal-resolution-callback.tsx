@@ -16,7 +16,6 @@ type Props = {
 	paidDomainName?: string | null;
 	intent?: string | null;
 	selectedThemeType?: string;
-	createWithBigSky?: boolean;
 };
 
 /**
@@ -28,7 +27,6 @@ export function useModalResolutionCallback( {
 	paidDomainName,
 	intent,
 	selectedThemeType,
-	createWithBigSky,
 }: Props ) {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
@@ -47,10 +45,6 @@ export function useModalResolutionCallback( {
 				return FREE_PLAN_FREE_DOMAIN_DIALOG;
 			}
 
-			if ( createWithBigSky && ONBOARDING_FLOW === flowName ) {
-				return PAID_PLAN_IS_REQUIRED_DIALOG;
-			}
-
 			// TODO: look into decoupling the flowName from here as well.
 			if (
 				paidDomainName &&
@@ -64,13 +58,6 @@ export function useModalResolutionCallback( {
 
 			return null;
 		},
-		[
-			isCustomDomainAllowedOnFreePlan,
-			flowName,
-			paidDomainName,
-			intent,
-			selectedThemeType,
-			createWithBigSky,
-		]
+		[ isCustomDomainAllowedOnFreePlan, flowName, paidDomainName, intent, selectedThemeType ]
 	);
 }

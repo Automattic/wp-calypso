@@ -2,6 +2,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 8px;
+
 	.premium-badge {
 		font-family: $sans;
 		background: var(--studio-black);

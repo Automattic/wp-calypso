@@ -128,10 +128,24 @@ export function usePrefillCheckoutContactForm( {
 }: {
 	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void;
 	isLoggedOut?: boolean;
-} ): void {
-	const cachedContactDetails = useCachedContactDetails( { isLoggedOut } );
-	useCachedContactDetailsForCheckoutForm(
-		cachedContactDetails,
+} ): boolean {
+	const { contactDetails, isError } = useCachedContactDetails( { isLoggedOut } );
+
+	const hasCompleted = useCachedContactDetailsForCheckoutForm(
+		contactDetails,
 		setShouldShowContactDetailsValidationErrors
 	);
+
+	// If there is an error, we return it as true and let the form handle it.
+	if ( isError ) {
+		return true;
+	}
+
+	// We don't retrieve cached contact details if the user is logged out.
+	// Unless they already live in the checkout data store.
+	if ( isLoggedOut ) {
+		return true;
+	}
+
+	return hasCompleted;
 }

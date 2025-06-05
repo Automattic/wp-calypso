@@ -4,8 +4,9 @@ import {
 	isWooExpressPlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import usePlanBillingDescription from '../../../hooks/data-store/use-plan-billing-description';
 import type { GridPlan } from '../../../types';
@@ -16,6 +17,10 @@ const DiscountPromotion = styled.div`
 	color: #306e27;
 	font-size: $font-body-extra-small;
 	margin-top: 6px;
+`;
+
+const BillingTimeframeContainer = styled.p`
+	margin-bottom: 0;
 `;
 
 interface RefundNoticeProps {
@@ -70,36 +75,44 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		( ! introOffer || introOffer.isOfferComplete )
 	) {
 		return (
-			<div>
+			<BillingTimeframeContainer>
 				<div>{ billingTimeframe }</div>
 				<DiscountPromotion>{ planBillingDescription }</DiscountPromotion>
-			</div>
+			</BillingTimeframeContainer>
 		);
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		const price = formatCurrency( 25000, 'USD' );
+		const price = formatCurrency( 25000, 'USD', { stripZeros: true } );
 
 		return (
-			<div className="plans-grid-next__billing-timeframe-vip-price">
-				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
-					args: { price },
-					components: { b: <b /> },
-					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+			<BillingTimeframeContainer>
+				{ fixMe( {
+					text: 'Starts at {{b}}%(price)s{{/b}} annually',
+					newCopy: translate( 'Starts at {{b}}%(price)s{{/b}} annually', {
+						args: { price },
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ),
+					oldCopy: translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
+						args: { price },
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ),
 				} ) }
-			</div>
+			</BillingTimeframeContainer>
 		);
 	}
 
 	return (
-		<div>
+		<BillingTimeframeContainer>
 			{ description }
 			<RefundNotice
 				showRefundPeriod={ showRefundPeriod }
 				planSlug={ planSlug }
 				billingPeriod={ billingPeriod }
 			/>
-		</div>
+		</BillingTimeframeContainer>
 	);
 };
 

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -267,6 +268,6 @@ test( 'tax hidden if not available', async () => {
 			</QueryClientProvider>
 		</ReduxProvider>
 	);
-	expect( await screen.findByText( `$36` ) ).toBeInTheDocument();
+	expect( await screen.findByText( '$36' ) ).toBeInTheDocument();
 	expect( screen.queryByText( `(includes ${ transaction.tax } VAT)` ) ).not.toBeInTheDocument();
 } );

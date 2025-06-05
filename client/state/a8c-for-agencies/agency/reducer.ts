@@ -45,6 +45,16 @@ export const isAgencyClientUser = ( state = initialState.isFetching, action: Any
 	return state;
 };
 
+export const userBillingType = ( state = initialState.isFetching, action: AnyAction ) => {
+	switch ( action.type ) {
+		case JETPACK_SET_AGENCY_CLIENT_USER: {
+			return action.billingType;
+		}
+	}
+
+	return state;
+};
+
 export const isFetching = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_REQUEST:
@@ -84,4 +94,5 @@ export default combineReducers( {
 	agencies,
 	error,
 	isAgencyClientUser,
+	userBillingType,
 } );

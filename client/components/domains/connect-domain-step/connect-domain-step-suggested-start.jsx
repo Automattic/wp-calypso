@@ -59,7 +59,7 @@ export default function ConnectDomainStepSuggestedStart( {
 				{ __( 'How long will it take?' ) }
 			</CardHeading>
 			<p className={ className + '__text' }>
-				{ __( 'It takes 5-15 minutes to set up.' ) }
+				{ __( 'It takes 5–15 minutes to set up.' ) }
 				<br />
 				{ __( 'It can take up to 72 hours for the domain to be fully connected.' ) }
 			</p>

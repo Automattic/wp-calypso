@@ -948,3 +948,34 @@ export function isValidFeatureKey( feature: string ) {
 export function getFeatureByKey( feature: string ) {
 	return FEATURES_LIST[ feature ];
 }
+
+export function getFeatureDifference(
+	smallerPlan: string,
+	biggerPlan: string,
+	featureBundleSelector: keyof WPComPlan
+) {
+	let biggerPlanObject = ( getPlan( biggerPlan ) as WPComPlan )?.[ featureBundleSelector ] as
+		| Array< string >
+		| ( () => Array< string > );
+	let smallerPlanObject = ( getPlan( smallerPlan ) as WPComPlan )?.[ featureBundleSelector ] as
+		| Array< string >
+		| ( () => Array< string > );
+
+	if ( typeof biggerPlanObject === 'function' ) {
+		biggerPlanObject = biggerPlanObject();
+	} else if ( ! Array.isArray( biggerPlanObject ) ) {
+		biggerPlanObject = [];
+	}
+
+	if ( typeof smallerPlanObject === 'function' ) {
+		smallerPlanObject = smallerPlanObject();
+	} else if ( ! Array.isArray( smallerPlanObject ) ) {
+		smallerPlanObject = [];
+	}
+
+	const difference = biggerPlanObject.filter(
+		( feature ) => ! smallerPlanObject.includes( feature )
+	);
+
+	return difference;
+}

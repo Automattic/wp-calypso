@@ -2,9 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, ExternalLink } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
+import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,10 +15,12 @@ import {
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
 import wp from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { StepProps, ProvidedDependencies } from '../../types';
+import type { StepProps } from '../../types';
 import './styles.scss';
 
-export default function DomainContactInfo( { navigation }: StepProps ) {
+export default function DomainContactInfo( {
+	navigation,
+}: StepProps< { submits: { domain: string | null } } > ) {
 	const { submit } = navigation;
 	const translate = useTranslate();
 
@@ -45,9 +47,7 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 function ContactInfo( {
 	onSubmit,
 }: {
-	onSubmit:
-		| ( ( providedDependencies?: ProvidedDependencies | undefined, ...params: string[] ) => void )
-		| undefined;
+	onSubmit?: ( dependencies: { domain: string | null } ) => void;
 } ) {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();

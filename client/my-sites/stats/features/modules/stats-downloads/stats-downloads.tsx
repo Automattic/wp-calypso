@@ -1,12 +1,11 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { download } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from 'calypso/my-sites/stats/const';
+import { DOWNLOADS_SUPPORT_URL } from 'calypso/my-sites/stats/const';
 import StatsCardSkeleton from 'calypso/my-sites/stats/features/modules/shared/stats-card-skeleton';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
@@ -71,7 +70,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 										<a
 											target="_blank"
 											rel="noreferrer"
-											href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
+											href={ localizeUrl( DOWNLOADS_SUPPORT_URL ) }
 										/>
 									),
 								},
@@ -95,7 +94,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
+					className={ className }
 					title={ moduleStrings.title }
 					isEmpty
 					emptyMessage={
@@ -110,7 +109,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 											<a
 												target="_blank"
 												rel="noreferrer"
-												href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) }
+												href={ localizeUrl( DOWNLOADS_SUPPORT_URL ) }
 											/>
 										),
 									},

@@ -3,7 +3,7 @@
 .trial-banner {
 	display: flex;
 	padding: 40px;
-	background-color: rgba(var(--color-neutral-0-rgb), 0.8);
+	background-color: color-mix(in srgb, var(--color-neutral-0) 80%, transparent);
 	box-shadow: none;
 
 	@media (max-width: $break-mobile) {

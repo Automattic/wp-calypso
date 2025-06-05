@@ -3,12 +3,12 @@ import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useSelector } from 'calypso/state';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import { SubscribersStepProps } from '../types';
 import { normalizeFromSite } from '../utils';
 import SubscriberUploadForm from './upload-form';
@@ -38,14 +38,24 @@ export default function StepInitial( {
 		prevInProgress.current = importSelector?.inProgress;
 	}, [ importSelector?.inProgress, setAutoFetchData ] );
 
+	const isOnFreePlan = useSelector( ( state ) => isSiteOnFreePlan( state, selectedSite.ID ) );
+
 	return (
 		<Card>
 			<h2>{ translate( 'Step 1: Export your subscribers from Substack' ) }</h2>
 			<p>
-				{ i18n.fixMe( {
-					text: `Generate a CSV of your Substack subscribers. In Substack, go to Subscribers, click Export under "All subscribers," then upload the CSV in the next step. On the free plan, you can import up to 100 subscribers.`,
+				{ fixMe( {
+					text: 'In Substack, go to {{strong}}Subscribers{{/strong}}, scroll down to the "All subscribers" table, click the {{strong}}…{{/strong}} menu on the right and select {{strong}}Export{{/strong}}. Choose the "Export all columns" option and download the CSV file. Then upload the CSV below.',
 					newCopy: translate(
-						`Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}`,
+						'In Substack, go to {{strong}}Subscribers{{/strong}}, scroll down to the "All subscribers" table, click the {{strong}}…{{/strong}} menu on the right and select {{strong}}Export{{/strong}}. Choose the "Export all columns" option and download the CSV file. Then upload the CSV below.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					),
+					oldCopy: translate(
+						'Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
 						{
 							components: {
 								strong: <strong />,
@@ -62,21 +72,33 @@ export default function StepInitial( {
 							},
 						}
 					),
-					oldCopy: createInterpolateElement(
-						translate(
-							`Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.`
-						),
-						{
-							strong: <strong />,
-						}
-					),
 				} ) }
 			</p>
-			<img
-				src={ exportSubstackSubscribersImg }
-				alt={ translate( 'Export Substack subscribers' ) }
-				className="export-subscribers"
-			/>
+			{ isOnFreePlan && (
+				<p>
+					{ fixMe( {
+						text: 'Note: On the free plan, you can import up to 100 subscribers.',
+						newCopy: translate(
+							'Note: On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
+							{
+								components: {
+									supportLink: (
+										<InlineSupportLink
+											noWrap={ false }
+											showIcon={ false }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/import-subscribers-to-a-newsletter/#import-limits'
+											) }
+											supportPostId={ 220199 }
+										/>
+									),
+								},
+							}
+						),
+						oldCopy: '',
+					} ) }
+				</p>
+			) }
 			<Button
 				href={ `https://${ normalizeFromSite( fromSite ) }/publish/subscribers` }
 				target="_blank"

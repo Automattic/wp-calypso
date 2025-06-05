@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .profile__settings .edit-gravatar {
 	text-align: center;
@@ -21,6 +22,10 @@
 	@include breakpoint-deprecated(">960px") {
 		clear: right;
 	}
+}
+
+.profile__settings .profile__public-url {
+	font-size: $font-body-small;
 }
 
 .profile__is_dev_account-fieldset-is-loading {
@@ -62,5 +67,23 @@
 .profile-links__list {
 	.profile-link:last-of-type {
 		margin-bottom: 0;
+	}
+}
+
+main.profile {
+	.email-verification-banner {
+		margin-bottom: 16px;
+		margin-top: 0;
+
+		@media (min-width: $break-small) {
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+	}
+
+	&:has(.email-verification-banner) .navigation-header {
+		@media (min-width: $break-small) {
+			padding-bottom: 0;
+		}
 	}
 }

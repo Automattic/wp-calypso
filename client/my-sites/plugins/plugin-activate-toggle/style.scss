@@ -51,6 +51,12 @@
 .plugin-row-formatter__toggle {
 	.components-flex.components-h-stack {
 		flex-direction: row-reverse;
+
+		@include break-large {
+			margin: auto 0;
+			flex-direction: unset;
+		}
+
 		.plugin-action__label {
 			@include break-large() {
 				// We don't want to use display: none here, because it will hide the popover icon

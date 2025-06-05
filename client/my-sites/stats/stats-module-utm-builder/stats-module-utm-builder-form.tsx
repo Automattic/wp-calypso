@@ -113,6 +113,7 @@ const InputField: React.FC< InputFieldProps > = ( {
 				placeholder={ placeholder }
 				aria-describedby={ ariaDescribedBy }
 				aria-labelledby={ `${ id }-label` }
+				autocomplete="off"
 			/>
 		</div>
 	);
@@ -122,9 +123,9 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 	const translate = useTranslate();
 	const [ url, setUrl ] = useState( initialData?.url || '' );
 	const [ inputValues, setInputValues ] = useState< inputValuesType >( {
+		utm_campaign: initialData?.utm_campaign || '',
 		utm_source: initialData?.utm_source || '',
 		utm_medium: initialData?.utm_medium || '',
-		utm_campaign: initialData?.utm_campaign || '',
 	} );
 	// Focus the initial input field when rendered.
 	const initialFieldReference = useRef< HTMLLabelElement >( null );
@@ -138,24 +139,24 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 
 	const fromLabels: formLabelsType = {
 		url: {
-			label: translate( 'Site or post URL' ),
+			label: translate( 'Destination URL' ),
 			placeholder: '',
 			describedBy: 'stats-utm-builder-help-section-url',
 		},
+		utm_campaign: {
+			label: translate( 'UTM Campaign' ),
+			placeholder: translate( 'e.g. promotion' ),
+			describedBy: 'stats-utm-builder-help-section-campaign-name',
+		},
 		utm_source: {
-			label: translate( 'UTM source' ),
+			label: translate( 'UTM Source' ),
 			placeholder: translate( 'e.g. newsletter' ),
 			describedBy: 'stats-utm-builder-help-section-campaign-source',
 		},
 		utm_medium: {
-			label: translate( 'UTM medium' ),
+			label: translate( 'UTM Medium' ),
 			placeholder: translate( 'e.g. email, social' ),
 			describedBy: 'stats-utm-builder-help-section-campaign-medium',
-		},
-		utm_campaign: {
-			label: translate( 'UTM campaign' ),
-			placeholder: translate( 'e.g. promotion' ),
-			describedBy: 'stats-utm-builder-help-section-campaign-name',
 		},
 	};
 

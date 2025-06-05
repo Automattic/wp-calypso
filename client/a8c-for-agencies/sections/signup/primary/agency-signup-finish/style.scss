@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .agency-signup-finish__wrapper {
 	display: flex;
 	flex-direction: column;
@@ -7,7 +10,7 @@
 }
 
 .agency-signup-finish__text {
-	font-size: 2rem;
+	@include heading-2x-large;
 	text-align: center;
 	color: var(--color-neutral-10);
 }

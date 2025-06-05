@@ -12,7 +12,7 @@ export const EmailDifferentDomainOwnerMessage = () => {
 			source: 'email-management',
 		};
 
-		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
+		recordTracksEvent( 'calypso_email_providers_nonowner_click', properties );
 	};
 
 	const translateOptions = {

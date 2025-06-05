@@ -19,23 +19,28 @@ export class DoneButton extends PureComponent {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		customizeSiteVariant: PropTypes.bool,
 	};
 
 	handleClick = () => {
 		const {
 			importerStatus: { type },
-			site: { ID: siteId },
+			site: { ID: siteId, URL },
 			siteSlug,
+			customizeSiteVariant,
 		} = this.props;
 
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			importer_id: type,
-			action: 'view-site',
+			action: customizeSiteVariant ? 'customize-site' : 'view-site',
 		} );
 
-		const destination = '/view/' + ( siteSlug || '' );
-		page( destination );
+		if ( customizeSiteVariant ) {
+			page( '/customize/' + ( siteSlug || '' ) );
+		} else {
+			window.open( URL, '_blank' );
+		}
 	};
 
 	componentWillUnmount() {
@@ -52,11 +57,14 @@ export class DoneButton extends PureComponent {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, customizeSiteVariant } = this.props;
+
+		const viewSiteText = translate( 'View site' );
+		const customizeSiteText = translate( 'Customize site' );
 
 		return (
-			<ImporterActionButton primary onClick={ this.handleClick }>
-				{ translate( 'View site' ) }
+			<ImporterActionButton primary={ !! customizeSiteVariant } onClick={ this.handleClick }>
+				{ customizeSiteVariant ? customizeSiteText : viewSiteText }
 			</ImporterActionButton>
 		);
 	}

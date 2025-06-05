@@ -41,7 +41,7 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		const editorPage = new EditorPage( page );
 		await editorPage.waitUntilLoaded();
 		await editorPage.closeWelcomeGuideIfNeeded();
-		await editorPage.enterTitle( 'my first post title' );
+		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 		await editorPage.publish();
 		await page.getByText( "Your blog's almost ready!" ).waitFor();
 	} );

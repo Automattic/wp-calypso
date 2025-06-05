@@ -15,10 +15,15 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import type { StepProps } from '../../types';
+import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
+const SiteOptions: Step< {
+	submits: {
+		siteTitle: string;
+		tagline: string;
+	};
+} > = ( { navigation } ) => {
 	const { currentSiteTitle, currentTagline } = useSelect(
 		( select ) => ( {
 			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -27,7 +32,7 @@ const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 		[]
 	);
 
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ tagline, setTagline ] = React.useState( currentTagline ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
@@ -161,9 +166,7 @@ const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 				shouldHideNavButtons={ false }
 				className={ `is-step-${ intent }` }
 				headerImageUrl={ headerImage }
-				hideSkip
 				goBack={ goBack }
-				goNext={ goNext }
 				isHorizontalLayout
 				formattedHeader={
 					<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />

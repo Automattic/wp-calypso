@@ -19,4 +19,14 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		'/subscribers/:domain/:subscriberId',
+		siteSelection,
+		navigation,
+		redirectIfCurrentUserCannot( 'list_users' ),
+		subscribers,
+		makeLayout,
+		clientRender
+	);
 }

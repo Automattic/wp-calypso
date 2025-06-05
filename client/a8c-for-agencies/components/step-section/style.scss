@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .step-section {
 	.step-section__header {
@@ -16,8 +17,7 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			font-size: rem(12px);
-			font-weight: 600;
+			@include heading-small;
 			background: var(--color-primary-50);
 			width: 24px;
 			border-radius: 50%;
@@ -26,16 +26,8 @@
 		}
 
 		.step-section__step-heading {
-			font-size: rem(20px);
-			font-weight: 600;
+			@include heading-large;
 			text-wrap: pretty;
 		}
-	}
-}
-
-.referrals-layout--automated,
-.commission-overview__layout-automated {
-	.step-section .step-section__header .step-section__step-heading {
-		font-size: rem(16px);
 	}
 }

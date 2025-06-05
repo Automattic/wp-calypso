@@ -12,8 +12,10 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
+	useMakeStepActive,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
+import RadioButton from './components/radio-button';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import {
@@ -40,6 +42,7 @@ export type { Theme } from './lib/theme';
 // Re-export the public API
 export {
 	Button,
+	RadioButton,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	CheckoutModal,
@@ -68,4 +71,5 @@ export {
 	useSetStepComplete,
 	useTogglePaymentMethod,
 	useTransactionStatus,
+	useMakeStepActive,
 };

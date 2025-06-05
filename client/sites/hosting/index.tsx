@@ -13,8 +13,8 @@ import {
 import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
-	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_HOSTING_FEATURES,
+	HOSTING_CONFIG,
+	HOSTING_FEATURES,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -42,7 +42,7 @@ export default function () {
 		redirectToServerSettingsIfDuplicatedView,
 		handleHostingPanelRedirect,
 		hostingConfiguration,
-		siteDashboard( DOTCOM_HOSTING_CONFIG ),
+		siteDashboard( HOSTING_CONFIG ),
 		makeLayout,
 		clientRender
 	);
@@ -55,7 +55,7 @@ export default function () {
 		redirectForNonSimpleSite,
 		redirectIfP2,
 		hostingFeatures,
-		siteDashboard( DOTCOM_HOSTING_FEATURES ),
+		siteDashboard( HOSTING_FEATURES ),
 		makeLayout,
 		clientRender
 	);

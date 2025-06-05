@@ -60,7 +60,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 
 	const getCategoriesUrl = () => {
 		if ( ! isWPCOMSite ) {
-			return siteUrl ? `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` : `#`;
+			return siteUrl ? `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` : '#';
 		}
 		return `https://wordpress.com/settings/newsletter/${ siteId }`;
 	};

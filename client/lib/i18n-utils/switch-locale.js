@@ -2,10 +2,10 @@ import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
+import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
-
 const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};
@@ -336,6 +336,9 @@ export default async function switchLocale( localeSlug ) {
 	if ( typeof document === 'undefined' ) {
 		return;
 	}
+
+	// Propagate the locale to @automattic/number-formatters
+	setLocaleNumberFormatters( localeSlug );
 
 	lastRequestedLocale = localeSlug;
 

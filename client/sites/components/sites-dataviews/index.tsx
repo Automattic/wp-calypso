@@ -1,21 +1,23 @@
 import { TimeSince } from '@automattic/components';
+import { DataViews, Field } from '@automattic/dataviews';
 import { SiteExcerptData } from '@automattic/sites';
-import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
-import { useSelector } from 'calypso/state';
+import { isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
+import { useSelector, useStore } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import type { View } from '@wordpress/dataviews';
-
+import type { View } from '@automattic/dataviews';
 import './style.scss';
 import './dataview-style.scss';
 
@@ -27,11 +29,7 @@ type Props = {
 	dataViewsState: View;
 	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
 	selectedItem: SiteExcerptData | null | undefined;
-	openSitePreviewPane: (
-		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
-	) => void;
-};
+} & Pick< React.ComponentProps< typeof SiteField >, 'sitePreviewPane' >;
 
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
@@ -57,9 +55,10 @@ const DotcomSitesDataViews = ( {
 	dataViewsState,
 	setDataViewsState,
 	selectedItem,
-	openSitePreviewPane,
+	sitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const store = useStore();
 	const userId = useSelector( getCurrentUserId );
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
@@ -67,7 +66,7 @@ const DotcomSitesDataViews = ( {
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
+	// The current selection is a derived value which is [selectedItem.ID] (see `selection`).
 	const onSelectionChange = useCallback(
 		( selectedSiteIds: string[] ) => {
 			// In table view, when a row is clicked, the item is selected for a bulk action, so the panel should not open.
@@ -77,17 +76,22 @@ const DotcomSitesDataViews = ( {
 			if ( selectedSiteIds.length === 0 ) {
 				return;
 			}
+
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
 			if ( site && ! site.is_deleted ) {
-				openSitePreviewPane( site, 'list_row_click' );
+				const canManageOptions = canCurrentUser( store.getState(), site.ID, 'manage_options' );
+				if ( isSitePreviewPaneEligible( site, canManageOptions ) ) {
+					sitePreviewPane.open( site, 'list_row_click' );
+					return;
+				}
+
+				navigate( site.options?.admin_url || '' );
 			}
 		},
-		[ dataViewsState.type, openSitePreviewPane, sites ]
+		[ dataViewsState.type, sitePreviewPane, sites, store ]
 	);
-	const getSelection = useCallback(
-		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
-		[ selectedItem ]
-	);
+
+	const selection = selectedItem ? [ selectedItem.ID.toString() ] : undefined;
 
 	const siteStatusGroups = useSiteStatusGroups();
 
@@ -99,11 +103,12 @@ const DotcomSitesDataViews = ( {
 		const dataViewFields: Field< SiteExcerptData >[] = [
 			{
 				id: 'icon',
+				label: __( 'Site icon' ),
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return (
 						<SiteIcon
 							site={ item }
-							openSitePreviewPane={ openSitePreviewPane }
+							openSitePreviewPane={ sitePreviewPane.open }
 							viewType={ dataViewsState.type }
 						/>
 					);
@@ -117,7 +122,7 @@ const DotcomSitesDataViews = ( {
 				label: __( 'Site' ),
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
-					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
+					return <SiteField site={ item } sitePreviewPane={ sitePreviewPane } />;
 				},
 				enableHiding: false,
 				enableSorting: true,
@@ -144,7 +149,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				label: __( 'Last Published' ),
+				label: __( 'Last published' ),
 				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
@@ -165,7 +170,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-interacted',
-				label: __( 'Last Interacted' ),
+				label: __( 'Last interacted' ),
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
@@ -175,7 +180,7 @@ const DotcomSitesDataViews = ( {
 
 		if ( isAutomattician && siteType === 'non-p2' ) {
 			dataViewFields.push( {
-				id: 'a8c_owned',
+				id: 'is_a8c',
 				label: __( 'Include A8C sites' ),
 				enableHiding: false,
 				elements: [
@@ -198,7 +203,7 @@ const DotcomSitesDataViews = ( {
 	}, [
 		__,
 		siteStatusGroups,
-		openSitePreviewPane,
+		sitePreviewPane,
 		dataViewsState.type,
 		userId,
 		isAutomattician,
@@ -206,7 +211,7 @@ const DotcomSitesDataViews = ( {
 	] );
 
 	const actions = useActions( {
-		openSitePreviewPane,
+		openSitePreviewPane: sitePreviewPane.open,
 		viewType: dataViewsState.type,
 	} );
 
@@ -220,7 +225,7 @@ const DotcomSitesDataViews = ( {
 				actions={ actions }
 				search
 				searchLabel={ __( 'Search sites…' ) }
-				selection={ getSelection() }
+				selection={ selection }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => {
 					return item.ID.toString();

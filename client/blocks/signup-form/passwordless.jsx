@@ -15,10 +15,12 @@ import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
+import { isThrottledError, getThrottledErrorMessage } from 'calypso/lib/signup/is-throttled-error';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import SignupSubmitButton from './signup-submit-button';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -142,13 +144,19 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( ! isExistingAccountError( error.error ) ) {
-			this.setState( {
-				errorMessages: [
-					this.props.translate(
-						'Sorry, something went wrong when trying to create your account. Please try again.'
-					),
-				],
-			} );
+			if ( isThrottledError( error.error ) ) {
+				this.setState( {
+					errorMessages: [ getThrottledErrorMessage( this.props.translate ) ],
+				} );
+			} else {
+				this.setState( {
+					errorMessages: [
+						this.props.translate(
+							'Sorry, something went wrong when trying to create your account. Please try again.'
+						),
+					],
+				} );
+			}
 		}
 
 		this.setState( {
@@ -305,14 +313,13 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<Button
-					type="submit"
-					primary
-					busy={ isSubmitting }
-					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
+				<SignupSubmitButton
+					isBusy={ isSubmitting }
+					isDisabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
-				</Button>
+				</SignupSubmitButton>
+				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);
 	}
@@ -323,6 +330,12 @@ class PasswordlessSignupForm extends Component {
 
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
+
+		const terms = ! this.props.disableTosText && this.props.renderTerms?.();
+
+		const elements = this.props.secondaryFooterButton
+			? [ this.formFooter(), terms ]
+			: [ terms, this.formFooter() ];
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
@@ -346,8 +359,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ ! this.props.disableTosText && this.props.renderTerms?.() }
-					{ this.formFooter() }
+					{ elements }
 				</LoggedOutForm>
 			</div>
 		);

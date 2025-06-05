@@ -1,0 +1,30 @@
+.dataforms-layouts-regular__field {
+	width: 100%;
+	min-height: $grid-unit-40;
+	justify-content: flex-start !important;
+	align-items: flex-start !important;
+}
+
+.dataforms-layouts-regular__field .components-base-control__label {
+	font-size: inherit;
+	font-weight: normal;
+	text-transform: none;
+}
+
+.dataforms-layouts-regular__field-label {
+	width: 38%;
+	flex-shrink: 0;
+	min-height: $grid-unit-40;
+	display: flex;
+	align-items: center;
+	padding: 6px 0; // Matches button to ensure alignment
+	line-height: $grid-unit-05 * 5;
+	hyphens: auto;
+}
+
+.dataforms-layouts-regular__field-control {
+	flex-grow: 1;
+	min-height: $grid-unit-40;
+	display: flex;
+	align-items: center;
+}

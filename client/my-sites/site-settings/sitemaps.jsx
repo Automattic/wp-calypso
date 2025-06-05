@@ -10,8 +10,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -35,25 +33,31 @@ class Sitemaps extends Component {
 		fields: PropTypes.object,
 	};
 
-	componentDidMount() {
-		this.props.getRemoveDuplicateViewsExperimentAssignment();
-	}
-
 	isSitePublic() {
 		const { fields } = this.props;
 		return parseInt( fields.blog_public ) === 1;
 	}
 
 	renderSitemapLink( sitemapUrl ) {
+		let url;
+		try {
+			url = new URL( sitemapUrl );
+		} catch ( error ) {
+			return null;
+		}
+
+		url.protocol = 'https:';
+		const secureSitemap = url.toString();
+
 		return (
-			<div key={ sitemapUrl }>
+			<div key={ secureSitemap }>
 				<ExternalLink
-					href={ sitemapUrl }
+					href={ secureSitemap }
 					icon
 					target="_blank"
 					style={ { overflowWrap: 'anywhere' } }
 				>
-					{ sitemapUrl }
+					{ secureSitemap }
 				</ExternalLink>
 			</div>
 		);
@@ -86,7 +90,7 @@ class Sitemaps extends Component {
 	}
 
 	renderNonPublicExplanation() {
-		const { isRemoveDuplicateViewsExperimentEnabled, siteSlug, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 		return (
 			<FormSettingExplanation>
 				{ translate(
@@ -94,15 +98,7 @@ class Sitemaps extends Component {
 						'You must set your {{a}}privacy settings{{/a}} to "public".',
 					{
 						components: {
-							a: (
-								<a
-									href={
-										isRemoveDuplicateViewsExperimentEnabled
-											? '/sites/settings/site/' + siteSlug
-											: '/settings/general/' + siteSlug
-									}
-								/>
-							),
+							a: <a href={ '/sites/settings/site/' + siteSlug } />,
 						},
 					}
 				) }
@@ -211,23 +207,15 @@ class Sitemaps extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const isRemoveDuplicateViewsExperimentEnabled =
-			getIsRemoveDuplicateViewsExperimentEnabled( state );
-		return {
-			siteId,
-			activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
-			isRemoveDuplicateViewsExperimentEnabled,
-			site: getSelectedSite( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
-			sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
-		};
-	},
-	{
-		getRemoveDuplicateViewsExperimentAssignment,
-	}
-)( localize( Sitemaps ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
+		sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
+	};
+} )( localize( Sitemaps ) );

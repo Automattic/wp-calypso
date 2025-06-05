@@ -23,22 +23,12 @@ import {
 	trackScrollPage,
 	setPageTitle,
 	getStartDate,
-	shouldShowBackButton,
 } from './controller-helper';
 
 const analyticsPageTitle = 'Reader';
-let lastRoute = null;
 
 function renderFeedError( context, next ) {
 	context.primary = createElement( FeedError );
-	next();
-}
-
-export function updateLastRoute( context, next ) {
-	if ( lastRoute ) {
-		context.lastRoute = lastRoute;
-	}
-	lastRoute = context.path;
 	next();
 }
 
@@ -97,7 +87,6 @@ export function following( context, next ) {
 		streamKey: 'following',
 		startDate,
 		recsStreamKey: 'custom_recs_posts_with_images',
-		showBack: shouldShowBackButton( context ),
 		trackScrollPage: trackScrollPage.bind(
 			null,
 			basePath,
@@ -161,7 +150,6 @@ export function feedListing( context, next ) {
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			suppressSiteNameLink
-			showBack={ shouldShowBackButton( context ) }
 			placeholder={ null }
 		/>
 	);
@@ -195,7 +183,6 @@ export function blogListing( context, next ) {
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			suppressSiteNameLink
-			showBack={ shouldShowBackButton( context ) }
 			placeholder={ null }
 		/>
 	);

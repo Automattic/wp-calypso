@@ -5,6 +5,8 @@ import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
+	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -52,39 +54,42 @@ const enhanceContextWithLogin = ( context ) => {
 
 	const previousHash = context.state || {};
 	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const currentState = context.store.getState();
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
 	const isJetpackLogin = isJetpack === 'jetpack';
-	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	const oauth2Client =
-		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
+	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
+	const isWooJPC = isWooJPCFlow( currentState );
+	const isBlazePro = getIsBlazePro( currentState );
+	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
+	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
-			! isP2Login &&
 			Boolean( clientId ) === false &&
-			Boolean( oauth2ClientId ) === false ) ||
-		isGravPoweredClient ||
-		isPartnerPortalClient;
+			Boolean( oauth2ClientId ) === false &&
+			! isBlazePro &&
+			! isWooJPC ) ||
+		isPartnerPortalClient ||
+		isStudioLogin ||
+		isCrowdsignalLogin;
 
 	context.primary = (
 		<WPLogin
 			action={ action }
 			isJetpack={ isJetpackLogin }
 			isWhiteLogin={ isWhiteLogin }
-			isP2Login={ isP2Login }
 			isGravPoweredClient={ isGravPoweredClient }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
 			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
-			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
 			signupUrl={ ( query && query.signup_url ) || null }
@@ -198,13 +203,23 @@ export async function magicLogin( context, next ) {
 
 export function qrCodeLogin( context, next ) {
 	const { redirect_to } = context.query;
-	context.primary = <QrCodeLoginPage locale={ context.params.lang } redirectTo={ redirect_to } />;
+
+	// Check if this is a Jetpack login flow based on the URL path
+	const isJetpack = context.path.includes( '/jetpack' );
+
+	context.primary = (
+		<QrCodeLoginPage
+			locale={ context.params.lang }
+			redirectTo={ redirect_to }
+			isJetpack={ isJetpack }
+		/>
+	);
 
 	next();
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
-	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+	if ( flow === 'jetpack' ) {
 		return HandleEmailedLinkFormJetpackConnect;
 	}
 	return HandleEmailedLinkForm;
@@ -223,7 +238,7 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
+	const { client_id, email, redirect_to, path, token, transition: isTransition } = previousQuery;
 
 	let activate = '';
 	try {
@@ -234,9 +249,14 @@ export function magicLoginUse( context, next ) {
 	}
 	const transition = isTransition === 'true';
 
-	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
+	const flow =
+		redirect_to?.includes( 'jetpack/connect' ) || path?.includes( 'jetpack/link/use' )
+			? 'jetpack'
+			: null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
+
+	const isJetpack = context.path.includes( '/jetpack' );
 
 	context.primary = (
 		<PrimaryComponent
@@ -246,6 +266,7 @@ export function magicLoginUse( context, next ) {
 			redirectTo={ redirect_to }
 			transition={ transition }
 			activate={ activate }
+			isJetpack={ isJetpack }
 		/>
 	);
 

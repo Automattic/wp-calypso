@@ -59,9 +59,9 @@ export default function ContactEditor( {
 
 	const onRemoveContact = ( contact: StateMonitoringSettingsContact ) => {
 		if ( type === 'email' ) {
-			recordEvent( `downtime_monitoring_remove_email` );
+			recordEvent( 'downtime_monitoring_remove_email' );
 		} else if ( type === 'sms' ) {
-			recordEvent( `downtime_monitoring_remove_phone_number` );
+			recordEvent( 'downtime_monitoring_remove_phone_number' );
 		}
 
 		setContacts( removeFromContactList( type, contacts, contact ) );

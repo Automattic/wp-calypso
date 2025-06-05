@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { Modal } from '@wordpress/components';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +8,6 @@ import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	acceptAtomicTransferDialog,
 	dismissAtomicTransferDialog,
-	acceptActivationModal,
 	activate as activateTheme,
 	initiateThemeTransfer,
 } from 'calypso/state/themes/actions';
@@ -37,7 +36,6 @@ interface AtomicTransferDialogProps {
 	isJetpack?: boolean;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
-	dispatchAcceptActivationModal: typeof acceptActivationModal;
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
 }
@@ -91,16 +89,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	continueToActivate() {
-		const {
-			siteId,
-			theme,
-			dispatchActivateTheme,
-			dispatchAcceptAtomicTransferDialog,
-			dispatchAcceptActivationModal,
-		} = this.props;
+		const { siteId, theme, dispatchActivateTheme, dispatchAcceptAtomicTransferDialog } = this.props;
 		if ( siteId ) {
 			dispatchAcceptAtomicTransferDialog( theme.id );
-			dispatchAcceptActivationModal( theme.id );
 			dispatchActivateTheme( theme.id, siteId );
 		}
 	}
@@ -192,15 +183,18 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	render() {
-		const { showEligibility, isMarketplaceProduct, inProgress } = this.props;
+		const { showEligibility, isMarketplaceProduct } = this.props;
+
+		if ( ! showEligibility ) {
+			return null;
+		}
 
 		return (
-			<Dialog
-				isVisible={ showEligibility }
-				onClose={ () => this.handleDismiss() }
-				shouldCloseOnEsc={ ! inProgress }
-				showCloseIcon={ ! inProgress }
-				shouldCloseOnOverlayClick={ ! inProgress }
+			<Modal
+				className="plugin-details-cta__dialog-content"
+				title={ translate( 'Before you continue' ) }
+				onRequestClose={ () => this.handleDismiss() }
+				size="medium"
 			>
 				{ this.renderActivationInProgress() }
 				{ this.renderSuccessfulTransfer() }
@@ -211,10 +205,11 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
+					onDismiss={ () => this.handleDismiss() }
 					onProceed={ () => this.handleAccept() }
 					backUrl="#"
 				/>
-			</Dialog>
+			</Modal>
 		);
 	}
 }
@@ -243,7 +238,6 @@ export default connect(
 	{
 		dispatchAcceptAtomicTransferDialog: acceptAtomicTransferDialog,
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
-		dispatchAcceptActivationModal: acceptActivationModal,
 		dispatchActivateTheme: activateTheme,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
 	}

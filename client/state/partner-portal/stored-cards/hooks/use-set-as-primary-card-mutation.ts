@@ -12,7 +12,7 @@ function mutationSetAsPrimaryCard( {
 }: SetAsPrimaryCardProps ): Promise< APIResponse > {
 	return wpcomJpl.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: `/jetpack-licensing/stripe/payment-method`,
+		path: '/jetpack-licensing/stripe/payment-method',
 		body: {
 			payment_method_id: paymentMethodId,
 			use_as_primary_payment_method: useAsPrimaryPaymentMethod,

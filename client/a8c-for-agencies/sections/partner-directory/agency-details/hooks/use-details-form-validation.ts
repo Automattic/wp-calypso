@@ -32,51 +32,51 @@ const useDetailsFormValidation = () => {
 		( payload: AgencyDetails ) => {
 			const newValidationError: ValidationState = {};
 			if ( payload.name === '' ) {
-				newValidationError.name = translate( `Company name can't be empty` );
+				newValidationError.name = translate( "Company name can't be empty" );
 			}
 
 			if ( payload.email === '' ) {
-				newValidationError.email = translate( `Email can't be empty` );
+				newValidationError.email = translate( "Email can't be empty" );
 			} else if ( ! emailValidator.validate( payload.email ) ) {
-				newValidationError.email = translate( `Please provide correct email address` );
+				newValidationError.email = translate( 'Please provide correct email address' );
 			}
 
 			if ( payload.website === '' ) {
-				newValidationError.website = translate( `Website can't be empty` );
+				newValidationError.website = translate( "Website can't be empty" );
 			} else if ( ! isValidUrl( payload.website ) ) {
-				newValidationError.website = translate( `Please enter a valid URL` );
+				newValidationError.website = translate( 'Please enter a valid URL' );
 			}
 
 			if ( payload.landingPageUrl !== '' && ! isValidUrl( payload.landingPageUrl ) ) {
-				newValidationError.landingPage = translate( `Please enter a valid URL` );
+				newValidationError.landingPage = translate( 'Please enter a valid URL' );
 			}
 
 			if ( payload.bioDescription === '' ) {
-				newValidationError.bio = translate( `Bio description can't be empty` );
+				newValidationError.bio = translate( "Bio description can't be empty" );
 			}
 
 			if ( payload.country === '' || payload.country === null ) {
-				newValidationError.country = translate( `Company location can't be empty` );
+				newValidationError.country = translate( "Company location can't be empty" );
 			}
 
 			if ( payload.industries.length < 1 ) {
-				newValidationError.industries = translate( `Please provide industries` );
+				newValidationError.industries = translate( 'Please provide industries' );
 			}
 
 			if ( payload.services.length < 1 ) {
-				newValidationError.services = translate( `Please provide services offered` );
+				newValidationError.services = translate( 'Please provide services offered' );
 			}
 
 			if ( payload.products.length < 1 ) {
-				newValidationError.products = translate( `Please provide products you work with` );
+				newValidationError.products = translate( 'Please provide products you work with' );
 			}
 
 			if ( payload.languagesSpoken.length < 1 ) {
-				newValidationError.languages = translate( `Please provide languages you speak` );
+				newValidationError.languages = translate( 'Please provide languages you speak' );
 			}
 
 			if ( payload.budgetLowerRange === '' ) {
-				newValidationError.minimumBudget = translate( `Please provide your minimum budget` );
+				newValidationError.minimumBudget = translate( 'Please provide your minimum budget' );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

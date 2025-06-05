@@ -123,6 +123,7 @@ const Placeholders = () => (
 const ConfirmationModal = ( {
 	isFetching,
 	siteTitle,
+	siteUrl,
 	siteDomain,
 	siteId,
 	onConfirm,
@@ -131,6 +132,7 @@ const ConfirmationModal = ( {
 	isFetching: boolean;
 	siteTitle?: string;
 	siteDomain?: string;
+	siteUrl?: string;
 	siteId?: number;
 	onConfirm: () => void;
 	closeModal: () => void;
@@ -147,7 +149,7 @@ const ConfirmationModal = ( {
 		setNewMessagingChat( {
 			initialMessage,
 			section: '100-year-plan',
-			siteUrl: siteDomain,
+			siteUrl,
 			siteId: siteId,
 		} );
 		setShowHelpCenter( true, true );
@@ -231,94 +233,99 @@ const ConfirmationModal = ( {
 	);
 };
 
-const HundredYearPlanSitePicker: Step = function HundredYearPlanSitePicker( { navigation, flow } ) {
-	const translate = useTranslate();
+const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: number } } > =
+	function HundredYearPlanSitePicker( { navigation, flow } ) {
+		const translate = useTranslate();
 
-	const [ selectedSiteId, setSelectedSiteId ] = useState< SiteId | null >( null );
-	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+		const [ selectedSiteId, setSelectedSiteId ] = useState< SiteId | null >( null );
+		const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 
-	const siteDomain = useSelect(
-		( select ) =>
-			( selectedSiteId &&
-				( select( SITE_STORE ) as SiteSelect ).getPrimarySiteDomain( selectedSiteId ) ) ||
-			undefined,
-		[ selectedSiteId ]
-	);
-	const siteTitle = useSelect(
-		( select ) =>
-			( selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSiteTitle( selectedSiteId ) ) ||
-			'',
-		[ selectedSiteId ]
-	);
-	const site = useSelect(
-		( select ) =>
-			( selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ) ) ||
-			null,
-		[ selectedSiteId ]
-	);
-	const isFetching = ! site || ! siteDomain || ! siteTitle;
+		const siteDomain = useSelect(
+			( select ) =>
+				( selectedSiteId &&
+					( select( SITE_STORE ) as SiteSelect ).getPrimarySiteDomain( selectedSiteId ) ) ||
+				undefined,
+			[ selectedSiteId ]
+		);
 
-	const selectSite = () => {
-		const siteSlug = new URL( site?.URL || '' ).host;
-		const siteId = site?.ID;
-		if ( ! siteSlug || ! siteId ) {
-			return;
-		}
-		navigation.submit?.( { siteSlug, siteId } );
-	};
+		const siteTitle = useSelect(
+			( select ) =>
+				( selectedSiteId &&
+					( select( SITE_STORE ) as SiteSelect ).getSiteTitle( selectedSiteId ) ) ||
+				'',
+			[ selectedSiteId ]
+		);
 
-	const onSelectSite = ( siteId: SiteId ) => {
-		setSelectedSiteId( siteId );
-		setShowConfirmModal( true );
-	};
+		const site = useSelect(
+			( select ) =>
+				( selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ) ) ||
+				null,
+			[ selectedSiteId ]
+		);
+		const isFetching = ! site || ! siteDomain || ! siteTitle;
 
-	const closeModal = () => {
-		setSelectedSiteId( null );
-		setShowConfirmModal( false );
-	};
+		const selectSite = () => {
+			const siteSlug = new URL( site?.URL || '' ).host;
+			const siteId = site?.ID;
+			if ( ! siteSlug || ! siteId ) {
+				return;
+			}
+			navigation.submit?.( { siteSlug, siteId } );
+		};
 
-	const filter = ( site: SiteDetails ) => {
-		return !! (
-			site.capabilities?.manage_options &&
-			( site.is_wpcom_atomic || ! site.jetpack ) &&
-			! site.options?.is_wpforteams_site &&
-			! site.is_wpcom_staging_site
+		const onSelectSite = ( siteId: SiteId ) => {
+			setSelectedSiteId( siteId );
+			setShowConfirmModal( true );
+		};
+
+		const closeModal = () => {
+			setSelectedSiteId( null );
+			setShowConfirmModal( false );
+		};
+
+		const filter = ( site: SiteDetails ) => {
+			return !! (
+				site.capabilities?.manage_options &&
+				( site.is_wpcom_atomic || ! site.jetpack ) &&
+				! site.options?.is_wpforteams_site &&
+				! site.is_wpcom_staging_site
+			);
+		};
+
+		return (
+			<>
+				<HundredYearPlanStepWrapper
+					stepName="hundred-year-plan-site-picker"
+					stepContent={
+						<div className="hundred-year-plan-site-picker__container">
+							<QuerySites allSites />
+							<SiteSelector filter={ filter } onSiteSelect={ onSelectSite } />
+						</div>
+					}
+					formattedHeader={
+						<FormattedHeader
+							align="center"
+							headerText={ translate( 'Select your site' ) }
+							subHeaderText={ translate(
+								'Start crafting your 100-Year legacy by appointing one of your sites.'
+							) }
+						/>
+					}
+					flowName={ flow }
+				/>
+				{ showConfirmModal && (
+					<ConfirmationModal
+						isFetching={ isFetching }
+						onConfirm={ selectSite }
+						closeModal={ closeModal }
+						siteTitle={ siteTitle }
+						siteUrl={ site?.URL }
+						siteDomain={ siteDomain?.domain }
+						siteId={ site?.ID }
+					/>
+				) }
+			</>
 		);
 	};
-
-	return (
-		<>
-			<HundredYearPlanStepWrapper
-				stepName="hundred-year-plan-site-picker"
-				stepContent={
-					<div className="hundred-year-plan-site-picker__container">
-						<QuerySites allSites />
-						<SiteSelector filter={ filter } onSiteSelect={ onSelectSite } />
-					</div>
-				}
-				formattedHeader={
-					<FormattedHeader
-						align="center"
-						headerText={ translate( 'Select your site' ) }
-						subHeaderText={ translate(
-							'Start crafting your 100-Year legacy by appointing one of your sites.'
-						) }
-					/>
-				}
-				flowName={ flow }
-			/>
-			{ showConfirmModal && (
-				<ConfirmationModal
-					isFetching={ isFetching }
-					onConfirm={ selectSite }
-					closeModal={ closeModal }
-					siteTitle={ siteTitle }
-					siteDomain={ siteDomain?.domain }
-					siteId={ site?.ID }
-				/>
-			) }
-		</>
-	);
-};
 
 export default HundredYearPlanSitePicker;

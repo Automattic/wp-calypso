@@ -1,25 +1,11 @@
-import { RegistryProvider } from '@wordpress/data';
-import React from 'react';
-
 /**
  * Internal dependencies
  */
-import './style.scss';
-import { createMockRegistry } from './mock-registry';
 import stores from './mock-registry/stores';
+import { withRegistryProvider, withThemeByClassName } from './decorators';
+import './style.scss';
 
 const siteKeys = Object.keys( stores );
-
-const withRegistryProvider = ( Story, context ) => {
-	const { site } = context.globals;
-	const registry = createMockRegistry( stores[ site ] );
-
-	return (
-		<RegistryProvider value={ registry }>
-			<Story />
-		</RegistryProvider>
-	);
-};
 
 export const globalTypes = {
 	site: {
@@ -33,4 +19,4 @@ export const globalTypes = {
 	},
 };
 
-export const decorators = [ withRegistryProvider ];
+export const decorators = [ withRegistryProvider, withThemeByClassName ];

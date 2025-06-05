@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 .page-section-wrapper {
 	margin-inline: 0;
 	background-repeat: no-repeat;
@@ -29,7 +29,7 @@
 }
 
 .page-section__sub-header-title {
-	@include a4a-font-body-md;
+	@include body-medium;
 }
 
 
@@ -45,18 +45,18 @@
 }
 
 .page-section__header-title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 
 	@include break-medium {
-		@include a4a-font-heading-xxl;
+		@include heading-2x-large;
 	}
 }
 
 .page-section__header-description {
-	@include a4a-font-body-md;
+	@include body-medium;
 	margin: 0;
 
 	@include break-medium {
-		@include a4a-font-body-lg;
+		@include body-large;
 	}
 }

@@ -148,7 +148,8 @@ export default function CheckoutMain( {
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace';
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -348,11 +349,23 @@ export default function CheckoutMain( {
 			customizedPreviousPath
 		);
 
+	const isForBusiness = responseCart?.tax?.location?.is_for_business ?? false;
+
 	const {
 		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
 		error: storedCardsError,
-	} = useStoredPaymentMethods( { isLoggedOut: isLoggedOutCart, type: 'card' } );
+	} = useStoredPaymentMethods( {
+		isLoggedOut: isLoggedOutCart,
+		type: 'card',
+		isForBusiness,
+	} );
+
+	// If tax_location->is_for_business is set to true, then only business
+	// cards will show in Checkout. We should announce this filtering to the
+	// user which these variables will do.
+	const areStoredCardsFiltered = isForBusiness;
+	const isBusinessCardsFilterEmpty = isForBusiness && storedCards.length ? false : true;
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -544,7 +557,21 @@ export default function CheckoutMain( {
 				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
-	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+	const a4aColors =
+		sitelessCheckoutType === 'a4a'
+			? {
+					primary: colors[ 'Automattic Blue' ],
+					primaryBorder: colors[ 'Automattic Blue 80' ],
+					primaryOver: colors[ 'Automattic Blue 60' ],
+					highlight: colors[ 'Automattic Blue 50' ],
+					highlightBorder: colors[ 'Automattic Blue 80' ],
+					highlightOver: colors[ 'Automattic Blue 60' ],
+			  }
+			: {};
+	const theme = {
+		...checkoutTheme,
+		colors: { ...checkoutTheme.colors, ...jetpackColors, ...a4aColors },
+	};
 
 	const isCheckoutV2ExperimentLoading = false;
 
@@ -710,7 +737,7 @@ export default function CheckoutMain( {
 			paymentMethodId,
 		}: {
 			transactionError: string | null;
-			paymentMethodId: string | null;
+			paymentMethodId: string | null | undefined;
 		} ) => {
 			const errorNoticeText = transactionError ? (
 				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly
@@ -794,6 +821,8 @@ export default function CheckoutMain( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					paymentMethods={ paymentMethods }
+					areStoredCardsFiltered={ areStoredCardsFiltered }
+					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }

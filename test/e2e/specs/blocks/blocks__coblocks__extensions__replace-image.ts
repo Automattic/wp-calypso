@@ -62,7 +62,7 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
 	} );
 
-	it( `Replace uploaded image`, async () => {
+	it( 'Replace uploaded image', async () => {
 		const editorParent = await editorPage.getEditorParent();
 		await editorParent.locator( 'button:text("Replace")' ).click();
 		await editorParent

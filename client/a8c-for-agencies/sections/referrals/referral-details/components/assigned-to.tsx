@@ -28,6 +28,10 @@ function getPurchaseStatus(
 		return [ 'info', translate( 'Canceled' ) ];
 	}
 
+	if ( purchase.status === 'error' ) {
+		return [ 'error', translate( 'Error' ) ];
+	}
+
 	return [ 'warning', translate( 'Awaiting payment' ) ];
 }
 

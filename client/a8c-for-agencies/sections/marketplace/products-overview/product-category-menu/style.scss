@@ -1,0 +1,35 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+@import "../../variables";
+
+.product-category-menu {
+	margin-block-start: 32px;
+
+	.a4a-carousel__content {
+		z-index: 1;
+	}
+
+	.a4a-carousel__navigation {
+		z-index: 10;
+	}
+}
+
+.product-category-menu-title {
+	@include heading-x-large;
+
+	color: var(--color-text-inverted);
+	z-index: 10;
+	position: relative;
+}
+
+.product-category-menu-items {
+	margin-block-start: -24px;
+}
+
+.product-category-menu-item {
+	width: 200px;
+	height: 100px;
+	background-color: var(--color-primary-0);
+}

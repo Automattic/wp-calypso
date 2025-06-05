@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { video } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -13,12 +11,11 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_VIDEOPRESS_URL_STATS } from '../../../const';
+import { VIDEOS_SUPPORT_URL, JETPACK_SUPPORT_VIDEOPRESS_URL_STATS } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
-import { StatsEmptyActionVideo } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import EmptyModuleCardVideo from '../shared/stats-empty-module-video';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
@@ -32,9 +29,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsVideoPlays';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? JETPACK_SUPPORT_VIDEOPRESS_URL_STATS
-		: `${ SUPPORT_URL }#videos`;
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_VIDEOPRESS_URL_STATS : VIDEOS_SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -87,25 +82,10 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ translate( 'Videos' ) }
 					isEmpty
-					emptyMessage={
-						<EmptyModuleCard
-							icon={ video }
-							description={ translate(
-								'Your {{link}}most popular videos{{/link}} will display here to better understand how they performed. Start uploading!',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
-									},
-									context: 'Stats: Info box label when the Videos module is empty',
-								}
-							) }
-							cards={ <StatsEmptyActionVideo from="module_videos" /> }
-						/>
-					}
+					emptyMessage={ <EmptyModuleCardVideo /> }
 					footerAction={
 						summaryUrl
 							? {

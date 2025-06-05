@@ -19,7 +19,7 @@ const FreePostSetup: Step = ( { navigation } ) => {
 
 	const formText = {
 		titlePlaceholder: translate( 'My Website' ),
-		titleMissing: translate( `Oops. Looks like your website doesn't have a name yet.` ),
+		titleMissing: translate( "Oops. Looks like your website doesn't have a name yet." ),
 		taglinePlaceholder: translate( 'Describe your website in a line or two' ),
 		iconPlaceholder: translate( 'Add a site icon' ),
 	};

@@ -7,7 +7,7 @@ import {
 	isLockedStyleVariation,
 } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
-import { isEmpty, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -296,18 +296,11 @@ export class Theme extends Component {
 	renderMoreButton = () => {
 		const { active, buttonContents, index, theme, siteId } = this.props;
 
-		let moreOptions;
-		if ( active && buttonContents.info ) {
-			moreOptions = { info: buttonContents.info };
-		} else if ( buttonContents.deleteTheme ) {
-			moreOptions = { deleteTheme: buttonContents.deleteTheme };
-		} else {
-			moreOptions = {};
-		}
-
-		if ( isEmpty( moreOptions ) ) {
+		if ( ! buttonContents.deleteTheme ) {
 			return null;
 		}
+
+		const moreOptions = { deleteTheme: buttonContents.deleteTheme };
 
 		return (
 			<ThemeMoreButton

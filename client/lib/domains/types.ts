@@ -112,6 +112,7 @@ export type ResponseDomain = {
 	isPrimary: boolean;
 	isRedeemable: boolean;
 	isRenewable: boolean;
+	isRootDomainRegisteredWithAutomattic: boolean;
 	isSubdomain: boolean;
 	isWPCOMDomain: boolean;
 	isWpcomStagingDomain: boolean;

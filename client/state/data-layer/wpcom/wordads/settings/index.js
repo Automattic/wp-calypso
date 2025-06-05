@@ -124,9 +124,11 @@ export const handleSaveFailure = ( {
 	updateWordadsSettings( siteId, previousSettings ),
 	errorNotice(
 		error === 'invalid_paypal'
-			? translate( 'Please enter a valid PayPal email address.' )
+			? translate(
+					'Your account needs a valid PayPal email to receive earnings. Enter one below, then try saving again.'
+			  )
 			: translate( 'An unexpected error occurred. Please try again later.' ),
-		{ id: `wordads-notice-error-${ siteId }`, duration: 5000 }
+		{ id: `wordads-notice-error-${ siteId }`, duration: 10000 }
 	),
 ];
 

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .team-invite .hosting-dashboard-layout__body-wrapper {
 	max-width: 700px;
@@ -10,7 +11,7 @@
 }
 
 .team-invite-form__required-information {
-	@include a4a-font-body-md;
+	@include body-medium;
 	color: var(--color-neutral-50);
 	margin-block-start: -32px;
 }

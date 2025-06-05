@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { payment, chartBar } from '@wordpress/icons';
-import { formatCurrency } from 'i18n-calypso';
 import { Subscriber } from '../../types';
 
-import '@automattic/components/src/highlight-cards/style.scss';
+import 'calypso/my-sites/stats/components/highlight-cards/style.scss';
 
 type CustomerStatsProps = {
 	customer: Subscriber;

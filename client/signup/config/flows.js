@@ -32,13 +32,19 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? destination
 		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
 
+	// Add celebrateLaunch=true for launch-site flow so the celebration modal shows after checkout
+	const isLaunchSiteFlow = flowName === 'launch-site';
+	const finalCheckoutBackUrl = isLaunchSiteFlow
+		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
+		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
+
 	return addQueryArgs(
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
-			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl ),
+			checkoutBackUrl: finalCheckoutBackUrl,
 		},
 		checkoutURL
 	);
@@ -90,7 +96,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 }
 
 function getLaunchDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
 function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
@@ -193,10 +199,6 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
-function getEntrepreneurFlowDestination( { redirect_to } ) {
-	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
-}
-
 const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
@@ -210,7 +212,6 @@ const flows = generateFlows( {
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,
-	getEntrepreneurFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

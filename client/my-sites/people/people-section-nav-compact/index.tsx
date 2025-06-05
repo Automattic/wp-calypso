@@ -20,7 +20,7 @@ function PeopleSectionNavCompact( props: Props ) {
 	const filters = [
 		{
 			id: 'team',
-			title: translate( 'Team' ),
+			title: translate( 'Users' ),
 			path: '/people/team/' + site?.slug,
 		},
 	];

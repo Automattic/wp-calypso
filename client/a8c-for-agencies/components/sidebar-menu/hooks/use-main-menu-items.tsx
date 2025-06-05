@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
@@ -11,10 +12,13 @@ import {
 	people,
 	starEmpty,
 	plugins,
+	chartBar,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
+import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -116,6 +120,16 @@ const useMainMenuItems = ( path: string ) => {
 			},
 			...referralItems,
 			migrationMenuItem,
+			{
+				icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
+				path: A4A_WOOPAYMENTS_LINK,
+				link: A4A_WOOPAYMENTS_LINK,
+				title: translate( 'WooPayments' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / WooPayments',
+				},
+				withChevron: true,
+			},
 			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
 						{
@@ -126,6 +140,25 @@ const useMainMenuItems = ( path: string ) => {
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Plugins',
 							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-reports' )
+				? [
+						{
+							icon: chartBar,
+							path: A4A_REPORTS_LINK,
+							link: A4A_REPORTS_LINK,
+							title: (
+								<div className="sidebar-menu-item__title-with-badge">
+									<span>{ translate( 'Reports' ) }</span>
+									<Badge type="info">{ translate( 'Beta' ) }</Badge>
+								</div>
+							),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Reports',
+							},
+							withChevron: true,
 						},
 				  ]
 				: [] ),
@@ -178,19 +211,6 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Agency Tier' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
-							},
-						},
-				  ]
-				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-woopayments' )
-				? [
-						{
-							icon: currencyDollar,
-							path: '/',
-							link: A4A_WOOPAYMENTS_LINK,
-							title: translate( 'WooPayments' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / WooPayments',
 							},
 						},
 				  ]

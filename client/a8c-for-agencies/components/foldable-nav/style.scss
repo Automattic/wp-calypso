@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .foldable-nav.foldable-card.card {
 	margin: 0;
 	background-color: transparent;
@@ -17,7 +20,7 @@
 
 		.foldable-card__main {
 			color: var(--color-accent-100);
-			@include a4a-font-heading-md;
+			@include heading-large;
 		}
 	}
 
@@ -28,7 +31,7 @@
 		p.no-content,
 		.components-flex-item {
 			color: var(--color-accent-80);
-			@include a4a-font-body-md;
+			@include body-medium;
 			margin-bottom: 0;
 		}
 

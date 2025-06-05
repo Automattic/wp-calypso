@@ -1,10 +1,11 @@
 import React from 'react';
 import uPlot from 'uplot';
+import { ChartResolution } from 'calypso/data/promote-post/use-campaign-chart-stats-query';
 
 export function tooltip(
 	tooltipRef: React.MutableRefObject< HTMLDivElement | null >,
-	formatDate: ( date: Date, hourly: boolean ) => string,
-	hourly: boolean,
+	formatDate: ( date: Date, resolution: ChartResolution ) => string,
+	resolution: ChartResolution,
 	formatValue: ( rawValue: number ) => string
 ) {
 	return {
@@ -63,7 +64,7 @@ export function tooltip(
 								// Only update the content if it has changed to avoid unnecessary reflows
 								const newTooltipContent = `
 									<div class="campaign-item-details__chart-tooltip-date">
-										<strong>${ formatDate( new Date( date * 1000 ), hourly ) }</strong>
+										<strong>${ formatDate( new Date( date * 1000 ), resolution ) }</strong>
 									</div>
 									<div class="campaign-item-details__chart-tooltip-divider"></div>
 									<div class="campaign-item-details__chart-tooltip-data">

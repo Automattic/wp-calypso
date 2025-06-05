@@ -1,9 +1,9 @@
-import i18n from 'i18n-calypso';
+import { setLocaleData, resetLocaleData } from '@wordpress/i18n';
 import { addLocaleQueryParam, injectLocalization } from '../';
 
 describe( 'index', () => {
 	beforeEach( () => {
-		i18n.configure(); // ensure everything is reset
+		resetLocaleData(); // ensure everything is reset
 	} );
 
 	describe( '#addLocaleQueryParam()', () => {
@@ -19,19 +19,19 @@ describe( 'index', () => {
 		} );
 
 		test( 'should include the locale query parameter for a non-default locale', () => {
-			i18n.setLocale( { '': { localeSlug: 'fr' } } );
+			setLocaleData( { '': { localeSlug: 'fr' } } );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 			expect( params ).toEqual( { query: 'locale=fr&search=foo' } );
 		} );
 
 		test( 'should include the locale query parameter for a locale variant', () => {
-			i18n.setLocale( { '': { localeSlug: 'de', localeVariant: 'de_formal' } } );
+			setLocaleData( { '': { localeSlug: 'de', localeVariant: 'de_formal' } } );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 			expect( params ).toEqual( { query: 'locale=de_formal&search=foo' } );
 		} );
 
 		test( 'should prioritize the locale specified on the request', () => {
-			i18n.setLocale( { '': { localeSlug: 'fr' } } );
+			setLocaleData( { '': { localeSlug: 'fr' } } );
 			const params = addLocaleQueryParam( { query: 'locale=cs' } );
 			expect( params ).toEqual( { query: 'locale=cs' } );
 		} );
@@ -52,7 +52,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should modify params by default', async () => {
-			i18n.setLocale( { '': { localeSlug: 'fr' } } );
+			setLocaleData( { '': { localeSlug: 'fr' } } );
 			const wpcom = {
 				async request( params ) {
 					expect( params.query ).toBe( 'locale=fr&search=foo' );

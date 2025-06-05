@@ -12,7 +12,9 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navigation, flow } ) {
+const HundredYearPlanDIYOrDIFM: Step< {
+	submits: { nextStep: 'thank-you' } | { diyOrDifmChoice: 'diy' };
+} > = function HundredYearPlanDIYOrDIFM( { navigation, flow } ) {
 	const translate = useTranslate();
 	const { submit } = navigation;
 
@@ -29,8 +31,7 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 		hideGdprBanner: true,
 		onSchedule: () => {
 			submit?.( { nextStep: 'thank-you' } );
-			// Close the Calendly popup after 1 second, to improve the user experience
-			setTimeout( closeCalendlyPopup, 1000 );
+			closeCalendlyPopup();
 		},
 	} );
 

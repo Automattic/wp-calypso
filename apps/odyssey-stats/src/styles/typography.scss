@@ -9,6 +9,14 @@
 	@include stats-section-header-for-jetpack;
 }
 
+// Replace fonts in client/my-sites/stats/stats-module-utm-builder/style.scss.
+// Need to be pretty specific to take precedence over those rules.
+.is-odyssey-stats.stats-utm-builder__overlay
+	.components-modal__header
+	.components-modal__header-heading {
+	@include stats-section-header-for-jetpack;
+}
+
 // Replace fonts in packages/components/src/highlight-cards/style.scss.
 $highlight-card-count-font: $font-sf-pro-display;
 $highlight-card-heading-font: $display-type-font;

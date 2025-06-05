@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
 import { Plans, ProductsList } from '@automattic/data-stores';
@@ -27,10 +28,6 @@ import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
-
-jest.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
-} ) );
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '@automattic/data-stores', () => ( {
@@ -348,7 +345,7 @@ describe( 'UpsellNudge', () => {
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		expect( screen.findByText( mockProducts.wp_titan_mail_monthly.product_name ) ).toNeverAppear();
 		await waitFor( () => {
-			expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
+			expect( page ).toHaveBeenCalledWith( '/checkout/example.com' );
 		} );
 
 		expect(

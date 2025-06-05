@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { setGeoLocation, setLocale } from '@automattic/number-formatters';
 import { render, screen } from '@testing-library/react';
-import i18n, { geolocateCurrencySymbol } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 import React from 'react';
 import PlanPrice from '../index';
 
@@ -204,32 +205,14 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price with $ when using displayFlatPrice and US locale', async () => {
-		globalThis.fetch = jest.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'US' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
-		);
-		await geolocateCurrencySymbol();
+		setGeoLocation( 'US' );
 		render( <PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice /> );
 		expect( document.body ).toHaveTextContent( '$96.05' );
 		expect( document.body ).not.toHaveTextContent( 'US$96.05' );
 	} );
 
 	it( 'renders a price with US$ when using displayFlatPrice and non-US locale', async () => {
-		globalThis.fetch = jest.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'CA' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
-		);
-		await geolocateCurrencySymbol();
+		setGeoLocation( 'CA' );
 		render( <PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice /> );
 		expect( document.body ).toHaveTextContent( 'US$96.05' );
 	} );
@@ -386,6 +369,7 @@ describe( 'PlanPrice', () => {
 				localeSlug: 'fr',
 			},
 		} );
+		setLocale( 'fr-CA' );
 		render( <PlanPrice rawPrice={ 48 } currencyCode="CAD" /> );
 		expect( document.body ).toHaveTextContent( '48C$' );
 	} );

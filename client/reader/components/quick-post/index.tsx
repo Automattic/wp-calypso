@@ -7,9 +7,12 @@ import {
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
@@ -19,9 +22,10 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -51,29 +55,47 @@ function QuickPost( {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const [ postContent, setPostContent ] = useState( '' );
+	const STORAGE_KEY = 'reader_quick_post_content';
+	const [ postContent, setPostContent ] = useState( () => {
+		// Use localStorage to save content between sessions.
+		return localStorage.getItem( STORAGE_KEY ) || '';
+	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const mostRecentlySelectedSiteId = useSelector( getMostRecentlySelectedSiteId );
+	const primarySiteId = useSelector( getPrimarySiteId );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
+	const popoverButtonRef = useRef< HTMLButtonElement >( null );
+
+	useEffect( () => {
+		if ( postContent ) {
+			localStorage.setItem( STORAGE_KEY, postContent );
+		}
+	}, [ postContent ] );
 
 	const clearEditor = () => {
+		localStorage.removeItem( STORAGE_KEY );
+		setPostContent( '' );
 		setEditorKey( ( key ) => key + 1 );
 	};
 
+	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
+
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
+		if ( ! postContent.trim() || ! siteId || isSubmitting ) {
 			return;
 		}
 
 		setIsSubmitting( true );
 
 		wpcom
-			.site( selectedSiteId )
+			.site( siteId )
 			.post()
 			.add( {
 				title:
@@ -88,7 +110,10 @@ function QuickPost( {
 				status: 'publish',
 			} )
 			.then( ( postData: PostItem ) => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
+					post_id: postData.ID,
+					post_url: postData.URL,
+				} );
 				clearEditor();
 
 				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
@@ -105,7 +130,7 @@ function QuickPost( {
 						// Actual API response will update the stream with the real post data
 						dispatch(
 							receiveNewPost( {
-								streamKey: `following`,
+								streamKey: 'following',
 								postData,
 							} )
 						);
@@ -121,10 +146,6 @@ function QuickPost( {
 			} );
 	};
 
-	const handleCancel = () => {
-		clearEditor();
-	};
-
 	const handleSiteSelect = ( siteId: number ) => {
 		dispatch( setSelectedSiteId( siteId ) );
 	};
@@ -135,6 +156,13 @@ function QuickPost( {
 		}
 		return translate( 'Post' );
 	};
+
+	const handleFullEditorClick = () => {
+		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
+	};
+
+	const toggleMenu = () => setIsMenuVisible( ! isMenuVisible );
+	const closeMenu = () => setIsMenuVisible( false );
 
 	if ( ! hasLoaded ) {
 		return (
@@ -155,29 +183,52 @@ function QuickPost( {
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown
-						selectedSiteId={ selectedSiteId || undefined }
+						selectedSiteId={ siteId }
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
+					<div className="quick-post-input__actions-menu">
+						<Button
+							ref={ popoverButtonRef }
+							icon={ moreVertical }
+							onClick={ toggleMenu }
+							aria-expanded={ isMenuVisible }
+							className="quick-post-input__actions-toggle"
+						/>
+						<PopoverMenu
+							context={ popoverButtonRef.current }
+							isVisible={ isMenuVisible }
+							onClose={ closeMenu }
+							position="bottom"
+							className="quick-post-input__popover"
+						>
+							<PopoverMenuItem
+								href={ siteId ? `/post/${ siteId }?type=post` : '/post' }
+								target="_blank"
+								rel="noreferrer"
+								onClick={ handleFullEditorClick }
+							>
+								{ translate( 'Open Full Editor' ) }
+							</PopoverMenuItem>
+						</PopoverMenu>
+					</div>
 				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }
-						initialContent=""
+						initialContent={ postContent }
 						onChange={ setPostContent }
 						isRTL={ isLocaleRtl( locale ) ?? false }
 						isDarkMode={ false }
+						customStyles={ `
+							div.is-root-container.block-editor-block-list__layout {
+								padding-bottom: 20px;
+							}
+						` }
 					/>
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button
-					onClick={ handleCancel }
-					disabled={ isDisabled }
-					className="quick-post-input__cancel"
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
 				<Button
 					variant="primary"
 					onClick={ handleSubmit }

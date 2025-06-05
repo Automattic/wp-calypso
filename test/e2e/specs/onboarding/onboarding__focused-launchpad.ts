@@ -14,14 +14,18 @@ import {
 	StartSiteFlow,
 	MyHomePage,
 	EditorPage,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 	let page: Page;
 	let newSiteDetails: NewSiteResponse;
+	let siteCreatedFlag = false;
+	let testAccount: TestAccount;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -32,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 				accountName: 'defaultUser',
 			},
 		] );
-		const testAccount = new TestAccount( testUser );
+		testAccount = new TestAccount( testUser );
 		await testAccount.authenticate( page );
 	} );
 
@@ -46,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Visit onboarding page', async function () {
-			await page.goto( DataHelper.getCalypsoURL( `/setup/onboarding` ) );
+			await page.goto( DataHelper.getCalypsoURL( '/setup/onboarding' ) );
 		} );
 
 		it( 'Skip domain selection', async function () {
@@ -55,9 +59,11 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await signupDomainPage.skipDomainSelection();
 		} );
 
-		it( `Select WordPress.com Free plan`, async function () {
+		it( 'Select WordPress.com Free plan', async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
+
+			siteCreatedFlag = true;
 		} );
 
 		it( 'Select "Publish a blog" goal', async function () {
@@ -79,11 +85,46 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await title.waitFor( { timeout: 30 * 1000 } );
 		} );
 
-		it( 'It will add subscribers', async function () {
-			const addSubscribersButton = await page.getByText( 'Add subscribers' );
+		it( 'Start building your audience', async function () {
+			const addSubscribersButton = await page.getByText( 'Start building your audience' );
 			await addSubscribersButton.waitFor();
 			await addSubscribersButton.click();
+			await new Promise( ( r ) => setTimeout( r, 1000 ) );
 
+			await page.goto(
+				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
+			);
+		} );
+
+		it( 'Complete your profile', async function () {
+			const completeProfileButton = await page.getByText( 'Complete your profile' );
+			await completeProfileButton.waitFor();
+			await completeProfileButton.click();
+			await new Promise( ( r ) => setTimeout( r, 1000 ) );
+
+			await page.goto(
+				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
+			);
+		} );
+
+		it( 'Give your site a name', async function () {
+			const giveSiteNameButton = await page.getByText( 'Give your site a name' );
+			await giveSiteNameButton.waitFor();
+			await giveSiteNameButton.click();
+		} );
+
+		it( 'Once at the /wp-admin settings page, update site name', async function () {
+			await page.fill( 'input[name="blogname"]', DataHelper.getRandomPhrase() );
+			const saveChangesButton = await page.getByRole( 'button', { name: 'Save Changes' } );
+			await saveChangesButton.click();
+
+			// The first time we save, we need to wait for the page to reload because it redirects to Calypo's settings page
+			// before loading /wp-admin settings page again, so we'd lose the settings updated notice
+			// We can probably remove this after the ungangling is completed.
+			await new Promise( ( r ) => setTimeout( r, 5000 ) );
+			await saveChangesButton.click();
+			// Wait for the success notice that appears after saving
+			await page.waitForSelector( '#setting-error-settings_updated' );
 			await page.goto(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
 			);
@@ -91,7 +132,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( "It will write the user's first post", async function () {
 			const writeFirstPostButton = await page.getByText( 'Write your first post' );
-			await writeFirstPostButton.waitFor();
+			await writeFirstPostButton.waitFor( { timeout: 30 * 1000 } );
 			await writeFirstPostButton.click();
 		} );
 
@@ -103,7 +144,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Enter blog title', async function () {
-			await editorPage.enterTitle( 'my first post' );
+			await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 		} );
 
 		it( 'Publish post', async function () {
@@ -116,10 +157,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		it( 'Should show Launch Site button and update title', async function () {
 			const header = await page.getByText( "You're all set!" );
 			await header.waitFor();
-
-			await page.goto(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
-			);
 			const launchSiteButton = await page.getByText( 'Launch your site' );
 			await launchSiteButton.waitFor();
 			await launchSiteButton.click();
@@ -128,6 +165,23 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		it( 'Make sure launch modal shows', async function () {
 			const myHomePage = new MyHomePage( page );
 			await myHomePage.validateTaskHeadingMessage( 'Congrats, your site is live!' );
+		} );
+	} );
+
+	afterAll( async function () {
+		if ( ! siteCreatedFlag ) {
+			return;
+		}
+
+		const restAPIClient = new RestAPIClient( {
+			username: testAccount.credentials.username,
+			password: testAccount.credentials.password,
+		} );
+
+		await apiDeleteSite( restAPIClient, {
+			url: newSiteDetails.blog_details.url,
+			id: newSiteDetails.blog_details.blogid,
+			name: newSiteDetails.blog_details.blogname,
 		} );
 	} );
 } );

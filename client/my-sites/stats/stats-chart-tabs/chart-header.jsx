@@ -69,15 +69,15 @@ const ChartHeader = ( {
 				<ButtonGroup className="stats-chart-tabs__type-toggle">
 					<Button
 						icon={ <Icon icon={ trendingUp } /> }
-						isSmall
-						isPrimary={ chartType === 'line' }
+						size="compact"
+						variant={ chartType === 'line' ? 'primary' : 'secondary' }
 						onClick={ () => handleChartTypeChange( 'line' ) }
 						aria-label="Switch to line chart"
 					/>
 					<Button
 						icon={ <Icon icon={ chartBar } /> }
-						isSmall
-						isPrimary={ chartType === 'bar' }
+						size="compact"
+						variant={ chartType === 'bar' ? 'primary' : 'secondary' }
 						onClick={ () => handleChartTypeChange( 'bar' ) }
 						aria-label="Switch to bar chart"
 					/>

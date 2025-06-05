@@ -39,7 +39,19 @@ import type { Step } from '../../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
-const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
+const DomainsStep: Step< {
+	submits:
+		| {
+				freeDomain?: boolean;
+				domainName?: string;
+				productSlug?: string;
+				domainItem?: DomainSuggestion;
+				deferDomainSelection?: true;
+				// Fake type just to make the this step types isomorphic to unified-domains.
+				domainCart?: undefined;
+		  }
+		| undefined;
+} > = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -181,7 +193,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
 			case DOMAIN_UPSELL_FLOW:
-				return __( 'Enter some descriptive keywords to get started' );
+				return __( 'Enter some descriptive keywords to get started.' );
 			case HUNDRED_YEAR_PLAN_FLOW:
 			case HUNDRED_YEAR_DOMAIN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
@@ -227,8 +239,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
-
-		submit?.();
+		submit( undefined );
 	};
 
 	const handleAddMapping = ( domain: string ) => {
@@ -238,7 +249,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit( undefined );
 	};
 
 	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {
@@ -248,7 +259,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				getAnalyticsSection(),
 				position,
 				suggestion?.is_premium,
-				flow
+				flow,
+				suggestion?.vendor
 			)
 		);
 
@@ -305,22 +317,33 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		return ! isCopySiteFlow( flow );
 	};
 
-	const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-		? HundredYearPlanStepWrapper
-		: StepContainer;
-
+	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
+		return (
+			<HundredYearPlanStepWrapper
+				stepName="domains"
+				flowName={ flow as string }
+				stepContent={ <div className="domains__content">{ renderContent() }</div> }
+				formattedHeader={
+					<FormattedHeader
+						id="domains-header"
+						align="center"
+						headerText={ getHeaderText() }
+						subHeaderText={ getSubHeaderText() }
+					/>
+				}
+			/>
+		);
+	}
 	return (
-		<Container
+		<StepContainer
 			stepName="domains"
 			isWideLayout
 			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
-			hideSkip
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => handleGoBack( goBack ) }
-			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"

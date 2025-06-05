@@ -1,4 +1,5 @@
-@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .credit-card-fields {
 	display: none;
@@ -19,8 +20,7 @@
 
 	input {
 		padding: 11px 16px;
-		line-height: 0.7;
-		font-size: $font-body-small;
+		@include body-small;
 		color: var(--color-neutral-80);
 	}
 }
@@ -55,8 +55,7 @@
 .credit-card-fields__input-field label {
 	display: block;
 	margin-bottom: 0.5rem;
-	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-	font-weight: 400;
+	@include body-x-large;
 	color: var(--color-neutral-80);
 }
 
@@ -64,9 +63,8 @@
 	display: block;
 	margin-block-start: 0.5rem;
 	color: var(--color-scary-50);
-	font-size: $font-body-small;
+	@include body-small;
 	font-style: italic;
-	font-weight: 400;
 }
 
 .credit-card-fields__stripe-element {
@@ -77,12 +75,11 @@
 .credit-card-fields__stripe-element .StripeElement {
 	display: block;
 	width: 100%;
-	font-size: 0.875rem;
+	@include body-medium;
 	box-sizing: border-box;
 	border: 1px solid var(--color-accent-60);
 	color: var(--color-neutral-80);
 	padding: 11px 16px;
-	line-height: 0.7;
 }
 
 .credit-card-fields__stripe-element--has-error .StripeElement {

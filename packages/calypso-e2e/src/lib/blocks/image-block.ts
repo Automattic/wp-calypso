@@ -1,5 +1,5 @@
 import { Page, ElementHandle } from 'playwright';
-import { EditorComponent, envVariables } from '../..';
+import { EditorComponent } from '../..';
 
 type Sources = 'Media Library' | 'Google Photos' | 'Pexels';
 
@@ -91,11 +91,7 @@ export class ImageBlock {
 		const page = ( await this.block.ownerFrame() )?.page() as Page;
 		await page.locator( 'input[type="file"][multiple]' ).setInputFiles( path );
 
-		const confirmButtonSelector = envVariables.TEST_ON_ATOMIC
-			? 'button:text-is("Select")'
-			: 'button :text-is("Insert")'; // The whitespace is intentional as the text is nested in a span element.
-
-		await page.locator( confirmButtonSelector ).click();
+		await page.locator( 'button:text-is("Select")' ).click();
 
 		return await this.getImage();
 	}

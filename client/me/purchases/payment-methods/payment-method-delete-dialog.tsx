@@ -42,7 +42,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 				{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
 				{
 					action: 'confirm',
-					label: translate( 'Delete' ),
+					label: translate( 'Remove' ),
 					isPrimary: true,
 					additionalClassNames: 'is-scary',
 					onClick: onConfirm,

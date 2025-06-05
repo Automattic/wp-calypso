@@ -1,5 +1,4 @@
 .domain-warnings__password {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 110%;
 	padding: 5px;
 }
@@ -9,7 +8,7 @@
 	color: var(--color-text);
 	padding-right: 4px !important;
 	border-radius: 0 !important;
-	.notice__action {
+	.calypso-notice__action {
 		background-color: var(--color-error-40) !important;
 		margin-right: 4px;
 	}

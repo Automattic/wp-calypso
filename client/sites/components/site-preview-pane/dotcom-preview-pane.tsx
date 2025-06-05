@@ -1,10 +1,8 @@
-import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
@@ -16,30 +14,30 @@ import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
+	DEPLOYMENTS,
 	FEATURE_TO_ROUTE_MAP,
-	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_OVERVIEW,
-	DOTCOM_MONITORING,
-	DOTCOM_SITE_PERFORMANCE,
-	DOTCOM_LOGS_PHP,
-	DOTCOM_LOGS_WEB,
-	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_HOSTING_FEATURES,
-	DOTCOM_STAGING_SITE,
-	SETTINGS_SITE,
+	HOSTING_FEATURES,
+	LOGS_PHP,
+	LOGS_WEB,
+	MONITORING,
+	OVERVIEW,
+	PERFORMANCE,
+	PLAN,
+	SETTINGS_ADMINISTRATION_DELETE_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
-	SETTINGS_ADMINISTRATION_DELETE_SITE,
-	SETTINGS_SERVER,
-	SETTINGS_SFTP_SSH,
 	SETTINGS_DATABASE,
 	SETTINGS_PERFORMANCE,
+	SETTINGS_SERVER,
+	SETTINGS_SFTP_SSH,
+	SETTINGS_SITE,
+	STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
 import type {
-	ItemData,
 	FeaturePreviewInterface,
+	ItemData,
 } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 interface Props {
@@ -65,15 +63,13 @@ const DotcomPreviewPane = ( {
 	const isPlanExpired = !! site.plan?.expired;
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 
-	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
-
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
-				enabled: ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_OVERVIEW ],
+				enabled: true,
+				featureIds: [ OVERVIEW ],
 			},
 			{
 				label: (
@@ -82,38 +78,37 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled:
-					( isSimpleSite || isPlanExpired ) && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_HOSTING_FEATURES ],
+				enabled: isSimpleSite || isPlanExpired,
+				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_MONITORING ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
 				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
+				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_STAGING_SITE ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ STAGING_SITE ],
 			},
 			{
 				label: __( 'Settings' ),
-				enabled: isRemoveDuplicateViewsExperimentEnabled,
+				enabled: true,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
@@ -126,15 +121,13 @@ const DotcomPreviewPane = ( {
 				],
 			},
 			{
-				label: hasEnTranslation( 'Server Settings' )
-					? __( 'Server Settings' )
-					: __( 'Server Config' ),
-				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
-				featureIds: [ DOTCOM_HOSTING_CONFIG ],
+				enabled: true,
+				visible: false,
+				featureIds: [ PLAN ],
 			},
 		];
 
-		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
+		return siteFeatures.map( ( { label, enabled, visible, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
 			const defaultFeatureId = featureIds[ 0 ] as string;
 			const defaultRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
@@ -147,7 +140,7 @@ const DotcomPreviewPane = ( {
 				tab: {
 					label,
 					href: defaultRoute,
-					visible: enabled,
+					visible: enabled && visible !== false,
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
@@ -166,7 +159,6 @@ const DotcomPreviewPane = ( {
 		hasEnTranslation,
 		isSimpleSite,
 		site,
-		isRemoveDuplicateViewsExperimentEnabled,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
 	] );

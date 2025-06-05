@@ -19,7 +19,6 @@ const PlanRenewContainer = styled.div( {
 	display: 'flex',
 	justifyItems: 'flex-start',
 	gap: '4px',
-	marginTop: '-2px',
 } );
 
 const PlanRenewLink = styled.a`

@@ -23,13 +23,11 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 			trackScrollPage={ () => {} }
 			emptyContent={ () => (
 				<EmptyContent
-					illustration={ null }
 					icon={ <Icon icon={ postList } size={ 48 } /> }
 					title={ null }
 					line={ translate( 'No posts yet.' ) }
 				/>
 			) }
-			showBack={ false }
 		/>
 	);
 };

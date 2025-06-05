@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,11 +20,15 @@ function CommentButton( {
 	const translate = useTranslate();
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
+	// Show a tooltip only when we are showing the number of existing comments.
+	const showTooltip = commentCount > 0;
 
 	return (
 		<TagName
-			className="comment-button tooltip"
-			data-tooltip={ translate( 'Comment' ) }
+			className={ clsx( 'comment-button', {
+				tooltip: showTooltip,
+			} ) }
+			data-tooltip={ showTooltip ? translate( 'Comment' ) : undefined }
 			onClick={ onClick }
 			href={ 'a' === TagName ? href : undefined }
 			target={ 'a' === TagName ? target : undefined }

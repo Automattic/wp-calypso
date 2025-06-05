@@ -29,20 +29,20 @@
 
 		.current-score {
 			color: #000;
-			font-size: 96px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 96px;
 			line-height: 96px;
 			font-weight: 300; /* stylelint-disable-line scales/font-weights */
 		}
 
 		.max-score {
 			color: var(--studio-gray-60);
-			font-size: 26px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 26px;
 			line-height: 26px;
 		}
 
 		&.mobile {
 			.current-score {
-				font-size: 64px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 64px;
 				line-height: 64px;
 			}
 

@@ -1,5 +1,6 @@
 import { Card } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
+import A4ACarousel from 'calypso/a8c-for-agencies/components/a4a-carousel';
 import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 
@@ -51,18 +52,20 @@ export default function HostingFeaturesSectionV2( {
 			background={ background }
 			description={ description }
 		>
-			<div className="hosting-features-section-v2__cards">
-				{ features.map( ( feature, index ) => {
-					return (
-						<FeatureCard
-							key={ `feature-card-${ index }` }
-							icon={ feature.icon }
-							title={ feature.title }
-							items={ feature.items }
-						/>
-					);
-				} ) }
-			</div>
+			<A4ACarousel>
+				<div className="hosting-features-section-v2__cards">
+					{ features.map( ( feature, index ) => {
+						return (
+							<FeatureCard
+								key={ `feature-card-${ index }` }
+								icon={ feature.icon }
+								title={ feature.title }
+								items={ feature.items }
+							/>
+						);
+					} ) }
+				</div>
+			</A4ACarousel>
 		</PageSection>
 	);
 }

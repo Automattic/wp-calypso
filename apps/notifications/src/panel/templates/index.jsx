@@ -457,7 +457,7 @@ class Layout extends Component {
 			// element itself. There may be better ways to handle this, but
 			// let's disable eslint here for now to avoid refactoring older code.
 			// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-			<div onClick={ this.props.interceptLinks }>
+			<div className="color-scheme is-global" onClick={ this.props.interceptLinks }>
 				{ this.props.error && <AppError error={ this.props.error } /> }
 
 				{ ! this.props.error && (

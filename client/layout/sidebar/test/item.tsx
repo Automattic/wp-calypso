@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';

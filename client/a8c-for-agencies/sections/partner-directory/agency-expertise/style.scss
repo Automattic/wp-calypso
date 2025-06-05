@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .partner-directory-agency-expertise__directory-client-sites {
 	display: grid;
@@ -25,18 +27,15 @@
 }
 
 h3.partner-directory-agency-expertise__client-samples-label {
-	font-size: rem(14px);
-	line-height: 1.5;
-	font-weight: 500;
+	@include body-medium;
 	margin-block-end: 8px;
 }
 
 .partner-directory-agency-expertise__error {
 	margin-block-start: 0.25rem;
 	color: var(--color-scary-40);
+	@include body-small;
 	font-style: italic;
-	font-size: 0.875rem;
-	line-height: 14px;
 
 	&.hidden {
 		display: none;

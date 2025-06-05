@@ -8,7 +8,8 @@ import {
 	isEcommerce,
 	isPro,
 } from '@automattic/calypso-products';
-import { formatCurrency, LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -148,11 +149,10 @@ function getDummyCartProducts( {
 				productSlug: activePlanScheme.product_slug,
 				productOriginalName: activePlanScheme.product_name,
 				itemSubTotal: activePlanScheme.cost_smallest_unit,
-				productDisplayCost:
-					formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) + '*',
+				productDisplayCost: formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
 				subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
 					args: {
 						planPrice: formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {

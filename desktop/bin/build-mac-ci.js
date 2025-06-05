@@ -7,15 +7,8 @@ const yaml = require( 'js-yaml' );
 
 const PROJECT_DIR = path.join( __dirname, '..' );
 const BUILD_DIR = path.join( PROJECT_DIR, 'release' );
-
-const circleTag = process.env.CIRCLE_TAG;
-const isReleaseBuild =
-	process.platform === 'darwin' && !! circleTag && circleTag.startsWith( 'desktop-v' );
-
-// In certain conditions, .circle/config.yml sets ELECTRON_BUILDER_ARGS to -c.mac.target=dir.
-// However, when building a release, that flag must not be set, otherwise the latest-mac.yml file will not be created,
-// and that file is needed below when isReleaseBuild is true.
-const ELECTRON_BUILDER_ARGS = isReleaseBuild ? '' : process.env.ELECTRON_BUILDER_ARGS || '';
+const ELECTRON_BUILDER_ARGS = process.env.ELECTRON_BUILDER_ARGS || '';
+const isReleaseBuild = process.env.RELEASE_BUILD === 'true';
 
 // Build Apple Silicon binaries only unless tagged for release.
 const arches = isReleaseBuild ? [ 'x64', 'arm64' ] : [ 'arm64' ];

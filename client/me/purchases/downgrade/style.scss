@@ -1,0 +1,187 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.downgrade__wrapper-card {
+	font-size: $font-body-small;
+	.downgrade__content{
+		margin-bottom: 14px;
+	}
+	.purchases__downgrade & {
+		box-shadow: none;
+		padding: 0;
+	}
+}
+
+.downgrade__back .header-cake__back,
+.confirm-downgrade-domain__back .header-cake__back {
+	padding: 24px 0;
+	text-align: left;
+}
+
+.downgrade__support-link {
+	color: var(--color-text-subtle);
+	margin: 14px 0  0 0;
+
+	.is-link {
+		text-decoration: none;
+	}
+}
+
+.confirm-downgrade-domain__formatted-header.formatted-header,
+.downgrade__formatted-header.formatted-header {
+	margin: 16px 0;
+}
+
+.downgrade__features {
+	margin-bottom: 14px;
+
+	ul.downgrade__features-list {
+		list-style: none;
+		margin: 0;
+		line-height: 2;
+
+		li {
+			list-style: none;
+			display: flex;
+			align-items: center;
+			column-gap: 4px;
+
+			span {
+				margin: auto 0;
+				flex: 1;
+			}
+
+			.gridicon {
+				color: var(--color-error-40);
+			}
+		}
+	}
+}
+
+.downgrade__features-link {
+	text-align: right;
+
+	a {
+		color: var(--color-text-subtle);
+		text-decoration: underline;
+	}
+}
+
+.downgrade__warning-string {
+	color: var(--color-error);
+	font-weight: 600;
+}
+
+.downgrade__confirm-buttons {
+	display: flex;
+
+	button {
+		margin-right: 8px;
+	}
+}
+
+// Reuse the same styles as the cancel purchase component for consistency
+.downgrade__purchase-name {
+	font-weight: 600;
+}
+
+.downgrade__footer {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+
+	.downgrade__footer-text {
+		flex-grow: 1;
+	}
+
+	.downgrade__button-wrapper {
+		flex-shrink: 0;
+	}
+
+	&::after {
+		display: none;
+	}
+}
+
+.downgrade__footer-text p {
+	margin: 0;
+
+	&.downgrade__refund-amount {
+		color: var(--color-success);
+	}
+
+	&.downgrade__expiration-text {
+		color: var(--color-error);
+	}
+}
+
+.downgrade__button {
+	@include breakpoint-deprecated( "<660px" ) {
+		width: 100%;
+	}
+}
+
+.purchases__downgrade .downgrade__inner-wrapper.card {
+	box-shadow: none;
+
+}
+
+.downgrade-placeholder {
+	.downgrade__plan-icon,
+	.downgrade__title,
+	.downgrade__subtitle,
+	.downgrade__description,
+	.downgrade__feature,
+	.downgrade__settings-link,
+	.downgrade__confirm-buttons div{
+		@include placeholder( --color-neutral-10 );
+		display: block;
+	}
+
+	.downgrade__plan-icon {
+		height: 56px;
+		border-radius: 50%;
+	}
+
+	.downgrade__header {
+		border-bottom: 2px solid var(--color-neutral-0);
+	}
+
+	.downgrade__subtitle{
+		margin-bottom: 3px;
+		width: 70%;
+	}
+
+	.downgrade__title {
+		margin-bottom: 1px;
+		margin-left: 0;
+		width: 70%;
+	}
+
+	.downgrade__settings-link {
+		height: 300px;
+	}
+
+	.downgrade__feature {
+		width: 40%;
+		margin-bottom: 5px;
+	}
+
+	.downgrade__confirm-buttons{
+		display: flex;
+		gap: 12px;
+		div {
+			width: 20%;
+			height: 50px;
+		}
+	}
+}
+
+.blank-canvas.atomic-warning {
+	.blank-canvas__footer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

@@ -97,7 +97,7 @@ class LikeButton extends PureComponent {
 					onClick: ! isLink ? this.toggleLiked : null,
 					onMouseEnter,
 					onMouseLeave,
-					title: this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
+					'aria-label': this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
 				},
 				( prop ) => prop === null
 			),

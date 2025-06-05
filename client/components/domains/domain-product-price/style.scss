@@ -25,9 +25,6 @@
 		}
 	}
 
-	&.domain-product-single-price {
-		justify-content: start;
-	}
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
 			padding-left: 1em;
@@ -50,10 +47,10 @@
 	}
 
 	.domain-product-price__sale-price {
-		color: var(--studio-orange-50);
+		color: var(--studio-orange-60);
 		font-weight: 600;
 		small {
-			color: var(--studio-orange-50);
+			color: var(--studio-orange-60);
 			font-size: $font-body-small;
 		}
 	}

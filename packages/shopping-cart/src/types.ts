@@ -544,10 +544,6 @@ export interface ResponseCartProduct {
 	/**
 	 * A unique ID for this cart item that can be used to refer to it in
 	 * certain cart actions.
-	 *
-	 * IMPORTANT: this does not persist between different fetches of the
-	 * shopping cart! It is only valid for the current instance of the
-	 * `ResponseCart`.
 	 */
 	uuid: string;
 
@@ -558,6 +554,10 @@ export interface ResponseCartProduct {
 
 	product_name_en: string;
 
+	/**
+	 * String that sort-of uniquely identifies this cart item
+	 */
+	cart_item_id: string;
 	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
@@ -884,6 +884,9 @@ export interface ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
+	isA4ASitelessCheckout?: boolean;
+	referral_id?: number;
+	agency_id?: number;
 
 	/**
 	 * Marketplace properties
@@ -931,6 +934,9 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
+	isA4ASitelessCheckout?: boolean;
+	referral_id?: number;
+	agency_id?: number;
 	intentId?: number;
 
 	/**

@@ -63,7 +63,7 @@ const selectSubscribers = ( payload: {
 	total: number;
 	total_email: number;
 	total_wpcom: number;
-	is_owner_subscribing: boolean;
+	is_owner_subscribed: boolean;
 	subscribers: {
 		label?: string;
 		date_subscribed: string;
@@ -77,7 +77,7 @@ const selectSubscribers = ( payload: {
 		total: payload.total,
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
-		is_owner_subscribing: payload.is_owner_subscribing,
+		is_owner_subscribed: payload.is_owner_subscribed,
 		subscribers: payload.subscribers?.map( ( item ) => {
 			return {
 				label: item.label ?? item.display_name,
@@ -167,7 +167,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 						? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
 						: null,
 				social_followers: results[ 1 ]?.data?.social_followers,
-				is_owner_subscribing: results[ 0 ]?.data?.is_owner_subscribing,
+				is_owner_subscribed: results[ 0 ]?.data?.is_owner_subscribed,
 				subscribers: ( results[ 0 ]?.data?.subscribers ?? [] ).sort( sortByDateDesc ),
 			},
 			isLoading: results.some( ( result ) => result.isPending ),
@@ -188,7 +188,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 					? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
 					: null,
 			social_followers: results[ 1 ]?.data?.social_followers,
-			is_owner_subscribing: results[ 2 ]?.data?.is_owner_subscribing,
+			is_owner_subscribed: results[ 2 ]?.data?.is_owner_subscribed,
 			// Merge email and wpcom subscribers and sort by date_subscribed, and only shows the most recent 10 subscribers.
 			subscribers: [
 				...( results[ 3 ]?.data?.subscribers ?? [] ),

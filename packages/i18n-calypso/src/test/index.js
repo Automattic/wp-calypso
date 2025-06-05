@@ -1,12 +1,6 @@
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import i18n, {
-	numberFormat,
-	numberFormatCompact,
-	translate,
-	formatCurrency,
-	getCurrencyObject,
-} from '..';
+import i18n, { translate } from '..';
 import data from './data';
 
 /**
@@ -30,6 +24,15 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'setLocale()', function () {
+		it( 'should emit a change event', () => {
+			const callback = jest.fn();
+			i18n.subscribe( callback );
+
+			i18n.setLocale();
+
+			expect( callback ).toHaveBeenCalled();
+		} );
+
 		describe( 'adding a new locale source from the same language', function () {
 			beforeEach( function () {
 				i18n.setLocale( {
@@ -197,12 +200,22 @@ describe( 'I18n', function () {
 
 				expect( translate( 'test-does-not-exist' ) ).toBe( 'translation3' );
 			} );
+
 			it( 'should return the new translation if it has been overwritten', function () {
 				i18n.addTranslations( {
 					'test-will-overwrite': [ 'not-translation1' ],
 				} );
 
 				expect( translate( 'test-will-overwrite' ) ).toBe( 'not-translation1' );
+			} );
+
+			it( 'should emit a change event', () => {
+				const callback = jest.fn();
+				i18n.subscribe( callback );
+
+				i18n.addTranslations( {} );
+
+				expect( callback ).toHaveBeenCalled();
 			} );
 		} );
 	} );
@@ -249,221 +262,60 @@ describe( 'I18n', function () {
 		} );
 	} );
 
-	describe( 'numberFormat()', function () {
-		describe( 'default numberFormat', function () {
-			it( 'should truncate decimals', function () {
-				expect( numberFormat( 150.15 ) ).toBe( '150' );
-			} );
-			it( 'should round up', function () {
-				expect( numberFormat( 150.5 ) ).toBe( '151' );
-			} );
-			it( 'should default to locale thousands separator (. for German in test)', function () {
-				expect( numberFormat( 1500 ) ).toBe( '1.500' );
-			} );
+	describe( 'emitChange()', () => {
+		it( 'should call all subscribed callbacks', () => {
+			const callback1 = jest.fn();
+			const callback2 = jest.fn();
+
+			i18n.subscribe( callback1 );
+			i18n.subscribe( callback2 );
+
+			i18n.emitChange();
+
+			expect( callback1 ).toHaveBeenCalled();
+			expect( callback2 ).toHaveBeenCalled();
 		} );
 
-		describe( 'with decimal', function () {
-			it( 'should default to locale decimal separator (, for German in test)', function () {
-				expect( numberFormat( 150, { decimals: 2 } ) ).toBe( '150,00' );
-			} );
-			it( 'should force the specified decimals to a not fractional number/integer', function () {
-				expect( numberFormat( 150, { decimals: 2 } ) ).toBe( '150,00' );
-			} );
-			it( 'should truncate to specified decimal', function () {
-				expect( numberFormat( 150.312, { decimals: 2 } ) ).toBe( '150,31' );
-			} );
-		} );
+		it( 'should not call unsubscribed callbacks', () => {
+			const callback1 = jest.fn();
+			const callback2 = jest.fn();
+			const callback3 = jest.fn();
 
-		describe( 'overriding defaults', function () {
-			it( 'should allow overriding of locale decimal and thousands separators', function () {
-				expect(
-					numberFormat( 2500.33, {
-						decimals: 3,
-					} )
-				).toBe( '2.500,330' );
-			} );
-		} );
+			i18n.subscribe( callback1 );
+			const unsubscribe2 = i18n.subscribe( callback2 );
+			i18n.subscribe( callback3 );
 
-		describe( 'numberFormatCompact()', function () {
-			describe( 'ar', () => {
-				beforeEach( function () {
-					i18n.setLocale( {
-						'': {
-							localeVariant: undefined,
-							localeSlug: 'ar',
-						},
-					} );
-				} );
-				test( 'defaults to latin notation and localised unit', () => {
-					expect(
-						numberFormatCompact( 1234, {
-							decimals: 1,
-						} )
-					).toEqual( '1.2 ألف' );
-				} );
-				test( 'non-latin/original notation and localised unit', () => {
-					expect(
-						numberFormatCompact( 1234, {
-							decimals: 1,
-							forceLatin: false,
-						} )
-					).toEqual( '١٫٢ ألف' );
-				} );
-			} );
+			unsubscribe2();
+			i18n.emitChange();
+
+			expect( callback1 ).toHaveBeenCalled();
+			expect( callback2 ).not.toHaveBeenCalled();
+			expect( callback3 ).toHaveBeenCalled();
 		} );
 	} );
 
-	describe( 'formatCurrency', () => {
-		const originalFetch = globalThis.fetch;
+	describe( 'reRenderTranslations()', () => {
+		it( 'should call subscriber callback', () => {
+			const callback = jest.fn();
 
-		beforeEach( async () => {
-			jest.clearAllMocks();
-			i18n.setLocale( data.locale );
-		} );
+			i18n.subscribe( callback );
 
-		test( 'renders correctly EUR in de-DE locale set by setLocale', () => {
-			i18n.setLocale( {
-				'': {
-					localeSlug: 'de',
-					localeVariant: 'de-DE',
-				},
-			} );
+			i18n.reRenderTranslations();
 
-			const money = formatCurrency( 9800900.32, 'EUR' );
-			expect( money ).toBe( '9.800.900,32 €' );
-		} );
-
-		describe( 'geoLocation if present', () => {
-			afterEach( async () => {
-				globalThis.fetch = originalFetch;
-			} );
-
-			test( 'sets USD currency symbol to US$ if geolocation is not US and locale is en', async () => {
-				globalThis.fetch = jest.fn( ( url ) =>
-					Promise.resolve( {
-						json: () =>
-							url.includes( '/geo' )
-								? Promise.resolve( { country_short: 'en' } )
-								: Promise.resolve( 'invalid' ),
-					} )
-				);
-				await i18n.geolocateCurrencySymbol();
-				i18n.setLocale( {
-					'': {
-						localeSlug: 'en',
-					},
-				} );
-
-				const money = formatCurrency( 9800900.32, 'USD' );
-				expect( money ).toBe( 'US$9,800,900.32' );
-			} );
-
-			test( 'sets USD currency symbol to $ if geolocation is US and locale is en', async () => {
-				globalThis.fetch = jest.fn( ( url ) =>
-					Promise.resolve( {
-						json: () =>
-							url.includes( '/geo' )
-								? Promise.resolve( { country_short: 'US' } )
-								: Promise.resolve( 'invalid' ),
-					} )
-				);
-				await i18n.geolocateCurrencySymbol();
-				i18n.setLocale( {
-					'': {
-						localeSlug: 'en',
-					},
-				} );
-
-				const money = formatCurrency( 9800900.32, 'USD' );
-				expect( money ).toBe( '$9,800,900.32' );
-			} );
+			expect( callback ).toHaveBeenCalled();
 		} );
 	} );
 
-	describe( 'getCurrencyObject', () => {
-		const originalFetch = globalThis.fetch;
+	describe( 'subscribe()', () => {
+		it( 'should return an unsubscribe function', () => {
+			const callback = jest.fn();
 
-		beforeEach( async () => {
-			jest.clearAllMocks();
-			i18n.setLocale( data.locale );
-		} );
+			const unsubscribe = i18n.subscribe( callback );
+			unsubscribe();
 
-		it( 'should return the currency object for EUR in de-DE locale set by setLocale', () => {
-			i18n.setLocale( {
-				'': {
-					localeSlug: 'de',
-					localeVariant: 'de-DE',
-				},
-			} );
-			const currencyObject = getCurrencyObject( 9800900.32, 'EUR' );
-			expect( currencyObject ).toEqual( {
-				symbol: '€',
-				symbolPosition: 'after',
-				integer: '9.800.900',
-				fraction: ',32',
-				sign: '',
-				hasNonZeroFraction: true,
-			} );
-		} );
+			i18n.setLocale();
 
-		describe( 'geoLocation if present', () => {
-			afterEach( async () => {
-				globalThis.fetch = originalFetch;
-			} );
-
-			test( 'sets USD currency symbol to US$ if geolocation is not US and locale is en', async () => {
-				globalThis.fetch = jest.fn( ( url ) =>
-					Promise.resolve( {
-						json: () =>
-							url.includes( '/geo' )
-								? Promise.resolve( { country_short: 'en' } )
-								: Promise.resolve( 'invalid' ),
-					} )
-				);
-				await i18n.geolocateCurrencySymbol();
-				i18n.setLocale( {
-					'': {
-						localeSlug: 'en',
-					},
-				} );
-
-				const currencyObject = getCurrencyObject( 9800900.32, 'USD' );
-				expect( currencyObject ).toEqual( {
-					symbol: 'US$',
-					symbolPosition: 'before',
-					integer: '9,800,900',
-					fraction: '.32',
-					sign: '',
-					hasNonZeroFraction: true,
-				} );
-			} );
-
-			test( 'sets USD currency symbol to $ if geolocation is US and locale is en', async () => {
-				globalThis.fetch = jest.fn( ( url ) =>
-					Promise.resolve( {
-						json: () =>
-							url.includes( '/geo' )
-								? Promise.resolve( { country_short: 'US' } )
-								: Promise.resolve( 'invalid' ),
-					} )
-				);
-				await i18n.geolocateCurrencySymbol();
-				i18n.setLocale( {
-					'': {
-						localeSlug: 'en',
-					},
-				} );
-
-				const currencyObject = getCurrencyObject( 9800900.32, 'USD' );
-				expect( currencyObject ).toEqual( {
-					symbol: '$',
-					symbolPosition: 'before',
-					integer: '9,800,900',
-					fraction: '.32',
-					sign: '',
-					hasNonZeroFraction: true,
-				} );
-			} );
+			expect( callback ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -509,6 +361,16 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
+		let originalHasTranslation;
+
+		beforeEach( () => {
+			originalHasTranslation = i18n.hasTranslation;
+		} );
+
+		afterEach( () => {
+			i18n.hasTranslation = originalHasTranslation;
+		} );
+
 		it( 'should return null if text is missing or wrong type', () => {
 			const result = i18n.fixMe( {} );
 			expect( result ).toBe( null );
@@ -553,6 +415,29 @@ describe( 'I18n', function () {
 				oldCopy: 'hi',
 			} );
 			expect( result ).toBe( 'hi' );
+		} );
+
+		it( 'should return newCopy if text has a translation with context', function () {
+			const result = i18n.fixMe( {
+				text: 'test3',
+				newCopy: 'translation3',
+				oldCopy: 'not test 3',
+				translationOptions: {
+					context: 'thecontext',
+				},
+			} );
+			expect( result ).toBe( 'translation3' );
+		} );
+		it( 'should return oldCopy if text does not have a translation with this context', function () {
+			const result = i18n.fixMe( {
+				text: 'test3',
+				newCopy: 'translation3',
+				oldCopy: 'not test 3',
+				translationOptions: {
+					context: 'notthecontext',
+				},
+			} );
+			expect( result ).toBe( 'not test 3' );
 		} );
 	} );
 } );

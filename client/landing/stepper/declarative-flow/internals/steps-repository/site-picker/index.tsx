@@ -1,4 +1,4 @@
-import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
@@ -9,7 +9,6 @@ import { defer } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
-import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
@@ -21,7 +20,13 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 import './styles.scss';
 
-const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
+const SitePickerStep: Step< {
+	submits: {
+		action: 'update-query' | 'create-site' | 'select-site';
+		queryParams?: Partial< SitesDashboardQueryParams >;
+		site?: SiteExcerptData;
+	};
+} > = function SitePickerStep( { navigation } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -32,10 +37,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
 	const siteCount = useSelector( getCurrentUserSiteCount );
-
-	useEffect( () => setMigrationConfirmed( false ), [] );
 
 	useEffect( () => {
 		// If the user has no sites, we should skip the site picker and go straight to the site creation step
@@ -76,7 +78,6 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 				setShowConfirmModal( false );
 			} }
 			onConfirm={ () => {
-				setMigrationConfirmed( true );
 				defer( () => destinationSite && selectSite( destinationSite ) );
 			} }
 		>
@@ -84,7 +85,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 				{ sprintf(
 					/* translators: the `sourceSite` and `targetSite` fields could be any site URL (eg: "yourname.com") */
 					__(
-						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site. '
+						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site.'
 					),
 					{
 						sourceSite: sourceSiteSlug,
@@ -102,9 +103,6 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 				stepName="site-picker"
 				hideBack
 				goBack={ navigation.goBack }
-				hideSkip={ SITE_MIGRATION_FLOW === flow }
-				skipLabelText={ __( 'Skip and create a new site' ) }
-				goNext={ createNewSite }
 				stepContent={
 					<SitePicker
 						page={ page }

@@ -25,7 +25,7 @@ $tiled-gallery-max-rounded-corners: 20;
 		align-self: inherit;
 
 		> img {
-			background-color: rgba(var(--color-text-rgb), 0.1);
+			background-color: color-mix(in srgb, var(--color-text) 10%, transparent);
 		}
 
 		> a,

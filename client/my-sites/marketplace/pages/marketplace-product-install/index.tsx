@@ -5,7 +5,7 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
@@ -14,7 +14,6 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -282,7 +281,10 @@ const MarketplaceProductInstall = ( {
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
-			// Default process
+			// Happens in 3 cases:
+			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
+			// - Install with the help of uploading archive of a plugins
+			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
 			( installedPlugin && pluginActive ) ||
 			// Transfer to atomic using a marketplace plugin
 			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus && canManagePlugins ) ||
@@ -343,42 +345,11 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	const installPluginQuestionText = translate( 'Do you want to install the plugin %(plugin)s?', {
-		args: { plugin: wporgPlugin?.name || wpComPluginData?.name },
-	} );
-	const activateThemeQuestionText = translate( 'Do you want to activate the theme %(theme)s?', {
-		args: { theme: wpOrgTheme?.name },
-	} );
-	const questionText = themeSlug ? activateThemeQuestionText : installPluginQuestionText;
-
-	const illustration = themeSlug
-		? wpOrgTheme?.screenshot
-		: wporgPlugin?.icon || wpComPluginData?.icon;
-	const pluginIllustrationWidth = 128;
-	const themeIllustrationWidth = 720;
-	const illustrationWidth = themeSlug ? themeIllustrationWidth : pluginIllustrationWidth;
-
-	const productName = themeSlug
-		? wpOrgTheme?.name || themeSlug
-		: wporgPlugin?.name || wpComPluginData?.name || pluginSlug;
-
-	const productPage = themeSlug
-		? `/themes/${ themeSlug }/${ selectedSite?.slug }`
-		: `/plugins/${ pluginSlug }/${ selectedSite?.slug }`;
-	const goToPluginPageText = translate( 'Go to the plugin page' );
-	const goToThemePageText = translate( 'Go to the theme page' );
-	const goToText = themeSlug ? goToThemePageText : goToPluginPageText;
-
-	const installPluginText = translate( 'Install and activate plugin' );
-	const activateThemeText = translate( 'Activate theme' );
-	const CTAText = themeSlug ? activateThemeText : installPluginText;
-
 	const renderError = () => {
 		// Evaluate error causes in priority order
 		if ( nonInstallablePlanError ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
 						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
@@ -396,7 +367,6 @@ const MarketplaceProductInstall = ( {
 		if ( isPluginUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
 						'This URL should not be accessed directly. Please try to upload the plugin again.'
@@ -406,31 +376,33 @@ const MarketplaceProductInstall = ( {
 				/>
 			);
 		}
-		if ( noDirectAccessError && ! directInstallationAllowed ) {
+
+		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
 			const variationPeriod = 'monthly';
 			const variation = wpComPluginData?.variations?.[ variationPeriod ];
 			const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
+			const productPage = `/themes/${ themeSlug }/${ selectedSite?.slug }`;
+			const productName = wpOrgTheme?.name || themeSlug;
 
 			return (
 				<>
 					<QueryProductsList />
 					<EmptyContent
 						className="marketplace-plugin-install__direct-install-container"
-						illustration={ illustration || '/calypso/images/illustrations/error.svg' }
-						illustrationWidth={
-							( wporgPlugin?.icon || wpComPluginData?.icon || wpOrgTheme?.screenshot ) &&
-							illustrationWidth
-						}
+						illustration={ wpOrgTheme?.screenshot || null }
+						illustrationWidth={ wpOrgTheme?.screenshot && 720 }
 						title={ productName }
-						line={ questionText }
+						line={ translate( 'Do you want to activate the theme %(theme)s?', {
+							args: { theme: wpOrgTheme?.name },
+						} ) }
 					>
 						{ isProductListFetched && (
 							<div className="marketplace-plugin-install__direct-install-actions">
-								<Button href={ productPage }>{ goToText }</Button>
+								<Button href={ productPage }>{ translate( 'Go to the theme page' ) }</Button>
 
 								{ ! isMarketplaceProduct ? (
 									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
-										{ CTAText }
+										{ translate( 'Activate theme' ) }
 									</Button>
 								) : (
 									<Button
@@ -453,14 +425,13 @@ const MarketplaceProductInstall = ( {
 		if ( pluginExists ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
 						'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					action={ translate( 'Continue' ) }
+					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);
@@ -468,7 +439,6 @@ const MarketplaceProductInstall = ( {
 		if ( pluginMalicious || pluginTooBig ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={
 						pluginMalicious
@@ -481,7 +451,7 @@ const MarketplaceProductInstall = ( {
 					}
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					action={ translate( 'Continue' ) }
+					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);
@@ -494,7 +464,6 @@ const MarketplaceProductInstall = ( {
 		) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate( 'An error occurred while installing the plugin.' ) }
 					action={ translate( 'Back' ) }

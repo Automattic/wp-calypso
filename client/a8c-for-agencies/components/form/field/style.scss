@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .a4a-form__section-field {
 	display: flex;
 	flex-direction: column;
@@ -7,7 +10,7 @@
 .a4a-form__section-field-label,
 .a4a-form__section-field-sub,
 .a4a-form__section-field-description {
-	@include a4a-font-body-md;
+	@include body-medium;
 }
 
 .a4a-form__section-field-label {
@@ -33,8 +36,7 @@
 	margin-block-start: 0.25rem;
 	color: var(--color-scary-40);
 	font-style: italic;
-	font-size: 0.875rem;
-	line-height: 14px;
+	@include body-small;
 
 	&.hidden {
 		display: none;

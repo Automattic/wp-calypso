@@ -18,7 +18,7 @@ const formData = {
 	name: `${ DataHelper.getRandomPhrase() }`,
 	// Making the email unique to each run allows us to filter down to one in the inbox later.
 	email: `test${ DataHelper.getTimestamp() + DataHelper.getRandomInteger( 0, 100 ) }@example.com`,
-	phone: `(877) 273-3049`,
+	phone: '(877) 273-3049',
 	hearAboutUsOption: 'Search Engine',
 	otherDetails: 'Test submission details',
 };
@@ -144,7 +144,10 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			const searchAndClickFolderWithResult = async () => {
 				await feedbackInboxPage.clearSearch();
 				await feedbackInboxPage.searchResponses( formData.email );
-				await page.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } ).click( { timeout: 4 * 1000 } );
+				await page
+					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) )
+					.click( { timeout: 4000 } );
 			};
 
 			const MAX_ATTEMPTS = 3;

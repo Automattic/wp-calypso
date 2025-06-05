@@ -1,3 +1,10 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+
+$progress-bar-bg-color: #0277A8;
+$progress-bar-bg-color-dark: #1490C7;
+
 .step-progress {
 	width: 100%;
 
@@ -15,6 +22,19 @@
 		grid-template-columns: repeat(6, 1fr);
 		gap: 8px;
 		width: 100%;
+
+		&.is-two-columns {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.progress-bar__progress {
+		background-color: $progress-bar-bg-color;
+
+
+		@media (prefers-color-scheme: dark) {
+			background-color: $progress-bar-bg-color-dark;
+		}
 	}
 
 	.step-progress__step {
@@ -38,7 +58,7 @@
 
 	.step-progress__step:not(.is-active) {
 		.step-progress__step-label {
-			color: var(--color-neutral-40);
+			color: var(--color-neutral-70);
 
 			@media (prefers-color-scheme: dark) {
 				color: var(--color-text-inverted);
@@ -47,8 +67,7 @@
 	}
 
 	.step-progress__step-label {
-		font-size: 0.875rem;
-		font-weight: 500;
+		@include body-medium;
 		transition: color 0.2s ease;
 		order: -1;
 		margin-bottom: 4px;
@@ -56,7 +75,7 @@
 }
 
 .field-mandatory-message {
-	@include a4a-font-body-sm;
+	@include body-small;
 	padding-block-end: 8px;
 
 	@media (prefers-color-scheme: dark) {

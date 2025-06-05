@@ -180,6 +180,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 								</li>
 							) ) }
 						</ul>
+						{ /* TODO: is this section / file still relevant? */ }
 						{ fromSite && (
 							<>
 								<p>

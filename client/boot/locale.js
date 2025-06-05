@@ -5,12 +5,12 @@ import {
 	isTranslatedIncompletely,
 	getLanguageSlugs,
 } from '@automattic/i18n-utils';
+import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
-
 export function getLocaleFromPathname() {
 	const pathname = window.location.pathname.replace( /\/$/, '' );
 	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
@@ -50,6 +50,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const localeSlug = i18n.getLocaleSlug();
 		const localeVariant = i18n.getLocaleVariant();
 		reduxStore.dispatch( { type: LOCALE_SET, localeSlug, localeVariant } );
+		// Propagate the locale to @automattic/number-formatters
+		setLocaleNumberFormatters( localeVariant || localeSlug );
 
 		if ( localeSlug ) {
 			loadUserUndeployedTranslations( localeSlug );

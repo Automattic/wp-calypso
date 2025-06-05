@@ -189,7 +189,7 @@ function shoppingCartReducer(
 					...action.productPropertiesToChange,
 				} )
 			) {
-				debug( `variant is already in cart; not submitting again` );
+				debug( 'variant is already in cart; not submitting again' );
 				return state;
 			}
 			debug( `replacing item with uuid ${ uuidToReplace } with`, action.productPropertiesToChange );

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .agency-details-form {
 
@@ -15,9 +16,7 @@
 
 	.agency-details-form__tos p {
 		margin: 45px 0 24px;
-		font-weight: 400;
-		font-size: 1rem;
-		line-height: 24px;
+		@include body-large;
 		color: var(--color-neutral-100);
 	}
 
@@ -41,8 +40,7 @@
 		margin-block-start: 0.25rem;
 		color: var(--color-scary-40);
 		font-style: italic;
-		font-size: 0.875rem;
-		line-height: 14px;
+		@include body-medium;
 
 		&.hidden {
 			display: none;
@@ -56,7 +54,7 @@
 	}
 
 	.company-details-form__tos p {
-		font-size: 1rem;
+		@include body-large;
 	}
 
 	.company-details-form__phone-input {
@@ -78,8 +76,7 @@
 	}
 
 	.components-base-control__label {
-		font-size: 0.875rem;
-		font-weight: 600;
+		@include heading-medium;
 		margin-bottom: 5px;
 		text-transform: none;
 	}

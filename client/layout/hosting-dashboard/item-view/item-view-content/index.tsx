@@ -3,11 +3,13 @@ import { useEffect, useRef, ReactNode } from 'react';
 import './style.scss';
 
 type Props = {
+	siteId?: number;
+	featureId: string;
 	children?: ReactNode;
 	className?: string;
 };
 
-export default function ItemViewContent( { children }: Props ) {
+export default function ItemViewContent( { siteId, featureId, children }: Props ) {
 	const ref = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -16,7 +18,7 @@ export default function ItemViewContent( { children }: Props ) {
 				ref.current.scrollTop = 0;
 			}
 		}, 0 );
-	}, [ children ] );
+	}, [ siteId, featureId ] );
 
 	return (
 		<div className="hosting-dashboard-item-view__content" ref={ ref }>

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .a4a-form-fieldset__header {
 	display: flex;
 
@@ -11,8 +14,7 @@
 	margin-block-start: 0.25rem;
 	color: var(--color-scary-40);
 	font-style: italic;
-	font-size: 0.875rem;
-	line-height: 14px;
+	@include body-small;
 
 	&.hidden {
 		display: none;
@@ -21,8 +23,6 @@
 
 .a4a-form-fieldset__description {
 	margin-block-start: 4px;
-	font-size: rem(14px);
-	line-height: 1.5;
-	font-weight: 400;
+	@include body-small;
 	color: var(--color-neutral-50);
 }

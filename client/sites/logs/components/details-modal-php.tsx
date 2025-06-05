@@ -1,5 +1,6 @@
 import { Badge } from '@automattic/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { PHPLog } from 'calypso/data/hosting/use-site-logs-query';
 import { useSelector } from 'calypso/state';
@@ -47,7 +48,7 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 			<div className="site-logs-details-modal__field-title">{ translate( 'File' ) }</div>
 			<div>{ item.file }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Line' ) }</div>
-			<div>{ numberFormat( item.line ) }</div>
+			<div>{ formatNumber( item.line ) }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Message' ) }</div>
 			<div>{ item.message }</div>
 		</div>

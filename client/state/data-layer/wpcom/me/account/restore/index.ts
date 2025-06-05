@@ -16,7 +16,7 @@ export function requestAccountRestore( action: AccountRestoreActionType ) {
 		{
 			method: 'POST',
 			apiVersion: '1.1',
-			path: `/me/account/restore`,
+			path: '/me/account/restore',
 			body: {
 				token,
 			},

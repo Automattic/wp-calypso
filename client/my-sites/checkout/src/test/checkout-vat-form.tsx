@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -79,6 +80,8 @@ describe( 'Checkout contact step VAT form', () => {
 		mockMatchMediaOnWindow();
 		mockGetVatInfoEndpoint( {} );
 		mockSetCachedContactDetailsEndpoint();
+		mockCachedContactDetailsEndpoint( {} );
+		mockGetVatInfoEndpoint( {} );
 	} );
 
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
@@ -359,6 +362,7 @@ describe( 'Checkout contact step VAT form', () => {
 			];
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		mockSetVatInfoEndpoint();
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render(

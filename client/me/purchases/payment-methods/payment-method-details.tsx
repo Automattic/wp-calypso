@@ -51,6 +51,8 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 				alt=""
 			/>
 			<div className="payment-method-details__details">
+				{ razorpayVpa && <span className="payment-method-details__vpa">{ razorpayVpa }</span> }
+				<span className="payment-method-details__name">{ name }</span>
 				<span className="payment-method-details__number">
 					<PaymentMethodSummary type={ type } digits={ lastDigits } email={ email } />
 				</span>
@@ -74,10 +76,6 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 						{ translate( 'Credit card expired' ) }
 					</span>
 				) }
-
-				{ razorpayVpa && <span className="payment-method-details__vpa">{ razorpayVpa }</span> }
-
-				<span className="payment-method-details__name">{ name }</span>
 			</div>
 		</div>
 	);

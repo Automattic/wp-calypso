@@ -60,7 +60,7 @@ export const useRelatedSites = (
 ): UseQueryResult< RelatedSite[] | null > => {
 	const SITE_RECOMMENDATIONS_COUNT = 5;
 	return useQuery( {
-		queryKey: [ `related-sites`, SITE_RECOMMENDATIONS_COUNT, siteId, postId ],
+		queryKey: [ 'related-sites', SITE_RECOMMENDATIONS_COUNT, siteId, postId ],
 		queryFn: () =>
 			wpcom.req.get(
 				{

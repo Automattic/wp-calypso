@@ -61,7 +61,7 @@ export default function SitesWithWooPaymentsMobileView( {
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Review status' ) }>
-							<WooPaymentsStatusColumn state={ item.state } siteUrl={ item.siteUrl } />
+							<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
 						</ListItemCardContent>
 					</ListItemCard>
 				) ) }

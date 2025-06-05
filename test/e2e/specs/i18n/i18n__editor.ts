@@ -274,7 +274,7 @@ describe( 'I18N: Editor', function () {
 		editorPage = new EditorPage( page );
 	} );
 
-	describe.each( locales )( `Locale: %s`, function ( locale ) {
+	describe.each( locales )( 'Locale: %s', function ( locale ) {
 		beforeAll( async function () {
 			await restAPIClient.setMySettings( { language: locale } );
 			await page.reload();

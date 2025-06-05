@@ -2,6 +2,7 @@ import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
+	useFilterDeletedSites,
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
@@ -15,6 +16,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
+import { useCurrentRoute } from 'calypso/components/route';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -42,13 +44,14 @@ import {
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
 } from '../onboarding-tours';
-import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
+import { OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
+import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import type { View } from '@wordpress/dataviews';
+import type { View } from '@automattic/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -126,7 +129,7 @@ const SitesDashboard = ( {
 		status,
 		siteType = DEFAULT_SITE_TYPE,
 	},
-	initialSiteFeature = DOTCOM_OVERVIEW,
+	initialSiteFeature = OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
@@ -135,6 +138,7 @@ const SitesDashboard = ( {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
+	const { shouldShow: isRestoringAccount } = useRestoreSitesBanner();
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -285,8 +289,14 @@ const SitesDashboard = ( {
 		showHidden: true,
 	} );
 
+	// Remove deleted sites from default view
+	const filteredStatusGroup = useFilterDeletedSites( currentStatusGroup, {
+		shouldApplyFilter:
+			! search && ( ! statusSlug || statusSlug === 'all' ) && ! isRestoringAccount(),
+	} );
+
 	// Perform sorting actions
-	const sortedSites = useSitesListSorting( currentStatusGroup, {
+	const sortedSites = useSitesListSorting( filteredStatusGroup, {
 		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort?.direction || undefined,
@@ -294,7 +304,7 @@ const SitesDashboard = ( {
 
 	const hasA8CSitesFilter =
 		dataViewsState.filters?.some(
-			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
+			( { field, operator, value } ) => field === 'is_a8c' && operator === 'is' && value === true
 		) ?? false;
 
 	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
@@ -349,30 +359,41 @@ const SitesDashboard = ( {
 		}
 	};
 
-	const openSitePreviewPane = (
-		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-		openInNewTab?: boolean
-	) => {
-		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
-			site_id: site.ID,
-			source,
-		} );
-		showSitesPage(
-			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`,
-			openInNewTab
-		);
+	const sitePreviewPane = {
+		getUrl: ( site: SiteExcerptData ) => {
+			return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`;
+		},
+		open: (
+			site: SiteExcerptData,
+			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+			openInNewTab?: boolean
+		) => {
+			recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+				site_id: site.ID,
+				source,
+			} );
+			showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
+		},
 	};
 
 	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
-			openSitePreviewPane( targetSite, 'environment_switcher' );
+			sitePreviewPane.open( targetSite, 'environment_switcher' );
 		}
 	};
 
+	const { currentSection, currentRoute } = useCurrentRoute() as {
+		currentSection: false | { group?: string; name?: string };
+		currentRoute: string;
+	};
 	const showSiteDashboard = useSelector( ( state ) =>
-		shouldShowSiteDashboard( state, selectedSite?.ID ?? null )
+		shouldShowSiteDashboard( {
+			state,
+			siteId: selectedSite?.ID ?? null,
+			section: currentSection as { group?: string },
+			route: currentRoute,
+		} )
 	);
 	if ( !! selectedSite && ! showSiteDashboard ) {
 		return null;
@@ -424,7 +445,7 @@ const SitesDashboard = ( {
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
 						selectedItem={ selectedSite }
-						openSitePreviewPane={ openSitePreviewPane }
+						sitePreviewPane={ sitePreviewPane }
 					/>
 				</LayoutColumn>
 			) }

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
+import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -33,10 +34,10 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		navigationSwap,
 		shouldGateOptions,
 		siteId,
+		context,
 	} = props;
 
 	const dispatch = useDispatch();
-
 	const getSummaryPeriodLabel = () => {
 		if ( query.start_date ) {
 			return translate( 'Custom Range Summary' );
@@ -69,20 +70,28 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		recordStats( item );
 	};
 
-	// Template for standard range options (7, 30, Quarter, Year, All Time).
-	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
-		'YYYY-MM-DD'
-	) }&summarize=1&num=`;
+	const summaryPeriodPath = useMemo( () => {
+		let periodPath = `/stats/${
+			period.period
+		}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
 
-	// Path for summary or custom range option. ie: The first button in the row.
-	// Defaults to one day/week/month/year.
-	let summaryPeriodPath = `/stats/${
-		period.period
-	}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
-	// Override if custom range was used in query.
-	if ( query.start_date ) {
-		summaryPeriodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
-	}
+		// Override if custom range was used in query.
+		if ( query.start_date ) {
+			periodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
+		}
+		return periodPath;
+	}, [ period.period, period.endOf, path, siteSlug, query ] );
+
+	const getSummaryPathForDaysRange = ( numberDays ) => {
+		const queryParams = new URLSearchParams( context.query );
+
+		queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
+		queryParams.set( 'summarize', 1 );
+		queryParams.set( 'num', numberDays );
+		queryParams.delete( 'endDate' );
+
+		return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
+	};
 
 	const options = [
 		{
@@ -96,7 +105,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '7',
 			label: translate( '7 days' ),
-			path: `${ summaryPath }7`,
+			path: getSummaryPathForDaysRange( 7 ),
 			stat: '7 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
@@ -104,7 +113,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '30',
 			label: translate( '30 days' ),
-			path: `${ summaryPath }30`,
+			path: getSummaryPathForDaysRange( 30 ),
 			stat: '30 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
@@ -112,7 +121,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '90',
 			label: translate( 'Quarter' ),
-			path: `${ summaryPath }90`,
+			path: getSummaryPathForDaysRange( 90 ),
 			stat: 'Quarter',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_QUARTER,
@@ -120,7 +129,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '365',
 			label: translate( 'Year' ),
-			path: `${ summaryPath }365`,
+			path: getSummaryPathForDaysRange( 365 ),
 			stat: 'Year',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_YEAR ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_YEAR,
@@ -128,7 +137,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '-1',
 			label: translate( 'All Time' ),
-			path: `${ summaryPath }-1`,
+			path: getSummaryPathForDaysRange( -1 ),
 			stat: 'All Time',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_ALL ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_ALL,

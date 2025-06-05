@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .referral-purchases-mobile {
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
@@ -13,20 +16,17 @@
 	}
 
 	.referral-purchases-mobile__product-name {
-		font-weight: 500;
-		font-size: 0.875rem;
+		@include heading-medium;
 		color: var(--color-gray-80);
 	}
 
 	h3 {
-		font-weight: 500;
-		font-size: rem(11px);
+		@include heading-small;
 		color: var(--color-gray-80);
 	}
 
 	p {
-		font-weight: 400;
-		font-size: rem(13px);
+		@include body-medium;
 		color: var(--color-gray-70);
 		margin: 0;
 	}

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .agency-tier__card {
 	padding: 8px;
 	border-radius: 4px;
@@ -29,7 +32,7 @@
 		}
 
 		.agency-tier__current-agency-tier-title {
-			@include a4a-font-heading-lg;
+			@include heading-large;
 		}
 
 		&.is-default {
@@ -48,19 +51,19 @@
 			}
 
 			.agency-tier__current-agency-tier-title {
-				@include a4a-font-body-lg;
+				@include body-large;
 			}
 		}
 	}
 
 	.agency-tier__current-agency-tier-description {
-		@include a4a-font-body-md;
+		@include body-medium;
 		padding-block-end: 8px;
 	}
 }
 
 .foldable-nav.foldable-card.card .foldable-card__content .agency-tier__bottom-content a.components-button {
-	@include a4a-font-body-md;
+	@include body-medium;
 	padding: 0;
 	color: var(--color-gray-40);
 

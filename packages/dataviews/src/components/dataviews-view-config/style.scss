@@ -1,0 +1,98 @@
+.dataviews-view-config {
+	width: 320px;
+	/* stylelint-disable-next-line property-no-unknown -- the linter needs to be updated to accepted the container-type property */
+	container-type: inline-size;
+	font-size: $default-font-size;
+	line-height: $default-line-height;
+}
+
+.dataviews-config__popover.is-expanded .dataviews-config__popover-content-wrapper {
+	overflow-y: scroll;
+	height: 100%;
+	.dataviews-view-config {
+		width: auto;
+	}
+}
+
+.dataviews-view-config__sort-direction .components-toggle-group-control-option-base {
+	text-transform: uppercase;
+}
+
+.dataviews-settings-section__title.dataviews-settings-section__title {
+	line-height: $grid-unit-30;
+	font-size: 15px;
+}
+
+.dataviews-settings-section__sidebar {
+	grid-column: span 4;
+}
+
+.dataviews-settings-section__content,
+.dataviews-settings-section__content > * {
+	grid-column: span 8;
+}
+
+.dataviews-settings-section__content .is-divided-in-two {
+	display: contents;
+	& > * {
+		grid-column: span 4;
+	}
+}
+
+.dataviews-settings-section:has(.dataviews-settings-section__content:empty) {
+	display: none;
+}
+
+@container (max-width: 500px) {
+	.dataviews-settings-section.dataviews-settings-section {
+		grid-template-columns: repeat(2, 1fr);
+		.dataviews-settings-section__sidebar {
+			grid-column: span 2;
+		}
+
+		.dataviews-settings-section__content {
+			grid-column: span 2;
+		}
+	}
+}
+.dataviews-field-control__field {
+	height: $grid-unit-40;
+}
+
+.dataviews-field-control__actions {
+	position: absolute;
+	top: -9999em;
+}
+.dataviews-field-control__actions.dataviews-field-control__actions {
+	gap: $grid-unit-05;
+}
+
+.dataviews-field-control__field:hover,
+.dataviews-field-control__field:focus-within,
+.dataviews-field-control__field.is-interacting {
+	.dataviews-field-control__actions {
+		position: unset;
+		top: unset;
+	}
+}
+
+.dataviews-field-control__icon {
+	display: flex;
+	width: $icon-size;
+}
+
+.dataviews-field-control__label-sub-label-container {
+	flex-grow: 1;
+}
+
+.dataviews-field-control__label {
+	display: block;
+}
+
+.dataviews-field-control__sub-label {
+	margin-top: $grid-unit-10;
+	margin-bottom: 0;
+	font-size: 11px;
+	font-style: normal;
+	color: $gray-700;
+}

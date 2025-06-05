@@ -1,5 +1,6 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .section-nav {
 	position: relative;
@@ -9,7 +10,7 @@
 	background: var(--color-surface);
 	box-sizing: border-box;
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 
 	&.is-empty .section-nav__panel {
@@ -236,6 +237,11 @@
 	.select-dropdown__container {
 		max-width: 200px;
 		position: static;
+
+		@media (max-width: $break-small) {
+			max-width: unset;
+			width: 100%;
+		}
 	}
 }
 

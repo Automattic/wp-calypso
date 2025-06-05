@@ -154,7 +154,7 @@ function handleJetpackCloudRedirections() {
 	}
 
 	//Main Backup page
-	page( `/backup/:site`, ( context, next ) => {
+	page( '/backup/:site', ( context, next ) => {
 		const { site } = context.params;
 		//todo: get the current selected feature family instead of the hardcoded 'overview'
 		const path = addQueryArgs( context.query, `/sites/overview/${ site }/${ JETPACK_BACKUP_ID }` );

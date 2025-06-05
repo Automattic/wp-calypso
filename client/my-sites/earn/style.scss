@@ -18,7 +18,7 @@
 
 	h2.formatted-header__title {
 		margin: 0 0 12px;
-		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 18px;
 		font-family: "SF Pro Display", $sans;
 	}
 	.highlight-cards-heading {
@@ -193,7 +193,7 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 
 h3.highlight-cards-heading,
 h3.ads__table-header-title {
-	font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 18px;
 }
 body:not(.theme-jetpack-cloud) {
 	.earn__ads-header {

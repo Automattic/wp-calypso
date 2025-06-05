@@ -26,9 +26,16 @@ export type SubscriptionPlan = {
 
 export type Subscriber = {
 	user_id: number;
-	subscription_id: number;
-	date_subscribed: string;
-	is_email_subscriber: boolean;
+	// Fields for new helper library
+	email_subscription_id?: number;
+	wpcom_subscription_id?: number;
+	wpcom_date_subscribed?: string;
+	email_date_subscribed?: string;
+	// Fields for old format
+	subscription_id?: number;
+	date_subscribed?: string;
+	// Common fields
+	subscription_status: string;
 	email_address: string;
 	avatar: string;
 	display_name: string;
@@ -40,6 +47,10 @@ export type Subscriber = {
 		name: string;
 	};
 	url?: string;
+};
+
+export type SubscriberDetails = Omit< Subscriber, 'date_subscribed' > & {
+	date_subscribed: string;
 };
 
 export type SubscriberQueryParams = {

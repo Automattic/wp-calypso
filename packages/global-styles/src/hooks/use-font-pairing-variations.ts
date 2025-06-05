@@ -13,7 +13,7 @@ const useFontPairingVariations = ( stylesheet: string, { enabled = true }: Optio
 		queryKey: [ 'global-styles-font-pairings', stylesheet ],
 		queryFn: async () =>
 			wpcomRequest< GlobalStylesObject[] >( {
-				path: `/global-styles-variation/font-pairings`,
+				path: '/global-styles-variation/font-pairings',
 				method: 'GET',
 				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( {

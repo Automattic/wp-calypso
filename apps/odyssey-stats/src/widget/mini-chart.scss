@@ -72,7 +72,7 @@ $barDarkColor: var(--color-primary-60);
 	}
 
 	.chart__y-axis-marker {
-		border-color: rgba(var(--color-neutral-5-rgb), 0.5);
+		border-color: color-mix(in srgb, var(--color-neutral-5) 50%, transparent);
 	}
 
 	.chart__y-axis {

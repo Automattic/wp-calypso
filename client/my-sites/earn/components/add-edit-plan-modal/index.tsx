@@ -1,6 +1,7 @@
 import { Dialog, FormInputValidation, FormLabel, FoldableCard } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { ToggleControl } from '@wordpress/components';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
@@ -47,7 +48,6 @@ type StripeMinimumCurrencyAmounts = {
 };
 
 type DefaultNames = {
-	// [ key: string ]: ( arg0: string ) => string;
 	[ key: string ]: string;
 };
 
@@ -141,9 +141,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.subscribe_as_site_subscriber ?? isOnlyTier
 	);
 
-	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
-		product?.type === TYPE_TIER ?? false
-	);
+	const [ editedPostIsTier, setEditedPostIsTier ] = useState( product?.type === TYPE_TIER );
 	const [ editedSchedule, setEditedSchedule ] = useState(
 		product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY
 	);
@@ -406,8 +404,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 									placeholder="0.00"
 									noWrap
-									className={ null }
-									currencySymbolSuffix={ null }
 								/>
 							</div>
 							<div className="memberships__dialog-sections-price-field-container">
@@ -422,8 +418,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 									placeholder="0.00"
 									noWrap
-									className={ null }
-									currencySymbolSuffix={ null }
 								/>
 							</div>
 						</FormFieldset>
@@ -457,8 +451,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"
 								noWrap
-								className={ null }
-								currencySymbolSuffix={ null }
 							/>
 						</div>
 					</FormFieldset>

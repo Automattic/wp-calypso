@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, DIFM_FLOW, Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -8,28 +8,85 @@ import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import HelpCenterStepButton from 'calypso/signup/help-center-step-button';
 import useShouldRenderHelpCenterButton from 'calypso/signup/help-center-step-button/use-should-render-help-center-button';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import type { Step } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { StepContainerV2DIFMStartingPoint } from './step-container-v2-difm-starting-point';
+import type { Step as StepType } from '../../types';
 import type { AppState } from 'calypso/types';
 
 const STEP_NAME = 'difmStartingPoint';
-const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
+
+const DIFMStartingPoint: StepType< {
+	submits: { newOrExistingSiteChoice: 'existing-site' | 'new-site' };
+} > = function ( { flow, navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const translate = useTranslate();
 	const existingSiteCount = useSelector( ( state: AppState ) => getCurrentUserSiteCount( state ) );
 	const siteId = useSite()?.ID;
 	const showNewOrExistingSiteChoice = ! siteId && !! existingSiteCount && existingSiteCount > 0;
 
-	const queryParams = new URLSearchParams( window?.location.search );
-	const flags = queryParams.get( 'flags' )?.split( ',' );
-	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
-
-	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( { enabledGeos: [ 'US' ] } );
-
-	const onSubmit = ( value: string ) => {
+	const onSubmit = ( value: 'existing-site' | 'new-site' ) => {
 		submit?.( {
 			newOrExistingSiteChoice: value,
 		} );
 	};
+
+	const helpCenterButtonCopy = translate( 'Questions?' );
+	const helpCenterButtonLink = translate( 'Contact our site-building team' );
+	const shouldRenderHelpCenter = useShouldRenderHelpCenterButton( {
+		flowName: DIFM_FLOW,
+		enabledGeos: [ 'US' ],
+	} );
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		const primaryButton = showNewOrExistingSiteChoice ? (
+			<Step.PrimaryButton onClick={ () => onSubmit( 'existing-site' ) }>
+				{ translate( 'Use an existing site' ) }
+			</Step.PrimaryButton>
+		) : (
+			<Step.PrimaryButton onClick={ () => onSubmit( 'new-site' ) }>
+				{ translate( 'Get started' ) }
+			</Step.PrimaryButton>
+		);
+
+		const secondaryButton = showNewOrExistingSiteChoice ? (
+			<Step.SecondaryButton onClick={ () => onSubmit( 'new-site' ) }>
+				{ translate( 'Start a new site' ) }
+			</Step.SecondaryButton>
+		) : undefined;
+
+		return (
+			<>
+				<DocumentHead title={ translate( 'Let us build your site' ) } />
+				<StepContainerV2DIFMStartingPoint
+					topBar={
+						<Step.TopBar
+							leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
+							rightElement={
+								shouldRenderHelpCenter ? (
+									<HelpCenterStepButton
+										flowName={ DIFM_FLOW }
+										enabledGeos={ [ 'US' ] }
+										helpCenterButtonCopy={ helpCenterButtonCopy }
+										helpCenterButtonLink={ helpCenterButtonLink }
+									/>
+								) : (
+									<Step.SkipButton onClick={ goNext }>
+										{ translate( 'No thanks, I’ll build it' ) }
+									</Step.SkipButton>
+								)
+							}
+						/>
+					}
+					stickyBottomBar={
+						<Step.StickyBottomBar leftElement={ secondaryButton } rightElement={ primaryButton } />
+					}
+					primaryButton={ primaryButton }
+					secondaryButton={ secondaryButton }
+					siteId={ siteId }
+				/>
+			</>
+		);
+	}
 
 	return (
 		<>
@@ -42,25 +99,25 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 				isWideLayout
 				isLargeSkipLayout={ false }
 				skipLabelText={
-					shouldRenderHelpCenterLink ? undefined : translate( 'No Thanks, I’ll Build It' )
+					shouldRenderHelpCenter ? undefined : translate( 'No thanks, I’ll build it' )
 				}
-				hideSkip={ shouldRenderHelpCenterLink }
+				hideSkip={ shouldRenderHelpCenter }
 				customizedActionButtons={
-					isHelpCenterLinkEnabled ? (
+					shouldRenderHelpCenter ? (
 						<HelpCenterStepButton
-							flowName={ flow }
+							flowName={ DIFM_FLOW }
 							enabledGeos={ [ 'US' ] }
-							helpCenterButtonCopy={ translate( 'Questions?' ) }
-							helpCenterButtonLink={ translate( 'Contact our site building team' ) }
+							helpCenterButtonCopy={ helpCenterButtonCopy }
+							helpCenterButtonLink={ helpCenterButtonLink }
 						/>
 					) : undefined
 				}
 				stepContent={
 					<DIFMLanding
 						onPrimarySubmit={ () =>
-							showNewOrExistingSiteChoice ? onSubmit( 'existing-site' ) : onSubmit( 'new-site' )
+							showNewOrExistingSiteChoice ? onSubmit( 'new-site' ) : onSubmit( 'existing-site' )
 						}
-						onSecondarySubmit={ () => onSubmit( 'new-site' ) }
+						onSecondarySubmit={ () => onSubmit( 'existing-site' ) }
 						showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
 						siteId={ siteId }
 						isStoreFlow={ false }

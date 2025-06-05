@@ -106,6 +106,7 @@ export interface DomainData {
 	has_private_registration: boolean;
 	is_pending_icann_verification: boolean;
 	is_icann_verification_suspended: boolean;
+	is_root_domain_registered_with_automattic: boolean;
 	manual_transfer_required: boolean;
 	registrar: string;
 	domain_locking_available: boolean;

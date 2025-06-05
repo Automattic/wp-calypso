@@ -14,7 +14,7 @@ describe( 'useNewsletterCategories', () => {
 	let wrapper: React.FC< { children: React.ReactNode } >;
 
 	beforeEach( () => {
-		( request as jest.MockedFunction< typeof request > ).mockReset();
+		jest.mocked( request ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -34,7 +34,7 @@ describe( 'useNewsletterCategories', () => {
 	} );
 
 	it( 'should return expected data when successful', async () => {
-		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+		jest.mocked( request ).mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [
 				{ id: 1, name: 'Category 1', slug: 'Slug 1', description: 'Description 1', parent: 1 },
@@ -56,7 +56,7 @@ describe( 'useNewsletterCategories', () => {
 	} );
 
 	it( 'should handle empty response', async () => {
-		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+		jest.mocked( request ).mockResolvedValue( {
 			enabled: false,
 			newsletter_categories: [],
 		} );
@@ -69,7 +69,7 @@ describe( 'useNewsletterCategories', () => {
 	} );
 
 	it( 'should call request with correct arguments', async () => {
-		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+		jest.mocked( request ).mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [],
 		} );
@@ -81,16 +81,14 @@ describe( 'useNewsletterCategories', () => {
 		await waitFor( () => expect( request ).toHaveBeenCalled() );
 
 		expect( request ).toHaveBeenCalledWith( {
-			path: `/sites/123/newsletter-categories`,
+			path: '/sites/123/newsletter-categories',
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );
 
 	it( 'should handle error response', async () => {
 		const errorMessage = 'API Error';
-		( request as jest.MockedFunction< typeof request > ).mockRejectedValue(
-			new Error( errorMessage )
-		);
+		jest.mocked( request ).mockRejectedValue( new Error( errorMessage ) );
 
 		const { result } = renderHook( () => useNewsletterCategories( { siteId: 123 } ), { wrapper } );
 

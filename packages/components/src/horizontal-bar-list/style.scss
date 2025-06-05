@@ -83,7 +83,7 @@
 			height: 100%;
 			content: "";
 			border-radius: 2px;
-			background-color: rgba(var(--color-primary-rgb), 15%);
+			background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 			position: absolute;
 			left: 0;
 			z-index: 0;
