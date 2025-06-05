@@ -161,6 +161,7 @@ export function getPurchasesFieldDefinitions( {
 						<div className="purchase-item__title">
 							<Button
 								variant="link"
+								title={ translate( 'Manage purchase', { textOnly: true } ) }
 								label={ translate( 'Manage purchase', { textOnly: true } ) }
 								onClick={ () => goToPurchase( item ) }
 							>
