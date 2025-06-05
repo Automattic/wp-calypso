@@ -37,9 +37,9 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			</SummaryButtonList>
 			<SectionHeader title={ __( 'Server' ) } />
 			<SummaryButtonList>
-				<DatabaseSettingsSummary site={ site } />
 				<WordPressSettingsSummary site={ site } />
 				<PHPSettingsSummary site={ site } />
+				<DatabaseSettingsSummary site={ site } />
 				<AgencySettingsSummary site={ site } />
 				<PrimaryDataCenterSettingsSummary site={ site } />
 				<StaticFile404SettingsSummary site={ site } />

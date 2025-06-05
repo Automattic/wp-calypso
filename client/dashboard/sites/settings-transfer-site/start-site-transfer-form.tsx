@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
 import { siteOwnerTransferMutation } from '../../app/queries';
 import Notice from '../../components/notice';
+import { SectionHeader } from '../../components/section-header';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
@@ -101,11 +102,9 @@ export function StartSiteTransferForm( {
 	};
 
 	return (
-		<VStack spacing={ 0 }>
+		<>
 			<VStack style={ { padding: '8px 0 12px' } }>
-				<Text size="15px" weight={ 500 } lineHeight="32px" as="h2">
-					{ __( 'Start site transfer' ) }
-				</Text>
+				<SectionHeader title={ __( 'Start site transfer' ) } level={ 3 } />
 			</VStack>
 			<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
 				<Notice variant="warning" density="medium">
@@ -182,11 +181,11 @@ export function StartSiteTransferForm( {
 						</li>
 					</List>
 				</VStack>
+				<Text weight={ 500 } as="h3">
+					{ __( 'To transfer your site, review and accept the following statements:' ) }
+				</Text>
 				<form onSubmit={ handleSubmit }>
-					<VStack>
-						<span style={ { textTransform: 'uppercase', fontSize: '11px', fontWeight: 500 } }>
-							{ __( 'To transfer your site, review and accept the following statements:' ) }
-						</span>
+					<VStack spacing={ 5 }>
 						<DataForm< StartSiteTransferFormData >
 							data={ formData }
 							fields={ fields }
@@ -195,7 +194,7 @@ export function StartSiteTransferForm( {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start" style={ { paddingTop: '8px' } }>
+						<HStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -211,6 +210,6 @@ export function StartSiteTransferForm( {
 					</VStack>
 				</form>
 			</VStack>
-		</VStack>
+		</>
 	);
 }

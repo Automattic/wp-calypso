@@ -14,6 +14,7 @@ export const SITE_FIELDS = [
 	'subscribers_count',
 	'plan',
 	'capabilities',
+	'is_a4a_dev_site',
 	'is_a8c',
 	'is_deleted',
 	'is_coming_soon',

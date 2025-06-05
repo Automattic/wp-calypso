@@ -7,8 +7,15 @@
 		margin: 0;
 	}
 
+	.dashboard-summary-button-list__children-list-item {
+		&:empty {
+			display: none;
+		}
+	}
+
 	&.has-density-low {
-		.dashboard-summary-button-list__children-list-item:not(:last-child) {
+		// Do not add a bottom margin to the last (non-empty) child.
+		.dashboard-summary-button-list__children-list-item:not(:nth-last-child(1 of :not(:empty))) {
 			margin-bottom: $grid-unit-30;
 		}
 	}
@@ -23,17 +30,20 @@
 		// TODO: once the component uses React context, we should use that
 		// to let the summary button component know the appropriate border
 		// radius inheritance behavior.
-		.dashboard-summary-button-list__children-list,
-		.dashboard-summary-button-list__children-list-item {
+		.dashboard-summary-button-list__children-list {
 			border-radius: inherit;
 		}
 
-		.dashboard-summary-button-list__children-list-item:first-child > * {
+		// First (non-empty) <li> and its direct children.
+		.dashboard-summary-button-list__children-list-item:nth-child(1 of :not(:empty)),
+		.dashboard-summary-button-list__children-list-item:nth-child(1 of :not(:empty)) > * {
 			border-top-left-radius: inherit;
 			border-top-right-radius: inherit;
 		}
 
-		.dashboard-summary-button-list__children-list-item:last-child > * {
+		// Last (non-empty) <li> and its direct children.
+		.dashboard-summary-button-list__children-list-item:nth-last-child(1 of :not(:empty)),
+		.dashboard-summary-button-list__children-list-item:nth-last-child(1 of :not(:empty)) > * {
 			// TODO: once the component uses React context, we should use that
 			// to let the correct summary button component know that it's
 			// the last child, and should not have a bottom border.

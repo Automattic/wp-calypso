@@ -4,6 +4,10 @@
 .dashboard-section-header {
 	position: relative;
 	z-index: 1;
+
+	.dashboard-section-header__heading-row {
+		min-height: 32px;
+	}
 }
 
 .dashboard-section-header__heading {
@@ -17,12 +21,10 @@
 
 	.dashboard-section-header.is-level-2 & {
 		@include heading-x-large();
-		margin-top: $grid-unit-05;
 	}
 
 	.dashboard-section-header.is-level-3 & {
 		@include heading-large();
-		margin-top: calc($grid-unit-05 * 1.5);
 	}
 }
 

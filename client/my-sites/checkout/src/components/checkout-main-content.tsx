@@ -403,8 +403,10 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
+	);
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -638,14 +640,15 @@ export default function CheckoutMainContent( {
 								</div>
 							) }
 
-							<WPCheckoutOrderSummary
-								siteId={ siteId }
-								onChangeSelection={ changeSelection }
-								showFeaturesList={
-									! isStreamlinedPriceExperimentLoading &&
-									! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
-								}
-							/>
+							{ isStreamlinedPrice ? (
+								<WPCheckoutOrderSummary siteId={ siteId } />
+							) : (
+								<WPCheckoutOrderSummary
+									siteId={ siteId }
+									onChangeSelection={ changeSelection }
+									showFeaturesList
+								/>
+							) }
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
 								areThereDomainProductsInCart={ areThereDomainProductsInCart }
@@ -660,9 +663,7 @@ export default function CheckoutMainContent( {
 	const checkoutMainContent = (
 		<WPCheckoutMainContent
 			className="checkout-main-content"
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
+			isStreamlinedPrice={ isStreamlinedPrice }
 		>
 			<CheckoutOrderBanner />
 			{ isStepContainerV2 ? (

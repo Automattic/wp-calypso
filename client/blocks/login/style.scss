@@ -289,6 +289,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	clear: both;
 	font-size: $font-body-small;
 	padding-top: 20px;
+	margin-bottom: unset;
 
 	&.disabled {
 		a,
