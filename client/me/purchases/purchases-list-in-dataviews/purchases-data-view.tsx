@@ -180,9 +180,7 @@ export function PurchasesDataViews( {
 		() => [
 			{
 				id: 'manage-purchase',
-				label: translate( 'Manage this purchase', { textOnly: true } ),
-				isPrimary: true,
-				icon: <Gridicon icon="chevron-right" />,
+				label: translate( 'Manage purchase', { textOnly: true } ),
 				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
 				callback: ( items: Purchases.Purchase[] ) => {
 					const siteUrl = items[ 0 ].domain;
