@@ -226,7 +226,7 @@ const membershipsMobileFields = [ 'product' ];
 export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
-	perPage: 5,
+	perPage: defaultPerPage,
 	titleField: 'purchase-id',
 	showTitle: false,
 	fields: membershipsDesktopFields,
