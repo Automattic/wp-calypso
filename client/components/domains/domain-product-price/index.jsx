@@ -45,7 +45,8 @@ export class DomainProductPrice extends Component {
 				args: { cost: renewPrice },
 			} );
 			return (
-				<div className="domain-product-price__renewal-price" aria-label={ ariaLabel }>
+				<div className="domain-product-price__renewal-price">
+					<span className="screen-reader-text">{ ariaLabel }</span>
 					<span aria-hidden="true">
 						{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
 							args: { cost: renewPrice },
@@ -79,7 +80,8 @@ export class DomainProductPrice extends Component {
 						{ translate( 'Free for the first year' ) }
 					</span>
 				</div>
-				<div className="domain-product-price__price" aria-label={ ariaLabel }>
+				<div className="domain-product-price__price">
+					<span className="screen-reader-text">{ ariaLabel }</span>
 					<del aria-hidden="true">{ priceText }</del>
 				</div>
 			</div>
@@ -128,7 +130,8 @@ export class DomainProductPrice extends Component {
 		return (
 			<div className={ className }>
 				<div className="domain-product-price__free-text">{ message }</div>
-				<div className="domain-product-price__price" aria-label={ ariaLabel }>
+				<div className="domain-product-price__price">
+					<span className="screen-reader-text">{ ariaLabel }</span>
 					<del aria-hidden="true">
 						{ this.props.isMappingProduct
 							? null
@@ -196,7 +199,8 @@ export class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</div>
-				<div className="domain-product-price__regular-price" aria-label={ ariaLabel }>
+				<div className="domain-product-price__regular-price">
+					<span className="screen-reader-text">{ ariaLabel }</span>
 					<span aria-hidden="true">
 						{ translate( '%(cost)s {{small}}/year{{/small}}', {
 							args: { cost: price },
@@ -227,7 +231,8 @@ export class DomainProductPrice extends Component {
 
 		return (
 			<div className={ className }>
-				<span className={ productPriceClassName } aria-label={ ariaLabel }>
+				<span className={ productPriceClassName }>
+					<span className="screen-reader-text">{ ariaLabel }</span>
 					<span aria-hidden="true">
 						{ translate( '%(cost)s {{small}}/year{{/small}}', {
 							args: { cost: price },
