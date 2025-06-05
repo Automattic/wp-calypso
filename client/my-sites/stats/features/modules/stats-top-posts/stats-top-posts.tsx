@@ -45,7 +45,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 
 	const options: OptionType[] = [
 		{ value: mainStatType, label: translate( 'Post & pages' ) },
-		{ value: subStatType, label: translate( 'Archive' ) },
+		{ value: subStatType, label: translate( 'Archive pages' ) },
 	];
 
 	const [ statType, setStatType ] = useState( mainStatType );
