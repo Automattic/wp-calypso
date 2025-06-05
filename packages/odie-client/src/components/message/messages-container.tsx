@@ -118,7 +118,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			! chat.conversationId &&
 			createZendeskConversation &&
 			resetSupportInteraction &&
-			isChatLoaded
+			isChatLoaded &&
+			! forceEmailSupport
 		) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
@@ -130,16 +131,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				setChatMessagesLoaded( true );
 			} else {
 				resetSupportInteraction().then( ( interaction ) => {
-					if ( isChatLoaded ) {
-						createZendeskConversation( {
-							avoidTransfer: true,
-							interactionId: interaction?.uuid,
-							section: searchParams.get( 'section' ),
-							createdFrom: 'direct_url',
-						} ).then( () => {
-							setChatMessagesLoaded( true );
-						} );
-					}
+					createZendeskConversation( {
+						avoidTransfer: true,
+						interactionId: interaction?.uuid,
+						section: searchParams.get( 'section' ),
+						createdFrom: 'direct_url',
+					} ).then( () => {
+						setChatMessagesLoaded( true );
+					} );
 				} );
 			}
 		}

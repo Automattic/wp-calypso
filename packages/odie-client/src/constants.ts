@@ -27,6 +27,11 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 	__i18n_text_domain__
 );
 
+export const ODIE_FORCE_EMAIL_FALLBACK_MESSAGE = __(
+	'We’re sorry, but live chat is temporarily unavailable for scheduled maintenance. Please feel free to reach out via email or check our Support Guides in the meantime.',
+	__i18n_text_domain__
+);
+
 export const ODIE_TRANSFER_MESSAGE: Message[] = [
 	{
 		content: __( 'No problem. Help is on the way!', __i18n_text_domain__ ),
@@ -66,8 +71,6 @@ export const ODIE_WRONG_FILE_TYPE_MESSAGE: Message = {
 		site_id: null,
 	},
 };
-
-export const ODIE_FORCE_EMAIL_FALLBACK_MESSAGE = __( 'Force Email Fallback', __i18n_text_domain__ );
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;

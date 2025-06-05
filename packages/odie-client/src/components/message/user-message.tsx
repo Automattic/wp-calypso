@@ -13,7 +13,11 @@ import {
 	ODIE_FORCE_EMAIL_FALLBACK_MESSAGE,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { interactionHasZendeskEvent, userProvidedEnoughInformation } from '../../utils';
+import {
+	interactionHasZendeskEvent,
+	userProvidedEnoughInformation,
+	getIsRequestingHumanSupport,
+} from '../../utils';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
@@ -67,7 +71,7 @@ export const UserMessage = ( {
 	);
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
-	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
+	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 
 	const showDirectEscalationLink = useMemo( () => {
 		return (

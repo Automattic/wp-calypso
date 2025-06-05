@@ -7,7 +7,8 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
-import { generateUUID, getOdieIdFromInteraction } from '../utils';
+import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import { getOdieEmailFallbackMessage } from '../utils/get-odie-messages';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
 
@@ -44,19 +45,24 @@ export const useSendOdieMessage = () => {
 		chat,
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
+		forceEmailSupport,
 	} = useOdieAssistantContext();
 
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
 		if ( ! Array.isArray( message ) ) {
-			const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-			if (
-				! chat.conversationId &&
-				isRequestingHumanSupport &&
-				canConnectToZendesk &&
-				isUserEligibleForPaidSupport
-			) {
-				newConversation( { createdFrom: 'automatic_escalation' } );
-				return;
+			if ( getIsRequestingHumanSupport( message ) ) {
+				if ( forceEmailSupport ) {
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, ...[ getOdieEmailFallbackMessage() ] ],
+						status: 'loaded',
+					} ) );
+					return;
+				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
+					newConversation( { createdFrom: 'automatic_escalation' } );
+					return;
+				}
 			}
 		}
 

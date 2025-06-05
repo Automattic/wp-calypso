@@ -1,4 +1,4 @@
-import { ODIE_INITIAL_MESSAGE } from '../constants';
+import { ODIE_FORCE_EMAIL_FALLBACK_MESSAGE, ODIE_INITIAL_MESSAGE } from '../constants';
 import type { Context, Message, OdieAllowedBots } from '../types';
 
 const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | undefined => {
@@ -21,5 +21,13 @@ export const getOdieInitialMessage = ( botNameSlug: OdieAllowedBots ): Message =
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),
+	};
+};
+
+export const getOdieEmailFallbackMessage = (): Message => {
+	return {
+		content: ODIE_FORCE_EMAIL_FALLBACK_MESSAGE,
+		role: 'bot',
+		type: 'error',
 	};
 };

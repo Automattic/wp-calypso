@@ -7,7 +7,7 @@ export {
 	getHelpCenterZendeskConversationStarted,
 	getHelpCenterZendeskConversationStartedElapsedTime,
 } from './storage-utils';
-export { getOdieInitialMessage } from './get-odie-initial-message';
+export { getOdieInitialMessage } from './get-odie-messages';
 export {
 	interactionHasZendeskEvent,
 	interactionHasEnded,
@@ -15,3 +15,8 @@ export {
 	getOdieIdFromInteraction,
 } from './support-interaction-utils';
 export { userProvidedEnoughInformation } from './user-provided-enough-information';
+import type { Message } from '../types';
+
+export const getIsRequestingHumanSupport = ( message: Message ) => {
+	return message.context?.flags?.forward_to_human_support ?? false;
+};
