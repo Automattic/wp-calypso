@@ -230,7 +230,7 @@ export function getPurchasesFieldDefinitions( {
 				) {
 					return 'expiring-soon';
 				}
-				return 'other';
+				return 'not-expiring-soon';
 			},
 		},
 		{
