@@ -100,6 +100,10 @@ export default function SitePreviewLinks( {
 		}
 	}
 
+	const handleCopy = () => {
+		showSuccessNotice( translate( 'Preview link copied to clipboard.' ) );
+	};
+
 	const checkedAndEnabled = checked && ! forceOff;
 	const isBusy = isFirstLoading || isCreating || isDeleting;
 
@@ -129,8 +133,11 @@ export default function SitePreviewLinks( {
 							<SitePreviewLink
 								key={ link.code }
 								{ ...link }
+								label={ translate( 'preview link' ) }
+								hideLabelFromVision
 								disabled={ disabled || isBusy }
 								siteUrl={ siteUrl }
+								onCopy={ handleCopy }
 							/>
 						) ) }
 				</>
