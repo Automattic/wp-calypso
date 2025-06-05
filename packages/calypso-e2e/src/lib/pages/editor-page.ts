@@ -530,10 +530,17 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			const isMenuButtonVisible = await this.editorPopoverMenuComponent.isMenuButtonVisible(
+				`Select parent block (${ expectedParentBlockName })`
+			);
+			if ( ! isMenuButtonVisible ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 			await this.editorPopoverMenuComponent.clickMenuButton(
 				`Select parent block (${ expectedParentBlockName })`
 			);
+			// It stays open on modal! We have to close it again.
+			await this.editorBlockToolbarComponent.clickOptionsButton();
 		}
 	}
 

@@ -29,4 +29,32 @@ export class EditorPopoverMenuComponent {
 		await locator.waitFor();
 		await locator.click();
 	}
+
+	/**
+	 * Checks if a menu button is visible.
+	 *
+	 * @param {string} name The name of the menu button.
+	 * @returns {Promise<boolean>} True if the menu button is visible, false otherwise.
+	 */
+	async isMenuButtonVisible( name: string ): Promise< boolean > {
+		const editorParent = await this.editor.parent();
+
+		const locator = editorParent.getByRole( 'menuitem', { name: name } );
+
+		try {
+			await locator.waitFor( { timeout: 100 } );
+		} catch ( e ) {
+			// Probably doesn't exist. That's ok.
+			return false;
+		}
+		if ( ( await locator.count() ) === 0 ) {
+			return false;
+		}
+
+		if ( await locator.isVisible() ) {
+			return true;
+		}
+
+		return false;
+	}
 }
