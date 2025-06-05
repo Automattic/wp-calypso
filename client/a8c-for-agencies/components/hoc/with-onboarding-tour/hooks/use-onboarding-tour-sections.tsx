@@ -25,10 +25,13 @@ import {
 	A4A_TEAM_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../../../sidebar-menu/lib/constants';
+import useCurrentOnboardingSection from './use-current-onboarding-section';
 
 export default function useOnboardingTourSections() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { saveCurrentSection } = useCurrentOnboardingSection();
 
 	return useMemo( () => {
 		const onNextBenefit = ( section: string, onNext: () => void ) => {
@@ -37,6 +40,7 @@ export default function useOnboardingTourSections() {
 					section,
 				} )
 			);
+			saveCurrentSection( section );
 			onNext();
 		};
 
@@ -51,7 +55,7 @@ export default function useOnboardingTourSections() {
 
 		return [
 			{
-				id: 'welcome',
+				id: 'overview',
 				title: translate( 'Welcome' ),
 				bannerImage: OnboardingTourBannerWelcome,
 				isDarkBanner: true,
@@ -375,5 +379,5 @@ export default function useOnboardingTourSections() {
 				},
 			},
 		];
-	}, [ dispatch, translate ] );
+	}, [ dispatch, saveCurrentSection, translate ] );
 }

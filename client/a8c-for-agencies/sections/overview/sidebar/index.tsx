@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { withOnboardingTour } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour';
 import OverviewSidebarAgencyTier from './agency-tier';
 import OverviewSidebarContactSupport from './contact-support';
 import OverviewSidebarFeaturedWooPayments from './featured-woopayments';
@@ -20,4 +19,4 @@ const OverviewSidebar = () => {
 	);
 };
 
-export default withOnboardingTour( OverviewSidebar );
+export default OverviewSidebar;
