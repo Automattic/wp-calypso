@@ -243,11 +243,10 @@ export type HelpCenterAction =
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
 			| typeof setNavigateToRoute
-			| typeof setNavigateToOdie
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >;
+	| GeneratorReturnType< typeof setShowHelpCenter | typeof setNavigateToOdie >;
