@@ -59,7 +59,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 			[ 'Date Picker', 'Add label…' ],
 			[ 'Phone Number Field', 'Add label…' ],
 			[ 'Multi-line Text Field', 'Add label…' ],
-			[ 'Checkbox', isRefactor ? 'Add option…' : 'Add label…' ],
+			[ 'Checkbox', 'Add label…' ],
 			[ 'Multiple Choice (Checkbox)', 'Add label' ],
 			[ 'Single Choice (Radio)', 'Add label' ],
 			[ 'Dropdown Field', 'Add label' ],
