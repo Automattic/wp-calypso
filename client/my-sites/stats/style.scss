@@ -104,7 +104,8 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 }
 
 .stats {
-	a {
+	a,
+	a:visited  {
 		color: var(--theme-highlight-color);
 	}
 }
