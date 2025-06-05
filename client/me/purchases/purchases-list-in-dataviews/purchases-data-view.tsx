@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon, Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	DataViews,
@@ -20,7 +20,8 @@ import {
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
-const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
+const purchasesWideFields = [ 'site', 'product', 'status', 'payment-method' ];
+const purchasesDesktopFields = [ 'site', 'product', 'status' ];
 const purchasesMobileFields = [ 'product' ];
 const defaultPerPage = 10;
 const defaultSort = {
@@ -138,21 +139,29 @@ export function PurchasesDataViews( {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
 } ) {
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
 
 	// Hide fields at mobile width
 	useEffect( () => {
-		if ( isDesktop && currentView.fields === purchasesMobileFields ) {
+		if ( isWide && currentView.fields !== purchasesWideFields ) {
+			setView( { ...currentView, fields: purchasesWideFields } );
+		}
+		if ( isWide ) {
+			return;
+		}
+		if ( isDesktop && currentView.fields !== purchasesDesktopFields ) {
 			setView( { ...currentView, fields: purchasesDesktopFields } );
+		}
+		if ( isDesktop ) {
 			return;
 		}
-		if ( ! isDesktop && currentView.fields === purchasesDesktopFields ) {
+		if ( currentView.fields !== purchasesMobileFields ) {
 			setView( { ...currentView, fields: purchasesMobileFields } );
-			return;
 		}
-	}, [ isDesktop, currentView, setView ] );
+	}, [ isWide, isDesktop, currentView, setView ] );
 
 	// Keep track of the current view params in the URL and restore them when the page loads.
 	usePreservePurchasesFiltersInUrl( { currentView, setView } );
