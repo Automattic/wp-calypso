@@ -173,7 +173,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		} );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
+	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
 
 	/**
 	 * Version for Odie API.

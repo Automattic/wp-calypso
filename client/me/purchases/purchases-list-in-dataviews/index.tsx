@@ -3,7 +3,6 @@ import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
@@ -38,6 +37,7 @@ import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
+import { PurchasesByOtherAdminsNotice } from '../purchases-list/purchases-by-other-admins-notice';
 import PurchasesSite from '../purchases-site';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
 import './style.scss';
@@ -82,103 +82,114 @@ function isDataLoading( {
 	}
 }
 
-class PurchasesListDataView extends Component<
-	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
-> {
-	renderConciergeBanner() {
-		const { nextAppointment, availableSessions, isUserBlocked } = this.props;
-		return (
-			<PurchaseListConciergeBanner
-				nextAppointment={ nextAppointment ?? undefined }
-				availableSessions={ availableSessions }
-				isUserBlocked={ isUserBlocked }
-			/>
-		);
+function ConciergeBanner( {
+	nextAppointment,
+	availableSessions,
+	isUserBlocked,
+}: Pick<
+	PurchasesListConnectedProps,
+	'nextAppointment' | 'availableSessions' | 'isUserBlocked'
+> ) {
+	return (
+		<PurchaseListConciergeBanner
+			nextAppointment={ nextAppointment ?? undefined }
+			availableSessions={ availableSessions }
+			isUserBlocked={ isUserBlocked }
+		/>
+	);
+}
+
+function PurchasesListDataView(
+	props: PurchasesListProps &
+		PurchasesListConnectedProps &
+		WithStoredPaymentMethodsProps &
+		LocalizeProps
+) {
+	const { purchases, sites, translate, subscriptions } = props;
+	const commonEventProps = { context: 'me' };
+	let content;
+
+	if (
+		isDataLoading( {
+			isFetchingUserPurchases: props.isFetchingUserPurchases,
+			hasLoadedUserPurchasesFromServer: props.hasLoadedUserPurchasesFromServer,
+		} )
+	) {
+		content = <PurchasesSite isPlaceholder />;
 	}
 
-	render() {
-		const { purchases, sites, translate, subscriptions } = this.props;
-		const commonEventProps = { context: 'me' };
-		let content;
+	if ( purchases && purchases.length ) {
+		content = <PurchasesDataViews purchases={ purchases } sites={ sites } />;
+	}
 
-		if (
-			isDataLoading( {
-				isFetchingUserPurchases: this.props.isFetchingUserPurchases,
-				hasLoadedUserPurchasesFromServer: this.props.hasLoadedUserPurchasesFromServer,
-			} )
-		) {
-			content = <PurchasesSite isPlaceholder />;
-		}
-
-		if ( purchases && purchases.length ) {
-			content = <PurchasesDataViews purchases={ purchases } sites={ sites } />;
-		}
-
-		if ( purchases && ! purchases.length && ! subscriptions.length ) {
-			if ( ! sites.length ) {
-				return (
-					<Main wideLayout className="purchases-list">
-						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-						<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-						<PurchasesNavigation section="activeUpgrades" />
-						<NoSitesMessage />
-					</Main>
-				);
-			}
-			content = (
-				<>
-					{ this.renderConciergeBanner() }
-					<CompactCard className="purchases-list__no-content">
-						<>
-							<TrackComponentView
-								eventName="calypso_no_purchases_upgrade_nudge_impression"
-								eventProperties={ commonEventProps }
-							/>
-							{ /* this.renderPurchasesByOtherAdminsNotice() to-do: render this as functional component */ }
-							<EmptyContent
-								title={ translate( 'Looking to upgrade?' ) }
-								line={ translate(
-									'Our plans give your site the power to thrive. ' +
-										'Find the plan that works for you.'
-								) }
-								action={ translate( 'Upgrade now' ) }
-								actionURL="/plans"
-								illustration={ noSitesIllustration }
-								actionCallback={ () => {
-									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
-								} }
-							/>
-						</>
-					</CompactCard>
-				</>
+	if ( purchases && ! purchases.length && ! subscriptions.length ) {
+		if ( ! sites.length ) {
+			return (
+				<Main wideLayout className="purchases-list">
+					<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+					<PurchasesNavigation section="activeUpgrades" />
+					<NoSitesMessage />
+				</Main>
 			);
 		}
-
-		return (
-			<Main wideLayout className="purchases-list">
-				<QueryUserPurchases />
-				<QueryMembershipsSubscriptions />
-				<PageViewTracker path="/me/purchases" title="Purchases" />
-
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ titles.sectionTitle }
-					subtitle={ translate(
-						'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
-							},
-						}
-					) }
+		content = (
+			<>
+				<ConciergeBanner
+					nextAppointment={ props.nextAppointment }
+					availableSessions={ props.availableSessions }
+					isUserBlocked={ props.isUserBlocked }
 				/>
-				<PurchasesNavigation section="activeUpgrades" />
-				{ content }
-				<MembershipSubscriptions memberships={ subscriptions } />
-				<QueryConciergeInitial />
-			</Main>
+				<CompactCard className="purchases-list__no-content">
+					<>
+						<TrackComponentView
+							eventName="calypso_no_purchases_upgrade_nudge_impression"
+							eventProperties={ commonEventProps }
+						/>
+						<PurchasesByOtherAdminsNotice sites={ sites } />
+						<EmptyContent
+							title={ translate( 'Looking to upgrade?' ) }
+							line={ translate(
+								'Our plans give your site the power to thrive. ' +
+									'Find the plan that works for you.'
+							) }
+							action={ translate( 'Upgrade now' ) }
+							actionURL="/plans"
+							illustration={ noSitesIllustration }
+							actionCallback={ () => {
+								recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+							} }
+						/>
+					</>
+				</CompactCard>
+			</>
 		);
 	}
+
+	return (
+		<Main wideLayout className="purchases-list">
+			<QueryUserPurchases />
+			<QueryMembershipsSubscriptions />
+			<PageViewTracker path="/me/purchases" title="Purchases" />
+
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ titles.sectionTitle }
+				subtitle={ translate(
+					'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+						},
+					}
+				) }
+			/>
+			<PurchasesNavigation section="activeUpgrades" />
+			{ content }
+			<MembershipSubscriptions memberships={ subscriptions } />
+			<QueryConciergeInitial />
+		</Main>
+	);
 }
 
 export default connect( ( state: AppState ) => ( {
