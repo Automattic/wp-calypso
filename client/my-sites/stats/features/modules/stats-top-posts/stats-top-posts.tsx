@@ -20,6 +20,11 @@ import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
+const MAIN_STAT_TYPE = 'statsTopPosts';
+const SUB_STAT_TYPE = 'statsArchives';
+
+type OptionType = { value: typeof MAIN_STAT_TYPE | typeof SUB_STAT_TYPE; label: string };
+
 const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
@@ -35,16 +40,15 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 
 	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
 
-	const mainStatType = 'statsTopPosts' as const;
-	const subStatType = 'statsArchives' as const;
+	const mainStatType = MAIN_STAT_TYPE;
+	const subStatType = SUB_STAT_TYPE;
 
-	const options = [
+	const options: OptionType[] = [
 		{ value: mainStatType, label: translate( 'Post & pages' ) },
 		{ value: subStatType, label: translate( 'Archive' ) },
 	];
 
-	type OptionType = ( typeof options )[ number ];
-	const [ statType, setStatType ] = useState< OptionType[ 'value' ] >( 'statsTopPosts' );
+	const [ statType, setStatType ] = useState( mainStatType );
 	const onStatTypeChange = ( option: OptionType ) => setStatType( option.value );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
