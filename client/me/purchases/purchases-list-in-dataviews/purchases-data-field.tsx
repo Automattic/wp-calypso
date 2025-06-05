@@ -95,9 +95,15 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			elements: sites.map( ( site ) => {
-				return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
-			} ),
+			elements: ( () => {
+				if ( sites.length < 2 ) {
+					// No point in having a filter if there's only one site.
+					return undefined;
+				}
+				return sites.map( ( site ) => {
+					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
+				} );
+			} )(),
 			filterBy: { operators: [ 'is' ], isPrimary: true },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
