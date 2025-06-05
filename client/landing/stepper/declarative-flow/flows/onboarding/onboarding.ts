@@ -53,10 +53,9 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
-		STEPS.PLAYGROUND,
 	];
 
-	return stepsWithRequiredLogin( steps );
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
