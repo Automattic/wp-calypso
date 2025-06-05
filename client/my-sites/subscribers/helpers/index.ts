@@ -28,7 +28,7 @@ const getSubscriberDetailsCacheKey = (
 
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
-const getSubscriptionIdFromSubscriber = ( subscriber: Subscriber ): number | string => {
+const getSubscriptionIdFromSubscriber = ( subscriber: Subscriber ): number => {
 	return (
 		subscriber.email_subscription_id ||
 		subscriber.subscription_id ||
