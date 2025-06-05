@@ -21,6 +21,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -145,6 +146,9 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+	const isGravatarDomain = useSelector(
+		( state ) => getCurrentQueryArguments( state )?.isGravatarDomain
+	);
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
@@ -545,6 +549,15 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
+	const gravatarColors = isGravatarDomain
+		? {
+				primary: colors[ 'Gravatar Blue' ],
+				primaryBorder: colors[ 'Gravatar Blue 80' ],
+				primaryOver: colors[ 'Gravatar Blue 60' ],
+				success: colors[ 'Gravatar Blue' ],
+				discount: colors[ 'Gravatar Blue' ],
+		  }
+		: {};
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -570,7 +583,7 @@ export default function CheckoutMain( {
 			: {};
 	const theme = {
 		...checkoutTheme,
-		colors: { ...checkoutTheme.colors, ...jetpackColors, ...a4aColors },
+		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
 	};
 
 	const isCheckoutV2ExperimentLoading = false;

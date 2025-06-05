@@ -469,29 +469,6 @@ body.is-mobile-app-view {
 		font-weight: 700 !important;
 	}
 
-	.domain-suggestion__action.is-primary:not( :disabled ),
-	.checkout-button.is-status-primary:not( :disabled ),
-	.components-button.is-primary:not( :disabled ) {
-		background-color: #1d4fc4;
-		border-color: #1d4fc4;
-
-		&:hover,
-		&:focus {
-			background-color: lighten( #1d4fc4, 10% );
-			border-color: lighten( #1d4fc4, 10% );
-		}
-
-		&.is-busy {
-			background-image: linear-gradient(
-				-45deg,
-				#1d4fc4 28%,
-				darken( #1d4fc4, 10% ) 28%,
-				darken( #1d4fc4, 10% ) 72%,
-				#1d4fc4 72%
-			);
-		}
-	}
-
 	// Domain pages only
 	&.is-section-signup {
 		.gravatar-text-logo {
@@ -501,21 +478,23 @@ body.is-mobile-app-view {
 			width: 130px;
 			height: 24px;
 		}
+
+		.domain-suggestion__action.is-primary:not( :disabled ) {
+			background-color: #1d4fc4;
+			border-color: #1d4fc4;
+
+			&:hover,
+			&:focus {
+				background-color: #002e9b;
+				border-color: #002e9b;
+			}
+		}
 	}
 
 	// Checkout page only
 	&.is-section-checkout {
 		.masterbar__secure-checkout {
 			column-gap: 8px;
-		}
-
-		.checkout-step__number-completed {
-			background-color: #1d4fc4;
-			border-color: #1d4fc4;
-		}
-
-		.checkout__summary-features ul > li > svg {
-			fill: #1d4fc4;
 		}
 	}
 
