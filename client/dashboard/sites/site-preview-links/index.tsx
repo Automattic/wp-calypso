@@ -61,6 +61,12 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		}
 	};
 
+	const handleCopy = () => {
+		createSuccessNotice( __( 'Copied the share link to clipboard.' ), {
+			type: 'snackbar',
+		} );
+	};
+
 	const renderContent = () => {
 		const isMutationPending = createMutation.isPending || deleteMutation.isPending;
 
@@ -102,9 +108,12 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 					{ links?.map( ( link ) => (
 						<SitePreviewLink
 							key={ link.code }
+							label={ __( 'Share link' ) }
+							hideLabelFromVision
 							{ ...link }
 							siteUrl={ site.URL }
 							disabled={ isMutationPending }
+							onCopy={ handleCopy }
 						/>
 					) ) }
 				</VStack>

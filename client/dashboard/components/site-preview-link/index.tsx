@@ -64,8 +64,11 @@ type SitePreviewLinkProps = {
 	code: string;
 	created_at: string;
 	expires_at?: string;
+	label?: string;
+	hideLabelFromVision?: boolean;
 	siteUrl: string;
 	disabled: boolean;
+	onCopy?: () => void;
 	isCreating?: boolean;
 	isRemoving?: boolean;
 };
@@ -73,10 +76,13 @@ type SitePreviewLinkProps = {
 const SitePreviewLink = ( {
 	code,
 	expires_at,
+	label,
+	hideLabelFromVision,
+	siteUrl,
+	disabled,
+	onCopy,
 	isCreating = false,
 	isRemoving = false,
-	disabled,
-	siteUrl,
 }: SitePreviewLinkProps ) => {
 	let linkValue = `${ siteUrl }?share=${ code }`;
 	if ( isCreating ) {
@@ -90,6 +96,8 @@ const SitePreviewLink = ( {
 		<ClipboardInputControl
 			key={ code }
 			value={ linkValue }
+			label={ label }
+			hideLabelFromVision={ hideLabelFromVision }
 			disabled={ disabled }
 			help={
 				hasExpiration ? (
@@ -102,6 +110,7 @@ const SitePreviewLink = ( {
 					__( 'Anyone with the link can view your site.' )
 				)
 			}
+			onCopy={ onCopy }
 		/>
 	);
 };
