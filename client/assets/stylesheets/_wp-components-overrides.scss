@@ -62,7 +62,7 @@
 }
 
 /* Gravatar & WP Job Manager */
-.layout.is-section-login.is-grav-powered-client {
+.is-grav-powered-client {
 	.components-button:not(.is-destructive) {
 		--color-gravatar-darker: color-mix(in srgb, var(--color-gravatar), #000 13%);
 
@@ -86,8 +86,7 @@
 .is-white-login.is-akismet .login,
 .is-white-login.is-akismet .magic-login,
 .is-akismet .signup-form,
-.is-akismet .auth-form__social,
-.is-akismet .step-container-v2 {
+.is-akismet .auth-form__social {
 	.components-button:not(.is-destructive) {
 		--wp-components-color-accent: var(--color-akismet);
 		--wp-components-color-accent-darker-10: var(--color-akismet);
