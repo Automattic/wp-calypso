@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -29,9 +28,8 @@ export const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'a8c-components-wp-button social-buttons__button magic-login-link', {
-				disabled: isDisabled,
-			} ) }
+			className="a8c-components-wp-button social-buttons__button magic-login-link"
+			disabled={ isDisabled }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"

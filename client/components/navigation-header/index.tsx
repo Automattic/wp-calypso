@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import clsx from 'clsx';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
@@ -35,6 +35,22 @@ interface Props {
 	loggedIn?: boolean;
 }
 
+// This function checks if the URL contains the 'options' query parameter and if it includes 'noCrumbs'.
+// Expired eCommerce trials use this to hide the breadcrumbs since those users can't access settings and other pages exposed in the breadcrumbs.
+export const checkShouldShowBreadcrumb = (): boolean => {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+
+	try {
+		const params = new URLSearchParams( window.location.search );
+		const options = params.get( 'options' ) || '';
+		return ! options.includes( 'noCrumbs' );
+	} catch {
+		return false;
+	}
+};
+
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
 	const {
 		id,
@@ -52,7 +68,12 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		loggedIn = true,
 	} = props;
 
+	const [ showCrumbs, setShowCrumbs ] = useState( false );
 	const showTitle = alwaysShowTitle || ( navigationItems.length < 2 && loggedIn );
+
+	useEffect( () => {
+		setShowCrumbs( checkShouldShowBreadcrumb() );
+	}, [] );
 
 	return (
 		<header
@@ -68,12 +89,14 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 			<Container>
 				<div className="navigation-header__main">
 					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
-					<Breadcrumb
-						items={ navigationItems }
-						mobileItem={ mobileItem }
-						compact={ compactBreadcrumb }
-						hideWhenOnlyOneLevel
-					/>
+					{ showCrumbs && (
+						<Breadcrumb
+							items={ navigationItems }
+							mobileItem={ mobileItem }
+							compact={ compactBreadcrumb }
+							hideWhenOnlyOneLevel
+						/>
+					) }
 					{ showTitle && (
 						<FormattedHeader
 							align="left"
@@ -88,6 +111,8 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		</header>
 	);
 } );
+
+NavigationHeader.displayName = 'NavigationHeader';
 
 NavigationHeader.defaultProps = {
 	id: '',

@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { DOMAIN_PRICE_RULE } from 'calypso/lib/cart-values/cart-items';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSitePlanSlug, hasDomainCredit } from 'calypso/state/sites/plans/selectors';
@@ -91,7 +92,7 @@ export class DomainProductPrice extends Component {
 
 		let message;
 		if (
-			( isMappingProduct && this.props.rule === 'FREE_WITH_PLAN' ) ||
+			( isMappingProduct && this.props.rule === DOMAIN_PRICE_RULE.FREE_WITH_PLAN ) ||
 			isCurrentPlan100YearPlan
 		) {
 			message = translate( 'Free with your plan' );
@@ -103,7 +104,7 @@ export class DomainProductPrice extends Component {
 					{ translate( 'Free domain for one year' ) }
 				</span>
 			);
-		} else if ( this.props.rule === 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' ) {
+		} else if ( this.props.rule === DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY ) {
 			message = translate( '%(planName)s plan required', {
 				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 			} );
@@ -239,19 +240,19 @@ export class DomainProductPrice extends Component {
 		}
 
 		switch ( this.props.rule ) {
-			case 'ONE_TIME_PRICE':
+			case DOMAIN_PRICE_RULE.ONE_TIME_PRICE:
 				return this.renderOneTimePrice();
-			case 'FREE_DOMAIN':
+			case DOMAIN_PRICE_RULE.FREE_DOMAIN:
 				return this.renderFree();
-			case 'FREE_FOR_FIRST_YEAR':
+			case DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR:
 				return this.renderFreeForFirstYear();
-			case 'FREE_WITH_PLAN':
-			case 'INCLUDED_IN_HIGHER_PLAN':
-			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
+			case DOMAIN_PRICE_RULE.FREE_WITH_PLAN:
+			case DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN:
+			case DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY:
 				return this.renderFreeWithPlan();
-			case 'DOMAIN_MOVE_PRICE':
+			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
 				return this.renderDomainMovePrice();
-			case 'PRICE':
+			case DOMAIN_PRICE_RULE.PRICE:
 			default:
 				return this.renderPrice();
 		}

@@ -11,6 +11,7 @@ import qrCenter from 'calypso/assets/images/qr-login/app.png';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
 import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
+import { JetpackQRCodeLogin } from './jetpack';
 
 import './style.scss';
 
@@ -41,7 +42,7 @@ const getLoginActionResponse = async ( action, args ) => {
 		} );
 };
 
-function TokenQRCode( { tokenData } ) {
+export function TokenQRCode( { tokenData } ) {
 	if ( ! tokenData ) {
 		return <QRCodePlaceholder />;
 	}
@@ -86,7 +87,7 @@ function QRCodeErrorCard() {
 	);
 }
 
-function QRCodeLogin( { redirectToAfterLoginUrl } ) {
+function QRCodeLogin( { redirectToAfterLoginUrl, isJetpack = false } ) {
 	const translate = useTranslate();
 	const [ tokenState, setTokenState ] = useState( null );
 	const [ authState, setAuthState ] = useState( false );
@@ -235,6 +236,10 @@ function QRCodeLogin( { redirectToAfterLoginUrl } ) {
 
 	if ( isErrorState ) {
 		return <QRCodeErrorCard />;
+	}
+
+	if ( isJetpack ) {
+		return <JetpackQRCodeLogin tokenState={ tokenState } />;
 	}
 
 	return (

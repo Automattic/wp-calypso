@@ -87,6 +87,12 @@ export const setMessage = ( message: string ) =>
 		message,
 	} ) as const;
 
+export const setContextTerm = ( contextTerm: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_CONTEXT_TERM',
+		contextTerm,
+	} ) as const;
+
 export const setAllowPremiumSupport = ( allow: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
@@ -101,7 +107,7 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
-	options: HelpCenterShowOptions = { hideBackButton: false, searchTerm: '' }
+	options: HelpCenterShowOptions = { hideBackButton: false, contextTerm: '' }
 ): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
 	const isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
 
@@ -142,7 +148,7 @@ export const setShowHelpCenter = function* (
 		yield setShowMessagingWidget( false );
 	}
 
-	yield setMessage( options?.searchTerm || '' );
+	yield setContextTerm( options?.contextTerm || '' );
 	yield setIsMinimized( false );
 
 	if ( allowPremiumSupport ) {
@@ -223,6 +229,7 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof setMessage
+			| typeof setContextTerm
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount

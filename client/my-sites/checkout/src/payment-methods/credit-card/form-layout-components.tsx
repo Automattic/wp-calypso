@@ -61,7 +61,7 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean; isDisabled?
 	cursor: ${ ( props ) => props.isDisabled && 'default' };
 `;
 
-export const StripeErrorMessage = styled.span`
+const StyledStripeErrorMessage = styled.div`
 	font-size: 14px;
 	margin-top: 8px;
 	font-style: italic;
@@ -69,6 +69,16 @@ export const StripeErrorMessage = styled.span`
 	display: block;
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 `;
+
+export const StripeErrorMessage = ( {
+	id,
+	children,
+	...props
+}: React.HTMLAttributes< HTMLSpanElement > ) => (
+	<StyledStripeErrorMessage id={ id } aria-invalid="true" aria-live="assertive" { ...props }>
+		{ children }
+	</StyledStripeErrorMessage>
+);
 
 export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
 	padding: 0 24px 24px 24px;

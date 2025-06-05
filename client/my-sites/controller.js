@@ -324,6 +324,10 @@ function onSelectedSiteAvailable( context ) {
 		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
+		const isDeleteSitePath = /^\/sites\/settings\/site\/[^/]+\/delete-site\?options=noCrumbs$/.test(
+			context.path
+		);
+
 		const permittedPathPrefixes = [
 			'/checkout/',
 			'/domains/',
@@ -334,7 +338,11 @@ function onSelectedSiteAvailable( context ) {
 			'/settings/delete-site/',
 		];
 
-		if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+		const isPermittedPath = permittedPathPrefixes.some( ( prefix ) =>
+			context.pathname.startsWith( prefix )
+		);
+
+		if ( ! isDeleteSitePath && ! isPermittedPath ) {
 			page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
 			return false;
 		}

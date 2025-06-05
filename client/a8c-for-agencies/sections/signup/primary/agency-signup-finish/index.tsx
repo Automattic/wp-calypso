@@ -73,9 +73,12 @@ export default function AgencySignupFinish() {
 					last_name: signupData.lastName,
 					name: signupData.agencyName,
 					business_url: signupData.agencyUrl,
+					agency_size: signupData.agencySize,
 					managed_sites: signupData.managedSites,
 					services_offered: ( signupData.servicesOffered || [] ).join( ',' ),
 					products_offered: ( signupData.productsOffered || [] ).join( ',' ),
+					products_to_offer: ( signupData.productsToOffer || [] ).join( ',' ),
+					expansion_planned: signupData.plansToOfferProducts,
 					city: signupData.city,
 					line1: signupData.line1,
 					line2: signupData.line2,
@@ -98,7 +101,7 @@ export default function AgencySignupFinish() {
 				size={ 48 }
 			/>
 			<h1 className="agency-signup-finish__text">
-				{ translate( 'Please hold, great things are coming.' ) }
+				{ translate( 'Please give us a minute to customize your experience…' ) }
 			</h1>
 		</div>
 	);

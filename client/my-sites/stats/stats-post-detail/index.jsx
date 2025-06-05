@@ -4,33 +4,33 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { isEqual, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { isHttps } from 'calypso/lib/url';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import {
+	useStatsNavigationHistory,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
-import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import {
-	getSiteSlug,
-	isJetpackSite,
-	isSitePreviewable,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSitePreviewable, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
@@ -52,6 +52,11 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
+		lastScreen: PropTypes.shape( {
+			text: PropTypes.string,
+			url: PropTypes.string,
+		} ),
+		editUrl: PropTypes.string,
 	};
 
 	state = {
@@ -93,6 +98,22 @@ class StatsPostDetail extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context } = this.props;
+		recordCurrentScreen( 'postDetails', {
+			queryParams: context.query,
+			period: null,
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { context } = this.props;
+		if ( ! isEqual( prevProps.context, this.props.context ) ) {
+			recordCurrentScreen( 'postDetails', {
+				queryParams: context.query,
+				period: null,
+			} );
+		}
 	}
 
 	openPreview = () => {
@@ -175,13 +196,14 @@ class StatsPostDetail extends Component {
 			postId,
 			siteId,
 			translate,
-			siteSlug,
+			editUrl,
 			showViewLink,
 			previewUrl,
 			supportsUTMStats,
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
 			isSimple,
+			lastScreen,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -205,16 +227,16 @@ class StatsPostDetail extends Component {
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const postDetailPageClasses = clsx( 'stats', {
 			'is-odyssey-stats': isWPAdmin,
-			'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
 		} );
 
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
 		const backLinkProps = {
-			text: navigationItems[ 0 ].label,
-			url: navigationItems[ 0 ].href,
+			text: lastScreen.text,
+			url: lastScreen.url,
 		};
+
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
 			// Remove the default logo for Odyssey stats.
@@ -243,33 +265,25 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 				<div className={ postDetailPageClasses }>
-					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
-						<PageHeader
-							backLinkProps={ backLinkProps }
-							titleProps={ titleProps }
-							rightSection={
-								showViewLink && (
-									<CoreButton onClick={ this.openPreview } variant="primary">
-										<span>{ actionLabel }</span>
-									</CoreButton>
-								)
-							}
-						/>
-					) : (
-						<NavigationHeader navigationItems={ navigationItems }>
-							{ showViewLink && (
-								<Button onClick={ this.openPreview }>
+					<PageHeader
+						backLinkProps={ backLinkProps }
+						titleProps={ titleProps }
+						rightSection={
+							showViewLink && (
+								<CoreButton onClick={ this.openPreview } variant="primary">
 									<span>{ actionLabel }</span>
-								</Button>
-							) }
-						</NavigationHeader>
-					) }
+								</CoreButton>
+							)
+						}
+					/>
 
 					{ isEmailTabsAvailable && (
 						<div
-							className={ clsx( 'stats-navigation', 'stats-navigation--modernized', {
-								'stats-navigation--improved': config.isEnabled( 'stats/navigation-improvement' ),
-							} ) }
+							className={ clsx(
+								'stats-navigation',
+								'stats-navigation--modernized',
+								'stats-navigation--improved'
+							) }
 						>
 							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 						</div>
@@ -288,8 +302,6 @@ class StatsPostDetail extends Component {
 								'https://wordpress.com/support/getting-more-views-and-traffic/'
 							) }
 							actionTarget="blank"
-							illustration={ IllustrationStats }
-							illustrationWidth={ 150 }
 						/>
 					) }
 
@@ -315,21 +327,33 @@ class StatsPostDetail extends Component {
 					externalUrl={ previewUrl }
 					onClose={ this.closePreview }
 				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
+					<Button href={ editUrl }>{ translate( 'Edit' ) }</Button>
 				</WebPreview>
 			</Main>
 		);
 	}
 }
 
+const StatsPostDetailWrapper = ( props ) => {
+	const lastScreen = useStatsNavigationHistory();
+	return <StatsPostDetail { ...props } lastScreen={ lastScreen } />;
+};
+
 const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 	const isSimple = isSimpleSite( state, siteId );
+	const previewUrl = getMappedPreviewUrl( state, siteId, postId );
+	const isOdyssey = config.isEnabled( 'is_odyssey' );
+	const adminBaseUrl = getSiteAdminUrlFromState( state, siteId );
+	const editUrl = isOdyssey
+		? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
+		: `/post/${ siteId }/${ postId }`;
+	const showViewLink =
+		( isOdyssey || isPreviewable ) && previewUrl !== null && isHttps( previewUrl );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -340,8 +364,9 @@ const connectComponent = connect( ( state, { postId } ) => {
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
-		previewUrl: getPostPreviewUrl( state, siteId, postId ),
+		showViewLink,
+		editUrl,
+		previewUrl: previewUrl,
 		siteId,
 		supportsUTMStats,
 		isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
@@ -350,4 +375,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -7,26 +8,26 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { sitePHPVersionQuery, siteCurrentPlanQuery } from '../../app/queries';
+import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
+import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
-import type { Site, SiteDomain, Plan } from '../../data/types';
+import type { Site } from '../../data/types';
+
+function PHPVersion( { siteSlug }: { siteSlug: string } ) {
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur>X.Y</TextBlur>;
+}
 
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( {
-	site,
-	phpVersion,
-	primaryDomain,
-	currentPlan,
-}: {
-	site: Site;
-	phpVersion?: string;
-	primaryDomain?: SiteDomain;
-	currentPlan: Plan;
-} ) {
-	const { options, URL: url, is_private } = site;
+export default function SiteCard( { site }: { site: Site } ) {
+	const { URL: url, is_private, is_wpcom_atomic } = site;
+	const wpVersion = getFormattedWordPressVersion( site );
+
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
 	const iframeDisabled = site.is_a8c && is_private;
@@ -59,23 +60,25 @@ export default function SiteCard( {
 					) }
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
-					{ primaryDomain && (
-						<Field title={ __( 'Domain' ) }>
-							<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-								{ primaryDomain.domain }
-							</ExternalLink>
-						</Field>
-					) }
+					<Field title={ __( 'Domain' ) }>
+						<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+							{ new URL( url ).hostname }
+						</ExternalLink>
+					</Field>
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
-					<HStack justify="space-between">
-						{ options?.software_version && (
-							<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
-						) }
-						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
-					</HStack>
-					<PlanDetails site={ site } currentPlan={ currentPlan } primaryDomain={ primaryDomain } />
+					{ ( wpVersion || is_wpcom_atomic ) && (
+						<HStack justify="space-between">
+							{ wpVersion && <Field title={ __( 'WordPress' ) }>{ wpVersion }</Field> }
+							{ is_wpcom_atomic && (
+								<Field title={ __( 'PHP' ) }>
+									<PHPVersion siteSlug={ site.slug } />
+								</Field>
+							) }
+						</HStack>
+					) }
+					<PlanDetails site={ site } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -84,7 +87,7 @@ export default function SiteCard( {
 
 function Field( { children, title }: { children: React.ReactNode; title: React.ReactNode } ) {
 	return (
-		<VStack className="site-overview-field">
+		<VStack className="site-overview-field" style={ { flex: 1 } }>
 			<FieldTitle>{ title }</FieldTitle>
 			<div className="site-overview-field-children">{ children }</div>
 		</VStack>
@@ -101,47 +104,67 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails( {
-	site,
-	currentPlan,
-	primaryDomain,
-}: {
-	site: Site;
-	currentPlan: Plan;
-	primaryDomain?: SiteDomain;
-} ) {
-	if ( ! site.plan || ! currentPlan ) {
+function PlanDetails( { site }: { site: Site } ) {
+	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( site.slug ) );
+
+	if ( ! site.plan ) {
 		return null;
 	}
 
 	const {
 		plan: { product_name_short, is_free: isFree },
 	} = site;
-	const { expiry, id } = currentPlan;
+
 	return (
 		<VStack>
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
-			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
-			{ primaryDomain && (
-				<Button
-					href={ `/purchases/subscriptions/${ primaryDomain.domain }/${ id }` }
-					variant="link"
-				>
-					{ __( 'Manage subscription' ) }
-				</Button>
+			{ isFree ? (
+				<>
+					<Text>{ __( 'No expiration date.' ) }</Text>
+					<Button href={ `/plans/${ site.slug }` } variant="link">
+						{ __( 'Upgrade' ) }
+					</Button>
+				</>
+			) : (
+				<>
+					{ currentPlan ? (
+						<>
+							<Text>{ getPlanExpirationMessage( currentPlan.expiry ) }</Text>
+							<Button
+								href={ `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` }
+								variant="link"
+							>
+								{ __( 'Manage subscription' ) }
+							</Button>
+						</>
+					) : (
+						<>
+							<Text>
+								<TextBlur>{ getPlanExpirationMessage( new Date().toISOString() ) }</TextBlur>
+							</Text>
+							{ /* @ts-expect-error inert is not typed */ }
+							<Button inert href="" variant="link">
+								<TextBlur>{ __( 'Manage subscription' ) }</TextBlur>
+							</Button>
+						</>
+					) }
+				</>
 			) }
 		</VStack>
 	);
 }
 
-function getPlanExpirationMessage( { isFree, expiry }: { isFree: boolean; expiry?: string } ) {
-	if ( isFree ) {
-		return __( 'No expiration date.' );
+function getPlanExpirationMessage( isoDate?: string ) {
+	if ( ! isoDate ) {
+		return null;
 	}
-	return (
-		expiry &&
+
+	return createInterpolateElement(
 		/* translators: %s: date of plan's expiration date. Eg.  August 20, 2025 */
-		sprintf( __( 'Expires on %s.' ), dateI18n( 'F j, Y', expiry ) )
+		sprintf( __( 'Expires on <time>%s</time>.' ), dateI18n( 'F j, Y', isoDate ) ),
+		{
+			time: <time dateTime={ isoDate } />,
+		}
 	);
 }

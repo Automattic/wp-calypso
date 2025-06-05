@@ -67,3 +67,4 @@ export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
 export type { UserActions } from './user';
 export type { Member, UseQuery, UsersQuery } from './users/types';
+export { isInSupportSession } from './help-center';

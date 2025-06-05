@@ -22,10 +22,12 @@ import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { RemovedFromCartItem } from 'calypso/my-sites/checkout/src/components/removed-from-cart-item';
+import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
-	isStreamlinedPriceRadioTreatment,
 	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
 } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -35,7 +37,7 @@ import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
-import type { OnChangeItemVariant } from './item-variation-picker';
+import type { OnChangeItemVariant, WPCOMProductVariant } from './item-variation-picker';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -98,6 +100,7 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -223,6 +226,9 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
+			{ restorableProducts.map( ( product ) => (
+				<RemovedFromCartItem key={ product.uuid } product={ product } />
+			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
@@ -295,11 +301,19 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown: ( key: string | null ) => void;
 	akQuantityOpenId: string | null;
 } ) {
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+	const isStreamlinedPrice =
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
+		isWpComPlan( product.product_slug );
+
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
 	}
@@ -380,10 +394,7 @@ function LineItemWrapper( {
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
-
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
-	const variants = useGetProductVariants( product, ( variant ) => {
+	const variantsFilterCallback = ( variant: WPCOMProductVariant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
 		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
@@ -398,21 +409,20 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if (
-			isWpComPlan( variant.productSlug ) &&
-			! isStreamlinedPriceExperimentLoading &&
-			isStreamlinedPriceRadioTreatment( streamlinedPriceExperimentAssignment )
-		) {
-			return true;
-		}
-
 		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+	};
+	const variants = useGetProductVariants(
+		product,
+		! isStreamlinedPrice ? variantsFilterCallback : undefined
+	);
 
 	const areThereVariants = variants.length > 1;
 
 	const finalShouldShowVariantSelector =
 		areThereVariants && shouldShowVariantSelector && onChangeSelection;
+
+	const firstVariant = variants[ 0 ];
+	const compareToPrice = firstVariant?.priceBeforeDiscounts / firstVariant?.termIntervalInMonths;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -420,15 +430,20 @@ function LineItemWrapper( {
 				product={ product }
 				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
+				isRestorable
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }
+				restorableProducts={ restorableProducts }
+				setRestorableProducts={ setRestorableProducts }
 				isPwpoUser={ isPwpoUser }
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
+				shouldShowComparison={ isStreamlinedPrice }
+				compareToPrice={ compareToPrice }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

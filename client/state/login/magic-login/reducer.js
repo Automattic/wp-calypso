@@ -133,6 +133,30 @@ export const requestEmailSuccess = ( state = false, action ) => {
 	return state;
 };
 
+export const publicToken = ( state = null, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
+			return action.response?.public_token || null;
+		case MAGIC_LOGIN_RESET_REQUEST_FORM:
+			return null;
+	}
+
+	return state;
+};
+
+export const authSuccessData = ( state = null, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_AUTH_SUCCESS:
+			return action.data || null;
+		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
+		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
+		case MAGIC_LOGIN_RESET_REQUEST_FORM:
+			return null;
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	isFetchingAuth,
 	isFetchingEmail,
@@ -141,4 +165,6 @@ export default combineReducers( {
 	requestEmailError,
 	requestEmailSuccess,
 	currentView,
+	publicToken,
+	authSuccessData,
 } );

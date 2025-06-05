@@ -192,21 +192,12 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	};
 
 	const renderEmptyContent = () => {
-		return (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'You are not authorized to view this page' ) }
-			/>
-		);
+		return <EmptyContent title={ translate( 'You are not authorized to view this page' ) } />;
 	};
 
 	const renderOwnerRequiredMessage = () => {
 		return (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/wordAds.svg"
-				illustrationWidth={ 400 }
-				title={ translate( 'Only site owners are eligible to activate WordAds.' ) }
-			/>
+			<EmptyContent title={ translate( 'Only site owners are eligible to activate WordAds.' ) } />
 		);
 	};
 

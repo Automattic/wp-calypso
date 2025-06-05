@@ -445,7 +445,11 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		return badges.length > 0
-			? badges.map( ( badge ) => <CoreBadge key={ badge }>{ badge }</CoreBadge> )
+			? badges.map( ( badge ) => (
+					<CoreBadge className="masterbar__info-badge" key={ badge }>
+						{ badge }
+					</CoreBadge>
+			  ) )
 			: null;
 	}
 
@@ -498,7 +502,7 @@ class MasterbarLoggedIn extends Component {
 								<div className="masterbar__site-info">
 									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 									<div className="masterbar__info-badges">
-										<CoreBadge>{ sitePlanName }</CoreBadge>
+										<CoreBadge className="masterbar__info-badge">{ sitePlanName }</CoreBadge>
 									</div>
 								</div>
 							) }
@@ -694,7 +698,12 @@ class MasterbarLoggedIn extends Component {
 						args: { display_name: user.display_name },
 					} ) }
 				</span>
-				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 16 } />
+				<Gravatar
+					className="masterbar__item-howdy-gravatar"
+					role="presentation"
+					user={ user }
+					size={ 16 }
+				/>
 			</Item>
 		);
 	}

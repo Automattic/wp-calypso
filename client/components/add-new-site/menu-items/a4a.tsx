@@ -95,7 +95,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				<AddNewSiteMenuItem
 					icon={ <img src={ pressableIcon } alt="Pressable" /> }
 					heading="Pressable"
-					description={ translate( 'Bring your theme, plugins, and content to WordPress.com.' ) }
+					description={ translate( 'Optimized and hassle-free hosting for business websites.' ) }
 					buttonProps={ {
 						href:
 							pressableOwnership === 'regular'
@@ -107,7 +107,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				<AddNewSiteMenuItem
 					icon={ <WordPressLogo /> }
 					heading="WordPress.com"
-					description={ translate( 'Use a backup file to import your content into a new site.' ) }
+					description={ translate( 'Best for large-scale businesses and major eCommerce sites.' ) }
 					buttonProps={ {
 						href: hasPendingWPCOMSites
 							? A4A_SITES_LINK_NEEDS_SETUP

@@ -583,7 +583,13 @@ export const DEFAULT_VIEW = {
 	search: '',
 	page: 1,
 	perPage: 10,
-	layout: {},
+	layout: {
+		styles: {
+			satellites: {
+				align: 'end' as const,
+			},
+		},
+	},
 	filters: [],
 };
 
@@ -633,6 +639,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Image',
 		id: 'image',
+		type: 'media',
 		header: (
 			<HStack spacing={ 1 } justify="start">
 				<Icon icon={ image } />
@@ -644,13 +651,16 @@ export const fields: Field< SpaceObject >[] = [
 				<img src={ item.image } alt="" style={ { width: '100%' } } />
 			);
 		},
-		enableSorting: false,
 	},
 	{
 		label: 'Title',
 		id: 'title',
+		type: 'text',
 		enableHiding: false,
 		enableGlobalSearch: true,
+		filterBy: {
+			operators: [ 'contains', 'notContains', 'startsWith' ],
+		},
 	},
 	{
 		id: 'date',
@@ -689,6 +699,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Description',
 		id: 'description',
+		type: 'text',
 		enableSorting: false,
 		enableGlobalSearch: true,
 	},

@@ -35,6 +35,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: emptyChat,
 	canConnectToZendesk: false,
+	isLoadingCanConnectToZendesk: false,
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
@@ -65,6 +66,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
+	isLoadingCanConnectToZendesk = false,
 	extraContactOptions,
 	selectedSiteId,
 	selectedSiteURL,
@@ -97,7 +99,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk
+		isUserEligibleForPaidSupport && canConnectToZendesk,
+		isLoadingCanConnectToZendesk
 	);
 
 	/**
@@ -196,6 +199,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
+				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
 				selectedSiteId,

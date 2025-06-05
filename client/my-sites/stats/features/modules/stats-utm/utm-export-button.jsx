@@ -36,7 +36,6 @@ function UTMExportButton( { data, path, period } ) {
 
 	return (
 		<DownloadCsv
-			borderless
 			data={ csvData }
 			path={ path }
 			period={ period }

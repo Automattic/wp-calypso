@@ -4,6 +4,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
+	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -34,6 +35,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	canConnectToZendesk?: boolean;
+	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
@@ -203,12 +205,17 @@ type MessageAction = {
 	uri: string;
 };
 
-export type ZendeskMessage = {
-	avatarUrl?: string;
+export type OdieMessage = {
 	displayName: string;
-	id: string;
 	received: number;
 	role: string;
+	text: string;
+	altText?: string;
+};
+
+export type ZendeskMessage = OdieMessage & {
+	avatarUrl?: string;
+	id: string;
 	actions?: MessageAction[];
 	source?: {
 		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
@@ -216,9 +223,7 @@ export type ZendeskMessage = {
 		integrationId: string;
 	};
 	type: ZendeskContentType;
-	text: string;
 	mediaUrl?: string;
-	altText?: string;
 };
 
 export type ZendeskContentType =
@@ -240,6 +245,13 @@ type Metadata = {
 	status: InteractionStatus;
 };
 
+export type OdieConversation = {
+	id: string;
+	createdAt: number;
+	messages: OdieMessage[];
+	metadata?: Metadata;
+};
+
 export type ZendeskConversation = {
 	id: string;
 	lastUpdatedAt: number;
@@ -252,6 +264,8 @@ export type ZendeskConversation = {
 	messages: ZendeskMessage[];
 	metadata: Metadata;
 };
+
+export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {
 	user_id: string;

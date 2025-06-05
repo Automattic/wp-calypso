@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { CheckIcon } from '../check-icon';
 import { CurrentOptionProps, OptionProps } from './types';
 
 export const CurrentOption = styled.button< CurrentOptionProps >`
@@ -21,6 +22,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 
 	${ ( props ) =>
 		props.open &&
+		! props.detached &&
 		css`
 			border-radius: 3px 3px 0 0;
 		` }
@@ -39,14 +41,46 @@ export const Option = styled.li< OptionProps >`
 	align-items: center;
 	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
+	position: relative;
+
+	${ ( props ) =>
+		props.detached &&
+		css`
+			padding-top: 14px;
+			padding-bottom: 14px;
+		` }
 
 	&:hover {
 		background: var( --studio-wordpress-blue-5 );
 	}
 
-	&.item-variant-option--selected {
-		background: var( --studio-wordpress-blue-50 );
-		color: #fff;
+	${ ( props ) =>
+		! props.detached
+			? css`
+					&.item-variant-option--selected {
+						background: var( --studio-wordpress-blue-50 );
+						color: #fff;
+					}
+			  `
+			: css`
+					&.item-variant-option--selected * {
+						color: var( --studio-black );
+					}
+			  ` }
+`;
+
+export const WPCheckoutCheckIcon = styled( CheckIcon )`
+	fill: ${ ( props ) => props.theme.colors.success };
+	margin-right: 4px;
+	position: absolute;
+	top: 50%;
+	right: 16px;
+	transform: translateY( -50% );
+	.rtl & {
+		margin-right: 0;
+		margin-left: 4px;
+		right: auto;
+		left: 16px;
 	}
 `;
 
@@ -60,12 +94,27 @@ export const Dropdown = styled.div`
 	}
 `;
 
-export const OptionList = styled.ul`
+export const OptionList = styled.ul< { detached: boolean } >`
 	position: absolute;
 	width: 100%;
 	z-index: 4;
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
+	${ ( props ) =>
+		props.detached &&
+		css`
+			box-shadow:
+				0px 50px 43px 0px rgba( 0, 0, 0, 0.02 ),
+				0px 30px 36px 0px rgba( 0, 0, 0, 0.04 ),
+				0px 15px 27px 0px rgba( 0, 0, 0, 0.07 ),
+				0px 5px 15px 0px rgba( 0, 0, 0, 0.08 );
+			margin-top: 10px;
+
+			${ Option }:first-of-type {
+				border-top-left-radius: 3px;
+				border-top-right-radius: 3px;
+			}
+		` }
 
 	${ Option } {
 		margin-top: -1px;
@@ -97,6 +146,28 @@ export const Discount = styled.span`
 
 	@media ( max-width: 660px ) {
 		width: 100%;
+	}
+`;
+
+export const DiscountAbsolute = styled.span< {
+	color: string;
+	backgroundColor: string;
+} >`
+	text-align: center;
+	color: ${ ( props ) => props.color };
+	display: block;
+	background-color: ${ ( props ) => props.backgroundColor };
+	padding: 0 10px;
+	border-radius: 4px;
+	font-size: 12px;
+	line-height: 20px;
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+	// Keep selected state override for now, adjust if needed
+	.item-variant-option--selected & {
+		color: ${ ( props ) => props.color };
 	}
 `;
 

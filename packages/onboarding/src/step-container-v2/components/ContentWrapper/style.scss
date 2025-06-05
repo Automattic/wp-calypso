@@ -3,15 +3,26 @@
 
 .step-container-v2__content-wrapper {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
 	gap: 3rem;
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
 
+	&.axis-vertical {
+		flex-direction: column;
+	}
+
+	&.axis-horizontal {
+		flex-direction: row;
+	}
+
 	padding: var( --step-container-v2-content-block-padding )
 		var( --step-container-v2-content-inline-padding );
+
+	&.no-top-padding {
+		padding-top: 0;
+	}
 
 	--step-container-v2-content-max-width: 1344px;
 

@@ -1,16 +1,18 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { useNavigate, Link } from '@tanstack/react-router';
+import { Button, Modal } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
@@ -42,9 +44,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
-				{ new URL( item.URL ).hostname }
-			</ExternalLink>
+			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
 		),
 	},
 	{
@@ -72,21 +72,6 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			) : (
 				__( 'Disabled' )
 			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
-		id: 'protect',
-		type: 'boolean',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -206,6 +191,7 @@ export default function Sites() {
 			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
 		[ hasA8CSites ]
 	);
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	if ( ! sites ) {
 		return;
@@ -213,22 +199,31 @@ export default function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
-
 	return (
 		<>
+			{ isModalOpen && (
+				<Modal title={ __( 'Add New Site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+					<AddNewSite context="sites-dashboard" />
+				</Modal>
+			) }
 			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
+				header={
+					<PageHeader
+						title={ __( 'Sites' ) }
+						actions={
+							<Button
+								variant="primary"
+								onClick={ () => setIsModalOpen( true ) }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add New Site' ) }
+							</Button>
+						}
+					/>
 				}
 			>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
@@ -249,7 +244,9 @@ export default function Sites() {
 								},
 							} );
 						} }
-						onClickItem={ onClickItem }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

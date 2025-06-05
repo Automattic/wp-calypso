@@ -11,7 +11,7 @@ export type Location = {
 };
 export interface HelpCenterShowOptions {
 	hideBackButton: boolean;
-	searchTerm: string;
+	contextTerm: string;
 }
 export interface SiteLogo {
 	id: number;

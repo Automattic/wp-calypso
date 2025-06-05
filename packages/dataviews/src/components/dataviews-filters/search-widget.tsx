@@ -18,11 +18,19 @@ import { search, check } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import type { Filter, NormalizedFilter, View } from '../../types';
+import type {
+	Filter,
+	NormalizedFilter,
+	View,
+	NormalizedField,
+	Option,
+} from '../../types';
 
 interface SearchWidgetProps {
 	view: View;
-	filter: NormalizedFilter;
+	filter: NormalizedFilter & {
+		elements: Option[];
+	};
 	onChangeView: ( view: View ) => void;
 }
 

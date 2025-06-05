@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -167,6 +167,39 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 			span: <span className="plugin-details-cta__installed-text-inactive"></span>,
 		},
 	} );
+
+	const getTermsAndConditions = () => {
+		const translateArgs = {
+			components: {
+				a: (
+					<a
+						target="_blank"
+						rel="noopener noreferrer"
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					/>
+				),
+				thirdPartyTos: (
+					<a
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://wordpress.com/third-party-plugins-terms/"
+					/>
+				),
+			},
+		};
+
+		return fixMe( {
+			text: 'By installing, you agree to {{a}}WordPress.com Terms of Service{{/a}} and {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
+			newCopy: translate(
+				'By installing, you agree to {{a}}WordPress.com Terms of Service{{/a}} and {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
+				translateArgs
+			),
+			oldCopy: translate(
+				'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
+				translateArgs
+			),
+		} );
+	};
 
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
 	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
@@ -341,36 +374,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				</div>
 				{ isDisabledForWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
-					<div className="plugin-details-cta__t-and-c">
-						{ translate(
-							'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
-							{
-								components: {
-									a: (
-										<a
-											target="_blank"
-											rel="noopener noreferrer"
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										/>
-									),
-									thirdPartyTos: (
-										<a
-											target="_blank"
-											rel="noopener noreferrer"
-											href="https://wordpress.com/third-party-plugins-terms/"
-										/>
-									),
-								},
-							}
-						) }
-					</div>
-				) }
-				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
-					<UpgradeRequiredContent translate={ translate } />
+					<div className="plugin-details-cta__t-and-c">{ getTermsAndConditions() }</div>
 				) }
 				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
 					<div className="plugin-details-cta__upgrade-required-card">
-						<UpgradeRequiredContent translate={ translate } />
 						<Button
 							href={ upgradeToBusinessHref }
 							className="plugin-details-cta__install-button"
@@ -556,21 +563,6 @@ function FreePrice( { shouldUpgrade } ) {
 				</span>
 			) }
 		</>
-	);
-}
-
-function UpgradeRequiredContent( { translate } ) {
-	return (
-		<div className="plugin-details-cta__upgrade-required">
-			<span className="plugin-details-cta__upgrade-required-icon">
-				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-				<Gridicon icon="notice-outline" size={ 20 } />
-				{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-			</span>
-			<span className="plugin-details-cta__upgrade-required-text">
-				{ translate( 'You need to upgrade your plan to install plugins.' ) }
-			</span>
-		</div>
 	);
 }
 

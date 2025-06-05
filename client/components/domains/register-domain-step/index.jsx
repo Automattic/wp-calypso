@@ -30,7 +30,6 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
@@ -318,7 +317,7 @@ class RegisterDomainStep extends Component {
 	// created a site by skipping the domain step. In these cases, fire the initial search
 	// with the subdomain name.
 	getInitialQueryInLaunchFlow() {
-		if ( ! this.props.isInLaunchFlow ) {
+		if ( ! this.props.isInLaunchFlow || this.props.selectedSite === null ) {
 			return;
 		}
 
@@ -751,12 +750,7 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				{ this.renderBestNamesPrompt() }
-				<EmptyContent
-					title=""
-					className="register-domain-step__placeholder"
-					illustration={ Illustration }
-					illustrationWidth={ 280 }
-				/>
+				<EmptyContent title="" className="register-domain-step__placeholder" />
 			</>
 		);
 	}

@@ -4,7 +4,7 @@ import { DataHelper } from '../..';
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
-	backLink: '.navigation-link:text("Back")',
+	backLink: '.navigation-link:text("Back"), .step-container-v2__back-button:text("Back")',
 	dontHaveASiteButton: 'button:text-matches("choose a content platform", "i")',
 	migrationModalCancel: 'button.action-buttons__cancel',
 	// Inputs
@@ -19,7 +19,8 @@ const selectors = {
 
 	// Headers
 	setupHeader: 'h1:text("Themes")',
-	startBuildingHeader: ( text: string ) => `h1.onboarding-title:text("${ text }")`,
+	startBuildingHeader: ( text: string ) =>
+		`.step-container-v2__heading h1:text("${ text }"), h1.onboarding-title:text("${ text }")`,
 
 	importModal: 'div.import__confirm-modal',
 

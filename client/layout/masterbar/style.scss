@@ -968,11 +968,12 @@ body.is-mobile-app-view {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 4px;
+	}
 
-		.components-badge:where(.is-default) {
-			background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
-			color: var(--color-global-masterbar-site-info-badge-color);
-		}
+	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
+	.masterbar__info-badge {
+		background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
+		color: var(--color-global-masterbar-site-info-badge-color);
 	}
 }
 

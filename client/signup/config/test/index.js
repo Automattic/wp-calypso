@@ -6,7 +6,7 @@ import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'component-file-picker', () => <div></div> );
+jest.mock( 'calypso/components/file-picker/component-file-picker', () => <div></div> );
 jest.mock( 'calypso/lib/explat', () => {
 	() => {
 		return [ false, null ];

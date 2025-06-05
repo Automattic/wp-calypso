@@ -86,10 +86,7 @@ const NoAccess = () => {
 
 	return (
 		<ContentWithHeader>
-			<EmptyContent
-				title={ translate( 'You are not authorized to view this page' ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
+			<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 		</ContentWithHeader>
 	);
 };

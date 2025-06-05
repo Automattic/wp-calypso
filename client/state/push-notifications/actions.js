@@ -11,7 +11,6 @@ import {
 	PUSH_NOTIFICATIONS_MUST_PROMPT,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'calypso/state/action-types';
 import { recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
@@ -184,7 +183,7 @@ export function receivePermissionState( permission ) {
 
 		if ( isEnabled( getState() ) ) {
 			// The user dismissed the prompt -- disable
-			dispatch( toggleEnabled() );
+			dispatch( setEnabledState( false ) );
 		}
 		dispatch( mustPrompt() );
 	};
@@ -315,26 +314,19 @@ export function block() {
 	};
 }
 
-export function toggleEnabled() {
-	return ( dispatch, getState ) => {
-		const enabling = ! isEnabled( getState() );
-		const doing = enabling ? 'enabling' : 'disabling';
+export function setEnabledState( state ) {
+	return ( dispatch ) => {
+		const doing = state ? 'enabling' : 'disabling';
 		debug( doing );
 		dispatch( {
 			type: PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 		} );
-		if ( enabling ) {
+		if ( state ) {
 			dispatch( fetchAndLoadServiceWorker() );
 			dispatch( recordTracksEvent( 'calypso_web_push_notifications_enabled' ) );
 		} else {
 			dispatch( deactivateSubscription() );
 			dispatch( recordTracksEvent( 'calypso_web_push_notifications_disabled' ) );
 		}
-	};
-}
-
-export function toggleUnblockInstructions() {
-	return {
-		type: PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 	};
 }

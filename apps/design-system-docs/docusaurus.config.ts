@@ -27,6 +27,8 @@ const config: Config = {
 		locales: [ 'en' ],
 	},
 
+	plugins: [ 'docusaurus-plugin-sass' ],
+
 	presets: [
 		[
 			'classic',
@@ -99,7 +101,7 @@ const config: Config = {
 						},
 						{
 							label: 'Components',
-							to: '/components/',
+							to: '/components/ds/',
 						},
 					],
 				},

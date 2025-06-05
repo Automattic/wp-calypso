@@ -1,41 +1,66 @@
-import { ExternalLink, __experimentalHeading as Heading } from '@wordpress/components';
+import { useQuery } from '@tanstack/react-query';
+import {
+	ExternalLink,
+	__experimentalHeading as Heading,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import filesize from 'filesize';
+import { siteMediaStorageQuery } from '../../app/queries';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
-import type { MediaStorage } from '../../data/types';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-export default function StorageCard( { mediaStorage }: { mediaStorage: MediaStorage } ) {
-	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
-	if ( ! storageUsedBytes || ! maxStorageBytes ) {
-		return null;
-	}
-	let usagePercentage = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
-	// Ensure that the displayed usage is never fully empty to
-	// avoid a confusing UI and that in never exceeds 100%.
-	usagePercentage = Math.min( Math.max( MINIMUM_DISPLAYED_USAGE, usagePercentage ), 100 );
-	const used = filesize( storageUsedBytes, { round: 0 } );
-	const max = filesize( maxStorageBytes, { round: 0 } );
+export default function StorageCard( { siteSlug }: { siteSlug: string } ) {
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( siteSlug ) );
 	return (
 		<OverviewCard
 			title={ __( 'Storage' ) }
 			icon={ backup }
-			customHeading={ createInterpolateElement(
-				/* translators: %1$s: storage space used, %2$s: maximum available storage space. Eg. '236 MB of 53 GB used' */
-				sprintf( __( '<heading>%1$s</heading> <span>of %2$s used</span>' ), used, max ),
-				{
-					heading: (
-						// @ts-expect-error children prop is injected by createInterpolateElement
-						<Heading level={ 2 } style={ { whiteSpace: 'nowrap' } } />
-					),
-					span: <span />,
-				}
-			) }
+			customHeading={
+				mediaStorage ? (
+					createInterpolateElement(
+						sprintf(
+							/* translators: %1$s: storage space used, %2$s: maximum available storage space. Eg. '236 MB of 53 GB used' */
+							__( '<heading>%1$s</heading> <span>of %2$s used</span>' ),
+							filesize( mediaStorage.storageUsedBytes, { round: 0 } ),
+							filesize( mediaStorage.maxStorageBytes, { round: 0 } )
+						),
+						{
+							heading: (
+								// @ts-expect-error children prop is injected by createInterpolateElement
+								<Heading level={ 2 } style={ { whiteSpace: 'nowrap' } } />
+							),
+							span: <span />,
+						}
+					)
+				) : (
+					<Heading level={ 2 } style={ { whiteSpace: 'nowrap' } }>
+						{ '\u00A0' }
+						<VisuallyHidden>{ __( 'Loading…' ) }</VisuallyHidden>
+					</Heading>
+				)
+			}
 		>
-			<OverviewCardProgressBar value={ usagePercentage } />
+			<OverviewCardProgressBar
+				value={
+					// Ensure that the displayed usage is never fully empty to
+					// avoid a confusing UI and that in never exceeds 100%.
+					mediaStorage
+						? Math.min(
+								Math.max(
+									MINIMUM_DISPLAYED_USAGE,
+									Math.round(
+										( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+									)
+								),
+								100
+						  )
+						: undefined
+				}
+			/>
 			<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
 		</OverviewCard>
 	);

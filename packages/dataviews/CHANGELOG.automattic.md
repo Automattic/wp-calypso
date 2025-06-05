@@ -2,10 +2,23 @@
 
 ## Next
 
-- Add new `boolean` field type definition and edit control. Field type definitions are able to define a default render function that will be used if the field doesn't define one.
+- `text`, `email` Edit control: add `help` support from the field `description` prop.
+- Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
+
+## 0.2.0
+
+- Bring changes from `@wordpress/dataviews 4.19.0` (no updates in this version).
+- `select` Edit control: add `help` support from the field `description` prop.
+- Add new Edit controls: `checkbox`, `toggleGroup`. In the `toggleGroup`, if the field elements (options) have a `description`, then the selected option's description will be also rendered.
+- Add new `media`, `boolean`, and `email` field type definitions.
+- Field type definitions are now able to define a default `enableSorting` and `render` function.
 - Pin the actions column on the table view when the width is insufficient.
-- Bring changes from @wordpress/dataviews 4.19.0 (no updates in this version).
+- Add `renderItemLink` prop support in the `DataViews` component. It replaces `onClickItem`prop and allows integration with router libraries.
+- Adds new story that combines DataViews and DataForm.
+- Add `className` prop to the `DataViews.Layout` component to allow customizing the layout styles.
 - Enhance filter component styles.
+- Add user input filter support based on the `Edit` property of the field type definitions.
+- Add new filter operators: `lessThan`, `greaterThan`, `lessThanOrEqual`, `greaterThanOrEqual`, `contains`, `notContains`, `startsWith`.
 
 ## 0.1.1
 

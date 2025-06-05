@@ -79,7 +79,7 @@ export default function FormRegularField< Item >( {
 		( fieldDef ) => fieldDef.id === field.id
 	);
 
-	if ( ! fieldDefinition ) {
+	if ( ! fieldDefinition || ! fieldDefinition.Edit ) {
 		return null;
 	}
 	if ( labelPosition === 'side' ) {

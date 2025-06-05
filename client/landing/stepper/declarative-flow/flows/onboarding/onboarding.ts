@@ -5,7 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
-import { isMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -24,6 +24,7 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
+import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
@@ -52,10 +53,9 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
-		STEPS.PLAYGROUND,
 	];
 
-	return stepsWithRequiredLogin( steps );
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -86,6 +86,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const coupon = useQuery().get( 'coupon' );
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
+		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -124,7 +125,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( await isMvpOnboardingExperiment() ) {
+			if ( await isSimplifiedOnboarding() ) {
 				return [
 					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
@@ -229,6 +230,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
+					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
 				case 'processing': {
 					const [ destination, backDestination ] =

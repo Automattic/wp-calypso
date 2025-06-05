@@ -789,6 +789,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-reports',
+		paths: [ '/reports', '/reports/overview', '/reports/dashboard' ],
+		module: 'calypso/a8c-for-agencies/sections/reports',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-sites',
 		paths: [ '/sites', 'sites/need-setup' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
@@ -830,15 +836,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [
-			'/referrals',
-			'/referrals/bank-details',
-			'/referrals/commissions',
-			// FIXME: Remove the above 2 items when automated referral is enabled
-			'/referrals/dashboard',
-			'/referrals/payment-settings',
-			'/referrals/faq',
-		],
+		paths: [ '/referrals/dashboard', '/referrals/payment-settings', '/referrals/faq' ],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
 		group: 'a8c-for-agencies',
 	},

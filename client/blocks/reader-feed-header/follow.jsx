@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ReaderFollowButton from 'calypso/reader/follow-button';
@@ -48,7 +48,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 				isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
 				subscriptionId: _feed?.subscription_id,
 			};
-		} );
+		}, shallowEqual );
 
 	const openSuggestedFollowsModal = ( followClicked ) => {
 		setIsSuggestedFollowsModalOpen( followClicked );

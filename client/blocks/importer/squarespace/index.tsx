@@ -107,7 +107,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 					} else if ( checkIsFailed() ) {
 						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
-						return <ProgressScreen job={ job } />;
+						return <ProgressScreen job={ job } showHeading={ renderHeading } />;
 					}
 
 					/**

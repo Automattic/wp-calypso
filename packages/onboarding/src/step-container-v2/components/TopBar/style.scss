@@ -66,8 +66,9 @@
 	}
 
 	&-right-element {
+		--color-accent: var( --color-neutral-100 );
+
 		margin-left: auto;
-		--wp-components-color-accent: var( --color-neutral-100 );
 		font-size: 0.875rem;
 		line-height: 1;
 	}

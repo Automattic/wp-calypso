@@ -29,11 +29,7 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -69,6 +65,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
+import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './login-form.scss';
 
@@ -155,7 +152,6 @@ export class LoginForm extends Component {
 		if (
 			currentRoute &&
 			currentRoute.includes( '/log-in/jetpack' ) &&
-			config.isEnabled( 'jetpack/magic-link-signup' ) &&
 			requestError.code === 'unknown_user' &&
 			! this.props.isWooJPC
 		) {
@@ -336,6 +332,7 @@ export class LoginForm extends Component {
 				redirectTo: this.props.redirectTo,
 				requestLoginEmailFormFlow: true,
 				createAccount: true,
+				...( shouldUseMagicCode( { isJetpack: this.props.isJetpack } ) && { tokenType: 'code' } ),
 				flow: 'jetpack',
 			} );
 		}
@@ -818,12 +815,6 @@ export class LoginForm extends Component {
 
 		return (
 			<Card className="login__form">
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
 				{ showLastUsedAuthenticationMethod ? (
 					<>
 						<span className="last-used-authentication-method">
@@ -1028,7 +1019,7 @@ export class LoginForm extends Component {
 						) }
 
 						{ ! hideSignupLink && isOauthLogin && (
-							<div className={ clsx( 'login__form-signup-link' ) }>
+							<p className={ clsx( 'login__form-signup-link' ) }>
 								{ this.props.translate(
 									'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 									{
@@ -1037,7 +1028,7 @@ export class LoginForm extends Component {
 										},
 									}
 								) }
-							</div>
+							</p>
 						) }
 					</>
 				) }
@@ -1136,7 +1127,6 @@ export class LoginForm extends Component {
 	render() {
 		const {
 			accountType,
-			oauth2Client,
 			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
@@ -1201,12 +1191,6 @@ export class LoginForm extends Component {
 				onSubmit={ this.onSubmitForm }
 				method="post"
 			>
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
 				{ this.renderLoginOptions() }
 
 				{ this.showJetpackConnectSiteOnly() && (

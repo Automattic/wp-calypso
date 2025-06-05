@@ -4,6 +4,10 @@
 @import "@wordpress/base-styles/variables";
 
 .is-section-themes {
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: var(--studio-white);
+	}
+
 	&.is-global-sidebar-visible {
 		.layout__content {
 			min-height: 100vh;

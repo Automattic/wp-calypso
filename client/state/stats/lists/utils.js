@@ -3,6 +3,23 @@ import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
+function getArchiveKeyLabel( key ) {
+	const otherLabel = translate( 'Others' );
+
+	const archiveKeyLabelMap = {
+		home: translate( 'Homepage' ),
+		search: translate( 'Searches' ),
+		err: translate( 'Error' ),
+		cat: translate( 'Categories' ),
+		tag: translate( 'Tags' ),
+		author: translate( 'Authors' ),
+		tax: translate( 'Aggregated' ),
+		date: translate( 'Dates' ),
+	};
+
+	return archiveKeyLabelMap[ key ] || otherLabel;
+}
+
 /**
  * Returns a string of the moment format for the period. Supports store stats
  * isoWeek and shortened formats.
@@ -84,11 +101,12 @@ export function parseAvatar( avatarUrl ) {
 
 /**
  * Builds data into escaped array for CSV export
- * @param   {Object} data   Normalized stats data object
- * @param   {string} parent Label of parent
- * @returns {Array}         CSV Row
+ * @param   {Object} data                                               Normalized stats data object
+ * @param   {string} parent                                             Label of parent
+ * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
+ * @returns {Array}                                                     CSV Row
  */
-export function buildExportArray( data, parent = null ) {
+export function buildExportArray( data, parent = null, modifierFn = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
@@ -102,9 +120,13 @@ export function buildExportArray( data, parent = null ) {
 		exportData = [ [ '"' + escapedLabel + '"', data.value, data.actions[ 0 ].data ] ];
 	}
 
+	if ( modifierFn ) {
+		exportData = [ modifierFn( exportData[ 0 ], data ) ];
+	}
+
 	if ( data.children ) {
 		const childData = map( data.children, ( child ) => {
-			return buildExportArray( child, label );
+			return buildExportArray( child, label, modifierFn );
 		} );
 
 		exportData = exportData.concat( flatten( childData ) );
@@ -390,6 +412,93 @@ export const normalizers = {
 				className: inPeriod ? 'published' : null,
 			};
 		} );
+	},
+
+	/**
+	 * Returns a normalized payload from `/sites/{ site }/stats/archives`
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Normalized stats data
+	 */
+	statsArchives: ( data, query ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
+		const archivesData = get( data, dataPath, [] );
+
+		const archives = Object.keys( archivesData ).reduce( ( accumulatedArchives, archiveKey ) => {
+			const archiveItems = archivesData[ archiveKey ];
+
+			// Taxonomy items are grouped by taxonomy term.
+			if ( 'tax' === archiveKey ) {
+				let totalTaxViews = 0;
+
+				const taxItems = Object.keys( archiveItems ).map( ( taxKey ) => {
+					const taxItem = archiveItems[ taxKey ];
+					const hasSubItems = Array.isArray( taxItem ) && taxItem.length > 0;
+					let itemViews = 0;
+
+					if ( hasSubItems ) {
+						const children = taxItem.map( ( item ) => {
+							itemViews += item.views;
+							totalTaxViews += item.views;
+
+							return {
+								label: item.value,
+								value: item.views,
+								link: item.href,
+							};
+						} );
+
+						return {
+							label: taxKey,
+							value: itemViews,
+							children,
+						};
+					}
+
+					return {
+						label: taxKey,
+						value: itemViews,
+					};
+				} );
+
+				accumulatedArchives.push( {
+					label: getArchiveKeyLabel( archiveKey ),
+					value: totalTaxViews,
+					children: taxItems,
+				} );
+			} else {
+				const hasItems = Array.isArray( archiveItems ) && archiveItems.length > 0;
+
+				if ( hasItems ) {
+					let totalViews = 0;
+
+					const children = archiveItems.map( ( item ) => {
+						totalViews += item.views;
+
+						return {
+							label: [ 'home', 'search' ].includes( archiveKey ) ? item.href : item.value,
+							value: item.views,
+							link: item.href,
+						};
+					} );
+
+					accumulatedArchives.push( {
+						label: getArchiveKeyLabel( archiveKey ),
+						value: totalViews,
+						children,
+					} );
+				}
+			}
+
+			return accumulatedArchives;
+		}, [] );
+
+		return archives.sort( ( a, b ) => b.value - a.value );
 	},
 
 	/**

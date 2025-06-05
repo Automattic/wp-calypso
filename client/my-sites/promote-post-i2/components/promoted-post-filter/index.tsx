@@ -31,7 +31,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 			<NavTabs>
 				{ tabs
 					.filter( ( { enabled = true } ) => enabled )
-					.map( ( { id, name, itemCount, isCountAmount, className } ) => {
+					.map( ( { id, name, itemCount, isCountAmount, className, label = '' } ) => {
 						return (
 							<NavItem
 								key={ id }
@@ -45,6 +45,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 									<span className="count">
 										{ isCountAmount ? '$' : null }
 										{ formatNumber( itemCount, { decimals: isCountAmount ? 2 : 0 } ) }
+										<span className="sr-only">{ label }</span>
 									</span>
 								) : null }
 							</NavItem>
