@@ -63,37 +63,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
 
-	// Keep focus within the help center when entering `Zendesk messaging`
-	useEffect( () => {
-		const helpCenter = nodeRef.current;
-		if ( ! helpCenter ) {
-			return;
-		}
-
-		helpCenter.setAttribute( 'tabindex', '-1' );
-
-		// Focus the chat container when it appears
-		const observer = new MutationObserver( ( mutations ) => {
-			for ( const mutation of mutations ) {
-				if ( mutation.type === 'childList' ) {
-					const chatContainer = document.querySelector( '.chatbox' ) as HTMLElement;
-					if ( chatContainer ) {
-						chatContainer.setAttribute( 'tabindex', '-1' );
-						chatContainer.focus();
-						observer.disconnect();
-						break;
-					}
-				}
-			}
-		} );
-
-		observer.observe( helpCenter, { childList: true, subtree: true } );
-
-		return () => {
-			observer.disconnect();
-		};
-	}, [ show, isMinimized ] );
-
 	const shouldCloseOnEscapeRef = useRef( false );
 
 	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
