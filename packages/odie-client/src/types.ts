@@ -22,7 +22,7 @@ export type OdieAssistantContextInterface = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
-	forceEmailSupport?: boolean;
+	forceEmailSupport: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
