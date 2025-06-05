@@ -79,7 +79,7 @@ export function ConfirmNewOwnerForm( {
 				</Text>
 			</VStack>
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+				<VStack spacing={ 4 }>
 					{ /* TODO: Update the gap between each field */ }
 					<DataForm< ConfirmNewOwnerFormData >
 						data={ formData }
