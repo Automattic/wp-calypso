@@ -1,4 +1,5 @@
 import { Snackbar } from '@wordpress/components';
+import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ComponentType, useEffect } from 'react';
 import OnboardingTourModal from '../../onboarding-tour-modal';
@@ -52,6 +53,7 @@ export function withOnboardingTour< T extends object >( WrappedComponent: Compon
 						explicitDismiss
 						onDismiss={ removeCurrentSection }
 						onRemove={ removeCurrentSection }
+						icon={ <Icon icon={ layout } /> }
 					>
 						&nbsp;
 					</Snackbar>

@@ -6,4 +6,12 @@
 	position: fixed;
 	bottom: 64px;
 	right: 64px;
+
+	.components-snackbar__icon {
+		fill: var(--color-text-inverted);
+	}
+
+	.components-button.components-snackbar__action:hover {
+		background-color: transparent;
+	}
 }
