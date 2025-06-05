@@ -21,19 +21,11 @@ const OverviewBodyEvents = () => {
 		'https://developer.woocommerce.com/youre-invited-to-step-inside-woo-marketing/';
 
 	const handleKlaviyoRegisterClick = (): void => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_overview_events_klaviyo_register_click', {
-				href: klaviyoRegistrationUrl,
-			} )
-		);
+		dispatch( recordTracksEvent( 'calypso_a4a_overview_events_klaviyo_register_click' ) );
 	};
 
 	const handleWooRegisterClick = (): void => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_overview_events_woo_register_click', {
-				href: wooRegistrationUrl,
-			} )
-		);
+		dispatch( recordTracksEvent( 'calypso_a4a_overview_events_woo_register_click' ) );
 	};
 
 	return (
