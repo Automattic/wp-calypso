@@ -168,17 +168,6 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
-const siteSettingsDatabaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/database',
-} ).lazy( () =>
-	import( '../sites/settings-database' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-database' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
@@ -208,6 +197,17 @@ const siteSettingsPHPRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-php' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-php' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
