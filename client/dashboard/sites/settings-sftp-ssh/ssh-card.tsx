@@ -28,6 +28,7 @@ import {
 	siteSshKeysDetachMutation,
 	profileSshKeysQuery,
 } from '../../app/queries';
+import CardLayout from '../../components/card-layout';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
@@ -290,63 +291,56 @@ export default function SshCard( {
 	}
 
 	return (
-		<Card>
-			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
-					<SectionHeader
-						title={ __( 'SSH' ) }
-						description={ createInterpolateElement(
-							__(
-								"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
-							),
-							{
-								wpCliLink: <ExternalLink href="#" children={ null } />,
-								learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
-							}
-						) }
-						level={ 3 }
-					/>
-				</VStack>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
-					<ToggleControl
-						label={ __( 'Enable SSH access for this site' ) }
-						checked={ sshEnabled }
-						disabled={ toggleSshAccessMutation.isPending }
-						onChange={ handleToggleSshAccess }
-						__nextHasNoMarginBottom
-					/>
-					{ sshEnabled && (
-						<DataForm< SshCardFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< SshCardFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+		<CardLayout>
+			<CardLayout.Header>
+				<SectionHeader
+					title={ __( 'SSH' ) }
+					description={ createInterpolateElement(
+						__(
+							"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
+						),
+						{
+							wpCliLink: <ExternalLink href="#" children={ null } />,
+							learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
+						}
 					) }
-				</VStack>
-				{ sshEnabled && ! userKeyIsAttached && (
-					<HStack justify="flex-start" style={ { padding: '8px 0' } }>
-						<Button
-							variant="primary"
-							isBusy={ attachSshKeyMutation.isPending }
-							disabled={ ! hasProfileSshKeys }
-							onClick={ handleAttachSshKey }
-						>
-							{ __( 'Attach SSH key to site' ) }
-						</Button>
-						<Button
-							variant="secondary"
-							target="_blank"
-							href="/me/security/ssh-key"
-							rel="noreferrer"
-						>
-							{ __( 'Add new SSH key ↗' ) }
-						</Button>
-					</HStack>
+					level={ 3 }
+				/>
+			</CardLayout.Header>
+			<CardLayout.Fields>
+				<ToggleControl
+					label={ __( 'Enable SSH access for this site' ) }
+					checked={ sshEnabled }
+					disabled={ toggleSshAccessMutation.isPending }
+					onChange={ handleToggleSshAccess }
+					__nextHasNoMarginBottom
+				/>
+				{ sshEnabled && (
+					<DataForm< SshCardFormData >
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits: Partial< SshCardFormData > ) => {
+							setFormData( ( data ) => ( { ...data, ...edits } ) );
+						} }
+					/>
 				) }
-			</CardBody>
-		</Card>
+			</CardLayout.Fields>
+			{ sshEnabled && ! userKeyIsAttached && (
+				<CardLayout.ButtonGroup>
+					<Button
+						variant="primary"
+						isBusy={ attachSshKeyMutation.isPending }
+						disabled={ ! hasProfileSshKeys }
+						onClick={ handleAttachSshKey }
+					>
+						{ __( 'Attach SSH key to site' ) }
+					</Button>
+					<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
+						{ __( 'Add new SSH key ↗' ) }
+					</Button>
+				</CardLayout.ButtonGroup>
+			) }
+		</CardLayout>
 	);
 }

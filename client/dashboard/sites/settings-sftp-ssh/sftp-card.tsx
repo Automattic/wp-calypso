@@ -2,12 +2,8 @@ import { DataForm } from '@automattic/dataviews';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
 	BaseControl,
 	Button,
-	Card,
-	CardBody,
 	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -16,6 +12,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
+import CardLayout from '../../components/card-layout';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser } from '../../data/types';
@@ -150,42 +147,40 @@ export default function SftpCard( {
 	};
 
 	return (
-		<Card>
-			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
-					<SectionHeader
-						title={ __( 'SFTP' ) }
-						description={ createInterpolateElement(
-							__(
-								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
-							),
-							{
-								link: <ExternalLink href="#" children={ null } />,
-							}
-						) }
-						level={ 3 }
-					/>
-				</VStack>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
-					<DataForm< SftpCardFormData >
-						data={ formData }
-						fields={ fields }
-						form={ form }
-						onChange={ noop }
-					/>
-				</VStack>
-				{ ! password && (
-					<HStack style={ { padding: '8px 0' } }>
-						<Button
-							variant="secondary"
-							isBusy={ mutation.isPending }
-							onClick={ () => setShowResetPasswordConfirmDialog( true ) }
-						>
-							{ __( 'Reset password' ) }
-						</Button>
-					</HStack>
-				) }
-			</CardBody>
+		<CardLayout>
+			<CardLayout.Header>
+				<SectionHeader
+					title={ __( 'SFTP' ) }
+					description={ createInterpolateElement(
+						__(
+							'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
+						),
+						{
+							link: <ExternalLink href="#" children={ null } />,
+						}
+					) }
+					level={ 3 }
+				/>
+			</CardLayout.Header>
+			<CardLayout.Fields>
+				<DataForm< SftpCardFormData >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ noop }
+				/>
+			</CardLayout.Fields>
+			{ ! password && (
+				<CardLayout.ButtonGroup>
+					<Button
+						variant="secondary"
+						isBusy={ mutation.isPending }
+						onClick={ () => setShowResetPasswordConfirmDialog( true ) }
+					>
+						{ __( 'Reset password' ) }
+					</Button>
+				</CardLayout.ButtonGroup>
+			) }
 			<ConfirmDialog
 				isOpen={ showResetPasswordConfirmDialog }
 				confirmButtonText={ __( 'Reset password' ) }
@@ -197,6 +192,6 @@ export default function SftpCard( {
 					'After resetting your password, be sure to update it in any SFTP clients, deployment tools, or scripts that use it to connect to your site.'
 				) }
 			</ConfirmDialog>
-		</Card>
+		</CardLayout>
 	);
 }
