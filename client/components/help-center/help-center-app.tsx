@@ -1,3 +1,7 @@
+/**
+ * The HelpCenterApp component is a wrapper around the HelpCenter component,
+ * providing configuration and behavior for showing/hiding the Help Center UI.
+ */
 import config from '@automattic/calypso-config';
 import { HelpCenter as HelpCenterStore } from '@automattic/data-stores';
 import HelpCenter from '@automattic/help-center';
