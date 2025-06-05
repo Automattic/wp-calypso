@@ -225,7 +225,7 @@ export function getPurchasesFieldDefinitions( {
 				if (
 					item.isRenewable &&
 					expiryDate &&
-					expireDate > now &&
+					expiryDate > now &&
 					expiryDate - now < expireSoonMs
 				) {
 					return 'expiring-soon';
