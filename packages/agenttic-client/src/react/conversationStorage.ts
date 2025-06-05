@@ -1,4 +1,5 @@
 import type { DataPart, Message, TextPart } from '../client/types/index';
+import { logger } from '../client/utils/logger';
 
 const STORAGE_KEY = 'a8c_agenttic_conversation_history';
 
@@ -165,8 +166,9 @@ export async function storeConversation(
 		);
 	} catch ( error ) {
 		// Handle sessionStorage quota exceeded or other errors
-		console.warn(
-			'Failed to store conversation in sessionStorage:',
+		logger(
+			'Failed to store conversation in sessionStorage for session %s: %O',
+			sessionId,
 			error
 		);
 	}
@@ -199,8 +201,9 @@ export async function loadConversation(
 			return [ ...messages ];
 		}
 	} catch ( error ) {
-		console.warn(
-			'Failed to load conversation from sessionStorage:',
+		logger(
+			'Failed to load conversation from sessionStorage for session %s: %O',
+			sessionId,
 			error
 		);
 	}
@@ -218,8 +221,9 @@ export async function clearConversation( sessionId: string ): Promise< void > {
 	try {
 		sessionStorage.removeItem( `${ STORAGE_KEY }_${ sessionId }` );
 	} catch ( error ) {
-		console.warn(
-			'Failed to clear conversation from sessionStorage:',
+		logger(
+			'Failed to clear conversation from sessionStorage for session %s: %O',
+			sessionId,
 			error
 		);
 	}
@@ -245,8 +249,8 @@ export async function clearAllConversations(): Promise< void > {
 			sessionStorage.removeItem( key );
 		}
 	} catch ( error ) {
-		console.warn(
-			'Failed to clear conversations from sessionStorage:',
+		logger(
+			'Failed to clear all conversations from sessionStorage: %O',
 			error
 		);
 	}
@@ -273,7 +277,7 @@ export async function getStoredSessionIds(): Promise< string[] > {
 			}
 		}
 	} catch ( error ) {
-		console.warn( 'Failed to enumerate sessionStorage keys:', error );
+		logger( 'Failed to enumerate sessionStorage keys: %O', error );
 	}
 
 	return sessionIds;
