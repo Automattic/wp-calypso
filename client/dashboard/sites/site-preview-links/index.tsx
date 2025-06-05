@@ -108,7 +108,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 					{ links?.map( ( link ) => (
 						<SitePreviewLink
 							key={ link.code }
-							label={ __( 'Share link' ) }
+							label={ __( 'share link' ) }
 							hideLabelFromVision
 							{ ...link }
 							siteUrl={ site.URL }
