@@ -10,6 +10,7 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
@@ -33,6 +34,7 @@ export const FullScreenLaunchpad = ( {
 } ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const [ isLaunching, setIsLaunching ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
@@ -158,7 +160,13 @@ export const FullScreenLaunchpad = ( {
 						onClick={ onSkipLaunchpad }
 						disabled={ isLaunching }
 					>
-						{ __( 'Skip to dashboard' ) }
+						{ isAllTasksCompleted
+							? fixMe( {
+									text: 'Go to dashboard',
+									newCopy: translate( 'Go to dashboard' ),
+									oldCopy: translate( 'Skip to dashboard' ),
+							  } )
+							: __( 'Skip to dashboard' ) }
 					</Button>
 				</div>
 			</div>

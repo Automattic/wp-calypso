@@ -58,7 +58,7 @@ function useScrollRectIntoView(
 export const TabList = forwardRef<
 	HTMLDivElement,
 	React.ComponentPropsWithoutRef< 'div' > & TabListProps
->( function TabList( { children, ...otherProps }, ref ) {
+>( function TabList( { children, density = 'default', ...otherProps }, ref ) {
 	const { store } = useTabsContext() ?? {};
 
 	const selectedId = Ariakit.useStoreState( store, 'selectedId' );
@@ -132,6 +132,7 @@ export const TabList = forwardRef<
 				styles.tablist,
 				overflow.first && styles[ 'is-overflowing-first' ],
 				overflow.last && styles[ 'is-overflowing-last' ],
+				styles[ `has-${ density }-density` ],
 				otherProps.className
 			) }
 		>

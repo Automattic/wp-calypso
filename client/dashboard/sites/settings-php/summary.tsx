@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { code } from '@wordpress/icons';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { sitePHPVersionQuery } from '../../app/queries';
@@ -17,10 +16,17 @@ export default function PHPSettingsSummary( { site, density }: { site: Site; den
 
 	const { recommendedValue } = getPHPVersions();
 
-	const badge = {
-		text: version ?? __( 'Managed' ),
-		intent:
-			version && version !== recommendedValue ? ( 'warning' as const ) : ( 'success' as const ),
+	const getBadge = () => {
+		if ( ! version ) {
+			return [];
+		}
+
+		return [
+			{
+				text: version,
+				intent: version !== recommendedValue ? ( 'warning' as const ) : ( 'success' as const ),
+			},
+		];
 	};
 
 	return (
@@ -29,7 +35,7 @@ export default function PHPSettingsSummary( { site, density }: { site: Site; den
 			title="PHP"
 			density={ density }
 			decoration={ <Icon icon={ code } /> }
-			badges={ [ badge ] }
+			badges={ getBadge() }
 		/>
 	);
 }

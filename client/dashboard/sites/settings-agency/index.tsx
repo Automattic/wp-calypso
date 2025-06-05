@@ -115,7 +115,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+						<VStack spacing={ 4 }>
 							<DataForm< SiteSettings >
 								data={ formData }
 								fields={ fields }

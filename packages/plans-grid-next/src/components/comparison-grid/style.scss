@@ -1,12 +1,20 @@
 @import "../../shared";
 
 .plans-grid-next-comparison-grid {
-	// fixes mobile view cards in features grid not containing content properly
 	min-width: fit-content;
+	border: solid 1px #e0e0e0;
+	background: hsl(0, 0%, 100%);
+	border-radius: 4px;
+	margin: 0 auto;
+
+	> .is-sticky-header-row {
+		border-bottom: solid 1px #e0e0e0;
+		background: #fff;
+	}
 
 	&.has-highlighted-plan {
 		@include plans-grid-medium-large {
-			padding-top: 43px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
+			margin-top: 43px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
 		}
 	}
 

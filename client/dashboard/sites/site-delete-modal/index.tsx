@@ -197,7 +197,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				) }
 			</Text>
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+				<VStack spacing={ 4 }>
 					<DataForm< SiteDeleteFormData >
 						data={ formData }
 						fields={ fields }

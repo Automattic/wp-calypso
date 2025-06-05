@@ -210,7 +210,22 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	};
 
 	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'Defensive mode' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Defensive mode' ) }
+					description={ createInterpolateElement(
+						__(
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <a href="#learn-more">{ __( 'Learn more' ) }</a>,
+						}
+					) }
+				/>
+			}
+		>
 			{ enabled ? renderEnabled() : renderDisabled() }
 		</PageLayout>
 	);
