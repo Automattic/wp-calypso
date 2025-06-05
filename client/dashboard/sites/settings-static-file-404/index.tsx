@@ -13,7 +13,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteStaticFile404Query, siteStaticFile404Mutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
-import { PageViewTracker } from '../../components/page-view-tracker';
 import { canSetStaticFile404Handling } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
@@ -63,7 +62,6 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 				size="small"
 				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
 			>
-				<PageViewTracker title="Site > Settings > 404" />
 				<SettingsCallout siteSlug={ siteSlug } />
 			</PageLayout>
 		);
@@ -91,7 +89,6 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
 		>
-			<PageViewTracker title="Site > Settings > 404" />
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

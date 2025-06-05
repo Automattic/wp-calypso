@@ -24,7 +24,6 @@ import {
 import { ActionList } from '../../components/action-list';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { PageViewTracker } from '../../components/page-view-tracker';
 import {
 	canUpdateCaching,
 	isEdgeCacheAvailable as getIsEdgeCacheAvailable,
@@ -254,7 +253,6 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			<PageViewTracker title="Site > Settings > Caching" />
 			{ canUpdate ? (
 				<>
 					{ renderForm() }
