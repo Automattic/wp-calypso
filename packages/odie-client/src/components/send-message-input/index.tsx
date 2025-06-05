@@ -57,8 +57,14 @@ export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, canConnectToZendesk } =
-		useOdieAssistantContext();
+	const {
+		trackEvent,
+		chat,
+		addMessage,
+		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
+		forceEmailSupport,
+	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -222,7 +228,12 @@ export const OdieSendMessageButton = () => {
 					className="odie-send-message-input-container"
 				>
 					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy || isAttachingFile || cantTransferToZendesk }
+						shouldDisableInputField={
+							isChatBusy ||
+							isAttachingFile ||
+							cantTransferToZendesk ||
+							( chat?.provider === 'zendesk' && forceEmailSupport )
+						}
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
@@ -237,6 +248,7 @@ export const OdieSendMessageButton = () => {
 							attachmentButtonRef={ attachmentButtonRef }
 							onFileUpload={ handleFileUpload }
 							isAttachingFile={ isAttachingFile }
+							isDisabled={ chat?.provider === 'zendesk' && forceEmailSupport }
 						/>
 					) }
 					<button
