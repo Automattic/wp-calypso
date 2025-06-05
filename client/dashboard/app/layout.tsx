@@ -19,7 +19,7 @@ function RouterProviderWithAuth( { config }: { config: AppConfig } ) {
 	return <RouterProvider router={ router } context={ { auth, config } } />;
 }
 
-function AnalyticsProviderWithAuth( { children }: { children: React.ReactNode } ) {
+function AnalyticsProviderWithClient( { children }: { children: React.ReactNode } ) {
 	const { user } = useAuth();
 	useEffect( () => {
 		if ( user ) {
@@ -48,9 +48,9 @@ function Layout( { config }: { config: AppConfig } ) {
 			<QueryClientProvider client={ queryClient }>
 				<AuthProvider>
 					<I18nProvider>
-						<AnalyticsProviderWithAuth>
+						<AnalyticsProviderWithClient>
 							<RouterProviderWithAuth config={ config } />
-						</AnalyticsProviderWithAuth>
+						</AnalyticsProviderWithClient>
 					</I18nProvider>
 				</AuthProvider>
 			</QueryClientProvider>
