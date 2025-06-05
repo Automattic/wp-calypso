@@ -328,6 +328,7 @@ export function agencyBlogQuery( siteId: string ) {
 			return fetchAgencyBlogBySiteId( siteId );
 		},
 		retry: ( failureCount: number, error: { code?: string } ) => {
+			// Stop retrying if we already know the blog is not an agency blog.
 			if ( error.hasOwnProperty( 'code' ) && error.code === 'partner_for_blog_not_found' ) {
 				return false;
 			}
