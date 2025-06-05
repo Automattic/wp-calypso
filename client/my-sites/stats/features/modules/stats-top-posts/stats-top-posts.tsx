@@ -23,7 +23,11 @@ import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 const MAIN_STAT_TYPE = 'statsTopPosts';
 const SUB_STAT_TYPE = 'statsArchives';
 
-type OptionType = { value: typeof MAIN_STAT_TYPE | typeof SUB_STAT_TYPE; label: string };
+type StatTypeOptionType = {
+	value: typeof MAIN_STAT_TYPE | typeof SUB_STAT_TYPE;
+	label: string;
+	mainItemLabel: string;
+};
 
 const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	period,
@@ -43,13 +47,21 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
 
-	const options: OptionType[] = [
-		{ value: mainStatType, label: translate( 'Post & pages' ) },
-		{ value: subStatType, label: translate( 'Archive pages' ) },
+	const options: StatTypeOptionType[] = [
+		{
+			value: mainStatType,
+			label: translate( 'Post & pages' ),
+			mainItemLabel: translate( 'Posts & pages' ),
+		},
+		{
+			value: subStatType,
+			label: translate( 'Archive' ),
+			mainItemLabel: translate( 'Archive pages' ),
+		},
 	];
 
 	const [ statType, setStatType ] = useState( mainStatType );
-	const onStatTypeChange = ( option: OptionType ) => setStatType( option.value );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => setStatType( option.value );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
@@ -142,7 +154,8 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 										onSelect={ onStatTypeChange }
 									/>
 								),
-								mainItemLabel: options.find( ( option ) => option.value === statType )?.label,
+								mainItemLabel: options.find( ( option ) => option.value === statType )
+									?.mainItemLabel,
 						  }
 						: null ) }
 				/>
