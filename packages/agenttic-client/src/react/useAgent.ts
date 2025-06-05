@@ -35,6 +35,48 @@ function createTextMessage( text: string ): Message {
 }
 
 /**
+ * Extract only the new content (non-history) parts from a message
+ * This helps avoid storing history data parts in conversation history
+ *
+ * @param message - The message to extract new content from
+ * @return A clean message with only new content parts
+ */
+function extractNewContentFromMessage( message: Message ): Message {
+	const newParts = message.parts.filter( ( part ) => {
+		// Keep text parts as they represent the actual message content
+		if ( part.type === 'text' ) {
+			return true;
+		}
+		if ( part.type === 'data' ) {
+			// EXCLUDE conversation history data parts (role + text combinations)
+			if ( 'role' in part.data && 'text' in part.data ) {
+				return false;
+			}
+
+			// INCLUDE tool calls (have toolCallId + toolId + arguments)
+			if ( 'toolCallId' in part.data && 'arguments' in part.data ) {
+				return true;
+			}
+
+			// INCLUDE tool results (have toolCallId + result)
+			if ( 'toolCallId' in part.data && 'result' in part.data ) {
+				return true;
+			}
+
+			// EXCLUDE tool definitions and context data (toolId without toolCallId, clientContext, etc.)
+			// These are usually provided by the system and shouldn't be stored in conversation history
+			return false;
+		}
+		return true;
+	} );
+
+	return {
+		...message,
+		parts: newParts,
+	};
+}
+
+/**
  * Convert conversation messages to data parts for history
  *
  * @param conversationMessages - Array of previous conversation messages
@@ -57,8 +99,25 @@ function conversationMessagesToDataParts(
 					},
 				} );
 			} else if ( part.type === 'data' ) {
-				// Pass through data parts (tool calls, tool results, etc.)
-				historyParts.push( part as DataPart );
+				// Only pass through tool calls and tool results, NOT conversation history data parts
+				// EXCLUDE conversation history data parts (role + text combinations)
+				if ( 'role' in part.data && 'text' in part.data ) {
+					continue; // Skip conversation history data parts
+				}
+
+				// INCLUDE tool calls (have toolCallId + arguments)
+				if ( 'toolCallId' in part.data && 'arguments' in part.data ) {
+					historyParts.push( part as DataPart );
+					continue;
+				}
+
+				// INCLUDE tool results (have toolCallId + result)
+				if ( 'toolCallId' in part.data && 'result' in part.data ) {
+					historyParts.push( part as DataPart );
+					continue;
+				}
+
+				// Skip all other data parts (tool definitions, context, etc.)
 			}
 		}
 	}
@@ -226,13 +285,19 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					isLoading: false,
 					lastResponse: task,
 					// Update conversation history only if withHistory is true
+					// Store only clean messages without history data parts to avoid duplication
 					conversationHistory: withHistory
 						? [
 								...prev.conversationHistory,
-								message,
+								// Store only the new content from the user message (without history parts)
+								createTextMessage( messageText ),
 								// Add agent response if present
 								...( task.status?.message
-									? [ task.status.message ]
+									? [
+											extractNewContentFromMessage(
+												task.status.message
+											),
+									  ]
 									: [] ),
 						  ]
 						: prev.conversationHistory,
@@ -283,12 +348,13 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						: createTextMessage( messageText ) );
 
 				// Add user message to conversation history before streaming (only if withHistory is true)
+				// Store only the clean message without history parts
 				if ( withHistory ) {
 					setState( ( prev ) => ( {
 						...prev,
 						conversationHistory: [
 							...prev.conversationHistory,
-							message,
+							createTextMessage( messageText ),
 						],
 					} ) );
 				}
@@ -315,11 +381,14 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 								status: update.status,
 							},
 							// Add agent response to conversation history (only if withHistory is true)
+							// Store only clean content without history parts
 							conversationHistory:
 								withHistory && update.status?.message
 									? [
 											...prev.conversationHistory,
-											update.status.message,
+											extractNewContentFromMessage(
+												update.status.message
+											),
 									  ]
 									: prev.conversationHistory,
 						} ) );
