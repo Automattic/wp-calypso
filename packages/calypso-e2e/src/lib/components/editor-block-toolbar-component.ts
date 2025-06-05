@@ -82,6 +82,20 @@ export class EditorBlockToolbarComponent {
 	}
 
 	/**
+	 * Checks if a menu button is open.
+	 *
+	 * @returns {boolean} True if the menu button is open, false otherwise.
+	 */
+	async isMenuButtonOpen(): Promise< boolean > {
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.button( { ariaLabel: 'Options' } ) );
+		const checked = await locator.getAttribute( 'aria-checked' );
+		const pressed = await locator.getAttribute( 'aria-pressed' );
+		const expanded = await locator.getAttribute( 'aria-expanded' );
+		return checked === 'true' || pressed === 'true' || expanded === 'true';
+	}
+
+	/**
 	 * Click the up arrow button to move the current block up.
 	 */
 	async moveUp(): Promise< void > {
