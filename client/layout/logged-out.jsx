@@ -341,8 +341,7 @@ export default withCurrentRoute(
 						! isBlazePro &&
 						! isWooJPC ) ||
 						isStudioClient ||
-						isCrowdsignalClient ||
-						isGravPoweredClient ) ) ||
+						isCrowdsignalClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

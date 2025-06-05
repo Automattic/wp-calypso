@@ -77,8 +77,7 @@ const enhanceContextWithLogin = ( context ) => {
 			! isWooJPC ) ||
 		isPartnerPortalClient ||
 		isStudioLogin ||
-		isCrowdsignalLogin ||
-		isGravPoweredClient;
+		isCrowdsignalLogin;
 
 	context.primary = (
 		<WPLogin
