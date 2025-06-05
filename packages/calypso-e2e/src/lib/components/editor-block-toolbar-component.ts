@@ -46,6 +46,25 @@ export class EditorBlockToolbarComponent {
 		this.editor = editor;
 	}
 
+	/* General helper */
+
+	/**
+	 * Given a Locator, determines whether the target button/toggle is
+	 * in an expanded state.
+	 *
+	 * If the toggle is in the on state or otherwise in an expanded
+	 * state, this method will return true. Otherwise, false.
+	 *
+	 * @param {Locator} target Target button.
+	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
+	 */
+	private async targetIsOpen( target: Locator ): Promise< boolean > {
+		const checked = await target.getAttribute( 'aria-checked' );
+		const pressed = await target.getAttribute( 'aria-pressed' );
+		const expanded = await target.getAttribute( 'aria-expanded' );
+		return checked === 'true' || pressed === 'true' || expanded === 'true';
+	}
+
 	/**
 	 * Click one of the primary (not buried under a drop down) buttons in the block toolbar.
 	 *
@@ -86,13 +105,10 @@ export class EditorBlockToolbarComponent {
 	 *
 	 * @returns {boolean} True if the menu button is open, false otherwise.
 	 */
-	async isMenuButtonOpen(): Promise< boolean > {
+	async isOptionsMenuOpen(): Promise< boolean > {
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.button( { ariaLabel: 'Options' } ) );
-		const checked = await locator.getAttribute( 'aria-checked' );
-		const pressed = await locator.getAttribute( 'aria-pressed' );
-		const expanded = await locator.getAttribute( 'aria-expanded' );
-		return checked === 'true' || pressed === 'true' || expanded === 'true';
+		const optionsLocator = editorParent.locator( selectors.button( { ariaLabel: 'Options' } ) );
+		return this.targetIsOpen( optionsLocator );
 	}
 
 	/**

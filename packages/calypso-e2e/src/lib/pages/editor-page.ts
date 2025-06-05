@@ -530,9 +530,9 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
-			const isMenuButtonOpen = await this.editorBlockToolbarComponent.isMenuButtonOpen();
+			const isOptionsMenuOpen = await this.editorBlockToolbarComponent.isOptionsMenuOpen();
 
-			if ( ! isMenuButtonOpen ) {
+			if ( ! isOptionsMenuOpen ) {
 				await this.editorBlockToolbarComponent.clickOptionsButton();
 			}
 			await this.editorPopoverMenuComponent.clickMenuButton(
