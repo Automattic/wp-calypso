@@ -469,6 +469,18 @@ body.is-mobile-app-view {
 		font-weight: 700 !important;
 	}
 
+	.domain-suggestion__action.is-primary:not( :disabled ),
+	.components-button.is-primary:not( :disabled ) {
+		background-color: #1d4fc4;
+		border-color: #1d4fc4;
+
+		&:hover,
+		&:focus {
+			background-color: #002e9b;
+			border-color: #002e9b;
+		}
+	}
+
 	// Domain pages only
 	&.is-section-signup {
 		.gravatar-text-logo {
@@ -477,17 +489,6 @@ body.is-mobile-app-view {
 			left: 24px;
 			width: 130px;
 			height: 24px;
-		}
-
-		.domain-suggestion__action.is-primary:not( :disabled ) {
-			background-color: #1d4fc4;
-			border-color: #1d4fc4;
-
-			&:hover,
-			&:focus {
-				background-color: #002e9b;
-				border-color: #002e9b;
-			}
 		}
 	}
 
