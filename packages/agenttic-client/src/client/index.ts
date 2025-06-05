@@ -246,6 +246,10 @@ export function createClient( config: ClientConfig ): Client {
 				requestConfig
 			);
 
+			// Track all tool calls and results from the entire execution
+			const allToolParts: ( ToolCallDataPart | ToolResultDataPart )[] =
+				[];
+
 			//Loop while there are tool calls to process, regardless of state
 			while ( currentTask.status.message && toolProvider ) {
 				const toolCalls = extractToolCallsFromMessage(
@@ -254,6 +258,9 @@ export function createClient( config: ClientConfig ): Client {
 				if ( toolCalls.length === 0 ) {
 					break; // No tool calls to process
 				}
+
+				// Add tool calls to the tracking array
+				allToolParts.push( ...toolCalls );
 
 				// Execute all tool calls
 				const toolResults: ToolResultDataPart[] = [];
@@ -270,24 +277,26 @@ export function createClient( config: ClientConfig ): Client {
 							args
 						);
 
-						toolResults.push(
-							createToolResultDataPart(
-								toolCallId as string,
-								toolId as string,
-								result
-							)
+						const toolResult = createToolResultDataPart(
+							toolCallId as string,
+							toolId as string,
+							result
 						);
+
+						toolResults.push( toolResult );
+						allToolParts.push( toolResult );
 					} catch ( error ) {
-						toolResults.push(
-							createToolResultDataPart(
-								toolCallId as string,
-								toolId as string,
-								undefined,
-								error instanceof Error
-									? error.message
-									: String( error )
-							)
+						const toolResult = createToolResultDataPart(
+							toolCallId as string,
+							toolId as string,
+							undefined,
+							error instanceof Error
+								? error.message
+								: String( error )
 						);
+
+						toolResults.push( toolResult );
+						allToolParts.push( toolResult );
 					}
 				}
 
@@ -314,6 +323,26 @@ export function createClient( config: ClientConfig ): Client {
 					toolProvider,
 					contextProvider
 				);
+			}
+
+			// Enhance the final task response to include all tool calls and results
+			// This ensures useAgent can capture them in conversation history
+			if ( allToolParts.length > 0 && currentTask.status?.message ) {
+				const enhancedMessage: Message = {
+					...currentTask.status.message,
+					parts: [
+						...allToolParts,
+						...currentTask.status.message.parts,
+					],
+				};
+
+				currentTask = {
+					...currentTask,
+					status: {
+						...currentTask.status,
+						message: enhancedMessage,
+					},
+				};
 			}
 
 			return {

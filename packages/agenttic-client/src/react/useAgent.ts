@@ -281,6 +281,30 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					...otherOptions,
 				} );
 
+				// Create a complete agent message with tool calls and results if present
+				let completeAgentMessage: Message | null = null;
+				if ( withHistory && task.status?.message ) {
+					// Extract all tool-related parts from the final message
+					const toolParts = task.status.message.parts.filter(
+						( part ) =>
+							part.type === 'data' &&
+							'toolCallId' in part.data &&
+							( 'arguments' in part.data ||
+								'result' in part.data )
+					);
+
+					// Extract text parts from final message
+					const textParts = task.status.message.parts.filter(
+						( part ) => part.type === 'text'
+					);
+
+					// Create complete message with tool parts + text parts in proper order
+					completeAgentMessage = {
+						role: 'agent',
+						parts: [ ...toolParts, ...textParts ],
+					};
+				}
+
 				setState( ( prev ) => ( {
 					...prev,
 					isLoading: false,
@@ -292,11 +316,11 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 								...prev.conversationHistory,
 								// Store only the new content from the user message (without history parts)
 								createTextMessage( messageText ),
-								// Add agent response if present
-								...( task.status?.message
+								// Add complete agent response with tool calls/results if present
+								...( completeAgentMessage
 									? [
 											extractNewContentFromMessage(
-												task.status.message
+												completeAgentMessage
 											),
 									  ]
 									: [] ),
@@ -440,13 +464,18 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 												accPart.type === 'data' &&
 												finalPart.type === 'data' &&
 												'toolCallId' in accPart.data &&
-												'toolCallId' in finalPart.data &&
+												'toolCallId' in
+													finalPart.data &&
 												accPart.data.toolCallId ===
 													finalPart.data.toolCallId &&
-												( ( 'arguments' in accPart.data &&
-													'arguments' in finalPart.data ) ||
-													( 'result' in accPart.data &&
-														'result' in finalPart.data ) )
+												( ( 'arguments' in
+													accPart.data &&
+													'arguments' in
+														finalPart.data ) ||
+													( 'result' in
+														accPart.data &&
+														'result' in
+															finalPart.data ) )
 										)
 								),
 							];
