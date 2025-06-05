@@ -51,6 +51,12 @@
 			overflow: hidden;
 		}
 
+		.purchase-item__title button.components-button.is-link {
+			font-size: inherit;
+			color: inherit;
+			text-decoration: none;
+		}
+
 		div {
 			max-width: 462px;
 		}

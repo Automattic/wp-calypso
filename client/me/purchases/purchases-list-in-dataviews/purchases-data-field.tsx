@@ -1,4 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
 import { Fields } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -75,6 +77,22 @@ export function getPurchasesFieldDefinitions( {
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
+	const goToPurchase = ( item: Purchases.Purchase ) => {
+		const siteUrl = item.domain;
+		const subscriptionId = item.id;
+		if ( ! siteUrl ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Cannot display manage purchase page for subscription without site' );
+			return;
+		}
+		if ( ! subscriptionId ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Cannot display manage purchase page for subscription without ID' );
+			return;
+		}
+		page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+	};
+
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'purchase-id',
@@ -141,7 +159,13 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<div className="purchase-item__information purchases-layout__information">
 						<div className="purchase-item__title">
-							{ getDisplayName( item ) }
+							<Button
+								variant="link"
+								label={ translate( 'Manage purchase', { textOnly: true } ) }
+								onClick={ () => goToPurchase( item ) }
+							>
+								{ getDisplayName( item ) }
+							</Button>
 							&nbsp;
 							<OwnerInfo purchase={ item } />
 						</div>
