@@ -1,6 +1,6 @@
 import { Tooltip } from '@wordpress/components';
 import { ComponentStatus, statuses } from './data';
-import styles from './style.module.scss';
+import styles from './status-indicator.module.scss';
 
 export const StatusIndicator = ( { status }: { status: ComponentStatus } ) => {
 	return (

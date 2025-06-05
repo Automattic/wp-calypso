@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { data, statuses, type ComponentData } from './data';
 import { IconLink } from './icon-link';
 import { StatusIndicator } from './status-indicator';
+import styles from './wp-components-table.module.scss';
 
 const FIELDS: Field< ComponentData >[] = [
 	{
@@ -52,6 +53,9 @@ const FIELDS: Field< ComponentData >[] = [
 		label: 'Notes',
 		enableHiding: true,
 		enableSorting: false,
+		render: ( { item } ) => {
+			return <div className={ styles[ 'wp-components-table-notes' ] }>{ item.notes }</div>;
+		},
 	},
 ];
 
