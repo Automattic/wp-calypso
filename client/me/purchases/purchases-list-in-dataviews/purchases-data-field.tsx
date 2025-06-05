@@ -207,6 +207,33 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 		{
+			id: 'expring-soon',
+			label: translate( 'Expiring soon' ),
+			type: 'text',
+			elements: [
+				{ value: 'expiring-soon', label: translate( 'Expiring soon' ) },
+				{ value: 'not-expiring-soon', label: translate( 'Other' ) },
+			],
+			filterBy: { operators: [ 'is' ] },
+			getValue: ( { item } ) => {
+				const expiryDate = Date.parse( item.expiryDate );
+				const now = Date.now();
+				const msPerDay = 86_400_000;
+				// @todo: this should be updated to be product-specific since
+				// some products renew 30 days in advance.
+				const expireSoonMs = msPerDay * 7;
+				if (
+					item.isRenewable &&
+					expiryDate &&
+					expireDate > now &&
+					expiryDate - now < expireSoonMs
+				) {
+					return 'expiring-soon';
+				}
+				return 'other';
+			},
+		},
+		{
 			id: 'status',
 			label: translate( 'Status' ),
 			type: 'text',
