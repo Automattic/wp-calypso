@@ -22,24 +22,26 @@ export default function CachingSettingsSummary( {
 		enabled: canUpdate,
 	} );
 
-	let badge;
-	if ( canUpdate ) {
-		if ( isEdgeCacheAvailable( site ) && isEdgeCacheActive ) {
-			badge = {
-				text: __( 'Edge cache enabled' ),
-				intent: 'success' as const,
-			};
-		} else {
-			badge = {
-				text: __( 'Edge cache disabled' ),
-			};
+	const getBadge = () => {
+		if ( ! canUpdate ) {
+			return [];
 		}
-	} else {
-		badge = {
-			text: __( 'Managed' ),
-			intent: 'success' as const,
-		};
-	}
+
+		if ( isEdgeCacheAvailable( site ) && isEdgeCacheActive ) {
+			return [
+				{
+					text: __( 'Edge cache enabled' ),
+					intent: 'success' as const,
+				},
+			];
+		}
+
+		return [
+			{
+				text: __( 'Edge cache disabled' ),
+			},
+		];
+	};
 
 	return (
 		<RouterLinkSummaryButton
@@ -47,7 +49,7 @@ export default function CachingSettingsSummary( {
 			title={ __( 'Caching' ) }
 			density={ density }
 			decoration={ <Icon icon={ next } /> }
-			badges={ [ badge ] }
+			badges={ getBadge() }
 		/>
 	);
 }
