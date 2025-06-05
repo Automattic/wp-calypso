@@ -308,9 +308,7 @@ export class Login extends Component {
 			socialConnect,
 			twoFactorAuthType,
 			locale,
-			isLoginView,
 			signupUrl,
-			isWoo,
 			isWCCOM,
 			isBlazePro,
 			currentQuery,
@@ -324,10 +322,6 @@ export class Login extends Component {
 			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {
 			return null;
-		}
-
-		if ( isWoo && isLoginView ) {
-			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
 		}
 
 		if ( isSocialFirst ) {
@@ -414,7 +408,6 @@ export class Login extends Component {
 			translate,
 			isGenericOauth,
 			isGravPoweredClient,
-			isWoo,
 			isBlazePro,
 			isWhiteLogin,
 			isJetpack,
@@ -426,6 +419,7 @@ export class Login extends Component {
 			action,
 			oauth2Client,
 			isWooJPC,
+			isWoo,
 			isWCCOM,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
@@ -434,7 +428,7 @@ export class Login extends Component {
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst = isWhiteLogin && ! isWoo;
+		const isSocialFirst = isWhiteLogin;
 
 		const jetpackLogo = (
 			<div className="magic-login__gutenboarding-wordpress-logo">
@@ -522,7 +516,8 @@ export class Login extends Component {
 			isFromAkismet ||
 			isCrowdsignalOAuth2Client( oauth2Client ) ||
 			isGravPoweredClient ||
-			isBlazePro;
+			isBlazePro ||
+			isWoo;
 
 		if ( shouldUseWideHeading ) {
 			brandLogo = <HeadingLogo isFromAkismet={ isFromAkismet } width={ 21 } height={ 21 } />;

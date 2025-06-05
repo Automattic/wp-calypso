@@ -444,7 +444,7 @@ class Login extends Component {
 							from={ get( currentQuery, 'from' ) }
 						/>
 					</div>
-					{ ! isWooJPC && ! isBlazePro && (
+					{ ! isWooJPC && ! isBlazePro && ! isWoo && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
@@ -527,20 +527,6 @@ class Login extends Component {
 							redirectPath={ redirectTo }
 							isBlazePro={ isBlazePro }
 							isWoo={ isWCCOM }
-						/>
-						<LoginForm
-							disableAutoFocus={ disableAutoFocus }
-							onSuccess={ this.handleValidLogin }
-							socialService={ socialService }
-							socialServiceResponse={ socialServiceResponse }
-							domain={ domain }
-							locale={ locale }
-							userEmail={ userEmail }
-							handleUsernameChange={ handleUsernameChange }
-							signupUrl={ signupUrl }
-							showSocialLoginFormOnly
-							sendMagicLoginLink={ this.sendMagicLoginLink }
-							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 						/>
 					</div>
 				);

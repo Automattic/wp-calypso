@@ -80,6 +80,8 @@ export function getHeaderText(
 			clientName = 'WP Job Manager';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
+		} else if ( isWCCOM ) {
+			clientName = 'Woo';
 		}
 
 		headerText = clientName
@@ -139,7 +141,6 @@ export function getHeaderText(
 					</>
 				);
 			}
-			headerText = translate( 'Log in to your account' );
 		}
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {

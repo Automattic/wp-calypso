@@ -32,14 +32,6 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 					<div className="masterbar__oauth-client-logo">{ clientLogo( oauth2Client ) }</div>
 				</li>
 
-				{ isWooOAuth2Client( oauth2Client ) && (
-					<li className="masterbar__oauth-client-close">
-						<a href="https://woocommerce.com">
-							Cancel <span>X</span>
-						</a>
-					</li>
-				) }
-
 				{ ! isWooOAuth2Client( oauth2Client ) &&
 					! isJetpackCloudOAuth2Client( oauth2Client ) &&
 					! isA4AOAuth2Client( oauth2Client ) && (

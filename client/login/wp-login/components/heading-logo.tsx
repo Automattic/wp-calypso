@@ -1,4 +1,5 @@
 import blazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.png';
+import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';
@@ -13,6 +14,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import type { OAuth2Client } from 'calypso/login/types';
 
 interface Props {
@@ -23,6 +25,7 @@ interface Props {
 
 const HeadingLogo = ( { isFromAkismet, width, height }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client ) as OAuth2Client | null;
+	const isWoo = useSelector( getIsWoo );
 
 	let clientLogo: string | null = null;
 	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
@@ -35,6 +38,8 @@ const HeadingLogo = ( { isFromAkismet, width, height }: Props ) => {
 		clientLogo = wpJobManagerLogo;
 	} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 		clientLogo = blazeProLogo;
+	} else if ( isWoo ) {
+		clientLogo = wooLogo;
 	} else if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		/**
 		 * Leave last to avoid overriding other grav-powered client logos.
@@ -46,8 +51,8 @@ const HeadingLogo = ( { isFromAkismet, width, height }: Props ) => {
 		<img
 			src={ clientLogo }
 			alt={ `${ oauth2Client?.name ?? 'Login' } Client Logo` }
-			width={ width }
-			height={ height }
+			width={ isWoo ? 64 : width }
+			height={ isWoo ? 24 : height }
 		/>
 	) : null;
 };

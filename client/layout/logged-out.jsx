@@ -174,7 +174,6 @@ const LayoutLoggedOut = ( {
 	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! masterbarIsHidden ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
-
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
 		config.isEnabled( 'jetpack-cloud' ) ||
@@ -338,6 +337,7 @@ export default withCurrentRoute(
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
+			const isWoo = getIsWoo( state );
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
@@ -345,12 +345,12 @@ export default withCurrentRoute(
 				( currentRoute.startsWith( '/log-in' ) &&
 					( ( ! isJetpackLogin &&
 						Boolean( currentQuery?.client_id ) === false &&
-						Boolean( currentQuery?.oauth2_client_id ) === false &&
-						! isWooJPC ) ||
+						Boolean( currentQuery?.oauth2_client_id ) === false ) ||
 						isStudioClient ||
 						isCrowdsignalClient ||
 						isGravPoweredClient ||
-						isBlazePro ) ) ||
+						isBlazePro ||
+						isWoo ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

@@ -15,6 +15,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -64,21 +65,19 @@ const enhanceContextWithLogin = ( context ) => {
 	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
-	const isWooJPC = isWooJPCFlow( currentState );
+	const isWoo = getIsWoo( currentState );
 	const isBlazePro = getIsBlazePro( currentState );
 	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
 	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin &&
-			Boolean( clientId ) === false &&
-			Boolean( oauth2ClientId ) === false &&
-			! isWooJPC ) ||
+		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
 		isPartnerPortalClient ||
 		isStudioLogin ||
 		isCrowdsignalLogin ||
 		isGravPoweredClient ||
-		isBlazePro;
+		isBlazePro ||
+		isWoo;
 
 	context.primary = (
 		<WPLogin
