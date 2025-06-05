@@ -130,7 +130,16 @@ export function getPurchasesFieldDefinitions( {
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				const site = { ID: item.siteId };
-				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+				return (
+					<Button
+						variant="link"
+						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						label={ translate( 'Manage purchase', { textOnly: true } ) }
+						onClick={ () => goToPurchase( item ) }
+					>
+						<PurchaseItemSiteIcon site={ site } purchase={ item } />
+					</Button>
+				);
 			},
 		},
 		{
