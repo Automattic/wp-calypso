@@ -105,7 +105,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 											'Choose someone to look after your site when you pass away. To take ownership of the site, we ask that the person you designate contacts us at <link>wordpress.com/help</link> with a copy of the death certificate.'
 										),
 										{
-											link: <ExternalLink href="https://wordpress.com/help" children={ null } />,
+											link: <ExternalLink href="/help" children={ null } />,
 										}
 									) }
 								</Text>

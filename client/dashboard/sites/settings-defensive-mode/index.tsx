@@ -16,6 +16,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { canUpdateDefensiveMode } from '../../utils/site-features';
@@ -217,10 +218,10 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					title={ __( 'Defensive mode' ) }
 					description={ createInterpolateElement(
 						__(
-							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <learnMoreLink />'
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>.'
 						),
 						{
-							learnMoreLink: <a href="#learn-more">{ __( 'Learn more' ) }</a>,
+							link: <InlineSupportLink supportContext="hosting-defensive-mode" />,
 						}
 					) }
 				/>

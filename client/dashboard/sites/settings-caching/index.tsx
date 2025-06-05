@@ -22,6 +22,7 @@ import {
 	siteObjectCacheClearMutation,
 } from '../../app/queries';
 import { ActionList } from '../../components/action-list';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import {
@@ -241,9 +242,9 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const description = canUpdate
 		? createInterpolateElement(
-				__( 'Manage your site’s server-side caching. <learnMoreLink />.' ),
+				__( 'Manage your site’s server-side caching. <link>Learn more</link>.' ),
 				{
-					learnMoreLink: <a href="#learn-more">{ __( 'Learn more' ) }</a>,
+					link: <InlineSupportLink supportContext="hosting-edge-cache" />,
 				}
 		  )
 		: '';
