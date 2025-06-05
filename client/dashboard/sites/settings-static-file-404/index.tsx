@@ -87,7 +87,14 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
+			header={
+				<SettingsPageHeader
+					title={ __( 'Handling requests for nonexistent assets' ) }
+					description={ __(
+						'Choose how to handle requests for assets (like images, fonts, or JavaScript) that don’t exist on your site.'
+					) }
+				/>
+			}
 		>
 			<Card>
 				<CardBody>
