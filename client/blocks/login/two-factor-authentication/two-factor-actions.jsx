@@ -100,6 +100,7 @@ class TwoFactorActions extends Component {
 					{ isSecurityKeyAvailable && (
 						<Button
 							variant="secondary"
+							className="a8c-components-wp-button"
 							data-e2e-link="2fa-security-key-link"
 							onClick={ this.recordSecurityKey }
 							__next40pxDefaultSize
@@ -111,6 +112,7 @@ class TwoFactorActions extends Component {
 					{ isSmsAvailable && (
 						<Button
 							variant="secondary"
+							className="a8c-components-wp-button"
 							data-e2e-link="2fa-sms-link"
 							onClick={ this.sendSmsCode }
 							__next40pxDefaultSize
@@ -122,6 +124,7 @@ class TwoFactorActions extends Component {
 					{ isAuthenticatorAvailable && (
 						<Button
 							variant="secondary"
+							className="a8c-components-wp-button"
 							data-e2e-link="2fa-otp-link"
 							onClick={ this.recordAuthenticatorLinkClick }
 							__next40pxDefaultSize
@@ -133,6 +136,7 @@ class TwoFactorActions extends Component {
 					{ isBackupCodeAvailable && (
 						<Button
 							variant="secondary"
+							className="a8c-components-wp-button"
 							onClick={ this.recordBackupLinkClick }
 							__next40pxDefaultSize
 						>
