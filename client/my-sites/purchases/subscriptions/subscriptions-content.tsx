@@ -94,10 +94,33 @@ export default function SubscriptionsContentWrapper() {
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const purchases = useSelector( ( state ) =>
+		isFetchingPurchases || ! hasLoadedPurchases ? [] : getSitePurchases( state, selectedSiteId )
+	);
 	const sites = useSelector( getSites ).filter( isValueTruthy );
 
 	if ( config.isEnabled( 'purchases/purchase-list-dataview' ) ) {
+		if ( ! selectedSiteId ) {
+			return <NoSitesMessage />;
+		}
+		if ( ! hasLoadedPurchases || isFetchingPurchases ) {
+			return (
+				<div className="subscriptions__list">
+					<PurchasesSite isPlaceholder />
+				</div>
+			);
+		}
+		// If there is a selected site but no site data, show the placeholder
+		if ( ! selectedSite?.ID ) {
+			return (
+				<div className="subscriptions__list">
+					<PurchasesSite isPlaceholder />
+				</div>
+			);
+		}
+		if ( purchases.length < 1 ) {
+			return <NoPurchasesMessage />;
+		}
 		return <PurchasesDataViews purchases={ purchases } sites={ sites } />;
 	}
 
