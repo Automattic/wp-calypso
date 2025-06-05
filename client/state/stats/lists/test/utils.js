@@ -864,27 +864,6 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Searches',
-						value: 4,
-						children: [
-							{
-								label: 'http://jetpack.com/?s=I+can',
-								value: 2,
-								link: 'http://jetpack.com/?s=I+can',
-							},
-							{
-								label: 'http://jetpack.com/?s=',
-								value: 1,
-								link: 'http://jetpack.com/?s=',
-							},
-							{
-								label: 'http://jetpack.com/?s=plugin',
-								value: 1,
-								link: 'http://jetpack.com/?s=plugin',
-							},
-						],
-					},
-					{
 						label: 'Homepage',
 						value: 59,
 						children: [
@@ -892,17 +871,6 @@ describe( 'utils', () => {
 								label: 'http://jetpack.com/',
 								value: 59,
 								link: 'http://jetpack.com/',
-							},
-						],
-					},
-					{
-						label: 'Categories',
-						value: 7,
-						children: [
-							{
-								label: 'rrr',
-								value: 7,
-								link: 'http://jetpack.com/category/rrr/',
 							},
 						],
 					},
@@ -952,6 +920,38 @@ describe( 'utils', () => {
 										link: 'http://jetpack.com/?taxonomy=jetpack_support_tag&term=eee',
 									},
 								],
+							},
+						],
+					},
+					{
+						label: 'Categories',
+						value: 7,
+						children: [
+							{
+								label: 'rrr',
+								value: 7,
+								link: 'http://jetpack.com/category/rrr/',
+							},
+						],
+					},
+					{
+						label: 'Searches',
+						value: 4,
+						children: [
+							{
+								label: 'http://jetpack.com/?s=I+can',
+								value: 2,
+								link: 'http://jetpack.com/?s=I+can',
+							},
+							{
+								label: 'http://jetpack.com/?s=',
+								value: 1,
+								link: 'http://jetpack.com/?s=',
+							},
+							{
+								label: 'http://jetpack.com/?s=plugin',
+								value: 1,
+								link: 'http://jetpack.com/?s=plugin',
 							},
 						],
 					},
@@ -1063,48 +1063,6 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Searches',
-						value: 9,
-						children: [
-							{
-								label: 'http://jetpack.com/?s=',
-								value: 4,
-								link: 'http://jetpack.com/?s=',
-							},
-							{
-								label: 'http://jetpack.com/?s=I+can',
-								value: 2,
-								link: 'http://jetpack.com/?s=I+can',
-							},
-							{
-								label: 'http://jetpack.com/?s=my+website+is+not+active',
-								value: 1,
-								link: 'http://jetpack.com/?s=my+website+is+not+active',
-							},
-							{
-								label: 'http://jetpack.com/?s=Ani',
-								value: 1,
-								link: 'http://jetpack.com/?s=Ani',
-							},
-							{
-								label: 'http://jetpack.com/?s=plugin',
-								value: 1,
-								link: 'http://jetpack.com/?s=plugin',
-							},
-						],
-					},
-					{
-						label: 'Categories',
-						value: 51,
-						children: [
-							{
-								label: 'rrr',
-								value: 51,
-								link: 'http://jetpack.com/category/rrr/',
-							},
-						],
-					},
-					{
 						label: 'Homepage',
 						value: 89,
 						children: [
@@ -1116,13 +1074,13 @@ describe( 'utils', () => {
 						],
 					},
 					{
-						label: 'Authors',
-						value: 1,
+						label: 'Categories',
+						value: 51,
 						children: [
 							{
-								label: 'ooo',
-								value: 1,
-								link: 'http://jetpack.com/author/ooo/',
+								label: 'rrr',
+								value: 51,
+								link: 'http://jetpack.com/category/rrr/',
 							},
 						],
 					},
@@ -1177,6 +1135,48 @@ describe( 'utils', () => {
 										link: 'http://jetpack.com/?taxonomy=jetpack_support_tag&term=eee',
 									},
 								],
+							},
+						],
+					},
+					{
+						label: 'Searches',
+						value: 9,
+						children: [
+							{
+								label: 'http://jetpack.com/?s=',
+								value: 4,
+								link: 'http://jetpack.com/?s=',
+							},
+							{
+								label: 'http://jetpack.com/?s=I+can',
+								value: 2,
+								link: 'http://jetpack.com/?s=I+can',
+							},
+							{
+								label: 'http://jetpack.com/?s=my+website+is+not+active',
+								value: 1,
+								link: 'http://jetpack.com/?s=my+website+is+not+active',
+							},
+							{
+								label: 'http://jetpack.com/?s=Ani',
+								value: 1,
+								link: 'http://jetpack.com/?s=Ani',
+							},
+							{
+								label: 'http://jetpack.com/?s=plugin',
+								value: 1,
+								link: 'http://jetpack.com/?s=plugin',
+							},
+						],
+					},
+					{
+						label: 'Authors',
+						value: 1,
+						children: [
+							{
+								label: 'ooo',
+								value: 1,
+								link: 'http://jetpack.com/author/ooo/',
 							},
 						],
 					},
