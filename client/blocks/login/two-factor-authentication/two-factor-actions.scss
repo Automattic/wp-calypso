@@ -1,10 +1,12 @@
+@import "@wordpress/base-styles/variables";
+
 .two-factor-authentication__actions.card {
 	display: flex;
 	flex-direction: column;
 	clip-path: initial;
-	gap: 16px;
+	gap: $grid-unit-20;
 	margin-bottom: 0;
-	padding: 0 0 24px;
+	padding: 0 0 $grid-unit-30;
 
 	&::after {
 		content: unset;
