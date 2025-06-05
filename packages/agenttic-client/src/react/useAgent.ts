@@ -406,34 +406,12 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						}
 					}
 
-					// Check if this is a tool result message and add it to conversation history
-					if (
-						withHistory &&
-						update.status?.message?.role === 'user' &&
-						update.status?.message?.parts.every(
-							( part ) =>
-								part.type === 'data' &&
-								( 'toolCallId' in part.data ||
-									( 'role' in part.data &&
-										'text' in part.data ) )
-						)
-					) {
-						const cleanToolResultMessage =
-							extractNewContentFromMessage(
-								update.status.message
-							);
-						setState( ( prev ) => ( {
-							...prev,
-							conversationHistory: [
-								...prev.conversationHistory,
-								cleanToolResultMessage,
-							],
-						} ) );
-					}
+					// Note: Tool results are not captured here as separate messages
+					// They will be included in the final agent message along with tool calls
 
 					// Update state with final result
 					if ( update.final ) {
-						// Create a complete agent message with all accumulated tool parts + final content
+						// Create a complete agent message with all tool parts + final content
 						let completeAgentMessage: Message | null = null;
 						if ( withHistory && update.status?.message ) {
 							// Extract text parts from final message
