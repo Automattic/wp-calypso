@@ -24,7 +24,7 @@ const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ]
 const purchasesMobileFields = [ 'product' ];
 const defaultPerPage = 10;
 const defaultSort = {
-	field: 'product',
+	field: 'site',
 	direction: 'desc' as SortDirection,
 };
 export const purchasesDataView: View = {
