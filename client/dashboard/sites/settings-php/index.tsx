@@ -8,7 +8,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
@@ -43,7 +43,11 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 				header={
 					<SettingsPageHeader
 						title="PHP"
-						description={ __( 'Sites on the Personal plan run on our recommended PHP version.' ) }
+						description={ sprintf(
+							/* translators: %s: plan name. Eg. 'Personal' */
+							__( 'Sites on the %s plan run on our recommended PHP version.' ),
+							site?.plan?.product_name_short
+						) }
 					/>
 				}
 			>
