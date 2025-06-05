@@ -156,14 +156,14 @@ const useSubscriberRemoveMutation = (
 		onMutate: async ( subscribers ) => {
 			// Cancel any outgoing refetches
 			await queryClient.cancelQueries( { queryKey: [ 'subscribers', siteId ] } );
-			await queryClient.cancelQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			await queryClient.cancelQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			// Get the current page data
 			const previousData =
 				queryClient.getQueryData< SubscriberEndpointResponse >( currentPageCacheKey );
 
 			// Get the current count data
-			const previousCountData = queryClient.getQueryData< { email_subscribers: number } >( [
+			const previousCountData = queryClient.getQueryData< { total_subscribers: number } >( [
 				'subscribers',
 				'count',
 				siteId,
@@ -212,9 +212,9 @@ const useSubscriberRemoveMutation = (
 			if ( previousCountData ) {
 				const updatedCountData = {
 					...previousCountData,
-					email_subscribers: previousCountData.email_subscribers - subscribers.length,
+					total_subscribers: previousCountData.total_subscribers - subscribers.length,
 				};
-				queryClient.setQueryData( [ 'subscribers', 'count', siteId ], updatedCountData );
+				queryClient.setQueryData( [ 'subscribers', 'counts', siteId ], updatedCountData );
 			}
 
 			// Handle subscriber details cache if needed
@@ -246,7 +246,7 @@ const useSubscriberRemoveMutation = (
 
 			// Revert the count data if it exists
 			if ( context?.previousCountData ) {
-				queryClient.setQueryData( [ 'subscribers', 'count', siteId ], context.previousCountData );
+				queryClient.setQueryData( [ 'subscribers', 'counts', siteId ], context.previousCountData );
 			}
 
 			if ( context?.previousDetailsData ) {
@@ -261,12 +261,12 @@ const useSubscriberRemoveMutation = (
 
 			// Force invalidate all subscriber queries to ensure UI is in sync
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 		},
 		onSuccess: ( data, subscribers ) => {
 			// Force invalidate all subscriber queries to ensure UI is in sync
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			for ( const subscriber of subscribers ) {
 				recordSubscriberRemoved( {
@@ -279,7 +279,7 @@ const useSubscriberRemoveMutation = (
 		onSettled: ( data, error, subscribers ) => {
 			// Always invalidate and refetch everything to ensure consistency
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			// Always handle subscriber details cache if requested
 			if ( invalidateDetailsCache ) {
