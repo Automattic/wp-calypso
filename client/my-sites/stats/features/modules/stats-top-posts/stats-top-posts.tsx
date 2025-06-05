@@ -38,7 +38,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
+	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
@@ -133,16 +133,18 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
-					{ ...( isArchiveBreakdownEnabled && {
-						toggleControl: (
-							<SimplifiedSegmentedControl
-								options={ options }
-								initialSelected={ statType }
-								onSelect={ onStatTypeChange }
-							/>
-						),
-						mainItemLabel: options.find( ( option ) => option.value === statType )?.label,
-					} ) }
+					{ ...( isArchiveBreakdownEnabled
+						? {
+								toggleControl: (
+									<SimplifiedSegmentedControl
+										options={ options }
+										initialSelected={ statType }
+										onSelect={ onStatTypeChange }
+									/>
+								),
+								mainItemLabel: options.find( ( option ) => option.value === statType )?.label,
+						  }
+						: null ) }
 				/>
 			) }
 			{ presentEmptyUI && (
