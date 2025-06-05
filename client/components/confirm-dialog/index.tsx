@@ -7,7 +7,7 @@ interface DialogFooterProps {
 }
 
 export const DialogFooter = ( { children }: DialogFooterProps ) => {
-	return <div className="auto-renew-confirm-dialog__footer">{ children }</div>;
+	return <div className="confirm-dialog__footer">{ children }</div>;
 };
 
 interface DialogContentProps {
@@ -15,18 +15,24 @@ interface DialogContentProps {
 }
 
 export const DialogContent = ( { children }: DialogContentProps ) => {
-	return <div className="auto-renew-confirm-dialog__content">{ children }</div>;
+	return <div className="confirm-dialog__content">{ children }</div>;
 };
 
 interface ConfirmDialogProps {
 	onRequestClose: ComponentProps< typeof Modal >[ 'onRequestClose' ];
 	children: React.ReactNode;
 	title: string;
+	style?: React.CSSProperties;
 }
 
-export const ConfirmDialog = ( { onRequestClose, children, title }: ConfirmDialogProps ) => {
+export const ConfirmDialog = ( { onRequestClose, children, title, style }: ConfirmDialogProps ) => {
 	return (
-		<Modal className="auto-renew-confirm-dialog" onRequestClose={ onRequestClose } title={ title }>
+		<Modal
+			className="confirm-dialog"
+			onRequestClose={ onRequestClose }
+			title={ title }
+			style={ style }
+		>
 			{ children }
 		</Modal>
 	);

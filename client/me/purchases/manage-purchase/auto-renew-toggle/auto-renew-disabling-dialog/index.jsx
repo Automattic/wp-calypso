@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import { ConfirmDialog, DialogContent, DialogFooter } from './confirm-dialog';
 
 const DIALOG = {
 	GENERAL: 'general',

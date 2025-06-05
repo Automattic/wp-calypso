@@ -1,5 +1,5 @@
-.auto-renew-confirm-dialog {
-	max-width: 580px;
+.confirm-dialog {
+	max-width: var(--max-width, 580px);
 
 	&__footer {
 		display: flex;
