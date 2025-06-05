@@ -534,8 +534,6 @@ export class EditorPage {
 			await this.editorPopoverMenuComponent.clickMenuButton(
 				`Select parent block (${ expectedParentBlockName })`
 			);
-			// It stays open on modal! We have to close it again.
-			await this.editorBlockToolbarComponent.clickOptionsButton();
 		}
 	}
 
