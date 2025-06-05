@@ -6,7 +6,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/advertising/': __( 'advertising' ),
 		'/comments/': __( 'comments' ),
 		'/discover': __( 'discover blogs' ),
-		'/email/': __( 'manage emails' ),
 		'/hosting-config/': __( 'hosting configuration' ),
 		'/marketing/sharing-buttons/': __( 'social share' ),
 		'/me/get-apps': __( 'wordpress apps' ),
