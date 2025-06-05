@@ -22,7 +22,7 @@ import {
 
 const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
 const purchasesMobileFields = [ 'product' ];
-const defaultPerPage = 5;
+const defaultPerPage = 10;
 const defaultSort = {
 	field: 'product',
 	direction: 'desc' as SortDirection,
