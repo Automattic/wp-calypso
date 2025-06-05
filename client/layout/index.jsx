@@ -136,7 +136,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
-		isDomainForGravatar: PropTypes.bool,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -191,7 +191,7 @@ class Layout extends Component {
 				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
-				isDomainForGravatar={ this.props.isDomainForGravatar }
+				isGravatarDomain={ this.props.isGravatarDomain }
 			/>
 		);
 	}
@@ -220,7 +220,7 @@ class Layout extends Component {
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-			'is-domain-for-gravatar': this.props.isDomainForGravatar,
+			'is-domain-for-gravatar': this.props.isGravatarDomain,
 		} );
 
 		const optionalBodyProps = () => {
@@ -416,7 +416,7 @@ export default withCurrentRoute(
 
 		const isCheckoutSection =
 			currentSection?.name === 'checkout' || currentSection?.name === 'checkout-thank-you';
-		const isDomainForGravatar =
+		const isGravatarDomain =
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && currentQuery?.isGravatarDomain === '1' );
 
@@ -456,7 +456,7 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
-			isDomainForGravatar,
+			isGravatarDomain,
 		};
 	} )( Layout )
 );

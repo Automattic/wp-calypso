@@ -22,7 +22,7 @@ interface Props {
 	isLeavingAllowed?: boolean;
 	shouldClearCartWhenLeaving?: boolean;
 	loadHelpCenterIcon?: boolean;
-	isDomainForGravatar?: boolean;
+	isGravatarDomain?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -31,7 +31,7 @@ const CheckoutMasterbar = ( {
 	siteSlug,
 	isLeavingAllowed,
 	loadHelpCenterIcon,
-	isDomainForGravatar,
+	isGravatarDomain,
 }: Props ) => {
 	const translate = useTranslate();
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
@@ -45,7 +45,7 @@ const CheckoutMasterbar = ( {
 			return 'akismet';
 		}
 
-		if ( isDomainForGravatar ) {
+		if ( isGravatarDomain ) {
 			return 'gravatar';
 		}
 

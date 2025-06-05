@@ -869,7 +869,7 @@ class Signup extends Component {
 		}
 
 		const showPageHeader = ! this.props.isGravatar;
-		const isDomainForGravatar = isDomainForGravatarFlow( this.props.flowName );
+		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
 			<>
@@ -891,7 +891,7 @@ class Signup extends Component {
 									/>
 								)
 							}
-							logoComponent={ isDomainForGravatar ? <GravatarTextLogo /> : undefined }
+							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
 					<div className="signup__steps">{ this.renderCurrentStep() }</div>

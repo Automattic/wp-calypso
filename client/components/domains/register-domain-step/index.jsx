@@ -1802,7 +1802,7 @@ class RegisterDomainStep extends Component {
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
-		const isDomainForGravatar = isDomainForGravatarFlow( this.props.flowName );
+		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
@@ -1810,7 +1810,7 @@ class RegisterDomainStep extends Component {
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
 			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error ) ||
-			( isDomainForGravatar &&
+			( isGravatarDomain &&
 				[ REGISTERED_OTHER_SITE_SAME_USER, REGISTERED_SAME_SITE ].includes( error ) )
 		) {
 			return;

@@ -21,7 +21,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	}
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
-	const isDomainForGravatar = isDomainForGravatarFlow( flowName );
+	const isGravatarDomain = isDomainForGravatarFlow( flowName );
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
@@ -46,7 +46,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
-			...( isDomainForGravatar && { isGravatarDomain: 1 } ),
+			...( isGravatarDomain && { isGravatarDomain: 1 } ),
 			checkoutBackUrl: finalCheckoutBackUrl,
 		},
 		checkoutURL
