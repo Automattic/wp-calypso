@@ -91,22 +91,24 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const data = { enabled: links.length > 0 };
 
 		return (
-			<>
-				<DataForm< { enabled: boolean } >
-					data={ data }
-					fields={ fields }
-					form={ form }
-					onChange={ handleChange }
-				/>
-				{ links?.map( ( link ) => (
-					<SitePreviewLink
-						key={ link.code }
-						{ ...link }
-						siteUrl={ site.URL }
-						disabled={ isMutationPending }
+			<form>
+				<VStack spacing={ 4 }>
+					<DataForm< { enabled: boolean } >
+						data={ data }
+						fields={ fields }
+						form={ form }
+						onChange={ handleChange }
 					/>
-				) ) }
-			</>
+					{ links?.map( ( link ) => (
+						<SitePreviewLink
+							key={ link.code }
+							{ ...link }
+							siteUrl={ site.URL }
+							disabled={ isMutationPending }
+						/>
+					) ) }
+				</VStack>
+			</form>
 		);
 	};
 
@@ -114,7 +116,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		return (
 			<Card>
 				<CardBody>
-					<VStack spacing={ 4 }>
+					<VStack spacing={ 3 }>
 						<SectionHeader level={ 3 } title={ title } description={ description } />
 						{ renderContent() }
 					</VStack>
