@@ -24,5 +24,5 @@ export default {
 	Edit: null,
 	render: () => null,
 	enableSorting: false,
-	filterBy: false,
+	filterBy: false as const,
 };
