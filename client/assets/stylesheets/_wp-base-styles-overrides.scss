@@ -39,11 +39,6 @@
 		--wp-admin-theme-color: var(--color-akismet);
 	}
 
-	/* A8C for Agencies */
-	.a8c-for-agencies &:not(.is-error) {
-		--wp-admin-theme-color: var(--color-primary-40);
-	}
-
 	/* Jetpack Cloud */
 	.jetpack-cloud &:not(.is-error) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-40);
