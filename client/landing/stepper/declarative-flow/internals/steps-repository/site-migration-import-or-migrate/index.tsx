@@ -1,19 +1,16 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -22,7 +19,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 	submits: {
 		destination: 'migrate' | 'import' | 'upgrade';
 	};
-} > = function ( { navigation, flow } ) {
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
@@ -30,7 +27,6 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const siteCanInstallPlugins = canInstallPlugins( site );
 	const isUpgradeRequired = ! siteCanInstallPlugins;
-	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const options = useMemo( () => {
 		const upgradeRequiredLabel = translate( '%(discountPercentage)s off %(planName)s', {
@@ -107,44 +103,17 @@ const SiteMigrationImportOrMigrate: StepType< {
 		  } )
 		: '';
 
-	if ( isUsingStepContainerV2 ) {
-		return (
-			<>
-				<DocumentHead title={ pageTitle } />
-				<Step.CenteredColumnLayout
-					columnWidth={ 5 }
-					topBar={
-						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
-					}
-					heading={ <Step.Heading text={ pageTitle } subText={ pageSubTitle } /> }
-					className="import-or-migrate-v2"
-				>
-					{ stepContent }
-				</Step.CenteredColumnLayout>
-			</>
-		);
-	}
-
 	return (
 		<>
 			<DocumentHead title={ pageTitle } />
-			<StepContainer
-				stepName="site-migration-import-or-migrate"
-				className="import-or-migrate"
-				shouldHideNavButtons={ false }
-				hideSkip
-				formattedHeader={
-					<FormattedHeader
-						id="how-to-migrate-header"
-						headerText={ pageTitle }
-						subHeaderText={ pageSubTitle }
-						align="center"
-					/>
-				}
-				stepContent={ stepContent }
-				recordTracksEvent={ recordTracksEvent }
-				goBack={ navigation.goBack }
-			/>
+			<Step.CenteredColumnLayout
+				columnWidth={ 5 }
+				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				heading={ <Step.Heading text={ pageTitle } subText={ pageSubTitle } /> }
+				className="import-or-migrate-v2"
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };
