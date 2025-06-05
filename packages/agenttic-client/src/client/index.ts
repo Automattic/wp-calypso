@@ -426,6 +426,16 @@ export function createClient( config: ClientConfig ): Client {
 							parts: [ ...historyDataParts, ...toolResults ],
 						};
 
+						yield {
+							id: update.id,
+							status: {
+								state: 'working',
+								message: toolResultMessage,
+							},
+							final: false,
+							text: '',
+						};
+
 						// Continue the task with tool results and stream the continuation
 						const continuedTaskUpdate = await continueTask(
 							update.id,
