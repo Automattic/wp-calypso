@@ -10,6 +10,15 @@ import { getRouter } from './router';
 function RouterProviderWithAuth( { config }: { config: AppConfig } ) {
 	const auth = useAuth();
 	const router = useMemo( () => getRouter( config ), [ config ] );
+
+	router.subscribe( 'onBeforeLoad', () => {
+		if ( document.startViewTransition ) {
+			document.startViewTransition( () => {
+				window.scrollTo( 0, 0 );
+			} );
+		}
+	} );
+
 	return <RouterProvider router={ router } context={ { auth, config } } />;
 }
 
