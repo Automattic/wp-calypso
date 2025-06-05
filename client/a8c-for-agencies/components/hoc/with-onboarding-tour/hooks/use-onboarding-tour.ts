@@ -9,7 +9,7 @@ export default function useOnboardingTour() {
 	useEffect( () => {
 		const handleHashChange = () => {
 			const hash = window.location.hash;
-			if ( isEnabled( 'a4a-unified-onboarding-tour' ) && hash === ONBOARDING_TOUR_HASH ) {
+			if ( isEnabled( 'a4a-unified-onboarding-tour' ) && hash.startsWith( ONBOARDING_TOUR_HASH ) ) {
 				setIsOpen( true );
 			}
 		};

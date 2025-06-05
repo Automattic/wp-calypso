@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { ONBOARDING_TOUR_HASH } from '../hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import OnboardingTourModalSection, {
 	ActionProps,
 	OnboardingTourModalSectionProps,
@@ -37,8 +38,12 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 		( child: ReactNode ) => isValidElement( child ) && child.type === OnboardingTourModalSection
 	) as ReactElement< OnboardingTourModalSectionProps >[];
 
+	const defaultSection = sections.find(
+		( section ) => `${ ONBOARDING_TOUR_HASH }-${ section?.props?.id }` === window.location.hash
+	);
+
 	const [ currentSectionId, setCurrentSectionId ] = useState(
-		sections.length > 0 ? sections[ 0 ].props?.id : null
+		defaultSection ? defaultSection.props?.id : sections[ 0 ].props?.id
 	);
 
 	const menuItems = useMemo(
@@ -109,6 +114,7 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 							key={ menuItem.id }
 							onClick={ () => {
 								setCurrentSectionId( menuItem.id );
+								window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ menuItem.id }`;
 								dispatch(
 									recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_click', {
 										section: menuItem.id,
