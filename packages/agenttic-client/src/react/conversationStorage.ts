@@ -1,0 +1,280 @@
+import type { DataPart, Message, TextPart } from '../client/types/index';
+
+const STORAGE_KEY = 'a8c_agenttic_conversation_history';
+
+/**
+ * Simplified stored message format for efficient serialization
+ */
+interface StoredMessage {
+	role: 'user' | 'agent';
+	content: string;
+	timestamp: number;
+	toolCalls?: Array< {
+		toolCallId: string;
+		toolId: string;
+		arguments: Record< string, unknown >;
+	} >;
+	toolResults?: Array< {
+		toolCallId: string;
+		result: any;
+		error?: string;
+	} >;
+}
+
+/**
+ * Stored conversation format
+ */
+interface StoredConversation {
+	sessionId: string;
+	messages: StoredMessage[];
+	lastUpdated: number;
+}
+
+/**
+ * Extract only essential content from a Message for storage
+ * @param message - The Message to extract content from
+ */
+function extractStorableContent( message: Message ): StoredMessage {
+	// Extract text content
+	const textParts = message.parts
+		.filter( ( part ): part is TextPart => part.type === 'text' )
+		.map( ( part ) => part.text )
+		.join( '\n' );
+
+	// Extract tool calls
+	const toolCalls = message.parts
+		.filter(
+			( part ): part is DataPart =>
+				part.type === 'data' &&
+				'toolCallId' in part.data &&
+				'arguments' in part.data
+		)
+		.map( ( part ) => ( {
+			toolCallId: part.data.toolCallId as string,
+			toolId: part.data.toolId as string,
+			arguments: part.data.arguments as Record< string, unknown >,
+		} ) );
+
+	// Extract tool results
+	const toolResults = message.parts
+		.filter(
+			( part ): part is DataPart =>
+				part.type === 'data' &&
+				'toolCallId' in part.data &&
+				'result' in part.data
+		)
+		.map( ( part ) => ( {
+			toolCallId: part.data.toolCallId as string,
+			result: part.data.result,
+			error: part.data.error as string | undefined,
+		} ) );
+
+	return {
+		role: message.role,
+		content: textParts || '(No text content)',
+		timestamp: Date.now(),
+		...( toolCalls.length > 0 && { toolCalls } ),
+		...( toolResults.length > 0 && { toolResults } ),
+	};
+}
+
+/**
+ * Convert stored message back to Message format
+ * @param stored - The StoredMessage to restore
+ */
+function restoreMessage( stored: StoredMessage ): Message {
+	const parts: Message[ 'parts' ] = [];
+
+	// Add text part
+	if ( stored.content && stored.content !== '(No text content)' ) {
+		parts.push( {
+			type: 'text',
+			text: stored.content,
+		} );
+	}
+
+	// Add tool call parts
+	if ( stored.toolCalls ) {
+		for ( const toolCall of stored.toolCalls ) {
+			parts.push( {
+				type: 'data',
+				data: {
+					toolCallId: toolCall.toolCallId,
+					toolId: toolCall.toolId,
+					arguments: toolCall.arguments,
+				},
+			} );
+		}
+	}
+
+	// Add tool result parts
+	if ( stored.toolResults ) {
+		for ( const toolResult of stored.toolResults ) {
+			parts.push( {
+				type: 'data',
+				data: {
+					toolCallId: toolResult.toolCallId,
+					result: toolResult.result,
+					...( toolResult.error && { error: toolResult.error } ),
+				},
+			} );
+		}
+	}
+
+	return {
+		role: stored.role,
+		parts,
+	};
+}
+
+// Module-level cache for conversation storage
+const conversationCache = new Map< string, Message[] >();
+const maxCacheSize = 50; // Limit number of cached conversations
+
+/**
+ * Store conversation messages for a session
+ * @param sessionId - The session ID to store messages for
+ * @param messages  - The array of messages to store
+ */
+export async function storeConversation(
+	sessionId: string,
+	messages: Message[]
+): Promise< void > {
+	// Update in-memory cache
+	conversationCache.set( sessionId, [ ...messages ] );
+
+	// Maintain cache size limit
+	if ( conversationCache.size > maxCacheSize ) {
+		const firstKey = conversationCache.keys().next().value;
+		if ( firstKey ) {
+			conversationCache.delete( firstKey );
+		}
+	}
+
+	try {
+		// Serialize and store in sessionStorage
+		const stored: StoredConversation = {
+			sessionId,
+			messages: messages.map( extractStorableContent ),
+			lastUpdated: Date.now(),
+		};
+
+		sessionStorage.setItem(
+			`${ STORAGE_KEY }_${ sessionId }`,
+			JSON.stringify( stored )
+		);
+	} catch ( error ) {
+		// Handle sessionStorage quota exceeded or other errors
+		console.warn(
+			'Failed to store conversation in sessionStorage:',
+			error
+		);
+	}
+}
+
+/**
+ * Load conversation messages for a session
+ * @param sessionId - The session ID to load messages for
+ */
+export async function loadConversation(
+	sessionId: string
+): Promise< Message[] > {
+	// Check in-memory cache first
+	if ( conversationCache.has( sessionId ) ) {
+		return [ ...conversationCache.get( sessionId )! ];
+	}
+
+	// Fallback to sessionStorage
+	try {
+		const stored = sessionStorage.getItem(
+			`${ STORAGE_KEY }_${ sessionId }`
+		);
+		if ( stored ) {
+			const conversation: StoredConversation = JSON.parse( stored );
+			const messages = conversation.messages.map( restoreMessage );
+
+			// Cache for future access
+			conversationCache.set( sessionId, messages );
+
+			return [ ...messages ];
+		}
+	} catch ( error ) {
+		console.warn(
+			'Failed to load conversation from sessionStorage:',
+			error
+		);
+	}
+
+	return [];
+}
+
+/**
+ * Clear conversation for a session
+ * @param sessionId - The session ID to clear
+ */
+export async function clearConversation( sessionId: string ): Promise< void > {
+	conversationCache.delete( sessionId );
+
+	try {
+		sessionStorage.removeItem( `${ STORAGE_KEY }_${ sessionId }` );
+	} catch ( error ) {
+		console.warn(
+			'Failed to clear conversation from sessionStorage:',
+			error
+		);
+	}
+}
+
+/**
+ * Clear all stored conversations
+ */
+export async function clearAllConversations(): Promise< void > {
+	conversationCache.clear();
+
+	try {
+		// Remove all agenttic conversation keys from sessionStorage
+		const keysToRemove: string[] = [];
+		for ( let i = 0; i < sessionStorage.length; i++ ) {
+			const key = sessionStorage.key( i );
+			if ( key && key.startsWith( STORAGE_KEY ) ) {
+				keysToRemove.push( key );
+			}
+		}
+
+		for ( const key of keysToRemove ) {
+			sessionStorage.removeItem( key );
+		}
+	} catch ( error ) {
+		console.warn(
+			'Failed to clear conversations from sessionStorage:',
+			error
+		);
+	}
+}
+
+/**
+ * Get list of stored conversation session IDs
+ */
+export async function getStoredSessionIds(): Promise< string[] > {
+	const sessionIds: string[] = [];
+
+	// From cache
+	sessionIds.push( ...conversationCache.keys() );
+
+	// From sessionStorage
+	try {
+		for ( let i = 0; i < sessionStorage.length; i++ ) {
+			const key = sessionStorage.key( i );
+			if ( key && key.startsWith( STORAGE_KEY ) ) {
+				const sessionId = key.replace( `${ STORAGE_KEY }_`, '' );
+				if ( ! sessionIds.includes( sessionId ) ) {
+					sessionIds.push( sessionId );
+				}
+			}
+		}
+	} catch ( error ) {
+		console.warn( 'Failed to enumerate sessionStorage keys:', error );
+	}
+
+	return sessionIds;
+}

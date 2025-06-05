@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { createClient } from '../client/index';
 import { createTextMessage, createTextPart } from '../client/utils/index';
 import type {
@@ -12,6 +12,11 @@ import type {
 	TaskUpdate,
 	TextPart,
 } from '../client/types/index';
+import {
+	clearConversation,
+	loadConversation,
+	storeConversation,
+} from './conversationStorage';
 
 /**
  * UI ChatMessage interface for consumer components
@@ -164,6 +169,7 @@ function extractToolCallsFromMessage( message?: Message ): DataPart[] {
  */
 export interface UseAgentConfig extends Omit< ClientConfig, 'dispatcher' > {
 	// Browser-specific config options can be added here
+	sessionId?: string; // Optional session ID for conversation persistence
 }
 
 /**
@@ -197,7 +203,7 @@ export interface UseAgentReturn {
 	// Utilities
 	clearError: () => void;
 	reset: () => void;
-	resetConversation: () => void;
+	resetConversation: () => Promise< void >;
 	getTextMessage: ( message: Message ) => ChatMessage;
 }
 
@@ -211,6 +217,8 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 	// Initialize client once on mount
 	const clientRef = useRef< Client | null >( null );
 	const [ initError, setInitError ] = useState< string | null >( null );
+	const [ initialHistoryLoaded, setInitialHistoryLoaded ] = useState( false );
+	const sessionId = config.sessionId || 'default-session';
 
 	// Initialize client only once
 	if ( ! clientRef.current && ! initError ) {
@@ -234,6 +242,48 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		lastResponse: null,
 		conversationHistory: [],
 	} );
+
+	// Load conversation history from storage on mount
+	useEffect( () => {
+		if ( ! initialHistoryLoaded && sessionId ) {
+			const loadHistory = async () => {
+				try {
+					const storedHistory = await loadConversation( sessionId );
+					if ( storedHistory.length > 0 ) {
+						setState( ( prev ) => ( {
+							...prev,
+							conversationHistory: storedHistory,
+						} ) );
+					}
+				} catch ( error ) {
+					console.warn(
+						'Failed to load conversation history:',
+						error
+					);
+				} finally {
+					setInitialHistoryLoaded( true );
+				}
+			};
+			loadHistory();
+		}
+	}, [ sessionId, initialHistoryLoaded ] );
+
+	// Store conversation history whenever it changes
+	const persistConversationHistory = useCallback(
+		async ( messages: Message[] ) => {
+			if ( sessionId ) {
+				try {
+					await storeConversation( sessionId, messages );
+				} catch ( error ) {
+					console.warn(
+						'Failed to persist conversation history:',
+						error
+					);
+				}
+			}
+		},
+		[ sessionId ]
+	);
 
 	const sendMessage = useCallback(
 		async (
@@ -292,28 +342,35 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					};
 				}
 
+				const newConversationHistory = withHistory
+					? [
+							...state.conversationHistory,
+							// Store only the new content from the user message (without history parts)
+							createTextMessage( messageText ),
+							// Add complete agent response with tool calls/results if present
+							...( completeAgentMessage
+								? [
+										extractNewContentFromMessage(
+											completeAgentMessage
+										),
+								  ]
+								: [] ),
+					  ]
+					: state.conversationHistory;
+
 				setState( ( prev ) => ( {
 					...prev,
 					isLoading: false,
 					lastResponse: task,
 					// Update conversation history only if withHistory is true
 					// Store only clean messages without history data parts to avoid duplication
-					conversationHistory: withHistory
-						? [
-								...prev.conversationHistory,
-								// Store only the new content from the user message (without history parts)
-								createTextMessage( messageText ),
-								// Add complete agent response with tool calls/results if present
-								...( completeAgentMessage
-									? [
-											extractNewContentFromMessage(
-												completeAgentMessage
-											),
-									  ]
-									: [] ),
-						  ]
-						: prev.conversationHistory,
+					conversationHistory: newConversationHistory,
 				} ) );
+
+				// Persist the updated conversation history
+				if ( withHistory ) {
+					await persistConversationHistory( newConversationHistory );
+				}
 
 				return task;
 			} catch ( error ) {
@@ -329,7 +386,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				throw error;
 			}
 		},
-		[ state.conversationHistory ]
+		[ state.conversationHistory, persistConversationHistory ]
 	);
 
 	const sendMessageStream = useCallback(
@@ -362,13 +419,16 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				// Add user message to conversation history before streaming (only if withHistory is true)
 				// Store only the clean message without history parts
 				if ( withHistory ) {
+					const newUserHistory = [
+						...state.conversationHistory,
+						createTextMessage( messageText ),
+					];
 					setState( ( prev ) => ( {
 						...prev,
-						conversationHistory: [
-							...prev.conversationHistory,
-							createTextMessage( messageText ),
-						],
+						conversationHistory: newUserHistory,
 					} ) );
+					// Persist the user message immediately
+					await persistConversationHistory( newUserHistory );
 				}
 
 				let finalUpdate: TaskUpdate | null = null;
@@ -473,6 +533,15 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							};
 						}
 
+						const newConversationHistory = completeAgentMessage
+							? [
+									...state.conversationHistory,
+									extractNewContentFromMessage(
+										completeAgentMessage
+									),
+							  ]
+							: state.conversationHistory;
+
 						setState( ( prev ) => ( {
 							...prev,
 							isLoading: false,
@@ -481,15 +550,15 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 								status: update.status,
 							},
 							// Add complete agent response to conversation history (only if withHistory is true)
-							conversationHistory: completeAgentMessage
-								? [
-										...prev.conversationHistory,
-										extractNewContentFromMessage(
-											completeAgentMessage
-										),
-								  ]
-								: prev.conversationHistory,
+							conversationHistory: newConversationHistory,
 						} ) );
+
+						// Persist the final conversation history
+						if ( withHistory && completeAgentMessage ) {
+							await persistConversationHistory(
+								newConversationHistory
+							);
+						}
 					}
 				}
 			} catch ( error ) {
@@ -505,7 +574,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				throw error;
 			}
 		},
-		[ state.conversationHistory ]
+		[ state.conversationHistory, persistConversationHistory ]
 	);
 
 	const clearError = useCallback( () => {
@@ -522,12 +591,16 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		} );
 	}, [] );
 
-	const resetConversation = useCallback( () => {
+	const resetConversation = useCallback( async () => {
 		setState( ( prev ) => ( {
 			...prev,
 			conversationHistory: [],
 		} ) );
-	}, [] );
+		// Clear persistent storage as well
+		if ( sessionId ) {
+			await clearConversation( sessionId );
+		}
+	}, [ sessionId ] );
 
 	const getTextMessage = useCallback( ( message: Message ): ChatMessage => {
 		const textParts = message.parts
