@@ -104,7 +104,7 @@ export function getPurchasesFieldDefinitions( {
 					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
 				} );
 			} )(),
-			filterBy: { operators: [ 'is' ], isPrimary: true },
+			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
@@ -161,7 +161,7 @@ export function getPurchasesFieldDefinitions( {
 				{ value: 'plan', label: translate( 'Plan' ) },
 				{ value: 'other', label: translate( 'Other' ) },
 			],
-			filterBy: { operators: [ 'is' ], isPrimary: true },
+			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
 				if ( item.isDomain || item.isDomainRegistration ) {
 					return 'domain';
