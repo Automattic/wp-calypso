@@ -41,6 +41,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import hasGravatarDomainUrlParam from 'calypso/state/selectors/has-gravatar-domain-url-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -191,7 +192,6 @@ class Layout extends Component {
 				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
-				isGravatarDomain={ this.props.isGravatarDomain }
 			/>
 		);
 	}
@@ -418,7 +418,7 @@ export default withCurrentRoute(
 			currentSection?.name === 'checkout' || currentSection?.name === 'checkout-thank-you';
 		const isGravatarDomain =
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
-			( isCheckoutSection && currentQuery?.isGravatarDomain === '1' );
+			( isCheckoutSection && hasGravatarDomainUrlParam( state ) );
 
 		return {
 			masterbarIsHidden,
