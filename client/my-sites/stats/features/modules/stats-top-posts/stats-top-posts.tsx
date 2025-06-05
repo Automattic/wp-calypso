@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
+import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -32,15 +33,24 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const mainStatType = 'statsTopPosts';
-	const subStatType = 'statsArchives';
+	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
+
+	const mainStatType = 'statsTopPosts' as const;
+	const subStatType = 'statsArchives' as const;
+
+	const options = [
+		{ value: mainStatType, label: translate( 'Post & pages' ) },
+		{ value: subStatType, label: translate( 'Archive' ) },
+	];
+
+	type OptionType = ( typeof options )[ number ];
+	const [ statType, setStatType ] = useState< OptionType[ 'value' ] >( 'statsTopPosts' );
+	const onStatTypeChange = ( option: OptionType ) => setStatType( option.value );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
 		: TOP_POSTS_SUPPORT_URL;
-
-	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
 
 	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
@@ -51,9 +61,6 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const isRequestingData = isArchiveBreakdownEnabled
 		? isRequestingTopPostsData || isRequestingArchivesData
 		: isRequestingTopPostsData;
-
-	// TODO: Toggle the statType with a control later.
-	const statType = isArchiveBreakdownEnabled ? subStatType : mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
@@ -122,6 +129,16 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
+					{ ...( isArchiveBreakdownEnabled && {
+						toggleControl: (
+							<SimplifiedSegmentedControl
+								options={ options }
+								initialSelected={ statType }
+								onSelect={ onStatTypeChange }
+							/>
+						),
+						mainItemLabel: options.find( ( option ) => option.value === statType )?.label,
+					} ) }
 				/>
 			) }
 			{ presentEmptyUI && (
