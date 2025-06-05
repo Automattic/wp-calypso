@@ -327,6 +327,13 @@ export function agencyBlogQuery( siteId: string ) {
 		queryFn: () => {
 			return fetchAgencyBlogBySiteId( siteId );
 		},
+		retry: ( failureCount: number, error: { code?: string } ) => {
+			if ( error.hasOwnProperty( 'code' ) && error.code === 'partner_for_blog_not_found' ) {
+				return false;
+			}
+
+			return failureCount < 3;
+		},
 	};
 }
 
