@@ -165,7 +165,7 @@ const useSubscriberRemoveMutation = (
 			// Get the current count data
 			const previousCountData = queryClient.getQueryData< { total_subscribers: number } >( [
 				'subscribers',
-				'count',
+				'counts',
 				siteId,
 			] );
 
