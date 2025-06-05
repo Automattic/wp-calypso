@@ -2,6 +2,8 @@ import { DataForm } from '@automattic/dataviews';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	Card,
+	CardBody,
 	Button,
 	CheckboxControl,
 	ExternalLink,
@@ -11,7 +13,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import type { SiteSettings } from '../../data/types';
+import { ShareSiteForm } from './share-site-form';
+import type { Site, SiteSettings } from '../../data/types';
 import type { Field, Form } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
@@ -93,9 +96,11 @@ const form = {
 } satisfies Form;
 
 export function PrivacyForm( {
+	site,
 	settings,
 	mutation,
 }: {
+	site: Site;
 	settings: SiteSettings;
 	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
 } ) {
@@ -128,46 +133,55 @@ export function PrivacyForm( {
 	};
 
 	return (
-		<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
-			<VStack spacing={ 4 }>
-				<DataForm< SiteSettings >
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits: Partial< SiteSettings > ) => {
-						setFormData( ( data ) => {
-							const newFormData = { ...data, ...edits };
+		<>
+			<Card>
+				<CardBody>
+					<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
+						<VStack spacing={ 4 }>
+							<DataForm< SiteSettings >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< SiteSettings > ) => {
+									setFormData( ( data ) => {
+										const newFormData = { ...data, ...edits };
 
-							if ( edits.wpcom_site_visibility !== undefined ) {
-								// Forget any previous edits to the discoverability controls when the visibility changes.
-								newFormData.wpcom_discourage_search_engines =
-									settings.wpcom_discourage_search_engines;
-								newFormData.wpcom_prevent_third_party_sharing =
-									settings.wpcom_discourage_search_engines ||
-									settings.wpcom_prevent_third_party_sharing;
-							}
+										if ( edits.wpcom_site_visibility !== undefined ) {
+											// Forget any previous edits to the discoverability controls when the visibility changes.
+											newFormData.wpcom_discourage_search_engines =
+												settings.wpcom_discourage_search_engines;
+											newFormData.wpcom_prevent_third_party_sharing =
+												settings.wpcom_discourage_search_engines ||
+												settings.wpcom_prevent_third_party_sharing;
+										}
 
-							if ( edits.wpcom_discourage_search_engines === true ) {
-								// Checking the search engine box forces the third party checkbox too.
-								newFormData.wpcom_prevent_third_party_sharing = true;
-							}
+										if ( edits.wpcom_discourage_search_engines === true ) {
+											// Checking the search engine box forces the third party checkbox too.
+											newFormData.wpcom_prevent_third_party_sharing = true;
+										}
 
-							return newFormData;
-						} );
-					} }
-				/>
-				<HStack justify="flex-start">
-					<Button
-						variant="primary"
-						__next40pxDefaultSize
-						type="submit"
-						isBusy={ isPending }
-						disabled={ isPending || ! isDirty }
-					>
-						{ __( 'Save' ) }
-					</Button>
-				</HStack>
-			</VStack>
-		</form>
+										return newFormData;
+									} );
+								} }
+							/>
+							<HStack justify="flex-start">
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					</form>
+				</CardBody>
+			</Card>
+
+			{ settings.wpcom_site_visibility === 'coming-soon' &&
+				formData.wpcom_site_visibility === 'coming-soon' && <ShareSiteForm site={ site } /> }
+		</>
 	);
 }

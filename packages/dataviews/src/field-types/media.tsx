@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import type { SortDirection, ValidationContext } from '../types';
+import type {
+	SortDirection,
+	ValidationContext,
+	FieldTypeDefinition,
+} from '../types';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	return 0;
@@ -24,7 +28,5 @@ export default {
 	Edit: null,
 	render: () => null,
 	enableSorting: false,
-	filterBy: {
-		operators: [],
-	},
-};
+	filterBy: false,
+} satisfies FieldTypeDefinition< any >;

@@ -10,8 +10,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { agencyBlogQuery } from '../../app/queries';
-import { Notice } from '../../components/notice';
-import type { AgencyBlog, Site } from '../../data/types';
+import Notice from '../../components/notice';
+import type { Site, AgencyBlog } from '../../data/types';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
 	if ( ! agency ) {
@@ -99,23 +99,23 @@ export function LaunchAgencyDevelopmentSiteForm( {
 
 export function LaunchForm( { site }: { site: Site } ) {
 	return (
-		<VStack spacing={ 4 } alignment="left">
-			<Text>
-				{ __(
-					'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-				) }
-			</Text>
-			<Button
-				__next40pxDefaultSize
-				variant="primary"
-				href={ addQueryArgs( '/start/launch-site', {
-					siteSlug: site.slug,
-					new: site.name,
-					hide_initial_query: 'yes',
-				} ) }
-			>
-				{ __( 'Launch site' ) }
-			</Button>
-		</VStack>
+		<Notice
+			title={ __( "Your site hasn't been launched yet" ) }
+			actions={
+				<Button
+					size="compact"
+					variant="primary"
+					href={ addQueryArgs( '/start/launch-site', {
+						siteSlug: site.slug,
+						new: site.name,
+						hide_initial_query: 'yes',
+					} ) }
+				>
+					{ __( 'Launch site' ) }
+				</Button>
+			}
+		>
+			{ __( 'It is hidden from visitors behind a "Coming Soon" notice until it is launched.' ) }
+		</Notice>
 	);
 }
