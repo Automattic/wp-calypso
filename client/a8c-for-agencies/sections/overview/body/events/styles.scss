@@ -56,15 +56,14 @@
 				.a4a-event__date {
 					@include heading-small;
 					text-transform: uppercase;
+				}
 
-					&--klaviyo {
-						--color-klaviyo: #b84f0a;
-						color: var(--color-klaviyo);
-					}
+				.a4a-event__date--klaviyo {
+					color: var(--color-klaviyo);
+				}
 
-					&--woo {
-						color: var(--studio-woocommerce-purple-60);
-					}
+				.a4a-event__date--woo {
+					color: var(--color-woo);
 				}
 
 				.a4a-event__title {
@@ -73,7 +72,7 @@
 
 				.a4a-event__meta {
 					@include body-small;
-					color: var(--color-studio-gray-50);
+					color: var(--color-neutral-50);
 					margin: 0;
 				}
 			}
@@ -96,14 +95,14 @@
 			background-repeat: no-repeat;
 			width: 100%;
 			height: 100%;
+		}
 
-			&--klaviyo {
-				background-size: 90%;
-			}
+		.a4a-event__image--klaviyo {
+			background-size: 90%;
+		}
 
-			&--woo {
-				background-size: auto 110%;
-			}
+		.a4a-event__image--woo {
+			background-size: auto 110%;
 		}
 
 		@container (max-width: 60ch) {
