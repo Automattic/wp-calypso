@@ -27,7 +27,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/settings/taxonomies/post_tag/': __( 'post tag' ),
 		'/settings/writing/': __( 'writing settings' ),
 		'/sites': __( 'manage sites' ),
-		'/subscribers': __( 'subscribers' ),
 		'/tags': __( 'tags' ),
 		'/woocommerce': __( 'woocommerce' ),
 		'/wp-admin/admin.php?page=akismet-key-config': __( 'site spam' ),
