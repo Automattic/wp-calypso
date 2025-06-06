@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN, recordSignupComplete } from 'calypso/lib/analytics/signup';
+import { useExperiment } from 'calypso/lib/explat';
 import { getSignupIsNewUserAndClear } from 'calypso/signup/storageUtils';
 import { useSite } from './use-site';
 import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
@@ -10,6 +11,10 @@ import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
 export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
+
+	useExperiment( 'calypso_signup_simplified_onboarding_remove_focused_launchpad', {
+		isEligible: flow === 'onboarding',
+	} );
 
 	const {
 		userId,

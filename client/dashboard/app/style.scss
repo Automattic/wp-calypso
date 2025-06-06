@@ -44,11 +44,6 @@ a {
 	font-size: $font-size-medium;
 }
 
-h1 {
-	font-family: var( --dashboard-h1__font-family );
-	font-weight: var( --dashboard-h1__font-weight ) !important;
-}
-
 // This is a temporary fix to match forms with the design.
 // The desired approach would be to create a layout component to wrap the form fields.
 // See: https://github.com/Automattic/wp-calypso/pull/103978

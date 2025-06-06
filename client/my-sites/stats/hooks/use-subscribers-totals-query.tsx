@@ -103,12 +103,14 @@ const selectSubscribers = ( payload: {
 // email_subscribers includes both email and wpcom subscribers so it can't be used for calculations
 const selectPaidSubscribers = ( payload: {
 	counts: {
+		total_subscribers: number;
 		email_subscribers: number;
 		paid_subscribers: number;
 		social_followers: number;
 	};
 } ) => {
 	return {
+		total_subscribers: payload?.counts?.total_subscribers,
 		email_subscribers: payload?.counts?.email_subscribers,
 		paid_subscribers: payload?.counts?.paid_subscribers,
 		social_followers: payload?.counts?.social_followers,

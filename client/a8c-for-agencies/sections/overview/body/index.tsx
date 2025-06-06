@@ -1,4 +1,5 @@
 import OverviewBodyEvents from './events';
+import { isEnabled } from '@automattic/calypso-config';
 import OverviewBodyHosting from './hosting';
 import OverviewBodyIntroCards from './intro-cards';
 import OverviewBodyNextSteps from './next-steps';
@@ -7,8 +8,8 @@ import OverviewBodyProducts from './products';
 const OverviewBody = () => {
 	return (
 		<div className="overview-body">
-			<OverviewBodyIntroCards />
-			<OverviewBodyEvents />
+			{ ! isEnabled( 'a4a-unified-onboarding-tour' ) && <OverviewBodyIntroCards /> }
+      <OverviewBodyEvents />
 			<OverviewBodyNextSteps />
 			<OverviewBodyHosting />
 			<OverviewBodyProducts />
