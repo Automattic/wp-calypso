@@ -6,6 +6,9 @@ type Props = {
 	children: React.ReactNode;
 };
 
+/**
+ * A router like MemoryRouter, but it persists the history to the server using user preferences.
+ */
 export const PersistentRouter = ( { children }: Props ) => {
 	const { history, state } = usePersistedHistory();
 
