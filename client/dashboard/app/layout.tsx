@@ -32,8 +32,12 @@ function AnalyticsProviderWithClient( { children }: { children: React.ReactNode 
 			recordTracksEvent( eventName, properties ) {
 				recordTracksEvent( eventName, properties );
 			},
-			recordPageView( url, title ) {
-				recordTracksPageViewWithPageParams( url, { title } );
+
+			// The title property is used by Google Analytics not Tracks. The hosting
+			// dashboard doesn't use Google Analytics for now.
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			recordPageView( url, _title ) {
+				recordTracksPageViewWithPageParams( url );
 			},
 		} ),
 		[]
