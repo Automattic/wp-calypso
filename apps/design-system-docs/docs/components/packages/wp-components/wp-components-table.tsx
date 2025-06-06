@@ -1,3 +1,4 @@
+import useIsBrowser from '@docusaurus/useIsBrowser';
 import { DataViews, filterSortAndPaginate, type Field, type View } from '@wordpress/dataviews';
 import { useState } from 'react';
 import { data, statuses, type ComponentData } from './data';
@@ -60,6 +61,8 @@ const FIELDS: Field< ComponentData >[] = [
 ];
 
 export function WPComponentsTable() {
+	const isBrowser = useIsBrowser();
+
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		page: 1,
@@ -70,6 +73,11 @@ export function WPComponentsTable() {
 		titleField: 'name',
 		fields: [ 'status', 'whereUsed', 'docs', 'figma', 'notes' ],
 	} );
+
+	// DataViews includes Emotion components, and thus cannot be rendered on the server.
+	if ( ! isBrowser ) {
+		return null;
+	}
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( data, view, FIELDS );
 
