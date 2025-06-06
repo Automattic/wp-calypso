@@ -550,11 +550,11 @@ export default function CheckoutMain( {
 
 	const gravatarColors = isGravatarDomain
 		? {
-				primary: colors[ 'Gravatar Blue' ],
-				primaryBorder: colors[ 'Gravatar Blue 80' ],
-				primaryOver: colors[ 'Gravatar Blue 60' ],
-				success: colors[ 'Gravatar Blue' ],
-				discount: colors[ 'Gravatar Blue' ],
+				primary: '#1d4fc4',
+				primaryBorder: '#001c5f',
+				primaryOver: '#002e9b',
+				success: '#1d4fc4',
+				discount: '#1d4fc4',
 		  }
 		: {};
 	const jetpackColors = isJetpackNotAtomic
