@@ -11,10 +11,7 @@ import SiteVisibilitySettings from '../index';
 function render( ui: React.ReactElement ) {
 	const queryClient = new QueryClient();
 	const router = createRouter( {
-		routeTree: createRootRoute( {
-			component: () => ui,
-			staticData: { analytics_title: '' },
-		} ),
+		routeTree: createRootRoute( { component: () => ui } ),
 	} );
 	return testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>

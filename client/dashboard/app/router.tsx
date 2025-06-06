@@ -38,23 +38,15 @@ import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
 
-declare module '@tanstack/react-router' {
-	interface StaticDataRouteOption {
-		// An untranslated title recorded in analytics.
-		analytics_title: string;
-	}
-}
-
 interface RouteContext {
 	config?: AppConfig;
 }
 
-const rootRoute = createRootRoute( { component: Root, staticData: { analytics_title: '' } } );
+const rootRoute = createRootRoute( { component: Root } );
 
 const indexRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '/',
-	staticData: { analytics_title: '' },
 	beforeLoad: ( { context }: { context: RouteContext } ) => {
 		if ( context.config ) {
 			throw redirect( { to: context.config.mainRoute } );
@@ -65,7 +57,6 @@ const indexRoute = createRoute( {
 const overviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'overview',
-	staticData: { analytics_title: 'Agency Overview' },
 } ).lazy( () =>
 	import( '../agency-overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-overview' )( {
@@ -77,7 +68,6 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	staticData: { analytics_title: 'Sites' },
 	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
@@ -90,7 +80,6 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	staticData: { analytics_title: 'Site' },
 	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
@@ -103,7 +92,6 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	staticData: { analytics_title: 'Site > Overview' },
 	loader: ( { params: { siteSlug }, preload } ) =>
 		Promise.all( [
 			// The current plan is nice to have preloaded, but not blocking for
@@ -122,7 +110,6 @@ const siteOverviewRoute = createRoute( {
 const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
-	staticData: { analytics_title: 'Site > Deployments' },
 } ).lazy( () =>
 	import( '../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -134,7 +121,6 @@ const siteDeploymentsRoute = createRoute( {
 const sitePerformanceRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'performance',
-	staticData: { analytics_title: 'Site > Performance' },
 } ).lazy( () =>
 	import( '../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -146,7 +132,6 @@ const sitePerformanceRoute = createRoute( {
 const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
-	staticData: { analytics_title: 'Site > Settings' },
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
@@ -160,7 +145,6 @@ const siteSettingsRoute = createRoute( {
 const siteSettingsSiteVisibilityRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/site-visibility',
-	staticData: { analytics_title: 'Site > Settings > Site visibility' },
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
@@ -174,7 +158,6 @@ const siteSettingsSiteVisibilityRoute = createRoute( {
 const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/subscription-gifting',
-	staticData: { analytics_title: 'Site > Settings > Subscription gifting' },
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
@@ -188,7 +171,6 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
-	staticData: { analytics_title: 'Site > Settings > WordPress' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateWordPressVersion( site ) ) {
@@ -206,7 +188,6 @@ const siteSettingsWordPressRoute = createRoute( {
 const siteSettingsPHPRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/php',
-	staticData: { analytics_title: 'Site > Settings > PHP' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdatePHPVersion( site ) ) {
@@ -224,7 +205,6 @@ const siteSettingsPHPRoute = createRoute( {
 const siteSettingsDatabaseRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/database',
-	staticData: { analytics_title: 'Site > Settings > Database' },
 } ).lazy( () =>
 	import( '../sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-database' )( {
@@ -236,7 +216,6 @@ const siteSettingsDatabaseRoute = createRoute( {
 const siteSettingsAgencyRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/agency',
-	staticData: { analytics_title: 'Site > Settings > PHP' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( site.is_wpcom_atomic ) {
@@ -254,7 +233,6 @@ const siteSettingsAgencyRoute = createRoute( {
 const siteSettingsHundredYearPlanRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/hundred-year-plan',
-	staticData: { analytics_title: 'Site > Settings > Hundred year plan' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateHundredYearPlanFeatures( site ) ) {
@@ -272,7 +250,6 @@ const siteSettingsHundredYearPlanRoute = createRoute( {
 const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/primary-data-center',
-	staticData: { analytics_title: 'Site > Settings > Primary data center' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canGetPrimaryDataCenter( site ) ) {
@@ -290,7 +267,6 @@ const siteSettingsPrimaryDataCenterRoute = createRoute( {
 const siteSettingsStaticFile404Route = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/static-file-404',
-	staticData: { analytics_title: 'Site > Settings > Static file 404' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canSetStaticFile404Handling( site ) ) {
@@ -308,7 +284,6 @@ const siteSettingsStaticFile404Route = createRoute( {
 const siteSettingsCachingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/caching',
-	staticData: { analytics_title: 'Site > Settings > Caching' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateCaching( site ) ) {
@@ -326,7 +301,6 @@ const siteSettingsCachingRoute = createRoute( {
 const siteSettingsDefensiveModeRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/defensive-mode',
-	staticData: { analytics_title: 'Site > Settings > Defensive mode' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateDefensiveMode( site ) ) {
@@ -344,7 +318,6 @@ const siteSettingsDefensiveModeRoute = createRoute( {
 const siteSettingsTransferSiteRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/transfer-site',
-	staticData: { analytics_title: 'Site > Settings > Transfer site' },
 } ).lazy( () =>
 	import( '../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
@@ -356,7 +329,6 @@ const siteSettingsTransferSiteRoute = createRoute( {
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	staticData: { analytics_title: 'Domains' },
 	loader: () => queryClient.ensureQueryData( domainsQuery() ),
 } ).lazy( () =>
 	import( '../domains' ).then( ( d ) =>
@@ -369,7 +341,6 @@ const domainsRoute = createRoute( {
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	staticData: { analytics_title: 'Emails' },
 	loader: () => queryClient.ensureQueryData( emailsQuery() ),
 } ).lazy( () =>
 	import( '../emails' ).then( ( d ) =>
@@ -382,7 +353,6 @@ const emailsRoute = createRoute( {
 const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	staticData: { analytics_title: 'Me' },
 	loader: () => queryClient.ensureQueryData( profileQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
@@ -406,7 +376,6 @@ const meRoute = createRoute( {
 const profileRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
-	staticData: { analytics_title: 'Me > Profile' },
 } ).lazy( () =>
 	import( '../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
@@ -418,7 +387,6 @@ const profileRoute = createRoute( {
 const billingRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing',
-	staticData: { analytics_title: 'Me > Billing' },
 } ).lazy( () =>
 	import( '../me/billing' ).then( ( d ) =>
 		createLazyRoute( 'billing' )( {
@@ -430,7 +398,6 @@ const billingRoute = createRoute( {
 const billingHistoryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/billing-history',
-	staticData: { analytics_title: 'Me > Billing > Billing history' },
 } ).lazy( () =>
 	import( '../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -442,7 +409,6 @@ const billingHistoryRoute = createRoute( {
 const activeSubscriptionsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/active-subscriptions',
-	staticData: { analytics_title: 'Me > Billing > Active subscriptions' },
 } ).lazy( () =>
 	import( '../me/active-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'active-subscriptions' )( {
@@ -454,7 +420,6 @@ const activeSubscriptionsRoute = createRoute( {
 const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
-	staticData: { analytics_title: 'Me > Billing > Payment methods' },
 } ).lazy( () =>
 	import( '../me/payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
@@ -466,7 +431,6 @@ const paymentMethodsRoute = createRoute( {
 const taxDetailsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/tax-details',
-	staticData: { analytics_title: 'Me > Billing > Tax details' },
 } ).lazy( () =>
 	import( '../me/tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
@@ -478,7 +442,6 @@ const taxDetailsRoute = createRoute( {
 const securityRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security',
-	staticData: { analytics_title: 'Me > Security' },
 } ).lazy( () =>
 	import( '../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {
@@ -490,7 +453,6 @@ const securityRoute = createRoute( {
 const privacyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
-	staticData: { analytics_title: 'Me > Privacy' },
 } ).lazy( () =>
 	import( '../me/privacy' ).then( ( d ) =>
 		createLazyRoute( 'privacy' )( {
@@ -502,7 +464,6 @@ const privacyRoute = createRoute( {
 const notificationsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'notifications',
-	staticData: { analytics_title: 'Me > Notifications' },
 } ).lazy( () =>
 	import( '../me/notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {

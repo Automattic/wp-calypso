@@ -27,12 +27,11 @@ import {
 } from 'calypso/dashboard/utils/site-features';
 import Root from './root';
 
-const rootRoute = createRootRoute( { component: Root, staticData: { analytics_title: '' } } );
+const rootRoute = createRootRoute( { component: Root } );
 
 const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings',
-	staticData: { analytics_title: '' },
 	loader: ( { params: { siteSlug } } ) => {
 		throw redirect( { to: `/${ siteSlug }` } );
 	},
@@ -41,7 +40,6 @@ const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 const dashboardSiteSettingsCompatibilityRouteWithFeature = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings/$feature',
-	staticData: { analytics_title: '' },
 	loader: ( { params: { siteSlug, feature } } ) => {
 		throw redirect( { to: `/${ siteSlug }/${ feature }` } );
 	},
@@ -50,7 +48,6 @@ const dashboardSiteSettingsCompatibilityRouteWithFeature = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '$siteSlug',
-	staticData: { analytics_title: 'Sites > Settings' },
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 	component: () => <Outlet />,
@@ -59,7 +56,6 @@ const siteRoute = createRoute( {
 const settingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	staticData: { analytics_title: 'Sites > Settings' },
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'settings' )( {
@@ -71,7 +67,6 @@ const settingsRoute = createRoute( {
 const siteVisibilityRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'site-visibility',
-	staticData: { analytics_title: 'Sites > Settings > Site visibility' },
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
@@ -85,7 +80,6 @@ const siteVisibilityRoute = createRoute( {
 const subscriptionGiftingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'subscription-gifting',
-	staticData: { analytics_title: 'Sites > Settings > Subscription gifting' },
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
@@ -99,7 +93,6 @@ const subscriptionGiftingRoute = createRoute( {
 const databaseRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'database',
-	staticData: { analytics_title: 'Sites > Settings > Database' },
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
@@ -111,7 +104,6 @@ const databaseRoute = createRoute( {
 const wordpressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'wordpress',
-	staticData: { analytics_title: 'Sites > Settings > WordPress' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateWordPressVersion( site ) ) {
@@ -129,7 +121,6 @@ const wordpressRoute = createRoute( {
 const phpRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'php',
-	staticData: { analytics_title: 'Sites > Settings > PHP' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdatePHPVersion( site ) ) {
@@ -147,7 +138,6 @@ const phpRoute = createRoute( {
 const primaryDataCenterRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'primary-data-center',
-	staticData: { analytics_title: 'Sites > Settings > Primary data center' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canGetPrimaryDataCenter( site ) ) {
@@ -165,7 +155,6 @@ const primaryDataCenterRoute = createRoute( {
 const staticFile404Route = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'static-file-404',
-	staticData: { analytics_title: 'Sites > Settings > Static file 404' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canSetStaticFile404Handling( site ) ) {
@@ -183,7 +172,6 @@ const staticFile404Route = createRoute( {
 const defensiveModeRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'defensive-mode',
-	staticData: { analytics_title: 'Sites > Settings > Defensive mode' },
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateDefensiveMode( site ) ) {
@@ -201,7 +189,6 @@ const defensiveModeRoute = createRoute( {
 const transferSiteRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'transfer-site',
-	staticData: { analytics_title: 'Sites > Settings > Transfer site' },
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
