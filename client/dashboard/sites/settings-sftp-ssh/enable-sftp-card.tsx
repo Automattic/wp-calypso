@@ -53,7 +53,7 @@ export default function EnableSftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'Get started with SFTP/SSH' ) }
 						description={
@@ -67,8 +67,6 @@ export default function EnableSftpCard( {
 						}
 						level={ 3 }
 					/>
-				</VStack>
-				<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
 					{ /* TODO: Replace the Panel with the Accordion component when it's ready */ }
 					<Panel>
 						<PanelBody title={ __( 'What is SFTP?' ) } initialOpen={ false }>
@@ -106,16 +104,16 @@ export default function EnableSftpCard( {
 							}
 						) }
 					</Text>
+					<HStack justify="flex-start">
+						<Button
+							variant="primary"
+							isBusy={ mutation.isPending }
+							onClick={ handleCreateCredentials }
+						>
+							{ __( 'Create credentials' ) }
+						</Button>
+					</HStack>
 				</VStack>
-				<HStack justify="flex-start" style={ { padding: '8px 0' } }>
-					<Button
-						variant="primary"
-						isBusy={ mutation.isPending }
-						onClick={ handleCreateCredentials }
-					>
-						{ __( 'Create credentials' ) }
-					</Button>
-				</HStack>
 			</CardBody>
 		</Card>
 	);

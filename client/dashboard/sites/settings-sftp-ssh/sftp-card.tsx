@@ -152,7 +152,7 @@ export default function SftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'SFTP' ) }
 						description={ createInterpolateElement(
@@ -165,26 +165,24 @@ export default function SftpCard( {
 						) }
 						level={ 3 }
 					/>
-				</VStack>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<DataForm< SftpCardFormData >
 						data={ formData }
 						fields={ fields }
 						form={ form }
 						onChange={ noop }
 					/>
+					{ ! password && (
+						<HStack justify="flex-start">
+							<Button
+								variant="secondary"
+								isBusy={ mutation.isPending }
+								onClick={ () => setShowResetPasswordConfirmDialog( true ) }
+							>
+								{ __( 'Reset password' ) }
+							</Button>
+						</HStack>
+					) }
 				</VStack>
-				{ ! password && (
-					<HStack style={ { padding: '8px 0' } }>
-						<Button
-							variant="secondary"
-							isBusy={ mutation.isPending }
-							onClick={ () => setShowResetPasswordConfirmDialog( true ) }
-						>
-							{ __( 'Reset password' ) }
-						</Button>
-					</HStack>
-				) }
 			</CardBody>
 			<ConfirmDialog
 				isOpen={ showResetPasswordConfirmDialog }

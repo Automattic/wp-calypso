@@ -293,7 +293,7 @@ export default function SshCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'SSH' ) }
 						description={ createInterpolateElement(
@@ -307,8 +307,6 @@ export default function SshCard( {
 						) }
 						level={ 3 }
 					/>
-				</VStack>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<ToggleControl
 						label={ __( 'Enable SSH access for this site' ) }
 						checked={ sshEnabled }
@@ -326,27 +324,27 @@ export default function SshCard( {
 							} }
 						/>
 					) }
+					{ sshEnabled && ! userKeyIsAttached && (
+						<HStack justify="flex-start">
+							<Button
+								variant="primary"
+								isBusy={ attachSshKeyMutation.isPending }
+								disabled={ ! hasProfileSshKeys }
+								onClick={ handleAttachSshKey }
+							>
+								{ __( 'Attach SSH key to site' ) }
+							</Button>
+							<Button
+								variant="secondary"
+								target="_blank"
+								href="/me/security/ssh-key"
+								rel="noreferrer"
+							>
+								{ __( 'Add new SSH key ↗' ) }
+							</Button>
+						</HStack>
+					) }
 				</VStack>
-				{ sshEnabled && ! userKeyIsAttached && (
-					<HStack justify="flex-start" style={ { padding: '8px 0' } }>
-						<Button
-							variant="primary"
-							isBusy={ attachSshKeyMutation.isPending }
-							disabled={ ! hasProfileSshKeys }
-							onClick={ handleAttachSshKey }
-						>
-							{ __( 'Attach SSH key to site' ) }
-						</Button>
-						<Button
-							variant="secondary"
-							target="_blank"
-							href="/me/security/ssh-key"
-							rel="noreferrer"
-						>
-							{ __( 'Add new SSH key ↗' ) }
-						</Button>
-					</HStack>
-				) }
 			</CardBody>
 		</Card>
 	);
