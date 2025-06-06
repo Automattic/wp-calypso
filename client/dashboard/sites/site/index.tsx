@@ -34,7 +34,7 @@ function Site() {
 									onClick={ () => onToggle() }
 								>
 									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<SiteIcon site={ site } size={ 24 } /> { site.name }
+										<SiteIcon site={ site } size={ 16 } /> { site.name }
 									</div>
 								</Button>
 							) }
