@@ -24,7 +24,7 @@ export interface Option< Value extends any = any > {
 	description?: string;
 }
 
-interface FilterByConfig {
+export interface FilterByConfig {
 	/**
 	 * The list of operators supported by the field.
 	 */
@@ -37,6 +37,18 @@ interface FilterByConfig {
 	 * except for the list layout where it behaves like a secondary filter.
 	 */
 	isPrimary?: boolean;
+}
+
+interface FilterConfigForType {
+	/**
+	 * What operators are used by default.
+	 */
+	defaultOperators: Operator[];
+
+	/**
+	 * What operators are supported by the field.
+	 */
+	validOperators: Operator[];
 }
 
 export type Operator =
@@ -93,7 +105,7 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * The filter config for the field.
 	 */
-	filterBy: FilterByConfig | false;
+	filterBy: FilterConfigForType | false;
 
 	/**
 	 * Whether the field is sortable.

@@ -7,8 +7,20 @@ import type { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import getFieldTypeDefinition from './field-types';
-import type { DataViewRenderFieldProps, Field, NormalizedField } from './types';
+import type {
+	DataViewRenderFieldProps,
+	Field,
+	FieldTypeDefinition,
+	FilterByConfig,
+	NormalizedField,
+} from './types';
 import { getControl } from './dataform-controls';
+import {
+	ALL_OPERATORS,
+	OPERATOR_IS_ANY,
+	OPERATOR_IS_NONE,
+	SINGLE_SELECTION_OPERATORS,
+} from './constants';
 
 const getValueFromId =
 	( id: string ) =>
@@ -25,6 +37,57 @@ const getValueFromId =
 
 		return value;
 	};
+
+function getFilterBy< Item >(
+	field: Field< Item >,
+	fieldTypeDefinition: FieldTypeDefinition< Item >
+): FilterByConfig | false {
+	if ( field.filterBy === false ) {
+		return false;
+	}
+
+	if ( typeof field.filterBy === 'object' ) {
+		let operators = field.filterBy.operators;
+
+		// Assign default values if no operator was provided.
+		if ( ! operators || ! Array.isArray( operators ) ) {
+			operators = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
+		}
+
+		// Make sure only valid operators are included.
+		let validOperators = ALL_OPERATORS;
+		if ( typeof fieldTypeDefinition.filterBy === 'object' ) {
+			validOperators = fieldTypeDefinition.filterBy.validOperators;
+		}
+		operators = operators.filter( ( operator ) =>
+			validOperators.includes( operator )
+		);
+
+		// Do not allow mixing single & multiselection operators.
+		// Remove multiselection operators if any of the single selection ones is present.
+		const hasSingleSelectionOperator = operators.some( ( operator ) =>
+			SINGLE_SELECTION_OPERATORS.includes( operator )
+		);
+		if ( hasSingleSelectionOperator ) {
+			operators = operators.filter( ( operator ) =>
+				SINGLE_SELECTION_OPERATORS.includes( operator )
+			);
+		}
+
+		return {
+			isPrimary: !! field.filterBy.isPrimary,
+			operators,
+		};
+	}
+
+	if ( fieldTypeDefinition.filterBy === false ) {
+		return false;
+	}
+
+	return {
+		operators: fieldTypeDefinition.filterBy.defaultOperators,
+	};
+}
 
 /**
  * Apply default values and normalize the fields config.
@@ -75,6 +138,8 @@ export function normalizeFields< Item >(
 				 )( { item, field } );
 			};
 
+		const filterBy = getFilterBy( field, fieldTypeDefinition );
+
 		return {
 			...field,
 			label: field.label || field.id,
@@ -89,7 +154,7 @@ export function normalizeFields< Item >(
 				field.enableSorting ??
 				fieldTypeDefinition.enableSorting ??
 				true,
-			filterBy: field.filterBy ?? fieldTypeDefinition.filterBy,
+			filterBy,
 		};
 	} );
 }

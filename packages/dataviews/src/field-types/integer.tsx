@@ -16,6 +16,10 @@ import {
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_IS_ANY,
+	OPERATOR_IS_NONE,
+	OPERATOR_IS_ALL,
+	OPERATOR_IS_NOT_ALL,
 } from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
@@ -42,15 +46,6 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const operators: Operator[] = [
-	OPERATOR_IS,
-	OPERATOR_IS_NOT,
-	OPERATOR_LESS_THAN,
-	OPERATOR_GREATER_THAN,
-	OPERATOR_LESS_THAN_OR_EQUAL,
-	OPERATOR_GREATER_THAN_OR_EQUAL,
-];
-
 export default {
 	sort,
 	isValid,
@@ -62,6 +57,27 @@ export default {
 	},
 	enableSorting: true,
 	filterBy: {
-		operators,
+		defaultOperators: [
+			OPERATOR_IS,
+			OPERATOR_IS_NOT,
+			OPERATOR_LESS_THAN,
+			OPERATOR_GREATER_THAN,
+			OPERATOR_LESS_THAN_OR_EQUAL,
+			OPERATOR_GREATER_THAN_OR_EQUAL,
+		],
+		validOperators: [
+			// Single-selection
+			OPERATOR_IS,
+			OPERATOR_IS_NOT,
+			OPERATOR_LESS_THAN,
+			OPERATOR_GREATER_THAN,
+			OPERATOR_LESS_THAN_OR_EQUAL,
+			OPERATOR_GREATER_THAN_OR_EQUAL,
+			// Multiple-selection
+			OPERATOR_IS_ANY,
+			OPERATOR_IS_NONE,
+			OPERATOR_IS_ALL,
+			OPERATOR_IS_NOT_ALL,
+		],
 	},
 } satisfies FieldTypeDefinition< any >;
