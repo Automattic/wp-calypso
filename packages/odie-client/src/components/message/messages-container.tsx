@@ -6,6 +6,7 @@ import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
+import { getOdieInitialMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import {
 	useAutoScroll,
@@ -14,11 +15,7 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import {
-	getOdieInitialMessage,
-	interactionHasZendeskEvent,
-	interactionHasEnded,
-} from '../../utils';
+import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';

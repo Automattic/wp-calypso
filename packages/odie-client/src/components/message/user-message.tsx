@@ -9,8 +9,8 @@ import Markdown from 'react-markdown';
 import {
 	ODIE_FORWARD_TO_FORUMS_MESSAGE,
 	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
-	ODIE_THIRD_PARTY_MESSAGE,
-	ODIE_FORCE_EMAIL_FALLBACK_MESSAGE,
+	ODIE_THIRD_PARTY_MESSAGE_CONTENT,
+	ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import {
@@ -35,14 +35,14 @@ const getDisplayMessage = (
 	forceEmailSupport?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
-		return ODIE_THIRD_PARTY_MESSAGE;
+		return ODIE_THIRD_PARTY_MESSAGE_CONTENT;
 	}
 	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
 		return messageContent;
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
-		return ODIE_FORCE_EMAIL_FALLBACK_MESSAGE;
+		return ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT;
 	}
 
 	const forwardMessage = isUserEligibleForPaidSupport
