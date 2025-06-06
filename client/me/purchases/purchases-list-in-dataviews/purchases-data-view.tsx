@@ -20,6 +20,8 @@ import {
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
+import './style.scss';
+
 const purchasesWideFields = [ 'site', 'product', 'status', 'payment-method' ];
 const purchasesDesktopFields = [ 'site', 'product', 'status' ];
 const purchasesMobileFields = [ 'product' ];
