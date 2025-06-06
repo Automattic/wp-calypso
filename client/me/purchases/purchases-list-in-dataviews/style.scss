@@ -18,6 +18,15 @@
 		text-align: right;
 	}
 
+	.dataviews-view-table__row {
+		background: var( --studio-white );
+		opacity: 1;
+
+		&:hover {
+			background-color: var( --color-neutral-0 );
+		}
+	}
+
 	.dataviews-view-table,
 	.dataviews-view-table tr {
 		max-width: 1040px;
