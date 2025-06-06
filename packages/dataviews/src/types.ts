@@ -215,6 +215,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
+	filterBy: FilterByConfig | false;
 };
 
 /**
