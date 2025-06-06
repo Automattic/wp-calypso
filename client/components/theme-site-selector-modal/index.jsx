@@ -45,8 +45,10 @@ export default function ThemeSiteSelectorModal( { isOpen, navigateOnClose = true
 		>
 			<div className="theme-site-selector-modal__content">
 				{ hasNonVisibleSites && <p>{ translate( 'Some unsupported sites are hidden.' ) }</p> }
-				{ /* eslint-disable-next-line jsx-a11y/no-autofocus */ }
-				<SiteSelector autoFocus onSiteSelect={ onSiteSelect } />
+				<SiteSelector
+					onSiteSelect={ onSiteSelect }
+					className="theme-site-selector-modal__selector"
+				/>
 			</div>
 		</Modal>
 	);
