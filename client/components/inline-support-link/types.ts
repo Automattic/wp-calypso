@@ -1,7 +1,13 @@
-export type SupportContextData = {
+export type ContextLink = {
 	link: string;
 	post_id: number;
 	blog_id?: number;
 };
 
-export type SupportContext = Record< string, SupportContextData >;
+export type ContextLinks = Record< string, ContextLink >;
+
+export type SupportDocData = {
+	link: string;
+	postId: number;
+	blogId?: number;
+};

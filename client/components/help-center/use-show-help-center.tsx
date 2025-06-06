@@ -15,7 +15,9 @@ const useShowHelpCenter = () => {
 		// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
 		if ( ! dispatch( HELP_CENTER_STORE ) ) {
 			setIsLoading( true );
-			const { HelpCenter: HelpCenterStore } = await import( '@automattic/data-stores' );
+			const { HelpCenter: HelpCenterStore } = await import(
+				/* webpackChunkName: "async-load-automattic-data-stores" */ '@automattic/data-stores'
+			);
 			HelpCenterStore.register();
 			setIsLoading( false );
 		}

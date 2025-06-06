@@ -1,15 +1,14 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import InlineSupportLink from './inline-support-link';
-
+import useSupportDocData from './use-support-doc-data';
 import './style.scss';
 
-class UnconnectedInlineSupportLink extends Component {
+class InlineSupportLink extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		supportPostId: PropTypes.number,
@@ -19,10 +18,6 @@ class UnconnectedInlineSupportLink extends Component {
 		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
 		linkTitle: PropTypes.string,
-		tracksEvent: PropTypes.string,
-		tracksOptions: PropTypes.object,
-		statsGroup: PropTypes.string,
-		statsName: PropTypes.string,
 		showSupportModal: PropTypes.bool,
 		noWrap: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -38,15 +33,20 @@ class UnconnectedInlineSupportLink extends Component {
 		noWrap: true,
 	};
 
-	onSupportLinkClick( event, supportData ) {
-		const { trackOpenDialog, onClick } = this.props;
+	onSupportLinkClick = ( event ) => {
+		const { showSupportModal, openDialog, onClick } = this.props;
+		if ( ! showSupportModal ) {
+			return;
+		}
 		onClick?.( event );
-		trackOpenDialog( event, supportData );
-	}
+		openDialog( event );
+	};
 
 	render() {
 		const {
 			className,
+			supportPostId,
+			supportLink,
 			showText,
 			showIcon,
 			linkTitle,
@@ -54,11 +54,17 @@ class UnconnectedInlineSupportLink extends Component {
 			translate,
 			children,
 			noWrap,
-			supportPostId,
-			supportLink,
-			supportContext,
-			showSupportModal,
 		} = this.props;
+
+		if ( ! supportPostId && ! supportLink ) {
+			return null;
+		}
+
+		const LinkComponent = supportPostId ? 'a' : ExternalLink;
+		const externalLinkProps = ! supportPostId && {
+			icon: showIcon,
+			iconSize,
+		};
 
 		const text = children ? children : translate( 'Learn more' );
 		let content = (
@@ -78,40 +84,74 @@ class UnconnectedInlineSupportLink extends Component {
 		}
 
 		return (
-			<InlineSupportLink
+			<LinkComponent
 				className={ clsx( 'inline-support-link', className ) }
-				title={ linkTitle }
-				supportPostId={ supportPostId }
-				supportLink={ supportLink }
-				supportContext={ supportContext }
-				disabled={ ! showSupportModal }
+				href={ supportLink }
 				onClick={ this.onSupportLinkClick }
+				target="_blank"
+				rel="noopener noreferrer"
+				title={ linkTitle }
+				{ ...externalLinkProps }
 			>
 				{ content }
-			</InlineSupportLink>
+			</LinkComponent>
 		);
 	}
 }
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
-	return {
-		trackOpenDialog: ( event, supportData ) => {
-			const analyticsEvents = [
-				...[
-					recordTracksEvent( 'calypso_inlinesupportlink_click', {
-						support_context: supportContext || null,
-						support_link: supportData.link,
-					} ),
-				],
-				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
-				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
-			];
-			if ( analyticsEvents.length > 0 ) {
-				dispatch( composeAnalytics( ...analyticsEvents ) );
-			}
-		},
+const ConnectedInlineSupportLink = ( {
+	supportPostId,
+	supportLink,
+	supportContext,
+	tracksEvent,
+	tracksOptions,
+	statsGroup,
+	statsName,
+	...props
+} ) => {
+	const { supportDocData, openSupportDoc } = useSupportDocData( {
+		supportPostId,
+		supportLink,
+		supportContext,
+	} );
+
+	const dispatch = useDispatch();
+
+	const openDialog = ( event ) => {
+		if ( ! supportDocData.postId ) {
+			return;
+		}
+
+		event.preventDefault();
+		const analyticsEvents = [
+			...[
+				recordTracksEvent( 'calypso_inlinesupportlink_click', {
+					support_context: supportContext || null,
+					support_link: supportDocData.link,
+				} ),
+			],
+			...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
+			...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
+		];
+		if ( analyticsEvents.length > 0 ) {
+			dispatch( composeAnalytics( ...analyticsEvents ) );
+		}
+
+		openSupportDoc();
 	};
+
+	if ( ! supportDocData ) {
+		return null;
+	}
+
+	return (
+		<InlineSupportLink
+			{ ...props }
+			supportPostId={ supportDocData.postId }
+			supportLink={ supportDocData.link }
+			openDialog={ openDialog }
+		/>
+	);
 };
 
-export default connect( null, mapDispatchToProps )( localize( UnconnectedInlineSupportLink ) );
+export default localize( ConnectedInlineSupportLink );
