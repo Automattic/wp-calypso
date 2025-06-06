@@ -44,6 +44,7 @@
 		align-self: center;
 		flex-shrink: 0;
 		position: relative;
+		z-index: -1;
 
 		img {
 			border-radius: 50%;
