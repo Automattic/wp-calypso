@@ -239,7 +239,12 @@ export const OdieSendMessageButton = () => {
 							isAttachingFile={ isAttachingFile }
 						/>
 					) }
-					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
+					<button
+						type="submit"
+						className={ buttonClasses }
+						disabled={ submitDisabled }
+						aria-label={ __( 'Send message', __i18n_text_domain__ ) }
+					>
 						<SendMessageIcon />
 					</button>
 				</form>
