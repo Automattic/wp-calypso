@@ -497,6 +497,12 @@ body.is-mobile-app-view {
 		}
 	}
 
+	&.is-section-checkout {
+		.cost-overrides-list-item__reason {
+			color: #1d4fc4;;
+		}
+	}
+
 	&.is-section-checkout-pending {
 		.gravatar-text-logo {
 			margin-left: 19.5px;
