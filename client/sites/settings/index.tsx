@@ -123,6 +123,7 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled( SETTINGS_PERFORMANCE ),
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,
