@@ -19,7 +19,7 @@ import {
 	type SpaceObject,
 } from '../dataviews/stories/fixtures';
 import { filterSortAndPaginate } from '../../filter-and-sort-data-view';
-import type { View, Form } from '../../types';
+import type { View, Form, Field } from '../../types';
 
 const meta = {
 	title: 'DataViews/FieldTypes',
@@ -46,27 +46,30 @@ const defaultLayouts = {
 	list: {},
 };
 
-export const All = ( {
-	type,
-	labelPosition,
-}: {
-	type: 'default' | 'regular' | 'panel';
-	labelPosition: 'default' | 'top' | 'side' | 'none';
-} ) => {
+interface FieldTypeStoryProps {
+	fields: Field< SpaceObject >[];
+	titleField?: string;
+	descriptionField?: string;
+	mediaField?: string;
+	type?: 'default' | 'regular' | 'panel';
+	labelPosition?: 'default' | 'top' | 'side' | 'none';
+}
+
+const FieldTypeStory = ( {
+	fields: storyFields,
+	titleField,
+	descriptionField,
+	mediaField,
+	type = 'default',
+	labelPosition = 'default',
+}: FieldTypeStoryProps ) => {
 	const form = useMemo(
 		() => ( {
 			type,
 			labelPosition,
-			fields: [
-				'title',
-				'description',
-				'type',
-				'isPlanet',
-				'satellites',
-				'date',
-			],
+			fields: storyFields.map( ( field ) => field.id ),
 		} ),
-		[ type, labelPosition ]
+		[ type, labelPosition, storyFields ]
 	) as Form;
 
 	const [ view, setView ] = useState< View >( {
@@ -76,18 +79,25 @@ export const All = ( {
 		perPage: 10,
 		layout: {},
 		filters: [],
-		titleField: 'title',
-		descriptionField: 'description',
-		mediaField: 'image',
-		fields: [ 'type', 'isPlanet', 'satellites', 'categories', 'date' ],
+		titleField,
+		descriptionField,
+		mediaField,
+		fields: storyFields
+			.filter(
+				( field ) =>
+					! [ titleField, descriptionField, mediaField ].includes(
+						field.id
+					)
+			)
+			.map( ( field ) => field.id ),
 	} );
 
 	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
 	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
 
 	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, fields );
-	}, [ modifiedData, view ] );
+		return filterSortAndPaginate( modifiedData, view, storyFields );
+	}, [ modifiedData, view, storyFields ] );
 
 	let selectedItem =
 		( selectedIds.length === 1 &&
@@ -102,7 +112,7 @@ export const All = ( {
 					data={ shownData }
 					paginationInfo={ paginationInfo }
 					view={ view }
-					fields={ fields }
+					fields={ storyFields }
 					onChangeView={ setView }
 					actions={ actions }
 					defaultLayouts={ defaultLayouts }
@@ -120,7 +130,7 @@ export const All = ( {
 					<DataForm
 						data={ selectedItem }
 						form={ form }
-						fields={ fields }
+						fields={ storyFields }
 						onChange={ ( updatedValues ) => {
 							const updatedItem = {
 								...selectedItem,
@@ -149,6 +159,25 @@ export const All = ( {
 				</VStack>
 			) }
 		</HStack>
+	);
+};
+
+export const All = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	return (
+		<FieldTypeStory
+			fields={ fields }
+			titleField="title"
+			descriptionField="description"
+			mediaField="image"
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -159,96 +188,17 @@ export const Text = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const textFields = useMemo(
 		() => fields.filter( ( field ) => field.type === 'text' ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ textFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -259,96 +209,17 @@ export const Integer = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const integerFields = useMemo(
 		() => fields.filter( ( field ) => field.type === 'integer' ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ integerFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -359,96 +230,17 @@ export const Boolean = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const booleanFields = useMemo(
 		() => fields.filter( ( field ) => field.type === 'boolean' ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ booleanFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -459,96 +251,17 @@ export const DateTime = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const dateTimeFields = useMemo(
 		() => fields.filter( ( field ) => field.type === 'datetime' ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ dateTimeFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -559,96 +272,17 @@ export const Email = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const emailFields = useMemo(
 		() => fields.filter( ( field ) => field.type === 'email' ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ emailFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -659,96 +293,17 @@ export const Media = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const mediaFields = useMemo(
 		() => fields.filter( ( field ) => field.type === 'media' ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ mediaFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
 
@@ -759,95 +314,16 @@ export const NoType = ( {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
-	const _fields = useMemo(
+	const noTypeFields = useMemo(
 		() => fields.filter( ( field ) => field.type === undefined ),
-		[ fields ]
+		[]
 	);
 
-	const form = useMemo(
-		() => ( {
-			type,
-			labelPosition,
-			fields: _fields.map( ( field ) => field.id ),
-		} ),
-		[ type, labelPosition ]
-	) as Form;
-
-	const [ view, setView ] = useState< View >( {
-		type: 'table' as const,
-		search: '',
-		page: 1,
-		perPage: 10,
-		layout: {},
-		filters: [],
-		fields: _fields.map( ( field ) => field.id ),
-	} );
-
-	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
-	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
-
-	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, _fields );
-	}, [ modifiedData, view ] );
-
-	let selectedItem =
-		( selectedIds.length === 1 &&
-			shownData.find( ( item ) => item.id === selectedIds[ 0 ] ) ) ||
-		null;
-
 	return (
-		<HStack alignment="stretch">
-			<div style={ { flex: 2 } }>
-				<DataViews
-					getItemId={ ( item ) => item.id.toString() }
-					data={ shownData }
-					paginationInfo={ paginationInfo }
-					view={ view }
-					fields={ _fields }
-					onChangeView={ setView }
-					actions={ actions }
-					defaultLayouts={ defaultLayouts }
-					selection={ selectedIds.map( ( id ) => id.toString() ) }
-					onChangeSelection={ ( newSelection ) =>
-						setSelectedIds(
-							newSelection.map( ( id ) => parseInt( id, 10 ) )
-						)
-					}
-				/>
-			</div>
-			{ selectedItem ? (
-				<VStack alignment="top">
-					<DataForm
-						data={ selectedItem }
-						form={ form }
-						fields={ _fields }
-						onChange={ ( updatedValues ) => {
-							const updatedItem = {
-								...selectedItem,
-								...updatedValues,
-							};
-
-							setModifiedData(
-								modifiedData.map( ( item ) =>
-									item.id === selectedItem.id
-										? updatedItem
-										: item
-								)
-							);
-						} }
-					/>
-				</VStack>
-			) : (
-				<VStack alignment="center">
-					<span
-						style={ {
-							color: '#888',
-						} }
-					>
-						Please, select a single item.
-					</span>
-				</VStack>
-			) }
-		</HStack>
+		<FieldTypeStory
+			fields={ noTypeFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
