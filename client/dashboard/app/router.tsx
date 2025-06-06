@@ -14,6 +14,8 @@ import {
 	canGetPrimaryDataCenter,
 	canSetStaticFile404Handling,
 	canUpdateCaching,
+	canUseSftp,
+	canUseSsh,
 } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
@@ -33,6 +35,8 @@ import {
 	siteEdgeCacheStatusQuery,
 	siteDefensiveModeQuery,
 	agencyBlogQuery,
+	siteSftpUsersQuery,
+	siteSshAccessStatusQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -168,17 +172,6 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
-const siteSettingsDatabaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/database',
-} ).lazy( () =>
-	import( '../sites/settings-database' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-database' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
@@ -208,6 +201,17 @@ const siteSettingsPHPRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-php' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-php' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -310,6 +314,24 @@ const siteSettingsDefensiveModeRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-defensive-mode' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsSftpSshRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/sftp-ssh',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		return Promise.all( [
+			canUseSftp( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
+			canUseSsh( site ) && queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../sites/settings-sftp-ssh' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -501,6 +523,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsCachingRoute,
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
+				siteSettingsSftpSshRoute,
 			] )
 		);
 	}

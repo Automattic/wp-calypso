@@ -152,7 +152,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleUpdateEdgeCacheStatus }>
-						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+						<VStack spacing={ 4 }>
 							<DataForm< CachingFormData >
 								data={ formData }
 								fields={ fields }

@@ -1,7 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
+import type { Site } from '../../data/types';
 
-const SiteMenu = ( { siteSlug }: { siteSlug: string } ) => {
+const SiteMenu = ( { site }: { site: Site } ) => {
+	const siteSlug = site.slug;
+
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
@@ -13,9 +16,11 @@ const SiteMenu = ( { siteSlug }: { siteSlug: string } ) => {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 				{ __( 'Performance' ) }
 			</ResponsiveMenu.Item>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
-				{ __( 'Settings' ) }
-			</ResponsiveMenu.Item>
+			{ site.capabilities.manage_options && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
+					{ __( 'Settings' ) }
+				</ResponsiveMenu.Item>
+			) }
 		</ResponsiveMenu>
 	);
 };

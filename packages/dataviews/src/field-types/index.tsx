@@ -78,8 +78,6 @@ export default function getFieldTypeDefinition< Item >(
 				: field.getValue( { item } );
 		},
 		enableSorting: true,
-		filterBy: {
-			operators: [],
-		},
+		filterBy: false,
 	};
 }

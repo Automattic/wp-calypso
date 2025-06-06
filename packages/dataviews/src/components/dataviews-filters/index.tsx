@@ -28,7 +28,10 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 	return useMemo( () => {
 		const filters: NormalizedFilter[] = [];
 		fields.forEach( ( field ) => {
-			if ( ! field.elements?.length && ! field.Edit ) {
+			if (
+				field.filterBy === false ||
+				( ! field.elements?.length && ! field.Edit )
+			) {
 				return;
 			}
 

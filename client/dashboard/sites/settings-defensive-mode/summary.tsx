@@ -26,21 +26,26 @@ export default function DefensiveModeSettingsSummary( {
 		return null;
 	}
 
-	let badge;
-	if ( data ) {
-		if ( data.enabled ) {
-			badge = {
-				text: __( 'Enabled' ),
-				intent: 'info' as const,
-			};
-		} else {
-			badge = {
-				text: __( 'Disabled' ),
-			};
+	const getBadge = () => {
+		if ( ! data ) {
+			return [];
 		}
-	} else {
-		badge = { text: __( 'Managed' ) };
-	}
+
+		if ( data.enabled ) {
+			return [
+				{
+					text: __( 'Enabled' ),
+					intent: 'info' as const,
+				},
+			];
+		}
+
+		return [
+			{
+				text: __( 'Disabled' ),
+			},
+		];
+	};
 
 	return (
 		<RouterLinkSummaryButton
@@ -48,7 +53,7 @@ export default function DefensiveModeSettingsSummary( {
 			title={ __( 'Defensive mode' ) }
 			density={ density }
 			decoration={ <Icon icon={ shield } /> }
-			badges={ [ badge ] }
+			badges={ getBadge() }
 		/>
 	);
 }

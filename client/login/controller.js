@@ -73,11 +73,12 @@ const enhanceContextWithLogin = ( context ) => {
 		( ! isJetpackLogin &&
 			Boolean( clientId ) === false &&
 			Boolean( oauth2ClientId ) === false &&
-			! isBlazePro &&
 			! isWooJPC ) ||
 		isPartnerPortalClient ||
 		isStudioLogin ||
-		isCrowdsignalLogin;
+		isCrowdsignalLogin ||
+		isGravPoweredClient ||
+		isBlazePro;
 
 	context.primary = (
 		<WPLogin

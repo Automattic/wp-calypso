@@ -44,15 +44,6 @@
 	--wp-components-color-accent: var(--color-accent);
 }
 
-/* A8C for Agencies */
-.a8c-for-agencies {
-	.components-button:not(.is-destructive) {
-		--wp-components-color-accent: var(--color-primary-40);
-		--wp-components-color-accent-darker-10: var(--color-primary-60);
-		--wp-components-color-accent-darker-20: var(--color-primary-60);
-	}
-}
-
 /* Jetpack */
 .layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	.components-button:not(.is-destructive) {

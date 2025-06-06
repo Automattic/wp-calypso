@@ -708,6 +708,482 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsArchives()', () => {
+			test( 'should return an empty array if data is null', () => {
+				expect( normalizers.statsArchives() ).toEqual( [] );
+			} );
+
+			test( 'should return an empty array if query.period is null', () => {
+				expect( normalizers.statsArchives( {}, { date: '2016-12-25' } ) ).toEqual( [] );
+			} );
+
+			test( 'should return an empty array if query.date is null', () => {
+				expect( normalizers.statsArchives( {}, { period: 'day' } ) ).toEqual( [] );
+			} );
+
+			test( 'should properly parse day period response', () => {
+				expect(
+					normalizers.statsArchives(
+						{
+							date: '2025-06-02',
+							days: {
+								'2025-06-02': {
+									search: [
+										{
+											href: 'http://jetpack.com/?s=I+can',
+											value: 'I can',
+											views: 2,
+										},
+										{
+											href: 'http://jetpack.com/?s=',
+											value: '',
+											views: 1,
+										},
+										{
+											href: 'http://jetpack.com/?s=plugin',
+											value: 'plugin',
+											views: 1,
+										},
+									],
+									home: [
+										{
+											href: 'http://jetpack.com/',
+											value: 1,
+											views: 59,
+										},
+									],
+									cat: [
+										{
+											href: 'http://jetpack.com/category/rrr/',
+											value: 'rrr',
+											views: 7,
+										},
+									],
+									tax: {
+										topics: [
+											{
+												href: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+												value: 'aaa',
+												views: 4,
+											},
+											{
+												href: 'http://jetpack.com/?taxonomy=topics&term=bbb',
+												value: 'bbb',
+												views: 2,
+											},
+											{
+												href: 'http://jetpack.com/?taxonomy=topics&term=ccc',
+												value: 'ccc',
+												views: 1,
+											},
+										],
+										jetpack_support_category: [
+											{
+												href: 'http://jetpack.com/?taxonomy=jetpack_support_category&term=ddd',
+												value: 'ddd',
+												views: 1,
+											},
+										],
+										jetpack_support_tag: [
+											{
+												href: 'http://jetpack.com/?taxonomy=jetpack_support_tag&term=eee',
+												value: 'eee',
+												views: 1,
+											},
+										],
+									},
+								},
+								'2025-06-01': {
+									search: [
+										{
+											href: 'http://jetpack.com/?s=',
+											value: '',
+											views: 3,
+										},
+										{
+											href: 'http://jetpack.com/?s=my+website+is+not+active',
+											value: 'my website is not active',
+											views: 1,
+										},
+										{
+											href: 'http://jetpack.com/?s=Ani',
+											value: 'Ani',
+											views: 1,
+										},
+									],
+									cat: [
+										{
+											href: 'http://jetpack.com/category/rrr/',
+											value: 'rrr',
+											views: 44,
+										},
+									],
+									home: [
+										{
+											href: 'http://jetpack.com/',
+											value: 1,
+											views: 30,
+										},
+									],
+									author: [
+										{
+											href: 'http://jetpack.com/author/ooo/',
+											value: 'ooo',
+											views: 1,
+										},
+									],
+									tax: {
+										topics: [
+											{
+												href: 'http://jetpack.com/?taxonomy=topics&term=bbb',
+												value: 'bbb',
+												views: 2,
+											},
+											{
+												href: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+												value: 'aaa',
+												views: 2,
+											},
+											{
+												href: 'http://jetpack.com/?taxonomy=topics&term=ppp',
+												value: 'ppp',
+												views: 1,
+											},
+										],
+									},
+								},
+							},
+							period: 'day',
+						},
+						{
+							period: 'day',
+							start_date: '2025-06-01',
+							date: '2025-06-02',
+							max: 10,
+						}
+					)
+				).toEqual( [
+					{
+						label: 'Homepage',
+						value: 59,
+						children: [
+							{
+								label: 'http://jetpack.com/',
+								value: 59,
+								link: 'http://jetpack.com/',
+							},
+						],
+					},
+					{
+						label: 'Aggregated',
+						value: 9,
+						children: [
+							{
+								label: 'topics',
+								value: 7,
+								children: [
+									{
+										label: 'aaa',
+										value: 4,
+										link: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+									},
+									{
+										label: 'bbb',
+										value: 2,
+										link: 'http://jetpack.com/?taxonomy=topics&term=bbb',
+									},
+									{
+										label: 'ccc',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=topics&term=ccc',
+									},
+								],
+							},
+							{
+								label: 'jetpack_support_category',
+								value: 1,
+								children: [
+									{
+										label: 'ddd',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=jetpack_support_category&term=ddd',
+									},
+								],
+							},
+							{
+								label: 'jetpack_support_tag',
+								value: 1,
+								children: [
+									{
+										label: 'eee',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=jetpack_support_tag&term=eee',
+									},
+								],
+							},
+						],
+					},
+					{
+						label: 'Categories',
+						value: 7,
+						children: [
+							{
+								label: 'rrr',
+								value: 7,
+								link: 'http://jetpack.com/category/rrr/',
+							},
+						],
+					},
+					{
+						label: 'Searches',
+						value: 4,
+						children: [
+							{
+								label: 'http://jetpack.com/?s=I+can',
+								value: 2,
+								link: 'http://jetpack.com/?s=I+can',
+							},
+							{
+								label: 'http://jetpack.com/?s=',
+								value: 1,
+								link: 'http://jetpack.com/?s=',
+							},
+							{
+								label: 'http://jetpack.com/?s=plugin',
+								value: 1,
+								link: 'http://jetpack.com/?s=plugin',
+							},
+						],
+					},
+				] );
+			} );
+
+			test( 'should properly parse summarized response', () => {
+				expect(
+					normalizers.statsArchives(
+						{
+							date: '2025-06-02',
+							period: 'day',
+							summary: {
+								search: [
+									{
+										href: 'http://jetpack.com/?s=',
+										value: '',
+										views: 4,
+									},
+									{
+										href: 'http://jetpack.com/?s=I+can',
+										value: 'I can',
+										views: 2,
+									},
+									{
+										href: 'http://jetpack.com/?s=my+website+is+not+active',
+										value: 'my website is not active',
+										views: 1,
+									},
+									{
+										href: 'http://jetpack.com/?s=Ani',
+										value: 'Ani',
+										views: 1,
+									},
+									{
+										href: 'http://jetpack.com/?s=plugin',
+										value: 'plugin',
+										views: 1,
+									},
+								],
+								cat: [
+									{
+										href: 'http://jetpack.com/category/rrr/',
+										value: 'rrr',
+										views: 51,
+									},
+								],
+								home: [
+									{
+										href: 'http://jetpack.com/',
+										value: 1,
+										views: 89,
+									},
+								],
+								author: [
+									{
+										href: 'http://jetpack.com/author/ooo/',
+										value: 'ooo',
+										views: 1,
+									},
+								],
+								tax: {
+									topics: [
+										{
+											href: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+											value: 'aaa',
+											views: 6,
+										},
+										{
+											href: 'http://jetpack.com/?taxonomy=topics&term=bbb',
+											value: 'bbb',
+											views: 4,
+										},
+										{
+											href: 'http://jetpack.com/?taxonomy=topics&term=ppp',
+											value: 'ppp',
+											views: 1,
+										},
+										{
+											href: 'http://jetpack.com/?taxonomy=topics&term=ccc',
+											value: 'ccc',
+											views: 1,
+										},
+									],
+									jetpack_support_category: [
+										{
+											href: 'http://jetpack.com/?taxonomy=jetpack_support_category&term=ddd',
+											value: 'ddd',
+											views: 1,
+										},
+									],
+									jetpack_support_tag: [
+										{
+											href: 'http://jetpack.com/?taxonomy=jetpack_support_tag&term=eee',
+											value: 'eee',
+											views: 1,
+										},
+									],
+								},
+							},
+						},
+						{
+							period: 'day',
+							start_date: '2025-06-01',
+							date: '2025-06-02',
+							summarize: 1,
+							max: 10,
+						}
+					)
+				).toEqual( [
+					{
+						label: 'Homepage',
+						value: 89,
+						children: [
+							{
+								label: 'http://jetpack.com/',
+								value: 89,
+								link: 'http://jetpack.com/',
+							},
+						],
+					},
+					{
+						label: 'Categories',
+						value: 51,
+						children: [
+							{
+								label: 'rrr',
+								value: 51,
+								link: 'http://jetpack.com/category/rrr/',
+							},
+						],
+					},
+					{
+						label: 'Aggregated',
+						value: 14,
+						children: [
+							{
+								label: 'topics',
+								value: 12,
+								children: [
+									{
+										label: 'aaa',
+										value: 6,
+										link: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+									},
+									{
+										label: 'bbb',
+										value: 4,
+										link: 'http://jetpack.com/?taxonomy=topics&term=bbb',
+									},
+									{
+										label: 'ppp',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=topics&term=ppp',
+									},
+									{
+										label: 'ccc',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=topics&term=ccc',
+									},
+								],
+							},
+							{
+								label: 'jetpack_support_category',
+								value: 1,
+								children: [
+									{
+										label: 'ddd',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=jetpack_support_category&term=ddd',
+									},
+								],
+							},
+							{
+								label: 'jetpack_support_tag',
+								value: 1,
+								children: [
+									{
+										label: 'eee',
+										value: 1,
+										link: 'http://jetpack.com/?taxonomy=jetpack_support_tag&term=eee',
+									},
+								],
+							},
+						],
+					},
+					{
+						label: 'Searches',
+						value: 9,
+						children: [
+							{
+								label: 'http://jetpack.com/?s=',
+								value: 4,
+								link: 'http://jetpack.com/?s=',
+							},
+							{
+								label: 'http://jetpack.com/?s=I+can',
+								value: 2,
+								link: 'http://jetpack.com/?s=I+can',
+							},
+							{
+								label: 'http://jetpack.com/?s=my+website+is+not+active',
+								value: 1,
+								link: 'http://jetpack.com/?s=my+website+is+not+active',
+							},
+							{
+								label: 'http://jetpack.com/?s=Ani',
+								value: 1,
+								link: 'http://jetpack.com/?s=Ani',
+							},
+							{
+								label: 'http://jetpack.com/?s=plugin',
+								value: 1,
+								link: 'http://jetpack.com/?s=plugin',
+							},
+						],
+					},
+					{
+						label: 'Authors',
+						value: 1,
+						children: [
+							{
+								label: 'ooo',
+								value: 1,
+								link: 'http://jetpack.com/author/ooo/',
+							},
+						],
+					},
+				] );
+			} );
+		} );
+
 		describe( 'statsCountryViews()', () => {
 			test( 'should return null if data is null', () => {
 				expect( normalizers.statsCountryViews() ).toBeNull();

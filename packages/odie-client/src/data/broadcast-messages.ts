@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import type { Message } from '../types';
 
 const messageEventName = 'odieMessageEvent';
-const clearChatEventName = 'clearChatEvent';
 
 export const broadcastOdieMessage = ( message: Message, origin: string ) => {
 	const bc = new BroadcastChannel( 'odieChannel' );
@@ -13,16 +12,8 @@ export const broadcastOdieMessage = ( message: Message, origin: string ) => {
 	} );
 };
 
-export const broadcastChatClearance = ( origin: string ) => {
-	const bc = new BroadcastChannel( 'odieChannel' );
-	bc.postMessage( {
-		type: clearChatEventName,
-		odieBroadcastClientId: origin,
-	} );
-};
-
 export const useOdieBroadcastWithCallbacks = (
-	callbacks: { addMessage?: ( message: Message ) => void; clearChat?: () => void },
+	callbacks: { addMessage?: ( message: Message ) => void },
 	listenerClientId: string
 ) => {
 	useEffect( () => {
@@ -32,8 +23,6 @@ export const useOdieBroadcastWithCallbacks = (
 			if ( listenerClientId !== odieBroadcastClientId ) {
 				if ( event.data.type === messageEventName && callbacks.addMessage ) {
 					callbacks.addMessage( event.data.message );
-				} else if ( event.data.type === clearChatEventName && callbacks.clearChat ) {
-					callbacks.clearChat();
 				}
 			}
 		};

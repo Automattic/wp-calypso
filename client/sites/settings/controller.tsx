@@ -212,7 +212,7 @@ export function dashboardBackportSiteSettings( context: PageJSContext, next: () 
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
+	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
 		return page.redirect( `/sites/settings/site/${ site?.slug }` );
 	}
 

@@ -1,9 +1,15 @@
 import page from '@automattic/calypso-router';
 import { Gridicon, Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, View, Filter, filterSortAndPaginate } from '@wordpress/dataviews';
+import {
+	DataViews,
+	View,
+	Filter,
+	filterSortAndPaginate,
+	SortDirection,
+} from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
@@ -14,19 +20,22 @@ import {
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
-const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
+const purchasesWideFields = [ 'site', 'product', 'status', 'payment-method' ];
+const purchasesDesktopFields = [ 'site', 'product', 'status' ];
 const purchasesMobileFields = [ 'product' ];
+const defaultPerPage = 10;
+const defaultSort = {
+	field: 'site',
+	direction: 'desc' as SortDirection,
+};
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
-	perPage: 5,
+	perPage: defaultPerPage,
 	titleField: 'purchase-id',
 	showTitle: false,
 	fields: purchasesDesktopFields,
-	sort: {
-		field: 'product',
-		direction: 'desc',
-	},
+	sort: defaultSort,
 	layout: {},
 };
 
@@ -37,27 +46,42 @@ function usePreservePurchasesFiltersInUrl( {
 	currentView: View;
 	setView: ( setter: ( currentView: View ) => View ) => void;
 } ) {
+	const urlSortField = 'sortField';
+	const urlSortDirection = 'sortDir';
+	const urlPaginationPage = 'pageNumber';
+	const urlPaginationPerPage = 'perPage';
 	const urlSiteFilterKey = 'siteFilter';
 	const urlTypeFilterKey = 'typeFilter';
 	const currentUrl = window.location.href;
+
+	// Apply view from URL
 	useEffect( () => {
 		const url = new URL( currentUrl );
 		const filters: Filter[] = [];
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
+		const pageNumber = url.searchParams.get( urlPaginationPage );
+		const perPage = url.searchParams.get( urlPaginationPerPage );
+		const sortField = url.searchParams.get( urlSortField );
+		const sortDir = (
+			url.searchParams.get( urlSortDirection ) === 'asc' ? 'asc' : 'desc'
+		) as SortDirection;
 		if ( siteFilterValue ) {
 			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
 		}
 		if ( typeFilterValue ) {
 			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
 		}
-		if ( filters.length > 0 ) {
-			setView( ( currentView ) => ( {
-				...currentView,
-				filters,
-			} ) );
-		}
+		setView( ( currentView ) => ( {
+			...currentView,
+			...( filters.length > 0 ? { filters } : {} ),
+			...( pageNumber ? { page: parseInt( pageNumber ) } : {} ),
+			...( perPage ? { perPage: parseInt( perPage ) } : {} ),
+			...( sortField ? { sort: { field: sortField, direction: sortDir } } : {} ),
+		} ) );
 	}, [ setView, currentUrl ] );
+
+	// Apply URL from view
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
@@ -66,11 +90,39 @@ function usePreservePurchasesFiltersInUrl( {
 		} else {
 			url.searchParams.delete( urlSiteFilterKey );
 		}
+
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
 		if ( typeFilter ) {
 			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
 		} else {
 			url.searchParams.delete( urlTypeFilterKey );
+		}
+
+		const pageNumber = currentView.page;
+		if ( pageNumber && pageNumber > 1 ) {
+			url.searchParams.set( urlPaginationPage, String( pageNumber ) );
+		} else {
+			url.searchParams.delete( urlPaginationPage );
+		}
+
+		const perPage = currentView.perPage;
+		if ( perPage && perPage !== defaultPerPage ) {
+			url.searchParams.set( urlPaginationPerPage, String( perPage ) );
+		} else {
+			url.searchParams.delete( urlPaginationPerPage );
+		}
+
+		const sort = currentView.sort;
+		if ( sort && sort !== defaultSort ) {
+			url.searchParams.set( urlSortField, sort.field );
+			url.searchParams.set( urlSortDirection, sort.direction );
+		} else {
+			url.searchParams.delete( urlSortField );
+			url.searchParams.delete( urlSortDirection );
+		}
+
+		if ( url.search === window.location.search ) {
+			return;
 		}
 		window.history.pushState( undefined, '', url );
 		// getPreviousRoute will not find this updated route unless we set it
@@ -87,21 +139,29 @@ export function PurchasesDataViews( {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
 } ) {
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
 
 	// Hide fields at mobile width
 	useEffect( () => {
-		if ( isDesktop && currentView.fields === purchasesMobileFields ) {
+		if ( isWide && currentView.fields !== purchasesWideFields ) {
+			setView( { ...currentView, fields: purchasesWideFields } );
+		}
+		if ( isWide ) {
+			return;
+		}
+		if ( isDesktop && currentView.fields !== purchasesDesktopFields ) {
 			setView( { ...currentView, fields: purchasesDesktopFields } );
+		}
+		if ( isDesktop ) {
 			return;
 		}
-		if ( ! isDesktop && currentView.fields === purchasesDesktopFields ) {
+		if ( currentView.fields !== purchasesMobileFields ) {
 			setView( { ...currentView, fields: purchasesMobileFields } );
-			return;
 		}
-	}, [ isDesktop, currentView, setView ] );
+	}, [ isWide, isDesktop, currentView, setView ] );
 
 	// Keep track of the current view params in the URL and restore them when the page loads.
 	usePreservePurchasesFiltersInUrl( { currentView, setView } );
@@ -129,9 +189,7 @@ export function PurchasesDataViews( {
 		() => [
 			{
 				id: 'manage-purchase',
-				label: translate( 'Manage this purchase', { textOnly: true } ),
-				isPrimary: true,
-				icon: <Gridicon icon="chevron-right" />,
+				label: translate( 'Manage purchase', { textOnly: true } ),
 				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
 				callback: ( items: Purchases.Purchase[] ) => {
 					const siteUrl = items[ 0 ].domain;
@@ -177,7 +235,7 @@ const membershipsMobileFields = [ 'product' ];
 export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
-	perPage: 5,
+	perPage: defaultPerPage,
 	titleField: 'purchase-id',
 	showTitle: false,
 	fields: membershipsDesktopFields,
