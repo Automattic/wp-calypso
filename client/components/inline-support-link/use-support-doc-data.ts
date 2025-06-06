@@ -31,7 +31,7 @@ const useSupportDocData = ( {
 	openSupportDoc: () => Promise< void > | void;
 } => {
 	const [ supportDocData, setSupportDocData ] = useState< SupportDocData >( {
-		link: supportPostId && supportLink ? localizeUrl( supportLink ) : supportLink,
+		link: supportLink ? localizeUrl( supportLink ) : supportLink,
 		postId: supportPostId,
 		blogId: 0, // support.wordpress.com is the default blog used for support links
 	} );

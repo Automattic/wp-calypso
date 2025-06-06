@@ -27,10 +27,8 @@ const InlineSupportLink = ( {
 		supportContext,
 	} );
 
-	const { postId, link } = supportDocData || {};
-
 	const handleClick = ( event: React.SyntheticEvent< HTMLAnchorElement > ) => {
-		if ( postId ) {
+		if ( supportDocData?.postId ) {
 			event.preventDefault();
 			openSupportDoc();
 		}
@@ -38,18 +36,18 @@ const InlineSupportLink = ( {
 		onClick?.( supportDocData );
 	};
 
+	if ( ! supportDocData?.postId && ! supportDocData?.link ) {
+		return null;
+	}
+
 	const linkProps = {
 		className: className,
-		href: link ?? '#',
+		href: supportDocData.link,
 		title,
 		onClick: handleClick,
 	};
 
-	if ( ! postId && ! link ) {
-		return null;
-	}
-
-	if ( postId ) {
+	if ( supportDocData?.postId ) {
 		return (
 			<a { ...linkProps } target="_blank" rel="noopener noreferrer">
 				{ children }
