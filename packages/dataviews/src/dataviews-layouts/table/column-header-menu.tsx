@@ -19,7 +19,6 @@ import { forwardRef, Children, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { unlock } from '../../lock-unlock';
-import { sanitizeOperators } from '../../utils';
 import { SORTING_DIRECTIONS, sortArrows, sortLabels } from '../../constants';
 import type {
 	NormalizedField,
@@ -81,7 +80,8 @@ const _HeaderMenu = forwardRef( function HeaderMenu< Item >(
 	isSortable = field.enableSorting !== false;
 	const header = field.header;
 
-	operators = sanitizeOperators( field );
+	operators = ( !! field.filterBy && field.filterBy?.operators ) || [];
+
 	// Filter can be added if:
 	//
 	// 1. The field is not already part of a view's filters.

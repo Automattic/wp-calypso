@@ -20,7 +20,6 @@ import Filter from './filter';
 import { default as AddFilter, AddFilterMenu } from './add-filter';
 import ResetFilters from './reset-filters';
 import DataViewsContext from '../dataviews-context';
-import { sanitizeOperators } from '../../utils';
 import { ALL_OPERATORS, SINGLE_SELECTION_OPERATORS } from '../../constants';
 import type { NormalizedFilter, NormalizedField, View } from '../../types';
 
@@ -35,7 +34,7 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 				return;
 			}
 
-			const operators = sanitizeOperators( field );
+			const operators = field.filterBy?.operators || [];
 			if ( operators.length === 0 ) {
 				return;
 			}
