@@ -91,6 +91,7 @@ const WasThisHelpfulButtons = ( {
 					className={ buttonLikedClasses }
 					onClick={ () => handleIsHelpful( true ) }
 					disabled={ notLiked }
+					aria-label={ __( 'Yes, this was helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsUpIcon className={ thumbsUpClasses } />
 				</button>
@@ -98,6 +99,7 @@ const WasThisHelpfulButtons = ( {
 					className={ buttonDislikedClasses }
 					onClick={ () => handleIsHelpful( false ) }
 					disabled={ liked }
+					aria-label={ __( 'No, this was not helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
 				</button>
