@@ -97,7 +97,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const data = { enabled: links.length > 0 };
 
 		return (
-			<form>
+			<>
 				<VStack spacing={ 4 }>
 					<DataForm< { enabled: boolean } >
 						data={ data }
@@ -117,7 +117,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 						/>
 					) ) }
 				</VStack>
-			</form>
+			</>
 		);
 	};
 
@@ -125,7 +125,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		return (
 			<Card>
 				<CardBody>
-					<VStack spacing={ 3 }>
+					<VStack spacing={ 4 }>
 						<SectionHeader level={ 3 } title={ title } description={ description } />
 						{ renderContent() }
 					</VStack>
