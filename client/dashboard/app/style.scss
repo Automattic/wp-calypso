@@ -14,7 +14,7 @@
 
 // BaseControl currently has an override for the label to accomodate the use case where the label is shown next to the control.
 // In site settings forms, the label is above the control for regular fields so we need to override this override for UI consistency.
-.dashboard-site-settings-form .dataforms-layouts-regular__field .components-base-control__label {
+.dataforms-layouts-regular__field .components-base-control__label {
 	font-size: 11px;
 	font-weight: 500;
 	text-transform: uppercase;
