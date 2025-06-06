@@ -53,7 +53,7 @@ export function withOnboardingTour< T extends object >( WrappedComponent: Compon
 						className="a4a-onboarding-tour-snackbar"
 						actions={ [
 							{
-								label: translate( 'Continue the Welcome tour' ),
+								label: translate( 'Continue tour' ),
 								onClick: () => {
 									window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ currentSection }`;
 									dispatch(
@@ -69,7 +69,7 @@ export function withOnboardingTour< T extends object >( WrappedComponent: Compon
 						onRemove={ onDismiss }
 						icon={ <Icon icon={ layout } /> }
 					>
-						&nbsp;
+						{ translate( 'Pick up where you left off' ) }
 					</Snackbar>
 				) }
 			</>
