@@ -3,26 +3,16 @@ $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
 
 .happy-blocks-search-card {
-	position: relative;
-	z-index: 1;
-
-	&::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-
-		opacity: 0.6;
-
-		background:
-			linear-gradient(90deg, #F7F8FE 31.63%, rgba(247, 248, 254, 0.00) 100%),
-			linear-gradient(0deg, #F7F8FE 0%, rgba(247, 248, 254, 0.00) 100%),
-			url(./assets/pattern.png) #D3D3D3 0 0 / 23px 23px repeat;
-		pointer-events: none;
-	}
+	background:
+		#F7F8FE url(./assets/hero-bg.png) no-repeat bottom right;
+	background-size: contain;
 
 	flex-shrink: 0;
-	padding: 16px 24px;
+	padding: 72px 24px;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		padding: 36px 16px;
+	}
 
 	.navigation {
 		display: flex;
@@ -63,13 +53,18 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		}
 
 		h2 {
-			margin-top: 54px;
+			margin-top: 16px;
 			margin-bottom: 24px;
 
 			font-size: 50px;
 			font-style: normal;
 			font-weight: 400;
 			line-height: 1.2;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				font-size: 44px;
+			}
+
 		}
 
 		.input-wrapper {
@@ -92,19 +87,38 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			border: none;
 			box-shadow: 0 0 4px 0 rgba(56, 88, 233, 0.12);
 			font-size: 16px;
+
+			&::-webkit-search-cancel-button {
+				-webkit-appearance: none;
+				appearance: none;
+				display: none;
+			}
 		}
 
-		.input-wrapper .search-icon {
+		.input-wrapper button {
 			position: absolute;
 			inset-block-start: 50%;
 			transform: translateY(-50%);
 			inset-inline-end: 20px;
-			pointer-events: none;
+			background: none;
+			border: none;
+			padding: 0;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			svg {
+				fill: #2C3338;
+			}
+
+			&:hover svg {
+				fill: #3858E9;
+			}
 		}
 
 		.search-terms {
 			margin-top: 16px;
-			margin-bottom: 88px;
 
 			display: flex;
 			align-items: flex-start;
@@ -120,23 +134,36 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				display: none;
 			}
 
+			@media ( max-width: $breakpoint-mobile ) {
+				gap: 8px;
+			}
 
 			li {
 				box-sizing: border-box;
 				border-radius: 4px;
 				background: #EDF1FF;
-				height: 32px;
-				padding: 14px;
+				padding: 2px;
 				flex-direction: column;
 				justify-content: center;
 				display: flex;
 
 				a {
+					padding: 6px 14px;
 					color: #2C3338;
 					font-size: 12px;
 					font-style: normal;
 					font-weight: 400;
 					line-height: 20px;
+					text-decoration: none;
+				}
+
+				&:hover {
+					background: #3858E9;
+					cursor: pointer;
+
+					a {
+						color: #fff;
+					}
 				}
 			}
 		}

@@ -1,6 +1,11 @@
 export enum DotcomFeatures {
 	SUBSCRIPTION_GIFTING = 'subscription-gifting',
 	COPY_SITE = 'copy-site',
+	LEGACY_CONTACT = 'legacy-contact',
+	LOCKED_MODE = 'locked-mode',
+	SFTP = 'sftp',
+	SSH = 'ssh',
+	SITE_PREVIEW_LINKS = 'site-preview-links',
 }
 
 export const SITE_FIELDS = [
@@ -12,6 +17,7 @@ export const SITE_FIELDS = [
 	'subscribers_count',
 	'plan',
 	'capabilities',
+	'is_a4a_dev_site',
 	'is_a8c',
 	'is_deleted',
 	'is_coming_soon',
@@ -26,4 +32,10 @@ export const SITE_FIELDS = [
 	'jetpack_modules',
 ];
 
-export const SITE_OPTIONS = [ 'admin_url', 'software_version', 'is_redirect' ];
+export const SITE_OPTIONS = [
+	'admin_url',
+	'software_version',
+	'is_redirect',
+	'is_wpforteams_site',
+	'p2_hub_blog_id',
+];

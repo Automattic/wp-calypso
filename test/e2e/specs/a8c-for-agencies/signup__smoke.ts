@@ -38,10 +38,6 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		const lastName = 'Doe';
 		await page.getByPlaceholder( 'Your last name' ).fill( lastName );
 
-		// Enter email
-		const myEmail = 'johndoe@gmail.com';
-		await page.getByPlaceholder( 'Your email' ).fill( myEmail );
-
 		// Enter the agency name
 		const agencyName = 'Agency name';
 		await page.getByPlaceholder( 'Agency name' ).fill( agencyName );
@@ -53,7 +49,6 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		// Verify the form values
 		expect( await page.getByPlaceholder( 'Your first name' ).inputValue() ).toBe( firstName );
 		expect( await page.getByPlaceholder( 'Your last name' ).inputValue() ).toBe( lastName );
-		expect( await page.getByPlaceholder( 'Your email' ).inputValue() ).toBe( myEmail );
 		expect( await page.getByPlaceholder( 'Business URL' ).inputValue() ).toBe( businessURL );
 	} );
 } );

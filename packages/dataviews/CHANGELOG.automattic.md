@@ -2,6 +2,14 @@
 
 ## Next
 
+- Add a story for each FieldTypeDefinition.
+
+## 0.2.1
+
+- `text`, `email` Edit control: add `help` support from the field `description` prop.
+- Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
+- Allow fields to opt-out of filtering via `field.filterBy: false`.
+
 ## 0.2.0
 
 - Bring changes from `@wordpress/dataviews 4.19.0` (no updates in this version).

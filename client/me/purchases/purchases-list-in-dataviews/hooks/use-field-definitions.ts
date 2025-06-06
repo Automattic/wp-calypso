@@ -1,3 +1,4 @@
+import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -7,7 +8,7 @@ import {
 	getMembershipsFieldDefinitions,
 } from '../purchases-data-field';
 
-export function usePurchasesFieldDefinitions() {
+export function usePurchasesFieldDefinitions( { sites }: { sites: SiteDetails[] } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const paymentMethods = useStoredPaymentMethods().paymentMethods;
@@ -17,9 +18,10 @@ export function usePurchasesFieldDefinitions() {
 			translate,
 			moment,
 			paymentMethods,
+			sites,
 		} );
 		return fieldDefinitions;
-	}, [ translate, moment, paymentMethods ] );
+	}, [ translate, moment, paymentMethods, sites ] );
 }
 
 export function useMembershipsFieldDefinitions() {

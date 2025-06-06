@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { DOMAIN_PRICE_RULE } from 'calypso/lib/cart-values/cart-items';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSitePlanSlug, hasDomainCredit } from 'calypso/state/sites/plans/selectors';
@@ -40,13 +41,19 @@ export class DomainProductPrice extends Component {
 		const isRenewCostDifferent = renewPrice && price !== renewPrice;
 
 		if ( isRenewCostDifferent ) {
+			const ariaLabel = translate( 'Renews for %(cost)s per year', {
+				args: { cost: renewPrice },
+			} );
 			return (
 				<div className="domain-product-price__renewal-price">
-					{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
-						args: { cost: renewPrice },
-						components: { small: <small /> },
-						comment: '%(cost)s is the annual renewal price of the domain',
-					} ) }
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<span aria-hidden="true">
+						{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
+							args: { cost: renewPrice },
+							components: { small: <small /> },
+							comment: '%(cost)s is the annual renewal price of the domain',
+						} ) }
+					</span>
 				</div>
 			);
 		}
@@ -62,6 +69,9 @@ export class DomainProductPrice extends Component {
 		const priceText = this.props.translate( '%(cost)s/year', {
 			args: { cost: this.props.price },
 		} );
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
@@ -71,7 +81,8 @@ export class DomainProductPrice extends Component {
 					</span>
 				</div>
 				<div className="domain-product-price__price">
-					<del>{ priceText }</del>
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<del aria-hidden="true">{ priceText }</del>
 				</div>
 			</div>
 		);
@@ -91,7 +102,7 @@ export class DomainProductPrice extends Component {
 
 		let message;
 		if (
-			( isMappingProduct && this.props.rule === 'FREE_WITH_PLAN' ) ||
+			( isMappingProduct && this.props.rule === DOMAIN_PRICE_RULE.FREE_WITH_PLAN ) ||
 			isCurrentPlan100YearPlan
 		) {
 			message = translate( 'Free with your plan' );
@@ -103,7 +114,7 @@ export class DomainProductPrice extends Component {
 					{ translate( 'Free domain for one year' ) }
 				</span>
 			);
-		} else if ( this.props.rule === 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' ) {
+		} else if ( this.props.rule === DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY ) {
 			message = translate( '%(planName)s plan required', {
 				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 			} );
@@ -112,12 +123,16 @@ export class DomainProductPrice extends Component {
 				components: { span: <span className="domain-product-price__free-price" /> },
 			} );
 		}
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
 				<div className="domain-product-price__free-text">{ message }</div>
 				<div className="domain-product-price__price">
-					<del>
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<del aria-hidden="true">
 						{ this.props.isMappingProduct
 							? null
 							: this.props.translate( '%(cost)s/year', {
@@ -172,6 +187,9 @@ export class DomainProductPrice extends Component {
 		const className = clsx( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
@@ -182,11 +200,14 @@ export class DomainProductPrice extends Component {
 					} ) }
 				</div>
 				<div className="domain-product-price__regular-price">
-					{ translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: price },
-						components: { small: <small /> },
-						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
-					} ) }
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<span aria-hidden="true">
+						{ translate( '%(cost)s {{small}}/year{{/small}}', {
+							args: { cost: price },
+							components: { small: <small /> },
+							comment: '%(cost)s is the annual renewal price of a domain currently on sale',
+						} ) }
+					</span>
 				</div>
 				{ this.renderRenewalPrice() }
 			</div>
@@ -204,14 +225,20 @@ export class DomainProductPrice extends Component {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 		const productPriceClassName = showStrikedOutPrice ? '' : 'domain-product-price__price';
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
 				<span className={ productPriceClassName }>
-					{ translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: price },
-						components: { small: <small /> },
-					} ) }
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<span aria-hidden="true">
+						{ translate( '%(cost)s {{small}}/year{{/small}}', {
+							args: { cost: price },
+							components: { small: <small /> },
+						} ) }
+					</span>
 				</span>
 				{ this.renderRenewalPrice() }
 			</div>
@@ -239,19 +266,19 @@ export class DomainProductPrice extends Component {
 		}
 
 		switch ( this.props.rule ) {
-			case 'ONE_TIME_PRICE':
+			case DOMAIN_PRICE_RULE.ONE_TIME_PRICE:
 				return this.renderOneTimePrice();
-			case 'FREE_DOMAIN':
+			case DOMAIN_PRICE_RULE.FREE_DOMAIN:
 				return this.renderFree();
-			case 'FREE_FOR_FIRST_YEAR':
+			case DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR:
 				return this.renderFreeForFirstYear();
-			case 'FREE_WITH_PLAN':
-			case 'INCLUDED_IN_HIGHER_PLAN':
-			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
+			case DOMAIN_PRICE_RULE.FREE_WITH_PLAN:
+			case DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN:
+			case DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY:
 				return this.renderFreeWithPlan();
-			case 'DOMAIN_MOVE_PRICE':
+			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
 				return this.renderDomainMovePrice();
-			case 'PRICE':
+			case DOMAIN_PRICE_RULE.PRICE:
 			default:
 				return this.renderPrice();
 		}

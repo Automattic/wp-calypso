@@ -29,6 +29,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -160,16 +161,19 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+	if ( isBlazePro && isWhiteLogin ) {
+		/**
+		 * This effectively removes the masterbar completely from Login pages (only).
+		 * However, in some cases, we want the styles imported from the masterbar to be applied.
+		 * They are more generic and affect the whole page, unfortunately.
+		 * For that, importing OauthClientMasterbar suffices to apply those styles, until refactored (we are in the process ofrefactoring).
+		 */
 		masterbar = null;
-	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	} else if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+		masterbar = null;
+	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! masterbarIsHidden ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
-
-		// Force masterbar for all Crowdsignal OAuth pages
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			classes[ 'has-no-masterbar' ] = false;
-		}
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
@@ -335,13 +339,17 @@ export default withCurrentRoute(
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 
+			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
+			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
-					! isJetpackLogin &&
-					Boolean( currentQuery?.client_id ) === false &&
-					Boolean( currentQuery?.oauth2_client_id ) === false &&
-					! isBlazePro &&
-					! isWooJPC ) ||
+					( ( ! isJetpackLogin &&
+						Boolean( currentQuery?.client_id ) === false &&
+						Boolean( currentQuery?.oauth2_client_id ) === false &&
+						! isWooJPC ) ||
+						isStudioClient ||
+						isCrowdsignalClient ||
+						isBlazePro ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

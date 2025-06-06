@@ -150,7 +150,7 @@ type DayOfWeek = {
  * @param {Modifiers} modifiers - The modifiers associated with the event.
  * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
  */
-export type OnSelectHandler< T > = (
+type OnSelectHandler< T > = (
 	selected: T,
 	triggerDate: Date,
 	modifiers: Modifiers,
@@ -204,10 +204,6 @@ export interface BaseProps
 	 * Disable the navigation buttons.
 	 */
 	disableNavigation?: boolean;
-	/**
-	 * Add modifiers to the matching days.
-	 */
-	modifiers?: Record< string, Matcher | Matcher[] | undefined > | undefined;
 	/**
 	 * Use custom labels, useful for translating the component.
 	 *
@@ -279,6 +275,24 @@ export interface BaseProps
 	 * [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 	 * for the possible values.
 	 *
+	 * When working with time zones, use the `TZDate` object exported by this
+	 * package instead of the native `Date` object.
+	 * @example
+	 *   import { DateCalendar, TZDate } from "@automattic/components";
+	 *
+	 *   export function WithTimeZone() {
+	 *     const timeZone = "America/New_York";
+	 *     const [ selected, setSelected ] = useState< Date | undefined >(
+	 *       new TZDate( 2024, 12, 10, timeZone ) // Use `TZDate` instead of `Date`
+	 *     );
+	 *     return (
+	 *       <DateCalendar
+	 *         timeZone={ timeZone }
+	 *         selected={ selected }
+	 *         onSelect={ setSelected }
+	 *     />
+	 *   );
+	 * }
 	 */
 	timeZone?: string;
 	/**
@@ -302,9 +316,13 @@ interface RangeProps {
 	 * When `true`, the range will reset when including a disabled day.
 	 */
 	excludeDisabled?: boolean;
-	/** The minimum number of days to include in the range. */
+	/**
+	 * The minimum number of nights to include in the range.
+	 */
 	min?: number;
-	/** The maximum number of days to include in the range. */
+	/**
+	 * The maximum number of nights to include in the range.
+	 */
 	max?: number;
 	/** The selected range. */
 	selected?: DateRange | undefined | null;

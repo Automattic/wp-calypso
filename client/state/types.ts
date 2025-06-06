@@ -1,3 +1,4 @@
+import { SiteDetails } from '@automattic/data-stores';
 import type { CountriesState } from './countries/types';
 import type { BillingTransactionsState } from 'calypso/state/billing-transactions/types';
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
@@ -22,6 +23,7 @@ export interface IAppState {
 	memberships?: IMembershipsState;
 	countries?: CountriesState;
 	billingTransactions?: BillingTransactionsState;
+	sites?: { items: Record< number | string, SiteDetails > };
 }
 
 /**

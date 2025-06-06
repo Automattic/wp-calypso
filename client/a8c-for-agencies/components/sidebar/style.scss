@@ -65,3 +65,9 @@
 	list-style: none;
 	margin: 0;
 }
+
+.sidebar-menu-item__title-with-badge {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}

@@ -1,11 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalHeading as Heading, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { restoreSitePlanSoftwareMutation } from '../../app/queries';
 import { ActionList } from '../../components/action-list';
+import { SectionHeader } from '../../components/section-header';
 import { DotcomFeatures } from '../../data/constants';
 import type { Site } from '../../data/types';
 
@@ -88,7 +89,7 @@ export default function SiteActions( { site }: { site: Site } ) {
 
 	return (
 		<>
-			<Heading>{ __( 'Actions' ) }</Heading>
+			<SectionHeader title={ __( 'Actions' ) } />
 			<ActionList>{ actions }</ActionList>
 		</>
 	);

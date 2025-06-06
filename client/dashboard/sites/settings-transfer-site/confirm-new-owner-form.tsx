@@ -1,16 +1,21 @@
 import { DataForm, isItemValid } from '@automattic/dataviews';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
+import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@automattic/dataviews';
 
-type ConfirmNewOwnerFormData = {
+export type ConfirmNewOwnerFormData = {
 	email: string;
 };
 
@@ -29,42 +34,68 @@ const form = {
 
 export function ConfirmNewOwnerForm( {
 	siteSlug,
-	handleSubmit,
+	newOwnerEmail,
+	onSubmit,
 }: {
 	siteSlug: string;
-	handleSubmit: ( event: React.FormEvent ) => void;
+	newOwnerEmail: string;
+	onSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
-		email: '',
+		email: newOwnerEmail,
 	} );
+
+	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( siteSlug ) );
+
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
 
+	const handleSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
+
+		mutation.mutate(
+			{ new_site_owner: formData.email },
+			{
+				onSuccess: () => {
+					onSubmit( formData );
+				},
+				onError: ( error ) => {
+					// TODO: Show the error via Data Form when the ValidatedTextControl is ready.
+					createErrorNotice(
+						error.message ??
+							sprintf(
+								/* translators: %s is the new owner's email */
+								__( 'Sorry, the site cannot be transferred to %s' ),
+								formData.email
+							),
+						{
+							type: 'snackbar',
+						}
+					);
+				},
+			}
+		);
+	};
+
 	return (
-		<VStack spacing={ 1 }>
-			<VStack style={ { padding: '8px 0' } }>
-				<Text size="15px" weight={ 500 } lineHeight="32px">
-					{ __( 'Confirm new owner' ) }
-				</Text>
+		<>
+			<VStack style={ { padding: '8px 0 12px' } }>
+				<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
 				<Text lineHeight="20px">
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(siteSlug)s - the current site slug */
-							__(
-								"Ready to transfer <strong>%(siteSlug)s</strong> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
-							),
-							{
-								siteSlug,
-							}
+						__(
+							"Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
 						),
 						{
-							strong: <strong />,
+							siteSlug: <strong>{ siteSlug }</strong>,
 						}
 					) }
 				</Text>
 			</VStack>
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+				<VStack spacing={ 4 }>
+					{ /* TODO: Update the gap between each field */ }
 					<DataForm< ConfirmNewOwnerFormData >
 						data={ formData }
 						fields={ fields }
@@ -74,12 +105,17 @@ export function ConfirmNewOwnerForm( {
 						} }
 					/>
 					<HStack justify="flex-start">
-						<Button variant="primary" type="submit" disabled={ isSaveDisabled }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ mutation.isPending }
+							disabled={ isSaveDisabled }
+						>
 							{ __( 'Continue' ) }
 						</Button>
 					</HStack>
 				</VStack>
 			</form>
-		</VStack>
+		</>
 	);
 }

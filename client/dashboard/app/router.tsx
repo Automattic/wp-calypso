@@ -6,10 +6,17 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
-import { canUpdatePHPVersion } from '../sites/settings-php/utils';
-import { canGetPrimaryDataCenter } from '../sites/settings-primary-data-center';
-import { canSetStaticFile404Handling } from '../sites/settings-static-file-404';
-import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
+import {
+	canUpdatePHPVersion,
+	canUpdateDefensiveMode,
+	canUpdateHundredYearPlanFeatures,
+	canUpdateWordPressVersion,
+	canGetPrimaryDataCenter,
+	canSetStaticFile404Handling,
+	canUpdateCaching,
+	canUseSftp,
+	canUseSsh,
+} from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -25,6 +32,11 @@ import {
 	siteWordPressVersionQuery,
 	sitePHPVersionQuery,
 	sitePrimaryDataCenterQuery,
+	siteEdgeCacheStatusQuery,
+	siteDefensiveModeQuery,
+	agencyBlogQuery,
+	siteSftpUsersQuery,
+	siteSshAccessStatusQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -84,9 +96,11 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: ( { params: { siteSlug } } ) =>
+	loader: ( { params: { siteSlug }, preload } ) =>
 		Promise.all( [
-			queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ),
+			// The current plan is nice to have preloaded, but not blocking for
+			// navigation.
+			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ) : undefined,
 			queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
 		] ),
 } ).lazy( () =>
@@ -158,17 +172,6 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
-const siteSettingsDatabaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/database',
-} ).lazy( () =>
-	import( '../sites/settings-database' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-database' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
@@ -203,6 +206,51 @@ const siteSettingsPHPRoute = createRoute( {
 	)
 );
 
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsAgencyRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/agency',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( site.is_wpcom_atomic ) {
+			await queryClient.ensureQueryData( agencyBlogQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-agency' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-agency' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsHundredYearPlanRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/hundred-year-plan',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateHundredYearPlanFeatures( site ) ) {
+			await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-hundred-year-plan' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-hundred-year-plan' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/primary-data-center',
@@ -232,6 +280,58 @@ const siteSettingsStaticFile404Route = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-static-file-404' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsCachingRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/caching',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateCaching( site ) ) {
+			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-caching' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-caching' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsDefensiveModeRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/defensive-mode',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateDefensiveMode( site ) ) {
+			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-defensive-mode' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-defensive-mode' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsSftpSshRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/sftp-ssh',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		return Promise.all( [
+			canUseSftp( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
+			canUseSsh( site ) && queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../sites/settings-sftp-ssh' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -416,9 +516,14 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsDatabaseRoute,
 				siteSettingsWordPressRoute,
 				siteSettingsPHPRoute,
+				siteSettingsAgencyRoute,
+				siteSettingsHundredYearPlanRoute,
 				siteSettingsPrimaryDataCenterRoute,
 				siteSettingsStaticFile404Route,
+				siteSettingsCachingRoute,
+				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
+				siteSettingsSftpSshRoute,
 			] )
 		);
 	}

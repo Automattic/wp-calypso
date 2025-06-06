@@ -22,6 +22,8 @@ import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { RemovedFromCartItem } from 'calypso/my-sites/checkout/src/components/removed-from-cart-item';
+import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
 	useStreamlinedPriceExperiment,
@@ -35,7 +37,7 @@ import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
-import type { OnChangeItemVariant } from './item-variation-picker';
+import type { OnChangeItemVariant, WPCOMProductVariant } from './item-variation-picker';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -98,6 +100,7 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -223,6 +226,9 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
+			{ restorableProducts.map( ( product ) => (
+				<RemovedFromCartItem key={ product.uuid } product={ product } />
+			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
@@ -295,6 +301,7 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown: ( key: string | null ) => void;
 	akQuantityOpenId: string | null;
 } ) {
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
@@ -387,8 +394,7 @@ function LineItemWrapper( {
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
-
-	const variants = useGetProductVariants( product, ( variant ) => {
+	const variantsFilterCallback = ( variant: WPCOMProductVariant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
 		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
@@ -403,12 +409,12 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if ( isStreamlinedPrice ) {
-			return true;
-		}
-
 		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+	};
+	const variants = useGetProductVariants(
+		product,
+		! isStreamlinedPrice ? variantsFilterCallback : undefined
+	);
 
 	const areThereVariants = variants.length > 1;
 
@@ -424,9 +430,12 @@ function LineItemWrapper( {
 				product={ product }
 				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
+				isRestorable
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }
+				restorableProducts={ restorableProducts }
+				setRestorableProducts={ setRestorableProducts }
 				isPwpoUser={ isPwpoUser }
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }

@@ -19,7 +19,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 32px;
 		padding-bottom: 24px;
 	}
 
@@ -31,6 +30,7 @@
 	&__right-section {
 		display: flex;
 		align-items: center;
+		margin-left: 12px;
 
 		.components-button {
 			height: 32px;
@@ -68,8 +68,8 @@
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		line-height: 1;
-		height: 32px;
+		line-height: 1.2;
+		min-height: 32px;
 
 		@media (max-width: $break-small) {
 			font-size: 20px;

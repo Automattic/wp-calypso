@@ -15,6 +15,11 @@ export interface User {
 	avatar_URL?: string;
 	language: string;
 	locale_variant: string;
+	email: string;
+}
+
+export interface SiteUser {
+	id: number;
 }
 
 export interface SiteDomain {
@@ -45,6 +50,7 @@ export interface Domain {
 }
 
 export interface SitePlan {
+	product_slug: string;
 	product_name: string;
 	product_name_short: string;
 	expired: boolean;
@@ -56,7 +62,7 @@ export interface SitePlan {
 }
 
 export interface Plan {
-	id: string;
+	id: string | null;
 	current_plan?: boolean;
 	expiry?: string;
 	subscribed_date?: string;
@@ -71,6 +77,8 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
+	p2_hub_blog_id?: number;
+	is_wpforteams_site?: boolean;
 }
 
 export interface Site {
@@ -86,12 +94,14 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
 	is_wpcom_staging_site: boolean;
+	is_vip: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;
@@ -101,6 +111,24 @@ export interface Site {
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
+}
+
+export interface AgencyBlog {
+	name: string;
+	existing_wpcom_license_count: number;
+	referral_status: 'active' | 'pending' | 'canceled' | 'archived';
+	prices: {
+		actual_price: number;
+		currency: string;
+	};
+}
+
+export interface Purchase {
+	ID: number | string;
+	active: boolean;
+	is_cancelable: boolean;
+	product_slug: string;
+	user_id: number | string;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
@@ -150,9 +178,14 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
+	is_fully_managed_agency_site?: boolean;
 	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
+	wpcom_discourage_search_engines?: boolean;
+	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
+	wpcom_legacy_contact?: string;
+	wpcom_locked_mode?: boolean;
 }
 
 export interface BasicMetricsData {
@@ -176,4 +209,62 @@ export interface UrlPerformanceInsights {
 
 export interface PhpMyAdminToken {
 	token: string;
+}
+
+export interface DefensiveModeSettings {
+	enabled: boolean;
+	enabled_by_a11n: boolean;
+	enabled_until: number;
+}
+
+export interface DefensiveModeSettingsUpdate {
+	active: boolean;
+	ttl?: number;
+}
+
+export interface SiteTransferConfirmation {
+	transfer: boolean;
+	email_sent: boolean;
+	new_owner_email: string;
+}
+
+export type SiteResetContentSummary = {
+	post_count: number;
+	page_count: number;
+	media_count: number;
+	plugin_count: number;
+};
+
+export type SiteResetStatus = {
+	status: 'in-progress' | 'ready' | 'completed';
+	progress: number;
+};
+
+export interface SftpUser {
+	username: string;
+	password: string;
+}
+
+export interface SshAccessStatus {
+	setting: 'sftp' | 'ssh';
+}
+
+export interface SiteSshKey {
+	sha256: string;
+	user_login: string;
+	name: string;
+	attached_at: string;
+}
+
+export interface ProfileSshKey {
+	name: string;
+	key: string;
+	type:
+		| 'ssh-rsa'
+		| 'ssh-ed25519'
+		| 'ecdsa-sha2-nistp256'
+		| 'ecdsa-sha2-nistp384'
+		| 'ecdsa-sha2-nistp521';
+	sha256: string;
+	created_at: string;
 }

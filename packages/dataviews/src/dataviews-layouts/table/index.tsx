@@ -44,6 +44,7 @@ interface TableColumnFieldProps< Item > {
 	fields: NormalizedField< Item >[];
 	column: string;
 	item: Item;
+	align?: 'start' | 'center' | 'end';
 }
 
 interface TableRowProps< Item > {
@@ -74,6 +75,7 @@ function TableColumnField< Item >( {
 	item,
 	fields,
 	column,
+	align,
 }: TableColumnFieldProps< Item > ) {
 	const field = fields.find( ( f ) => f.id === column );
 
@@ -81,8 +83,13 @@ function TableColumnField< Item >( {
 		return null;
 	}
 
+	const className = clsx( 'dataviews-view-table__cell-content-wrapper', {
+		'dataviews-view-table__cell-align-end': align === 'end',
+		'dataviews-view-table__cell-align-center': align === 'center',
+	} );
+
 	return (
-		<div className="dataviews-view-table__cell-content-wrapper">
+		<div className={ className }>
 			<field.render item={ item } field={ field } />
 		</div>
 	);
@@ -188,15 +195,23 @@ function TableRow< Item >( {
 			) }
 			{ columns.map( ( column: string ) => {
 				// Explicit picks the supported styles.
-				const { width, maxWidth, minWidth } =
+				const { width, maxWidth, minWidth, align } =
 					view.layout?.styles?.[ column ] ?? {};
 
 				return (
-					<td key={ column } style={ { width, maxWidth, minWidth } }>
+					<td
+						key={ column }
+						style={ {
+							width,
+							maxWidth,
+							minWidth,
+						} }
+					>
 						<TableColumnField
 							fields={ fields }
 							item={ item }
 							column={ column }
+							align={ align }
 						/>
 					</td>
 				);
@@ -358,12 +373,17 @@ function ViewTable< Item >( {
 						) }
 						{ columns.map( ( column, index ) => {
 							// Explicit picks the supported styles.
-							const { width, maxWidth, minWidth } =
+							const { width, maxWidth, minWidth, align } =
 								view.layout?.styles?.[ column ] ?? {};
 							return (
 								<th
 									key={ column }
-									style={ { width, maxWidth, minWidth } }
+									style={ {
+										width,
+										maxWidth,
+										minWidth,
+										textAlign: align,
+									} }
 									aria-sort={
 										view.sort?.direction &&
 										view.sort?.field === column

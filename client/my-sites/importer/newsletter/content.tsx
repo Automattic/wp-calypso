@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
 import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
@@ -95,9 +96,15 @@ export default function Content( {
 					<h2>{ __( 'Step 1: Export your content from Substack' ) }</h2>
 					<p>
 						{ createInterpolateElement(
-							__(
-								'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
-							),
+							( fixMe( {
+								text: 'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.',
+								newCopy: __(
+									'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
+								),
+								oldCopy: __(
+									'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
+								),
+							} ) || '' ) as string,
 							{
 								strong: <strong />,
 							}

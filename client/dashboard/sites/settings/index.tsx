@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-	__experimentalHeading as Heading,
-	__experimentalVStack as VStack,
-	Card,
-} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
+import { SummaryButtonList } from '../../components/summary-button-list';
+import AgencySettingsSummary from '../settings-agency/summary';
+import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
+import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
+import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
+import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
@@ -28,23 +30,24 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
-			<Heading>{ __( 'General' ) }</Heading>
-			<Card>
-				<VStack>
-					<SiteVisibilitySettingsSummary site={ site } />
-					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
-				</VStack>
-			</Card>
-			<Heading>{ __( 'Server' ) }</Heading>
-			<Card>
-				<VStack>
-					<DatabaseSettingsSummary site={ site } />
-					<WordPressSettingsSummary site={ site } />
-					<PHPSettingsSummary site={ site } />
-					<PrimaryDataCenterSettingsSummary site={ site } />
-					<StaticFile404SettingsSummary site={ site } />
-				</VStack>
-			</Card>
+			<SectionHeader title={ __( 'General' ) } />
+			<SummaryButtonList>
+				<SiteVisibilitySettingsSummary site={ site } />
+				<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+				<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
+			</SummaryButtonList>
+			<SectionHeader title={ __( 'Server' ) } />
+			<SummaryButtonList>
+				<WordPressSettingsSummary site={ site } />
+				<PHPSettingsSummary site={ site } />
+				<SftpSshSettingsSummary site={ site } />
+				<DatabaseSettingsSummary site={ site } />
+				<AgencySettingsSummary site={ site } />
+				<PrimaryDataCenterSettingsSummary site={ site } />
+				<StaticFile404SettingsSummary site={ site } />
+				<CachingSettingsSummary site={ site } />
+				<DefensiveModeSettingsSummary site={ site } />
+			</SummaryButtonList>
 			<SiteActions site={ site } />
 			<DangerZone site={ site } />
 		</PageLayout>

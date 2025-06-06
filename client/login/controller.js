@@ -5,6 +5,8 @@ import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
+	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -64,14 +66,18 @@ const enhanceContextWithLogin = ( context ) => {
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
 	const isWooJPC = isWooJPCFlow( currentState );
 	const isBlazePro = getIsBlazePro( currentState );
+	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
+	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			Boolean( clientId ) === false &&
 			Boolean( oauth2ClientId ) === false &&
-			! isBlazePro &&
 			! isWooJPC ) ||
-		isPartnerPortalClient;
+		isPartnerPortalClient ||
+		isStudioLogin ||
+		isCrowdsignalLogin ||
+		isBlazePro;
 
 	context.primary = (
 		<WPLogin
@@ -232,7 +238,7 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
+	const { client_id, email, redirect_to, path, token, transition: isTransition } = previousQuery;
 
 	let activate = '';
 	try {
@@ -243,7 +249,10 @@ export function magicLoginUse( context, next ) {
 	}
 	const transition = isTransition === 'true';
 
-	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
+	const flow =
+		redirect_to?.includes( 'jetpack/connect' ) || path?.includes( 'jetpack/link/use' )
+			? 'jetpack'
+			: null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 

@@ -75,6 +75,10 @@
 	--color-yellow-0: var(--studio-yellow-0);
 	--color-yellow-20: var(--studio-yellow-20);
 	--color-yellow-50: var(--studio-yellow-50);
+
+	// Brand colors
+	--color-klaviyo: #b84f0a;
+	--color-woo: var(--studio-woocommerce-purple-60)
 }
 
 .theme-a8c-for-agencies {
@@ -590,6 +594,14 @@ html {
 			}
 		}
 	}
+
+	&.bordered {
+		.dataviews-view-table {
+			border: 1px solid var(--color-neutral-5);
+			border-radius: 2px;
+		}
+	}
+
 }
 
 

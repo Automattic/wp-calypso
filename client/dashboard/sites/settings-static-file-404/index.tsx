@@ -13,27 +13,34 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteStaticFile404Query, siteStaticFile404Mutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canSetStaticFile404Handling } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
-
-export function canSetStaticFile404Handling( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 const fields: Field< { setting: string } >[] = [
 	{
 		id: 'setting',
 		label: __( 'Server response' ),
-		Edit: 'select',
-		description: __(
-			'Assets are images, fonts, JavaScript, and CSS files that web browsers request as part of loading a web page. This setting controls how the web server handles requests for missing asset files.'
-		),
+		Edit: 'radio',
 		elements: [
-			{ value: 'default', label: __( 'Default' ) },
-			{ value: 'lightweight', label: __( 'Send a lightweight File-Not-Found page' ) },
-			{ value: 'wordpress', label: __( 'Delegate request to WordPress' ) },
+			{
+				value: 'default',
+				label: __( 'Default' ),
+				description: __( 'Use the setting that WordPress.com has decided is the best option.' ),
+			},
+			{
+				value: 'lightweight',
+				label: __( 'Send a lightweight File-Not-Found page' ),
+				description: __(
+					'Let the server handle static file 404 requests. This option is more performant than the others because it doesn’t load the WordPress core code when handling nonexistent assets.'
+				),
+			},
+			{
+				value: 'wordpress',
+				label: __( 'Delegate request to WordPress' ),
+				description: __( 'Let WordPress handle static file 404 requests.' ),
+			},
 		],
 	},
 ];
@@ -41,6 +48,7 @@ const fields: Field< { setting: string } >[] = [
 const form = {
 	type: 'regular' as const,
 	fields: [ 'setting' ],
+	labelPosition: 'none' as const,
 };
 
 export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: string } ) {
@@ -91,7 +99,14 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 	return (
 		<PageLayout
 			size="small"
-			header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
+			header={
+				<SettingsPageHeader
+					title={ __( 'Handling requests for nonexistent assets' ) }
+					description={ __(
+						'Choose how to handle requests for assets (like images, fonts, or JavaScript) that don’t exist on your site.'
+					) }
+				/>
+			}
 		>
 			<Card>
 				<CardBody>

@@ -10,7 +10,8 @@ import {
 import type { DataViewRenderFieldProps, NormalizedField } from './types';
 
 export function sanitizeOperators< Item >( field: NormalizedField< Item > ) {
-	let operators = field.filterBy?.operators;
+	let operators =
+		typeof field.filterBy === 'object' && field.filterBy?.operators;
 
 	// Assign default values.
 	if ( ! operators || ! Array.isArray( operators ) ) {

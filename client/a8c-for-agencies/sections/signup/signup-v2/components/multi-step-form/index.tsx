@@ -174,10 +174,14 @@ const MultiStepForm = ( {
 
 	const onCreateAgency = useCallback(
 		( data: Partial< AgencyDetailsSignupPayload > ) => {
-			const newFormData = { ...formData, ...data };
+			const newFormData = {
+				...formData,
+				...data,
+				initialSource: sourceName,
+			};
 			submitSignup( newFormData as AgencyDetailsSignupPayload );
 		},
-		[ formData, submitSignup ]
+		[ formData, sourceName, submitSignup ]
 	);
 
 	const currentForm = useMemo( () => {
