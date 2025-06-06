@@ -14,19 +14,19 @@ $hint-container-bg-color: #EBF7FF;
 
 .onboarding-tour-modal {
 	display: flex;
-	flex-direction: column-reverse;
-
-	@include break-mobile {
-		flex-direction: row;
-	}
+	flex-direction: row;
 }
 
 .onboarding-tour-modal__aside {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	gap: 4px;
 	padding: 12px;
 	width: 220px;
+
+	@include break-mobile {
+		display: flex;
+	}
 }
 
 .onboarding-tour-modal__aside-menu-item.is-active {
@@ -36,10 +36,10 @@ $hint-container-bg-color: #EBF7FF;
 
 .onboarding-tour-modal__main {
 	flex: 1;
-	border-inline-start: 1px solid var(--color-neutral-0);
 	max-width: 100%;
 
 	@include break-mobile {
+		border-inline-start: 1px solid var(--color-neutral-0);
 		max-width: calc( 100% - 220px );
 	}
 }
@@ -83,10 +83,20 @@ $hint-container-bg-color: #EBF7FF;
 
 .onboarding-tour-modal__main-content-footer {
 	display: flex;
-	justify-content: flex-end;
+	flex-direction: column;
 	gap: 16px;
 	padding: 0 24px;
 	margin-block-start: 16px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding-block: 16px;
+	background-color: var(--color-surface);
+
+	@include break-mobile {
+		justify-content: flex-end;
+		flex-direction: row;
+	}
 }
 
 
