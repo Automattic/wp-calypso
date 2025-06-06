@@ -522,6 +522,8 @@ export const data: ComponentData[] = [
 		figma:
 			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=2274-38167',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-notice--docs',
+		notes:
+			'A design update is in the works. Search for the "Components: Notice" project on Linear.',
 	},
 	{
 		id: 'number-control',
