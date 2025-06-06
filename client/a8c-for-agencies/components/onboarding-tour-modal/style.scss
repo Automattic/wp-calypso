@@ -13,8 +13,11 @@ $hint-container-bg-color: #EBF7FF;
 }
 
 .onboarding-tour-modal {
-	display: flex;
-	flex-direction: row;
+	display: flex;	flex-direction: column-reverse;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
 }
 
 .onboarding-tour-modal__aside {
@@ -94,11 +97,36 @@ $hint-container-bg-color: #EBF7FF;
 	background-color: var(--color-surface);
 
 	@include break-mobile {
+		position: relative;
 		justify-content: flex-end;
 		flex-direction: row;
+		padding-block: 0;
 	}
 }
 
+.onboarding-tour-modal__main-content-footer-navigation {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	@include break-mobile {
+		display: none;
+	}
+}
+
+.onboarding-tour-modal__main-content-footer-navigation-button {
+	display: block;
+	cursor: pointer;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	margin: 4px;
+	background-color: var(--color-neutral-5);
+
+	&.is-active {
+		background-color: var(--color-primary-50);
+	}
+}
 
 .onboarding-tour-modal__section {
 	padding: 0 24px;
