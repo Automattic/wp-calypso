@@ -41,7 +41,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import hasGravatarDomainQuery from 'calypso/state/selectors/has-gravatar-domain-query';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -418,7 +418,7 @@ export default withCurrentRoute(
 			currentSection?.name === 'checkout' || currentSection?.name === 'checkout-thank-you';
 		const isGravatarDomain =
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
-			( isCheckoutSection && hasGravatarDomainQuery( state ) );
+			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
 		return {
 			masterbarIsHidden,

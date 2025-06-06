@@ -1,5 +1,5 @@
 import type { AppState } from 'calypso/types';
 
-export default function hasGravatarDomainQuery( state: AppState ): boolean {
+export default function hasGravatarDomainQueryParam( state: AppState ): boolean {
 	return state?.route?.query?.current?.isGravatarDomain === '1';
 }

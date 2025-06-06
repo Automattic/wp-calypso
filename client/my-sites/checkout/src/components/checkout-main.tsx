@@ -21,7 +21,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import hasGravatarDomainQuery from 'calypso/state/selectors/has-gravatar-domain-query';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -146,7 +146,7 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isGravatarDomain = useSelector( ( state ) => hasGravatarDomainQuery( state ) );
+	const isGravatarDomain = useSelector( ( state ) => hasGravatarDomainQueryParam( state ) );
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
