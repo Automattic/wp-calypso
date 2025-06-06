@@ -35,6 +35,8 @@
 		"checkout/razorpay": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
+		"dashboard/v2": true,
+		"dashboard/v2/backport/site-settings": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
@@ -160,8 +162,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true,
-		"dashboard/v2": true
+		"yolo/command-palette": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

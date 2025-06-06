@@ -6,8 +6,10 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
 import { SectionHeader } from '../../components/section-header';
@@ -45,6 +47,8 @@ export function ConfirmNewOwnerForm( {
 
 	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( siteSlug ) );
 
+	const { createErrorNotice } = useDispatch( noticesStore );
+
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
 
 	const handleSubmit = ( event: React.FormEvent ) => {
@@ -56,8 +60,19 @@ export function ConfirmNewOwnerForm( {
 				onSuccess: () => {
 					onSubmit( formData );
 				},
-				onError: () => {
-					// TODO: Display error message below the field.
+				onError: ( error ) => {
+					// TODO: Show the error via Data Form when the ValidatedTextControl is ready.
+					createErrorNotice(
+						error.message ??
+							sprintf(
+								/* translators: %s is the new owner's email */
+								__( 'Sorry, the site cannot be transferred to %s' ),
+								formData.email
+							),
+						{
+							type: 'snackbar',
+						}
+					);
 				},
 			}
 		);
