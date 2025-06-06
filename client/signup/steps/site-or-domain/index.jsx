@@ -106,7 +106,10 @@ class SiteOrDomain extends Component {
 			icon: null,
 			titleIcon: globe,
 			value: 'domain',
-			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			actionText: <Gridicon icon="chevron-right" size={ 18 } aria-hidden="true" />,
+			actionButtonLabel: translate( 'Select %(title)s', {
+				args: { title: buyADomainTitle },
+			} ),
 			allItemClickable: true,
 			'aria-label': `${ buyADomainTitle }. ${ buyADomainDescription }`,
 		} );
@@ -118,7 +121,10 @@ class SiteOrDomain extends Component {
 			icon: null,
 			titleIcon: addCard,
 			value: 'page',
-			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			actionText: <Gridicon icon="chevron-right" size={ 18 } aria-hidden="true" />,
+			actionButtonLabel: translate( 'Select %(title)s', {
+				args: { title: newSiteTitle },
+			} ),
 			allItemClickable: true,
 			'aria-label': `${ newSiteTitle }. ${ newSiteDescription }`,
 		} );
@@ -131,7 +137,10 @@ class SiteOrDomain extends Component {
 				icon: null,
 				titleIcon: layout,
 				value: 'existing-site',
-				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+				actionText: <Gridicon icon="chevron-right" size={ 18 } aria-hidden="true" />,
+				actionButtonLabel: translate( 'Select %(title)s', {
+					args: { title: existingSiteTitle },
+				} ),
 				allItemClickable: true,
 				'aria-label': `${ existingSiteTitle }. ${ existingSiteDescription }`,
 			} );
