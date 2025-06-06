@@ -40,7 +40,6 @@ export default function useOnboardingTourSections() {
 					section,
 				} )
 			);
-			saveCurrentSection( section );
 			onNext();
 		};
 
@@ -50,6 +49,7 @@ export default function useOnboardingTourSections() {
 					section,
 				} )
 			);
+			saveCurrentSection( section );
 			onClose();
 		};
 
