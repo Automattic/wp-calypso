@@ -18,11 +18,12 @@ export const ReportCountColumn = ( { count }: { count: number } ) => {
 	);
 };
 
-export const ReportStatusColumn = ( { status }: { status: 'sent' | 'error' } ) => {
+export const ReportStatusColumn = ( { status }: { status: 'sent' | 'pending' | 'error' } ) => {
 	const translate = useTranslate();
 
 	const statusConfig = {
 		sent: { type: 'success', text: translate( 'Sent' ) },
+		pending: { type: 'warning', text: translate( 'Pending' ) },
 		error: { type: 'error', text: translate( 'Error' ) },
 	};
 
