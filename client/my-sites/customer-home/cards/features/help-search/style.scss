@@ -13,7 +13,6 @@ $min_results_height: 180px;
 	justify-content: space-between;
 	align-items: center;
 	padding: 16px;
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 
@@ -26,6 +25,14 @@ $min_results_height: 180px;
 	button {
 		flex-shrink: 0;
 	}
+
+	box-shadow: none;
+	border-bottom: 1px solid var(--color-border-subtle);
+
+	@include break-mobile {
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border: none;
+	}
 }
 
 .customer-home__layout .help-search {
@@ -37,6 +44,7 @@ $min_results_height: 180px;
 		margin-bottom: 0;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
+		padding-bottom: 0;
 	}
 
 
@@ -86,7 +94,6 @@ $min_results_height: 180px;
 
 	.inline-help__search {
 		width: 100%; // Don't allow ellipsis items to flow outside box
-		padding: 0 0 16px 0;
 	}
 
 	.inline-help__results {
