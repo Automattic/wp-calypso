@@ -122,9 +122,10 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					width: '260px',
 					padding: 0,
 				} }
+				aria-label={ __( 'Get special offer: Free domain and up to 55% off annual plans' ) }
 			>
 				<VStack className="dashboard-add-new-site__banner">
-					<img src={ devSiteBanner } alt={ offer } />
+					<img src={ devSiteBanner } alt="" aria-hidden="true" />
 					<Text size="title">{ offer }</Text>
 					<Text variant="muted" as="p">
 						{ sprintf(
@@ -137,7 +138,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 							} )
 						) }
 					</Text>
-					<div>{ __( 'Unlock offer' ) }</div>
+					<div aria-hidden="true">{ __( 'Unlock offer' ) }</div>
 				</VStack>
 			</Button>
 		</Wrapper>
