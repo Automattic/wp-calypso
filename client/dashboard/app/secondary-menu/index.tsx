@@ -11,7 +11,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import MenuDivider from '../../components/menu-divider';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
@@ -98,18 +97,15 @@ function SecondaryMenu() {
 	};
 
 	return (
-		<HStack spacing={ 3 } justify="flex-end">
+		<HStack spacing={ 2 } justify="flex-end">
 			{ supports.reader && (
-				<>
-					<Button
-						className="dashboard-secondary-menu__item"
-						icon={ <ReaderIcon /> }
-						label={ __( 'Reader' ) }
-						text={ __( 'Reader' ) }
-						href="/reader"
-					/>
-					<MenuDivider />
-				</>
+				<Button
+					className="dashboard-secondary-menu__item"
+					icon={ <ReaderIcon /> }
+					label={ __( 'Reader' ) }
+					text={ __( 'Reader' ) }
+					href="/reader"
+				/>
 			) }
 			{ supports.help && (
 				<Button
