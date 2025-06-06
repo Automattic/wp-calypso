@@ -135,31 +135,61 @@ function usePreservePurchasesFiltersInUrl( {
 }
 
 function useHidePurchasesFieldsAtCertainWidths( {
-	currentView,
 	setView,
 }: {
-	currentView: View;
-	setView: ( setter: View | ( ( currentView: View ) => View ) ) => void;
+	setView: ( setter: View | ( ( view: View ) => View ) ) => void;
 } ): void {
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
-	useEffect( () => {
-		if ( isWide && currentView.fields !== purchasesWideFields ) {
-			setView( { ...currentView, fields: purchasesWideFields } );
-		}
+	const currentWidth = ( () => {
 		if ( isWide ) {
-			return;
-		}
-		if ( isDesktop && currentView.fields !== purchasesDesktopFields ) {
-			setView( { ...currentView, fields: purchasesDesktopFields } );
+			return 'wide';
 		}
 		if ( isDesktop ) {
-			return;
+			return 'desktop';
 		}
-		if ( currentView.fields !== purchasesMobileFields ) {
-			setView( { ...currentView, fields: purchasesMobileFields } );
+		return 'mobile';
+	} )();
+	useEffect( () => {
+		switch ( currentWidth ) {
+			case 'wide': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== purchasesWideFields.length ) {
+						return {
+							...view,
+							fields: purchasesWideFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+			case 'desktop': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== purchasesDesktopFields.length ) {
+						return {
+							...view,
+							fields: purchasesDesktopFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+			case 'mobile': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== purchasesMobileFields.length ) {
+						return {
+							...view,
+							fields: purchasesMobileFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
 		}
-	}, [ isWide, isDesktop, currentView, setView ] );
+	}, [ currentWidth, setView ] );
 }
 
 export function PurchasesDataViews( {
@@ -173,7 +203,7 @@ export function PurchasesDataViews( {
 	const [ currentView, setView ] = useState( purchasesDataView );
 
 	// Hide fields at mobile width
-	useHidePurchasesFieldsAtCertainWidths( { currentView, setView } );
+	useHidePurchasesFieldsAtCertainWidths( { setView } );
 
 	// Keep track of the current view params in the URL and restore them when the page loads.
 	usePreservePurchasesFiltersInUrl( { currentView, setView } );
