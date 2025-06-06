@@ -42,7 +42,7 @@ export const EmailFallbackNotice: React.FC = () => {
 				&nbsp;
 				{ createInterpolateElement(
 					__(
-						'We`re sorry for the inconvenience and appreciate your patience. Please feel free to reach out via <email>email</email> or check our <guides>Support Guides</guides> in the meantime.',
+						'We’re sorry for the inconvenience and appreciate your patience. Please feel free to reach out via <email>email</email> or check our <guides>Support Guides</guides> in the meantime.',
 						__i18n_text_domain__
 					),
 					{
