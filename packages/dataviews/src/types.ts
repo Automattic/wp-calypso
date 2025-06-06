@@ -184,7 +184,7 @@ export type Field< Item > = {
 	/**
 	 * Filter config for the field.
 	 */
-	filterBy?: FilterByConfig | undefined | false;
+	filterBy?: FilterByConfig | false;
 
 	/**
 	 * Callback used to retrieve the value of the field from the item.
