@@ -23,7 +23,7 @@ function Site() {
 	return (
 		<>
 			<HeaderBar>
-				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
+				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
 					<HeaderBar.Title>
 						<Dropdown
 							renderToggle={ ( { onToggle } ) => (
