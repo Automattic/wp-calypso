@@ -149,22 +149,30 @@ export const usePersistedHistory = () => {
 	}, [ history ] );
 
 	useEffect( () => {
-		wpcomRequest< { help_center_router_history: PersistedHistory } >( {
-			path: '/me/preferences',
-			apiNamespace: 'wpcom/v2',
-		} ).then( ( response ) => {
-			if ( response.help_center_router_history ) {
-				const history = new MemoryHistory(
-					response.help_center_router_history.entries,
-					response.help_center_router_history.index
-				);
-				setHistory( history );
-				setState( {
-					action: history.action,
-					location: history.location,
-				} );
-			}
-		} );
+		( canAccessWpcomApis()
+			? wpcomRequest< { help_center_router_history: PersistedHistory } >( {
+					path: '/me/preferences',
+					apiNamespace: 'wpcom/v2',
+			  } )
+			: apiFetch< { help_center_router_history: PersistedHistory } >( {
+					global: true,
+					path: '/help-center/open-state',
+			  } as Parameters< typeof apiFetch >[ 0 ] )
+		)
+			.then( ( response ) => {
+				if ( response.help_center_router_history ) {
+					const history = new MemoryHistory(
+						response.help_center_router_history.entries,
+						response.help_center_router_history.index
+					);
+					setHistory( history );
+					setState( {
+						action: history.action,
+						location: history.location,
+					} );
+				}
+			} )
+			.catch( () => {} );
 	}, [] );
 
 	return { history, state };
