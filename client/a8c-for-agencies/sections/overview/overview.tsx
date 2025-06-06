@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
+import { withOnboardingTour } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
@@ -18,7 +19,7 @@ import OverviewSidebar from './sidebar';
 
 import './style.scss';
 
-export default function Overview() {
+function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency overview' );
 
@@ -45,3 +46,5 @@ export default function Overview() {
 		</Layout>
 	);
 }
+
+export default withOnboardingTour( Overview );

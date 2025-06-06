@@ -6,7 +6,7 @@ import {
 } from '@automattic/zendesk-client';
 import { DropZone, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SendMessageIcon } from '../../assets/send-message-icon';
@@ -65,8 +65,16 @@ export const OdieSendMessageButton = () => {
 		false;
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
+	const isInitialLoading = chat.status === 'loading';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+
+	// Focus input when chat is ready
+	useEffect( () => {
+		if ( ! isInitialLoading ) {
+			inputRef.current?.focus();
+		}
+	}, [ isInitialLoading ] );
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,

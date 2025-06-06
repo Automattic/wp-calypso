@@ -33,6 +33,7 @@ export type SpaceObject = {
 	categories: string[];
 	satellites: number;
 	date: string;
+	email: string;
 };
 
 export const data: SpaceObject[] = [
@@ -46,6 +47,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'NASA' ],
 		satellites: 0,
 		date: '2021-01-01T00:00:00Z',
+		email: 'apollo@example.com',
 	},
 	{
 		id: 2,
@@ -57,6 +59,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space' ],
 		satellites: 0,
 		date: '2019-01-02T00:00:00Z',
+		email: 'space@example.com',
 	},
 	{
 		id: 3,
@@ -68,6 +71,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'NASA' ],
 		satellites: 0,
 		date: '2025-01-03T00:00:00Z',
+		email: 'nasa@example.com',
 	},
 	{
 		id: 4,
@@ -79,6 +83,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 14,
 		date: '2020-01-01T00:00:00Z',
+		email: 'neptune@example.com',
 	},
 	{
 		id: 5,
@@ -90,6 +95,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 0,
 		date: '2020-01-02T01:00:00Z',
+		email: 'mercury@example.com',
 	},
 	{
 		id: 6,
@@ -101,6 +107,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 0,
 		date: '2020-01-02T00:00:00Z',
+		email: 'venus@example.com',
 	},
 	{
 		id: 7,
@@ -112,6 +119,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 1,
 		date: '2023-01-03T00:00:00Z',
+		email: 'earth@example.com',
 	},
 	{
 		id: 8,
@@ -123,6 +131,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 2,
 		date: '2020-01-01T00:00:00Z',
+		email: 'mars@example.com',
 	},
 	{
 		id: 9,
@@ -134,6 +143,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 95,
 		date: '2017-01-01T00:01:00Z',
+		email: 'jupiter@example.com',
 	},
 	{
 		id: 10,
@@ -145,6 +155,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 146,
 		date: '2020-02-01T00:02:00Z',
+		email: 'saturn@example.com',
 	},
 	{
 		id: 11,
@@ -156,6 +167,7 @@ export const data: SpaceObject[] = [
 		categories: [ 'Space', 'Ice giant', 'Solar system' ],
 		satellites: 28,
 		date: '2020-03-01T00:00:00Z',
+		email: 'uranus@example.com',
 	},
 ];
 
@@ -703,6 +715,11 @@ export const fields: Field< SpaceObject >[] = [
 		enableSorting: false,
 		enableGlobalSearch: true,
 		filterBy: false,
+	},
+	{
+		label: 'Email',
+		id: 'email',
+		type: 'email',
 	},
 	{
 		label: 'Categories',

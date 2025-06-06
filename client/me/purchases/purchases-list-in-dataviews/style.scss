@@ -1,6 +1,23 @@
 /* Purchase listing
 ================================================== */
 #purchases-list {
+	padding: 8px 0 0;
+
+	.dataviews__view-actions {
+		margin-top: 0;
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	.dataviews-wrapper .dataviews-view-table__row th:last-child,
+	.dataviews-wrapper .dataviews-view-table__row td:last-child {
+		padding-right: 24px;
+	}
+
+	.dataviews-wrapper .dataviews-view-table__row .dataviews-view-table__actions-column {
+		text-align: right;
+	}
+
 	.dataviews-view-table,
 	.dataviews-view-table tr {
 		max-width: 1040px;
@@ -10,7 +27,6 @@
 	.dataviews-view-table tr.dataviews-view-table__row th,
 	.dataviews-view-table tr.dataviews-view-table__row td {
 		white-space: break-spaces;
-		padding: 16px 0;
 	}
 
 	.dataviews-view-table tr td:first-child,
@@ -33,6 +49,12 @@
 		.purchase-item__title {
 			font-size: 16px;
 			overflow: hidden;
+		}
+
+		.purchase-item__title button.components-button.is-link {
+			font-size: inherit;
+			color: inherit;
+			text-decoration: none;
 		}
 
 		div {
