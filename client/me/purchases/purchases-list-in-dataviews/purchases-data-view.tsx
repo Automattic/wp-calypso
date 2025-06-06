@@ -46,7 +46,7 @@ function usePreservePurchasesFiltersInUrl( {
 	setView,
 }: {
 	currentView: View;
-	setView: ( setter: ( currentView: View ) => View ) => void;
+	setView: ( setter: View | ( ( currentView: View ) => View ) ) => void;
 } ) {
 	const urlSortField = 'sortField';
 	const urlSortDirection = 'sortDir';
@@ -134,19 +134,15 @@ function usePreservePurchasesFiltersInUrl( {
 	}, [ currentView ] );
 }
 
-export function PurchasesDataViews( {
-	purchases,
-	sites,
+function useHidePurchasesFieldsAtCertainWidths( {
+	currentView,
+	setView,
 }: {
-	purchases: Purchases.Purchase[];
-	sites: SiteDetails[];
-} ) {
+	currentView: View;
+	setView: ( setter: View | ( ( currentView: View ) => View ) ) => void;
+} ): void {
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
-	const translate = useTranslate();
-	const [ currentView, setView ] = useState( purchasesDataView );
-
-	// Hide fields at mobile width
 	useEffect( () => {
 		if ( isWide && currentView.fields !== purchasesWideFields ) {
 			setView( { ...currentView, fields: purchasesWideFields } );
@@ -164,6 +160,20 @@ export function PurchasesDataViews( {
 			setView( { ...currentView, fields: purchasesMobileFields } );
 		}
 	}, [ isWide, isDesktop, currentView, setView ] );
+}
+
+export function PurchasesDataViews( {
+	purchases,
+	sites,
+}: {
+	purchases: Purchases.Purchase[];
+	sites: SiteDetails[];
+} ) {
+	const translate = useTranslate();
+	const [ currentView, setView ] = useState( purchasesDataView );
+
+	// Hide fields at mobile width
+	useHidePurchasesFieldsAtCertainWidths( { currentView, setView } );
 
 	// Keep track of the current view params in the URL and restore them when the page loads.
 	usePreservePurchasesFiltersInUrl( { currentView, setView } );
