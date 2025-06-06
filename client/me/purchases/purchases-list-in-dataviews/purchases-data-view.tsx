@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Gridicon, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -318,9 +318,7 @@ export function MembershipsDataViews( { memberships }: { memberships: Membership
 		() => [
 			{
 				id: 'manage-purchase',
-				label: translate( 'Manage this purchase', { textOnly: true } ),
-				isPrimary: true,
-				icon: <Gridicon icon="chevron-right" />,
+				label: translate( 'Manage purchase', { textOnly: true } ),
 				isEligible: ( item: MembershipSubscription ) => Boolean( item.ID ),
 				callback: ( items: MembershipSubscription[] ) => {
 					const subscriptionId = items[ 0 ].ID;
