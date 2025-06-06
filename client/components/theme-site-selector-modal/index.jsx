@@ -48,6 +48,7 @@ export default function ThemeSiteSelectorModal( { isOpen, navigateOnClose = true
 				<SiteSelector
 					onSiteSelect={ onSiteSelect }
 					className="theme-site-selector-modal__selector"
+					autoFocus
 				/>
 			</div>
 		</Modal>
