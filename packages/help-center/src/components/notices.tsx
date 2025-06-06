@@ -1,5 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import './notices.scss';
 
 export const NewThirdPartyCookiesNotice: React.FC = () => {
@@ -26,6 +29,7 @@ export const NewThirdPartyCookiesNotice: React.FC = () => {
 };
 
 export const EmailFallbackNotice: React.FC = () => {
+	const navigate = useNavigate();
 	return (
 		<div className="help-center__notice">
 			<p>
@@ -36,9 +40,27 @@ export const EmailFallbackNotice: React.FC = () => {
 					) }
 				</strong>
 				&nbsp;
-				{ __(
-					'We`re sorry for the inconvenience and appreciate your patience. Please feel free to reach out via email or check our Support Guides in the meantime.',
-					__i18n_text_domain__
+				{ createInterpolateElement(
+					__(
+						'We`re sorry for the inconvenience and appreciate your patience. Please feel free to reach out via <email>email</email> or check our <guides>Support Guides</guides> in the meantime.',
+						__i18n_text_domain__
+					),
+					{
+						email: (
+							<Button
+								variant="link"
+								className="help-center__notice-link"
+								onClick={ () => navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' ) }
+							/>
+						),
+						guides: (
+							<Button
+								variant="link"
+								className="help-center__notice-link"
+								onClick={ () => navigate( '/' ) }
+							/>
+						),
+					}
 				) }
 			</p>
 		</div>
