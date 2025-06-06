@@ -64,10 +64,41 @@ class SiteOrDomain extends Component {
 			// translators: %s is a domain name
 			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
 		}
+		const buyADomainDescription = translate( 'Add a site later.' );
+
+		const newSiteTitle = translate( 'New site' );
+		const newSiteDescription = translate(
+			'Customize and launch your site. Free domain for the first year on annual plans.',
+			{
+				comment: 'Description for new site option, periods added for screen reader pause',
+			}
+		);
+		const newSiteVisualDescription = translate(
+			'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+			{
+				components: {
+					strong: <strong />,
+					br: <br />,
+				},
+			}
+		);
+
+		const existingSiteTitle = translate( 'Existing WordPress.com site' );
+		const existingSiteDescription = translate(
+			'Use the domain with a site you already started. Free domain for the first year on annual plans.'
+		);
+		const existingSiteVisualDescription = translate(
+			'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+			{
+				components: {
+					strong: <strong />,
+					br: <br />,
+				},
+			}
+		);
 
 		const choices = [];
 
-		const buyADomainDescription = translate( 'Add a site later.' );
 		choices.push( {
 			key: 'domain',
 			title: buyADomainTitle,
@@ -80,25 +111,10 @@ class SiteOrDomain extends Component {
 			'aria-label': `${ buyADomainTitle }. ${ buyADomainDescription }`,
 		} );
 
-		const newSiteTitle = translate( 'New site' );
-		const newSiteDescription = translate(
-			'Customize and launch your site. Free domain for the first year on annual plans.',
-			{
-				comment: 'Description for new site option, periods added for screen reader pause',
-			}
-		);
 		choices.push( {
 			key: 'page',
 			title: newSiteTitle,
-			description: translate(
-				'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-				{
-					components: {
-						strong: <strong />,
-						br: <br />,
-					},
-				}
-			),
+			description: newSiteVisualDescription,
 			icon: null,
 			titleIcon: addCard,
 			value: 'page',
@@ -108,25 +124,10 @@ class SiteOrDomain extends Component {
 		} );
 
 		if ( isLoggedIn && siteCount > 0 ) {
-			const existingSiteTitle = translate( 'Existing WordPress.com site' );
-			const existingSiteDescription = translate(
-				'Use the domain with a site you already started. Free domain for the first year on annual plans.',
-				{
-					comment: 'Description for existing site option, periods added for screen reader pause',
-				}
-			);
 			choices.push( {
 				key: 'existing-site',
 				title: existingSiteTitle,
-				description: translate(
-					'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-					{
-						components: {
-							strong: <strong />,
-							br: <br />,
-						},
-					}
-				),
+				description: existingSiteVisualDescription,
 				icon: null,
 				titleIcon: layout,
 				value: 'existing-site',
