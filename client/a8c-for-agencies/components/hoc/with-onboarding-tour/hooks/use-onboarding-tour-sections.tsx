@@ -1,5 +1,3 @@
-import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
@@ -15,6 +13,7 @@ import OnboardingTourBannerWelcome from 'calypso/assets/images/a8c-for-agencies/
 import OnboardingTourBannerWooPayments from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-woopayments.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { RenderableAction, RenderableActionProps } from '../../../onboarding-tour-modal/section';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_MIGRATIONS_LINK,
@@ -54,32 +53,28 @@ export default function useOnboardingTourSections() {
 						}
 					),
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_OVERVIEW_LINK );
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_overview_page_click' )
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'Check out the Overview page' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_start_tour_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Start tour' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Check out the Overview page' ),
+							variant: 'secondary',
+							href: A4A_OVERVIEW_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_overview_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Start tour' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_start_tour_click' ) );
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -105,32 +100,32 @@ export default function useOnboardingTourSections() {
 						}
 					),
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_SITES_LINK );
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_sites_page_click' )
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'Connect your first site' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Connect your first site' ),
+							variant: 'secondary',
+							href: A4A_SITES_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_sites_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-sites',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -147,34 +142,32 @@ export default function useOnboardingTourSections() {
 						translate( 'Did we mention this is a recurring commission?' ),
 					],
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_MARKETPLACE_LINK );
-									dispatch(
-										recordTracksEvent(
-											'calypso_a4a_onboarding_tour_explore_marketplace_page_click'
-										)
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'Explore products & hosting' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Explore products & hosting' ),
+							variant: 'secondary',
+							href: A4A_MARKETPLACE_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_marketplace_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-marketplace',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -190,32 +183,32 @@ export default function useOnboardingTourSections() {
 						),
 					],
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_PURCHASES_LINK );
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_purchases_page_click' )
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'View purchases' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'View purchases' ),
+							variant: 'secondary',
+							href: A4A_PURCHASES_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_purchases_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-purchases',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -233,32 +226,32 @@ export default function useOnboardingTourSections() {
 						),
 					],
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_REFERRALS_LINK );
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_referrals_page_click' )
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'View Referrals Dashboard' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'View Referrals Dashboard' ),
+							variant: 'secondary',
+							href: A4A_REFERRALS_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_referrals_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-referrals',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -284,32 +277,32 @@ export default function useOnboardingTourSections() {
 						}
 					),
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_MIGRATIONS_LINK );
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_migrations_page_click' )
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'View migration offer' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'View migration offer' ),
+							variant: 'secondary',
+							href: A4A_MIGRATIONS_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_migrations_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-migrations',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -328,34 +321,32 @@ export default function useOnboardingTourSections() {
 						),
 					],
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_WOOPAYMENTS_LINK );
-									dispatch(
-										recordTracksEvent(
-											'calypso_a4a_onboarding_tour_explore_woopayments_page_click'
-										)
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'Check out WooPayments' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Check out WooPayments' ),
+							variant: 'secondary',
+							href: A4A_WOOPAYMENTS_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_woopayments_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-woopayments',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -370,34 +361,32 @@ export default function useOnboardingTourSections() {
 						),
 					],
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_AGENCY_TIER_LINK );
-									dispatch(
-										recordTracksEvent(
-											'calypso_a4a_onboarding_tour_explore_agency_tiers_page_click'
-										)
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'Check out WooPayments' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Check out Agency Tiers' ),
+							variant: 'secondary',
+							href: A4A_AGENCY_TIER_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_agency_tiers_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-agency-tiers',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -412,32 +401,32 @@ export default function useOnboardingTourSections() {
 						),
 					],
 				},
-				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									page( A4A_TEAM_LINK );
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_team_page_click' )
-									);
-									onClose();
-								} }
-							>
-								{ translate( 'Add your team' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
-									onNext();
-								} }
-							>
-								{ translate( 'Next benefit' ) }
-							</Button>
-						</>
-					);
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Add your team' ),
+							variant: 'secondary',
+							href: A4A_TEAM_LINK,
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_team_page_click' )
+								);
+								onClose();
+							},
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+										section: 'onboarding-tour-team',
+									} )
+								);
+								onNext();
+							},
+						},
+					];
 				},
 			},
 			{
@@ -453,24 +442,22 @@ export default function useOnboardingTourSections() {
 						),
 					],
 				},
-				renderActions: ( { onClose }: { onNext: () => void; onClose: () => void } ) => {
-					return (
-						<>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_end_tour_click' ) );
-									onClose();
-								} }
-							>
-								{ translate( 'End tour' ) }
-							</Button>
-							<OverviewSidebarGrowthAcceleratorCta
-								className="a4a-onboarding-tour__schedule-a-call-cta"
-								onRequestSuccess={ onClose }
-							/>
-						</>
-					);
+				renderableActions: ( { onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'End tour' ),
+							variant: 'secondary',
+							onClick: () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_end_tour_click' ) );
+								onClose();
+							},
+						},
+						<OverviewSidebarGrowthAcceleratorCta
+							key="onboarding-tour-growth-call-cta"
+							className="a4a-onboarding-tour__schedule-a-call-cta"
+							onRequestSuccess={ onClose }
+						/>,
+					];
 				},
 			},
 		],

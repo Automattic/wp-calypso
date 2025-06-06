@@ -5,22 +5,26 @@ import { useTranslate } from 'i18n-calypso';
 import {
 	Children,
 	isValidElement,
-	ReactElement,
 	ReactNode,
+	ReactElement,
 	useEffect,
 	useMemo,
 	useState,
 } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import OnboardingTourModalSection, { OnboardingTourModalSectionProps } from './section';
+import OnboardingTourModalSection, {
+	ActionProps,
+	OnboardingTourModalSectionProps,
+	RenderableAction,
+} from './section';
 import OnboardingTourModalSectionContent from './section-content';
 
 import './style.scss';
 
 interface OnboardingTourModalProps {
 	onClose: () => void;
-	children?: React.ReactNode;
+	children?: ReactNode;
 }
 
 function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) {
@@ -55,10 +59,35 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 	);
 
 	const actions = useMemo( () => {
-		return currentSection?.props?.renderActions?.( {
-			onClose,
-			onNext: () => setCurrentSectionId( sections[ currentSectionIndex + 1 ]?.props?.id ),
-		} );
+		return currentSection?.props
+			?.renderableActions?.( {
+				onClose,
+				onNext: () => setCurrentSectionId( sections[ currentSectionIndex + 1 ]?.props?.id ),
+			} )
+			?.map( ( renderableAction: RenderableAction ) => {
+				if ( ! renderableAction ) {
+					return null;
+				}
+
+				if ( isValidElement( renderableAction ) ) {
+					return renderableAction;
+				}
+
+				const buttonProps = renderableAction as ActionProps;
+
+				return (
+					<Button
+						key={ buttonProps.label }
+						href={ buttonProps.href }
+						onClick={ buttonProps.onClick }
+						variant={ buttonProps.variant }
+						disabled={ buttonProps.disabled }
+						isBusy={ buttonProps.isBusy }
+					>
+						{ buttonProps.label }
+					</Button>
+				);
+			} );
 	}, [ currentSection?.props, onClose, sections, currentSectionIndex ] );
 
 	useEffect( () => {
