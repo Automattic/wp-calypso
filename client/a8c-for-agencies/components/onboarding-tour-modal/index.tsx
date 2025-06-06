@@ -14,6 +14,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import OnboardingTourModalSection, { OnboardingTourModalSectionProps } from './section';
+import OnboardingTourModalSectionContent from './section-content';
 
 import './style.scss';
 
@@ -141,5 +142,6 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 }
 
 OnboardingTourModal.Section = OnboardingTourModalSection;
+OnboardingTourModal.SectionContent = OnboardingTourModalSectionContent;
 
 export default OnboardingTourModal;

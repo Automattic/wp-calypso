@@ -20,7 +20,11 @@ export function withOnboardingTour< T extends JSX.IntrinsicAttributes >(
 					<OnboardingTourModal onClose={ onClose }>
 						{ sections.map( ( section ) => (
 							<OnboardingTourModal.Section key={ section.id } { ...section }>
-								{ section.content }
+								<OnboardingTourModal.SectionContent
+									title={ section.content.title }
+									descriptions={ section.content.descriptions }
+									hint={ section.content.hint }
+								/>
 							</OnboardingTourModal.Section>
 						) ) }
 					</OnboardingTourModal>

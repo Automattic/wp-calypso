@@ -38,28 +38,22 @@ export default function useOnboardingTourSections() {
 				title: translate( 'Welcome' ),
 				bannerImage: OnboardingTourBannerWelcome,
 				isDarkBanner: true,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Welcome to Automattic for Agencies!' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								"We're more than a site management platform—we're your partner in growing your WordPress agency. This quick tour highlights key features and benefits to help you boost revenue and streamline your workflows."
-							) }
-						</p>
-						<p className="a4a-onboarding-tour__spoiler">
-							{ translate(
-								"{{b}}Spoiler alert:{{/b}} You can unlock serious earning potential, deliver better client results, and boost your agency's efficiency. Stick with the tour to see how, or jump in and explore—your progress is saved and you can pick it back up any time.",
-								{
-									components: {
-										b: <b />,
-									},
-								}
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Welcome to Automattic for Agencies!' ),
+					descriptions: [
+						translate(
+							"We're more than a site management platform—we're your partner in growing your WordPress agency. This quick tour highlights key features and benefits to help you boost revenue and streamline your workflows."
+						),
+					],
+					hint: translate(
+						"{{b}}Spoiler alert:{{/b}} You can unlock serious earning potential, deliver better client results, and boost your agency's efficiency. Stick with the tour to see how, or jump in and explore—your progress is saved and you can pick it back up any time.",
+						{
+							components: {
+								b: <b />,
+							},
+						}
+					),
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -92,33 +86,25 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-sites',
 				title: translate( 'Sites' ),
 				bannerImage: OnboardingTourBannerSites,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'One dashboard. Every site. Seamless management.' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								"Monitor, manage, and optimize all your client sites—regardless of where they're hosted—right from the Automattic for Agencies dashboard."
-							) }
-							<br />
-							<br />
-							{ translate(
-								'The lightweight plugin connects your sites in seconds. From there, use built-in Jetpack tools to track performance, boost speed, and keep things secure and backed up.'
-							) }
-						</p>
-						<p className="a4a-onboarding-tour__spoiler">
-							{ translate(
-								'{{b}}Pro tip:{{/b}} Sites hosted on Pressable come with Jetpack Complete (a $800+ value per site, annually) at no extra cost.',
-								{
-									components: {
-										b: <b />,
-									},
-								}
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'One dashboard. Every site. Seamless management.' ),
+					descriptions: [
+						translate(
+							"Monitor, manage, and optimize all your client sites—regardless of where they're hosted—right from the Automattic for Agencies dashboard."
+						),
+						translate(
+							'The lightweight plugin connects your sites in seconds. From there, use built-in Jetpack tools to track performance, boost speed, and keep things secure and backed up.'
+						),
+					],
+					hint: translate(
+						'{{b}}Pro tip:{{/b}} Sites hosted on Pressable come with Jetpack Complete (a $800+ value per site, annually) at no extra cost.',
+						{
+							components: {
+								b: <b />,
+							},
+						}
+					),
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -152,21 +138,15 @@ export default function useOnboardingTourSections() {
 				title: translate( 'Marketplace' ),
 				bannerImage: OnboardingTourBannerMarketplace,
 				isDarkBanner: true,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Buy at a discount or earn commission—your choice!' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								'You now have the freedom to choose how you work with clients. Purchase products and hosting directly and enjoy volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission on products without the billing headaches.'
-							) }
-							<br />
-							<br />
-							{ translate( 'Did we mention this is a recurring commission?' ) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Buy at a discount or earn commission—your choice!' ),
+					descriptions: [
+						translate(
+							'You now have the freedom to choose how you work with clients. Purchase products and hosting directly and enjoy volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission on products without the billing headaches.'
+						),
+						translate( 'Did we mention this is a recurring commission?' ),
+					],
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -202,18 +182,14 @@ export default function useOnboardingTourSections() {
 				title: translate( 'Purchases' ),
 				bannerImage: OnboardingTourBannerPurchases,
 				isDarkBanner: true,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Easily manage all your purchases in one spot.' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								'Assign Jetpack products and Woo extensions, launch WordPress.com sites, manage Pressable hosting, and access all your billing and invoices—no digging required.'
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Easily manage all your purchases in one spot.' ),
+					descriptions: [
+						translate(
+							'Assign Jetpack products and Woo extensions, launch WordPress.com sites, manage Pressable hosting, and access all your billing and invoices—no digging required.'
+						),
+					],
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -246,23 +222,17 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-referrals',
 				title: translate( 'Referrals' ),
 				bannerImage: OnboardingTourBannerReferrals,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Track referrals and commissions with ease' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								"Send referrals through the marketplace, then head to your referrals dashboard to view total commissions, upcoming payouts, and the status of your clients' products and hosting."
-							) }
-							<br />
-							<br />
-							{ translate(
-								'Have questions about commission rates and eligibility? Check the FAQ right in the Referrals dashboard.'
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Track referrals and commissions with ease' ),
+					descriptions: [
+						translate(
+							"Send referrals through the marketplace, then head to your referrals dashboard to view total commissions, upcoming payouts, and the status of your clients' products and hosting."
+						),
+						translate(
+							'Have questions about commission rates and eligibility? Check the FAQ right in the Referrals dashboard.'
+						),
+					],
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -295,33 +265,25 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-migrations',
 				title: translate( 'Migrations' ),
 				bannerImage: OnboardingTourBannerMigrations,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Better hosting for your clients. Up to $10K for you.' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								'Tired of subpar hosting? Migrate your sites to WordPress.com or Pressable and tap into WP Cloud—the only cloud platform built just for WordPress.'
-							) }
-							<br />
-							<br />
-							{ translate(
-								'We offer 5 free development licenses on WordPress.com (only pay when you launch) and a free Pressable demo. See the difference for yourself.'
-							) }
-						</p>
-						<p className="a4a-onboarding-tour__spoiler">
-							{ translate(
-								'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000*',
-								{
-									components: {
-										b: <b />,
-									},
-								}
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Better hosting for your clients. Up to $10K for you.' ),
+					descriptions: [
+						translate(
+							'Tired of subpar hosting? Migrate your sites to WordPress.com or Pressable and tap into WP Cloud—the only cloud platform built just for WordPress.'
+						),
+						translate(
+							'We offer 5 free development licenses on WordPress.com (only pay when you launch) and a free Pressable demo. See the difference for yourself.'
+						),
+					],
+					hint: translate(
+						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000*',
+						{
+							components: {
+								b: <b />,
+							},
+						}
+					),
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -355,21 +317,17 @@ export default function useOnboardingTourSections() {
 				title: translate( 'WooPayments' ),
 				bannerImage: OnboardingTourBannerWooPayments,
 				isDarkBanner: true,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">{ translate( 'Learn. Pitch. Earn.' ) }</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								"If you build sites using WooCommerce, you're leaving money on the table by not using WooPayments, Woo's fully-integrated payments solution. "
-							) }
-							<br />
-							<br />
-							{ translate(
-								"We've made it easy for you to learn about WooPayments, copy and paste a pitch to send to your clients, and track your earnings from your referrals all in one place."
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Learn. Pitch. Earn.' ),
+					descriptions: [
+						translate(
+							"If you build sites using WooCommerce, you're leaving money on the table by not using WooPayments, Woo's fully-integrated payments solution. "
+						),
+						translate(
+							"We've made it easy for you to learn about WooPayments, copy and paste a pitch to send to your clients, and track your earnings from your referrals all in one place."
+						),
+					],
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -404,18 +362,14 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-agency-tiers',
 				title: translate( 'Agency Tiers' ),
 				bannerImage: OnboardingTourBannerAgencyTiers,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Resources and rewards tailored for your growth' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								'Our Agency Tiers program unlocks exclusive perks—like co-marketing, directory placement, pre-qualified leads, and dedicated partner managers. More tools, more visibility, more ways to earn.'
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Resources and rewards tailored for your growth' ),
+					descriptions: [
+						translate(
+							'Our Agency Tiers program unlocks exclusive perks—like co-marketing, directory placement, pre-qualified leads, and dedicated partner managers. More tools, more visibility, more ways to earn.'
+						),
+					],
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -450,18 +404,14 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-team',
 				title: translate( 'Team' ),
 				bannerImage: OnboardingTourBannerTeam,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Invite your team. Reclaim your time.' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								'Running a growing agency is a team sport. With our dashboard, you can bring your whole crew along to help manage sites, send referrals, and keep clients happy.'
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Invite your team. Reclaim your time.' ),
+					descriptions: [
+						translate(
+							'Running a growing agency is a team sport. With our dashboard, you can bring your whole crew along to help manage sites, send referrals, and keep clients happy.'
+						),
+					],
+				},
 				renderActions: ( { onNext, onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
@@ -495,18 +445,14 @@ export default function useOnboardingTourSections() {
 				title: translate( 'Free growth call' ),
 				bannerImage: OnboardingTourBannerGrowthCall,
 				isDarkBanner: true,
-				content: (
-					<div className="a4a-onboarding-tour">
-						<h1 className="a4a-onboarding-tour__title">
-							{ translate( 'Free agency growth call' ) }
-						</h1>
-						<p className="a4a-onboarding-tour__description">
-							{ translate(
-								"Set up time with one of our growth specialists to think more strategically about your agency's success. Together, we'll explore your goals, identify new opportunities, and share proven ways to attract and retain more clients. Reach out anytime — we're here to support you."
-							) }
-						</p>
-					</div>
-				),
+				content: {
+					title: translate( 'Free agency growth call' ),
+					descriptions: [
+						translate(
+							"Set up time with one of our growth specialists to think more strategically about your agency's success. Together, we'll explore your goals, identify new opportunities, and share proven ways to attract and retain more clients. Reach out anytime — we're here to support you."
+						),
+					],
+				},
 				renderActions: ( { onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>

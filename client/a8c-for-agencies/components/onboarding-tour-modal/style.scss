@@ -1,5 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$hint-container-bg-color: #EBF7FF;
 
 .onboarding-tour-modal-wrapper {
 	max-width: 700px;
@@ -83,6 +86,7 @@
 	justify-content: flex-end;
 	gap: 16px;
 	padding: 0 24px;
+	margin-block-start: 16px;
 }
 
 
@@ -99,4 +103,34 @@
 	&.is-light {
 		color: var(--color-text-inverted);
 	}
+}
+
+
+
+.onboarding-tour-modal__section-content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.onboarding-tour-modal__section-content-title {
+	@include heading-large;
+}
+
+.onboarding-tour-modal__section-content-descriptions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-block-end: 8px;
+
+	p {
+		@include body-small;
+		margin: 0;
+	}
+}
+
+.onboarding-tour-modal__section-content-hint {
+	@include body-small;
+	padding: 12px;
+	background-color: $hint-container-bg-color;
 }
