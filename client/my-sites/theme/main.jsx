@@ -430,10 +430,6 @@ class ThemeSheet extends Component {
 		);
 	}
 
-	isThemeCurrentOne() {
-		return this.props.isActive;
-	}
-
 	isThemeAvailable() {
 		const { demoUrl, retired } = this.props;
 		return demoUrl && ! retired;
