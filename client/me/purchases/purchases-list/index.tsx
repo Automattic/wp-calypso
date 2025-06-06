@@ -3,9 +3,10 @@ import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { useTranslate, localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -14,7 +15,6 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
@@ -78,7 +78,7 @@ const PurchasesList: React.FC<
 } ) => {
 	const translate = useTranslate();
 	const {
-		data: transferredOwnershipPurchases,
+		data: transferredOwnershipPurchases = [],
 		isLoading,
 		isSuccess: hasLoadedTransferredOwnershipPurchases,
 	} = useGetJetpackTransferredLicensePurchases( { userId } );
@@ -150,6 +150,7 @@ const PurchasesList: React.FC<
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
+							name={ site.name }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite
@@ -243,4 +244,4 @@ export default connect( ( state: AppState ) => ( {
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
 	userId: getCurrentUserId( state ),
-} ) )( withStoredPaymentMethods( localize( PurchasesList ), { type: 'card', expired: true } ) );
+} ) )( withStoredPaymentMethods( PurchasesList, { type: 'card', expired: true } ) );
