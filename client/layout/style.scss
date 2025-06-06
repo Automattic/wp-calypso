@@ -445,7 +445,7 @@ body.is-mobile-app-view {
 		height: 22px;
 	}
 
-	h1.wp-brand-font,
+	h1.formatted-header__title,
 	.checkout-title,
 	h1.thank-you__header-title {
 		font-family:
@@ -461,16 +461,17 @@ body.is-mobile-app-view {
 			sans-serif !important;
 	}
 
-	h1.wp-brand-font,
+	h1.formatted-header__title,
 	.checkout-title,
-	h1.thank-you__header-title,
 	.wp-checkout-order-summary__label,
-	.wp-checkout-order-summary__total-price {
+	.wp-checkout-order-summary__total-price,
+	h1.thank-you__header-title {
 		font-weight: 700 !important;
 	}
 
 	.domain-suggestion__action.is-primary:not( :disabled ),
-	.components-button.is-primary:not( :disabled ) {
+	.checkout-modal__button.is-status-primary,
+	.thank-you__product-actions .components-button.is-primary:not( :disabled ) {
 		background-color: #1d4fc4;
 		border-color: #1d4fc4;
 
