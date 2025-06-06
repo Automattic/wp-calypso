@@ -405,4 +405,98 @@ export const data: ComponentData[] = [
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-guide--docs',
 		notes: 'Needs design update. May become a pattern, rather than a standalone component.',
 	},
+	{
+		id: 'h-stack',
+		name: 'HStack',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-hstack--docs',
+		notes: 'Stable, but a v2 is planned with better defaults.',
+	},
+	{
+		id: 'heading',
+		name: 'Heading',
+		whereUsed: 'global',
+		status: 'not-recommended',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-heading--docs',
+		notes:
+			'Values are not aligned with the current design system. Prefer using Sass variables from `@wordpress/base-styles` instead.',
+	},
+	{
+		id: 'icon',
+		name: 'Icon',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-icon--docs',
+		notes: 'Prefer this component over the `Icon` component from `@wordpress/icons`.',
+	},
+	{
+		id: 'input-control',
+		name: 'InputControl',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=991-34623',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-inputcontrol--docs',
+	},
+	{
+		id: 'item-group',
+		name: 'ItemGroup',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=2244-18011',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-itemgroup--docs',
+	},
+	{
+		id: 'keyboard-shortcuts',
+		name: 'KeyboardShortcuts',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-keyboardshortcuts--docs',
+	},
+	{
+		id: 'menu',
+		name: 'Menu',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=991-34615',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-menu--docs',
+		notes:
+			'If possible, use this component instead of `DropdownMenu`. It may still be marked as private but is pretty much ready.',
+	},
+	{
+		id: 'menu-group',
+		name: 'MenuGroup',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-menugroup--docs',
+		notes: 'Subcomponent of `DropdownMenu`.',
+	},
+	{
+		id: 'menu-item',
+		name: 'MenuItem',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-menuitem--docs',
+		notes: 'Subcomponent of `DropdownMenu`.',
+	},
+	{
+		id: 'menu-items-choice',
+		name: 'MenuItemsChoice',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-menuitemschoice--docs',
+		notes: 'Subcomponent of `DropdownMenu`.',
+	},
+	{
+		id: 'modal',
+		name: 'Modal',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=2036-43132',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-modal--docs',
+	},
 ];
