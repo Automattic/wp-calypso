@@ -42,7 +42,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
-		redirectToHostingDashboardBackportIfEnabled( SETTINGS_SITE ),
+		redirectToHostingDashboardBackportIfEnabled,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -84,7 +84,7 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled( SETTINGS_SERVER ),
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -97,7 +97,7 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled( SETTINGS_SFTP_SSH ),
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -110,7 +110,7 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled( SETTINGS_DATABASE ),
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -123,7 +123,7 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled( SETTINGS_PERFORMANCE ),
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,
