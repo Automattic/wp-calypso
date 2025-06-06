@@ -304,4 +304,105 @@ export const data: ComponentData[] = [
 			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16471-149894',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-duotoneswatch--docs',
 	},
+	{
+		id: 'elevation',
+		name: 'Elevation',
+		whereUsed: 'global',
+		status: 'not-recommended',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-elevation--docs',
+		notes: 'Planned for deprecation.',
+	},
+	{
+		id: 'external-link',
+		name: 'ExternalLink',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16471-137598',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-externallink--docs',
+	},
+	{
+		id: 'flex',
+		name: 'Flex',
+		whereUsed: 'global',
+		status: 'not-recommended',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-flex--docs',
+		notes:
+			'Planned for deprecation. For use cases not covered by `HStack` and `VStack`, write your own CSS.',
+	},
+	{
+		id: 'focal-point-picker',
+		name: 'FocalPointPicker',
+		whereUsed: 'editor',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16530-42220',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-focalpointpicker--docs',
+		notes: 'Needs Figma component.',
+	},
+	{
+		id: 'font-size-picker',
+		name: 'FontSizePicker',
+		whereUsed: 'editor',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16530-44047',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-fontsizepicker--docs',
+	},
+	{
+		id: 'form-file-upload',
+		name: 'FormFileUpload',
+		whereUsed: 'global',
+		status: 'use-with-caution',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16530-22089',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-formfileupload--docs',
+		notes: 'Needs design update.',
+	},
+	{
+		id: 'form-toggle',
+		name: 'FormToggle',
+		whereUsed: 'global',
+		status: 'use-with-caution',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-formtoggle--docs',
+		notes:
+			'If possible, use `ToggleControl` instead. (May be absorbed by `ToggleControl` once it supports more customization.)',
+	},
+	{
+		id: 'form-token-field',
+		name: 'FormTokenField',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16530-21625',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-formtokenfield--docs',
+		notes: 'Stable, but a v2 is planned.',
+	},
+	{
+		id: 'gradient-picker',
+		name: 'GradientPicker',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16530-42457',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-gradientpicker--docs',
+	},
+	{
+		id: 'grid',
+		name: 'Grid',
+		whereUsed: 'global',
+		status: 'not-recommended',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-grid--docs',
+		notes: 'Planned for deprecation.',
+	},
+	{
+		id: 'guide',
+		name: 'Guide',
+		whereUsed: 'editor',
+		status: 'use-with-caution',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16471-139278',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-guide--docs',
+		notes: 'Needs design update. May become a pattern, rather than a standalone component.',
+	},
 ];
