@@ -41,7 +41,33 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function usePreservePurchasesFiltersInUrl( {
+function alterUrlForViewProp(
+	url: URL,
+	urlKey: string,
+	currentViewPropValue: string | number | undefined,
+	defaultValue?: string | number | undefined
+): void {
+	if ( currentViewPropValue && defaultValue && currentViewPropValue !== defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else if ( currentViewPropValue && ! defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else {
+		url.searchParams.delete( urlKey );
+	}
+}
+
+function updateUrlForView( url: URL ): void {
+	if ( url.search === window.location.search ) {
+		return;
+	}
+	window.history.pushState( undefined, '', url );
+	// getPreviousRoute will not find this updated route unless we set it
+	// explicitly. It only records the route when the page first loads.
+	// This seems like a bug but it appears to be how it works.
+	reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
+}
+
+function usePreservePurchasesViewInUrl( {
 	currentView,
 	setView,
 }: {
@@ -87,50 +113,22 @@ function usePreservePurchasesFiltersInUrl( {
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
-		if ( siteFilter ) {
-			url.searchParams.set( urlSiteFilterKey, siteFilter.value );
-		} else {
-			url.searchParams.delete( urlSiteFilterKey );
-		}
+		alterUrlForViewProp( url, urlSiteFilterKey, siteFilter?.value );
 
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
-		if ( typeFilter ) {
-			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
-		} else {
-			url.searchParams.delete( urlTypeFilterKey );
-		}
+		alterUrlForViewProp( url, urlTypeFilterKey, typeFilter?.value );
 
 		const pageNumber = currentView.page;
-		if ( pageNumber && pageNumber > 1 ) {
-			url.searchParams.set( urlPaginationPage, String( pageNumber ) );
-		} else {
-			url.searchParams.delete( urlPaginationPage );
-		}
+		alterUrlForViewProp( url, urlPaginationPage, pageNumber, 1 );
 
 		const perPage = currentView.perPage;
-		if ( perPage && perPage !== defaultPerPage ) {
-			url.searchParams.set( urlPaginationPerPage, String( perPage ) );
-		} else {
-			url.searchParams.delete( urlPaginationPerPage );
-		}
+		alterUrlForViewProp( url, urlPaginationPerPage, perPage, defaultPerPage );
 
 		const sort = currentView.sort;
-		if ( sort && sort !== defaultSort ) {
-			url.searchParams.set( urlSortField, sort.field );
-			url.searchParams.set( urlSortDirection, sort.direction );
-		} else {
-			url.searchParams.delete( urlSortField );
-			url.searchParams.delete( urlSortDirection );
-		}
+		alterUrlForViewProp( url, urlSortField, sort?.field, defaultSort.field );
+		alterUrlForViewProp( url, urlSortDirection, sort?.direction, defaultSort.direction );
 
-		if ( url.search === window.location.search ) {
-			return;
-		}
-		window.history.pushState( undefined, '', url );
-		// getPreviousRoute will not find this updated route unless we set it
-		// explicitly. It only records the route when the page first loads.
-		// This seems like a bug but it appears to be how it works.
-		reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
+		updateUrlForView( url );
 	}, [ currentView ] );
 }
 
@@ -206,7 +204,7 @@ export function PurchasesDataViews( {
 	useHidePurchasesFieldsAtCertainWidths( { setView } );
 
 	// Keep track of the current view params in the URL and restore them when the page loads.
-	usePreservePurchasesFiltersInUrl( { currentView, setView } );
+	usePreservePurchasesViewInUrl( { currentView, setView } );
 
 	const sitesWithPurchases = useMemo( () => {
 		return Array.from(
