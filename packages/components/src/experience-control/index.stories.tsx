@@ -3,7 +3,7 @@ import { fn } from '@storybook/test';
 import { ExperienceControl } from './index';
 
 const meta: Meta< typeof ExperienceControl > = {
-	title: 'Unaudited/ExperienceControl',
+	title: 'packages/components/ExperienceControl',
 	component: ExperienceControl,
 	args: { onChange: fn() },
 };

@@ -34,19 +34,6 @@ $experience-types: (
 	border: none;
 }
 
-.a8c-experience-control__radio {
-	position: absolute;
-	opacity: 0;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
-}
-
 .a8c-experience-control__option {
 	display: inline-flex;
 	border-radius: 50%;
@@ -88,6 +75,6 @@ $experience-types: (
 	}
 }
 
-.a8c-experience-control__option-label {
+.a8c-experience-control__option-icon {
 	display: flex;
 }

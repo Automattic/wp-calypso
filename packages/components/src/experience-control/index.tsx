@@ -15,18 +15,15 @@ import './style.scss';
 
 const ExperienceControlOption = ( {
 	className,
-	label,
+	icon,
 	ariaLabel,
 	...restProps
 }: ExperienceControlOptionProps ) => (
 	<label className={ clsx( 'a8c-experience-control__option', className ) }>
-		<input
-			type="radio"
-			className="a8c-experience-control__radio"
-			aria-label={ ariaLabel }
-			{ ...restProps }
-		/>
-		<div className="a8c-experience-control__option-label">{ label }</div>
+		<VisuallyHidden>
+			<input type="radio" aria-label={ ariaLabel } { ...restProps } />
+		</VisuallyHidden>
+		<div className="a8c-experience-control__option-icon">{ icon }</div>
 	</label>
 );
 
@@ -122,7 +119,7 @@ export function ExperienceControl( {
 					value={ option.value }
 					name={ name ?? `experience-control-${ nameId }` }
 					ariaLabel={ option.ariaLabel }
-					label={ option.icon }
+					icon={ option.icon }
 				/>
 			) ) }
 		</ExperienceControlBase>

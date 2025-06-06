@@ -13,7 +13,7 @@ export type ExperienceOption = {
 	/** The value representing the experience level */
 	value: ExperienceValue;
 	/** The icon component to display for this option */
-	icon: JSX.Element;
+	icon: React.ReactNode;
 	/** The accessibility label for this option */
 	ariaLabel: string;
 };
@@ -28,8 +28,8 @@ export type ExperienceControlOptionProps = Pick<
 > & {
 	/** Optional CSS class name */
 	className?: string;
-	/** The label content for the option */
-	label: React.ReactNode;
+	/** The icon component for the option */
+	icon: React.ReactNode;
 	/** The accessibility label for the option */
 	ariaLabel: string;
 };
