@@ -30,8 +30,24 @@ export default function useOnboardingTourSections() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	return useMemo(
-		() => [
+	return useMemo( () => {
+		const onNextBenefit = ( section: string, onNext: () => void ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
+					section,
+				} )
+			);
+			onNext();
+		};
+
+		const onExplore = ( section: string, onClose: () => void ) => {
+			dispatch(
+				recordTracksEvent( `calypso_a4a_onboarding_tour_explore_${ section }_page_click` )
+			);
+			onClose();
+		};
+
+		return [
 			{
 				id: 'onboarding-tour-welcome',
 				title: translate( 'Welcome' ),
@@ -59,20 +75,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Check out the Overview page' ),
 							variant: 'secondary',
 							href: A4A_OVERVIEW_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_overview_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'overview', onClose ),
 						},
 						{
 							label: translate( 'Start tour' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_start_tour_click' ) );
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'overview', onNext ),
 						},
 					];
 				},
@@ -106,24 +114,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Connect your first site' ),
 							variant: 'secondary',
 							href: A4A_SITES_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_sites_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'sites', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-sites',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'sites', onNext ),
 						},
 					];
 				},
@@ -148,24 +144,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Explore products & hosting' ),
 							variant: 'secondary',
 							href: A4A_MARKETPLACE_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_marketplace_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'marketplace', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-marketplace',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'marketplace', onNext ),
 						},
 					];
 				},
@@ -189,24 +173,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'View purchases' ),
 							variant: 'secondary',
 							href: A4A_PURCHASES_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_purchases_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'purchases', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-purchases',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'purchases', onNext ),
 						},
 					];
 				},
@@ -232,24 +204,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'View Referrals Dashboard' ),
 							variant: 'secondary',
 							href: A4A_REFERRALS_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_referrals_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'referrals', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-referrals',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'referrals', onNext ),
 						},
 					];
 				},
@@ -283,24 +243,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'View migration offer' ),
 							variant: 'secondary',
 							href: A4A_MIGRATIONS_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_migrations_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'migrations', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-migrations',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'migrations', onNext ),
 						},
 					];
 				},
@@ -327,24 +275,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Check out WooPayments' ),
 							variant: 'secondary',
 							href: A4A_WOOPAYMENTS_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_woopayments_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'woopayments', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-woopayments',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'woopayments', onNext ),
 						},
 					];
 				},
@@ -367,24 +303,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Check out Agency Tiers' ),
 							variant: 'secondary',
 							href: A4A_AGENCY_TIER_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_agency_tiers_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'agency_tiers', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-agency-tiers',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'agency-tiers', onNext ),
 						},
 					];
 				},
@@ -407,24 +331,12 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Add your team' ),
 							variant: 'secondary',
 							href: A4A_TEAM_LINK,
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_team_page_click' )
-								);
-								onClose();
-							},
+							onClick: () => onExplore( 'team', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
-							onClick: () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
-										section: 'onboarding-tour-team',
-									} )
-								);
-								onNext();
-							},
+							onClick: () => onNextBenefit( 'team', onNext ),
 						},
 					];
 				},
@@ -460,7 +372,6 @@ export default function useOnboardingTourSections() {
 					];
 				},
 			},
-		],
-		[ dispatch, translate ]
-	);
+		];
+	}, [ dispatch, translate ] );
 }
