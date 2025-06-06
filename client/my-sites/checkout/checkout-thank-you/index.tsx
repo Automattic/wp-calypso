@@ -57,7 +57,7 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
-import hasGravatarDomainUrlParam from 'calypso/state/selectors/has-gravatar-domain-url-param';
+import hasGravatarDomainQuery from 'calypso/state/selectors/has-gravatar-domain-query';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
@@ -726,7 +726,7 @@ export default connect(
 					: undefined,
 			site: siteId ? getSite( state, siteId ) : null,
 			siteDomains: siteId ? getDomainsBySiteId( state, siteId ) : null,
-			isGravatarDomain: hasGravatarDomainUrlParam( state ),
+			isGravatarDomain: hasGravatarDomainQuery( state ),
 		};
 	},
 	{
