@@ -99,7 +99,7 @@ $notification-panel-width: 450px;
 
 	&.wpnt-closed {
 		visibility: hidden;
-		right: -400px;
+		right: -$notification-panel-width;
 		opacity: 0;
 		pointer-events: none;
 		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -111,7 +111,7 @@ $notification-panel-width: 450px;
 
 	&.wpnc__main .wpnc__single-view {
 		left: inherit;
-		width: 400px;
+		width: $notification-panel-width;
 
 		@include breakpoint-deprecated( "<800px" ) {
 			left: 0;
