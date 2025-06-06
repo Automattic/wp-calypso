@@ -13,6 +13,10 @@
 				color: var(--color-text-subtle);
 			}
 
+			.site__badge {
+				background-color: var(--color-surface);
+			}
+
 			.site__title,
 			.site__domain {
 				&::after {
