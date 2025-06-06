@@ -404,12 +404,7 @@ class ThemeSheet extends Component {
 
 	shouldRenderPreviewButton() {
 		const { isWPForTeamsSite } = this.props;
-		return (
-			this.isThemeAvailable() &&
-			! this.isThemeCurrentOne() &&
-			! isWPForTeamsSite &&
-			! this.shouldRenderForStaging()
-		);
+		return this.isThemeAvailable() && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 	}
 
 	shouldRenderUnlockStyleButton() {
