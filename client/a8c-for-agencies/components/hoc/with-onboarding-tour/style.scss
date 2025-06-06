@@ -1,26 +1,3 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-
-.a4a-onboarding-tour {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.a4a-onboarding-tour__title {
-	@include heading-large;
-}
-
-.a4a-onboarding-tour__description {
-	@include body-small;
-}
-
-.a4a-onboarding-tour__spoiler {
-	@include body-small;
-	padding: 12px;
-	background-color: #EBF7FF;
-}
-
 .components-button.is-primary.overview__growth-accelerator-footer-schedule-call.a4a-onboarding-tour__schedule-a-call-cta {
 	flex: 0;
 }
