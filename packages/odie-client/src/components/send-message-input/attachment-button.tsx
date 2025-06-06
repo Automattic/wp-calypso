@@ -1,4 +1,5 @@
 import { FormFileUpload, Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, image } from '@wordpress/icons';
 import React from 'react';
 
@@ -17,6 +18,7 @@ export const AttachmentButton: React.FC< {
 				}
 			} }
 			disabled={ isAttachingFile }
+			aria-label={ __( 'Attach image', __i18n_text_domain__ ) }
 		>
 			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }
 			{ ! isAttachingFile && <Icon ref={ attachmentButtonRef } icon={ image } /> }
