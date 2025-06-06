@@ -16,6 +16,7 @@ export interface SelectItem< T > {
 	hidden?: boolean;
 	isPrimary?: boolean;
 	allItemClickable?: boolean;
+	'aria-label'?: string;
 }
 
 interface Props< T > {
@@ -40,6 +41,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 					value,
 					isPrimary,
 					allItemClickable,
+					'aria-label': ariaLabel,
 				} ) => (
 					<div key={ key } className="select-items__item">
 						{ ! titleIcon && (
@@ -78,6 +80,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 							<button
 								className="select-items__item-clickable"
 								onClick={ () => onSelect( value ) }
+								aria-label={ ariaLabel || `${ title }. ${ description }` }
 							/>
 						) }
 					</div>

@@ -77,10 +77,19 @@ class SiteOrDomain extends Component {
 			value: 'domain',
 			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 			allItemClickable: true,
+			'aria-label': `${ buyADomainTitle }. ${ buyADomainDescription }`,
 		} );
+
+		const newSiteTitle = translate( 'New site' );
+		const newSiteDescription = translate(
+			'Customize and launch your site. Free domain for the first year on annual plans.',
+			{
+				comment: 'Description for new site option, periods added for screen reader pause',
+			}
+		);
 		choices.push( {
 			key: 'page',
-			title: translate( 'New site' ),
+			title: newSiteTitle,
 			description: translate(
 				'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
 				{
@@ -95,11 +104,20 @@ class SiteOrDomain extends Component {
 			value: 'page',
 			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 			allItemClickable: true,
+			'aria-label': `${ newSiteTitle }. ${ newSiteDescription }`,
 		} );
+
 		if ( isLoggedIn && siteCount > 0 ) {
+			const existingSiteTitle = translate( 'Existing WordPress.com site' );
+			const existingSiteDescription = translate(
+				'Use the domain with a site you already started. Free domain for the first year on annual plans.',
+				{
+					comment: 'Description for existing site option, periods added for screen reader pause',
+				}
+			);
 			choices.push( {
 				key: 'existing-site',
-				title: translate( 'Existing WordPress.com site' ),
+				title: existingSiteTitle,
 				description: translate(
 					'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
 					{
@@ -114,6 +132,7 @@ class SiteOrDomain extends Component {
 				value: 'existing-site',
 				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 				allItemClickable: true,
+				'aria-label': `${ existingSiteTitle }. ${ existingSiteDescription }`,
 			} );
 		}
 
