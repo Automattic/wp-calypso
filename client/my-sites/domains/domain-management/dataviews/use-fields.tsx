@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { DomainsTableExpiresRenewsOnCell } from '@automattic/domains-table/src/domains-table/domains-table-expires-renews-cell';
@@ -23,6 +24,9 @@ export function useFields() {
 		hasConnectableSites,
 		completedJobs,
 	} = useDomainsDataViewsContext();
+
+	const isUserDomainsAPIEnabled =
+		config.isEnabled( 'calypso/domains-dataviews' ) && config.isEnabled( 'domains/user-domains' );
 
 	const fields = useMemo< Field< PartialDomainData >[] >(
 		() => [
@@ -54,6 +58,9 @@ export function useFields() {
 				enableHiding: false,
 				enableSorting: true,
 				getValue: ( { item }: { item: PartialDomainData } ) => {
+					if ( isUserDomainsAPIEnabled ) {
+						return item?.owner || '';
+					}
 					const domain = getFullDomain( item );
 					if ( ! domain ) {
 						return '';
@@ -66,6 +73,9 @@ export function useFields() {
 					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
 				},
 				render: ( { item }: { item: PartialDomainData } ) => {
+					if ( isUserDomainsAPIEnabled ) {
+						return item?.owner || '';
+					}
 					const domain = getFullDomain( item );
 					if ( ! domain ) {
 						return <LoadingPlaceholder />;
@@ -108,6 +118,9 @@ export function useFields() {
 				enableHiding: false,
 				enableSorting: true,
 				getValue: ( { item }: { item: PartialDomainData } ) => {
+					if ( isUserDomainsAPIEnabled ) {
+						return item?.ssl_status || '';
+					}
 					const domain = getFullDomain( item );
 					return domain?.sslStatus || '';
 				},

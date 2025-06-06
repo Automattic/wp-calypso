@@ -27,7 +27,7 @@ const SslStatusField = ( props: Props ) => {
 	return (
 		<DomainsTableSslCell
 			domainManagementLink={ domainManagementLink }
-			sslStatus={ domain.sslStatus }
+			sslStatus={ domain.sslStatus || props.domain.ssl_status }
 			hasWpcomManagedSslCert={ hasWpcomManagedSslCert }
 			as="div"
 		/>

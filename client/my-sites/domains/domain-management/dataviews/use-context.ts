@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	PartialDomainData,
@@ -68,9 +69,12 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		...new Set( domains?.map( ( domain: PartialDomainData ) => domain.blog_id ) ?? [] ),
 	];
 
+	const isUserDomainsAPIEnabled =
+		config.isEnabled( 'calypso/domains-dataviews' ) && config.isEnabled( 'domains/user-domains' );
 	const allSiteDomains = useQueries( {
 		queries: allSiteIds.map( ( siteId ) =>
 			getSiteDomainsQueryObject( siteId, {
+				enabled: ! isUserDomainsAPIEnabled,
 				...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( siteId ) } ),
 			} )
 		),
@@ -88,6 +92,9 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 	}, [ allSiteDomains ] );
 
 	const getFullDomain = ( domain: PartialDomainData ) => {
+		if ( isUserDomainsAPIEnabled ) {
+			return domain;
+		}
 		const domains = siteDomains[ domain.blog_id ] ?? [];
 		return domains.find( ( d ) => d.name === domain.domain );
 	};

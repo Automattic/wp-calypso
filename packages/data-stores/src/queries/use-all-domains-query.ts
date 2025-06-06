@@ -24,6 +24,8 @@ export type PartialDomainData = Pick<
 	| 'type'
 	| 'wpcom_domain'
 	| 'domain_status'
+	| 'ssl_status'
+	| 'owner'
 >;
 
 export interface AllDomainsQueryFnData {
