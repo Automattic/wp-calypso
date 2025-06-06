@@ -249,4 +249,4 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setNavigateToOdie >;
+	| GeneratorReturnType< typeof setShowHelpCenter >;
