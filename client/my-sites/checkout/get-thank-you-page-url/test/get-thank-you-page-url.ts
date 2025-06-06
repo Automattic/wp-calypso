@@ -864,6 +864,28 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie/:receiptId' );
 	} );
 
+	it( 'redirects to url from cookie followed by placeholder receiptId and Gravatar domain query parameter', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					id: '123',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isGravatarDomain: true,
+			getUrlFromCookie,
+		} );
+		expect( url ).toBe( '/cookie/:receiptId?isGravatarDomain=1' );
+	} );
+
 	it( 'redirects to thank-you page followed by placeholder receiptId if no cookie url is set, there is no site, and there is no receipt', () => {
 		const cart = {
 			...getMockCart(),
@@ -877,6 +899,26 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+	} );
+
+	it( 'redirects to thank-you page followed by placeholder receiptId and Gravatar domain query parameter if no cookie url is set', () => {
+		const cart = {
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					id: '123',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isGravatarDomain: true,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId?isGravatarDomain=1' );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {
