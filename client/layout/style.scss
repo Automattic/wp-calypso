@@ -440,6 +440,10 @@ body.is-mobile-app-view {
 			sans-serif !important;
 	}
 
+	.masterbar__secure-checkout {
+		column-gap: 8px;
+	}
+
 	.gravatar-text-logo {
 		width: 119px;
 		height: 22px;
@@ -482,7 +486,7 @@ body.is-mobile-app-view {
 		}
 	}
 
-	// Domain pages only
+	// Domain pages
 	&.is-section-signup {
 		.gravatar-text-logo {
 			position: absolute;
@@ -493,14 +497,12 @@ body.is-mobile-app-view {
 		}
 	}
 
-	// Checkout page only
-	&.is-section-checkout {
-		.masterbar__secure-checkout {
-			column-gap: 8px;
+	&.is-section-checkout-pending {
+		.gravatar-text-logo {
+			margin-left: 19.5px;
 		}
 	}
 
-	// Checkout thank you page only
 	&.is-section-checkout-thank-you {
 		.gravatar-text-logo {
 			margin-left: 24px;

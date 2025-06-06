@@ -414,8 +414,9 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
-		const isCheckoutSection =
-			currentSection?.name === 'checkout' || currentSection?.name === 'checkout-thank-you';
+		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
+			sectionName
+		);
 		const isGravatarDomain =
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );

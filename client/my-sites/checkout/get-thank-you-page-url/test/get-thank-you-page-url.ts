@@ -864,7 +864,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie/:receiptId' );
 	} );
 
-	it( 'redirects to url from cookie followed by placeholder receiptId and Gravatar domain query parameter', () => {
+	it( 'redirects to url from cookie followed by receipt id and Gravatar domain parameter', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
@@ -878,12 +878,13 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
-			siteSlug: 'foo.bar',
+			siteSlug: 'no-site',
 			cart,
 			isGravatarDomain: true,
+			receiptId: samplePurchaseId,
 			getUrlFromCookie,
 		} );
-		expect( url ).toBe( '/cookie/:receiptId?isGravatarDomain=1' );
+		expect( url ).toBe( `/cookie/${ samplePurchaseId }?isGravatarDomain=1` );
 	} );
 
 	it( 'redirects to thank-you page followed by placeholder receiptId if no cookie url is set, there is no site, and there is no receipt', () => {
@@ -901,7 +902,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'redirects to thank-you page followed by placeholder receiptId and Gravatar domain query parameter if no cookie url is set', () => {
+	it( 'redirects to thank-you page followed by receipt id and Gravatar domain parameter if no cookie url is set', () => {
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -914,11 +915,12 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
-			siteSlug: 'foo.bar',
+			siteSlug: 'no-site',
 			cart,
 			isGravatarDomain: true,
+			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId?isGravatarDomain=1' );
+		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?isGravatarDomain=1` );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {
