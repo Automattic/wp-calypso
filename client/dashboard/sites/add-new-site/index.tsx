@@ -67,6 +67,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
 					href={ `/start?source=${ context }&ref=new-site-popover` }
+					aria-label={ __( 'Add WordPress.com site' ) }
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
@@ -81,6 +82,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 						} );
 					} }
 					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
+					aria-label={ __( 'Build a new site with AI' ) }
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
@@ -88,6 +90,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
 					href={ `/jetpack/connect?cta_from=${ context }&cta_id=add-site` }
+					aria-label={ __( 'Add site via the Jetpack plugin' ) }
 				/>
 			</Column>
 			<Column title={ __( 'Migrate and import' ) }>
@@ -97,6 +100,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Bring your entire WordPress site to WordPress.com.' ) }
 					onClick={ migrateClick }
 					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover&action=migrate` }
+					aria-label={ __( 'Migrate an existing WordPress site' ) }
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
@@ -104,6 +108,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Use a backup to only import content from other platforms.' ) }
 					onClick={ importClick }
 					href={ `/setup/site-migration/create-site?source=${ context }&ref=new-site-popover&action=import` }
+					aria-label={ __( 'Import content from other platforms' ) }
 				/>
 			</Column>
 
