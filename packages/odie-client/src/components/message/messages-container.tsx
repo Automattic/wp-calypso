@@ -4,6 +4,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { getOdieInitialMessage } from '../../constants';
@@ -158,7 +159,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<>
-			<div className="chatbox-messages" ref={ messagesContainerRef }>
+			<div
+				className={ clx( 'chatbox-messages', {
+					'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
+				} ) }
+				ref={ messagesContainerRef }
+			>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />

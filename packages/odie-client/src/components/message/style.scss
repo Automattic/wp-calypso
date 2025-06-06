@@ -433,6 +433,10 @@ $blueberry-color: #3858e9;
 
 .chatbox-messages:last-child {
 	margin-bottom: 72px;
+
+	&.force-email-support {
+		margin-bottom: 176px;
+	}
 }
 
 .odie-sources {
