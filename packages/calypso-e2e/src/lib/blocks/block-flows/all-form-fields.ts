@@ -1,4 +1,3 @@
-import { envVariables } from '../../..';
 import { OpenInlineInserter } from '../../pages';
 import {
 	labelFormFieldBlock,
@@ -167,16 +166,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 				await context.editorPage.selectParentBlock( 'Form' );
 			}
 
-			const addBlockLocater = await editorCanvas.getByRole( 'button', { name: 'Add block' } );
-			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-				// See: https://github.com/Automattic/jetpack/issues/32695
-				// On mobile, we can't click the inline button directly due to an overlay z-index bug.
-				// So we force the click via dispatchEvent.
-				await addBlockLocater.waitFor();
-				await addBlockLocater.dispatchEvent( 'click' );
-			} else {
-				await addBlockLocater.click();
-			}
+			await editorCanvas.getByRole( 'button', { name: 'Add block' } ).click();
 		};
 		await context.editorPage.addBlockInline(
 			blockName,

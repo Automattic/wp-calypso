@@ -93,7 +93,7 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * The filter config for the field.
 	 */
-	filterBy: FilterByConfig;
+	filterBy: FilterByConfig | false;
 
 	/**
 	 * Whether the field is sortable.
@@ -184,7 +184,7 @@ export type Field< Item > = {
 	/**
 	 * Filter config for the field.
 	 */
-	filterBy?: FilterByConfig | undefined;
+	filterBy?: FilterByConfig | undefined | false;
 
 	/**
 	 * Callback used to retrieve the value of the field from the item.

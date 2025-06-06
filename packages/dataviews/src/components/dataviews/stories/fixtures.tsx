@@ -702,6 +702,7 @@ export const fields: Field< SpaceObject >[] = [
 		type: 'text',
 		enableSorting: false,
 		enableGlobalSearch: true,
+		filterBy: false,
 	},
 	{
 		label: 'Categories',

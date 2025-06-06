@@ -12,6 +12,7 @@ import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
+import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
@@ -39,6 +40,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<SummaryButtonList>
 				<WordPressSettingsSummary site={ site } />
 				<PHPSettingsSummary site={ site } />
+				<SftpSshSettingsSummary site={ site } />
 				<DatabaseSettingsSummary site={ site } />
 				<AgencySettingsSummary site={ site } />
 				<PrimaryDataCenterSettingsSummary site={ site } />

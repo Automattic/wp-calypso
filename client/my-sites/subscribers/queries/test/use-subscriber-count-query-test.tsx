@@ -6,10 +6,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
-import useSubscriberCountQuery, { defaultSubscribersTotals } from '../use-subscriber-count-query';
+import useSubscriberCountQuery, {
+	defaultSubscribersTotals,
+	SubscribersTotals,
+} from '../use-subscriber-count-query';
 
-const mockResponse = {
+const mockResponse: { counts: SubscribersTotals } = {
 	counts: {
+		total_subscribers: 300,
 		email_subscribers: 100,
 		paid_subscribers: 50,
 		social_followers: 200,

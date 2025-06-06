@@ -203,7 +203,7 @@ export default function SubscriberDataViews( {
 	}, [ subscriberId, subscriberDetails ] );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
-	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
+	const grandTotal = subscribersTotals?.total_subscribers ?? 0;
 	const {
 		subscribers,
 		is_owner_subscribed: isOwnerSubscribed,

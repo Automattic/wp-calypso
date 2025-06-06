@@ -23,6 +23,10 @@ import type {
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
 	SiteTransferConfirmation,
+	SftpUser,
+	SshAccessStatus,
+	SiteSshKey,
+	ProfileSshKey,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -38,6 +42,13 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 		}
 	}
 	return await wpcom.req.post( '/me/settings', data );
+};
+
+export const fetchProfileSshKeys = async (): Promise< ProfileSshKey[] > => {
+	return wpcom.req.get( {
+		path: '/me/ssh-keys',
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
@@ -622,21 +633,18 @@ export const fetchSiteResetContentSummary = async (
 ): Promise< SiteResetContentSummary > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/content-summary`,
-		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 export const resetSite = async ( siteIdOrSlug: string ): Promise< void > => {
 	return wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/reset-site`,
-		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< SiteResetStatus > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/status`,
-		apiNamespace: 'wpcom/v2',
 	} );
 };
 
@@ -644,5 +652,91 @@ export const launchSite = async ( siteId: string ): Promise< void > => {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/launch`,
 		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchSftpUsers = async ( siteIdOrSlug: string ): Promise< SftpUser[] > => {
+	const { users } = await wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-users`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return users.map( ( username: string ) => ( {
+		username,
+	} ) );
+};
+
+export const createSftpUser = async ( siteIdOrSlug: string ): Promise< SftpUser > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-user`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const resetSftpPassword = async (
+	siteIdOrSlug: string,
+	sshUsername: string
+): Promise< SftpUser > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-user/${ sshUsername }/reset-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchSshAccessStatus = async ( siteIdOrSlug: string ): Promise< SshAccessStatus > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-access`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const enableSshAccess = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/ssh-access`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			setting: 'ssh',
+		}
+	);
+};
+
+export const disableSshAccess = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/ssh-access`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			setting: 'sftp',
+		}
+	);
+};
+
+export const fetchSiteSshKeys = async ( siteIdOrSlug: string ): Promise< SiteSshKey[] > => {
+	const { ssh_keys } = await wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return ssh_keys;
+};
+
+export const attachSiteSshKey = async ( siteIdOrSlug: string, name: string ) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ name }
+	);
+};
+
+export const detachSiteSshKey = async ( siteIdOrSlug: string, userLogin: string, name: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys/${ userLogin }/${ name }`,
+		apiNamespace: 'wpcom/v2',
+		method: 'DELETE',
 	} );
 };
