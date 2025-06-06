@@ -511,12 +511,15 @@ $image-height: 47px;
 		}
 
 		.wp-login__main-footer-help-docs,
+		.wp-login__main-footer-magic-login,
 		.login__lost-password-link {
 			font-size: $font-body-small;
 			display: block;
 		}
 
 		.login__lost-password-link,
+		.wp-login__main-footer-magic-login,
+		.wp-login__main-footer-magic-login a,
 		.wp-login__main-footer-help-docs a {
 			color: var(--studio-gray-90, #1d2327);
 			font-weight: 500;
