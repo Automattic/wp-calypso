@@ -344,11 +344,11 @@ const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 	} );
 };
 
-export const getRouter = () => {
+export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
 	const router = new Router( {
 		routeTree,
-		basepath: '/sites/settings/v2',
+		basepath: basePath,
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,

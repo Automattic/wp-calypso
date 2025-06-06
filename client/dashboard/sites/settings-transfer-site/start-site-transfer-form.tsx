@@ -6,8 +6,10 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
 import { siteOwnerTransferMutation } from '../../app/queries';
 import Notice from '../../components/notice';
@@ -79,6 +81,8 @@ export function StartSiteTransferForm( {
 
 	const mutation = useMutation( siteOwnerTransferMutation( siteSlug ) );
 
+	const { createErrorNotice } = useDispatch( noticesStore );
+
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
 	const renderSiteSlug = () => <strong>{ siteSlug }</strong>;
@@ -94,8 +98,10 @@ export function StartSiteTransferForm( {
 				onSuccess: () => {
 					onSubmit();
 				},
-				onError: () => {
-					// TODO: Display error message
+				onError: ( error ) => {
+					createErrorNotice( error.message ?? __( 'Unable to start site transfer.' ), {
+						type: 'snackbar',
+					} );
 				},
 			}
 		);

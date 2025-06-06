@@ -216,12 +216,9 @@ export function dashboardBackportSiteSettings( context: PageJSContext, next: () 
 		return page.redirect( `/sites/settings/site/${ site?.slug }` );
 	}
 
-	context.primary = (
-		<>
-			<PageViewTracker title="Sites > Settings > General" path={ getRouteFromContext( context ) } />
-			<DashboardBackportSiteSettingsRenderer />
-		</>
-	);
+	// Route doesn't require a <PageViewTracker /> because the dashboard
+	// fires its own page view events.
+	context.primary = <DashboardBackportSiteSettingsRenderer />;
 
 	next();
 }
