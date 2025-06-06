@@ -80,6 +80,7 @@ function usePreservePurchasesViewInUrl( {
 	const urlPaginationPerPage = 'perPage';
 	const urlSiteFilterKey = 'siteFilter';
 	const urlTypeFilterKey = 'typeFilter';
+	const urlExpiringSoonFilter = 'expiringSoonFilter';
 	const currentUrl = window.location.href;
 
 	// Apply view from URL
@@ -88,6 +89,7 @@ function usePreservePurchasesViewInUrl( {
 		const filters: Filter[] = [];
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
+		const expiringSoonValue = url.searchParams.get( urlExpiringSoonFilter );
 		const pageNumber = url.searchParams.get( urlPaginationPage );
 		const perPage = url.searchParams.get( urlPaginationPerPage );
 		const sortField = url.searchParams.get( urlSortField );
@@ -96,6 +98,9 @@ function usePreservePurchasesViewInUrl( {
 		) as SortDirection;
 		if ( siteFilterValue ) {
 			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
+		}
+		if ( expiringSoonValue ) {
+			filters.push( { value: expiringSoonValue, operator: 'is', field: 'expiring-soon' } );
 		}
 		if ( typeFilterValue ) {
 			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
@@ -117,6 +122,11 @@ function usePreservePurchasesViewInUrl( {
 
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
 		alterUrlForViewProp( url, urlTypeFilterKey, typeFilter?.value );
+
+		const expringSoonFilter = currentView.filters?.find(
+			( filter ) => filter.field === 'expiring-soon'
+		);
+		alterUrlForViewProp( url, urlExpiringSoonFilter, expringSoonFilter?.value );
 
 		const pageNumber = currentView.page;
 		alterUrlForViewProp( url, urlPaginationPage, pageNumber, 1 );

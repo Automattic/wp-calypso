@@ -207,7 +207,7 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 		{
-			id: 'expring-soon',
+			id: 'expiring-soon',
 			label: translate( 'Expiring soon' ),
 			type: 'text',
 			elements: [
