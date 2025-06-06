@@ -498,5 +498,85 @@ export const data: ComponentData[] = [
 		figma:
 			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=2036-43132',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-modal--docs',
+		notes: 'Stable, but a v2 is planned.',
+	},
+	{
+		id: 'navigable-menu',
+		name: 'NavigableMenu',
+		whereUsed: 'global',
+		status: 'unaudited',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-navigablemenu--docs',
+	},
+	{
+		id: 'navigator',
+		name: 'Navigator',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-navigator--docs',
+	},
+	{
+		id: 'notice',
+		name: 'Notice',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=2274-38167',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-notice--docs',
+	},
+	{
+		id: 'number-control',
+		name: 'NumberControl',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16471-138738',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-experimental-numbercontrol--docs',
+	},
+	{
+		id: 'palette-edit',
+		name: 'PaletteEdit',
+		whereUsed: 'editor',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-paletteedit--docs',
+	},
+	{
+		id: 'panel',
+		name: 'Panel',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16471-138147',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-panel--docs',
+	},
+	{
+		id: 'placeholder',
+		name: 'Placeholder',
+		whereUsed: 'editor',
+		status: 'unaudited',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16471-137924',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-placeholder--docs',
+		notes: 'Needs review.',
+	},
+	{
+		id: 'popover',
+		name: 'Popover',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-popover--docs',
+	},
+	{
+		id: 'progress-bar',
+		name: 'ProgressBar',
+		whereUsed: 'global',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-progressbar--docs',
+	},
+	{
+		id: 'query-controls',
+		name: 'QueryControls',
+		whereUsed: 'editor',
+		status: 'stable',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-querycontrols--docs',
 	},
 ];
