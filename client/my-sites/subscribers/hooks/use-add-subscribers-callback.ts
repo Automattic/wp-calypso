@@ -62,7 +62,7 @@ export const useAddSubscribersCallback = ( siteId: number | null ) => {
 
 					// Invalidate the subscribers queries to ensure that the new subscribers are fetched.
 					queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-					queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+					queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 				}
 			} else {
 				dispatch(

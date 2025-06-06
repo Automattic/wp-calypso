@@ -29,7 +29,6 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -226,11 +225,7 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			socialAccountIsLinking ||
-			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			this.props.isBlazePro
-		);
+		return socialAccountIsLinking || ( hasAccountTypeLoaded && isRegularAccount( accountType ) );
 	}
 
 	isPasswordView() {
@@ -241,10 +236,7 @@ export class LoginForm extends Component {
 
 	isUsernameOrEmailView() {
 		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
-		return (
-			isSendingEmail ||
-			( ! socialAccountIsLinking && ! hasAccountTypeLoaded && ! this.props.isBlazePro )
-		);
+		return isSendingEmail || ( ! socialAccountIsLinking && ! hasAccountTypeLoaded );
 	}
 
 	resetView = ( event ) => {
@@ -277,8 +269,7 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		// Skip this step if we're in the Blaze Pro signup flows, and hasAccountTypeLoaded.
-		if ( ! this.props.hasAccountTypeLoaded && ! this.props.isBlazePro ) {
+		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -536,10 +527,6 @@ export class LoginForm extends Component {
 	renderUsernameorEmailLabel() {
 		if ( this.props.isWoo ) {
 			return this.props.translate( 'Your email or username' );
-		}
-
-		if ( this.props.isBlazePro ) {
-			return this.props.translate( 'Your email address' );
 		}
 
 		if ( this.props.isWoo ) {
@@ -1046,13 +1033,6 @@ export class LoginForm extends Component {
 			currentQuery,
 			oauth2Client
 		);
-		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
-		);
 
 		const showLastUsedAuthenticationMethod =
 			lastUsedAuthenticationMethod &&
@@ -1063,10 +1043,7 @@ export class LoginForm extends Component {
 		const shouldShowSocialLoginForm =
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
-			! isCoreProfilerLostPasswordFlow &&
-			! isFromGravatar3rdPartyApp &&
-			! isFromGravatarQuickEditor &&
-			! isGravatarFlowWithEmail;
+			! isCoreProfilerLostPasswordFlow;
 
 		if ( isJetpack ) {
 			return (

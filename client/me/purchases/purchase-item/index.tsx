@@ -647,7 +647,7 @@ export function PurchaseItemPaymentMethod( {
 			<div className="purchase-item__no-payment-method">
 				{ ! isDisconnectedSite && (
 					<Button
-						variant="primary"
+						variant="link"
 						size="compact"
 						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) =>
 							goToAddPaymentMethod( e, purchase.id )

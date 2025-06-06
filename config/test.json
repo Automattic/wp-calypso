@@ -106,7 +106,6 @@
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
-		"subscribers-helper-library": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
