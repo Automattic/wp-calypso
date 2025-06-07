@@ -183,7 +183,7 @@
 		"@types/node": "^22.15.3",
 		"@types/page": "^1.11.9",
 		"@types/qs": "^6.9.7",
-		"@types/react": "^18.3.21",
+		"@types/react": "^18.3.23",
 		"@types/react-modal": "^3.16.3",
 		"@types/react-transition-group": "^4.4.4",
 		"@types/store": "^2.0.5",
@@ -324,7 +324,7 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
-		"@types/react": "^18.3.21",
+		"@types/react": "^18.3.23",
 		"@types/react-dom": "^18.3.7",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
