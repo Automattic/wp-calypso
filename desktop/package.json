@@ -36,7 +36,7 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@electron/notarize": "^2.4.0",
+		"@electron/notarize": "^2.5.0",
 		"@playwright/browser-chromium": "1.48.2",
 		"copy-webpack-plugin": "^10.2.4",
 		"electron": "26.2.4",

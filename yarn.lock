@@ -5391,14 +5391,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/notarize@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@electron/notarize@npm:2.4.0"
+"@electron/notarize@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@electron/notarize@npm:2.5.0"
   dependencies:
     debug: "npm:^4.1.1"
     fs-extra: "npm:^9.0.1"
     promise-retry: "npm:^2.0.1"
-  checksum: 87703b8abe27f07622f18d056eb2999ac403c6e34140445d6475eebfaa86f0c348269c7411a5b2e1acf6ac16e872917f7ec2a5fde6d1386c2f017fc2b57e3343
+  checksum: 262c6a90db4b18c82abb2a8f5349d1bf19ac34a440fe6c01b8aee302b1c886a79906693e6c3fdba2a4efa23a6519abf2113a882b438f7b6687eb2daed3da2afa
   languageName: node
   linkType: hard
 
@@ -12759,7 +12759,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@electron/notarize": "npm:^2.4.0"
+    "@electron/notarize": "npm:^2.5.0"
     "@playwright/browser-chromium": "npm:1.48.2"
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
