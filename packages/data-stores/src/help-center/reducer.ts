@@ -24,6 +24,17 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 	return state;
 };
 
+const helpCenterRouterHistory: Reducer<
+	{ entries: string[]; index: number } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
+			return action.history;
+	}
+	return state;
+};
+
 const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
@@ -191,6 +202,7 @@ const reducer = combineReducers( {
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	helpCenterRouterHistory,
 	allowPremiumSupport,
 	contextTerm,
 	helpCenterOptions,

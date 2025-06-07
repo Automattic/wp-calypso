@@ -1,13 +1,9 @@
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
 import { useState, useEffect, useLayoutEffect } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-
-type PersistedHistory = {
-	entries: Location[];
-	index: number;
-};
-
+import { HELP_CENTER_STORE } from '../stores';
 export interface HistoryEvent {
 	action: Action;
 	location: Location;
@@ -143,37 +139,25 @@ export const usePersistedHistory = () => {
 		action: history.action,
 		location: history.location,
 	} );
+	const persistedHistory = useSelect(
+		( select ) => select( HELP_CENTER_STORE ).getHelpCenterRouterHistory(),
+		[]
+	);
 
 	useLayoutEffect( () => {
 		return history.listen( setState );
 	}, [ history ] );
 
 	useEffect( () => {
-		( canAccessWpcomApis()
-			? wpcomRequest< { help_center_router_history: PersistedHistory } >( {
-					path: '/me/preferences',
-					apiNamespace: 'wpcom/v2',
-			  } )
-			: apiFetch< { help_center_router_history: PersistedHistory } >( {
-					global: true,
-					path: '/help-center/open-state',
-			  } as Parameters< typeof apiFetch >[ 0 ] )
-		)
-			.then( ( response ) => {
-				if ( response.help_center_router_history ) {
-					const history = new MemoryHistory(
-						response.help_center_router_history.entries,
-						response.help_center_router_history.index
-					);
-					setHistory( history );
-					setState( {
-						action: history.action,
-						location: history.location,
-					} );
-				}
-			} )
-			.catch( () => {} );
-	}, [] );
+		if ( persistedHistory ) {
+			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
+			setHistory( history );
+			setState( {
+				action: history.action,
+				location: history.location,
+			} );
+		}
+	}, [ persistedHistory ] );
 
 	return { history, state };
 };

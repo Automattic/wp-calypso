@@ -21,6 +21,13 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
+export function setHelpCenterRouterHistory( history: { entries: string[]; index: number } ) {
+	return {
+		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
+		history,
+	} as const;
+}
+
 export const setNavigateToRoute = ( route?: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
@@ -241,6 +248,7 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
 			| typeof setIsMinimized
+			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
