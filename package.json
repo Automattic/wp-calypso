@@ -266,7 +266,7 @@
 		"babel-loader": "^8.2.3",
 		"bunyan": "^1.8.15",
 		"chalk": "^4.1.2",
-		"check-node-version": "^4.0.2",
+		"check-node-version": "^4.2.1",
 		"chroma-js": "^2.6.0",
 		"css-loader": "^6.11.0",
 		"doctrine": "^3.0.0",

@@ -15038,9 +15038,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"check-node-version@npm:^4.0.2":
-  version: 4.1.0
-  resolution: "check-node-version@npm:4.1.0"
+"check-node-version@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "check-node-version@npm:4.2.1"
   dependencies:
     chalk: "npm:^3.0.0"
     map-values: "npm:^1.0.1"
@@ -15050,7 +15050,7 @@ __metadata:
     semver: "npm:^6.3.0"
   bin:
     check-node-version: bin.js
-  checksum: fea1a5ed7f4a83ebe43425c1223b7ddae5655a09f974397d1088af3521da0b9b3e1edd14c5c7b8a2590d6d7a4fa22da69ea0347fdde985164f97b847cc78e09f
+  checksum: 7778e04d240710c64d952181d45c1efe21c2a032da529d8eafced5811652137bd24d53b0a850fac27cb75de8041f40fa268df66e8f57fbeeff82813215eefab7
   languageName: node
   linkType: hard
 
@@ -37265,7 +37265,7 @@ __metadata:
     bunyan: "npm:^1.8.15"
     calypso: "workspace:^"
     chalk: "npm:^4.1.2"
-    check-node-version: "npm:^4.0.2"
+    check-node-version: "npm:^4.2.1"
     chroma-js: "npm:^2.6.0"
     cmdk: "npm:^0.2.1"
     css-loader: "npm:^6.11.0"
