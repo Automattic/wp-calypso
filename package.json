@@ -263,7 +263,7 @@
 		"@wordpress/eslint-plugin": "^22.9.0",
 		"@wordpress/prettier-config": "^4.23.0",
 		"@wordpress/stylelint-config": "^23.15.0",
-		"babel-loader": "^8.2.3",
+		"babel-loader": "^8.4.1",
 		"bunyan": "^1.8.15",
 		"chalk": "^4.1.2",
 		"check-node-version": "^4.0.2",
