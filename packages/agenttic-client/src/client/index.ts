@@ -217,19 +217,16 @@ export function createClient( config: ClientConfig ): Client {
 			const { withHistory = true } = params;
 
 			// Extract conversation history from the incoming message only if withHistory is true
-			const conversationHistory = withHistory
+			const initialConversationHistory = withHistory
 				? extractConversationHistory( params.message )
 				: [];
 
-			// Add the initial user message to conversation history if it's not already there
-			// This ensures the original user request is preserved for tool result context
-			if (
-				withHistory &&
-				( conversationHistory.length === 0 ||
-					conversationHistory[ conversationHistory.length - 1 ] !==
-						params.message )
-			) {
-				conversationHistory.push( params.message );
+			// Track new conversation parts since the initial message for tool result context
+			const newConversationParts: Message[] = [];
+
+			// Add the initial user message to new conversation parts
+			if ( withHistory ) {
+				newConversationParts.push( params.message );
 			}
 
 			// Prepare the request
@@ -302,14 +299,15 @@ export function createClient( config: ClientConfig ): Client {
 					}
 				}
 
-				// Add current agent message to conversation history (only if withHistory is true)
+				// Add current agent message to new conversation parts (only if withHistory is true)
 				if ( withHistory ) {
-					conversationHistory.push( currentTask.status.message );
+					newConversationParts.push( currentTask.status.message );
 				}
 
-				// Create tool result message with conversation history (if enabled)
+				// Create tool result message with only NEW conversation parts since initial message
+				// This avoids duplicating the conversation history that was already sent initially
 				const historyDataParts = withHistory
-					? conversationHistoryToDataParts( conversationHistory )
+					? conversationHistoryToDataParts( newConversationParts )
 					: [];
 
 				const toolResultMessage = createToolResultMessage(
@@ -361,19 +359,16 @@ export function createClient( config: ClientConfig ): Client {
 			const { withHistory = true } = params;
 
 			// Extract conversation history from the incoming message only if withHistory is true
-			const conversationHistory = withHistory
+			const initialConversationHistory = withHistory
 				? extractConversationHistory( params.message )
 				: [];
 
-			// Add the initial user message to conversation history if it's not already there
-			// This ensures the original user request is preserved for tool result context
-			if (
-				withHistory &&
-				( conversationHistory.length === 0 ||
-					conversationHistory[ conversationHistory.length - 1 ] !==
-						params.message )
-			) {
-				conversationHistory.push( params.message );
+			// Track new conversation parts since the initial message for tool result context
+			const newConversationParts: Message[] = [];
+
+			// Add the initial user message to new conversation parts
+			if ( withHistory ) {
+				newConversationParts.push( params.message );
 			}
 
 			// Prepare the request
@@ -440,15 +435,16 @@ export function createClient( config: ClientConfig ): Client {
 							}
 						}
 
-						// Add current agent message to conversation history (only if withHistory is true)
+						// Add current agent message to new conversation parts (only if withHistory is true)
 						if ( withHistory ) {
-							conversationHistory.push( update.status.message );
+							newConversationParts.push( update.status.message );
 						}
 
-						// Create tool result message with conversation history (if enabled)
+						// Create tool result message with only NEW conversation parts since initial message
+						// This avoids duplicating the conversation history that was already sent initially
 						const historyDataParts = withHistory
 							? conversationHistoryToDataParts(
-									conversationHistory
+									newConversationParts
 							  )
 							: [];
 
