@@ -1,3 +1,4 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
@@ -140,7 +141,7 @@ export const usePersistedHistory = () => {
 		location: history.location,
 	} );
 	const persistedHistory = useSelect(
-		( select ) => select( HELP_CENTER_STORE ).getHelpCenterRouterHistory(),
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
 		[]
 	);
 

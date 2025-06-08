@@ -3,6 +3,7 @@ import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -25,7 +26,7 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 };
 
 const helpCenterRouterHistory: Reducer<
-	{ entries: string[]; index: number } | undefined,
+	{ entries: Location[]; index: number } | undefined,
 	HelpCenterAction
 > = ( state, action ) => {
 	switch ( action.type ) {

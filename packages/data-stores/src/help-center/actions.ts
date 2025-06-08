@@ -13,6 +13,7 @@ import type {
 	HelpCenterShowOptions,
 } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
 
 export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
 	return {
@@ -21,7 +22,7 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
-export function setHelpCenterRouterHistory( history: { entries: string[]; index: number } ) {
+export function setHelpCenterRouterHistory( history: { entries: Location[]; index: number } ) {
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
