@@ -1,6 +1,12 @@
 import styled from '@emotion/styled';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import moment from 'moment';
+import {
+	addHours,
+	differenceInMilliseconds,
+	differenceInDays,
+	formatDistanceToNowStrict,
+	intervalToDuration,
+} from 'date-fns';
 import ClipboardInputControl from '../clipboard-input-control';
 
 const Separator = styled.span( {
@@ -15,20 +21,23 @@ type LinkExpiryCopyProps = {
 };
 
 const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
-	const now = moment();
-	const expiryDate = moment( expiresAt );
+	const now = new Date();
+	const expiryDate = new Date( expiresAt );
 
-	const difference = expiryDate.diff( now );
-
+	const difference = differenceInMilliseconds( expiryDate, now );
 	if ( difference < 0 ) {
 		return __( 'Expired.' );
 	}
 
-	const duration = moment.duration( difference );
-	if ( duration.asDays() < 1 || duration.hours() === 0 ) {
+	const duration = intervalToDuration( {
+		start: now,
+		end: expiryDate,
+	} );
+
+	if ( differenceInDays( expiryDate, now ) < 1 || duration?.hours === 0 ) {
 		// Less than 1 day left, or more than 1 day left but no hours need to be appended
 		// We can utilize moment.js to get the duration string
-		const durationString = expiryDate.toNow( true );
+		const durationString = formatDistanceToNowStrict( expiryDate, { addSuffix: true } );
 		return sprintf(
 			// translators: Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".
 			__( 'Expires in %(durationString)s' ),
@@ -38,10 +47,17 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 
 	// Unfortunately, moment.js does not provide a way to get the duration string for more than 1 day in our desired format, i.e. e.g.:"%{d} days, %{h} hours".
 
-	duration.add( 1, 'hour' ); // Add 1 hour to the duration to round up the day for case where the user just created the link, e.g.: we prefer to show "Expires in 3 days", instead of "Expires in 2 days, 23 hours".
-	const days = Math.floor( duration.asDays() );
-	const hours = duration.hours();
+	// Add 1 hour to the duration to round up the day for case where the user just created the link, e.g.: we prefer to show "Expires in 3 days", instead of "Expires in 2 days, 23 hours".
+	const roundedExpiryDate = addHours( expiryDate, 1 );
+	const roundedDuration = intervalToDuration( {
+		start: now,
+		end: roundedExpiryDate,
+	} );
+
+	const days = roundedDuration?.days ?? 0;
+	const hours = roundedDuration?.hours ?? 0;
 	const hasHours = hours > 0; // Despite previous check whether hours are 0, we need to check again after we round up the hours
+
 	return (
 		<>
 			{ sprintf(
