@@ -15,7 +15,7 @@ describe( 'hasGravatarDomainQueryParam()', () => {
 		expect( hasGravatarDomainQueryParam( state ) ).toBe( true );
 	} );
 
-	test( 'should return `true` if the state has the wrong Gravatar domain query', () => {
+	test( 'should return `false` if the state has the wrong Gravatar domain query', () => {
 		const state = {
 			route: {
 				query: {
