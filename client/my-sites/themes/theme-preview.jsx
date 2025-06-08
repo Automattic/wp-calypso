@@ -68,7 +68,7 @@ class ThemePreview extends Component {
 
 		let previewUrl = demoUrl + '?demo=true&iframe=true&theme_preview=true';
 		if ( locale && locale.length > 0 && locale !== 'en' ) {
-			previewUrl += '&locale=' + locale;
+			previewUrl += '&language=' + locale;
 		}
 
 		return (
