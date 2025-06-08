@@ -101,7 +101,7 @@ export default function useCreatePaymentCompleteCallback( {
 					isSearchPluginActive( state, siteId ) ) &&
 				! isAtomicSite( state, siteId )
 		) || false;
-	const isGravatarDomain = useSelector( ( state ) => hasGravatarDomainQueryParam( state ) );
+	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const adminPageRedirect = useSelector( ( state ) =>
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);

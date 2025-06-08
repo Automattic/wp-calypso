@@ -146,7 +146,7 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isGravatarDomain = useSelector( ( state ) => hasGravatarDomainQueryParam( state ) );
+	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
