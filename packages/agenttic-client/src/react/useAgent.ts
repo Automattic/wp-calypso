@@ -406,29 +406,36 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				error: null,
 			} ) );
 
+			// Track conversation history locally to avoid race conditions
+			let currentConversationHistory = [ ...state.conversationHistory ];
+
 			try {
 				const message: Message =
 					options.message ||
 					( withHistory
 						? createTextMessageWithHistory(
 								messageText,
-								state.conversationHistory
+								currentConversationHistory
 						  )
 						: createTextMessage( messageText ) );
 
-				// Add user message to conversation history before streaming (only if withHistory is true)
+				// Add user message to local conversation history before streaming (only if withHistory is true)
 				// Store only the clean message without history parts
 				if ( withHistory ) {
-					const newUserHistory = [
-						...state.conversationHistory,
-						createTextMessage( messageText ),
+					const userMessage = createTextMessage( messageText );
+					currentConversationHistory = [
+						...currentConversationHistory,
+						userMessage,
 					];
+
 					setState( ( prev ) => ( {
 						...prev,
-						conversationHistory: newUserHistory,
+						conversationHistory: currentConversationHistory,
 					} ) );
 					// Persist the user message immediately
-					await persistConversationHistory( newUserHistory );
+					await persistConversationHistory(
+						currentConversationHistory
+					);
 				}
 
 				let finalUpdate: TaskUpdate | null = null;
@@ -533,14 +540,15 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							};
 						}
 
-						const newConversationHistory = completeAgentMessage
-							? [
-									...state.conversationHistory,
-									extractNewContentFromMessage(
-										completeAgentMessage
-									),
-							  ]
-							: state.conversationHistory;
+						// Add agent message to local conversation history
+						if ( completeAgentMessage ) {
+							currentConversationHistory = [
+								...currentConversationHistory,
+								extractNewContentFromMessage(
+									completeAgentMessage
+								),
+							];
+						}
 
 						setState( ( prev ) => ( {
 							...prev,
@@ -550,13 +558,13 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 								status: update.status,
 							},
 							// Add complete agent response to conversation history (only if withHistory is true)
-							conversationHistory: newConversationHistory,
+							conversationHistory: currentConversationHistory,
 						} ) );
 
 						// Persist the final conversation history
 						if ( withHistory && completeAgentMessage ) {
 							await persistConversationHistory(
-								newConversationHistory
+								currentConversationHistory
 							);
 						}
 					}
