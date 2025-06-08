@@ -37,7 +37,7 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 	if ( differenceInDays( expiryDate, now ) < 1 || duration?.hours === 0 ) {
 		// Less than 1 day left, or more than 1 day left but no hours need to be appended
 		// We can utilize moment.js to get the duration string
-		const durationString = formatDistanceToNowStrict( expiryDate, { addSuffix: true } );
+		const durationString = formatDistanceToNowStrict( expiryDate );
 		return sprintf(
 			// translators: Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".
 			__( 'Expires in %(durationString)s' ),
