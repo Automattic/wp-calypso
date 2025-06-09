@@ -3,6 +3,7 @@
 ## Next
 
 - Add a story for each FieldTypeDefinition.
+- Adjust the spacing of the `DataForm` based on the type.
 
 ## 0.2.1
 
