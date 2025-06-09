@@ -438,9 +438,6 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					);
 				}
 
-				let finalUpdate: TaskUpdate | null = null;
-				const accumulatedParts: Part[] = [];
-
 				for await ( const update of clientRef.current.sendMessageStream(
 					{
 						message,
@@ -448,105 +445,38 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						...otherOptions,
 					}
 				) ) {
-					finalUpdate = update;
 					yield update;
 
-					// Accumulate tool-related parts from all updates
-					if ( update.status?.message?.parts ) {
-						for ( const part of update.status.message.parts ) {
-							// Collect tool calls and tool results from streaming updates
-							if (
-								part.type === 'data' &&
-								( ( 'toolCallId' in part.data &&
-									'arguments' in part.data ) ||
-									( 'toolCallId' in part.data &&
-										'result' in part.data ) )
-							) {
-								// Avoid duplicates by checking if we already have this part
-								const isDuplicate = accumulatedParts.some(
-									( existingPart ) =>
-										existingPart.type === 'data' &&
-										'toolCallId' in existingPart.data &&
-										'toolCallId' in part.data &&
-										existingPart.data.toolCallId ===
-											part.data.toolCallId &&
-										// Same type (both calls or both results)
-										( ( 'arguments' in existingPart.data &&
-											'arguments' in part.data ) ||
-											( 'result' in existingPart.data &&
-												'result' in part.data ) )
-								);
-
-								if ( ! isDuplicate ) {
-									accumulatedParts.push( part );
-								}
-							}
-						}
+					// Save tool interactions when input is required
+					if (
+						update.status?.state === 'input-required' &&
+						update.status?.message &&
+						withHistory
+					) {
+						const toolMessage = extractNewContentFromMessage(
+							update.status.message
+						);
+						currentConversationHistory = [
+							...currentConversationHistory,
+							toolMessage,
+						];
+						await persistConversationHistory(
+							currentConversationHistory
+						);
 					}
 
-					// Note: Tool results are not captured here as separate messages
-					// They will be included in the final agent message along with tool calls
-
-					// Update state with final result
-					if ( update.final ) {
-						// Create a complete agent message with all tool parts + final content
-						let completeAgentMessage: Message | null = null;
+					if (
+						update.final &&
+						update.status?.state !== 'input-required'
+					) {
+						let finalAgentMessage: Message | null = null;
 						if ( withHistory && update.status?.message ) {
-							// Extract text parts from final message
-							const finalTextParts =
-								update.status.message.parts.filter(
-									( part ) => part.type === 'text'
-								);
-
-							// Extract any additional tool parts from final message (in case they weren't captured during streaming)
-							const finalToolParts =
-								update.status.message.parts.filter(
-									( part ) =>
-										part.type === 'data' &&
-										'toolCallId' in part.data &&
-										( 'arguments' in part.data ||
-											'result' in part.data )
-								);
-
-							// Combine accumulated parts + final tool parts (deduplicate) + text parts
-							const allToolParts = [
-								...accumulatedParts,
-								...finalToolParts.filter(
-									( finalPart ) =>
-										! accumulatedParts.some(
-											( accPart ) =>
-												accPart.type === 'data' &&
-												finalPart.type === 'data' &&
-												'toolCallId' in accPart.data &&
-												'toolCallId' in
-													finalPart.data &&
-												accPart.data.toolCallId ===
-													finalPart.data.toolCallId &&
-												( ( 'arguments' in
-													accPart.data &&
-													'arguments' in
-														finalPart.data ) ||
-													( 'result' in
-														accPart.data &&
-														'result' in
-															finalPart.data ) )
-										)
-								),
-							];
-
-							completeAgentMessage = {
-								role: 'agent',
-								parts: [ ...allToolParts, ...finalTextParts ],
-							};
-						}
-
-						// Add agent message to local conversation history
-						if ( completeAgentMessage ) {
+							finalAgentMessage = extractNewContentFromMessage(
+								update.status.message
+							);
 							currentConversationHistory = [
 								...currentConversationHistory,
-								extractNewContentFromMessage(
-									completeAgentMessage
-								),
+								finalAgentMessage,
 							];
 						}
 
@@ -557,12 +487,11 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 								id: update.id,
 								status: update.status,
 							},
-							// Add complete agent response to conversation history (only if withHistory is true)
 							conversationHistory: currentConversationHistory,
 						} ) );
 
 						// Persist the final conversation history
-						if ( withHistory && completeAgentMessage ) {
+						if ( withHistory && finalAgentMessage ) {
 							await persistConversationHistory(
 								currentConversationHistory
 							);
