@@ -61,7 +61,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 			apiVersion: '1.2',
 		},
 		{
-			site_visibility: 'all',
+			site_visibility: 'visible',
 			include_domain_only: 'true',
 			site_activity: 'active',
 			fields: JOINED_SITE_FIELDS,
