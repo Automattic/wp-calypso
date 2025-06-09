@@ -67,10 +67,10 @@ import type {
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
-export function sitesQuery() {
+export function sitesQuery( siteVisibility: Parameters< typeof fetchSites >[ 0 ] = 'all' ) {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
-		queryFn: fetchSites,
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS, siteVisibility ],
+		queryFn: () => fetchSites( siteVisibility ),
 	};
 }
 
