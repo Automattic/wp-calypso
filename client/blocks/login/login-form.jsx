@@ -422,6 +422,7 @@ export class LoginForm extends Component {
 									variant="link"
 									className="login__form-change-username"
 									onClick={ this.resetView }
+									size="small"
 								>
 									<Gridicon icon="arrow-left" size={ 18 } />
 
@@ -522,6 +523,7 @@ export class LoginForm extends Component {
 				className="login__form-change-username"
 				onClick={ this.resetView }
 				variant="link"
+				size="compact"
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ includes( this.state.usernameOrEmail, '@' )
