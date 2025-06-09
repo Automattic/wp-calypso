@@ -70,7 +70,7 @@ class InlineSupportLink extends Component {
 		let content = (
 			<>
 				{ showText && text }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ supportPostId && showIcon ? <Gridicon icon="help-outline" size={ iconSize } /> : null }
 			</>
 		);
 		/* Prevent widows, sometimes:
