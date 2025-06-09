@@ -3,13 +3,14 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { setHelpCenterRouterHistory } from './actions';
 import type { APIFetchOptions } from './types';
+import type { Location } from 'history';
 
 export function* isHelpCenterShown() {
 	try {
 		const preferences: {
 			help_center_open: boolean;
 			help_center_router_history: {
-				entries: string[];
+				entries: Location[];
 				index: number;
 			};
 		} = canAccessWpcomApis()
