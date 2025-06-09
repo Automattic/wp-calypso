@@ -1,9 +1,40 @@
 import debug from 'debug';
-import chalk from 'chalk';
 
-// Force color support for chalk
-//process.env.FORCE_COLOR = '1'; // Force color output
-chalk.level = 3; // Truecolor support (16 million colors)
+// Browser-compatible chalk handling
+const isBrowser = typeof window !== 'undefined';
+const noOpColor = ( text: string ) => text;
+
+let chalk: any;
+if ( isBrowser ) {
+	// Browser environment - no coloring
+	chalk = {
+		red: noOpColor,
+		green: noOpColor,
+		yellow: noOpColor,
+		blue: noOpColor,
+		magenta: noOpColor,
+		dim: noOpColor,
+		level: 0,
+	};
+} else {
+	// Node.js environment - import chalk
+	try {
+		chalk = require( 'chalk' );
+		// Force color support for chalk
+		chalk.level = 3; // Truecolor support (16 million colors)
+	} catch ( error ) {
+		// Fallback if chalk import fails
+		chalk = {
+			red: noOpColor,
+			green: noOpColor,
+			yellow: noOpColor,
+			blue: noOpColor,
+			magenta: noOpColor,
+			dim: noOpColor,
+			level: 0,
+		};
+	}
+}
 
 // Single debug instance for the entire agenttic-client package
 export const logger = debug( 'agenttic-client' );
