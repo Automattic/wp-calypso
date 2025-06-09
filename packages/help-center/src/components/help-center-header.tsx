@@ -111,6 +111,7 @@ const ChatEllipsisMenu = () => {
 			popoverClassName="help-center help-center__container-header-menu"
 			position="bottom"
 			trackEventProps={ { source: 'help_center' } }
+			ariaLabel={ __( 'Chat options', __i18n_text_domain__ ) }
 		>
 			<div className="conversation-menu__wrapper">
 				<button onClick={ clearChat }>
