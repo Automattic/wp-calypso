@@ -8,7 +8,7 @@ import { getDataCenterOptions } from 'calypso/data/data-center';
 import { siteQuery, sitePrimaryDataCenterQuery } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { canGetPrimaryDataCenter } from '../../utils/site-features';
+import { canViewPrimaryDataCenterSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
@@ -16,7 +16,7 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: primaryDataCenter } = useQuery( {
 		...sitePrimaryDataCenterQuery( siteSlug ),
-		enabled: site && canGetPrimaryDataCenter( site ),
+		enabled: site && canViewPrimaryDataCenterSettings( site ),
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();

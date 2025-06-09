@@ -1,10 +1,11 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { useCanTransferSite } from '../hooks/use-can-transfer-site';
+import { canViewSiteActions, canTransferSite } from '../features';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
 import SiteResetModal from '../site-reset-modal';
@@ -67,8 +68,6 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 	);
 };
 
-const showSiteDeleteAction = ( site: Site ) => ! site.is_wpcom_staging_site;
-
 const SiteDeleteAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -96,14 +95,17 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 };
 
 export default function DangerZone( { site }: { site: Site } ) {
-	const canTransferSite = useCanTransferSite( { site } );
-	const canResetSite = ! site.is_wpcom_staging_site;
+	const { user } = useAuth();
+
+	if ( ! canViewSiteActions( site ) ) {
+		return null;
+	}
 
 	const actions = [
-		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
+		canTransferSite( site, user ) && <SiteTransferAction key="transfer-site" site={ site } />,
 		<SiteLeaveAction key="leave-site" site={ site } />,
-		canResetSite && <SiteResetAction key="reset-site" site={ site } />,
-		showSiteDeleteAction( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
+		<SiteResetAction key="reset-site" site={ site } />,
+		<SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {

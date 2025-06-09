@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { canUpdateHundredYearPlanFeatures } from '../../utils/site-features';
+import { canViewHundredYearPlanSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
@@ -61,7 +61,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 		return null;
 	}
 
-	if ( ! canUpdateHundredYearPlanFeatures( site ) ) {
+	if ( ! canViewHundredYearPlanSettings( site ) ) {
 		throw notFound();
 	}
 

@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { heading } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { hasSubscriptionGiftingFeature } from './utils';
+import { canViewSubscriptionGiftingSettings } from '../features';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -15,7 +15,7 @@ export default function SubscriptionGiftingSettingsSummary( {
 	settings: SiteSettings;
 	density?: Density;
 } ) {
-	if ( ! hasSubscriptionGiftingFeature( site ) ) {
+	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
 		return null;
 	}
 	return (

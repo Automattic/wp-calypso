@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { siteDefensiveModeQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdateDefensiveMode } from '../../utils/site-features';
+import { canViewDefensiveModeSettings } from '../features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -15,14 +15,14 @@ export default function DefensiveModeSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const canUpdate = canUpdateDefensiveMode( site );
+	const canView = canViewDefensiveModeSettings( site );
 
 	const { data } = useQuery( {
 		...siteDefensiveModeQuery( site.slug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 
-	if ( ! canUpdate ) {
+	if ( ! canView ) {
 		return null;
 	}
 

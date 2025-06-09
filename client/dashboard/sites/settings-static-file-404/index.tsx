@@ -13,7 +13,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteStaticFile404Query, siteStaticFile404Mutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
-import { canSetStaticFile404Handling } from '../../utils/site-features';
+import { canViewStaticFile404Settings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
@@ -56,7 +56,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: currentSetting } = useQuery( {
 		...siteStaticFile404Query( siteSlug ),
-		enabled: site && canSetStaticFile404Handling( site ),
+		enabled: site && canViewStaticFile404Settings( site ),
 	} );
 	const mutation = useMutation( siteStaticFile404Mutation( siteSlug ) );
 
@@ -68,7 +68,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 		return null;
 	}
 
-	if ( ! canSetStaticFile404Handling( site ) ) {
+	if ( ! canViewStaticFile404Settings( site ) ) {
 		return (
 			<PageLayout
 				size="small"

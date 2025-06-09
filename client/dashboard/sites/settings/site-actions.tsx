@@ -7,10 +7,8 @@ import { addQueryArgs } from '@wordpress/url';
 import { restoreSitePlanSoftwareMutation } from '../../app/queries';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
-import { DotcomFeatures } from '../../data/constants';
+import { canViewSiteActions, canRestorePlanSoftware, canDuplicateSite } from '../features';
 import type { Site } from '../../data/types';
-
-const canRestorePlanSoftware = ( { is_wpcom_atomic }: Site ) => is_wpcom_atomic;
 
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -52,9 +50,6 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	);
 };
 
-const canDuplicateSite = ( { capabilities, plan }: Site ) =>
-	capabilities.manage_options && plan?.features.active.includes( DotcomFeatures.COPY_SITE );
-
 const DuplicateSite = ( { site }: { site: Site } ) => {
 	return (
 		<ActionList.ActionItem
@@ -76,6 +71,10 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 };
 
 export default function SiteActions( { site }: { site: Site } ) {
+	if ( ! canViewSiteActions( site ) ) {
+		return null;
+	}
+
 	const actions = [
 		canRestorePlanSoftware( site ) && (
 			<RestorePlanSoftware key="restore-plan-software" site={ site } />

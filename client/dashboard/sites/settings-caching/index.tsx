@@ -25,12 +25,10 @@ import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import {
-	canUpdateCaching,
-	isEdgeCacheAvailable as getIsEdgeCacheAvailable,
-} from '../../utils/site-features';
+import { canViewCachingSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
+import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@automattic/dataviews';
 
 type CachingFormData = {
@@ -52,11 +50,11 @@ const form = {
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateCaching( site );
+	const canView = site && canViewCachingSettings( site );
 
 	const { data: isEdgeCacheActive } = useQuery( {
 		...siteEdgeCacheStatusQuery( siteSlug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( siteSlug ) );
 	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( siteSlug ) );
@@ -240,7 +238,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const description = canUpdate
+	const description = canView
 		? createInterpolateElement(
 				__( 'Manage your site’s server-side caching. <link>Learn more</link>.' ),
 				{
@@ -254,7 +252,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			{ canUpdate ? (
+			{ canView ? (
 				<>
 					{ renderForm() }
 					{ renderActions() }
