@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ActionList } from '../../components/action-list';
@@ -111,9 +111,9 @@ export default function DangerZone( { site }: { site: Site } ) {
 	}
 
 	return (
-		<>
+		<VStack spacing={ 3 }>
 			<SectionHeader title={ __( 'Danger zone' ) } />
 			<ActionList>{ actions }</ActionList>
-		</>
+		</VStack>
 	);
 }

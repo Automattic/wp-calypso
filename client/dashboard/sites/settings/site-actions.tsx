@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -88,9 +88,9 @@ export default function SiteActions( { site }: { site: Site } ) {
 	}
 
 	return (
-		<>
+		<VStack spacing={ 3 }>
 			<SectionHeader title={ __( 'Actions' ) } />
 			<ActionList>{ actions }</ActionList>
-		</>
+		</VStack>
 	);
 }

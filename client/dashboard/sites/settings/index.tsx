@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
@@ -30,24 +31,28 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
-			<SectionHeader title={ __( 'General' ) } level={ 3 } />
-			<SummaryButtonList>
-				<SiteVisibilitySettingsSummary site={ site } />
-				<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
-				<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
-			</SummaryButtonList>
-			<SectionHeader title={ __( 'Server' ) } level={ 3 } />
-			<SummaryButtonList>
-				<WordPressSettingsSummary site={ site } />
-				<PHPSettingsSummary site={ site } />
-				<SftpSshSettingsSummary site={ site } />
-				<DatabaseSettingsSummary site={ site } />
-				<AgencySettingsSummary site={ site } />
-				<PrimaryDataCenterSettingsSummary site={ site } />
-				<StaticFile404SettingsSummary site={ site } />
-				<CachingSettingsSummary site={ site } />
-				<DefensiveModeSettingsSummary site={ site } />
-			</SummaryButtonList>
+			<VStack spacing={ 3 }>
+				<SectionHeader title={ __( 'General' ) } level={ 3 } />
+				<SummaryButtonList>
+					<SiteVisibilitySettingsSummary site={ site } />
+					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+					<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
+				</SummaryButtonList>
+			</VStack>
+			<VStack spacing={ 3 }>
+				<SectionHeader title={ __( 'Server' ) } level={ 3 } />
+				<SummaryButtonList>
+					<WordPressSettingsSummary site={ site } />
+					<PHPSettingsSummary site={ site } />
+					<SftpSshSettingsSummary site={ site } />
+					<DatabaseSettingsSummary site={ site } />
+					<AgencySettingsSummary site={ site } />
+					<PrimaryDataCenterSettingsSummary site={ site } />
+					<StaticFile404SettingsSummary site={ site } />
+					<CachingSettingsSummary site={ site } />
+					<DefensiveModeSettingsSummary site={ site } />
+				</SummaryButtonList>
+			</VStack>
 			<SiteActions site={ site } />
 			<DangerZone site={ site } />
 		</PageLayout>
