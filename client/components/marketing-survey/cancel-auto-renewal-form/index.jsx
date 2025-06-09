@@ -138,14 +138,14 @@ class CancelAutoRenewalForm extends Component {
 		return (
 			<ConfirmDialog
 				onRequestClose={ onClose }
-				title={ translate( 'Auto-renewal is now off.' ) }
+				title={ translate( 'Help us improve' ) }
 				className="cancel-auto-renewal-form__dialog"
 			>
 				<DialogContent>
 					<FormFieldset className="cancel-auto-renewal-form__form-fieldset">
 						<p>
 							{ translate(
-								"Before you go, we'd love to know: " +
+								"You've turned off auto-renewal. Before you go, we'd love to know: " +
 									"are you letting this %(productType)s expire completely, or do you think you'll renew it manually?",
 								{
 									args: { productType },
@@ -154,6 +154,7 @@ class CancelAutoRenewalForm extends Component {
 							) }
 						</p>
 						<RadioControl
+							className="cancel-auto-renewal-form__radio-control"
 							hideLabelFromVision
 							options={ this.radioButtons }
 							selected={ this.state.response }
@@ -166,6 +167,7 @@ class CancelAutoRenewalForm extends Component {
 						purchase={ purchase }
 						onClick={ onClose }
 						className="cancel-auto-renewal-form__chat-button"
+						label={ translate( 'Need help?' ) }
 					/>
 					<Button onClick={ onClose } variant="tertiary">
 						{ translate( 'Skip' ) }
