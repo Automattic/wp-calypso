@@ -2,11 +2,7 @@ import { Button } from '@wordpress/components';
 import { IconFigma } from './icon-figma';
 import { IconStorybook } from './icon-storybook';
 
-export const IconLink = ( { href, type }: { href?: string; type: 'figma' | 'storybook' } ) => {
-	if ( ! href ) {
-		return null;
-	}
-
+export const IconLink = ( { href, type }: { href: string; type: 'figma' | 'storybook' } ) => {
 	return (
 		<Button
 			__next40pxDefaultSize

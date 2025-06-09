@@ -46,7 +46,7 @@ const FIELDS: Field< ComponentData >[] = [
 		enableHiding: true,
 		enableSorting: false,
 		render: ( { item } ) => {
-			return <IconLink href={ item.figma } type="figma" />;
+			return item.figma && <IconLink href={ item.figma } type="figma" />;
 		},
 	},
 	{
