@@ -38,7 +38,7 @@ export const ALL_OPERATORS = [
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
-];
+] satisfies Operator[];
 
 export const SINGLE_SELECTION_OPERATORS = [
 	OPERATOR_IS,
@@ -50,7 +50,7 @@ export const SINGLE_SELECTION_OPERATORS = [
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
-];
+] satisfies Operator[];
 
 export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	[ OPERATOR_IS ]: {
