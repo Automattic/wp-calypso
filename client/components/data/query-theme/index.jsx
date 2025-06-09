@@ -6,10 +6,10 @@ import { requestTheme } from 'calypso/state/themes/actions';
 import { isRequestingTheme } from 'calypso/state/themes/selectors';
 
 const request =
-	( siteId, themeId, forceRequest = false ) =>
+	( siteId, themeId, locale = null, forceRequest = false ) =>
 	( dispatch, getState ) => {
 		if ( ! isRequestingTheme( getState(), siteId, themeId ) || forceRequest ) {
-			dispatch( requestTheme( themeId, siteId ) );
+			dispatch( requestTheme( themeId, siteId, locale ) );
 		}
 	};
 
@@ -27,9 +27,9 @@ export function useQueryTheme( siteId, themeId ) {
 		if ( siteId && themeId ) {
 			if ( oldLocale.current !== locale ) {
 				oldLocale.current = locale;
-				dispatch( request( siteId, themeId, true ) );
+				dispatch( request( siteId, themeId, locale, true ) );
 			} else {
-				dispatch( request( siteId, themeId ) );
+				dispatch( request( siteId, themeId, locale ) );
 			}
 		}
 	}, [ dispatch, siteId, themeId, locale ] );
