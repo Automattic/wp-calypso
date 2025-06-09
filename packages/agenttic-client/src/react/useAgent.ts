@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { createClient } from '../client/index';
-import { createTextMessage, createTextPart } from '../client/utils/index';
+import {
+	createTextMessage,
+	createTextPart,
+	extractToolCallsFromMessage,
+} from '../client/utils/index';
 import type {
 	Client,
 	ClientConfig,
@@ -145,12 +149,12 @@ function createTextMessageWithHistory(
 }
 
 /**
- * Extract tool calls from a message
+ * Extract tool results from a message
  *
- * @param message - The message to check for tool calls
- * @return Array of tool call parts
+ * @param message - The message to check for tool results
+ * @return Array of tool result parts
  */
-function extractToolCallsFromMessage( message?: Message ): DataPart[] {
+function extractToolResultsFromMessage( message?: Message ): DataPart[] {
 	if ( ! message?.parts ) {
 		return [];
 	}
@@ -159,8 +163,7 @@ function extractToolCallsFromMessage( message?: Message ): DataPart[] {
 		( part: any ) =>
 			part.type === 'data' &&
 			'toolCallId' in part.data &&
-			'toolId' in part.data &&
-			'arguments' in part.data
+			'result' in part.data
 	) as DataPart[];
 }
 
@@ -409,6 +412,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 			// Track conversation history locally to avoid race conditions
 			let currentConversationHistory = [ ...state.conversationHistory ];
 
+			// Track current tool call IDs to ensure we only capture matching tool results
+			let currentToolCallIds: string[] = [];
+
 			try {
 				const message: Message =
 					options.message ||
@@ -447,12 +453,20 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				) ) {
 					yield update;
 
-					// Save tool interactions when input is required
+					// Save tool interactions when input is required (this saves the agent message with tool calls)
 					if (
 						update.status?.state === 'input-required' &&
 						update.status?.message &&
 						withHistory
 					) {
+						// Capture the tool call IDs for this batch
+						const toolCalls = extractToolCallsFromMessage(
+							update.status.message
+						);
+						currentToolCallIds = toolCalls.map(
+							( call ) => call.data.toolCallId as string
+						);
+
 						const toolMessage = extractNewContentFromMessage(
 							update.status.message
 						);
@@ -465,10 +479,52 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						);
 					}
 
+					// Capture tool results when tools are executed (state becomes 'working' after tool execution)
+					if (
+						update.status?.state === 'working' &&
+						update.status?.message &&
+						withHistory &&
+						! update.final
+					) {
+						// Extract ALL tool results first
+						const allToolResults = extractToolResultsFromMessage(
+							update.status.message
+						);
+
+						// Filter to only include results that match current tool call IDs
+						const currentToolResults = allToolResults.filter(
+							( result ) =>
+								currentToolCallIds.includes(
+									result.data.toolCallId as string
+								)
+						);
+
+						if ( currentToolResults.length > 0 ) {
+							// Create a message containing just the matching tool results
+							const toolResultMessage: Message = {
+								role: 'agent',
+								parts: currentToolResults,
+							};
+
+							currentConversationHistory = [
+								...currentConversationHistory,
+								extractNewContentFromMessage(
+									toolResultMessage
+								),
+							];
+							await persistConversationHistory(
+								currentConversationHistory
+							);
+						}
+					}
+
 					if (
 						update.final &&
 						update.status?.state !== 'input-required'
 					) {
+						// Clear tool call tracking for next batch
+						currentToolCallIds = [];
+
 						let finalAgentMessage: Message | null = null;
 						if ( withHistory && update.status?.message ) {
 							finalAgentMessage = extractNewContentFromMessage(
