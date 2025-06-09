@@ -154,7 +154,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			clearTimeout( retryTimeout );
 			destroy();
 		};
-	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded ] );
+	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded, isChatLoaded ] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations ) {
