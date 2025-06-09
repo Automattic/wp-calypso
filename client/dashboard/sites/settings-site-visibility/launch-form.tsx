@@ -119,13 +119,9 @@ export function LaunchForm( { site }: { site: Site } ) {
 
 	return (
 		<Notice
-			title={ __( "Your site hasn’t been launched yet" ) }
+			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
-				<Button
-					size="compact"
-					variant="primary"
-					href={ getLaunchUrl() }
-				>
+				<Button size="compact" variant="primary" href={ getLaunchUrl() }>
 					{ __( 'Launch site' ) }
 				</Button>
 			}
