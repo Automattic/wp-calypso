@@ -15,7 +15,7 @@ const parameters = {
 			const sectionOrder = [
 				'Validated Form Controls',
 				'WP Overrides',
-				'Still Internal',
+				'Unpublished',
 				'Deprecated',
 				'Unaudited',
 			];
