@@ -30,13 +30,13 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
-			<SectionHeader title={ __( 'General' ) } />
+			<SectionHeader title={ __( 'General' ) } level={ 3 } />
 			<SummaryButtonList>
 				<SiteVisibilitySettingsSummary site={ site } />
 				<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 				<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 			</SummaryButtonList>
-			<SectionHeader title={ __( 'Server' ) } />
+			<SectionHeader title={ __( 'Server' ) } level={ 3 } />
 			<SummaryButtonList>
 				<WordPressSettingsSummary site={ site } />
 				<PHPSettingsSummary site={ site } />
