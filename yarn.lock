@@ -37270,7 +37270,6 @@ __metadata:
     cmdk: "npm:^0.2.1"
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
-    date-fns: "npm:^4.1.0"
     debug: "npm:^4.4.1"
     doctrine: "npm:^3.0.0"
     dotenv-webpack: "npm:^8.1.0"
