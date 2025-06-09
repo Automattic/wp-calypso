@@ -3,7 +3,7 @@ import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -18,18 +18,21 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
-
-const MAIN_STAT_TYPE = 'statsTopPosts';
-const SUB_STAT_TYPE = 'statsArchives';
+import useOptionLabels, {
+	MAIN_STAT_TYPE,
+	SUB_STAT_TYPE,
+	StatType,
+	StatsModulePostsProps,
+} from './use-option-labels';
+import type { StatsStateProps } from '../types';
 
 type StatTypeOptionType = {
-	value: typeof MAIN_STAT_TYPE | typeof SUB_STAT_TYPE;
+	value: StatType;
 	label: string;
 	mainItemLabel: string;
 };
 
-const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
+const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -41,26 +44,26 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const optionLabels = useOptionLabels();
 
 	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
 
-	const options: StatTypeOptionType[] = [
-		{
-			value: mainStatType,
-			label: translate( 'Post & pages' ),
-			mainItemLabel: translate( 'Posts & pages' ),
-		},
-		{
-			value: subStatType,
-			label: translate( 'Archive' ),
-			mainItemLabel: translate( 'Archive pages' ),
-		},
-	];
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+		};
+	} );
 
 	const [ statType, setStatType ] = useState( mainStatType );
+	// Apply statType from the query to the component state to toggle the view list.
+	useEffect( () => {
+		setStatType( query.viewdType || mainStatType );
+	}, [ query.viewdType, mainStatType ] );
 	const onStatTypeChange = ( option: StatTypeOptionType ) => setStatType( option.value );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -98,15 +101,23 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		? ! hasData && ! presentLoadingUI
 		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
+	// Query both statTypes for the Traffic page module card to avoid loading when switching between controls.
+	// Only query one statType at a time to avoid loading plenty of data for the summary mode.
+	const shouldQueryMainStatType = ! summary || query.viewdType === mainStatType;
+	const shouldQuerySubStatType = ! summary || query.viewdType === subStatType;
+
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && (
+			{ ! shouldGateStatsModule && siteId && shouldQueryMainStatType && (
 				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
 
-			{ ! shouldGateStatsModule && siteId && isArchiveBreakdownEnabled && (
-				<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
-			) }
+			{ ! shouldGateStatsModule &&
+				siteId &&
+				isArchiveBreakdownEnabled &&
+				shouldQuerySubStatType && (
+					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+				) }
 
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
@@ -145,7 +156,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
-					{ ...( isArchiveBreakdownEnabled
+					{ ...( isArchiveBreakdownEnabled && ! summary
 						? {
 								toggleControl: (
 									<SimplifiedSegmentedControl

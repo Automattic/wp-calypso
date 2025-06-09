@@ -27,6 +27,7 @@ import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import { GEO_MODES } from '../features/modules/stats-locations/types';
+import PostsNavTabs from '../features/modules/stats-top-posts/nav-tabs';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
@@ -425,6 +426,13 @@ class StatsSummary extends Component {
 								query={ moduleQuery }
 								givenSiteId={ siteId }
 							/>
+						</div>
+					) }
+
+					{ /* TODO: Refactor to use the same component for both locations and posts */ }
+					{ this.props.context.params.module === 'posts' && (
+						<div className="stats-navigation stats-navigation--improved">
+							<PostsNavTabs query={ moduleQuery } />
 						</div>
 					) }
 
