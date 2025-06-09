@@ -40,6 +40,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 					description={ __(
 						'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
 					) }
+					tracksId="sftp-ssh"
 				/>
 			</PageLayout>
 		);

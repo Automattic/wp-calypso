@@ -42,7 +42,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	if ( ! canUpdate ) {
 		return (
 			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
-				<SettingsCallout siteSlug={ siteSlug } />
+				<SettingsCallout siteSlug={ siteSlug } tracksId="php" />
 			</PageLayout>
 		);
 	}

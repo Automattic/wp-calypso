@@ -55,6 +55,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 					description={ __(
 						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
 					) }
+					tracksId="database"
 				/>
 			</PageLayout>
 		);

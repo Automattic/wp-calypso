@@ -126,7 +126,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderCallout = () => {
-		return <SettingsCallout siteSlug={ siteSlug } />;
+		return <SettingsCallout siteSlug={ siteSlug } tracksId="caching" />;
 	};
 
 	const renderForm = () => {

@@ -74,7 +74,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 				size="small"
 				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
 			>
-				<SettingsCallout siteSlug={ siteSlug } />
+				<SettingsCallout siteSlug={ siteSlug } tracksId="static-file-404" />
 			</PageLayout>
 		);
 	}
