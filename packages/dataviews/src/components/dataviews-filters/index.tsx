@@ -34,11 +34,7 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 				return;
 			}
 
-			const operators = field.filterBy?.operators || [];
-			if ( operators.length === 0 ) {
-				return;
-			}
-
+			const operators = field.filterBy.operators;
 			const isPrimary = !! field.filterBy?.isPrimary;
 			filters.push( {
 				field: field.id,

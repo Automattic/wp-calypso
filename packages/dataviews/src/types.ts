@@ -39,6 +39,21 @@ export interface FilterByConfig {
 	isPrimary?: boolean;
 }
 
+export interface NormalizedFilterByConfig {
+	/**
+	 * The list of operators supported by the field.
+	 */
+	operators: Operator[];
+
+	/**
+	 * Whether it is a primary filter.
+	 *
+	 * A primary filter is always visible and is not listed in the "Add filter" component,
+	 * except for the list layout where it behaves like a secondary filter.
+	 */
+	isPrimary?: boolean;
+}
+
 interface FilterConfigForType {
 	/**
 	 * What operators are used by default.
@@ -215,7 +230,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
-	filterBy: FilterByConfig | false;
+	filterBy: NormalizedFilterByConfig | false;
 };
 
 /**

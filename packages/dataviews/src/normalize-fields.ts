@@ -11,7 +11,7 @@ import type {
 	DataViewRenderFieldProps,
 	Field,
 	FieldTypeDefinition,
-	FilterByConfig,
+	NormalizedFilterByConfig,
 	NormalizedField,
 } from './types';
 import { getControl } from './dataform-controls';
@@ -41,7 +41,7 @@ const getValueFromId =
 function getFilterBy< Item >(
 	field: Field< Item >,
 	fieldTypeDefinition: FieldTypeDefinition< Item >
-): FilterByConfig | false {
+): NormalizedFilterByConfig | false {
 	if ( field.filterBy === false ) {
 		return false;
 	}
@@ -72,6 +72,12 @@ function getFilterBy< Item >(
 			operators = operators.filter( ( operator ) =>
 				SINGLE_SELECTION_OPERATORS.includes( operator )
 			);
+		}
+
+		// If no operators are left at this point,
+		// the filters should be disabled.
+		if ( operators.length === 0 ) {
+			return false;
 		}
 
 		return {
