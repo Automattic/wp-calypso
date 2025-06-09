@@ -13,11 +13,19 @@ import type {
 	HelpCenterShowOptions,
 } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
 
 export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
 	return {
 		type: 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION',
 		supportInteraction,
+	} as const;
+}
+
+export function setHelpCenterRouterHistory( history: { entries: Location[]; index: number } ) {
+	return {
+		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
+		history,
 	} as const;
 }
 
@@ -128,7 +136,11 @@ export const setShowHelpCenter = function* (
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
 				body: {
-					calypso_preferences: { help_center_open: show },
+					calypso_preferences: {
+						help_center_open: show,
+						// Delete navigation history when closing the help center
+						...( ! show ? { help_center_router_history: null } : {} ),
+					},
 				},
 			} ).catch( () => {} );
 		} else {
@@ -137,7 +149,10 @@ export const setShowHelpCenter = function* (
 				global: true,
 				path: '/help-center/open-state',
 				method: 'PUT',
-				data: { help_center_open: show },
+				data: {
+					help_center_open: show, // Delete navigation history when closing the help center
+					...( ! show ? { help_center_router_history: null } : {} ),
+				},
 			} as APIFetchOptions ).catch( () => {} );
 		}
 	}
@@ -239,6 +254,7 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
 			| typeof setIsMinimized
+			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId

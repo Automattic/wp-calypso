@@ -18,6 +18,7 @@ import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { profileQuery, profileMutation } from '../../app/queries';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
@@ -177,7 +178,7 @@ export default function Profile() {
 							description={
 								<>
 									{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
-									<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
+									<InlineSupportLink supportContext="manage-profile" />
 								</>
 							}
 						/>

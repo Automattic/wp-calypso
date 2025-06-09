@@ -1,3 +1,4 @@
+@import '@automattic/typography/styles/variables';
 @import 'calypso/dashboard/app-dotcom/style.scss';
 
 .dashboard-backport-site-settings-root {
@@ -5,18 +6,22 @@
 	    align-self: center;
 	    margin: 0;
 	    padding: 0;
+	}
 
-	    h1 {
-	    	font-family: var( --dashboard-h1__font-family );
-	    	font-weight: var( --dashboard-h1__font-weight ) !important;
-	    }
+	.dashboard-section-header.is-level-1 .dashboard-section-header__heading {
+		font-family: $sans;
+		font-size: 1.5rem;
+		font-weight: 500 !important;
+		line-height: 1;
+	}
+	
+	.dashboard-section-header.is-level-2 .dashboard-section-header__heading {
+		font-size: 15px;
+		line-height: 20px;
+	}
 
-	    h2 {
-	    	font-size: 1.25rem;
-	    	font-weight: 500;
-	    	line-height: 1.5;
-	    	margin-bottom: 0;
-		}
+	.dataforms-layouts-regular__field {
+		min-height: 0;
 	}
 
 	.site-preview-pane:has( & .dashboard-snackbars ) {

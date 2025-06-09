@@ -8,7 +8,6 @@ import {
 	Button,
 	Card,
 	CardBody,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -17,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
@@ -160,7 +160,7 @@ export default function SftpCard( {
 								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
 							),
 							{
-								link: <ExternalLink href="#" children={ null } />,
+								link: <InlineSupportLink supportContext="hosting-sftp" />,
 							}
 						) }
 						level={ 3 }

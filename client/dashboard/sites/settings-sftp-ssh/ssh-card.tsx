@@ -29,6 +29,7 @@ import {
 	profileSshKeysQuery,
 } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
@@ -300,8 +301,8 @@ export default function SshCard( {
 								"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
 							),
 							{
-								wpCliLink: <ExternalLink href="#" children={ null } />,
-								learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
+								wpCliLink: <ExternalLink href="https://wp-cli.org/" children={ null } />,
+								learnMoreLink: <InlineSupportLink supportContext="hosting-connect-to-ssh" />,
 							}
 						) }
 						level={ 3 }
