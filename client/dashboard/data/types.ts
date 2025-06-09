@@ -16,6 +16,7 @@ export interface User {
 	language: string;
 	locale_variant: string;
 	email: string;
+	site_count: number;
 }
 
 export interface SiteUser {
@@ -74,11 +75,12 @@ export interface SiteCapabilities {
 }
 
 export interface SiteOptions {
-	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
-	p2_hub_blog_id?: number;
 	is_wpforteams_site?: boolean;
+	p2_hub_blog_id?: number;
+	site_creation_flow?: string;
+	software_version: string;
 }
 
 export interface Site {
@@ -216,6 +218,7 @@ export interface DefensiveModeSettings {
 	enabled_by_a11n: boolean;
 	enabled_until: number;
 }
+
 export interface DefensiveModeSettingsUpdate {
 	active: boolean;
 	ttl?: number;
@@ -238,3 +241,32 @@ export type SiteResetStatus = {
 	status: 'in-progress' | 'ready' | 'completed';
 	progress: number;
 };
+
+export interface SftpUser {
+	username: string;
+	password: string;
+}
+
+export interface SshAccessStatus {
+	setting: 'sftp' | 'ssh';
+}
+
+export interface SiteSshKey {
+	sha256: string;
+	user_login: string;
+	name: string;
+	attached_at: string;
+}
+
+export interface ProfileSshKey {
+	name: string;
+	key: string;
+	type:
+		| 'ssh-rsa'
+		| 'ssh-ed25519'
+		| 'ecdsa-sha2-nistp256'
+		| 'ecdsa-sha2-nistp384'
+		| 'ecdsa-sha2-nistp521';
+	sha256: string;
+	created_at: string;
+}

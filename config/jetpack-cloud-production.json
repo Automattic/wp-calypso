@@ -72,7 +72,6 @@
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"subscribers-helper-library": true,
 		"upgrades/redirect-payments": false,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false

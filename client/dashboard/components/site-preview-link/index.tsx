@@ -1,18 +1,7 @@
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import { trailingslashit } from 'calypso/lib/route';
-import ClipboardButtonInput from '../clipboard-button-input';
-import { PreviewLink } from './use-site-preview-links';
-
-const HelpText = styled.p( {
-	display: 'block',
-	margin: '5px 0',
-	fontSize: '0.875rem',
-	fontStyle: 'italic',
-	fontWeight: 400,
-	color: 'var(--color-text-subtle)',
-} );
+import ClipboardInputControl from '../clipboard-input-control';
 
 const Separator = styled.span( {
 	'::before': {
@@ -26,15 +15,13 @@ type LinkExpiryCopyProps = {
 };
 
 const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
-	const translate = useTranslate();
-
 	const now = moment();
 	const expiryDate = moment( expiresAt );
 
 	const difference = expiryDate.diff( now );
 
 	if ( difference < 0 ) {
-		return translate( 'Expired.' );
+		return __( 'Expired.' );
 	}
 
 	const duration = moment.duration( difference );
@@ -42,11 +29,11 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 		// Less than 1 day left, or more than 1 day left but no hours need to be appended
 		// We can utilize moment.js to get the duration string
 		const durationString = expiryDate.toNow( true );
-		return translate( 'Expires in %(durationString)s', {
-			args: { durationString },
-			comment:
-				'Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".',
-		} );
+		return sprintf(
+			// translators: Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".
+			__( 'Expires in %(durationString)s' ),
+			{ durationString }
+		);
 	}
 
 	// Unfortunately, moment.js does not provide a way to get the duration string for more than 1 day in our desired format, i.e. e.g.:"%{d} days, %{h} hours".
@@ -57,61 +44,74 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 	const hasHours = hours > 0; // Despite previous check whether hours are 0, we need to check again after we round up the hours
 	return (
 		<>
-			{ translate( 'Expires in %(days)d day', 'Expires in %(days)d days', {
-				count: days,
-				args: { days },
-				comment:
-					'%(days) is the number of days until the link expires. We know it is at least 1 day.',
-			} ) }
+			{ sprintf(
+				// translators: %(days) is the number of days until the link expires. We know it is at least 1 day.
+				_n( 'Expires in %(days)d day', 'Expires in %(days)d days', days ),
+				{ days }
+			) }
 			{ hasHours && ', ' }
 			{ hasHours &&
-				translate( '%(hours)d hour', '%(hours)d hours', {
-					count: hours,
-					args: { hours },
-					comment: '%{hours} is the number of hours until the link expires, in the range of 1-23.',
-				} ) }
+				sprintf(
+					// translators: %(hours) is the number of hours until the link expires, in the range of 1-23.
+					_n( '%(hours)d hour', '%(hours)d hours', hours ),
+					{ hours }
+				) }
 		</>
 	);
 };
 
 type SitePreviewLinkProps = {
+	code: string;
+	created_at: string;
+	expires_at?: string;
+	label?: string;
+	hideLabelFromVision?: boolean;
 	siteUrl: string;
 	disabled: boolean;
-} & PreviewLink;
+	onCopy?: () => void;
+	isCreating?: boolean;
+	isRemoving?: boolean;
+};
 
 const SitePreviewLink = ( {
 	code,
 	expires_at,
+	label,
+	hideLabelFromVision,
+	siteUrl,
+	disabled,
+	onCopy,
 	isCreating = false,
 	isRemoving = false,
-	disabled,
-	siteUrl,
 }: SitePreviewLinkProps ) => {
-	const translate = useTranslate();
-
-	let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
+	let linkValue = `${ siteUrl }?share=${ code }`;
 	if ( isCreating ) {
-		linkValue = translate( 'Loading…' );
+		linkValue = __( 'Loading…' );
 	} else if ( isRemoving ) {
-		linkValue = translate( 'Disabling…' );
+		linkValue = __( 'Disabling…' );
 	}
 
 	const hasExpiration = expires_at && expires_at.length > 0;
 	return (
-		<>
-			<ClipboardButtonInput key={ code } value={ linkValue } disabled={ disabled } />
-			<HelpText>
-				{ hasExpiration ? (
+		<ClipboardInputControl
+			key={ code }
+			value={ linkValue }
+			label={ label }
+			hideLabelFromVision={ hideLabelFromVision }
+			disabled={ disabled }
+			help={
+				hasExpiration ? (
 					<>
-						{ translate( 'Anyone with the link can view your site' ) }
+						{ __( 'Anyone with the link can view your site' ) }
 						<Separator />
 						<LinkExpiryCopy expiresAt={ expires_at } />
 					</>
 				) : (
-					translate( 'Anyone with the link can view your site.' )
-				) }
-			</HelpText>
-		</>
+					__( 'Anyone with the link can view your site.' )
+				)
+			}
+			onCopy={ onCopy }
+		/>
 	);
 };
 

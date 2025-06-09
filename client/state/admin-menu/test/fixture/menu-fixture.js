@@ -11,7 +11,7 @@ export default [
 				slug: 'edit-phppost_typefeedback',
 				title: 'Feedback',
 				type: 'submenu-item',
-				url: 'https://examplewebsite.wordpress.com/wp-admin/edit.php?post_type=feedback',
+				url: 'https://examplewebsite.wordpress.com/wp-admin/admin.php?page=jetpack-forms',
 			},
 			{
 				parent: 'feedback',

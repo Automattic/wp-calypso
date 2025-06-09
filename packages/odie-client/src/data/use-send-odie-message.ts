@@ -115,7 +115,7 @@ export const useSendOdieMessage = () => {
 			}
 
 			if ( ! odieId ) {
-				addEventToInteraction( {
+				addEventToInteraction.mutate( {
 					interactionId: currentSupportInteraction!.uuid,
 					eventData: {
 						event_external_id: returnedChat.chat_id.toString(),

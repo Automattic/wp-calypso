@@ -1,11 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus } from '@automattic/help-center/src/hooks';
-import {
-	useCanConnectToZendeskMessaging,
-	useZendeskMessagingAvailability,
-	useOpenZendeskMessaging,
-} from '@automattic/zendesk-client';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -20,18 +16,10 @@ const SupportLink = ( { purchase, usage } ) => {
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { isEligibleForChat } = useChatStatus();
-	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
-	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
-		'wpcom_messaging',
-		isEligibleForChat
-	);
-	const { isOpeningZendeskWidget } = useOpenZendeskMessaging(
-		'migration-error',
-		isEligibleForChat
-	);
+	const { data: canConnectToZendeskMessaging, isLoading } = useCanConnectToZendeskMessaging();
 
 	const getHelp = useCallback( () => {
-		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
+		if ( canConnectToZendeskMessaging ) {
 			setNewMessagingChat( {
 				initialMessage:
 					usage === 'cancel-purchase' ? 'Purchase cancellation flow' : 'Plan downgrade flow',
@@ -39,22 +27,24 @@ const SupportLink = ( { purchase, usage } ) => {
 				siteId: siteId,
 			} );
 		} else {
-			setNavigateToRoute( '/contact-options' );
+			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 		}
 	}, [
 		siteId,
-		isMessagingAvailable,
 		siteUrl,
 		canConnectToZendeskMessaging,
+		setNewMessagingChat,
 		setNavigateToRoute,
 		setShowHelpCenter,
+		usage,
 	] );
 
 	const onClick = () => {
-		if ( usage === 'cancel-purchase' ) {
-			recordTracksEvent( 'calypso_cancellation_help_button_click' );
-		}
+		recordTracksEvent( 'calypso_support_link_help_button_click', {
+			usage,
+			is_user_eligible_for_chat: isEligibleForChat,
+		} );
 		getHelp();
 	};
 
@@ -66,9 +56,7 @@ const SupportLink = ( { purchase, usage } ) => {
 					: translate( 'Need help with your purchase?' ) }{ ' ' }
 				{ translate( '{{contactLink}}Ask a Happiness Engineer{{/contactLink}}.', {
 					components: {
-						contactLink: (
-							<Button variant="link" onClick={ onClick } disabled={ isOpeningZendeskWidget } />
-						),
+						contactLink: <Button variant="link" onClick={ onClick } disabled={ isLoading } />,
 					},
 				} ) }
 			</span>

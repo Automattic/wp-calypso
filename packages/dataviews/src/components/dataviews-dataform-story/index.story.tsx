@@ -5,9 +5,6 @@ import { useState, useMemo } from '@wordpress/element';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Card,
-	CardHeader,
-	CardBody,
 } from '@wordpress/components';
 
 /**
@@ -22,10 +19,10 @@ import {
 	type SpaceObject,
 } from '../dataviews/stories/fixtures';
 import { filterSortAndPaginate } from '../../filter-and-sort-data-view';
-import type { View, Form } from '../../types';
+import type { View, Form, Field } from '../../types';
 
 const meta = {
-	title: 'DataViews/DataViewsAndDataForm',
+	title: 'DataViews/FieldTypes',
 	component: DataForm,
 	argTypes: {
 		type: {
@@ -49,27 +46,30 @@ const defaultLayouts = {
 	list: {},
 };
 
-export const Default = ( {
-	type,
-	labelPosition,
-}: {
-	type: 'default' | 'regular' | 'panel';
-	labelPosition: 'default' | 'top' | 'side' | 'none';
-} ) => {
+interface FieldTypeStoryProps {
+	fields: Field< SpaceObject >[];
+	titleField?: string;
+	descriptionField?: string;
+	mediaField?: string;
+	type?: 'default' | 'regular' | 'panel';
+	labelPosition?: 'default' | 'top' | 'side' | 'none';
+}
+
+const FieldTypeStory = ( {
+	fields: storyFields,
+	titleField,
+	descriptionField,
+	mediaField,
+	type = 'default',
+	labelPosition = 'default',
+}: FieldTypeStoryProps ) => {
 	const form = useMemo(
 		() => ( {
 			type,
 			labelPosition,
-			fields: [
-				'title',
-				'description',
-				'type',
-				'isPlanet',
-				'satellites',
-				'date',
-			],
+			fields: storyFields.map( ( field ) => field.id ),
 		} ),
-		[ type, labelPosition ]
+		[ type, labelPosition, storyFields ]
 	) as Form;
 
 	const [ view, setView ] = useState< View >( {
@@ -79,18 +79,25 @@ export const Default = ( {
 		perPage: 10,
 		layout: {},
 		filters: [],
-		titleField: 'title',
-		descriptionField: 'description',
-		mediaField: 'image',
-		fields: [ 'type', 'isPlanet', 'satellites', 'categories', 'date' ],
+		titleField,
+		descriptionField,
+		mediaField,
+		fields: storyFields
+			.filter(
+				( field ) =>
+					! [ titleField, descriptionField, mediaField ].includes(
+						field.id
+					)
+			)
+			.map( ( field ) => field.id ),
 	} );
 
 	const [ selectedIds, setSelectedIds ] = useState< number[] >( [] );
 	const [ modifiedData, setModifiedData ] = useState< SpaceObject[] >( data );
 
 	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( modifiedData, view, fields );
-	}, [ modifiedData, view ] );
+		return filterSortAndPaginate( modifiedData, view, storyFields );
+	}, [ modifiedData, view, storyFields ] );
 
 	let selectedItem =
 		( selectedIds.length === 1 &&
@@ -105,7 +112,7 @@ export const Default = ( {
 					data={ shownData }
 					paginationInfo={ paginationInfo }
 					view={ view }
-					fields={ fields }
+					fields={ storyFields }
 					onChangeView={ setView }
 					actions={ actions }
 					defaultLayouts={ defaultLayouts }
@@ -123,7 +130,7 @@ export const Default = ( {
 					<DataForm
 						data={ selectedItem }
 						form={ form }
-						fields={ fields }
+						fields={ storyFields }
 						onChange={ ( updatedValues ) => {
 							const updatedItem = {
 								...selectedItem,
@@ -152,5 +159,171 @@ export const Default = ( {
 				</VStack>
 			) }
 		</HStack>
+	);
+};
+
+export const All = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	return (
+		<FieldTypeStory
+			fields={ fields }
+			titleField="title"
+			descriptionField="description"
+			mediaField="image"
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const Text = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const textFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'text' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ textFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const Integer = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const integerFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'integer' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ integerFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const Boolean = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const booleanFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'boolean' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ booleanFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const DateTime = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const dateTimeFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'datetime' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ dateTimeFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const Email = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const emailFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'email' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ emailFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const Media = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const mediaFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'media' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ mediaFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const NoType = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const noTypeFields = useMemo(
+		() => fields.filter( ( field ) => field.type === undefined ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ noTypeFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
 	);
 };
