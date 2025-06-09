@@ -210,6 +210,11 @@ export const setNewMessagingChat = function* ( {
 	yield setShowHelpCenter( true );
 };
 
+export const setNavigateToOdie = function* () {
+	yield setNavigateToRoute( '/odie' );
+	yield setShowHelpCenter( true );
+};
+
 export const setShowSupportDoc = function* ( link: string, postId?: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,

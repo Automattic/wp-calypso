@@ -39,6 +39,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 					label={ __( 'Search' ) }
 					value={ view.search }
 					onChange={ ( value ) => setView( { ...view, search: value } ) }
+					size="compact"
 					__nextHasNoMarginBottom
 				/>
 			</MenuGroup>

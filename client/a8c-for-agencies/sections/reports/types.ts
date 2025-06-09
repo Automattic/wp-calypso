@@ -2,7 +2,7 @@ export interface Report {
 	id: string;
 	site: string;
 	status: 'sent' | 'error';
-	createdAt: string;
+	created_at: string;
 }
 
 export interface SiteReports {
