@@ -94,9 +94,7 @@ export default function SubscriptionsContentWrapper() {
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
-	const purchases = useSelector( ( state ) =>
-		isFetchingPurchases || ! hasLoadedPurchases ? [] : getSitePurchases( state, selectedSiteId )
-	);
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const sites = useSelector( getSites ).filter( isValueTruthy );
 
 	if ( config.isEnabled( 'purchases/purchase-list-dataview' ) ) {
