@@ -195,13 +195,7 @@ export function PrivacyForm( {
 									density="medium"
 									actions={
 										hasNonWpcomDomain ? (
-											<Button
-												variant="secondary"
-												href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-													// TODO Have domain management return back to v2 settings page
-													source: '/v2/sites/settings/site-visibility',
-												} ) }
-											>
+											<Button variant="secondary" href={ `/domains/manage/${ site.slug }` }>
 												{ __( 'Manage domains' ) }
 											</Button>
 										) : (
