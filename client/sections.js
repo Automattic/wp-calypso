@@ -777,7 +777,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-auth',
-		paths: [ '/connect', '/connect/oauth/token' ],
+		paths: [ '/log-in', '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,

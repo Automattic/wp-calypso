@@ -2,6 +2,8 @@
 
 ## Next
 
+- Add a story for each FieldTypeDefinition.
+
 ## 0.2.1
 
 - `text`, `email` Edit control: add `help` support from the field `description` prop.

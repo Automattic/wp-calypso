@@ -597,6 +597,344 @@ $image-height: 47px;
 	}
 }
 
+/* stylelint-disable scales/font-weights, scales/radii */
+.layout.is-section-login.is-grav-powered-client {
+	background-color: #fff;
+
+	&.is-wp-job-manager {
+		background-color: #efefef;
+
+		.login a,
+		.login__form-change-username {
+			color: var(--color-wp-job-manager);
+		}
+
+		.login {
+			border-radius: 2px;
+		}
+
+		.form-button.is-primary {
+			&,
+			&:disabled {
+				background-color: var(--color-wp-job-manager);
+			}
+
+			&:hover:not(&:disabled),
+			&:focus {
+				background-color: darken(#2404eb, 10%);
+			}
+		}
+	}
+
+	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {
+		&,
+		.calypso-notice__icon-wrapper {
+			background-color: var(--studio-gray-0);
+		}
+	}
+
+	.layout__content {
+		padding: 0;
+	}
+
+	.wp-login__main {
+		max-width: 480px;
+	}
+
+	.login,
+	.form-text-input {
+		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	}
+
+	.login {
+		background-color: #fff;
+		border-radius: 8px;
+		padding: 20px;
+		color: #101517;
+		font-size: 14px;
+		line-height: 1.5;
+
+		a:not(.calypso-notice.is-error a) {
+			color: var(--color-gravatar);
+		}
+
+		button {
+			font-family: inherit;
+		}
+	}
+
+	.login__form-header-wrapper {
+		text-align: left;
+	}
+
+	.login__form-header {
+		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-size: 32px;
+		font-weight: 900;
+		line-height: 1.2;
+		text-align: left;
+		margin: 24px 0;
+	}
+
+	.login__header-subtitle,
+	.verification-code-form__help-text,
+	.two-factor-authentication__info {
+		margin-bottom: 24px;
+	}
+
+	.verification-code-form__help-text {
+		color: inherit;
+	}
+
+	.card {
+		background: transparent;
+	}
+
+	form {
+		max-width: 100%;
+
+		> .card {
+			padding: 0;
+			border: 0;
+			box-shadow: none;
+		}
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
+	label.form-label {
+		color: inherit;
+		margin-bottom: 10px;
+	}
+
+	.two-factor-authentication__verification-code-form .form-label {
+		display: none;
+	}
+
+	.login__form-change-username {
+		color: var(--color-gravatar);
+	}
+
+	.login__form-password {
+		margin-top: 15px;
+	}
+
+	.form-text-input,
+	.login__form-userdata input:last-of-type.form-text-input {
+		padding: 14px 16px;
+		border-color: #9ea4a8;
+		font-size: 16px;
+		margin: 0;
+		border-radius: 2px;
+		height: auto;
+	}
+
+	.form-password-input__toggle {
+		top: 14px;
+	}
+
+	.form-input-validation {
+		margin-bottom: 0;
+		padding-top: 15px;
+		padding-bottom: 0;
+	}
+
+	.login__form-terms {
+		color: rgba(#00101c, 0.6);
+		margin: 24px 0 0;
+		font-size: 0.875rem;
+		text-align: left;
+	}
+
+	button.form-button.is-primary,
+	.two-factor-authentication__actions .button {
+		min-height: 56px;
+		margin: 0;
+		padding: 10px 16px;
+		font-size: 16px;
+		font-weight: 600;
+
+		&:disabled {
+			opacity: 0.3;
+		}
+	}
+
+	button.form-button.is-primary {
+		margin-top: 16px;
+		margin-bottom: 0;
+		border: 0;
+
+		&,
+		&:disabled {
+			background-color: var(--color-gravatar);
+		}
+
+		&:hover:not(&:disabled),
+		&:focus {
+			background-color: darken(#1d4fc4, 10%);
+		}
+	}
+
+	.components-button.is-primary {
+		min-height: 56px;
+		margin-top: 16px;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.two-factor-authentication__actions {
+		display: flex;
+		flex-direction: column;
+		margin-top: 24px;
+		padding: 0;
+		gap: 16px;
+		background: transparent;
+
+		&::after {
+			display: none;
+		}
+
+		.button {
+			color: var(--color-gravatar);
+			border: 1px solid #1d4fc44d;
+			box-shadow: none;
+
+			&:hover:not(&:disabled),
+			&:focus {
+				color: darken(#1d4fc4, 13%);
+				border-color: darken(#1d4fc44d, 13%);
+			}
+		}
+	}
+
+	div.two-factor-authentication__small-print {
+		font-size: inherit;
+		margin-top: 24px;
+		padding: 0;
+	}
+
+	.auth-form__separator {
+		margin-top: 24px;
+	}
+
+	.auth-form__separator-text {
+		font-size: 15px;
+		text-transform: lowercase;
+		color: inherit;
+	}
+
+	.auth-form__social {
+		background: transparent;
+		margin: 24px 0 0;
+		padding: 0;
+		width: fit-content;
+		clip-path: unset;
+	}
+
+	.social-buttons__button {
+		box-shadow: none;
+		padding: unset;
+		height: auto;
+
+		> svg {
+			box-shadow: inset 0 0 0 $border-width $gray-300;
+			border-radius: 50%;
+			margin: 0;
+			width: 20px;
+			height: 20px;
+			margin-right: 12px;
+			padding: 12px;
+		}
+
+		> span {
+			margin-left: unset;
+		}
+
+		&:hover {
+			background: unset;
+			box-shadow: none;
+
+			> svg {
+				/* Matches hover state of .components-button */
+				background: color-mix(in srgb, var(--wp-components-color-accent) 4%, transparent);
+			}
+		}
+
+		&:focus {
+			box-shadow: none;
+
+			> svg {
+				/* Matches focus state of .components-button */
+				box-shadow: 0 0 0 currentColor inset, 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent);
+			}
+		}
+	}
+
+	.grav-powered-login__divider {
+		background-color: #e7e9ea;
+		width: 80px;
+		margin: 24px 0;
+	}
+
+	.grav-powered-login__footer,
+	.wp-login__links.has-2fa-links {
+		display: flex;
+		flex-direction: column;
+		font-size: 16px;
+		line-height: 1;
+		gap: 24px;
+
+		a,
+		button {
+			font-size: inherit;
+			width: fit-content;
+		}
+
+		button:focus {
+			outline: dotted;
+		}
+	}
+
+	.wp-login__links.has-2fa-links {
+		align-items: center;
+		margin-top: 24px;
+
+		a,
+		button {
+			color: var(--color-gravatar);
+			font-weight: normal;
+			text-decoration: underline;
+			padding: 0;
+			border: 0;
+		}
+	}
+
+	@include break-small {
+		background-color: #efefef;
+
+		.wp-login__main:not(:has(.locale-suggestions)) .login,
+		.grav-powered-magic-login:not(:has(.locale-suggestions)) .grav-powered-magic-login__content {
+			margin-top: 40px;
+		}
+
+		.login {
+			padding: 40px 56px;
+		}
+
+		.login__form-header {
+			font-size: 40px;
+		}
+
+		.grav-powered-login__footer,
+		.wp-login__links.has-2fa-links {
+			gap: 16px;
+		}
+	}
+}
+/* stylelint-enable scales/font-weights, scales/radii */
+
 .wp-login__p2-logo {
 	position: absolute;
 	top: 24px;

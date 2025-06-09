@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -12,7 +13,7 @@ export default function OverviewSidebarRelaunchWelcomeTour() {
 
 	const handleRelaunchWelcomeTour = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_overview_relaunch_welcome_tour_click' ) );
-		// TODO: Implement the relaunch welcome tour
+		window.location.hash = ONBOARDING_TOUR_HASH;
 	};
 
 	return (

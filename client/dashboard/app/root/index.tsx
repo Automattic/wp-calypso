@@ -3,6 +3,7 @@ import { useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
 import { LoadingLine } from '../../components/loading-line';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
@@ -39,6 +40,7 @@ function Root() {
 			</main>
 			<CommandPalette />
 			<Snackbars />
+			<PageViewTracker />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>
 					<WebpackBuildMonitor />

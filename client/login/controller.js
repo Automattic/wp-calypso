@@ -77,7 +77,6 @@ const enhanceContextWithLogin = ( context ) => {
 		isPartnerPortalClient ||
 		isStudioLogin ||
 		isCrowdsignalLogin ||
-		isGravPoweredClient ||
 		isBlazePro;
 
 	context.primary = (

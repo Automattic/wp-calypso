@@ -3,6 +3,7 @@
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
 @import "calypso/my-sites/stats/theme-override-mixin";
+@import "calypso/my-sites/stats/modernized-mixins";
 
 // Odyssey font overrides
 $font-sf-pro-display: "SF Pro Display", $sans;
@@ -90,6 +91,8 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		padding: 0;
 	}
 
+	// TODO: Remove other independent segmented control styles by this mixin.
+	@include segmented-controls;
 }
 
 .list-emails {

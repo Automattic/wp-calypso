@@ -207,7 +207,7 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 		{
-			id: 'expring-soon',
+			id: 'expiring-soon',
 			label: translate( 'Expiring soon' ),
 			type: 'text',
 			elements: [
@@ -299,6 +299,16 @@ export function getMembershipsFieldDefinitions( {
 }: {
 	translate: LocalizeProps[ 'translate' ];
 } ): Fields< MembershipSubscription > {
+	const goToPurchase = ( item: MembershipSubscription ) => {
+		const subscriptionId = item.ID;
+		if ( ! subscriptionId ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Cannot display manage purchase page for subscription without ID' );
+			return;
+		}
+		page( `/me/purchases/other/${ subscriptionId }` );
+	};
+
 	return [
 		{
 			id: 'site',
@@ -314,7 +324,14 @@ export function getMembershipsFieldDefinitions( {
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
 					<div className="membership-item__site purchases-layout__site">
-						<Icon subscription={ item } />
+						<Button
+							variant="link"
+							title={ translate( 'Manage purchase', { textOnly: true } ) }
+							label={ translate( 'Manage purchase', { textOnly: true } ) }
+							onClick={ () => goToPurchase( item ) }
+						>
+							<Icon subscription={ item } />
+						</Button>
 					</div>
 				);
 			},
@@ -332,7 +349,16 @@ export function getMembershipsFieldDefinitions( {
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
 					<div className="membership-item__information purchase-item__information purchases-layout__information">
-						<div className="membership-item__title purchase-item__title">{ item.title }</div>
+						<div className="membership-item__title purchase-item__title">
+							<Button
+								variant="link"
+								title={ translate( 'Manage purchase', { textOnly: true } ) }
+								label={ translate( 'Manage purchase', { textOnly: true } ) }
+								onClick={ () => goToPurchase( item ) }
+							>
+								{ item.title }
+							</Button>
+						</div>
 						<div className="membership-item__purchase-type purchase-item__purchase-type">
 							<MembershipType subscription={ item } />
 						</div>
