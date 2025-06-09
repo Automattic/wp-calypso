@@ -30,7 +30,7 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 				id: 'createdAt',
 				label: translate( 'Created' ),
 				getValue: () => '-',
-				render: ( { item }: { item: Report } ) => <ReportDateColumn date={ item.createdAt } />,
+				render: ( { item }: { item: Report } ) => <ReportDateColumn date={ item.created_at } />,
 				enableHiding: false,
 				enableSorting: false,
 			},

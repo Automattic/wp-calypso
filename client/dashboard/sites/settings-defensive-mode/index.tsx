@@ -16,8 +16,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
 import { canUpdateDefensiveMode } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
@@ -175,34 +177,29 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				<Notice>{ __( 'Defensive mode is disabled.' ) }</Notice>
 				<Card>
 					<CardBody>
-						<VStack spacing={ 8 } style={ { padding: '8px 0' } }>
-							<Text size="15px" weight={ 500 } lineHeight="20px">
-								{ __( 'Enable defensive mode' ) }
-							</Text>
-
-							<form onSubmit={ handleEnable }>
-								<VStack spacing={ 4 }>
-									<DataForm< { ttl: string } >
-										data={ formData }
-										fields={ fields }
-										form={ form }
-										onChange={ ( edits: { ttl?: string } ) => {
-											setFormData( ( data ) => ( { ...data, ...edits } ) );
-										} }
-									/>
-									<HStack justify="flex-start">
-										<Button
-											variant="primary"
-											type="submit"
-											isBusy={ isPending }
-											disabled={ isPending }
-										>
-											{ __( 'Enable' ) }
-										</Button>
-									</HStack>
-								</VStack>
-							</form>
-						</VStack>
+						<form onSubmit={ handleEnable }>
+							<VStack spacing={ 4 }>
+								<SectionHeader title={ __( 'Enable defensive mode' ) } level={ 3 } />
+								<DataForm< { ttl: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { ttl?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<HStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending }
+									>
+										{ __( 'Enable' ) }
+									</Button>
+								</HStack>
+							</VStack>
+						</form>
 					</CardBody>
 				</Card>
 			</VStack>
@@ -217,10 +214,10 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					title={ __( 'Defensive mode' ) }
 					description={ createInterpolateElement(
 						__(
-							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <learnMoreLink />'
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>.'
 						),
 						{
-							learnMoreLink: <a href="#learn-more">{ __( 'Learn more' ) }</a>,
+							link: <InlineSupportLink supportContext="hosting-defensive-mode" />,
 						}
 					) }
 				/>

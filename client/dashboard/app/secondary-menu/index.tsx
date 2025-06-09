@@ -11,13 +11,36 @@ import {
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import MenuDivider from '../../components/menu-divider';
+import { AsyncHelpCenterApp, useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
 
 import './style.scss';
+
+function Help() {
+	const { user } = useAuth();
+	const { isLoading, isShown, setShowHelpCenter } = useShowHelpCenter();
+
+	const handleToggleHelpCenter = () => {
+		setShowHelpCenter( ! isShown );
+	};
+
+	return (
+		<>
+			<Button
+				className="dashboard-secondary-menu__item"
+				label={ __( 'Help' ) }
+				icon={ help }
+				variant="tertiary"
+				isBusy={ isLoading }
+				onClick={ handleToggleHelpCenter }
+			/>
+			{ isShown && <AsyncHelpCenterApp currentUser={ user } sectionName="dashboard" /> }
+		</>
+	);
+}
 
 // User profile dropdown component
 function UserProfile() {
@@ -93,33 +116,18 @@ function SecondaryMenu() {
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
-	const openHelpCenter = () => {
-		// Open help center action would go here
-	};
-
 	return (
-		<HStack spacing={ 3 } justify="flex-end">
+		<HStack spacing={ 2 } justify="flex-end">
 			{ supports.reader && (
-				<>
-					<Button
-						className="dashboard-secondary-menu__item"
-						icon={ <ReaderIcon /> }
-						label={ __( 'Reader' ) }
-						text={ __( 'Reader' ) }
-						href="/reader"
-					/>
-					<MenuDivider />
-				</>
-			) }
-			{ supports.help && (
 				<Button
 					className="dashboard-secondary-menu__item"
-					label={ __( 'Help' ) }
-					onClick={ openHelpCenter }
-					icon={ help }
-					variant="tertiary"
+					icon={ <ReaderIcon /> }
+					label={ __( 'Reader' ) }
+					text={ __( 'Reader' ) }
+					href="/reader"
 				/>
 			) }
+			{ supports.help && <Help /> }
 			{ supports.notifications && (
 				<Button
 					className="dashboard-secondary-menu__item"

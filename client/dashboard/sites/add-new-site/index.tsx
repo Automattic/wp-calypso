@@ -8,10 +8,10 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
+import { useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -56,7 +56,8 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 			numberFormatOptions: { style: 'percent' },
 		} )
 	);
-	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+
+	const { setShowHelpCenter } = useShowHelpCenter();
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>

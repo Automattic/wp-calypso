@@ -4,10 +4,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
+import {
+	ODIE_ERROR_MESSAGE,
+	ODIE_RATE_LIMIT_MESSAGE,
+	ODIE_EMAIL_FALLBACK_MESSAGE,
+} from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
-import { generateUUID, getOdieIdFromInteraction } from '../utils';
+import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
 
@@ -44,19 +48,29 @@ export const useSendOdieMessage = () => {
 		chat,
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
+		forceEmailSupport,
 	} = useOdieAssistantContext();
 
+	/*
+		Adds a message to the chat.
+		If the message is a request for human support, it will escalate the chat to human support, if eligible.
+		If email support is forced, it will add an email fallback message.
+	*/
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
 		if ( ! Array.isArray( message ) ) {
-			const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-			if (
-				! chat.conversationId &&
-				isRequestingHumanSupport &&
-				canConnectToZendesk &&
-				isUserEligibleForPaidSupport
-			) {
-				newConversation( { createdFrom: 'automatic_escalation' } );
-				return;
+			if ( getIsRequestingHumanSupport( message ) ) {
+				if ( forceEmailSupport ) {
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, ...[ ODIE_EMAIL_FALLBACK_MESSAGE ] ],
+						status: 'loaded',
+					} ) );
+					return;
+				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
+					newConversation( { createdFrom: 'automatic_escalation' } );
+					return;
+				}
 			}
 		}
 

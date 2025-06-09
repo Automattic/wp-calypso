@@ -13,7 +13,7 @@ import {
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isPartnerPortalOAuth2Client,
-	isWPJobManagerOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import './login-header.scss';
 
@@ -76,8 +76,6 @@ export function getHeaderText(
 		let clientName = oauth2Client?.name;
 		if ( isFromAkismet ) {
 			clientName = 'Akismet';
-		} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
-			clientName = 'WP Job Manager';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
 		}
@@ -169,6 +167,12 @@ export function getHeaderText(
 				);
 			}
 		}
+
+		if ( isGravPoweredClient ) {
+			headerText = translate( 'Login to %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+			} );
+		}
 	} else if ( isWooJPC ) {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 		if ( isLostPasswordFlow ) {
@@ -198,6 +202,7 @@ export function LoginHeader( {
 	isFromAkismet,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
+	isGravPoweredLoginPage,
 	isJetpack,
 	isManualRenewalImmediateLoginAttempt,
 	isSocialFirst,
@@ -368,6 +373,28 @@ export function LoginHeader( {
 					) }
 				</p>
 			);
+		}
+
+		if ( isGravPoweredClient ) {
+			if ( isGravPoweredLoginPage ) {
+				const isFromGravatar3rdPartyApp =
+					isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+				const isFromGravatarQuickEditor =
+					isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
+				const isGravatarFlowWithEmail = !! (
+					isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+				);
+
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail
+							? translate( 'Please log in with your email and password.' )
+							: translate(
+									'If you prefer logging in with a password, or a social media account, choose below:'
+							  ) }
+					</p>
+				);
+			}
 		}
 
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {

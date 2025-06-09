@@ -10,6 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -112,7 +113,8 @@ function useDowngradeHandler( {
 	siteUrl?: string | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setNewMessagingChat } = useDispatch( HELP_CENTER_STORE );
+	const { setNewMessagingChat, setNavigateToOdie } = useDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
@@ -122,12 +124,23 @@ function useDowngradeHandler( {
 				return;
 			}
 
-			setNewMessagingChat( {
-				initialMessage: 'User wants to downgrade plan.',
-				siteUrl,
-			} );
+			if ( canConnectToZendeskMessaging ) {
+				setNewMessagingChat( {
+					initialMessage: 'User wants to downgrade plan.',
+					siteUrl,
+				} );
+			} else {
+				setNavigateToOdie();
+			}
 		},
-		[ currentPlan?.purchaseId, setNewMessagingChat, siteUrl, siteSlug ]
+		[
+			currentPlan?.purchaseId,
+			setNewMessagingChat,
+			siteUrl,
+			siteSlug,
+			canConnectToZendeskMessaging,
+			setNavigateToOdie,
+		]
 	);
 }
 

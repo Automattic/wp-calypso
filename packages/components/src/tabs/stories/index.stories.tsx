@@ -7,7 +7,7 @@ import { Icon } from '../../icon';
 import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof Tabs > = {
-	title: 'Components/Containers/Tabs',
+	title: 'Tabs',
 	id: 'components-tabs',
 	component: Tabs,
 	subcomponents: {

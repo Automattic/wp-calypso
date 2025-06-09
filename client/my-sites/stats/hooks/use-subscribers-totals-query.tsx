@@ -161,7 +161,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 			data: {
 				total_email: results[ 0 ]?.data?.total_email,
 				total_wpcom: results[ 0 ]?.data?.total_wpcom,
-				total: results[ 0 ]?.data?.total,
+				total: results[ 1 ]?.data?.total_subscribers,
 				paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 				free_subscribers:
 					results[ 1 ]?.data?.email_subscribers !== undefined &&
@@ -182,7 +182,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 		data: {
 			total_email: results[ 3 ]?.data?.total,
 			total_wpcom: results[ 2 ]?.data?.total,
-			total: results[ 1 ].data?.email_subscribers,
+			total: results[ 1 ]?.data?.total_subscribers,
 			paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
 				results[ 1 ]?.data?.email_subscribers !== undefined &&

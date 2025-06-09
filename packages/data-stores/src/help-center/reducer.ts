@@ -3,6 +3,7 @@ import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -20,6 +21,17 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER':
 			return action.show;
+	}
+	return state;
+};
+
+const helpCenterRouterHistory: Reducer<
+	{ entries: Location[]; index: number } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
+			return action.history;
 	}
 	return state;
 };
@@ -191,6 +203,7 @@ const reducer = combineReducers( {
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	helpCenterRouterHistory,
 	allowPremiumSupport,
 	contextTerm,
 	helpCenterOptions,

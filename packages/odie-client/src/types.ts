@@ -22,6 +22,7 @@ export type OdieAssistantContextInterface = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
+	forceEmailSupport: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
@@ -47,6 +48,7 @@ export type OdieAssistantProviderProps = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	version?: string | null;
+	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;

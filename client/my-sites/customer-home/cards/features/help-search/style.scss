@@ -1,36 +1,57 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 $search_results_top_spacing: 24px;
 $card_padding_small: 16px;
 $card_padding_large: 24px;
 $min_results_height: 180px;
+
+.customer-home-help-search__footer {
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+
+	p {
+		margin: 0;
+		font-size: $font-body-small;
+		color: var(--color-text-subtle);
+	}
+
+	button {
+		flex-shrink: 0;
+	}
+
+	box-shadow: none;
+	border-bottom: 1px solid var(--color-border-subtle);
+
+	@include break-mobile {
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border: none;
+	}
+}
 
 .customer-home__layout .help-search {
 	.card-heading {
 		margin-bottom: 16px;
 	}
 
+	&.customer-home__card {
+		margin-bottom: 0;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		padding-bottom: 0;
+	}
+
+
+
 	.help-search__content {
 		display: flex;
 		justify-content: space-between;
-	}
-
-	.help-search__cta {
-		display: flex;
-		align-items: center;
-		width: calc(100% + $card_padding_large * 2);
-		height: auto;
-		padding-left: $card_padding_large;
-		padding-right: $card_padding_large;
-		margin-left: -$card_padding_large;
-		margin-right: -$card_padding_large;
-		color: var(--color-text);
-		font-size: inherit;
-
-		&:hover,
-		&:focus {
-			background: var(--color-neutral-0);
-		}
 	}
 
 	.help-search__help-icon {
@@ -73,35 +94,6 @@ $min_results_height: 180px;
 
 	.inline-help__search {
 		width: 100%; // Don't allow ellipsis items to flow outside box
-		padding: 0 0 16px 0;
-	}
-
-	.inline-help__results-item {
-		display: flex; // required for ellipsis overflow
-		font-size: inherit;
-
-		a {
-			text-decoration: none;
-			padding: 10px $card_padding_small;
-
-			// Ellipsis overflow handling
-			display: flex;
-			align-items: center;
-			flex: 1;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-
-			.gridicon,
-			svg {
-				top: 0;
-			}
-
-			&:hover,
-			&:focus {
-				cursor: pointer;
-			}
-		}
 	}
 
 	.inline-help__results {
@@ -171,7 +163,8 @@ $min_results_height: 180px;
 	.inline-help__results-placeholder-item {
 		height: 15px;
 		margin: 20px $card_padding_large 0;
-		border-radius: 16px; /* stylelint-disable-line scales/radii */
+
+		border-radius: 16px; // stylelint-disable-line scales/radii
 		background-color: var(--color-neutral-5);
 
 		&:first-child {
