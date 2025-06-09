@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Gridicon, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -41,12 +41,38 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function usePreservePurchasesFiltersInUrl( {
+function alterUrlForViewProp(
+	url: URL,
+	urlKey: string,
+	currentViewPropValue: string | number | undefined,
+	defaultValue?: string | number | undefined
+): void {
+	if ( currentViewPropValue && defaultValue && currentViewPropValue !== defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else if ( currentViewPropValue && ! defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else {
+		url.searchParams.delete( urlKey );
+	}
+}
+
+function updateUrlForView( url: URL ): void {
+	if ( url.search === window.location.search ) {
+		return;
+	}
+	window.history.pushState( undefined, '', url );
+	// getPreviousRoute will not find this updated route unless we set it
+	// explicitly. It only records the route when the page first loads.
+	// This seems like a bug but it appears to be how it works.
+	reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
+}
+
+function usePreservePurchasesViewInUrl( {
 	currentView,
 	setView,
 }: {
 	currentView: View;
-	setView: ( setter: ( currentView: View ) => View ) => void;
+	setView: ( setter: View | ( ( currentView: View ) => View ) ) => void;
 } ) {
 	const urlSortField = 'sortField';
 	const urlSortDirection = 'sortDir';
@@ -54,6 +80,7 @@ function usePreservePurchasesFiltersInUrl( {
 	const urlPaginationPerPage = 'perPage';
 	const urlSiteFilterKey = 'siteFilter';
 	const urlTypeFilterKey = 'typeFilter';
+	const urlExpiringSoonFilter = 'expiringSoonFilter';
 	const currentUrl = window.location.href;
 
 	// Apply view from URL
@@ -62,6 +89,7 @@ function usePreservePurchasesFiltersInUrl( {
 		const filters: Filter[] = [];
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
+		const expiringSoonValue = url.searchParams.get( urlExpiringSoonFilter );
 		const pageNumber = url.searchParams.get( urlPaginationPage );
 		const perPage = url.searchParams.get( urlPaginationPerPage );
 		const sortField = url.searchParams.get( urlSortField );
@@ -70,6 +98,9 @@ function usePreservePurchasesFiltersInUrl( {
 		) as SortDirection;
 		if ( siteFilterValue ) {
 			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
+		}
+		if ( expiringSoonValue ) {
+			filters.push( { value: expiringSoonValue, operator: 'is', field: 'expiring-soon' } );
 		}
 		if ( typeFilterValue ) {
 			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
@@ -87,51 +118,86 @@ function usePreservePurchasesFiltersInUrl( {
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
-		if ( siteFilter ) {
-			url.searchParams.set( urlSiteFilterKey, siteFilter.value );
-		} else {
-			url.searchParams.delete( urlSiteFilterKey );
-		}
+		alterUrlForViewProp( url, urlSiteFilterKey, siteFilter?.value );
 
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
-		if ( typeFilter ) {
-			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
-		} else {
-			url.searchParams.delete( urlTypeFilterKey );
-		}
+		alterUrlForViewProp( url, urlTypeFilterKey, typeFilter?.value );
+
+		const expringSoonFilter = currentView.filters?.find(
+			( filter ) => filter.field === 'expiring-soon'
+		);
+		alterUrlForViewProp( url, urlExpiringSoonFilter, expringSoonFilter?.value );
 
 		const pageNumber = currentView.page;
-		if ( pageNumber && pageNumber > 1 ) {
-			url.searchParams.set( urlPaginationPage, String( pageNumber ) );
-		} else {
-			url.searchParams.delete( urlPaginationPage );
-		}
+		alterUrlForViewProp( url, urlPaginationPage, pageNumber, 1 );
 
 		const perPage = currentView.perPage;
-		if ( perPage && perPage !== defaultPerPage ) {
-			url.searchParams.set( urlPaginationPerPage, String( perPage ) );
-		} else {
-			url.searchParams.delete( urlPaginationPerPage );
-		}
+		alterUrlForViewProp( url, urlPaginationPerPage, perPage, defaultPerPage );
 
 		const sort = currentView.sort;
-		if ( sort && sort !== defaultSort ) {
-			url.searchParams.set( urlSortField, sort.field );
-			url.searchParams.set( urlSortDirection, sort.direction );
-		} else {
-			url.searchParams.delete( urlSortField );
-			url.searchParams.delete( urlSortDirection );
-		}
+		alterUrlForViewProp( url, urlSortField, sort?.field, defaultSort.field );
+		alterUrlForViewProp( url, urlSortDirection, sort?.direction, defaultSort.direction );
 
-		if ( url.search === window.location.search ) {
-			return;
-		}
-		window.history.pushState( undefined, '', url );
-		// getPreviousRoute will not find this updated route unless we set it
-		// explicitly. It only records the route when the page first loads.
-		// This seems like a bug but it appears to be how it works.
-		reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
+		updateUrlForView( url );
 	}, [ currentView ] );
+}
+
+function useHidePurchasesFieldsAtCertainWidths( {
+	setView,
+}: {
+	setView: ( setter: View | ( ( view: View ) => View ) ) => void;
+} ): void {
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const currentWidth = ( () => {
+		if ( isWide ) {
+			return 'wide';
+		}
+		if ( isDesktop ) {
+			return 'desktop';
+		}
+		return 'mobile';
+	} )();
+	useEffect( () => {
+		switch ( currentWidth ) {
+			case 'wide': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== purchasesWideFields.length ) {
+						return {
+							...view,
+							fields: purchasesWideFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+			case 'desktop': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== purchasesDesktopFields.length ) {
+						return {
+							...view,
+							fields: purchasesDesktopFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+			case 'mobile': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== purchasesMobileFields.length ) {
+						return {
+							...view,
+							fields: purchasesMobileFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+		}
+	}, [ currentWidth, setView ] );
 }
 
 export function PurchasesDataViews( {
@@ -141,32 +207,14 @@ export function PurchasesDataViews( {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
 } ) {
-	const isWide = useBreakpoint( WIDE_BREAKPOINT );
-	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
 
 	// Hide fields at mobile width
-	useEffect( () => {
-		if ( isWide && currentView.fields !== purchasesWideFields ) {
-			setView( { ...currentView, fields: purchasesWideFields } );
-		}
-		if ( isWide ) {
-			return;
-		}
-		if ( isDesktop && currentView.fields !== purchasesDesktopFields ) {
-			setView( { ...currentView, fields: purchasesDesktopFields } );
-		}
-		if ( isDesktop ) {
-			return;
-		}
-		if ( currentView.fields !== purchasesMobileFields ) {
-			setView( { ...currentView, fields: purchasesMobileFields } );
-		}
-	}, [ isWide, isDesktop, currentView, setView ] );
+	useHidePurchasesFieldsAtCertainWidths( { setView } );
 
 	// Keep track of the current view params in the URL and restore them when the page loads.
-	usePreservePurchasesFiltersInUrl( { currentView, setView } );
+	usePreservePurchasesViewInUrl( { currentView, setView } );
 
 	const sitesWithPurchases = useMemo( () => {
 		return Array.from(
@@ -270,9 +318,7 @@ export function MembershipsDataViews( { memberships }: { memberships: Membership
 		() => [
 			{
 				id: 'manage-purchase',
-				label: translate( 'Manage this purchase', { textOnly: true } ),
-				isPrimary: true,
-				icon: <Gridicon icon="chevron-right" />,
+				label: translate( 'Manage purchase', { textOnly: true } ),
 				isEligible: ( item: MembershipSubscription ) => Boolean( item.ID ),
 				callback: ( items: MembershipSubscription[] ) => {
 					const subscriptionId = items[ 0 ].ID;
