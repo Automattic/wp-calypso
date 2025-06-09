@@ -24,9 +24,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
+import VatInfoDataForm from './vat-info-data-form';
 import type { UpdateError, FetchError } from './use-vat-details';
 import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
-
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -203,6 +203,7 @@ function VatForm( {
 
 	return (
 		<>
+			<VatInfoDataForm />
 			<FormFieldset className="vat-info__country-field">
 				<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
 				<CountryCodeInput
