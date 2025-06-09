@@ -8,44 +8,24 @@
 	align-items: stretch;
 	overflow-x: auto;
 
-	&:where( [aria-orientation='horizontal'] ) {
+	&:where( [data-orientation='horizontal'] ) {
 		width: fit-content;
 	}
 
 	--direction-factor: 1;
 	--direction-start: left;
 	--direction-end: right;
-	--selected-start: var( --selected-left, 0 );
 	&:dir( rtl ) {
 		--direction-factor: -1;
 		--direction-start: right;
 		--direction-end: left;
-		--selected-start: var( --selected-right, 0 );
 	}
 
-	@media not ( prefers-reduced-motion ) {
-		&[data-indicator-animated]::before {
-			transition-property: transform, border-radius, border-block;
-			transition-duration: 0.2s;
-			transition-timing-function: ease-out;
-		}
-	}
+
 	position: relative;
-	&::before {
-		content: '';
-		position: absolute;
-		pointer-events: none;
-		transform-origin: var( --direction-start ) top;
 
-		// Windows high contrast mode.
-		outline: 2px solid transparent;
-		outline-offset: -1px;
-	}
 
-	/* Using a large value to avoid antialiasing rounding issues
-			when scaling in the transform, see: https://stackoverflow.com/a/52159123 */
-	--antialiasing-factor: 100;
-	&[aria-orientation='horizontal'] {
+	&[data-orientation='horizontal'] {
 		--fade-width: 4rem;
 		--fade-gradient-base: transparent 0%, #{colors.$black} var( --fade-width );
 		--fade-gradient-composed: var( --fade-gradient-base ), #{colors.$black} 60%, transparent 50%;
@@ -63,48 +43,56 @@
 		&.has-compact-density {
 			gap: 1rem;
 		}
-
-		&::before {
-			bottom: 0;
-			height: 0;
-			width: calc( var( --antialiasing-factor ) * 1px );
-			transform: translateX( calc( var( --selected-start ) * var( --direction-factor ) * 1px ) )
-				scaleX( calc( var( --selected-width, 0 ) / var( --antialiasing-factor ) ) );
-			border-bottom: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
-		}
 	}
 
-	&[aria-orientation='vertical'] {
+	&[data-orientation='vertical'] {
 		flex-direction: column;
+	}
+}
 
-		&::before {
-			/* Adjusting the border radius to match the scaling in the y axis. */
-			border-radius: variables.$radius-small /
-				calc(
-					variables.$radius-small / ( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
-				);
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: calc( var( --antialiasing-factor ) * 1px );
-			transform: translateY( calc( var( --selected-top, 0 ) * 1px ) )
-				scaleY( calc( var( --selected-height, 0 ) / var( --antialiasing-factor ) ) );
-			background-color: color-mix( in srgb, theme.$components-color-accent, transparent 96% );
-		}
-		&[data-select-on-move='true']:has( :is( :focus-visible, [data-focus-visible] ) )::before {
-			box-sizing: border-box;
-			border: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
-			/* Adjusting the border width to match the scaling in the y axis. */
-			border-block-width: calc(
-				var( --wp-admin-border-width-focus, 1px ) /
-					( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
-			);
-		}
+.indicator {
+	@media not ( prefers-reduced-motion ) {
+		transition-property: translate, width, height, border-radius, border-block;
+		transition-duration: 0.2s;
+		transition-timing-function: ease-out;
+	}
+
+	position: absolute;
+	z-index: -1;
+	pointer-events: none;
+
+	// Windows high contrast mode.
+	outline: 2px solid transparent;
+	outline-offset: -1px;
+
+
+	&[data-orientation='horizontal'] {
+		left: 0;
+		bottom: 0;
+		height: 0;
+		width: var(--active-tab-width);
+		translate: var(--active-tab-left) -50%;
+		border-bottom: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
+	}
+
+	&[data-orientation='vertical'] {
+		border-radius: variables.$radius-small;
+		top: 0;
+		left: 50%;
+		width: 100%;
+		height: var(--active-tab-height);
+		translate: -50% var(--active-tab-top);
+		background-color: color-mix( in srgb, theme.$components-color-accent, transparent 96% );
+
+	}
+
+	.tablist[data-select-on-move='true']:has( :focus-visible ) &[data-orientation='vertical'] {
+		box-sizing: border-box;
+		border: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
 	}
 }
 
 .tab {
-
 	/* Resets */
 	border-radius: 0;
 	background: transparent;
@@ -120,12 +108,12 @@
 	font-weight: 400;
 	color: theme.$components-color-foreground;
 
-	&[aria-disabled='true'] {
+	&[data-disabled] {
 		cursor: default;
 		color: theme.$components-color-gray-600;
 	}
 
-	&:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
+	&:not( [data-disabled] ):is( :hover, :focus-visible ) {
 		color: theme.$components-color-accent;
 	}
 
@@ -153,11 +141,11 @@
 		}
 	}
 
-	&[data-focus-visible]::after {
+	&:focus-visible::after {
 		opacity: 1;
 	}
 
-	[aria-orientation='horizontal'] & {
+	[data-orientation='horizontal'] & {
 		padding-inline: variables.$grid-unit-05 * 4;
 		height: variables.$grid-unit-05 * 12;
 		scroll-margin: 24px;
@@ -168,7 +156,7 @@
 		}
 	}
 
-	.has-compact-density[aria-orientation='horizontal'] & {
+	.has-compact-density[data-orientation='horizontal'] & {
 		padding-inline: 0;
 
 		&::after {
@@ -178,7 +166,7 @@
 		}
 	}
 
-	[aria-orientation='vertical'] & {
+	[data-orientation='vertical'] & {
 		padding: variables.$grid-unit-05 * 2 variables.$grid-unit-05 * 3;
 		min-height: variables.$grid-unit-05 * 10;
 
@@ -187,7 +175,7 @@
 			fill: currentColor;
 		}
 	}
-	[aria-orientation='vertical'][data-select-on-move='false'] &::after {
+	[data-orientation='vertical'][data-select-on-move='false'] &::after {
 		content: '';
 		inset: var( --wp-admin-border-width-focus );
 	}
@@ -199,10 +187,10 @@
 	display: flex;
 	align-items: center;
 
-	[aria-orientation='horizontal'] & {
+	[data-orientation='horizontal'] & {
 		justify-content: center;
 	}
-	[aria-orientation='vertical'] & {
+	[data-orientation='vertical'] & {
 		justify-content: start;
 	}
 }
@@ -210,11 +198,11 @@
 .tab__chevron {
 	flex-shrink: 0;
 	margin-inline-end: variables.$grid-unit-05 * -1;
-	[aria-orientation='horizontal'] & {
+	[data-orientation='horizontal'] & {
 		display: none;
 	}
 	opacity: 0;
-	[role='tab']:is( [aria-selected='true'], [data-focus-visible], :hover ) & {
+	[role='tab']:is( [aria-selected='true'], :focus-visible, :hover ) & {
 		opacity: 1;
 	}
 	// The chevron is transitioned into existence when selectOnMove is enabled,
@@ -236,7 +224,7 @@
 		outline: none;
 	}
 
-	&[data-focus-visible] {
+	&:focus-visible {
 		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) theme.$components-color-accent;
 		// Windows high contrast mode.
 		outline: 2px solid transparent;

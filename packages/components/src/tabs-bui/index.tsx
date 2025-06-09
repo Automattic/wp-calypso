@@ -5,22 +5,12 @@
  * - Added `density` prop to `Tabs.TabList`, with new `compact` variant.
  */
 
-import * as Ariakit from '@ariakit/react';
-import { isRTL } from '@wordpress/i18n';
-import { useEffect, useMemo, useId } from 'react';
-import { TabsContext } from './context';
+import { Tabs as BaseUITabs } from '@base-ui-components/react/tabs';
+import { forwardRef } from 'react';
 import { Tab } from './tab';
 import { TabList } from './tablist';
 import { TabPanel } from './tabpanel';
 import type { TabsProps } from './types';
-
-function externalToInternalTabId( externalId: string | undefined | null, instanceId: string ) {
-	return externalId && `${ instanceId }-${ externalId }`;
-}
-
-function internalToExternalTabId( internalId: string | undefined | null, instanceId: string ) {
-	return typeof internalId === 'string' ? internalId.replace( `${ instanceId }-`, '' ) : internalId;
-}
 
 /**
  * Tabs is a collection of React components that combine to render
@@ -35,65 +25,58 @@ function internalToExternalTabId( internalId: string | undefined | null, instanc
  * component.
  */
 export const Tabs = Object.assign(
-	function Tabs( {
-		selectOnMove = true,
-		defaultTabId,
-		orientation = 'horizontal',
-		onSelect,
-		children,
-		selectedTabId,
-		activeTabId,
-		defaultActiveTabId,
-		onActiveTabIdChange,
-	}: TabsProps ) {
-		const instanceId = useId();
-		const store = Ariakit.useTabStore( {
-			selectOnMove,
-			orientation,
-			defaultSelectedId: externalToInternalTabId( defaultTabId, instanceId ),
-			setSelectedId: ( newSelectedId ) => {
-				onSelect?.( internalToExternalTabId( newSelectedId, instanceId ) );
-			},
-			selectedId: externalToInternalTabId( selectedTabId, instanceId ),
-			defaultActiveId: externalToInternalTabId( defaultActiveTabId, instanceId ),
-			setActiveId: ( newActiveId ) => {
-				onActiveTabIdChange?.( internalToExternalTabId( newActiveId, instanceId ) );
-			},
-			activeId: externalToInternalTabId( activeTabId, instanceId ),
-			rtl: isRTL(),
-		} );
+	forwardRef< HTMLDivElement, React.ComponentPropsWithoutRef< 'div' > & TabsProps >(
+		function Tabs( props, ref ) {
+			// const instanceId = useId();
+			// const store = Ariakit.useTabStore( {
+			// 	selectOnMove,
+			// 	orientation,
+			// 	defaultSelectedId: externalToInternalTabId( defaultTabId, instanceId ),
+			// 	setSelectedId: ( newSelectedId ) => {
+			// 		onSelect?.( internalToExternalTabId( newSelectedId, instanceId ) );
+			// 	},
+			// 	selectedId: externalToInternalTabId( selectedTabId, instanceId ),
+			// 	defaultActiveId: externalToInternalTabId( defaultActiveTabId, instanceId ),
+			// 	setActiveId: ( newActiveId ) => {
+			// 		onActiveTabIdChange?.( internalToExternalTabId( newActiveId, instanceId ) );
+			// 	},
+			// 	activeId: externalToInternalTabId( activeTabId, instanceId ),
+			// 	rtl: isRTL(),
+			// } );
 
-		const { items, activeId } = Ariakit.useStoreState( store );
-		const { setActiveId } = store;
+			// const { items, activeId } = Ariakit.useStoreState( store );
+			// const { setActiveId } = store;
 
-		useEffect( () => {
-			requestAnimationFrame( () => {
-				const focusedElement = items?.[ 0 ]?.element?.ownerDocument.activeElement;
+			// useEffect( () => {
+			// 	requestAnimationFrame( () => {
+			// 		const focusedElement = items?.[ 0 ]?.element?.ownerDocument.activeElement;
 
-				if ( ! focusedElement || ! items.some( ( item ) => focusedElement === item.element ) ) {
-					return; // Return early if no tabs are focused.
-				}
+			// 		if ( ! focusedElement || ! items.some( ( item ) => focusedElement === item.element ) ) {
+			// 			return; // Return early if no tabs are focused.
+			// 		}
 
-				// If, after ariakit re-computes the active tab, that tab doesn't match
-				// the currently focused tab, then we force an update to ariakit to avoid
-				// any mismatches, especially when navigating to previous/next tab with
-				// arrow keys.
-				if ( activeId !== focusedElement.id ) {
-					setActiveId( focusedElement.id );
-				}
-			} );
-		}, [ activeId, items, setActiveId ] );
+			// 		// If, after ariakit re-computes the active tab, that tab doesn't match
+			// 		// the currently focused tab, then we force an update to ariakit to avoid
+			// 		// any mismatches, especially when navigating to previous/next tab with
+			// 		// arrow keys.
+			// 		if ( activeId !== focusedElement.id ) {
+			// 			setActiveId( focusedElement.id );
+			// 		}
+			// 	} );
+			// }, [ activeId, items, setActiveId ] );
 
-		const contextValue = useMemo(
-			() => ( {
-				store,
-				instanceId,
-			} ),
-			[ store, instanceId ]
-		);
+			// const contextValue = useMemo(
+			// 	() => ( {
+			// 		store,
+			// 		instanceId,
+			// 	} ),
+			// 	[ store, instanceId ]
+			// );
 
-		return <TabsContext.Provider value={ contextValue }>{ children }</TabsContext.Provider>;
-	},
+			// return <TabsContext.Provider value={ contextValue }>{ children }</TabsContext.Provider>;
+			return <BaseUITabs.Root { ...props } ref={ ref } />;
+		}
+	),
 	{
 		/**
 		 * Renders a single tab.
@@ -117,9 +100,6 @@ export const Tabs = Object.assign(
 		 */
 		TabPanel: Object.assign( TabPanel, {
 			displayName: 'Tabs.TabPanel',
-		} ),
-		Context: Object.assign( TabsContext, {
-			displayName: 'Tabs.Context',
 		} ),
 	}
 );

@@ -1,17 +1,4 @@
-import type * as Ariakit from '@ariakit/react';
-
-export type TabsContextProps =
-	| {
-			/**
-			 * The tabStore object returned by Ariakit's `useTabStore` hook.
-			 */
-			store: Ariakit.TabStore;
-			/**
-			 * The unique id string for this instance of the Tabs component.
-			 */
-			instanceId: string;
-	  }
-	| undefined;
+import { Tabs } from '@base-ui-components/react/tabs';
 
 export type TabsProps = {
 	/**
@@ -19,76 +6,36 @@ export type TabsProps = {
 	 * `Tabs.Tablist` component and as many instances of the `Tabs.TabPanel`
 	 * components as there are `Tabs.Tab` components.
 	 */
-	children: Ariakit.TabProviderProps[ 'children' ];
+	children: Tabs.Root.Props[ 'children' ];
 	/**
-	 * Determines if the tab should be selected when it receives focus. If set to
-	 * `false`, the tab will only be selected upon clicking, not when using arrow
-	 * keys to shift focus (manual tab activation). See the [official W3C docs](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/)
-	 * for more info.
-	 * @default true
+	 * The value of the currently selected Tab.
+	 * Use when the component is controlled. When the value is null,
+	 * no Tab will be selected.
 	 */
-	selectOnMove?: Ariakit.TabProviderProps[ 'selectOnMove' ];
+	value?: Tabs.Root.Props[ 'value' ];
 	/**
-	 * The id of the tab whose panel is currently visible.
-	 *
-	 * If left `undefined`, it will be automatically set to the first enabled
-	 * tab, and the component assumes it is being used in "uncontrolled" mode.
-	 *
-	 * Consequently, any value different than `undefined` will set the component
-	 * in "controlled" mode. When in "controlled" mode, the `null` value will
-	 * result in no tabs being selected, and the tablist becoming tabbable.
+	 * The default value.
+	 * Use when the component is not controlled. When the value is null,
+	 * no Tab will be selected.
 	 */
-	selectedTabId?: Ariakit.TabProviderProps[ 'selectedId' ];
+	defaultValue?: Tabs.Root.Props[ 'defaultValue' ];
 	/**
-	 * The id of the tab whose panel is currently visible.
-	 *
-	 * If left `undefined`, it will be automatically set to the first enabled
-	 * tab. If set to `null`, no tab will be selected, and the tablist will be
-	 * tabbable.
-	 *
-	 * Note: this prop will be overridden by the `selectedTabId` prop if it is
-	 * provided (meaning the component will be used in "controlled" mode).
+	 * Callback invoked when new value is being set.
 	 */
-	defaultTabId?: Ariakit.TabProviderProps[ 'defaultSelectedId' ];
+	onValueChange?: Tabs.Root.Props[ 'onValueChange' ];
 	/**
-	 * The function called when the `selectedTabId` changes.
-	 */
-	onSelect?: Ariakit.TabProviderProps[ 'setSelectedId' ];
-	/**
-	 * The current active tab `id`. The active tab is the tab element within the
-	 * tablist widget that has DOM focus.
-	 *
-	 * - `null` represents the tablist (ie. the base composite element). Users
-	 *   will be able to navigate out of it using arrow keys.
-	 * - If `activeTabId` is initially set to `null`, the base composite element
-	 *   itself will have focus and users will be able to navigate to it using
-	 *   arrow keys.
-	 */
-	activeTabId?: Ariakit.TabProviderProps[ 'activeId' ];
-	/**
-	 * The tab id that should be active by default when the composite widget is
-	 * rendered. If `null`, the tablist element itself will have focus
-	 * and users will be able to navigate to it using arrow keys. If `undefined`,
-	 * the first enabled item will be focused.
-	 *
-	 * Note: this prop will be overridden by the `activeTabId` prop if it is
-	 * provided.
-	 */
-	defaultActiveTabId?: Ariakit.TabProviderProps[ 'defaultActiveId' ];
-	/**
-	 * A callback that gets called when the `activeTabId` state changes.
-	 */
-	onActiveTabIdChange?: Ariakit.TabProviderProps[ 'setActiveId' ];
-	/**
-	 * Defines the orientation of the tablist and determines which arrow keys
-	 * can be used to move focus:
-	 *
-	 * - `both`: all arrow keys work.
-	 * - `horizontal`: only left and right arrow keys work.
-	 * - `vertical`: only up and down arrow keys work.
+	 * The component orientation (layout flow direction).d down arrow keys work.
 	 * @default "horizontal"
 	 */
-	orientation?: Ariakit.TabProviderProps[ 'orientation' ];
+	orientation?: Tabs.Root.Props[ 'orientation' ];
+	/**
+	 * Allows you to replace the component’s HTML element with a different tag,
+	 * or compose it with another component.
+	 * Accepts a ReactElement or a function that returns the element to render.
+	 *
+	 * By default, the tabs root will be rendered as a `div` element.
+	 */
+	render?: Tabs.Root.Props[ 'render' ];
 };
 
 export type TabListProps = {
@@ -96,7 +43,27 @@ export type TabListProps = {
 	 * The children elements, which should include one or more instances of the
 	 * `Tabs.Tab` component.
 	 */
-	children: Ariakit.TabListProps[ 'children' ];
+	children: Tabs.List.Props[ 'children' ];
+	/**
+	 * Whether to automatically change the active tab on arrow key focus.
+	 * Otherwise, tabs will be activated using Enter or Spacebar key press.
+	 * @default true
+	 */
+	activateOnFocus?: Tabs.List.Props[ 'activateOnFocus' ];
+	/**
+	 * Whether to loop keyboard focus back to the first item when the end of
+	 * the list is reached while using the arrow keys.
+	 * @default false
+	 */
+	loop?: Tabs.List.Props[ 'loop' ];
+	/**
+	 * Allows you to replace the component’s HTML element with a different tag,
+	 * or compose it with another component.
+	 * Accepts a ReactElement or a function that returns the element to render.
+	 *
+	 * By default, the tablist will be rendered as a `div` element.
+	 */
+	render?: Tabs.List.Props[ 'render' ];
 	/**
 	 * The visual density of the tab list.
 	 * @default "default"
@@ -104,55 +71,50 @@ export type TabListProps = {
 	density?: 'compact' | 'default';
 };
 
-// TODO: consider prop name changes (tabId, selectedTabId)
-// compound technique
-
 export type TabProps = {
 	/**
-	 * The unique ID of the tab. It will be used to register the tab and match
-	 * it to a corresponding `Tabs.TabPanel` component.
+	 * The value of the Tab. When not specified,
+	 * the value is the child position index.
 	 */
-	tabId: NonNullable< Ariakit.TabProps[ 'id' ] >;
+	value?: Tabs.Tab.Props[ 'value' ];
 	/**
 	 * The contents of the tab.
 	 */
-	children?: Ariakit.TabProps[ 'children' ];
+	children?: Tabs.Tab.Props[ 'children' ];
 	/**
-	 * Determines if the tab should be disabled. Note that disabled tabs can
-	 * still be accessed via the keyboard when navigating through the tablist.
-	 * @default false
-	 */
-	disabled?: Ariakit.TabProps[ 'disabled' ];
-	/**
-	 * Allows the component to be rendered as a different HTML element or React
-	 * component. The value can be a React element or a function that takes in the
-	 * original component props and gives back a React element with the props
-	 * merged.
+	 * Allows you to replace the component’s HTML element with a different tag,
+	 * or compose it with another component.
+	 * Accepts a ReactElement or a function that returns the element to render.
 	 *
 	 * By default, the tab will be rendered as a `button` element.
 	 */
-	render?: Ariakit.TabProps[ 'render' ];
+	render?: Tabs.Tab.Props[ 'render' ];
 };
 
 export type TabPanelProps = {
 	/**
 	 * The contents of the tab panel.
 	 */
-	children?: Ariakit.TabPanelProps[ 'children' ];
+	children?: Tabs.Panel.Props[ 'children' ];
 	/**
-	 * The unique `id` of the `Tabs.Tab` component controlling this panel. This
-	 * connection is used to assign the `aria-labelledby` attribute to the tab
-	 * panel and to determine if the tab panel should be visible.
+	 * The value of the TabPanel.
+	 * It will be shown when the Tab with the corresponding value is selected.
+	 * If not provided, it will fall back to the index of the panel.
+	 * It is recommended to explicitly provide it, as it's required for the tab
+	 * panel to be rendered on the server.
+	 */
+	value?: Tabs.Panel.Props[ 'value' ];
+	/**
+	 * Whether to keep the HTML element in the DOM while the panel is hidden.
+	 * @default false
+	 */
+	keepMounted?: Tabs.Panel.Props[ 'keepMounted' ];
+	/**
+	 * Allows you to replace the component’s HTML element with a different tag,
+	 * or compose it with another component.
+	 * Accepts a ReactElement or a function that returns the element to render.
 	 *
-	 * If not provided, this link is automatically established by matching the
-	 * order of `Tabs.Tab` and `Tabs.TabPanel` elements in the DOM.
+	 * By default, the tab panel will be rendered as a `div` element.
 	 */
-	tabId: NonNullable< Ariakit.TabPanelProps[ 'tabId' ] >;
-	/**
-	 * Determines whether or not the tabpanel element should be focusable.
-	 * If `false`, pressing the tab key will skip over the tabpanel, and instead
-	 * focus on the first focusable element in the panel (if there is one).
-	 * @default true
-	 */
-	focusable?: Ariakit.TabPanelProps[ 'focusable' ];
+	render?: Tabs.Panel.Props[ 'render' ];
 };

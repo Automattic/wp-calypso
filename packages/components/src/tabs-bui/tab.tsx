@@ -1,38 +1,21 @@
-import * as Ariakit from '@ariakit/react';
+import { Tabs as BaseUITabs } from '@base-ui-components/react/tabs';
 import { chevronRight } from '@wordpress/icons';
-import warning from '@wordpress/warning';
+// import warning from '@wordpress/warning';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 import { Icon } from '../icon';
-import { useTabsContext } from './context';
+// import { useTabsContext } from './context';
 import styles from './style.module.scss';
 import type { TabProps } from './types';
 
 export const Tab = forwardRef<
 	HTMLButtonElement,
-	Omit< React.ComponentPropsWithoutRef< 'button' >, 'id' > & TabProps
->( function Tab( { children, tabId, disabled, render, ...otherProps }, ref ) {
-	const { store, instanceId } = useTabsContext() ?? {};
-
-	if ( ! store ) {
-		warning( '`Tabs.Tab` must be wrapped in a `Tabs` component.' );
-		return null;
-	}
-
-	const instancedTabId = `${ instanceId }-${ tabId }`;
-
+	React.ComponentPropsWithoutRef< 'button' > & TabProps
+>( function Tab( { className, children, ...otherProps }, ref ) {
 	return (
-		<Ariakit.Tab
-			ref={ ref }
-			store={ store }
-			id={ instancedTabId }
-			disabled={ disabled }
-			render={ render }
-			{ ...otherProps }
-			className={ clsx( styles.tab, otherProps.className ) }
-		>
+		<BaseUITabs.Tab ref={ ref } { ...otherProps } className={ clsx( styles.tab, className ) }>
 			<span className={ styles.tab__children }>{ children }</span>
 			<Icon className={ styles.tab__chevron } icon={ chevronRight } />
-		</Ariakit.Tab>
+		</BaseUITabs.Tab>
 	);
 } );
