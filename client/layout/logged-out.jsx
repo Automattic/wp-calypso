@@ -349,7 +349,6 @@ export default withCurrentRoute(
 						! isWooJPC ) ||
 						isStudioClient ||
 						isCrowdsignalClient ||
-						isGravPoweredClient ||
 						isBlazePro ) ) ||
 				isPartnerPortal;
 

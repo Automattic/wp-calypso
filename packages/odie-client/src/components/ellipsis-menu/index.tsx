@@ -12,6 +12,7 @@ type EllipsisMenuProps = {
 	position?: string;
 	popoverClassName?: string;
 	trackEventProps?: { source: string };
+	ariaLabel?: string;
 } & PropsWithChildren;
 
 export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
@@ -19,6 +20,7 @@ export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 	children,
 	popoverClassName,
 	trackEventProps,
+	ariaLabel,
 } ) => {
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const popoverContext = useRef< HTMLButtonElement >( null );
@@ -46,8 +48,9 @@ export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 				onClick={ handleClick }
 				borderless
 				className="ellipsis-menu__toggle"
+				ariaLabel={ ariaLabel }
 			>
-				<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
+				<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" aria-hidden />
 			</Button>
 			{ isMenuVisible && (
 				<PopoverMenu

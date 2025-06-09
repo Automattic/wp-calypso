@@ -40,7 +40,6 @@ import { AppState } from 'calypso/types';
 import { PurchasesByOtherAdminsNotice } from '../purchases-list/purchases-by-other-admins-notice';
 import PurchasesSite from '../purchases-site';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
-import './style.scss';
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;

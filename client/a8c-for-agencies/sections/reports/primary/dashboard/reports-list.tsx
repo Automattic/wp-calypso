@@ -80,7 +80,7 @@ export default function ReportsList( {
 							label: translate( 'Last Generated' ),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteReports } ) => (
-								<ReportDateColumn date={ item.latestReport.createdAt } />
+								<ReportDateColumn date={ item.latestReport.created_at } />
 							),
 							enableHiding: false,
 							enableSorting: false,
