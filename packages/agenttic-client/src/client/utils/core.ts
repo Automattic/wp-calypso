@@ -156,3 +156,29 @@ export function createContextDataPart(
 		metadata: {},
 	};
 }
+
+/**
+ * Create a simple text message with user role
+ * @param text
+ */
+export function createTextMessage( text: string ): Message {
+	return {
+		role: 'user',
+		parts: [ createTextPart( text ) ],
+	};
+}
+
+/**
+ * Create a tool result message from tool result data parts
+ * @param toolResults
+ * @param historyDataParts
+ */
+export function createToolResultMessage(
+	toolResults: ToolResultDataPart[],
+	historyDataParts: any[] = []
+): Message {
+	return {
+		role: 'user',
+		parts: [ ...historyDataParts, ...toolResults ],
+	};
+}

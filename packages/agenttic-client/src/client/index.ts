@@ -17,7 +17,9 @@ import {
 	type RequestConfig,
 } from './utils/index';
 import {
+	createTextMessage,
 	createToolResultDataPart,
+	createToolResultMessage,
 	extractTextFromMessage,
 	extractToolCallsFromMessage,
 } from './utils/index';
@@ -215,19 +217,16 @@ export function createClient( config: ClientConfig ): Client {
 			const { withHistory = true } = params;
 
 			// Extract conversation history from the incoming message only if withHistory is true
-			const conversationHistory = withHistory
+			const initialConversationHistory = withHistory
 				? extractConversationHistory( params.message )
 				: [];
 
-			// Add the initial user message to conversation history if it's not already there
-			// This ensures the original user request is preserved for tool result context
-			if (
-				withHistory &&
-				( conversationHistory.length === 0 ||
-					conversationHistory[ conversationHistory.length - 1 ] !==
-						params.message )
-			) {
-				conversationHistory.push( params.message );
+			// Track new conversation parts since the initial message for tool result context
+			const newConversationParts: Message[] = [];
+
+			// Add the initial user message to new conversation parts
+			if ( withHistory ) {
+				newConversationParts.push( params.message );
 			}
 
 			// Prepare the request
@@ -246,6 +245,10 @@ export function createClient( config: ClientConfig ): Client {
 				requestConfig
 			);
 
+			// Track all tool calls and results from the entire execution
+			const allToolParts: ( ToolCallDataPart | ToolResultDataPart )[] =
+				[];
+
 			//Loop while there are tool calls to process, regardless of state
 			while ( currentTask.status.message && toolProvider ) {
 				const toolCalls = extractToolCallsFromMessage(
@@ -254,6 +257,9 @@ export function createClient( config: ClientConfig ): Client {
 				if ( toolCalls.length === 0 ) {
 					break; // No tool calls to process
 				}
+
+				// Add tool calls to the tracking array
+				allToolParts.push( ...toolCalls );
 
 				// Execute all tool calls
 				const toolResults: ToolResultDataPart[] = [];
@@ -270,41 +276,44 @@ export function createClient( config: ClientConfig ): Client {
 							args
 						);
 
-						toolResults.push(
-							createToolResultDataPart(
-								toolCallId as string,
-								toolId as string,
-								result
-							)
+						const toolResult = createToolResultDataPart(
+							toolCallId as string,
+							toolId as string,
+							result
 						);
+
+						toolResults.push( toolResult );
+						allToolParts.push( toolResult );
 					} catch ( error ) {
-						toolResults.push(
-							createToolResultDataPart(
-								toolCallId as string,
-								toolId as string,
-								undefined,
-								error instanceof Error
-									? error.message
-									: String( error )
-							)
+						const toolResult = createToolResultDataPart(
+							toolCallId as string,
+							toolId as string,
+							undefined,
+							error instanceof Error
+								? error.message
+								: String( error )
 						);
+
+						toolResults.push( toolResult );
+						allToolParts.push( toolResult );
 					}
 				}
 
-				// Add current agent message to conversation history (only if withHistory is true)
+				// Add current agent message to new conversation parts (only if withHistory is true)
 				if ( withHistory ) {
-					conversationHistory.push( currentTask.status.message );
+					newConversationParts.push( currentTask.status.message );
 				}
 
-				// Create tool result message with conversation history (if enabled)
+				// Create tool result message with only NEW conversation parts since initial message
+				// This avoids duplicating the conversation history that was already sent initially
 				const historyDataParts = withHistory
-					? conversationHistoryToDataParts( conversationHistory )
+					? conversationHistoryToDataParts( newConversationParts )
 					: [];
 
-				const toolResultMessage: Message = {
-					role: 'user',
-					parts: [ ...historyDataParts, ...toolResults ],
-				};
+				const toolResultMessage = createToolResultMessage(
+					toolResults,
+					historyDataParts
+				);
 
 				// Continue the same task with tool results
 				currentTask = await continueTask(
@@ -314,6 +323,26 @@ export function createClient( config: ClientConfig ): Client {
 					toolProvider,
 					contextProvider
 				);
+			}
+
+			// Enhance the final task response to include all tool calls and results
+			// This ensures useAgent can capture them in conversation history
+			if ( allToolParts.length > 0 && currentTask.status?.message ) {
+				const enhancedMessage: Message = {
+					...currentTask.status.message,
+					parts: [
+						...allToolParts,
+						...currentTask.status.message.parts,
+					],
+				};
+
+				currentTask = {
+					...currentTask,
+					status: {
+						...currentTask.status,
+						message: enhancedMessage,
+					},
+				};
 			}
 
 			return {
@@ -330,19 +359,16 @@ export function createClient( config: ClientConfig ): Client {
 			const { withHistory = true } = params;
 
 			// Extract conversation history from the incoming message only if withHistory is true
-			const conversationHistory = withHistory
+			const initialConversationHistory = withHistory
 				? extractConversationHistory( params.message )
 				: [];
 
-			// Add the initial user message to conversation history if it's not already there
-			// This ensures the original user request is preserved for tool result context
-			if (
-				withHistory &&
-				( conversationHistory.length === 0 ||
-					conversationHistory[ conversationHistory.length - 1 ] !==
-						params.message )
-			) {
-				conversationHistory.push( params.message );
+			// Track new conversation parts since the initial message for tool result context
+			const newConversationParts: Message[] = [];
+
+			// Add the initial user message to new conversation parts
+			if ( withHistory ) {
+				newConversationParts.push( params.message );
 			}
 
 			// Prepare the request
@@ -409,21 +435,32 @@ export function createClient( config: ClientConfig ): Client {
 							}
 						}
 
-						// Add current agent message to conversation history (only if withHistory is true)
+						// Add current agent message to new conversation parts (only if withHistory is true)
 						if ( withHistory ) {
-							conversationHistory.push( update.status.message );
+							newConversationParts.push( update.status.message );
 						}
 
-						// Create tool result message with conversation history (if enabled)
+						// Create tool result message with only NEW conversation parts since initial message
+						// This avoids duplicating the conversation history that was already sent initially
 						const historyDataParts = withHistory
 							? conversationHistoryToDataParts(
-									conversationHistory
+									newConversationParts
 							  )
 							: [];
 
-						const toolResultMessage: Message = {
-							role: 'user',
-							parts: [ ...historyDataParts, ...toolResults ],
+						const toolResultMessage = createToolResultMessage(
+							toolResults,
+							historyDataParts
+						);
+
+						yield {
+							id: update.id,
+							status: {
+								state: 'working',
+								message: toolResultMessage,
+							},
+							final: false,
+							text: '',
 						};
 
 						// Continue the task with tool results and stream the continuation
@@ -457,10 +494,7 @@ export function createClient( config: ClientConfig ): Client {
 			sessionId?: string
 		): Promise< TaskUpdate > {
 			// Create a simple text message for user input
-			const userMessage: Message = {
-				role: 'user',
-				parts: [ { type: 'text', text: userInput } ],
-			};
+			const userMessage = createTextMessage( userInput );
 
 			// Continue the task with user input
 			const continuedTask = await continueTask(
@@ -520,10 +554,8 @@ export function createClient( config: ClientConfig ): Client {
 				}
 
 				// Continue with tool results
-				const toolResultMessage: Message = {
-					role: 'user',
-					parts: toolResults,
-				};
+				const toolResultMessage =
+					createToolResultMessage( toolResults );
 
 				currentTask = await continueTask(
 					currentTask.id,
