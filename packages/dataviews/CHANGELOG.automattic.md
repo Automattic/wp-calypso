@@ -2,6 +2,7 @@
 
 ## Next
 
+- Update the field type definitions to declare the default and valid operators they support.
 - Add a story for each FieldTypeDefinition.
 
 ## 0.2.1

@@ -1,4 +1,5 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useAttachFileToConversation,
@@ -57,8 +58,14 @@ export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, canConnectToZendesk } =
-		useOdieAssistantContext();
+	const {
+		trackEvent,
+		chat,
+		addMessage,
+		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
+		forceEmailSupport,
+	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -205,6 +212,7 @@ export const OdieSendMessageButton = () => {
 	);
 
 	const showAttachmentButton = chat.conversationId && inferredClientId;
+	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
 	return (
 		<>
@@ -214,40 +222,47 @@ export const OdieSendMessageButton = () => {
 				</div>
 			) }
 			<div className={ inputContainerClasses } ref={ divContainerRef }>
-				<form
-					onSubmit={ ( event ) => {
-						event.preventDefault();
-						sendMessageHandler();
-					} }
-					className="odie-send-message-input-container"
-				>
-					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy || isAttachingFile || cantTransferToZendesk }
-						sendMessageHandler={ sendMessageHandler }
-						className="odie-send-message-input"
-						inputRef={ inputRef }
-						setSubmitDisabled={ setSubmitDisabled }
-						keyUpHandle={ onKeyUp }
-						onPasteHandle={ onPaste }
-						placeholder={ textAreaPlaceholder }
-					/>
-					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					{ showAttachmentButton && (
-						<AttachmentButton
-							attachmentButtonRef={ attachmentButtonRef }
-							onFileUpload={ handleFileUpload }
-							isAttachingFile={ isAttachingFile }
-						/>
-					) }
-					<button
-						type="submit"
-						className={ buttonClasses }
-						disabled={ submitDisabled }
-						aria-label={ __( 'Send message', __i18n_text_domain__ ) }
+				{ isEmailFallback ? (
+					<EmailFallbackNotice />
+				) : (
+					<form
+						onSubmit={ ( event ) => {
+							event.preventDefault();
+							sendMessageHandler();
+						} }
+						className="odie-send-message-input-container"
 					>
-						<SendMessageIcon />
-					</button>
-				</form>
+						<ResizableTextarea
+							shouldDisableInputField={
+								isChatBusy || isAttachingFile || cantTransferToZendesk || isEmailFallback
+							}
+							sendMessageHandler={ sendMessageHandler }
+							className="odie-send-message-input"
+							inputRef={ inputRef }
+							setSubmitDisabled={ setSubmitDisabled }
+							keyUpHandle={ onKeyUp }
+							onPasteHandle={ onPaste }
+							placeholder={ textAreaPlaceholder }
+						/>
+						{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+						{ showAttachmentButton && (
+							<AttachmentButton
+								attachmentButtonRef={ attachmentButtonRef }
+								onFileUpload={ handleFileUpload }
+								isAttachingFile={ isAttachingFile }
+								isDisabled={ isEmailFallback }
+							/>
+						) }
+						<button
+							type="submit"
+							className={ buttonClasses }
+							disabled={ submitDisabled }
+							aria-label={ __( 'Send message', __i18n_text_domain__ ) }
+						>
+							<SendMessageIcon />
+						</button>
+					</form>
+				) }
 			</div>
 			{ showAttachmentButton && (
 				<DropZone

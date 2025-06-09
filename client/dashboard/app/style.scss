@@ -43,10 +43,3 @@ a {
 #wpcom {
 	font-size: $font-size-medium;
 }
-
-// This is a temporary fix to match forms with the design.
-// The desired approach would be to create a layout component to wrap the form fields.
-// See: https://github.com/Automattic/wp-calypso/pull/103978
-form {
-	padding: 8px 0;
-}

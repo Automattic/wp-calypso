@@ -22,7 +22,9 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
-export function setHelpCenterRouterHistory( history: { entries: Location[]; index: number } ) {
+export function setHelpCenterRouterHistory(
+	history: { entries: Location[]; index: number } | undefined
+) {
 	return {
 		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 		history,
@@ -138,7 +140,7 @@ export const setShowHelpCenter = function* (
 				body: {
 					calypso_preferences: {
 						help_center_open: show,
-						// Delete navigation history when closing the help center
+						// Delete the remote version of the navigation history when closing the help center
 						...( ! show ? { help_center_router_history: null } : {} ),
 					},
 				},
@@ -150,7 +152,7 @@ export const setShowHelpCenter = function* (
 				path: '/help-center/open-state',
 				method: 'PUT',
 				data: {
-					help_center_open: show, // Delete navigation history when closing the help center
+					help_center_open: show, // Delete the remote version of the navigation history when closing the help center
 					...( ! show ? { help_center_router_history: null } : {} ),
 				},
 			} as APIFetchOptions ).catch( () => {} );
@@ -159,6 +161,8 @@ export const setShowHelpCenter = function* (
 
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
+		// Reset the local navigation history when closing the help center
+		yield setHelpCenterRouterHistory( undefined );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
