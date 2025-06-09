@@ -73,8 +73,11 @@ export const ODIE_EMAIL_FALLBACK_MESSAGE: Message = {
 	type: 'message',
 	context: {
 		flags: {
-			hide_disclaimer_content: true,
 			show_contact_support_msg: false,
+			forward_to_human_support: true,
+		},
+		question_tags: {
+			inquiry_type: 'request-for-human-support',
 		},
 		site_id: null,
 	},
