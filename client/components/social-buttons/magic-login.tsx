@@ -11,9 +11,10 @@ import './style.scss';
 
 type MagicLoginButtonProps = {
 	loginUrl: string;
+	buttonText?: string;
 };
 
-export const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
+export const MagicLoginButton = ( { loginUrl, buttonText }: MagicLoginButtonProps ) => {
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
 	const dispatch = useDispatch();
@@ -38,7 +39,9 @@ export const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 			__next40pxDefaultSize
 		>
 			<MailIcon width="20" height="20" isDisabled={ isDisabled } />
-			<span className="social-buttons__service-name">{ translate( 'Email me a login link' ) }</span>
+			<span className="social-buttons__service-name">
+				{ buttonText || translate( 'Email me a login link' ) }
+			</span>
 		</Button>
 	);
 };
