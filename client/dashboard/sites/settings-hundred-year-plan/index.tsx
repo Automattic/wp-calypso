@@ -3,7 +3,6 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -17,7 +16,8 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
-import { canUpdateHundredYearPlanFeatures } from '../../utils/site-features';
+import { SectionHeader } from '../../components/section-header';
+import { canViewHundredYearPlanSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
@@ -61,7 +61,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 		return null;
 	}
 
-	if ( ! canUpdateHundredYearPlanFeatures( site ) ) {
+	if ( ! canViewHundredYearPlanSettings( site ) ) {
 		throw notFound();
 	}
 
@@ -94,42 +94,37 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit } className="dashboard-site-settings-form">
-						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
-							<VStack spacing={ 2 }>
-								<Text size="15px" weight={ 500 }>
-									{ __( 'Legacy contact' ) }
-								</Text>
-								<Text variant="muted" as="p">
-									{ createInterpolateElement(
-										__(
-											'Choose someone to look after your site when you pass away. To take ownership of the site, we ask that the person you designate contacts us at <link>wordpress.com/help</link> with a copy of the death certificate.'
-										),
-										{
-											link: <ExternalLink href="https://wordpress.com/help" children={ null } />,
-										}
-									) }
-								</Text>
-							</VStack>
-							<VStack spacing={ 4 }>
-								<DataForm< SiteSettings >
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: Partial< SiteSettings > ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
-								<HStack justify="flex-start">
-									<Button
-										variant="primary"
-										type="submit"
-										isBusy={ isPending }
-										disabled={ isPending || ! isDirty }
-									>
-										{ __( 'Save' ) }
-									</Button>
-								</HStack>
-							</VStack>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								title={ __( 'Legacy contact' ) }
+								description={ createInterpolateElement(
+									__(
+										'Choose someone to look after your site when you pass away. To take ownership of the site, we ask that the person you designate contacts us at <link>wordpress.com/help</link> with a copy of the death certificate.'
+									),
+									{
+										link: <ExternalLink href="/help" children={ null } />,
+									}
+								) }
+								level={ 3 }
+							/>
+							<DataForm< SiteSettings >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< SiteSettings > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+							<HStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</HStack>
 						</VStack>
 					</form>
 				</CardBody>

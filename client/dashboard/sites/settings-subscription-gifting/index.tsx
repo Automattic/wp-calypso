@@ -15,8 +15,8 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canViewSubscriptionGiftingSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
-import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
 
@@ -59,7 +59,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		return null;
 	}
 
-	if ( ! hasSubscriptionGiftingFeature( site ) ) {
+	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
 		throw notFound();
 	}
 
@@ -99,7 +99,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+						<VStack spacing={ 4 }>
 							<DataForm< SiteSettings >
 								data={ formData }
 								fields={ fields }

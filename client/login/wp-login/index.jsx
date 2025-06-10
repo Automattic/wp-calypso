@@ -19,14 +19,14 @@ import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
-	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -409,7 +409,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( ( isWoo || isBlazePro ) && isLoginView ) {
+		if ( isWoo && isLoginView ) {
 			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
 		}
 
@@ -517,7 +517,7 @@ export class Login extends Component {
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient && ! isWoo && ! isBlazePro;
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient && ! isWoo;
 
 		const jetpackLogo = (
 			<div className="magic-login__gutenboarding-wordpress-logo">
@@ -600,16 +600,18 @@ export class Login extends Component {
 			);
 		}
 
+		const shouldUseWideHeading =
+			isStudioAppOAuth2Client( oauth2Client ) ||
+			isFromAkismet ||
+			isCrowdsignalOAuth2Client( oauth2Client ) ||
+			isBlazePro;
+
 		return (
 			<>
 				{ isWhiteLogin && (
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
-						{ ...( ( isStudioAppOAuth2Client( oauth2Client ) ||
-							isFromAkismet ||
-							isCrowdsignalOAuth2Client( oauth2Client ) ) && {
-							columnWidthHeading: 8,
-						} ) }
+						{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
 						topBar={
 							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
 						}

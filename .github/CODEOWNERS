@@ -113,6 +113,3 @@
 
 # V2 Dashboard
 /client/dashboard @Automattic/lego
-
-# Design System
-/packages/components @Automattic/team-calypso

@@ -196,6 +196,21 @@ Event fired when the user navigates between months.
 
 The time zone (IANA or UTC offset) to use in the calendar. See [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for possible values.
 
+When working with time zones, use the `TZDate` object exported by this package instead of the native `Date` object.
+
+```tsx
+import { DateRangeCalendar, TZDate } from '@automattic/components';
+
+export function WithTimeZone() {
+	const timeZone = 'America/New_York';
+	const [ selected, setSelected ] = useState< Date | undefined >( {
+		from: new TZDate( 2024, 12, 10, timeZone ), // Use `TZDate` instead of `Date`
+		to: new TZDate( 2024, 12, 8, timeZone ), // Use `TZDate` instead of `Date`
+	} );
+	return <DateRangeCalendar timeZone={ timeZone } selected={ selected } onSelect={ setSelected } />;
+}
+```
+
 ### `role`
 
 - Type: `'application' | 'dialog' | undefined`

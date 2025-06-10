@@ -22,14 +22,13 @@ import {
 	siteObjectCacheClearMutation,
 } from '../../app/queries';
 import { ActionList } from '../../components/action-list';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import {
-	canUpdateCaching,
-	isEdgeCacheAvailable as getIsEdgeCacheAvailable,
-} from '../../utils/site-features';
+import { canViewCachingSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
+import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@automattic/dataviews';
 
 type CachingFormData = {
@@ -51,11 +50,11 @@ const form = {
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateCaching( site );
+	const canView = site && canViewCachingSettings( site );
 
 	const { data: isEdgeCacheActive } = useQuery( {
 		...siteEdgeCacheStatusQuery( siteSlug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( siteSlug ) );
 	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( siteSlug ) );
@@ -125,7 +124,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderCallout = () => {
-		return <SettingsCallout siteSlug={ siteSlug } />;
+		return <SettingsCallout siteSlug={ siteSlug } tracksId="caching" />;
 	};
 
 	const renderForm = () => {
@@ -152,7 +151,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleUpdateEdgeCacheStatus }>
-						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+						<VStack spacing={ 4 }>
 							<DataForm< CachingFormData >
 								data={ formData }
 								fields={ fields }
@@ -239,11 +238,11 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const description = canUpdate
+	const description = canView
 		? createInterpolateElement(
-				__( 'Manage your site’s server-side caching. <learnMoreLink />.' ),
+				__( 'Manage your site’s server-side caching. <link>Learn more</link>.' ),
 				{
-					learnMoreLink: <a href="#learn-more">{ __( 'Learn more' ) }</a>,
+					link: <InlineSupportLink supportContext="hosting-edge-cache" />,
 				}
 		  )
 		: '';
@@ -253,7 +252,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			{ canUpdate ? (
+			{ canView ? (
 				<>
 					{ renderForm() }
 					{ renderActions() }

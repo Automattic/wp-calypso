@@ -11,13 +11,11 @@ import SiteVisibilitySettings from '../index';
 function render( ui: React.ReactElement ) {
 	const queryClient = new QueryClient();
 	const router = createRouter( {
-		routeTree: createRootRoute( {
-			component: () => ui,
-		} ),
+		routeTree: createRootRoute( { component: () => ui } ),
 	} );
 	return testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
-			<RouterProvider router={ router } />
+			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
 		</QueryClientProvider>
 	);
 }
