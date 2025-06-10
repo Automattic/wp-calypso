@@ -78,7 +78,7 @@ class SiteOrDomain extends Component {
 			{
 				components: {
 					strong: <strong />,
-					br: <br />,
+					br: <br aria-hidden="true" />,
 				},
 			}
 		);
@@ -92,7 +92,7 @@ class SiteOrDomain extends Component {
 			{
 				components: {
 					strong: <strong />,
-					br: <br />,
+					br: <br aria-hidden="true" />,
 				},
 			}
 		);
