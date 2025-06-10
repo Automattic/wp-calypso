@@ -263,6 +263,7 @@ function ItemVariantOption( {
 			id={ productId.toString() }
 			className={ isSelected ? 'item-variant-option--selected' : undefined }
 			aria-label={ variantLabel.noun }
+			aria-selected={ isSelected }
 			data-product-slug={ productSlug }
 			role="option"
 			onClick={ onSelect }
