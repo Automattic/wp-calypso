@@ -684,6 +684,11 @@ $image-height: 47px;
 
 	.card {
 		background: transparent;
+
+		&.two-factor-authentication__push-notification-approval,
+		&.two-factor-authentication__actions {
+			box-shadow: none;
+		}
 	}
 
 	form {
