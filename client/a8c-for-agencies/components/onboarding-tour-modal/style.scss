@@ -4,6 +4,7 @@
 
 $hint-container-bg-color: #EBF7FF;
 $banner-height: 260px;
+$banner-height-mobile: 200px;
 $mobile-modal-margin-top: 40px;
 $mobile-footer-height: 150px;
 
@@ -52,14 +53,18 @@ $mobile-footer-height: 150px;
 
 .onboarding-tour-modal__main-banner-container {
 	width: 100%;
-	height: $banner-height;
+	height: $banner-height-mobile;
+	overflow: hidden;
 	position: relative;
+
+	@include break-medium {
+		height: $banner-height;
+	}
 }
 
 .onboarding-tour-modal__main-banner {
-	background-size: cover;
 	width: 100%;
-	height: $banner-height;
+	height: auto;
 	position: absolute;
 	top: 0;
 	opacity: 0;

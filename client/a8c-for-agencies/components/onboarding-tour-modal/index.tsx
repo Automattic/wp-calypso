@@ -141,15 +141,14 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 					</Button>
 					<div className="onboarding-tour-modal__main-banner-container">
 						{ sections.map( ( section ) => (
-							<div
+							<img
 								className={ clsx( 'onboarding-tour-modal__main-banner', {
 									'is-visible': section.props.id === currentSection?.props.id,
 								} ) }
 								key={ section.props.id }
-								style={ {
-									backgroundImage: `url(${ section?.props.bannerImage })`,
-								} }
-							></div>
+								src={ section?.props.bannerImage }
+								alt=""
+							/>
 						) ) }
 					</div>
 					<div className="onboarding-tour-modal__main-content">
