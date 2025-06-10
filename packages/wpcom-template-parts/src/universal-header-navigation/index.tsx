@@ -47,8 +47,8 @@ const UniversalNavbarHeader = ( {
 					<div className="masterbar-menu">
 						<div className="masterbar">
 							<nav className="x-nav" aria-label="WordPress.com">
-								<ul className="x-nav-list x-nav-list__left">
-									<li className="x-nav-item">
+								<ul className="x-nav-list x-nav-list__left" role="menu">
+									<li className="x-nav-item" role="none">
 										<a
 											role="menuitem"
 											className="x-nav-link x-nav-link__logo x-link"
@@ -68,7 +68,7 @@ const UniversalNavbarHeader = ( {
 									</li>
 									{ variant !== 'minimal' ? (
 										<>
-											<li className="x-nav-item x-nav-item__wide">
+											<li className="x-nav-item x-nav-item__wide" role="none">
 												<NonClickableItem
 													className="x-nav-link x-link"
 													content={ __( 'Products', __i18n_text_domain__ ) }
@@ -167,7 +167,7 @@ const UniversalNavbarHeader = ( {
 													</ul>
 												</div>
 											</li>
-											<li className="x-nav-item x-nav-item__wide">
+											<li className="x-nav-item x-nav-item__wide" role="none">
 												<NonClickableItem
 													className="x-nav-link x-link"
 													content={ __( 'Features', __i18n_text_domain__ ) }
@@ -233,7 +233,7 @@ const UniversalNavbarHeader = ( {
 													</ul>
 												</div>
 											</li>
-											<li className="x-nav-item x-nav-item__wide">
+											<li className="x-nav-item x-nav-item__wide" role="none">
 												<NonClickableItem
 													className="x-nav-link x-link"
 													content={ __( 'Resources', __i18n_text_domain__ ) }
@@ -315,7 +315,7 @@ const UniversalNavbarHeader = ( {
 										</>
 									) : null }
 								</ul>
-								<ul className="x-nav-list x-nav-list__right">
+								<ul className="x-nav-list x-nav-list__right" role="menu">
 									{ ! isLoggedIn && (
 										<ClickableItem
 											className="x-nav-item x-nav-item__wide"
@@ -338,7 +338,7 @@ const UniversalNavbarHeader = ( {
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
 										/>
 									) }
-									<li className="x-nav-item x-nav-item__narrow">
+									<li className="x-nav-item x-nav-item__narrow" role="none">
 										<button
 											role="menuitem"
 											className="x-nav-link x-nav-link__menu x-link"
