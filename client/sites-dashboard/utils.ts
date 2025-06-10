@@ -102,6 +102,10 @@ export const getMigrationType = ( site: SiteExcerptData ): 'diy' | 'difm' | unde
 		return undefined;
 	}
 
+	if ( migrationStatus === 'migration-in-progress' ) {
+		return 'difm';
+	}
+
 	const type = migrationStatus.split( '-' )[ 2 ];
 
 	if ( ! [ 'difm', 'diy' ].includes( type ) ) {
