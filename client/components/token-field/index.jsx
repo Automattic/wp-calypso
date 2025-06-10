@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 import { difference } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -92,6 +93,8 @@ class TokenField extends PureComponent {
 			ref: 'main',
 			className: classes,
 			tabIndex: '-1',
+			'aria-haspopup': 'listbox',
+			'aria-owns': 'options-list',
 		};
 
 		if ( ! this.props.disabled ) {
@@ -110,7 +113,7 @@ class TokenField extends PureComponent {
 					tabIndex="-1"
 					onMouseDown={ this._onContainerTouched }
 					onTouchStart={ this._onContainerTouched }
-					role="textbox"
+					role="listbox"
 				>
 					{ this._renderTokensAndInput() }
 				</div>
@@ -168,6 +171,18 @@ class TokenField extends PureComponent {
 			value,
 		} = this.props;
 
+		let ariaLabel = '';
+		if ( this.props.value.length > 0 ) {
+			/* translators: %(items)s is a comma-separated list of selected items */
+			ariaLabel = translate( 'Selected: %(items)s. Search to add more.', {
+				args: {
+					items: this.props.value.map( this.props.displayTransform ).join( ', ' ),
+				},
+			} );
+		} else {
+			ariaLabel = translate( 'Search to add items' );
+		}
+
 		let props = {
 			autoCapitalize,
 			autoComplete,
@@ -179,6 +194,10 @@ class TokenField extends PureComponent {
 			onBlur: this._onBlur,
 			spellCheck,
 			value: this.state.incompleteTokenValue,
+			role: 'textbox',
+			'aria-controls': 'options-list',
+			'aria-activedescendant': `option-${ this._getSelectedSuggestion() }`,
+			'aria-label': ariaLabel,
 		};
 
 		if ( value.length === 0 && placeholder ) {
