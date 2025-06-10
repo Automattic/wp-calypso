@@ -3,9 +3,15 @@ import { useMemo } from 'react';
 import useCountryList, {
 	isVatSupported,
 } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
-function getUniqueCountries( countries ) {
-	const unique = [];
+interface CountryCodeOption {
+	label: string;
+	value: string;
+}
+
+function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] {
+	const unique: C[] = [];
 	countries.forEach( ( country ) => {
 		if ( unique.map( ( x ) => x.code ).includes( country.code ) ) {
 			return;
@@ -15,7 +21,7 @@ function getUniqueCountries( countries ) {
 	return unique;
 }
 
-export default function useDataFormCountryCodes() {
+export default function useDataFormCountryCodes(): CountryCodeOption[] {
 	const translate = useTranslate();
 	const countries = useCountryList();
 
