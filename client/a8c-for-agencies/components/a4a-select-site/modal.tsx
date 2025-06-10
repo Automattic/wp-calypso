@@ -6,13 +6,13 @@ import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4ASelectSiteTable from './site-table';
-import type { SelectSiteModalProps } from './types';
+import type { SelectSiteModalProps, A4ASelectSiteItem } from './types';
 
 const SelectSiteModal = ( { onClose, onSiteSelect, title, subtitle }: SelectSiteModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ selectedSite, setSelectedSite ] = useState< SiteItem | null >( null );
+	const [ selectedSite, setSelectedSite ] = useState< A4ASelectSiteItem | null >( null );
 
 	const handleSelectSite = () => {
 		if ( selectedSite ) {

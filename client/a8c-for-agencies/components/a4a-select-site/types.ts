@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react';
 
+export type A4ASelectSiteItem = {
+	id: number;
+	site: string;
+	date: string;
+	rawSite: Site;
+};
+
 export interface A4ASelectSiteProps {
 	trackingEvent?: string;
 	buttonLabel?: string;
@@ -23,6 +30,6 @@ export interface SelectSiteModalProps {
 }
 
 export interface SelectSiteTableProps {
-	selectedSite: SiteItem | null;
-	setSelectedSite: ( site: SiteItem | null ) => void;
+	selectedSite: A4ASelectSiteItem | null;
+	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
 }

@@ -5,14 +5,11 @@ import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-p
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import {
-	useFetchAllManagedSites,
-	type SiteItem,
-} from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-all-managed-sites';
+import { useFetchAllManagedSites } from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-all-managed-sites';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { SelectSiteTableProps } from './types';
+import type { SelectSiteTableProps, A4ASelectSiteItem } from './types';
 
 const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableProps ) => {
 	const translate = useTranslate();
@@ -26,7 +23,7 @@ const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableP
 	} );
 
 	const onSelectSite = useCallback(
-		( item: SiteItem ) => {
+		( item: A4ASelectSiteItem ) => {
 			setSelectedSite( item );
 			dispatch( recordTracksEvent( 'calypso_a4a_select_site_table_select_site_click' ) );
 		},
@@ -37,8 +34,8 @@ const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableP
 		const siteColumn = {
 			id: 'site',
 			label: translate( 'Site' ),
-			getValue: ( { item }: { item: SiteItem } ) => item.site,
-			render: ( { item }: { item: SiteItem } ) => (
+			getValue: ( { item }: { item: A4ASelectSiteItem } ) => item.site,
+			render: ( { item }: { item: A4ASelectSiteItem } ) => (
 				<div>
 					<FormRadio
 						htmlFor={ `site-${ item.id }` }
@@ -58,7 +55,7 @@ const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableP
 	}, [ onSelectSite, selectedSite?.id, translate ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( items as SiteItem[], dataViewsState, fields );
+		return filterSortAndPaginate( items as A4ASelectSiteItem[], dataViewsState, fields );
 	}, [ items, dataViewsState, fields ] );
 
 	return (
