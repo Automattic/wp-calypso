@@ -5,7 +5,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import './styles.scss';
+import './style.scss';
 
 export default function SubscriberImportLimitNotice() {
 	const translate = useTranslate();
