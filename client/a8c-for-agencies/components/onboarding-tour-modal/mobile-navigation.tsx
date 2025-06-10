@@ -16,7 +16,7 @@ export default function OnboardingTourModalMobileNavigation( {
 	setCurrentSectionId,
 }: Props ) {
 	const onSwipe = useCallback(
-		( e ) => {
+		( e: React.TouchEvent< HTMLDivElement > ) => {
 			// Prevent scrolling while touching navigation
 			e.preventDefault();
 
