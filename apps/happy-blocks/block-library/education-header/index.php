@@ -20,17 +20,12 @@ $happy_blocks_current_page = $args['active_page'];
 
 if ( isset( $args['button_only'] ) && $args['button_only'] ) : ?>
 <div class="happy-blocks_navigation_search">
-	<div></div>
-	<form class="happy-blocks_inner_search_form" role="search" method="get" action="">
-		<input type="search" name="s" value="" placeholder="<?php echo esc_html( $args['search_placeholder'] ); ?>">
-			<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
-				<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
-					<path d="M13 5C9.7 5 7 7.7 7 11C7 12.4 7.5 13.7 8.3 14.7L4.5 18.5L5.6 19.6L9.4 15.8C10.4 16.6 11.7 17.1 13.1 17.1C16.4 17.1 19.1 14.4 19.1 11.1C19.1 7.8 16.3 5 13 5ZM13 15.5C10.5 15.5 8.5 13.5 8.5 11C8.5 8.5 10.5 6.5 13 6.5C15.5 6.5 17.5 8.5 17.5 11C17.5 13.5 15.5 15.5 13 15.5Z"/>
-				</svg>
-				<?php echo esc_html( __( 'Search', 'happy-blocks' ) ); ?>
-			</button>
-		</div>
-	</form>
+	<a class="jetpack-search-filter__link" href="#">
+		<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
+			<path d="M13 5C9.7 5 7 7.7 7 11C7 12.4 7.5 13.7 8.3 14.7L4.5 18.5L5.6 19.6L9.4 15.8C10.4 16.6 11.7 17.1 13.1 17.1C16.4 17.1 19.1 14.4 19.1 11.1C19.1 7.8 16.3 5 13 5ZM13 15.5C10.5 15.5 8.5 13.5 8.5 11C8.5 8.5 10.5 6.5 13 6.5C15.5 6.5 17.5 8.5 17.5 11C17.5 13.5 15.5 15.5 13 15.5Z"/>
+		</svg>
+		<?php echo esc_html( __( 'Search', 'happy-blocks' ) ); ?>
+	</a>
 </div>
 <?php else : ?>
 <div class="happy-blocks-mini-search happy-blocks-header is-<?php echo esc_html( $happy_blocks_current_page ); ?>">
