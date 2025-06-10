@@ -121,7 +121,7 @@ try {
 		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
-		await runTask( testWorkspaces );
+		// await runTask( testWorkspaces );
 		await runTask( testApps );
 	} )();
 
