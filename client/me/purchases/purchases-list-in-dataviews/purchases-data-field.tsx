@@ -189,6 +189,8 @@ export function getPurchasesFieldDefinitions( {
 		{
 			id: 'type',
 			label: translate( 'Type' ),
+			enableHiding: false,
+			enableSorting: true,
 			type: 'text',
 			elements: [
 				{ value: 'domain', label: translate( 'Domains' ) },
@@ -208,6 +210,8 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'expiring-soon',
+			enableHiding: false,
+			enableSorting: true,
 			label: translate( 'Expiring soon' ),
 			type: 'text',
 			elements: [
