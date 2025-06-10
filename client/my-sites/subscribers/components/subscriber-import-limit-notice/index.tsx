@@ -4,18 +4,16 @@ import { Notice } from '@wordpress/components';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export default function SubscriberImportLimitNotice() {
 	const translate = useTranslate();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) ) || { ID: 0, slug: '' };
-	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSite.ID ) );
-	const isOnFreePlan =
-		isFreePlan( currentPlan?.productSlug ) || isJetpackFreePlan( currentPlan?.productSlug );
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const currentPlan = selectedSite?.plan?.product_slug || '';
+	const isOnFreePlan = isFreePlan( currentPlan ) || isJetpackFreePlan( currentPlan );
 
-	if ( ! isOnFreePlan || ! selectedSite.ID ) {
+	if ( ! isOnFreePlan || ! selectedSite?.ID ) {
 		return null;
 	}
 
