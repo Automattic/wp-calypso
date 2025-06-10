@@ -1,52 +1,75 @@
 import { DataForm } from '@automattic/dataviews';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
+	__experimentalHStack as HStack,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
+	__experimentalVStack as VStack,
+	Button,
+	Notice,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
+import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDataFormCountryCodes from './use-data-form-country-codes';
 import useVatDetails from './use-vat-details';
 
-function VatIdField( { data, field, onChange } ) {
-	const { id, label } = field;
-	const value = field.getValue( { item: data } );
+const VatIdControl = ( { data, field, onChange } ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const onChangeControl = useCallback(
-		( newValue ) =>
-			onChange( {
-				[ id ]: newValue,
-			} ),
-		[ id, onChange ]
+	const { getValue, id, isUpdating, isVatAlreadySet, label, taxName } = field;
+	const { country } = data;
+
+	const vatIdHelp = translate(
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+		{
+			args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
+			components: {
+				contactSupportLink: (
+					<a
+						target="_blank"
+						href={ CALYPSO_CONTACT }
+						rel="noreferrer"
+						onClick={ () => {
+							dispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+						} }
+					/>
+				),
+			},
+		}
 	);
-
-	const prefix = useMemo( () => {
-		return data.country ? (
-			<InputControlPrefixWrapper>{ data.country }</InputControlPrefixWrapper>
-		) : null;
-	}, [ data.country ] );
 
 	return (
 		<InputControl
 			__next40pxDefaultSize
+			disabled={ isUpdating || isVatAlreadySet }
+			help={ ! isVatAlreadySet && vatIdHelp }
 			label={ label }
-			onChange={ onChangeControl }
-			prefix={ prefix }
-			value={ value ?? '' }
+			onChange={ ( value ) => onChange( { [ id ]: value } ) }
+			prefix={ country && <InputControlPrefixWrapper>{ country }</InputControlPrefixWrapper> }
+			value={ getValue( { item: data } ) || '' }
 		/>
 	);
-}
+};
 
 export default function VatInfoDataForm() {
 	const translate = useTranslate();
-	const { vatDetails } = useVatDetails();
+	const dispatch = useDispatch();
+
+	const [ localData, setLocalData ] = useState();
+
+	const { isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
+		useVatDetails();
 	const countryCodes = useDataFormCountryCodes();
 
-	const [ localData, setLocalData ] = useState( undefined );
-
-	const data = useMemo( () => {
+	const formData = useMemo( () => {
 		const serverData = {
 			country: vatDetails.country ?? '',
 			id: vatDetails.id ?? '',
@@ -58,6 +81,10 @@ export default function VatInfoDataForm() {
 			...localData,
 		};
 	}, [ localData, vatDetails.address, vatDetails.country, vatDetails.id, vatDetails.name ] );
+
+	const { data: geoData } = useGeoLocationQuery();
+	const taxName = useTaxName( formData.country ?? geoData?.country_short ?? 'GB' );
+
 	const fields = [
 		{
 			elements: countryCodes,
@@ -66,9 +93,12 @@ export default function VatInfoDataForm() {
 			type: 'text',
 		},
 		{
-			Edit: VatIdField,
+			Edit: VatIdControl,
 			id: 'id',
+			isUpdating,
+			isVatAlreadySet: !! vatDetails.id,
 			label: translate( 'VAT ID' ),
+			taxName,
 		},
 		{
 			id: 'name',
@@ -81,17 +111,58 @@ export default function VatInfoDataForm() {
 			type: 'text',
 		},
 	];
+
 	const form = {
 		type: 'regular',
 		fields: [ 'country', 'id', 'name', 'address' ],
 	};
-	const onChange = ( edits ) => {
-		setLocalData( ( current ) => ( { ...current, ...edits } ) );
+
+	const onSubmit = ( e ) => {
+		e.preventDefault();
+		dispatch( recordTracksEvent( 'calypso_vat_details_update' ) );
+		setVatDetails( { ...vatDetails, ...localData } );
 	};
 
 	return (
-		<form onSubmit={ () => {} }>
-			<DataForm data={ data } fields={ fields } form={ form } onChange={ onChange } />
+		<form onSubmit={ onSubmit }>
+			<VStack spacing={ 4 }>
+				<DataForm
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits ) => {
+						setLocalData( ( current ) => ( { ...current, ...edits } ) );
+					} }
+				/>
+
+				{ ! isUpdating && !! updateError && (
+					<Notice className="vat-info__notice" isDismissible={ false } status="error">
+						{ updateError.message }
+					</Notice>
+				) }
+
+				{ ! isUpdating && !! isUpdateSuccessful && (
+					<Notice className="vat-info__notice" isDismissible={ false } status="success">
+						{ translate( 'Your %s details have been updated!', {
+							textOnly: true,
+							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} ) }
+					</Notice>
+				) }
+
+				<HStack justify="flex-start">
+					<Button
+						__next40pxDefaultSize
+						className="vat-info__submit-button"
+						disabled={ isUpdating }
+						isBusy={ isUpdating }
+						type="submit"
+						variant="primary"
+					>
+						{ translate( 'Validate and save' ) }
+					</Button>
+				</HStack>
+			</VStack>
 		</form>
 	);
 }
