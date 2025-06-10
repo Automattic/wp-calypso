@@ -8,7 +8,7 @@ import {
 	Popover,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -19,33 +19,43 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { A4A_REPORTS_LINK } from '../../constants';
+import { formatDate } from '../../lib/format-date';
 
 import './style.scss';
-
-const AVAILABLE_TIMEFRAMES = [
-	{ label: 'Last 30 days', value: '30_days' },
-	{ label: 'Last 7 days', value: '7_days' },
-	{ label: 'Last 24 hours', value: '24_hours' },
-	{ label: 'Custom range', value: 'custom' },
-];
-
-// Checkbox groups for Step 2
-const STATS_OPTIONS = [
-	{ label: 'Visitors and Views in this timeframe', value: 'total_traffic' },
-	{ label: 'Top 5 posts', value: 'top_pages' },
-	{ label: 'Top 5 referrers', value: 'top_devices' },
-	{ label: 'Top 5 cities', value: 'top_locations' },
-	{ label: 'Device breakdown', value: 'device_breakdown' },
-	{ label: 'Total Visitors and Views since the site was created', value: 'total_traffic_all_time' },
-	{ label: 'Most popular time of day', value: 'most_popular_time_of_day' },
-	{ label: 'Most popular day of week', value: 'most_popular_day_of_week' },
-];
 
 type CheckedItemsState = Record< string, boolean >;
 
 const BuildReport = () => {
 	const translate = useTranslate();
 	const title = translate( 'Build Report' );
+
+	const AVAILABLE_TIMEFRAMES = useMemo(
+		() => [
+			{ label: translate( 'Last 30 days' ), value: '30_days' },
+			{ label: translate( 'Last 7 days' ), value: '7_days' },
+			{ label: translate( 'Last 24 hours' ), value: '24_hours' },
+			{ label: translate( 'Custom range' ), value: 'custom' },
+		],
+		[ translate ]
+	);
+
+	// Checkbox groups for Step 2
+	const STATS_OPTIONS = useMemo(
+		() => [
+			{ label: translate( 'Visitors and Views in this timeframe' ), value: 'total_traffic' },
+			{ label: translate( 'Top 5 posts' ), value: 'top_pages' },
+			{ label: translate( 'Top 5 referrers' ), value: 'top_devices' },
+			{ label: translate( 'Top 5 cities' ), value: 'top_locations' },
+			{ label: translate( 'Device breakdown' ), value: 'device_breakdown' },
+			{
+				label: translate( 'Total Visitors and Views since the site was created' ),
+				value: 'total_traffic_all_time',
+			},
+			{ label: translate( 'Most popular time of day' ), value: 'most_popular_time_of_day' },
+			{ label: translate( 'Most popular day of week' ), value: 'most_popular_day_of_week' },
+		],
+		[ translate ]
+	);
 
 	const today = new Date();
 	const yesterday = new Date( today );
@@ -71,8 +81,9 @@ const BuildReport = () => {
 	);
 
 	const [ currentStep, setCurrentStep ] = useState( 1 );
-	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
-	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
+
+	const handleNextStep = useCallback( () => setCurrentStep( ( prev ) => prev + 1 ), [] );
+	const handlePrevStep = useCallback( () => setCurrentStep( ( prev ) => prev - 1 ), [] );
 
 	const handleStep2CheckboxChange = ( groupKey: 'stats', itemName: string ) => {
 		const setterMap: Record<
@@ -87,20 +98,7 @@ const BuildReport = () => {
 		} ) );
 	};
 
-	// Helper function to format date for display
-	const formatDateForDisplay = ( dateString: string | undefined ) => {
-		if ( ! dateString ) {
-			return '';
-		}
-		const date = new Date( dateString );
-		return date.toLocaleDateString( 'en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-		} );
-	};
-
-	const renderStepContent = () => {
+	const stepContent = useMemo( () => {
 		switch ( currentStep ) {
 			case 1:
 				return (
@@ -134,7 +132,7 @@ const BuildReport = () => {
 										__nextHasNoMarginBottom
 										id="start-date"
 										label={ translate( 'Start date' ) }
-										value={ formatDateForDisplay( startDate ) }
+										value={ formatDate( startDate ) }
 										placeholder={ translate( 'Select start date' ) }
 										onChange={ () => {} }
 										onClick={ () => setIsStartDatePickerOpen( true ) }
@@ -170,7 +168,7 @@ const BuildReport = () => {
 										__nextHasNoMarginBottom
 										id="end-date"
 										label={ translate( 'End date' ) }
-										value={ formatDateForDisplay( endDate ) }
+										value={ formatDate( endDate ) }
 										placeholder={ translate( 'Select end date' ) }
 										onChange={ () => {} }
 										onClick={ () => setIsEndDatePickerOpen( true ) }
@@ -288,26 +286,45 @@ const BuildReport = () => {
 			default:
 				return null;
 		}
-	};
+	}, [
+		currentStep,
+		selectedSite,
+		selectedTimeframe,
+		startDate,
+		endDate,
+		clientEmail,
+		sendMeACopy,
+		teammateEmails,
+		customIntroText,
+		statsCheckedItems,
+		isStartDatePickerOpen,
+		isEndDatePickerOpen,
+		translate,
+		AVAILABLE_TIMEFRAMES,
+		STATS_OPTIONS,
+	] );
 
-	const renderActions = () => (
-		<div className="build-report__actions">
-			{ currentStep > 1 && (
-				<Button variant="secondary" onClick={ handlePrevStep }>
-					{ translate( 'Back' ) }
-				</Button>
-			) }
-			{ currentStep < 3 && (
-				<Button variant="primary" onClick={ handleNextStep }>
-					{ translate( 'Next' ) }
-				</Button>
-			) }
-			{ currentStep === 3 && (
-				<Button variant="primary" onClick={ () => alert( 'Schedule and Send clicked' ) }>
-					{ translate( 'Send to client now' ) }
-				</Button>
-			) }
-		</div>
+	const actions = useMemo(
+		() => (
+			<div className="build-report__actions">
+				{ currentStep > 1 && (
+					<Button variant="secondary" onClick={ handlePrevStep }>
+						{ translate( 'Back' ) }
+					</Button>
+				) }
+				{ currentStep < 3 && (
+					<Button variant="primary" onClick={ handleNextStep }>
+						{ translate( 'Next' ) }
+					</Button>
+				) }
+				{ currentStep === 3 && (
+					<Button variant="primary" onClick={ () => alert( 'Schedule and Send clicked' ) }>
+						{ translate( 'Send to client now' ) }
+					</Button>
+				) }
+			</div>
+		),
+		[ currentStep, translate, handleNextStep, handlePrevStep ]
 	);
 
 	return (
@@ -333,8 +350,8 @@ const BuildReport = () => {
 			</LayoutTop>
 			<LayoutBody>
 				<div className="build-report__content">
-					{ renderStepContent() }
-					{ renderActions() }
+					{ stepContent }
+					{ actions }
 				</div>
 			</LayoutBody>
 		</Layout>
