@@ -24,7 +24,7 @@ export const OPERATOR_CONTAINS = 'contains';
 export const OPERATOR_NOT_CONTAINS = 'notContains';
 export const OPERATOR_STARTS_WITH = 'startsWith';
 
-export const ALL_OPERATORS = [
+export const ALL_OPERATORS: Operator[] = [
 	OPERATOR_IS,
 	OPERATOR_IS_NOT,
 	OPERATOR_IS_ANY,
@@ -38,9 +38,9 @@ export const ALL_OPERATORS = [
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
-] satisfies Operator[];
+];
 
-export const SINGLE_SELECTION_OPERATORS = [
+export const SINGLE_SELECTION_OPERATORS: Operator[] = [
 	OPERATOR_IS,
 	OPERATOR_IS_NOT,
 	OPERATOR_LESS_THAN,
@@ -50,7 +50,7 @@ export const SINGLE_SELECTION_OPERATORS = [
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
-] satisfies Operator[];
+];
 
 export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	[ OPERATOR_IS ]: {
