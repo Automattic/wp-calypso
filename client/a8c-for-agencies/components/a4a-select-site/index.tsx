@@ -1,7 +1,9 @@
+import { Button } from '@wordpress/components';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import A4ASelectSiteButton from './button';
 import A4ASelectSiteModal from './modal';
 import type { A4ASelectSiteProps } from './types';
 
@@ -13,7 +15,9 @@ const A4ASelectSite = ( {
 	title,
 	subtitle,
 }: A4ASelectSiteProps ) => {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
+
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleOpenModal = useCallback( () => {
@@ -25,11 +29,14 @@ const A4ASelectSite = ( {
 
 	return (
 		<>
-			<A4ASelectSiteButton
-				handleOpenModal={ handleOpenModal }
-				buttonLabel={ buttonLabel }
-				className={ className }
-			/>
+			<Button
+				__next40pxDefaultSize
+				variant="secondary"
+				onClick={ handleOpenModal }
+				className={ clsx( className ) }
+			>
+				{ buttonLabel || translate( 'Select a site' ) }
+			</Button>
 			{ isOpen && (
 				<A4ASelectSiteModal
 					onClose={ () => setIsOpen( false ) }
@@ -41,8 +48,5 @@ const A4ASelectSite = ( {
 		</>
 	);
 };
-
-A4ASelectSite.Button = A4ASelectSiteButton;
-A4ASelectSite.Modal = A4ASelectSiteModal;
 
 export default A4ASelectSite;
