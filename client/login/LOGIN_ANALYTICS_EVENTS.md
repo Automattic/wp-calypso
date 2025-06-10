@@ -42,27 +42,23 @@ This document outlines all the analytics events tracked during the login process
 
 **Properties**:
 - `flow` (string|null): The client's login flow
-- `token_type` (string): Always "link" for email requests
-- `is_jetpack` (boolean): Whether this is a Jetpack login
-- `is_magic_code` (boolean): Whether magic code is being used
+- `token_type` (string): Token type being requested
 
 ### `calypso_login_email_link_success`
 **Description**: Tracks successful email link request
 
 **Properties**:
 - `flow` (string|null): The client's login flow
-- `token_type` (string): Always "link"
-- `is_jetpack` (boolean): Whether this is a Jetpack login
-- `is_magic_code` (boolean): Whether magic code is being used
+- `token_type` (string): Token type that was requested
 
 ### `calypso_login_email_link_failure`
 **Description**: Tracks failed email link requests
 
 **Properties**:
 - `flow` (string|null): The client's login flow
-- `token_type` (string): Always "link"
-- `is_jetpack` (boolean): Whether this is a Jetpack login
-- `is_magic_code` (boolean): Whether magic code is being used
+- `token_type` (string): Token type that was requested
+- `error_code` (string): Error code from the API
+- `error_message` (string): Error message from the API
 
 ### `calypso_login_email_link_handle_click_view`
 **Description**: Tracks when user views the email link handling page
