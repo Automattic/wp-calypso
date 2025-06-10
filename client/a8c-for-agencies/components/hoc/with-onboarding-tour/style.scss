@@ -1,5 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
 .components-button.is-primary.overview__growth-accelerator-footer-schedule-call.a4a-onboarding-tour__schedule-a-call-cta {
 	flex: 0;
+	min-height: 36px;
+
+	@include break-mobile {
+		min-height: 0;
+	}
 }
 
 .a4a-onboarding-tour-snackbar {
