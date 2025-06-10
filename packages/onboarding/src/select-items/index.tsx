@@ -73,7 +73,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 									primary={ isPrimary }
 									className="select-items__item-button"
 									onClick={ () => onSelect( value ) }
-									aria-label={ actionButtonLabel }
+									aria-label={ actionButtonLabel?.toString() }
 								>
 									{ actionText }
 								</Button>
