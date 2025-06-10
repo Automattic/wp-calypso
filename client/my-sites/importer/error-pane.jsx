@@ -5,6 +5,7 @@ import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -109,12 +110,12 @@ class ImporterError extends PureComponent {
 							br: <br />,
 							cs: helpButton,
 							doc: (
-								<a
-									href={ localizeUrl(
+								<InlineSupportLink
+									showIcon={ false }
+									supportLink={ localizeUrl(
 										'https://wordpress.com/support/import-from-substack/import-content/'
 									) }
-									target="_blank"
-									rel="noreferrer"
+									supportPostId={ 400434 }
 								/>
 							),
 						},
