@@ -27,6 +27,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -655,7 +656,8 @@ export default connect(
 				! isJetpackCloudOAuth2Client( oauth2Client ) &&
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isCrowdsignalOAuth2Client( oauth2Client ) &&
-				! isStudioAppOAuth2Client( oauth2Client ),
+				! isStudioAppOAuth2Client( oauth2Client ) &&
+				! isVIPOAuth2Client( oauth2Client ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),

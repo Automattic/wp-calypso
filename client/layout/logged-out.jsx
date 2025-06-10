@@ -30,6 +30,7 @@ import {
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -346,6 +347,7 @@ export default withCurrentRoute(
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isA4AClient = isA4AOAuth2Client( oauth2Client );
+			const isVipClient = isVIPOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
 					( ( Boolean( currentQuery?.client_id ) === false &&
@@ -356,7 +358,8 @@ export default withCurrentRoute(
 						isA4AClient ||
 						isWoo ||
 						isJetpackCloudClient ||
-						isJetpackLogin ) ) ||
+						isJetpackLogin ||
+						isVipClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

@@ -12,6 +12,7 @@ import {
 	isGravatarFlowOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isGravatarOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import './login-header.scss';
 
@@ -82,6 +83,8 @@ export function getHeaderText(
 			clientName = 'Jetpack';
 		} else if ( isWCCOM ) {
 			headerText = translate( 'Log in to Woo with WordPress.com' );
+		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
+			clientName = 'VIP';
 		}
 
 		headerText = clientName

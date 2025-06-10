@@ -9,6 +9,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isA4AOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -73,6 +74,7 @@ const enhanceContextWithLogin = ( context ) => {
 	const isA4AClient = isA4AOAuth2Client( oauth2Client );
 	const isJetpackLogin = isJetpack === 'jetpack';
 	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
+	const isVipClient = isVIPOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
 		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
@@ -83,7 +85,8 @@ const enhanceContextWithLogin = ( context ) => {
 		isA4AClient ||
 		isJetpackCloudClient ||
 		isJetpackLogin ||
-		isWoo;
+		isWoo ||
+		isVipClient;
 
 	context.primary = (
 		<WPLogin
