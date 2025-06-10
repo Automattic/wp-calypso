@@ -1,4 +1,4 @@
-import { isFreePlanProduct } from '@automattic/calypso-products';
+import { isFreePlanProduct, PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
-import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -23,8 +22,8 @@ import {
 	domainRegistration,
 	updatePrivacyForDomain,
 	ObjectWithProducts,
+	planItem,
 } from 'calypso/lib/cart-values/cart-items';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
@@ -33,11 +32,15 @@ import {
 	domainManagementList,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
+import { RenderDomainsStep } from 'calypso/signup/steps/domains';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordRemoveDomainButtonClick,
+	recordAddDomainButtonClickInMapDomain,
+	recordAddDomainButtonClickInTransferDomain,
+	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -101,12 +104,15 @@ type DomainSearchProps = {
 	wpAdminUrl: ReturnType< typeof getSiteAdminUrl >;
 };
 
+const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
+
 class DomainSearch extends Component< DomainSearchProps > {
 	isMounted = false;
 
 	state = {
 		domainRegistrationAvailable: true,
 		domainRegistrationMaintenanceEndTime: null,
+		step: {},
 	};
 
 	handleDomainsAvailabilityChange = (
@@ -423,22 +429,43 @@ class DomainSearch extends Component< DomainSearchProps > {
 						{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
 							<NewDomainsRedirectionNoticeUpsell />
 						) }
-						<RegisterDomainStep
+						<RenderDomainsStep
 							suggestion={ this.getInitialSuggestion() }
-							domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+							isOnboarding
+							useStepperWrapper
+							isDomainOnly
+							positionInFlow={ 0 }
+							flowName="site-domain-search" // this enables the multi-domain cart
+							stepName=""
+							goToNextStep={ () => {
+								const domains = this.props.cart.products.filter(
+									( p ) => p.is_domain_registration
+								);
+
+								if ( domains.length === 1 ) {
+									page( domainAddEmailUpsell( this.props.selectedSiteSlug, domains[ 0 ].meta ) );
+								} else {
+									page( `/checkout/${ this.props.selectedSiteSlug }` );
+								}
+							} }
+							multiDomainDefaultPlan={ multiDomainDefaultPlan }
+							saveSignupStep={ ( step: any ) => {
+								this.setState( { step: { ...this.state.step, ...step } } );
+							} }
+							submitSignupStep={ () => {} }
+							step={ this.state.step }
+							cart={ this.props.cart }
+							productsList={ this.props.productsList }
 							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
-							onAddDomain={ this.handleAddRemoveDomain }
-							onAddMapping={ this.handleAddMapping }
-							onAddTransfer={ this.handleAddTransfer }
-							isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-							showAlreadyOwnADomain
+							includeWordPressDotCom={ false }
+							translate={ translate }
+							path=""
+							shoppingCartManager={ this.props.shoppingCartManager }
 							selectedSite={ selectedSite }
-							basePath={ this.props.basePath }
-							products={ this.props.productsList }
-							vendor={ getSuggestionsVendor( {
-								flowName: '',
-							} ) }
+							recordAddDomainButtonClick={ this.props.recordAddDomainButtonClick }
+							submitDomainStepSelection={ () => {} } // only tracks events
+							setDesignType={ () => {} } // idk what this does
+							fetchUsernameSuggestion={ () => {} } // idk what this does
 						/>
 					</div>
 				</span>
@@ -488,6 +515,9 @@ export default connect(
 	},
 	{
 		recordAddDomainButtonClick,
+		recordAddDomainButtonClickInMapDomain,
+		recordAddDomainButtonClickInTransferDomain,
+		recordAddDomainButtonClickInUseYourDomain,
 		recordRemoveDomainButtonClick,
 		setCurrentFlowName,
 	}
