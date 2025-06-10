@@ -22,8 +22,8 @@ import {
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
 	A4A_AGENCY_TIER_LINK,
-	A4A_WOOPAYMENTS_LINK,
 	A4A_TEAM_LINK,
+	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../../../sidebar-menu/lib/constants';
 
 export default function useOnboardingTourSections() {
@@ -42,7 +42,9 @@ export default function useOnboardingTourSections() {
 
 		const onExplore = ( section: string, onClose: () => void ) => {
 			dispatch(
-				recordTracksEvent( `calypso_a4a_onboarding_tour_explore_${ section }_page_click` )
+				recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_feature_click', {
+					section,
+				} )
 			);
 			onClose();
 		};
@@ -274,7 +276,7 @@ export default function useOnboardingTourSections() {
 						{
 							label: translate( 'Check out WooPayments' ),
 							variant: 'secondary',
-							href: A4A_WOOPAYMENTS_LINK,
+							href: A4A_WOOPAYMENTS_OVERVIEW_LINK,
 							onClick: () => onExplore( 'woopayments', onClose ),
 						},
 						{

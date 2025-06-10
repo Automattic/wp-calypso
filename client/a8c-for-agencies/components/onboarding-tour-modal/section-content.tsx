@@ -1,8 +1,9 @@
+import { TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 
 type Props = {
 	title: ReactNode;
-	descriptions?: ReactNode[];
+	descriptions?: ( string | TranslateResult )[];
 	hint?: ReactNode;
 };
 
@@ -15,10 +16,10 @@ export default function OnboardingTourModalSectionContent( {
 		<div className="onboarding-tour-modal__section-content">
 			<h1 className="onboarding-tour-modal__section-content-title">{ title }</h1>
 			<div className="onboarding-tour-modal__section-content-descriptions">
-				{ descriptions.map( ( description, index ) => (
+				{ descriptions.map( ( description: string | TranslateResult, index: number ) => (
 					<p
 						className="onboarding-tour-modal__section-content-description"
-						key={ `${ index }-${ description }` }
+						key={ `description-${ index }` }
 					>
 						{ description }
 					</p>
