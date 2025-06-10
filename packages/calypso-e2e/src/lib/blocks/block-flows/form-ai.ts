@@ -81,7 +81,7 @@ export class FormAiFlow implements BlockFlow {
 			.getByRole( 'document', {
 				// The form will always have one of these input fields, and they are easy
 				// to validate later in the editor with accessible checks!
-				name: /^Block: (Text input|name|email|multi-line text) field$/,
+				name: /^Block: (Text Input|Name|Email|Multi-line Text) Field$/,
 			} )
 			.locator( 'label' )
 			.first()
