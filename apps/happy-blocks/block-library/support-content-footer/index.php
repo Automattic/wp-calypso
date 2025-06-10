@@ -166,6 +166,36 @@ if ( 'home' === $current_page_slug ) {
 		</div>
 	</div>
 	<?php
+} elseif ( 'courses-2' === $current_page_slug ) {
+	?>
+		<div class="happy-blocks-new-support-content-footer">
+			<h2 class="support-footer__heading"><?php esc_html_e( 'Continue your learning journey', 'happy-blocks' ); ?></h2>
+			<div class="support-content-resources">
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides/' ) ); ?>" class="support-content-resource">
+					<div class="support-content-resource__content">
+						<div class="support-footer__icon-wrapper">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+								<path d="M18 5.5H6C5.86739 5.5 5.74021 5.55268 5.64645 5.64645C5.55268 5.74021 5.5 5.86739 5.5 6V18C5.5 18.1326 5.55268 18.2598 5.64645 18.3536C5.74021 18.4473 5.86739 18.5 6 18.5H18C18.1326 18.5 18.2598 18.4473 18.3536 18.3536C18.4473 18.2598 18.5 18.1326 18.5 18V6C18.5 5.86739 18.4473 5.74021 18.3536 5.64645C18.2598 5.55268 18.1326 5.5 18 5.5ZM6 4H18C18.5304 4 19.0391 4.21071 19.4142 4.58579C19.7893 4.96086 20 5.46957 20 6V18C20 18.5304 19.7893 19.0391 19.4142 19.4142C19.0391 19.7893 18.5304 20 18 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V6C4 5.46957 4.21071 4.96086 4.58579 4.58579C4.96086 4.21071 5.46957 4 6 4ZM7 9H8.5V10.5H7V9ZM8.5 13.5H7V15H8.5V13.5ZM10 9H17V10.5H10V9ZM17 13.5H10V15H17V13.5Z" fill="white"/>
+							</svg>
+						</div>
+						<h3 class="support-footer__card-title"><?php esc_html_e( 'Browse our guides', 'happy-blocks' ); ?></h3>
+						<p class="support-footer__card-description"><?php esc_html_e( 'Find step-by-step solutions to common questions in our comprehensive guides.', 'happy-blocks' ); ?></p>
+					</div>
+				</a>
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/blog/' ) ); ?>" class="support-content-resource">
+					<div class="support-content-resource__content">
+						<div class="support-footer__icon-wrapper">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M6 5.5H18C18.1326 5.5 18.2598 5.55268 18.3536 5.64645C18.4473 5.74021 18.5 5.86739 18.5 6V13H14C14 13.5304 13.7893 14.0391 13.4142 14.4142C13.0391 14.7893 12.5304 15 12 15C11.4696 15 10.9609 14.7893 10.5858 14.4142C10.2107 14.0391 10 13.5304 10 13H5.5V6C5.5 5.86739 5.55268 5.74021 5.64645 5.64645C5.74021 5.55268 5.86739 5.5 6 5.5ZM5.5 14.5V18C5.5 18.1326 5.55268 18.2598 5.64645 18.3536C5.74021 18.4473 5.86739 18.5 6 18.5H18C18.1326 18.5 18.2598 18.4473 18.3536 18.3536C18.4473 18.2598 18.5 18.1326 18.5 18V14.5H15.163C14.8793 15.0988 14.4315 15.6048 13.8715 15.9591C13.3116 16.3134 12.6626 16.5015 12 16.5015C11.3374 16.5015 10.6884 16.3134 10.1285 15.9591C9.56853 15.6048 9.12069 15.0988 8.837 14.5H5.5ZM4 13V6C4 5.46957 4.21071 4.96086 4.58579 4.58579C4.96086 4.21071 5.46957 4 6 4H18C18.5304 4 19.0391 4.21071 19.4142 4.58579C19.7893 4.96086 20 5.46957 20 6V18C20 18.5304 19.7893 19.0391 19.4142 19.4142C19.0391 19.7893 18.5304 20 18 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V13Z" fill="white"/>
+							</svg>
+						</div>
+						<h3 class="support-footer__card-title"><?php esc_html_e( 'Subscribe to our blog', 'happy-blocks' ); ?></h3>
+						<p class="support-footer__card-description"><?php esc_html_e( 'Sign up to get tips, tutorials, and all the latest news straight to your inbox.', 'happy-blocks' ); ?></p>
+					</div>
+				</a>
+			</div>
+		</div>
+	<?php
 } else {
 	?>
 		<div class="happy-blocks-new-support-content-footer">
