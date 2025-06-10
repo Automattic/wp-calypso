@@ -719,15 +719,20 @@ $image-height: 47px;
 	.form-text-input,
 	.login__form-userdata input:last-of-type.form-text-input {
 		padding: 14px 16px;
-		border-color: #9ea4a8;
 		font-size: 16px;
 		margin: 0;
 		border-radius: 2px;
 		height: auto;
+		line-height: 1.5;
+
+		&[type="password"] {
+			padding-right: 44px;
+		}
 	}
 
 	.form-password-input__toggle {
-		top: 14px;
+		top: 15px;
+		right: 16px;
 	}
 
 	.form-input-validation {
