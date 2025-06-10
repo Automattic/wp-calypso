@@ -381,7 +381,6 @@ export class Login extends Component {
 			locale,
 			isLoginView,
 			signupUrl,
-			isWoo,
 			isWCCOM,
 			isBlazePro,
 			currentQuery,
@@ -401,7 +400,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isWoo && isLoginView ) {
+		if ( isLoginView ) {
 			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
 		}
 
@@ -488,7 +487,6 @@ export class Login extends Component {
 			translate,
 			isGenericOauth,
 			isGravPoweredClient,
-			isWoo,
 			isBlazePro,
 			isWhiteLogin,
 			isJetpack,
@@ -508,7 +506,9 @@ export class Login extends Component {
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+
+		// TODO: remove isGravPoweredClient when login pages are unified.
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
 
 		const mainContent = (
 			<Main

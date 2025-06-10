@@ -342,8 +342,6 @@ $breakpoint-mobile: 660px;
 
 	&.is-section-signup .layout__content,
 	.layout__content {
-		padding-top: 85px;
-
 		@media (max-width: $break-mobile) {
 			padding-top: 50px;
 			padding-bottom: 80px;
@@ -507,7 +505,6 @@ $breakpoint-mobile: 660px;
 		margin-top: 50px;
 	}
 
-	.wp-login__container,
 	.magic-login,
 	.step-wrapper,
 	.jetpack-connect__main-logo {
@@ -1394,11 +1391,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.layout__content {
-			padding-top: 80px;
-		}
-
-		.wp-login__container,
 		.magic-login,
 		.step-wrapper,
 		.jetpack-connect__main-logo {

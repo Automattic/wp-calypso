@@ -126,6 +126,7 @@ export function getHeaderText(
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
 	} else if ( oauth2Client ) {
+		// TODO: remove isWCCOM when login pages are unified and we have clarified design.
 		if ( isWCCOM ) {
 			if ( wccomFrom === 'cart' ) {
 				headerText = translate( 'Log in with a WordPress.com account' );

@@ -145,6 +145,7 @@ const LayoutLoggedOut = ( {
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
+		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 	};
@@ -152,6 +153,7 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	useEffect( () => {
+		// TODO: remove this useEffect when login pages are unified.
 		isWooJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
 
@@ -161,7 +163,7 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( isBlazePro && isWhiteLogin ) {
+	if ( ( isBlazePro || isWoo ) && isWhiteLogin ) {
 		/**
 		 * This effectively removes the masterbar completely from Login pages (only).
 		 * However, in some cases, we want the styles imported from the masterbar to be applied.
@@ -339,6 +341,7 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
+			const isWoo = getIsWoo( state );
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
@@ -346,12 +349,12 @@ export default withCurrentRoute(
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
 					( ( Boolean( currentQuery?.client_id ) === false &&
-						Boolean( currentQuery?.oauth2_client_id ) === false &&
-						! isWooJPC ) ||
+						Boolean( currentQuery?.oauth2_client_id ) === false ) ||
 						isStudioClient ||
 						isCrowdsignalClient ||
 						isBlazePro ||
 						isA4AClient ||
+						isWoo ||
 						isJetpackCloudClient ||
 						isJetpackLogin ) ) ||
 				isPartnerPortal;
@@ -372,6 +375,7 @@ export default withCurrentRoute(
 				isInStepContainerV2FlowContext( currentRoute, currentQuery );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
+			// TODO: remove isWooJPC check.
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
 			return {
