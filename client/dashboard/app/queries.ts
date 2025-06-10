@@ -64,13 +64,16 @@ import type {
 	SshAccessStatus,
 	SftpUser,
 	SiteSshKey,
+	FetchSitesOptions,
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
-export function sitesQuery( siteVisibility: Parameters< typeof fetchSites >[ 0 ] = 'all' ) {
+export function sitesQuery(
+	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible' }
+) {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS, siteVisibility ],
-		queryFn: () => fetchSites( siteVisibility ),
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS, fetchSitesOptions.site_visibility ],
+		queryFn: () => fetchSites( fetchSitesOptions ),
 	};
 }
 

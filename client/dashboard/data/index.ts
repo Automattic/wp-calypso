@@ -55,9 +55,7 @@ export const fetchProfileSshKeys = async (): Promise< ProfileSshKey[] > => {
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export const fetchSites = async (
-	site_visibility: FetchSitesOptions[ 'site_visibility' ]
-): Promise< Site[] > => {
+export const fetchSites = async ( { site_visibility }: FetchSitesOptions ): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
 		{
 			path: '/me/sites',

@@ -165,24 +165,24 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
-const getSiteVisibilityByViewOptions = (
+const getFetchSitesOptions = (
 	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
-): FetchSitesOptions[ 'site_visibility' ] => {
+): FetchSitesOptions => {
 	if (
 		viewOptions.filters?.find(
 			( filter: Filter ) => filter.field === 'status' && filter.value === 'deleted'
 		)
 	) {
-		return 'deleted';
+		return { site_visibility: 'deleted' };
 	}
 
-	return viewOptions.search ? 'all' : 'visible';
+	return { site_visibility: viewOptions.search ? 'all' : 'visible' };
 };
 
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
-	const sites = useQuery( sitesQuery( getSiteVisibilityByViewOptions( viewOptions ) ) ).data;
+	const sites = useQuery( sitesQuery( getFetchSitesOptions( viewOptions ) ) ).data;
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
 	const defaultView = useMemo(
 		() =>
