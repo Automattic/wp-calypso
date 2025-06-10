@@ -24,7 +24,7 @@ export interface Option< Value extends any = any > {
 	description?: string;
 }
 
-interface FilterByConfig {
+export interface FilterByConfig {
 	/**
 	 * The list of operators supported by the field.
 	 */
@@ -37,6 +37,33 @@ interface FilterByConfig {
 	 * except for the list layout where it behaves like a secondary filter.
 	 */
 	isPrimary?: boolean;
+}
+
+export interface NormalizedFilterByConfig {
+	/**
+	 * The list of operators supported by the field.
+	 */
+	operators: Operator[];
+
+	/**
+	 * Whether it is a primary filter.
+	 *
+	 * A primary filter is always visible and is not listed in the "Add filter" component,
+	 * except for the list layout where it behaves like a secondary filter.
+	 */
+	isPrimary?: boolean;
+}
+
+interface FilterConfigForType {
+	/**
+	 * What operators are used by default.
+	 */
+	defaultOperators: Operator[];
+
+	/**
+	 * What operators are supported by the field.
+	 */
+	validOperators: Operator[];
 }
 
 export type Operator =
@@ -93,7 +120,7 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * The filter config for the field.
 	 */
-	filterBy: FilterByConfig | false;
+	filterBy: FilterConfigForType | false;
 
 	/**
 	 * Whether the field is sortable.
@@ -184,7 +211,7 @@ export type Field< Item > = {
 	/**
 	 * Filter config for the field.
 	 */
-	filterBy?: FilterByConfig | undefined | false;
+	filterBy?: FilterByConfig | false;
 
 	/**
 	 * Callback used to retrieve the value of the field from the item.
@@ -203,6 +230,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
+	filterBy: NormalizedFilterByConfig | false;
 };
 
 /**

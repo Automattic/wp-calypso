@@ -21,18 +21,18 @@ import {
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { canUpdateWordPressVersion } from '../../utils/site-features';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { canViewWordPressSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
-export default function WordPressVersionSettings( { siteSlug }: { siteSlug: string } ) {
+export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateWordPressVersion( site );
+	const canView = site && canViewWordPressSettings( site );
 
 	const { data: currentVersion } = useQuery( {
 		...siteWordPressVersionQuery( siteSlug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 	const mutation = useMutation( siteWordPressVersionMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -141,7 +141,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
-			{ canUpdate ? renderForm() : renderNotice() }
+			{ canView ? renderForm() : renderNotice() }
 		</PageLayout>
 	);
 }

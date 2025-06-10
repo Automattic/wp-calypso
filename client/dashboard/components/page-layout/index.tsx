@@ -25,7 +25,7 @@ function PageLayout( {
 		>
 			{ header }
 			{ notices }
-			<VStack spacing={ 8 } className="dashboard-page-layout__content">
+			<VStack spacing={ 6 } className="dashboard-page-layout__content">
 				{ children }
 			</VStack>
 		</VStack>

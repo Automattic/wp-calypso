@@ -15,8 +15,15 @@ import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
-import type { Site } from '../data/types';
-import type { Field, Operator, SortDirection, ViewTable, ViewGrid } from '@automattic/dataviews';
+import type { FetchSitesOptions, Site } from '../data/types';
+import type {
+	Field,
+	Operator,
+	SortDirection,
+	ViewTable,
+	ViewGrid,
+	Filter,
+} from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -81,6 +88,9 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Status' ),
 		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
 		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
+		filterBy: {
+			operators: [ 'is' ],
+		},
 		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
 	},
 	{
@@ -155,9 +165,26 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
+const getFetchSitesOptions = (
+	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
+): FetchSitesOptions => {
+	if (
+		viewOptions.filters?.find(
+			( filter: Filter ) => filter.field === 'status' && filter.value === 'deleted'
+		)
+	) {
+		return { site_visibility: 'deleted' };
+	}
+
+	return { site_visibility: viewOptions.search ? 'all' : 'visible' };
+};
+
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const sites = useQuery( sitesQuery() ).data;
+	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		sitesQuery( getFetchSitesOptions( viewOptions ) )
+	);
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
 	const defaultView = useMemo(
 		() =>
@@ -175,16 +202,17 @@ export default function Sites() {
 				: DEFAULT_VIEW,
 		[ hasA8CSites ]
 	);
-	const search: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
 	const view = useMemo(
 		() => ( {
 			...defaultView,
-			...DEFAULT_LAYOUTS[ search?.type ?? DEFAULT_VIEW.type ],
-			...( search
-				? Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) )
+			...DEFAULT_LAYOUTS[ viewOptions?.type ?? DEFAULT_VIEW.type ],
+			...( viewOptions
+				? Object.fromEntries(
+						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
+				  )
 				: {} ),
 		} ),
-		[ defaultView, search ]
+		[ defaultView, viewOptions ]
 	);
 	const fields = useMemo(
 		() =>
@@ -193,11 +221,7 @@ export default function Sites() {
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	if ( ! sites ) {
-		return;
-	}
-
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 
 	return (
 		<>
@@ -229,6 +253,7 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
+						isLoading={ isLoadingSites }
 						onChangeView={ ( view ) => {
 							if ( view.type === 'list' ) {
 								return;

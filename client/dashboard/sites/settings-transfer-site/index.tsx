@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
-import { Card, CardBody, ExternalLink } from '@wordpress/components';
+import { Card, CardBody } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteQuery } from '../../app/queries';
+import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
-import { useCanTransferSite } from '../hooks/use-can-transfer-site';
+import { canTransferSite } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owner-form';
 import { EmailConfirmation } from './email-confirmation';
@@ -31,8 +32,7 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 							'Transfer this site to a new or existing site member with just a few clicks. <link>Learn more</link>.'
 						),
 						{
-							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href="#learn-more" />,
+							link: <InlineSupportLink supportContext="site-transfer" />,
 						}
 					) }
 				/>
@@ -47,7 +47,6 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
 	const { user } = useAuth();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canTransferSite = useCanTransferSite( { site } );
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const confirmationHash = getQueryArg( window.location.search, 'site-transfer-confirm' );
@@ -69,7 +68,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 		return null;
 	}
 
-	if ( ! canTransferSite ) {
+	if ( ! canTransferSite( site, user ) ) {
 		throw notFound();
 	}
 

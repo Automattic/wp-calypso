@@ -1,6 +1,4 @@
-/**
- * External Dependencies
- */
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useSupportActivity } from '../data/use-support-activity';
 import { useSupportStatus } from '../data/use-support-status';
 
@@ -18,6 +16,10 @@ export default function useChatStatus() {
 		supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' )
 	);
 
+	const forceEmailSupport =
+		supportStatus?.availability?.force_email_support ||
+		( isTestModeEnvironment() && supportStatus?.availability?.force_email_support_test );
+
 	return {
 		hasActiveChats,
 		isEligibleForChat,
@@ -26,5 +28,6 @@ export default function useChatStatus() {
 		isPrecancellationChatOpen: Boolean( availability?.is_precancellation_chat_open ),
 		supportActivity,
 		supportLevel: supportStatus?.eligibility?.support_level,
+		forceEmailSupport,
 	};
 }

@@ -9,7 +9,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -19,8 +18,8 @@ import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { PersistentRouter } from './persistent-router';
 import type { HelpCenterSelect } from '@automattic/data-stores';
-
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
 	children?: React.ReactNode;
@@ -85,7 +84,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}
 
 	return (
-		<MemoryRouter>
+		<PersistentRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
@@ -105,7 +104,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>
-		</MemoryRouter>
+		</PersistentRouter>
 	);
 };
 

@@ -11,7 +11,8 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { agencyBlogQuery } from '../../app/queries';
 import Notice from '../../components/notice';
-import type { Site, AgencyBlog } from '../../data/types';
+import { isBigSkyTrial } from '../../utils/site-features';
+import type { AgencyBlog, Site } from '../../data/types';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
 	if ( ! agency ) {
@@ -98,24 +99,34 @@ export function LaunchAgencyDevelopmentSiteForm( {
 }
 
 export function LaunchForm( { site }: { site: Site } ) {
+	const getLaunchUrl = () => {
+		if ( isBigSkyTrial( site ) ) {
+			return addQueryArgs( '/setup/ai-site-builder/domains', {
+				siteId: site.ID,
+				source: 'general-settings',
+				redirect: 'site-launch',
+				new: site.name,
+				search: 'yes',
+			} );
+		}
+
+		return addQueryArgs( '/start/launch-site', {
+			siteSlug: site.slug,
+			new: site.name,
+			hide_initial_query: 'yes',
+		} );
+	};
+
 	return (
 		<Notice
-			title={ __( "Your site hasn't been launched yet" ) }
+			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
-				<Button
-					size="compact"
-					variant="primary"
-					href={ addQueryArgs( '/start/launch-site', {
-						siteSlug: site.slug,
-						new: site.name,
-						hide_initial_query: 'yes',
-					} ) }
-				>
+				<Button size="compact" variant="primary" href={ getLaunchUrl() }>
 					{ __( 'Launch site' ) }
 				</Button>
 			}
 		>
-			{ __( 'It is hidden from visitors behind a "Coming Soon" notice until it is launched.' ) }
+			{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 		</Notice>
 	);
 }
