@@ -449,7 +449,15 @@
 	}
 }
 
-/* stylelint-disable scales/font-weights */
+/* --- Gravatar Magic Login Start --- */
+.layout.is-section-login.is-magic-login.is-grav-powered-client {
+	background-color: #fff;
+
+	@include break-small {
+		background-color: #efefef;
+	}
+}
+
 .grav-powered-magic-login {
 	max-width: 480px;
 	font-size: 14px;
@@ -471,17 +479,15 @@
 			color: #2404eb;
 		}
 
-		.magic-login__form-action button[type="submit"].form-button.is-primary {
-			min-height: unset;
+		button[type="submit"].is-primary {
 			margin-top: 0;
-			border-radius: 2px;
+			background-color: #2404eb;
 
-			&,
-			&:disabled {
-				background-color: #2404eb;
+			&.is-busy {
+				background-image: linear-gradient(-45deg, #2404eb 28%, darken(#2404eb, 10%) 28%, darken(#2404eb, 10%) 72%, #2404eb 72%);
 			}
 
-			&:hover:not(&:disabled),
+			&:hover:not(:disabled),
 			&:focus {
 				background-color: darken(#2404eb, 10%);
 			}
@@ -492,12 +498,16 @@
 			padding-right: 30px;
 			border-radius: 2px;
 
+			.calypso-notice {
+				margin-top: 0;
+			}
+
 			.calypso-notice__icon-wrapper {
 				display: flex;
 			}
 
 			.calypso-notice__content {
-				padding-left: 13px;
+				padding: 13px;
 			}
 		}
 
@@ -542,19 +552,26 @@
 		}
 	}
 
-	button[type="submit"].form-button.is-primary,
-	.magic-login__form-action button[type="submit"].form-button.is-primary {
+	button[type="submit"].is-primary {
 		width: 100%;
-		min-height: 56px;
-		margin-top: 24px;
-		border-radius: 4px;
+		font-size: 16px;
+		font-weight: 600;
+		background-color: #1d4fc4;
+		margin: 16px 0 0;
 
 		&.is-busy {
 			background-image: linear-gradient(-45deg, #1d4fc4 28%, darken(#1d4fc4, 10%) 28%, darken(#1d4fc4, 10%) 72%, #1d4fc4 72%);
 		}
 
 		&:disabled {
+			opacity: 0.3;
 			color: #fff;
+			cursor: not-allowed;
+		}
+
+		&:hover:not(:disabled),
+		&:focus {
+			background-color: darken(#1d4fc4, 10%);
 		}
 	}
 
@@ -568,16 +585,19 @@
 	.grav-powered-magic-login__content {
 		background-color: #fff;
 		color: #101517;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 		padding: 20px;
+
+		.calypso-notice {
+			margin-top: 12px;
+		}
 
 		.calypso-notice__icon-wrapper {
 			display: none;
 		}
 
 		.calypso-notice__content {
-			padding-left: 0;
+			padding: 0;
 		}
 
 		a {
@@ -633,6 +653,10 @@
 		max-width: 100%;
 		padding: 0;
 		box-shadow: none;
+
+		form {
+			max-width: inherit;
+		}
 	}
 
 	.magic-login__email-fields {
@@ -758,7 +782,7 @@
 	}
 
 	.grav-powered-magic-login__gravatar-info {
-		margin-top: 32px;
+		margin: 32px 30px 0;
 	}
 
 	.grav-powered-magic-login__gravatar-info-heading {
@@ -816,6 +840,10 @@
 			}
 		}
 
+		&:not(:has(.locale-suggestions)) .grav-powered-magic-login__content {
+			margin-top: 50px;
+		}
+
 		.grav-powered-magic-login__content {
 			padding: 40px 56px;
 		}
@@ -847,11 +875,12 @@
 		}
 
 		.grav-powered-magic-login__gravatar-info {
-			margin-top: 40px;
+			margin: 40px 0 0;
 		}
 	}
 }
 
+/* This is the magic link processing page. */
 .grav-powered-magic-link {
 	display: flex;
 	flex-direction: column;
@@ -871,12 +900,12 @@
 		border: none;
 	}
 }
+/* --- Gravatar Magic Login End --- */
 
 .magic-login__a4a-logo {
 	display: block;
 	margin: 0 auto;
 }
-/* stylelint-enable scales/font-weights */
 
 .card.magic-login__verify-code-form {
 	--magic-login-error-color: #cc1818;
