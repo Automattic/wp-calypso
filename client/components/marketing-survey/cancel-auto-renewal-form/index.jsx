@@ -143,9 +143,10 @@ class CancelAutoRenewalForm extends Component {
 			>
 				<DialogContent>
 					<FormFieldset className="cancel-auto-renewal-form__form-fieldset">
+						<p>{ translate( "You've turned off auto-renewal." ) }</p>
 						<p>
 							{ translate(
-								"You've turned off auto-renewal. Before you go, we'd love to know: " +
+								"Before you go, we'd love to know: " +
 									"are you letting this %(productType)s expire completely, or do you think you'll renew it manually?",
 								{
 									args: { productType },
