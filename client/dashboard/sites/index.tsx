@@ -221,7 +221,7 @@ export default function Sites() {
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 
 	return (
 		<>
