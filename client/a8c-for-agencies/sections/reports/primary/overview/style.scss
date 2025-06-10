@@ -2,6 +2,8 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+$report-header-background-color: #b9e4fe;
+
 .reports-overview {
 	.hosting-dashboard-layout__header-actions {
 		display: flex;
@@ -48,16 +50,196 @@
 	}
 }
 
-button.components-button.reports-overview__button.is-secondary {
-	&,
-	&:hover,
-	&:focus,
-	&:focus-visible {
-		color: var( --color-primary-60 );
-		background-color: var( --color-surface );
-		border: none;
-		outline: none;
-		box-shadow: none;
-		text-decoration: none;
+.reports-overview__buttons-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	a.components-button {
+		width: 100%;
+		text-wrap: balance;
 	}
+
+	@include break-wide {
+		flex-direction: row;
+
+		a.components-button {
+			width: auto;
+		}
+	}
+}
+
+.reports-overview__example-report-modal {
+	.components-modal__content {
+		background-color: var( --a4a-brand-blue-80 );
+	}
+}
+
+.reports-overview__example-report-modal-body {
+	overflow: hidden;
+}
+
+.example-report {
+	padding-block: 24px;
+
+	@include break-medium {
+		padding: 56px;
+	}
+}
+
+.example-report__inner-body {
+	padding: 24px;
+}
+
+.example-report__content {
+	background: var( --color-surface );
+	max-width: 800px;
+	margin: 0 auto;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.example-report__header {
+	background-color: $report-header-background-color;
+	padding: 40px 24px;
+	position: relative;
+	overflow: hidden;
+
+	// This will be used for the decorative background image
+	&::after {
+		content: '';
+		position: absolute;
+		inset-block-start: -120px;
+		inset-inline-end: 0;
+		width: 50%;
+		height: 100%;
+		background-image: url( calypso/assets/images/a8c-for-agencies/reports/doodle.png );
+		background-repeat: no-repeat;
+		background-position: right center;
+		background-size: contain;
+		pointer-events: none;
+	}
+}
+
+.example-report__header-title {
+	@include body-small;
+	text-transform: uppercase;
+	margin-block-end: 0;
+	color: var( --color-neutral-70 );
+}
+
+.example-report__header-heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+	margin-block-start: 16px;
+	color: var( --color-neutral-90 );
+}
+
+.example-report__url {
+	@include body-small;
+	color: var( --color-neutral-70 );
+	margin-block-end: 24px;
+}
+
+.example-report__message {
+	@include body-large;
+	line-height: 1.6;
+	color: var( --color-neutral-90 );
+	max-width: 600px;
+	margin-block-end: 0;
+}
+
+.example-report__section-title-container {
+	margin-block-end: 24px;
+}
+
+.example-report__section-title {
+	@include heading-x-large;
+	margin-block-end: 16px;
+}
+
+.example-report__grid {
+	display: grid;
+	grid-template-columns: repeat( 1, 1fr );
+	gap: 24px;
+	margin-block-end: 48px;
+
+	@include break-medium {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	&:last-child {
+		margin-block-end: 24px;
+	}
+}
+
+.example-report__card {
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	padding: 24px;
+
+	.example-report__card-title {
+		@include heading;
+		font-weight: 600;
+		color: var( --color-neutral-70 );
+		display: flex;
+		align-items: center;
+		margin-block-start: 0;
+		margin-block-end: 16px;
+		gap: 8px;
+	}
+
+	.example-report__card-value {
+		@include heading-2x-large;
+		margin: 0;
+		color: var( --color-neutral-90 );
+	}
+}
+
+.example-report__card-list {
+	.example-report__card-title {
+		margin-block-end: 24px;
+	}
+
+	.example-report__table-header,
+	.example-report__table-row {
+		@include body-small;
+		display: flex;
+		justify-content: space-between;
+		padding: 4px 0;
+
+		span:last-child {
+			text-align: end;
+			font-weight: 600;
+		}
+	}
+
+	.example-report__table-header {
+		font-weight: normal;
+		margin-block-end: 8px;
+
+		.example-report__table-header-text {
+			font-weight: 600;
+		}
+	}
+
+	.example-report__table-row {
+		span:first-child {
+			color: var( --color-neutral-90 );
+		}
+
+		span:last-child {
+			color: var( --color-neutral-90 );
+		}
+	}
+}
+
+.example-report__footer {
+	@include body-small;
+	background-color: var( --color-neutral-0 );
+	color: var( --color-neutral-70 );
+	text-align: left;
+	padding: 24px;
 }

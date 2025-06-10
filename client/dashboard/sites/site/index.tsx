@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Dropdown, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { chevronDownSmall } from '@wordpress/icons';
 import { siteQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
@@ -22,13 +23,18 @@ function Site() {
 	return (
 		<>
 			<HeaderBar>
-				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
+				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
 					<HeaderBar.Title>
 						<Dropdown
 							renderToggle={ ( { onToggle } ) => (
-								<Button className="dashboard-menu__item active" onClick={ () => onToggle() }>
+								<Button
+									className="dashboard-menu__item active"
+									icon={ chevronDownSmall }
+									iconPosition="right"
+									onClick={ () => onToggle() }
+								>
 									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<SiteIcon site={ site } size={ 24 } /> { site.name }
+										<SiteIcon site={ site } size={ 16 } /> { site.name }
 									</div>
 								</Button>
 							) }

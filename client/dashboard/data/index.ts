@@ -6,6 +6,7 @@ import type {
 	MediaStorage,
 	MonitorUptime,
 	Plan,
+	FetchSitesOptions,
 	Site,
 	AgencyBlog,
 	Purchase,
@@ -54,14 +55,14 @@ export const fetchProfileSshKeys = async (): Promise< ProfileSshKey[] > => {
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export const fetchSites = async (): Promise< Site[] > => {
+export const fetchSites = async ( { site_visibility }: FetchSitesOptions ): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
 		{
 			path: '/me/sites',
 			apiVersion: '1.2',
 		},
 		{
-			site_visibility: 'all',
+			site_visibility,
 			include_domain_only: 'true',
 			site_activity: 'active',
 			fields: JOINED_SITE_FIELDS,
@@ -633,18 +634,21 @@ export const fetchSiteResetContentSummary = async (
 ): Promise< SiteResetContentSummary > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/content-summary`,
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 export const resetSite = async ( siteIdOrSlug: string ): Promise< void > => {
 	return wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/reset-site`,
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< SiteResetStatus > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/status`,
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 

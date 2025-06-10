@@ -6,8 +6,10 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
 import { siteOwnerTransferMutation } from '../../app/queries';
 import Notice from '../../components/notice';
@@ -79,6 +81,8 @@ export function StartSiteTransferForm( {
 
 	const mutation = useMutation( siteOwnerTransferMutation( siteSlug ) );
 
+	const { createErrorNotice } = useDispatch( noticesStore );
+
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
 	const renderSiteSlug = () => <strong>{ siteSlug }</strong>;
@@ -94,23 +98,23 @@ export function StartSiteTransferForm( {
 				onSuccess: () => {
 					onSubmit();
 				},
-				onError: () => {
-					// TODO: Display error message
+				onError: ( error ) => {
+					createErrorNotice( error.message ?? __( 'Unable to start site transfer.' ), {
+						type: 'snackbar',
+					} );
 				},
 			}
 		);
 	};
 
 	return (
-		<>
-			<VStack style={ { padding: '8px 0 12px' } }>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 4 }>
 				<SectionHeader title={ __( 'Start site transfer' ) } level={ 3 } />
-			</VStack>
-			<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
 				<Notice variant="warning" density="medium">
 					{ __( 'Please read the following carefully. Transferring a site cannot be undone.' ) }
 				</Notice>
-				<VStack spacing={ 6 } style={ { padding: '8px 0' } }>
+				<VStack spacing={ 6 }>
 					<List title={ __( 'Content and ownership' ) }>
 						<li>
 							{ createInterpolateElement(
@@ -181,35 +185,31 @@ export function StartSiteTransferForm( {
 						</li>
 					</List>
 				</VStack>
-				<Text weight={ 500 } as="h3">
+				<Text weight={ 500 } lineHeight="32px" as="h3">
 					{ __( 'To transfer your site, review and accept the following statements:' ) }
 				</Text>
-				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 5 }>
-						<DataForm< StartSiteTransferFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< StartSiteTransferFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
-						<HStack justify="flex-start">
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ mutation.isPending }
-								disabled={ isSaveDisabled }
-							>
-								{ __( 'Start transfer' ) }
-							</Button>
-							<Button variant="tertiary" onClick={ onBack } disabled={ mutation.isPending }>
-								{ __( 'Back' ) }
-							</Button>
-						</HStack>
-					</VStack>
-				</form>
+				<DataForm< StartSiteTransferFormData >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits: Partial< StartSiteTransferFormData > ) => {
+						setFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
+				/>
+				<HStack justify="flex-start">
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ mutation.isPending }
+						disabled={ isSaveDisabled }
+					>
+						{ __( 'Start transfer' ) }
+					</Button>
+					<Button variant="tertiary" onClick={ onBack } disabled={ mutation.isPending }>
+						{ __( 'Back' ) }
+					</Button>
+				</HStack>
 			</VStack>
-		</>
+		</form>
 	);
 }

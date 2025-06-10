@@ -136,12 +136,23 @@
 			padding-bottom: 145px;
 		}
 
-		.card:not(.gdpr-banner) {
-			background: none;
-			box-shadow: none;
-			margin: 0 auto;
-			max-width: 320px;
-			padding: 0;
+		.card {
+			&:not(.gdpr-banner) {
+				background: none;
+				box-shadow: none;
+				max-width: 320px;
+				padding: 0;
+			}
+
+			&:not(.two-factor-authentication__verification-code-form) {
+				margin: 0 auto;
+			}
+
+			// Allow for the illustration width
+			&.two-factor-authentication__push-notification-approval,
+			&.two-factor-authentication__actions {
+				max-width: 360px;
+			}
 		}
 
 		.layout__content {

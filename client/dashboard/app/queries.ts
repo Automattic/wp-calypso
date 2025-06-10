@@ -64,13 +64,16 @@ import type {
 	SshAccessStatus,
 	SftpUser,
 	SiteSshKey,
+	FetchSitesOptions,
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
-export function sitesQuery() {
+export function sitesQuery(
+	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible' }
+) {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
-		queryFn: fetchSites,
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS, fetchSitesOptions.site_visibility ],
+		queryFn: () => fetchSites( fetchSitesOptions ),
 	};
 }
 
@@ -326,6 +329,14 @@ export function agencyBlogQuery( siteId: string ) {
 		queryKey: [ 'site', siteId, 'agency-blog' ],
 		queryFn: () => {
 			return fetchAgencyBlogBySiteId( siteId );
+		},
+		retry: ( failureCount: number, error: { code?: string } ) => {
+			// Stop retrying if we already know the blog is not an agency blog.
+			if ( error.hasOwnProperty( 'code' ) && error.code === 'partner_for_blog_not_found' ) {
+				return false;
+			}
+
+			return failureCount < 3;
 		},
 	};
 }

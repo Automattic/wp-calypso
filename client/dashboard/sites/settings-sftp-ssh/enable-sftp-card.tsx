@@ -15,6 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteSftpUsersCreateMutation } from '../../app/queries';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
@@ -52,7 +53,7 @@ export default function EnableSftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'Get started with SFTP/SSH' ) }
 						description={
@@ -66,8 +67,6 @@ export default function EnableSftpCard( {
 						}
 						level={ 3 }
 					/>
-				</VStack>
-				<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
 					{ /* TODO: Replace the Panel with the Accordion component when it's ready */ }
 					<Panel>
 						<PanelBody title={ __( 'What is SFTP?' ) } initialOpen={ false }>
@@ -78,7 +77,7 @@ export default function EnableSftpCard( {
 								),
 								{
 									filezillaLink: <ExternalLink href={ FILEZILLA_URL } children={ null } />,
-									supportLink: <ExternalLink href="#hosting-sftp" children={ null } />,
+									supportLink: <InlineSupportLink supportContext="hosting-sftp" />,
 								}
 							) }
 						</PanelBody>
@@ -89,7 +88,7 @@ export default function EnableSftpCard( {
 										'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. For more information see <supportLink>Connect to SSH on WordPress.com</supportLink>.'
 									),
 									{
-										supportLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
+										supportLink: <InlineSupportLink supportContext="hosting-connect-to-ssh" />,
 									}
 								) }
 							</PanelBody>
@@ -105,16 +104,16 @@ export default function EnableSftpCard( {
 							}
 						) }
 					</Text>
+					<HStack justify="flex-start">
+						<Button
+							variant="primary"
+							isBusy={ mutation.isPending }
+							onClick={ handleCreateCredentials }
+						>
+							{ __( 'Create credentials' ) }
+						</Button>
+					</HStack>
 				</VStack>
-				<HStack justify="flex-start" style={ { padding: '8px 0' } }>
-					<Button
-						variant="primary"
-						isBusy={ mutation.isPending }
-						onClick={ handleCreateCredentials }
-					>
-						{ __( 'Create credentials' ) }
-					</Button>
-				</HStack>
 			</CardBody>
 		</Card>
 	);

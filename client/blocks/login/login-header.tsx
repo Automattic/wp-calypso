@@ -12,8 +12,8 @@ import {
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import './login-header.scss';
 
@@ -73,7 +73,12 @@ export function getHeaderText(
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		const clientName = isFromAkismet ? 'Akismet' : oauth2Client?.name;
+		let clientName = oauth2Client?.name;
+		if ( isFromAkismet ) {
+			clientName = 'Akismet';
+		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			clientName = 'Blaze Pro';
+		}
 
 		headerText = clientName
 			? ( fixMe( {
@@ -167,10 +172,6 @@ export function getHeaderText(
 			headerText = translate( 'Login to %(clientTitle)s', {
 				args: { clientTitle: oauth2Client.title },
 			} );
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			headerText = translate( 'Log in to your Blaze Pro account' );
 		}
 	} else if ( isWooJPC ) {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE } from '../constants';
@@ -15,23 +14,35 @@ type ApiResponseError = {
 	message: string;
 };
 
-const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
-
+/**
+ * Gets the email subscription ID from a subscriber object.
+ * @param {Subscriber} subscriber - The subscriber object
+ * @returns {number} The email subscription ID, or 0 if not found
+ * @deprecated The `subscription_id` property is deprecated and from the old API endpoint response. Use `email_subscription_id` instead.
+ */
 const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		// For new helper library, use email_subscription_id if it exists, otherwise use subscription_id
-		return subscriber.email_subscription_id || subscriber.subscription_id || 0;
-	}
-	return subscriber.subscription_id || 0;
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.email_subscription_id || subscriber.subscription_id || 0;
 };
 
+/**
+ * Gets the WordPress.com subscription ID from a subscriber object.
+ * @param {Subscriber} subscriber - The subscriber object
+ * @returns {number} The WordPress.com subscription ID, or 0 if not found
+ * @deprecated The `subscription_id` property is deprecated and from the old API endpoint response. Use `wpcom_subscription_id` instead.
+ */
 const getWpcomSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		return subscriber.wpcom_subscription_id || 0;
-	}
-	return 0;
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.wpcom_subscription_id || subscriber.subscription_id || 0;
 };
 
+/**
+ * Hook to remove subscribers from a site.
+ * Handles removal of email subscribers, WordPress.com followers, and paid subscription members.
+ * @param {number | null} siteId - The ID of the site
+ * @param {SubscriberQueryParams} SubscriberQueryParams - Query parameters for subscriber list
+ * @param {boolean} invalidateDetailsCache - Whether to invalidate the subscriber details cache (default: false)
+ */
 const useSubscriberRemoveMutation = (
 	siteId: number | null,
 	SubscriberQueryParams: SubscriberQueryParams,
@@ -156,16 +167,16 @@ const useSubscriberRemoveMutation = (
 		onMutate: async ( subscribers ) => {
 			// Cancel any outgoing refetches
 			await queryClient.cancelQueries( { queryKey: [ 'subscribers', siteId ] } );
-			await queryClient.cancelQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			await queryClient.cancelQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			// Get the current page data
 			const previousData =
 				queryClient.getQueryData< SubscriberEndpointResponse >( currentPageCacheKey );
 
 			// Get the current count data
-			const previousCountData = queryClient.getQueryData< { email_subscribers: number } >( [
+			const previousCountData = queryClient.getQueryData< { total_subscribers: number } >( [
 				'subscribers',
-				'count',
+				'counts',
 				siteId,
 			] );
 
@@ -212,9 +223,9 @@ const useSubscriberRemoveMutation = (
 			if ( previousCountData ) {
 				const updatedCountData = {
 					...previousCountData,
-					email_subscribers: previousCountData.email_subscribers - subscribers.length,
+					total_subscribers: previousCountData.total_subscribers - subscribers.length,
 				};
-				queryClient.setQueryData( [ 'subscribers', 'count', siteId ], updatedCountData );
+				queryClient.setQueryData( [ 'subscribers', 'counts', siteId ], updatedCountData );
 			}
 
 			// Handle subscriber details cache if needed
@@ -246,7 +257,7 @@ const useSubscriberRemoveMutation = (
 
 			// Revert the count data if it exists
 			if ( context?.previousCountData ) {
-				queryClient.setQueryData( [ 'subscribers', 'count', siteId ], context.previousCountData );
+				queryClient.setQueryData( [ 'subscribers', 'counts', siteId ], context.previousCountData );
 			}
 
 			if ( context?.previousDetailsData ) {
@@ -261,12 +272,12 @@ const useSubscriberRemoveMutation = (
 
 			// Force invalidate all subscriber queries to ensure UI is in sync
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 		},
 		onSuccess: ( data, subscribers ) => {
 			// Force invalidate all subscriber queries to ensure UI is in sync
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			for ( const subscriber of subscribers ) {
 				recordSubscriberRemoved( {
@@ -279,7 +290,7 @@ const useSubscriberRemoveMutation = (
 		onSettled: ( data, error, subscribers ) => {
 			// Always invalidate and refetch everything to ensure consistency
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			// Always handle subscriber details cache if requested
 			if ( invalidateDetailsCache ) {

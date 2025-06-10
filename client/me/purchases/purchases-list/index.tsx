@@ -43,6 +43,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
+import { PurchasesByOtherAdminsNotice } from './purchases-by-other-admins-notice';
 import PurchasesListHeader from './purchases-list-header';
 
 export interface PurchasesListProps {
@@ -188,6 +189,7 @@ const PurchasesList: React.FC<
 							eventName="calypso_no_purchases_upgrade_nudge_impression"
 							eventProperties={ commonEventProps }
 						/>
+						<PurchasesByOtherAdminsNotice sites={ sites } />
 						<EmptyContent
 							title={ translate( 'Looking to upgrade?' ) }
 							line={ translate(

@@ -29,6 +29,7 @@
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/browserslist-config": "^6.23.0",
 		"@wordpress/components": "^29.9.0",
+		"@wordpress/dataviews": "^4.19.0",
 		"docusaurus-plugin-sass": "^0.2.6",
 		"prism-react-renderer": "^2.4.1",
 		"react": "^18.3.1",
@@ -39,7 +40,7 @@
 		"@docusaurus/module-type-aliases": "^3.7.0",
 		"@docusaurus/tsconfig": "^3.7.0",
 		"@docusaurus/types": "^3.7.0",
-		"@types/react": "^18.3.21",
+		"@types/react": "^18.3.23",
 		"typescript": "^5.8.3"
 	},
 	"optionalDependencies": {

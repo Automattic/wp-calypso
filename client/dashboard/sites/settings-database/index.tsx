@@ -18,7 +18,7 @@ import { siteQuery } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data';
-import { canAccessPhpMyAdmin } from '../../utils/site-features';
+import { canViewDatabaseSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import calloutIllustrationUrl from './callout-illustration.svg';
@@ -34,7 +34,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		return null;
 	}
 
-	if ( ! canAccessPhpMyAdmin( site ) ) {
+	if ( ! canViewDatabaseSettings( site ) ) {
 		return (
 			<PageLayout
 				size="small"
@@ -55,6 +55,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 					description={ __(
 						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
 					) }
+					tracksId="database"
 				/>
 			</PageLayout>
 		);

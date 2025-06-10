@@ -29,6 +29,7 @@ import {
 	profileSshKeysQuery,
 } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
@@ -292,7 +293,7 @@ export default function SshCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'SSH' ) }
 						description={ createInterpolateElement(
@@ -300,14 +301,12 @@ export default function SshCard( {
 								"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
 							),
 							{
-								wpCliLink: <ExternalLink href="#" children={ null } />,
-								learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
+								wpCliLink: <ExternalLink href="https://wp-cli.org/" children={ null } />,
+								learnMoreLink: <InlineSupportLink supportContext="hosting-connect-to-ssh" />,
 							}
 						) }
 						level={ 3 }
 					/>
-				</VStack>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<ToggleControl
 						label={ __( 'Enable SSH access for this site' ) }
 						checked={ sshEnabled }
@@ -325,27 +324,27 @@ export default function SshCard( {
 							} }
 						/>
 					) }
+					{ sshEnabled && ! userKeyIsAttached && (
+						<HStack justify="flex-start">
+							<Button
+								variant="primary"
+								isBusy={ attachSshKeyMutation.isPending }
+								disabled={ ! hasProfileSshKeys }
+								onClick={ handleAttachSshKey }
+							>
+								{ __( 'Attach SSH key to site' ) }
+							</Button>
+							<Button
+								variant="secondary"
+								target="_blank"
+								href="/me/security/ssh-key"
+								rel="noreferrer"
+							>
+								{ __( 'Add new SSH key ↗' ) }
+							</Button>
+						</HStack>
+					) }
 				</VStack>
-				{ sshEnabled && ! userKeyIsAttached && (
-					<HStack justify="flex-start" style={ { padding: '8px 0' } }>
-						<Button
-							variant="primary"
-							isBusy={ attachSshKeyMutation.isPending }
-							disabled={ ! hasProfileSshKeys }
-							onClick={ handleAttachSshKey }
-						>
-							{ __( 'Attach SSH key to site' ) }
-						</Button>
-						<Button
-							variant="secondary"
-							target="_blank"
-							href="/me/security/ssh-key"
-							rel="noreferrer"
-						>
-							{ __( 'Add new SSH key ↗' ) }
-						</Button>
-					</HStack>
-				) }
 			</CardBody>
 		</Card>
 	);

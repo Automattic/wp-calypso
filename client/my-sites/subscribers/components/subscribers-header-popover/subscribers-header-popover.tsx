@@ -32,7 +32,7 @@ const SubscribersHeaderPopover = ( {
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
-	const hasSubscribers = subscribersTotals?.email_subscribers ?? 0 > 0;
+	const hasSubscribers = !! subscribersTotals?.total_subscribers;
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 

@@ -1,0 +1,17 @@
+.help-center__notice{
+	background-color: var( --studio-yellow-0 );
+	border-left: 4px solid var( --studio-yellow-20 );
+	padding: 8px 16px;
+    
+    &.cookie-warning{
+        margin-bottom: 30px;
+    }
+
+	p {
+		margin: 0;
+	}
+
+	button.help-center__notice-link {
+		font-size: $font-body-small;
+	}
+}

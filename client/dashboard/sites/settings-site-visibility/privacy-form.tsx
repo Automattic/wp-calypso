@@ -6,13 +6,13 @@ import {
 	CardBody,
 	Button,
 	CheckboxControl,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import InlineSupportLink from '../../components/inline-support-link';
 import { ShareSiteForm } from './share-site-form';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Field, Form } from '@automattic/dataviews';
@@ -69,14 +69,7 @@ const fields: Field< SiteSettings >[] = [
 						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
 					),
 					{
-						a: (
-							// TODO investigate whether localizeUrl() is safe to import into dashboard
-							<ExternalLink
-								/* eslint-disable-next-line wpcalypso/i18n-unlocalized-url */
-								href="https://wordpress.com/support/privacy-settings/make-your-website-public/#prevent-third-party-sharing"
-								children={ null } // ExternalLink's children prop is marked as required
-							/>
-						),
+						a: <InlineSupportLink supportContext="privacy-prevent-third-party-sharing" />,
 					}
 				) }
 			/>
