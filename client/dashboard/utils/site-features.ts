@@ -17,7 +17,7 @@ export function hasAdvancedHostingFeatures( site: Site ) {
 	return hasHostingFeatures( site ) && hasPlanFeature( site, DotcomFeatures.SFTP );
 }
 
-export const isBigSkyTrial = ( site: Site ) => {
+export const isSitePlanBigSkyTrial = ( site: Site ) => {
 	if ( ! site.plan ) {
 		return false;
 	}
@@ -44,4 +44,22 @@ export const isBigSkyTrial = ( site: Site ) => {
 	];
 
 	return ! bigSkyPlans.includes( product_slug as DotcomPlans );
+};
+
+export const isSitePlanPaid = ( site: Site ) => {
+	if ( ! site.plan ) {
+		return false;
+	}
+
+	return ! [ DotcomPlans.JETPACK_FREE, DotcomPlans.FREE_PLAN ].includes(
+		site.plan.product_slug as DotcomPlans
+	);
+};
+
+export const isSitePlanHostingTrial = ( site: Site ) => {
+	if ( ! site.plan ) {
+		return false;
+	}
+
+	return site.plan.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 };
