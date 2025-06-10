@@ -1,23 +1,14 @@
 import { Gridicon, ExternalLink } from '@automattic/components';
-import { HelpCenter } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { dispatch as dataStoreDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-
+import useSupportDocData from './use-support-doc-data';
 import './style.scss';
 
-const HELP_CENTER_STORE = HelpCenter.register();
-
 class InlineSupportLink extends Component {
-	state = {
-		supportDataFromContext: undefined,
-	};
-
 	static propTypes = {
 		className: PropTypes.string,
 		supportPostId: PropTypes.number,
@@ -27,10 +18,6 @@ class InlineSupportLink extends Component {
 		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
 		linkTitle: PropTypes.string,
-		tracksEvent: PropTypes.string,
-		tracksOptions: PropTypes.object,
-		statsGroup: PropTypes.string,
-		statsName: PropTypes.string,
 		showSupportModal: PropTypes.bool,
 		noWrap: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -46,47 +33,34 @@ class InlineSupportLink extends Component {
 		noWrap: true,
 	};
 
-	componentDidMount() {
-		if ( this.props.supportContext && ! this.props.supportPostId && ! this.props.supportLink ) {
-			// Lazy load the supportPostId and supportLink by key if not provided.
-			asyncRequire( './context-links' ).then( ( module ) => {
-				const contextLinks = module.default;
-				const supportDataFromContext = contextLinks[ this.props.supportContext ];
-				if ( ! supportDataFromContext ) {
-					return;
-				}
-				this.setState( { supportDataFromContext } );
-			} );
-		}
-	}
-
-	onSupportLinkClick( event, supportPostId, url, blogId ) {
+	onSupportLinkClick = ( event ) => {
 		const { showSupportModal, openDialog, onClick } = this.props;
 		if ( ! showSupportModal ) {
 			return;
 		}
 		onClick?.( event );
-		openDialog( event, supportPostId, url, blogId );
-	}
+		openDialog( event );
+	};
 
 	render() {
-		const { className, showText, showIcon, linkTitle, iconSize, translate, children, noWrap } =
-			this.props;
-
-		let { supportPostId, supportLink } = this.props;
-		let blogId; // support.wordpress is the default blog used for support links
-		if ( this.state.supportDataFromContext ) {
-			supportPostId = this.state.supportDataFromContext.post_id;
-			supportLink = this.state.supportDataFromContext.link;
-			blogId = this.state.supportDataFromContext.blog_id;
-		}
+		const {
+			className,
+			supportPostId,
+			supportLink,
+			showText,
+			showIcon,
+			linkTitle,
+			iconSize,
+			translate,
+			children,
+			noWrap,
+		} = this.props;
 
 		if ( ! supportPostId && ! supportLink ) {
 			return null;
 		}
 
 		const LinkComponent = supportPostId ? 'a' : ExternalLink;
-		const url = supportPostId ? localizeUrl( supportLink ) : supportLink;
 		const externalLinkProps = ! supportPostId && {
 			icon: showIcon,
 			iconSize,
@@ -96,7 +70,7 @@ class InlineSupportLink extends Component {
 		let content = (
 			<>
 				{ showText && text }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ supportPostId && showIcon ? <Gridicon icon="help-outline" size={ iconSize } /> : null }
 			</>
 		);
 		/* Prevent widows, sometimes:
@@ -112,8 +86,8 @@ class InlineSupportLink extends Component {
 		return (
 			<LinkComponent
 				className={ clsx( 'inline-support-link', className ) }
-				href={ url }
-				onClick={ ( event ) => this.onSupportLinkClick( event, supportPostId, url, blogId ) }
+				href={ supportLink }
+				onClick={ this.onSupportLinkClick }
 				target="_blank"
 				rel="noopener noreferrer"
 				title={ linkTitle }
@@ -125,35 +99,59 @@ class InlineSupportLink extends Component {
 	}
 }
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
-	return {
-		openDialog: ( event, supportPostId, supportLink, blogId ) => {
-			if ( ! supportPostId ) {
-				return;
-			}
-			event.preventDefault();
-			const analyticsEvents = [
-				...[
-					recordTracksEvent( 'calypso_inlinesupportlink_click', {
-						support_context: supportContext || null,
-						support_link: supportLink,
-					} ),
-				],
-				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
-				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
-			];
-			if ( analyticsEvents.length > 0 ) {
-				dispatch( composeAnalytics( ...analyticsEvents ) );
-			}
+const ConnectedInlineSupportLink = ( {
+	supportPostId,
+	supportLink,
+	supportContext,
+	tracksEvent,
+	tracksOptions,
+	statsGroup,
+	statsName,
+	...props
+} ) => {
+	const { supportDocData, openSupportDoc } = useSupportDocData( {
+		supportPostId,
+		supportLink,
+		supportContext,
+	} );
 
-			dataStoreDispatch( HELP_CENTER_STORE ).setShowSupportDoc(
-				supportLink,
-				supportPostId,
-				blogId
-			);
-		},
+	const dispatch = useDispatch();
+
+	const openDialog = ( event ) => {
+		if ( ! supportDocData.postId ) {
+			return;
+		}
+
+		event.preventDefault();
+		const analyticsEvents = [
+			...[
+				recordTracksEvent( 'calypso_inlinesupportlink_click', {
+					support_context: supportContext || null,
+					support_link: supportDocData.link,
+				} ),
+			],
+			...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
+			...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
+		];
+		if ( analyticsEvents.length > 0 ) {
+			dispatch( composeAnalytics( ...analyticsEvents ) );
+		}
+
+		openSupportDoc();
 	};
+
+	if ( ! supportDocData ) {
+		return null;
+	}
+
+	return (
+		<InlineSupportLink
+			{ ...props }
+			supportPostId={ supportDocData.postId }
+			supportLink={ supportDocData.link }
+			openDialog={ openDialog }
+		/>
+	);
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default localize( ConnectedInlineSupportLink );

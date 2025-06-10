@@ -13,6 +13,7 @@ const LoginFooter = ( { lostPasswordLink, shouldRenderTos }: LoginFooterProps ) 
 	const translate = useTranslate();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
+	const showGravHelperDocs = isGravPoweredClient && false;
 
 	if ( ! lostPasswordLink && ! shouldRenderTos ) {
 		return null;
@@ -22,7 +23,7 @@ const LoginFooter = ( { lostPasswordLink, shouldRenderTos }: LoginFooterProps ) 
 		<div className="wp-login__main-footer">
 			{ shouldRenderTos && <SocialTos /> }
 			{ lostPasswordLink }
-			{ isGravPoweredClient && (
+			{ showGravHelperDocs && (
 				<div className="wp-login__main-footer-help-docs">
 					{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
 						components: {

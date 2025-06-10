@@ -31,7 +31,7 @@ export default function ReportsMobileView( {
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Created' ) }>
 							<div className="reports-details-mobile-view__column">
-								<ReportDateColumn date={ report.createdAt } />
+								<ReportDateColumn date={ report.created_at } />
 							</div>
 						</ListItemCardContent>
 					</ListItemCard>

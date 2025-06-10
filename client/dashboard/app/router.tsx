@@ -7,16 +7,17 @@ import {
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
 import {
-	canUpdatePHPVersion,
-	canUpdateDefensiveMode,
-	canUpdateHundredYearPlanFeatures,
-	canUpdateWordPressVersion,
-	canGetPrimaryDataCenter,
-	canSetStaticFile404Handling,
-	canUpdateCaching,
-	canUseSftp,
-	canUseSsh,
-} from '../utils/site-features';
+	canViewAgencySettings,
+	canViewHundredYearPlanSettings,
+	canViewWordPressSettings,
+	canViewPHPSettings,
+	canViewSftpSettings,
+	canViewSshSettings,
+	canViewDefensiveModeSettings,
+	canViewPrimaryDataCenterSettings,
+	canViewStaticFile404Settings,
+	canViewCachingSettings,
+} from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -177,7 +178,7 @@ const siteSettingsWordPressRoute = createRoute( {
 	path: 'settings/wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateWordPressVersion( site ) ) {
+		if ( canViewWordPressSettings( site ) ) {
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
 		}
 	},
@@ -194,7 +195,7 @@ const siteSettingsPHPRoute = createRoute( {
 	path: 'settings/php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdatePHPVersion( site ) ) {
+		if ( canViewPHPSettings( site ) ) {
 			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
 		}
 	},
@@ -222,7 +223,7 @@ const siteSettingsAgencyRoute = createRoute( {
 	path: 'settings/agency',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( site.is_wpcom_atomic ) {
+		if ( canViewAgencySettings( site ) ) {
 			await queryClient.ensureQueryData( agencyBlogQuery( site.ID ) );
 		}
 	},
@@ -239,7 +240,7 @@ const siteSettingsHundredYearPlanRoute = createRoute( {
 	path: 'settings/hundred-year-plan',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateHundredYearPlanFeatures( site ) ) {
+		if ( canViewHundredYearPlanSettings( site ) ) {
 			await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
 		}
 	},
@@ -256,7 +257,7 @@ const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	path: 'settings/primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canGetPrimaryDataCenter( site ) ) {
+		if ( canViewPrimaryDataCenterSettings( site ) ) {
 			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( siteSlug ) );
 		}
 	},
@@ -273,7 +274,7 @@ const siteSettingsStaticFile404Route = createRoute( {
 	path: 'settings/static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canSetStaticFile404Handling( site ) ) {
+		if ( canViewStaticFile404Settings( site ) ) {
 			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
 		}
 	},
@@ -290,7 +291,7 @@ const siteSettingsCachingRoute = createRoute( {
 	path: 'settings/caching',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateCaching( site ) ) {
+		if ( canViewCachingSettings( site ) ) {
 			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
 		}
 	},
@@ -307,7 +308,7 @@ const siteSettingsDefensiveModeRoute = createRoute( {
 	path: 'settings/defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateDefensiveMode( site ) ) {
+		if ( canViewDefensiveModeSettings( site ) ) {
 			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
 		}
 	},
@@ -325,8 +326,9 @@ const siteSettingsSftpSshRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		return Promise.all( [
-			canUseSftp( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
-			canUseSsh( site ) && queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+			canViewSftpSettings( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
+			canViewSshSettings( site ) &&
+				queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
 		] );
 	},
 } ).lazy( () =>

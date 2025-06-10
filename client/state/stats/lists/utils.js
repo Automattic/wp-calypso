@@ -1,23 +1,23 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
+import { sortBy, camelCase, get, filter, map, flatten, capitalize } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
 function getArchiveKeyLabel( key ) {
-	const otherLabel = translate( 'Others' );
-
 	const archiveKeyLabelMap = {
+		author: translate( 'Authors' ),
+		cat: translate( 'Categories' ),
+		err: translate( 'Error' ),
 		home: translate( 'Homepage' ),
 		search: translate( 'Searches' ),
-		err: translate( 'Error' ),
-		cat: translate( 'Categories' ),
 		tag: translate( 'Tags' ),
-		author: translate( 'Authors' ),
-		tax: translate( 'Aggregated' ),
+		tax: translate( 'Taxonomies' ),
 		date: translate( 'Dates' ),
+		multiple: translate( 'Aggregated' ),
+		other: translate( 'Others' ),
 	};
 
-	return archiveKeyLabelMap[ key ] || otherLabel;
+	return archiveKeyLabelMap[ key ] ?? capitalize( key );
 }
 
 /**

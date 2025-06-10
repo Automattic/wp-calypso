@@ -138,10 +138,7 @@ $blueberry-color: #3858e9;
 	.chat-feedback-wrapper {
 		width: 100%;
 		margin-left: 46px;
-
-		&.chat-feedback-wrapper-no-extra-contact {
-			margin-right: 44px;
-		}
+		margin-right: 44px;
 
 		.card.odie-foldable-card.odie-sources-foldable-card {
 			margin-top: 4px;
@@ -436,6 +433,10 @@ $blueberry-color: #3858e9;
 
 .chatbox-messages:last-child {
 	margin-bottom: 72px;
+
+	&.force-email-support {
+		margin-bottom: 176px;
+	}
 }
 
 .odie-sources {

@@ -140,6 +140,9 @@ export class DomainsMiniCart extends Component {
 						borderless
 						className="button domains__domain-cart-remove"
 						onClick={ this.props.freeDomainRemoveClickHandler }
+						aria-label={ translate( 'Remove %(domain)s from cart', {
+							args: { domain: this.props.wpcomSubdomainSelected.domain_name },
+						} ) }
 					>
 						{ translate( 'Remove' ) }
 					</Button>
