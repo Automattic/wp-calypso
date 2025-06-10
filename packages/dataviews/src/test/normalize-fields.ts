@@ -51,7 +51,7 @@ describe( 'normalizeFields: default getValue', () => {
 			];
 			const normalizedFields = normalizeFields( fields );
 			const result = normalizedFields[ 0 ].filterBy;
-			expect( result ).toBe( false );
+			expect( result ).toStrictEqual( { operators: [ 'is', 'isNot' ] } );
 		} );
 
 		it( 'returns the field type definition for typed fields', () => {
