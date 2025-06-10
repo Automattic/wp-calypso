@@ -6,7 +6,7 @@ import { requestThemeFilters } from 'calypso/state/themes/actions';
 export class QueryThemeFilters extends Component {
 	static propTypes = {
 		requestThemeFilters: PropTypes.func.isRequired,
-		locale: PropTypes.func.isRequired,
+		locale: PropTypes.string.isRequired,
 	};
 
 	componentDidMount() {

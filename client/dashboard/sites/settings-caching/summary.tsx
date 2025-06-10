@@ -4,7 +4,8 @@ import { __ } from '@wordpress/i18n';
 import { next } from '@wordpress/icons';
 import { siteEdgeCacheStatusQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdateCaching, isEdgeCacheAvailable } from '../../utils/site-features';
+import { canViewCachingSettings } from '../features';
+import { isEdgeCacheAvailable } from './utils';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -15,15 +16,15 @@ export default function CachingSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const canUpdate = site && canUpdateCaching( site );
+	const canView = site && canViewCachingSettings( site );
 
 	const { data: isEdgeCacheActive } = useQuery( {
 		...siteEdgeCacheStatusQuery( site.slug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 
 	const getBadge = () => {
-		if ( ! canUpdate ) {
+		if ( ! canView ) {
 			return [];
 		}
 

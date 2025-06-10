@@ -10,8 +10,8 @@ import { getHelpCenterZendeskConversationStarted, interactionHasZendeskEvent } f
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
 	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
-	const newConversation = useCreateZendeskConversation();
-	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk } =
+	const createZendeskConversation = useCreateZendeskConversation();
+	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 	const navigate = useNavigate();
 
@@ -47,7 +47,11 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 			if ( conversationStarted ) {
 				return;
 			}
-			newConversation( { createdFrom: 'direct_escalation' } );
+			if ( forceEmailSupport ) {
+				navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' );
+				return;
+			}
+			createZendeskConversation( { createdFrom: 'direct_escalation' } );
 		} else {
 			navigate( '/contact-form?mode=FORUM' );
 		}
@@ -56,24 +60,32 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		messageId,
 		isUserEligibleForPaidSupport,
 		conversationStarted,
-		newConversation,
+		createZendeskConversation,
 		navigate,
 		chat?.provider,
 		currentSupportInteraction,
 		chat?.conversationId,
+		forceEmailSupport,
 	] );
 
 	if ( hideNewConversationButton ) {
 		return null;
 	}
 
+	const getButtonText = () => {
+		if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
+			return forceEmailSupport
+				? __( 'Contact our support team by email.', __i18n_text_domain__ )
+				: __( 'Contact our support team.', __i18n_text_domain__ );
+		}
+		return __( 'Ask in our forums.', __i18n_text_domain__ );
+	};
+
 	return (
 		<div className="disclaimer">
 			{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 			<button onClick={ handleClick } className="odie-button-link">
-				{ isUserEligibleForPaidSupport && canConnectToZendesk
-					? __( 'Contact our support team.', __i18n_text_domain__ )
-					: __( 'Ask in our forums.', __i18n_text_domain__ ) }
+				{ getButtonText() }
 			</button>
 		</div>
 	);
