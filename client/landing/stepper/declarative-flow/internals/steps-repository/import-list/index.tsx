@@ -30,7 +30,6 @@ const ImportList: Step< {
 				submit={ navigation.submit }
 				getFinalImporterUrl={ getFinalImporterUrl }
 				{ ...props }
-				renderHeading={ false }
 				title={ text }
 				subTitle={ subText }
 			/>
