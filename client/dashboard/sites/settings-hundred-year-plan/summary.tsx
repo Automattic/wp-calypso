@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { institution } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdateHundredYearPlanFeatures } from '../../utils/site-features';
+import { canViewHundredYearPlanSettings } from '../features';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -15,7 +15,7 @@ export default function HundredYearPlanSummary( {
 	settings: SiteSettings;
 	density?: Density;
 } ) {
-	if ( ! canUpdateHundredYearPlanFeatures( site ) ) {
+	if ( ! canViewHundredYearPlanSettings( site ) ) {
 		return null;
 	}
 

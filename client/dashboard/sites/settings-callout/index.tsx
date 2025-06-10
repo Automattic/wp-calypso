@@ -2,15 +2,17 @@ import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { useEffect, type ReactNode } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import calloutIllustrationUrl from './callout-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
-import type { ReactNode } from 'react';
 
 interface SettingsCalloutProps extends Omit< CalloutProps, 'title' | 'description' > {
 	siteSlug: string;
 	title?: string;
 	description?: ReactNode;
+	tracksId: string;
 }
 
 export default function SettingsCallout( {
@@ -19,8 +21,20 @@ export default function SettingsCallout( {
 	image,
 	title,
 	description,
+	tracksId,
 }: SettingsCalloutProps ) {
+	const { recordTracksEvent } = useAnalytics();
+	useEffect( () => {
+		recordTracksEvent( 'calypso_settings_callout_impression', {
+			callout_id: tracksId,
+		} );
+	}, [ recordTracksEvent, tracksId ] );
+
 	const handleUpgradePlan = () => {
+		recordTracksEvent( 'calypso_settings_callout_click', {
+			callout_id: tracksId,
+		} );
+
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
 		window.location.href = addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }/business`, {

@@ -1,3 +1,4 @@
+$notification-panel-width: 450px;
 $no-sidebar-min-page-width: 800px;
 $with-sidebar-min-page-width: 1114px;
 
@@ -17,11 +18,11 @@ $with-sidebar-min-page-width: 1114px;
 
 	.wpnc__note-list {
 		left: auto;
-		width: 400px;
+		width: $notification-panel-width; // For reader/notifications screen.
 	}
 
 	.wpnc__single-view {
-		right: 400px;
+		right: $notification-panel-width;
 		left: 10px;
 		top: 0;
 		bottom: 0;
@@ -257,6 +258,8 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.components-toggle-group-control-option-base {
+			padding: 0 6px;
+			white-space: nowrap;
 			z-index: initial;
 		}
 	}

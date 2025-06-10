@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 $blueberry-blue: #3858e9;
 
 .chatbox {
@@ -124,4 +125,59 @@ $blueberry-blue: #3858e9;
 	padding: 16px;
 	border-top: 1px solid var(--gray-gray-5, #dcdcde);
 	background: var(--black-white-white, #fff);
+}
+
+.odie-closed-conversation-footer {
+	border-top: 1px solid var(--studio-gray-5, #DCDCDE);
+	background: var(--studio-white, #FFF);
+	box-sizing: border-box;
+
+	width: 100%;
+	display: flex;
+	padding: 16px;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+
+	span {
+		color: var(--studio-gray-40, #787C82);
+		font-size: $font-body-small;
+		line-height: 20px;
+	}
+
+	.odie-closed-conversation-footer__button {
+		display: flex;
+		height: 40px;
+		padding: 10px 24px;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+		align-self: stretch;
+
+		border-radius: 4px;
+		border: 1px solid var(--studio-gray-10, #C3C4C7);
+		background: var(--studio-white, #FFF);
+		color: var(--studio-gray-100, #101517);
+
+		svg {
+			color: var(--studio-gray-40);
+		}
+
+		&:hover {
+			border-color: var(--color-neutral-20)  !important;
+		}
+
+		&:focus {
+			outline: var(--studio-blue-50, #0675c4) solid 2px !important;
+		}
+
+		&:focus,
+		&:hover {
+			color: var(--studio-gray-100, #101517) !important;
+
+			svg {
+				color: var(--studio-gray-40);
+			}
+		}
+	}
 }

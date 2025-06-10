@@ -113,22 +113,25 @@ export default function ReaderAvatar( {
 		'has-site-icon': hasSiteIcon,
 		'has-gravatar': hasAvatar || showPlaceholder,
 	} );
-	const defaultIconElement = ! hasSiteIcon && ! hasAvatar && ! showPlaceholder && (
-		<Gridicon key="globe-icon" icon="globe" size={ siteIconSize } />
-	);
-	const siteIconElement = hasSiteIcon && (
-		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
-	);
+
+	let siteIconElement = null;
+	if ( ! hasSiteIcon && ! hasAvatar && ! showPlaceholder ) {
+		siteIconElement = <Gridicon icon="globe" size={ siteIconSize } />;
+	} else if ( hasSiteIcon ) {
+		const siteAvatar = <SiteIcon size={ siteIconSize } site={ fakeSite } />;
+		siteIconElement = siteUrl ? <a href={ siteUrl }>{ siteAvatar }</a> : siteAvatar;
+	}
+
 	const avatarUrl = author?.wpcom_login ? getUserProfileUrl( author.wpcom_login ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
-		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
+		<Gravatar user={ author } size={ gravatarSize } />
 	);
 	const avatarElement = avatarUrl ? <a href={ avatarUrl }> { authorAvatar }</a> : authorAvatar;
-	const iconElements = [ defaultIconElement, siteIconElement, avatarElement ];
 
 	return (
 		<div className={ classes } onClick={ onClick } aria-hidden="true">
-			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
+			{ siteIconElement }
+			{ avatarElement }
 		</div>
 	);
 }

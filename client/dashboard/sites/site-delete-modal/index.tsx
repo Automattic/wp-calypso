@@ -178,8 +178,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 					{ createInterpolateElement(
 						'Before deleting your site, consider <link>exporting your content as a backup</link>.',
 						{
-							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href="#" />,
+							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
 						}
 					) }
 				</Text>

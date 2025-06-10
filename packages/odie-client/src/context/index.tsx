@@ -5,7 +5,11 @@ import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
-import { isOdieAllowedBot, getHelpCenterZendeskConversationStarted } from '../utils';
+import {
+	isOdieAllowedBot,
+	getHelpCenterZendeskConversationStarted,
+	getIsRequestingHumanSupport,
+} from '../utils';
 import type {
 	Chat,
 	Message,
@@ -51,6 +55,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	trackEvent: noop,
 	waitAnswerToFirstMessageFromHumanSupport: false,
+	forceEmailSupport: false,
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -74,6 +79,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	userFieldFlowName,
 	version = null,
 	currentUser,
+	forceEmailSupport = false,
 	children,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
@@ -106,8 +112,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	/**
 	 * Has the user ever escalated to get human support?
 	 */
-	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some(
-		( message ) => message.context?.flags?.forward_to_human_support
+	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some( ( message ) =>
+		getIsRequestingHumanSupport( message )
 	);
 
 	/**
@@ -213,6 +219,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,
+				forceEmailSupport,
 			} }
 		>
 			{ children }

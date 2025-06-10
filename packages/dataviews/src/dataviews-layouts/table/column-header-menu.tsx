@@ -19,7 +19,6 @@ import { forwardRef, Children, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { unlock } from '../../lock-unlock';
-import { sanitizeOperators } from '../../utils';
 import { SORTING_DIRECTIONS, sortArrows, sortLabels } from '../../constants';
 import type {
 	NormalizedField,
@@ -81,18 +80,17 @@ const _HeaderMenu = forwardRef( function HeaderMenu< Item >(
 	isSortable = field.enableSorting !== false;
 	const header = field.header;
 
-	operators = sanitizeOperators( field );
+	operators = ( !! field.filterBy && field.filterBy?.operators ) || [];
+
 	// Filter can be added if:
 	//
 	// 1. The field is not already part of a view's filters.
 	// 2. The field has elements or Edit property.
-	// 3. The field has declared filter operators.
-	// 4. The field does not opt-out of filtering.
-	// 5. The filter is not primary (if it is, it is already visible).
+	// 3. The field does not opt-out of filtering.
+	// 4. The filter is not primary (if it is, it is already visible).
 	canAddFilter =
 		! view.filters?.some( ( _filter ) => fieldId === _filter.field ) &&
 		!! ( field.elements?.length || field.Edit ) &&
-		!! operators.length &&
 		field.filterBy !== false &&
 		! field.filterBy?.isPrimary;
 
