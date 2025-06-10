@@ -194,7 +194,7 @@ export function getPurchasesFieldDefinitions( {
 			type: 'text',
 			elements: [
 				{ value: 'domain', label: translate( 'Domains' ) },
-				{ value: 'plan', label: translate( 'Plan' ) },
+				{ value: 'plan', label: translate( 'Plans' ) },
 				{ value: 'other', label: translate( 'Other' ) },
 			],
 			filterBy: { operators: [ 'is' ] },
