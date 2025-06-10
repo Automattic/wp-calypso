@@ -70,6 +70,13 @@
 	.build-report__preview-button {
 		width: fit-content;
 	}
+
+	.build-report__error-message {
+		color: var( --color-error );
+		font-size: 12px;
+		margin-block-start: 4px;
+		margin-block-end: 0;
+	}
 }
 
 .build-report__date-popover {

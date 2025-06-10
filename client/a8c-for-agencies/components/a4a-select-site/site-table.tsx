@@ -11,7 +11,11 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { SelectSiteTableProps, A4ASelectSiteItem } from './types';
 
-const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableProps ) => {
+const A4ASelectSiteTable = ( {
+	selectedSite,
+	setSelectedSite,
+	selectedSiteId,
+}: SelectSiteTableProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -30,6 +34,8 @@ const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableP
 		[ dispatch, setSelectedSite ]
 	);
 
+	const updatedSelectedSiteId = selectedSite?.id || selectedSiteId;
+
 	const fields = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
@@ -40,7 +46,7 @@ const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableP
 					<FormRadio
 						htmlFor={ `site-${ item.id }` }
 						id={ `site-${ item.id }` }
-						checked={ selectedSite?.id === item.id }
+						checked={ updatedSelectedSiteId === item.id }
 						onChange={ () => onSelectSite( item ) }
 						label={ item.site }
 					/>
@@ -52,7 +58,7 @@ const A4ASelectSiteTable = ( { selectedSite, setSelectedSite }: SelectSiteTableP
 		};
 
 		return [ siteColumn ];
-	}, [ onSelectSite, selectedSite?.id, translate ] );
+	}, [ onSelectSite, updatedSelectedSiteId, translate ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( items as A4ASelectSiteItem[], dataViewsState, fields );
