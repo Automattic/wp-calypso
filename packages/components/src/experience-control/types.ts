@@ -46,7 +46,11 @@ export type ExperienceControlBaseProps = Omit<
 /**
  * Props for the main ExperienceControl component.
  */
-export type ExperienceControlProps = Pick< ExperienceControlBaseProps, 'label' | 'help' > & {
+export type ExperienceControlProps = {
+	/** The label for the control */
+	label: string;
+	/** Optional help text for the control */
+	help?: string;
 	/** The callback function when experience value changes */
 	onChange: ( experience: ExperienceValue ) => void;
 	/** The current selected experience value */
