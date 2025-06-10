@@ -110,7 +110,11 @@ const ChecklistItem: FC< Props > = ( {
 					{ ...buttonProps }
 				>
 					{ completed && (
-						<div className="checklist-item__checkmark-container" aria-hidden="true">
+						<div
+							className="checklist-item__checkmark-container"
+							aria-hidden="true"
+							data-testid="checklist-item-checkmark"
+						>
 							<Icon icon={ check } className="checklist-item__checkmark" size={ 25 } />
 						</div>
 					) }
