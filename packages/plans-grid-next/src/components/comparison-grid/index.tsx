@@ -997,6 +997,7 @@ const ComparisonGrid = ( {
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
 	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
+	const prevGridPlans = useRef< GridPlan[] >( [] );
 
 	useEffect( () => {
 		let numPlansToDisplay = gridPlans.length;
@@ -1014,9 +1015,30 @@ const ComparisonGrid = ( {
 				break;
 		}
 
-		let visiblePlanSlugs = gridPlans
-			.slice( 0, numPlansToDisplay )
-			.map( ( { planSlug } ) => planSlug );
+		let visiblePlanSlugs: PlanSlug[] = [];
+
+		// re-slice from gridPlans if the number of plans to show is different
+		// This re-sets the plan grid to show the first N plans
+		if ( visiblePlans.length !== numPlansToDisplay ) {
+			visiblePlanSlugs = gridPlans
+				.slice( 0, numPlansToDisplay )
+				.map( ( { planSlug } ) => planSlug );
+		} else if ( prevGridPlans.current !== gridPlans ) {
+			// If the number of plans is the same and the set of plans to show has changed
+			// Show the plans at the same indexes in the new set as were shown in the old set
+			// This should get the same planSlugs in the same order as the previous set of grid plans
+			visiblePlanSlugs = visiblePlans.map( ( planSlug ) => {
+				const index = prevGridPlans.current.findIndex(
+					( { planSlug: gridPlanSlug } ) => gridPlanSlug === planSlug
+				);
+				return gridPlans[ index ]?.planSlug;
+			} );
+
+			prevGridPlans.current = gridPlans;
+		} else {
+			// Otherwise, just keep the same set of visible plans as a starting point
+			visiblePlanSlugs = visiblePlans;
+		}
 
 		const isCurrentPlanVisible =
 			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
@@ -1043,7 +1065,7 @@ const ComparisonGrid = ( {
 		gridPlans,
 		currentPlanTerm,
 		selectedPlanTerm,
-		intervalType,
+		visiblePlans,
 	] );
 
 	const visibleGridPlans = useMemo(
