@@ -675,7 +675,7 @@ export default function CheckoutMainContent( {
 						size={ ! isLargeViewport ? 'small' : undefined }
 					/>
 				) : (
-					<WPCheckoutTitle className="checkout-title">{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
 				) }
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />

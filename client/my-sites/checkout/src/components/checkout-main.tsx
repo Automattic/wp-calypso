@@ -548,15 +548,23 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
-	const gravatarColors = isGravatarDomain
-		? {
-				primary: '#1d4fc4',
-				primaryBorder: '#001c5f',
-				primaryOver: '#002e9b',
-				success: '#1d4fc4',
-				discount: '#1d4fc4',
-		  }
-		: {};
+	let gravatarColors = {};
+	let gravatarFontWeights = {};
+
+	if ( isGravatarDomain ) {
+		gravatarColors = {
+			primary: '#1d4fc4',
+			primaryBorder: '#001c5f',
+			primaryOver: '#002e9b',
+			success: '#1d4fc4',
+			discount: '#1d4fc4',
+		};
+
+		gravatarFontWeights = {
+			bold: '700',
+		};
+	}
+
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -583,6 +591,7 @@ export default function CheckoutMain( {
 	const theme = {
 		...checkoutTheme,
 		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
 	const isCheckoutV2ExperimentLoading = false;
