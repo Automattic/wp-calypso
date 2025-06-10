@@ -39,6 +39,14 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 	};
 };
 
+/**
+ * Attempts to retrieve the site information from the tanstack cache.
+ *
+ * It looks for the site slug in both the "site" and "sites" caches. Perhaps it's
+ * overkill to search in both places. But this whole thing is a heuristic - we're
+ * hoping to attach site info if it happens to be available. So I think checking
+ * both caches represents a "best effort" attempt.
+ */
 function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
 	const site = queryClient.getQueryData< Site >( [ 'site', siteSlug, SITE_FIELDS, SITE_OPTIONS ] );
 	if ( site ) {
