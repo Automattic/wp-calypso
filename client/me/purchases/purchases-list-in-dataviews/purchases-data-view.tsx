@@ -134,9 +134,11 @@ function usePreservePurchasesFiltersInUrl( {
 export function PurchasesDataViews( {
 	purchases,
 	sites,
+	transferredOwnershipPurchases = [],
 }: {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
+	transferredOwnershipPurchases?: Purchases.Purchase[];
 } ) {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
@@ -171,6 +173,7 @@ export function PurchasesDataViews( {
 
 	const purchasesDataFields = usePurchasesFieldDefinitions( {
 		sites: sitesWithPurchases,
+		transferredOwnershipPurchases,
 	} );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
@@ -183,7 +186,13 @@ export function PurchasesDataViews( {
 				label: translate( 'Manage this purchase', { textOnly: true } ),
 				isPrimary: true,
 				icon: <Gridicon icon="chevron-right" />,
-				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
+				isEligible: ( item: Purchases.Purchase ) => {
+					// Hide manage button for transferred ownership purchases
+					const isTransferredOwnership = transferredOwnershipPurchases.some(
+						( transferredPurchase ) => transferredPurchase.id === item.id
+					);
+					return Boolean( item.domain && item.id ) && ! isTransferredOwnership;
+				},
 				callback: ( items: Purchases.Purchase[] ) => {
 					const siteUrl = items[ 0 ].domain;
 					const subscriptionId = items[ 0 ].id;
@@ -201,7 +210,7 @@ export function PurchasesDataViews( {
 				},
 			},
 		],
-		[ translate ]
+		[ translate, transferredOwnershipPurchases ]
 	);
 
 	const getItemId = ( item: Purchases.Purchase ) => {
