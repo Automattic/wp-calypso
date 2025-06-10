@@ -33,6 +33,65 @@ import { defaultDispatcher } from './utils/dispatcher';
 const DEFAULT_TIMEOUT = 120000;
 
 /**
+ * Execute a batch of tool calls and return their results
+ * @param toolCalls
+ * @param toolProvider
+ */
+async function executeToolCallBatch(
+	toolCalls: ToolCallDataPart[],
+	toolProvider: any
+): Promise< {
+	results: ToolResultDataPart[];
+	shouldReturnToAgent: boolean;
+	agentMessages: Message[];
+} > {
+	const results: ToolResultDataPart[] = [];
+	const agentMessages: Message[] = [];
+	let shouldReturnToAgent = false;
+
+	for ( const toolCall of toolCalls ) {
+		const { toolCallId, toolId, arguments: args } = toolCall.data;
+
+		try {
+			const executionResult = await toolProvider.executeTool(
+				toolId as string,
+				args
+			);
+			const { result, returnToAgent, agentMessage } =
+				processToolExecutionResult( executionResult );
+
+			if ( returnToAgent ) {
+				shouldReturnToAgent = true;
+			}
+
+			if ( agentMessage ) {
+				agentMessages.push( createAgentTextMessage( agentMessage ) );
+			}
+
+			results.push(
+				createToolResultDataPart(
+					toolCallId as string,
+					toolId as string,
+					result
+				)
+			);
+		} catch ( error ) {
+			shouldReturnToAgent = true;
+			results.push(
+				createToolResultDataPart(
+					toolCallId as string,
+					toolId as string,
+					undefined,
+					error instanceof Error ? error.message : String( error )
+				)
+			);
+		}
+	}
+
+	return { results, shouldReturnToAgent, agentMessages };
+}
+
+/**
  * Extract conversation history from a message's data parts
  *
  * @param message - The A2A message to extract conversation history from
@@ -445,7 +504,6 @@ export function createClient( config: ClientConfig ): Client {
 
 						// Track agent messages from tool executions
 						const agentMessages: Message[] = [];
-						
 						for ( const toolCall of toolCalls ) {
 							const {
 								toolCallId,
@@ -533,12 +591,114 @@ export function createClient( config: ClientConfig ): Client {
 								contextProvider
 							);
 
-							// Yield the continued task result
+							// Check if the continued task has more tool calls to process
+							let continuedToolCalls = continuedTaskUpdate.status
+								?.message
+								? extractToolCallsFromMessage(
+										continuedTaskUpdate.status.message
+								  )
+								: [];
+
+							// Add the first tool results to conversation history before processing additional calls
+							if ( withHistory && toolResults.length > 0 ) {
+								newConversationParts.push( {
+									role: 'agent' as const,
+									parts: toolResults,
+								} );
+							}
+
+							// Process any additional tool calls from the continued task
+							let finalTask = continuedTaskUpdate;
+
+							if ( continuedToolCalls.length > 0 ) {
+								yield {
+									...continuedTaskUpdate,
+									final: false,
+									text: extractTextFromMessage(
+										continuedTaskUpdate.status?.message || {
+											role: 'agent',
+											parts: [],
+										}
+									),
+								};
+
+								// Process additional tool calls
+								while ( continuedToolCalls.length > 0 ) {
+									// Add the current task message (with additional tool calls) to conversation history FIRST
+									if (
+										withHistory &&
+										finalTask.status?.message
+									) {
+										newConversationParts.push(
+											finalTask.status.message
+										);
+									}
+
+									// Execute the additional tool calls
+									const {
+										results: moreResults,
+										shouldReturnToAgent: moreShouldReturn,
+									} = await executeToolCallBatch(
+										continuedToolCalls,
+										toolProvider
+									);
+
+									if ( moreShouldReturn ) {
+										// Include conversation history with additional tool results
+										const moreHistoryDataParts = withHistory
+											? conversationHistoryToDataParts(
+													newConversationParts
+											  )
+											: [];
+
+										const moreResultMessage =
+											createToolResultMessage(
+												moreResults,
+												moreHistoryDataParts
+											);
+										finalTask = await continueTask(
+											finalTask.id,
+											moreResultMessage,
+											requestConfig,
+											toolProvider,
+											contextProvider
+										);
+
+										// Check for more tool calls in the response
+										continuedToolCalls = finalTask.status
+											?.message
+											? extractToolCallsFromMessage(
+													finalTask.status.message
+											  )
+											: [];
+
+										// Only yield intermediate result if there are more tool calls coming
+										if ( continuedToolCalls.length > 0 ) {
+											yield {
+												id: finalTask.id,
+												status: finalTask.status,
+												final: false,
+												text: extractTextFromMessage(
+													finalTask.status
+														?.message || {
+														role: 'agent',
+														parts: [],
+													}
+												),
+											};
+										}
+									} else {
+										break;
+									}
+								}
+							}
+
+							// Single final result - regardless of whether we processed additional tool calls or not
 							yield {
-								...continuedTaskUpdate,
+								...finalTask,
 								final: true,
 								text: extractTextFromMessage(
-									continuedTaskUpdate.status?.message || {
+									finalTask.status?.message || {
 										role: 'agent',
 										parts: [],
 									}
@@ -622,49 +782,9 @@ export function createClient( config: ClientConfig ): Client {
 					break; // No tool calls, likely human input required again
 				}
 
-				// Execute tool calls (same logic as sendMessage)
-				const toolResults: ToolResultDataPart[] = [];
-				let shouldReturnToAgent = false;
-
-				for ( const toolCall of toolCalls ) {
-					const {
-						toolCallId,
-						toolId,
-						arguments: args,
-					} = toolCall.data;
-					try {
-						const executionResult = await toolProvider.executeTool(
-							toolId as string,
-							args
-						);
-
-						const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
-
-						// Mark that at least one tool wants to return to agent
-						if ( returnToAgent ) {
-							shouldReturnToAgent = true;
-						}
-
-						toolResults.push(
-							createToolResultDataPart(
-								toolCallId as string,
-								toolId as string,
-								result
-							)
-						);
-					} catch ( error ) {
-						toolResults.push(
-							createToolResultDataPart(
-								toolCallId as string,
-								toolId as string,
-								undefined,
-								error instanceof Error
-									? error.message
-									: String( error )
-							)
-						);
-					}
-				}
+				// Execute tool calls
+				const { results: toolResults, shouldReturnToAgent } =
+					await executeToolCallBatch( toolCalls, toolProvider );
 
 				// Only continue with tool results if at least one tool wants to return to agent
 				if ( shouldReturnToAgent ) {

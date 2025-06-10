@@ -9,8 +9,11 @@ export { useAgent } from './react/useAgent';
 export { useClientContext } from './react/useClientContext';
 export { useClientTools } from './react/useClientTools';
 
-// Essential utility for external consumers
-export { extractToolCallsFromMessage } from './client/utils/core';
+// Essential utilities for external consumers
+export {
+	extractToolCallsFromMessage,
+	extractTextFromMessage,
+} from './client/utils/core';
 
 // All type exports (safe to expose)
 export type {
