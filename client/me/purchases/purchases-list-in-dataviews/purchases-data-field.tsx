@@ -122,7 +122,7 @@ export function getPurchasesFieldDefinitions( {
 					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
 				} );
 			} )(),
-			filterBy: { operators: [ 'is' ] },
+			filterBy: { operators: [ 'isAny' ] },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
