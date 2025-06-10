@@ -83,6 +83,10 @@ export interface SiteOptions {
 	software_version: string;
 }
 
+export interface FetchSitesOptions {
+	site_visibility: 'all' | 'visible' | 'hidden' | 'deleted';
+}
+
 export interface Site {
 	ID: string;
 	slug: string;

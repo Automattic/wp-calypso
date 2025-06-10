@@ -4,8 +4,10 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
+import { getOdieInitialMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import {
 	useAutoScroll,
@@ -14,11 +16,7 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import {
-	getOdieInitialMessage,
-	interactionHasZendeskEvent,
-	interactionHasEnded,
-} from '../../utils';
+import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
@@ -47,7 +45,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -118,7 +116,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			! chat.conversationId &&
 			createZendeskConversation &&
 			resetSupportInteraction &&
-			isChatLoaded
+			isChatLoaded &&
+			! forceEmailSupport
 		) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
@@ -130,16 +129,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				setChatMessagesLoaded( true );
 			} else {
 				resetSupportInteraction().then( ( interaction ) => {
-					if ( isChatLoaded ) {
-						createZendeskConversation( {
-							avoidTransfer: true,
-							interactionId: interaction?.uuid,
-							section: searchParams.get( 'section' ),
-							createdFrom: 'direct_url',
-						} ).then( () => {
-							setChatMessagesLoaded( true );
-						} );
-					}
+					createZendeskConversation( {
+						avoidTransfer: true,
+						interactionId: interaction?.uuid,
+						section: searchParams.get( 'section' ),
+						createdFrom: 'direct_url',
+					} ).then( () => {
+						setChatMessagesLoaded( true );
+					} );
 				} );
 			}
 		}
@@ -162,7 +159,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<>
-			<div className="chatbox-messages" ref={ messagesContainerRef }>
+			<div
+				className={ clx( 'chatbox-messages', {
+					'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
+				} ) }
+				ref={ messagesContainerRef }
+			>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
@@ -203,7 +205,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						<JumpToRecent containerReference={ messagesContainerRef } />
 						{ chat.provider === 'odie' && (
 							<>
-								<ViewMostRecentOpenConversationNotice />
+								{ ! forceEmailSupport && <ViewMostRecentOpenConversationNotice /> }
 								{ availableStatusWithFeedback.includes( chat.status ) && (
 									<div className="odie-chatbox__action-message">
 										{ chat.status === 'sending' && <ThinkingPlaceholder /> }

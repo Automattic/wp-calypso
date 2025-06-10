@@ -15,6 +15,7 @@ import { default as datetime } from './datetime';
 import { default as boolean } from './boolean';
 import { default as media } from './media';
 import { renderFromElements } from '../utils';
+import { ALL_OPERATORS, OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
 
 /**
  *
@@ -78,6 +79,9 @@ export default function getFieldTypeDefinition< Item >(
 				: field.getValue( { item } );
 		},
 		enableSorting: true,
-		filterBy: false,
+		filterBy: {
+			defaultOperators: [ OPERATOR_IS, OPERATOR_IS_NOT ],
+			validOperators: ALL_OPERATORS,
+		},
 	};
 }

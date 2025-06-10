@@ -37,9 +37,12 @@ export const MessageContent = ( {
 		( isNextMessageFromSameSender || isFeedbackMessage ) && 'next-chat-message-same-sender'
 	);
 
-	const isMessageWithOnlyText =
-		message.context?.flags?.hide_disclaimer_content ||
-		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
+	const isMessageWithEscalationOption =
+		message.role === 'bot' &&
+		! (
+			message.context?.flags?.hide_disclaimer_content ||
+			message.context?.question_tags?.inquiry_type === 'user-is-greeting'
+		);
 
 	// This will parse text messages sent from users to Zendesk.
 	const parseTextMessage = ( message: Message ): Message => {
@@ -72,7 +75,7 @@ export const MessageContent = ( {
 						<UserMessage
 							message={ markdownMessageContent }
 							isDisliked={ isDisliked }
-							isMessageWithoutEscalationOption={ isMessageWithOnlyText }
+							isMessageWithEscalationOption={ isMessageWithEscalationOption }
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }

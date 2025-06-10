@@ -37,7 +37,7 @@ $recoleta-font-family: 'Recoleta', serif;
 		}
 
 		.support-content-resource {
-			background-color: var( --studio-blue-5, #f7f8fe );
+			background-color: #f7f8fe;
 			border-radius: 4px;
 			padding: 40px;
 			flex: 1;
@@ -52,13 +52,13 @@ $recoleta-font-family: 'Recoleta', serif;
 
 			&:hover {
 				.support-footer__card-title {
-					color: var( --studio-blue-50, #3858e9 );
+					color: #3858e9;
 				}
 			}
 		}
 
 		.support-footer__icon-wrapper {
-			background-color: var( --studio-blue-50, #3858e9 );
+			background-color: #3858e9;
 			border-radius: 50%;
 			padding: 8px;
 			margin-bottom: 24px;

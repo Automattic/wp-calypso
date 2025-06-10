@@ -23,16 +23,16 @@ import {
 } from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
-	canUpdatePHPVersion,
-	canUpdateDefensiveMode,
-	canUpdateHundredYearPlanFeatures,
-	canUpdateWordPressVersion,
-	canGetPrimaryDataCenter,
-	canSetStaticFile404Handling,
-	canUpdateCaching,
-	canUseSftp,
-	canUseSsh,
-} from 'calypso/dashboard/utils/site-features';
+	canViewWordPressSettings,
+	canViewPHPSettings,
+	canViewDefensiveModeSettings,
+	canViewPrimaryDataCenterSettings,
+	canViewStaticFile404Settings,
+	canViewHundredYearPlanSettings,
+	canViewCachingSettings,
+	canViewSshSettings,
+	canViewSftpSettings,
+} from 'calypso/dashboard/sites/features';
 import Root from './root';
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -103,7 +103,7 @@ const wordpressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateWordPressVersion( site ) ) {
+		if ( canViewWordPressSettings( site ) ) {
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
 		}
 	},
@@ -120,7 +120,7 @@ const phpRoute = createRoute( {
 	path: 'php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdatePHPVersion( site ) ) {
+		if ( canViewPHPSettings( site ) ) {
 			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
 		}
 	},
@@ -165,7 +165,7 @@ const hundredYearPlanRoute = createRoute( {
 	path: 'hundred-year-plan',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateHundredYearPlanFeatures( site ) ) {
+		if ( canViewHundredYearPlanSettings( site ) ) {
 			await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
 		}
 	},
@@ -182,7 +182,7 @@ const primaryDataCenterRoute = createRoute( {
 	path: 'primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canGetPrimaryDataCenter( site ) ) {
+		if ( canViewPrimaryDataCenterSettings( site ) ) {
 			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( siteSlug ) );
 		}
 	},
@@ -199,7 +199,7 @@ const staticFile404Route = createRoute( {
 	path: 'static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canSetStaticFile404Handling( site ) ) {
+		if ( canViewStaticFile404Settings( site ) ) {
 			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
 		}
 	},
@@ -216,7 +216,7 @@ const cachingRoute = createRoute( {
 	path: 'caching',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateCaching( site ) ) {
+		if ( canViewCachingSettings( site ) ) {
 			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
 		}
 	},
@@ -233,7 +233,7 @@ const defensiveModeRoute = createRoute( {
 	path: 'defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateDefensiveMode( site ) ) {
+		if ( canViewDefensiveModeSettings( site ) ) {
 			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
 		}
 	},
@@ -251,8 +251,9 @@ const sftpSshRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		return Promise.all( [
-			canUseSftp( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
-			canUseSsh( site ) && queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+			canViewSftpSettings( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
+			canViewSshSettings( site ) &&
+				queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
 		] );
 	},
 } ).lazy( () =>

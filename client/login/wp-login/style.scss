@@ -591,10 +591,6 @@ $image-height: 47px;
 			font-size: $font-body-small;
 		}
 	}
-
-	.two-factor-authentication__actions.card {
-		padding-top: 0;
-	}
 }
 
 /* stylelint-disable scales/font-weights, scales/radii */
@@ -688,6 +684,11 @@ $image-height: 47px;
 
 	.card {
 		background: transparent;
+
+		&.two-factor-authentication__push-notification-approval,
+		&.two-factor-authentication__actions {
+			box-shadow: none;
+		}
 	}
 
 	form {

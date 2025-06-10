@@ -19,7 +19,8 @@ import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '..
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { canUpdateDefensiveMode } from '../../utils/site-features';
+import { SectionHeader } from '../../components/section-header';
+import { canViewDefensiveModeSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -63,11 +64,11 @@ const form = {
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateDefensiveMode( site );
+	const canView = site && canViewDefensiveModeSettings( site );
 
 	const { data } = useQuery( {
 		...siteDefensiveModeQuery( siteSlug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 	const mutation = useMutation( siteDefensiveModeMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -76,7 +77,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		ttl: availableTtls[ 0 ].value,
 	} );
 
-	if ( ! canUpdate ) {
+	if ( ! canView ) {
 		throw notFound();
 	}
 
@@ -176,34 +177,29 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				<Notice>{ __( 'Defensive mode is disabled.' ) }</Notice>
 				<Card>
 					<CardBody>
-						<VStack spacing={ 8 } style={ { padding: '8px 0' } }>
-							<Text size="15px" weight={ 500 } lineHeight="20px">
-								{ __( 'Enable defensive mode' ) }
-							</Text>
-
-							<form onSubmit={ handleEnable }>
-								<VStack spacing={ 4 }>
-									<DataForm< { ttl: string } >
-										data={ formData }
-										fields={ fields }
-										form={ form }
-										onChange={ ( edits: { ttl?: string } ) => {
-											setFormData( ( data ) => ( { ...data, ...edits } ) );
-										} }
-									/>
-									<HStack justify="flex-start">
-										<Button
-											variant="primary"
-											type="submit"
-											isBusy={ isPending }
-											disabled={ isPending }
-										>
-											{ __( 'Enable' ) }
-										</Button>
-									</HStack>
-								</VStack>
-							</form>
-						</VStack>
+						<form onSubmit={ handleEnable }>
+							<VStack spacing={ 4 }>
+								<SectionHeader title={ __( 'Enable defensive mode' ) } level={ 3 } />
+								<DataForm< { ttl: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { ttl?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<HStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending }
+									>
+										{ __( 'Enable' ) }
+									</Button>
+								</HStack>
+							</VStack>
+						</form>
 					</CardBody>
 				</Card>
 			</VStack>

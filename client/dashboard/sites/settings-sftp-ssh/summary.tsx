@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import { siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUseSftp, canUseSsh } from '../../utils/site-features';
+import { canViewSftpSettings, canViewSshSettings } from '../features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -17,12 +17,12 @@ export default function SftpSshSettingsSummary( {
 } ) {
 	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( site.slug ),
-		enabled: canUseSftp( site ),
+		enabled: canViewSftpSettings( site ),
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
 		...siteSshAccessStatusQuery( site.slug ),
-		enabled: canUseSsh( site ),
+		enabled: canViewSshSettings( site ),
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
@@ -34,7 +34,7 @@ export default function SftpSshSettingsSummary( {
 			text: sftpEnabled ? __( 'SFTP enabled' ) : __( 'SFTP disabled' ),
 			intent: sftpEnabled ? ( 'success' as const ) : undefined,
 		},
-		canUseSsh( site ) && {
+		canViewSshSettings( site ) && {
 			text: sshEnabled ? __( 'SSH enabled' ) : __( 'SSH disabled' ),
 			intent: sshEnabled ? ( 'success' as const ) : undefined,
 		},
