@@ -19,6 +19,33 @@ body.archive {
 		}
 	}
 }
+.happy-blocks_navigation_search {
+	display: flex;
+	justify-content: space-between;
+	padding: 16px 24px;
+	margin-bottom: 32px;
+
+	@media only screen and (max-width: $breakpoint-mobile) {
+		padding: 16px;
+		margin-bottom: 16px;
+	}
+
+	.happy-blocks_inner_search_form {
+		input {
+			display: none;
+		}
+
+		.search-submit-button {
+			height: 24px;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			border: none;
+			background: #fff;
+			cursor: pointer;
+		}
+	}
+}
 
 .happy-blocks_inner_search {
 	height: 0;
