@@ -3,7 +3,7 @@ import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -44,13 +44,14 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const optionLabels = useOptionLabels();
 
 	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats
+		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
+		: TOP_POSTS_SUPPORT_URL;
 
-	const mainStatType = MAIN_STAT_TYPE;
-	const subStatType = SUB_STAT_TYPE;
-
+	const optionLabels = useOptionLabels();
 	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
 		return {
 			value: key as StatType,
@@ -59,17 +60,8 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		};
 	} );
 
-	const [ statType, setStatType ] = useState( mainStatType );
-	// Apply statType from the query to the component state to toggle the view list.
-	useEffect( () => {
-		setStatType( query.viewdType || mainStatType );
-	}, [ query.viewdType, mainStatType ] );
-	const onStatTypeChange = ( option: StatTypeOptionType ) => setStatType( option.value );
-
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
-		: TOP_POSTS_SUPPORT_URL;
+	const mainStatType = MAIN_STAT_TYPE;
+	const subStatType = SUB_STAT_TYPE;
 
 	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
@@ -80,6 +72,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const isRequestingData = isArchiveBreakdownEnabled
 		? isRequestingTopPostsData || isRequestingArchivesData
 		: isRequestingTopPostsData;
+
+	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
+
+	const statType = localStatType ?? query.viewdType ?? mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
