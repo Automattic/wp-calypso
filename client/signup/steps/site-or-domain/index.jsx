@@ -113,7 +113,6 @@ class SiteOrDomain extends Component {
 			allItemClickable: true,
 			'aria-label': `${ buyADomainTitle }. ${ buyADomainDescription }`,
 		} );
-
 		choices.push( {
 			key: 'page',
 			title: newSiteTitle,
@@ -128,7 +127,6 @@ class SiteOrDomain extends Component {
 			allItemClickable: true,
 			'aria-label': `${ newSiteTitle }. ${ newSiteDescription }`,
 		} );
-
 		if ( isLoggedIn && siteCount > 0 ) {
 			choices.push( {
 				key: 'existing-site',
