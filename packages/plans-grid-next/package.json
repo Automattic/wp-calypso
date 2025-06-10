@@ -8,6 +8,17 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.tsx",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.tsx",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -38,24 +49,24 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/number-formatters": "^1.0.0",
+		"@automattic/number-formatters": "^1.0.1",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@emotion/react": "11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/data": "^10.22.0",
-		"@wordpress/element": "^6.22.0",
-		"@wordpress/icons": "^10.22.0",
-		"@wordpress/primitives": "^4.22.0",
-		"@wordpress/url": "^4.22.0",
-		"@wordpress/warning": "^3.22.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/primitives": "^4.23.0",
+		"@wordpress/url": "^4.23.0",
+		"@wordpress/warning": "^3.23.0",
 		"clsx": "^2.1.1",
 		"i18n-calypso": "workspace:^",
 		"react-intersection-observer": "^9.4.3",
 		"react-transition-group": "^4.3.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^5.22.0",
+		"@wordpress/i18n": "^5.23.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
@@ -73,9 +84,9 @@
 		"msw": "^2.2.14",
 		"msw-storybook-addon": "^2.0.4",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^8.6.9",
-		"typescript": "^5.8.2",
-		"webpack": "^5.97.1"
+		"storybook": "^8.6.14",
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"msw": {
 		"workerDirectory": "static"

@@ -29,7 +29,7 @@ export default function () {
 	// Billing
 	page( '/purchases/billing', requireAccessContext, billingContext, makeLayout, clientRender );
 
-	// Payment Methods
+	// Payment methods
 	page(
 		'/purchases/payment-methods',
 		requireAccessContext,

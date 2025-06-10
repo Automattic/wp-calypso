@@ -59,7 +59,7 @@ export default function PaymentMethodAdd( { withAssignLicense, isClientCheckout 
 					{ ! stepper && ! isClientCheckout && (
 						<Breadcrumb
 							items={ [
-								{ label: translate( 'Payment Methods' ), href: paymentMethodsLink },
+								{ label: translate( 'Payment methods' ), href: paymentMethodsLink },
 								{ label: translate( 'Add new card' ) },
 							] }
 						/>

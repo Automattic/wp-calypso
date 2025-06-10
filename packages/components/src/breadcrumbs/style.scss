@@ -1,0 +1,49 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.a8c-components-breadcrumbs {
+	overflow: visible;
+
+	.a8c-components-breadcrumbs__list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.a8c-components-breadcrumbs__item-wrapper {
+		display: inline-flex;
+		flex-shrink: 0;
+
+		&.is-current {
+			.breadcrumb__item {
+				color: $gray-900;
+			}
+		}
+
+		&:not(.is-current)::after {
+			content: '/';
+			color: $gray-200;
+			margin: 0 8px;
+			@include body-medium;
+		}
+	}
+
+	.a8c-components-breadcrumbs__item {
+		color: $gray-700;
+		text-decoration: none;
+		height: auto;
+		padding: 0;
+		@include body-medium;
+
+		&:hover {
+			color: $gray-900;
+		}
+	}
+
+	&.is-offscreen {
+		position: absolute;
+		top: -9999em;
+		width: fit-content;
+		visibility: hidden;
+	}
+}

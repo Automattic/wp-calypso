@@ -32,7 +32,7 @@ const getPageInfo = (
 			return {
 				title: isDesktop
 					? translate( 'Migrations: Set up secure payments' )
-					: translate( 'Migrations: Payout Settings' ),
+					: translate( 'Migrations: Payout settings' ),
 				mainPageBreadCrumb: {
 					label: translate( 'Migrations' ),
 					href: A4A_MIGRATIONS_LINK,
@@ -41,10 +41,10 @@ const getPageInfo = (
 		case 'woopayments':
 			return {
 				title: isDesktop
-					? translate( 'WooPayments Commissions: Set up secure payments' )
-					: translate( 'WooPayments: Payout Settings' ),
+					? translate( 'WooPayments commissions: Set up secure payments' )
+					: translate( 'WooPayments: Payout settings' ),
 				mainPageBreadCrumb: {
-					label: translate( 'WooPayments Commissions' ),
+					label: translate( 'WooPayments commissions' ),
 					href: A4A_WOOPAYMENTS_LINK,
 				},
 			};
@@ -52,7 +52,7 @@ const getPageInfo = (
 			return {
 				title: isDesktop
 					? translate( 'Your referrals and commissions: Set up secure payments' )
-					: translate( 'Referrals: Payout Settings' ),
+					: translate( 'Referrals: Payout settings' ),
 				mainPageBreadCrumb: {
 					label: isDesktop
 						? translate( 'Your referrals and commissions' )

@@ -1,13 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 import '@automattic/components/styles/wp-button-override.scss';
@@ -17,17 +15,12 @@ type QrCodeLoginButtonProps = {
 	loginUrl: string;
 };
 
-export const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
+export default function QrCodeLoginButton( { loginUrl }: QrCodeLoginButtonProps ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { isDisabled, oauth2Client, isWoo } = useSelector( ( select ) => {
-		return {
-			oauth2Client: getCurrentOAuth2Client( select ) as { id: string },
-			locale: getCurrentLocaleSlug( select ),
-			isWoo: getIsWoo( select ),
-			isDisabled: isFormDisabled( select ),
-		};
-	} );
+	const isDisabled = useSelector( isFormDisabled );
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWoo = useSelector( getIsWoo );
 
 	// Is not supported for any oauth 2 client.
 	// n.b this seems to work for woo.com so it's not clear why the above comment is here
@@ -45,9 +38,8 @@ export const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'a8c-components-wp-button social-buttons__button', {
-				disabled: isDisabled,
-			} ) }
+			className="a8c-components-wp-button social-buttons__button"
+			disabled={ isDisabled }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"
@@ -61,6 +53,4 @@ export const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 			</span>
 		</Button>
 	);
-};
-
-export default QrCodeLoginButton;
+}

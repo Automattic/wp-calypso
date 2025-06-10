@@ -23,7 +23,9 @@ import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import { Downgrade } from './downgrade';
@@ -197,6 +199,8 @@ export function vatDetails( context, next ) {
 export function managePurchase( context, next ) {
 	const ManagePurchasesWrapper = localize( () => {
 		const classes = 'manage-purchase';
+		const previousRoute = useSelector( getPreviousRoute );
+		const purchaseListUrl = previousRoute.includes( '/purchases' ) ? previousRoute : undefined;
 
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
@@ -209,6 +213,7 @@ export function managePurchase( context, next ) {
 					<ManagePurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
+						purchaseListUrl={ purchaseListUrl }
 					/>
 				</Main>
 			</PurchasesWrapper>

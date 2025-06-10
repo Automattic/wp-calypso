@@ -16,6 +16,41 @@ const VENDOR_INFO_MAP: Record< string, VendorInfo > = {
 		vendorName: 'StoreApps',
 		vendorUrl: 'https://woocommerce.com/vendor/storeapps/',
 	},
+	afterpay: {
+		vendorSlug: 'afterpay',
+		vendorName: 'Afterpay',
+		vendorUrl: 'https://woocommerce.com/vendor/afterpay/',
+	},
+	affirm: {
+		vendorSlug: 'affirm',
+		vendorName: 'Affirm',
+		vendorUrl: 'https://woocommerce.com/vendor/affirm/',
+	},
+	mollie: {
+		vendorSlug: 'mollie',
+		vendorName: 'Mollie',
+		vendorUrl: 'https://woocommerce.com/vendor/mollie/',
+	},
+	stripe: {
+		vendorSlug: 'stripe',
+		vendorName: 'Stripe',
+		vendorUrl: 'https://woocommerce.com/vendor/stripe/',
+	},
+	klarna: {
+		vendorSlug: 'klarna',
+		vendorName: 'Klarna',
+		vendorUrl: 'https://woocommerce.com/vendor/klarna/',
+	},
+	paypal: {
+		vendorSlug: 'paypal',
+		vendorName: 'PayPal',
+		vendorUrl: 'https://woocommerce.com/vendor/paypal/',
+	},
+	klaviyo: {
+		vendorSlug: 'klaviyo',
+		vendorName: 'Klaviyo',
+		vendorUrl: 'https://woocommerce.com/vendor/klaviyo/',
+	},
 	woocommerce: {
 		vendorSlug: 'woocommerce',
 		vendorName: 'Woo',
@@ -44,6 +79,13 @@ const THIRD_PARTY_PRODUCT_MAP: Record< string, string > = {
 	'woocommerce-rental-products': 'kestrel',
 	'woocommerce-smart-coupons': 'storeapps',
 	'woocommerce-variation-swatches-and-photos': 'element-stark',
+	'woocommerce-afterpay': 'afterpay',
+	'woocommerce-affirm': 'affirm',
+	'woocommerce-mollie': 'mollie',
+	'woocommerce-stripe': 'stripe',
+	'woocommerce-klarna': 'klarna',
+	'woocommerce-paypal': 'paypal',
+	'woocommerce-klaviyo': 'klaviyo',
 };
 
 export const getVendorInfo = ( productSlug: string ) => {

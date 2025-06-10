@@ -71,6 +71,7 @@ export const TRACKING_IDS = {
 	jetpackTwitterPixelId: 'odlje',
 	wooGoogleTagManagerId: 'GTM-W64W8Q',
 	parselyTracker: 'wordpress.com',
+	wpcomLinkedinId: '7224796',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';

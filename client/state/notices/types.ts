@@ -31,6 +31,8 @@ export interface BaseNoticeOptions {
 	onClick?: () => void;
 	showDismiss?: boolean;
 	onDismissClick?: () => void;
+	ariaLive?: 'off' | 'polite' | 'assertive';
+	role?: string;
 }
 
 // Notice options as they're expected by the action creator

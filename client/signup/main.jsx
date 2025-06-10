@@ -240,7 +240,8 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies, siteDomains } =
+			this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -277,6 +278,12 @@ class Signup extends Component {
 			signupDependencies.domainItem !== prevProps.signupDependencies.domainItem
 		) {
 			clearDomainsDependencies();
+		}
+
+		// Re-check fulfilled steps when siteDomains data changes
+		// This ensures that isDomainFulfilled is called again when domain data loads
+		if ( flowName === 'launch-site' && siteDomains !== prevProps.siteDomains ) {
+			this.removeFulfilledSteps( this.props );
 		}
 	}
 

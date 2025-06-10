@@ -1,12 +1,24 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Card, CardBody, ToggleControl } from '@wordpress/components';
+import { notFound } from '@tanstack/react-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	CheckboxControl,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
-import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
+import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canViewSubscriptionGiftingSettings } from '../features';
+import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field, SimpleFormField } from '@automattic/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -15,7 +27,7 @@ const fields: Field< SiteSettings >[] = [
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
 			return (
-				<ToggleControl
+				<CheckboxControl
 					__nextHasNoMarginBottom
 					label={ hideLabelFromVision ? '' : field.label }
 					checked={ getValue( { item: data } ) }
@@ -30,44 +42,84 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	type: 'regular' as const,
-	fields,
+	fields: [ { id: 'wpcom_gifting_subscription' } as SimpleFormField ],
 };
 
-export function getSubscriptionGiftingSettingBadges( settings: SiteSettings ) {
-	return settings.wpcom_gifting_subscription
-		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-		: [ { text: __( 'Disabled' ) } ];
-}
-
-export default function SubscriptionGiftingSettings() {
-	const { siteSlug } = siteSettingsSubscriptionGiftingRoute.useParams();
+export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
 
-	if ( ! data ) {
+	const [ formData, setFormData ] = useState( {
+		wpcom_gifting_subscription: data?.wpcom_gifting_subscription,
+	} );
+
+	if ( ! data || ! site ) {
 		return null;
 	}
 
-	const handleSubmit = ( edits: Partial< SiteSettings > ) => {
-		return mutation.mutate( edits );
+	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
+		throw notFound();
+	}
+
+	const isDirty = Object.entries( formData ).some(
+		( [ key, value ] ) => data[ key as keyof SiteSettings ] !== value
+	);
+
+	const { isPending } = mutation;
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		mutation.mutate(
+			{ ...formData },
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+				},
+			}
+		);
 	};
 
 	return (
 		<PageLayout
 			size="small"
-			title={ __( 'Accept a gift subscription' ) }
-			description={ __(
-				'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
-			) }
+			header={
+				<SettingsPageHeader
+					title={ __( 'Accept a gift subscription' ) }
+					description={ __(
+						'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+					) }
+				/>
+			}
 		>
 			<Card>
 				<CardBody>
-					<DataForm< SiteSettings >
-						data={ data }
-						fields={ fields }
-						form={ form }
-						onChange={ handleSubmit }
-					/>
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 }>
+							<DataForm< SiteSettings >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< SiteSettings > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+							<HStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					</form>
 				</CardBody>
 			</Card>
 		</PageLayout>

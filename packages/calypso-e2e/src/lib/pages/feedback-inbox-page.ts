@@ -22,11 +22,7 @@ export class FeedbackInboxPage {
 	 * @param {string} siteUrlWithProtocol Site URL with the protocol.
 	 */
 	async visit( siteUrlWithProtocol: string ): Promise< void > {
-		const url = new URL(
-			// The query arg is necessary for sites that were using the "Classic" feedback view.
-			'/wp-admin/admin.php?page=jetpack-forms&dashboard-preferred-view=modern',
-			siteUrlWithProtocol
-		);
+		const url = new URL( '/wp-admin/admin.php?page=jetpack-forms-admin', siteUrlWithProtocol );
 		await this.page.goto( url.href, { timeout: 20 * 1000 } );
 	}
 
@@ -103,8 +99,10 @@ export class FeedbackInboxPage {
 			.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) )
 			.fill( search );
 		await responseRequestPromise;
-		// And wait for the UI re-render by waiting until the tabs are re-enabled.
-		await this.page.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } ).waitFor();
+		await this.page
+			.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
+			.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\(\d+\)$/ } ) )
+			.waitFor();
 	}
 
 	/**

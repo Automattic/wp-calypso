@@ -15,7 +15,7 @@ import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
-	siteId: number | undefined;
+	siteId: number | null;
 	openMigrateSubscribersModal: () => void;
 };
 
@@ -31,8 +31,8 @@ const SubscribersHeaderPopover = ( {
 		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
-	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
-	const hasSubscribers = subscribersTotals?.email_subscribers ?? 0 > 0;
+	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
+	const hasSubscribers = !! subscribersTotals?.total_subscribers;
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 

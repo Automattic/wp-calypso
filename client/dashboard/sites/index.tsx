@@ -1,20 +1,29 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { useNavigate, Link } from '@tanstack/react-router';
+import { Button, Modal } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
-import type { Site } from '../data/types';
-import type { Operator, ViewTable, ViewGrid, SortDirection } from '@automattic/dataviews';
+import type { FetchSitesOptions, Site } from '../data/types';
+import type {
+	Field,
+	Operator,
+	SortDirection,
+	ViewTable,
+	ViewGrid,
+	Filter,
+} from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -31,7 +40,7 @@ const actions = [
 	},
 ];
 
-const DEFAULT_FIELDS = [
+const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
 		label: __( 'Site' ),
@@ -42,9 +51,7 @@ const DEFAULT_FIELDS = [
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
-				{ new URL( item.URL ).hostname }
-			</ExternalLink>
+			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
 		),
 	},
 	{
@@ -59,6 +66,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'backups',
+		type: 'boolean',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
@@ -74,32 +82,20 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
-	},
-	{
-		id: 'protect',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		enableSorting: false,
 	},
 	{
 		id: 'status',
 		label: __( 'Status' ),
 		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
 		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
+		filterBy: {
+			operators: [ 'is' ],
+		},
 		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
 	},
 	{
 		id: 'is_a8c',
+		type: 'boolean',
 		label: __( 'A8C Owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
@@ -109,7 +105,6 @@ const DEFAULT_FIELDS = [
 			operators: [ 'is' as Operator ],
 		},
 		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-		enableSorting: false,
 	},
 	{
 		id: 'preview',
@@ -170,9 +165,26 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
+const getFetchSitesOptions = (
+	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
+): FetchSitesOptions => {
+	if (
+		viewOptions.filters?.find(
+			( filter: Filter ) => filter.field === 'status' && filter.value === 'deleted'
+		)
+	) {
+		return { site_visibility: 'deleted' };
+	}
+
+	return { site_visibility: viewOptions.search ? 'all' : 'visible' };
+};
+
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const sites = useQuery( sitesQuery() ).data;
+	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		sitesQuery( getFetchSitesOptions( viewOptions ) )
+	);
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
 	const defaultView = useMemo(
 		() =>
@@ -190,50 +202,58 @@ export default function Sites() {
 				: DEFAULT_VIEW,
 		[ hasA8CSites ]
 	);
-	const search: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
 	const view = useMemo(
 		() => ( {
 			...defaultView,
-			...DEFAULT_LAYOUTS[ search?.type ?? DEFAULT_VIEW.type ],
-			...( search
-				? Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) )
+			...DEFAULT_LAYOUTS[ viewOptions?.type ?? DEFAULT_VIEW.type ],
+			...( viewOptions
+				? Object.fromEntries(
+						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
+				  )
 				: {} ),
 		} ),
-		[ defaultView, search ]
+		[ defaultView, viewOptions ]
 	);
 	const fields = useMemo(
 		() =>
 			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
 		[ hasA8CSites ]
 	);
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	if ( ! sites ) {
-		return;
-	}
-
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
-
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 
 	return (
 		<>
+			{ isModalOpen && (
+				<Modal title={ __( 'Add New Site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+					<AddNewSite context="sites-dashboard" />
+				</Modal>
+			) }
 			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
+				header={
+					<PageHeader
+						title={ __( 'Sites' ) }
+						actions={
+							<Button
+								variant="primary"
+								onClick={ () => setIsModalOpen( true ) }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add New Site' ) }
+							</Button>
+						}
+					/>
 				}
 			>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }
 						view={ view }
+						isLoading={ isLoadingSites }
 						onChangeView={ ( view ) => {
 							if ( view.type === 'list' ) {
 								return;
@@ -249,7 +269,9 @@ export default function Sites() {
 								},
 							} );
 						} }
-						onClickItem={ onClickItem }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

@@ -1,16 +1,20 @@
 .application-password-item {
-	overflow: auto;
+	display: flex;
 }
 
 .application-password-item__details {
-	float: left;
+	flex-grow: 1;
+	flex-shrink: 1;
 }
 
 .application-password-item__generated {
 	color: var(--color-neutral-40);
 	font-size: 0.9em;
+	margin: 0;
 }
 
 .application-password-item__revoke {
-	float: right;
+	align-self: center;
+	flex-grow: 0;
+	flex-shrink: 0;
 }

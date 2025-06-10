@@ -16,7 +16,11 @@ import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibilit
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
-import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import {
+	useLocalizedPlugins,
+	siteObjectsToSiteIds,
+	formatPluginRating,
+} from 'calypso/my-sites/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
@@ -289,7 +293,7 @@ const PluginsBrowserListElement = ( props ) => {
 										color="#f0b849" // alert-yellow
 									/>
 									<span className="plugins-browser-item__rating-value">
-										{ formatNumber( plugin.rating / 20, { decimals: 1 } ) }
+										{ formatPluginRating( plugin.rating ) }
 									</span>
 									{ Number.isInteger( plugin.num_ratings ) && (
 										<span className="plugins-browser-item__number-of-ratings">

@@ -13,10 +13,10 @@
 	// Card class name is too generic. Which results and this component randomly getting borders.
 	border: none;
 
-	 a {
+	a:not(.components-external-link) {
 		text-decoration: none;
 	}
-	p a {
+	p a:not(.components-external-link) {
 		text-decoration: underline;
 	}
 

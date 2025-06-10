@@ -1,37 +1,60 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-	__experimentalHeading as Heading,
-	__experimentalVStack as VStack,
-	Card,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteSettingsQuery } from '../../app/queries';
-import { siteRoute } from '../../app/router';
+import { siteQuery, siteSettingsQuery } from '../../app/queries';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { getSubscriptionGiftingSettingBadges } from '../settings-subscription-gifting';
+import { SectionHeader } from '../../components/section-header';
+import { SummaryButtonList } from '../../components/summary-button-list';
+import AgencySettingsSummary from '../settings-agency/summary';
+import CachingSettingsSummary from '../settings-caching/summary';
+import DatabaseSettingsSummary from '../settings-database/summary';
+import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
+import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
+import PHPSettingsSummary from '../settings-php/summary';
+import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
+import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
+import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
+import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
+import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import WordPressSettingsSummary from '../settings-wordpress/summary';
+import DangerZone from './danger-zone';
+import SiteActions from './site-actions';
 
-export default function SiteSettings() {
-	const { siteSlug } = siteRoute.useParams();
+export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! settings ) {
+	if ( ! site || ! settings ) {
 		return null;
 	}
 
 	return (
-		<PageLayout title={ __( 'Settings' ) } size="small">
-			<Heading>{ __( 'General' ) }</Heading>
-			<Card>
-				<VStack>
-					<RouterLinkSummaryButton
-						to={ `/sites/${ siteSlug }/settings/subscription-gifting` }
-						title={ __( 'Accept a gift subscription' ) }
-						density="medium"
-						badges={ getSubscriptionGiftingSettingBadges( settings ) }
-					/>
-				</VStack>
-			</Card>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
+			<VStack spacing={ 3 }>
+				<SectionHeader title={ __( 'General' ) } level={ 3 } />
+				<SummaryButtonList>
+					<SiteVisibilitySettingsSummary site={ site } />
+					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+					<AgencySettingsSummary site={ site } />
+					<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
+				</SummaryButtonList>
+			</VStack>
+			<VStack spacing={ 3 }>
+				<SectionHeader title={ __( 'Server' ) } level={ 3 } />
+				<SummaryButtonList>
+					<WordPressSettingsSummary site={ site } />
+					<PHPSettingsSummary site={ site } />
+					<SftpSshSettingsSummary site={ site } />
+					<DatabaseSettingsSummary site={ site } />
+					<PrimaryDataCenterSettingsSummary site={ site } />
+					<StaticFile404SettingsSummary site={ site } />
+					<CachingSettingsSummary site={ site } />
+					<DefensiveModeSettingsSummary site={ site } />
+				</SummaryButtonList>
+			</VStack>
+			<SiteActions site={ site } />
+			<DangerZone site={ site } />
 		</PageLayout>
 	);
 }

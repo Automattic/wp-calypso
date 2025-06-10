@@ -1,0 +1,4 @@
+// Above the site switcher dropdown.
+.components-modal__screen-overlay:has(.dashboard-site-switcher__modal) {
+    z-index: 1000000;
+}

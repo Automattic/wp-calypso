@@ -8,7 +8,9 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getEmailStatsNormalizedData } from 'calypso/state/stats/emails/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -35,6 +37,7 @@ class StatsGeochart extends Component {
 		customHeight: PropTypes.number,
 		isRealTime: PropTypes.bool,
 		minutesLimit: PropTypes.number,
+		currentUserCountryCode: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -372,15 +375,16 @@ class StatsGeochart extends Component {
 		}
 
 		const chartData = this.prepareChartData( data );
+		const statsRoot = document.querySelector( 'main.stats-main' ) || document.body;
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
 		// We have to set values to Google GeoChart via JS. We don't
 		// support switching color schemes in IE11 thus applying the
 		// defaults as raw hex values here.
 		const chartColorLight =
-			getComputedStyle( document.body ).getPropertyValue( '--color-accent-5' ).trim() || '#ffdff3';
+			getComputedStyle( statsRoot ).getPropertyValue( '--color-accent-5' ).trim() || '#d52c82';
 		const chartColorDark =
-			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
+			getComputedStyle( statsRoot ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
 			keepAspectRatio: true,
@@ -455,11 +459,10 @@ class StatsGeochart extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+const ConnectedStatsGeochart = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const statType = ownProps.statType ?? 'statsCountryViews';
-	const currentUserCountryCode = getCurrentUserCountryCode( state );
-	const { postId, query, kind } = ownProps;
+	const { postId, query, kind, currentUserCountryCode } = ownProps;
 
 	// Skip data fetching if it was explicitly passed as a prop
 	if ( ownProps.data ) {
@@ -491,3 +494,17 @@ export default connect( ( state, ownProps ) => {
 		statType,
 	};
 } )( localize( StatsGeochart ) );
+
+const StatsGeochartWrapper = ( props ) => {
+	const { data: geoData, isLoading: isGeoLocationLoading } = useGeoLocationQuery();
+	const geoCountryCode = geoData?.country_short;
+	const userCountryCode = useSelector( getCurrentUserCountryCode );
+
+	// Use geo location fallback if user country code is not available
+	const geoLocationReady = ! isGeoLocationLoading && geoCountryCode;
+	const finalCountryCode = userCountryCode || geoLocationReady || null;
+
+	return <ConnectedStatsGeochart { ...props } currentUserCountryCode={ finalCountryCode } />;
+};
+
+export default StatsGeochartWrapper;

@@ -60,7 +60,6 @@ class SiteRedirect extends Component {
 		if ( isSiteAtomic ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 					title={ translate( 'Site Redirects are not available for this site.' ) }
 					line={ translate( "Try searching plugins for 'redirect'." ) }
 					action={ translate( 'Explore the Plugin Directory' ) }

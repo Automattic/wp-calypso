@@ -6,19 +6,19 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { receiveSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { JETPACK_SUPPORT_URL_TRAFFIC, UTM_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
-import UTMBuilder from '../../../stats-module-utm-builder/';
+import UTMBuilder from '../../../stats-module-utm-builder';
 import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import UTMDropdown from './stats-module-utm-dropdown';
-import UTMExportButton from './utm-export-button';
 import '../../../stats-module/style.scss';
 import '../../../stats-list/style.scss';
 
@@ -50,6 +50,7 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ selectedOption, setSelectedOption ] = useState( () => {
 		const utmQueryParam = context.query[ UTM_QUERY_PARAM ];
 		return Object.values( OPTION_KEYS ).includes( utmQueryParam )
@@ -125,6 +126,13 @@ const StatsModuleUTM = ( {
 		query,
 		postId
 	);
+
+	// Use ref to track previous data and avoid unnecessary dispatches when data is the same.
+	useEffect( () => {
+		if ( data ) {
+			dispatch( receiveSiteStats( siteId, 'statsUTM', query, data, Date.now() ) );
+		}
+	}, [ data, query, siteId, dispatch ] );
 
 	// Show error and loading based on the query
 	const hasError = false;
@@ -227,7 +235,6 @@ const StatsModuleUTM = ( {
 						titleNodes={ titleNodes }
 						emptyMessage={ <div>{ moduleStrings.empty }</div> }
 						metricLabel={ metricLabel }
-						downloadCsv={ <UTMExportButton data={ data } path={ path } period={ period } /> }
 						showMore={
 							displaySummaryLink && ! summary
 								? {

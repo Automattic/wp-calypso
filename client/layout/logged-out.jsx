@@ -1,6 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -30,6 +29,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -89,7 +89,6 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
-	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -101,16 +100,7 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage =
-		sectionName === 'reader' &&
-		( pathNameWithoutLocale.startsWith( '/tag/' ) || pathNameWithoutLocale.startsWith( '/tags' ) );
 	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
-
-	const isReaderDiscoverPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
-
-	const isReaderSearchPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/reader/search' );
 
 	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
 	const hasGravPoweredClientClass =
@@ -171,16 +161,19 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+	if ( isBlazePro && isWhiteLogin ) {
+		/**
+		 * This effectively removes the masterbar completely from Login pages (only).
+		 * However, in some cases, we want the styles imported from the masterbar to be applied.
+		 * They are more generic and affect the whole page, unfortunately.
+		 * For that, importing OauthClientMasterbar suffices to apply those styles, until refactored (we are in the process ofrefactoring).
+		 */
 		masterbar = null;
-	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	} else if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+		masterbar = null;
+	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! masterbarIsHidden ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
-
-		// Force masterbar for all Crowdsignal OAuth pages
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			classes[ 'has-no-masterbar' ] = false;
-		}
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
@@ -200,12 +193,9 @@ const LayoutLoggedOut = ( {
 			'subscriptions',
 			'theme',
 			'themes',
-		].includes( sectionName ) &&
-		! isReaderTagPage &&
-		! isReaderSearchPage &&
-		! isReaderDiscoverPage
+		].includes( sectionName )
 	) {
-		const nonMonochromeSections = [ 'plugins' ];
+		const nonMonochromeSections = [ 'plugins', 'themes', 'theme' ];
 
 		const className = clsx( {
 			'is-style-monochrome':
@@ -346,12 +336,22 @@ export default withCurrentRoute(
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-			const isWPComLogin =
-				currentRoute.startsWith( '/log-in' ) &&
-				! isJetpackLogin &&
-				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
-			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
+			const isWooJPC = isWooJPCFlow( state );
+
+			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
+			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
+			const isWhiteLogin =
+				( currentRoute.startsWith( '/log-in' ) &&
+					( ( ! isJetpackLogin &&
+						Boolean( currentQuery?.client_id ) === false &&
+						Boolean( currentQuery?.oauth2_client_id ) === false &&
+						! isWooJPC ) ||
+						isStudioClient ||
+						isCrowdsignalClient ||
+						isBlazePro ) ) ||
+				isPartnerPortal;
+
 			const noMasterbarForRoute =
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||
@@ -362,7 +362,6 @@ export default withCurrentRoute(
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
-			const isWooJPC = isWooJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||

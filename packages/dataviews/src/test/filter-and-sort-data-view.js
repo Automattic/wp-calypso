@@ -258,6 +258,216 @@ describe( 'filters', () => {
 		expect( result[ 9 ].title ).toBe( 'Saturn' );
 		expect( result[ 10 ].title ).toBe( 'Uranus' );
 	} );
+
+	it( 'should filter using LESS THAN operator for integer', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'lessThan',
+						value: 2,
+					},
+				],
+			},
+			fields
+		);
+		expect( result.every( ( item ) => item.satellites < 2 ) ).toBe( true );
+	} );
+
+	it( 'should filter using GREATER THAN operator for integer', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'greaterThan',
+						value: 10,
+					},
+				],
+			},
+			fields
+		);
+		expect( result.every( ( item ) => item.satellites > 10 ) ).toBe( true );
+	} );
+
+	it( 'should filter using LESS THAN OR EQUAL operator for integer', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'lessThanOrEqual',
+						value: 1,
+					},
+				],
+			},
+			fields
+		);
+		expect( result.every( ( item ) => item.satellites <= 1 ) ).toBe( true );
+	} );
+
+	it( 'should filter using GREATER THAN OR EQUAL operator for integer', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'greaterThanOrEqual',
+						value: 27,
+					},
+				],
+			},
+			fields
+		);
+		expect( result.every( ( item ) => item.satellites >= 27 ) ).toBe(
+			true
+		);
+	} );
+
+	it( 'should filter using CONTAINS operator for text fields', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'title',
+						operator: 'contains',
+						value: 'nep',
+					},
+				],
+			},
+			fields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].title ).toBe( 'Neptune' );
+	} );
+
+	it( 'should filter using NOT_CONTAINS operator for text fields', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'description',
+						operator: 'notContains',
+						value: 'description',
+					},
+				],
+			},
+			fields
+		);
+		// Only 'NASA photo' and 'La planète Vénus' do not contain 'description'
+		expect( result.map( ( r ) => r.description ) ).toEqual( [
+			'NASA photo',
+			'La planète Vénus',
+		] );
+	} );
+
+	it( 'should filter using STARTS_WITH operator for text fields', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'title',
+						operator: 'startsWith',
+						value: 'Mar',
+					},
+				],
+			},
+			fields
+		);
+		expect( result.map( ( r ) => r.title ) ).toContain( 'Mars' );
+	} );
+
+	it( 'should filter using LESS THAN operator for datetime', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'lessThan',
+						value: '1970-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect(
+			result.every(
+				( item ) => new Date( item.date ) < new Date( '1970-01-01' )
+			)
+		).toBe( true );
+	} );
+
+	it( 'should filter using GREATER THAN operator for datetime', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'greaterThan',
+						value: '2000-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect(
+			result.every(
+				( item ) => new Date( item.date ) > new Date( '2000-01-01' )
+			)
+		).toBe( true );
+	} );
+
+	it( 'should filter using LESS THAN OR EQUAL operator for datetime', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'lessThanOrEqual',
+						value: '1970-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect(
+			result.every(
+				( item ) => new Date( item.date ) <= new Date( '1970-01-01' )
+			)
+		).toBe( true );
+	} );
+
+	it( 'should filter using GREATER THAN OR EQUAL operator for datetime', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'greaterThanOrEqual',
+						value: '2000-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect(
+			result.every(
+				( item ) => new Date( item.date ) >= new Date( '2000-01-01' )
+			)
+		).toBe( true );
+	} );
 } );
 
 describe( 'sorting', () => {

@@ -30,7 +30,6 @@ export class LoginLinks extends Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
-		privateSite: PropTypes.bool,
 		query: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,

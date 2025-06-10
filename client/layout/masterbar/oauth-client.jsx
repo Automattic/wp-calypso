@@ -4,15 +4,14 @@ import PropTypes from 'prop-types';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
-	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import BlazeProOauthMasterbar from './blaze-pro';
-import CrowdsignalOauthMasterbar from './crowdsignal';
 import WooOauthMasterbar from './woo';
+import './blaze-pro.scss';
 
 import './oauth-client.scss';
 
@@ -61,14 +60,14 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 );
 
 const OauthClientMasterbar = ( { oauth2Client } ) => {
-	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-		return <CrowdsignalOauthMasterbar oauth2Client={ oauth2Client } />;
-	}
-
 	if ( isWooOAuth2Client( oauth2Client ) ) {
 		return <WooOauthMasterbar />;
 	}
 
+	/**
+	 * This is a special case for Blaze Pro that is used in both Login and Signup pages.
+	 * TODO clk Refactor (remove) this to use the same approach as the other oauth2 clients.
+	 */
 	if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 		return <BlazeProOauthMasterbar />;
 	}

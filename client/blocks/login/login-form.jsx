@@ -29,16 +29,11 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
@@ -70,6 +65,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
+import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './login-form.scss';
 
@@ -82,14 +78,12 @@ export class LoginForm extends Component {
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
 		isFormDisabled: PropTypes.bool,
-		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		createSocialUserFailed: PropTypes.func.isRequired,
 		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
-		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		resetAuthAccountType: PropTypes.func.isRequired,
@@ -103,7 +97,6 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
@@ -159,7 +152,6 @@ export class LoginForm extends Component {
 		if (
 			currentRoute &&
 			currentRoute.includes( '/log-in/jetpack' ) &&
-			config.isEnabled( 'jetpack/magic-link-signup' ) &&
 			requestError.code === 'unknown_user' &&
 			! this.props.isWooJPC
 		) {
@@ -234,11 +226,7 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			socialAccountIsLinking ||
-			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			this.props.isBlazePro
-		);
+		return socialAccountIsLinking || ( hasAccountTypeLoaded && isRegularAccount( accountType ) );
 	}
 
 	isPasswordView() {
@@ -249,10 +237,7 @@ export class LoginForm extends Component {
 
 	isUsernameOrEmailView() {
 		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
-		return (
-			isSendingEmail ||
-			( ! socialAccountIsLinking && ! hasAccountTypeLoaded && ! this.props.isBlazePro )
-		);
+		return isSendingEmail || ( ! socialAccountIsLinking && ! hasAccountTypeLoaded );
 	}
 
 	resetView = ( event ) => {
@@ -285,8 +270,7 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		// Skip this step if we're in the Blaze Pro signup flows, and hasAccountTypeLoaded.
-		if ( ! this.props.hasAccountTypeLoaded && ! this.props.isBlazePro ) {
+		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -340,6 +324,7 @@ export class LoginForm extends Component {
 				redirectTo: this.props.redirectTo,
 				requestLoginEmailFormFlow: true,
 				createAccount: true,
+				...( shouldUseMagicCode( { isJetpack: this.props.isJetpack } ) && { tokenType: 'code' } ),
 				flow: 'jetpack',
 			} );
 		}
@@ -352,37 +337,6 @@ export class LoginForm extends Component {
 				},
 				'/log-in/jetpack/link'
 			)
-		);
-	}
-
-	renderPrivateSiteNotice() {
-		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
-			return (
-				<Notice status="is-info" showDismiss={ false } icon="lock">
-					{ this.props.translate(
-						'Log in to WordPress.com to proceed. ' +
-							"If you are not a member of this site, we'll send " +
-							'your username to the site owner for approval.'
-					) }
-				</Notice>
-			);
-		}
-	}
-
-	renderLoginFromSignupNotice() {
-		return (
-			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate(
-					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-					{
-						components: {
-							returnToSignup: (
-								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
-							),
-						},
-					}
-				) }
-			</Notice>
 		);
 	}
 
@@ -445,7 +399,6 @@ export class LoginForm extends Component {
 		return (
 			<form method="post">
 				<Card className="login__form">
-					{ this.renderPrivateSiteNotice() }
 					<div className="login__form-userdata">
 						{ linkingSocialUser && (
 							<p>
@@ -575,10 +528,6 @@ export class LoginForm extends Component {
 	renderUsernameorEmailLabel() {
 		if ( this.props.isWoo ) {
 			return this.props.translate( 'Your email or username' );
-		}
-
-		if ( this.props.isBlazePro ) {
-			return this.props.translate( 'Your email address' );
 		}
 
 		if ( this.props.isWoo ) {
@@ -796,7 +745,6 @@ export class LoginForm extends Component {
 			isWoo,
 			isBlazePro,
 			hideSignupLink,
-			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
@@ -855,12 +803,6 @@ export class LoginForm extends Component {
 
 		return (
 			<Card className="login__form">
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
 				{ showLastUsedAuthenticationMethod ? (
 					<>
 						<span className="last-used-authentication-method">
@@ -893,8 +835,6 @@ export class LoginForm extends Component {
 									) }
 								</p>
 							) }
-
-							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
 							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
@@ -1067,7 +1007,7 @@ export class LoginForm extends Component {
 						) }
 
 						{ ! hideSignupLink && isOauthLogin && (
-							<div className={ clsx( 'login__form-signup-link' ) }>
+							<p className={ clsx( 'login__form-signup-link' ) }>
 								{ this.props.translate(
 									'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 									{
@@ -1076,7 +1016,7 @@ export class LoginForm extends Component {
 										},
 									}
 								) }
-							</div>
+							</p>
 						) }
 					</>
 				) }
@@ -1094,6 +1034,7 @@ export class LoginForm extends Component {
 			currentQuery,
 			oauth2Client
 		);
+
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
 		const isFromGravatarQuickEditor =
@@ -1175,7 +1116,6 @@ export class LoginForm extends Component {
 	render() {
 		const {
 			accountType,
-			oauth2Client,
 			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
@@ -1240,14 +1180,6 @@ export class LoginForm extends Component {
 				onSubmit={ this.onSubmitForm }
 				method="post"
 			>
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
-				{ this.renderPrivateSiteNotice() }
-
 				{ this.renderLoginOptions() }
 
 				{ this.showJetpackConnectSiteOnly() && (
@@ -1271,7 +1203,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
-			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),

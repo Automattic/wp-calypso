@@ -1,4 +1,4 @@
-import CoreBadge from '@automattic/components/src/core-badge';
+import { CoreBadge } from '@automattic/components/src/core-badge';
 import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
 import { usePerformanceData } from '../hooks/use-performance-data';

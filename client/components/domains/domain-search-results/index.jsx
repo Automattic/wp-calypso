@@ -264,7 +264,7 @@ class DomainSearchResults extends Component {
 	handleAddMapping = ( event ) => {
 		event.preventDefault();
 		if ( this.props.isSignupStep ) {
-			this.props.onClickMapping( event );
+			this.props.onClickUseYourDomain( event );
 		} else {
 			this.props.onAddMapping( this.props.lastDomainSearched );
 		}

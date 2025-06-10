@@ -19,7 +19,6 @@ jest.mock(
 			showSiteNameOnCards,
 			sidebarTabTitle,
 			useCompactCards,
-			showBack,
 		} ) => (
 			<div data-testid="reader-stream" data-stream-key={ streamKey } className={ className }>
 				<div data-testid="stream-props">
@@ -27,7 +26,6 @@ jest.mock(
 					<span data-prop="showSiteNameOnCards">{ String( showSiteNameOnCards ) }</span>
 					<span data-prop="sidebarTabTitle">{ sidebarTabTitle }</span>
 					<span data-prop="useCompactCards">{ String( useCompactCards ) }</span>
-					<span data-prop="showBack">{ String( showBack ) }</span>
 				</div>
 				{ emptyContent && <div data-testid="empty-content">{ emptyContent() }</div> }
 			</div>
@@ -77,7 +75,6 @@ describe( 'UserPosts', () => {
 		expect( propsContainer.querySelector( '[data-prop="useCompactCards"]' ) ).toHaveTextContent(
 			'true'
 		);
-		expect( propsContainer.querySelector( '[data-prop="showBack"]' ) ).toHaveTextContent( 'false' );
 	} );
 
 	test( 'should provide empty content function that renders correctly', () => {
