@@ -20,7 +20,7 @@ export default function SubscriberImportLimitNotice() {
 	return (
 		<Notice status="info" isDismissible={ false } className="subscribers-import-limit-notice">
 			{ fixMe( {
-				text: 'Note: On the free plan, you can import up to 100 subscribers.',
+				text: 'Import up to 100 subscribers on the Free plan. Upgrade to add more.',
 				newCopy: translate(
 					'Import {{supportLink}}up to 100 subscribers{{/supportLink}} on the Free plan. {{upgradeLink}}Upgrade{{/upgradeLink}} to add more.',
 					{
