@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { SITE_FIELDS, SITE_OPTIONS } from '../../data/constants';
+import { siteQuery, sitesQuery } from '../queries';
 import type { User, Site } from '../../data/types';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AnyRouter } from '@tanstack/react-router';
@@ -48,11 +48,11 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
  * both caches represents a "best effort" attempt.
  */
 function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
-	const site = queryClient.getQueryData< Site >( [ 'site', siteSlug, SITE_FIELDS, SITE_OPTIONS ] );
+	const site = queryClient.getQueryData< Site >( siteQuery( siteSlug ).queryKey );
 	if ( site ) {
 		return site;
 	}
 
-	const sites = queryClient.getQueryData< Site[] >( [ 'sites', SITE_FIELDS, SITE_OPTIONS ] );
+	const sites = queryClient.getQueryData< Site[] >( sitesQuery().queryKey );
 	return sites?.find( ( s ) => s.slug === siteSlug );
 }
