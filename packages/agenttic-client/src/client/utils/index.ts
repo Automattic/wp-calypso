@@ -10,7 +10,9 @@ export {
 	createToolResultDataPart,
 	createContextDataPart,
 	createTextMessage,
+	createAgentTextMessage,
 	createToolResultMessage,
+	processToolExecutionResult,
 } from './core';
 
 // Re-export internal utilities

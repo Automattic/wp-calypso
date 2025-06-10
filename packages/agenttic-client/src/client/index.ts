@@ -22,6 +22,8 @@ import {
 	createToolResultMessage,
 	extractTextFromMessage,
 	extractToolCallsFromMessage,
+	processToolExecutionResult,
+	createAgentTextMessage,
 } from './utils/index';
 import { defaultDispatcher } from './utils/dispatcher';
 
@@ -249,6 +251,9 @@ export function createClient( config: ClientConfig ): Client {
 			const allToolParts: ( ToolCallDataPart | ToolResultDataPart )[] =
 				[];
 
+			// Track agent messages from tool executions
+			const agentMessages: Message[] = [];
+
 			//Loop while there are tool calls to process, regardless of state
 			while ( currentTask.status.message && toolProvider ) {
 				const toolCalls = extractToolCallsFromMessage(
@@ -263,6 +268,8 @@ export function createClient( config: ClientConfig ): Client {
 
 				// Execute all tool calls
 				const toolResults: ToolResultDataPart[] = [];
+				let shouldReturnToAgent = false;
+
 				for ( const toolCall of toolCalls ) {
 					const {
 						toolCallId,
@@ -271,10 +278,21 @@ export function createClient( config: ClientConfig ): Client {
 					} = toolCall.data;
 
 					try {
-						const result = await toolProvider.executeTool(
+						const executionResult = await toolProvider.executeTool(
 							toolId as string,
 							args
 						);
+						const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
+
+						// Mark that at least one tool wants to return to agent
+						if ( returnToAgent ) {
+							shouldReturnToAgent = true;
+						}
+
+						// Create agent message if provided
+						if ( agentMessage ) {
+							agentMessages.push( createAgentTextMessage( agentMessage ) );
+						}
 
 						const toolResult = createToolResultDataPart(
 							toolCallId as string,
@@ -304,44 +322,62 @@ export function createClient( config: ClientConfig ): Client {
 					newConversationParts.push( currentTask.status.message );
 				}
 
-				// Create tool result message with only NEW conversation parts since initial message
-				// This avoids duplicating the conversation history that was already sent initially
-				const historyDataParts = withHistory
-					? conversationHistoryToDataParts( newConversationParts )
-					: [];
+				// Only continue with tool results if at least one tool wants to return to agent
+				if ( shouldReturnToAgent ) {
+					// Continue with tool results
+					const toolResultMessage =
+						createToolResultMessage( toolResults );
 
-				const toolResultMessage = createToolResultMessage(
-					toolResults,
-					historyDataParts
-				);
-
-				// Continue the same task with tool results
-				currentTask = await continueTask(
-					currentTask.id,
-					toolResultMessage,
-					requestConfig,
-					toolProvider,
-					contextProvider
-				);
+					currentTask = await continueTask(
+						currentTask.id,
+						toolResultMessage,
+						requestConfig,
+						toolProvider,
+						contextProvider
+					);
+				} else {
+					// Tools executed but don't want to return to agent
+					// Break out of loop to prevent further agent communication
+					break;
+				}
 			}
 
 			// Enhance the final task response to include all tool calls and results
 			// This ensures useAgent can capture them in conversation history
-			if ( allToolParts.length > 0 && currentTask.status?.message ) {
-				const enhancedMessage: Message = {
-					...currentTask.status.message,
-					parts: [
-						...allToolParts,
-						...currentTask.status.message.parts,
-					],
-				};
+			if ( allToolParts.length > 0 ) {
+				if ( currentTask.status?.message ) {
+					// Create a new message with tool parts only (no agent text)
+					const enhancedMessage: Message = {
+						...currentTask.status.message,
+						parts: allToolParts,
+					};
 
-				currentTask = {
+					currentTask = {
+						...currentTask,
+						status: {
+							...currentTask.status,
+							message: enhancedMessage,
+						},
+					};
+				}
+			}
+
+			// If we have agent messages, create a separate final agent message
+			if ( agentMessages.length > 0 ) {
+				// Combine all agent message texts
+				const combinedAgentText = agentMessages
+					.map( msg => extractTextFromMessage( msg ) )
+					.join( ' ' );
+
+				// Create a separate agent text message
+				const finalAgentMessage = createAgentTextMessage( combinedAgentText );
+
+				return {
 					...currentTask,
-					status: {
-						...currentTask.status,
-						message: enhancedMessage,
-					},
+					// Keep the enhanced message with tool results
+					// The agent message will be handled separately by the caller
+					text: combinedAgentText,
+					agentMessage: finalAgentMessage, // Add this for the caller to handle
 				};
 			}
 
@@ -402,6 +438,14 @@ export function createClient( config: ClientConfig ): Client {
 					if ( toolCalls.length > 0 ) {
 						// Execute all tool calls
 						const toolResults: ToolResultDataPart[] = [];
+						let shouldReturnToAgent = false;
+
+						// Track tool calls and results for message enhancement
+						const toolParts: ( ToolCallDataPart | ToolResultDataPart )[] = [];
+
+						// Track agent messages from tool executions
+						const agentMessages: Message[] = [];
+						
 						for ( const toolCall of toolCalls ) {
 							const {
 								toolCallId,
@@ -409,29 +453,44 @@ export function createClient( config: ClientConfig ): Client {
 								arguments: args,
 							} = toolCall.data;
 							try {
-								const result = await toolProvider.executeTool(
+								const executionResult = await toolProvider.executeTool(
 									toolId as string,
 									args
 								);
+								const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
 
-								toolResults.push(
-									createToolResultDataPart(
-										toolCallId as string,
-										toolId as string,
-										result
-									)
+								// Mark that at least one tool wants to return to agent
+								if ( returnToAgent ) {
+									shouldReturnToAgent = true;
+								}
+
+								// Create agent message if provided
+								if ( agentMessage ) {
+									agentMessages.push( createAgentTextMessage( agentMessage ) );
+								}
+
+								const toolResult = createToolResultDataPart(
+									toolCallId as string,
+									toolId as string,
+									result
 								);
+
+								toolResults.push( toolResult );
+								// Add tool result to tracking
+								toolParts.push( toolResult );
 							} catch ( error ) {
-								toolResults.push(
-									createToolResultDataPart(
-										toolCallId as string,
-										toolId as string,
-										undefined,
-										error instanceof Error
-											? error.message
-											: String( error )
-									)
+								const toolResult = createToolResultDataPart(
+									toolCallId as string,
+									toolId as string,
+									undefined,
+									error instanceof Error
+										? error.message
+										: String( error )
 								);
+
+								toolResults.push( toolResult );
+								// Add tool result to tracking
+								toolParts.push( toolResult );
 							}
 						}
 
@@ -440,49 +499,93 @@ export function createClient( config: ClientConfig ): Client {
 							newConversationParts.push( update.status.message );
 						}
 
-						// Create tool result message with only NEW conversation parts since initial message
-						// This avoids duplicating the conversation history that was already sent initially
-						const historyDataParts = withHistory
-							? conversationHistoryToDataParts(
-									newConversationParts
-							  )
-							: [];
+						// Only continue to agent if at least one tool wants to return
+						if ( shouldReturnToAgent ) {
+							// Create tool result message with only NEW conversation parts since initial message
+							// This avoids duplicating the conversation history that was already sent initially
+							const historyDataParts = withHistory
+								? conversationHistoryToDataParts(
+										newConversationParts
+								  )
+								: [];
 
-						const toolResultMessage = createToolResultMessage(
-							toolResults,
-							historyDataParts
-						);
+							const toolResultMessage = createToolResultMessage(
+								toolResults,
+								historyDataParts
+							);
 
-						yield {
-							id: update.id,
-							status: {
-								state: 'working',
-								message: toolResultMessage,
-							},
-							final: false,
-							text: '',
-						};
+							yield {
+								id: update.id,
+								status: {
+									state: 'working',
+									message: toolResultMessage,
+								},
+								final: false,
+								text: '',
+							};
 
-						// Continue the task with tool results and stream the continuation
-						const continuedTaskUpdate = await continueTask(
-							update.id,
-							toolResultMessage,
-							requestConfig,
-							toolProvider,
-							contextProvider
-						);
+							// Continue the task with tool results and stream the continuation
+							const continuedTaskUpdate = await continueTask(
+								update.id,
+								toolResultMessage,
+								requestConfig,
+								toolProvider,
+								contextProvider
+							);
 
-						// Yield the continued task result
-						yield {
-							...continuedTaskUpdate,
-							final: true,
-							text: extractTextFromMessage(
-								continuedTaskUpdate.status?.message || {
-									role: 'agent',
-									parts: [],
-								}
-							),
-						};
+							// Yield the continued task result
+							yield {
+								...continuedTaskUpdate,
+								final: true,
+								text: extractTextFromMessage(
+									continuedTaskUpdate.status?.message || {
+										role: 'agent',
+										parts: [],
+									}
+								),
+							};
+						} else {
+							// Tools executed but don't want to return to agent
+							// Create message with tool results only (no agent text)
+							const enhancedMessage: Message = {
+								...update.status.message,
+								parts: toolParts,
+							};
+
+							const enhancedUpdate = {
+								...update,
+								status: {
+									...update.status,
+									message: enhancedMessage,
+								},
+								final: agentMessages.length === 0, // Only final if no agent messages to follow
+								text: extractTextFromMessage( enhancedMessage ),
+							};
+
+							// First yield the tool results
+							yield enhancedUpdate;
+
+							// If we have agent messages, yield them as a separate message
+							if ( agentMessages.length > 0 ) {
+								const combinedAgentText = agentMessages
+									.map( msg => extractTextFromMessage( msg ) )
+									.join( ' ' );
+
+
+								const finalAgentMessage = createAgentTextMessage( combinedAgentText );
+
+								// Yield agent message as completely separate TaskUpdate
+								yield {
+									id: enhancedUpdate.id,
+									status: {
+										state: 'completed',
+										message: finalAgentMessage,
+									},
+									final: true,
+									text: combinedAgentText,
+								};
+							}
+						}
 					}
 				}
 			}
@@ -521,6 +624,8 @@ export function createClient( config: ClientConfig ): Client {
 
 				// Execute tool calls (same logic as sendMessage)
 				const toolResults: ToolResultDataPart[] = [];
+				let shouldReturnToAgent = false;
+
 				for ( const toolCall of toolCalls ) {
 					const {
 						toolCallId,
@@ -528,10 +633,18 @@ export function createClient( config: ClientConfig ): Client {
 						arguments: args,
 					} = toolCall.data;
 					try {
-						const result = await toolProvider.executeTool(
+						const executionResult = await toolProvider.executeTool(
 							toolId as string,
 							args
 						);
+
+						const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
+
+						// Mark that at least one tool wants to return to agent
+						if ( returnToAgent ) {
+							shouldReturnToAgent = true;
+						}
+
 						toolResults.push(
 							createToolResultDataPart(
 								toolCallId as string,
@@ -553,17 +666,24 @@ export function createClient( config: ClientConfig ): Client {
 					}
 				}
 
-				// Continue with tool results
-				const toolResultMessage =
-					createToolResultMessage( toolResults );
+				// Only continue with tool results if at least one tool wants to return to agent
+				if ( shouldReturnToAgent ) {
+					// Continue with tool results
+					const toolResultMessage =
+						createToolResultMessage( toolResults );
 
-				currentTask = await continueTask(
-					currentTask.id,
-					toolResultMessage,
-					requestConfig,
-					toolProvider,
-					contextProvider
-				);
+					currentTask = await continueTask(
+						currentTask.id,
+						toolResultMessage,
+						requestConfig,
+						toolProvider,
+						contextProvider
+					);
+				} else {
+					// Tools executed but don't want to return to agent
+					// Break out of loop to prevent further agent communication
+					break;
+				}
 			}
 
 			return {

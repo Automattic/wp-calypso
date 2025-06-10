@@ -195,6 +195,7 @@ export interface TaskUpdate {
 	final?: boolean;
 	artifact?: Artifact;
 	text: string; // Extracted text from status.message
+	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 }
 
 export interface Client {
@@ -224,9 +225,15 @@ export interface Tool {
 	};
 }
 
+export interface ToolExecutionResult {
+	result: any;
+	returnToAgent?: boolean; // Default: true - whether to automatically send result back to agent
+	agentMessage?: string; // Optional: custom agent message to add to conversation history
+}
+
 export interface ToolProvider {
 	getAvailableTools(): Promise< Tool[] >;
-	executeTool( toolId: string, args: any ): Promise< any >;
+	executeTool( toolId: string, args: any ): Promise< any | ToolExecutionResult >;
 }
 
 export interface ToolCallResult {

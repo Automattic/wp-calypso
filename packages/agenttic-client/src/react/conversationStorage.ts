@@ -70,8 +70,13 @@ function extractStorableContent( message: Message ): StoredMessage {
 			error: part.data.error as string | undefined,
 		} ) );
 
+	// Determine the role - if this message contains tool interactions, store as "agent"
+	// regardless of the original message role
+	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
+	const storageRole = hasToolInteractions ? 'agent' : message.role;
+
 	return {
-		role: message.role,
+		role: storageRole,
 		content: textParts || '(No text content)',
 		timestamp: Date.now(),
 		...( toolCalls.length > 0 && { toolCalls } ),

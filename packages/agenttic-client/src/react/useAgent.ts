@@ -361,18 +361,30 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					  ]
 					: state.conversationHistory;
 
+				// Check if there's a separate agent message to add
+				let finalConversationHistory = newConversationHistory;
+				if ( withHistory && (task as any).agentMessage ) {
+					const separateAgentMessage = extractNewContentFromMessage(
+						(task as any).agentMessage
+					);
+					finalConversationHistory = [
+						...newConversationHistory,
+						separateAgentMessage,
+					];
+				}
+
 				setState( ( prev ) => ( {
 					...prev,
 					isLoading: false,
 					lastResponse: task,
 					// Update conversation history only if withHistory is true
 					// Store only clean messages without history data parts to avoid duplication
-					conversationHistory: newConversationHistory,
+					conversationHistory: finalConversationHistory,
 				} ) );
 
 				// Persist the updated conversation history
 				if ( withHistory ) {
-					await persistConversationHistory( newConversationHistory );
+					await persistConversationHistory( finalConversationHistory );
 				}
 
 				return task;
@@ -451,8 +463,6 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						...otherOptions,
 					}
 				) ) {
-					yield update;
-
 					// Save tool interactions when input is required (this saves the agent message with tool calls)
 					if (
 						update.status?.state === 'input-required' &&
@@ -474,6 +484,13 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							...currentConversationHistory,
 							toolMessage,
 						];
+
+						// Update state immediately to keep in-memory history in sync
+						setState( ( prev ) => ( {
+							...prev,
+							conversationHistory: currentConversationHistory,
+						} ) );
+
 						await persistConversationHistory(
 							currentConversationHistory
 						);
@@ -512,6 +529,13 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 									toolResultMessage
 								),
 							];
+
+							// Update state immediately to keep in-memory history in sync
+							setState( ( prev ) => ( {
+								...prev,
+								conversationHistory: currentConversationHistory,
+							} ) );
+
 							await persistConversationHistory(
 								currentConversationHistory
 							);
@@ -553,6 +577,8 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							);
 						}
 					}
+
+					yield update;
 				}
 			} catch ( error ) {
 				const errorMessage =

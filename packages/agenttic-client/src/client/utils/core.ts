@@ -169,6 +169,46 @@ export function createTextMessage( text: string ): Message {
 }
 
 /**
+ * Create a simple text message with agent role
+ * @param text
+ */
+export function createAgentTextMessage( text: string ): Message {
+	return {
+		role: 'agent',
+		parts: [ createTextPart( text ) ],
+	};
+}
+
+/**
+ * Process tool execution result to extract result and returnToAgent flag
+ * @param executionResult
+ */
+export function processToolExecutionResult( executionResult: any ): {
+	result: any;
+	returnToAgent: boolean;
+	agentMessage?: string;
+} {
+	// Check if result is a ToolExecutionResult object
+	if (
+		executionResult &&
+		typeof executionResult === 'object' &&
+		'result' in executionResult
+	) {
+		return {
+			result: executionResult.result,
+			returnToAgent: executionResult.returnToAgent !== false, // Default to true
+			agentMessage: executionResult.agentMessage, // Pass through agentMessage if present
+		};
+	}
+
+	// Legacy direct result format
+	return {
+		result: executionResult,
+		returnToAgent: true,
+	};
+}
+
+/**
  * Create a tool result message from tool result data parts
  * @param toolResults
  * @param historyDataParts
