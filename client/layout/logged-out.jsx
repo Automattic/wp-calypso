@@ -113,7 +113,6 @@ const LayoutLoggedOut = ( {
 		! isJetpackLogin &&
 		! hasGravPoweredClientClass &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
-		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
