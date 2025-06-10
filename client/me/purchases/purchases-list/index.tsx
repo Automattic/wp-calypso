@@ -150,11 +150,11 @@ const PurchasesList: React.FC<
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
-							name={ site.name }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite
 							cards={ paymentMethodsState.paymentMethods }
+							transferredOwnershipPurchases={ transferredOwnershipPurchases }
 						/>
 					);
 				} ) }
@@ -243,5 +243,5 @@ export default connect( ( state: AppState ) => ( {
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-	userId: getCurrentUserId( state ),
+	userId: getCurrentUserId( state ) ?? undefined,
 } ) )( withStoredPaymentMethods( PurchasesList, { type: 'card', expired: true } ) );

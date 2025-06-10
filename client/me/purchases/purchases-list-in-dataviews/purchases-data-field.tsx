@@ -64,12 +64,14 @@ export function getPurchasesFieldDefinitions( {
 	paymentMethods,
 	sites,
 	fieldIds,
+	transferredOwnershipPurchases = [],
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
 	sites: SiteDetails[];
 	fieldIds?: string[];
+	transferredOwnershipPurchases?: Purchases.Purchase[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -137,7 +139,12 @@ export function getPurchasesFieldDefinitions( {
 						<div className="purchase-item__title">
 							{ getDisplayName( item ) }
 							&nbsp;
-							<OwnerInfo purchase={ item } />
+							<OwnerInfo
+								purchase={ item }
+								isTransferredOwnership={ transferredOwnershipPurchases.some(
+									( transferredPurchase ) => transferredPurchase.id === item.id
+								) }
+							/>
 						</div>
 						<div className="purchase-item__purchase-type">
 							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
