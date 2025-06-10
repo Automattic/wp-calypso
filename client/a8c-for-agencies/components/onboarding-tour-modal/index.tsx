@@ -14,6 +14,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ONBOARDING_TOUR_HASH } from '../hoc/with-onboarding-tour/hooks/use-onboarding-tour';
+import OnboardingTourModalMobileNavigation from './mobile-navigation';
 import OnboardingTourModalSection, {
 	ActionProps,
 	OnboardingTourModalSectionProps,
@@ -163,31 +164,19 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 						<div className="onboarding-tour-modal__main-content-footer">
 							{ actions }
 
-							<div className="onboarding-tour-modal__main-content-footer-navigation">
-								{ menuItems.map( ( menuItem ) => (
-									<button
-										className={ clsx(
-											'onboarding-tour-modal__main-content-footer-navigation-button',
-											{
-												'is-active': menuItem.id === currentSectionId,
-											}
-										) }
-										key={ menuItem.id }
-										onClick={ () => {
-											setCurrentSectionId( menuItem.id );
-											dispatch(
-												recordTracksEvent(
-													'calypso_onboarding_tour_modal_section_menu_item_click',
-													{
-														section: menuItem.id,
-													}
-												)
-											);
-										} }
-										aria-label={ menuItem.label }
-									/>
-								) ) }
-							</div>
+							<OnboardingTourModalMobileNavigation
+								menuItems={ menuItems }
+								currentSectionId={ currentSectionId }
+								setCurrentSectionId={ ( sectionId ) => {
+									setCurrentSectionId( sectionId );
+									window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ sectionId }`;
+									dispatch(
+										recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_swipe', {
+											section: sectionId,
+										} )
+									);
+								} }
+							/>
 						</div>
 					</div>
 				</div>

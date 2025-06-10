@@ -123,8 +123,14 @@ $mobile-footer-height: 150px;
 	}
 }
 
+.onboarding-tour-modal__main-content-footer-navigation-wrapper {
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
 .onboarding-tour-modal__main-content-footer-navigation {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 
