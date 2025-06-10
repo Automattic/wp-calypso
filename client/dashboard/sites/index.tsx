@@ -182,7 +182,9 @@ const getFetchSitesOptions = (
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
-	const sites = useQuery( sitesQuery( getFetchSitesOptions( viewOptions ) ) ).data;
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		sitesQuery( getFetchSitesOptions( viewOptions ) )
+	);
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
 	const defaultView = useMemo(
 		() =>
@@ -219,10 +221,6 @@ export default function Sites() {
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	if ( ! sites ) {
-		return;
-	}
-
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	return (
@@ -255,6 +253,7 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
+						isLoading={ isLoadingSites }
 						onChangeView={ ( view ) => {
 							if ( view.type === 'list' ) {
 								return;
