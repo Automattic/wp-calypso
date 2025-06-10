@@ -64,6 +64,13 @@ function getFilterBy< Item >(
 			validOperators.includes( operator )
 		);
 
+		// The `between` operator is not supported for preset layout.
+		if ( field.elements && operators.includes( OPERATOR_BETWEEN ) ) {
+			operators = operators.filter(
+				( operator ) => operator !== OPERATOR_BETWEEN
+			);
+		}
+
 		// Do not allow mixing single & multiselection operators.
 		// Remove multiselection operators if any of the single selection ones is present.
 		const hasSingleSelectionOperator = operators.some( ( operator ) =>
