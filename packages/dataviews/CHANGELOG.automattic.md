@@ -4,6 +4,7 @@
 
 - Update the field type definitions to declare the default and valid operators they support.
 - Add a story for each FieldTypeDefinition.
+- Add new filter operators: `before`, `after`, `beforeInc`, and `afterInc` for date fields.
 
 ## 0.2.1
 
