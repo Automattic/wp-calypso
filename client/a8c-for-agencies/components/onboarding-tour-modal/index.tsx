@@ -73,18 +73,11 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 					return renderableAction;
 				}
 
-				const buttonProps = renderableAction as ActionProps;
+				const { label, ...restButtonProps } = renderableAction as ActionProps;
 
 				return (
-					<Button
-						key={ buttonProps.label }
-						href={ buttonProps.href }
-						onClick={ buttonProps.onClick }
-						variant={ buttonProps.variant }
-						disabled={ buttonProps.disabled }
-						isBusy={ buttonProps.isBusy }
-					>
-						{ buttonProps.label }
+					<Button key={ label } { ...restButtonProps }>
+						{ label }
 					</Button>
 				);
 			} );
