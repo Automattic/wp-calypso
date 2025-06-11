@@ -224,6 +224,12 @@ const BuildReport = () => {
 													}
 													setIsStartDatePickerOpen( false );
 												} }
+												isInvalidDate={ ( date ) => {
+													// Disable dates from today onwards (only yesterday and earlier allowed)
+													const today = new Date();
+													today.setHours( 0, 0, 0, 0 ); // Start of today
+													return new Date( date ) >= today;
+												} }
 											/>
 										</Popover>
 									) }
@@ -254,6 +260,13 @@ const BuildReport = () => {
 													setIsEndDatePickerOpen( false );
 												} }
 												isInvalidDate={ ( date ) => {
+													// Disable dates after today (only today and earlier allowed)
+													const today = new Date();
+													today.setHours( 23, 59, 59, 999 ); // End of today
+													if ( new Date( date ) > today ) {
+														return true;
+													}
+
 													// Disable dates before the start date
 													if ( ! startDate ) {
 														return false;
