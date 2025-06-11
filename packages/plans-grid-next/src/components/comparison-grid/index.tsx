@@ -997,73 +997,66 @@ const ComparisonGrid = ( {
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
 	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
-	const prevGridPlans = useRef< GridPlan[] >( gridPlans );
-	const visiblePlansRef = useRef< PlanSlug[] >( [] );
 
 	useEffect( () => {
-		visiblePlansRef.current = visiblePlans;
-	}, [ visiblePlans ] );
+		setVisiblePlans( ( prev ) => {
+			let visibleLength = gridPlans.length;
+			switch ( gridSize ) {
+				case 'large':
+					visibleLength = 4;
+					break;
+				case 'medium':
+					visibleLength = 3;
+					break;
+				case 'smedium':
+				case 'small':
+					visibleLength = 2;
+					break;
+			}
 
-	useEffect( () => {
-		let numPlansToDisplay = gridPlans.length;
+			// visible length changed, update with the current gridPlans
+			// - we don't care about previous order
+			if ( prev.length !== visibleLength ) {
+				return gridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+			}
 
-		switch ( gridSize ) {
-			case 'large':
-				numPlansToDisplay = 4;
-				break;
-			case 'medium':
-				numPlansToDisplay = 3;
-				break;
-			case 'smedium':
-			case 'small':
-				numPlansToDisplay = 2;
-				break;
-		}
+			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
+			// - we care about previous order
+			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
+			if ( isPrevStale ) {
+				return prev.map( ( planSlug ) => {
+					const gridPlan = gridPlans.find(
+						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+					);
 
-		let visiblePlanSlugs: PlanSlug[] = [];
+					return gridPlan?.planSlug ?? planSlug;
+				} );
+			}
 
-		// If the number of plans is fewer than the full set and we are updating to a new plan set
-		// Show the plans at the same indexes in the new set as were shown in the old set
-		// This should get plans in the same order as the previous set of grid plans
-		if ( numPlansToDisplay < gridPlans.length && prevGridPlans.current !== gridPlans ) {
-			visiblePlanSlugs = visiblePlansRef.current.map( ( planSlug ) => {
-				const index = prevGridPlans.current.findIndex(
-					( { planSlug: gridPlanSlug } ) => gridPlanSlug === planSlug
-				);
-				return gridPlans[ index ]?.planSlug;
-			} );
+			const isCurrentPlanVisible = !! currentSitePlanSlug && prev.includes( currentSitePlanSlug );
 
-			prevGridPlans.current = gridPlans;
-		} else {
-			// Otherwise, just get the first N plans to show
-			visiblePlanSlugs = gridPlans
-				.slice( 0, numPlansToDisplay )
-				.map( ( { planSlug } ) => planSlug );
-		}
+			/**
+			 * Plans are sorted by least to most expensive unless:
+			 * - a current plan exists and
+			 * - the current plan's term matches the selected term and
+			 * - the current plan would not be displayed due to the number of plans that can be visible at once
+			 *
+			 * If those conditions are met:
+			 * - the current plan is placed at the start of the grid and
+			 * - the last plan is removed to maintain the expected number of visible plans
+			 */
+			if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
+				prev = [ currentSitePlanSlug, ...prev ].slice( 0, visibleLength );
+			}
 
-		const isCurrentPlanVisible =
-			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
-
-		/**
-		 * Plans are sorted by least to most expensive unless:
-		 * - a current plan exists and
-		 * - the current plan's term matches the selected term and
-		 * - the current plan would not be displayed due to the number of plans that can be visible at once
-		 *
-		 * If those conditions are met:
-		 * - the current plan is placed at the start of the grid and
-		 * - the last plan is removed to maintain the expected number of visible plans
-		 */
-		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
-			visiblePlanSlugs = [ currentSitePlanSlug, ...visiblePlanSlugs ].slice( 0, numPlansToDisplay );
-		}
-
-		setVisiblePlans( visiblePlanSlugs );
+			// nothing to update
+			return prev;
+		} );
 	}, [
 		gridSize,
 		gridPlansIndex,
-		currentSitePlanSlug,
 		gridPlans,
+		currentSitePlanSlug,
 		currentPlanTerm,
 		selectedPlanTerm,
 	] );
