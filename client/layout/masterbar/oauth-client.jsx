@@ -13,6 +13,7 @@ import BlazeProOauthMasterbar from './blaze-pro';
 import './blaze-pro.scss';
 
 import './oauth-client.scss';
+import './woo.scss';
 
 const clientLogo = ( oauth2Client ) => {
 	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {

@@ -469,7 +469,6 @@ $breakpoint-mobile: 660px;
 
 		.social-buttons__service-name {
 			margin-left: 16px;
-			font-weight: 500;
 		}
 
 		.login__social-tos {
@@ -1271,7 +1270,8 @@ $breakpoint-mobile: 660px;
 
 		h1,
 		h2,
-		h3 {
+		h3,
+		.wp-login__heading-text {
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
 		}
