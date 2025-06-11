@@ -430,11 +430,12 @@ class StatsSummary extends Component {
 					) }
 
 					{ /* TODO: Refactor to use the same component for both locations and posts */ }
-					{ this.props.context.params.module === 'posts' && (
-						<div className="stats-navigation stats-navigation--improved">
-							<PostsNavTabs query={ moduleQuery } />
-						</div>
-					) }
+					{ isEnabled( 'stats/archive-breakdown' ) &&
+						this.props.context.params.module === 'posts' && (
+							<div className="stats-navigation stats-navigation--improved">
+								<PostsNavTabs query={ moduleQuery } />
+							</div>
+						) }
 
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (
