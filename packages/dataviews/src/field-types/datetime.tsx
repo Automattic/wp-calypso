@@ -16,7 +16,6 @@ import {
 	OPERATOR_BEFORE_INC,
 	OPERATOR_AFTER_INC,
 } from '../constants';
-import { OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	const timeA = new Date( a ).getTime();
