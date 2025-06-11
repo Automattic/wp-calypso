@@ -221,26 +221,26 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'domain',
 		get label() {
-			return translate( 'Domain' );
+			return translate( 'Problems with domain' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'didNotGetFreeDomain',
+				value: 'troubleConnectingOrTransferring',
 				get label() {
-					return translate( 'I didn’t get a free domain.' );
+					return translate( 'Trouble connecting or transferring my existing domain.' );
 				},
 			},
 			{
-				value: 'otherDomainIssues',
+				value: 'confusedAboutDomains',
 				get label() {
-					return translate( 'Other domain issues' );
+					return translate( 'Confused about how domains work with the WordPress.com plan.' );
 				},
 			},
 			{
-				value: 'domainConnection',
+				value: 'domainIncorrect',
 				get label() {
-					return translate( 'Problem connecting my domain' );
+					return translate( 'Didn’t get the domain name I expected / My domain is incorrect.' );
 				},
 			},
 		],
