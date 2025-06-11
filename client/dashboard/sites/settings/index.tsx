@@ -36,6 +36,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<SummaryButtonList>
 					<SiteVisibilitySettingsSummary site={ site } />
 					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+					<AgencySettingsSummary site={ site } />
 					<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 				</SummaryButtonList>
 			</VStack>
@@ -46,7 +47,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<PHPSettingsSummary site={ site } />
 					<SftpSshSettingsSummary site={ site } />
 					<DatabaseSettingsSummary site={ site } />
-					<AgencySettingsSummary site={ site } />
 					<PrimaryDataCenterSettingsSummary site={ site } />
 					<StaticFile404SettingsSummary site={ site } />
 					<CachingSettingsSummary site={ site } />

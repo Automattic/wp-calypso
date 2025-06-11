@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales } from '@automattic/i18n-utils';
 import {
 	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
@@ -400,6 +401,7 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enabledHelpCenterGeos: [ 'US' ],
+			enabledHelpCenterLocales: englishLocales,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},

@@ -16,6 +16,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { A4A_REPORTS_BUILD_LINK } from '../../constants';
 import ExampleReport from './example-report';
 
 import './style.scss';
@@ -59,8 +60,6 @@ export default function ReportsOverview() {
 
 	const handleBuildNewReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_new_report_button_click' ) );
-		// Build new report action - placeholder
-		// This would typically open report builder or navigate to creation flow
 	}, [ dispatch ] );
 
 	const handleViewExampleReport = useCallback( () => {
@@ -70,7 +69,12 @@ export default function ReportsOverview() {
 
 	const buildNewReportButton = useMemo( () => {
 		return (
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildNewReport }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				onClick={ handleBuildNewReport }
+				href={ A4A_REPORTS_BUILD_LINK }
+			>
 				{ translate( 'Build a new report' ) }
 			</Button>
 		);

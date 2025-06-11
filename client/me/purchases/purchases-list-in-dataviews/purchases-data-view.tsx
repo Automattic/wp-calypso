@@ -44,7 +44,7 @@ export const purchasesDataView: View = {
 function alterUrlForViewProp(
 	url: URL,
 	urlKey: string,
-	currentViewPropValue: string | number | undefined,
+	currentViewPropValue: string | number | string[] | number[] | undefined,
 	defaultValue?: string | number | undefined
 ): void {
 	if ( currentViewPropValue && defaultValue && currentViewPropValue !== defaultValue ) {
@@ -97,7 +97,7 @@ function usePreservePurchasesViewInUrl( {
 			url.searchParams.get( urlSortDirection ) === 'asc' ? 'asc' : 'desc'
 		) as SortDirection;
 		if ( siteFilterValue ) {
-			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
+			filters.push( { value: siteFilterValue.split( ',' ), operator: 'isAny', field: 'site' } );
 		}
 		if ( expiringSoonValue ) {
 			filters.push( { value: expiringSoonValue, operator: 'is', field: 'expiring-soon' } );

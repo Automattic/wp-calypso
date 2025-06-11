@@ -40,7 +40,7 @@
 		"@docusaurus/module-type-aliases": "^3.7.0",
 		"@docusaurus/tsconfig": "^3.7.0",
 		"@docusaurus/types": "^3.7.0",
-		"@types/react": "^18.3.21",
+		"@types/react": "^18.3.23",
 		"typescript": "^5.8.3"
 	},
 	"optionalDependencies": {

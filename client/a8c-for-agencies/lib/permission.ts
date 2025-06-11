@@ -7,6 +7,7 @@ import {
 	A4A_REPORTS_LINK,
 	A4A_REPORTS_OVERVIEW_LINK,
 	A4A_REPORTS_DASHBOARD_LINK,
+	A4A_REPORTS_BUILD_LINK,
 } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import {
 	A4A_LANDING_LINK,
@@ -72,6 +73,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_REPORTS_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_REPORTS_OVERVIEW_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_REPORTS_DASHBOARD_LINK ]: [ 'a4a_read_managed_sites' ],
+	[ A4A_REPORTS_BUILD_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_MARKETPLACE_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_MARKETPLACE_PRODUCTS_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_MARKETPLACE_HOSTING_LINK ]: [ 'a4a_read_marketplace' ],

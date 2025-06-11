@@ -3,9 +3,9 @@
 
 .dashboard-backport-site-settings-root {
 	.dashboard-page-layout {
-	    align-self: center;
-	    margin: 0;
-	    padding: 0;
+		align-self: center;
+		margin: 0;
+		padding: 0;
 	}
 
 	.dashboard-section-header.is-level-1 .dashboard-section-header__heading {
@@ -26,5 +26,15 @@
 
 	.site-preview-pane:has( & .dashboard-snackbars ) {
 		z-index: 176;
+	}
+}
+
+.is-global.is-section-site-settings {
+	// BaseControl currently has an override for the label to accommodate the use case where the label is shown next to the control.
+	// In site settings forms, the label is above the control for regular fields so we need to override this override for UI consistency.
+	.dataforms-layouts-regular__field .components-base-control__label {
+		font-size: 11px;
+		font-weight: 500;
+		text-transform: uppercase;
 	}
 }

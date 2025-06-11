@@ -20,7 +20,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { canUpdateDefensiveMode } from '../../utils/site-features';
+import { canViewDefensiveModeSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -64,11 +64,11 @@ const form = {
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateDefensiveMode( site );
+	const canView = site && canViewDefensiveModeSettings( site );
 
 	const { data } = useQuery( {
 		...siteDefensiveModeQuery( siteSlug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 	const mutation = useMutation( siteDefensiveModeMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -77,7 +77,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		ttl: availableTtls[ 0 ].value,
 	} );
 
-	if ( ! canUpdate ) {
+	if ( ! canView ) {
 		throw notFound();
 	}
 

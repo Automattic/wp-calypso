@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ChatButton from 'calypso/components/chat-button';
@@ -17,6 +16,7 @@ type Props = {
 	surveyStep?: string;
 	onClick: () => void;
 	className?: string;
+	label?: string;
 };
 
 const PrecancellationChatButton: FC< Props > = ( {
@@ -24,9 +24,9 @@ const PrecancellationChatButton: FC< Props > = ( {
 	surveyStep = '',
 	onClick,
 	className,
+	label,
 } ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const siteUrl =
 		useSelector( ( state ) => getSiteUrl( state, purchase.siteId ) ) || 'Unknown site';
 
@@ -60,9 +60,10 @@ const PrecancellationChatButton: FC< Props > = ( {
 			onClick={ handleClick }
 			section="pre-cancellation"
 		>
-			{ hasEnTranslation( 'Need help? {{span}}Contact us{{/span}}' )
-				? translate( 'Need help? {{span}}Contact us{{/span}}', { components: { span: <span /> } } )
-				: translate( 'Need help? Contact us' ) }
+			{ label ||
+				translate( 'Need help? {{span}}Contact us{{/span}}', {
+					components: { span: <span /> },
+				} ) }
 		</ChatButton>
 	);
 };

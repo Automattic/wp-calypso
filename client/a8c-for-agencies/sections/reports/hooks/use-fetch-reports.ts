@@ -14,7 +14,6 @@ export default function useFetchReports() {
 				path: `/agency/${ agencyId }/reports`,
 			} ),
 		enabled: !! agencyId,
-		refetchOnWindowFocus: true,
-		staleTime: 0,
+		refetchOnWindowFocus: false,
 	} );
 }

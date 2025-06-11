@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import { siteQuery, siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
-import { canUseSftp, canUseSsh } from '../../utils/site-features';
+import { canViewSftpSettings, canViewSshSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import calloutIllustrationUrl from './callout-illustration.svg';
@@ -15,12 +15,12 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( siteSlug ),
-		enabled: site && canUseSftp( site ),
+		enabled: site && canViewSftpSettings( site ),
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
 		...siteSshAccessStatusQuery( siteSlug ),
-		enabled: site && canUseSsh( site ),
+		enabled: site && canViewSshSettings( site ),
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
@@ -29,7 +29,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 		return null;
 	}
 
-	if ( ! canUseSftp( site ) ) {
+	if ( ! canViewSftpSettings( site ) ) {
 		return (
 			<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
 				<SettingsCallout
@@ -51,9 +51,9 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 			{ sftpEnabled ? (
 				<SftpCard siteSlug={ site.slug } sftpUsers={ sftpUsers } />
 			) : (
-				<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canUseSsh( site ) } />
+				<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canViewSshSettings( site ) } />
 			) }
-			{ sftpEnabled && canUseSsh( site ) && (
+			{ sftpEnabled && canViewSshSettings( site ) && (
 				<SshCard
 					siteSlug={ site.slug }
 					sftpUsers={ sftpUsers }

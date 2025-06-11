@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "../../../assets/stylesheets/shared/extends-forms";
 
-.form-text-input {
+.form-text-input:not(.form-text-input-core-styles) {
 	@at-root {
 		input[type='text']#{&},
 		input[type='url']#{&},
@@ -31,6 +31,20 @@
 			// Ensures the input text is flush to the start of the element, as in regular text inputs
 			// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
 			display: none;
+		}
+	}
+}
+
+.form-text-input-core-styles {
+	@at-root {
+		input[type='text']#{&},
+		input[type='url']#{&},
+		input[type='password']#{&},
+		input[type='email']#{&},
+		input[type='tel']#{&},
+		input[type='number']#{&},
+		input[type='search']#{&} {
+			@extend %form-field-core-styles;
 		}
 	}
 }

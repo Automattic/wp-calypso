@@ -15,18 +15,18 @@ import { getPHPVersions } from 'calypso/data/php-versions';
 import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { canUpdatePHPVersion } from '../../utils/site-features';
+import { canViewPHPSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdatePHPVersion( site );
+	const canView = site && canViewPHPSettings( site );
 
 	const { data: currentVersion } = useQuery( {
 		...sitePHPVersionQuery( siteSlug ),
-		enabled: canUpdate,
+		enabled: canView,
 	} );
 	const mutation = useMutation( sitePHPVersionMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -39,7 +39,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		return null;
 	}
 
-	if ( ! canUpdate ) {
+	if ( ! canView ) {
 		return (
 			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
 				<SettingsCallout siteSlug={ siteSlug } tracksId="php" />
