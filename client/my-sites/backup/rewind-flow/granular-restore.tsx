@@ -154,6 +154,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState( false );
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
+	const [ isFinished, setIsFinished ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -233,6 +234,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
+		setIsFinished( false );
 
 		// Track the restore confirmation event.
 		dispatch(
@@ -589,13 +591,18 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
-	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
 		( restoreInitiated && userHasRequestedRestore );
 
 	const shouldRenderConfirmation = ( ! isInProgress || ! isFinished ) && ! restoreInitiated;
+
+	useEffect( () => {
+		if ( inProgressRewindStatus === 'finished' ) {
+			setIsFinished( true );
+		}
+	}, [ dispatch, inProgressRewindStatus ] );
 
 	useEffect( () => {
 		if ( isInProgress && ! userHasRequestedRestore ) {
