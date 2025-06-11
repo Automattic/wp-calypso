@@ -64,7 +64,7 @@ function getFilterBy< Item >(
 			validOperators.includes( operator )
 		);
 
-		// The `between` operator is not supported for preset layout.
+		// The `between` operator is not supported when elements are provided.
 		if ( field.elements && operators.includes( OPERATOR_BETWEEN ) ) {
 			operators = operators.filter(
 				( operator ) => operator !== OPERATOR_BETWEEN
@@ -101,8 +101,16 @@ function getFilterBy< Item >(
 		return false;
 	}
 
+	let defaultOperators = fieldTypeDefinition.filterBy.defaultOperators;
+	// The `between` operator is not supported when elements are provided.
+	if ( field.elements && defaultOperators.includes( OPERATOR_BETWEEN ) ) {
+		defaultOperators = defaultOperators.filter(
+			( operator ) => operator !== OPERATOR_BETWEEN
+		);
+	}
+
 	return {
-		operators: fieldTypeDefinition.filterBy.defaultOperators,
+		operators: defaultOperators,
 	};
 }
 
