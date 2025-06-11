@@ -347,7 +347,7 @@ export default withCurrentRoute(
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isA4AClient = isA4AOAuth2Client( oauth2Client );
-			const isVipClient = isVIPOAuth2Client( oauth2Client );
+			const isVIPClient = isVIPOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
 					( ( Boolean( currentQuery?.client_id ) === false &&
@@ -359,7 +359,7 @@ export default withCurrentRoute(
 						isWoo ||
 						isJetpackCloudClient ||
 						isJetpackLogin ||
-						isVipClient ) ) ||
+						isVIPClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

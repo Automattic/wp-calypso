@@ -74,7 +74,7 @@ const enhanceContextWithLogin = ( context ) => {
 	const isA4AClient = isA4AOAuth2Client( oauth2Client );
 	const isJetpackLogin = isJetpack === 'jetpack';
 	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
-	const isVipClient = isVIPOAuth2Client( oauth2Client );
+	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
 		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
@@ -86,7 +86,7 @@ const enhanceContextWithLogin = ( context ) => {
 		isJetpackCloudClient ||
 		isJetpackLogin ||
 		isWoo ||
-		isVipClient;
+		isVIPClient;
 
 	context.primary = (
 		<WPLogin
