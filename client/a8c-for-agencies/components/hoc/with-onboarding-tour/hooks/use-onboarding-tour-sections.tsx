@@ -19,7 +19,7 @@ import {
 	A4A_MIGRATIONS_LINK,
 	A4A_OVERVIEW_LINK,
 	A4A_PURCHASES_LINK,
-	A4A_REFERRALS_LINK,
+	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK,
 	A4A_AGENCY_TIER_LINK,
 	A4A_TEAM_LINK,
@@ -209,7 +209,7 @@ export default function useOnboardingTourSections() {
 						{
 							label: translate( 'View Referrals Dashboard' ),
 							variant: 'secondary',
-							href: A4A_REFERRALS_LINK,
+							href: A4A_REFERRALS_DASHBOARD,
 							onClick: () => onExplore( 'referrals', onClose ),
 						},
 						{
