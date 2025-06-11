@@ -175,8 +175,6 @@ class TokenField extends PureComponent {
 					items: this.props.value.map( this.props.displayTransform ).join( ', ' ),
 				},
 			} );
-		} else {
-			ariaLabel = translate( 'Search to add items' );
 		}
 
 		let props = {
