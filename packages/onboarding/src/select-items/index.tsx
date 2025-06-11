@@ -13,7 +13,6 @@ export interface SelectItem< T > {
 	titleIcon?: React.ReactElement; // If titleIcon is set, it will show on the same line of title and, icon will be ignored
 	value: T;
 	actionText: TranslateResult | null;
-	actionButtonLabel?: TranslateResult;
 	hidden?: boolean;
 	isPrimary?: boolean;
 	allItemClickable?: boolean;
@@ -43,7 +42,6 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 					isPrimary,
 					allItemClickable,
 					'aria-label': ariaLabel,
-					actionButtonLabel,
 				} ) => (
 					<div key={ key } className="select-items__item">
 						{ ! titleIcon && (
@@ -73,7 +71,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 									primary={ isPrimary }
 									className="select-items__item-button"
 									onClick={ () => onSelect( value ) }
-									aria-label={ actionButtonLabel?.toString() }
+									aria-hidden="true"
 								>
 									{ actionText }
 								</Button>
