@@ -163,6 +163,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				className={ clx( 'chatbox-messages', {
 					'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
 				} ) }
+				aria-live="polite"
+				aria-atomic="false"
 				ref={ messagesContainerRef }
 			>
 				<ChatDate chat={ chat } />
