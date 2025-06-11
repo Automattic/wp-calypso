@@ -71,26 +71,71 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'price/budget',
 		get label() {
-			return translate( 'Price/Budget' );
+			return translate( 'Too expensive' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
 				value: 'tooExpensive',
 				get label() {
-					return translate( 'It’s too expensive.' );
+					return translate( 'The plan is too expensive for the features offered.' );
 				},
 			},
 			{
-				value: 'wantCheaperPlan',
+				value: 'lackOfCustomization',
 				get label() {
-					return translate( 'I want a cheaper plan.' );
+					return translate( 'Lack of customization features (e.g., colors, fonts, themes).' );
 				},
 			},
 			{
 				value: 'freeIsGoodEnough',
 				get label() {
-					return translate( 'Free is good enough for me.' );
+					return translate( 'The free plan is sufficient for my current needs.' );
+				},
+			},
+			{
+				value: 'foundBetterValue',
+				get label() {
+					return translate( 'I found a competitor with better pricing/value.' );
+				},
+			},
+			{
+				value: 'budgetConstraints',
+				get label() {
+					return translate( 'Budget constraints / Can no longer afford it.' );
+				},
+			},
+		],
+	},
+	{
+		value: 'tooHardToUse',
+		get label() {
+			return translate( 'Too hard to use' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'complicatedDashboard',
+				get label() {
+					return translate( 'The platform/dashboard is too complicated or confusing to navigate.' );
+				},
+			},
+			{
+				value: 'difficultEditor',
+				get label() {
+					return translate( 'The website editor is difficult or unintuitive to use.' );
+				},
+			},
+			{
+				value: 'tooMuchTimeToLearn',
+				get label() {
+					return translate( 'It takes too much time to learn how to use the platform.' );
+				},
+			},
+			{
+				value: 'inadequateOnboarding',
+				get label() {
+					return translate( 'Onboarding or tutorials were not helpful enough.' );
 				},
 			},
 		],
