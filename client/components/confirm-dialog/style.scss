@@ -1,0 +1,15 @@
+.confirm-dialog {
+	max-width: var(--max-width, 580px);
+
+	&__footer {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+	}
+
+	&__content {
+		text-wrap: pretty;
+		margin-bottom: 24px;
+		font-size: $font-body-small;
+	}
+}

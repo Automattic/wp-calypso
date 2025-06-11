@@ -6,7 +6,11 @@ import { useState, useEffect, useRef } from '@wordpress/element';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
-import { getConversationIdFromInteraction, getOdieIdFromInteraction } from '../utils';
+import {
+	getConversationIdFromInteraction,
+	getOdieIdFromInteraction,
+	getIsRequestingHumanSupport,
+} from '../utils';
 import type { Chat, Message } from '../types';
 
 /**
@@ -66,9 +70,7 @@ export const useGetCombinedChat = (
 		}
 
 		const filteredOdieMessages =
-			odieChat?.messages.filter(
-				( message ) => ! message.context?.flags?.forward_to_human_support
-			) ?? [];
+			odieChat?.messages.filter( ( message ) => ! getIsRequestingHumanSupport( message ) ) ?? [];
 
 		// We have an ongoing conversation with Zendesk, but we have some problems connecting to it
 		if ( ! canConnectToZendesk ) {
@@ -105,8 +107,9 @@ export const useGetCombinedChat = (
 				} );
 			} catch ( error ) {
 				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
-					conversationId,
-					odieId,
+					conversation_id: conversationId,
+					odie_id: odieId,
+					error: error instanceof Error ? error.message : String( error ),
 				} );
 
 				startNewInteraction( {
@@ -126,6 +129,7 @@ export const useGetCombinedChat = (
 		canConnectToZendesk,
 		getZendeskConversation,
 		startNewInteraction,
+		isLoadingCanConnectToZendesk,
 	] );
 
 	return { mainChatState, setMainChatState };

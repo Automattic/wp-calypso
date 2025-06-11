@@ -7,6 +7,7 @@ import {
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isA4AOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -68,16 +69,18 @@ const enhanceContextWithLogin = ( context ) => {
 	const isBlazePro = getIsBlazePro( currentState );
 	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
 	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
+	const isA4AClient = isA4AOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			Boolean( clientId ) === false &&
 			Boolean( oauth2ClientId ) === false &&
-			! isBlazePro &&
 			! isWooJPC ) ||
 		isPartnerPortalClient ||
 		isStudioLogin ||
-		isCrowdsignalLogin;
+		isCrowdsignalLogin ||
+		isBlazePro ||
+		isA4AClient;
 
 	context.primary = (
 		<WPLogin

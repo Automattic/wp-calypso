@@ -53,7 +53,6 @@ body.is-section-signup {
 	--color-link: var(--color-blaze-pro);
 	--color-link-dark: var(--color-blaze-pro);
 
-	background: var(--color-white);
 	min-height: 100%;
 
 	$login-form-max-width: 327px;
@@ -448,14 +447,14 @@ body.is-section-signup {
 	.two-factor-authentication__verification-code-form-wrapper {
 		box-shadow: none;
 
-		.form-label {
+		.form-label:not(.form-label-core-styles) {
 			color: #1e1e1e;
 			font-size: rem(11px);
 			line-height: 16px;
 			text-transform: uppercase;
 		}
 
-		.form-text-input {
+		.form-text-input:not(.form-text-input-core-styles) {
 			border: 1px solid #dddddf;
 
 			&:focus,
@@ -469,20 +468,10 @@ body.is-section-signup {
 		}
 	}
 
-	// "Continue with a backup code" button
-	&.layout.is-white-login .wp-login__links.two-factor-authentication__actions > .button:first-of-type {
-		color: var(--color-black);
-		font-size: rem(13px);
-		font-weight: 600;
-		line-height: 14px;
-		padding: 12px 16px;
-	}
-
 	&.layout.is-white-login,
 	.card.login__form,
 	.signup-form .logged-out-form,
-	.login__lostpassword-form,
-	.two-factor-authentication__verification-code-form-wrapper {
+	.login__lostpassword-form {
 		.login .button.is-primary,
 		.login .button.is-primary:hover,
 		.form-button {

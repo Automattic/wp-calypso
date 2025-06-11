@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -109,10 +108,6 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 
 	const { site, isMigrationCompleted, isMigrationInProgress } = useSiteMigrationStatus( siteId );
 	const { data } = useFindZendeskMigrationTicket( siteId, isMigrationCompleted === false );
-
-	if ( ! isEnabled( 'migration-flow/cancel-difm' ) ) {
-		return null;
-	}
 
 	if ( ! data?.ticket_id ) {
 		return null;

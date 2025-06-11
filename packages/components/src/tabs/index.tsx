@@ -2,6 +2,7 @@
  * Forked from `@wordpress/components`
  * - Removed Tabs.Context from Storybook sub-components.
  * - Converted styles from Emotion to (S)CSS modules.
+ * - Added `density` prop to `Tabs.TabList`, with new `compact` variant.
  */
 
 import * as Ariakit from '@ariakit/react';

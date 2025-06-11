@@ -49,6 +49,8 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
+		"dashboard/v2": true,
+		"dashboard/v2/backport/site-settings": false,
 		"design-picker/use-assembler-styles": true,
 		"dev/account-settings-helper": true,
 		"dev/auth-helper": true,
@@ -119,7 +121,6 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration-flow/cancel-difm": true,
 		"oauth": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
@@ -178,7 +179,6 @@
 		"stats/paid-wpcom-v3": true,
 		"stats/real-time-tab": true,
 		"subscriber-importer": true,
-		"subscribers-helper-library": true,
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,
@@ -190,7 +190,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true,
-		"dashboard/v2": true
+		"yolo/command-palette": true
 	}
 }

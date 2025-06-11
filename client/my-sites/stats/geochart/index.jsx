@@ -375,15 +375,16 @@ class StatsGeochart extends Component {
 		}
 
 		const chartData = this.prepareChartData( data );
+		const statsRoot = document.querySelector( 'main.stats-main' ) || document.body;
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
 		// We have to set values to Google GeoChart via JS. We don't
 		// support switching color schemes in IE11 thus applying the
 		// defaults as raw hex values here.
 		const chartColorLight =
-			getComputedStyle( document.body ).getPropertyValue( '--color-accent-5' ).trim() || '#ffdff3';
+			getComputedStyle( statsRoot ).getPropertyValue( '--color-accent-5' ).trim() || '#d52c82';
 		const chartColorDark =
-			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
+			getComputedStyle( statsRoot ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
 			keepAspectRatio: true,

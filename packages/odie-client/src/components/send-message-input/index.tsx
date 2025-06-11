@@ -1,4 +1,5 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useAttachFileToConversation,
@@ -6,7 +7,7 @@ import {
 } from '@automattic/zendesk-client';
 import { DropZone, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SendMessageIcon } from '../../assets/send-message-icon';
@@ -58,8 +59,14 @@ export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, canConnectToZendesk } =
-		useOdieAssistantContext();
+	const {
+		trackEvent,
+		chat,
+		addMessage,
+		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
+		forceEmailSupport,
+	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -68,9 +75,19 @@ export const OdieSendMessageButton = () => {
 	const isEligibleForZendeskChat = chat?.provider === 'zendesk' && ! isUserEligibleForPaidSupport;
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
+	const isInitialLoading = chat.status === 'loading';
+	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 	const [ sendingFailed, setSendingFailed ] = useState( false );
+
+	// Focus input when chat is ready
+	useEffect( () => {
+		if ( ! isInitialLoading ) {
+			inputRef.current?.focus();
+		}
+	}, [ isInitialLoading ] );
+
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
 		'messenger'
@@ -90,7 +107,8 @@ export const OdieSendMessageButton = () => {
 		isAttachingFile ||
 		cantTransferToZendesk ||
 		cantConnectToZendeskChat ||
-		isEligibleForZendeskChat;
+		isEligibleForZendeskChat ||
+		isEmailFallback;
 
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
@@ -241,35 +259,45 @@ export const OdieSendMessageButton = () => {
 				</OdieNotice>
 			) }
 			<div className={ inputContainerClasses } ref={ divContainerRef }>
-				<form
-					onSubmit={ ( event ) => {
-						event.preventDefault();
-						sendMessageHandler();
-					} }
-					className="odie-send-message-input-container"
-				>
-					<ResizableTextarea
-						shouldDisableInputField={ shouldDisableInputField }
-						sendMessageHandler={ sendMessageHandler }
-						className="odie-send-message-input"
-						inputRef={ inputRef }
-						setSubmitDisabled={ setSubmitDisabled }
-						keyUpHandle={ onKeyUp }
-						onPasteHandle={ onPaste }
-						placeholder={ textAreaPlaceholder }
-					/>
-					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					{ showAttachmentButton && (
-						<AttachmentButton
-							attachmentButtonRef={ attachmentButtonRef }
-							onFileUpload={ handleFileUpload }
-							isAttachingFile={ isAttachingFile }
+				{ isEmailFallback ? (
+					<EmailFallbackNotice />
+				) : (
+					<form
+						onSubmit={ ( event ) => {
+							event.preventDefault();
+							sendMessageHandler();
+						} }
+						className="odie-send-message-input-container"
+					>
+						<ResizableTextarea
+							shouldDisableInputField={ shouldDisableInputField }
+							sendMessageHandler={ sendMessageHandler }
+							className="odie-send-message-input"
+							inputRef={ inputRef }
+							setSubmitDisabled={ setSubmitDisabled }
+							keyUpHandle={ onKeyUp }
+							onPasteHandle={ onPaste }
+							placeholder={ textAreaPlaceholder }
 						/>
-					) }
-					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
-						<SendMessageIcon />
-					</button>
-				</form>
+						{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+						{ showAttachmentButton && (
+							<AttachmentButton
+								attachmentButtonRef={ attachmentButtonRef }
+								onFileUpload={ handleFileUpload }
+								isAttachingFile={ isAttachingFile }
+								isDisabled={ isEmailFallback }
+							/>
+						) }
+						<button
+							type="submit"
+							className={ buttonClasses }
+							disabled={ submitDisabled }
+							aria-label={ __( 'Send message', __i18n_text_domain__ ) }
+						>
+							<SendMessageIcon />
+						</button>
+					</form>
+				) }
 			</div>
 			{ showAttachmentButton && (
 				<DropZone

@@ -4,6 +4,7 @@ import {
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
+import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -19,7 +20,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
-	const isDomainOnly = [ 'domain', 'domain-for-gravatar' ].includes( flowName );
+	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
+	const isGravatarDomain = isDomainForGravatarFlow( flowName );
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
@@ -44,6 +46,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
+			...( isGravatarDomain && { isGravatarDomain: 1 } ),
 			checkoutBackUrl: finalCheckoutBackUrl,
 		},
 		checkoutURL

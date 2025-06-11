@@ -62,6 +62,6 @@
 		"superagent": "^3.8.3",
 		"winston": "^3.3.3",
 		"wpcom-xhr-request": "workspace:^",
-		"ws": "^7.3.1"
+		"ws": "^7.5.10"
 	}
 }

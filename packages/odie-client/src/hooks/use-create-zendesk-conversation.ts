@@ -94,10 +94,18 @@ export const useCreateZendeskConversation = (): ( ( {
 		} );
 
 		setWaitAnswerToFirstMessageFromHumanSupport( true );
-		addEventToInteraction( {
+		const updatedInteraction = await addEventToInteraction.mutateAsync( {
 			interactionId: currentInteractionID,
 			eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 		} );
+		const eventAddedToNewInteraction = updatedInteraction.uuid !== currentInteractionID;
+		if ( eventAddedToNewInteraction ) {
+			await Smooch.updateConversation( conversation.id, {
+				metadata: {
+					supportInteractionId: updatedInteraction.uuid,
+				},
+			} );
+		}
 
 		setChat( ( prevChat ) => ( {
 			...prevChat,

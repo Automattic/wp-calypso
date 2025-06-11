@@ -19,6 +19,28 @@ body.archive {
 		}
 	}
 }
+.happy-blocks_navigation_search {
+	display: flex;
+	justify-content: end;
+	padding: 16px 24px;
+	margin-bottom: 32px;
+
+	@media only screen and (max-width: $breakpoint-mobile) {
+		padding: 16px;
+		margin-bottom: 16px;
+	}
+
+	a.jetpack-search-filter__link {
+		height: 24px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		border: none;
+		background: #fff;
+		color: #1e1e1e;
+		text-decoration: none;
+	}
+}
 
 .happy-blocks_inner_search {
 	height: 0;

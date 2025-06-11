@@ -11,6 +11,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
+import { useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -44,11 +45,6 @@ const offerClick = () => {
 		action: 'offer',
 	} );
 };
-const bigSkyClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'big-sky',
-	} );
-};
 
 function AddNewSite( { context }: AddNewSiteProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -61,6 +57,8 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 		} )
 	);
 
+	const { setShowHelpCenter } = useShowHelpCenter();
+
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
 			<Column title={ __( 'Add new site' ) }>
@@ -70,6 +68,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
 					href={ `/start?source=${ context }&ref=new-site-popover` }
+					aria-label={ __( 'Add WordPress.com site' ) }
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
@@ -77,8 +76,14 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __(
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
 					) }
-					onClick={ bigSkyClick }
+					onClick={ () => {
+						setShowHelpCenter( false ); // Close the help center
+						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+							action: 'big-sky',
+						} );
+					} }
 					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
+					aria-label={ __( 'Build a new site with AI' ) }
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
@@ -86,6 +91,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
 					href={ `/jetpack/connect?cta_from=${ context }&cta_id=add-site` }
+					aria-label={ __( 'Add site via the Jetpack plugin' ) }
 				/>
 			</Column>
 			<Column title={ __( 'Migrate and import' ) }>
@@ -95,6 +101,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Bring your entire WordPress site to WordPress.com.' ) }
 					onClick={ migrateClick }
 					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover&action=migrate` }
+					aria-label={ __( 'Migrate an existing WordPress site' ) }
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
@@ -102,6 +109,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __( 'Use a backup to only import content from other platforms.' ) }
 					onClick={ importClick }
 					href={ `/setup/site-migration/create-site?source=${ context }&ref=new-site-popover&action=import` }
+					aria-label={ __( 'Import content from other platforms' ) }
 				/>
 			</Column>
 
@@ -115,9 +123,10 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					width: '260px',
 					padding: 0,
 				} }
+				aria-label={ __( 'Get special offer: Free domain and up to 55% off annual plans' ) }
 			>
 				<VStack className="dashboard-add-new-site__banner">
-					<img src={ devSiteBanner } alt={ offer } />
+					<img src={ devSiteBanner } alt="" aria-hidden="true" />
 					<Text size="title">{ offer }</Text>
 					<Text variant="muted" as="p">
 						{ sprintf(
@@ -130,7 +139,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 							} )
 						) }
 					</Text>
-					<div>{ __( 'Unlock offer' ) }</div>
+					<div aria-hidden="true">{ __( 'Unlock offer' ) }</div>
 				</VStack>
 			</Button>
 		</Wrapper>

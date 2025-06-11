@@ -6,15 +6,18 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
-import { canUpdateCaching } from '../sites/settings-caching';
 import {
-	canUpdatePHPVersion,
-	canUpdateDefensiveMode,
-	canUpdateHundredYearPlanFeatures,
-	canUpdateWordPressVersion,
-	canGetPrimaryDataCenter,
-	canSetStaticFile404Handling,
-} from '../utils/site-features';
+	canViewAgencySettings,
+	canViewHundredYearPlanSettings,
+	canViewWordPressSettings,
+	canViewPHPSettings,
+	canViewSftpSettings,
+	canViewSshSettings,
+	canViewDefensiveModeSettings,
+	canViewPrimaryDataCenterSettings,
+	canViewStaticFile404Settings,
+	canViewCachingSettings,
+} from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -33,6 +36,8 @@ import {
 	siteEdgeCacheStatusQuery,
 	siteDefensiveModeQuery,
 	agencyBlogQuery,
+	siteSftpUsersQuery,
+	siteSshAccessStatusQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -168,23 +173,12 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
-const siteSettingsDatabaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/database',
-} ).lazy( () =>
-	import( '../sites/settings-database' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-database' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateWordPressVersion( site ) ) {
+		if ( canViewWordPressSettings( site ) ) {
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
 		}
 	},
@@ -201,7 +195,7 @@ const siteSettingsPHPRoute = createRoute( {
 	path: 'settings/php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdatePHPVersion( site ) ) {
+		if ( canViewPHPSettings( site ) ) {
 			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
 		}
 	},
@@ -213,12 +207,23 @@ const siteSettingsPHPRoute = createRoute( {
 	)
 );
 
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const siteSettingsAgencyRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/agency',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( site.is_wpcom_atomic ) {
+		if ( canViewAgencySettings( site ) ) {
 			await queryClient.ensureQueryData( agencyBlogQuery( site.ID ) );
 		}
 	},
@@ -235,7 +240,7 @@ const siteSettingsHundredYearPlanRoute = createRoute( {
 	path: 'settings/hundred-year-plan',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateHundredYearPlanFeatures( site ) ) {
+		if ( canViewHundredYearPlanSettings( site ) ) {
 			await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
 		}
 	},
@@ -252,7 +257,7 @@ const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	path: 'settings/primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canGetPrimaryDataCenter( site ) ) {
+		if ( canViewPrimaryDataCenterSettings( site ) ) {
 			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( siteSlug ) );
 		}
 	},
@@ -269,7 +274,7 @@ const siteSettingsStaticFile404Route = createRoute( {
 	path: 'settings/static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canSetStaticFile404Handling( site ) ) {
+		if ( canViewStaticFile404Settings( site ) ) {
 			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
 		}
 	},
@@ -286,7 +291,7 @@ const siteSettingsCachingRoute = createRoute( {
 	path: 'settings/caching',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateCaching( site ) ) {
+		if ( canViewCachingSettings( site ) ) {
 			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
 		}
 	},
@@ -303,13 +308,32 @@ const siteSettingsDefensiveModeRoute = createRoute( {
 	path: 'settings/defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateDefensiveMode( site ) ) {
+		if ( canViewDefensiveModeSettings( site ) ) {
 			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
 		}
 	},
 } ).lazy( () =>
 	import( '../sites/settings-defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-defensive-mode' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsSftpSshRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/sftp-ssh',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		return Promise.all( [
+			canViewSftpSettings( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
+			canViewSshSettings( site ) &&
+				queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../sites/settings-sftp-ssh' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -501,6 +525,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsCachingRoute,
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
+				siteSettingsSftpSshRoute,
 			] )
 		);
 	}

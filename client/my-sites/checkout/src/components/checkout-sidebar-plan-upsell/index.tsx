@@ -20,6 +20,7 @@ import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscount,
 } from '../item-variation-picker/util';
+import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
 
@@ -44,11 +45,8 @@ function getUpsellTextForVariant(
 	isStreamlinedPrice: boolean
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
-		const cardTitle = isStreamlinedPrice
-			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying annually' )
-			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		const cardTitle = __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
 		return {
 			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
 				strong: createElement( 'strong' ),
@@ -114,6 +112,9 @@ export function CheckoutSidebarPlanUpsell() {
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
+	);
 
 	const variants = useGetProductVariants( plan );
 
@@ -204,7 +205,7 @@ export function CheckoutSidebarPlanUpsell() {
 		upsellVariant,
 		percentSavings,
 		__,
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+		isStreamlinedPrice
 	);
 
 	if ( ! upsellText ) {
@@ -215,15 +216,13 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const checkoutSidebarPlanUpsellClassName =
 		'checkout-sidebar-plan-upsell' +
-		( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
-			? ' checkout-sidebar-plan-upsell-streamlined'
-			: '' );
+		( isStreamlinedPrice ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
 
 	return (
 		<>
 			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+					{ ! isStreamlinedPrice && (
 						<>
 							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 								<strong>{ __( 'Plan' ) }</strong>
@@ -265,6 +264,14 @@ export function CheckoutSidebarPlanUpsell() {
 						} ) }
 					</div>
 				</div>
+				{ isStreamlinedPrice && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ undefined }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						isStreamlinedPrice={ isStreamlinedPrice }
+					/>
+				) }
 				<PromoCardCTA
 					cta={ {
 						disabled: isFormLoading,

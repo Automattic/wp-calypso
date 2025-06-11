@@ -51,6 +51,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	com_vs_org: {
+		link: 'https://wordpress.com/support/com-vs-org/',
+		post_id: 38,
+	},
 	dashboard: {
 		link: 'https://wordpress.com/support/dashboard/',
 		post_id: 137,

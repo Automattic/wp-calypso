@@ -10,6 +10,7 @@ import {
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { HTTPError, stringifyBody } from '../utils';
 import { AUTHENTICATE_URL } from './constants';
 
@@ -60,16 +61,25 @@ async function postMagicLoginRequest( url, bodyObj ) {
 }
 
 /**
- * Logs a user in from a token included in a magic link.
+ * Logs a user in from a token included in a magic link or magic code.
  * @param	{string}	token	Security token
  * @param	{string}	redirectTo	Url to redirect the user to upon successful login
  * @param	{string | null}	flow	The client's login flow
+ * @param	{boolean}	isMagicCode	Whether this is a magic code (true) or magic link (false)
  * @returns	{Function}	A thunk that can be dispatched
  */
 export const fetchMagicLoginAuthenticate =
-	( token, redirectTo, flow = null ) =>
+	( token, redirectTo, flow = null, isMagicCode = false ) =>
 	( dispatch ) => {
 		dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
+
+		// Track authentication attempt
+		dispatch(
+			recordTracksEvent( 'calypso_login_magic_authenticate_attempt', {
+				flow,
+				token_type: isMagicCode ? 'code' : 'link',
+			} )
+		);
 
 		postMagicLoginRequest( AUTHENTICATE_URL, {
 			client_id: config( 'wpcom_signup_id' ),
@@ -79,6 +89,14 @@ export const fetchMagicLoginAuthenticate =
 			flow,
 		} )
 			.then( ( json ) => {
+				// Track successful authentication
+				dispatch(
+					recordTracksEvent( 'calypso_login_magic_authenticate_success', {
+						flow,
+						token_type: isMagicCode ? 'code' : 'link',
+					} )
+				);
+
 				dispatch( {
 					type: LOGIN_REQUEST_SUCCESS,
 					data: json.data,
@@ -91,6 +109,16 @@ export const fetchMagicLoginAuthenticate =
 			} )
 			.catch( ( error ) => {
 				const { status, response } = error;
+
+				// Track failed authentication
+				dispatch(
+					recordTracksEvent( 'calypso_login_magic_authenticate_failure', {
+						flow,
+						token_type: isMagicCode ? 'code' : 'link',
+						error_code: status,
+						error_message: response?.body?.data?.errors?.[ 0 ]?.code || 'unknown',
+					} )
+				);
 
 				dispatch( {
 					type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,

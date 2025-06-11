@@ -4,7 +4,7 @@ export const getPHPVersions = () => {
 	// PHP 8.3 is now the default recommended version
 	const recommendedValue = '8.3';
 	// translators: PHP Version for a version switcher
-	const recommendedLabel = sprintf( __( '%s (recommended)' ), recommendedValue );
+	const recommendedLabel = sprintf( __( '%s (Recommended)' ), recommendedValue );
 
 	const phpVersions = [
 		{
@@ -14,7 +14,7 @@ export const getPHPVersions = () => {
 		},
 		{
 			// translators: PHP Version for a version switcher
-			label: sprintf( __( '%s (deprecated)' ), '7.4' ),
+			label: sprintf( __( '%s (Deprecated)' ), '7.4' ),
 			value: '7.4',
 			disabled: true, // EOL 1st July, 2024
 		},
@@ -25,7 +25,7 @@ export const getPHPVersions = () => {
 		},
 		{
 			// translators: PHP Version for a version switcher
-			label: sprintf( __( '%s (deprecated)' ), '8.1' ),
+			label: sprintf( __( '%s (Deprecated)' ), '8.1' ),
 			value: '8.1',
 			disabled: false, // EOL 31st December, 2025
 		},

@@ -178,8 +178,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 					{ createInterpolateElement(
 						'Before deleting your site, consider <link>exporting your content as a backup</link>.',
 						{
-							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href="#" />,
+							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
 						}
 					) }
 				</Text>
@@ -197,7 +196,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				) }
 			</Text>
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+				<VStack spacing={ 4 }>
 					<DataForm< SiteDeleteFormData >
 						data={ formData }
 						fields={ fields }

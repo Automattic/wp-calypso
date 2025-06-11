@@ -61,7 +61,7 @@ export default function StorageCard( { siteSlug }: { siteSlug: string } ) {
 						: undefined
 				}
 			/>
-			<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
+			<ExternalLink href={ `/add-ons/${ siteSlug }` }>{ __( 'Buy more' ) }</ExternalLink>
 		</OverviewCard>
 	);
 }

@@ -113,7 +113,6 @@ const LayoutLoggedOut = ( {
 		! isJetpackLogin &&
 		! hasGravPoweredClientClass &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
-		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
@@ -161,7 +160,15 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+	if ( isBlazePro && isWhiteLogin ) {
+		/**
+		 * This effectively removes the masterbar completely from Login pages (only).
+		 * However, in some cases, we want the styles imported from the masterbar to be applied.
+		 * They are more generic and affect the whole page, unfortunately.
+		 * For that, importing OauthClientMasterbar suffices to apply those styles, until refactored (we are in the process ofrefactoring).
+		 */
+		masterbar = null;
+	} else if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
 		masterbar = null;
 	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! masterbarIsHidden ) {
 		classes.dops = true;
@@ -333,15 +340,17 @@ export default withCurrentRoute(
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
+			const isA4AClient = isA4AOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
 					( ( ! isJetpackLogin &&
 						Boolean( currentQuery?.client_id ) === false &&
 						Boolean( currentQuery?.oauth2_client_id ) === false &&
-						! isBlazePro &&
 						! isWooJPC ) ||
 						isStudioClient ||
-						isCrowdsignalClient ) ) ||
+						isCrowdsignalClient ||
+						isBlazePro ||
+						isA4AClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

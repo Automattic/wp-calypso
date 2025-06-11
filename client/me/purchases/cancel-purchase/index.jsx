@@ -43,7 +43,6 @@ import {
 	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
-	getIncludedDomainTransfer,
 } from 'calypso/state/purchases/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
@@ -352,7 +351,6 @@ class CancelPurchase extends Component {
 
 						<CancelPurchaseDomainOptions
 							includedDomainPurchase={ this.props.includedDomainPurchase }
-							includedDomainTransfer={ this.props.includedDomainTransfer }
 							cancelBundledDomain={ this.state.cancelBundledDomain }
 							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
 							purchase={ purchase }
@@ -431,7 +429,6 @@ export default connect( ( state, props ) => {
 		purchases,
 		productsList,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
-		includedDomainTransfer: getIncludedDomainTransfer( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
 		isHundredYearDomain: selectedDomain?.isHundredYearDomain,
 	};

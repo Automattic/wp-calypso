@@ -39,6 +39,17 @@ import {
 	fetchSiteResetContentSummary,
 	resetSite,
 	fetchSiteResetStatus,
+	launchSite,
+	fetchSftpUsers,
+	createSftpUser,
+	resetSftpPassword,
+	fetchSshAccessStatus,
+	enableSshAccess,
+	disableSshAccess,
+	fetchSiteSshKeys,
+	fetchProfileSshKeys,
+	attachSiteSshKey,
+	detachSiteSshKey,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -50,13 +61,19 @@ import type {
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
 	SiteTransferConfirmation,
+	SshAccessStatus,
+	SftpUser,
+	SiteSshKey,
+	FetchSitesOptions,
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
-export function sitesQuery() {
+export function sitesQuery(
+	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible' }
+) {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
-		queryFn: fetchSites,
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS, fetchSitesOptions.site_visibility ],
+		queryFn: () => fetchSites( fetchSitesOptions ),
 	};
 }
 
@@ -181,6 +198,19 @@ export function profileMutation() {
 	};
 }
 
+export function profileSshKeysQuery() {
+	return {
+		queryKey: [ 'profile', 'ssh-keys' ],
+		queryFn: () => {
+			return fetchProfileSshKeys();
+		},
+		retry: false, // Don't retry on 401 errors
+		meta: {
+			persist: false,
+		},
+	};
+}
+
 export function siteSettingsQuery( siteId: string ) {
 	return {
 		queryKey: [ 'site-settings', siteId ],
@@ -300,6 +330,14 @@ export function agencyBlogQuery( siteId: string ) {
 		queryFn: () => {
 			return fetchAgencyBlogBySiteId( siteId );
 		},
+		retry: ( failureCount: number, error: { code?: string } ) => {
+			// Stop retrying if we already know the blog is not an agency blog.
+			if ( error.hasOwnProperty( 'code' ) && error.code === 'partner_for_blog_not_found' ) {
+				return false;
+			}
+
+			return failureCount < 3;
+		},
 	};
 }
 
@@ -395,6 +433,120 @@ export function p2HubP2sQuery( siteId: string, options: { limit?: number } = {} 
 		queryKey: [ 'p2-hub-p2s', siteId, options ],
 		queryFn: () => {
 			return fetchP2HubP2s( siteId, options );
+		},
+	};
+}
+
+export function launchSiteMutation( siteIdOrSlug: string ) {
+	return {
+		mutationFn: () => launchSite( siteIdOrSlug ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteIdOrSlug ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteIdOrSlug ] } );
+		},
+	};
+}
+
+export function siteSftpUsersQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'sftp-users' ],
+		queryFn: () => {
+			return fetchSftpUsers( siteId );
+		},
+		meta: {
+			persist: false,
+		},
+	};
+}
+
+const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[], sftpUser: SftpUser ) => {
+	const index = currentSftpUsers.findIndex(
+		( currentSftpUser ) => currentSftpUser.username === sftpUser.username
+	);
+	if ( index >= 0 ) {
+		return [ ...currentSftpUsers.slice( 0, index ), sftpUser, ...currentSftpUsers.slice( 0 + 1 ) ];
+	}
+
+	return [ ...currentSftpUsers, sftpUser ];
+};
+
+export function siteSftpUsersCreateMutation( siteId: string ) {
+	return {
+		mutationFn: () => createSftpUser( siteId ),
+		onSuccess: ( createdSftpUser: SftpUser ) => {
+			queryClient.setQueryData(
+				[ 'site', siteId, 'sftp-users' ],
+				( currentSftpUsers: SftpUser[] ) =>
+					updateCurrentSftpUsers( currentSftpUsers, createdSftpUser )
+			);
+		},
+	};
+}
+
+export function siteSftpUsersResetPasswordMutation( siteId: string ) {
+	return {
+		mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
+		onSuccess: ( updatedSftpUser: SftpUser ) => {
+			queryClient.setQueryData(
+				[ 'site', siteId, 'sftp-users' ],
+				( currentSftpUsers: SftpUser[] ) =>
+					updateCurrentSftpUsers( currentSftpUsers, updatedSftpUser )
+			);
+		},
+	};
+}
+
+export function siteSshAccessStatusQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'ssh-access' ],
+		queryFn: () => {
+			return fetchSshAccessStatus( siteId );
+		},
+	};
+}
+
+export function siteSshAccessEnableMutation( siteId: string ) {
+	return {
+		mutationFn: () => enableSshAccess( siteId ),
+		onSuccess: ( data: SshAccessStatus ) => {
+			queryClient.setQueryData( [ 'site', siteId, 'ssh-access' ], data );
+		},
+	};
+}
+
+export function siteSshAccessDisableMutation( siteId: string ) {
+	return {
+		mutationFn: () => disableSshAccess( siteId ),
+		onSuccess: ( data: SshAccessStatus ) => {
+			queryClient.setQueryData( [ 'site', siteId, 'ssh-access' ], data );
+		},
+	};
+}
+
+export function siteSshKeysQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'ssh-keys' ],
+		queryFn: () => {
+			return fetchSiteSshKeys( siteId );
+		},
+	};
+}
+
+export function siteSshKeysAttachMutation( siteId: string ) {
+	return {
+		mutationFn: ( name: string ) => attachSiteSshKey( siteId, name ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'ssh-keys' ] } );
+		},
+	};
+}
+
+export function siteSshKeysDetachMutation( siteId: string ) {
+	return {
+		mutationFn: ( siteSshKey: SiteSshKey ) =>
+			detachSiteSshKey( siteId, siteSshKey.user_login, siteSshKey.name ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'ssh-keys' ] } );
 		},
 	};
 }
