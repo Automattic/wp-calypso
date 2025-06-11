@@ -1,7 +1,7 @@
 import { isFreePlanProduct, PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { BackButton } from '@automattic/onboarding';
+import { BackButton, Step } from '@automattic/onboarding';
 import { UseShoppingCart, withShoppingCart } from '@automattic/shopping-cart';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -432,7 +432,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 						<RenderDomainsStep
 							suggestion={ this.getInitialSuggestion() }
 							isOnboarding
-							useStepperWrapper
 							isDomainOnly
 							positionInFlow={ 0 }
 							flowName="site-domain-search" // this enables the multi-domain cart
@@ -466,6 +465,27 @@ class DomainSearch extends Component< DomainSearchProps > {
 							submitDomainStepSelection={ () => {} } // only tracks events
 							setDesignType={ () => {} } // idk what this does
 							fetchUsernameSuggestion={ () => {} } // idk what this does
+							render={ ( {
+								mainContent,
+								sideContent,
+							}: {
+								mainContent: React.ReactNode;
+								sideContent: React.ReactNode;
+							} ) => {
+								return (
+									<div className="site-domains-add-page">
+										<Step.TwoColumnLayout
+											noPadding="all"
+											firstColumnWidth={ 7 }
+											secondColumnWidth={ 3 }
+											className="domains__step-content domains__step-content-domain-step"
+										>
+											{ mainContent }
+											{ sideContent }
+										</Step.TwoColumnLayout>
+									</div>
+								);
+							} }
 						/>
 					</div>
 				</span>

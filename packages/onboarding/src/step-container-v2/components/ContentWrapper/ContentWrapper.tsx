@@ -7,18 +7,19 @@ export const ContentWrapper = ( {
 	children,
 	centerAligned,
 	axisDirection = 'vertical',
-	noTopPadding = false,
+	noPadding,
 }: {
 	children: ReactNode;
 	centerAligned?: boolean;
 	axisDirection?: 'vertical' | 'horizontal';
-	noTopPadding?: boolean;
+	noPadding?: 'top' | 'all';
 } ) => {
 	return (
 		<div
 			className={ clsx( 'step-container-v2__content-wrapper', `axis-${ axisDirection }`, {
 				'center-aligned': centerAligned,
-				'no-top-padding': noTopPadding,
+				'no-top-padding': noPadding === 'top',
+				'no-padding': noPadding === 'all',
 			} ) }
 		>
 			{ children }

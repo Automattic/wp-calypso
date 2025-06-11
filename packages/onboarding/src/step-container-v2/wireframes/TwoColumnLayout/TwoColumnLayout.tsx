@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Children, Fragment, isValidElement, ReactNode } from 'react';
+import { Children, Fragment, isValidElement, ReactNode, ComponentProps } from 'react';
 import { ContentRow } from '../../components/ContentRow/ContentRow';
 import { ContentWrapper } from '../../components/ContentWrapper/ContentWrapper';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
@@ -8,7 +8,7 @@ import { StickyBottomBarRenderer } from '../../components/StickyBottomBar/Sticky
 import { TopBarRenderer } from '../../components/TopBar/TopBarRenderer';
 import './style.scss';
 
-interface TwoColumnLayoutProps {
+type TwoColumnLayoutProps = {
 	topBar?: ContentProp;
 	heading?: ReactNode;
 	className?: string;
@@ -17,7 +17,7 @@ interface TwoColumnLayoutProps {
 	stickyBottomBar?: ContentProp;
 	firstColumnWidth: number;
 	secondColumnWidth: number;
-}
+} & Pick< ComponentProps< typeof ContentWrapper >, 'noPadding' >;
 
 export const TwoColumnLayout = ( {
 	firstColumnWidth,
@@ -28,6 +28,7 @@ export const TwoColumnLayout = ( {
 	className,
 	footer,
 	stickyBottomBar,
+	noPadding,
 }: TwoColumnLayoutProps ) => {
 	const getChildFlexGrow = ( index: number ) => {
 		switch ( index ) {
@@ -59,7 +60,7 @@ export const TwoColumnLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper>
+						<ContentWrapper noPadding={ noPadding }>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow
 								columns={ 10 }

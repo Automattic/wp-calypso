@@ -1472,6 +1472,22 @@ class RenderDomainsStepComponent extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		if ( this.props.render ) {
+			const [ content, sideContent ] = this.getContentColumns();
+
+			const mainContent = (
+				<>
+					<QueryProductsList type="domains" />
+					{ content }
+				</>
+			);
+
+			return this.props.render( {
+				mainContent,
+				sideContent,
+			} );
+		}
+
 		if ( shouldUseStepContainerV2( flowName ) ) {
 			const [ content, sideContent ] = this.getContentColumns();
 

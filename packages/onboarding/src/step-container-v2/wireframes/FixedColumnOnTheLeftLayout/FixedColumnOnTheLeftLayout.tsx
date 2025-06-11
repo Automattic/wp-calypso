@@ -40,7 +40,7 @@ const FixedColumnOnTheLeftLayout = ( {
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper
 							axisDirection={ context.isLargeViewport ? 'horizontal' : 'vertical' }
-							noTopPadding={ context.isLargeViewport }
+							noPadding={ context.isLargeViewport ? 'top' : undefined }
 						>
 							<ContentRow
 								columns={ context.isLargeViewport ? fixedColumnWidth : undefined }
