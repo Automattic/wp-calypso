@@ -108,7 +108,7 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'otherPriceValue',
 				get label() {
-					return translate( 'Something else related to price/value' );
+					return translate( 'Something else related to price/value.' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more about your price/value concern' );
