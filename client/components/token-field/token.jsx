@@ -46,6 +46,8 @@ export default class extends PureComponent {
 				className={ tokenClasses }
 				onMouseEnter={ this.props.onMouseEnter }
 				onMouseLeave={ this.props.onMouseLeave }
+				onClick={ ! this.props.disabled ? this._onClickRemove : null }
+				tabIndex={ 0 }
 				disabled={ this.props.disabled }
 				aria-label={ ariaLabel }
 			>
