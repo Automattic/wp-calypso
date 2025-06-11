@@ -158,7 +158,7 @@ class PostCommentForm extends Component {
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
-					<Gravatar user={ this.props.currentUser } />
+					<Gravatar showHovercards user={ this.props.currentUser } />
 					<AutoresizingFormTextarea
 						value={ this.getCommentText() }
 						placeholder={ translate( 'Add a comment…' ) }

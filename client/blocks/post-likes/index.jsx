@@ -35,7 +35,13 @@ class PostLikes extends PureComponent {
 				className="post-likes__item"
 				onClick={ likeUrl ? this.trackLikeClick : null }
 			>
-				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 32 } />
+				<Gravatar
+					showHovercards
+					user={ like }
+					alt={ like.login }
+					title={ like.login }
+					size={ 32 }
+				/>
 				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
 			</LikeWrapper>
 		);

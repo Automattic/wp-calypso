@@ -124,7 +124,7 @@ export default function ReaderAvatar( {
 
 	const avatarUrl = author?.wpcom_login ? getUserProfileUrl( author.wpcom_login ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
-		<Gravatar user={ author } size={ gravatarSize } />
+		<Gravatar showHovercards user={ author } size={ gravatarSize } />
 	);
 	const avatarElement = avatarUrl ? <a href={ avatarUrl }> { authorAvatar }</a> : authorAvatar;
 

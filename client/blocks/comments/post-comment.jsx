@@ -448,10 +448,10 @@ class PostComment extends PureComponent {
 				<div className="comments__comment-author">
 					{ commentAuthorUrl ? (
 						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick } tabIndex={ -1 }>
-							<Gravatar user={ comment.author } />
+							<Gravatar showHovercards user={ comment.author } />
 						</a>
 					) : (
-						<Gravatar user={ comment.author } />
+						<Gravatar showHovercards user={ comment.author } />
 					) }
 
 					{ this.renderAuthorTag( {

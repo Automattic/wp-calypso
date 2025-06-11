@@ -28,7 +28,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 	return (
 		<div className="reader-related-card__meta">
 			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
-				<Gravatar user={ post.author } />
+				<Gravatar showHovercards user={ post.author } />
 			</a>
 			<div className="reader-related-card__byline">
 				<span className="reader-related-card__byline-site">
