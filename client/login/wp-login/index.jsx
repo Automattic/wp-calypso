@@ -19,6 +19,7 @@ import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
@@ -569,7 +570,7 @@ export default connect(
 		const isFromGravatarQuickEditor =
 			props.isGravPoweredClient && currentQuery?.gravatar_from === 'quick-editor';
 		const isGravatarFlowWithEmail = !! (
-			isGravPoweredOAuth2Client( oauth2Client ) && currentQuery?.email_address
+			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
 		);
 		const isGravatarSameAccountLogin =
 			isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail;
