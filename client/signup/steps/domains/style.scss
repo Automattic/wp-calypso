@@ -309,6 +309,7 @@ body.is-section-signup,
 			border-radius: 4px;
 			box-sizing: border-box;
 			height: 40px;
+			overflow: hidden;
 
 			@include break-mobile {
 				height: 48px;
@@ -414,7 +415,7 @@ body.is-section-signup,
 		}
 
 		.register-domain-step__search-card {
-			background: var(--color-surface);
+			background: transparent;
 			box-shadow: none;
 			margin: 20px 0 0;
 
