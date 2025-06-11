@@ -273,40 +273,61 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 		],
 	},
 	{
-		value: 'couldNotFinish',
+		value: 'badSupport',
 		get label() {
-			return translate( 'Couldn’t finish my site' );
+			return translate( 'Bad support experience' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'noTime',
+				value: 'slowOrUnhelpful',
 				get label() {
-					return translate( 'I don’t have time.' );
+					return translate( 'Support was unhelpful or slow to respond.' );
 				},
 			},
 			{
-				value: 'needProfessionalHelp',
+				value: 'noHumanSupport',
 				get label() {
-					return translate( 'Need professional help to build my site.' );
+					return translate( 'Could not easily reach a human support agent.' );
 				},
 			},
 			{
-				value: 'siteIsNotReady',
+				value: 'AIInsufficient',
 				get label() {
-					return translate( 'My site is not ready.' );
+					return translate( 'AI/automated support was not sufficient for my issue.' );
+				},
+			},
+		],
+	},
+	{
+		value: 'noLongerNeedSite',
+		get label() {
+			return translate( 'No longer need a site' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'projectChanged',
+				get label() {
+					return translate( 'My project/business plans have changed.' );
 				},
 			},
 			{
-				value: 'cannotFindWhatIWanted',
+				value: 'justExploring',
 				get label() {
-					return translate( 'Couldn’t find what I wanted.' );
+					return translate( 'I was just exploring/testing the platform.' );
 				},
 			},
 			{
-				value: 'tooComplicated',
+				value: 'noLongerNeedSite',
 				get label() {
-					return translate( 'It’s too complicated for me.' );
+					return translate( 'I no longer need this website/service.' );
+				},
+			},
+			{
+				value: 'mayReturn',
+				get label() {
+					return translate( 'Temporary cancellation, I might return.' );
 				},
 			},
 		],
