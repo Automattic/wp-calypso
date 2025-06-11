@@ -11,9 +11,9 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import BlazeProOauthMasterbar from './blaze-pro';
 import './blaze-pro.scss';
+import './woo.scss';
 
 import './oauth-client.scss';
-import './woo.scss';
 
 const clientLogo = ( oauth2Client ) => {
 	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
@@ -21,6 +21,7 @@ const clientLogo = ( oauth2Client ) => {
 	} else if ( isA4AOAuth2Client( oauth2Client ) ) {
 		return <A4ALogo full className="a4a-logo" size={ 28 } />;
 	}
+
 	return oauth2Client.icon && <img src={ oauth2Client.icon } alt={ oauth2Client.title } />;
 };
 

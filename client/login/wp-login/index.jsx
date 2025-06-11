@@ -400,10 +400,6 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isLoginView ) {
-			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
-		}
-
 		if ( isSocialFirst ) {
 			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />;
 		}
@@ -499,6 +495,7 @@ export class Login extends Component {
 			oauth2Client,
 			isWooJPC,
 			isWCCOM,
+			isWoo,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
 			wccomFrom,
@@ -582,7 +579,8 @@ export class Login extends Component {
 			isCrowdsignalOAuth2Client( oauth2Client ) ||
 			isBlazePro ||
 			isJetpack ||
-			isJetpackCloudOAuth2Client( oauth2Client );
+			isJetpackCloudOAuth2Client( oauth2Client ) ||
+			isWoo;
 
 		return (
 			<>

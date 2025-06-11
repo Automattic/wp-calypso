@@ -128,9 +128,7 @@ export function getHeaderText(
 	} else if ( oauth2Client ) {
 		// TODO: remove isWCCOM when login pages are unified and we have clarified design.
 		if ( isWCCOM ) {
-			if ( wccomFrom === 'cart' ) {
-				headerText = translate( 'Log in with a WordPress.com account' );
-			} else if ( twoFactorEnabled ) {
+			if ( twoFactorEnabled ) {
 				headerText = translate( 'Authenticate your login' );
 			} else if ( currentQuery.lostpassword_flow ) {
 				headerText = translate( 'Log in to your account' );
@@ -143,7 +141,7 @@ export function getHeaderText(
 					</>
 				);
 			}
-			headerText = translate( 'Log in to your account' );
+			headerText = translate( 'Log in to Woo with WordPress.com' );
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
