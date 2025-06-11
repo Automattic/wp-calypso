@@ -993,34 +993,6 @@ export class LoginForm extends Component {
 							/>
 						</div>
 
-						{ ! isBlazePro && isJetpack && (
-							<p className="login__form-jetpack-terms">
-								{ this.props.translate(
-									'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and ' +
-										'to {{privacyLink}}sync your site’s data{{/privacyLink}} with us. We’ll check if that ' +
-										'email is linked to an existing WordPress.com account or create a new one instantly. ',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-											privacyLink: (
-												<a
-													href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</p>
-						) }
-
 						{ ! hideSignupLink && isOauthLogin && (
 							<p className={ clsx( 'login__form-signup-link' ) }>
 								{ this.props.translate(
@@ -1040,7 +1012,7 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginOptions() {
-		const { oauth2Client, currentQuery, isWoo, isWooJPC, isSocialFirst, isJetpack } = this.props;
+		const { oauth2Client, currentQuery, isWoo, isWooJPC, isSocialFirst } = this.props;
 
 		const { lastUsedAuthenticationMethod } = this.state;
 
@@ -1071,35 +1043,6 @@ export class LoginForm extends Component {
 			! isFromGravatar3rdPartyApp &&
 			! isFromGravatarQuickEditor &&
 			! isGravatarFlowWithEmail;
-
-		if ( isJetpack ) {
-			return (
-				<div className="login__form-jetpack">
-					{ shouldShowSocialLoginForm && (
-						<SocialLoginForm
-							lastUsedAuthenticationMethod={
-								showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
-							}
-							handleLogin={ this.handleSocialLogin }
-							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ false }
-							isWoo={ isWoo }
-							isSocialFirst={
-								isSocialFirst || ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin )
-							}
-							magicLoginLink={ null }
-							qrLoginLink={ this.getQrLoginLink() }
-						/>
-					) }
-
-					<FormDivider />
-
-					{ this.renderLoginCard() }
-				</div>
-			);
-		}
 
 		return (
 			<>
