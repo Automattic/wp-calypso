@@ -79,7 +79,7 @@ class SuggestionsList extends PureComponent {
 				ref={ this.listRef }
 				className={ classes }
 				role="listbox"
-				tabindex="0"
+				tabIndex="0"
 				aria-label={ translate( 'Options' ) }
 			>
 				{ this._renderSuggestions() }
