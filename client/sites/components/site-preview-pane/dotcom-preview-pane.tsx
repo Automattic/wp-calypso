@@ -191,16 +191,11 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
-	const hasStagingSitePermission = stagingSites?.some(
-		( stagingSite ) => stagingSite.user_has_permission
-	);
-
-	const hasManageOptionsPermission = useSelector( ( state ) => {
+	const hasEnvironmentPermission = useSelector( ( state ) => {
 		if ( site.is_wpcom_staging_site ) {
 			return canCurrentUser( state, site.options?.wpcom_production_blog_id, 'manage_options' );
 		}
-
-		return canCurrentUser( state, site.ID, 'manage_options' );
+		return stagingSites?.[ 0 ]?.user_has_permission ?? false;
 	} );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
@@ -226,12 +221,7 @@ const DotcomPreviewPane = ( {
 						return <SiteStatus site={ site } />;
 					}
 
-					if (
-						( hasStagingSitePermission &&
-							! site.is_wpcom_staging_site &&
-							isStagingStatusFinished ) ||
-						( hasManageOptionsPermission && site.is_wpcom_staging_site )
-					) {
+					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
 					}
 				},
