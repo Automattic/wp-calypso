@@ -40,7 +40,7 @@ export interface CancellationReason extends CancellationReasonBase {
 	/**
 	 * Options for the sub category select
 	 */
-	selectOptions?: CancellationReasonBase[];
+	selectOptions?: CancellationReason[];
 }
 
 /**
@@ -103,6 +103,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'budgetConstraints',
 				get label() {
 					return translate( 'Budget constraints / Can no longer afford it.' );
+				},
+			},
+			{
+				value: 'otherPriceValue',
+				get label() {
+					return translate( 'Something else related to price/value' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more about your price/value concern' );
 				},
 			},
 		],

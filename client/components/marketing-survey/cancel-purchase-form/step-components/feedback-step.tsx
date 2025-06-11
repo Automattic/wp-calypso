@@ -20,11 +20,21 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 	const translate = useTranslate();
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
+	const [ textAreaValue, setTextAreaValue ] = useState( '' );
 	const reasons = getCancellationReasons( reasonCodes, { productSlug: purchase.productSlug } );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
+	const selectedSubOption = selectedReason?.selectOptions?.find(
+		( option ) => option.value === details
+	);
 
 	const onDetailsChange = ( val: string ) => {
 		setDetails( val );
+		setTextAreaValue( '' ); // Reset textarea when changing sub-option
+		props.onDetailsChange( val );
+	};
+
+	const onTextAreaChange = ( val: string ) => {
+		setTextAreaValue( val );
 		props.onDetailsChange( val );
 	};
 
@@ -37,6 +47,7 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 					options={ reasons.map( toSelectOption ) }
 					onChange={ ( val ) => {
 						onDetailsChange( '' );
+						setTextAreaValue( '' );
 						setValue( val );
 						props.onChange( val );
 					} }
@@ -47,8 +58,8 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 					<TextareaControl
 						label={ translate( 'Can you please specify?' ) }
 						placeholder={ String( selectedReason.textPlaceholder ) }
-						value={ details }
-						onChange={ onDetailsChange }
+						value={ textAreaValue }
+						onChange={ onTextAreaChange }
 					/>
 				</div>
 			) }
@@ -59,6 +70,16 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 						value={ details }
 						options={ selectedReason.selectOptions.map( toSelectOption ) }
 						onChange={ onDetailsChange }
+					/>
+				</div>
+			) }
+			{ selectedSubOption?.textPlaceholder && (
+				<div className="cancel-purchase-form__feedback-question">
+					<TextareaControl
+						label={ translate( 'Can you please specify?' ) }
+						placeholder={ String( selectedSubOption.textPlaceholder ) }
+						value={ textAreaValue }
+						onChange={ onTextAreaChange }
 					/>
 				</div>
 			) }
