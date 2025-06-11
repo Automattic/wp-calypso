@@ -4,6 +4,7 @@
 
 - Update the field type definitions to declare the default and valid operators they support. Fields with no `type` property can use all operators and, if none is provided in the field's config, they'll display `is` and `isNot`.
 - Add a story for each FieldTypeDefinition.
+- Adjust the spacing of the `DataForm` based on the type.
 
 ## 0.2.1
 

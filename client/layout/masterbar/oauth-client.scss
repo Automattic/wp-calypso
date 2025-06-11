@@ -587,11 +587,6 @@
 				order: 4;
 			}
 		}
-
-		.login__form-userdata label {
-			font-size: $font-title-small;
-			font-weight: 400;
-		}
 	}
 
 	.login__social-tos {
@@ -616,7 +611,9 @@
 
 	input:focus:hover[type],
 	input:focus[type] {
-		box-shadow: 0 0 0 2px var(--color-primary-10);
+		&:not(.form-text-input-core-styles) {
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+		}
 	}
 
 	.button {
@@ -672,7 +669,6 @@
 		}
 	}
 
-	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--studio-jetpack-green-40);
 

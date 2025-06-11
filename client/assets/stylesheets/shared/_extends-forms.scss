@@ -1,3 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 // SASS placeholder selectors for form styles
 
 %form-field {
@@ -80,5 +84,40 @@
 
 	&.is-error:hover {
 		border-color: var(--color-error-dark);
+	}
+}
+
+%form-field-core-styles {
+	@include input-control;
+
+	box-sizing: border-box;
+	width: 100%;
+	height: $grid-unit-50;
+	border-color: var(--color-neutral-10);
+	font-size: $font-body-small;
+	color: var(--color-neutral-60);
+
+	@include break-small {
+		font-size: $font-body-small;
+	}
+
+	&:disabled {
+		background-color: var(--wp-components-color-gray-100, #f0f0f0);
+	}
+
+	&.is-error {
+		border-color: var(--color-error);
+
+		&:focus {
+			--wp-admin-theme-color: var(--color-error);
+		}
+	}
+
+	&.is-valid {
+		border-color: var(--color-success);
+
+		&:focus {
+			--wp-admin-theme-color: var(--color-success);
+		}
 	}
 }
