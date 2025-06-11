@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -33,7 +32,7 @@ const A4ASelectSite = ( {
 				__next40pxDefaultSize
 				variant="secondary"
 				onClick={ handleOpenModal }
-				className={ clsx( className ) }
+				className={ className }
 			>
 				{ buttonLabel || translate( 'Select a site' ) }
 			</Button>

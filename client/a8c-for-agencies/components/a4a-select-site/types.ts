@@ -1,3 +1,4 @@
+import type { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { ReactNode } from 'react';
 
 export type A4ASelectSiteItem = {
