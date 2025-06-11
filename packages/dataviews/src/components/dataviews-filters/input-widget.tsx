@@ -4,6 +4,8 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from '@wordpress/element';
 import { Flex } from '@wordpress/components';
+import fastDeepEqual from 'fast-deep-equal/es6';
+
 /**
  * Internal dependencies
  */
@@ -50,7 +52,7 @@ export default function InputWidget( {
 	const handleChange = useCallback(
 		( data: Record< string, any > ) => {
 			const nextValue = data[ field.id ];
-			if ( nextValue === currentValue ) {
+			if ( fastDeepEqual( nextValue, currentValue ) ) {
 				return;
 			}
 
