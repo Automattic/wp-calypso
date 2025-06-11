@@ -12,7 +12,6 @@ import {
 import BlazeProOauthMasterbar from './blaze-pro';
 import WooOauthMasterbar from './woo';
 import './blaze-pro.scss';
-import './woo.scss';
 
 import './oauth-client.scss';
 
