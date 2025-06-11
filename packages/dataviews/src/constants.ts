@@ -137,7 +137,7 @@ export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	},
 	[ OPERATOR_BETWEEN ]: {
 		key: 'between-filter',
-		label: __( 'between (inc)' ),
+		label: __( 'Between (inc)' ),
 	},
 };
 
