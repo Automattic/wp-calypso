@@ -33,6 +33,7 @@ export default class extends PureComponent {
 			'is-disabled': this.props.disabled,
 		} );
 
+		/* translators: %(item)s is the selected item */
 		const ariaLabel = translate( 'Deselect %(item)s', {
 			args: {
 				item: displayTransform( value ),
