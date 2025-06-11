@@ -10,6 +10,7 @@ import {
 	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import BlazeProOauthMasterbar from './blaze-pro';
+import WooOauthMasterbar from './woo';
 import './blaze-pro.scss';
 import './woo.scss';
 
@@ -53,6 +54,10 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 );
 
 const OauthClientMasterbar = ( { oauth2Client } ) => {
+	if ( isWooOAuth2Client( oauth2Client ) ) {
+		return <WooOauthMasterbar />;
+	}
+
 	/**
 	 * This is a special case for Blaze Pro that is used in both Login and Signup pages.
 	 * TODO clk Refactor (remove) this to use the same approach as the other oauth2 clients.
