@@ -8,6 +8,7 @@ import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-featur
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
@@ -188,6 +189,18 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
+	const hasStagingSitePermission = stagingSites?.some(
+		( stagingSite ) => stagingSite.user_has_permission
+	);
+
+	const hasManageOptionsPermission = useSelector( ( state ) => {
+		if ( site.is_wpcom_staging_site ) {
+			return canCurrentUser( state, site.options?.wpcom_production_blog_id, 'manage_options' );
+		}
+
+		return canCurrentUser( state, site.ID, 'manage_options' );
+	} );
+
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
 		site,
@@ -211,7 +224,12 @@ const DotcomPreviewPane = ( {
 						return <SiteStatus site={ site } />;
 					}
 
-					if ( site.is_wpcom_staging_site || isStagingStatusFinished ) {
+					if (
+						( hasStagingSitePermission &&
+							! site.is_wpcom_staging_site &&
+							isStagingStatusFinished ) ||
+						( hasManageOptionsPermission && site.is_wpcom_staging_site )
+					) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
 					}
 				},

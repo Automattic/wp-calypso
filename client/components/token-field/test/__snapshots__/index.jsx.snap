@@ -4,12 +4,9 @@ exports[`TokenField render should render tokens 1`] = `
 <div>
   <div
     class="token-field"
-    tabindex="-1"
   >
     <div
       class="token-field__input-container"
-      role="textbox"
-      tabindex="-1"
     >
       <span
         class="token-field__token"
@@ -54,6 +51,10 @@ exports[`TokenField render should render tokens 1`] = `
         </svg>
       </span>
       <input
+        aria-activedescendant="option-undefined"
+        aria-controls="options-list"
+        aria-label="Selected: foo, bar. Search to add more."
+        aria-owns="options-list"
         class="form-text-input token-field__input"
         placeholder=""
         size="1"
@@ -62,176 +63,315 @@ exports[`TokenField render should render tokens 1`] = `
       />
     </div>
     <ul
+      aria-label="Options"
       class="token-field__suggestions-list"
-      tabindex="-1"
+      id="options-list"
+      role="listbox"
+      tabindex="0"
     >
       <li
+        aria-label="Option the"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-the"
+        role="option"
       >
         the
       </li>
       <li
+        aria-label="Option of"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-of"
+        role="option"
       >
         of
       </li>
       <li
+        aria-label="Option and"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-and"
+        role="option"
       >
         and
       </li>
       <li
+        aria-label="Option to"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-to"
+        role="option"
       >
         to
       </li>
       <li
+        aria-label="Option a"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-a"
+        role="option"
       >
         a
       </li>
       <li
+        aria-label="Option in"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-in"
+        role="option"
       >
         in
       </li>
       <li
+        aria-label="Option for"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-for"
+        role="option"
       >
         for
       </li>
       <li
+        aria-label="Option is"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-is"
+        role="option"
       >
         is
       </li>
       <li
+        aria-label="Option on"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-on"
+        role="option"
       >
         on
       </li>
       <li
+        aria-label="Option that"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-that"
+        role="option"
       >
         that
       </li>
       <li
+        aria-label="Option by"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-by"
+        role="option"
       >
         by
       </li>
       <li
+        aria-label="Option this"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-this"
+        role="option"
       >
         this
       </li>
       <li
+        aria-label="Option with"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-with"
+        role="option"
       >
         with
       </li>
       <li
+        aria-label="Option i"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-i"
+        role="option"
       >
         i
       </li>
       <li
+        aria-label="Option you"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-you"
+        role="option"
       >
         you
       </li>
       <li
+        aria-label="Option it"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-it"
+        role="option"
       >
         it
       </li>
       <li
+        aria-label="Option not"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-not"
+        role="option"
       >
         not
       </li>
       <li
+        aria-label="Option or"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-or"
+        role="option"
       >
         or
       </li>
       <li
+        aria-label="Option be"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-be"
+        role="option"
       >
         be
       </li>
       <li
+        aria-label="Option are"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-are"
+        role="option"
       >
         are
       </li>
       <li
+        aria-label="Option from"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-from"
+        role="option"
       >
         from
       </li>
       <li
+        aria-label="Option at"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-at"
+        role="option"
       >
         at
       </li>
       <li
+        aria-label="Option as"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-as"
+        role="option"
       >
         as
       </li>
       <li
+        aria-label="Option your"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-your"
+        role="option"
       >
         your
       </li>
       <li
+        aria-label="Option all"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-all"
+        role="option"
       >
         all
       </li>
       <li
+        aria-label="Option have"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-have"
+        role="option"
       >
         have
       </li>
       <li
+        aria-label="Option new"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-new"
+        role="option"
       >
         new
       </li>
       <li
+        aria-label="Option more"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-more"
+        role="option"
       >
         more
       </li>
       <li
+        aria-label="Option an"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-an"
+        role="option"
       >
         an
       </li>
       <li
+        aria-label="Option was"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-was"
+        role="option"
       >
         was
       </li>
       <li
+        aria-label="Option we"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-we"
+        role="option"
       >
         we
       </li>
       <li
+        aria-label="Option snake"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-snake"
+        role="option"
       >
         snake
       </li>
       <li
+        aria-label="Option pipes"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-pipes"
+        role="option"
       >
         pipes
       </li>
       <li
+        aria-label="Option sound"
+        aria-selected="false"
         class="token-field__suggestion"
+        id="option-sound"
+        role="option"
       >
         sound
       </li>
