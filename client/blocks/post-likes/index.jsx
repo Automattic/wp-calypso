@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryPostLikers from 'calypso/components/data/query-post-likers';
-import Gravatar from 'calypso/components/gravatar';
+import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -35,13 +35,7 @@ class PostLikes extends PureComponent {
 				className="post-likes__item"
 				onClick={ likeUrl ? this.trackLikeClick : null }
 			>
-				<Gravatar
-					showHovercards
-					user={ like }
-					alt={ like.login }
-					title={ like.login }
-					size={ 32 }
-				/>
+				<GravatarWithHovercards user={ like } alt={ like.login } title={ like.login } size={ 32 } />
 				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
 			</LikeWrapper>
 		);
