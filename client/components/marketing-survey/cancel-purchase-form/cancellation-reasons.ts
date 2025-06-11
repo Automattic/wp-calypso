@@ -246,6 +246,33 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 		],
 	},
 	{
+		value: 'wrongPlanOrSite',
+		get label() {
+			return translate( 'Wrong plan or site' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'wrongPlan',
+				get label() {
+					return translate( 'I purchased this plan by mistake.' );
+				},
+			},
+			{
+				value: 'wrongSite',
+				get label() {
+					return translate( 'I meant to upgrade a different website or account.' );
+				},
+			},
+			{
+				value: 'noMatch',
+				get label() {
+					return translate( 'The plan I chose didn’t match what I thought I was buying.' );
+				},
+			},
+		],
+	},
+	{
 		value: 'couldNotFinish',
 		get label() {
 			return translate( 'Couldn’t finish my site' );
