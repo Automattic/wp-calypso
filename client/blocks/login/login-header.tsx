@@ -79,6 +79,8 @@ export function getHeaderText(
 			clientName = 'WP Job Manager';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
+		} else if ( isGravPoweredClient ) {
+			clientName = 'Gravatar';
 		}
 
 		headerText = clientName
