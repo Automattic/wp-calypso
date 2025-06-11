@@ -57,4 +57,34 @@ describe( 'login', () => {
 		const url = login( { isJetpack: true, useMagicLink: true } );
 		expect( url ).toBe( '/log-in/jetpack' );
 	} );
+
+	test( 'should return the login url with gravatar_from param', () => {
+		const url = login( { gravatarFrom: 'test' } );
+		expect( url ).toBe( '/log-in?gravatar_from=test' );
+	} );
+
+	test( 'should return the login url with gravatar_flow param', () => {
+		const url = login( { gravatarFlow: true } );
+		expect( url ).toBe( '/log-in?gravatar_flow=1' );
+	} );
+
+	test( 'should return the login url with gravatar_flow_with_email param', () => {
+		const url = login( { gravatarFlowWithEmail: true } );
+		expect( url ).toBe( '/log-in?gravatar_flow_with_email=1' );
+	} );
+
+	test( 'should return the login url for requesting a magic login link with gravatar_from param', () => {
+		const url = login( { useMagicLink: true, gravatarFrom: 'test' } );
+		expect( url ).toBe( '/log-in/link?gravatar_from=test' );
+	} );
+
+	test( 'should return the login url for requesting a magic login link with gravatar_flow param', () => {
+		const url = login( { useMagicLink: true, gravatarFlow: true } );
+		expect( url ).toBe( '/log-in/link?gravatar_flow=1' );
+	} );
+
+	test( 'should return the login url for requesting a magic login link with gravatar_flow_with_email param', () => {
+		const url = login( { useMagicLink: true, gravatarFlowWithEmail: true } );
+		expect( url ).toBe( '/log-in/link?gravatar_flow_with_email=1' );
+	} );
 } );
