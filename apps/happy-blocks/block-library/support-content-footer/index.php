@@ -174,9 +174,9 @@ if ( 'home' === $current_page_slug ) {
 				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides/' ) ); ?>" class="support-content-resource">
 					<div class="support-content-resource__content">
 						<div class="support-footer__icon-wrapper">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-								<path d="M18 5.5H6C5.86739 5.5 5.74021 5.55268 5.64645 5.64645C5.55268 5.74021 5.5 5.86739 5.5 6V18C5.5 18.1326 5.55268 18.2598 5.64645 18.3536C5.74021 18.4473 5.86739 18.5 6 18.5H18C18.1326 18.5 18.2598 18.4473 18.3536 18.3536C18.4473 18.2598 18.5 18.1326 18.5 18V6C18.5 5.86739 18.4473 5.74021 18.3536 5.64645C18.2598 5.55268 18.1326 5.5 18 5.5ZM6 4H18C18.5304 4 19.0391 4.21071 19.4142 4.58579C19.7893 4.96086 20 5.46957 20 6V18C20 18.5304 19.7893 19.0391 19.4142 19.4142C19.0391 19.7893 18.5304 20 18 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V6C4 5.46957 4.21071 4.96086 4.58579 4.58579C4.96086 4.21071 5.46957 4 6 4ZM7 9H8.5V10.5H7V9ZM8.5 13.5H7V15H8.5V13.5ZM10 9H17V10.5H10V9ZM17 13.5H10V15H17V13.5Z" fill="white"/>
-							</svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+  <path fill="#fff" d="M18 5.5H6a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5ZM6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm1 5h1.5v1.5H7V9Zm1.5 4.5H7V15h1.5v-1.5ZM10 9h7v1.5h-7V9Zm7 4.5h-7V15h7v-1.5Z"/>
+</svg>
 						</div>
 						<h3 class="support-footer__card-title"><?php esc_html_e( 'Browse our guides', 'happy-blocks' ); ?></h3>
 						<p class="support-footer__card-description"><?php esc_html_e( 'Find step-by-step solutions to common questions in our comprehensive guides.', 'happy-blocks' ); ?></p>
