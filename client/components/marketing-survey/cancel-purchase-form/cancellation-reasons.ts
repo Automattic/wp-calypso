@@ -141,6 +141,78 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 		],
 	},
 	{
+		value: 'missingFeatures',
+		get label() {
+			return translate( 'Missing features' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'cannotInstallPlugins',
+				get label() {
+					return translate(
+						'Cannot install desired plugins (e.g., from WordPress.org or third-party).'
+					);
+				},
+			},
+			{
+				value: 'cannotUploadThemes',
+				get label() {
+					return translate( 'Cannot upload custom themes.' );
+				},
+			},
+			{
+				value: 'limitedCustomization',
+				get label() {
+					return translate(
+						'Limited design or customization options (e.g., layout, specific elements).'
+					);
+				},
+			},
+			{
+				value: 'missingFunctionality',
+				get label() {
+					return translate(
+						'Lacking specific functionality I need (e.g., e-commerce, specific integrations, advanced SEO tools).'
+					);
+				},
+			},
+			{
+				value: 'coreFeaturesMissing',
+				get label() {
+					return translate( 'Core features I expected are only available on a much higher plan.' );
+				},
+			},
+		],
+	},
+	{
+		value: 'technicalIssues',
+		get label() {
+			return translate( 'Technical issues' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'tooComplicated',
+				get label() {
+					return translate( 'It’s too complicated for me.' );
+				},
+			},
+			{
+				value: 'seoIssues',
+				get label() {
+					return translate( 'SEO issues' );
+				},
+			},
+			{
+				value: 'loadingTime',
+				get label() {
+					return translate( 'Loading time' );
+				},
+			},
+		],
+	},
+	{
 		value: 'couldNotFinish',
 		get label() {
 			return translate( 'Couldn’t finish my site' );
@@ -175,78 +247,6 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'tooComplicated',
 				get label() {
 					return translate( 'It’s too complicated for me.' );
-				},
-			},
-		],
-	},
-	{
-		value: 'missingFeatures',
-		get label() {
-			return translate( 'Missing features' );
-		},
-		selectOptions: [
-			PLACEHOLDER,
-			{
-				value: 'otherFeatures',
-				get label() {
-					return translate( 'Other features' );
-				},
-			},
-			{
-				value: 'eCommerceFeatures',
-				get label() {
-					return translate( 'eCommerce features' );
-				},
-			},
-			{
-				value: 'customization',
-				get label() {
-					return translate( 'Customization / CSS' );
-				},
-			},
-			{
-				value: 'cannotUsePlugin',
-				get label() {
-					return translate( 'Can’t use a plugin' );
-				},
-			},
-			{
-				value: 'cannotUseTheme',
-				get label() {
-					return translate( 'Can’t use a theme' );
-				},
-			},
-			{
-				value: 'loadingTime',
-				get label() {
-					return translate( 'Loading time' );
-				},
-			},
-		],
-	},
-	{
-		value: 'technicalIssues',
-		get label() {
-			return translate( 'Technical issues' );
-		},
-		selectOptions: [
-			PLACEHOLDER,
-			{
-				value: 'tooComplicated',
-				get label() {
-					return translate( 'It’s too complicated for me.' );
-				},
-			},
-			{
-				value: 'seoIssues',
-				get label() {
-					return translate( 'SEO issues' );
-				},
-			},
-			{
-				value: 'loadingTime',
-				get label() {
-					return translate( 'Loading time' );
 				},
 			},
 		],
