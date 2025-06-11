@@ -706,13 +706,6 @@ export const fields: Field< SpaceObject >[] = [
 		label: 'Satellites',
 		id: 'satellites',
 		type: 'integer',
-		elements: [
-			{ value: 'Space', label: 'Space' },
-			{ value: 'NASA', label: 'NASA' },
-			{ value: 'Planet', label: 'Planet' },
-			{ value: 'Solar system', label: 'Solar system' },
-			{ value: 'Ice giant', label: 'Ice giant' },
-		],
 		enableSorting: true,
 	},
 	{

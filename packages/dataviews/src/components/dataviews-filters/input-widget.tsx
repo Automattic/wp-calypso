@@ -50,6 +50,10 @@ export default function InputWidget( {
 	const handleChange = useCallback(
 		( data: Record< string, any > ) => {
 			const nextValue = data[ field.id ];
+			if ( nextValue === currentValue ) {
+				return;
+			}
+
 			onChangeView( {
 				...view,
 				filters: ( view.filters ?? [] ).map( ( _filter ) =>
