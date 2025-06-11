@@ -40,10 +40,7 @@ const Template: StoryFn< typeof Tabs > = ( props ) => {
 			<Tabs.TabPanel>
 				<p>Selected tab: Tab 2</p>
 			</Tabs.TabPanel>
-			<Tabs.TabPanel
-
-			// focusable={ false }
-			>
+			<Tabs.TabPanel focusable={ false }>
 				<p>Selected tab: Tab 3</p>
 				<p>
 					This tabpanel has its <code>focusable</code> prop set to
@@ -71,10 +68,7 @@ const ManualActivationTemplate: StoryFn< typeof Tabs > = ( props ) => {
 			<Tabs.TabPanel value="tab2">
 				<p>Selected tab: Tab 2</p>
 			</Tabs.TabPanel>
-			<Tabs.TabPanel
-				value="tab3"
-				// focusable={ false }
-			>
+			<Tabs.TabPanel value="tab3" focusable={ false }>
 				<p>Selected tab: Tab 3</p>
 				<p>
 					This tabpanel has its <code>focusable</code> prop set to
@@ -102,10 +96,7 @@ const CompactTemplate: StoryFn< typeof Tabs > = ( props ) => {
 			<Tabs.TabPanel>
 				<p>Selected tab: Tab 2</p>
 			</Tabs.TabPanel>
-			<Tabs.TabPanel
-
-			//focusable={ false }
-			>
+			<Tabs.TabPanel focusable={ false }>
 				<p>Selected tab: Tab 3</p>
 				<p>
 					This tabpanel has its <code>focusable</code> prop set to

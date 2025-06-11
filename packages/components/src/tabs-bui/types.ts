@@ -117,4 +117,9 @@ export type TabPanelProps = {
 	 * By default, the tab panel will be rendered as a `div` element.
 	 */
 	render?: Tabs.Panel.Props[ 'render' ];
+	/**
+	 * Whether the tab panel should be focusable.
+	 * @default true
+	 */
+	focusable?: boolean;
 };

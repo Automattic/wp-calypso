@@ -7,11 +7,11 @@ import type { TabPanelProps } from './types';
 export const TabPanel = forwardRef<
 	HTMLDivElement,
 	React.ComponentPropsWithoutRef< 'div' > & TabPanelProps
->( function TabPanel( { className, ...otherProps }, ref ) {
+>( function TabPanel( { className, focusable = true, ...otherProps }, ref ) {
 	return (
 		<BaseUITabs.Panel
 			ref={ ref }
-			// focusable={ focusable }
+			tabIndex={ focusable ? 0 : -1 }
 			{ ...otherProps }
 			className={ clsx( styles.tabpanel, className ) }
 		/>
