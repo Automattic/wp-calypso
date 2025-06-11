@@ -14,20 +14,20 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteSftpUsersCreateMutation } from '../../app/queries';
+import { siteSftpUsersCreateMutation } from '../../app/queries/site-sftp';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 
 export default function EnableSftpCard( {
-	siteSlug,
+	siteId,
 	canUseSsh,
 }: {
-	siteSlug: string;
+	siteId: string;
 	canUseSsh: boolean;
 } ) {
-	const mutation = useMutation( siteSftpUsersCreateMutation( siteSlug ) );
+	const mutation = useMutation( siteSftpUsersCreateMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleCreateCredentials = () => {

@@ -1,7 +1,8 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
@@ -11,14 +12,14 @@ import { ShareSiteForm } from './share-site-form';
 import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
 		useState( false );
 
-	if ( ! settings || ! site ) {
+	if ( ! settings ) {
 		return null;
 	}
 

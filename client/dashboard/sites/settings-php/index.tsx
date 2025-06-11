@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -12,7 +12,8 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { canViewPHPSettings } from '../features';
@@ -21,23 +22,19 @@ import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canView = site && canViewPHPSettings( site );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewPHPSettings( site );
 
 	const { data: currentVersion } = useQuery( {
-		...sitePHPVersionQuery( siteSlug ),
+		...sitePHPVersionQuery( site.ID ),
 		enabled: canView,
 	} );
-	const mutation = useMutation( sitePHPVersionMutation( siteSlug ) );
+	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
-
-	if ( ! site ) {
-		return null;
-	}
 
 	if ( ! canView ) {
 		return (

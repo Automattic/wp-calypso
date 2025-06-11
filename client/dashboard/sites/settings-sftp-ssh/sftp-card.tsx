@@ -14,7 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
+import { siteSftpUsersResetPasswordMutation } from '../../app/queries/site-sftp';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
@@ -35,14 +35,14 @@ type SftpCardFormData = {
 };
 
 export default function SftpCard( {
-	siteSlug,
+	siteId,
 	sftpUsers = [],
 }: {
-	siteSlug: string;
+	siteId: string;
 	sftpUsers: SftpUser[];
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
-	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteSlug ) );
+	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
 	const formData = {

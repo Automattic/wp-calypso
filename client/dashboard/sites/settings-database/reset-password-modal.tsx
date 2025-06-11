@@ -7,17 +7,17 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { resetPhpMyAdminPassword } from '../../data';
+import { restoreDatabasePassword } from '../../data/site-hosting';
 
 interface ResetPasswordModalProps {
-	siteSlug: string;
+	siteId: string;
 	onClose: () => void;
 	onSuccess: () => void;
 	onError: () => void;
 }
 
 export default function ResetPasswordModal( {
-	siteSlug,
+	siteId,
 	onClose,
 	onSuccess,
 	onError,
@@ -26,7 +26,7 @@ export default function ResetPasswordModal( {
 
 	const handleRestore = () => {
 		setIsRestoring( true );
-		resetPhpMyAdminPassword( siteSlug )
+		restoreDatabasePassword( siteId )
 			.then( () => {
 				setIsRestoring( false );
 				onSuccess();

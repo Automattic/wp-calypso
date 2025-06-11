@@ -9,7 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { agencyBlogQuery } from '../../app/queries';
+import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import Notice from '../../components/notice';
 import { isBigSkyTrial } from '../../utils/site-features';
 import type { AgencyBlog, Site } from '../../data/types';
@@ -61,7 +61,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 	site: Site;
 	onLaunchClick: () => void;
 } ) {
-	const { data, isError } = useQuery( agencyBlogQuery( site.ID ) );
+	const { data, isError } = useQuery( siteAgencyBlogQuery( site.ID ) );
 
 	const billingMessage = getAgencyBillingMessage( data, isError );
 	const isReferralStatusActive = data?.referral_status === 'active';

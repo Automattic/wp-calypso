@@ -10,15 +10,16 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { sitePHPVersionQuery, siteCurrentPlanQuery } from '../../app/queries';
+import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
+import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
 import type { Site } from '../../data/types';
 
-function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur>X.Y</TextBlur>;
+function PHPVersion( { siteId }: { siteId: string } ) {
+	return useQuery( sitePHPVersionQuery( siteId ) ).data ?? <TextBlur>X.Y</TextBlur>;
 }
 
 /**
@@ -73,7 +74,7 @@ export default function SiteCard( { site }: { site: Site } ) {
 							{ wpVersion && <Field title={ __( 'WordPress' ) }>{ wpVersion }</Field> }
 							{ is_wpcom_atomic && (
 								<Field title={ __( 'PHP' ) }>
-									<PHPVersion siteSlug={ site.slug } />
+									<PHPVersion siteId={ site.ID } />
 								</Field>
 							) }
 						</HStack>

@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -15,12 +15,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	agencyBlogQuery,
-	siteQuery,
-	siteSettingsMutation,
-	siteSettingsQuery,
-} from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
+import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
@@ -61,21 +58,17 @@ const form = {
 
 export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: siteSettings } = useQuery( siteSettingsQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
 	const { data: agencyBlog, isLoading: isLoadingAgencyBlog } = useQuery( {
-		...agencyBlogQuery( site?.ID as string ),
-		enabled: site && site.is_wpcom_atomic,
+		...siteAgencyBlogQuery( site.ID ),
+		enabled: site.is_wpcom_atomic,
 	} );
-	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState( {
 		is_fully_managed_agency_site: siteSettings?.is_fully_managed_agency_site,
 	} );
-
-	if ( ! site ) {
-		return null;
-	}
 
 	if ( ! agencyBlog && ! isLoadingAgencyBlog ) {
 		throw notFound();

@@ -26,11 +26,15 @@ interface TestSiteOptions {
 	wpcom_data_sharing_opt_out: boolean;
 }
 
+const siteId = '123';
+const siteSlug = 'test-site';
+
 // Only mocks site and settings fields that are necessary for the tests.
 // Feel free to add more fields as they are needed.
-function mockTestSite( slug: string, options: TestSiteOptions ) {
+function mockTestSite( options: TestSiteOptions ) {
 	const site = {
-		slug,
+		ID: siteId,
+		slug: siteSlug,
 		launch_status: 'launched',
 	};
 
@@ -43,19 +47,19 @@ function mockTestSite( slug: string, options: TestSiteOptions ) {
 	};
 
 	const scope = nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ site.slug }` )
+		.get( `/rest/v1.1/sites/${ siteSlug }` )
 		.query( true )
 		.reply( 200, site )
-		.get( `/rest/v1.4/sites/${ site.slug }/settings` )
+		.get( `/rest/v1.4/sites/${ siteId }/settings` )
 		.query( true )
 		.reply( 200, settings );
 
 	return { site, settings, scope };
 }
 
-function mockSettingsSaved( siteSlug: string, settings: nock.DataMatcherMap ) {
+function mockSettingsSaved( settings: nock.DataMatcherMap ) {
 	return nock( 'https://public-api.wordpress.com' )
-		.post( `/rest/v1.4/sites/${ siteSlug }/settings`, ( body ) => {
+		.post( `/rest/v1.4/sites/${ siteId }/settings`, ( body ) => {
 			expect( body ).toEqual( settings );
 			return true;
 		} )
@@ -65,7 +69,7 @@ function mockSettingsSaved( siteSlug: string, settings: nock.DataMatcherMap ) {
 describe( '<SiteVisibilitySettings>', () => {
 	describe( 'Launched site', () => {
 		test( 'hides search engine and 3rd party checkboxes when private', async () => {
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: -1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
@@ -81,7 +85,7 @@ describe( '<SiteVisibilitySettings>', () => {
 		} );
 
 		test( 'hides search engine and 3rd party checkboxes when coming soon', async () => {
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 1,
 				wpcom_data_sharing_opt_out: false,
@@ -99,7 +103,7 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'data sharing opt-out is disabled and force checked when site is not crawlable', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
@@ -134,7 +138,7 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'switching away from public resets data sharing and crawlable settings', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
@@ -170,12 +174,12 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a public site private', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
 			} );
-			const scope = mockSettingsSaved( 'test-site', {
+			const scope = mockSettingsSaved( {
 				blog_public: -1,
 				wpcom_data_sharing_opt_out: false,
 				wpcom_public_coming_soon: 0,
@@ -204,12 +208,12 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a public site coming soon', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
 			} );
-			const scope = mockSettingsSaved( 'test-site', {
+			const scope = mockSettingsSaved( {
 				blog_public: 0,
 				wpcom_data_sharing_opt_out: false,
 				wpcom_public_coming_soon: 1,
@@ -239,12 +243,12 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a coming soon site public (crawlable, allow data sharing)', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 1,
 				wpcom_data_sharing_opt_out: false,
 			} );
-			const scope = mockSettingsSaved( 'test-site', {
+			const scope = mockSettingsSaved( {
 				blog_public: 1,
 				wpcom_data_sharing_opt_out: false,
 				wpcom_public_coming_soon: 0,
@@ -283,12 +287,12 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a private site public (not crawlable, prevent data sharing)', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: -1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
 			} );
-			const scope = mockSettingsSaved( 'test-site', {
+			const scope = mockSettingsSaved( {
 				blog_public: 0,
 				wpcom_data_sharing_opt_out: true,
 				wpcom_public_coming_soon: 0,
@@ -328,12 +332,12 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a public site crawlable but prevent data sharing', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( 'test-site', {
+			mockTestSite( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
 			} );
-			const scope = mockSettingsSaved( 'test-site', {
+			const scope = mockSettingsSaved( {
 				blog_public: 1,
 				wpcom_data_sharing_opt_out: true,
 				wpcom_public_coming_soon: 0,

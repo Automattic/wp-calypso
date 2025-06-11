@@ -6,7 +6,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { sitesQuery } from '../app/queries';
+import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';

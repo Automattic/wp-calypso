@@ -20,7 +20,7 @@ export async function createSitePreviewLink( siteId: string ): Promise< SitePrev
 	} );
 }
 
-export async function deleteSitePreviewLink( siteId: string, code: string ): Promise< void > {
+export async function deleteSitePreviewLink( siteId: string, code: string ) {
 	return wpcom.req.post( {
 		method: 'DELETE',
 		path: `/sites/${ siteId }/preview-links/${ code }`,

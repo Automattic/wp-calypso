@@ -11,8 +11,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
+import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
 import { SectionHeader } from '../../components/section-header';
+import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
 export type ConfirmNewOwnerFormData = {
@@ -33,11 +34,11 @@ const form = {
 };
 
 export function ConfirmNewOwnerForm( {
-	siteSlug,
+	site,
 	newOwnerEmail,
 	onSubmit,
 }: {
-	siteSlug: string;
+	site: Site;
 	newOwnerEmail: string;
 	onSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
@@ -45,7 +46,7 @@ export function ConfirmNewOwnerForm( {
 		email: newOwnerEmail,
 	} );
 
-	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( siteSlug ) );
+	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( site.ID ) );
 
 	const { createErrorNotice } = useDispatch( noticesStore );
 
@@ -90,7 +91,7 @@ export function ConfirmNewOwnerForm( {
 								"Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
 							),
 							{
-								siteSlug: <strong>{ siteSlug }</strong>,
+								siteSlug: <strong>{ site.slug }</strong>,
 							}
 						) }
 					</Text>

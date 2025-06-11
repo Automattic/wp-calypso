@@ -2,20 +2,20 @@ import { useQuery } from '@tanstack/react-query';
 import { VisuallyHidden } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
-import { siteMonitorUptimeQuery } from '../../app/queries';
+import { siteUptimeQuery } from '../../a../../app/queries/site-uptime';
 import { TextBlur } from '../../components/text-blur';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { Site } from '../../data/types';
 
 import './style.scss';
 
-function UptimeCardEnabled( { siteSlug }: { siteSlug: string } ) {
-	const { data: siteMonitorUptime } = useQuery( siteMonitorUptimeQuery( siteSlug ) );
+function UptimeCardEnabled( { siteId }: { siteId: string } ) {
+	const { data: siteUptime } = useQuery( siteUptimeQuery( siteId ) );
 
 	let uptimePercentage;
 
-	if ( siteMonitorUptime ) {
-		const { upDays, downDays } = Object.entries( siteMonitorUptime ).reduce(
+	if ( siteUptime ) {
+		const { upDays, downDays } = Object.entries( siteUptime ).reduce(
 			( accumulator, [ , { status } = {} ] ) => {
 				accumulator[ status === 'up' ? 'upDays' : 'downDays' ] += 1;
 				return accumulator;
@@ -51,6 +51,6 @@ function UptimeCardEnabled( { siteSlug }: { siteSlug: string } ) {
 
 export default function UptimeCard( { site }: { site: Site } ) {
 	return site.jetpack_modules?.includes( 'monitor' ) ? (
-		<UptimeCardEnabled siteSlug={ site.slug } />
+		<UptimeCardEnabled siteId={ site.ID } />
 	) : null /* Opportunity for upsell? */;
 }

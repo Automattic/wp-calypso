@@ -6,29 +6,23 @@ import {
 import { queryClient } from '../query-client';
 import type { SitePreviewLink } from '../../data/site-preview-links';
 
-export function sitePreviewLinksQuery( siteId: string ) {
-	return {
-		queryKey: [ 'site', siteId, 'preview-links' ],
-		queryFn: () => {
-			return fetchSitePreviewLinks( siteId );
-		},
-	};
-}
+export const sitePreviewLinksQuery = ( siteId: string ) => ( {
+	queryKey: [ 'site', siteId, 'preview-links' ],
+	queryFn: () => {
+		return fetchSitePreviewLinks( siteId );
+	},
+} );
 
-export function sitePreviewLinkCreateMutation( siteId: string ) {
-	return {
-		mutationFn: () => createSitePreviewLink( siteId ),
-		onSuccess: ( data: SitePreviewLink ) => {
-			queryClient.setQueryData( sitePreviewLinksQuery( siteId ).queryKey, [ data ] );
-		},
-	};
-}
+export const sitePreviewLinkCreateMutation = ( siteId: string ) => ( {
+	mutationFn: () => createSitePreviewLink( siteId ),
+	onSuccess: ( data: SitePreviewLink ) => {
+		queryClient.setQueryData( sitePreviewLinksQuery( siteId ).queryKey, [ data ] );
+	},
+} );
 
-export function sitePreviewLinkDeleteMutation( siteId: string ) {
-	return {
-		mutationFn: ( code: string ) => deleteSitePreviewLink( siteId, code ),
-		onSuccess: () => {
-			queryClient.removeQueries( sitePreviewLinksQuery( siteId ) );
-		},
-	};
-}
+export const sitePreviewLinkDeleteMutation = ( siteId: string ) => ( {
+	mutationFn: ( code: string ) => deleteSitePreviewLink( siteId, code ),
+	onSuccess: () => {
+		queryClient.removeQueries( sitePreviewLinksQuery( siteId ) );
+	},
+} );

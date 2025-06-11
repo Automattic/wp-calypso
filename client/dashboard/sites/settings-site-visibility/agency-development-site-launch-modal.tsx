@@ -10,7 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { launchSiteMutation } from '../../app/queries';
+import { siteLaunchMutation } from '../../app/queries/site';
 import type { Site } from '../../data/types';
 
 interface AgencyDevelopmentSiteLaunchModalProps {
@@ -24,7 +24,7 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 }: AgencyDevelopmentSiteLaunchModalProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isLaunching, setIsLaunching ] = useState( false );
-	const mutation = useMutation( launchSiteMutation( site.slug ) );
+	const mutation = useMutation( siteLaunchMutation( site.ID ) );
 
 	const handleLaunch = () => {
 		setIsLaunching( true );

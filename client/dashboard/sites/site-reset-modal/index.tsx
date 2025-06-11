@@ -16,9 +16,9 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState, useCallback } from 'react';
 import {
 	siteResetContentSummaryQuery,
-	resetSiteMutation,
+	siteResetMutation,
 	siteResetStatusQuery,
-} from '../../app/queries';
+} from '../../app/queries/site-reset';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
 import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
@@ -60,7 +60,6 @@ function SiteResetContent( {
 	onSubmit,
 	onClose,
 }: {
-	site: Site;
 	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 	isBusy: boolean;
@@ -178,7 +177,7 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 
 	const { data: resetStatus, refetch: refetchResetStatus } =
 		useQuery< SiteResetStatus >( statusQuery );
-	const { mutate, isPending: isMutationPending } = useMutation( resetSiteMutation( site.ID ) );
+	const { mutate, isPending: isMutationPending } = useMutation( siteResetMutation( site.ID ) );
 
 	const showSuccessNotice = useCallback( () => {
 		createSuccessNotice(
@@ -244,7 +243,6 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 			size: 'medium' as const,
 			content: (
 				<SiteResetContent
-					site={ site }
 					siteContent={ siteContentSummary }
 					siteDomain={ site.slug }
 					isBusy={ isMutationPending }
