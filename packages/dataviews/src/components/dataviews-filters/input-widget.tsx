@@ -8,7 +8,7 @@ import { Flex } from '@wordpress/components';
  * Internal dependencies
  */
 import type { View, NormalizedFilter, NormalizedField } from '../../types';
-import { getCurrentValue } from './search-widget';
+import { getCurrentValue } from './utils';
 
 interface UserInputWidgetProps {
 	view: View;
