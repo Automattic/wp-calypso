@@ -1,6 +1,12 @@
 @import "@automattic/onboarding/styles/mixins";
 // domain search
 
+.site-domains-add-page {
+	.already-own-a-domain {
+		display: none;
+	}
+}
+
 .domain-search__content {
 	overflow: visible;
 	padding: 0 0 20px;

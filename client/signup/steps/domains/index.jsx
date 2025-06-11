@@ -1154,6 +1154,7 @@ class RenderDomainsStepComponent extends Component {
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 				handleClickUseYourDomain={ this.handleUseYourDomainClick }
+				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 			/>
 		);
 	};

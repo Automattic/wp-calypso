@@ -430,6 +430,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 							<NewDomainsRedirectionNoticeUpsell />
 						) }
 						<RenderDomainsStep
+							showAlreadyOwnADomain
 							suggestion={ this.getInitialSuggestion() }
 							isOnboarding
 							isDomainOnly
