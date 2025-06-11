@@ -48,7 +48,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 							<Icon className="select-items__item-icon" icon={ icon } size={ 24 } />
 						) }
 						<div className="select-items__item-info-wrapper">
-							<div className="select-items__item-info">
+							<div className="select-items__item-info" aria-hidden="true">
 								<h2 className="select-items__item-title">
 									{ titleIcon && (
 										<Icon className="select-items__item-icon" icon={ titleIcon } size={ 24 } />
