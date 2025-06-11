@@ -147,6 +147,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 					return translate( 'Onboarding or tutorials were not helpful enough.' );
 				},
 			},
+			{
+				value: 'otherTooHardToUse',
+				get label() {
+					return translate( 'Something else related to too hard to use.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
 		],
 	},
 	{
@@ -192,6 +201,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 					return translate( 'Core features I expected are only available on a much higher plan.' );
 				},
 			},
+			{
+				value: 'otherMissingFeatures',
+				get label() {
+					return translate( 'Something else related to features/flexibility.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
 		],
 	},
 	{
@@ -225,6 +243,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 					return translate( 'Site was down or inaccessible.' );
 				},
 			},
+			{
+				value: 'otherTechnicalIssues',
+				get label() {
+					return translate( 'Something else related to technical problems.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
 		],
 	},
 	{
@@ -250,6 +277,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'domainIncorrect',
 				get label() {
 					return translate( 'Didn’t get the domain name I expected / My domain is incorrect.' );
+				},
+			},
+			{
+				value: 'otherDomain',
+				get label() {
+					return translate( 'Something else related to domains.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],
@@ -279,6 +315,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 					return translate( 'The plan I chose didn’t match what I thought I was buying.' );
 				},
 			},
+			{
+				value: 'otherWrongPlanOrSite',
+				get label() {
+					return translate( 'Something else related to an accidental purchase.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
 		],
 	},
 	{
@@ -304,6 +349,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'AIInsufficient',
 				get label() {
 					return translate( 'AI/automated support was not sufficient for my issue.' );
+				},
+			},
+			{
+				value: 'otherBadSupport',
+				get label() {
+					return translate( 'Something else related to support.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],
@@ -337,6 +391,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'mayReturn',
 				get label() {
 					return translate( 'Temporary cancellation, I might return.' );
+				},
+			},
+			{
+				value: 'otherNoLongerNeedSite',
+				get label() {
+					return translate( 'Something else related to changed needs.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],
