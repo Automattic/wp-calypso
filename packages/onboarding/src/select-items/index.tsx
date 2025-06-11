@@ -72,6 +72,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 									className="select-items__item-button"
 									onClick={ () => onSelect( value ) }
 									aria-hidden="true"
+									tabIndex={ -1 }
 								>
 									{ actionText }
 								</Button>
