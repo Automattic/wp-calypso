@@ -188,26 +188,59 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'technicalIssues',
 		get label() {
-			return translate( 'Technical issues' );
+			return translate( 'Technical problems' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'tooComplicated',
+				value: 'tooSlow',
 				get label() {
-					return translate( 'It’s too complicated for me.' );
+					return translate( 'Site is slow or experiences performance issues.' );
 				},
 			},
 			{
-				value: 'seoIssues',
+				value: 'bugsOrGlitches',
 				get label() {
-					return translate( 'SEO issues' );
+					return translate( 'Encountered bugs, errors, or glitches.' );
 				},
 			},
 			{
-				value: 'loadingTime',
+				value: 'migrationProblems',
 				get label() {
-					return translate( 'Loading time' );
+					return translate( 'Problems migrating my existing site or content.' );
+				},
+			},
+			{
+				value: 'downtime',
+				get label() {
+					return translate( 'Site was down or inaccessible.' );
+				},
+			},
+		],
+	},
+	{
+		value: 'domain',
+		get label() {
+			return translate( 'Domain' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'didNotGetFreeDomain',
+				get label() {
+					return translate( 'I didn’t get a free domain.' );
+				},
+			},
+			{
+				value: 'otherDomainIssues',
+				get label() {
+					return translate( 'Other domain issues' );
+				},
+			},
+			{
+				value: 'domainConnection',
+				get label() {
+					return translate( 'Problem connecting my domain' );
 				},
 			},
 		],
@@ -247,33 +280,6 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'tooComplicated',
 				get label() {
 					return translate( 'It’s too complicated for me.' );
-				},
-			},
-		],
-	},
-	{
-		value: 'domain',
-		get label() {
-			return translate( 'Domain' );
-		},
-		selectOptions: [
-			PLACEHOLDER,
-			{
-				value: 'didNotGetFreeDomain',
-				get label() {
-					return translate( 'I didn’t get a free domain.' );
-				},
-			},
-			{
-				value: 'otherDomainIssues',
-				get label() {
-					return translate( 'Other domain issues' );
-				},
-			},
-			{
-				value: 'domainConnection',
-				get label() {
-					return translate( 'Problem connecting my domain' );
 				},
 			},
 		],
