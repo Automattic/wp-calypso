@@ -24,7 +24,6 @@ interface LoginHeaderProps {
 	isFromAkismet: boolean;
 	isFromAutomatticForAgenciesPlugin: boolean;
 	isGravPoweredClient: boolean;
-	isGravPoweredLoginPage: boolean;
 	isJetpack: boolean;
 	isManualRenewalImmediateLoginAttempt: boolean;
 	isSignupExistingAccount: boolean;

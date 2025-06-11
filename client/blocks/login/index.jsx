@@ -90,8 +90,8 @@ class Login extends Component {
 		redirectTo: PropTypes.string,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
+		isGravatarSameAccountLogin: PropTypes.bool,
 		isGravPoweredClient: PropTypes.bool,
-		isGravPoweredLoginPage: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
 		emailRequested: PropTypes.bool,
 		isSendingEmail: PropTypes.bool,
@@ -99,6 +99,8 @@ class Login extends Component {
 		isWCCOM: PropTypes.bool,
 		isWoo: PropTypes.bool,
 		from: PropTypes.string,
+		gravatarFrom: PropTypes.string,
+		gravatarFlow: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -161,10 +163,8 @@ class Login extends Component {
 			if ( this.props.isGravPoweredClient ) {
 				urlConfig = {
 					...urlConfig,
-					gravatarFrom:
-						isGravatarOAuth2Client( this.props.oauth2Client ) &&
-						this.props.currentQuery?.gravatar_from,
-					gravatarFlow: isGravatarFlowOAuth2Client( this.props.oauth2Client ),
+					gravatarFrom: this.props.gravatarFrom,
+					gravatarFlow: this.props.gravatarFlow,
 					emailAddress: this.props.currentQuery?.email_address,
 				};
 			}
@@ -220,6 +220,8 @@ class Login extends Component {
 					// Pass oauth2 and redirectTo query params so that we can get the correct signup url for the user
 					oauth2ClientId: this.props.oauth2Client?.id,
 					redirectTo: this.props.redirectTo,
+					gravatarFrom: this.props.gravatarFrom,
+					gravatarFlow: this.props.gravatarFlow,
 				} )
 			);
 		} else {
@@ -411,7 +413,10 @@ class Login extends Component {
 			translate,
 			action,
 			currentQuery,
+			isGravatarSameAccountLogin,
 			isGravPoweredClient,
+			gravatarFrom,
+			gravatarFlow,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
 			currentUser,
@@ -576,7 +581,10 @@ class Login extends Component {
 				isSocialFirst={ isSocialFirst }
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+				isGravatarSameAccountLogin={ isGravatarSameAccountLogin }
 				isGravPoweredClient={ isGravPoweredClient }
+				gravatarFrom={ gravatarFrom }
+				gravatarFlow={ gravatarFlow }
 				isWPJobManager={ isWPJobManagerOAuth2Client( oauth2Client ) }
 				loginButtonText={
 					isWooJPC && this.props.initialQuery?.lostpassword_flow === 'true'
@@ -603,7 +611,6 @@ class Login extends Component {
 			currentQuery,
 			fromSite,
 			isGravPoweredClient,
-			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
 			isSignupExistingAccount,
 			isSocialFirst,
@@ -639,7 +646,6 @@ class Login extends Component {
 						isFromAkismet={ isFromAkismet }
 						isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 						isGravPoweredClient={ isGravPoweredClient }
-						isGravPoweredLoginPage={ isGravPoweredLoginPage }
 						isJetpack={ isJetpack }
 						isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
 						isSocialFirst={ isSocialFirst }
@@ -680,47 +686,54 @@ class Login extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		accountType: getAuthAccountType( state ),
-		redirectTo: getRedirectToOriginal( state ),
-		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
-		currentUser: getCurrentUser( state ),
-		requestNotice: getRequestNotice( state ),
-		twoFactorEnabled: isTwoFactorEnabled( state ),
-		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		isLinking: getSocialAccountIsLinking( state ),
-		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-		linkingSocialService: getSocialAccountLinkService( state ),
-		partnerSlug: getPartnerSlugFromQuery( state ),
-		isFromAkismet: isAkismetRedirect(
-			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
-		),
-		isFromAutomatticForAgenciesPlugin:
-			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
-			'automattic-for-agencies-client' ===
-				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		isWooJPC: isWooJPCFlow( state ),
-		isWCCOM: getIsWCCOM( state ),
-		isWoo: getIsWoo( state ),
-		wccomFrom: getWccomFrom( state ),
-		currentQuery: getCurrentQueryArguments( state ),
-		initialQuery: getInitialQueryArguments( state ),
-		currentRoute: getCurrentRoute( state ),
-		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
-		isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
-		isSignupExistingAccount: !! (
-			getInitialQueryArguments( state )?.is_signup_existing_account ||
-			getCurrentQueryArguments( state )?.is_signup_existing_account
-		),
-		requestError: getRequestError( state ),
-		isSendingEmail: isFetchingMagicLoginEmail( state ),
-		emailRequested: isMagicLoginEmailRequested( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
-	} ),
+	( state ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const currentQuery = getCurrentQueryArguments( state );
+
+		return {
+			accountType: getAuthAccountType( state ),
+			redirectTo: getRedirectToOriginal( state ),
+			usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
+			currentUser: getCurrentUser( state ),
+			requestNotice: getRequestNotice( state ),
+			twoFactorEnabled: isTwoFactorEnabled( state ),
+			twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+			oauth2Client,
+			isLinking: getSocialAccountIsLinking( state ),
+			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
+			linkingSocialService: getSocialAccountLinkService( state ),
+			partnerSlug: getPartnerSlugFromQuery( state ),
+			isFromAkismet: isAkismetRedirect(
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
+			),
+			isFromAutomatticForAgenciesPlugin:
+				'automattic-for-agencies-client' === get( currentQuery, 'from' ) ||
+				'automattic-for-agencies-client' ===
+					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isJetpackWooDnaFlow: wooDnaConfig( currentQuery ).isWooDnaFlow(),
+			isWooJPC: isWooJPCFlow( state ),
+			isWCCOM: getIsWCCOM( state ),
+			isWoo: getIsWoo( state ),
+			wccomFrom: getWccomFrom( state ),
+			currentQuery,
+			initialQuery: getInitialQueryArguments( state ),
+			currentRoute: getCurrentRoute( state ),
+			loginEmailAddress: currentQuery?.email_address,
+			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
+			isSignupExistingAccount: !! (
+				getInitialQueryArguments( state )?.is_signup_existing_account ||
+				currentQuery?.is_signup_existing_account
+			),
+			requestError: getRequestError( state ),
+			isSendingEmail: isFetchingMagicLoginEmail( state ),
+			emailRequested: isMagicLoginEmailRequested( state ),
+			isLoggedIn: isUserLoggedIn( state ),
+			from: get( currentQuery, 'from' ),
+			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
+		};
+	},
 	{
 		rebootAfterLogin,
 		hideMagicLoginRequestForm,

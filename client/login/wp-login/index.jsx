@@ -68,6 +68,7 @@ export class Login extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
+		isGravatarSameAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
 	};
 
@@ -297,6 +298,10 @@ export class Login extends Component {
 	}
 
 	renderLoginHeaderNavigation() {
+		if ( this.props.isGravatarSameAccountLogin ) {
+			return null;
+		}
+
 		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
 	}
 
@@ -362,6 +367,7 @@ export class Login extends Component {
 			domain,
 			isJetpack,
 			isWhiteLogin,
+			isGravatarSameAccountLogin,
 			isGravPoweredClient,
 			oauth2Client,
 			socialConnect,
@@ -372,17 +378,7 @@ export class Login extends Component {
 			locale,
 			signupUrl,
 			action,
-			currentRoute,
 		} = this.props;
-
-		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
-		const isGravPoweredLoginPage =
-			isGravPoweredClient &&
-			! currentRoute.startsWith( '/log-in/push' ) &&
-			! currentRoute.startsWith( '/log-in/authenticator' ) &&
-			! currentRoute.startsWith( '/log-in/sms' ) &&
-			! currentRoute.startsWith( '/log-in/webauthn' ) &&
-			! currentRoute.startsWith( '/log-in/backup' );
 
 		return (
 			<LoginBlock
@@ -392,8 +388,8 @@ export class Login extends Component {
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
+				isGravatarSameAccountLogin={ isGravatarSameAccountLogin }
 				isGravPoweredClient={ isGravPoweredClient }
-				isGravPoweredLoginPage={ isGravPoweredLoginPage }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
@@ -568,6 +564,16 @@ export default connect(
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
 
+		const isFromGravatar3rdPartyApp =
+			props.isGravPoweredClient && currentQuery?.gravatar_from === '3rd-party';
+		const isFromGravatarQuickEditor =
+			props.isGravPoweredClient && currentQuery?.gravatar_from === 'quick-editor';
+		const isGravatarFlowWithEmail = !! (
+			isGravPoweredOAuth2Client( oauth2Client ) && currentQuery?.email_address
+		);
+		const isGravatarSameAccountLogin =
+			isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail;
+
 		return {
 			locale: getCurrentLocaleSlug( state ),
 			oauth2Client,
@@ -606,6 +612,7 @@ export default connect(
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+			isGravatarSameAccountLogin,
 		};
 	},
 	{

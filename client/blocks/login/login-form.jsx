@@ -101,7 +101,10 @@ export class LoginForm extends Component {
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		loginButtonText: PropTypes.string,
+		isGravatarSameAccountLogin: PropTypes.bool,
 		isGravPoweredClient: PropTypes.bool,
+		gravatarFrom: PropTypes.string,
+		gravatarFlow: PropTypes.bool,
 		isWPJobManager: PropTypes.bool,
 	};
 
@@ -607,15 +610,17 @@ export class LoginForm extends Component {
 			return null;
 		}
 
-		const { query, usernameOrEmail } = this.props;
+		const { currentQuery, usernameOrEmail, oauth2Client, gravatarFrom, gravatarFlow } = this.props;
 
 		return getLoginLinkPageUrl( {
 			locale: this.props.locale,
 			currentRoute: this.props.currentRoute,
-			signupUrl: this.props.currentQuery?.signup_url,
-			oauth2ClientId: this.props.oauth2Client?.id,
-			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
+			signupUrl: currentQuery?.signup_url,
+			oauth2ClientId: oauth2Client?.id,
+			emailAddress: usernameOrEmail || currentQuery?.email_address || this.state.usernameOrEmail,
 			redirectTo: this.props.redirectTo,
+			gravatarFrom,
+			gravatarFlow,
 		} );
 	}
 
@@ -749,6 +754,7 @@ export class LoginForm extends Component {
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
+			isGravatarSameAccountLogin,
 		} = this.props;
 
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -774,6 +780,9 @@ export class LoginForm extends Component {
 			},
 			signupUrl
 		);
+
+		const shouldDisableFormInput =
+			isFormDisabled || this.isPasswordView() || isGravatarSameAccountLogin;
 
 		const renderTerms = () => {
 			return this.props.translate(
@@ -852,7 +861,7 @@ export class LoginForm extends Component {
 								name="usernameOrEmail"
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
-								disabled={ isFormDisabled || this.isPasswordView() }
+								disabled={ shouldDisableFormInput }
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -1033,6 +1042,7 @@ export class LoginForm extends Component {
 			isWooJPC,
 			isSocialFirst,
 			isJetpack,
+			isGravatarSameAccountLogin,
 			isGravPoweredClient,
 			isWPJobManager,
 			translate,
@@ -1108,6 +1118,7 @@ export class LoginForm extends Component {
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							magicLoginButtonText={ isMagicCode ? translate( 'Email me a login code' ) : null }
+							isMagicLoginOnly={ isGravatarSameAccountLogin }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					</Fragment>

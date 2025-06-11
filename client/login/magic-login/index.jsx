@@ -194,14 +194,13 @@ class MagicLogin extends Component {
 			}
 
 			const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
+			const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 
 			if (
 				( prevProps.showCheckYourEmail && ! showCheckYourEmail ) ||
 				( prevState.showEmailCodeVerification && ! showEmailCodeVerification ) ||
 				( prevState.showSecondaryEmailOptions && ! showSecondaryEmailOptions )
 			) {
-				const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
-
 				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
 					...eventOptions,
 					from: query?.gravatar_from,
@@ -249,6 +248,8 @@ class MagicLogin extends Component {
 							redirectTo: redirectToSanitized,
 							oauth2ClientId: oauth2Client.id,
 							locale: this.props.locale,
+							gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from,
+							gravatarFlow: isGravatarFlow,
 						} )
 					);
 				}
@@ -1046,7 +1047,7 @@ class MagicLogin extends Component {
 			locale,
 			redirectTo: query?.redirect_to,
 			oauth2ClientId: query?.client_id,
-			gravatarFrom: query?.gravatar_from,
+			gravatarFrom: isGravatar && query?.gravatar_from,
 			gravatarFlow: isGravatarFlow,
 			emailAddress: query?.email_address,
 		} );

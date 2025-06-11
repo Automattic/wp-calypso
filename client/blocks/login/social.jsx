@@ -14,6 +14,12 @@ import {
 
 import './social.scss';
 
+const SERVICE_NAME_GOOGLE = 'google';
+const SERVICE_NAME_APPLE = 'apple';
+const SERVICE_NAME_GITHUB = 'github';
+const SERVICE_NAME_MAGIC_LOGIN = 'magic-login';
+const SERVICE_NAME_QR_CODE = 'qr-code';
+
 class SocialLoginForm extends Component {
 	static propTypes = {
 		handleLogin: PropTypes.func.isRequired,
@@ -22,6 +28,7 @@ class SocialLoginForm extends Component {
 		shouldRenderToS: PropTypes.bool,
 		magicLoginLink: PropTypes.string,
 		magicLoginButtonText: PropTypes.string,
+		isMagicLoginOnly: PropTypes.bool,
 		qrLoginLink: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
 		lastUsedAuthenticationMethod: PropTypes.string,
@@ -34,7 +41,7 @@ class SocialLoginForm extends Component {
 
 	socialLoginButtons = [
 		{
-			service: 'google',
+			service: SERVICE_NAME_GOOGLE,
 			button: (
 				<GoogleSocialButton
 					responseHandler={ this.props.handleLogin }
@@ -45,7 +52,7 @@ class SocialLoginForm extends Component {
 			),
 		},
 		{
-			service: 'apple',
+			service: SERVICE_NAME_APPLE,
 			button: (
 				<AppleLoginButton
 					responseHandler={ this.props.handleLogin }
@@ -57,7 +64,7 @@ class SocialLoginForm extends Component {
 			),
 		},
 		{
-			service: 'github',
+			service: SERVICE_NAME_GITHUB,
 			button: (
 				<GithubSocialButton
 					responseHandler={ this.props.handleLogin }
@@ -69,7 +76,7 @@ class SocialLoginForm extends Component {
 			),
 		},
 		{
-			service: 'magic-login',
+			service: SERVICE_NAME_MAGIC_LOGIN,
 			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
 				<MagicLoginButton
 					loginUrl={ this.props.magicLoginLink }
@@ -79,12 +86,14 @@ class SocialLoginForm extends Component {
 			),
 		},
 		{
-			service: 'qr-code',
+			service: SERVICE_NAME_QR_CODE,
 			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.qrLoginLink && (
 				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 5 } />
 			),
 		},
-	];
+	].filter( ( { service } ) =>
+		this.props.isMagicLoginOnly ? service === SERVICE_NAME_MAGIC_LOGIN : true
+	);
 
 	render() {
 		const { shouldRenderToS, isWoo, isSocialFirst, lastUsedAuthenticationMethod } = this.props;
