@@ -173,9 +173,9 @@
 .blaze-pro,
 .is-blaze-pro {
 	.components-button:not(.is-destructive) {
-		--color-blaze-pro-darker: color-mix(in srgb, var(--color-blaze-pro), #000 13%);
+		--color-blaze-pro-darker: color-mix(in srgb, var(--color-blaze-pro), #000 23%);
 
-		--wp-components-color-accent: var(--color-blaze-pro);
+		--wp-components-color-accent: var(--color-blaze-pro-darker);
 		--wp-components-color-accent-darker-10: var(--color-blaze-pro-darker);
 		--wp-components-color-accent-darker-20: var(--color-blaze-pro-darker);
 	}
