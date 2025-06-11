@@ -139,6 +139,7 @@ class CancelPurchaseForm extends Component {
 			atomicRevertCheckOne: false,
 			atomicRevertCheckTwo: false,
 			purchaseIsAlreadyExtended: false,
+			nextAdventureValidation: true,
 		};
 	}
 
@@ -229,6 +230,10 @@ class CancelPurchaseForm extends Component {
 			importQuestionRadio: value,
 		};
 		this.setState( newState );
+	};
+
+	onNextAdventureValidationChange = ( isValid ) => {
+		this.setState( { nextAdventureValidation: isValid } );
 	};
 
 	// Because of the legacy reason, we can't just use `flowType` here.
@@ -405,6 +410,7 @@ class CancelPurchaseForm extends Component {
 					onSelectNextAdventure={ this.onRadioTwoChange }
 					onChangeNextAdventureDetails={ this.onTextTwoChange }
 					onChangeText={ this.onTextThreeChange }
+					onValidationChange={ this.onNextAdventureValidationChange }
 				/>
 			);
 		}
@@ -513,6 +519,11 @@ class CancelPurchaseForm extends Component {
 
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
 			if ( this.state.questionTwoRadio === 'anotherReasonTwo' && ! this.state.questionTwoText ) {
+				return false;
+			}
+
+			// For plan cancellations, require a valid selection from the adventure dropdown
+			if ( ! this.state.nextAdventureValidation ) {
 				return false;
 			}
 
