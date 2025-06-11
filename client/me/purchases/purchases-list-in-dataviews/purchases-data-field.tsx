@@ -215,24 +215,50 @@ export function getPurchasesFieldDefinitions( {
 			label: translate( 'Expiring soon' ),
 			type: 'text',
 			elements: [
-				{ value: 'expiring-soon', label: translate( 'Expiring soon' ) },
-				{ value: 'not-expiring-soon', label: translate( 'Other' ) },
+				{
+					value: '7',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 7 } } ),
+				},
+				{
+					value: '14',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 14 } } ),
+				},
+				{
+					value: '30',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 30 } } ),
+				},
+				{
+					value: '60',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 60 } } ),
+				},
+				{
+					value: '365',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 365 } } ),
+				},
 			],
 			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
-				const expiryDate = Date.parse( item.expiryDate );
 				const now = Date.now();
+				const expiryDate = Date.parse( item.expiryDate );
+				if ( ! item.isRenewable || ! expiryDate || expiryDate < now ) {
+					return 'not-expiring-soon';
+				}
 				const msPerDay = 86_400_000;
-				// @todo: this should be updated to be product-specific since
-				// some products renew 30 days in advance.
-				const expireSoonMs = msPerDay * 7;
-				if (
-					item.isRenewable &&
-					expiryDate &&
-					expiryDate > now &&
-					expiryDate - now < expireSoonMs
-				) {
-					return 'expiring-soon';
+				const msTilExpiry = expiryDate - now;
+				if ( msTilExpiry <= 7 * msPerDay ) {
+					return '7';
+				}
+				if ( msTilExpiry <= 14 * msPerDay ) {
+					return '14';
+				}
+				if ( msTilExpiry <= 30 * msPerDay ) {
+					return '30';
+				}
+				if ( msTilExpiry <= 60 * msPerDay ) {
+					return '60';
+				}
+				if ( msTilExpiry <= 365 * msPerDay ) {
+					return '365';
 				}
 				return 'not-expiring-soon';
 			},
