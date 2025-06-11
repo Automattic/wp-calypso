@@ -9,8 +9,10 @@ exports[`TokenField render should render tokens 1`] = `
       class="token-field__input-container"
     >
       <button
+        aria-checked="true"
         aria-label="Deselect foo"
         class="token-field__token"
+        tabindex="0"
         type="button"
       >
         <span
@@ -31,8 +33,10 @@ exports[`TokenField render should render tokens 1`] = `
         </svg>
       </button>
       <button
+        aria-checked="true"
         aria-label="Deselect bar"
         class="token-field__token"
+        tabindex="0"
         type="button"
       >
         <span
