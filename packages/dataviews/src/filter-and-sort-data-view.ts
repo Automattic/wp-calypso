@@ -2,7 +2,7 @@
  * External dependencies
  */
 import removeAccents from 'remove-accents';
-
+import { getDate } from '@wordpress/date';
 /**
  * Internal dependencies
  */
@@ -33,31 +33,6 @@ function normalizeSearchInput( input = '' ) {
 }
 
 const EMPTY_ARRAY: [] = [];
-
-/**
- * Parses a date string into a UTC Date object.
- * Handles different date string formats:
- * - With timezone (e.g. "2024-03-20T10:00:00Z" or "2024-03-20T10:00:00+00:00")
- * - Date only (e.g. "2024-03-20")
- * - Without timezone (e.g. "2024-03-20T10:00:00")
- *
- * @param dateStr - The date string to parse
- * @returns A Date object in UTC
- */
-const parseAsUTC = ( dateStr: string ): Date => {
-	// If dateStr already has timezone info, parse as is
-	if ( /Z|[+-]\d{2}:\d{2}$/.test( dateStr ) ) {
-		return new Date( dateStr );
-	}
-
-	// If date-only format (YYYY-MM-DD), set time to start of day UTC
-	if ( /^\d{4}-\d{2}-\d{2}$/.test( dateStr ) ) {
-		return new Date( `${ dateStr }T00:00:00Z` );
-	}
-
-	// For dates without timezone, assume UTC by appending Z
-	return new Date( `${ dateStr }Z` );
-};
 
 /**
  * Applies the filtering, sorting and pagination to the raw data based on the view configuration.
@@ -250,9 +225,9 @@ export function filterSortAndPaginate< Item >(
 					filter.operator === OPERATOR_BEFORE &&
 					filter.value !== undefined
 				) {
-					const filterValue = parseAsUTC( filter.value );
+					const filterValue = getDate( filter.value );
 					filteredData = filteredData.filter( ( item ) => {
-						const fieldValue = new Date(
+						const fieldValue = getDate(
 							field.getValue( { item } )
 						);
 						return fieldValue < filterValue;
@@ -261,9 +236,9 @@ export function filterSortAndPaginate< Item >(
 					filter.operator === OPERATOR_AFTER &&
 					filter.value !== undefined
 				) {
-					const filterValue = parseAsUTC( filter.value );
+					const filterValue = getDate( filter.value );
 					filteredData = filteredData.filter( ( item ) => {
-						const fieldValue = new Date(
+						const fieldValue = getDate(
 							field.getValue( { item } )
 						);
 						return fieldValue > filterValue;
@@ -272,9 +247,9 @@ export function filterSortAndPaginate< Item >(
 					filter.operator === OPERATOR_BEFORE_INC &&
 					filter.value !== undefined
 				) {
-					const filterValue = parseAsUTC( filter.value );
+					const filterValue = getDate( filter.value );
 					filteredData = filteredData.filter( ( item ) => {
-						const fieldValue = new Date(
+						const fieldValue = getDate(
 							field.getValue( { item } )
 						);
 						return fieldValue <= filterValue;
@@ -283,9 +258,9 @@ export function filterSortAndPaginate< Item >(
 					filter.operator === OPERATOR_AFTER_INC &&
 					filter.value !== undefined
 				) {
-					const filterValue = parseAsUTC( filter.value );
+					const filterValue = getDate( filter.value );
 					filteredData = filteredData.filter( ( item ) => {
-						const fieldValue = new Date(
+						const fieldValue = getDate(
 							field.getValue( { item } )
 						);
 						return fieldValue >= filterValue;
