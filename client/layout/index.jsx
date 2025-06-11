@@ -41,6 +41,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -136,6 +137,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -218,6 +220,7 @@ class Layout extends Component {
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+			'is-domain-for-gravatar': this.props.isGravatarDomain,
 		} );
 
 		const optionalBodyProps = () => {
@@ -411,6 +414,13 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
+		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
+			sectionName
+		);
+		const isGravatarDomain =
+			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
+			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -447,6 +457,7 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+			isGravatarDomain,
 		};
 	} )( Layout )
 );

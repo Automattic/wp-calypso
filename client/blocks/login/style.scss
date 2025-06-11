@@ -175,15 +175,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .login__form .login__form-userdata {
-	label {
-		color: var(--color-neutral-70);
-		display: block;
-		font-size: $font-body-small;
-		line-height: 1.5;
-		font-weight: 600;
-		margin-bottom: 5px;
-	}
-
 	input.form-text-input,
 	input {
 		margin-bottom: 20px;
@@ -209,23 +200,11 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .login__form-change-username {
-	color: var(--color-link);
 	font-weight: inherit;
-	cursor: pointer;
-
-	&:hover,
-	&:focus,
-	&:active {
-		color: var(--color-link-dark);
-	}
 
 	.gridicon {
 		margin-right: 3px;
 		vertical-align: text-bottom;
-	}
-
-	&.button.is-borderless .gridicon {
-		top: 3px;
 	}
 }
 

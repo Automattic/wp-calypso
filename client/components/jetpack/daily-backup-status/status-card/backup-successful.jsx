@@ -124,6 +124,7 @@ const BackupSuccessful = ( {
 					hasWarnings={ hasWarnings }
 					availableActions={ availableActions }
 					onClickClone={ onClickClone }
+					disabled={ backup.activityStatus !== 'success' }
 				/>
 			) }
 

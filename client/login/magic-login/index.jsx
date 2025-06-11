@@ -544,7 +544,8 @@ class MagicLogin extends Component {
 		this.props.fetchMagicLoginAuthenticate(
 			`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
 			query?.redirect_to,
-			getGravatarOAuth2Flow( oauth2Client )
+			getGravatarOAuth2Flow( oauth2Client ),
+			true
 		);
 	};
 

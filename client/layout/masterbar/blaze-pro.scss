@@ -447,14 +447,14 @@ body.is-section-signup {
 	.two-factor-authentication__verification-code-form-wrapper {
 		box-shadow: none;
 
-		.form-label {
+		.form-label:not(.form-label-core-styles) {
 			color: #1e1e1e;
 			font-size: rem(11px);
 			line-height: 16px;
 			text-transform: uppercase;
 		}
 
-		.form-text-input {
+		.form-text-input:not(.form-text-input-core-styles) {
 			border: 1px solid #dddddf;
 
 			&:focus,

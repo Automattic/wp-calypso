@@ -1,0 +1,79 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.build-report {
+	.build-report__content {
+		max-width: 660px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 24px;
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 4px;
+		margin-inline: auto;
+		margin-block-start: 16px;
+	}
+
+	.build-report__step-title {
+		@include heading-large;
+		margin-block-end: 0;
+		padding-block: 8px 4px;
+	}
+
+	.build-report__step-description {
+		@include body-medium;
+		color: var( --color-neutral-70 );
+		margin-block-end: 0;
+	}
+
+	.build-report__group-label {
+		@include heading-medium;
+	}
+
+	// Fixing margins from StyledHelp-deprecatedMarginHelp which is being inserted by the component
+	.components-base-control__help {
+		margin-block-start: 0;
+		margin-block-end: 0;
+	}
+
+	.build-report__actions {
+		display: flex;
+		gap: 8px;
+		padding-block: 8px;
+	}
+
+	.build-report__date-fields-container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+
+		@media (max-width: 768px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.build-report__date-field {
+		.build-report__date-input {
+			.components-text-control__input {
+				cursor: pointer;
+
+				&:focus,
+				&:hover {
+					border-color: var( --color-primary );
+					box-shadow: 0 0 0 1px var( --color-primary );
+					outline: none;
+				}
+			}
+		}
+	}
+
+	.build-report__preview-button {
+		width: fit-content;
+	}
+}
+
+.build-report__date-popover {
+	.components-popover__content {
+		padding: 16px;
+	}
+}

@@ -8,6 +8,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchMagicLoginAuthenticate } from 'calypso/state/login/magic-login/actions';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getMagicLoginAuthSuccessData from 'calypso/state/selectors/get-magic-login-auth-success-data';
@@ -141,10 +142,15 @@ const VerifyLoginCode = ( {
 			return;
 		}
 
+		// Track magic code verification attempt
+		recordTracksEvent( 'calypso_login_magic_code_submit', {
+			code_length: verificationCode.length,
+		} );
+
 		// Format: publicToken:code
 		const loginToken = `${ publicToken }:${ btoa( verificationCode ) }`;
 
-		authenticate( loginToken, redirectTo );
+		authenticate( loginToken, redirectTo, null, true );
 	};
 
 	const isDisabled = isValidating || isRedirecting;
@@ -262,6 +268,7 @@ const mapState = ( state ) => ( {
 
 const mapDispatch = {
 	fetchMagicLoginAuthenticate,
+	recordTracksEvent,
 };
 
 export default connect( mapState, mapDispatch )( localize( VerifyLoginCode ) );

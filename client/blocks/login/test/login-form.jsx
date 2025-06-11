@@ -17,7 +17,7 @@ describe( 'LoginForm', () => {
 		const username = screen.getByLabelText( /username/i );
 		expect( username ).toBeInTheDocument();
 
-		const password = screen.getByLabelText( /password/i );
+		const password = screen.getByLabelText( /^password$/i );
 		expect( password ).toBeInTheDocument();
 
 		const btn = screen.getByRole( 'button', { name: /continue$/i } );
