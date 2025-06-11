@@ -1,7 +1,7 @@
 import { isFreePlanProduct, PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { BackButton, Step } from '@automattic/onboarding';
+import { BackButton } from '@automattic/onboarding';
 import { UseShoppingCart, withShoppingCart } from '@automattic/shopping-cart';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -474,15 +474,10 @@ class DomainSearch extends Component< DomainSearchProps > {
 							} ) => {
 								return (
 									<div className="site-domains-add-page">
-										<Step.TwoColumnLayout
-											noPadding="all"
-											firstColumnWidth={ 7 }
-											secondColumnWidth={ 3 }
-											className="domains__step-content domains__step-content-domain-step"
-										>
+										<div className="domains__step-content domains__step-content-domain-step">
 											{ mainContent }
 											{ sideContent }
-										</Step.TwoColumnLayout>
+										</div>
 									</div>
 								);
 							} }
