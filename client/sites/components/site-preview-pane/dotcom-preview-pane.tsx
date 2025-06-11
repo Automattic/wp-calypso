@@ -195,7 +195,10 @@ const DotcomPreviewPane = ( {
 		if ( site.is_wpcom_staging_site ) {
 			return canCurrentUser( state, site.options?.wpcom_production_blog_id, 'manage_options' );
 		}
-		return stagingSites?.[ 0 ]?.user_has_permission ?? false;
+		return (
+			canCurrentUser( state, site.options?.wpcom_staging_blog_ids?.[ 0 ], 'manage_options' ) ??
+			false
+		);
 	} );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
