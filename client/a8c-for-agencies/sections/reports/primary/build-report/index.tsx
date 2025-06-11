@@ -29,7 +29,7 @@ const BuildReport = () => {
 	const translate = useTranslate();
 	const title = translate( 'Build Report' );
 
-	const AVAILABLE_TIMEFRAMES = useMemo(
+	const availableTimeframes = useMemo(
 		() => [
 			{ label: translate( 'Last 30 days' ), value: '30_days' },
 			{ label: translate( 'Last 7 days' ), value: '7_days' },
@@ -40,7 +40,7 @@ const BuildReport = () => {
 	);
 
 	// Checkbox groups for Step 2
-	const STATS_OPTIONS = useMemo(
+	const statsOptions = useMemo(
 		() => [
 			{ label: translate( 'Visitors and Views in this timeframe' ), value: 'total_traffic' },
 			{ label: translate( 'Top 5 posts' ), value: 'top_pages' },
@@ -61,7 +61,7 @@ const BuildReport = () => {
 	const yesterday = new Date( today );
 	yesterday.setDate( today.getDate() - 1 );
 
-	const [ selectedTimeframe, setSelectedTimeframe ] = useState( AVAILABLE_TIMEFRAMES[ 0 ].value );
+	const [ selectedTimeframe, setSelectedTimeframe ] = useState( availableTimeframes[ 0 ].value );
 	const [ selectedSite, setSelectedSite ] = useState( '' );
 	const [ clientEmail, setClientEmail ] = useState( '' );
 	const [ customIntroText, setCustomIntroText ] = useState( '' );
@@ -77,7 +77,7 @@ const BuildReport = () => {
 	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
 
 	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
-		STATS_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
+		statsOptions.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
 	);
 
 	const [ currentStep, setCurrentStep ] = useState( 1 );
@@ -120,7 +120,7 @@ const BuildReport = () => {
 							__nextHasNoMarginBottom
 							label={ translate( 'Report date range' ) }
 							value={ selectedTimeframe }
-							options={ AVAILABLE_TIMEFRAMES }
+							options={ availableTimeframes }
 							onChange={ setSelectedTimeframe }
 						/>
 
@@ -248,7 +248,7 @@ const BuildReport = () => {
 						/>
 
 						<h3 className="build-report__group-label">{ translate( 'Stats' ) }</h3>
-						{ STATS_OPTIONS.map( ( item ) => (
+						{ statsOptions.map( ( item ) => (
 							<CheckboxControl
 								__nextHasNoMarginBottom
 								key={ item.value }
@@ -300,8 +300,8 @@ const BuildReport = () => {
 		isStartDatePickerOpen,
 		isEndDatePickerOpen,
 		translate,
-		AVAILABLE_TIMEFRAMES,
-		STATS_OPTIONS,
+		availableTimeframes,
+		statsOptions,
 	] );
 
 	const actions = useMemo(
