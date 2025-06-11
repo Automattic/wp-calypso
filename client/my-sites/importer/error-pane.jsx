@@ -29,7 +29,7 @@ class ImporterError extends PureComponent {
 	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		window.location.href = '/help';
+		window.open( '/help', '_blank', 'noopener,noreferrer' );
 	};
 
 	installPlugin = ( event ) => {

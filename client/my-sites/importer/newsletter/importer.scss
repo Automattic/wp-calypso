@@ -41,6 +41,12 @@ $newsletter_importer_line-height: 20px;
 		padding: 0;
 		margin: 0;
 		box-shadow: none;
+
+		.calypso-notice.is-error {
+			a, .button.is-link {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	.summary__content {
