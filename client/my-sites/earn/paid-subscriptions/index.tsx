@@ -18,6 +18,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
+import PaidSubscriptionPage from 'calypso/my-sites/earn/paid-subscriptions/paid-subscription/index';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import {
@@ -30,23 +31,22 @@ import {
 	PLAN_MONTHLY_FREQUENCY,
 	PLAN_ONE_TIME_FREQUENCY,
 } from '../memberships/constants';
-import { Query, Subscriber } from '../types';
+import { Query, PaidSubscription } from '../types';
 import CancelDialog from './cancel-dialog';
-import Customer from './customer/index';
 
-type CustomerSectionProps = {
+type PaidSubscriptionsSectionProps = {
 	query?: Query;
 };
 
-const CustomerSection = ( { query }: CustomerSectionProps ) => {
+const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
-	const subscriberId = query?.subscriber;
-	const [ subscriberToCancel, setSubscriberToCancel ] = useState< Subscriber | null >( null );
+	const subscriptionId = query?.paid_susbcription;
+	const [ subscriberToCancel, setSubscriberToCancel ] = useState< PaidSubscription | null >( null );
 	const site = useSelector( getSelectedSite );
 
-	const subscribers = useSelector(
+	const paid_subscriptions = useSelector(
 		( state ) => getOwnershipsForSiteId( state, site?.ID ),
 		shallowEqual
 	);
@@ -57,12 +57,12 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 
 	const fetchNextSubscriberPage = useCallback(
 		( force: boolean ) => {
-			const fetched = Object.keys( subscribers ).length;
+			const fetched = Object.keys( paid_subscriptions ).length;
 			if ( fetched < totalSubscribers || force ) {
 				dispatch( requestSubscribers( site?.ID, fetched ) );
 			}
 		},
-		[ dispatch, site, subscribers, totalSubscribers ]
+		[ dispatch, site, paid_subscriptions, totalSubscribers ]
 	);
 
 	const downloadCsvLink = addQueryArgs(
@@ -78,10 +78,10 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 	function renderSubscriberList() {
 		return (
 			<div>
-				{ Object.values( subscribers ).length === 0 && (
+				{ Object.values( paid_subscriptions ).length === 0 && (
 					<Card>
 						{ translate(
-							"You haven't added any customers. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
+							"You don't have any active subscriptions yet. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
 							{
 								components: {
 									learnMoreLink: isJetpackCloud() ? (
@@ -100,29 +100,29 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 						) }
 					</Card>
 				) }
-				{ Object.values( subscribers ).length > 0 && (
+				{ Object.values( paid_subscriptions ).length > 0 && (
 					<>
-						<ul className="supporters-list" role="table">
+						<ul className="paid-subscriptions-list" role="table">
 							<li className="row header" role="row">
-								<span className="supporters-list__profile-column" role="columnheader">
+								<span className="paid-subscriptions-list__profile-column" role="columnheader">
 									{ translate( 'Name' ) }
 								</span>
-								<span className="supporters-list__offer-type-column" role="columnheader">
+								<span className="paid-subscriptions-list__offer-type-column" role="columnheader">
 									{ translate( 'Offer Type' ) }
 								</span>
-								<span className="supporters-list__total-column" role="columnheader">
+								<span className="paid-subscriptions-list__total-column" role="columnheader">
 									{ translate( 'Total' ) }
 								</span>
-								<span className="supporters-list__since-column" role="columnheader">
+								<span className="paid-subscriptions-list__since-column" role="columnheader">
 									{ translate( 'Since' ) }
 								</span>
-								<span className="supporters-list__menu-column" role="columnheader">
+								<span className="paid-subscriptions-list__menu-column" role="columnheader">
 									<Tooltip text={ translate( 'Download list as CSV' ) } delay={ 0 }>
 										<Button href={ downloadCsvLink }>{ translate( 'Export' ) }</Button>
 									</Tooltip>
 								</span>
 							</li>
-							{ orderBy( Object.values( subscribers ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
+							{ orderBy( Object.values( paid_subscriptions ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
 								renderSubscriber( sub )
 							) }
 							<InfiniteScroll nextPageMethod={ () => fetchNextSubscriberPage( false ) } />
@@ -140,94 +140,105 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 		);
 	}
 
-	function getCancelButtonText( subscriber: Subscriber | null ) {
-		return subscriber?.plan?.renew_interval === 'one-time'
+	function getCancelButtonText( paidSubscription: PaidSubscription | null ) {
+		return paidSubscription?.plan?.renew_interval === 'one-time'
 			? translate( 'Remove payment' )
 			: translate( 'Cancel payment' );
 	}
 
-	function renderSubscriberSubscriptionSummary( subscriber: Subscriber ) {
-		if ( subscriber.plan.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
+	function renderPaidSubscriptionSummary( paidSubscription: PaidSubscription ) {
+		if ( paidSubscription.plan.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
 			return translate( 'One Time (%(amount)s)', {
 				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+					amount: formatCurrency(
+						paidSubscription.plan.renewal_price,
+						paidSubscription.plan.currency
+					),
 				},
 			} );
-		} else if ( subscriber.plan.renew_interval === PLAN_YEARLY_FREQUENCY ) {
+		} else if ( paidSubscription.plan.renew_interval === PLAN_YEARLY_FREQUENCY ) {
 			return translate( 'Yearly (%(amount)s)', {
 				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+					amount: formatCurrency(
+						paidSubscription.plan.renewal_price,
+						paidSubscription.plan.currency
+					),
 				},
 			} );
-		} else if ( subscriber.plan.renew_interval === PLAN_MONTHLY_FREQUENCY ) {
+		} else if ( paidSubscription.plan.renew_interval === PLAN_MONTHLY_FREQUENCY ) {
 			return translate( 'Monthly (%(amount)s)', {
 				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+					amount: formatCurrency(
+						paidSubscription.plan.renewal_price,
+						paidSubscription.plan.currency
+					),
 				},
 			} );
 		}
 	}
 	const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
-	function renderSubscriberActions( subscriber: Subscriber ) {
+	function renderSubscriberActions( paidSubscription: PaidSubscription ) {
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
 				<PopoverMenuItem
-					href={ `${ earnPath }/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }
+					href={ `${ earnPath }/paid-subscriptions/${ site?.slug }?paid_susbcription=${ paidSubscription.id }` }
 				>
 					<Gridicon size={ 18 } icon="visible" />
 					{ translate( 'View' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem onClick={ () => setSubscriberToCancel( subscriber ) }>
+				<PopoverMenuItem onClick={ () => setSubscriberToCancel( paidSubscription ) }>
 					<Gridicon size={ 18 } icon="cross" />
-					{ getCancelButtonText( subscriber ) }
+					{ getCancelButtonText( paidSubscription ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
 	}
 
-	function renderSubscriber( subscriber: Subscriber ) {
+	function renderSubscriber( paidSubscription: PaidSubscription ) {
 		return (
-			<li key={ subscriber.id } className="supporter-row row" role="row">
-				<span className="supporters-list__profile-column" role="cell">
-					<div className="supporters-list__user-profile">
+			<li key={ paidSubscription.id } className="paid-subscription-row row" role="row">
+				<span className="paid-subscriptions-list__profile-column" role="cell">
+					<div className="paid-subscriptions-list__user-profile">
 						<Gravatar
-							user={ subscriber.user }
+							user={ paidSubscription.user }
 							size={ 40 }
-							className="supporters-list__user-image"
+							className="paid-subscriptions-list__user-image"
 						/>
-						<div className="supporters-list__user-details">
-							<span className="supporters-list__user-name">
-								{ decodeEntities( subscriber.user.name ) }
+						<div className="paid-subscriptions-list__user-details">
+							<span className="paid-subscriptions-list__user-name">
+								{ decodeEntities( paidSubscription.user.name ) }
 							</span>
-							<span className="supporters-list__user-email">{ subscriber.user.user_email }</span>
+							<span className="paid-subscriptions-list__user-email">
+								{ paidSubscription.user.user_email }
+							</span>
 						</div>
 					</div>
 				</span>
-				<span className="supporters-list__offer-type-column" role="cell">
-					<div className="supporters-list__offer-type-title">
-						{ subscriber.plan.title ? `${ subscriber.plan.title }` : ' ' }
+				<span className="paid-subscriptions-list__offer-type-column" role="cell">
+					<div className="paid-subscriptions-list__offer-type-title">
+						{ paidSubscription.plan.title ? `${ paidSubscription.plan.title }` : ' ' }
 					</div>
-					<div className="supporters-list__offer-type-price">
-						{ renderSubscriberSubscriptionSummary( subscriber ) }
+					<div className="paid-subscriptions-list__offer-type-price">
+						{ renderPaidSubscriptionSummary( paidSubscription ) }
 					</div>
 				</span>
-				<span className="supporters-list__total-column" role="cell">
-					{ formatCurrency( subscriber.all_time_total, subscriber.plan.currency ) }
+				<span className="paid-subscriptions-list__total-column" role="cell">
+					{ formatCurrency( paidSubscription.all_time_total, paidSubscription.plan.currency ) }
 				</span>
-				<span className="supporters-list__since-column" role="cell">
-					{ moment( subscriber.start_date ).format( 'll' ) }
+				<span className="paid-subscriptions-list__since-column" role="cell">
+					{ moment( paidSubscription.start_date ).format( 'll' ) }
 				</span>
-				<span className="supporters-list__menu-column" role="cell">
-					{ renderSubscriberActions( subscriber ) }
+				<span className="paid-subscriptions-list__menu-column" role="cell">
+					{ renderSubscriberActions( paidSubscription ) }
 				</span>
 			</li>
 		);
 	}
 
-	function getSingleSubscriber( subscriberId: string ) {
-		const subscriberList = Object.values( subscribers );
-		return subscriberList.filter( ( subscriber ) => subscriber.id === subscriberId )[ 0 ];
+	function getSinglePaidSubscription( subscriptionId: string ) {
+		const subscriptionsList = Object.values( paid_subscriptions );
+		return subscriptionsList.filter( ( subscription ) => subscription.id === subscriptionId )[ 0 ];
 	}
 
 	useEffect( () => {
@@ -238,10 +249,10 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 		return <LoadingEllipsis />;
 	}
 
-	if ( subscriberId ) {
-		const subscriber = getSingleSubscriber( subscriberId );
-		if ( subscriber ) {
-			return <Customer customer={ subscriber } />;
+	if ( subscriptionId ) {
+		const paidSubscription = getSinglePaidSubscription( subscriptionId );
+		if ( paidSubscription ) {
+			return <PaidSubscriptionPage paidSubscription={ paidSubscription } />;
 		}
 	}
 
@@ -254,4 +265,4 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 	);
 };
 
-export default CustomerSection;
+export default PaidSubscriptionsSection;

@@ -629,11 +629,15 @@ export function PurchaseItemPaymentMethod( {
 		);
 	}
 
-	const goToAddPaymentMethod = ( e: React.MouseEvent< HTMLButtonElement >, siteId: number ) => {
+	const goToAddPaymentMethod = (
+		e: React.MouseEvent< HTMLButtonElement >,
+		siteSlug: string | number,
+		purchaseId: number
+	) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		page( `/me/purchases/add-payment-method/${ siteId }/payment-method/add` );
+		page( `/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add` );
 	};
 
 	if (
@@ -650,7 +654,7 @@ export function PurchaseItemPaymentMethod( {
 						variant="link"
 						size="compact"
 						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) =>
-							goToAddPaymentMethod( e, purchase.id )
+							goToAddPaymentMethod( e, purchase.siteId, purchase.id )
 						}
 					>
 						{ translate( 'Add payment method' ) }

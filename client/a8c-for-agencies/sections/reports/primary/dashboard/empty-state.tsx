@@ -5,6 +5,7 @@ import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { A4A_REPORTS_BUILD_LINK } from '../../constants';
 
 const ReportsDashboardEmptyState = () => {
 	const translate = useTranslate();
@@ -12,7 +13,6 @@ const ReportsDashboardEmptyState = () => {
 
 	const handleBuildNewReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_empty_state_build_new_report_click' ) );
-		// Build new report action - placeholder for future implementation
 	}, [ dispatch ] );
 
 	const handleViewExampleReport = useCallback( () => {
@@ -40,7 +40,12 @@ const ReportsDashboardEmptyState = () => {
 					) }
 				>
 					<div className="reports-dashboard-empty-state__buttons">
-						<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildNewReport }>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ handleBuildNewReport }
+							href={ A4A_REPORTS_BUILD_LINK }
+						>
 							{ translate( 'Build a new report' ) }
 						</Button>
 						<Button __next40pxDefaultSize variant="secondary" onClick={ handleViewExampleReport }>

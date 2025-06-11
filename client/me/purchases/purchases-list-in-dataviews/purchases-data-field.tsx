@@ -122,7 +122,7 @@ export function getPurchasesFieldDefinitions( {
 					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
 				} );
 			} )(),
-			filterBy: { operators: [ 'is' ] },
+			filterBy: { operators: [ 'isAny' ] },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
@@ -189,10 +189,12 @@ export function getPurchasesFieldDefinitions( {
 		{
 			id: 'type',
 			label: translate( 'Type' ),
+			enableHiding: false,
+			enableSorting: true,
 			type: 'text',
 			elements: [
 				{ value: 'domain', label: translate( 'Domains' ) },
-				{ value: 'plan', label: translate( 'Plan' ) },
+				{ value: 'plan', label: translate( 'Plans' ) },
 				{ value: 'other', label: translate( 'Other' ) },
 			],
 			filterBy: { operators: [ 'is' ] },
@@ -208,6 +210,8 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'expiring-soon',
+			enableHiding: false,
+			enableSorting: true,
 			label: translate( 'Expiring soon' ),
 			type: 'text',
 			elements: [
@@ -235,7 +239,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'status',
-			label: translate( 'Status' ),
+			label: translate( 'Expires/Renews on' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,

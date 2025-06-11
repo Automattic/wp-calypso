@@ -25,8 +25,10 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { PaymentMethodSelectorSubmitButtonContent } from '../manage-purchase/payment-method-selector/payment-method-selector-submit-button-content';
 
-function AddNewPaymentMethod() {
-	const goToPaymentMethods = () => page( paymentMethods );
+function AddNewPaymentMethod( { purchaseListUrl }: { purchaseListUrl?: string | undefined } ) {
+	const goToPaymentMethods = () => {
+		page( purchaseListUrl ?? paymentMethods );
+	};
 	const addPaymentMethodTitle = String( titles.addPaymentMethod );
 	const currency = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
@@ -85,7 +87,11 @@ function AddNewPaymentMethod() {
 	);
 }
 
-export default function AccountLevelAddNewPaymentMethodWrapper() {
+export default function AccountLevelAddNewPaymentMethodWrapper( {
+	purchaseListUrl,
+}: {
+	purchaseListUrl?: string | undefined;
+} ) {
 	const locale = useSelector( getCurrentUserLocale );
 
 	return (
@@ -99,7 +105,7 @@ export default function AccountLevelAddNewPaymentMethodWrapper() {
 				<QueryProducts
 					productSlugList={ [ 'value_bundle', 'personal-bundle', 'business-bundle' ] }
 				/>
-				<AddNewPaymentMethod />
+				<AddNewPaymentMethod purchaseListUrl={ purchaseListUrl } />
 			</RazorpayHookProvider>
 		</StripeHookProvider>
 	);

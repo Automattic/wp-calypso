@@ -326,9 +326,12 @@ $y-axis-padding: 0 20px;
 
 
 	&.form-label {
-		display: inline-block;
-		margin-bottom: 0;
-		font-weight: 400;
+		&,
+		&.is-selectable {
+			display: inline-block;
+			margin-bottom: 0;
+			font-weight: 400;
+		}
 	}
 
 	&.is-selectable {

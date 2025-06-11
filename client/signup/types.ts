@@ -24,6 +24,7 @@ export interface Flow {
 	helpCenterButtonText?: string;
 	enableHotjar?: boolean;
 	enabledHelpCenterGeos?: string[];
+	enabledHelpCenterLocales?: string[];
 	onEnterFlow?: ( flowName: string ) => void;
 }
 

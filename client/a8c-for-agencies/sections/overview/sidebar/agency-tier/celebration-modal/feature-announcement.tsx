@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import EmergingPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/announcement-background.svg';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -32,7 +33,8 @@ const AgencyTierFeatureAnnouncement = () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_agency_tier_announcement_modal_cta_click' ) );
 	};
 
-	if ( isDismissed ) {
+	// If the new unified onboarding tour is enabled, we do not need to show the modal.
+	if ( isDismissed || isEnabled( 'a4a-unified-onboarding-tour' ) ) {
 		return null;
 	}
 
