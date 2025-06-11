@@ -117,7 +117,7 @@ if ( 'home' === $current_page_slug ) {
 	<?php
 } elseif ( 'contact' === $current_page_slug ) {
 	?>
-	<div class="happy-blocks-new-support-content-footer">
+	<div class="happy-blocks-new-support-content-footer contact-page">
 		<div class="support-content-resources">
 			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/sites?help-center=wapuu' ) ); ?>" class="support-content-resource">
 				<div class="support-content-resource__content">
