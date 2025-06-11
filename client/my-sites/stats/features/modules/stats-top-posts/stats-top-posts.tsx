@@ -100,12 +100,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 
 	// Query both statTypes for the Traffic page module card to avoid loading when switching between controls.
 	// Only query one statType at a time to avoid loading plenty of data for the summary mode.
-	const shouldQueryMainStatType = ! summary || query.viewdType === mainStatType;
 	const shouldQuerySubStatType = ! summary || query.viewdType === subStatType;
 
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && shouldQueryMainStatType && (
+			{ ! shouldGateStatsModule && siteId && (
 				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
 
