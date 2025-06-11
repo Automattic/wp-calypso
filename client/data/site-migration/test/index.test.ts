@@ -5,7 +5,6 @@ describe( 'getMigrationState', () => {
 	it( 'returns status pending and type difm for migration-pending-difm', () => {
 		const migrationInfo = {
 			migration_status: 'migration-pending-difm',
-			in_progress: false,
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( {
 			status: 'pending',
@@ -16,7 +15,6 @@ describe( 'getMigrationState', () => {
 	it( 'returns status started and type difm for migration-started-difm', () => {
 		const migrationInfo = {
 			migration_status: 'migration-started-difm',
-			in_progress: false,
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( {
 			status: 'started',
@@ -27,7 +25,6 @@ describe( 'getMigrationState', () => {
 	it( 'returns status pending and type diy for migration-pending-diy', () => {
 		const migrationInfo = {
 			migration_status: 'migration-pending-diy',
-			in_progress: false,
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( {
 			status: 'pending',
@@ -38,7 +35,6 @@ describe( 'getMigrationState', () => {
 	it( 'returns status started and type diy for migration-started-diy', () => {
 		const migrationInfo = {
 			migration_status: 'migration-started-diy',
-			in_progress: false,
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( {
 			status: 'started',
@@ -48,7 +44,7 @@ describe( 'getMigrationState', () => {
 
 	it( 'returns type DIFM and status started when the migration was started by DAMS', () => {
 		const migrationInfo = {
-			in_progress: true,
+			migration_status: 'migration-in-progress',
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( {
 			status: 'started',
@@ -70,7 +66,6 @@ describe( 'getMigrationState', () => {
 	it( 'returns null when the type is not supported', () => {
 		const migrationInfo = {
 			migration_status: 'migration-pending-unknown',
-			in_progress: false,
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( null );
 	} );
@@ -78,7 +73,6 @@ describe( 'getMigrationState', () => {
 	it( 'returns null when the status is not supported', () => {
 		const migrationInfo = {
 			migration_status: 'migration-unknown-difm',
-			in_progress: false,
 		};
 		expect( getMigrationState( migrationInfo ) ).toEqual( null );
 	} );
@@ -98,6 +92,7 @@ describe( 'isMigrationInProgress', () => {
 	it.each( [
 		{ site: { site_migration: { migration_status: 'migration-started-diy' } } },
 		{ site: { site_migration: { migration_status: 'migration-pending-diy' } } },
+		{ site: { site_migration: { migration_status: 'migration-in-progress' } } },
 	] )( 'returns true when the migration is in progress', ( scenario ) => {
 		return expect( isMigrationInProgress( scenario?.site as SiteExcerptData ) ).toBe( true );
 	} );

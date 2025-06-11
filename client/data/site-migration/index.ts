@@ -16,7 +16,8 @@ const POSSIBLE_TYPES = [ 'difm', 'diy' ] as const;
 export const getMigrationState = (
 	site: MigrationStatusInfo | undefined
 ): MigrationState | null => {
-	const { migration_status, in_progress: isDAMSInProgress } = site ?? {};
+	const { migration_status } = site ?? {};
+	const isDAMSInProgress = migration_status === 'migration-in-progress';
 
 	const [ , status, type ] = migration_status?.split( '-' ) ?? [];
 
