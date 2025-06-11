@@ -445,44 +445,6 @@ $breakpoint-mobile: 660px;
 		margin-top: 25px;
 	}
 
-	.auth-form__social-buttons {
-		align-items: center;
-
-		@media (max-width: $break-mobile) {
-			align-items: flex-start;
-		}
-
-		button.social-buttons__button.button {
-			border: 0;
-			text-align: center;
-			padding-bottom: 0;
-			padding-left: 0;
-			padding-right: 0;
-			width: 196px;
-
-			svg {
-				border: 1px solid var(--studio-gray-10);
-				border-radius: 24px; /* stylelint-disable-line scales/radii */
-				padding: 12px;
-			}
-		}
-
-		.social-buttons__service-name {
-			margin-left: 16px;
-		}
-
-		.login__social-tos {
-			margin: 0 auto 2.5em;
-			max-width: 100%;
-			order: -1;
-
-			a {
-				font-size: inherit;
-				line-height: inherit;
-			}
-		}
-	}
-
 	.step-wrapper,
 	.wp-login__main.main,
 	.magic-login.main {
@@ -533,7 +495,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.login form,
 	.wp-login__links,
 	.login__social-connect-prompt,
 	.magic-login__request-link,
@@ -776,19 +737,6 @@ $breakpoint-mobile: 660px;
 		padding: 24px;
 	}
 
-	.auth-form__social-buttons-tos {
-		margin-top: 24px;
-		font-size: $woo-font-size-small;
-		line-height: 18px;
-		color: $gray-50;
-		text-align: left;
-
-		a {
-			color: $gray-50;
-			font-size: inherit;
-		}
-	}
-
 	.login__lost-password-form-wrapper {
 		// Loading lost password form module is very fast, so we don't need to show a visual placeholder, just need to have the space reserved. Otherwise we will see a flash of content.
 		.async-load__placeholder {
@@ -879,54 +827,6 @@ $breakpoint-mobile: 660px;
 
 	.signup-form__woo-wrapper .gridicon {
 		color: var(--color-primary);
-	}
-
-	.auth-form__social {
-		max-width: 100%;
-		padding: 40px 0 14px;
-		border-top: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		@media (max-width: $break-mobile) {
-			align-items: flex-start;
-		}
-
-		p {
-			color: var(--studio-gray-60);
-			font-size: $woo-font-size-small;
-		}
-
-		a {
-			font-size: $woo-font-size-small;
-		}
-
-		button {
-			padding: 0;
-		}
-
-		.auth-form__social-buttons-tos {
-			text-align: left;
-			color: $gray-50;
-
-			a {
-				line-height: 18px;
-			}
-		}
-	}
-
-	.auth-form__social-buttons button {
-		text-align: start;
-		box-shadow: none;
-		border: 0;
-
-		svg {
-			border: 1px solid var(--studio-gray-10);
-			border-radius: 24px; /* stylelint-disable-line scales/radii */
-			padding: 12px;
-			margin-top: 0;
-		}
 	}
 
 	&.is-woocommerce-core-profiler-flow {
@@ -1545,66 +1445,6 @@ $breakpoint-mobile: 660px;
 			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
 				padding: 0;
 				margin: 24px 0 0 0;
-			}
-		}
-
-		.auth-form__social {
-			max-width: 100%;
-			padding: 40px 0 14px;
-			border-top: 0;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			.auth-form__social-buttons {
-				width: 100%;
-
-				.auth-form__social-buttons-container {
-					gap: 16px;
-					width: 100%;
-				}
-
-				.social-buttons__button {
-					padding: 8px 16px;
-
-					> span {
-						color: var(--studio-gray-100);
-						font-family: $woo-inter-font;
-						font-size: 1rem;
-						margin-left: -20px;
-						margin-right: auto;
-					}
-				}
-
-				.social-icons {
-					border: 0;
-					padding: 0;
-				}
-
-				.login__social-tos {
-					margin: 0 auto 2.5em;
-					max-width: 100%;
-					order: -1;
-
-					a {
-						font-size: inherit;
-						line-height: inherit;
-					}
-				}
-			}
-
-			.auth-form__social-buttons-tos {
-				margin-top: 32px;
-				font-size: $woo-font-size-small;
-				line-height: 18px;
-				color: $gray-50;
-				text-align: center;
-
-				a {
-					color: $gray-50;
-					line-height: 18px;
-					font-size: inherit;
-				}
 			}
 		}
 
