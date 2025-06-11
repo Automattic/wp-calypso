@@ -14,7 +14,7 @@ import {
  */
 import type { Form, FieldLayoutProps } from '../../types';
 import DataFormContext from '../../components/dataform-context';
-import { DataFormLayout } from '../data-form-layout';
+import { DataFormFieldOrchestrator } from '../data-form-orchestrator';
 import { isCombinedField } from '../is-combined-field';
 
 function Header( { title }: { title: string } ) {
@@ -35,6 +35,7 @@ export default function FormRegularField< Item >( {
 	field,
 	onChange,
 	hideLabelFromVision,
+	errorMessage,
 }: FieldLayoutProps< Item > ) {
 	const { fields } = useContext( DataFormContext );
 
@@ -65,7 +66,7 @@ export default function FormRegularField< Item >( {
 				{ ! hideLabelFromVision && field.label && (
 					<Header title={ field.label } />
 				) }
-				<DataFormLayout
+				<DataFormFieldOrchestrator
 					data={ data }
 					form={ form as Form }
 					onChange={ onChange }
@@ -95,6 +96,7 @@ export default function FormRegularField< Item >( {
 						field={ fieldDefinition }
 						onChange={ onChange }
 						hideLabelFromVision
+						errorMessage={ errorMessage }
 					/>
 				</div>
 			</HStack>
@@ -110,6 +112,7 @@ export default function FormRegularField< Item >( {
 				hideLabelFromVision={
 					labelPosition === 'none' ? true : hideLabelFromVision
 				}
+				errorMessage={ errorMessage }
 			/>
 		</div>
 	);

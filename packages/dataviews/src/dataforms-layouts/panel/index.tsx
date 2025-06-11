@@ -24,7 +24,7 @@ import type {
 	SimpleFormField,
 } from '../../types';
 import DataFormContext from '../../components/dataform-context';
-import { DataFormLayout } from '../data-form-layout';
+import { DataFormFieldOrchestrator } from '../data-form-orchestrator';
 import { isCombinedField } from '../is-combined-field';
 
 function DropdownHeader( {
@@ -66,6 +66,7 @@ function PanelDropdown< Item >( {
 	data,
 	onChange,
 	field,
+	errorMessage,
 }: {
 	fieldDefinition: NormalizedField< Item >;
 	popoverAnchor: HTMLElement | null;
@@ -73,6 +74,7 @@ function PanelDropdown< Item >( {
 	data: Item;
 	onChange: ( value: any ) => void;
 	field: FormField;
+	errorMessage: string | undefined;
 } ) {
 	const fieldLabel = isCombinedField( field )
 		? field.label
@@ -147,7 +149,7 @@ function PanelDropdown< Item >( {
 			renderContent={ ( { onClose } ) => (
 				<>
 					<DropdownHeader title={ fieldLabel } onClose={ onClose } />
-					<DataFormLayout
+					<DataFormFieldOrchestrator
 						data={ data }
 						form={ form as Form }
 						onChange={ onChange }
@@ -161,9 +163,10 @@ function PanelDropdown< Item >( {
 								hideLabelFromVision={
 									( form?.fields ?? [] ).length < 2
 								}
+								errorMessage={ errorMessage }
 							/>
 						) }
-					</DataFormLayout>
+					</DataFormFieldOrchestrator>
 				</>
 			) }
 		/>
@@ -174,6 +177,7 @@ export default function FormPanelField< Item >( {
 	data,
 	field,
 	onChange,
+	errorMessage,
 }: FieldLayoutProps< Item > ) {
 	const { fields } = useContext( DataFormContext );
 	const fieldDefinition = fields.find( ( fieldDef ) => {
@@ -224,6 +228,7 @@ export default function FormPanelField< Item >( {
 						data={ data }
 						onChange={ onChange }
 						labelPosition={ labelPosition }
+						errorMessage={ errorMessage }
 					/>
 				</div>
 			</VStack>
@@ -240,6 +245,7 @@ export default function FormPanelField< Item >( {
 					data={ data }
 					onChange={ onChange }
 					labelPosition={ labelPosition }
+					errorMessage={ errorMessage }
 				/>
 			</div>
 		);
@@ -262,6 +268,7 @@ export default function FormPanelField< Item >( {
 					data={ data }
 					onChange={ onChange }
 					labelPosition={ labelPosition }
+					errorMessage={ errorMessage }
 				/>
 			</div>
 		</HStack>

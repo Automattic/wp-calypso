@@ -70,3 +70,5 @@ export { VIPLogo } from './logos/vip-logo';
 export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
 export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
+
+export { ValidatedTextControl } from './validated-form-controls/components/text-control';

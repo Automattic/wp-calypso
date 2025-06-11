@@ -12,6 +12,7 @@ import type { SetSelection } from './private-types';
  * WordPress dependencies
  */
 import type { useFocusOnMount } from '@wordpress/compose';
+import { FormValidationState } from './dataform-hooks/use-form';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -123,6 +124,15 @@ export type FieldTypeDefinition< Item > = {
 	filterBy: FilterConfigForType | false;
 
 	/**
+	 * The validation callbacks for the field.
+	 */
+	validationSchema?: {
+		minLength?: number;
+		maxLength?: number;
+		onTouched?: boolean;
+	};
+
+	/**
 	 * Whether the field is sortable.
 	 */
 	enableSorting: boolean;
@@ -192,7 +202,6 @@ export type Field< Item > = {
 	 * Whether the field is sortable.
 	 */
 	enableSorting?: boolean;
-
 	/**
 	 * Whether the field is searchable.
 	 */
@@ -218,6 +227,11 @@ export type Field< Item > = {
 	 * Defaults to `item[ field.id ]`.
 	 */
 	getValue?: ( args: { item: Item } ) => any;
+
+	/**
+	 * The validation schema for the field.
+	 */
+	validationSchema?: ValidationSchema;
 };
 
 export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
@@ -231,6 +245,17 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
+	validationCallbacks: Record< string, ( value: any ) => string | undefined >;
+};
+
+export type ValidationSchema = {
+	required: boolean;
+	pattern: string;
+	minLength: number;
+	maxLength: number;
+	min: number;
+	max: number;
+	onTouched: boolean;
 };
 
 /**
@@ -245,6 +270,7 @@ export type DataFormControlProps< Item > = {
 	field: NormalizedField< Item >;
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
+	errorMessage: string | undefined;
 };
 
 export type DataViewRenderFieldProps< Item > = {
@@ -636,6 +662,7 @@ export interface DataFormProps< Item > {
 	fields: Field< Item >[];
 	form: Form;
 	onChange: ( value: Record< string, any > ) => void;
+	validation?: FormValidationState;
 }
 
 export interface FieldLayoutProps< Item > {
@@ -643,4 +670,5 @@ export interface FieldLayoutProps< Item > {
 	field: FormField;
 	onChange: ( value: any ) => void;
 	hideLabelFromVision?: boolean;
+	errorMessage: string | undefined;
 }

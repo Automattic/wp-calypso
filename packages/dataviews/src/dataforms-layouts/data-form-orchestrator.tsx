@@ -3,7 +3,6 @@
  */
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useContext, useMemo } from '@wordpress/element';
-
 /**
  * Internal dependencies
  */
@@ -12,8 +11,10 @@ import { getFormFieldLayout } from './index';
 import DataFormContext from '../components/dataform-context';
 import { isCombinedField } from './is-combined-field';
 import normalizeFormFields from '../normalize-form-fields';
+import { useFieldError } from '../dataform-hooks/use-field-error';
+import { useFieldValidation } from '../dataform-hooks/use-field-validation';
 
-export function DataFormLayout< Item >( {
+export function DataFormFieldOrchestrator< Item >( {
 	data,
 	form,
 	onChange,
@@ -28,12 +29,13 @@ export function DataFormLayout< Item >( {
 			field: FormField;
 			onChange: ( value: any ) => void;
 			hideLabelFromVision?: boolean;
+			errorMessage: string | undefined;
 		} ) => React.JSX.Element | null,
 		field: FormField
 	) => React.JSX.Element;
 } ) {
-	const { fields: fieldDefinitions } = useContext( DataFormContext );
-
+	const { fields: fieldDefinitions, validation } =
+		useContext( DataFormContext );
 	function getFieldDefinition( field: SimpleFormField | string ) {
 		const fieldId = typeof field === 'string' ? field : field.id;
 
@@ -73,12 +75,26 @@ export function DataFormLayout< Item >( {
 					return children( FieldLayout, formField );
 				}
 
+				const handleChange = useFieldValidation(
+					formField,
+					fieldDefinition,
+					validation,
+					onChange
+				);
+
+				const errorMessage = useFieldError(
+					formField,
+					fieldDefinition,
+					validation
+				);
+
 				return (
 					<FieldLayout
 						key={ formField.id }
 						data={ data }
 						field={ formField }
-						onChange={ onChange }
+						errorMessage={ errorMessage }
+						onChange={ handleChange }
 					/>
 				);
 			} ) }

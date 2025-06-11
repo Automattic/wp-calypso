@@ -77,6 +77,8 @@ export default function InputWidget( {
 				data={ data }
 				field={ field }
 				onChange={ handleChange }
+				// No Validation for now
+				errorMessage={ '' }
 			/>
 		</div>
 	);

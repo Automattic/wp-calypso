@@ -13,6 +13,7 @@ import type {
 	FieldTypeDefinition,
 	NormalizedFilterByConfig,
 	NormalizedField,
+	ValidationSchema,
 } from './types';
 import { getControl } from './dataform-controls';
 import {
@@ -21,6 +22,25 @@ import {
 	OPERATOR_IS_NONE,
 	SINGLE_SELECTION_OPERATORS,
 } from './constants';
+
+// This is a fake schema parser that only supports minLength and maxLength
+const fakeSchemaParser = ( schema: ValidationSchema ) => {
+	const callbacks = {} as {
+		[ key: string ]: ( value: any ) => string | undefined;
+	};
+
+	if ( schema.minLength !== undefined ) {
+		callbacks.minLength = ( value ) =>
+			value.length < schema.minLength ? 'Length is too short' : undefined;
+	}
+
+	if ( schema.maxLength !== undefined ) {
+		callbacks.maxLength = ( value ) =>
+			value.length >= schema.maxLength ? 'Length is too long' : undefined;
+	}
+
+	return callbacks;
+};
 
 const getValueFromId =
 	( id: string ) =>
@@ -144,6 +164,10 @@ export function normalizeFields< Item >(
 				 )( { item, field } );
 			};
 
+		const validationCallbacks = field.validationSchema
+			? fakeSchemaParser( field.validationSchema )
+			: {};
+
 		const filterBy = getFilterBy( field, fieldTypeDefinition );
 
 		return {
@@ -161,6 +185,7 @@ export function normalizeFields< Item >(
 				fieldTypeDefinition.enableSorting ??
 				true,
 			filterBy,
+			validationCallbacks,
 		};
 	} );
 }

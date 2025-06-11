@@ -3,7 +3,7 @@
  */
 import type { Form } from './types';
 
-interface NormalizedFormField {
+export interface NormalizedFormField {
 	id: string;
 	layout: 'regular' | 'panel';
 	labelPosition: 'side' | 'top' | 'none';

@@ -14,6 +14,7 @@ export default function Text< Item >( {
 	field,
 	onChange,
 	hideLabelFromVision,
+	errorMessage,
 }: DataFormControlProps< Item > ) {
 	const { id, label, placeholder, description } = field;
 	const value = field.getValue( { item: data } );
