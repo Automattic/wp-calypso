@@ -101,6 +101,7 @@ class Login extends Component {
 		from: PropTypes.string,
 		gravatarFrom: PropTypes.string,
 		gravatarFlow: PropTypes.bool.isRequired,
+		gravatarFlowWithEmail: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -165,6 +166,7 @@ class Login extends Component {
 					...urlConfig,
 					gravatarFrom: this.props.gravatarFrom,
 					gravatarFlow: this.props.gravatarFlow,
+					gravatarFlowWithEmail: this.props.gravatarFlowWithEmail,
 					emailAddress: this.props.currentQuery?.email_address,
 				};
 			}
@@ -222,6 +224,7 @@ class Login extends Component {
 					redirectTo: this.props.redirectTo,
 					gravatarFrom: this.props.gravatarFrom,
 					gravatarFlow: this.props.gravatarFlow,
+					gravatarFlowWithEmail: this.props.gravatarFlowWithEmail,
 				} )
 			);
 		} else {
@@ -689,6 +692,7 @@ export default connect(
 	( state ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentQuery = getCurrentQueryArguments( state );
+		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 
 		return {
 			accountType: getAuthAccountType( state ),
@@ -731,7 +735,10 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			from: get( currentQuery, 'from' ),
 			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from,
-			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
+			gravatarFlow: isGravatarFlow,
+			gravatarFlowWithEmail:
+				isGravatarFlow &&
+				!! ( currentQuery?.email_address || currentQuery?.gravatar_flow_with_email ),
 		};
 	},
 	{

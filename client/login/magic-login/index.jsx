@@ -250,6 +250,7 @@ class MagicLogin extends Component {
 							locale: this.props.locale,
 							gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from,
 							gravatarFlow: isGravatarFlow,
+							gravatarFlowWithEmail: isGravatarFlow && !! query?.email_address,
 						} )
 					);
 				}

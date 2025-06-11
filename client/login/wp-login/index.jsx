@@ -569,9 +569,9 @@ export default connect(
 			props.isGravPoweredClient && currentQuery?.gravatar_from === '3rd-party';
 		const isFromGravatarQuickEditor =
 			props.isGravPoweredClient && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
-		);
+		const isGravatarFlowWithEmail =
+			isGravatarFlowOAuth2Client( oauth2Client ) &&
+			!! ( currentQuery?.email_address || currentQuery?.gravatar_flow_with_email );
 		const isGravatarSameAccountLogin =
 			isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail;
 
