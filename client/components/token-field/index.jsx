@@ -92,9 +92,6 @@ class TokenField extends PureComponent {
 		let tokenFieldProps = {
 			ref: 'main',
 			className: classes,
-			tabIndex: '-1',
-			'aria-haspopup': 'listbox',
-			'aria-owns': 'options-list',
 		};
 
 		if ( ! this.props.disabled ) {
@@ -107,13 +104,12 @@ class TokenField extends PureComponent {
 
 		return (
 			<div { ...tokenFieldProps }>
+				{ /* eslint-disable jsx-a11y/no-static-element-interactions */ }
 				<div
 					ref={ this.setTokensAndInput }
 					className="token-field__input-container"
-					tabIndex="-1"
 					onMouseDown={ this._onContainerTouched }
 					onTouchStart={ this._onContainerTouched }
-					role="listbox"
 				>
 					{ this._renderTokensAndInput() }
 				</div>
@@ -194,7 +190,7 @@ class TokenField extends PureComponent {
 			onBlur: this._onBlur,
 			spellCheck,
 			value: this.state.incompleteTokenValue,
-			role: 'textbox',
+			'aria-owns': 'options-list',
 			'aria-controls': 'options-list',
 			'aria-activedescendant': `option-${ this._getSelectedSuggestion() }`,
 			'aria-label': ariaLabel,
