@@ -100,7 +100,7 @@ const purchaseStatus: PurchaseStatus = {
 };
 
 function getSitePurchasesStatus( site: SiteWithPurchases ) {
-	if ( ! site.isConnected && ! site.slug.startsWith( 'siteless.akismet.com' ) ) {
+	if ( ! site.isConnected && ! site.slug?.startsWith( 'siteless.akismet.com' ) ) {
 		if ( site.slug === 'siteless.jetpack.com' ) {
 			return 'pendingActivation';
 		}
