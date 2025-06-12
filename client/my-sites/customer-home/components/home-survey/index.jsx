@@ -1,5 +1,5 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
 import SurveyModal from 'calypso/components/survey-modal';
 import { useSelector } from 'calypso/state';
@@ -8,6 +8,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import homeSurveyImage from './assets/images/home-survey.png';
 
 const HomeSurvey = () => {
+	const { __ } = useI18n();
 	const site = useSelector( getSelectedSite );
 	const isEnglishLocale = useIsEnglishLocale();
 	const isSiteLaunched = site?.launch_status === 'launched';
