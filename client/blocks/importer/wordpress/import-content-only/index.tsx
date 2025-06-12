@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -34,6 +33,7 @@ interface Props {
 	siteSlug: string;
 	siteAnalyzedData: UrlData | null;
 	stepNavigator?: StepNavigator;
+	renderHeading?: boolean;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -44,7 +44,8 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const [ renderState, setRenderState ] = useState< RenderState >( 'idle' );
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator, renderHeading } =
+		props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
@@ -108,15 +109,12 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}, [ job, isSiteCompatible ] );
 
 	const onCompleteSiteViewClick = useCallback( () => {
-		if (
-			job?.importerFileType !== 'playground' &&
-			isEnabled( 'onboarding/import-redirect-to-themes' )
-		) {
+		if ( job?.importerFileType !== 'playground' ) {
 			stepNavigator?.navigate?.(
 				addQueryArgs( 'design-setup', { comingFromSuccessfulImport: '1' } )
 			);
 		} else {
-			stepNavigator?.goToSiteViewPage?.();
+			stepNavigator?.goToAdmin?.();
 		}
 	}, [ job ] );
 
@@ -148,7 +146,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				'import__error-message': renderState === 'error',
 			} ) }
 		>
-			{ renderState === 'progress' && <ProgressScreen job={ job } /> }
+			{ renderState === 'progress' && <ProgressScreen job={ job } showHeading={ renderHeading } /> }
 
 			{ renderState === 'error' && (
 				<ErrorMessage
@@ -194,6 +192,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					urlData={ siteAnalyzedData }
 					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 					importerStatus={ job }
+					renderHeading={ renderHeading }
 				/>
 			) }
 
@@ -203,7 +202,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					siteSlug={ siteSlug }
 					job={ job as ImportJob }
 					buttonLabel={
-						job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
+						job?.importerFileType === 'playground' ? translate( 'Go to dashboard' ) : undefined
 					}
 					resetImport={ () => {
 						dispatch( resetImport( siteItem?.ID, job?.importerId ) );

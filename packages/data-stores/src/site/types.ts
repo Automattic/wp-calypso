@@ -126,6 +126,7 @@ export interface SiteDetails {
 	description: string;
 	domain: string;
 	icon?: { ico: string; img: string; media_id: number };
+	is_a8c?: boolean;
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;
@@ -214,7 +215,10 @@ export interface SiteDetailsCapabilities {
 	remove_users: boolean;
 	upload_files: boolean;
 	update_plugins: boolean;
-	view_hosting: boolean;
+	/**
+	 * @deprecated `view_hosting` is no longer used and will be removed in a future release.
+	 */
+	view_hosting?: boolean;
 	view_stats: boolean;
 }
 
@@ -627,6 +631,8 @@ export interface SourceSiteMigrationBase {
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
 	migration_status?: string;
+	is_complete?: boolean;
+	in_progress?: boolean;
 }
 
 export interface Page {

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useEffect } from 'react';
@@ -9,7 +8,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
-import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
 import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
@@ -31,7 +29,6 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingToggle,
 	handleSubmitForm,
 	isAdmin,
-	isJetpack,
 	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
@@ -54,10 +51,7 @@ const SiteSettingsTraffic = ( {
 		<div className="settings-traffic site-settings">
 			<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 			{ ! isAdmin && (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/illustration-404.svg"
-					title={ translate( 'You are not authorized to view this page' ) }
-				/>
+				<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 			) }
 			<JetpackDevModeNotice />
 			{ isAdmin && shouldShowAdvertisingOption && (
@@ -82,10 +76,6 @@ const SiteSettingsTraffic = ( {
 					placeholder={ null }
 				/>
 			) }
-			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
-				<CloudflareAnalyticsSettings />
-			) }
-
 			{ isJetpackAdmin && (
 				<JetpackSiteStats
 					handleAutosavingToggle={ handleAutosavingToggle }

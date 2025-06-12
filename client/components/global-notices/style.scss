@@ -47,7 +47,7 @@
 	}
 }
 
-.global-notices .notice {
+.global-notices .calypso-notice {
 	flex-wrap: nowrap;
 	margin-bottom: 0;
 	text-align: left;
@@ -55,7 +55,7 @@
 	border-radius: 0;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
-	.notice__icon-wrapper {
+	.calypso-notice__icon-wrapper {
 		border-radius: 0;
 	}
 
@@ -65,7 +65,7 @@
 		margin-bottom: 24px;
 		border-radius: 2px;
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			border-radius: 2px 0 0 3px;
 		}
 	}

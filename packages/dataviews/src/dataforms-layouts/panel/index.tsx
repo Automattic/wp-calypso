@@ -138,7 +138,10 @@ function PanelDropdown< Item >( {
 					) }
 					onClick={ onToggle }
 				>
-					<fieldDefinition.render item={ data } />
+					<fieldDefinition.render
+						item={ data }
+						field={ fieldDefinition }
+					/>
 				</Button>
 			) }
 			renderContent={ ( { onClose } ) => (

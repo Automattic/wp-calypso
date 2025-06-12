@@ -321,7 +321,7 @@ const PluginsDashboard = ( {
 
 	const dashboardTitle = selectedPlugin
 		? `Manage ${ selectedPlugin.name } in all sites`
-		: 'Manage Plugins';
+		: 'Manage plugins';
 	return (
 		<Layout
 			className={ clsx(
@@ -333,7 +333,7 @@ const PluginsDashboard = ( {
 			title={ dashboardTitle }
 			sidebarNavigation={
 				isJetpackCloudOrA8CForAgencies && (
-					<SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+					<SidebarNavigation sectionTitle={ translate( 'Manage plugins' ) } />
 				)
 			}
 		>
@@ -350,7 +350,7 @@ const PluginsDashboard = ( {
 				<LayoutTop withNavigation={ false }>
 					{ isA8CForAgencies() && ! pluginSlug && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
-						<Title>{ translate( 'Manage Plugins' ) }</Title>
+						<Title>{ translate( 'Manage plugins' ) }</Title>
 						{ ! pluginSlug && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }

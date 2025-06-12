@@ -17,5 +17,8 @@
 // @wordpress/components stylesheet
 @import "@wordpress/components/build-style/style.css";
 
+// Overrides for @wordpress/base-styles
+@import "./wp-base-styles-overrides";
+
 // Overrides for @wordpress/components
 @import "./wp-components-overrides";

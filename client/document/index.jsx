@@ -1,5 +1,6 @@
 import { parse } from 'path';
 import config from '@automattic/calypso-config';
+import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -19,7 +20,6 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -52,7 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
-			disableHelpCenterAutoOpen,
+			isSSP,
 			isWooDna,
 			lang,
 			languageRevisions,
@@ -81,7 +81,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
-			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
+			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -134,11 +134,7 @@ class Document extends Component {
 		}
 
 		return (
-			<html
-				lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ clsx( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
-			>
+			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
 					title={ headTitle }
 					branchName={ branchName }

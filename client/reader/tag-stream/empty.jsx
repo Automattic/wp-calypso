@@ -67,7 +67,6 @@ class TagEmptyContent extends Component {
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

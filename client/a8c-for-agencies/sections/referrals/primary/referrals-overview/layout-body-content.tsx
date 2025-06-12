@@ -1,7 +1,8 @@
-import { Button, WooLogo } from '@automattic/components';
+import { Button, WooLogo, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { formatNumber } from '@automattic/number-formatters';
 import { reusableBlock } from '@wordpress/icons';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import {
@@ -19,7 +20,6 @@ import {
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -36,8 +36,6 @@ interface Props {
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
-	isArchiveView?: boolean;
-	onReferralRefetch?: () => void;
 }
 
 export default function LayoutBodyContent( {
@@ -46,8 +44,6 @@ export default function LayoutBodyContent( {
 	isLoading,
 	dataViewsState,
 	setDataViewsState,
-	isArchiveView,
-	onReferralRefetch,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -105,7 +101,7 @@ export default function LayoutBodyContent( {
 	if ( referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && ! isArchiveView && (
+				{ ! dataViewsState.selectedItem && (
 					<ConsolidatedViews
 						referrals={ referrals }
 						totalPayouts={ tipaltiData?.PaymentsStatus?.submittedTotal }
@@ -115,8 +111,6 @@ export default function LayoutBodyContent( {
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
-					isArchiveView={ isArchiveView }
-					onArchiveReferral={ () => onReferralRefetch?.() }
 				/>
 			</>
 		);
@@ -143,13 +137,12 @@ export default function LayoutBodyContent( {
 				{ translate( 'Recommend our products.' ) } <br />
 				{ translate( 'Earn up to a %(commissionPercent)s commission.', {
 					args: {
-						commissionPercent: numberFormat( 0.5, {
+						commissionPercent: formatNumber( 0.5, {
 							numberFormatOptions: { style: 'percent' },
 						} ),
 					},
 				} ) }
 			</div>
-
 			<div className="referrals-overview__section-subtitle">
 				{ translate(
 					'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes{{nbsp/}}needed.',

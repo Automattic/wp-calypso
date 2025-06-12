@@ -12,25 +12,23 @@ type UsernameOrEmailButtonProps = {
 	onClick: () => void;
 };
 
-const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
+export const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
 	const { __ } = useI18n();
 	const isDisabled = useSelector( isFormDisabled );
 
 	return (
 		<Button
-			className={ clsx( 'a8c-components-wp-button social-buttons__button', {
-				disabled: isDisabled,
-			} ) }
+			className="a8c-components-wp-button social-buttons__button"
 			onClick={ onClick }
 			disabled={ isDisabled }
 			variant="secondary"
 			__next40pxDefaultSize
 		>
 			<WordPressLogo
-				className={ clsx( 'social-icons', {
-					'social-icons--enabled': ! isDisabled,
-					'social-icons--disabled': !! isDisabled,
-				} ) }
+				className={ clsx(
+					'social-icons',
+					isDisabled ? 'social-icons--disabled' : 'social-icons--enabled'
+				) }
 				size={ 20 }
 			/>
 			<span className="social-buttons__service-name">{ __( 'Continue with email' ) }</span>

@@ -13,7 +13,6 @@ import type {
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:cart-functions' );
-let lastUUID = 100;
 const emptyResponseCart = getEmptyResponseCart();
 
 function convertResponseCartProductToRequestCartProduct(
@@ -249,7 +248,7 @@ export function convertRawResponseCartToResponseCart(
 		products: rawProducts.filter( isRealProduct ).map( ( product ) => {
 			return {
 				...product,
-				uuid: product.product_slug + lastUUID++,
+				uuid: product.cart_item_id,
 			};
 		} ),
 	};

@@ -25,7 +25,6 @@ import {
 	Flow,
 	Navigate,
 	ProvidedDependencies,
-	StepperStep,
 } from '../../internals/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
@@ -221,7 +220,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 	siteId: number,
 	siteSlug: string,
 	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
-	navigate: Navigate< StepperStep[] >,
+	navigate: Navigate,
 	assembleSite: (
 		arg0: any,
 		arg1: string,

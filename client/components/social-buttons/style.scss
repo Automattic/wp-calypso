@@ -1,8 +1,8 @@
 /*rtl:ignore*/
+@import '@automattic/typography/styles/variables';
 
 .social-buttons__button {
 	padding-inline: 18px;
-	font-size: $font-body-small;
 
 	> svg {
 		margin-top: -2px;
@@ -10,10 +10,6 @@
 		border-radius: 0;
 		margin-right: auto;
 		fill: inherit;
-
-		&.disabled {
-			display: none;
-		}
 	}
 
 	> span {

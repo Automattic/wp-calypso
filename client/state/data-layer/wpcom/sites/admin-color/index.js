@@ -1,5 +1,5 @@
 import { ADMIN_COLOR_REQUEST } from 'calypso/state/action-types';
-import { receiveAdminColor } from 'calypso/state/admin-color/actions';
+import { receiveAdminColor, requestAdminColorFailure } from 'calypso/state/admin-color/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -20,9 +20,11 @@ export const handleSuccess =
 		return dispatch( receiveAdminColor( siteId, response.admin_color ) );
 	};
 
-export const handleError = () => {
-	return null;
-};
+export const handleError =
+	( { siteId } ) =>
+	( dispatch ) => {
+		return dispatch( requestAdminColorFailure( siteId ) );
+	};
 
 registerHandlers( 'state/data-layer/wpcom/admin-color/index.js', {
 	[ ADMIN_COLOR_REQUEST ]: [

@@ -35,6 +35,17 @@
 					"path": "${workspaceFolder}/client"
 				}
 			]
+		},
+		{
+			"name": "Debug Current Jest File",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": [ "test-client" ],
+			"args": [ "${relativeFile}", "--", "--runInBand" ],
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"sourceMaps": true
 		}
 	]
 }

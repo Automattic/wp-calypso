@@ -11,9 +11,11 @@ const selectors = {
 
 	// Team people
 	teamUser: ( username: string ) => `.people-profile:has(:text("${ username }"))`,
-	deletedUserContentAction: ( action: 'reassign' | 'delete' ) => `input[value="${ action }"]`,
-	deleteUserButton: 'button:text("Delete user")',
-	deleteConfirmBanner: ':text("Successfully deleted")',
+	clearUserButton: 'button:has-text("Clear")',
+	removeUserButton: ( username: string ) => `button:has-text("Remove ${ username }")`,
+	deleteConfirmBanner: ':text("Invite deleted.")',
+	removeConfirmButton: '.dialog__action-buttons button:has-text("Remove")',
+	removeConfirmBanner: ':text("Successfully removed")',
 
 	// Header
 	addPeopleButton: 'a:text("Add a user")',
@@ -93,33 +95,23 @@ export class PeoplePage {
 	/**
 	 * Delete the user from site.
 	 */
-	async deleteUser(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
+	async deleteUser( username: string ): Promise< void > {
+		// Try the Clear button first (for pending invites)
+		const clearButton = this.page.locator( selectors.clearUserButton );
+		try {
+			await clearButton.waitFor( { state: 'visible', timeout: 2000 } );
+			if ( await clearButton.isVisible() ) {
+				await clearButton.click();
+				await this.page.waitForSelector( selectors.deleteConfirmBanner );
+				return;
+			}
+		} catch ( e ) {}
 
-		const elementHandle = await this.page.waitForSelector(
-			selectors.deletedUserContentAction( 'delete' )
-		);
-
-		// Invoke scroll directly via JavaScript.
-		// Playwright's built-in `click` or `check` methods are not able to
-		// scroll the radio buttons into view for uncertain reasons.
-		await this.page.evaluate(
-			( element: SVGElement | HTMLElement ) => element.scrollIntoView(),
-			elementHandle
-		);
-
-		// Native `page.check` sometimes fails here. Instead, click on the radio and wait for the
-		// Delete user button to become enabled.
-		await this.page.click( selectors.deletedUserContentAction( 'delete' ) );
-		await this.page.waitForSelector(
-			`${ selectors.deletedUserContentAction( 'delete' ) }:checked`
-		);
-
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.deleteUserButton ),
-		] );
-		await this.page.waitForSelector( selectors.deleteConfirmBanner );
+		// If Clear button not found, try Remove flow (for accepted invites)
+		const removeButton = this.page.locator( selectors.removeUserButton( username ) );
+		await removeButton.click();
+		await this.page.click( selectors.removeConfirmButton );
+		await this.page.waitForSelector( selectors.removeConfirmBanner );
 	}
 
 	/* Invites */

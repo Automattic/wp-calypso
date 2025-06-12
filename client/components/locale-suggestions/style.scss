@@ -15,7 +15,7 @@
 }
 
 .locale-suggestions__notice {
-	&.notice.is-compact.is-light.is-info {
+	&.calypso-notice.is-compact.is-light.is-info {
 		margin: 20px auto;
 
 		a.locale-suggestions__locale-link {
@@ -28,10 +28,10 @@
 			background: var(--color-text-inverted);
 		}
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			color: var(--color-neutral-20);
 
-			.notice__icon-wrapper-drop {
+			.calypso-notice__icon-wrapper-drop {
 				background: var(--color-text-inverted);
 			}
 

@@ -1,13 +1,13 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { addQueryArgs } from '@wordpress/url';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
-import type { Navigate, StepperStep } from '../../types';
+import type { Navigate } from '../../types';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
 interface Props {
 	exitFlow: ( path: string ) => void;
-	navigate: Navigate< StepperStep[] >;
+	navigate: Navigate;
 }
 
 interface PostFlowUrlProps {

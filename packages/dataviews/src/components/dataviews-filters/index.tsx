@@ -16,34 +16,32 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import FilterSummary from './filter-summary';
+import Filter from './filter';
 import { default as AddFilter, AddFilterMenu } from './add-filter';
 import ResetFilters from './reset-filters';
 import DataViewsContext from '../dataviews-context';
-import { sanitizeOperators } from '../../utils';
-import { ALL_OPERATORS, OPERATOR_IS, OPERATOR_IS_NOT } from '../../constants';
+import { ALL_OPERATORS, SINGLE_SELECTION_OPERATORS } from '../../constants';
 import type { NormalizedFilter, NormalizedField, View } from '../../types';
 
 export function useFilters( fields: NormalizedField< any >[], view: View ) {
 	return useMemo( () => {
 		const filters: NormalizedFilter[] = [];
 		fields.forEach( ( field ) => {
-			if ( ! field.elements?.length ) {
+			if (
+				field.filterBy === false ||
+				( ! field.elements?.length && ! field.Edit )
+			) {
 				return;
 			}
 
-			const operators = sanitizeOperators( field );
-			if ( operators.length === 0 ) {
-				return;
-			}
-
+			const operators = field.filterBy.operators;
 			const isPrimary = !! field.filterBy?.isPrimary;
 			filters.push( {
 				field: field.id,
 				name: field.label,
-				elements: field.elements,
+				elements: field.elements ?? [],
 				singleSelection: operators.some( ( op ) =>
-					[ OPERATOR_IS, OPERATOR_IS_NOT ].includes( op )
+					SINGLE_SELECTION_OPERATORS.includes( op )
 				),
 				operators,
 				isVisible:
@@ -71,21 +69,16 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 	}, [ fields, view ] );
 }
 
-export function FiltersToggle( {
-	filters,
-	view,
-	onChangeView,
-	setOpenedFilter,
-	isShowingFilter,
-	setIsShowingFilter,
-}: {
-	filters: NormalizedFilter[];
-	view: View;
-	onChangeView: ( view: View ) => void;
-	setOpenedFilter: ( filter: string | null ) => void;
-	isShowingFilter: boolean;
-	setIsShowingFilter: React.Dispatch< React.SetStateAction< boolean > >;
-} ) {
+export function FiltersToggle() {
+	const {
+		filters,
+		view,
+		onChangeView,
+		setOpenedFilter,
+		isShowingFilter,
+		setIsShowingFilter,
+	} = useContext( DataViewsContext );
+
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const onChangeViewWithFilterVisibility = useCallback(
 		( _view: View ) => {
@@ -178,7 +171,7 @@ function FilterVisibilityToggle( {
 	);
 }
 
-function Filters() {
+function Filters( { className }: { className?: string } ) {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
 		useContext( DataViewsContext );
 	const addFilterRef = useRef< HTMLButtonElement >( null );
@@ -200,10 +193,11 @@ function Filters() {
 	const filterComponents = [
 		...visibleFilters.map( ( filter ) => {
 			return (
-				<FilterSummary
+				<Filter
 					key={ filter.field }
 					filter={ filter }
 					view={ view }
+					fields={ fields }
 					onChangeView={ onChangeView }
 					addFilterRef={ addFilterRef }
 					openedFilter={ openedFilter }
@@ -226,8 +220,8 @@ function Filters() {
 		<HStack
 			justify="flex-start"
 			style={ { width: 'fit-content' } }
-			className="dataviews-filters__container"
 			wrap
+			className={ className }
 		>
 			{ filterComponents }
 		</HStack>

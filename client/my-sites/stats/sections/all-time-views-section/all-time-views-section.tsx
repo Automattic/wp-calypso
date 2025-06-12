@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	Card,
 	SimplifiedSegmentedControl,
@@ -63,7 +62,6 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 		'is-loading': ! viewData,
 	} );
 
-	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
@@ -77,7 +75,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 			<div className="highlight-cards">
 				<h3 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h3>
 
-				{ isEmptyStateV2 && isRequestingData && (
+				{ isRequestingData && (
 					<div className="highlight-cards-list">
 						<Card className={ cardWrapperClassName }>
 							<div className="highlight-card-heading">
@@ -91,7 +89,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 						</Card>
 					</div>
 				) }
-				{ isEmptyStateV2 && ! isRequestingData && ! hasData && ! shouldGateStats && (
+				{ ! isRequestingData && ! hasData && ! shouldGateStats && (
 					<StatsCard
 						title={ translate( 'Total views' ) }
 						isEmpty
@@ -112,7 +110,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 					/>
 				) }
 
-				{ ( ( ! isRequestingData && hasData ) || ! isEmptyStateV2 ) && (
+				{ ! isRequestingData && hasData && (
 					<div className="highlight-cards-list">
 						{ /*
 								TODO: Refactor this card along with other similar structure cards to a component
@@ -122,13 +120,11 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							<div className="highlight-card-heading">
 								<h4 className="highlight-card-heading__title">
 									<span>{ translate( 'Total views' ) }</span>
-									{ isEmptyStateV2 && (
-										<StatsInfoArea>
-											{ translate(
-												'Learn about views patterns by analysing total and average daily views to your site.'
-											) }
-										</StatsInfoArea>
-									) }
+									<StatsInfoArea>
+										{ translate(
+											'Learn about views patterns by analysing total and average daily views to your site.'
+										) }
+									</StatsInfoArea>
 								</h4>
 								{ viewData && (
 									<SimplifiedSegmentedControl

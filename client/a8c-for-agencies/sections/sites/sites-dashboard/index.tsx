@@ -94,7 +94,7 @@ export default function SitesDashboard() {
 		showOnlyDevelopmentSites,
 	] );
 
-	// Reset back to page one when entering Needs Attention, Favourites, or Development page.
+	// Reset back to page one when entering Needs attention, Favourites, or Development page.
 	const selectedFilters = getSelectedFilters( dataViewsState.filters );
 	const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
 	const prevIsOnFavouritesPageRef = useRef( showOnlyFavorites );
@@ -246,9 +246,9 @@ export default function SitesDashboard() {
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
 			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop withNavigation={ navItems.length > 1 }>
+				<LayoutTop isFullWidth withNavigation={ navItems.length > 1 }>
 					<ProvisioningSiteNotification />
-					<A4AAgencyApprovalNotice />
+					<A4AAgencyApprovalNotice isFullWidth />
 
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>

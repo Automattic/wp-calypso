@@ -1,12 +1,7 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 
-type PurchaseActions =
-	| 'Renew annually'
-	| 'Renew monthly'
-	| 'Pick another plan'
-	| 'Remove plan'
-	| 'Cancel plan';
+type PurchaseActions = 'Cancel plan' | 'Cancel subscription';
 
 /**
  * Represents the /me endpoint.
@@ -39,6 +34,20 @@ export class PurchasesPage {
 	 * @param {string} siteSlug Site slug.
 	 */
 	async clickOnPurchase( name: string, siteSlug: string ) {
+		const purchasesListDataView = this.page.locator( '#purchases-list .dataviews-wrapper' );
+		const purchasesListCardView = this.page.locator( '.card.purchase-item' );
+		await purchasesListCardView.or( purchasesListDataView ).first().waitFor( { state: 'visible' } );
+
+		if ( await purchasesListDataView.isVisible() ) {
+			await this.page
+				.locator( '#purchases-list .dataviews-view-table__row' )
+				.filter( { hasText: name } )
+				.filter( { hasText: siteSlug } )
+				.locator( '.dataviews-view-table__actions-column button' )
+				.click();
+			return;
+		}
+
 		await this.page
 			.locator( '.card.purchase-item' )
 			.filter( { hasText: name } )
@@ -49,23 +58,15 @@ export class PurchasesPage {
 	/* Purchase detail view */
 
 	/**
-	 * Clicks on an action for the purchase.
+	 * Clicks a cancellation action for the purchase.
 	 *
 	 * @param {PurchaseActions} action Action to click.
 	 */
-	async purchaseAction( action: PurchaseActions ) {
-		if ( action === 'Pick another plan' ) {
-			await this.page.getByRole( 'link', { name: action } ).click();
-			return await this.page.waitForURL( /plan/ );
-		}
+	async cancelPurchase( action: PurchaseActions ) {
+		await this.page.getByRole( 'link', { name: action } ).click();
 
-		await Promise.race( [
-			this.page.getByRole( 'button', { name: action } ).click(),
-			this.page.getByRole( 'link', { name: action } ).click(),
-		] );
-
-		if ( action === 'Cancel plan' ) {
-			await this.page.getByRole( 'button', { name: 'Cancel Subscription' } ).click();
+		if ( action === 'Cancel plan' || action === 'Cancel subscription' ) {
+			await this.page.getByRole( 'button', { name: 'Cancel subscription' } ).click();
 		}
 	}
 }

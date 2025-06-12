@@ -1,4 +1,4 @@
-import { isEcommercePlan } from '@automattic/calypso-products/src';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';

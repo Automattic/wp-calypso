@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
@@ -58,7 +57,6 @@ const DiscoverStream = ( props ) => {
 		<Stream
 			{ ...props }
 			streamKey={ buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags ) }
-			showBack={ false } // We will instead add this through the header section, since not all discover tabs have a stream to render the back button
 			sidebarTabTitle={
 				selectedTab === DEFAULT_TAB ? translate( 'Sites' ) : translate( 'Related' )
 			}
@@ -70,4 +68,4 @@ const DiscoverStream = ( props ) => {
 	);
 };
 
-export default withDimensions( DiscoverStream );
+export default DiscoverStream;

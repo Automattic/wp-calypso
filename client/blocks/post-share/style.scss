@@ -12,7 +12,7 @@ $section-border: solid 1px var(--color-neutral-5);
 	position: relative;
 	background-color: var(--color-surface);
 
-	.notice {
+	.calypso-notice {
 		margin-bottom: 0;
 
 		+ div > .post-share__main {
@@ -20,7 +20,7 @@ $section-border: solid 1px var(--color-neutral-5);
 		}
 
 		&,
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			border-radius: 0;
 		}
 	}

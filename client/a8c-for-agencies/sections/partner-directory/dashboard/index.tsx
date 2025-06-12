@@ -7,7 +7,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -99,15 +98,13 @@ const PartnerDirectoryDashboard = () => {
 	const onSubmitPublishProfileSuccess = useCallback(
 		( response: Agency ) => {
 			// Update the store with the new agency data
-			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
+			if ( response ) {
+				dispatch( setActiveAgency( { ...agency, ...response } ) );
+			}
 
-			reduxDispatch(
-				successNotice( translate( 'Your profile has been saved!' ), {
-					duration: 6000,
-				} )
-			);
+			dispatch( successNotice( translate( 'Your profile has been saved!' ), { duration: 6000 } ) );
 		},
-		[ agency, translate ]
+		[ agency, translate, dispatch ]
 	);
 
 	const { onSubmit: submitPublishProfile, isSubmitting: isSubmittingPublishProfile } =
@@ -264,7 +261,7 @@ const PartnerDirectoryDashboard = () => {
 						{
 							// Application approved, but the Directory page is not available yet
 							application.key === 'approved' && ! brandMeta.isAvailable
-								? translate( 'This partner directory is launching soon.' )
+								? translate( 'This Partner Directory is launching soon.' )
 								: ''
 						}
 					</div>

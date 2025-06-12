@@ -1,6 +1,11 @@
-import { FoldableCard } from '@automattic/components';
+import { FoldableCard, WordPressLogo } from '@automattic/components';
+import {
+	formatCurrency,
+	formatNumberCompact,
+	getCurrencyObject,
+} from '@automattic/number-formatters';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { useTranslate, numberFormatCompact, formatCurrency, getCurrencyObject } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -9,7 +14,6 @@ import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -23,8 +27,8 @@ const formatCurrencyCompact = ( amount: number, currencyCode = 'USD' ) => {
 	const currencyObject = getCurrencyObject( amount, currencyCode );
 	const formattedAmount =
 		currencyObject.symbolPosition === 'before'
-			? `${ currencyObject.symbol }${ numberFormatCompact( amount ) }`
-			: `${ numberFormatCompact( amount ) }${ currencyObject.symbol }`;
+			? `${ currencyObject.symbol }${ formatNumberCompact( amount ) }`
+			: `${ formatNumberCompact( amount ) }${ currencyObject.symbol }`;
 
 	return formattedAmount;
 };
@@ -66,7 +70,6 @@ export default function CommissionOverview() {
 					/>
 				</LayoutHeader>
 			</LayoutTop>
-
 			<LayoutBody>
 				<div className="commission-overview__section-heading">
 					{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {

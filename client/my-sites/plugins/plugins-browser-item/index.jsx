@@ -2,9 +2,10 @@ import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -15,7 +16,11 @@ import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibilit
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
-import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import {
+	useLocalizedPlugins,
+	siteObjectsToSiteIds,
+	formatPluginRating,
+} from 'calypso/my-sites/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
@@ -288,13 +293,13 @@ const PluginsBrowserListElement = ( props ) => {
 										color="#f0b849" // alert-yellow
 									/>
 									<span className="plugins-browser-item__rating-value">
-										{ numberFormat( plugin.rating / 20, { decimals: 1 } ) }
+										{ formatPluginRating( plugin.rating ) }
 									</span>
 									{ Number.isInteger( plugin.num_ratings ) && (
 										<span className="plugins-browser-item__number-of-ratings">
 											{ translate( '(%(number_of_ratings)s)', {
 												args: {
-													number_of_ratings: numberFormat( plugin.num_ratings ),
+													number_of_ratings: formatNumber( plugin.num_ratings ),
 												},
 											} ) }
 										</span>

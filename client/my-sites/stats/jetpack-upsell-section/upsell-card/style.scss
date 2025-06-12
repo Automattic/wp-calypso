@@ -4,6 +4,18 @@
 
 .jetpack-upsell-card {
 	--jetpack-yelow-off: #edf2e2;
+
+	&.card {
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+		box-shadow: none;
+
+		@media (max-width: $break-medium) {
+			border-radius: 0;
+			border-width: 0 0 1px 0;
+			margin-bottom: 0;
+		}
+	}
 }
 
 .jetpack-upsell-card__title {

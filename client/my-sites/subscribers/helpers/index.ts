@@ -1,4 +1,5 @@
 import { SubscribersFilterBy } from '../constants';
+import type { Subscriber } from '../types';
 
 const getSubscribersCacheKey = ( {
 	siteId,
@@ -8,7 +9,6 @@ const getSubscribersCacheKey = ( {
 	sortTerm,
 	filters,
 	sortOrder,
-	use_new_helper,
 }: {
 	siteId: number | undefined | null;
 	page?: number;
@@ -17,18 +17,7 @@ const getSubscribersCacheKey = ( {
 	sortTerm?: string;
 	filters?: SubscribersFilterBy[];
 	sortOrder?: 'asc' | 'desc';
-	use_new_helper?: boolean;
-} ) => [
-	'subscribers',
-	siteId,
-	page,
-	perPage,
-	search,
-	sortTerm,
-	filters,
-	sortOrder,
-	use_new_helper,
-];
+} ) => [ 'subscribers', siteId, page, perPage, search, sortTerm, filters, sortOrder ];
 
 const getSubscriberDetailsCacheKey = (
 	siteId: number | undefined | null,
@@ -39,4 +28,18 @@ const getSubscriberDetailsCacheKey = (
 
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
-export { getSubscriberDetailsCacheKey, getSubscriberDetailsType, getSubscribersCacheKey };
+const getSubscriptionIdFromSubscriber = ( subscriber: Subscriber ): number => {
+	return (
+		subscriber.email_subscription_id ||
+		subscriber.subscription_id ||
+		subscriber.wpcom_subscription_id ||
+		0
+	);
+};
+
+export {
+	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsType,
+	getSubscribersCacheKey,
+	getSubscriptionIdFromSubscriber,
+};

@@ -30,6 +30,7 @@ class SecurityCheckupNavigationItem extends Component {
 		onClick: PropTypes.func,
 		path: PropTypes.string,
 		text: PropTypes.string,
+		disabled: PropTypes.bool,
 	};
 
 	render() {
@@ -43,6 +44,7 @@ class SecurityCheckupNavigationItem extends Component {
 				onClick={ this.props.onClick }
 				external={ this.props.external }
 				className="security-checkup__nav-item"
+				disabled={ this.props.disabled }
 			>
 				<SecurityCheckupNavigationItemContents
 					materialIcon={ this.props.materialIcon }

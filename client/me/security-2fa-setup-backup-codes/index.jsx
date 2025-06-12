@@ -7,7 +7,6 @@ import Notice from 'calypso/components/notice';
 import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
 import wp from 'calypso/lib/wp';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
-import Security2faProgress from 'calypso/me/security-2fa-progress';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Security2faSetupBackupCodes extends Component {
@@ -85,7 +84,6 @@ class Security2faSetupBackupCodes extends Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 3 } isSmsFlow={ this.props.isSmsFlow } />
 				<p>
 					{ this.props.translate(
 						'Backup codes let you access your account if your phone is ' +

@@ -85,7 +85,7 @@ const newsletter: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
@@ -140,7 +140,7 @@ const newsletter: Flow = {
 					);
 
 				case 'subscribers':
-					completeSubscribersTask();
+					await completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}

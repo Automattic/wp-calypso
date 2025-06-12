@@ -1,4 +1,4 @@
-import { formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
 import { getUnformattedDomainPrice } from './get-unformatted-domain-price';
 
 export function getDomainPrice( slug, productsList, currencyCode, stripZeros = false ) {

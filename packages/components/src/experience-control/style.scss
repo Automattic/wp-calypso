@@ -1,0 +1,80 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$color-good: #255C33;
+$color-neutral: #2F2F2F;
+$color-bad: #660C0D;
+$color-background-good: #EDF8EF;
+$color-background-neutral: #F0F0F0;
+$color-background-bad: #FAE7E8;
+
+$experience-types: (
+	'is-good': (
+		border: $color-background-good,
+		background: $color-good,
+		hover: $color-background-good
+	),
+	'is-neutral': (
+		border: $color-background-neutral,
+		background: $color-neutral,
+		hover: $color-background-neutral
+	),
+	'is-bad': (
+		border: $color-background-bad,
+		background: $color-bad,
+		hover: $color-background-bad
+	)
+);
+
+.a8c-experience-control__fieldset {
+	display: flex;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.a8c-experience-control__option {
+	display: inline-flex;
+	border-radius: 50%;
+	height: 32px;
+	width: 32px;
+	border-width: 1px;
+	border-style: solid;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	position: relative;
+
+	&:focus-within {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2* var(--wp-admin-border-width-focus)) var(--color-primary-50);
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+
+	@each $type, $colors in $experience-types {
+		&.#{$type} {
+			border-color: map-get($colors, 'border');
+
+			&:has(input[type="radio"]:checked) {
+				background-color: map-get($colors, 'background');
+			}
+
+			&:hover, &:focus-within {
+				&:not(:has(input[type="radio"]:checked)) {
+					background-color: map-get($colors, 'hover');
+				}
+			}
+		}
+	}
+
+	&:has(input[type="radio"]:checked) {
+		svg path {
+			fill: var(--color-text-inverted);
+		}
+	}
+}
+
+.a8c-experience-control__option-icon {
+	display: flex;
+}

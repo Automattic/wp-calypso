@@ -27,20 +27,20 @@ import {
 	getPlan,
 	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
-import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
-import { useBreakpoint } from '@automattic/viewport-react';
-import { Tooltip } from '@wordpress/components';
+import { Tooltip, Modal, Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { Icon as WpIcon, check, close } from '@wordpress/icons';
+import { Icon as WpIcon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
 import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
+import type { FeatureObject } from '@automattic/calypso-products';
 
 export type UpgradeModalClosedBy = 'close_icon' | 'cancel_button' | 'dialog_action';
 
@@ -51,15 +51,15 @@ interface UpgradeModalProps {
 	slug: string;
 	isOpen: boolean;
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
-	isMarketplacePlanSubscriptionNeeeded?: boolean;
+	isMarketplacePlanSubscriptionNeeded?: boolean;
 	requiredPlan: string;
 	marketplaceProduct?: ProductListItem;
 	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
+	isPlanSufficient: boolean;
 }
 
 interface UpgradeModalContent {
-	header: JSX.Element | null;
 	text: JSX.Element | null;
 	price: JSX.Element | null;
 	action: JSX.Element | null;
@@ -69,20 +69,19 @@ interface UpgradeModalContent {
  * - This component provides users with details about a specific theme and outlines the plan they need to upgrade to.
  */
 export const ThemeUpgradeModal = ( {
-	additionalClassNames,
-	additionalOverlayClassNames,
 	slug,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
-	isMarketplacePlanSubscriptionNeeeded,
+	isMarketplacePlanSubscriptionNeeded,
 	requiredPlan,
 	marketplaceProduct,
 	closeModal,
 	checkout,
+	isPlanSufficient,
 }: UpgradeModalProps ) => {
 	const translate = useTranslate();
 	const theme = useThemeDetails( slug );
-	const isDesktop = useBreakpoint( '>782px' );
+	const [ isExpandedListOpen, setIsExpandedListOpen ] = useState( false );
 
 	// Check current theme: Does it have a plugin bundled?
 	const themeSoftwareSet = theme?.data?.taxonomies?.theme_software_set as
@@ -112,9 +111,6 @@ export const ThemeUpgradeModal = ( {
 		const planPrice = requiredPlanProduct?.combined_cost_display;
 
 		return {
-			header: (
-				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
-			),
 			text: (
 				<p>
 					{ translate(
@@ -136,13 +132,16 @@ export const ThemeUpgradeModal = ( {
 				<div className="theme-upgrade-modal__actions bundle">
 					<Button
 						className="theme-upgrade-modal__cancel"
+						__next40pxDefaultSize
+						variant="secondary"
 						onClick={ () => closeModal( 'cancel_button' ) }
 					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
 						className="theme-upgrade-modal__upgrade-plan"
-						primary
+						__next40pxDefaultSize
+						variant="primary"
 						onClick={ () => checkout() }
 					>
 						{ translate( 'Upgrade to activate' ) }
@@ -219,22 +218,22 @@ export const ThemeUpgradeModal = ( {
 		);
 
 		return {
-			header: (
-				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
-			),
 			text: <p>{ planText }</p>,
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle">
 					<Button
 						className="theme-upgrade-modal__cancel"
+						__next40pxDefaultSize
+						variant="secondary"
 						onClick={ () => closeModal( 'cancel_button' ) }
 					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
 						className="theme-upgrade-modal__upgrade-plan"
-						primary
+						__next40pxDefaultSize
+						variant="primary"
 						onClick={ () => checkout() }
 					>
 						{ translate( 'Upgrade to activate' ) }
@@ -295,17 +294,13 @@ export const ThemeUpgradeModal = ( {
 
 		if ( ! bundleSettings ) {
 			return {
-				header: null,
 				text: null,
 				price: null,
 				action: null,
 			};
 		}
 
-		const bundleName = bundleSettings.name;
 		const bundledPluginMessage = bundleSettings.bundledPluginMessage;
-		const color = bundleSettings.color;
-		const Icon = bundleSettings.iconComponent;
 		const planText = getPlanText(
 			businessPlanName as string,
 			requiredPlanProduct?.product_term || '',
@@ -313,19 +308,6 @@ export const ThemeUpgradeModal = ( {
 		);
 
 		return {
-			header: (
-				<>
-					<div className="theme-upgrade-modal__logo" style={ { backgroundColor: color } }>
-						<Icon />
-					</div>
-					<h1 className="theme-upgrade-modal__heading bundle">
-						{
-							// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-							translate( 'Unlock this %(bundleName)s theme', { args: { bundleName } } )
-						}
-					</h1>
-				</>
-			),
 			text: (
 				<p>
 					{ bundledPluginMessage } { planText }
@@ -336,13 +318,16 @@ export const ThemeUpgradeModal = ( {
 				<div className="theme-upgrade-modal__actions bundle">
 					<Button
 						className="theme-upgrade-modal__cancel"
+						__next40pxDefaultSize
+						variant="secondary"
 						onClick={ () => closeModal( 'cancel_button' ) }
 					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
 						className="theme-upgrade-modal__upgrade-plan"
-						primary
+						__next40pxDefaultSize
+						variant="primary"
 						onClick={ () => checkout() }
 					>
 						{ translate( 'Upgrade Plan' ) }
@@ -379,41 +364,50 @@ export const ThemeUpgradeModal = ( {
 				: translate( '%(cost)s per month', { args: { cost: productPrice || '' } } );
 
 		return {
-			header: (
-				<h1 className="theme-upgrade-modal__heading bundle externally-managed">
-					{ isDesktop
-						? translate( 'Unlock this partner theme' )
-						: translate( 'Unlock this theme' ) }
-				</h1>
-			),
 			text: (
 				<>
-					<p>
-						{ translate(
-							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
-							{
-								args: {
-									businessPlanName: businessPlanName,
-									commercePlanName: ecommercePlanName,
-								},
-							}
-						) }
-					</p>
+					{ ! isPlanSufficient && (
+						<p>
+							{ translate(
+								'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
+								{
+									args: {
+										businessPlanName: businessPlanName,
+										commercePlanName: ecommercePlanName,
+									},
+								}
+							) }
+						</p>
+					) }
 					<div>
-						<label>
-							<strong>{ translate( 'To activate this theme you need:' ) }</strong>
-						</label>
-						<br />
 						<div className="theme-upgrade-modal__price-summary">
 							{ isMarketplaceThemeSubscriptionNeeded && (
-								<div className="theme-upgrade-modal__price-item">
-									<label>{ theme.data?.name }</label>
-									<label className="theme-upgrade-modal__price-value">
-										<strong>{ productPriceText }</strong>
-									</label>
-								</div>
+								<>
+									{ isPlanSufficient ? (
+										<p>
+											{ translate(
+												"Great choice. You're about to give your site a fresh look. This theme is available for an extra {{b}}%(productPriceText)s{{/b}}.",
+												{
+													components: {
+														b: <strong />,
+													},
+													args: {
+														productPriceText,
+													},
+												}
+											) }
+										</p>
+									) : (
+										<div className="theme-upgrade-modal__price-item">
+											<label>{ theme.data?.name }</label>
+											<label className="theme-upgrade-modal__price-value">
+												<strong>{ productPriceText }</strong>
+											</label>
+										</div>
+									) }
+								</>
 							) }
-							{ isMarketplacePlanSubscriptionNeeeded && (
+							{ isMarketplacePlanSubscriptionNeeded && (
 								<div className="theme-upgrade-modal__price-item">
 									<label>
 										{ translate( '%(businessPlanName)s plan', {
@@ -436,13 +430,16 @@ export const ThemeUpgradeModal = ( {
 				<div className="theme-upgrade-modal__actions bundle externally-managed">
 					<Button
 						className="theme-upgrade-modal__cancel"
+						__next40pxDefaultSize
+						variant="secondary"
 						onClick={ () => closeModal( 'cancel_button' ) }
 					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
 						className="theme-upgrade-modal__upgrade-plan"
-						primary
+						__next40pxDefaultSize
+						variant="primary"
 						onClick={ () => checkout() }
 					>
 						{ translate( 'Continue' ) }
@@ -509,14 +506,23 @@ export const ThemeUpgradeModal = ( {
 	let modalData = null;
 	let featureList = null;
 	let featureListHeader = null;
+	let modalTitle = translate( 'Unlock this theme' );
 
 	if ( showBundleVersion ) {
+		const bundleName = bundleSettings?.name || '';
+		// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+		modalTitle = String(
+			translate( 'Unlock this %(bundleName)s theme', {
+				args: { bundleName },
+			} )
+		);
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
 			args: { businessPlanName: businessPlanName },
 		} );
 	} else if ( isExternallyManaged ) {
+		modalTitle = translate( 'Unlock this partner theme' );
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
@@ -536,56 +542,78 @@ export const ThemeUpgradeModal = ( {
 		} );
 	}
 
+	// Map features list so that if list is bigger than 4, we only show 3 and "view more" link.
+	const mapFeatureList = ( featureList: FeatureObject[] ) => {
+		if ( featureList.length <= 4 || isExpandedListOpen ) {
+			return featureList.map( ( feature, i ) => (
+				<li key={ i } className="theme-upgrade-modal__included-item">
+					<Tooltip text={ feature.getDescription?.() as string } position="top left">
+						<div>
+							<WpIcon className="wpicon" icon={ check } size={ 24 } />
+							{ feature.getTitle() }
+						</div>
+					</Tooltip>
+				</li>
+			) );
+		}
+		return (
+			<>
+				{ featureList.slice( 0, 3 ).map( ( feature, i ) => (
+					<li key={ i } className="theme-upgrade-modal__included-item">
+						<Tooltip text={ feature.getDescription?.() as string } position="top left">
+							<div>
+								<WpIcon className="wpicon" icon={ check } size={ 24 } />
+								{ feature.getTitle() }
+							</div>
+						</Tooltip>
+					</li>
+				) ) }
+				<li className="theme-upgrade-modal__included-item">
+					<Button
+						variant="link"
+						onClick={ () => {
+							setIsExpandedListOpen( true );
+						} }
+					>
+						{ translate( 'View more' ) }
+					</Button>
+				</li>
+			</>
+		);
+	};
+
 	const features =
-		isExternallyManaged && featureList.length === 0 ? null : (
+		featureList.length === 0 ? null : (
 			<div className="theme-upgrade-modal__included">
 				<h2>{ featureListHeader }</h2>
-				<ul>
-					{ featureList.map( ( feature, i ) => (
-						<li key={ i } className="theme-upgrade-modal__included-item">
-							<Tooltip text={ feature.getDescription?.() as string } position="top left">
-								<div>
-									<WpIcon className="wpicon" icon={ check } size={ 24 } />
-									{ feature.getTitle() }
-								</div>
-							</Tooltip>
-						</li>
-					) ) }
-				</ul>
+				<ul>{ mapFeatureList( featureList ) }</ul>
 			</div>
 		);
 
+	if ( ! isOpen ) {
+		return null;
+	}
+
 	return (
-		<Dialog
-			additionalClassNames={ additionalClassNames }
-			additionalOverlayClassNames={ additionalOverlayClassNames }
-			className={ clsx( 'theme-upgrade-modal', { loading: isLoading } ) }
-			isVisible={ isOpen }
-			onClose={ () => closeModal( 'dialog_action' ) }
-			isFullScreen
+		<Modal
+			className={ clsx( { loading: isLoading } ) }
+			title={ modalTitle }
+			onRequestClose={ () => closeModal( 'dialog_action' ) }
+			size="medium"
 		>
 			{ isLoading && <LoadingEllipsis /> }
 			{ ! isLoading && (
-				<>
-					<div className="theme-upgrade-modal__col">
-						{ modalData.header }
+				<div className="theme-upgrade-modal">
+					<div className="theme-upgrade-modal__purchases">
 						{ modalData.text }
 						{ modalData.price }
-						{ /* We don't want to show features on mobile for Partner themes */ }
-						{ ! isExternallyManaged && features }
-						{ modalData.action }
 					</div>
-					<div className="theme-upgrade-modal__col">{ features }</div>
-					<Button
-						className="theme-upgrade-modal__close"
-						borderless
-						onClick={ () => closeModal( 'close_icon' ) }
-					>
-						<WpIcon className="wpicon" icon={ close } size={ 24 } />
-						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
-					</Button>
-				</>
+					{ ! isPlanSufficient && features && (
+						<div className="theme-upgrade-modal__features">{ features }</div>
+					) }
+					{ modalData.action }
+				</div>
 			) }
-		</Dialog>
+		</Modal>
 	);
 };

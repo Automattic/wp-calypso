@@ -38,7 +38,7 @@ type ExchangeCodeForTokenResponse = {
 	access_token: string;
 };
 
-const GitHubLoginButton = ( {
+export const GitHubLoginButton = ( {
 	children,
 	responseHandler,
 	onClick,
@@ -181,9 +181,8 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<Button
-					className={ clsx( 'a8c-components-wp-button social-buttons__button github', {
-						disabled: isDisabled,
-					} ) }
+					className="a8c-components-wp-button social-buttons__button github"
+					disabled={ isDisabled }
 					data-social-service="github"
 					{ ...eventHandlers }
 					variant="secondary"

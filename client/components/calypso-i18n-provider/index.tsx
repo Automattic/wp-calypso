@@ -1,4 +1,5 @@
 import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
+import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
 import { defaultI18n } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
 import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
@@ -18,15 +19,16 @@ const CalypsoI18nProvider: FunctionComponent< { i18n?: I18N; children?: React.Re
 			setLocaleSlug( i18n.getLocaleSlug() );
 		};
 
-		i18n.on( 'change', onChange );
-
-		return () => {
-			i18n.off( 'change', onChange );
-		};
+		return i18n.subscribe( onChange );
 	}, [ i18n ] );
 
 	useEffect( () => {
 		defaultI18n.resetLocaleData( i18n.getLocale() );
+
+		if ( localeSlug ) {
+			// Propagate the locale to @automattic/number-formatters
+			setLocaleNumberFormatters( localeSlug );
+		}
 	}, [ localeSlug ] );
 
 	return (

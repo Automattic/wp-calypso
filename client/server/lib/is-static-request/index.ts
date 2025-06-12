@@ -6,7 +6,6 @@ const STATIC_PATHS = [
 	'/calypso/',
 	'/service-worker',
 	'/nostats.js',
-	'/version',
 	'/__webpack_hmr',
 	'_favicon.ico',
 ];

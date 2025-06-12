@@ -122,14 +122,14 @@
 }
 
 .sharing-services-group__services {
-	.notice.is-compact {
+	.calypso-notice.is-compact {
 		margin-bottom: 0;
 		margin-left: -22px;
 		margin-right: -22px;
 		display: flex;
 	}
 }
-.sharing-service--fediverse .notice.is-compact {
+.sharing-service--fediverse .calypso-notice.is-compact {
 	margin-left: 0;
 	margin-right: 0;
 }

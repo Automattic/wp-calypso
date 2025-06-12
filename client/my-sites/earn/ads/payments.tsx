@@ -1,7 +1,8 @@
 import { Badge, Card } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import Notice from 'calypso/components/notice';
@@ -76,7 +77,7 @@ const WordAdsPayments = () => {
 						) }
 					</td>
 					<td className="ads__payments-history-value">
-						${ numberFormat( payment.amount, { decimals: 2 } ) }
+						${ formatNumber( payment.amount, { decimals: 2 } ) }
 					</td>
 					<td className="ads__payments-history-value">
 						<Badge

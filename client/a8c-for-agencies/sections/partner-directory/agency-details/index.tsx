@@ -18,8 +18,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
@@ -43,6 +42,7 @@ type Props = {
 
 const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { validate, validationError, updateValidationError } = useDetailsFormValidation();
 
@@ -52,32 +52,31 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
-			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
+			if ( response ) {
+				dispatch( setActiveAgency( { ...agency, ...response } ) );
+			}
 
-			reduxDispatch(
+			dispatch(
 				successNotice( translate( 'Your agency profile was submitted!' ), {
 					displayOnNextPage: true,
 					duration: 6000,
 				} )
 			);
-			isFeedbackShown
-				? page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK )
-				: page(
-						addQueryArgs( A4A_FEEDBACK_LINK, {
-							type: FeedbackType.PDDetailsAdded,
-						} )
-				  );
+
+			if ( isFeedbackShown ) {
+				page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+			} else {
+				page( addQueryArgs( A4A_FEEDBACK_LINK, { type: FeedbackType.PDDetailsAdded } ) );
+			}
 		},
-		[ agency, isFeedbackShown, translate ]
+		[ agency, isFeedbackShown, translate, dispatch ]
 	);
 
 	const onSubmitError = useCallback( () => {
-		reduxDispatch(
-			errorNotice( translate( 'Something went wrong submitting the profile!' ), {
-				duration: 6000,
-			} )
+		dispatch(
+			errorNotice( translate( 'Something went wrong submitting the profile!' ), { duration: 6000 } )
 		);
-	}, [ translate ] );
+	}, [ translate, dispatch ] );
 
 	const { formData, setFormData } = useDetailsForm( {
 		initialFormData,

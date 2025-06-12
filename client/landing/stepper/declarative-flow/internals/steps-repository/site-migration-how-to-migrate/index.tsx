@@ -100,8 +100,9 @@ const SiteMigrationHowToMigrate: StepType< {
 						},
 					}
 			  )
-			: translate(
-					'Skip the migration hassle. Our team handles everything without disrupting your current site, plus you get 50% off our annual %(planName)s plan.',
+			: // translators: %% is the percentage symbol, please leave it as is. %(planName)s is the name of the Business plan.
+			  translate(
+					'Skip the migration hassle. Our team handles everything without disrupting your current site, plus you get 50%% off our annual %(planName)s plan.',
 					{
 						args: {
 							planName,
@@ -150,8 +151,9 @@ const SiteMigrationHowToMigrate: StepType< {
 							rightElement={
 								<Step.SkipButton
 									onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }
-									label={ translate( "I'll do it myself" ) }
-								/>
+								>
+									{ translate( "I'll do it myself" ) }
+								</Step.SkipButton>
 							}
 						/>
 					}

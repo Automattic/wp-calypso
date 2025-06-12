@@ -17,8 +17,6 @@ import Geochart from '../geochart';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-picker';
-import DownloadCsv from '../stats-download-csv';
-import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -42,6 +40,7 @@ class StatsModule extends Component {
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
+		toggleControl: PropTypes.node,
 		listItemClassName: PropTypes.string,
 		gateStats: PropTypes.bool,
 		gateDownloads: PropTypes.bool,
@@ -264,15 +263,14 @@ class StatsModule extends Component {
 			moduleStrings,
 			statType,
 			query,
-			period,
 			translate,
 			useShortLabel,
 			metricLabel,
 			additionalColumns,
+			toggleControl,
 			mainItemLabel,
 			listItemClassName,
 			gateStats,
-			gateDownloads,
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
@@ -292,30 +290,6 @@ class StatsModule extends Component {
 		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
 
-		const renderDownloadCsv = () => {
-			// Disable for the email module as it doesn't work correctly.
-			if ( statType === 'statsEmailsSummary' ) {
-				return null;
-			}
-
-			if ( gateDownloads ) {
-				return <DownloadCsvUpsell siteId={ siteId } borderless />;
-			}
-
-			return (
-				<DownloadCsv
-					statType={ statType }
-					query={ query }
-					path={ path }
-					borderless
-					period={ period }
-					skipQuery={ skipQuery }
-				/>
-			);
-		};
-
-		const downloadCsv = renderDownloadCsv();
-
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
 		// TODO: Translate empty message
 		// But not yet as this is just a placeholder for now.
@@ -332,13 +306,12 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
-					downloadCsv={ downloadCsv }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={
 						displaySummaryLink && ! summary
 							? {
-									url: this.getSummaryLink(),
+									url: summaryLink,
 									label:
 										data.length >= 10
 											? translate( 'View all', {
@@ -358,7 +331,8 @@ class StatsModule extends Component {
 						)
 					}
 					additionalColumns={ additionalColumns }
-					splitHeader={ !! additionalColumns }
+					splitHeader={ !! toggleControl || !! additionalColumns }
+					toggleControl={ toggleControl }
 					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }

@@ -8,6 +8,7 @@ import {
 	invoicesContext,
 	paymentMethodsContext,
 	paymentMethodsAddContext,
+	crmDownloadsContext,
 } from './controller';
 
 export default function () {
@@ -28,7 +29,7 @@ export default function () {
 	// Billing
 	page( '/purchases/billing', requireAccessContext, billingContext, makeLayout, clientRender );
 
-	// Payment Methods
+	// Payment methods
 	page(
 		'/purchases/payment-methods',
 		requireAccessContext,
@@ -46,4 +47,13 @@ export default function () {
 
 	// Invoices
 	page( '/purchases/invoices', requireAccessContext, invoicesContext, makeLayout, clientRender );
+
+	// CRM Downloads
+	page(
+		'/purchases/crm-downloads/:licenseKey',
+		// requireAccessContext,
+		crmDownloadsContext,
+		makeLayout,
+		clientRender
+	);
 }

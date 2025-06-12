@@ -1,51 +1,20 @@
-import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import {
+	isDomainRegistration,
+	isDomainMapping,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
-const CancelPurchaseDomainOptions = ( {
-	includedDomainPurchase,
-	cancelBundledDomain,
-	confirmCancelBundledDomain = false,
-	purchase,
-	onCancelConfirmationStateChange,
-} ) => {
+const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
 	const translate = useTranslate();
-	const [ confirmCancel, setConfirmCancel ] = useState( confirmCancelBundledDomain );
-
-	useEffect( () => {
-		setConfirmCancel( confirmCancelBundledDomain );
-	}, [ confirmCancelBundledDomain ] );
-
-	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
-		return null;
-	}
-
-	const onCancelBundledDomainChange = ( event ) => {
-		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
-		onCancelConfirmationStateChange( {
-			cancelBundledDomain: newCancelBundledDomainValue,
-			confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancel,
-		} );
-	};
-
-	const onConfirmCancelBundledDomainChange = ( event ) => {
-		const checked = event.target.checked;
-		setConfirmCancel( checked );
-		onCancelConfirmationStateChange( {
-			cancelBundledDomain,
-			confirmCancelBundledDomain: checked,
-		} );
-	};
-
-	const planCostText = purchase.totalRefundText;
-
-	const NonRefundableDomainMappingMessage = () => (
+	return (
 		<div>
 			<p>
 				{ translate(
@@ -60,8 +29,11 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+};
 
-	const CancelableDomainMappingMessage = () => (
+const CancelableDomainMappingMessage = ( { includedDomainPurchase, purchase } ) => {
+	const translate = useTranslate();
+	return (
 		<div>
 			<p>
 				{ translate(
@@ -98,77 +70,131 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+};
 
-	const NonRefundableDomainPurchaseMessage = () => (
+const CancelPlanWithoutCancellingDomainMessage = ( { planPurchase, includedDomainPurchase } ) => {
+	const translate = useTranslate();
+	return (
 		<div>
 			<p>
-				{ translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
-					{
-						args: {
-							domain: includedDomainPurchase.meta,
-							domainCost: includedDomainPurchase.priceText,
-						},
-					}
-				) }
+				{ isDomainTransfer( includedDomainPurchase )
+					? translate(
+							'This plan includes a domain transfer, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+							{
+								args: {
+									domain: includedDomainPurchase.meta,
+								},
+							}
+					  )
+					: translate(
+							'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+							{
+								args: {
+									domain: includedDomainPurchase.meta,
+								},
+							}
+					  ) }
 			</p>
+			{ isRefundable( planPurchase ) && (
+				<p>
+					{ translate(
+						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+							'minus %(domainCost)s for the domain.',
+						{
+							args: {
+								domainCost: includedDomainPurchase.costToUnbundleText,
+								planCost: planPurchase.totalRefundText,
+								refundAmount: planPurchase.refundText,
+							},
+						}
+					) }
+				</p>
+			) }
 		</div>
+	);
+};
+
+const CancelPurchaseDomainOptions = ( {
+	includedDomainPurchase,
+	cancelBundledDomain,
+	purchase,
+	onCancelConfirmationStateChange,
+} ) => {
+	const translate = useTranslate();
+	const [ confirmCancel, setConfirmCancel ] = useState( false );
+
+	const onCancelBundledDomainChange = useCallback(
+		( event ) => {
+			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
+			onCancelConfirmationStateChange( {
+				cancelBundledDomain: newCancelBundledDomainValue,
+				confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancel,
+			} );
+		},
+		[ confirmCancel, onCancelConfirmationStateChange ]
 	);
 
-	const RefundablePurchaseWithNonRefundableDomainMessage = () => (
-		<div>
-			<p>
-				{ translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
-					{
-						args: {
-							domain: includedDomainPurchase.meta,
-							domainCost: includedDomainPurchase.priceText,
-						},
-					}
-				) }
-			</p>
-			<p>
-				{ translate(
-					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-						'minus %(domainCost)s for the domain.',
-					{
-						args: {
-							domainCost: includedDomainPurchase.priceText,
-							planCost: planCostText,
-							refundAmount: purchase.refundText,
-						},
-					}
-				) }
-			</p>
-		</div>
+	const onConfirmCancelBundledDomainChange = useCallback(
+		( event ) => {
+			const checked = event.target.checked;
+			setConfirmCancel( checked );
+			onCancelConfirmationStateChange( {
+				cancelBundledDomain,
+				confirmCancelBundledDomain: checked,
+			} );
+		},
+		[ cancelBundledDomain, onCancelConfirmationStateChange ]
 	);
+
+	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+		return null;
+	}
 
 	if (
 		! isDomainMapping( includedDomainPurchase ) &&
-		! isDomainRegistration( includedDomainPurchase )
+		! isDomainRegistration( includedDomainPurchase ) &&
+		! isDomainTransfer( includedDomainPurchase )
 	) {
 		return null;
 	}
 
-	// Domain mapping.
+	// Domain mappings get treated separately for now. (It is also rare for a
+	// plan's domain credit to be used on a domain mapping in the first place.)
 	if ( isDomainMapping( includedDomainPurchase ) ) {
 		if ( ! isRefundable( purchase ) ) {
-			return <NonRefundableDomainMappingMessage />;
+			return (
+				<NonRefundableDomainMappingMessage includedDomainPurchase={ includedDomainPurchase } />
+			);
 		}
 
-		return <CancelableDomainMappingMessage />;
+		return (
+			<CancelableDomainMappingMessage
+				includedDomainPurchase={ includedDomainPurchase }
+				purchase={ purchase }
+			/>
+		);
 	}
 
-	// Domain registration.
-	if ( ! isRefundable( purchase ) ) {
-		return <NonRefundableDomainPurchaseMessage />;
-	}
-
-	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
-		return <RefundablePurchaseWithNonRefundableDomainMessage />;
+	// In most other cases, we'll cancel the plan and leave the domain alone.
+	// Those are handled here.
+	// The one exception is when a plan and domain registration are both in
+	// their refund window (e.g. they were recently purchased, and likely
+	// purchased together), in which case we allow the user to cancel both at
+	// the same time for convenience. We don't do that for domain transfers
+	// currently, although we probably could (but domain transfers are
+	// inherently in a state of flux and also potentially harder for customers
+	// to understand exactly what they're cancelling).
+	if (
+		isDomainTransfer( includedDomainPurchase ) ||
+		! isRefundable( purchase ) ||
+		! isRefundable( includedDomainPurchase )
+	) {
+		return (
+			<CancelPlanWithoutCancellingDomainMessage
+				includedDomainPurchase={ includedDomainPurchase }
+				planPurchase={ purchase }
+			/>
+		);
 	}
 
 	return (
@@ -244,7 +270,7 @@ const CancelPurchaseDomainOptions = ( {
 											"you'll lose it permanently.",
 										{
 											args: {
-												planCost: planCostText,
+												planCost: purchase.totalRefundText,
 											},
 										}
 									) }

@@ -13,6 +13,7 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import BillingDashboard from './billing/billing-dashboard';
+import CrmDownloads from './crm-downloads';
 import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';
 import PaymentMethodAdd from './payment-methods/payment-method-add';
@@ -81,7 +82,7 @@ export const paymentMethodsContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Purchases > Payment Methods" path={ context.path } />
+			<PageViewTracker title="Purchases > Payment methods" path={ context.path } />
 			<PaymentMethodOverview />
 		</>
 	);
@@ -93,8 +94,20 @@ export const paymentMethodsAddContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Purchases > Payment Methods > Add" path={ context.path } />
+			<PageViewTracker title="Purchases > Payment methods > Add" path={ context.path } />
 			<PaymentMethodAdd />
+		</>
+	);
+
+	next();
+};
+
+export const crmDownloadsContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Purchases > Site > CRM Downloads" path={ context.path } />
+			<CrmDownloads licenseKey={ context.params.licenseKey || '' } />
 		</>
 	);
 

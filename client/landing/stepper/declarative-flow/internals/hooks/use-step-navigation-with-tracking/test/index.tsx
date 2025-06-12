@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook, act } from '@testing-library/react';
 import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,

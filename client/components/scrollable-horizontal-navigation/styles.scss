@@ -1,16 +1,12 @@
 .scrollable-horizontal-navigation {
 	position: relative;
 	margin: auto;
-	margin-bottom: -20px;
 	overflow: hidden;
+
 	@media only screen and (max-width: 600px) {
 		padding: 0 24px;
 	}
 
-	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
-		margin-bottom: 0;
-	}
 	@media only screen and (max-width: 660px) {
 		margin: 0 16px -24px;
 	}

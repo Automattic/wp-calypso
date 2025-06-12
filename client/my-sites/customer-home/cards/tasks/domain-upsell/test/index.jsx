@@ -60,7 +60,7 @@ const initialState = {
 	},
 };
 
-jest.mock( '@automattic/domain-picker/src', () => {
+jest.mock( '@automattic/domain-picker', () => {
 	return {
 		useDomainSuggestions: () => {
 			return {

@@ -1,7 +1,8 @@
 import { AddOns, StorageAddOnSlug } from '@automattic/data-stores';
 import { useGetPurchasedStorageAddOn } from '@automattic/data-stores/src/add-ons';
+import { formatCurrency } from '@automattic/number-formatters';
 import { CustomSelectControl } from '@wordpress/components';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 
 import './style.scss';

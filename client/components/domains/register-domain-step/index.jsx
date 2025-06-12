@@ -6,10 +6,10 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
+	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -31,7 +31,6 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
@@ -81,7 +80,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
-import tip from './tip';
 
 import './style.scss';
 
@@ -320,7 +318,7 @@ class RegisterDomainStep extends Component {
 	// created a site by skipping the domain step. In these cases, fire the initial search
 	// with the subdomain name.
 	getInitialQueryInLaunchFlow() {
-		if ( ! this.props.isInLaunchFlow ) {
+		if ( ! this.props.isInLaunchFlow || this.props.selectedSite === null ) {
 			return;
 		}
 
@@ -540,7 +538,6 @@ class RegisterDomainStep extends Component {
 						/>
 					) }
 					{ this.renderFilterContent() }
-					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
 				</div>
 				{ showAlreadyOwnADomain && (
@@ -754,30 +751,8 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				{ this.renderBestNamesPrompt() }
-				<EmptyContent
-					title=""
-					className="register-domain-step__placeholder"
-					illustration={ Illustration }
-					illustrationWidth={ 280 }
-				/>
+				<EmptyContent title="" className="register-domain-step__placeholder" />
 			</>
-		);
-	}
-
-	renderDomainExplanationImage() {
-		return (
-			<div className="register-domain-step__domain-side-content-container-domain-explanation-image">
-				<span></span>
-				<span></span>
-				<span className="register-domain-step__domain-side-content-container-domain-explanation-image-url">
-					https://
-					{ this.props.translate( 'yoursitename', {
-						comment: 'example url used to explain what a domain is.',
-					} ) }
-					.com
-				</span>
-				<span></span>
-			</div>
 		);
 	}
 
@@ -1097,7 +1072,7 @@ class RegisterDomainStep extends Component {
 
 		// Skips availability check for the Gravatar flow - so TLDs that are
 		// available but not eligible for Gravatar won't be displayed
-		if ( this.props.flowName === 'domain-for-gravatar' ) {
+		if ( isDomainForGravatarFlow( this.props.flowName ) ) {
 			this.clearSuggestionErrorMessage();
 			const gravatarTlds = [
 				'link',
@@ -1556,7 +1531,6 @@ class RegisterDomainStep extends Component {
 		const { translate, promptText } = this.props;
 		return (
 			<div className="register-domain-step__example-prompt">
-				<Icon icon={ tip } size={ 20 } />
 				{ promptText ?? translate( 'The best names are short and memorable' ) }
 			</div>
 		);
@@ -1828,7 +1802,7 @@ class RegisterDomainStep extends Component {
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
-		const isGravatarFlow = this.props.flowName === 'domain-for-gravatar';
+		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
@@ -1836,7 +1810,7 @@ class RegisterDomainStep extends Component {
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
 			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error ) ||
-			( isGravatarFlow &&
+			( isGravatarDomain &&
 				[ REGISTERED_OTHER_SITE_SAME_USER, REGISTERED_SAME_SITE ].includes( error ) )
 		) {
 			return;

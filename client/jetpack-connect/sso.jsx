@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { flowRight, get, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -369,8 +369,11 @@ class JetpackSsoForm extends Component {
 		return (
 			<Main>
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Oops, this URL should not be accessed directly' ) }
+					title={ fixMe( {
+						text: 'This URL should not be accessed directly',
+						newCopy: translate( 'This URL should not be accessed directly' ),
+						oldCopy: translate( 'Oops, this URL should not be accessed directly' ),
+					} ) }
 					line={ translate(
 						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
 						{

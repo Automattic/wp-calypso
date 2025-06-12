@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isJetpackPlan,
 	isJetpackProduct,
+	is100Year,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -86,10 +87,13 @@ export default function PurchaseMeta( {
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
 	);
 
+	const is100YearPlan = purchase && is100Year( purchase );
+
 	// 100-year domains will only show a "Price" label since their renewal date is a long time in the future
-	const renewalPriceHeader = domainDetails?.isHundredYearDomain
-		? translate( 'Price' )
-		: translate( 'Renewal Price' );
+	const renewalPriceHeader =
+		domainDetails?.isHundredYearDomain || is100YearPlan
+			? translate( 'Price' )
+			: translate( 'Renewal Price' );
 
 	const hideRenewalPriceSection = isOneTimePurchase( purchase );
 	const hideTaxString = isIncludedWithPlan( purchase ) || purchase?.priceInteger === 0;

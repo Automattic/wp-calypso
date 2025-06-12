@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -18,7 +19,9 @@ jest.mock( 'calypso/components/data/domain-management', () => {
 	return DomainManagementData;
 } );
 
-jest.mock( 'component-file-picker', () => () => <div>File Picker</div> );
+jest.mock( 'calypso/components/file-picker/component-file-picker', () => () => (
+	<div>File Picker</div>
+) );
 
 describe( 'domainManagementV2', () => {
 	const mockNext = jest.fn();

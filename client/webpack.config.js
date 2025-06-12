@@ -309,9 +309,6 @@ const webpackConfig = {
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
-			fingerprintJsVersion: JSON.stringify(
-				require( '../packages/fingerprintjs/package.json' ).version
-			),
 			global: 'window',
 		} ),
 		// Node polyfills
@@ -375,17 +372,6 @@ const webpackConfig = {
 				res.request = 'calypso/components/empty-component';
 			}
 		} ),
-		/*
-		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-		 */
-		...( browserslistEnv === 'evergreen'
-			? [
-					new webpack.NormalModuleReplacementPlugin(
-						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
-						'lodash-es/noop'
-					),
-			  ]
-			: [] ),
 
 		/*
 		 * Replace `lodash` with `lodash-es`

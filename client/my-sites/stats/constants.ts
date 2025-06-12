@@ -8,6 +8,7 @@ export const STATS_PERIOD = {
 
 // The product title. Do not translate.
 export const STATS_PRODUCT_NAME = 'Jetpack Stats';
+export const STATS_PRODUCT_NAME_IMPR = 'Stats';
 
 // statTypes referred from
 // https://github.com/Automattic/wp-calypso/blob/trunk/packages/wpcom.js/src/lib/runtime/site.get.js
@@ -87,3 +88,5 @@ export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
+
+export const NAVIGATION_METHOD_ARROW = 'arrow';

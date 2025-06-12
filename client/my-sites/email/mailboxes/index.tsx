@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -41,10 +40,7 @@ const NoAccessCard = () => {
 	return (
 		<Main>
 			<TrackPageView context="no-access" />
-			<EmptyContent
-				title={ translate( 'You are not authorized to view this page' ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
+			<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 		</Main>
 	);
 };
@@ -55,10 +51,7 @@ const NotSupportedOnP2Card = () => {
 	return (
 		<Main>
 			<TrackPageView context="not-supported-on-p2" />
-			<EmptyContent
-				title={ translate( 'Mailboxes are not supported on P2 sites' ) }
-				illustration={ noSitesIllustration }
-			/>
+			<EmptyContent title={ translate( 'Mailboxes are not supported on P2 sites' ) } />
 		</Main>
 	);
 };

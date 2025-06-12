@@ -45,6 +45,8 @@ interface NoticeProps {
 	theme?: 'light' | 'dark';
 	text?: ReactNode;
 	children?: ReactNode;
+	ariaLive?: 'off' | 'polite' | 'assertive';
+	role?: 'status' | 'alert' | 'log' | 'marquee' | 'timer';
 }
 
 function getIcon( status: NoticeStatus | undefined ): string {
@@ -61,6 +63,9 @@ function getIcon( status: NoticeStatus | undefined ): string {
 	}
 }
 
+/**
+ * @deprecated Use `Notice` from `client/dashboard/components/notice` instead.
+ */
 export default function Notice( {
 	children,
 	className,
@@ -73,6 +78,8 @@ export default function Notice( {
 	status,
 	text,
 	theme = 'dark',
+	ariaLive,
+	role = 'status',
 }: NoticeProps ) {
 	const translate = useTranslate();
 
@@ -88,7 +95,7 @@ export default function Notice( {
 		}
 	}, [ duration ] );
 
-	const classes = clsx( 'notice', status, className, {
+	const classes = clsx( 'calypso-notice', status, className, {
 		'is-compact': isCompact,
 		'is-loading': isLoading,
 		'is-dismissable': showDismiss,
@@ -106,25 +113,32 @@ export default function Notice( {
 		renderedIcon = icon;
 	} else {
 		const iconName = icon || getIcon( status );
-		renderedIcon = <Gridicon className="notice__icon" icon={ iconName as string } size={ 24 } />;
+		renderedIcon = (
+			<Gridicon className="calypso-notice__icon" icon={ iconName as string } size={ 24 } />
+		);
 		iconNeedsDrop = GRIDICONS_WITH_DROP.includes(
 			iconName as ( typeof GRIDICONS_WITH_DROP )[ number ]
 		);
 	}
 
 	return (
-		<div className={ classes } role="status" aria-label={ translate( 'Notice' ) }>
-			<span className="notice__icon-wrapper">
-				{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
+		<div
+			className={ classes }
+			role={ role || 'status' }
+			aria-label={ translate( 'Notice' ) }
+			aria-live={ ariaLive }
+		>
+			<span className="calypso-notice__icon-wrapper">
+				{ iconNeedsDrop && <span className="calypso-notice__icon-wrapper-drop" /> }
 				{ renderedIcon }
 			</span>
-			<span className="notice__content">
-				<span className="notice__text">{ text ? text : children }</span>
+			<span className="calypso-notice__content">
+				<span className="calypso-notice__text">{ text ? text : children }</span>
 			</span>
 			{ text ? children : null }
 			{ showDismiss && (
 				<button
-					className="notice__dismiss"
+					className="calypso-notice__dismiss"
 					onClick={ onDismissClick }
 					aria-label={ translate( 'Dismiss' ) }
 				>

@@ -14,7 +14,7 @@ export type StepNavigator = {
 	goToGoalsPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToImportContentOnlyPage?: () => void;
-	goToSiteViewPage?: () => void;
+	goToAdmin?: () => void;
 	goToDashboardPage?: () => void;
 	goToCheckoutPage?: ( queryArgs?: object ) => void;
 	goToWpAdminImportPage?: () => void;
@@ -89,4 +89,5 @@ export interface ImporterBaseProps {
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;
 	stepNavigator?: StepNavigator;
+	renderHeading?: boolean;
 }

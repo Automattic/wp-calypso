@@ -139,6 +139,7 @@
 	border: 1px solid var( --studio-gray-10 );
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
+	padding-block-end: 8px;
 
 	&.separators-top-bottom {
 		margin-top: 16px;

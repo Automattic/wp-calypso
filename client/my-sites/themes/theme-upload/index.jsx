@@ -299,7 +299,6 @@ class Upload extends Component {
 				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
 				action={ this.props.translate( 'Open WP Admin' ) }
 				actionURL={ this.props.siteAdminUrl }
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}
@@ -326,7 +325,7 @@ class Upload extends Component {
 		}
 
 		return (
-			<Main className="theme-upload" wideLayout>
+			<Main className="theme-upload">
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<DocumentHead title={ translate( 'Install Theme' ) } />
 

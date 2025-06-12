@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
@@ -60,7 +60,11 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		return (
 			<EmptyContent
 				illustration=""
-				title={ translate( 'Uh oh. User not found.' ) }
+				title={ fixMe( {
+					text: 'User not found.',
+					newCopy: translate( 'User not found.' ),
+					oldCopy: translate( 'Uh oh. User not found.' ),
+				} ) }
 				line={ translate( 'Sorry, the user you were looking for could not be found.' ) }
 				action={ translate( 'Return to Reader' ) }
 				actionURL="/reader"

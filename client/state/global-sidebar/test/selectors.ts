@@ -1,97 +1,120 @@
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import isScheduledUpdatesMultisiteRoute from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
-import { shouldShowSiteDashboard, getShouldShowGlobalSidebar } from '../selectors';
-import type { AppState } from 'calypso/types';
+import sections from 'calypso/sections';
+import { getSidebarType, SidebarType } from '../selectors';
 
 jest.mock( 'calypso/lib/plans/untangling-plans-experiment', () => ( {
 	isPlansPageUntangled: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-scheduled-updates-multisite-route', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-	isScheduledUpdatesMultisiteCreateRoute: jest.fn(),
-	isScheduledUpdatesMultisiteEditRoute: jest.fn(),
-} ) );
+interface Site {
+	ID: number;
+	adminInterface?: string;
+	isPlansPageUntangled?: boolean;
+}
 
-describe( 'Global Sidebar Selectors', () => {
-	const createMockState = ( path: string ): AppState =>
-		( {
-			route: {
-				path: {
-					current: path,
-				},
-			},
-		} ) as AppState;
+describe( 'getSidebarType', () => {
+	const site: Site = {
+		ID: 123,
+	};
+	const siteDefault: Site = {
+		ID: 123,
+		adminInterface: 'calypso',
+	};
+	const siteClassic: Site = {
+		ID: 123,
+		adminInterface: 'wp-admin',
+	};
+	const sitePlansTangled: Site = {
+		ID: 123,
+		isPlansPageUntangled: false,
+	};
+	const sitePlansUntangled: Site = {
+		ID: 123,
+		isPlansPageUntangled: true,
+	};
 
-	beforeEach( () => {
+	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	describe( 'shouldShowSiteDashboard', () => {
-		it( 'should return false when siteId is null', () => {
-			const state = createMockState( '/setup' );
-			expect( shouldShowSiteDashboard( state, null ) ).toBe( false );
-		} );
+	it.each( [
+		[ null, '/sites', SidebarType.Global ],
+		[ null, '/p2s', SidebarType.Global ],
+		[ null, '/domains/manage', SidebarType.Global ],
+		[ null, '/themes', SidebarType.Global ],
+		[ null, '/plugins', SidebarType.Global ],
+		[ null, '/plugins/scheduled-updates', SidebarType.Global ],
+		[ null, '/me', SidebarType.Global ],
+		[ null, '/reader', SidebarType.Global ],
 
-		it( 'should return true for setup route with valid siteId', () => {
-			const state = createMockState( '/setup' );
-			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( true );
-		} );
+		[ site, '/overview/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/hosting-features/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/github-deployments/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/staging-site/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/site-monitoring/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/site-logs/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/sites/performance/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/sites/settings/site/example.com', SidebarType.GlobalCollapsed ],
+		[ site, '/sites/settings/server/example.com', SidebarType.GlobalCollapsed ],
 
-		it( 'should return true for start route with valid siteId', () => {
-			const state = createMockState( '/start' );
-			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( true );
-		} );
+		[ null, '/domains/manage/all/overview/domain.com', SidebarType.GlobalCollapsed ],
+		[ null, '/domains/manage/all/email/domain.com', SidebarType.GlobalCollapsed ],
+		[ null, '/domains/manage/all/contact-info/edit/domain.com', SidebarType.GlobalCollapsed ],
 
-		it( 'should return false for non-dashboard routes', () => {
-			const state = createMockState( '/some-other-route' );
-			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( false );
-		} );
+		[ null, '/plugins/manage/sites', SidebarType.GlobalCollapsed ],
+		[ null, '/plugins/scheduled-updates/create', SidebarType.GlobalCollapsed ],
+		[ null, '/plugins/scheduled-updates/edit/000-daily-86400-06:00', SidebarType.GlobalCollapsed ],
 
-		it( 'should include plans route when plans page is untangled', () => {
-			const state = createMockState( '/plans' );
+		[ siteDefault, '/home/example.com', SidebarType.UnifiedSiteDefault ],
+		[ siteDefault, '/domains/manage/example.com', SidebarType.UnifiedSiteDefault ],
+		[ siteDefault, '/themes/example.com', SidebarType.UnifiedSiteDefault ],
+		[ siteDefault, '/plugins/example.com', SidebarType.UnifiedSiteDefault ],
+
+		[ siteClassic, '/home/example.com', SidebarType.UnifiedSiteClassic ],
+		[ siteClassic, '/domains/manage/example.com', SidebarType.UnifiedSiteClassic ],
+		[ siteClassic, '/themes/example.com', SidebarType.UnifiedSiteClassic ],
+		[ siteClassic, '/plugins/example.com', SidebarType.UnifiedSiteClassic ],
+
+		[ null, '/start', SidebarType.None ],
+		[ null, '/setup', SidebarType.None ],
+
+		[ sitePlansTangled, '/plans/example.com', SidebarType.UnifiedSiteDefault ],
+		[ sitePlansUntangled, '/plans/example.com', SidebarType.GlobalCollapsed ],
+	] )( 'should return correct sidebar type', ( selectedSite, route, expected ) => {
+		const section =
+			sections.findLast( ( s ) =>
+				s.paths.some(
+					( path ) =>
+						route.startsWith( path ) &&
+						[ 'me', 'reader', 'sites', 'sites-dashboard' ].includes( s.group || '' )
+				)
+			) || ( {} as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+		const siteId = selectedSite?.ID || null;
+		const state = siteId
+			? {
+					sites: {
+						items: {
+							[ siteId ]: {
+								options: {
+									wpcom_admin_interface: selectedSite?.adminInterface,
+								},
+							},
+						},
+					},
+			  }
+			: {};
+
+		if ( selectedSite?.isPlansPageUntangled ) {
 			( isPlansPageUntangled as jest.Mock ).mockReturnValue( true );
-			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( true );
-		} );
+		}
 
-		it( 'should not include plans route when plans page is not untangled', () => {
-			const state = createMockState( '/plans' );
-			( isPlansPageUntangled as jest.Mock ).mockReturnValue( false );
-			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( false );
+		const actual = getSidebarType( {
+			state,
+			siteId,
+			section,
+			route,
 		} );
-	} );
-
-	describe( 'getShouldShowGlobalSidebar', () => {
-		it( 'should return true for me section', () => {
-			const state = createMockState( '/me' );
-			expect( getShouldShowGlobalSidebar( state, null, 'me' ) ).toBe( true );
-		} );
-
-		it( 'should return true for reader section', () => {
-			const state = createMockState( '/reader' );
-			expect( getShouldShowGlobalSidebar( state, null, 'reader' ) ).toBe( true );
-		} );
-
-		it( 'should return true for sites section with no siteId', () => {
-			const state = createMockState( '/sites' );
-			expect( getShouldShowGlobalSidebar( state, null, 'sites' ) ).toBe( true );
-		} );
-
-		it( 'should return false for tangled routes in the sites section', () => {
-			const state = createMockState( '/domains/manage' );
-			expect( getShouldShowGlobalSidebar( state, 123, 'sites' ) ).toBe( false );
-		} );
-
-		it( 'should return true for tangled routes in the sites-dashboard section', () => {
-			const state = createMockState( '/domains/manage' );
-			expect( getShouldShowGlobalSidebar( state, 123, 'sites-dashboard' ) ).toBe( true );
-		} );
-
-		it( 'should handle scheduled updates multisite route', () => {
-			const state = createMockState( '/plugins' );
-			( isScheduledUpdatesMultisiteRoute as jest.Mock ).mockReturnValue( true );
-			expect( getShouldShowGlobalSidebar( state, 123, 'sites' ) ).toBe( true );
-		} );
+		expect( actual ).toEqual( expected );
 	} );
 } );

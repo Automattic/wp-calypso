@@ -94,11 +94,6 @@ $brand-display: "SF Pro Display", sans-serif;
 				justify-content: end;
 			}
 		}
-		@media screen and (max-width: $break-small) {
-			.empty-state {
-				padding-inline: 0 !important;
-			}
-		}
 	}
 
 	.plugins-update-manager-multisite-filters {
@@ -211,6 +206,14 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		.validation-msg {
 			width: 100%;
+		}
+	}
+
+	.empty-state {
+		@include content-padding;
+
+		p {
+			max-width: 720px;
 		}
 	}
 }

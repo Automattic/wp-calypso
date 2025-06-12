@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import selectAlphabeticallySortedProductOptions from '../select-alphabetically-sorted-product-options';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 

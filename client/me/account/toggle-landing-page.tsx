@@ -1,5 +1,5 @@
 import { RadioControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -11,10 +11,12 @@ import { SITES_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/
 function ToggleLandingPageSettings() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { sitesAsLandingPage, readerAsLandingPage } = useSelector( ( state ) => ( {
-		sitesAsLandingPage: getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage,
-		readerAsLandingPage: getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage,
-	} ) );
+	const sitesAsLandingPage = useSelector(
+		( state ) => getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage
+	);
+	const readerAsLandingPage = useSelector(
+		( state ) => getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage
+	);
 
 	let selectedOption = 'default';
 	if ( sitesAsLandingPage ) {
@@ -66,14 +68,20 @@ function ToggleLandingPageSettings() {
 		}
 	}
 
+	const primarySiteLabel = fixMe( {
+		text: 'Primary site dashboard',
+		newCopy: translate( 'Primary site dashboard' ),
+		oldCopy: translate( 'My primary site' ),
+	} ) as string;
+
 	return (
 		<div>
 			<RadioControl
 				selected={ selectedOption }
 				options={ [
-					{ label: translate( 'My primary site' ), value: 'default' },
-					{ label: translate( 'All my sites' ), value: 'my-sites' },
-					{ label: translate( 'The Reader' ), value: 'reader' },
+					{ label: primarySiteLabel, value: 'default' },
+					{ label: translate( 'Sites' ), value: 'my-sites' },
+					{ label: translate( 'Reader' ), value: 'reader' },
 				] }
 				onChange={ handlePreferenceChange }
 				disabled={ isSaving }

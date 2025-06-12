@@ -2,7 +2,6 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const doctrine = require( 'doctrine' );
 const { camelCase, forEach } = require( 'lodash' );
-const mkdirp = require( 'mkdirp' );
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
 const SELECTORS_DIR = 'client/state/selectors';
@@ -31,5 +30,5 @@ const selectors = files.map( ( file ) => {
 
 selectors.sort( ( a, b ) => a.name > b.name );
 
-mkdirp.sync( DEST_DIR );
+fs.mkdirSync( DEST_DIR, { recursive: true } );
 fs.writeFileSync( path.join( DEST_DIR, DEST_FILE ), JSON.stringify( selectors, null, 2 ) );

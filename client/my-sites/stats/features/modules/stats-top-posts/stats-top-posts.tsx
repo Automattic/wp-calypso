@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
+import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -17,9 +18,21 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
+import useOptionLabels, {
+	MAIN_STAT_TYPE,
+	SUB_STAT_TYPE,
+	StatType,
+	StatsModulePostsProps,
+} from './use-option-labels';
+import type { StatsStateProps } from '../types';
 
-const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
+type StatTypeOptionType = {
+	value: StatType;
+	label: string;
+	mainItemLabel: string;
+};
+
+const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -31,21 +44,46 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsTopPosts';
+
+	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
 		: TOP_POSTS_SUPPORT_URL;
 
-	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsModule = useShouldGateStats( statType );
+	const optionLabels = useOptionLabels();
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+		};
+	} );
 
-	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
-		isRequestingSiteStatsForQuery( state, siteId, statType, query )
+	const mainStatType = MAIN_STAT_TYPE;
+	const subStatType = SUB_STAT_TYPE;
+
+	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
+		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
 	);
+	const isRequestingArchivesData = useSelector( ( state: StatsStateProps ) =>
+		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
+	);
+	const isRequestingData = isArchiveBreakdownEnabled
+		? isRequestingTopPostsData || isRequestingArchivesData
+		: isRequestingTopPostsData;
+
+	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
+
+	const statType = localStatType ?? query.viewdType ?? mainStatType;
+
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
+
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( mainStatType );
 
 	const hasData = !! data?.length;
 	// TODO: Is there a way to show the Skeleton loader for real-time data?
@@ -60,11 +98,23 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		? ! hasData && ! presentLoadingUI
 		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
+	// Query both statTypes for the Traffic page module card to avoid loading when switching between controls.
+	// Only query one statType at a time to avoid loading plenty of data for the summary mode.
+	const shouldQuerySubStatType = ! summary || query.viewdType === subStatType;
+
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && statType && (
-				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+			{ ! shouldGateStatsModule && siteId && (
+				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
+
+			{ ! shouldGateStatsModule &&
+				siteId &&
+				isArchiveBreakdownEnabled &&
+				shouldQuerySubStatType && (
+					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+				) }
+
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
 					isLoading={ isRequestingData }
@@ -102,6 +152,19 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
+					{ ...( isArchiveBreakdownEnabled && ! summary
+						? {
+								toggleControl: (
+									<SimplifiedSegmentedControl
+										options={ options }
+										initialSelected={ statType }
+										onSelect={ onStatTypeChange }
+									/>
+								),
+								mainItemLabel: options.find( ( option ) => option.value === statType )
+									?.mainItemLabel,
+						  }
+						: null ) }
 				/>
 			) }
 			{ presentEmptyUI && (

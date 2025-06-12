@@ -1,0 +1,52 @@
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as OverviewStories from './overview.stories';
+import { ValidatedInputControl } from './components/input-control';
+
+<Meta of={ OverviewStories } title="Validated Form Controls/Overview" />
+
+# Validated Form Controls
+
+This section contains form control components that extend [WordPress components](https://wordpress.github.io/gutenberg/) with additional validation capabilities.
+
+## Status: Beta
+
+We are still gathering feedback and iterating. Please get in touch with Team Calypso if you are interested in trying them out in your project.
+
+## Usage
+
+Component APIs are the same as the underlying WordPress components, with the addition of some optional props:
+
+<ArgTypes of={ ValidatedInputControl } include={ [ 'required', 'markWhenOptional', 'customValidator' ] } />
+
+## Implementation
+
+These components are designed to work with the native HTML5 [Constraint Validation API](https://developer.mozilla.org/en-US/docs/Web/API/Constraint_validation). Using this browser API as the "source of truth" for form element errors has these benefits:
+
+- Ability to use CSS selectors like `:invalid`, `:user-invalid`, `:required`, and `:optional`.
+- Ability to use simple HTML attribute-based constraints (e.g. `min`, `max`, `required`, `pattern`, `type`) together with fully custom validation logic (with the `setCustomValidity()` method).
+- Attribute-based constraints will already have localized, user-facing error messages built in.
+- When a user clicks the form submit button, the browser will automatically check the validity states of all enclosed form elements and block the submit when there are errors. It will also automatically scroll and focus to the first erroring element and show a prominent error popover.
+- While not _all_ aspects of the Constraint Validation API are well-supported in all screen readers yet, many aspects are, and will continue to improve. We can supplement any accessibility shortcomings with things like `aria-live` announcements of error messages.
+
+## Current limitations
+
+### No easy access to underlying validation APIs
+
+- The consumer does not have a simple way to trigger their custom validators at an arbitrary point in time. Currently, the validation timings for custom validators are handled by the component — first on `blur`, and then on every `change` after the field is considered "touched". Note that this limitation only applies to **custom** validators, not the standard attribute-based validators like `required` or `pattern`, which can be triggered at any time using the `reportValidity()` method on either the underlying control element or the wrapping `<form>` element.
+- The consumer does not have direct access to the [`validity` object](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) of the underlying element.
+
+We don't foresee these being needed much, but it is technically possible by the consumer accessing the target element's validation APIs via `ref`. Better docs or ergonomics can be added when we have actual use cases.
+
+### Delegate elements
+
+The implementations for `ToggleGroupControl` and `CustomSelectControl` use a "delegate" element for validation, due to upstream limitations that prevent us from using the actual underlying elements for constraint validation. A delegate element in this context is a visually hidden form element that we "delegate" the Constraint Validation API concerns to.
+
+This is not ideal, but lets us maintain a consistent mechanism to scroll to the invalid field when attempting to submit, and block the form from submitting. It is hopefully fine as a stopgap, given the low amount of actual validation that will need happen on these two specific components.
+
+### Controlled mode only
+
+Some of the underlying WordPress components currently do not fully support uncontrolled mode. For now, we recommend sticking to controlled mode to avoid any issues.
+
+## Examples
+
+<Stories />

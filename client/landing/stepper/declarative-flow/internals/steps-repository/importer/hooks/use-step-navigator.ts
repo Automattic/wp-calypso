@@ -4,12 +4,12 @@ import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-select
 import { addQueryArgs } from 'calypso/lib/route';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';
-import type { NavigationControls } from '../../../types';
+import type { NavigationControlsWithSubmittedData } from '../../../types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 export function useStepNavigator(
 	flow: string | null,
-	navigation: NavigationControls<
+	navigation: NavigationControlsWithSubmittedData<
 		| {
 				type: 'redirect';
 				url: string;
@@ -20,6 +20,7 @@ export function useStepNavigator(
 	>,
 	siteId: number | undefined | null,
 	siteSlug: string | undefined | null,
+	site: { options?: { admin_url?: string } } | undefined | null,
 	fromSite: string | undefined | null
 ): StepNavigator {
 	const { data: selectedPlan } = useSelectedPlanUpgradeQuery();
@@ -38,17 +39,23 @@ export function useStepNavigator(
 	}
 
 	function goToImportCapturePage() {
-		navigation.goToStep?.( 'import' );
+		const migrationUrl = `/setup/site-migration?siteSlug=${ siteSlug }&ref=importer`;
+		const urlWithFromParam = fromSite ? `${ migrationUrl }&from=${ fromSite }` : migrationUrl;
+
+		navigation.submit?.( {
+			type: 'redirect',
+			url: urlWithFromParam,
+		} );
 	}
 
 	function goToImportContentOnlyPage() {
 		navigator( getWordpressImportContentOnlyUrl() );
 	}
 
-	function goToSiteViewPage() {
+	function goToAdmin() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/view/${ siteId || siteSlug || '' }`,
+			url: site?.options?.admin_url ?? `/home/${ siteId || siteSlug || '' }`,
 		} );
 	}
 
@@ -130,7 +137,7 @@ export function useStepNavigator(
 		goToGoalsPage,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
-		goToSiteViewPage,
+		goToAdmin,
 		goToDashboardPage,
 		goToCheckoutPage,
 		goToWpAdminImportPage,

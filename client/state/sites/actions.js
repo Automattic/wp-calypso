@@ -105,9 +105,8 @@ export function requestSites() {
 		} );
 		const siteFilter = config( 'site_filter' );
 
-		return wpcom
-			.me()
-			.sites( {
+		return wpcom.req
+			.get( '/me/sites', {
 				apiVersion: '1.2',
 				site_visibility: 'all',
 				include_domain_only: true,

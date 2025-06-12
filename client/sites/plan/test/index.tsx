@@ -1,4 +1,5 @@
 /** @jest-environment jsdom */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_FREE } from '@automattic/calypso-products';

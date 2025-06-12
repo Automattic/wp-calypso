@@ -3,7 +3,12 @@
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
-		"types": [ "node", "@types/gtag.js", "@emotion/react/types/css-prop" ],
+		"types": [
+			"node",
+			"@types/gtag.js",
+			"@emotion/react/types/css-prop",
+			"@testing-library/jest-dom"
+		],
 		"paths": {
 			"calypso/*": [ "./*" ]
 		}
@@ -16,11 +21,5 @@
 		"./package.json",
 		"./state/data-layer/wpcom/sites/jitm/schema.json",
 		"./declarations.d.ts"
-	],
-	"exclude": [
-		"./**/node_modules/**/*",
-		"./**/test/**/*",
-		"./server/devdocs/search-index.js",
-		"./**/.stories.tsx"
 	]
 }

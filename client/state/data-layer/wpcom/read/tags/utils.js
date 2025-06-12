@@ -26,7 +26,7 @@ export function fromApi( apiResponse ) {
 	return tags.map( ( tag ) => ( {
 		id: tag.ID,
 		description: decodeEntities( tag.description ),
-		displayName: decodeEntities( tag.display_name ),
+		displayName: decodeEntities( tag.title || tag.display_name ),
 		url: `/tag/${ tag.slug }`,
 		title: decodeEntities( tag.title ),
 		slug: tag.slug.toLowerCase(),

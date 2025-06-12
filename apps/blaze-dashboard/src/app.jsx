@@ -2,6 +2,7 @@
  * Global polyfills
  */
 import './load-config';
+import accessibleFocus from '@automattic/accessible-focus';
 import config, { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
@@ -62,6 +63,9 @@ async function AppBoot() {
 			applyMiddleware( thunkMiddleware, wpcomApiMiddleware, analyticsMiddleware )
 		)
 	);
+
+	// Add accessible-focus listener
+	accessibleFocus();
 
 	setStore( store );
 	setupContextMiddleware( store, queryClient );

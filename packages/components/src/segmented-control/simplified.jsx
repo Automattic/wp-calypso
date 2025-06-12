@@ -2,12 +2,10 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import SegmentedControl from '.';
 
-const noop = () => {};
-
 function SimplifiedSegmentedControl( {
 	options,
 	initialSelected = options[ 0 ].value,
-	onSelect = noop,
+	onSelect,
 	...props
 } ) {
 	const [ selected, setSelected ] = useState( initialSelected );
@@ -18,7 +16,10 @@ function SimplifiedSegmentedControl( {
 			key={ index }
 			onClick={ () => {
 				setSelected( option.value );
-				onSelect( option );
+
+				if ( typeof onSelect === 'function' ) {
+					onSelect( option );
+				}
 			} }
 			path={ option.path }
 			selected={ selected === option.value }

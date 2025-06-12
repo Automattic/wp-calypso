@@ -7,10 +7,17 @@
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
-	"browser": "dist/esm/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"types": "dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -25,12 +32,11 @@
 		"test": "yarn jest"
 	},
 	"dependencies": {
-		"tslib": "^2.3.0"
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
-		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"jest": "^29.7.0",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	}
 }

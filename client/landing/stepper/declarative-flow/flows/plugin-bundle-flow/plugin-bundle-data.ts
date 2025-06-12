@@ -29,7 +29,7 @@ interface BundleStepsSettings {
 		/** Custom steps for the bundle. Empty string if it has not custom steps. */
 		customSteps: StepperStep[];
 		/** Customize back function only for custom steps of the flow. The default steps have their logic separately. It returns `false` if nothing should be done here. */
-		goBack?: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
+		goBack?: ( currentStep: string, navigate: Navigate ) => boolean | void;
 		/** Custom end of flow. Notice that it can end earlier depending on the current state. It returns `false` if nothing should be done here. */
 		endFlow?: ( {
 			intent,

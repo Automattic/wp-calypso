@@ -3,6 +3,10 @@
 	flex-direction: column;
 	align-items: center;
 	padding: 18px 0 32px;
+
+	a {
+		text-decoration: none;
+	}
 }
 
 .stats-empty-module-card__icon {

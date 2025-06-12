@@ -4,10 +4,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { external } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import SubscriberImportLimitNotice from 'calypso/my-sites/subscribers/components/subscriber-import-limit-notice';
 import { SubscribersStepProps } from '../types';
 import { normalizeFromSite } from '../utils';
 import SubscriberUploadForm from './upload-form';
@@ -41,30 +41,37 @@ export default function StepInitial( {
 		<Card>
 			<h2>{ translate( 'Step 1: Export your subscribers from Substack' ) }</h2>
 			<p>
-				{ translate(
-					'Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
-					{
-						components: {
-							strong: <strong />,
-							supportLink: (
-								<InlineSupportLink
-									noWrap={ false }
-									showIcon={ false }
-									supportLink={ localizeUrl(
-										'https://wordpress.com/support/import-subscribers-to-a-newsletter/#troubleshooting-subscriber-imports'
-									) }
-									supportPostId={ 220199 }
-								/>
-							),
-						},
-					}
-				) }
+				{ fixMe( {
+					text: 'In Substack, go to {{strong}}Subscribers{{/strong}}, scroll down to the "All subscribers" table, click the {{strong}}…{{/strong}} menu on the right and select {{strong}}Export{{/strong}}. Choose the "Export all columns" option and download the CSV file. Then upload the CSV below.',
+					newCopy: translate(
+						'In Substack, go to {{strong}}Subscribers{{/strong}}, scroll down to the "All subscribers" table, click the {{strong}}…{{/strong}} menu on the right and select {{strong}}Export{{/strong}}. Choose the "Export all columns" option and download the CSV file. Then upload the CSV below.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					),
+					oldCopy: translate(
+						'Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
+						{
+							components: {
+								strong: <strong />,
+								supportLink: (
+									<InlineSupportLink
+										noWrap={ false }
+										showIcon={ false }
+										supportLink={ localizeUrl(
+											'https://wordpress.com/support/import-subscribers-to-a-newsletter/#troubleshooting-subscriber-imports'
+										) }
+										supportPostId={ 220199 }
+									/>
+								),
+							},
+						}
+					),
+				} ) }
 			</p>
-			<img
-				src={ exportSubstackSubscribersImg }
-				alt={ translate( 'Export Substack subscribers' ) }
-				className="export-subscribers"
-			/>
+
 			<Button
 				href={ `https://${ normalizeFromSite( fromSite ) }/publish/subscribers` }
 				target="_blank"
@@ -77,6 +84,7 @@ export default function StepInitial( {
 			</Button>
 			<hr />
 			<h2>{ translate( 'Step 2: Import your subscribers' ) }</h2>
+			<SubscriberImportLimitNotice />
 			{ selectedSite.ID && (
 				<SubscriberUploadForm
 					siteId={ selectedSite.ID }

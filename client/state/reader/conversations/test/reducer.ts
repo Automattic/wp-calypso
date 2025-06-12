@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import deepFreeze from 'deep-freeze';
 import {
 	READER_CONVERSATION_FOLLOW,

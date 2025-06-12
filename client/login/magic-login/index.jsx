@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import AppPromo from 'calypso/blocks/app-promo';
+import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-code';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -62,6 +63,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginPublicToken from 'calypso/state/selectors/get-magic-login-public-token';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
@@ -71,6 +73,7 @@ import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-e
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
+import RequestLoginCode from './request-login-code';
 import RequestLoginEmailForm from './request-login-email-form';
 import './style.scss';
 
@@ -126,15 +129,10 @@ class MagicLogin extends Component {
 		showEmailCodeVerification: false,
 		maskedEmailAddress: '',
 		hashedEmail: null,
-		isFormReady: false,
-	};
-
-	handleFormReady = () => {
-		this.setState( { isFormReady: true } );
 	};
 
 	componentDidMount() {
-		const { userEmail, oauth2Client, query } = this.props;
+		const { oauth2Client, query } = this.props;
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
@@ -149,22 +147,6 @@ class MagicLogin extends Component {
 				is_gravatar_flow_with_email: !! ( isGravatarFlow && query?.email_address ),
 				is_initial_view: true,
 			} );
-		}
-
-		// If the auto_trigger query parameter is set to true, automatically trigger the email send.
-		if ( query?.auto_trigger !== undefined ) {
-			if ( userEmail && emailValidator.validate( userEmail ) ) {
-				if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-					this.handleGravPoweredEmailSubmit( userEmail );
-				} else {
-					this.props.sendEmailLogin( userEmail, {
-						redirectTo: query?.redirect_to,
-						requestLoginEmailFormFlow: true,
-						createAccount: true,
-						flow: 'jetpack', // Auto trigger is Jetpack flow
-					} );
-				}
-			}
 		}
 	}
 
@@ -561,7 +543,8 @@ class MagicLogin extends Component {
 		this.props.fetchMagicLoginAuthenticate(
 			`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
 			query?.redirect_to,
-			getGravatarOAuth2Flow( oauth2Client )
+			getGravatarOAuth2Flow( oauth2Client ),
+			true
 		);
 	};
 
@@ -1301,6 +1284,10 @@ class MagicLogin extends Component {
 		return <p className="studio-magic-login__tos">{ tosText }</p>;
 	};
 
+	handlePublicTokenReceived = ( publicToken ) => {
+		this.setState( { publicToken } );
+	};
+
 	render() {
 		const {
 			oauth2Client,
@@ -1308,7 +1295,7 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 			isWooJPC,
-			isSendingEmail,
+			isJetpackLogin,
 			isFromJetpackOnboarding,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
@@ -1377,26 +1364,25 @@ class MagicLogin extends Component {
 			);
 		}
 
-		const isJetpackMagicLinkSignUpEnabled =
-			config.isEnabled( 'jetpack/magic-link-signup' ) && this.props.isJetpackLogin;
-		const shouldShowLoadingEllipsis =
-			isFromJetpackOnboarding &&
-			isJetpackMagicLinkSignUpEnabled &&
-			( isSendingEmail || ! this.state.isFormReady );
+		const isWhiteLogin =
+			! this.props.isWCCOM &&
+			! this.props.isFromAutomatticForAgenciesPlugin &&
+			! this.props.isJetpackLogin;
 
-		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
-		// flag is enabled, some steps will display a different UI
+		// If this is part of the Jetpack login flow, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
-			...( isJetpackMagicLinkSignUpEnabled ? { isJetpackMagicLinkSignUpEnabled: true } : {} ),
+			isJetpackMagicLinkSignUpEnabled: this.props.isJetpackLogin,
 			createAccountForNewUser: true,
-			shouldShowLoadingEllipsis,
-			onReady: this.handleFormReady,
 			isFromJetpackOnboarding,
 		};
 
 		return (
-			<Main className="magic-login magic-login__request-link is-white-login">
+			<Main
+				className={ clsx( 'magic-login magic-login__request-link', {
+					'is-white-login': isWhiteLogin,
+				} ) }
+			>
 				{ this.renderGutenboardingLogo() }
 				{ this.props.isFromAutomatticForAgenciesPlugin && (
 					<A4ALogo fullA4A size={ 58 } className="magic-login__a4a-logo" />
@@ -1406,9 +1392,18 @@ class MagicLogin extends Component {
 
 				<GlobalNotices id="notices" />
 
-				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
+				{ shouldUseMagicCode( { isJetpack: isJetpackLogin } ) ? (
+					<RequestLoginCode
+						{ ...requestLoginEmailFormProps }
+						emailRequested={ this.props.emailRequested }
+						publicToken={ this.props.publicToken }
+						onPublicTokenReceived={ this.handlePublicTokenReceived }
+					/>
+				) : (
+					<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
+				) }
 
-				{ ! shouldShowLoadingEllipsis && this.renderLinks() }
+				{ this.renderLinks() }
 			</Main>
 		);
 	}
@@ -1421,7 +1416,7 @@ const mapState = ( state ) => ( {
 	isSendingEmail: isFetchingMagicLoginEmail( state ),
 	emailRequested: isMagicLoginEmailRequested( state ),
 	emailRequestError: getMagicLoginRequestEmailError( state ),
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
+	isJetpackLogin: getCurrentRoute( state )?.startsWith( '/log-in/jetpack/link' ),
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:
 		getLastCheckedUsernameOrEmail( state ) ||
@@ -1442,6 +1437,7 @@ const mapState = ( state ) => ( {
 		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ) ===
 		'jetpack-onboarding',
 	isWooJPC: isWooJPCFlow( state ),
+	publicToken: getMagicLoginPublicToken( state ),
 } );
 
 const mapDispatch = {

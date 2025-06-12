@@ -1,8 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from 'calypso/a8c-for-agencies/components/a4a-logo';
+import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
@@ -47,7 +49,12 @@ export default function AgencySignupFinish() {
 	useEffect( () => {
 		if ( agency ) {
 			// Redirect to the sites page if the user already has an agency record.
-			page.redirect( A4A_OVERVIEW_LINK );
+
+			if ( isEnabled( 'a4a-unified-onboarding-tour' ) ) {
+				page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
+			} else {
+				page.redirect( A4A_OVERVIEW_LINK );
+			}
 		}
 	}, [ agency ] );
 
@@ -73,9 +80,12 @@ export default function AgencySignupFinish() {
 					last_name: signupData.lastName,
 					name: signupData.agencyName,
 					business_url: signupData.agencyUrl,
+					agency_size: signupData.agencySize,
 					managed_sites: signupData.managedSites,
 					services_offered: ( signupData.servicesOffered || [] ).join( ',' ),
 					products_offered: ( signupData.productsOffered || [] ).join( ',' ),
+					products_to_offer: ( signupData.productsToOffer || [] ).join( ',' ),
+					expansion_planned: signupData.plansToOfferProducts,
 					city: signupData.city,
 					line1: signupData.line1,
 					line2: signupData.line2,
@@ -98,7 +108,7 @@ export default function AgencySignupFinish() {
 				size={ 48 }
 			/>
 			<h1 className="agency-signup-finish__text">
-				{ translate( 'Please hold, great things are coming.' ) }
+				{ translate( 'Please give us a minute to customize your experience…' ) }
 			</h1>
 		</div>
 	);

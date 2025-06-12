@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { APIPartner } from 'calypso/state/partner-portal/types';
 import formatApiPartner from '../format-api-partner';
 

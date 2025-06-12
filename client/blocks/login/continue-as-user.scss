@@ -2,12 +2,13 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .continue-as-user {
-	display: block;
+	display: flex;
+	flex-direction: column;
 	animation: 1s appear 0s ease-in;
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	text-align: center;
-	height: calc(65vh - 80px); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
+	height: calc(65vh - 47px); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
 	margin: 48px auto 0;
 	position: relative;
 	max-width: 400px;
@@ -23,11 +24,6 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-
-		& > a.button {
-			margin: 0 20px;
-			border-radius: 4px;
-		}
 	}
 
 	.continue-as-user__gravatar {
@@ -35,24 +31,25 @@
 		border: 1px solid #a7aaad;
 	}
 
-	.continue-as-user__change-user-link {
-		color: var(--color-link);
-		cursor: pointer;
-		margin: auto;
-
-		&:hover,
-		&:focus,
-		&:active {
-			color: var(--color-link-dark);
-		}
+	.continue-as-user__continue-button {
+		min-width: 100%;
+		margin-block: 13px;
 	}
 
 	.continue-as-user__not-you {
 		display: block;
 		bottom: 0;
-		margin-bottom: -33px;
 		position: absolute;
 		text-align: center;
 		width: 100%;
+	}
+}
+
+.is-white-login {
+	.continue-as-user {
+		height: auto;
+	}
+	.continue-as-user__not-you {
+		position: static;
 	}
 }

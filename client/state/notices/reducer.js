@@ -47,23 +47,8 @@ export const items = ( state = {}, action ) => {
 	return state;
 };
 
-export const lastTimeShown = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case NOTICE_CREATE: {
-			const { notice } = action;
-			return {
-				...state,
-				[ notice.noticeId ]: Date.now(),
-			};
-		}
-	}
-
-	return state;
-};
-
 const combinedReducer = combineReducers( {
 	items,
-	lastTimeShown,
 } );
 
 export default withStorageKey( 'notices', combinedReducer );

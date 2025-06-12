@@ -279,6 +279,8 @@ export class UserStep extends Component {
 							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 						}
 					);
+				} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+					subHeaderText = translate( 'First, create your WordPress.com account.' );
 				} else {
 					subHeaderText = translate(
 						'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -298,7 +300,7 @@ export class UserStep extends Component {
 
 		const redirectToAfterLoginUrl = getRedirectToAfterLoginUrl( this.props );
 
-		if ( redirectToAfterLoginUrl?.startsWith( '/setup/hosted-site-migration' ) ) {
+		if ( redirectToAfterLoginUrl?.startsWith( '/setup/site-migration' ) ) {
 			subHeaderText = translate(
 				'Pick an option to start moving your site to the world’s best WordPress host.'
 			);

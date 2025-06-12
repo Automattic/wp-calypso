@@ -1,5 +1,6 @@
 import { Badge, Button, Gridicon } from '@automattic/components';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { memo } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -49,18 +50,14 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 	return (
 		<InvoicesListRow>
 			<div>{ number }</div>
-
 			<div>
 				{ dueDate && <FormattedDate date={ moment( dueDate ) } format="ll" /> }
 				{ ! dueDate && <Gridicon icon="minus" /> }
 			</div>
-
 			<div>
 				<Badge type={ badgeType }>{ badgeLabel }</Badge>
 			</div>
-
 			<div>{ formatCurrency( total, currency.toUpperCase() ) }</div>
-
 			<div className="invoices-list-card__actions">
 				{ status === 'open' && (
 					<Button

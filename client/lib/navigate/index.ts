@@ -4,7 +4,7 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 
 // Using page() for cross origin navigations would throw a `History.pushState` exception
 // about creating state object with a cross-origin URL.
-function isSameOrigin( path: string ): boolean {
+export function isSameOrigin( path: string ): boolean {
 	return new URL( path, window.location.href ).origin === window.location.origin;
 }
 

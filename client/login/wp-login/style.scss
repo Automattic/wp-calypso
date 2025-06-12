@@ -1,4 +1,5 @@
-@import "jetpack-connect/colors";
+@import "../../jetpack-connect/colors";
+@import "../../assets/stylesheets/shared/mixins/elevation";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
@@ -9,9 +10,15 @@
 $image-height: 47px;
 
 .layout.is-section-login {
-	padding-bottom: $image-height;
 	position: relative;
-	min-height: calc(100% - #{$image-height});
+	min-height: 100%; // Needed for any screen not yet using a StepContainerV2 wireframe (e.g. magic login).
+
+	// This adjustment is only necessary when rendering the Jetpack colophon.
+	// isWhiteLogin screens don't need it.
+	&:where(:not(.is-white-login)) {
+		padding-bottom: $image-height;
+		min-height: calc(100% - #{$image-height});
+	}
 
 	.layout__content {
 		position: static;
@@ -29,10 +36,43 @@ $image-height: 47px;
 			display: none;
 		}
 	}
+
+	.step-container-v2__heading {
+		text-align: center;
+	}
+}
+
+.wp-login__heading-logo {
+	text-align: center;
+	margin-bottom: 16px;
+
+	> img {
+		width: 64px;
+		height: 64px;
+	}
+}
+
+.wp-login__heading-subtext {
+	color: var(--studio-gray-50, #646970);
+
+	a {
+		color: var(--studio-gray-50, #646970);
+		text-decoration: underline;
+	}
 }
 
 .wp-login__main.main {
 	max-width: 400px;
+
+	&.is-jetpack {
+		max-width: 450px;
+
+		// This is margin based on the layout + padding height.
+		margin-top: calc(96px - 48px);
+		@include break-small {
+			margin-top: calc(170px - 48px);
+		}
+	}
 }
 
 .wp-login__header {
@@ -61,9 +101,9 @@ $image-height: 47px;
 }
 
 .wp-login__links {
-
 	a,
-	button {
+	button,
+	.components-button {
 		border-bottom: 1px solid var(--color-neutral-10);
 		box-sizing: border-box;
 		cursor: pointer;
@@ -125,26 +165,6 @@ $image-height: 47px;
 	}
 }
 
-.card.wp-login__private-site {
-	margin-bottom: 0;
-}
-
-.wp-login__private-site-image {
-	height: 92px;
-	margin-bottom: 10px;
-	text-align: center;
-}
-
-.wp-login__private-site-header {
-	font-weight: 600;
-	margin-bottom: 10px;
-	text-align: center;
-}
-
-.wp-login__private-site-button {
-	width: 100%;
-}
-
 .wp-login__site-return-link {
 	overflow: hidden;
 	position: relative;
@@ -166,16 +186,19 @@ $image-height: 47px;
 
 .layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
 
-	.login__form input:focus,
-	.logged-out-form input:focus {
-		border-color: var(--color-accent);
-		box-shadow: 0 0 0 2px var(--color-accent-light);
+	.login__form input,
+	.logged-out-form input {
+		&:not(.form-text-input-core-styles) {
+			&:focus {
+				border-color: var(--color-accent);
+				box-shadow: 0 0 0 2px var(--color-accent-light);
+			}
+		}
 	}
 
 	.login__form-terms a,
 	.login__social-tos a,
-	.form-input-validation a,
-	.login__form-change-username {
+	.form-input-validation a {
 		color: var(--color-accent-dark);
 
 		&:hover,
@@ -289,7 +312,12 @@ $image-height: 47px;
 }
 
 .layout.is-white-login {
-	background-color: #fdfdfd;
+	background-color: var( --color-main-background, #fcfcfc );
+
+	// Specificity bump.
+	.layout__content.layout__content {
+		padding: 0;
+	}
 
 	.login__form-header {
 		@include onboarding-heading-text-mobile;
@@ -344,17 +372,20 @@ $image-height: 47px;
 		}
 	}
 
+	.login__form-action .components-button.is-primary {
+		margin: 6px auto 13px;
+	}
+
 	.login form {
 
 		// We shouldn't regularly use .components-* classnames. The following is
 		// an exception to opt-out from some style overrides. Ideally, all
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
-		input:not(.components-text-control__input),
-		button:not(.social-buttons__button) {
+		input:not(.components-text-control__input, .form-text-input-core-styles),
+		button:not(.components-button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
-			height: 44px;
-			border-radius: 4px;
+			height: 40px; // Matches .components-button height __next40pxDefaultSize
 			border: 1px solid var(--studio-gray-10);
 			font-size: $font-body;
 
@@ -363,10 +394,6 @@ $image-height: 47px;
 			&.disabled {
 				background-color: #fdfdfd;
 			}
-		}
-
-		.social-buttons__button {
-			border-radius: 4px;
 		}
 
 		.login__form-userdata input {
@@ -379,7 +406,7 @@ $image-height: 47px;
 		}
 
 		.login__form-userdata {
-			button {
+			button:not(.login__form-change-username, .form-password-input__toggle) {
 				min-width: 194px;
 				height: unset;
 				border: 0;
@@ -437,12 +464,7 @@ $image-height: 47px;
 	}
 
 	.wp-login__main.is-social-first {
-		max-width: 758px;
-		margin-top: 24px;
-
-		@include break-medium {
-			margin-top: 20.5vh;
-		}
+		max-width: none;
 
 		.wp-login__header-navigation {
 			align-items: center;
@@ -482,38 +504,36 @@ $image-height: 47px;
 	}
 
 	.wp-login__main-footer {
-
+		display: flex;
+		flex-direction: column;
+		align-self: center;
 		max-width: var(--login-form-column-max-width);
-		margin: 0 auto;
 
+		.wp-login__main-footer-help-docs {
+			margin-top: 16px;
+		}
+
+		.wp-login__main-footer-help-docs,
 		.login__lost-password-link {
-			color: var(--studio-gray-90, #1d2327);
-			display: block;
 			font-size: $font-body-small;
+			display: block;
+		}
+
+		.login__lost-password-link,
+		.wp-login__main-footer-help-docs a {
+			color: var(--studio-gray-90, #1d2327);
 			font-weight: 500;
 			text-align: center;
 			text-decoration: underline;
-			text-underline-offset: 5px;
-			margin-top: 24px;
-
-			@include break-mobile {
-				margin-top: 40px;
-			}
 		}
 	}
 
 	.layout__primary {
-		margin-top: 40px;
+		margin-top: 0;
 
 		/* START - Note: Patches below needed to continue using the current Divider.
 		We can remove when we refactor the Divider itself (or rethink current usage), and leave the default card styles intact.
 		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.auth-form__separator`) */
-		padding-left: 20px;
-		padding-right: 20px;
-
-		@include break-mobile {
-			margin-top: 64px;
-		}
 
 		form {
 			.card.login__form {
@@ -525,11 +545,6 @@ $image-height: 47px;
 		/* END - Note */
 	}
 
-	.form-password-input .form-password-input__toggle-visibility {
-		top: calc((44px - 24px) / 2);
-		/* height of input - height of toggle */
-	}
-
 	.two-factor-authentication__verification-code-form > p,
 	.login__form-terms,
 	.login__social-tos {
@@ -538,10 +553,6 @@ $image-height: 47px;
 
 	.two-factor-authentication__verification-code-form > p {
 		text-align: left;
-	}
-
-	.login__form .login__form-userdata label {
-		color: var(--studio-gray-60);
 	}
 
 	.login__form-terms {
@@ -574,10 +585,6 @@ $image-height: 47px;
 			font-size: $font-body-small;
 		}
 	}
-
-	.two-factor-authentication__actions.card {
-		padding-top: 0;
-	}
 }
 
 /* stylelint-disable scales/font-weights, scales/radii */
@@ -607,14 +614,13 @@ $image-height: 47px;
 				background-color: darken(#2404eb, 10%);
 			}
 		}
-
-		.social-buttons__button {
-			--color-accent: var(--color-wp-job-manager);
-		}
 	}
 
-	.login__form-gutenboarding-wordpress-logo {
-		display: none;
+	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {
+		&,
+		.calypso-notice__icon-wrapper {
+			background-color: var(--studio-gray-0);
+		}
 	}
 
 	.layout__content {
@@ -638,7 +644,7 @@ $image-height: 47px;
 		font-size: 14px;
 		line-height: 1.5;
 
-		a:not(.notice.is-error a) {
+		a:not(.calypso-notice.is-error a) {
 			color: var(--color-gravatar);
 		}
 
@@ -672,6 +678,11 @@ $image-height: 47px;
 
 	.card {
 		background: transparent;
+
+		&.two-factor-authentication__push-notification-approval,
+		&.two-factor-authentication__actions {
+			box-shadow: none;
+		}
 	}
 
 	form {
@@ -680,6 +691,7 @@ $image-height: 47px;
 		> .card {
 			padding: 0;
 			border: 0;
+			box-shadow: none;
 		}
 	}
 
@@ -707,15 +719,20 @@ $image-height: 47px;
 	.form-text-input,
 	.login__form-userdata input:last-of-type.form-text-input {
 		padding: 14px 16px;
-		border-color: #9ea4a8;
 		font-size: 16px;
 		margin: 0;
 		border-radius: 2px;
 		height: auto;
+		line-height: 1.5;
+
+		&[type="password"] {
+			padding-right: 44px;
+		}
 	}
 
 	.form-password-input__toggle {
-		top: 14px;
+		top: 15px;
+		right: 16px;
 	}
 
 	.form-input-validation {
@@ -727,10 +744,8 @@ $image-height: 47px;
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
 		margin: 24px 0 0;
-
-		a {
-			text-decoration: none;
-		}
+		font-size: 0.875rem;
+		text-align: left;
 	}
 
 	button.form-button.is-primary,
@@ -760,6 +775,13 @@ $image-height: 47px;
 		&:focus {
 			background-color: darken(#1d4fc4, 10%);
 		}
+	}
+
+	.components-button.is-primary {
+		min-height: 56px;
+		margin-top: 16px;
+		font-size: 16px;
+		font-weight: 600;
 	}
 
 	.two-factor-authentication__actions {
@@ -812,8 +834,6 @@ $image-height: 47px;
 	}
 
 	.social-buttons__button {
-		--color-accent: var(--color-gravatar);
-
 		box-shadow: none;
 		padding: unset;
 		height: auto;
@@ -894,6 +914,11 @@ $image-height: 47px;
 	@include break-small {
 		background-color: #efefef;
 
+		.wp-login__main:not(:has(.locale-suggestions)) .login,
+		.grav-powered-magic-login:not(:has(.locale-suggestions)) .grav-powered-magic-login__content {
+			margin-top: 40px;
+		}
+
 		.login {
 			padding: 40px 56px;
 		}
@@ -918,28 +943,4 @@ $image-height: 47px;
 
 :root {
 	--login-form-column-max-width: 327px;
-}
-
-@include break-mobile {
-	:root {
-		--login-form-column-max-width: 600px;
-	}
-}
-
-@include break-small {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}
-
-@include break-medium {
-	:root {
-		--login-form-column-max-width: 350px;
-	}
-}
-
-@include break-large {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
 }

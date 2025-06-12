@@ -1,4 +1,5 @@
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
@@ -35,8 +36,8 @@ const useUnsubscribeModal = (
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
 			const link = isJetpackCloud()
-				? `/monetize/supporters/${ selectedSiteSlug }`
-				: `/earn/supporters/${ selectedSiteSlug }`;
+				? `/monetize/paid-subscriptions/${ selectedSiteSlug }`
+				: `/earn/paid-subscriptions/${ selectedSiteSlug }`;
 			navigate( link ?? '' );
 		} else if (
 			action === UnsubscribeActionType.Unsubscribe &&
@@ -63,7 +64,7 @@ const useUnsubscribeModal = (
 										{
 											count: subscribers.length,
 											args: {
-												count: numberFormat( subscribers.length ),
+												count: formatNumber( subscribers.length ),
 											},
 											comment: 'Shows when multiple subscribers are removed, using the count',
 										}

@@ -15,21 +15,21 @@ $highlight-color: #a3b745;
 $notification-color: #d46f15;
 
 Created this definition in color-studio to generate 0-100 shades:
-    {
-      name: 'Ectoplasm Green',
-      default: 50,
-      specs: {
-        hue_start: 70,
-        hue_end: 72,
-        hue_curve: 'easeOutSine',
-        sat_steps: [
-          8, 27, 56, 80, 100, 100, 100, 100, 100, 100, 100, 100
-        ],
-        lum_steps: [
-          96, 96, 95, 94, 87, 75.1, 61.6, 49, 40.5, 31, 20, 11
-        ]
-      }
-    }
+	{
+		name: 'Ectoplasm Green',
+		default: 50,
+		specs: {
+			hue_start: 70,
+			hue_end: 72,
+			hue_curve: 'easeOutSine',
+			sat_steps: [
+				8, 27, 56, 80, 100, 100, 100, 100, 100, 100, 100, 100
+			],
+			lum_steps: [
+				96, 96, 95, 94, 87, 75.1, 61.6, 49, 40.5, 31, 20, 11
+			]
+		}
+	}
 */
 
 .color-scheme.is-ectoplasm {

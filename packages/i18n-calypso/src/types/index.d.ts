@@ -2,11 +2,6 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
-import type {
-	NumberFormatParams,
-	NumberFormatCurrencyParams,
-	CurrencyObject,
-} from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -76,21 +71,6 @@ export type ComponentUpdateHook = ( ...args: any ) => any;
 
 export type EventListener = ( ...payload: any ) => any;
 
-/**
- * Omit `number` as it's an argument to the function.
- * Omit `browserSafeLocale` as it's pulled from the i18n instance state.
- */
-export type NumberFormatOptions = Omit< NumberFormatParams, 'number' | 'browserSafeLocale' >;
-
-/**
- * Omit `number` and `currency` as they're arguments to the function.
- * Omit `browserSafeLocale` and `geoLocation` as they're pulled from the i18n instance state.
- */
-export type FormatCurrencyOptions = Omit<
-	NumberFormatCurrencyParams,
-	'number' | 'currency' | 'browserSafeLocale' | 'geoLocation'
->;
-
 export interface I18N {
 	/**
 	 * Translate a string.
@@ -108,46 +88,11 @@ export interface I18N {
 	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
 
-	numberFormat( number: number, options?: NumberFormatOptions ): string;
-	numberFormatCompact( number: number, options?: NumberFormatOptions ): string;
-	formatCurrency( number: number, currency: string, options?: FormatCurrencyOptions ): string;
-	getCurrencyObject(
-		number: number,
-		currency: string,
-		options?: FormatCurrencyOptions
-	): CurrencyObject;
-
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;
 	hasTranslation( original: string ): boolean;
 
 	configure( options: Record< string, any > ): void;
-
-	/**
-	 * Fetches geolocation data from the specified endpoint URL.
-	 * If the fetch operation fails, it logs a warning message to the console.
-	 * Used for currencies: when the user is inside the US using USD,
-	 * they should only see `$` and not `US$`.
-	 *
-	 * This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`.
-	 * This is to determine the country code to provide better USD formatting.
-	 * By default, the currency symbol for USD will be based on the locale (unlike other currency codes which
-	 * use a hard-coded list of overrides); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`.
-	 * However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$`
-	 * regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
-	 *
-	 * In the US, users will expect to see USD prices rendered with the currency symbol `$`.
-	 * However, there are many other currencies which use `$` as their currency symbol (eg: `CAD`).
-	 * This package tries to prevent confusion between these symbols by using an international version of the symbol
-	 * when the locale does not match the currency. So if your locale is `en-CA`, USD prices will be rendered with the symbol `US$`.
-	 *
-	 * However, this relies on the user having set their interface language to something other than `en-US`/`en`,
-	 * and many English-speaking non-US users still have that interface language (eg: there's no English locale available
-	 * in our settings for Argentinian English so such users would probably still have `en`).
-	 * As a result, those users will see a price with `$` and could be misled about what currency is being displayed.
-	 * `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
-	 */
-	geolocateCurrencySymbol(): Promise< void >;
 
 	getLocale(): LocaleData;
 	getLocaleSlug(): string | null; // TODO clk i18ncalypso this should be string. Default is 'en'
@@ -161,9 +106,7 @@ export interface I18N {
 	registerTranslateHook( hook: TranslateHook ): void;
 	registerComponentUpdateHook( hook: ComponentUpdateHook ): void;
 
-	on( eventName: string, listener: EventListener ): void;
-	off( eventName: string, listener: EventListener ): void;
-	emit( eventName: string, ...payload: any ): void;
+	subscribe( callback: () => any ): () => void;
 
 	/**
 	 * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
@@ -175,28 +118,28 @@ export interface I18N {
 	 * @param options.text - The text to check for translation.
 	 * @param options.newCopy - The translation to return if the text is translated.
 	 * @param options.oldCopy - The fallback to return if the text is not translated.
+	 * @param options.translationOptions - Optional. The options to pass to the translation.
 	 * @example
 	 * i18n.fixMe( {
 	 * 	text: 'new copy',
 	 * 	newCopy: i18n.translate( 'new copy' ),
 	 * 	oldCopy: i18n.translate( 'old copy' ),
+	 * 	translationOptions: {
+	 * 		context: 'Some disambiguating context if needed for the translation',
+	 * 	}
 	 * } );
 	 */
 	fixMe( options: {
 		text: string;
 		newCopy: ExistingReactNode;
 		oldCopy?: ExistingReactNode;
+		translationOptions?: TranslateOptions;
 	} ): ExistingReactNode | null;
 }
 
 declare const i18n: I18N;
 export default i18n;
 export declare const translate: typeof i18n.translate;
-export declare const numberFormat: typeof i18n.numberFormat;
-export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
-export declare const formatCurrency: typeof i18n.formatCurrency;
-export declare const getCurrencyObject: typeof i18n.getCurrencyObject;
-export declare const geolocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
 export declare const configure: typeof i18n.configure;
@@ -208,15 +151,11 @@ export declare const isRtl: typeof i18n.isRtl;
 export declare const defaultLocaleSlug: typeof i18n.defaultLocaleSlug;
 export declare const registerTranslateHook: typeof i18n.registerTranslateHook;
 export declare const registerComponentUpdateHook: typeof i18n.registerComponentUpdateHook;
-export declare const on: typeof i18n.on;
-export declare const off: typeof i18n.off;
-export declare const emit: typeof i18n.emit;
 export declare const fixMe: typeof i18n.fixMe;
 
 export interface LocalizeProps {
 	locale: string;
 	translate: typeof translate;
-	numberFormat: typeof numberFormat;
 }
 
 export type WithoutLocalizedProps< OrigProps > = Pick<

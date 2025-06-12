@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';

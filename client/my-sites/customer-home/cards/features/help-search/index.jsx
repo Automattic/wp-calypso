@@ -1,7 +1,6 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
-import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -62,7 +61,7 @@ export default function HelpSearch() {
 		<>
 			<Card className="help-search customer-home__card">
 				<div className="help-search__inner">
-					<CardHeading tagName="h2">{ translate( 'Get help' ) }</CardHeading>
+					<CardHeading tagName="h2">{ translate( 'Need help?' ) }</CardHeading>
 					<div className="help-search__content">
 						<div className="help-search__search inline-help__search">
 							<HelpSearchCard
@@ -81,15 +80,17 @@ export default function HelpSearch() {
 						</div>
 					</div>
 				</div>
-				<div className="help-search__footer">
-					<Button className="help-search__cta" onClick={ onClick }>
-						<span className="help-search__help-icon">
-							<Gridicon icon="help" size={ 36 } />
-						</span>
-						{ translate( 'Get help' ) }
-					</Button>
-				</div>
 			</Card>
+			<div className="customer-home-help-search__footer">
+				<p>
+					{ translate(
+						'Our AI assistant is here to answer your questions and help you find solutions.'
+					) }
+				</p>
+				<Button variant="secondary" className="help-search__cta" onClick={ onClick }>
+					{ translate( 'Get help' ) }
+				</Button>
+			</div>
 		</>
 	);
 }

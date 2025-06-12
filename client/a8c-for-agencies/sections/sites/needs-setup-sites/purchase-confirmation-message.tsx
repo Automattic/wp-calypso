@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
-import NoticeBanner from '@automattic/components/src/notice-banner';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -34,16 +34,15 @@ export default function PurchaseConfirmationMessage() {
 	}, [ dispatch, wpcomHostingPurchased ] );
 
 	return successNotification ? (
-		<div className="sites-overview__banner">
-			<NoticeBanner
-				level="success"
-				title={ translate( 'Congratulations on your WordPress.com purchase!' ) }
-				onClose={ () => setSuccessNotification( false ) }
-			>
-				{ translate(
-					'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.'
-				) }
-			</NoticeBanner>
-		</div>
+		<LayoutBanner
+			isFullWidth
+			level="success"
+			title={ translate( 'Congratulations on your WordPress.com purchase!' ) }
+			onClose={ () => setSuccessNotification( false ) }
+		>
+			{ translate(
+				'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.'
+			) }
+		</LayoutBanner>
 	) : null;
 }

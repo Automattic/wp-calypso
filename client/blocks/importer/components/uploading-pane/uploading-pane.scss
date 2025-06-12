@@ -66,10 +66,6 @@
 	color: var(--studio-gray-50);
 
 	.inline-support-link {
-		&::before {
-			content: "\A";
-		}
-
 		&:hover {
 			color: var(--studio-gray-100);
 		}

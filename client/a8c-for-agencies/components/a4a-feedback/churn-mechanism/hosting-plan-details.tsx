@@ -1,6 +1,7 @@
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, close, arrowUpLeft } from '@wordpress/icons';
-import { numberFormatCompact, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
@@ -64,7 +65,7 @@ const PressablePlanDetails = ( { productId }: { productId: number } ) => {
 							} ),
 							translate( '%(count)s visits per month', {
 								args: {
-									count: numberFormatCompact( selectedPlanInfo?.visits ?? 0 ),
+									count: formatNumberCompact( selectedPlanInfo?.visits ?? 0 ),
 								},
 								comment: '%(count)d is the number of visits.',
 							} ),

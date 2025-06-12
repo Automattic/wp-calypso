@@ -1,4 +1,5 @@
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import { A4A_MIGRATIONS_PAYMENT_SETTINGS } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';

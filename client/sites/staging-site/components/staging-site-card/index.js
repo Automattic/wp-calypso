@@ -230,11 +230,13 @@ export const StagingSiteCard = ( {
 		// If we are done with the transfer, and we have not errored we want to set the action to NONE, and display a success notice.
 		if ( stagingSiteStatus === StagingSiteStatus.REVERTED ) {
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
+			// Refetch the sites to remove the deleted staging site from the list
+			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
 			dispatch(
 				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, siteId, stagingSiteStatus ] );
+	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
 
 	const handleNullTransferStatus = useCallback( () => {
 		// When a revert is finished, the status after deletion becomes null, as the API doesn't return any value ( returns an error ) due to the staging site's deletion.

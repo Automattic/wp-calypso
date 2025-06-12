@@ -41,11 +41,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		isError: isStoreApplicationPasswordError,
 		isPending: isStoreApplicationPasswordPending,
 	} = useStoreApplicationPassword( siteSlug as string );
-	const hasStoreApplicationPasswordResponse =
-		isStoreApplicationPasswordSuccess || isStoreApplicationPasswordError;
 	const isLoading =
 		isAuthorizationSuccessful &&
-		( ! hasStoreApplicationPasswordResponse || isStoreApplicationPasswordPending );
+		( isStoreApplicationPasswordSuccess || isStoreApplicationPasswordPending );
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
@@ -128,18 +126,17 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		/>
 	) : undefined;
 
-	const stepContent = ! isLoading ? (
+	const stepContent = (
 		<Authorization
 			onAuthorizationClick={ startAuthorization }
 			onShareCredentialsClick={ navigateToFallbackCredentials }
 		/>
-	) : (
-		<div data-testid="loading-ellipsis">
-			<LoadingEllipsis />
-		</div>
 	);
 
 	if ( isUsingStepContainerV2 ) {
+		if ( isLoading ) {
+			return <Step.Loading title={ title } delay={ 500 } />;
+		}
 		return (
 			<>
 				<DocumentHead title={ title } />
@@ -151,6 +148,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 					className="site-migration-application-password-authorization-v2"
 				>
+					{ notice }
 					{ stepContent }
 				</Step.CenteredColumnLayout>
 			</>
@@ -164,8 +162,6 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 				stepName="site-migration-application-password-authorization"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
-				hideSkip
 				notice={ notice }
 				formattedHeader={ formattedHeader }
 				stepContent={

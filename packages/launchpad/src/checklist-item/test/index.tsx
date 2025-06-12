@@ -126,7 +126,7 @@ describe( 'ChecklistItem', () => {
 	describe( 'when the task is completed', () => {
 		it( 'shows the task completed icon', () => {
 			renderComponent( { task: buildTask( { completed: true } ) } );
-			const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
+			const taskCompleteIcon = screen.getByTestId( 'checklist-item-checkmark' );
 
 			expect( taskCompleteIcon ).toBeVisible();
 		} );

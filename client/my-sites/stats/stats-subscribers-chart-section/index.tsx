@@ -280,6 +280,7 @@ export default function SubscribersChartSection( {
 							require="calypso/my-sites/stats/components/line-chart"
 							chartData={ lineChartData }
 							height={ 300 }
+							curveType="monotone" // can use smooth, linear, monotone
 							EmptyState={ () => null }
 							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }

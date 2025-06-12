@@ -1,5 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -103,7 +104,7 @@ class FeedHeader extends Component {
 								{ ' ' }
 								{ translate( '%s subscriber', '%s subscribers', {
 									count: followerCount,
-									args: [ this.props.numberFormat( followerCount ) ],
+									args: [ formatNumber( followerCount ) ],
 									comment: '%s is the number of subscribers. For example: "12,000,000"',
 								} ) }
 							</div>

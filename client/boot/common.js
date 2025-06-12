@@ -6,7 +6,6 @@ import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
-import defaultCalypsoI18n from 'i18n-calypso';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
@@ -42,15 +41,20 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
 import { setupErrorLogger } from '../lib/error-logger/setup-error-logger';
+import { setupCountryCode } from './geolocation';
 import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
+	let previousPath = null;
+
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.canonicalPath );
-		const path = parsed.pathname + parsed.search || null;
-		context.prevPath = path === context.path ? false : path;
+
+		context.previousPath = previousPath;
+		previousPath = context.path;
+
 		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
@@ -222,12 +226,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
 
-	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
-			networkConnection.default.init( reduxStore )
-		);
-	}
-
 	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
@@ -326,7 +324,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
-	defaultCalypsoI18n.geolocateCurrencySymbol();
+	setupCountryCode();
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();
