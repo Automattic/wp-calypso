@@ -243,6 +243,11 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getUseYourDomainUrl = () => {
+		if ( this.props.getUseYourDomainUrl ) {
+			const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
+			return this.props.getUseYourDomainUrl( lastQuery );
+		}
+
 		return getStepUrl(
 			this.props.flowName,
 			this.props.stepName,
@@ -534,6 +539,10 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	handleAddMapping = ( { sectionName, domain, state } ) => {
+		if ( this.props.handleAddMapping ) {
+			this.props.handleAddMapping( domain );
+			return;
+		}
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -575,6 +584,11 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	handleAddTransfer = ( { domain, authCode } ) => {
+		if ( this.props.handleAddTransfer ) {
+			this.props.handleAddTransfer( domain );
+			return;
+		}
+
 		const domainItem = domainTransfer( {
 			domain,
 			extra: {
@@ -662,7 +676,7 @@ class RenderDomainsStepComponent extends Component {
 			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
-			'domains', // domains/add
+			'domains/add',
 		].includes( flowName );
 	};
 
@@ -799,6 +813,8 @@ class RenderDomainsStepComponent extends Component {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
 		} );
+
+		this.props.recordRemoveDomainButtonClick( domain.meta );
 	};
 
 	async removeDomain( { domain_name, product_slug } ) {
@@ -1288,7 +1304,7 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getAnalyticsSection() {
-		return this.props.isDomainOnly ? 'domain-first' : 'signup';
+		return this.props.analyticsSection ?? this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
 	getContentColumns() {

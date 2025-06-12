@@ -17,10 +17,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import {
 	hasPlan,
-	hasDomainInCart,
 	domainTransfer,
 	domainRegistration,
-	updatePrivacyForDomain,
 	ObjectWithProducts,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
@@ -65,11 +63,14 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { recordUseYourDomainButtonClick } from '../../../components/domains/register-domain-step/analytics';
 import type { Context } from '@automattic/calypso-router';
 import type { DomainSuggestion, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
+
+const noop = () => {};
 
 type DomainSearchProps = {
 	basePath: string;
@@ -95,6 +96,7 @@ type DomainSearchProps = {
 		rootVendor?: string
 	) => void;
 	recordRemoveDomainButtonClick: ( domainName: string ) => void;
+	recordUseYourDomainButtonClick: ( section: string ) => void;
 	isSiteOnFreePlan?: boolean;
 	isSiteOnMonthlyPlan: boolean;
 	isDomainUpsell: boolean;
@@ -130,14 +132,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 			domainRegistrationAvailable: isAvailable,
 			domainRegistrationMaintenanceEndTime: maintenanceEndTime,
 		} );
-	};
-
-	handleAddRemoveDomain = ( suggestion: DomainSuggestion, position: number ) => {
-		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.addDomain( suggestion, position );
-		} else {
-			this.removeDomain( suggestion );
-		}
 	};
 
 	handleAddMapping = ( domain: string ) => {
@@ -206,81 +200,19 @@ class DomainSearch extends Component< DomainSearchProps > {
 		}
 	}
 
-	async addDomain( suggestion: DomainSuggestion, position: number ) {
-		const queryArgs = getQueryArgs( window.location.href );
-		const {
-			domain_name: domain,
-			product_slug: productSlug,
-			supports_privacy: supportsPrivacy,
-			is_premium: isPremium,
-			vendor: rootVendor,
-		} = suggestion;
+	getUseYourDomainUrl = ( lastQuery?: string ) => {
+		let useYourDomainUrl;
 
-		this.props.recordAddDomainButtonClick(
-			domain,
-			'domains',
-			position,
-			isPremium,
-			'domains/add',
-			rootVendor
-		);
+		useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 
-		let registration = domainRegistration( {
-			domain,
-			productSlug: productSlug as string,
-			extra: { privacy_available: supportsPrivacy },
-		} );
-
-		if ( supportsPrivacy ) {
-			registration = updatePrivacyForDomain( registration, true );
-		}
-
-		if ( this.props.domainAndPlanUpsellFlow ) {
-			try {
-				// If we are in the domain + annual plan upsell flow, we need to redirect
-				// to the plans page next and let it know that we are still in that flow.
-				await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
-			} catch {
-				// Nothing needs to be done here. CartMessages will display the error to the user.
-				return;
-			}
-			// Monthly plans don't have free domains
-			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
-			const nextStepLink =
-				! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
-					? addQueryArgs( `/checkout/${ this.props.selectedSiteSlug }`, queryArgs )
-					: addQueryArgs( `/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`, {
-							...queryArgs,
-							domainAndPlanPackage: true,
-							domain: this.props.isDomainUpsell ? domain : undefined,
-					  } );
-			page( nextStepLink );
-			return;
-		}
-
-		try {
-			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
-		} catch {
-			// Nothing needs to be done here. CartMessages will display the error to the user.
-			return;
-		}
-		page( addQueryArgs( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ), queryArgs ) );
-	}
-
-	removeDomain( suggestion: DomainSuggestion ) {
-		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-
-		const productToRemove = this.props.cart.products.find(
-			( product ) =>
-				product.meta === suggestion.domain_name && product.product_slug === suggestion.product_slug
-		);
-		if ( productToRemove ) {
-			const uuidToRemove = productToRemove.uuid;
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).catch( () => {
-				// Nothing needs to be done here. CartMessages will display the error to the user.
+		if ( this.props.selectedSite ) {
+			useYourDomainUrl = domainUseMyDomain( this.props.selectedSite.slug, {
+				domain: lastQuery?.trim(),
 			} );
 		}
-	}
+
+		return useYourDomainUrl;
+	};
 
 	getInitialSuggestion() {
 		const { context, selectedSite } = this.props;
@@ -437,10 +369,44 @@ class DomainSearch extends Component< DomainSearchProps > {
 							<NewDomainsRedirectionNoticeUpsell />
 						) }
 						<RenderDomainsStep
-							goToNextStep={ () => {
+							goToNextStep={ async () => {
 								const domains = this.props.cart.products.filter(
 									( p ) => p.is_domain_registration
 								);
+
+								if ( this.props.domainAndPlanUpsellFlow ) {
+									const domain = domains[ 0 ];
+									const queryArgs = getQueryArgs( window.location.href );
+									const registration = domainRegistration( {
+										domain: domain.meta,
+										productSlug: domain.product_slug,
+										extra: domain.extra,
+									} );
+
+									try {
+										// If we are in the domain + annual plan upsell flow, we need to redirect
+										// to the plans page next and let it know that we are still in that flow.
+										await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+									} catch {
+										// Nothing needs to be done here. CartMessages will display the error to the user.
+										return;
+									}
+									// Monthly plans don't have free domains
+									const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
+									const nextStepLink =
+										! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+											? addQueryArgs( `/checkout/${ this.props.selectedSiteSlug }`, queryArgs )
+											: addQueryArgs(
+													`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`,
+													{
+														...queryArgs,
+														domainAndPlanPackage: true,
+														domain: this.props.isDomainUpsell ? domain : undefined,
+													}
+											  );
+									page( nextStepLink );
+									return;
+								}
 
 								if ( domains.length === 1 ) {
 									page( domainAddEmailUpsell( this.props.selectedSiteSlug, domains[ 0 ].meta ) );
@@ -448,20 +414,24 @@ class DomainSearch extends Component< DomainSearchProps > {
 									page( `/checkout/${ this.props.selectedSiteSlug }` );
 								}
 							} }
-							saveSignupStep={ ( step: any ) => {
+							step={ this.state.step }
+							saveSignupStep={ ( step: Record< string, unknown > ) => {
 								this.setState( { step: { ...this.state.step, ...step } } );
 							} }
-							submitSignupStep={ () => {} }
+							handleAddMapping={ this.handleAddMapping }
+							handleAddTransfer={ this.handleAddTransfer }
+							getUseYourDomainUrl={ this.getUseYourDomainUrl }
+							submitSignupStep={ noop }
 							showAlreadyOwnADomain
 							isDomainOnly={ false }
 							domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 							suggestion={ this.getInitialSuggestion() }
 							positionInFlow={ 0 }
-							flowName="domains"
+							analyticsSection="domains"
+							flowName="domains/add"
 							stepName="domains-search"
 							multiDomainDefaultPlan={ multiDomainDefaultPlan }
-							step={ this.state.step }
 							cart={ this.props.cart }
 							productsList={ this.props.productsList }
 							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
@@ -471,6 +441,8 @@ class DomainSearch extends Component< DomainSearchProps > {
 							shoppingCartManager={ this.props.shoppingCartManager }
 							selectedSite={ selectedSite }
 							recordAddDomainButtonClick={ this.props.recordAddDomainButtonClick }
+							recordRemoveDomainButtonClick={ this.props.recordRemoveDomainButtonClick }
+							recordUseYourDomainButtonClick={ this.props.recordUseYourDomainButtonClick }
 							submitDomainStepSelection={ this.props.submitDomainStepSelection }
 							designType={ this.props.designType }
 							setDesignType={ this.props.setDesignType }
@@ -545,6 +517,7 @@ export default connect(
 		recordAddDomainButtonClickInTransferDomain,
 		recordAddDomainButtonClickInUseYourDomain,
 		recordRemoveDomainButtonClick,
+		recordUseYourDomainButtonClick,
 		setCurrentFlowName,
 		submitDomainStepSelection,
 		setDesignType,
