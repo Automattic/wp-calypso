@@ -20,29 +20,30 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDataFormCountryCodes from './use-data-form-country-codes';
 import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
+import type { VatField, VatFormControlProps, VatFormData } from './types';
 
-const VatSelectControl = ( { data, field, onChange } ) => {
+function VatSelectControl( { data, field, onChange }: VatFormControlProps ) {
 	const translate = useTranslate();
 
+	const { elements, getValue, id, label, isDisabled, isVatAlreadySet } = field;
+
 	const options =
-		field.elements.length === 0
-			? [ { label: translate( 'Loading…' ), value: '' } ]
-			: field.elements;
+		elements?.length === 0 ? [ { label: translate( 'Loading…' ), value: '' } ] : elements;
 
 	return (
 		<SelectControl
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
-			disabled={ field.isDisabled || field.isVatAlreadySet || field.elements.length === 0 }
-			label={ field.label }
-			value={ field.getValue( { item: data } ) }
-			onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
+			disabled={ isDisabled || isVatAlreadySet || elements?.length === 0 }
+			label={ label }
+			value={ getValue( { item: data } ) }
+			onChange={ ( value ) => onChange( { [ id ]: value } ) }
 			options={ options }
 		/>
 	);
-};
+}
 
-const VatIdControl = ( { data, field, onChange } ) => {
+function VatIdControl( { data, field, onChange }: VatFormControlProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -80,23 +81,27 @@ const VatIdControl = ( { data, field, onChange } ) => {
 			value={ getValue( { item: data } ) || '' }
 		/>
 	);
-};
+}
 
-const VatInputControl = ( { data, field, onChange } ) => (
-	<InputControl
-		__next40pxDefaultSize
-		disabled={ field.isDisabled }
-		label={ field.label }
-		onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
-		value={ field.getValue( { item: data } ) || '' }
-	/>
-);
+function VatInputControl( { data, field, onChange }: VatFormControlProps ) {
+	const { getValue, id, label, isDisabled } = field;
+
+	return (
+		<InputControl
+			__next40pxDefaultSize
+			disabled={ isDisabled }
+			label={ label }
+			onChange={ ( value ) => onChange( { [ id ]: value } ) }
+			value={ getValue( { item: data } ) || '' }
+		/>
+	);
+}
 
 export default function VatForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ localData, setLocalData ] = useState();
+	const [ localData, setLocalData ] = useState< Partial< VatFormData > >( {} );
 
 	const { isLoading, isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
 		useVatDetails();
@@ -123,7 +128,7 @@ export default function VatForm() {
 	const isVatAlreadySet = !! vatDetails.id;
 	const isDisabled = isLoading || isUpdating;
 
-	const fields = [
+	const fields: VatField[] = [
 		{
 			Edit: VatSelectControl,
 			elements: countryCodes,
@@ -157,11 +162,11 @@ export default function VatForm() {
 	];
 
 	const form = {
-		type: 'regular',
+		type: 'regular' as const,
 		fields: [ 'country', 'id', 'name', 'address' ],
 	};
 
-	const onSubmit = ( e ) => {
+	const onSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		dispatch( recordTracksEvent( 'calypso_vat_details_update' ) );
 		setVatDetails( { ...vatDetails, ...localData } );
