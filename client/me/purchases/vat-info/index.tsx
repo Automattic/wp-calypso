@@ -16,7 +16,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
-import VatInfoDataForm from './vat-info-data-form';
+import VatForm from './vat-form';
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -86,7 +86,7 @@ export default function VatInfoPage() {
 		<Layout className="vat-info">
 			<Column type="main">
 				<CompactCard className="vat-info__form">
-					<VatInfoDataForm />
+					<VatForm />
 				</CompactCard>
 			</Column>
 			<Column type="sidebar">

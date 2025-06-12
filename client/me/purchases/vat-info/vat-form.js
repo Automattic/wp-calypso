@@ -83,7 +83,7 @@ const VatInputControl = ( { data, field, onChange } ) => (
 	/>
 );
 
-export default function VatInfoDataForm() {
+export default function VatForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
