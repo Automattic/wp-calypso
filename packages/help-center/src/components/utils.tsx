@@ -41,7 +41,10 @@ export const getLastMessage = ( {
 		return null;
 	}
 
-	const filteredMessages = conversation.messages.filter( ( message ) => message.type !== 'form' );
+	const filteredMessages = conversation.messages.filter(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		( message ) => ( message as any ).type !== 'form'
+	);
 	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
 };
 
