@@ -3,15 +3,12 @@ import { moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { useDownloadSubscribersCSV } from '../../hooks';
 import useSubscriberCountQuery from '../../queries/use-subscriber-count-query';
-import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
@@ -24,27 +21,12 @@ const SubscribersHeaderPopover = ( {
 	openMigrateSubscribersModal,
 }: SubscribersHeaderPopoverProps ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
-	const dispatch = useDispatch();
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
-	const downloadCsvLink = addQueryArgs(
-		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
-		'https://dashboard.wordpress.com/wp-admin/index.php'
-	);
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
 	const hasSubscribers = !! subscribersTotals?.total_subscribers;
-	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-
-	const onDownloadCsvClick = () => {
-		dispatch(
-			recordGoogleEvent(
-				'Subscribers',
-				'Clicked Download email subscribers as CSV menu item on Subscribers'
-			)
-		);
-		recordExport();
-	};
+	const { downloadCSV } = useDownloadSubscribersCSV( siteId );
 
 	const hasMultipleSites = currentUserSiteCount && currentUserSiteCount > 1;
 
@@ -74,7 +56,12 @@ const SubscribersHeaderPopover = ( {
 				focusOnShow={ false }
 			>
 				{ hasSubscribers ? (
-					<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
+					<PopoverMenuItem
+						onClick={ ( event: React.MouseEvent ) => {
+							event.preventDefault();
+							downloadCSV();
+						} }
+					>
 						{ translate( 'Download subscribers as CSV' ) }
 					</PopoverMenuItem>
 				) : null }

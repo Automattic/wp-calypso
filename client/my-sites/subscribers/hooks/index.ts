@@ -4,3 +4,4 @@ export { default as useSubscriptionPlans } from './use-subscription-plans';
 export { default as useUnsubscribeModal } from './use-unsubscribe-modal';
 export { useAddSubscribersCallback } from './use-add-subscribers-callback';
 export { useMigrateSubscribersCallback } from './use-migrate-subscribers-callback';
+export { useDownloadSubscribersCSV } from './use-download-subscribers-csv';
