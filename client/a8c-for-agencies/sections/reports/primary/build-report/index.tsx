@@ -317,7 +317,7 @@ const BuildReport = () => {
 									label={ translate( 'Teammate email(s)' ) }
 									value={ teammateEmails }
 									onChange={ setTeammateEmails }
-									type="text"
+									type="email"
 									help={
 										! hasFieldError( 'teammateEmails' )
 											? translate( 'Use commas to separate addresses.' )
