@@ -6,23 +6,21 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleFocus = () => {
-		const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` ) as HTMLElement;
-		if ( dropdown ) {
+		const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
+		if ( dropdown instanceof HTMLElement ) {
 			dropdown.setAttribute( 'aria-hidden', 'false' );
+			setIsOpen( true );
 		}
-		setIsOpen( true );
 	};
 
 	const handleBlur = ( event: React.FocusEvent< HTMLButtonElement > ) => {
 		// Only close if focus is moving outside the dropdown
 		if ( ! event.currentTarget.parentElement?.contains( event.relatedTarget as Node ) ) {
-			const dropdown = document.querySelector(
-				`[data-dropdown-name="${ content }"]`
-			) as HTMLElement;
-			if ( dropdown ) {
+			const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
+			if ( dropdown instanceof HTMLElement ) {
 				dropdown.setAttribute( 'aria-hidden', 'true' );
+				setIsOpen( false );
 			}
-			setIsOpen( false );
 		}
 	};
 
@@ -30,10 +28,8 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			setIsOpen( ! isOpen );
-			const dropdown = document.querySelector(
-				`[data-dropdown-name="${ content }"]`
-			) as HTMLElement;
-			if ( dropdown ) {
+			const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
+			if ( dropdown instanceof HTMLElement ) {
 				dropdown.setAttribute( 'aria-hidden', isOpen ? 'true' : 'false' );
 			}
 		}
