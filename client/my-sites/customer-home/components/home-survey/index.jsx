@@ -1,4 +1,5 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { __ } from '@wordpress/i18n';
 import moment from 'moment';
 import SurveyModal from 'calypso/components/survey-modal';
 import { useSelector } from 'calypso/state';
@@ -37,13 +38,15 @@ const HomeSurvey = () => {
 		<SurveyModal
 			name="survey-home"
 			eventName="calypso_survey_home"
-			title="Shape the Future of WordPress.com"
-			description="Are you interested in participating in a research interview and earning a $50 credit on your WordPress.com account? We are looking for feedback!"
+			title={ __( 'Shape the Future of WordPress.com' ) }
+			description={ __(
+				'Are you interested in participating in a research interview and earning a $50 credit on your WordPress.com account? We are looking for feedback!'
+			) }
 			surveyImage={ homeSurveyImage }
-			surveyImageAlt="WordPress.com Survey"
+			surveyImageAlt={ __( 'WordPress.com Survey' ) }
 			url="https://app.lyssna.com/apply/d82b7c11c07a0fb5"
-			dismissText="No thanks"
-			confirmText="Yes, I want to participate"
+			dismissText={ __( 'No thanks' ) }
+			confirmText={ __( 'Yes, I want to participate' ) }
 			showOverlay={ false }
 		/>
 	);
