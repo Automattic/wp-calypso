@@ -163,10 +163,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				className={ clx( 'chatbox-messages', {
 					'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
 				} ) }
-				aria-live="polite"
-				aria-atomic="false"
 				ref={ messagesContainerRef }
 			>
+				<div
+					className="screen-reader-text"
+					aria-live="polite"
+					aria-atomic="false"
+					aria-relevant="additions"
+				>
+					{ chat.messages.map( ( message ) => (
+						<div key={ message.created_at }>{ message.role === 'bot' && message.content }</div>
+					) ) }
+				</div>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
