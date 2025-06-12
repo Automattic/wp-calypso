@@ -1,4 +1,5 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import moment from 'moment';
 import SurveyModal from 'calypso/components/survey-modal';
 import { useSelector } from 'calypso/state';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
@@ -10,11 +11,9 @@ const HomeSurvey = () => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const isSiteLaunched = site?.launch_status === 'launched';
 	const isSiteCreatedInLast3Days =
-		site?.options?.created_at &&
-		new Date( site.options.created_at ) > new Date( Date.now() - 3 * 24 * 60 * 60 * 1000 );
+		site?.options?.created_at && moment().diff( moment( site?.options?.created_at ), 'days' ) <= 3;
 	const isLastActivityWithin2Days =
-		site?.options?.updated_at &&
-		new Date( site.options.updated_at ) > new Date( Date.now() - 2 * 24 * 60 * 60 * 1000 );
+		site?.options?.updated_at && moment().diff( moment( site?.options?.updated_at ), 'days' ) <= 2;
 	const isTwentyTwentyFiveTheme = site?.options?.theme_slug === 'pub/twentytwentyfive'; // The old default theme.
 	const isRetrospectTheme = site?.options?.theme_slug === 'pub/retrospect'; // The new default theme. See 185017-ghe-Automattic/wpcom.
 	const isAutomattician = useSelector( isA8cTeamMember );
