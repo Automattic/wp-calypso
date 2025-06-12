@@ -1,9 +1,56 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useState } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
 export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
+	const [ isOpen, setIsOpen ] = useState( false );
+
+	const handleFocus = () => {
+		const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` ) as HTMLElement;
+		if ( dropdown ) {
+			dropdown.setAttribute( 'aria-hidden', 'false' );
+		}
+		setIsOpen( true );
+	};
+
+	const handleBlur = ( event: React.FocusEvent< HTMLButtonElement > ) => {
+		// Only close if focus is moving outside the dropdown
+		if ( ! event.currentTarget.parentElement?.contains( event.relatedTarget as Node ) ) {
+			const dropdown = document.querySelector(
+				`[data-dropdown-name="${ content }"]`
+			) as HTMLElement;
+			if ( dropdown ) {
+				dropdown.setAttribute( 'aria-hidden', 'true' );
+			}
+			setIsOpen( false );
+		}
+	};
+
+	const handleKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			setIsOpen( ! isOpen );
+			const dropdown = document.querySelector(
+				`[data-dropdown-name="${ content }"]`
+			) as HTMLElement;
+			if ( dropdown ) {
+				dropdown.setAttribute( 'aria-hidden', isOpen ? 'true' : 'false' );
+			}
+		}
+	};
+
 	return (
-		<button role="menuitem" className={ className }>
+		<button
+			role="menuitem"
+			className={ `x-nav-link x-link ${ className || '' }` }
+			aria-haspopup="true"
+			aria-expanded={ isOpen }
+			data-dropdown-trigger={ content }
+			tabIndex={ 0 }
+			onFocus={ handleFocus }
+			onBlur={ handleBlur }
+			onKeyDown={ handleKeyDown }
+		>
 			{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
 		</button>
 	);
@@ -72,6 +119,7 @@ export const ClickableItem = ( {
 		const target = event.currentTarget;
 		clickNavLinkEvent( target );
 	};
+
 	return (
 		<li className={ liClassName } role="none">
 			<a
@@ -79,7 +127,7 @@ export const ClickableItem = ( {
 				className={ typeClassName ? typeClassName : `x-${ type }-link x-link` }
 				href={ urlValue }
 				title={ titleValue }
-				tabIndex={ -1 }
+				tabIndex={ type === 'nav' ? 0 : -1 }
 				target={ target }
 				onClick={ onClick }
 			>
