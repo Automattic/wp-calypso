@@ -125,7 +125,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 	};
 
 	if ( purchase.purchaser_id ) {
-		object.purchaserId = purchase.purchaser_id;
+		object.purchaserId = Number( purchase.purchaser_id );
 	}
 
 	if ( isCreditCardPurchase( purchase ) ) {
