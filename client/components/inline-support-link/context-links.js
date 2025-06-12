@@ -472,6 +472,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/transfer-domain-registration/',
 		post_id: 41298,
 	},
+	'plans-upgrade-credit': {
+		link: 'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit',
+		post_id: 267100,
+	},
 };
 
 export default contextLinks;

@@ -302,7 +302,7 @@ export function summary( context, next ) {
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 
 	// The option is used for stats queries only.
-	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode' ] );
+	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode', 'viewdType' ] );
 
 	if ( queryOptions.summarize ) {
 		statsQueryOptions.period = 'day';

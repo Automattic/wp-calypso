@@ -186,16 +186,19 @@ $image-height: 47px;
 
 .layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
 
-	.login__form input:focus,
-	.logged-out-form input:focus {
-		border-color: var(--color-accent);
-		box-shadow: 0 0 0 2px var(--color-accent-light);
+	.login__form input,
+	.logged-out-form input {
+		&:not(.form-text-input-core-styles) {
+			&:focus {
+				border-color: var(--color-accent);
+				box-shadow: 0 0 0 2px var(--color-accent-light);
+			}
+		}
 	}
 
 	.login__form-terms a,
 	.login__social-tos a,
-	.form-input-validation a,
-	.login__form-change-username {
+	.form-input-validation a {
 		color: var(--color-accent-dark);
 
 		&:hover,
@@ -379,7 +382,7 @@ $image-height: 47px;
 		// an exception to opt-out from some style overrides. Ideally, all
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
-		input:not(.components-text-control__input),
+		input:not(.components-text-control__input, .form-text-input-core-styles),
 		button:not(.components-button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
 			height: 40px; // Matches .components-button height __next40pxDefaultSize
@@ -403,7 +406,7 @@ $image-height: 47px;
 		}
 
 		.login__form-userdata {
-			button {
+			button:not(.login__form-change-username, .form-password-input__toggle) {
 				min-width: 194px;
 				height: unset;
 				border: 0;
@@ -542,11 +545,6 @@ $image-height: 47px;
 		/* END - Note */
 	}
 
-	.form-password-input .form-password-input__toggle-visibility {
-		top: calc((44px - 24px) / 2);
-		/* height of input - height of toggle */
-	}
-
 	.two-factor-authentication__verification-code-form > p,
 	.login__form-terms,
 	.login__social-tos {
@@ -555,10 +553,6 @@ $image-height: 47px;
 
 	.two-factor-authentication__verification-code-form > p {
 		text-align: left;
-	}
-
-	.login__form .login__form-userdata label {
-		color: var(--studio-gray-60);
 	}
 
 	.login__form-terms {
@@ -725,15 +719,20 @@ $image-height: 47px;
 	.form-text-input,
 	.login__form-userdata input:last-of-type.form-text-input {
 		padding: 14px 16px;
-		border-color: #9ea4a8;
 		font-size: 16px;
 		margin: 0;
 		border-radius: 2px;
 		height: auto;
+		line-height: 1.5;
+
+		&[type="password"] {
+			padding-right: 44px;
+		}
 	}
 
 	.form-password-input__toggle {
-		top: 14px;
+		top: 15px;
+		right: 16px;
 	}
 
 	.form-input-validation {

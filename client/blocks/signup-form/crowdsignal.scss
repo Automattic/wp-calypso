@@ -133,7 +133,9 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	max-width: 320px;
 	width: 100%;
 
-	.components-button {
+	.signup-form__crowdsignal-submit,
+	.signup-form__crowdsignal-wpcom,
+	.signup-form__crowdsignal-show-form {
 		width: 100%;
 	}
 }

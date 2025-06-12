@@ -346,10 +346,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if (
-			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
-			'/log-in/authenticator' !== currentRoute
-		) {
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
 		}
 

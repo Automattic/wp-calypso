@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
+import { getMigrationStatus } from 'calypso/data/site-migration';
 import { navigate } from 'calypso/lib/navigate';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
@@ -13,7 +14,6 @@ import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import {
 	displaySiteUrl,
-	getMigrationStatus,
 	isP2Site as getIsP2Site,
 	isStagingSite,
 	isSitePreviewPaneEligible as getIsSitePreviewPaneEligible,

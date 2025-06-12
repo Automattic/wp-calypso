@@ -9,7 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { agencyBlogQuery } from '../../app/queries';
+import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import Notice from '../../components/notice';
 import { isBigSkyTrial } from '../../utils/site-features';
 import type { AgencyBlog, Site } from '../../data/types';
@@ -23,7 +23,7 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 		Number.isFinite( agency.prices?.actual_price ) && typeof agency.prices?.currency === 'string';
 
 	if ( isAgencyQueryError || ! priceInfoIsDefined ) {
-		return __( "After launch, we'll bill your agency in the next billing cycle." );
+		return __( 'After launch, we’ll bill your agency in the next billing cycle.' );
 	}
 
 	const { existing_wpcom_license_count: existingWPCOMLicenseCount = 0, name, prices } = agency;
@@ -33,8 +33,8 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 		sprintf(
 			/* translators: agencyName is the name of the agency that will be billed for the site; licenseCount is the number of licenses the agency will be billed for; price is the price per license */
 			_n(
-				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting license, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>",
-				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting licenses, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>",
+				'After launch, we’ll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting license, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>',
+				'After launch, we’ll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting licenses, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>',
 				existingWPCOMLicenseCount + 1
 			),
 			{
@@ -61,7 +61,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 	site: Site;
 	onLaunchClick: () => void;
 } ) {
-	const { data, isError } = useQuery( agencyBlogQuery( site.ID ) );
+	const { data, isError } = useQuery( siteAgencyBlogQuery( site.ID ) );
 
 	const billingMessage = getAgencyBillingMessage( data, isError );
 	const isReferralStatusActive = data?.referral_status === 'active';
@@ -70,7 +70,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 
 	return (
 		<Notice
-			title={ __( "Your site hasn't been launched yet" ) }
+			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
 				<>
 					<Button size="compact" variant="primary" onClick={ () => onLaunchClick() }>
@@ -90,7 +90,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 		>
 			<VStack spacing={ 5 } alignment="left">
 				<Text as="p">
-					{ __( 'It is hidden from visitors behind a "Coming Soon" notice until it is launched.' ) }
+					{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 				</Text>
 				{ shouldShowBillingMessage && <Text as="p">{ billingMessage }</Text> }
 			</VStack>
