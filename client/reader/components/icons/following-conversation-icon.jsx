@@ -1,4 +1,4 @@
-export default function ReaderFollowingConversationIcon( { iconSize } ) {
+export default function ReaderFollowingConversationIcon( { iconSize, className } ) {
 	return (
 		<svg
 			key="following-conversation"
@@ -6,7 +6,7 @@ export default function ReaderFollowingConversationIcon( { iconSize } ) {
 			viewBox="0 0 24 24"
 			width={ iconSize }
 			height={ iconSize }
-			className="reader-following-conversation"
+			className={ className }
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<path

@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 
 export const useQueryForRoute = ( currentRoute: string ) => {
 	const urlMapping = {
-		'/add-ons/': __( 'add-ons' ),
 		'/advertising/': __( 'advertising' ),
 		'/comments/': __( 'comments' ),
 		'/discover': __( 'discover blogs' ),

@@ -44,15 +44,17 @@ export function SettingsSidebar() {
 	return (
 		<Sidebar>
 			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
-			{ areAdvancedHostingFeaturesSupported && (
-				<>
-					<SidebarItem href={ `/sites/settings/server/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/database/${ slug }` }>
-						{ __( 'Database' ) }
-					</SidebarItem>
-				</>
-			) }
+			{ areAdvancedHostingFeaturesSupported && [
+				<SidebarItem key="server" href={ `/sites/settings/server/${ slug }` }>
+					{ __( 'Server' ) }
+				</SidebarItem>,
+				<SidebarItem key="sftp-ssh" href={ `/sites/settings/sftp-ssh/${ slug }` }>
+					{ sftpSshTitle }
+				</SidebarItem>,
+				<SidebarItem key="database" href={ `/sites/settings/database/${ slug }` }>
+					{ __( 'Database' ) }
+				</SidebarItem>,
+			] }
 			{ areHostingFeaturesSupported && (
 				<SidebarItem href={ `/sites/settings/performance/${ slug }` }>
 					{ __( 'Performance' ) }
