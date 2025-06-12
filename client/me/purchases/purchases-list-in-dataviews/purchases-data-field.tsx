@@ -176,12 +176,28 @@ export function getPurchasesFieldDefinitions( {
 							>
 								{ getDisplayName( item ) }
 							</Button>
-							&nbsp;
 							<OwnerInfo purchase={ item } />
 						</div>
-						<div className="purchase-item__purchase-type">
-							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
-						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'description',
+			label: translate( 'Description' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				// Render a bunch of things to make this easily searchable.
+				const site = sites.find( ( site ) => site.ID === item.siteId );
+				return item.siteName + ' ' + item.domain + ' ' + site?.URL;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return (
+					<div className="purchase-item__information purchases-layout__information">
+						<PurchaseItemRowProduct purchase={ item } translate={ translate } />
 					</div>
 				);
 			},
