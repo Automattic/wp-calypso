@@ -3,8 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteLaunchMutation, siteBySlugSlug } from '../../app/queries/site';
+import { siteLaunchMutation, siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
@@ -19,9 +18,8 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 	const settingsMutation = useMutation( siteSettingsMutation( site.ID ) );
-	const launchMutation = useMutation( siteLaunchMutation( site.ID) );
+	const launchMutation = useMutation( siteLaunchMutation( site.ID ) );
 
-	const [ isLaunching, setIsLaunching ] = useState( false );
 	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
 		useState( false );
 
@@ -30,7 +28,6 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	}
 
 	const handleLaunch = () => {
-		setIsLaunching( true );
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
 				createSuccessNotice(
@@ -46,7 +43,6 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 				} );
 			},
 			onSettled: () => {
-				setIsLaunching( false );
 				setIsAgencyDevelopmentSiteLaunchModalOpen( false );
 			},
 		} );
@@ -64,14 +60,18 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 							/>
 							{ isAgencyDevelopmentSiteLaunchModalOpen && (
 								<AgencyDevelopmentSiteLaunchModal
-									isLaunching={ isLaunching }
+									isLaunching={ launchMutation.isPending }
 									onClose={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( false ) }
 									onLaunch={ handleLaunch }
 								/>
 							) }
 						</>
 					) : (
-						<LaunchForm site={ site } isLaunching={ isLaunching } onLaunchClick={ handleLaunch } />
+						<LaunchForm
+							site={ site }
+							isLaunching={ launchMutation.isPending }
+							onLaunchClick={ handleLaunch }
+						/>
 					) }
 					{ site.is_coming_soon && <ShareSiteForm site={ site } /> }
 				</>

@@ -16,7 +16,7 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanHostingTrial,
 	isSitePlanPaid,
-} from '../../utils/site-features';
+} from '../../utils/site-plans';
 import type { AgencyBlog, Site } from '../../data/types';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
@@ -112,12 +112,11 @@ export function LaunchForm( {
 	isLaunching: boolean;
 	onLaunchClick: () => void;
 } ) {
-	const { data, isLoading } = useQuery( siteDomainsQuery( site.slug ) );
+	const { data: domains = [], isLoading } = useQuery( siteDomainsQuery( site.ID ) );
 	if ( isLoading ) {
 		return null;
 	}
 
-	const domains = data?.domains || [];
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
 	const shouldImmediatelyLaunch = isSitePlanPaidWithDomains || isSitePlanHostingTrial( site );
 
