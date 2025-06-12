@@ -78,7 +78,6 @@ const ThreatDialog: React.FC< Props > = ( {
 		<ServerCredentialsWizardDialog
 			showDialog={ showDialog }
 			onCloseDialog={ onCloseDialog }
-			skipServerCredentials={ action === 'ignore' || action === 'unignore' }
 			buttons={ buttons }
 			{ ...titleProps }
 			baseDialogClassName="threat-dialog"

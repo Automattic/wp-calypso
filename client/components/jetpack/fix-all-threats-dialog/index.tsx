@@ -53,7 +53,6 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 	return (
 		<ServerCredentialsWizardDialog
 			showDialog={ showDialog }
-			isSingular={ false }
 			onCloseDialog={ onCloseDialog }
 			title={ translate( 'Fix all threats' ) }
 			buttons={ buttons }
