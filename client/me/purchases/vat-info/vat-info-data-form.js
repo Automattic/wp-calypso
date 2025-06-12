@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDataFormCountryCodes from './use-data-form-country-codes';
 import useVatDetails from './use-vat-details';
 
-const VatRequiredSelectControl = ( { data, field, onChange } ) => (
+const VatSelectControl = ( { data, field, onChange } ) => (
 	<SelectControl
 		__next40pxDefaultSize
 		__nextHasNoMarginBottom
@@ -72,7 +72,7 @@ const VatIdControl = ( { data, field, onChange } ) => {
 	);
 };
 
-const VatRequiredInputControl = ( { data, field, onChange } ) => (
+const VatInputControl = ( { data, field, onChange } ) => (
 	<InputControl
 		__next40pxDefaultSize
 		disabled={ field.isUpdating }
@@ -112,7 +112,7 @@ export default function VatInfoDataForm() {
 
 	const fields = [
 		{
-			Edit: VatRequiredSelectControl,
+			Edit: VatSelectControl,
 			elements: countryCodes,
 			id: 'country',
 			isUpdating,
@@ -129,14 +129,17 @@ export default function VatInfoDataForm() {
 			taxName,
 		},
 		{
-			Edit: VatRequiredInputControl,
+			Edit: VatInputControl,
 			id: 'name',
+			isUpdating,
 			label: translate( 'Name' ),
 			type: 'text',
 		},
 		{
-			Edit: VatRequiredInputControl,
+			Edit: VatInputControl,
 			id: 'address',
+			isUpdating,
+
 			label: translate( 'Address' ),
 			type: 'text',
 		},
