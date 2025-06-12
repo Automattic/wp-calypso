@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
 	Card,
@@ -15,7 +15,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import {
+	siteDefensiveModeSettingsQuery,
+	siteDefensiveModeSettingsMutation,
+} from '../../app/queries/site-defensive-mode';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
@@ -63,14 +67,14 @@ const form = {
 };
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canView = site && canViewDefensiveModeSettings( site );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewDefensiveModeSettings( site );
 
 	const { data } = useQuery( {
-		...siteDefensiveModeQuery( siteSlug ),
+		...siteDefensiveModeSettingsQuery( site.ID ),
 		enabled: canView,
 	} );
-	const mutation = useMutation( siteDefensiveModeMutation( siteSlug ) );
+	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { ttl: string } >( {

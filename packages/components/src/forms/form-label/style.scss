@@ -1,10 +1,12 @@
 @import "@automattic/typography/styles/variables";
 
 .form-label {
-	display: block;
-	font-size: $font-body-small;
-	font-weight: 600;
-	margin-bottom: 5px;
+	&:not(.form-label-core-styles) {
+		display: block;
+		font-size: $font-body-small;
+		font-weight: 600;
+		margin-bottom: 5px;
+	}
 
 	.form-label__required {
 		color: var(--color-error);
@@ -17,9 +19,22 @@
 		font-weight: normal;
 		margin-left: 6px;
 	}
+
+	input[type="checkbox"] + span,
+	input[type="radio"] + span {
+		font-weight: normal;
+	}
 }
 
-.form-label input[type="checkbox"] + span,
-.form-label input[type="radio"] + span {
-	font-weight: normal;
+.form-label-core-styles {
+	display: block;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--color-neutral-100);
+	margin-bottom: 6px;
+
+	&:not(.form-label-core-styles-no-caps) {
+		text-transform: uppercase;
+	}
 }

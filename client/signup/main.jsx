@@ -6,9 +6,11 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
+import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -867,6 +869,7 @@ class Signup extends Component {
 		}
 
 		const showPageHeader = ! this.props.isGravatar;
+		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
 			<>
@@ -888,6 +891,7 @@ class Signup extends Component {
 									/>
 								)
 							}
+							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
 					<div className="signup__steps">{ this.renderCurrentStep() }</div>

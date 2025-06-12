@@ -2,7 +2,7 @@
  * External dependencies
  */
 import removeAccents from 'remove-accents';
-
+import { getDate } from '@wordpress/date';
 /**
  * Internal dependencies
  */
@@ -17,6 +17,10 @@ import {
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
@@ -216,6 +220,50 @@ export function filterSortAndPaginate< Item >(
 									String( filter.value ).toLowerCase()
 								)
 						);
+					} );
+				} else if (
+					filter.operator === OPERATOR_BEFORE &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue < filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_AFTER &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue > filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_BEFORE_INC &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue <= filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_AFTER_INC &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue >= filterValue;
 					} );
 				}
 			}

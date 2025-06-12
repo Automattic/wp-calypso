@@ -3,6 +3,7 @@ import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-t
 import ReportsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/reports';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import ReportsLanding from './landing';
+import BuildReport from './primary/build-report';
 import ReportsDashboard from './primary/dashboard';
 import ReportsOverview from './primary/overview';
 
@@ -33,5 +34,16 @@ export const reportsDashboardContext: Callback = ( context, next ) => {
 		</>
 	);
 
+	next();
+};
+
+export const reportsBuildContext: Callback = ( context, next ) => {
+	context.secondary = <ReportsSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Reports > Build" path={ context.path } />
+			<BuildReport />
+		</>
+	);
 	next();
 };

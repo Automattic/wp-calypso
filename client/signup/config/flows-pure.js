@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales } from '@automattic/i18n-utils';
 import {
 	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
+	DOMAIN_FOR_GRAVATAR_FLOW,
 	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
@@ -278,7 +280,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'domain-for-gravatar',
+			name: DOMAIN_FOR_GRAVATAR_FLOW,
 			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
 			destination: getDomainSignupFlowDestination,
 			description: 'Checkout flow for domains on Gravatar',
@@ -400,6 +402,7 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enabledHelpCenterGeos: [ 'US' ],
+			enabledHelpCenterLocales: englishLocales,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},

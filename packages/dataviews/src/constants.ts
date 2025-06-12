@@ -20,6 +20,10 @@ export const OPERATOR_LESS_THAN = 'lessThan';
 export const OPERATOR_GREATER_THAN = 'greaterThan';
 export const OPERATOR_LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
 export const OPERATOR_GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
+export const OPERATOR_BEFORE = 'before';
+export const OPERATOR_AFTER = 'after';
+export const OPERATOR_BEFORE_INC = 'beforeInc';
+export const OPERATOR_AFTER_INC = 'afterInc';
 export const OPERATOR_CONTAINS = 'contains';
 export const OPERATOR_NOT_CONTAINS = 'notContains';
 export const OPERATOR_STARTS_WITH = 'startsWith';
@@ -35,6 +39,10 @@ export const ALL_OPERATORS: Operator[] = [
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
@@ -47,6 +55,10 @@ export const SINGLE_SELECTION_OPERATORS: Operator[] = [
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
@@ -92,6 +104,22 @@ export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	[ OPERATOR_GREATER_THAN_OR_EQUAL ]: {
 		key: 'greater-than-or-equal-filter',
 		label: __( 'Greater than or equal' ),
+	},
+	[ OPERATOR_BEFORE ]: {
+		key: 'before-filter',
+		label: __( 'Before' ),
+	},
+	[ OPERATOR_AFTER ]: {
+		key: 'after-filter',
+		label: __( 'After' ),
+	},
+	[ OPERATOR_BEFORE_INC ]: {
+		key: 'before-inc-filter',
+		label: __( 'Before (inc)' ),
+	},
+	[ OPERATOR_AFTER_INC ]: {
+		key: 'after-inc-filter',
+		label: __( 'After (inc)' ),
 	},
 	[ OPERATOR_CONTAINS ]: {
 		key: 'contains-filter',

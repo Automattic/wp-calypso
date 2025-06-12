@@ -7,13 +7,19 @@ import OverviewSidebarQuickLinks from './quick-links';
 import OverviewSidebarRelaunchWelcomeTour from './relaunch-welcome-tour';
 
 const OverviewSidebar = () => {
+	const isNewArrangement = isEnabled( 'a4a-unified-onboarding-tour' );
 	return (
 		<div className="overview-sidebar">
-			{ isEnabled( 'a4a-unified-onboarding-tour' ) && <OverviewSidebarRelaunchWelcomeTour /> }
+			{ isNewArrangement && (
+				<>
+					<OverviewSidebarRelaunchWelcomeTour />
+					<OverviewSidebarGrowthAccelerator />
+				</>
+			) }
 			{ isEnabled( 'a8c-for-agencies-agency-tier' ) && <OverviewSidebarAgencyTier /> }
-			<OverviewSidebarQuickLinks />
+			{ ! isNewArrangement && <OverviewSidebarQuickLinks /> }
 			<OverviewSidebarFeaturedWooPayments />
-			<OverviewSidebarGrowthAccelerator />
+			{ ! isNewArrangement && <OverviewSidebarGrowthAccelerator /> }
 			<OverviewSidebarContactSupport />
 		</div>
 	);

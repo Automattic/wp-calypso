@@ -1,0 +1,71 @@
+/* @wordpress/base-styles overrides
+ * See _wp-components-overrides.scss for overrides specific to components.
+*/
+
+/* .form-text-input-core-styles includes @wordpress/base-styles/mixins/input-control */
+.form-text-input-core-styles {
+	/* Blaze Pro */
+	.blaze-pro &:not(.is-error, .is-valid),
+	.is-blaze-pro &:not(.is-error, .is-valid) {
+		--wp-admin-theme-color: var(--color-gray);
+	}
+
+	/* Woo */
+	.woo.is-woo-passwordless & {
+		&[type='text'],
+		&[type='password'] {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+			font-size: 1rem;
+			height: 48px;
+			padding: 8px 16px;
+
+			&:not(:focus, :disabled) {
+				border-color: var(--studio-gray-30);
+			}
+
+			&:focus {
+				border-width: 1.5px;
+			}
+
+			&:not(.is-error, .is-valid) {
+				--wp-admin-theme-color: var(--woo-purple-50);
+			}
+		}
+	}
+
+	/* Akismet */
+	.is-akismet &:not(.is-error, .is-valid) {
+		--wp-admin-theme-color: var(--color-akismet);
+	}
+
+	/* Jetpack Cloud */
+	.jetpack-cloud &:not(.is-error, .is-valid) {
+		--wp-admin-theme-color: var(--studio-jetpack-green-40);
+	}
+
+	/* Jetpack login */
+	.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) &:not(.is-error, .is-valid) {
+		--wp-admin-theme-color: var(--studio-jetpack-green-50);
+	}
+
+	/* Gravatar powered client */
+	.layout.is-section-login.is-grav-powered-client & {
+		&[type='text'],
+		&[type='password'] {
+			&:not(.is-error, .is-valid) {
+				--wp-admin-theme-color: var(--color-gravatar);
+			}
+		}
+	}
+
+	/* WP Job Manager */
+	.layout.is-section-login.is-grav-powered-client.is-wp-job-manager & {
+		&[type='text'],
+		&[type='password'] {
+			&:not(.is-error, .is-valid) {
+				--wp-admin-theme-color: var(--color-wp-job-manager);
+			}
+		}
+	}
+}

@@ -82,6 +82,10 @@ export type Operator =
 	| 'greaterThan'
 	| 'lessThanOrEqual'
 	| 'greaterThanOrEqual'
+	| 'before'
+	| 'after'
+	| 'beforeInc'
+	| 'afterInc'
 	| 'contains'
 	| 'notContains'
 	| 'startsWith';

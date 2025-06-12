@@ -16,3 +16,17 @@ export interface ReportsApiResponse {
 	data: Report;
 	status: 'sent' | 'error';
 }
+
+export type BuildReportCheckedItemsState = Record< string, boolean >;
+
+export type BuildReportFormData = {
+	selectedSite: string;
+	selectedTimeframe: string;
+	clientEmail: string;
+	startDate?: string;
+	endDate?: string;
+	sendMeACopy: boolean;
+	teammateEmails: string;
+	customIntroText: string;
+	statsCheckedItems: BuildReportCheckedItemsState;
+};

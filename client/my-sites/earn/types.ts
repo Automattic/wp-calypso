@@ -38,7 +38,7 @@ export type Query = {
 	[ key: string ]: string;
 };
 
-export type Subscriber = {
+export type PaidSubscription = {
 	id: string;
 	status: string;
 	start_date: string;

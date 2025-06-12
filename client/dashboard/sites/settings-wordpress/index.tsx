@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -13,11 +13,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { siteBySlugQuery } from '../../app/queries/site';
 import {
-	siteQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
-} from '../../app/queries';
+} from '../../app/queries/site-wordpress-version';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
@@ -27,23 +27,19 @@ import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canView = site && canViewWordPressSettings( site );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewWordPressSettings( site );
 
 	const { data: currentVersion } = useQuery( {
-		...siteWordPressVersionQuery( siteSlug ),
+		...siteWordPressVersionQuery( site.ID ),
 		enabled: canView,
 	} );
-	const mutation = useMutation( siteWordPressVersionMutation( siteSlug ) );
+	const mutation = useMutation( siteWordPressVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
-
-	if ( ! site ) {
-		return null;
-	}
 
 	const fields: Field< { version: string } >[] = [
 		{

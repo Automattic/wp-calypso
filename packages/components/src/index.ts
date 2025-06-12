@@ -87,3 +87,4 @@ export { ValidatedRangeControl } from './validated-form-controls/components/rang
 
 // Export types
 export type { ValidatedControlProps } from './validated-form-controls/components/types';
+export { GravatarTextLogo } from './logos/gravatar-text-logo';
