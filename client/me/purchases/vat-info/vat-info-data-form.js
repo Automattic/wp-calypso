@@ -1,14 +1,15 @@
 import { DataForm } from '@automattic/dataviews';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
+	Button,
 	__experimentalHStack as HStack,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 	__experimentalVStack as VStack,
-	Button,
 	Notice,
+	SelectControl,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -18,6 +19,18 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDataFormCountryCodes from './use-data-form-country-codes';
 import useVatDetails from './use-vat-details';
+
+const VatRequiredSelectControl = ( { data, field, onChange } ) => (
+	<SelectControl
+		__next40pxDefaultSize
+		__nextHasNoMarginBottom
+		disabled={ field.isUpdating || field.isVatAlreadySet }
+		label={ field.label }
+		value={ field.getValue( { item: data } ) }
+		onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
+		options={ field.elements }
+	/>
+);
 
 const VatIdControl = ( { data, field, onChange } ) => {
 	const translate = useTranslate();
@@ -50,7 +63,7 @@ const VatIdControl = ( { data, field, onChange } ) => {
 		<InputControl
 			__next40pxDefaultSize
 			disabled={ isUpdating || isVatAlreadySet }
-			help={ ! isVatAlreadySet && vatIdHelp }
+			help={ isVatAlreadySet && vatIdHelp }
 			label={ label }
 			onChange={ ( value ) => onChange( { [ id ]: value } ) }
 			prefix={ country && <InputControlPrefixWrapper>{ country }</InputControlPrefixWrapper> }
@@ -58,6 +71,16 @@ const VatIdControl = ( { data, field, onChange } ) => {
 		/>
 	);
 };
+
+const VatRequiredInputControl = ( { data, field, onChange } ) => (
+	<InputControl
+		__next40pxDefaultSize
+		disabled={ field.isUpdating }
+		label={ field.label }
+		onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
+		value={ field.getValue( { item: data } ) || '' }
+	/>
+);
 
 export default function VatInfoDataForm() {
 	const translate = useTranslate();
@@ -85,10 +108,15 @@ export default function VatInfoDataForm() {
 	const { data: geoData } = useGeoLocationQuery();
 	const taxName = useTaxName( formData.country ?? geoData?.country_short ?? 'GB' );
 
+	const isVatAlreadySet = !! vatDetails.id;
+
 	const fields = [
 		{
+			Edit: VatRequiredSelectControl,
 			elements: countryCodes,
 			id: 'country',
+			isUpdating,
+			isVatAlreadySet,
 			label: translate( 'Country' ),
 			type: 'text',
 		},
@@ -96,16 +124,18 @@ export default function VatInfoDataForm() {
 			Edit: VatIdControl,
 			id: 'id',
 			isUpdating,
-			isVatAlreadySet: !! vatDetails.id,
+			isVatAlreadySet,
 			label: translate( 'VAT ID' ),
 			taxName,
 		},
 		{
+			Edit: VatRequiredInputControl,
 			id: 'name',
 			label: translate( 'Name' ),
 			type: 'text',
 		},
 		{
+			Edit: VatRequiredInputControl,
 			id: 'address',
 			label: translate( 'Address' ),
 			type: 'text',
