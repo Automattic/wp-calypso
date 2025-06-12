@@ -8,15 +8,15 @@ import homeSurveyImage from './assets/images/home-survey.png';
 const HomeSurvey = () => {
 	const site = useSelector( getSelectedSite );
 	const isEnglishLocale = useIsEnglishLocale();
-	const isSiteLaunched = site?.launch_status === 'launched' || false;
+	const isSiteLaunched = site?.launch_status === 'launched';
 	const isSiteCreatedInLast3Days =
 		site?.options?.created_at &&
 		new Date( site.options.created_at ) > new Date( Date.now() - 3 * 24 * 60 * 60 * 1000 );
 	const isLastActivityWithin2Days =
 		site?.options?.updated_at &&
 		new Date( site.options.updated_at ) > new Date( Date.now() - 2 * 24 * 60 * 60 * 1000 );
-	const isTwentyTwentyFiveTheme = site?.options?.theme_slug === 'pub/twentytwentyfive' || false; // The old default theme.
-	const isRetrospectTheme = site?.options?.theme_slug === 'pub/retrospect' || false; // The new default theme. See 185017-ghe-Automattic/wpcom.
+	const isTwentyTwentyFiveTheme = site?.options?.theme_slug === 'pub/twentytwentyfive'; // The old default theme.
+	const isRetrospectTheme = site?.options?.theme_slug === 'pub/retrospect'; // The new default theme. See 185017-ghe-Automattic/wpcom.
 	const isAutomattician = useSelector( isA8cTeamMember );
 
 	const isEligibleForSurvey =
