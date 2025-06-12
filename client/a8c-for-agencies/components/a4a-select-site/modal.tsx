@@ -8,7 +8,13 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4ASelectSiteTable from './site-table';
 import type { SelectSiteModalProps, A4ASelectSiteItem } from './types';
 
-const SelectSiteModal = ( { onClose, onSiteSelect, title, subtitle }: SelectSiteModalProps ) => {
+const SelectSiteModal = ( {
+	onClose,
+	onSiteSelect,
+	title,
+	subtitle,
+	selectedSiteId,
+}: SelectSiteModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -16,7 +22,7 @@ const SelectSiteModal = ( { onClose, onSiteSelect, title, subtitle }: SelectSite
 
 	const handleSelectSite = () => {
 		if ( selectedSite ) {
-			onSiteSelect( selectedSite.id, selectedSite.site );
+			onSiteSelect( selectedSite );
 			onClose();
 		}
 	};
@@ -51,7 +57,11 @@ const SelectSiteModal = ( { onClose, onSiteSelect, title, subtitle }: SelectSite
 				</Button>
 			}
 		>
-			<A4ASelectSiteTable selectedSite={ selectedSite } setSelectedSite={ setSelectedSite } />
+			<A4ASelectSiteTable
+				selectedSite={ selectedSite }
+				setSelectedSite={ setSelectedSite }
+				selectedSiteId={ selectedSiteId }
+			/>
 		</A4AModal>
 	);
 };

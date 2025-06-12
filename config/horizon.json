@@ -79,7 +79,6 @@
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
 		"onboarding/create-course": false,
-		"onboarding/step-container-v2-import-flow": true,
 		"onboarding/step-container-v2-migration-flow": true,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
