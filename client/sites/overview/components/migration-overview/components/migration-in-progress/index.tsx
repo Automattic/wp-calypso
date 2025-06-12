@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
-import Cards from './cards';
-import { Container, Header } from './layout';
+import Cards from '../cards';
+import { Container, Header } from '../layout';
 import type { SiteDetails } from '@automattic/data-stores';
 
-export const MigrationStartedDIY = ( { site }: { site: SiteDetails } ) => {
+export const MigrationInProgress = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const title = translate( 'Your migration is underway' );
 	const migrationSourceSiteDomain = site?.options?.migration_source_site_domain

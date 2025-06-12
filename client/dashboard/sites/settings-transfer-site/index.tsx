@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { Card, CardBody } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import { canTransferSite } from '../features';
@@ -46,7 +46,7 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 // TODO: Use Stepper component when the design is ready.
 export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
 	const { user } = useAuth();
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const confirmationHash = getQueryArg( window.location.search, 'site-transfer-confirm' );
@@ -64,10 +64,6 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 		handleForward();
 	};
 
-	if ( ! site ) {
-		return null;
-	}
-
 	if ( ! canTransferSite( site, user ) ) {
 		throw notFound();
 	}
@@ -75,10 +71,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 	if ( confirmationHash ) {
 		return (
 			<SettingsTransferSitePageLayout>
-				<InvitationEmailSent
-					siteSlug={ siteSlug }
-					confirmationHash={ confirmationHash as string }
-				/>
+				<InvitationEmailSent site={ site } confirmationHash={ confirmationHash as string } />
 			</SettingsTransferSitePageLayout>
 		);
 	}
@@ -89,14 +82,13 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 				<CardBody>
 					{ currentStep === 0 && (
 						<ConfirmNewOwnerForm
-							siteSlug={ siteSlug }
+							site={ site }
 							newOwnerEmail={ newOwnerEmail }
 							onSubmit={ handleConfirmNewOwner }
 						/>
 					) }
 					{ currentStep === 1 && (
 						<StartSiteTransferForm
-							siteSlug={ siteSlug }
 							newOwnerEmail={ newOwnerEmail }
 							site={ site }
 							onSubmit={ handleStartSiteTransfer }

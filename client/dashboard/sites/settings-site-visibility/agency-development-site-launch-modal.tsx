@@ -10,7 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { launchSiteMutation } from '../../app/queries';
+import { siteLaunchMutation } from '../../app/queries/site';
 import type { Site } from '../../data/types';
 
 interface AgencyDevelopmentSiteLaunchModalProps {
@@ -24,7 +24,7 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 }: AgencyDevelopmentSiteLaunchModalProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isLaunching, setIsLaunching ] = useState( false );
-	const mutation = useMutation( launchSiteMutation( site.slug ) );
+	const mutation = useMutation( siteLaunchMutation( site.ID ) );
 
 	const handleLaunch = () => {
 		setIsLaunching( true );
@@ -50,10 +50,10 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 	};
 
 	return (
-		<Modal title={ __( "You're about to launch this website" ) } onRequestClose={ onClose }>
+		<Modal title={ __( 'You’re about to launch this website' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
 				<Text as="p">
-					{ __( "After launch, we'll bill your agency in the next billing cycle." ) }
+					{ __( 'After launch, we’ll bill your agency in the next billing cycle.' ) }
 				</Text>
 				<HStack justify="flex-end" spacing={ 2 }>
 					<Button disabled={ isLaunching } onClick={ onClose }>

@@ -1,26 +1,22 @@
-import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
+import { getMigrationState } from 'calypso/data/site-migration';
+import { MigrationInProgress } from './components/migration-in-progress';
 import { MigrationPending } from './components/migration-pending';
 import { MigrationStartedDIFM } from './components/migration-started-difm';
-import { MigrationStartedDIY } from './components/migration-started-diy';
 import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
-	const migrationType = getMigrationType( site );
-	const migrationStatus = getMigrationStatus( site );
-	const isPending = 'pending' === migrationStatus;
+	const state = getMigrationState( site?.site_migration );
 
-	if ( isPending ) {
+	if ( state?.status === 'pending' ) {
 		return <MigrationPending site={ site } />;
 	}
 
-	if ( migrationType === 'difm' ) {
+	if ( state?.type === 'difm' ) {
 		return <MigrationStartedDIFM site={ site } />;
 	}
 
-	if ( migrationType === 'diy' ) {
-		return <MigrationStartedDIY site={ site } />;
-	}
+	return <MigrationInProgress site={ site } />;
 };
 
 export default MigrationOverview;

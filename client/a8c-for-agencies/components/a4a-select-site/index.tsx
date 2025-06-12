@@ -13,6 +13,7 @@ const A4ASelectSite = ( {
 	onSiteSelect,
 	title,
 	subtitle,
+	selectedSiteId,
 }: A4ASelectSiteProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -42,6 +43,7 @@ const A4ASelectSite = ( {
 					onSiteSelect={ onSiteSelect }
 					title={ title }
 					subtitle={ subtitle }
+					selectedSiteId={ selectedSiteId }
 				/>
 			) }
 		</>

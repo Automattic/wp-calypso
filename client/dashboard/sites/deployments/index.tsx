@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -15,7 +15,7 @@ import ghIconUrl from './gh-icon.svg';
 
 function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
 	if ( ! site ) {
 		return;

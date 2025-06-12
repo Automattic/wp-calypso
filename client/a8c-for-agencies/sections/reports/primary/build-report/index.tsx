@@ -19,11 +19,12 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { A4A_REPORTS_LINK } from '../../constants';
+import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { formatDate } from '../../lib/format-date';
+import type { BuildReportFormData, BuildReportCheckedItemsState } from '../../types';
+import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
 import './style.scss';
-
-type CheckedItemsState = Record< string, boolean >;
 
 const BuildReport = () => {
 	const translate = useTranslate();
@@ -62,7 +63,7 @@ const BuildReport = () => {
 	yesterday.setDate( today.getDate() - 1 );
 
 	const [ selectedTimeframe, setSelectedTimeframe ] = useState( availableTimeframes[ 0 ].value );
-	const [ selectedSite, setSelectedSite ] = useState( '' );
+	const [ selectedSite, setSelectedSite ] = useState< A4ASelectSiteItem | null >( null );
 	const [ clientEmail, setClientEmail ] = useState( '' );
 	const [ customIntroText, setCustomIntroText ] = useState( '' );
 	const [ sendMeACopy, setSendMeACopy ] = useState( false );
@@ -75,24 +76,82 @@ const BuildReport = () => {
 	);
 	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
 	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
+	const [ showValidationErrors, setShowValidationErrors ] = useState( false );
 
-	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
+	const [ statsCheckedItems, setStatsCheckedItems ] = useState< BuildReportCheckedItemsState >(
 		statsOptions.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
 	);
 
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 
-	const handleNextStep = useCallback( () => setCurrentStep( ( prev ) => prev + 1 ), [] );
-	const handlePrevStep = useCallback( () => setCurrentStep( ( prev ) => prev - 1 ), [] );
+	// Form data for validation
+	const formData: BuildReportFormData = {
+		selectedSite: selectedSite?.site || '',
+		selectedTimeframe,
+		clientEmail,
+		startDate,
+		endDate,
+		sendMeACopy,
+		teammateEmails,
+		customIntroText,
+		statsCheckedItems,
+	};
+
+	// Get validation errors for current step
+	const validationErrors = useFormValidation( currentStep, formData );
+	const hasErrors = validationErrors.length > 0;
+
+	// Helper to get error message for a specific field
+	const getFieldError = useCallback(
+		( fieldName: string ): string | undefined => {
+			if ( ! showValidationErrors ) {
+				return undefined;
+			}
+			return validationErrors.find( ( error ) => error.field === fieldName )?.message;
+		},
+		[ showValidationErrors, validationErrors ]
+	);
+
+	// Helper to check if field has error
+	const hasFieldError = useCallback(
+		( fieldName: string ): boolean => {
+			return (
+				showValidationErrors && validationErrors.some( ( error ) => error.field === fieldName )
+			);
+		},
+		[ showValidationErrors, validationErrors ]
+	);
+
+	const handleNextStep = useCallback( () => {
+		setShowValidationErrors( true );
+
+		if ( hasErrors ) {
+			// Focus on first error field for accessibility
+			const firstError = validationErrors[ 0 ];
+			const errorElement = document.querySelector( `[data-field="${ firstError.field }"]` );
+			if ( errorElement ) {
+				( errorElement as HTMLElement ).focus();
+			}
+			return;
+		}
+
+		setShowValidationErrors( false );
+		setCurrentStep( ( prev ) => prev + 1 );
+	}, [ hasErrors, validationErrors ] );
+
+	const handlePrevStep = useCallback( () => {
+		setShowValidationErrors( false );
+		setCurrentStep( ( prev ) => prev - 1 );
+	}, [] );
 
 	const handleStep2CheckboxChange = ( groupKey: 'stats', itemName: string ) => {
 		const setterMap: Record<
 			string,
-			React.Dispatch< React.SetStateAction< CheckedItemsState > >
+			React.Dispatch< React.SetStateAction< BuildReportCheckedItemsState > >
 		> = {
 			stats: setStatsCheckedItems,
 		};
-		setterMap[ groupKey ]?.( ( prev: CheckedItemsState ) => ( {
+		setterMap[ groupKey ]?.( ( prev: BuildReportCheckedItemsState ) => ( {
 			...prev,
 			[ itemName ]: ! prev[ itemName ],
 		} ) );
@@ -109,10 +168,17 @@ const BuildReport = () => {
 
 						<div className="build-report__field">
 							<A4ASelectSite
-								onSiteSelect={ ( _siteId, siteDomain ) => setSelectedSite( siteDomain ) }
-								buttonLabel={ selectedSite || translate( 'Choose a site to report on' ) }
+								selectedSiteId={ selectedSite?.id }
+								onSiteSelect={ ( site: A4ASelectSiteItem ) => setSelectedSite( site ) }
+								buttonLabel={ selectedSite?.site || translate( 'Choose a site to report on' ) }
 								trackingEvent="calypso_a4a_reports_select_site_button_click"
+								data-field="selectedSite"
 							/>
+							{ hasFieldError( 'selectedSite' ) && (
+								<div className="build-report__error-message">
+									{ getFieldError( 'selectedSite' ) }
+								</div>
+							) }
 						</div>
 
 						<SelectControl
@@ -158,6 +224,12 @@ const BuildReport = () => {
 													}
 													setIsStartDatePickerOpen( false );
 												} }
+												isInvalidDate={ ( date ) => {
+													// Disable dates from today onwards (only yesterday and earlier allowed)
+													const today = new Date();
+													today.setHours( 0, 0, 0, 0 ); // Start of today
+													return new Date( date ) >= today;
+												} }
 											/>
 										</Popover>
 									) }
@@ -188,6 +260,13 @@ const BuildReport = () => {
 													setIsEndDatePickerOpen( false );
 												} }
 												isInvalidDate={ ( date ) => {
+													// Disable dates after today (only today and earlier allowed)
+													const today = new Date();
+													today.setHours( 23, 59, 59, 999 ); // End of today
+													if ( new Date( date ) > today ) {
+														return true;
+													}
+
 													// Disable dates before the start date
 													if ( ! startDate ) {
 														return false;
@@ -200,15 +279,27 @@ const BuildReport = () => {
 								</div>
 							</div>
 						) }
-						<TextControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							label={ translate( 'Client email(s)' ) }
-							value={ clientEmail }
-							onChange={ setClientEmail }
-							type="email"
-							help={ translate( "We'll email the report here. Use commas to separate addresses." ) }
-						/>
+						<div className="build-report__field">
+							<TextControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								label={ translate( 'Client email(s)' ) }
+								value={ clientEmail }
+								onChange={ setClientEmail }
+								type="email"
+								help={
+									! hasFieldError( 'clientEmail' )
+										? translate( "We'll email the report here. Use commas to separate addresses." )
+										: undefined
+								}
+								data-field="clientEmail"
+							/>
+							{ hasFieldError( 'clientEmail' ) && (
+								<div className="build-report__error-message">
+									{ getFieldError( 'clientEmail' ) }
+								</div>
+							) }
+						</div>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ translate( 'Also send to your team' ) }
@@ -224,9 +315,19 @@ const BuildReport = () => {
 									value={ teammateEmails }
 									onChange={ setTeammateEmails }
 									type="text"
-									help={ translate( 'Use commas to separate addresses.' ) }
+									help={
+										! hasFieldError( 'teammateEmails' )
+											? translate( 'Use commas to separate addresses.' )
+											: undefined
+									}
 									placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
+									data-field="teammateEmails"
 								/>
+								{ hasFieldError( 'teammateEmails' ) && (
+									<div className="build-report__error-message">
+										{ getFieldError( 'teammateEmails' ) }
+									</div>
+								) }
 							</div>
 						) }
 					</>
@@ -257,6 +358,11 @@ const BuildReport = () => {
 								onChange={ () => handleStep2CheckboxChange( 'stats', item.value ) }
 							/>
 						) ) }
+						{ hasFieldError( 'statsCheckedItems' ) && (
+							<div className="build-report__error-message">
+								{ getFieldError( 'statsCheckedItems' ) }
+							</div>
+						) }
 					</>
 				);
 			case 3:
@@ -288,20 +394,23 @@ const BuildReport = () => {
 		}
 	}, [
 		currentStep,
-		selectedSite,
+		translate,
+		selectedSite?.id,
+		selectedSite?.site,
+		hasFieldError,
+		getFieldError,
 		selectedTimeframe,
+		availableTimeframes,
 		startDate,
+		isStartDatePickerOpen,
 		endDate,
+		isEndDatePickerOpen,
 		clientEmail,
 		sendMeACopy,
 		teammateEmails,
 		customIntroText,
-		statsCheckedItems,
-		isStartDatePickerOpen,
-		isEndDatePickerOpen,
-		translate,
-		availableTimeframes,
 		statsOptions,
+		statsCheckedItems,
 	] );
 
 	const actions = useMemo(

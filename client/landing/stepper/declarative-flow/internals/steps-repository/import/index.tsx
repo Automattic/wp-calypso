@@ -3,7 +3,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
 import DocumentHead from 'calypso/components/data/document-head';
-import { shouldUseStepContainerV2ImportFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -23,8 +22,8 @@ export const ImportWrapper: StepType< {
 	};
 } > = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, flow, stepName, text, subText } = props;
-	const useContainerV2 = shouldUseStepContainerV2ImportFlow( flow ) && stepName === 'importList';
+	const { navigation, children, stepName, text, subText } = props;
+	const useContainerV2 = stepName === 'importList';
 	const documentTitle = __( 'Import your site content' );
 	const showHeading = text && subText;
 

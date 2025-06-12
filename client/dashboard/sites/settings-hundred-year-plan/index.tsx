@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -14,7 +14,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { canViewHundredYearPlanSettings } from '../features';
@@ -48,9 +49,9 @@ const form = {
 
 export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState( {
 		wpcom_legacy_contact: settings?.wpcom_legacy_contact,

@@ -6,20 +6,20 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
-import { siteOwnerTransferConfirmMutation } from '../../app/queries';
+import { siteOwnerTransferConfirmMutation } from '../../app/queries/site-owner-transfer';
 import Notice from '../../components/notice';
-import type { SiteTransferConfirmation } from '../../data/types';
+import type { Site, SiteOwnerTransferConfirmation } from '../../data/types';
 
 export function InvitationEmailSent( {
-	siteSlug,
+	site,
 	confirmationHash,
 }: {
-	siteSlug: string;
+	site: Site;
 	confirmationHash: string;
 } ) {
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
 	const [ hasError, setHasError ] = useState( false );
-	const mutation = useMutation( siteOwnerTransferConfirmMutation( siteSlug ) );
+	const mutation = useMutation( siteOwnerTransferConfirmMutation( site.ID ) );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 
@@ -31,7 +31,7 @@ export function InvitationEmailSent( {
 		mutation.mutate(
 			{ hash: confirmationHash },
 			{
-				onSuccess: ( { transfer, new_owner_email }: SiteTransferConfirmation ) => {
+				onSuccess: ( { transfer, new_owner_email }: SiteOwnerTransferConfirmation ) => {
 					if ( transfer ) {
 						createSuccessNotice(
 							sprintf(
