@@ -71,7 +71,14 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 
 		it( 'Verify successful login to WordPress.com', async function () {
 			// Wait for navigation to complete and verify we're on WordPress.com
-			await page.waitForURL( /.*wordpress\.com\/sites.*/ );
+			console.log( 'Current URL before waiting:', await page.url() );
+			try {
+				await page.waitForURL( /.*wordpress\.com\/sites.*/, { timeout: 30000 } );
+			} catch ( error ) {
+				console.error( 'Failed to navigate to WordPress.com:', error );
+				console.log( 'Current URL after timeout:', await page.url() );
+				throw error;
+			}
 			await page.screenshot( {
 				path: 'auth_github-auth-success.jpeg',
 				fullPage: true,
