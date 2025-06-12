@@ -170,7 +170,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				aria-label={ translate( 'Pick a product term' ) }
 				aria-expanded={ isOpen }
 				{ ...( isOpen && {
-					'aria-controls': 'item-variant-listbox',
+					'aria-controls': `item-variant-listbox-${ selectedItem.uuid }`,
 					'aria-haspopup': 'listbox',
 				} ) }
 				disabled={ isDisabled }
@@ -217,7 +217,7 @@ function ItemVariantOptionList( {
 		: variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
 		<OptionList
-			id="item-variant-listbox"
+			id={ `item-variant-listbox-${ selectedItem.uuid }` }
 			role="listbox"
 			tabIndex={ -1 }
 			detached={ isStreamlinedPrice }
