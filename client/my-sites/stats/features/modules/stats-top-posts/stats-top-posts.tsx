@@ -34,7 +34,7 @@ type StatTypeOptionType = {
 
 const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	period,
-	query,
+	query: queryFromProps,
 	moduleStrings,
 	className,
 	summaryUrl,
@@ -59,6 +59,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 			mainItemLabel: item.mainItemLabel,
 		};
 	} );
+
+	const query = {
+		...queryFromProps,
+		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
+	};
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
