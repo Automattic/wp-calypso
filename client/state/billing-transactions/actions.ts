@@ -18,9 +18,12 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 			type: BILLING_TRANSACTIONS_REQUEST,
 		} );
 
+		const limit = 200;
+		const url = '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' );
 		return wp.req
-			.get( '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' ), {
+			.get( url, {
 				apiVersion: '1.3',
+				limit,
 			} )
 			.then(
 				( {
@@ -30,9 +33,28 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 					billing_history: BillingTransaction[];
 					upcoming_charges: UpcomingCharge[];
 				} ) => {
+					const fullBillingHistory = billing_history;
+					if ( billing_history.length === limit ) {
+						// If we have exactly the limit number of transactions, it means there are more transactions to fetch.
+						let nextData = [];
+						do {
+							// Fetch the next page of transactions.
+							return wp.req
+								.get( url, {
+									apiVersion: '1.3',
+									offset: billing_history.length,
+									limit,
+								} )
+								.then( ( { billing_history }: { billing_history: BillingTransaction[] } ) => {
+									fullBillingHistory.push( ...billing_history );
+									nextData = billing_history;
+								} );
+						} while ( nextData.length === limit );
+					}
+
 					dispatch( {
 						type: BILLING_TRANSACTIONS_RECEIVE,
-						past: billing_history,
+						past: fullBillingHistory,
 						upcoming: upcoming_charges,
 					} );
 					dispatch( {
