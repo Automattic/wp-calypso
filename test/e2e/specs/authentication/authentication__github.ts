@@ -2,7 +2,13 @@
  * @group authentication
  * @browser firefox
  */
-import { DataHelper, LoginPage, SecretsManager, GitHubLoginPage } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	LoginPage,
+	SecretsManager,
+	GitHubLoginPage,
+	EmailClient,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -12,6 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 	let page: Page;
 	let loginPage: LoginPage;
 	let githubLoginPage: GitHubLoginPage;
+	let timestamp: Date;
 
 	describe( 'WordPress.com', function () {
 		beforeAll( async () => {
@@ -24,12 +31,6 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Click on Login with GitHub button', async function () {
-			await page.screenshot( {
-				path: 'auth_github-auth-start.jpeg',
-				fullPage: true,
-				type: 'jpeg',
-				quality: 20,
-			} );
 			await Promise.all( [
 				page.waitForNavigation( { url: /.*github\.com\/login.*/ } ),
 				loginPage.clickLoginWithGitHub(),
@@ -47,6 +48,30 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 			await githubLoginPage.pressEnter();
 		} );
 
+		it( 'Press Send SMS', async function () {
+			timestamp = new Date( Date.now() );
+			await githubLoginPage.clickButtonContainingText( 'Send SMS' );
+		} );
+
+		it( 'Handle SMS two-factor authentication', async function () {
+			const emailClient = new EmailClient();
+
+			const message = await emailClient.getLastMatchingMessage( {
+				inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
+				receivedAfter: timestamp,
+				subject: 'SMS',
+				body: 'GitHub authentication code',
+			} );
+
+			console.log( 'XXX MESSAGE', message );
+
+			const code = emailClient.get2FACodeFromMessage( message );
+
+			console.log( 'XXX CODE', code );
+
+			await githubLoginPage.enter2FACode( code );
+		} );
+
 		it( 'Handle GitHub device verification if needed', async function () {
 			// GitHub may show a device verification screen in CI
 			const verificationUrl = 'https://github.com/sessions/verified-device';
@@ -56,35 +81,31 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 				throw new Error( 'Navigation failed - no response received' );
 			}
 
-			await page.screenshot( {
-				path: 'auth_github-device-verification.jpeg',
-				fullPage: true,
-				type: 'jpeg',
-				quality: 20,
-			} );
-
 			if ( response.url() === verificationUrl ) {
 				// If we're on the verification screen, click the verify button
 				await githubLoginPage.clickButtonWithExactText( 'Verify' );
 			}
 		} );
 
-		it( 'Verify successful login to WordPress.com', async function () {
-			// Wait for navigation to complete and verify we're on WordPress.com
-			console.log( 'Current URL before waiting:', await page.url() );
-			try {
-				await page.waitForURL( /.*wordpress\.com\/sites.*/, { timeout: 30000 } );
-			} catch ( error ) {
-				console.error( 'Failed to navigate to WordPress.com:', error );
-				console.log( 'Current URL after timeout:', await page.url() );
-				throw error;
+		it( 'Skip GitHub trust device if needed', async function () {
+			// GitHub may show a device verification screen in CI
+			const verificationUrl = 'https://github.com/sessions/trusted-device';
+			const response = await page.waitForNavigation();
+
+			if ( ! response ) {
+				throw new Error( 'Navigation failed - no response received' );
 			}
-			await page.screenshot( {
-				path: 'auth_github-auth-success.jpeg',
-				fullPage: true,
-				type: 'jpeg',
-				quality: 20,
-			} );
+
+			if ( response.url() === verificationUrl ) {
+				// If we're on the trusted device screen, skip it
+				await githubLoginPage.clickButtonWithExactText( "Don't ask again for this browser" );
+			}
+		} );
+
+		it( 'Verify successful login to WordPress.com', async function () {
+			// expect pattern like "https://wordpress.com/log-in/github/callback?service=github&code"
+			await page.waitForURL( /.*wordpress\.com\/log-in\/github\/callback.*/ );
+			await page.waitForNavigation( { url: /.*wordpress\.com\/sites.*/ } );
 			expect( page.url() ).toMatch( /.*wordpress\.com\/sites.*/ );
 		} );
 
