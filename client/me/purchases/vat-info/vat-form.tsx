@@ -8,7 +8,6 @@ import {
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 	__experimentalVStack as VStack,
-	Notice,
 	SelectControl,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -18,6 +17,7 @@ import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDataFormCountryCodes from './use-data-form-country-codes';
+import useDisplayVatNotices from './use-display-vat-notices';
 import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
 import type { VatField, VatFormControlProps, VatFormData } from './types';
@@ -108,8 +108,6 @@ export default function VatForm() {
 		useVatDetails();
 	const countryCodes = useDataFormCountryCodes();
 
-	useRecordVatEvents( { updateError, isUpdateSuccessful } );
-
 	const formData = useMemo( () => {
 		const serverData = {
 			country: vatDetails.country ?? '',
@@ -125,6 +123,9 @@ export default function VatForm() {
 
 	const { data: geoData } = useGeoLocationQuery();
 	const taxName = useTaxName( formData.country ?? geoData?.country_short ?? 'GB' );
+
+	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful, taxName } );
+	useRecordVatEvents( { updateError, isUpdateSuccessful } );
 
 	const isVatAlreadySet = !! vatDetails.id;
 	const isDisabled = isLoading || isUpdating;
@@ -184,21 +185,6 @@ export default function VatForm() {
 						setLocalData( ( current ) => ( { ...current, ...edits } ) );
 					} }
 				/>
-
-				{ ! isUpdating && !! updateError && (
-					<Notice className="vat-info__notice" isDismissible={ false } status="error">
-						{ updateError.message }
-					</Notice>
-				) }
-
-				{ ! isUpdating && !! isUpdateSuccessful && (
-					<Notice className="vat-info__notice" isDismissible={ false } status="success">
-						{ translate( 'Your %s details have been updated!', {
-							textOnly: true,
-							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} ) }
-					</Notice>
-				) }
 
 				<HStack justify="flex-start">
 					<Button
