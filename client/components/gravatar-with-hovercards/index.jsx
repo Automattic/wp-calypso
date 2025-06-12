@@ -15,6 +15,7 @@ import '@gravatar-com/hovercards/dist/style.css';
 // have a jarring flickering effect as the hovercard is still initially visible before removal.
 // Controlling visiblity this way prevents the flickering in cleanup: we ensure hovercards have no
 // visibility until verifying that their container ref is in the dom.
+// This issue is being tracked in https://github.com/Automattic/gravatar/issues/210
 const createStyleElement = () => {
 	let styleElement = document.getElementById( 'gravatar-hovercard-style' );
 	if ( ! styleElement ) {
