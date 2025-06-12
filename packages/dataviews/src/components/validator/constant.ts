@@ -4,4 +4,6 @@ export const INPUT_VALIDATION_RULES = {
 	pattern: 'pattern',
 	required: 'required',
 	validate: 'validate',
+	min: 'min',
+	max: 'max',
 } as const;

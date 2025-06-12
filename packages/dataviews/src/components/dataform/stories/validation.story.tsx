@@ -192,8 +192,6 @@ const DataFormWithValidation = ( {
 								onChange( { [ field.id ]: value } )
 							}
 							customValidator={ () => errorMessage }
-							min={ 0 }
-							max={ 50 }
 						/>
 					),
 					rules: {

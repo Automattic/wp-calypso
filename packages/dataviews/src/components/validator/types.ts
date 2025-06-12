@@ -40,11 +40,23 @@ export type RequiredRule = {
 	value: boolean;
 };
 
+export type MinRule = {
+	message: string;
+	value: number;
+};
+
+export type MaxRule = {
+	message: string;
+	value: number;
+};
+
 export type Rule< Item > =
 	| LengthRule
 	| PatternRule
 	| ValidateRule< Item >
-	| RequiredRule;
+	| RequiredRule
+	| MinRule
+	| MaxRule;
 
 export type NormalizedRule< Item > = {
 	type: keyof typeof INPUT_VALIDATION_RULES;

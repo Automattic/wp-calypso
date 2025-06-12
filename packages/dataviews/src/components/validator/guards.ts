@@ -1,5 +1,7 @@
 import {
 	LengthRule,
+	MaxRule,
+	MinRule,
 	PatternRule,
 	RequiredRule,
 	Rule,
@@ -24,6 +26,14 @@ export const isRequiredRule = < Item >(
 export const isLengthRule = < Item >(
 	rule: Rule< Item >
 ): rule is LengthRule => {
+	return 'value' in rule && typeof rule.value === 'number';
+};
+
+export const isMinRule = < Item >( rule: Rule< Item > ): rule is MinRule => {
+	return 'value' in rule && typeof rule.value === 'number';
+};
+
+export const isMaxRule = < Item >( rule: Rule< Item > ): rule is MaxRule => {
 	return 'value' in rule && typeof rule.value === 'number';
 };
 

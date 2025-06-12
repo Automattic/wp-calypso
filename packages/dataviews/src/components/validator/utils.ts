@@ -2,6 +2,8 @@ import { Field, FormField, NormalizedField } from '../../types';
 import { INPUT_VALIDATION_RULES } from './constant';
 import {
 	isLengthRule,
+	isMaxRule,
+	isMinRule,
 	isPatternRule,
 	isRequiredRule,
 	isValidateRule,
@@ -55,6 +57,20 @@ const generateCallback = < Item >(
 	if ( isValidateRule( rule ) ) {
 		return ( value: any, field: NormalizedField< Item >, item: Item ) => {
 			return rule.callback( value, field, item );
+		};
+	}
+
+	if ( isMinRule( rule ) && type === 'min' ) {
+		return ( value: any ) => {
+			const valueNumber = Number( value );
+			return valueNumber >= rule.value ? undefined : rule.message;
+		};
+	}
+
+	if ( isMaxRule( rule ) && type === 'max' ) {
+		return ( value: any ) => {
+			const valueNumber = Number( value );
+			return valueNumber <= rule.value ? undefined : rule.message;
 		};
 	}
 
