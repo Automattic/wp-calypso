@@ -219,8 +219,15 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	}
 }
 
-button.x-nav-link.x-link {
+button.x-nav-link.x-link,
+a.x-nav-link.x-link {
 	cursor: pointer;
+
+	&:focus {
+		outline: 2px solid $studio-blue-50;
+		outline-offset: -2px;
+		border-radius: 2px;
+	}
 }
 
 .x-nav-item .x-link,
