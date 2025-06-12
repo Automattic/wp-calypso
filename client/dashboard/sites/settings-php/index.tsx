@@ -38,7 +38,15 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 
 	if ( ! canView ) {
 		return (
-			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
+			<PageLayout
+				size="small"
+				header={
+					<SettingsPageHeader
+						title="PHP"
+						description={ __( 'Sites on the Personal plan run on our recommended PHP version.' ) }
+					/>
+				}
+			>
 				<SettingsCallout siteSlug={ siteSlug } tracksId="php" />
 			</PageLayout>
 		);
