@@ -120,6 +120,7 @@ export function getPurchasesFieldDefinitions( {
 				const site = { ID: item.siteId };
 				return (
 					<Button
+						className="purchase-item__icon"
 						variant="link"
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
 						label={ translate( 'Manage purchase', { textOnly: true } ) }
