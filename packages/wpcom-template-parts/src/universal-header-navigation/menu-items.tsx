@@ -14,8 +14,11 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 	};
 
 	const handleBlur = ( event: React.FocusEvent< HTMLButtonElement > ) => {
-		// Only close if focus is moving outside the dropdown
-		if ( ! event.currentTarget.parentElement?.contains( event.relatedTarget as Node ) ) {
+		const relatedTarget = event.relatedTarget;
+		if (
+			relatedTarget instanceof Node &&
+			! event.currentTarget.parentElement?.contains( relatedTarget )
+		) {
 			const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
 			if ( dropdown instanceof HTMLElement ) {
 				dropdown.setAttribute( 'aria-hidden', 'true' );
