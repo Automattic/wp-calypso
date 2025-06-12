@@ -56,13 +56,19 @@ function GravatarWithHovercards( props ) {
 	}, [] );
 
 	const handleHovercardShown = ( hash, hovercardElement ) => {
-		// Only show the hovercard if our container is in the dom
-		if ( containerRef.current && document.body.contains( containerRef.current ) ) {
-			showHovercards( styleElementRef.current );
-		} else {
-			hovercardElement?.remove();
-			hideHovercards( styleElementRef.current );
-		}
+		// Timeout to bump this check to the end of the callstack to avoid a race condition where
+		// this is evaluated after dismount but before dom update. This was happening about 5-10% of
+		// the time and makes it so hovering a gravatar does not trigger the hovercard until another
+		// unhover/rehover.
+		setTimeout( () => {
+			// Only show the hovercard if our container is in the dom
+			if ( containerRef.current && document.body.contains( containerRef.current ) ) {
+				showHovercards( styleElementRef.current );
+			} else {
+				hovercardElement?.remove();
+				hideHovercards( styleElementRef.current );
+			}
+		}, 0 );
 	};
 
 	return (
