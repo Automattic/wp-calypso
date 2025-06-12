@@ -57,7 +57,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Verify successful login to WordPress.com', async function () {
-			// Verify we're on WordPress.com
+			// Wait for navigation to complete and verify we're on WordPress.com
+			await page.waitForURL( /.*wordpress\.com\/sites.*/ );
 			expect( page.url() ).toMatch( /.*wordpress\.com\/sites.*/ );
 		} );
 
