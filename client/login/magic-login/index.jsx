@@ -1359,10 +1359,7 @@ class MagicLogin extends Component {
 			);
 		}
 
-		const isWhiteLogin =
-			! this.props.isWCCOM &&
-			! this.props.isFromAutomatticForAgenciesPlugin &&
-			! this.props.isJetpackLogin;
+		const isWhiteLogin = ! this.props.isWCCOM && ! this.props.isFromAutomatticForAgenciesPlugin;
 
 		// If this is part of the Jetpack login flow, some steps will display a different UI
 		const requestLoginEmailFormProps = {
