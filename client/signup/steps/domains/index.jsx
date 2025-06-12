@@ -662,6 +662,7 @@ class RenderDomainsStepComponent extends Component {
 			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
+			'site-domain-search',
 		].includes( flowName );
 	};
 
