@@ -8,6 +8,7 @@ export type FormValidationState = {
 		field: string,
 		error: Record< string, string | undefined >
 	) => void;
+	removeError: ( field: string ) => void;
 	isFormValid: () => boolean;
 };
 

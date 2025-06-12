@@ -19,12 +19,22 @@ export function useFieldValidation< Item >(
 				] );
 			}
 
-			const errors = fieldDefinition?.rules.reduce( ( acc, rule ) => {
-				const error = rule.callback( value[ field.id ] );
-				return { ...acc, [ rule.type ]: error };
-			}, {} );
+			const errors = fieldDefinition?.rules.reduce(
+				( acc, rule ) => {
+					const error = rule.callback( value[ field.id ] );
+					return {
+						...acc,
+						...( error && { [ rule.type ]: error } ),
+					};
+				},
+				{} as Record< string, string >
+			);
 
-			validation.setErrors( field.id, errors ?? {} );
+			if ( errors && Object.keys( errors ).length > 0 ) {
+				validation.setErrors( field.id, errors );
+			} else {
+				validation.removeError( field.id );
+			}
 		},
 		[ field.id, fieldDefinition, validation, onChange ]
 	);
@@ -77,6 +87,18 @@ export const useValidation = (): FormValidationState => {
 		[ validationState.messageErrors ]
 	);
 
+	const removeError = useCallback(
+		( field: string ) =>
+			setValidationState( ( { messageErrors } ) => {
+				const { [ field ]: _, ...rest } = messageErrors;
+				return {
+					...validationState,
+					messageErrors: rest,
+				};
+			} ),
+		[ validationState.messageErrors ]
+	);
+
 	const isFormValid = useCallback(
 		() =>
 			Object.values( validationState.messageErrors ).every(
@@ -93,6 +115,7 @@ export const useValidation = (): FormValidationState => {
 		errorMessages: validationState.messageErrors,
 		setTouchedFields,
 		setErrors,
+		removeError,
 		isFormValid,
 	};
 };
