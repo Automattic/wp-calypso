@@ -1,7 +1,7 @@
 import { fetchSitePurchases } from '../../data/site-purchases';
 import type { Purchase } from '../../data/site-purchases';
 
-export const siteHasCancelablePurchasesQuery = ( siteId: string, userId: number ) => ( {
+export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number ) => ( {
 	queryKey: [ 'site', siteId, 'purchases', 'has-cancelable' ],
 	queryFn: () => fetchSitePurchases( siteId ),
 	select: ( purchases: Purchase[] ) => {

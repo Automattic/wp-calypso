@@ -11,8 +11,8 @@ export interface EngagementStats {
 	previousData: EngagementStatsDataPoint;
 }
 
-export async function fetchSiteEngagementStats( siteIdOrSlug: string ) {
-	const response = await wpcom.req.get( `/sites/${ siteIdOrSlug }/stats/visits`, {
+export async function fetchSiteEngagementStats( siteId: number ) {
+	const response = await wpcom.req.get( `/sites/${ siteId }/stats/visits`, {
 		unit: 'day',
 		quantity: 14,
 		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),

@@ -8,7 +8,7 @@ export interface Purchase {
 	user_id: number | string;
 }
 
-export async function fetchSitePurchases( siteId: string ): Promise< Purchase[] > {
+export async function fetchSitePurchases( siteId: number ): Promise< Purchase[] > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/purchases`,
 	} );

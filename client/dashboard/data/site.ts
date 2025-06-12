@@ -78,7 +78,7 @@ export interface SiteOptions {
 }
 
 export interface Site {
-	ID: string;
+	ID: number;
 	slug: string;
 	name: string;
 	URL: string;
@@ -109,20 +109,20 @@ export interface Site {
 	jetpack_modules: string[] | null;
 }
 
-export async function fetchSite( siteIdOrSlug: string ): Promise< Site > {
+export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
 	return await wpcom.req.get(
 		{ path: `/sites/${ siteIdOrSlug }` },
 		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 }
 
-export async function deleteSite( siteIdOrSlug: string ) {
+export async function deleteSite( siteId: number ) {
 	return wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/delete`,
+		path: `/sites/${ siteId }/delete`,
 	} );
 }
 
-export async function launchSite( siteId: string ) {
+export async function launchSite( siteId: number ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/launch`,
 		apiNamespace: 'wpcom/v2',

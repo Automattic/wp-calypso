@@ -8,7 +8,7 @@ export interface Plan {
 	user_facing_expiry?: string;
 }
 
-export async function fetchCurrentSitePlan( siteId: string ): Promise< Plan > {
+export async function fetchCurrentSitePlan( siteId: number ): Promise< Plan > {
 	const plans: Record< string, Plan > = await wpcom.req.get( {
 		path: `/sites/${ siteId }/plans`,
 		apiVersion: '1.3',

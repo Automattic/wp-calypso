@@ -7,16 +7,16 @@ import { queryClient } from '../query-client';
 import { siteByIdQuery } from './site';
 import type { SiteOwnerTransferConfirmation } from '../../data/site-owner-transfer';
 
-export const siteOwnerTransferMutation = ( siteId: string ) => ( {
+export const siteOwnerTransferMutation = ( siteId: number ) => ( {
 	mutationFn: ( data: { new_site_owner: string } ) => startSiteOwnerTransfer( siteId, data ),
 } );
 
-export const siteOwnerTransferEligibilityCheckMutation = ( siteId: string ) => ( {
+export const siteOwnerTransferEligibilityCheckMutation = ( siteId: number ) => ( {
 	mutationFn: ( data: { new_site_owner: string } ) =>
 		checkSiteOwnerTransferEligibility( siteId, data ),
 } );
 
-export const siteOwnerTransferConfirmMutation = ( siteId: string ) => ( {
+export const siteOwnerTransferConfirmMutation = ( siteId: number ) => ( {
 	mutationFn: ( data: { hash: string } ) => confirmSiteOwnerTransfer( siteId, data ),
 	onSuccess: ( { transfer }: SiteOwnerTransferConfirmation ) => {
 		if ( transfer ) {

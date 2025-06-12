@@ -4,16 +4,16 @@ import {
 	fetchSiteResetStatus,
 } from '../../data/site-reset';
 
-export const siteResetContentSummaryQuery = ( siteId: string ) => ( {
+export const siteResetContentSummaryQuery = ( siteId: number ) => ( {
 	queryKey: [ 'site', siteId, 'reset', 'content-summary' ],
 	queryFn: () => fetchSiteResetContentSummary( siteId ),
 } );
 
-export const siteResetMutation = ( siteId: string ) => ( {
+export const siteResetMutation = ( siteId: number ) => ( {
 	mutationFn: () => resetSite( siteId ),
 } );
 
-export const siteResetStatusQuery = ( siteId: string ) => ( {
+export const siteResetStatusQuery = ( siteId: number ) => ( {
 	queryKey: [ 'site', siteId, 'reset', 'status' ],
 	queryFn: () => fetchSiteResetStatus( siteId ),
 } );

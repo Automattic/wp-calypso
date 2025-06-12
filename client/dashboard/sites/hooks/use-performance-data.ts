@@ -12,7 +12,7 @@ interface PerformanceData {
 	isLoading: boolean;
 }
 
-export function usePerformanceData( siteId: string, url: string ): PerformanceData {
+export function usePerformanceData( siteId: number, url: string ): PerformanceData {
 	const { data: siteSettings, isLoading: isLoadingSiteSettings } = useQuery( {
 		...siteSettingsQuery( siteId ),
 		refetchOnWindowFocus: false,

@@ -26,7 +26,7 @@ interface TestSiteOptions {
 	wpcom_data_sharing_opt_out: boolean;
 }
 
-const siteId = '123';
+const siteId = 123;
 const siteSlug = 'test-site';
 
 // Only mocks site and settings fields that are necessary for the tests.

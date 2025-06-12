@@ -13,7 +13,7 @@ export type SiteResetStatus = {
 };
 
 export async function fetchSiteResetContentSummary(
-	siteId: string
+	siteId: number
 ): Promise< SiteResetContentSummary > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/reset-site/content-summary`,
@@ -21,14 +21,14 @@ export async function fetchSiteResetContentSummary(
 	} );
 }
 
-export async function resetSite( siteId: string ) {
+export async function resetSite( siteId: number ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/reset-site`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
 
-export async function fetchSiteResetStatus( siteId: string ): Promise< SiteResetStatus > {
+export async function fetchSiteResetStatus( siteId: number ): Promise< SiteResetStatus > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/reset-site/status`,
 		apiNamespace: 'wpcom/v2',

@@ -8,20 +8,20 @@ export const siteBySlugQuery = ( siteSlug: string ) => ( {
 	queryFn: () => fetchSite( siteSlug ),
 } );
 
-export const siteByIdQuery = ( siteId: string ) => ( {
+export const siteByIdQuery = ( siteId: number ) => ( {
 	predicate: ( { queryKey, state }: Query ) => {
 		return queryKey[ 0 ] === 'site-by-slug' && ( state.data as Site )?.ID === siteId;
 	},
 } );
 
-export const siteDeleteMutation = ( siteId: string ) => ( {
+export const siteDeleteMutation = ( siteId: number ) => ( {
 	mutationFn: () => deleteSite( siteId ),
 	onSuccess: () => {
 		queryClient.invalidateQueries( siteByIdQuery( siteId ) );
 	},
 } );
 
-export const siteLaunchMutation = ( siteId: string ) => ( {
+export const siteLaunchMutation = ( siteId: number ) => ( {
 	mutationFn: () => launchSite( siteId ),
 	onSuccess: () => {
 		queryClient.invalidateQueries( siteByIdQuery( siteId ) );

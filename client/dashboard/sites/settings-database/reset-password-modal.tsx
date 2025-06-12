@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { restoreDatabasePassword } from '../../data/site-hosting';
 
 interface ResetPasswordModalProps {
-	siteId: string;
+	siteId: number;
 	onClose: () => void;
 	onSuccess: () => void;
 	onError: () => void;

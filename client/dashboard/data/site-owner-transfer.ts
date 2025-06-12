@@ -6,7 +6,7 @@ export interface SiteOwnerTransferConfirmation {
 	new_owner_email: string;
 }
 
-export async function startSiteOwnerTransfer( siteId: string, data: { new_site_owner: string } ) {
+export async function startSiteOwnerTransfer( siteId: number, data: { new_site_owner: string } ) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-owner-transfer`,
@@ -23,7 +23,7 @@ export async function startSiteOwnerTransfer( siteId: string, data: { new_site_o
 }
 
 export async function checkSiteOwnerTransferEligibility(
-	siteId: string,
+	siteId: number,
 	data: { new_site_owner: string }
 ) {
 	return wpcom.req.post(
@@ -36,7 +36,7 @@ export async function checkSiteOwnerTransferEligibility(
 }
 
 export async function confirmSiteOwnerTransfer(
-	siteId: string,
+	siteId: number,
 	data: { hash: string }
 ): Promise< SiteOwnerTransferConfirmation > {
 	return wpcom.req.post(

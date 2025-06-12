@@ -24,7 +24,7 @@ export default function EnableSftpCard( {
 	siteId,
 	canUseSsh,
 }: {
-	siteId: string;
+	siteId: number;
 	canUseSsh: boolean;
 } ) {
 	const mutation = useMutation( siteSftpUsersCreateMutation( siteId ) );

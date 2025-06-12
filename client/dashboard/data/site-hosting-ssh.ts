@@ -11,14 +11,14 @@ export interface SiteSshKey {
 	attached_at: string;
 }
 
-export async function fetchSshAccessStatus( siteId: string ): Promise< SshAccessStatus > {
+export async function fetchSshAccessStatus( siteId: number ): Promise< SshAccessStatus > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/ssh-access`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
 
-export async function enableSshAccess( siteId: string ) {
+export async function enableSshAccess( siteId: number ) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/ssh-access`,
@@ -28,7 +28,7 @@ export async function enableSshAccess( siteId: string ) {
 	);
 }
 
-export async function disableSshAccess( siteId: string ) {
+export async function disableSshAccess( siteId: number ) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/ssh-access`,
@@ -38,7 +38,7 @@ export async function disableSshAccess( siteId: string ) {
 	);
 }
 
-export async function fetchSiteSshKeys( siteId: string ): Promise< SiteSshKey[] > {
+export async function fetchSiteSshKeys( siteId: number ): Promise< SiteSshKey[] > {
 	const { ssh_keys } = await wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/ssh-keys`,
 		apiNamespace: 'wpcom/v2',
@@ -47,7 +47,7 @@ export async function fetchSiteSshKeys( siteId: string ): Promise< SiteSshKey[] 
 	return ssh_keys;
 }
 
-export async function attachSiteSshKey( siteId: string, name: string ) {
+export async function attachSiteSshKey( siteId: number, name: string ) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/ssh-keys`,
@@ -57,7 +57,7 @@ export async function attachSiteSshKey( siteId: string, name: string ) {
 	);
 }
 
-export async function detachSiteSshKey( siteId: string, userLogin: string, name: string ) {
+export async function detachSiteSshKey( siteId: number, userLogin: string, name: string ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/hosting/ssh-keys/${ userLogin }/${ name }`,
 		apiNamespace: 'wpcom/v2',

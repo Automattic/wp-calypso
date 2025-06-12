@@ -4,7 +4,7 @@ export interface SiteUptime {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
 
-export async function fetchSiteUptime( siteId: string ): Promise< SiteUptime | undefined > {
+export async function fetchSiteUptime( siteId: number ): Promise< SiteUptime | undefined > {
 	return wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/jetpack-monitor-uptime`,

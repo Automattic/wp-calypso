@@ -9,7 +9,7 @@ import type { Site } from '../../data/types';
 
 import './style.scss';
 
-function UptimeCardEnabled( { siteId }: { siteId: string } ) {
+function UptimeCardEnabled( { siteId }: { siteId: number } ) {
 	const { data: siteUptime } = useQuery( siteUptimeQuery( siteId ) );
 
 	let uptimePercentage;

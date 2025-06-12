@@ -18,7 +18,7 @@ import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
 import type { Site } from '../../data/types';
 
-function PHPVersion( { siteId }: { siteId: string } ) {
+function PHPVersion( { siteId }: { siteId: number } ) {
 	return useQuery( sitePHPVersionQuery( siteId ) ).data ?? <TextBlur>X.Y</TextBlur>;
 }
 
@@ -106,7 +106,7 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 }
 
 function PlanDetails( { site }: { site: Site } ) {
-	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( site.slug ) );
+	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 
 	if ( ! site.plan ) {
 		return null;

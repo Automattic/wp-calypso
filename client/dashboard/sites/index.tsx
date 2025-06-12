@@ -248,7 +248,7 @@ export default function Sites() {
 			>
 				<DataViewsCard>
 					<DataViews< Site >
-						getItemId={ ( item ) => item.ID }
+						getItemId={ ( item ) => item.ID.toString() }
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }

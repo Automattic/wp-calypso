@@ -1,7 +1,7 @@
 import wpcom from 'calypso/lib/wp';
 
 export async function fetchP2HubP2s(
-	siteId: string,
+	siteId: number,
 	options: { limit?: number } = {}
 ): Promise< { totalItems: number } > {
 	return wpcom.req.get(

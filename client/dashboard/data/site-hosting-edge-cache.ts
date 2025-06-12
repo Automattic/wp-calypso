@@ -11,14 +11,14 @@ export interface DefensiveModeSettingsUpdate {
 	ttl?: number;
 }
 
-export async function fetchEdgeCacheStatus( siteId: string ): Promise< boolean > {
+export async function fetchEdgeCacheStatus( siteId: number ): Promise< boolean > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/edge-cache/active`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
 
-export async function updateEdgeCacheStatus( siteId: string, active: boolean ): Promise< boolean > {
+export async function updateEdgeCacheStatus( siteId: number, active: boolean ): Promise< boolean > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/edge-cache/active`,
@@ -28,7 +28,7 @@ export async function updateEdgeCacheStatus( siteId: string, active: boolean ): 
 	);
 }
 
-export async function clearEdgeCache( siteId: string ) {
+export async function clearEdgeCache( siteId: number ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 		apiNamespace: 'wpcom/v2',
@@ -36,7 +36,7 @@ export async function clearEdgeCache( siteId: string ) {
 }
 
 export async function fetchEdgeCacheDefensiveModeSettings(
-	siteId: string
+	siteId: number
 ): Promise< DefensiveModeSettings > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/edge-cache/defensive-mode`,
@@ -45,7 +45,7 @@ export async function fetchEdgeCacheDefensiveModeSettings(
 }
 
 export async function updateEdgeCacheDefensiveModeSettings(
-	siteId: string,
+	siteId: number,
 	data: DefensiveModeSettingsUpdate
 ): Promise< DefensiveModeSettings > {
 	return wpcom.req.post(

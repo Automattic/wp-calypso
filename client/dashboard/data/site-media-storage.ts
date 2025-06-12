@@ -6,8 +6,8 @@ export interface SiteMediaStorage {
 	storageUsedBytes: number;
 }
 
-export async function fetchSiteMediaStorage( siteIdOrSlug: string ): Promise< SiteMediaStorage > {
-	const mediaStorage = await wpcom.req.get( `/sites/${ siteIdOrSlug }/media-storage` );
+export async function fetchSiteMediaStorage( siteId: number ): Promise< SiteMediaStorage > {
+	const mediaStorage = await wpcom.req.get( `/sites/${ siteId }/media-storage` );
 	return {
 		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),

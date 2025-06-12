@@ -5,7 +5,7 @@ export interface SftpUser {
 	password: string;
 }
 
-export async function fetchSftpUsers( siteId: string ): Promise< SftpUser[] > {
+export async function fetchSftpUsers( siteId: number ): Promise< SftpUser[] > {
 	const { users } = await wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/ssh-users`,
 		apiNamespace: 'wpcom/v2',
@@ -16,7 +16,7 @@ export async function fetchSftpUsers( siteId: string ): Promise< SftpUser[] > {
 	} ) );
 }
 
-export async function createSftpUser( siteId: string ): Promise< SftpUser > {
+export async function createSftpUser( siteId: number ): Promise< SftpUser > {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/hosting/ssh-user`,
 		apiNamespace: 'wpcom/v2',
@@ -24,7 +24,7 @@ export async function createSftpUser( siteId: string ): Promise< SftpUser > {
 }
 
 export async function resetSftpPassword(
-	siteId: string,
+	siteId: number,
 	sshUsername: string
 ): Promise< SftpUser > {
 	return wpcom.req.post( {

@@ -2,7 +2,7 @@ import { fetchSftpUsers, createSftpUser, resetSftpPassword } from '../../data/si
 import { queryClient } from '../query-client';
 import type { SftpUser } from '../../data/site-hosting-sftp';
 
-export const siteSftpUsersQuery = ( siteId: string ) => ( {
+export const siteSftpUsersQuery = ( siteId: number ) => ( {
 	queryKey: [ 'site', siteId, 'sftp-users' ],
 	queryFn: () => fetchSftpUsers( siteId ),
 	meta: {
@@ -21,7 +21,7 @@ const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[], sftpUser: SftpUse
 	return [ ...currentSftpUsers, sftpUser ];
 };
 
-export const siteSftpUsersCreateMutation = ( siteId: string ) => ( {
+export const siteSftpUsersCreateMutation = ( siteId: number ) => ( {
 	mutationFn: () => createSftpUser( siteId ),
 	onSuccess: ( createdSftpUser: SftpUser ) => {
 		queryClient.setQueryData(
@@ -32,7 +32,7 @@ export const siteSftpUsersCreateMutation = ( siteId: string ) => ( {
 	},
 } );
 
-export const siteSftpUsersResetPasswordMutation = ( siteId: string ) => ( {
+export const siteSftpUsersResetPasswordMutation = ( siteId: number ) => ( {
 	mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
 	onSuccess: ( updatedSftpUser: SftpUser ) => {
 		queryClient.setQueryData(

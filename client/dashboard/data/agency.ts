@@ -10,7 +10,7 @@ export interface AgencyBlog {
 	};
 }
 
-export async function fetchAgencyBlog( siteId: string ): Promise< AgencyBlog > {
+export async function fetchAgencyBlog( siteId: number ): Promise< AgencyBlog > {
 	return wpcom.req.get( {
 		path: `/agency/blog/${ siteId }`,
 		apiNamespace: 'wpcom/v2',

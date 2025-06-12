@@ -6,21 +6,21 @@ export interface SitePreviewLink {
 	expires_at?: string;
 }
 
-export async function fetchSitePreviewLinks( siteId: string ): Promise< SitePreviewLink[] > {
+export async function fetchSitePreviewLinks( siteId: number ): Promise< SitePreviewLink[] > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/preview-links`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
 
-export async function createSitePreviewLink( siteId: string ): Promise< SitePreviewLink > {
+export async function createSitePreviewLink( siteId: number ): Promise< SitePreviewLink > {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/preview-links`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
 
-export async function deleteSitePreviewLink( siteId: string, code: string ) {
+export async function deleteSitePreviewLink( siteId: number, code: string ) {
 	return wpcom.req.post( {
 		method: 'DELETE',
 		path: `/sites/${ siteId }/preview-links/${ code }`,

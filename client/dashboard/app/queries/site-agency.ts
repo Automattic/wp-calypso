@@ -1,6 +1,6 @@
 import { fetchAgencyBlog } from '../../data/agency';
 
-export const siteAgencyBlogQuery = ( siteId: string ) => ( {
+export const siteAgencyBlogQuery = ( siteId: number ) => ( {
 	queryKey: [ 'site', siteId, 'agency-blog' ],
 	queryFn: () => {
 		return fetchAgencyBlog( siteId );

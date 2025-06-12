@@ -8,12 +8,12 @@ import type {
 	DefensiveModeSettingsUpdate,
 } from '../../data/site-hosting-edge-cache';
 
-export const siteDefensiveModeSettingsQuery = ( siteId: string ) => ( {
+export const siteDefensiveModeSettingsQuery = ( siteId: number ) => ( {
 	queryKey: [ 'site', siteId, 'defensive-mode' ],
 	queryFn: () => fetchEdgeCacheDefensiveModeSettings( siteId ),
 } );
 
-export const siteDefensiveModeSettingsMutation = ( siteId: string ) => ( {
+export const siteDefensiveModeSettingsMutation = ( siteId: number ) => ( {
 	mutationFn: ( data: DefensiveModeSettingsUpdate ) =>
 		updateEdgeCacheDefensiveModeSettings( siteId, data ),
 	onSuccess: ( data: DefensiveModeSettings ) => {

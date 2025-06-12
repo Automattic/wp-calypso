@@ -88,7 +88,7 @@ export default function SshCard( {
 	sftpUsers,
 	sshEnabled,
 }: {
-	siteId: string;
+	siteId: number;
 	sftpUsers: SftpUser[];
 	sshEnabled: boolean;
 } ) {

@@ -38,7 +38,7 @@ export default function SftpCard( {
 	siteId,
 	sftpUsers = [],
 }: {
-	siteId: string;
+	siteId: number;
 	sftpUsers: SftpUser[];
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
