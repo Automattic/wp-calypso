@@ -18,6 +18,7 @@ import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDataFormCountryCodes from './use-data-form-country-codes';
+import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
 
 const VatSelectControl = ( { data, field, onChange } ) => (
@@ -91,6 +92,8 @@ export default function VatInfoDataForm() {
 	const { isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
 		useVatDetails();
 	const countryCodes = useDataFormCountryCodes();
+
+	useRecordVatEvents( { updateError, isUpdateSuccessful } );
 
 	const formData = useMemo( () => {
 		const serverData = {
