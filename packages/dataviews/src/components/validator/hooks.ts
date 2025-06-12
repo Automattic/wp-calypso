@@ -1,7 +1,106 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 import { Field, FormField, NormalizedField } from '../../types';
 import { FormValidationState } from './types';
 import { NormalizedFormField } from '../../normalize-form-fields';
+
+const initialState: FormValidationState = {
+	touchedFields: [],
+	errorMessages: {},
+	isFormValid: false,
+	setTouchedFields: () => {},
+	setErrors: () => {},
+	removeError: () => {},
+};
+
+type ValidationAction =
+	| { type: 'SET_TOUCHED_FIELDS'; payload: string[] }
+	| {
+			type: 'SET_ERRORS';
+			payload: {
+				field: string;
+				errors: Record< string, string | undefined >;
+			};
+	  }
+	| { type: 'REMOVE_ERROR'; payload: string }
+	| { type: 'RESET_VALIDATION' };
+
+const validationReducer = (
+	state: FormValidationState,
+	action: ValidationAction
+): FormValidationState => {
+	switch ( action.type ) {
+		case 'SET_TOUCHED_FIELDS':
+			return {
+				...state,
+				touchedFields: [ ...state.touchedFields, ...action.payload ],
+			};
+
+		case 'SET_ERRORS':
+			return {
+				...state,
+				errorMessages: {
+					...state.errorMessages,
+					[ action.payload.field ]: action.payload.errors,
+				},
+			};
+
+		case 'REMOVE_ERROR': {
+			const { [ action.payload ]: _, ...rest } = state.errorMessages;
+			return {
+				...state,
+				errorMessages: rest,
+			};
+		}
+
+		case 'RESET_VALIDATION':
+			return initialState;
+
+		default:
+			return state;
+	}
+};
+
+export const useValidation = (): FormValidationState => {
+	const [ validationState, dispatch ] = useReducer(
+		validationReducer,
+		initialState
+	);
+
+	const setTouchedFields = useCallback( ( touchedFields: string[] ) => {
+		dispatch( { type: 'SET_TOUCHED_FIELDS', payload: touchedFields } );
+	}, [] );
+
+	const setErrors = useCallback(
+		( field: string, error: Record< string, string | undefined > ) =>
+			dispatch( {
+				type: 'SET_ERRORS',
+				payload: { field, errors: error },
+			} ),
+		[ dispatch ]
+	);
+
+	const removeError = useCallback(
+		( field: string ) =>
+			dispatch( { type: 'REMOVE_ERROR', payload: field } ),
+		[ dispatch ]
+	);
+
+	const isFormValid = useMemo(
+		() => Object.keys( validationState.errorMessages ).length === 0,
+		[ validationState.errorMessages ]
+	);
+
+	console.log( isFormValid );
+
+	return {
+		touchedFields: validationState.touchedFields,
+		errorMessages: validationState.errorMessages,
+		setTouchedFields,
+		setErrors,
+		removeError,
+		isFormValid,
+	};
+};
 
 export function useFieldValidation< Item >(
 	field: NormalizedFormField,
@@ -67,68 +166,3 @@ export function useFieldError< Item >(
 		return '';
 	}, [ field.id, fieldDefinition, validation ] );
 }
-
-export const useValidation = (): FormValidationState => {
-	const [ validationState, setValidationState ] = useState( {
-		touchedFields: [] as string[],
-		messageErrors: {} as Record<
-			string,
-			Record< string, string | undefined >
-		>,
-	} );
-
-	const setTouchedFields = useCallback( ( touchedFields: string[] ) => {
-		setValidationState( ( prevValidationState ) => ( {
-			...prevValidationState,
-			touchedFields: [
-				...prevValidationState.touchedFields,
-				...touchedFields,
-			],
-		} ) );
-	}, [] );
-
-	const setErrors = useCallback(
-		( field: string, error: Record< string, string | undefined > ) =>
-			setValidationState( ( prevValidationState ) => ( {
-				...prevValidationState,
-				messageErrors: {
-					...prevValidationState.messageErrors,
-					[ field ]: error,
-				},
-			} ) ),
-		[ validationState.messageErrors ]
-	);
-
-	const removeError = useCallback(
-		( field: string ) =>
-			setValidationState( ( prevValidationState ) => {
-				const { [ field ]: _, ...rest } =
-					prevValidationState.messageErrors;
-				return {
-					...prevValidationState,
-					messageErrors: rest,
-				};
-			} ),
-		[ validationState.messageErrors ]
-	);
-
-	const isFormValid = useCallback(
-		() =>
-			Object.values( validationState.messageErrors ).every(
-				( fieldErrors ) =>
-					Object.values( fieldErrors ).every(
-						( errorMessage ) => ! errorMessage
-					)
-			),
-		[ validationState.messageErrors ]
-	);
-
-	return {
-		touchedFields: validationState.touchedFields,
-		errorMessages: validationState.messageErrors,
-		setTouchedFields,
-		setErrors,
-		removeError,
-		isFormValid,
-	};
-};

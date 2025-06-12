@@ -10,7 +10,7 @@ export type FormValidationState = {
 		error: Record< string, string | undefined >
 	) => void;
 	removeError: ( field: string ) => void;
-	isFormValid: () => boolean;
+	isFormValid: boolean;
 };
 
 export type Rules< Item > = {
@@ -32,7 +32,7 @@ export type ValidateRule< Item > = {
 		value: any,
 		field: NormalizedField< Item >,
 		data: Item
-	) => string;
+	) => string | undefined;
 };
 
 export type RequiredRule = {
