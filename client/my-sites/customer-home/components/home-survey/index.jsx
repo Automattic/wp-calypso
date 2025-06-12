@@ -1,5 +1,4 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import ReactDOM from 'react-dom';
 import SurveyModal from 'calypso/components/survey-modal';
 import { useSelector } from 'calypso/state';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
@@ -35,7 +34,7 @@ const HomeSurvey = () => {
 		return null;
 	}
 
-	return ReactDOM.createPortal(
+	return (
 		<SurveyModal
 			name="survey-home"
 			eventName="calypso_survey_home"
@@ -47,8 +46,7 @@ const HomeSurvey = () => {
 			dismissText="No thanks"
 			confirmText="Yes, I want to participate"
 			showOverlay={ false }
-		/>,
-		document.body
+		/>
 	);
 };
 
