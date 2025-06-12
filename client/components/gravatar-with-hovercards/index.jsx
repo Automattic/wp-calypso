@@ -16,6 +16,7 @@ import '@gravatar-com/hovercards/dist/style.css';
 // Controlling visiblity this way prevents the flickering in cleanup: we ensure hovercards have no
 // visibility until verifying that their container ref is in the dom.
 // This issue is being tracked in https://github.com/Automattic/gravatar/issues/210
+// More details and gifs of these issues shown in https://github.com/Automattic/wp-calypso/pull/104136
 const createStyleElement = () => {
 	let styleElement = document.getElementById( 'gravatar-hovercard-style' );
 	if ( ! styleElement ) {
