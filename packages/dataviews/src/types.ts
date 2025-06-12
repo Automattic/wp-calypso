@@ -226,7 +226,7 @@ export type Field< Item > = {
 	/**
 	 * The validation schema for the field.
 	 */
-	rules?: Rules;
+	rules?: Rules< Item >;
 };
 
 export type NormalizedField< Item > = Omit<
@@ -243,7 +243,7 @@ export type NormalizedField< Item > = Omit<
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
-	rules: NormalizedRule[];
+	rules: NormalizedRule< Item >[];
 };
 
 /**

@@ -1,29 +1,38 @@
-import { Field, FormField } from '../../types';
+import { Field, FormField, NormalizedField } from '../../types';
 import { INPUT_VALIDATION_RULES } from './constant';
+import {
+	isLengthRule,
+	isPatternRule,
+	isRequiredRule,
+	isValidateRule,
+} from './guards';
+
 import { NormalizedRule, Rule, Rules } from './types';
 
-export const normalizeRules = ( rules: Rules ): NormalizedRule[] => {
+export const normalizeRules = < Item >(
+	rules: Rules< Item >
+): NormalizedRule< Item >[] => {
 	return Object.entries( rules ).map( ( [ key, value ] ) => {
 		return {
 			type: key,
-			message: value.message,
-			// @ts-ignore
+			...( 'message' in value && { message: value.message } ),
+			// @ts-expect-error - TODO: fix this
 			callback: generateCallback( key, value ),
-		} as NormalizedRule;
+		} as NormalizedRule< Item >;
 	} );
 };
 
-const generateCallback = (
+const generateCallback = < Item >(
 	type: keyof typeof INPUT_VALIDATION_RULES,
-	rule: Rule
+	rule: Rule< Item >
 ) => {
-	if ( type === INPUT_VALIDATION_RULES.required ) {
-		return ( value: any ) => {
+	if ( isRequiredRule( rule ) ) {
+		return ( value: string | boolean ) => {
 			return value ? undefined : rule.message;
 		};
 	}
 
-	if ( type === INPUT_VALIDATION_RULES.pattern ) {
+	if ( isPatternRule( rule ) ) {
 		return ( value: any ) => {
 			return value.match( new RegExp( rule.message ) )
 				? undefined
@@ -31,15 +40,21 @@ const generateCallback = (
 		};
 	}
 
-	if ( type === INPUT_VALIDATION_RULES.minLength ) {
+	if ( isLengthRule( rule ) && type === 'minLength' ) {
 		return ( value: any ) => {
 			return value.length >= rule.value ? undefined : rule.message;
 		};
 	}
 
-	if ( type === INPUT_VALIDATION_RULES.maxLength ) {
+	if ( isLengthRule( rule ) && type === 'maxLength' ) {
 		return ( value: any ) => {
 			return value.length <= rule.value ? undefined : rule.message;
+		};
+	}
+
+	if ( isValidateRule( rule ) ) {
+		return ( value: any, field: NormalizedField< Item >, item: Item ) => {
+			return rule.callback( value, field, item );
 		};
 	}
 

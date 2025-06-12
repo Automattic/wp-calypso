@@ -148,7 +148,7 @@ export function normalizeFields< Item >(
 
 		const normalizedRules = field.rules
 			? normalizeRules( field.rules )
-			: ( [] as NormalizedRule[] );
+			: ( [] as NormalizedRule< Item >[] );
 
 		const filterBy = getFilterBy( field, fieldTypeDefinition );
 

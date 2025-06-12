@@ -3,4 +3,5 @@ export const INPUT_VALIDATION_RULES = {
 	minLength: 'minLength',
 	pattern: 'pattern',
 	required: 'required',
+	validate: 'validate',
 } as const;

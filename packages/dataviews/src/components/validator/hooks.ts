@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { FormField, NormalizedField } from '../../types';
+import { Field, FormField, NormalizedField } from '../../types';
 import { FormValidationState } from './types';
+import { NormalizedFormField } from '../../normalize-form-fields';
 
 export function useFieldValidation< Item >(
-	field: FormField,
+	field: NormalizedFormField,
+	data: Item,
 	fieldDefinition: NormalizedField< Item > | undefined,
 	validation: FormValidationState,
 	onChange: ( value: any ) => void
@@ -13,15 +15,17 @@ export function useFieldValidation< Item >(
 			onChange( value );
 
 			if ( ! validation.touchedFields?.includes( field.id ) ) {
-				validation.setTouchedFields( [
-					...validation.touchedFields,
-					field.id,
-				] );
+				validation.setTouchedFields( [ field.id ] );
 			}
 
 			const errors = fieldDefinition?.rules.reduce(
 				( acc, rule ) => {
-					const error = rule.callback( value[ field.id ] );
+					const error = rule.callback(
+						value[ field.id ],
+						fieldDefinition,
+						data
+					);
+
 					return {
 						...acc,
 						...( error && { [ rule.type ]: error } ),
@@ -41,19 +45,24 @@ export function useFieldValidation< Item >(
 }
 
 export function useFieldError< Item >(
-	field: FormField,
-	fieldDefinition: any,
+	field: NormalizedFormField,
+	fieldDefinition: NormalizedField< Item > | undefined,
 	validation: FormValidationState
 ) {
 	return useMemo( () => {
-		if (
-			( fieldDefinition?.validationSchema?.onTouched &&
-				validation.touchedFields.includes( fieldDefinition.id ) ) ||
-			! fieldDefinition?.validationSchema?.onTouched
-		) {
-			return Object.values(
-				validation.errorMessages[ field.id ] ?? []
-			)[ 0 ];
+		if ( validation.touchedFields.includes( field.id ) ) {
+			const requiredError =
+				validation?.errorMessages?.[ field.id ]?.[ 'required' ];
+
+			if ( requiredError ) {
+				return requiredError;
+			}
+
+			return Object.entries(
+				validation?.errorMessages?.[ field.id ] ?? {}
+			)
+				.filter( ( [ key ] ) => key !== 'required' )
+				.map( ( [ _, error ] ) => error )[ 0 ];
 		}
 		return '';
 	}, [ field.id, fieldDefinition, validation ] );
@@ -71,7 +80,10 @@ export const useValidation = (): FormValidationState => {
 	const setTouchedFields = useCallback( ( touchedFields: string[] ) => {
 		setValidationState( ( prevValidationState ) => ( {
 			...prevValidationState,
-			touchedFields,
+			touchedFields: [
+				...prevValidationState.touchedFields,
+				...touchedFields,
+			],
 		} ) );
 	}, [] );
 
@@ -80,7 +92,7 @@ export const useValidation = (): FormValidationState => {
 			setValidationState( ( prevValidationState ) => ( {
 				...prevValidationState,
 				messageErrors: {
-					...validationState.messageErrors,
+					...prevValidationState.messageErrors,
 					[ field ]: error,
 				},
 			} ) ),
@@ -89,10 +101,11 @@ export const useValidation = (): FormValidationState => {
 
 	const removeError = useCallback(
 		( field: string ) =>
-			setValidationState( ( { messageErrors } ) => {
-				const { [ field ]: _, ...rest } = messageErrors;
+			setValidationState( ( prevValidationState ) => {
+				const { [ field ]: _, ...rest } =
+					prevValidationState.messageErrors;
 				return {
-					...validationState,
+					...prevValidationState,
 					messageErrors: rest,
 				};
 			} ),

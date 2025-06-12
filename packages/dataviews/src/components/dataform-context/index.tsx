@@ -23,6 +23,7 @@ const DataFormContext = createContext< DataFormContextType< any > >( {
 		isFormValid: () => false,
 		touchedFields: [],
 		errorMessages: {},
+		removeError: () => {},
 	},
 } );
 

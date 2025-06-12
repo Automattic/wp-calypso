@@ -1,3 +1,4 @@
+import { Field, NormalizedField } from '../../types';
 import { INPUT_VALIDATION_RULES } from './constant';
 
 export type FormValidationState = {
@@ -12,17 +13,45 @@ export type FormValidationState = {
 	isFormValid: () => boolean;
 };
 
-export type Rules = {
-	[ key in keyof typeof INPUT_VALIDATION_RULES ]: Rule;
+export type Rules< Item > = {
+	[ key in keyof typeof INPUT_VALIDATION_RULES ]?: Rule< Item >;
 };
 
-export type Rule = {
+export type LengthRule = {
 	message: string;
-	value: boolean | number;
+	value: number;
 };
 
-export type NormalizedRule = {
+export type PatternRule = {
+	message: string;
+	value: string;
+};
+
+export type ValidateRule< Item > = {
+	callback: (
+		value: any,
+		field: NormalizedField< Item >,
+		data: Item
+	) => string;
+};
+
+export type RequiredRule = {
+	message: string;
+	value: boolean;
+};
+
+export type Rule< Item > =
+	| LengthRule
+	| PatternRule
+	| ValidateRule< Item >
+	| RequiredRule;
+
+export type NormalizedRule< Item > = {
 	type: keyof typeof INPUT_VALIDATION_RULES;
 	message: string;
-	callback: ( value: any ) => string | undefined;
+	callback: (
+		value: any,
+		field?: NormalizedField< Item >,
+		item?: Item
+	) => string | undefined;
 };

@@ -2,16 +2,13 @@
  * WordPress dependencies
  */
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useContext, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import type { Form, FormField, SimpleFormField } from '../types';
-import { getFormFieldLayout } from './index';
-import DataFormContext from '../components/dataform-context';
-import { isCombinedField } from './is-combined-field';
 import normalizeFormFields from '../normalize-form-fields';
-import { useFieldError, useFieldValidation } from '../components/validator';
+import type { Form, FormField } from '../types';
+import { DataFormField } from './data-form-field';
 
 export function DataFormFieldOrchestrator< Item >( {
 	data,
@@ -33,16 +30,6 @@ export function DataFormFieldOrchestrator< Item >( {
 		field: FormField
 	) => React.JSX.Element;
 } ) {
-	const { fields: fieldDefinitions, validation } =
-		useContext( DataFormContext );
-	function getFieldDefinition( field: SimpleFormField | string ) {
-		const fieldId = typeof field === 'string' ? field : field.id;
-
-		return fieldDefinitions.find(
-			( fieldDefinition ) => fieldDefinition.id === fieldId
-		);
-	}
-
 	const normalizedFormFields = useMemo(
 		() => normalizeFormFields( form ),
 		[ form ]
@@ -51,49 +38,13 @@ export function DataFormFieldOrchestrator< Item >( {
 	return (
 		<VStack spacing={ form?.type === 'panel' ? 2 : 4 }>
 			{ normalizedFormFields.map( ( formField ) => {
-				const FieldLayout = getFormFieldLayout( formField.layout )
-					?.component;
-
-				if ( ! FieldLayout ) {
-					return null;
-				}
-
-				const fieldDefinition = ! isCombinedField( formField )
-					? getFieldDefinition( formField )
-					: undefined;
-
-				if (
-					fieldDefinition &&
-					fieldDefinition.isVisible &&
-					! fieldDefinition.isVisible( data )
-				) {
-					return null;
-				}
-
-				if ( children ) {
-					return children( FieldLayout, formField );
-				}
-
-				const handleChange = useFieldValidation(
-					formField,
-					fieldDefinition,
-					validation,
-					onChange
-				);
-
-				const errorMessage = useFieldError(
-					formField,
-					fieldDefinition,
-					validation
-				);
-
 				return (
-					<FieldLayout
+					<DataFormField
 						key={ formField.id }
 						data={ data }
-						field={ formField }
-						errorMessage={ errorMessage }
-						onChange={ handleChange }
+						formField={ formField }
+						onChange={ onChange }
+						children={ children }
 					/>
 				);
 			} ) }
