@@ -66,8 +66,6 @@ export function DataFormField< Item >( {
 		validation
 	);
 
-	useEffect( () => {}, [ errorMessage ] );
-
 	if ( ! FieldLayout ) {
 		return null;
 	}
