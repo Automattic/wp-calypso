@@ -53,21 +53,21 @@ const PluginDetailsSidebar = ( {
 
 	const supportLinks = [
 		{
-			href: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
+			supportContext: 'general-support-options',
 			label: translate( 'How to get help!' ),
-			openInNewTab: true,
+			openIn: 'HelpCenter',
 		},
 		{
 			href: localizeUrl( 'https://automattic.com/privacy/' ),
 			label: translate( 'See privacy policy' ),
-			openInNewTab: true,
+			openIn: 'NewTab',
 		},
 	];
 	documentation_url &&
 		supportLinks.unshift( {
 			href: documentation_url,
 			label: translate( 'View documentation' ),
-			openInNewTab: true,
+			openIn: 'NewTab',
 		} );
 
 	const isPremiumVersionAvailable = !! premium_slug;
@@ -139,7 +139,7 @@ const PluginDetailsSidebar = ( {
 						'Take a look at the posibilities of this plugin before your commit.'
 					) }
 					links={ [
-						{ href: { demo_url }, label: translate( 'View live demo' ), openInNewTab: true },
+						{ href: { demo_url }, label: translate( 'View live demo' ), openIn: 'NewTab' },
 					] }
 					first
 				/>
