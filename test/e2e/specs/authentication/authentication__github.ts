@@ -1,7 +1,7 @@
 /**
  * @group authentication
+ * @browser firefox
  */
-
 import { DataHelper, LoginPage, SecretsManager, GitHubLoginPage } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -24,6 +24,12 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Click on Login with GitHub button', async function () {
+			await page.screenshot( {
+				path: 'auth_github-auth-start.jpeg',
+				fullPage: true,
+				type: 'jpeg',
+				quality: 20,
+			} );
 			await Promise.all( [
 				page.waitForNavigation( { url: /.*github\.com\/login.*/ } ),
 				loginPage.clickLoginWithGitHub(),
@@ -50,6 +56,13 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 				throw new Error( 'Navigation failed - no response received' );
 			}
 
+			await page.screenshot( {
+				path: 'auth_github-device-verification.jpeg',
+				fullPage: true,
+				type: 'jpeg',
+				quality: 20,
+			} );
+
 			if ( response.url() === verificationUrl ) {
 				// If we're on the verification screen, click the verify button
 				await githubLoginPage.clickButtonWithExactText( 'Verify' );
@@ -59,6 +72,12 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		it( 'Verify successful login to WordPress.com', async function () {
 			// Wait for navigation to complete and verify we're on WordPress.com
 			await page.waitForURL( /.*wordpress\.com\/sites.*/ );
+			await page.screenshot( {
+				path: 'auth_github-auth-success.jpeg',
+				fullPage: true,
+				type: 'jpeg',
+				quality: 20,
+			} );
 			expect( page.url() ).toMatch( /.*wordpress\.com\/sites.*/ );
 		} );
 
