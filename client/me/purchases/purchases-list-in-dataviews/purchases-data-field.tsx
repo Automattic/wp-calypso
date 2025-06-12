@@ -95,18 +95,6 @@ export function getPurchasesFieldDefinitions( {
 
 	const fields: Fields< Purchases.Purchase > = [
 		{
-			id: 'purchase-id',
-			label: 'Purchase ID',
-			type: 'text',
-			enableGlobalSearch: false,
-			enableSorting: false,
-			enableHiding: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				// getValue must return a string because the DataViews search feature calls `trim()` on it.
-				return String( item.id );
-			},
-		},
-		{
 			id: 'site',
 			label: translate( 'Site' ),
 			type: 'text',
