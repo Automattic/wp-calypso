@@ -23,7 +23,7 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 		Number.isFinite( agency.prices?.actual_price ) && typeof agency.prices?.currency === 'string';
 
 	if ( isAgencyQueryError || ! priceInfoIsDefined ) {
-		return __( "After launch, we'll bill your agency in the next billing cycle." );
+		return __( 'After launch, we’ll bill your agency in the next billing cycle.' );
 	}
 
 	const { existing_wpcom_license_count: existingWPCOMLicenseCount = 0, name, prices } = agency;
@@ -33,8 +33,8 @@ function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryE
 		sprintf(
 			/* translators: agencyName is the name of the agency that will be billed for the site; licenseCount is the number of licenses the agency will be billed for; price is the price per license */
 			_n(
-				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting license, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>",
-				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting licenses, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>",
+				'After launch, we’ll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting license, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>',
+				'After launch, we’ll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting licenses, you will be charged %(price)s / license / month. <learnMoreLink>Learn more</learnMoreLink>',
 				existingWPCOMLicenseCount + 1
 			),
 			{
@@ -70,7 +70,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 
 	return (
 		<Notice
-			title={ __( "Your site hasn't been launched yet" ) }
+			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
 				<>
 					<Button size="compact" variant="primary" onClick={ () => onLaunchClick() }>
@@ -90,7 +90,7 @@ export function LaunchAgencyDevelopmentSiteForm( {
 		>
 			<VStack spacing={ 5 } alignment="left">
 				<Text as="p">
-					{ __( 'It is hidden from visitors behind a "Coming Soon" notice until it is launched.' ) }
+					{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 				</Text>
 				{ shouldShowBillingMessage && <Text as="p">{ billingMessage }</Text> }
 			</VStack>

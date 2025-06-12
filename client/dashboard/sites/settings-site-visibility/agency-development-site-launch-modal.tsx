@@ -50,10 +50,10 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 	};
 
 	return (
-		<Modal title={ __( "You're about to launch this website" ) } onRequestClose={ onClose }>
+		<Modal title={ __( 'You’re about to launch this website' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
 				<Text as="p">
-					{ __( "After launch, we'll bill your agency in the next billing cycle." ) }
+					{ __( 'After launch, we’ll bill your agency in the next billing cycle.' ) }
 				</Text>
 				<HStack justify="flex-end" spacing={ 2 }>
 					<Button disabled={ isLaunching } onClick={ onClose }>
