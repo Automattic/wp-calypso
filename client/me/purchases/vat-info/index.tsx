@@ -6,7 +6,7 @@ import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-clie
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -23,9 +23,10 @@ import useCountryList, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
 import VatInfoDataForm from './vat-info-data-form';
-import type { UpdateError, FetchError } from './use-vat-details';
+import type { UpdateError } from './use-vat-details';
 import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
 import './style.scss';
 
@@ -385,46 +386,6 @@ function useDisplayVatNotices( {
 			return;
 		}
 	}, [ error, success, reduxDispatch, translate, taxName ] );
-}
-
-function useRecordVatEvents( {
-	updateError,
-	fetchError,
-	isUpdateSuccessful,
-}: {
-	updateError?: UpdateError | null;
-	fetchError?: FetchError | null;
-	isUpdateSuccessful?: boolean;
-} ) {
-	const reduxDispatch = useDispatch();
-	const lastFetchError = useRef< FetchError >();
-	const lastUpdateError = useRef< UpdateError >();
-
-	useEffect( () => {
-		if ( fetchError && lastFetchError.current !== fetchError ) {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_vat_details_fetch_failure', {
-					error: fetchError.error,
-					message: fetchError.message,
-				} )
-			);
-			lastFetchError.current = fetchError;
-			return;
-		}
-
-		if ( updateError && lastUpdateError.current !== updateError ) {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: updateError.error } )
-			);
-			lastUpdateError.current = updateError;
-			return;
-		}
-
-		if ( isUpdateSuccessful ) {
-			reduxDispatch( recordTracksEvent( 'calypso_vat_details_validation_success' ) );
-			return;
-		}
-	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
 }
 
 // TODO - We'll need to fix the error handling for touch fields and pass the error to this component
