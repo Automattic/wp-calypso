@@ -28,8 +28,9 @@ function VatSelectControl( { data, field, onChange }: VatFormControlProps ) {
 	const { elements, getValue, id, label, isDisabled, isVatAlreadySet } = field;
 
 	const options =
-		elements?.length === 0 ? [ { label: translate( 'Loading…' ), value: '' } ] : elements;
-
+		elements?.length === 0
+			? [ { label: translate( 'Loading…' ), value: '' } ]
+			: [ { label: '', value: '' }, ...( elements ?? [] ) ];
 	return (
 		<SelectControl
 			__next40pxDefaultSize
