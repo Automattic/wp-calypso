@@ -352,8 +352,8 @@ const HomeContent = ( {
 					allDomains={ allDomains }
 				/>
 			) }
+			{ ! celebrateLaunchModalIsOpen && <HomeSurvey /> }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<HomeSurvey />
 		</div>
 	);
 };
