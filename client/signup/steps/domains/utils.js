@@ -37,7 +37,7 @@ export function shouldUseMultipleDomainsInCart( flowName ) {
 	const enabledFlows = [
 		'domain',
 		'onboarding',
-		'site-domain-search',
+		'domains', // domains/add
 		EXAMPLE_FLOW,
 		NEW_HOSTED_SITE_FLOW,
 	];

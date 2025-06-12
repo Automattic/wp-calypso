@@ -662,7 +662,7 @@ class RenderDomainsStepComponent extends Component {
 			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
-			'site-domain-search',
+			'domains', // domains/add
 		].includes( flowName );
 	};
 
@@ -1099,6 +1099,8 @@ class RenderDomainsStepComponent extends Component {
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
+				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+				onDomainsAvailabilityChange={ this.props.onDomainsAvailabilityChange }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				onMappingError={ this.handleDomainMappingError }

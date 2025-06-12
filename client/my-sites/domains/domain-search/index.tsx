@@ -32,7 +32,7 @@ import {
 	domainManagementList,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
-import { RenderDomainsStep } from 'calypso/signup/steps/domains';
+import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -49,6 +49,9 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
+import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	isSiteOnECommerceTrial,
@@ -102,6 +105,10 @@ type DomainSearchProps = {
 	isEcommerceSite: boolean;
 	preferredView: ReturnType< typeof getSiteOption >;
 	wpAdminUrl: ReturnType< typeof getSiteAdminUrl >;
+	submitDomainStepSelection: ( suggestion: DomainSuggestion, section: string ) => void;
+	designType: string;
+	setDesignType: ( designType: string ) => void;
+	fetchUsernameSuggestion: ( username: string ) => void;
 };
 
 const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
@@ -430,13 +437,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 							<NewDomainsRedirectionNoticeUpsell />
 						) }
 						<RenderDomainsStep
-							showAlreadyOwnADomain
-							suggestion={ this.getInitialSuggestion() }
-							isOnboarding
-							isDomainOnly
-							positionInFlow={ 0 }
-							flowName="site-domain-search" // this enables the multi-domain cart
-							stepName=""
 							goToNextStep={ () => {
 								const domains = this.props.cart.products.filter(
 									( p ) => p.is_domain_registration
@@ -448,24 +448,33 @@ class DomainSearch extends Component< DomainSearchProps > {
 									page( `/checkout/${ this.props.selectedSiteSlug }` );
 								}
 							} }
-							multiDomainDefaultPlan={ multiDomainDefaultPlan }
 							saveSignupStep={ ( step: any ) => {
 								this.setState( { step: { ...this.state.step, ...step } } );
 							} }
 							submitSignupStep={ () => {} }
+							showAlreadyOwnADomain
+							isDomainOnly={ false }
+							domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
+							suggestion={ this.getInitialSuggestion() }
+							positionInFlow={ 0 }
+							flowName="domains"
+							stepName="domains-search"
+							multiDomainDefaultPlan={ multiDomainDefaultPlan }
 							step={ this.state.step }
 							cart={ this.props.cart }
 							productsList={ this.props.productsList }
 							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 							includeWordPressDotCom={ false }
 							translate={ translate }
-							path=""
+							path={ this.props.basePath }
 							shoppingCartManager={ this.props.shoppingCartManager }
 							selectedSite={ selectedSite }
 							recordAddDomainButtonClick={ this.props.recordAddDomainButtonClick }
-							submitDomainStepSelection={ () => {} } // only tracks events
-							setDesignType={ () => {} } // idk what this does
-							fetchUsernameSuggestion={ () => {} } // idk what this does
+							submitDomainStepSelection={ this.props.submitDomainStepSelection }
+							designType={ this.props.designType }
+							setDesignType={ this.props.setDesignType }
+							fetchUsernameSuggestion={ this.props.fetchUsernameSuggestion }
 							render={ ( {
 								mainContent,
 								sideContent,
@@ -527,6 +536,7 @@ export default connect(
 			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
 			preferredView: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
 			wpAdminUrl: getSiteAdminUrl( state, siteId ),
+			designType: getDesignType( state ),
 		};
 	},
 	{
@@ -536,5 +546,8 @@ export default connect(
 		recordAddDomainButtonClickInUseYourDomain,
 		recordRemoveDomainButtonClick,
 		setCurrentFlowName,
+		submitDomainStepSelection,
+		setDesignType,
+		fetchUsernameSuggestion,
 	}
 )( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );

@@ -230,9 +230,10 @@ export class DomainsMiniCart extends Component {
 			return this.mobile();
 		}
 
-		const shouldRenderChooseDomainLater = ! [ 'domain', 'site-domain-search' ].includes(
-			this.props.flowName
-		);
+		const shouldRenderChooseDomainLater = ! [
+			'domain',
+			'domains', // domains/add
+		].includes( this.props.flowName );
 
 		return (
 			<div className="domains__domain-side-content domains__domain-cart">
