@@ -1,4 +1,3 @@
-import configApi from '@automattic/calypso-config';
 import {
 	SITE_SETUP_FLOW,
 	ONBOARDING_FLOW,
