@@ -2,6 +2,7 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import ReactDOM from 'react-dom';
 import SurveyModal from 'calypso/components/survey-modal';
 import { useSelector } from 'calypso/state';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import homeSurveyImage from './assets/images/home-survey.png';
 
@@ -17,6 +18,7 @@ const HomeSurvey = () => {
 		new Date( site.options.updated_at ) > new Date( Date.now() - 2 * 24 * 60 * 60 * 1000 );
 	const isTwentyTwentyFiveTheme = site?.options?.theme_slug === 'pub/twentytwentyfive' || false; // The old default theme.
 	const isRetrospectTheme = site?.options?.theme_slug === 'pub/retrospect' || false; // The new default theme. See 185017-ghe-Automattic/wpcom.
+	const isAutomattician = useSelector( isA8cTeamMember );
 
 	const isEligibleForSurvey =
 		isEnglishLocale &&
@@ -24,7 +26,8 @@ const HomeSurvey = () => {
 		isSiteCreatedInLast3Days &&
 		isLastActivityWithin2Days &&
 		! isTwentyTwentyFiveTheme &&
-		! isRetrospectTheme;
+		! isRetrospectTheme &&
+		! isAutomattician;
 
 	if ( ! isEligibleForSurvey ) {
 		return null;
