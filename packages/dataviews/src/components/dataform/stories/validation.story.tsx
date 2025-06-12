@@ -103,6 +103,11 @@ const DataFormWithValidationFreeComposition = ( {
 			<Button disabled={ ! validation.isFormValid } variant="primary">
 				{ validation.isFormValid ? 'Send' : 'Please fix the errors' }
 			</Button>
+
+			<p>Touched fields: { validation.touchedFields.join( ', ' ) }</p>
+			<p>
+				Error messages: { JSON.stringify( validation.errorMessages ) }
+			</p>
 		</>
 	);
 };
