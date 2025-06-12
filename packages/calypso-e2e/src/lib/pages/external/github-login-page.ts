@@ -8,6 +8,7 @@ const selectors = {
 	// Inputs
 	emailInput: 'input[id="login_field"]',
 	passwordInput: 'input[id="password"]',
+	codeInput: 'input[name="sms_otp"]',
 
 	// Button
 	submitFormButton: 'input[data-signin-label="Sign In"]',
@@ -84,5 +85,15 @@ export class GitHubLoginPage {
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.locator( selectors.passwordInput );
 		await locator.fill( password );
+	}
+
+	/**
+	 * Fills the 2FA code field.
+	 *
+	 * @param {string} code 2FA code of the user.
+	 */
+	async enter2FACode( code: string ): Promise< void > {
+		const locator = this.page.locator( selectors.codeInput );
+		await locator.fill( code );
 	}
 }
