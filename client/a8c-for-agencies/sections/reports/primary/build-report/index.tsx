@@ -7,6 +7,7 @@ import {
 	DatePicker,
 	Popover,
 } from '@wordpress/components';
+import { Icon, error } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useMemo, useCallback } from 'react';
 import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
@@ -20,15 +21,15 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { A4A_REPORTS_LINK } from '../../constants';
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
+import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
 import { formatDate } from '../../lib/format-date';
-import type { BuildReportFormData, BuildReportCheckedItemsState } from '../../types';
+import type { BuildReportCheckedItemsState } from '../../types';
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
 import './style.scss';
 
 const BuildReport = () => {
 	const translate = useTranslate();
-	const title = translate( 'Build Report' );
 
 	const availableTimeframes = useMemo(
 		() => [
@@ -58,44 +59,42 @@ const BuildReport = () => {
 		[ translate ]
 	);
 
-	const today = new Date();
-	const yesterday = new Date( today );
-	yesterday.setDate( today.getDate() - 1 );
+	// Use the custom hook for form data management
+	const {
+		formData,
+		setSelectedTimeframe,
+		setSelectedSite,
+		setClientEmail,
+		setCustomIntroText,
+		setSendMeACopy,
+		setTeammateEmails,
+		setStartDate,
+		setEndDate,
+		setStatsCheckedItems,
+		isLoading: isDuplicateLoading,
+		isDuplicating,
+		error: duplicateError,
+	} = useDuplicateReportFormData( availableTimeframes, statsOptions );
 
-	const [ selectedTimeframe, setSelectedTimeframe ] = useState( availableTimeframes[ 0 ].value );
-	const [ selectedSite, setSelectedSite ] = useState< A4ASelectSiteItem | null >( null );
-	const [ clientEmail, setClientEmail ] = useState( '' );
-	const [ customIntroText, setCustomIntroText ] = useState( '' );
-	const [ sendMeACopy, setSendMeACopy ] = useState( false );
-	const [ teammateEmails, setTeammateEmails ] = useState( '' );
-	const [ startDate, setStartDate ] = useState< string | undefined >(
-		yesterday.toISOString().split( 'T' )[ 0 ]
-	);
-	const [ endDate, setEndDate ] = useState< string | undefined >(
-		today.toISOString().split( 'T' )[ 0 ]
-	);
-	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
-	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
-	const [ showValidationErrors, setShowValidationErrors ] = useState( false );
-
-	const [ statsCheckedItems, setStatsCheckedItems ] = useState< BuildReportCheckedItemsState >(
-		statsOptions.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
-	);
-
-	const [ currentStep, setCurrentStep ] = useState( 1 );
-
-	// Form data for validation
-	const formData: BuildReportFormData = {
-		selectedSite: selectedSite?.site || '',
+	const {
+		selectedSite,
 		selectedTimeframe,
-		clientEmail,
 		startDate,
 		endDate,
+		clientEmail,
 		sendMeACopy,
 		teammateEmails,
 		customIntroText,
 		statsCheckedItems,
-	};
+	} = formData;
+
+	const title = isDuplicating ? translate( 'Duplicate Report' ) : translate( 'Build Report' );
+
+	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
+	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
+	const [ showValidationErrors, setShowValidationErrors ] = useState( false );
+
+	const [ currentStep, setCurrentStep ] = useState( 1 );
 
 	// Get validation errors for current step
 	const validationErrors = useFormValidation( currentStep, formData );
@@ -144,18 +143,18 @@ const BuildReport = () => {
 		setCurrentStep( ( prev ) => prev - 1 );
 	}, [] );
 
-	const handleStep2CheckboxChange = ( groupKey: 'stats', itemName: string ) => {
-		const setterMap: Record<
-			string,
-			React.Dispatch< React.SetStateAction< BuildReportCheckedItemsState > >
-		> = {
-			stats: setStatsCheckedItems,
-		};
-		setterMap[ groupKey ]?.( ( prev: BuildReportCheckedItemsState ) => ( {
-			...prev,
-			[ itemName ]: ! prev[ itemName ],
-		} ) );
-	};
+	const handleStep2CheckboxChange = useCallback(
+		( groupKey: 'stats', itemName: string ) => {
+			const setterMap: Record< string, ( value: BuildReportCheckedItemsState ) => void > = {
+				stats: ( value: BuildReportCheckedItemsState ) => setStatsCheckedItems( value ),
+			};
+			setterMap[ groupKey ]?.( {
+				...statsCheckedItems,
+				[ itemName ]: ! statsCheckedItems[ itemName ],
+			} );
+		},
+		[ statsCheckedItems, setStatsCheckedItems ]
+	);
 
 	const stepContent = useMemo( () => {
 		switch ( currentStep ) {
@@ -168,9 +167,10 @@ const BuildReport = () => {
 
 						<div className="build-report__field">
 							<A4ASelectSite
-								selectedSiteId={ selectedSite?.id }
+								isDisabled={ isDuplicateLoading }
+								selectedSiteId={ selectedSite?.blogId }
 								onSiteSelect={ ( site: A4ASelectSiteItem ) => setSelectedSite( site ) }
-								buttonLabel={ selectedSite?.site || translate( 'Choose a site to report on' ) }
+								buttonLabel={ selectedSite?.domain || translate( 'Choose a site to report on' ) }
 								trackingEvent="calypso_a4a_reports_select_site_button_click"
 								data-field="selectedSite"
 							/>
@@ -188,6 +188,7 @@ const BuildReport = () => {
 							value={ selectedTimeframe }
 							options={ availableTimeframes }
 							onChange={ setSelectedTimeframe }
+							disabled={ isDuplicateLoading }
 						/>
 
 						{ selectedTimeframe === 'custom' && (
@@ -293,6 +294,7 @@ const BuildReport = () => {
 										: undefined
 								}
 								data-field="clientEmail"
+								disabled={ isDuplicateLoading }
 							/>
 							{ hasFieldError( 'clientEmail' ) && (
 								<div className="build-report__error-message">
@@ -305,6 +307,7 @@ const BuildReport = () => {
 							label={ translate( 'Also send to your team' ) }
 							checked={ sendMeACopy }
 							onChange={ setSendMeACopy }
+							disabled={ isDuplicateLoading }
 						/>
 						{ sendMeACopy && (
 							<div>
@@ -314,7 +317,7 @@ const BuildReport = () => {
 									label={ translate( 'Teammate email(s)' ) }
 									value={ teammateEmails }
 									onChange={ setTeammateEmails }
-									type="text"
+									type="email"
 									help={
 										! hasFieldError( 'teammateEmails' )
 											? translate( 'Use commas to separate addresses.' )
@@ -322,6 +325,7 @@ const BuildReport = () => {
 									}
 									placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
 									data-field="teammateEmails"
+									disabled={ isDuplicateLoading }
 								/>
 								{ hasFieldError( 'teammateEmails' ) && (
 									<div className="build-report__error-message">
@@ -395,22 +399,32 @@ const BuildReport = () => {
 	}, [
 		currentStep,
 		translate,
-		selectedSite?.id,
-		selectedSite?.site,
+		isDuplicateLoading,
+		selectedSite?.blogId,
+		selectedSite?.domain,
 		hasFieldError,
 		getFieldError,
 		selectedTimeframe,
 		availableTimeframes,
+		setSelectedTimeframe,
 		startDate,
 		isStartDatePickerOpen,
 		endDate,
 		isEndDatePickerOpen,
 		clientEmail,
+		setClientEmail,
 		sendMeACopy,
+		setSendMeACopy,
 		teammateEmails,
+		setTeammateEmails,
 		customIntroText,
+		setCustomIntroText,
 		statsOptions,
+		setSelectedSite,
+		setStartDate,
+		setEndDate,
 		statsCheckedItems,
+		handleStep2CheckboxChange,
 	] );
 
 	const actions = useMemo(
@@ -422,7 +436,7 @@ const BuildReport = () => {
 					</Button>
 				) }
 				{ currentStep < 3 && (
-					<Button variant="primary" onClick={ handleNextStep }>
+					<Button variant="primary" onClick={ handleNextStep } disabled={ isDuplicateLoading }>
 						{ translate( 'Next' ) }
 					</Button>
 				) }
@@ -433,7 +447,7 @@ const BuildReport = () => {
 				) }
 			</div>
 		),
-		[ currentStep, translate, handleNextStep, handlePrevStep ]
+		[ currentStep, handlePrevStep, translate, handleNextStep, isDuplicateLoading ]
 	);
 
 	return (
@@ -448,7 +462,7 @@ const BuildReport = () => {
 								href: A4A_REPORTS_LINK,
 							},
 							{
-								label: translate( 'Build Report' ),
+								label: title,
 							},
 						] }
 					/>
@@ -459,8 +473,28 @@ const BuildReport = () => {
 			</LayoutTop>
 			<LayoutBody>
 				<div className="build-report__content">
-					{ stepContent }
-					{ actions }
+					<div className="build-report__content-header">
+						<h1 className="build-report__content-title">{ title }</h1>
+						<p className="build-report__content-description">
+							{ isDuplicating
+								? translate(
+										'Start with your previous send. All fields are filled in. Just make updates for the new report and send.'
+								  )
+								: translate(
+										'Get started by choosing the details to include for your client below.'
+								  ) }
+						</p>
+						{ duplicateError && (
+							<div className="build-report__content-note">
+								<Icon icon={ error } />
+								{ translate( 'Note: Some data could not be duplicated.' ) }
+							</div>
+						) }
+					</div>
+					<div className="build-report__form">
+						{ stepContent }
+						{ actions }
+					</div>
 				</div>
 			</LayoutBody>
 		</Layout>
