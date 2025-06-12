@@ -20,7 +20,7 @@ const VALIDATION_RULES = {
 	step1: ( data: BuildReportFormData, translate: ( key: string ) => string ): ValidationError[] => {
 		const errors: ValidationError[] = [];
 
-		if ( ! data.selectedSite.trim() ) {
+		if ( ! data.selectedSite?.domain.trim() ) {
 			errors.push( {
 				field: 'selectedSite',
 				message: translate( 'Please select a site to report on.' ),

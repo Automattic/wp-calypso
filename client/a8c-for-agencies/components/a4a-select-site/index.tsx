@@ -14,6 +14,7 @@ const A4ASelectSite = ( {
 	title,
 	subtitle,
 	selectedSiteId,
+	isDisabled,
 }: A4ASelectSiteProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const A4ASelectSite = ( {
 	return (
 		<>
 			<Button
+				disabled={ isDisabled }
 				__next40pxDefaultSize
 				variant="secondary"
 				onClick={ handleOpenModal }

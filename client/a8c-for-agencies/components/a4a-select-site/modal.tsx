@@ -3,10 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { type SiteItem } from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-all-managed-sites';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4ASelectSiteTable from './site-table';
-import type { SelectSiteModalProps, A4ASelectSiteItem } from './types';
+import type { SelectSiteModalProps } from './types';
 
 const SelectSiteModal = ( {
 	onClose,
@@ -18,11 +19,14 @@ const SelectSiteModal = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ selectedSite, setSelectedSite ] = useState< A4ASelectSiteItem | null >( null );
+	const [ selectedSite, setSelectedSite ] = useState< SiteItem | null >( null );
 
 	const handleSelectSite = () => {
 		if ( selectedSite ) {
-			onSiteSelect( selectedSite );
+			onSiteSelect( {
+				blogId: selectedSite.rawSite.blog_id,
+				domain: selectedSite.site,
+			} );
 			onClose();
 		}
 	};

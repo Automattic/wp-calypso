@@ -1,11 +1,9 @@
-import type { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { type SiteItem } from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-all-managed-sites';
 import type { ReactNode } from 'react';
 
 export type A4ASelectSiteItem = {
-	id: number;
-	site: string;
-	date: string;
-	rawSite: Site;
+	blogId: number;
+	domain: string;
 };
 
 export interface A4ASelectSiteProps {
@@ -16,6 +14,7 @@ export interface A4ASelectSiteProps {
 	title?: string;
 	subtitle?: ReactNode;
 	selectedSiteId?: number;
+	isDisabled?: boolean;
 }
 
 export interface A4ASelectSiteButtonProps {
@@ -33,7 +32,7 @@ export interface SelectSiteModalProps {
 }
 
 export interface SelectSiteTableProps {
-	selectedSite: A4ASelectSiteItem | null;
-	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
+	selectedSite: SiteItem | null;
+	setSelectedSite: ( site: SiteItem | null ) => void;
 	selectedSiteId?: number;
 }
