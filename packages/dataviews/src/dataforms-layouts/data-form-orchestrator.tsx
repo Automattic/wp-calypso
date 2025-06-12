@@ -11,8 +11,7 @@ import { getFormFieldLayout } from './index';
 import DataFormContext from '../components/dataform-context';
 import { isCombinedField } from './is-combined-field';
 import normalizeFormFields from '../normalize-form-fields';
-import { useFieldError } from '../dataform-hooks/use-field-error';
-import { useFieldValidation } from '../dataform-hooks/use-field-validation';
+import { useFieldError, useFieldValidation } from '../components/validator';
 
 export function DataFormFieldOrchestrator< Item >( {
 	data,

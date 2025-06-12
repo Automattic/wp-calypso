@@ -65,9 +65,15 @@ const DataFormWithValidation = ( {
 					id: 'name',
 					label: 'Name',
 					type: 'text' as const,
-					validationSchema: {
-						minLength: 10,
-						maxLength: 100,
+					rules: {
+						minLength: {
+							message: 'Minimum length is 2',
+							value: minLength,
+						},
+						maxLength: {
+							message: 'Maximum length is 100',
+							value: maxLength,
+						},
 					},
 				},
 				{
@@ -91,9 +97,15 @@ const DataFormWithValidation = ( {
 							/>
 						);
 					},
-					validationSchema: {
-						minLength,
-						maxLength,
+					rules: {
+						minLength: {
+							message: `Minimum length is ${ minLength }`,
+							value: minLength,
+						},
+						maxLength: {
+							message: `Maximum length is ${ maxLength }`,
+							value: 5,
+						},
 					},
 				},
 			] as Field< { name: string; surname: string } >[],

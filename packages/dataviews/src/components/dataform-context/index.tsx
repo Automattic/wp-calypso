@@ -7,10 +7,8 @@ import { createContext } from '@wordpress/element';
  * Internal dependencies
  */
 import type { NormalizedField } from '../../types';
-import {
-	FormValidationState,
-	useValidation,
-} from '../../dataform-hooks/use-form';
+import { useValidation } from '../validator';
+import { FormValidationState } from '../validator/types';
 
 type DataFormContextType< Item > = {
 	fields: NormalizedField< Item >[];

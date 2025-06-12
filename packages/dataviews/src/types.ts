@@ -12,7 +12,11 @@ import type { SetSelection } from './private-types';
  * WordPress dependencies
  */
 import type { useFocusOnMount } from '@wordpress/compose';
-import { FormValidationState } from './dataform-hooks/use-form';
+import {
+	FormValidationState,
+	NormalizedRule,
+	Rules,
+} from './components/validator/types';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -124,15 +128,6 @@ export type FieldTypeDefinition< Item > = {
 	filterBy: FilterConfigForType | false;
 
 	/**
-	 * The validation callbacks for the field.
-	 */
-	validationSchema?: {
-		minLength?: number;
-		maxLength?: number;
-		onTouched?: boolean;
-	};
-
-	/**
 	 * Whether the field is sortable.
 	 */
 	enableSorting: boolean;
@@ -231,10 +226,13 @@ export type Field< Item > = {
 	/**
 	 * The validation schema for the field.
 	 */
-	validationSchema?: ValidationSchema;
+	rules?: Rules;
 };
 
-export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
+export type NormalizedField< Item > = Omit<
+	Field< Item >,
+	'Edit' | 'rules'
+> & {
 	label: string;
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
@@ -245,17 +243,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
-	validationCallbacks: Record< string, ( value: any ) => string | undefined >;
-};
-
-export type ValidationSchema = {
-	required: boolean;
-	pattern: string;
-	minLength: number;
-	maxLength: number;
-	min: number;
-	max: number;
-	onTouched: boolean;
+	rules: NormalizedRule[];
 };
 
 /**
