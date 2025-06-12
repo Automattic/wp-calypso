@@ -77,6 +77,7 @@
 	.purchase-item__information {
 		margin-right: 16px;
 		max-width: 250px;
+		flex: auto;
 
 		@include breakpoint-deprecated( ">480px" ) {
 			max-width: 400px;

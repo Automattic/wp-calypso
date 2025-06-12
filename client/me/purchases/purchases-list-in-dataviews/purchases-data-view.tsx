@@ -284,14 +284,18 @@ export function PurchasesDataViews( {
 	);
 }
 
-const membershipsDesktopFields = [ 'site', 'product', 'status' ];
-const membershipsMobileFields = [ 'product' ];
+const membershipsDesktopFields = [ 'status' ];
+const membershipsMobileFields: string[] = [];
 export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: defaultPerPage,
-	titleField: 'purchase-id',
-	showTitle: false,
+	titleField: 'product',
+	showTitle: true,
+	mediaField: 'site',
+	showMedia: true,
+	descriptionField: 'description',
+	showDescription: true,
 	fields: membershipsDesktopFields,
 	sort: {
 		field: 'product',

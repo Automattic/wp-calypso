@@ -155,7 +155,7 @@ export function getPurchasesFieldDefinitions( {
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
-					<div className="purchase-item__information purchases-layout__information">
+					<div className="purchase-item__information">
 						<div className="purchase-item__title">
 							<Button
 								variant="link"
@@ -185,8 +185,10 @@ export function getPurchasesFieldDefinitions( {
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
-					<div className="purchase-item__information purchases-layout__information">
-						<PurchaseItemRowProduct purchase={ item } translate={ translate } />
+					<div className="purchase-item__information">
+						<div className="purchase-item__purchase-type">
+							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
+						</div>
 					</div>
 				);
 			},
@@ -358,16 +360,15 @@ export function getMembershipsFieldDefinitions( {
 			// Render the site icon
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__site purchases-layout__site">
-						<Button
-							variant="link"
-							title={ translate( 'Manage purchase', { textOnly: true } ) }
-							label={ translate( 'Manage purchase', { textOnly: true } ) }
-							onClick={ () => goToPurchase( item ) }
-						>
-							<Icon subscription={ item } />
-						</Button>
-					</div>
+					<Button
+						className="purchase-item__icon"
+						variant="link"
+						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						label={ translate( 'Manage purchase', { textOnly: true } ) }
+						onClick={ () => goToPurchase( item ) }
+					>
+						<Icon subscription={ item } />
+					</Button>
 				);
 			},
 		},
@@ -383,7 +384,7 @@ export function getMembershipsFieldDefinitions( {
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__information purchase-item__information purchases-layout__information">
+					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__title purchase-item__title">
 							<Button
 								variant="link"
@@ -394,6 +395,23 @@ export function getMembershipsFieldDefinitions( {
 								{ item.title }
 							</Button>
 						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'description',
+			label: translate( 'Product Description' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: MembershipSubscription } ) => {
+				return item.title + ' ' + item.site_title + ' ' + item.site_url;
+			},
+			render: ( { item }: { item: MembershipSubscription } ) => {
+				return (
+					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__purchase-type purchase-item__purchase-type">
 							<MembershipType subscription={ item } />
 						</div>
@@ -413,7 +431,7 @@ export function getMembershipsFieldDefinitions( {
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__status purchase-item__status purchases-layout__status">
+					<div className="membership-item__status purchase-item__status">
 						<MembershipTerms subscription={ item } />
 					</div>
 				);
