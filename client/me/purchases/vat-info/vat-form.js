@@ -21,23 +21,32 @@ import useDataFormCountryCodes from './use-data-form-country-codes';
 import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
 
-const VatSelectControl = ( { data, field, onChange } ) => (
-	<SelectControl
-		__next40pxDefaultSize
-		__nextHasNoMarginBottom
-		disabled={ field.isUpdating || field.isVatAlreadySet }
-		label={ field.label }
-		value={ field.getValue( { item: data } ) }
-		onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
-		options={ field.elements }
-	/>
-);
+const VatSelectControl = ( { data, field, onChange } ) => {
+	const translate = useTranslate();
+
+	const options =
+		field.elements.length === 0
+			? [ { label: translate( 'Loading…' ), value: '' } ]
+			: field.elements;
+
+	return (
+		<SelectControl
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			disabled={ field.isDisabled || field.isVatAlreadySet || field.elements.length === 0 }
+			label={ field.label }
+			value={ field.getValue( { item: data } ) }
+			onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
+			options={ options }
+		/>
+	);
+};
 
 const VatIdControl = ( { data, field, onChange } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { getValue, id, isUpdating, isVatAlreadySet, label, taxName } = field;
+	const { getValue, id, isDisabled, isVatAlreadySet, label, taxName } = field;
 	const { country } = data;
 
 	const vatIdHelp = translate(
@@ -63,7 +72,7 @@ const VatIdControl = ( { data, field, onChange } ) => {
 	return (
 		<InputControl
 			__next40pxDefaultSize
-			disabled={ isUpdating || isVatAlreadySet }
+			disabled={ isDisabled || isVatAlreadySet }
 			help={ isVatAlreadySet && vatIdHelp }
 			label={ label }
 			onChange={ ( value ) => onChange( { [ id ]: value } ) }
@@ -76,7 +85,7 @@ const VatIdControl = ( { data, field, onChange } ) => {
 const VatInputControl = ( { data, field, onChange } ) => (
 	<InputControl
 		__next40pxDefaultSize
-		disabled={ field.isUpdating }
+		disabled={ field.isDisabled }
 		label={ field.label }
 		onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
 		value={ field.getValue( { item: data } ) || '' }
@@ -89,7 +98,7 @@ export default function VatForm() {
 
 	const [ localData, setLocalData ] = useState();
 
-	const { isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
+	const { isLoading, isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
 		useVatDetails();
 	const countryCodes = useDataFormCountryCodes();
 
@@ -112,21 +121,21 @@ export default function VatForm() {
 	const taxName = useTaxName( formData.country ?? geoData?.country_short ?? 'GB' );
 
 	const isVatAlreadySet = !! vatDetails.id;
+	const isDisabled = isLoading || isUpdating;
 
 	const fields = [
 		{
 			Edit: VatSelectControl,
 			elements: countryCodes,
 			id: 'country',
-			isUpdating,
+			isDisabled,
 			isVatAlreadySet,
 			label: translate( 'Country' ),
-			type: 'text',
 		},
 		{
 			Edit: VatIdControl,
 			id: 'id',
-			isUpdating,
+			isDisabled,
 			isVatAlreadySet,
 			label: translate( 'VAT ID' ),
 			taxName,
@@ -134,15 +143,14 @@ export default function VatForm() {
 		{
 			Edit: VatInputControl,
 			id: 'name',
-			isUpdating,
+			isDisabled,
 			label: translate( 'Name' ),
 			type: 'text',
 		},
 		{
 			Edit: VatInputControl,
 			id: 'address',
-			isUpdating,
-
+			isDisabled,
 			label: translate( 'Address' ),
 			type: 'text',
 		},
@@ -190,7 +198,7 @@ export default function VatForm() {
 					<Button
 						__next40pxDefaultSize
 						className="vat-info__submit-button"
-						disabled={ isUpdating }
+						disabled={ isDisabled }
 						isBusy={ isUpdating }
 						type="submit"
 						variant="primary"
