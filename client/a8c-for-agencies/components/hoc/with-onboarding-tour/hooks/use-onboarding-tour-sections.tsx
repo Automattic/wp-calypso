@@ -19,16 +19,19 @@ import {
 	A4A_MIGRATIONS_LINK,
 	A4A_OVERVIEW_LINK,
 	A4A_PURCHASES_LINK,
-	A4A_REFERRALS_LINK,
+	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK,
 	A4A_AGENCY_TIER_LINK,
 	A4A_TEAM_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../../../sidebar-menu/lib/constants';
+import useCurrentOnboardingSection from './use-current-onboarding-section';
 
 export default function useOnboardingTourSections() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { saveCurrentSection } = useCurrentOnboardingSection();
 
 	return useMemo( () => {
 		const onNextBenefit = ( section: string, onNext: () => void ) => {
@@ -46,12 +49,13 @@ export default function useOnboardingTourSections() {
 					section,
 				} )
 			);
+			saveCurrentSection( section );
 			onClose();
 		};
 
 		return [
 			{
-				id: 'onboarding-tour-welcome',
+				id: 'overview',
 				title: translate( 'Welcome' ),
 				bannerImage: OnboardingTourBannerWelcome,
 				isDarkBanner: true,
@@ -88,7 +92,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-sites',
+				id: 'sites',
 				title: translate( 'Sites' ),
 				bannerImage: OnboardingTourBannerSites,
 				content: {
@@ -127,7 +131,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-marketplace',
+				id: 'marketplace',
 				title: translate( 'Marketplace' ),
 				bannerImage: OnboardingTourBannerMarketplace,
 				isDarkBanner: true,
@@ -157,7 +161,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-purchases',
+				id: 'purchases',
 				title: translate( 'Purchases' ),
 				bannerImage: OnboardingTourBannerPurchases,
 				isDarkBanner: true,
@@ -186,7 +190,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-referrals',
+				id: 'referrals',
 				title: translate( 'Referrals' ),
 				bannerImage: OnboardingTourBannerReferrals,
 				content: {
@@ -205,7 +209,7 @@ export default function useOnboardingTourSections() {
 						{
 							label: translate( 'View Referrals Dashboard' ),
 							variant: 'secondary',
-							href: A4A_REFERRALS_LINK,
+							href: A4A_REFERRALS_DASHBOARD,
 							onClick: () => onExplore( 'referrals', onClose ),
 						},
 						{
@@ -217,7 +221,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-migrations',
+				id: 'migrations',
 				title: translate( 'Migrations' ),
 				bannerImage: OnboardingTourBannerMigrations,
 				content: {
@@ -256,7 +260,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-woopayments',
+				id: 'woopayments',
 				title: translate( 'WooPayments' ),
 				bannerImage: OnboardingTourBannerWooPayments,
 				isDarkBanner: true,
@@ -288,7 +292,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-agency-tiers',
+				id: 'agency-tiers',
 				title: translate( 'Agency Tiers' ),
 				bannerImage: OnboardingTourBannerAgencyTiers,
 				content: {
@@ -316,7 +320,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-team',
+				id: 'team',
 				title: translate( 'Team' ),
 				bannerImage: OnboardingTourBannerTeam,
 				content: {
@@ -344,7 +348,7 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'onboarding-tour-growth-call',
+				id: 'growth-call',
 				title: translate( 'Free growth call' ),
 				bannerImage: OnboardingTourBannerGrowthCall,
 				isDarkBanner: true,
@@ -375,5 +379,5 @@ export default function useOnboardingTourSections() {
 				},
 			},
 		];
-	}, [ dispatch, translate ] );
+	}, [ dispatch, saveCurrentSection, translate ] );
 }

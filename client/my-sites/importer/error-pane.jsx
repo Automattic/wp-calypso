@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { localize, fixMe } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -28,7 +29,7 @@ class ImporterError extends PureComponent {
 	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		window.location.href = '/help';
+		window.open( '/help', '_blank', 'noopener,noreferrer' );
 	};
 
 	installPlugin = ( event ) => {
@@ -97,31 +98,27 @@ class ImporterError extends PureComponent {
 		}
 
 		if ( this.props.importerEngine === 'substack' ) {
-			return fixMe( {
-				text: '%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
-				newCopy: this.props.translate(
-					'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
-					{
-						args: {
-							errorDescription: description.length ? description : defaultError,
-						},
-						components: {
-							br: <br />,
-							cs: helpButton,
-							doc: (
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/import-from-substack/import-content/'
-									) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-						},
-					}
-				),
-				oldCopy: generalMessage,
-			} );
+			return this.props.translate(
+				'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+				{
+					args: {
+						errorDescription: description.length ? description : defaultError,
+					},
+					components: {
+						br: <br />,
+						cs: helpButton,
+						doc: (
+							<InlineSupportLink
+								showIcon={ false }
+								supportLink={ localizeUrl(
+									'https://wordpress.com/support/import-from-substack/import-content/'
+								) }
+								supportPostId={ 400434 }
+							/>
+						),
+					},
+				}
+			);
 		}
 
 		return generalMessage;

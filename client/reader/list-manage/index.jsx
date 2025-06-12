@@ -6,12 +6,12 @@ import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/con
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { preventWidows } from 'calypso/lib/formatting';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import Missing from 'calypso/reader/list-stream/missing';
 import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
 import {
@@ -91,14 +91,14 @@ function ReaderListCreate() {
 	const isCreatingList = useSelector( isCreatingListSelector );
 
 	return (
-		<Main>
+		<ReaderMain>
 			<NavigationHeader title={ translate( 'Create List' ) } />
 			<ListForm
 				isCreateForm
 				isSubmissionDisabled={ isCreatingList }
 				onSubmit={ ( list ) => dispatch( createReaderList( list ) ) }
 			/>
-		</Main>
+		</ReaderMain>
 	);
 }
 
@@ -132,7 +132,7 @@ function ReaderListEdit( props ) {
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
-			<Main>
+			<ReaderMain>
 				<NavigationHeader
 					title={ translate( 'Manage %(listName)s', {
 						args: { listName: list?.title || decodeURIComponent( props.slug ) },
@@ -179,7 +179,7 @@ function ReaderListEdit( props ) {
 						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }
 					</>
 				) }
-			</Main>
+			</ReaderMain>
 		</>
 	);
 }

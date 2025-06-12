@@ -4,7 +4,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { restoreSitePlanSoftwareMutation } from '../../app/queries';
+import { sitePlanSoftwareRestoreMutation } from '../../app/queries/site-plans';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
 import { canViewSiteActions, canRestorePlanSoftware, canDuplicateSite } from '../features';
@@ -12,7 +12,7 @@ import type { Site } from '../../data/types';
 
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( restoreSitePlanSoftwareMutation( site.slug ) );
+	const mutation = useMutation( sitePlanSoftwareRestoreMutation( site.ID ) );
 
 	const handleClick = () => {
 		mutation.mutate( undefined, {

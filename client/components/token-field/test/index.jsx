@@ -34,7 +34,7 @@ describe( 'TokenField', () => {
 	async function setText( text ) {
 		const user = userEvent.setup();
 
-		const field = screen.getAllByRole( 'textbox' )[ 1 ];
+		const field = screen.getByRole( 'textbox' );
 		await user.clear( field );
 		if ( text.length ) {
 			await user.type( field, text );
@@ -42,14 +42,14 @@ describe( 'TokenField', () => {
 	}
 
 	function sendKeyDown( keyCode, shiftKey ) {
-		fireEvent.keyDown( screen.getAllByRole( 'textbox' )[ 1 ], {
+		fireEvent.keyDown( screen.getByRole( 'textbox' ), {
 			keyCode,
 			shiftKey: !! shiftKey,
 		} );
 	}
 
 	function sendKeyPress( charCode ) {
-		fireEvent.keyPress( screen.getAllByRole( 'textbox' )[ 1 ], {
+		fireEvent.keyPress( screen.getByRole( 'textbox' ), {
 			charCode,
 		} );
 	}
@@ -286,7 +286,7 @@ describe( 'TokenField', () => {
 			sendKeyDown( keyCodes.tab );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', '' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', '' );
 		} );
 
 		test( 'should not allow adding blank tokens with Tab', () => {
@@ -315,7 +315,7 @@ describe( 'TokenField', () => {
 			sendKeyDown( keyCodes.enter );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', '' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', '' );
 		} );
 
 		test( 'should not allow adding blank tokens with Enter', () => {
@@ -366,7 +366,7 @@ describe( 'TokenField', () => {
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar' ] );
 
 			// The text input does not register the < keypress when it is sent this way.
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', 'baz' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', 'baz' );
 		} );
 
 		test( 'should trim token values when adding', async () => {
@@ -397,12 +397,12 @@ describe( 'TokenField', () => {
 
 			function testSavedState( isActive ) {
 				expect( getTokensHTML( container ) ).toEqual( expectedTokens );
-				expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', '' );
+				expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', '' );
 				expect( getSelectedSuggestion( container ) ).toBeNull();
 				expect( container.querySelectorAll( '.is-active' ).length === 1 ).toBe( isActive );
 			}
 
-			const input = screen.getAllByRole( 'textbox' )[ 1 ];
+			const input = screen.getByRole( 'textbox' );
 			fireEvent.blur( input );
 			testSavedState( false );
 			fireEvent.focus( input );
@@ -450,7 +450,7 @@ describe( 'TokenField', () => {
 			const user = userEvent.setup();
 			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getAllByRole( 'textbox' )[ 1 ].focus();
+			screen.getByRole( 'textbox' ).focus();
 
 			const firstSuggestion = container.querySelectorAll( '.token-field__suggestion' )[ 0 ];
 
@@ -567,12 +567,12 @@ describe( 'TokenField', () => {
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz', 'quux' ] );
 
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', ' wut' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', ' wut' );
 
 			await setText( 'wut,' );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', '' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', '' );
 		} );
 
 		test( 'should add multiple tab-separated tokens when pasting', async () => {
@@ -581,7 +581,7 @@ describe( 'TokenField', () => {
 			await setText( 'baz\tquux\twut' );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz', 'quux' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', 'wut' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', 'wut' );
 		} );
 
 		test( 'should not duplicate tokens when pasting', async () => {
@@ -590,7 +590,7 @@ describe( 'TokenField', () => {
 			await setText( 'baz \tbaz,  quux \tquux,quux , wut  \twut, wut' );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', ' wut' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', ' wut' );
 		} );
 
 		test( 'should skip empty tokens at the beginning of a paste', async () => {
@@ -599,7 +599,7 @@ describe( 'TokenField', () => {
 			await setText( ',  ,\t \t  ,,baz, quux' );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', ' quux' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', ' quux' );
 		} );
 
 		test( 'should skip empty tokens in the middle of a paste', async () => {
@@ -608,7 +608,7 @@ describe( 'TokenField', () => {
 			await setText( 'baz,  ,\t \t  ,,quux' );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', '  quux' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', '  quux' );
 		} );
 
 		test( 'should skip empty tokens at the end of a paste', async () => {
@@ -617,7 +617,7 @@ describe( 'TokenField', () => {
 			await setText( 'baz, quux,  ,\t \t  ,,   ' );
 
 			expect( getTokensHTML( container ) ).toEqual( [ 'foo', 'bar', 'baz', 'quux' ] );
-			expect( screen.getAllByRole( 'textbox' )[ 1 ] ).toHaveAttribute( 'value', '     ' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'value', '     ' );
 		} );
 	} );
 
@@ -626,7 +626,7 @@ describe( 'TokenField', () => {
 			const user = userEvent.setup();
 			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getAllByRole( 'textbox' )[ 1 ].focus();
+			screen.getByRole( 'textbox' ).focus();
 
 			await user.click( container.querySelectorAll( '.token-field__remove-token' )[ 0 ] );
 
@@ -636,7 +636,7 @@ describe( 'TokenField', () => {
 		test( 'should remove the token to the left when backspace pressed', () => {
 			const { container } = render( <TokenFieldWrapper />, { legacyRoot: true } );
 
-			screen.getAllByRole( 'textbox' )[ 1 ].focus();
+			screen.getByRole( 'textbox' ).focus();
 
 			sendKeyDown( keyCodes.backspace );
 
@@ -646,7 +646,7 @@ describe( 'TokenField', () => {
 		test( 'should remove the token to the right when delete pressed', () => {
 			const { container } = render( <TokenFieldWrapper /> );
 
-			screen.getAllByRole( 'textbox' )[ 1 ].focus();
+			screen.getByRole( 'textbox' ).focus();
 
 			sendKeyDown( keyCodes.leftArrow );
 			sendKeyDown( keyCodes.leftArrow );

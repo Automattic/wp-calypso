@@ -109,6 +109,7 @@ export const useGetCombinedChat = (
 				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
 					conversation_id: conversationId,
 					odie_id: odieId,
+					error: error instanceof Error ? error.message : String( error ),
 				} );
 
 				startNewInteraction( {

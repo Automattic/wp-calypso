@@ -18,36 +18,3 @@ export enum DotcomPlans {
 	PREMIUM_2_YEARS = 'value_bundle-2y',
 	PREMIUM_3_YEARS = 'value_bundle-3y',
 }
-
-export const SITE_FIELDS = [
-	'ID',
-	'slug',
-	'URL',
-	'name',
-	'icon',
-	'subscribers_count',
-	'plan',
-	'capabilities',
-	'is_a4a_dev_site',
-	'is_a8c',
-	'is_deleted',
-	'is_coming_soon',
-	'is_private',
-	'is_wpcom_atomic',
-	'is_wpcom_staging_site',
-	'launch_status',
-	'site_migration',
-	'site_owner',
-	'options',
-	'jetpack',
-	'jetpack_modules',
-];
-
-export const SITE_OPTIONS = [
-	'admin_url',
-	'is_redirect',
-	'is_wpforteams_site',
-	'p2_hub_blog_id',
-	'site_creation_flow',
-	'software_version',
-];

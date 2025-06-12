@@ -16,9 +16,9 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState, useCallback } from 'react';
 import {
 	siteResetContentSummaryQuery,
-	resetSiteMutation,
+	siteResetMutation,
 	siteResetStatusQuery,
-} from '../../app/queries';
+} from '../../app/queries/site-reset';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
 import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
@@ -48,7 +48,7 @@ function InProgressContent( { progress }: { progress: number | undefined } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<ProgressBar className="reset-site-modal-progress-bar" value={ progressValue } />
-			<Text>{ __( "We're resetting your site. We'll email you once it's ready." ) }</Text>
+			<Text>{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }</Text>
 		</VStack>
 	);
 }
@@ -60,7 +60,6 @@ function SiteResetContent( {
 	onSubmit,
 	onClose,
 }: {
-	site: Site;
 	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 	isBusy: boolean;
@@ -108,7 +107,7 @@ function SiteResetContent( {
 				{ createInterpolateElement(
 					/* translators: <siteDomain />: site domain */
 					__(
-						"Resetting <siteDomain /> will remove all of its content but keep the site and its URL up and running. You'll also lose any modifications you've made to your current theme. This cannot be undone."
+						'Resetting <siteDomain /> will remove all of its content but keep the site and its URL up and running. You’ll also lose any modifications you’ve made to your current theme. This cannot be undone.'
 					),
 					{
 						siteDomain: <strong>{ siteDomain }</strong>,
@@ -178,7 +177,7 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 
 	const { data: resetStatus, refetch: refetchResetStatus } =
 		useQuery< SiteResetStatus >( statusQuery );
-	const { mutate, isPending: isMutationPending } = useMutation( resetSiteMutation( site.ID ) );
+	const { mutate, isPending: isMutationPending } = useMutation( siteResetMutation( site.ID ) );
 
 	const showSuccessNotice = useCallback( () => {
 		createSuccessNotice(
@@ -244,7 +243,6 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 			size: 'medium' as const,
 			content: (
 				<SiteResetContent
-					site={ site }
 					siteContent={ siteContentSummary }
 					siteDomain={ site.slug }
 					isBusy={ isMutationPending }

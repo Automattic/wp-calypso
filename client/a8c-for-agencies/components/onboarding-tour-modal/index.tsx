@@ -13,6 +13,8 @@ import {
 } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { ONBOARDING_TOUR_HASH } from '../hoc/with-onboarding-tour/hooks/use-onboarding-tour';
+import OnboardingTourModalMobileNavigation from './mobile-navigation';
 import OnboardingTourModalSection, {
 	ActionProps,
 	OnboardingTourModalSectionProps,
@@ -37,8 +39,12 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 		( child: ReactNode ) => isValidElement( child ) && child.type === OnboardingTourModalSection
 	) as ReactElement< OnboardingTourModalSectionProps >[];
 
+	const defaultSection = sections.find(
+		( section ) => `${ ONBOARDING_TOUR_HASH }-${ section?.props?.id }` === window.location.hash
+	);
+
 	const [ currentSectionId, setCurrentSectionId ] = useState(
-		sections.length > 0 ? sections[ 0 ].props?.id : null
+		defaultSection ? defaultSection.props?.id : sections[ 0 ].props?.id
 	);
 
 	const menuItems = useMemo(
@@ -109,6 +115,7 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 							key={ menuItem.id }
 							onClick={ () => {
 								setCurrentSectionId( menuItem.id );
+								window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ menuItem.id }`;
 								dispatch(
 									recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_click', {
 										section: menuItem.id,
@@ -135,15 +142,14 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 					</Button>
 					<div className="onboarding-tour-modal__main-banner-container">
 						{ sections.map( ( section ) => (
-							<div
+							<img
 								className={ clsx( 'onboarding-tour-modal__main-banner', {
 									'is-visible': section.props.id === currentSection?.props.id,
 								} ) }
 								key={ section.props.id }
-								style={ {
-									backgroundImage: `url(${ section?.props.bannerImage })`,
-								} }
-							></div>
+								src={ section?.props.bannerImage }
+								alt=""
+							/>
 						) ) }
 					</div>
 					<div className="onboarding-tour-modal__main-content">
@@ -155,7 +161,23 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 						>
 							{ sections }
 						</div>
-						<div className="onboarding-tour-modal__main-content-footer">{ actions }</div>
+						<div className="onboarding-tour-modal__main-content-footer">
+							{ actions }
+
+							<OnboardingTourModalMobileNavigation
+								menuItems={ menuItems }
+								currentSectionId={ currentSectionId }
+								setCurrentSectionId={ ( sectionId ) => {
+									setCurrentSectionId( sectionId );
+									window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ sectionId }`;
+									dispatch(
+										recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_swipe', {
+											section: sectionId,
+										} )
+									);
+								} }
+							/>
+						</div>
 					</div>
 				</div>
 			</div>

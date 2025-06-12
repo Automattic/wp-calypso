@@ -14,7 +14,6 @@ import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isA4AOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -113,7 +112,6 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			isA4AOAuth2Client( this.props.oauth2Client ) ||
 			this.props.isWhiteLogin
 		) {
 			return null;

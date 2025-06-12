@@ -4,11 +4,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscriptionStop } from 'calypso/state/memberships/subscribers/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { Subscriber } from '../types';
+import { PaidSubscription } from '../types';
 
 type CancelDialogProps = {
-	subscriberToCancel: Subscriber | null;
-	setSubscriberToCancel: Dispatch< SetStateAction< Subscriber | null > >;
+	subscriberToCancel: PaidSubscription | null;
+	setSubscriberToCancel: Dispatch< SetStateAction< PaidSubscription | null > >;
 };
 
 function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDialogProps ) {
@@ -29,7 +29,7 @@ function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDial
 		setSubscriberToCancel( null );
 	}
 
-	function getText( subscriber: Subscriber | null ) {
+	function getText( subscriber: PaidSubscription | null ) {
 		const subscriber_email = subscriber?.user.user_email ?? '';
 		const plan_name = subscriber?.plan.title ?? '';
 
