@@ -29,7 +29,9 @@ const HomeSurvey = () => {
 		! isRetrospectTheme &&
 		! isAutomattician;
 
-	if ( ! isEligibleForSurvey ) {
+	const forceShowSurvey = window.location.search.includes( 'show_survey' );
+
+	if ( ! isEligibleForSurvey && ! forceShowSurvey ) {
 		return null;
 	}
 
