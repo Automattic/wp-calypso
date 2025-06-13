@@ -3,9 +3,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": false,
-		"outDir": "dist/esm",
-		"declarationDir": "dist/types",
-		"emitDeclarationOnly": true,
+		"outDir": "dist",
 		"rootDir": "src",
 		"types": [ "@testing-library/jest-dom" ]
 	},
