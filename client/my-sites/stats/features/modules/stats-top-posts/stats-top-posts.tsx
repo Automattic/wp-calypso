@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
+import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -16,11 +17,24 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
+import useOptionLabels, {
+	MAIN_STAT_TYPE,
+	SUB_STAT_TYPE,
+	StatType,
+	StatsModulePostsProps,
+	validQueryViewType,
+} from './use-option-labels';
+import type { StatsStateProps } from '../types';
 
-const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
+type StatTypeOptionType = {
+	value: StatType;
+	label: string;
+	mainItemLabel: string;
+};
+
+const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	period,
-	query,
+	query: queryFromProps,
 	moduleStrings,
 	className,
 	summaryUrl,
@@ -31,14 +45,27 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const mainStatType = 'statsTopPosts';
-	const subStatType = 'statsArchives';
-
+	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
 	const supportContext = config.isEnabled( 'is_running_in_jetpack_site' )
 		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
 		: 'stats-top-posts-and-pages-analyze-content-performance';
 
-	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
+	const optionLabels = useOptionLabels();
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+		};
+	} );
+
+	const query = {
+		...queryFromProps,
+		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
+	};
+
+	const mainStatType = MAIN_STAT_TYPE;
+	const subStatType = SUB_STAT_TYPE;
 
 	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
@@ -50,8 +77,10 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		? isRequestingTopPostsData || isRequestingArchivesData
 		: isRequestingTopPostsData;
 
-	// TODO: Toggle the statType with a control later.
-	const statType = isArchiveBreakdownEnabled ? subStatType : mainStatType;
+	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
+
+	const statType = localStatType || validQueryViewType( query.viewType ) || mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
@@ -73,15 +102,23 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		? ! hasData && ! presentLoadingUI
 		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
+	// Query both statTypes for the Traffic page module card to avoid loading when switching between controls.
+	// Only query one statType at a time to avoid loading plenty of data for the summary mode.
+	const shouldQueryMainStatType = ! summary || statType === mainStatType;
+	const shouldQuerySubStatType = ! summary || statType === subStatType;
+
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && (
+			{ ! shouldGateStatsModule && siteId && shouldQueryMainStatType && (
 				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
 
-			{ ! shouldGateStatsModule && siteId && isArchiveBreakdownEnabled && (
-				<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
-			) }
+			{ ! shouldGateStatsModule &&
+				siteId &&
+				isArchiveBreakdownEnabled &&
+				shouldQuerySubStatType && (
+					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+				) }
 
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
@@ -122,6 +159,19 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
+					{ ...( isArchiveBreakdownEnabled && ! summary
+						? {
+								toggleControl: (
+									<SimplifiedSegmentedControl
+										options={ options }
+										initialSelected={ statType }
+										onSelect={ onStatTypeChange }
+									/>
+								),
+								mainItemLabel: options.find( ( option ) => option.value === statType )
+									?.mainItemLabel,
+						  }
+						: null ) }
 				/>
 			) }
 			{ presentEmptyUI && (

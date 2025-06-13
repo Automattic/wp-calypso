@@ -69,20 +69,20 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	line-height: 1.3;
 }
 
-.post-stats-card__post-title {
-	@include stats-section-header;
-	display: block;
-	margin-bottom: 4px;
-	// For loading placeholder
-	min-height: 80px;
-
-	&:visited {
-		color: var(--studio-gray-100);
-	}
-}
-
 .post-stats-card__post-info {
 	grid-area: post;
+
+	.post-stats-card__post-title {
+		@include stats-section-header;
+		display: block;
+		margin-bottom: 4px;
+		// For loading placeholder
+		min-height: 80px;
+	
+		&:visited {
+			color: var(--studio-gray-100);
+		}
+	}
 }
 
 .post-stats-card__post-date {

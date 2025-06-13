@@ -1,4 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
 import { Fields } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -75,19 +77,23 @@ export function getPurchasesFieldDefinitions( {
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
+	const goToPurchase = ( item: Purchases.Purchase ) => {
+		const siteUrl = item.domain;
+		const subscriptionId = item.id;
+		if ( ! siteUrl ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Cannot display manage purchase page for subscription without site' );
+			return;
+		}
+		if ( ! subscriptionId ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Cannot display manage purchase page for subscription without ID' );
+			return;
+		}
+		page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+	};
+
 	const fields: Fields< Purchases.Purchase > = [
-		{
-			id: 'purchase-id',
-			label: 'Purchase ID',
-			type: 'text',
-			enableGlobalSearch: false,
-			enableSorting: false,
-			enableHiding: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				// getValue must return a string because the DataViews search feature calls `trim()` on it.
-				return String( item.id );
-			},
-		},
 		{
 			id: 'site',
 			label: translate( 'Site' ),
@@ -95,10 +101,16 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			elements: sites.map( ( site ) => {
-				return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
-			} ),
-			filterBy: { operators: [ 'is' ], isPrimary: true },
+			elements: ( () => {
+				if ( sites.length < 2 ) {
+					// No point in having a filter if there's only one site.
+					return undefined;
+				}
+				return sites.map( ( site ) => {
+					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
+				} );
+			} )(),
+			filterBy: { operators: [ 'isAny' ] },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
@@ -106,7 +118,17 @@ export function getPurchasesFieldDefinitions( {
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				const site = { ID: item.siteId };
-				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+				return (
+					<Button
+						className="purchase-item__icon"
+						variant="link"
+						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						label={ translate( 'Manage purchase', { textOnly: true } ) }
+						onClick={ () => goToPurchase( item ) }
+					>
+						<PurchaseItemSiteIcon site={ site } purchase={ item } />
+					</Button>
+				);
 			},
 		},
 		{
@@ -133,12 +155,37 @@ export function getPurchasesFieldDefinitions( {
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
-					<div className="purchase-item__information purchases-layout__information">
+					<div className="purchase-item__information">
 						<div className="purchase-item__title">
-							{ getDisplayName( item ) }
-							&nbsp;
+							<Button
+								variant="link"
+								title={ translate( 'Manage purchase', { textOnly: true } ) }
+								label={ translate( 'Manage purchase', { textOnly: true } ) }
+								onClick={ () => goToPurchase( item ) }
+							>
+								{ getDisplayName( item ) }
+							</Button>
 							<OwnerInfo purchase={ item } />
 						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'description',
+			label: translate( 'Description' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				// Render a bunch of things to make this easily searchable.
+				const site = sites.find( ( site ) => site.ID === item.siteId );
+				return item.siteName + ' ' + item.domain + ' ' + site?.URL;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return (
+					<div className="purchase-item__information">
 						<div className="purchase-item__purchase-type">
 							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
 						</div>
@@ -149,13 +196,15 @@ export function getPurchasesFieldDefinitions( {
 		{
 			id: 'type',
 			label: translate( 'Type' ),
+			enableHiding: false,
+			enableSorting: true,
 			type: 'text',
 			elements: [
 				{ value: 'domain', label: translate( 'Domains' ) },
-				{ value: 'plan', label: translate( 'Plan' ) },
+				{ value: 'plan', label: translate( 'Plans' ) },
 				{ value: 'other', label: translate( 'Other' ) },
 			],
-			filterBy: { operators: [ 'is' ], isPrimary: true },
+			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
 				if ( item.isDomain || item.isDomainRegistration ) {
 					return 'domain';
@@ -167,8 +216,63 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 		{
+			id: 'expiring-soon',
+			enableHiding: false,
+			enableSorting: true,
+			label: translate( 'Expiring soon' ),
+			type: 'text',
+			elements: [
+				{
+					value: '7',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 7 } } ),
+				},
+				{
+					value: '14',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 14 } } ),
+				},
+				{
+					value: '30',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 30 } } ),
+				},
+				{
+					value: '60',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 60 } } ),
+				},
+				{
+					value: '365',
+					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 365 } } ),
+				},
+			],
+			filterBy: { operators: [ 'is' ] },
+			getValue: ( { item } ) => {
+				const now = Date.now();
+				const expiryDate = Date.parse( item.expiryDate );
+				if ( ! item.isRenewable || ! expiryDate || expiryDate < now ) {
+					return 'not-expiring-soon';
+				}
+				const msPerDay = 86_400_000;
+				const msTilExpiry = expiryDate - now;
+				if ( msTilExpiry <= 7 * msPerDay ) {
+					return '7';
+				}
+				if ( msTilExpiry <= 14 * msPerDay ) {
+					return '14';
+				}
+				if ( msTilExpiry <= 30 * msPerDay ) {
+					return '30';
+				}
+				if ( msTilExpiry <= 60 * msPerDay ) {
+					return '60';
+				}
+				if ( msTilExpiry <= 365 * msPerDay ) {
+					return '365';
+				}
+				return 'not-expiring-soon';
+			},
+		},
+		{
 			id: 'status',
-			label: translate( 'Status' ),
+			label: translate( 'Expires/Renews on' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -232,6 +336,16 @@ export function getMembershipsFieldDefinitions( {
 }: {
 	translate: LocalizeProps[ 'translate' ];
 } ): Fields< MembershipSubscription > {
+	const goToPurchase = ( item: MembershipSubscription ) => {
+		const subscriptionId = item.ID;
+		if ( ! subscriptionId ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Cannot display manage purchase page for subscription without ID' );
+			return;
+		}
+		page( `/me/purchases/other/${ subscriptionId }` );
+	};
+
 	return [
 		{
 			id: 'site',
@@ -246,9 +360,15 @@ export function getMembershipsFieldDefinitions( {
 			// Render the site icon
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__site purchases-layout__site">
+					<Button
+						className="purchase-item__icon"
+						variant="link"
+						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						label={ translate( 'Manage purchase', { textOnly: true } ) }
+						onClick={ () => goToPurchase( item ) }
+					>
 						<Icon subscription={ item } />
-					</div>
+					</Button>
 				);
 			},
 		},
@@ -264,8 +384,34 @@ export function getMembershipsFieldDefinitions( {
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__information purchase-item__information purchases-layout__information">
-						<div className="membership-item__title purchase-item__title">{ item.title }</div>
+					<div className="membership-item__information purchase-item__information">
+						<div className="membership-item__title purchase-item__title">
+							<Button
+								variant="link"
+								title={ translate( 'Manage purchase', { textOnly: true } ) }
+								label={ translate( 'Manage purchase', { textOnly: true } ) }
+								onClick={ () => goToPurchase( item ) }
+							>
+								{ item.title }
+							</Button>
+						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'description',
+			label: translate( 'Product Description' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: MembershipSubscription } ) => {
+				return item.title + ' ' + item.site_title + ' ' + item.site_url;
+			},
+			render: ( { item }: { item: MembershipSubscription } ) => {
+				return (
+					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__purchase-type purchase-item__purchase-type">
 							<MembershipType subscription={ item } />
 						</div>
@@ -285,7 +431,7 @@ export function getMembershipsFieldDefinitions( {
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__status purchase-item__status purchases-layout__status">
+					<div className="membership-item__status purchase-item__status">
 						<MembershipTerms subscription={ item } />
 					</div>
 				);

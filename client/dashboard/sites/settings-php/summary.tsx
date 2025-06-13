@@ -2,16 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { code } from '@wordpress/icons';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import { sitePHPVersionQuery } from '../../app/queries';
+import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdatePHPVersion } from '../../utils/site-features';
+import { canViewPHPSettings } from '../features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function PHPSettingsSummary( { site, density }: { site: Site; density?: Density } ) {
 	const { data: version } = useQuery( {
-		...sitePHPVersionQuery( site.slug ),
-		enabled: canUpdatePHPVersion( site ),
+		...sitePHPVersionQuery( site.ID ),
+		enabled: canViewPHPSettings( site ),
 	} );
 
 	const { recommendedValue } = getPHPVersions();

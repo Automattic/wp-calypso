@@ -41,13 +41,19 @@ export class DomainProductPrice extends Component {
 		const isRenewCostDifferent = renewPrice && price !== renewPrice;
 
 		if ( isRenewCostDifferent ) {
+			const ariaLabel = translate( 'Renews for %(cost)s per year', {
+				args: { cost: renewPrice },
+			} );
 			return (
 				<div className="domain-product-price__renewal-price">
-					{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
-						args: { cost: renewPrice },
-						components: { small: <small /> },
-						comment: '%(cost)s is the annual renewal price of the domain',
-					} ) }
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<span aria-hidden="true">
+						{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
+							args: { cost: renewPrice },
+							components: { small: <small /> },
+							comment: '%(cost)s is the annual renewal price of the domain',
+						} ) }
+					</span>
 				</div>
 			);
 		}
@@ -63,6 +69,9 @@ export class DomainProductPrice extends Component {
 		const priceText = this.props.translate( '%(cost)s/year', {
 			args: { cost: this.props.price },
 		} );
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
@@ -72,7 +81,8 @@ export class DomainProductPrice extends Component {
 					</span>
 				</div>
 				<div className="domain-product-price__price">
-					<del>{ priceText }</del>
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<del aria-hidden="true">{ priceText }</del>
 				</div>
 			</div>
 		);
@@ -113,12 +123,16 @@ export class DomainProductPrice extends Component {
 				components: { span: <span className="domain-product-price__free-price" /> },
 			} );
 		}
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
 				<div className="domain-product-price__free-text">{ message }</div>
 				<div className="domain-product-price__price">
-					<del>
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<del aria-hidden="true">
 						{ this.props.isMappingProduct
 							? null
 							: this.props.translate( '%(cost)s/year', {
@@ -173,6 +187,9 @@ export class DomainProductPrice extends Component {
 		const className = clsx( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
@@ -183,11 +200,14 @@ export class DomainProductPrice extends Component {
 					} ) }
 				</div>
 				<div className="domain-product-price__regular-price">
-					{ translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: price },
-						components: { small: <small /> },
-						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
-					} ) }
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<span aria-hidden="true">
+						{ translate( '%(cost)s {{small}}/year{{/small}}', {
+							args: { cost: price },
+							components: { small: <small /> },
+							comment: '%(cost)s is the annual renewal price of a domain currently on sale',
+						} ) }
+					</span>
 				</div>
 				{ this.renderRenewalPrice() }
 			</div>
@@ -205,14 +225,20 @@ export class DomainProductPrice extends Component {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 		const productPriceClassName = showStrikedOutPrice ? '' : 'domain-product-price__price';
+		const ariaLabel = this.props.translate( '%(cost)s per year', {
+			args: { cost: this.props.price },
+		} );
 
 		return (
 			<div className={ className }>
 				<span className={ productPriceClassName }>
-					{ translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: price },
-						components: { small: <small /> },
-					} ) }
+					<span className="screen-reader-text">{ ariaLabel }</span>
+					<span aria-hidden="true">
+						{ translate( '%(cost)s {{small}}/year{{/small}}', {
+							args: { cost: price },
+							components: { small: <small /> },
+						} ) }
+					</span>
 				</span>
 				{ this.renderRenewalPrice() }
 			</div>

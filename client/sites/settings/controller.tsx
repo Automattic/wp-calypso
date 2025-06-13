@@ -44,15 +44,17 @@ export function SettingsSidebar() {
 	return (
 		<Sidebar>
 			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
-			{ areAdvancedHostingFeaturesSupported && (
-				<>
-					<SidebarItem href={ `/sites/settings/server/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/database/${ slug }` }>
-						{ __( 'Database' ) }
-					</SidebarItem>
-				</>
-			) }
+			{ areAdvancedHostingFeaturesSupported && [
+				<SidebarItem key="server" href={ `/sites/settings/server/${ slug }` }>
+					{ __( 'Server' ) }
+				</SidebarItem>,
+				<SidebarItem key="sftp-ssh" href={ `/sites/settings/sftp-ssh/${ slug }` }>
+					{ sftpSshTitle }
+				</SidebarItem>,
+				<SidebarItem key="database" href={ `/sites/settings/database/${ slug }` }>
+					{ __( 'Database' ) }
+				</SidebarItem>,
+			] }
 			{ areHostingFeaturesSupported && (
 				<SidebarItem href={ `/sites/settings/performance/${ slug }` }>
 					{ __( 'Performance' ) }
@@ -212,16 +214,13 @@ export function dashboardBackportSiteSettings( context: PageJSContext, next: () 
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
+	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
 		return page.redirect( `/sites/settings/site/${ site?.slug }` );
 	}
 
-	context.primary = (
-		<>
-			<PageViewTracker title="Sites > Settings > General" path={ getRouteFromContext( context ) } />
-			<DashboardBackportSiteSettingsRenderer />
-		</>
-	);
+	// Route doesn't require a <PageViewTracker /> because the dashboard
+	// fires its own page view events.
+	context.primary = <DashboardBackportSiteSettingsRenderer siteSlug={ site?.slug } />;
 
 	next();
 }

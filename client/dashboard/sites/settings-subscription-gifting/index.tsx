@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -13,10 +13,11 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
+import { canViewSubscriptionGiftingSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
-import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
 
@@ -47,19 +48,19 @@ const form = {
 
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
-	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data } = useQuery( siteSettingsQuery( site.ID ) );
+	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState( {
 		wpcom_gifting_subscription: data?.wpcom_gifting_subscription,
 	} );
 
-	if ( ! data || ! site ) {
+	if ( ! data ) {
 		return null;
 	}
 
-	if ( ! hasSubscriptionGiftingFeature( site ) ) {
+	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
 		throw notFound();
 	}
 

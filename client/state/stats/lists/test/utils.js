@@ -866,16 +866,10 @@ describe( 'utils', () => {
 					{
 						label: 'Homepage',
 						value: 59,
-						children: [
-							{
-								label: 'http://jetpack.com/',
-								value: 59,
-								link: 'http://jetpack.com/',
-							},
-						],
+						children: null,
 					},
 					{
-						label: 'Aggregated',
+						label: 'Taxonomies',
 						value: 9,
 						children: [
 							{
@@ -1051,6 +1045,18 @@ describe( 'utils', () => {
 										},
 									],
 								},
+								date: [
+									{
+										href: 'http://jetpack.com/2024/05',
+										value: '2024/05',
+										views: 4,
+									},
+									{
+										href: 'http://jetpack.com/2023/06',
+										value: '2023/06',
+										views: 3,
+									},
+								],
 							},
 						},
 						{
@@ -1065,13 +1071,7 @@ describe( 'utils', () => {
 					{
 						label: 'Homepage',
 						value: 89,
-						children: [
-							{
-								label: 'http://jetpack.com/',
-								value: 89,
-								link: 'http://jetpack.com/',
-							},
-						],
+						children: null,
 					},
 					{
 						label: 'Categories',
@@ -1085,7 +1085,7 @@ describe( 'utils', () => {
 						],
 					},
 					{
-						label: 'Aggregated',
+						label: 'Taxonomies',
 						value: 14,
 						children: [
 							{
@@ -1166,6 +1166,22 @@ describe( 'utils', () => {
 								label: 'http://jetpack.com/?s=plugin',
 								value: 1,
 								link: 'http://jetpack.com/?s=plugin',
+							},
+						],
+					},
+					{
+						label: 'Dates',
+						value: 7,
+						children: [
+							{
+								label: '2024/05',
+								value: 4,
+								link: 'http://jetpack.com/2024/05',
+							},
+							{
+								label: '2023/06',
+								value: 3,
+								link: 'http://jetpack.com/2023/06',
 							},
 						],
 					},

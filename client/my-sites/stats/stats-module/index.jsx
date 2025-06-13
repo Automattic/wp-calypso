@@ -40,6 +40,7 @@ class StatsModule extends Component {
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
+		toggleControl: PropTypes.node,
 		listItemClassName: PropTypes.string,
 		gateStats: PropTypes.bool,
 		gateDownloads: PropTypes.bool,
@@ -266,6 +267,7 @@ class StatsModule extends Component {
 			useShortLabel,
 			metricLabel,
 			additionalColumns,
+			toggleControl,
 			mainItemLabel,
 			listItemClassName,
 			gateStats,
@@ -329,7 +331,8 @@ class StatsModule extends Component {
 						)
 					}
 					additionalColumns={ additionalColumns }
-					splitHeader={ !! additionalColumns }
+					splitHeader={ !! toggleControl || !! additionalColumns }
+					toggleControl={ toggleControl }
 					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }

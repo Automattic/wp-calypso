@@ -27,6 +27,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -74,6 +75,7 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -289,6 +291,7 @@ class MasterbarLoggedIn extends Component {
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
+			isGravatarDomain,
 		} = this.props;
 
 		return (
@@ -302,6 +305,7 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
 	}
@@ -870,6 +874,7 @@ export default connect(
 			isAtomicAndEditingToolkitDeactivated:
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 		};
 	},
 	{

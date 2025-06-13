@@ -1,6 +1,6 @@
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
@@ -16,6 +16,8 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { A4A_REPORTS_BUILD_LINK } from '../../constants';
+import ExampleReport from './example-report';
 
 import './style.scss';
 
@@ -23,6 +25,7 @@ export default function ReportsOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Client Reports' );
+	const [ showExampleModal, setShowExampleModal ] = useState( false );
 
 	const benefitsList1 = useMemo(
 		() => [
@@ -57,19 +60,21 @@ export default function ReportsOverview() {
 
 	const handleBuildNewReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_new_report_button_click' ) );
-		// Build new report action - placeholder
-		// This would typically open report builder or navigate to creation flow
 	}, [ dispatch ] );
 
 	const handleViewExampleReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_view_example_report_button_click' ) );
-		// View example report action - placeholder
-		// This would typically open a modal or navigate to example report
+		setShowExampleModal( true );
 	}, [ dispatch ] );
 
 	const buildNewReportButton = useMemo( () => {
 		return (
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildNewReport }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				onClick={ handleBuildNewReport }
+				href={ A4A_REPORTS_BUILD_LINK }
+			>
 				{ translate( 'Build a new report' ) }
 			</Button>
 		);
@@ -100,7 +105,16 @@ export default function ReportsOverview() {
 									) }
 								</div>
 							</div>
-							{ buildNewReportButton }
+							<div className="reports-overview__buttons-container">
+								{ buildNewReportButton }
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ handleViewExampleReport }
+								>
+									{ translate( 'View example report' ) }
+								</Button>
+							</div>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
@@ -120,14 +134,6 @@ export default function ReportsOverview() {
 								'Reports turn raw data into clear stories. They highlight progress, justify fees, and create regular touchpoints that spark new goals. Each delivery invites a conversation, making upsells or scope expansion a natural, value-based next step for both sides.'
 							) }
 						</div>
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							className="reports-overview__button"
-							onClick={ handleViewExampleReport }
-						>
-							{ translate( 'View an example report' ) }
-						</Button>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
 						<img src={ whyImage } alt="" />
@@ -163,6 +169,18 @@ export default function ReportsOverview() {
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 			</LayoutBody>
+
+			{ showExampleModal && (
+				<Modal
+					title={ translate( 'Example client report' ) }
+					onRequestClose={ () => setShowExampleModal( false ) }
+					className="reports-overview__example-report-modal"
+					bodyOpenClassName="reports-overview__example-report-modal-body"
+					isFullScreen
+				>
+					<ExampleReport />
+				</Modal>
+			) }
 		</Layout>
 	);
 }

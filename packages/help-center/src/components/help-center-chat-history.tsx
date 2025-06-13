@@ -10,9 +10,10 @@ import { Link } from 'react-router-dom';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { useGetHistoryChats } from '../hooks/use-get-history-chats';
+import { useChatStatus, useGetHistoryChats } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
+import { EmailFallbackNotice } from './notices';
 import { getLastMessage } from './utils';
 import './help-center-chat-history.scss';
 import type {
@@ -87,6 +88,7 @@ export const HelpCenterChatHistory = () => {
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { supportInteractions, isLoadingInteractions, recentConversations, archivedConversations } =
 		useGetHistoryChats();
+	const { forceEmailSupport } = useChatStatus();
 
 	const { unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -98,11 +100,14 @@ export const HelpCenterChatHistory = () => {
 	// Temporarily simplified version
 	if ( simplifiedHistoryChat ) {
 		return (
-			<Conversations
-				conversations={ recentConversations }
-				supportInteractions={ supportInteractions }
-				isLoadingInteractions={ isLoadingInteractions }
-			/>
+			<>
+				{ forceEmailSupport && <EmailFallbackNotice /> }
+				<Conversations
+					conversations={ recentConversations }
+					supportInteractions={ supportInteractions }
+					isLoadingInteractions={ isLoadingInteractions }
+				/>
+			</>
 		);
 	}
 

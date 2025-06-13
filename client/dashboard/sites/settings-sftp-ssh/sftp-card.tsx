@@ -8,15 +8,15 @@ import {
 	Button,
 	Card,
 	CardBody,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
+import { siteSftpUsersResetPasswordMutation } from '../../app/queries/site-sftp';
 import ClipboardInputControl from '../../components/clipboard-input-control';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
@@ -35,14 +35,14 @@ type SftpCardFormData = {
 };
 
 export default function SftpCard( {
-	siteSlug,
+	siteId,
 	sftpUsers = [],
 }: {
-	siteSlug: string;
+	siteId: number;
 	sftpUsers: SftpUser[];
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
-	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteSlug ) );
+	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
 	const formData = {
@@ -152,7 +152,7 @@ export default function SftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack style={ { paddingBottom: '12px' } }>
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'SFTP' ) }
 						description={ createInterpolateElement(
@@ -160,31 +160,29 @@ export default function SftpCard( {
 								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
 							),
 							{
-								link: <ExternalLink href="#" children={ null } />,
+								link: <InlineSupportLink supportContext="hosting-sftp" />,
 							}
 						) }
 						level={ 3 }
 					/>
-				</VStack>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<DataForm< SftpCardFormData >
 						data={ formData }
 						fields={ fields }
 						form={ form }
 						onChange={ noop }
 					/>
+					{ ! password && (
+						<HStack justify="flex-start">
+							<Button
+								variant="secondary"
+								isBusy={ mutation.isPending }
+								onClick={ () => setShowResetPasswordConfirmDialog( true ) }
+							>
+								{ __( 'Reset password' ) }
+							</Button>
+						</HStack>
+					) }
 				</VStack>
-				{ ! password && (
-					<HStack style={ { padding: '8px 0' } }>
-						<Button
-							variant="secondary"
-							isBusy={ mutation.isPending }
-							onClick={ () => setShowResetPasswordConfirmDialog( true ) }
-						>
-							{ __( 'Reset password' ) }
-						</Button>
-					</HStack>
-				) }
 			</CardBody>
 			<ConfirmDialog
 				isOpen={ showResetPasswordConfirmDialog }

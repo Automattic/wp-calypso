@@ -9,10 +9,15 @@ import Markdown from 'react-markdown';
 import {
 	ODIE_FORWARD_TO_FORUMS_MESSAGE,
 	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
-	ODIE_THIRD_PARTY_MESSAGE,
+	ODIE_THIRD_PARTY_MESSAGE_CONTENT,
+	ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { interactionHasZendeskEvent, userProvidedEnoughInformation } from '../../utils';
+import {
+	interactionHasZendeskEvent,
+	userProvidedEnoughInformation,
+	getIsRequestingHumanSupport,
+} from '../../utils';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
@@ -26,28 +31,37 @@ const getDisplayMessage = (
 	canConnectToZendesk: boolean,
 	isRequestingHumanSupport: boolean,
 	messageContent: string,
-	forwardMessage: string,
-	hasCannedResponse?: boolean
+	hasCannedResponse?: boolean,
+	forceEmailSupport?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
-		return ODIE_THIRD_PARTY_MESSAGE;
+		return ODIE_THIRD_PARTY_MESSAGE_CONTENT;
 	}
 	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
 		return messageContent;
 	}
+
+	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
+		return ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT;
+	}
+
+	const forwardMessage = isUserEligibleForPaidSupport
+		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
+		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
+
 	return forwardMessage;
 };
 
 export const UserMessage = ( {
 	message,
 	isDisliked = false,
-	isMessageWithoutEscalationOption = false,
+	isMessageWithEscalationOption = false,
 }: {
 	isDisliked?: boolean;
 	message: Message;
-	isMessageWithoutEscalationOption?: boolean;
+	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk } =
+	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 
 	const currentSupportInteraction = useSelect(
@@ -57,8 +71,7 @@ export const UserMessage = ( {
 	);
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
-	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-	const isBot = message.role === 'bot';
+	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 
 	const showDirectEscalationLink = useMemo( () => {
 		return (
@@ -69,17 +82,13 @@ export const UserMessage = ( {
 		);
 	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
 
-	const forwardMessage = isUserEligibleForPaidSupport
-		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
-		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
-
 	const displayMessage = getDisplayMessage(
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		isRequestingHumanSupport,
 		message.content,
-		forwardMessage,
-		hasCannedResponse
+		hasCannedResponse,
+		forceEmailSupport
 	);
 
 	const displayingThirdPartyMessage =
@@ -150,7 +159,7 @@ export const UserMessage = ( {
 					{ isRequestingHumanSupport ? displayMessage : message.content }
 				</Markdown>
 			</div>
-			{ ! isMessageWithoutEscalationOption && isBot && (
+			{ isMessageWithEscalationOption && (
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
 						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,

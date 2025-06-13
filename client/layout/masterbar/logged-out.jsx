@@ -194,7 +194,7 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	renderWordPressItem() {
-		const { locale } = this.props;
+		const { locale, translate } = this.props;
 
 		let homeUrl = '/';
 		if ( ! isDefaultLocale( locale ) ) {
@@ -202,7 +202,11 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		return (
-			<Item url={ homeUrl } className="masterbar__item-logo masterbar__item--always-show-content">
+			<Item
+				url={ homeUrl }
+				className="masterbar__item-logo masterbar__item--always-show-content"
+				ariaLabel={ translate( 'WordPress.com logo' ) }
+			>
 				<WordPressLogo className="masterbar__wpcom-logo" />
 				<WordPressWordmark className="masterbar__wpcom-wordmark" />
 			</Item>

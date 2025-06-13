@@ -73,7 +73,7 @@ export const ClickableItem = ( {
 		clickNavLinkEvent( target );
 	};
 	return (
-		<li className={ liClassName }>
+		<li className={ liClassName } role="none">
 			<a
 				role="menuitem"
 				className={ typeClassName ? typeClassName : `x-${ type }-link x-link` }

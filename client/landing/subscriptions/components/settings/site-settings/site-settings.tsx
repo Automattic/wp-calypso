@@ -4,9 +4,9 @@ import { Icon, seen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { getFeedUrl } from 'calypso/reader/route';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
-import UnsubscribeIcon from '../icons/unsubscribe-icon';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
@@ -116,13 +116,16 @@ export const SiteSettingsPopover = ( {
 							'is-loading': unsubscribing,
 						} ) }
 						disabled={ unsubscribing }
-						icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+						icon={ ReaderFollowingConversationIcon( {
+							iconSize: 24,
+							className: 'subscriptions-ellipsis-menu__item-icon',
+						} ) }
 						onClick={ () => {
 							onUnsubscribe();
 							close();
 						} }
 					>
-						{ translate( 'Unsubscribe' ) }
+						{ translate( 'Subscribed' ) }
 					</Button>
 
 					<hr className="subscriptions__separator" />

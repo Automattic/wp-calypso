@@ -41,7 +41,7 @@ function CostTooltip() {
 				<div>
 					<p>
 						{ translate(
-							'The total cost is being calculated based on the current date as well as the number of licenses in total.'
+							'The projected cost is calculated based on the total licenses owned multiplied by the days they will have been active for during the current month.'
 						) }
 					</p>
 
@@ -100,7 +100,7 @@ export default function BillingSummary() {
 				<span className="billing-summary__label">
 					{ billing.isSuccess && <CostTooltip /> }
 					{ billing.isSuccess &&
-						translate( 'Cost for %(date)s', {
+						translate( 'Projected cost for %(date)s', {
 							args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
 						} ) }
 

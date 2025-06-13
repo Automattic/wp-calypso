@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import moment from 'moment';
 import ClipboardInputControl from '../clipboard-input-control';
 
 const Separator = styled.span( {
@@ -10,38 +9,77 @@ const Separator = styled.span( {
 	},
 } );
 
+const ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+const ONE_DAY_IN_MILLISECONDS = 24 * ONE_HOUR_IN_MILLISECONDS;
+const ONE_MINUTE_IN_SECONDS = 60;
+const ONE_HOUR_IN_SECONDS = 60 * ONE_MINUTE_IN_SECONDS;
+const ONE_DAY_IN_SECONDS = 24 * ONE_HOUR_IN_SECONDS;
+
 type LinkExpiryCopyProps = {
 	expiresAt: string;
 };
 
+function getExpiryStringLessThanOneDay( expiryDate: Date, now: Date ) {
+	const expiryInSeconds = Math.round( ( expiryDate.getTime() - now.getTime() ) / 1000 );
+
+	if ( expiryInSeconds < ONE_MINUTE_IN_SECONDS ) {
+		return sprintf(
+			// translators: %(seconds) is the number of seconds until the link expires.
+			_n( 'Expires in %(seconds)d second', 'Expires in %(seconds)d seconds', expiryInSeconds ),
+			{ seconds: expiryInSeconds }
+		);
+	}
+
+	if ( expiryInSeconds < ONE_HOUR_IN_SECONDS ) {
+		const minutes = Math.round( expiryInSeconds / ONE_MINUTE_IN_SECONDS );
+		return sprintf(
+			// translators: %(minutes) is the number of minutes until the link expires.
+			_n( 'Expires in %(minutes)d minute', 'Expires in %(minutes)d minutes', minutes ),
+			{ minutes }
+		);
+	}
+
+	if ( expiryInSeconds < ONE_DAY_IN_SECONDS ) {
+		const hours = Math.round( expiryInSeconds / ONE_HOUR_IN_SECONDS );
+		return sprintf(
+			// translators: %(hours) is the number of hours until the link expires.
+			_n( 'Expires in %(hours)d hour', 'Expires in %(hours)d hours', hours ),
+			{ hours }
+		);
+	}
+
+	const days = Math.round( expiryInSeconds / ONE_DAY_IN_SECONDS );
+	return sprintf(
+		// translators: %(days) is the number of days until the link expires.
+		_n( 'Expires in %(days)d day', 'Expires in %(days)d days', days ),
+		{ days }
+	);
+}
+
 const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
-	const now = moment();
-	const expiryDate = moment( expiresAt );
+	const now = new Date();
+	const expiryDate = new Date( expiresAt );
 
-	const difference = expiryDate.diff( now );
-
+	const difference = expiryDate.getTime() - now.getTime();
 	if ( difference < 0 ) {
 		return __( 'Expired.' );
 	}
 
-	const duration = moment.duration( difference );
-	if ( duration.asDays() < 1 || duration.hours() === 0 ) {
-		// Less than 1 day left, or more than 1 day left but no hours need to be appended
-		// We can utilize moment.js to get the duration string
-		const durationString = expiryDate.toNow( true );
-		return sprintf(
-			// translators: Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".
-			__( 'Expires in %(durationString)s' ),
-			{ durationString }
-		);
+	// Less than 1 day left.
+	if ( difference < ONE_DAY_IN_MILLISECONDS ) {
+		return getExpiryStringLessThanOneDay( expiryDate, now );
 	}
 
-	// Unfortunately, moment.js does not provide a way to get the duration string for more than 1 day in our desired format, i.e. e.g.:"%{d} days, %{h} hours".
+	// Add 1 hour to the duration to round up the day for case where the user just created the link.
+	// e.g.: we prefer to show "Expires in 3 days", instead of "Expires in 2 days, 23 hours".
+	const roundedUpExpiryDate = new Date( expiryDate.getTime() + ONE_HOUR_IN_MILLISECONDS );
+	const roundedUpDifference = Math.abs( roundedUpExpiryDate.getTime() - now.getTime() );
 
-	duration.add( 1, 'hour' ); // Add 1 hour to the duration to round up the day for case where the user just created the link, e.g.: we prefer to show "Expires in 3 days", instead of "Expires in 2 days, 23 hours".
-	const days = Math.floor( duration.asDays() );
-	const hours = duration.hours();
-	const hasHours = hours > 0; // Despite previous check whether hours are 0, we need to check again after we round up the hours
+	const totalHours = Math.floor( roundedUpDifference / ONE_HOUR_IN_MILLISECONDS );
+	const days = Math.floor( totalHours / 24 );
+	const hours = totalHours % 24;
+	const hasHours = hours > 0;
+
 	return (
 		<>
 			{ sprintf(

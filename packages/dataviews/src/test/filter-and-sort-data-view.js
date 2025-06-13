@@ -385,15 +385,15 @@ describe( 'filters', () => {
 		expect( result.map( ( r ) => r.title ) ).toContain( 'Mars' );
 	} );
 
-	it( 'should filter using LESS THAN operator for datetime', () => {
+	it( 'should filter using BEFORE operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'lessThan',
-						value: '1970-01-01',
+						operator: 'before',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -401,20 +401,20 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) < new Date( '1970-01-01' )
+				( item ) => new Date( item.date ) < new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );
 
-	it( 'should filter using GREATER THAN operator for datetime', () => {
+	it( 'should filter using AFTER operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'greaterThan',
-						value: '2000-01-01',
+						operator: 'after',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -422,20 +422,20 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) > new Date( '2000-01-01' )
+				( item ) => new Date( item.date ) > new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );
 
-	it( 'should filter using LESS THAN OR EQUAL operator for datetime', () => {
+	it( 'should filter using BEFORE (inc) operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'lessThanOrEqual',
-						value: '1970-01-01',
+						operator: 'beforeInc',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -443,20 +443,20 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) <= new Date( '1970-01-01' )
+				( item ) => new Date( item.date ) <= new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );
 
-	it( 'should filter using GREATER THAN OR EQUAL operator for datetime', () => {
+	it( 'should filter using AFTER (inc) operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'greaterThanOrEqual',
-						value: '2000-01-01',
+						operator: 'afterInc',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -464,7 +464,7 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) >= new Date( '2000-01-01' )
+				( item ) => new Date( item.date ) >= new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );

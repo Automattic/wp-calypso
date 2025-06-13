@@ -17,9 +17,6 @@
 		},
 		"./src/*": {
 			"calypso:src": "./src/*"
-		},
-		"./?stepper": {
-			"calypso:src": "./src/index.ts?stepper"
 		}
 	},
 	"sideEffects": [

@@ -20,6 +20,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { A4A_REPORTS_BUILD_LINK } from '../../constants';
 import useFetchReports from '../../hooks/use-fetch-reports';
 import { getSiteReports } from '../../lib/get-site-reports';
 import ReportsDetails from '../../reports-details';
@@ -45,7 +46,6 @@ export default function ReportsDashboard() {
 
 	const handleBuildNewReport = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_new_report_click' ) );
-		// TODO: Open create report modal or navigate to create page
 	};
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
@@ -109,7 +109,11 @@ export default function ReportsDashboard() {
 							<MobileSidebarNavigation />
 							<div className="reports-dashboard__actions">
 								{ ! isLoading && ! showEmptyState && (
-									<Button variant="primary" onClick={ handleBuildNewReport }>
+									<Button
+										variant="primary"
+										onClick={ handleBuildNewReport }
+										href={ A4A_REPORTS_BUILD_LINK }
+									>
 										{ translate( 'Build a new report' ) }
 									</Button>
 								) }
