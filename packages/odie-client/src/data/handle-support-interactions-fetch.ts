@@ -19,7 +19,7 @@ export const handleSupportInteractionsFetch = async (
 		  } )
 		: await apiFetch( {
 				method,
-				path: `/help-center/support-interactions${ path ?? '' }`,
+				path: `/help-center/support-interactions${ fullPath ?? '' }`,
 				data,
 		  } );
 };
