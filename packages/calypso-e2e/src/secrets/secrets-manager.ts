@@ -37,6 +37,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 	'appleLoginUser',
+	'gitHubLoginUser',
 	'jetpackAtomicDefaultUser',
 	'jetpackAtomicPhpOldUser',
 	'jetpackAtomicPhpNewUser',
@@ -239,6 +240,9 @@ export class SecretsManager {
 					totpKey: 'FAKE_VALUE',
 				},
 				appleLoginUser: {
+					...fakeAccount,
+				},
+				gitHubLoginUser: {
 					...fakeAccount,
 				},
 				jetpackAtomicDefaultUser: {

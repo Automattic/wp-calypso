@@ -65,6 +65,7 @@
 		"newsletter-categories": true,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
+		"purchases/purchase-list-dataview": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
