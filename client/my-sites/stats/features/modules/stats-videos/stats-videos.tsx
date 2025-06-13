@@ -1,17 +1,16 @@
-import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { VIDEOS_SUPPORT_URL, JETPACK_SUPPORT_VIDEOPRESS_URL_STATS } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -28,8 +27,12 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsVideoPlays';
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_VIDEOPRESS_URL_STATS : VIDEOS_SUPPORT_URL;
+
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-videos-jetpack' : 'stats-videos';
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -63,7 +66,9 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context:
 										'Stats: Header popover with information when the Videos module has data.',

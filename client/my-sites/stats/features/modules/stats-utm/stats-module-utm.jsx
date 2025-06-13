@@ -1,17 +1,16 @@
 import page from '@automattic/calypso-router';
 import { StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { receiveSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, UTM_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -162,9 +161,7 @@ const StatsModuleUTM = ( {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const supportUrl = isSiteJetpackNotAtomic
-		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking` )
-		: UTM_SUPPORT_URL;
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-utm-jetpack' : 'stats-utm';
 
 	const titleNodes = (
 		<StatsInfoArea>
@@ -173,7 +170,7 @@ const StatsModuleUTM = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+						link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 					},
 					context: 'Stats: Popover information when the UTM module has data',
 				}
@@ -206,7 +203,9 @@ const StatsModuleUTM = ( {
 									{
 										comment: '{{link}} links to support documentation.',
 										components: {
-											link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+											link: (
+												<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+											),
 										},
 										context: 'Stats: Info box label when the UTM module is empty',
 									}

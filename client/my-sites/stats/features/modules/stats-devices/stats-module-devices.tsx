@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { mobile } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -13,7 +13,6 @@ import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, DEVICES_SUPPORT_URL } from '../../../const';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -154,9 +153,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const supportUrl = isSiteJetpackNotAtomic
-		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` )
-		: localizeUrl( DEVICES_SUPPORT_URL );
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-devices-jetpack' : 'stats-devices';
 
 	const titleNodes = (
 		<StatsInfoArea>
@@ -165,7 +162,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+						link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 					},
 					context: 'Stats: Info popover content when the Devices module has data.',
 				}
@@ -200,7 +197,9 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 									{
 										comment: '{{link}} links to support documentation.',
 										components: {
-											link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+											link: (
+												<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+											),
 										},
 										context: 'Stats: Info box label when the Devices module is empty',
 									}

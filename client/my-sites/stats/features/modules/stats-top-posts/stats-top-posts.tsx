@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import {
 	isRequestingSiteStatsForQuery,
@@ -12,7 +12,6 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { TOP_POSTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
@@ -35,10 +34,9 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const mainStatType = 'statsTopPosts';
 	const subStatType = 'statsArchives';
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
-		: TOP_POSTS_SUPPORT_URL;
+	const supportContext = config.isEnabled( 'is_running_in_jetpack_site' )
+		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
+		: 'stats-top-posts-and-pages-analyze-content-performance';
 
 	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
 
@@ -104,7 +102,9 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context:
 										'Stats: Link in a popover for the Posts & Pages when the module has data',
@@ -138,7 +138,9 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',
 								}

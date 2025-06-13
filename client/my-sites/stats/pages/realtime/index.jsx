@@ -42,6 +42,7 @@ function StatsRealtime( { context } ) {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const dispatch = useDispatch();
+
 	const moduleStrings = statsStrings();
 
 	const halfWidthModuleClasses = clsx(

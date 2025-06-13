@@ -1,11 +1,10 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import useLocationViewsQuery, {
 	StatsLocationViewsData,
 } from 'calypso/my-sites/stats/hooks/use-location-views-query';
@@ -18,13 +17,13 @@ import {
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { receiveSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { normalizers } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { LOCATIONS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { STAT_TYPE_COUNTRY_VIEWS } from '../../../constants';
 import Geochart from '../../../geochart';
 import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
@@ -59,10 +58,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
-		: LOCATIONS_SUPPORT_URL;
+
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-locations-jetpack' : 'stats-locations';
 
 	// selectOption is in plural form i.e. 'countries'! Possible something to unify in the future.
 	const appliedGeoModeFromUrl = useMemo( () => {
@@ -238,7 +238,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: <a target="_blank" rel="noreferrer" href={ localizeUrl( `${ supportUrl }` ) } />,
+						link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 					},
 					context: 'Stats: Info box label when the Countries module is empty',
 				}
@@ -274,7 +274,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: <a target="_blank" rel="noreferrer" href={ localizeUrl( `${ supportUrl }` ) } />,
+						link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 					},
 					context: 'Stats: Link in a popover for Countries module when the module has data',
 				}
