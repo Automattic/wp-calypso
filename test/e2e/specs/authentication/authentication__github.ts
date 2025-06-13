@@ -63,11 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 				body: 'GitHub authentication code',
 			} );
 
-			console.log( 'XXX MESSAGE', message );
-
 			const code = emailClient.get2FACodeFromMessage( message );
-
-			console.log( 'XXX CODE', code );
 
 			await githubLoginPage.enter2FACode( code );
 		} );
