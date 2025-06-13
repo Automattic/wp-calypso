@@ -101,8 +101,6 @@ export class LoginForm extends Component {
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		loginButtonText: PropTypes.string,
-		isGravPoweredClient: PropTypes.bool,
-		isWPJobManager: PropTypes.bool,
 	};
 
 	state = {
@@ -1041,17 +1039,7 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginOptions() {
-		const {
-			oauth2Client,
-			currentQuery,
-			isWoo,
-			isWooJPC,
-			isSocialFirst,
-			isJetpack,
-			isGravPoweredClient,
-			isWPJobManager,
-			translate,
-		} = this.props;
+		const { oauth2Client, currentQuery, isWoo, isWooJPC, isSocialFirst, isJetpack } = this.props;
 
 		const { lastUsedAuthenticationMethod } = this.state;
 
@@ -1101,8 +1089,6 @@ export class LoginForm extends Component {
 			);
 		}
 
-		const isMagicCode = isGravPoweredClient && ! isWPJobManager;
-
 		return (
 			<>
 				{ this.renderLoginCard() }
@@ -1122,7 +1108,6 @@ export class LoginForm extends Component {
 							isWoo={ isWoo }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
-							magicLoginButtonText={ isMagicCode ? translate( 'Email me a login code' ) : null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					</Fragment>

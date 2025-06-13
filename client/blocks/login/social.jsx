@@ -21,7 +21,6 @@ class SocialLoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		shouldRenderToS: PropTypes.bool,
 		magicLoginLink: PropTypes.string,
-		magicLoginButtonText: PropTypes.string,
 		qrLoginLink: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
 		lastUsedAuthenticationMethod: PropTypes.string,
@@ -71,11 +70,7 @@ class SocialLoginForm extends Component {
 		{
 			service: 'magic-login',
 			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
-				<MagicLoginButton
-					loginUrl={ this.props.magicLoginLink }
-					buttonText={ this.props.magicLoginButtonText }
-					key={ 4 }
-				/>
+				<MagicLoginButton loginUrl={ this.props.magicLoginLink } key={ 4 } />
 			),
 		},
 		{

@@ -19,7 +19,6 @@ import {
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
-	isWPJobManagerOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -418,7 +417,6 @@ class Login extends Component {
 			redirectTo,
 			isWooJPC,
 			isWoo,
-			oauth2Client,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
@@ -576,8 +574,6 @@ class Login extends Component {
 				isSocialFirst={ isSocialFirst }
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-				isGravPoweredClient={ isGravPoweredClient }
-				isWPJobManager={ isWPJobManagerOAuth2Client( oauth2Client ) }
 				loginButtonText={
 					isWooJPC && this.props.initialQuery?.lostpassword_flow === 'true'
 						? translate( 'Log in' )
