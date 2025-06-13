@@ -1,17 +1,10 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	// General
-	buttonContainingText: ( text: string ) => `button:has-text("${ text }")`,
-	buttonWithExactText: ( text: string ) => `button:text-is("${ text }")`,
-
 	// Inputs
 	emailInput: 'input[id="login_field"]',
 	passwordInput: 'input[id="password"]',
 	codeInput: 'input[name="sms_otp"]',
-
-	// Button
-	submitFormButton: 'input[data-signin-label="Sign In"]',
 };
 
 /**
@@ -38,8 +31,7 @@ export class GitHubLoginPage {
 	 * @param {string} text Text on the button.
 	 */
 	async clickButtonContainingText( text: string ): Promise< void > {
-		const locator = this.page.locator( selectors.buttonContainingText( text ) );
-		await locator.click();
+		await this.page.getByRole( 'button', { name: new RegExp( text, 'i' ) } ).click();
 	}
 
 	/**
@@ -48,8 +40,7 @@ export class GitHubLoginPage {
 	 * @param {string} text Text on the button.
 	 */
 	async clickButtonWithExactText( text: string ): Promise< void > {
-		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
-		await locator.click();
+		await this.page.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 
 	/**
@@ -59,8 +50,7 @@ export class GitHubLoginPage {
 	 * @returns {Promise<boolean>} True if the button exists and is visible.
 	 */
 	async hasButtonWithExactText( text: string ): Promise< boolean > {
-		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
-		return await locator.isVisible();
+		return await this.page.getByRole( 'button', { name: text, exact: true } ).isVisible();
 	}
 
 	/**
