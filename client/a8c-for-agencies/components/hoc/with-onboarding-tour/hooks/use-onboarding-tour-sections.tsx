@@ -310,7 +310,7 @@ export default function useOnboardingTourSections() {
 
 			{
 				id: 'partner-directory',
-				title: translate( 'Partner Directory' ),
+				title: translate( 'Partner Directories' ),
 				bannerImage: OnboardingTourBannerPartnerDirectory,
 				content: {
 					title: translate( 'Get leads from multiple agency directories' ),
@@ -326,7 +326,7 @@ export default function useOnboardingTourSections() {
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'Check out Partner Directory' ),
+							label: translate( 'Check out Partner Directories' ),
 							variant: 'secondary',
 							href: A4A_PARTNER_DIRECTORY_LINK,
 							onClick: () => onExplore( 'partner-directory', onClose ),
