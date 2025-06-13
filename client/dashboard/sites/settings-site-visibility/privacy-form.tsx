@@ -69,7 +69,7 @@ const robotFields: Field< SiteSettings & { isPrimaryDomainStaging: boolean } >[]
 			<CheckboxControl
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : field.label }
-				checked={ field.getValue( { item: data } ) }
+				checked={ data.isPrimaryDomainStaging || field.getValue( { item: data } ) }
 				disabled={ data.isPrimaryDomainStaging }
 				onChange={ () => {
 					onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
@@ -84,7 +84,7 @@ const robotFields: Field< SiteSettings & { isPrimaryDomainStaging: boolean } >[]
 			<CheckboxControl
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : field.label }
-				checked={ field.getValue( { item: data } ) }
+				checked={ data.isPrimaryDomainStaging || field.getValue( { item: data } ) }
 				disabled={ data.isPrimaryDomainStaging || data.wpcom_discourage_search_engines }
 				onChange={ () => {
 					onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
@@ -127,12 +127,9 @@ export function PrivacyForm( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState( {
 		wpcom_site_visibility: settings.wpcom_site_visibility,
-		wpcom_discourage_search_engines:
-			settings.wpcom_discourage_search_engines || isPrimaryDomainStaging,
+		wpcom_discourage_search_engines: settings.wpcom_discourage_search_engines,
 		wpcom_prevent_third_party_sharing:
-			settings.wpcom_discourage_search_engines ||
-			isPrimaryDomainStaging ||
-			settings.wpcom_prevent_third_party_sharing,
+			settings.wpcom_discourage_search_engines || settings.wpcom_prevent_third_party_sharing,
 	} );
 
 	const isDirty = Object.entries( formData ).some(
@@ -161,12 +158,9 @@ export function PrivacyForm( {
 
 			if ( edits.wpcom_site_visibility !== undefined ) {
 				// Forget any previous edits to the discoverability controls when the visibility changes.
-				newFormData.wpcom_discourage_search_engines =
-					settings.wpcom_discourage_search_engines || isPrimaryDomainStaging;
+				newFormData.wpcom_discourage_search_engines = settings.wpcom_discourage_search_engines;
 				newFormData.wpcom_prevent_third_party_sharing =
-					settings.wpcom_discourage_search_engines ||
-					isPrimaryDomainStaging ||
-					settings.wpcom_prevent_third_party_sharing;
+					settings.wpcom_discourage_search_engines || settings.wpcom_prevent_third_party_sharing;
 			}
 			if ( edits.wpcom_discourage_search_engines === true ) {
 				// Checking the search engine box forces the third party checkbox too.
