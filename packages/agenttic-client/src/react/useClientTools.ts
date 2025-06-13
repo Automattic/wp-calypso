@@ -12,8 +12,7 @@ export type GetClientToolsCallback = () => Promise< Tool[] >;
  */
 export type ExecuteToolCallback = (
 	toolId: string,
-	args: any,
-	toolCallId?: string
+	args: any
 ) => Promise< any >;
 
 /**
@@ -48,17 +47,13 @@ export function useClientTools(
 	}, [ getClientTools ] );
 
 	const stableExecuteTool = useCallback(
-		async (
-			toolId: string,
-			args: any,
-			toolCallId?: string
-		): Promise< any > => {
+		async ( toolId: string, args: any ): Promise< any > => {
 			if ( ! executeTool ) {
 				throw new Error( 'No executeTool callback provided' );
 			}
 
 			try {
-				return await executeTool( toolId, args, toolCallId );
+				return await executeTool( toolId, args );
 			} catch ( error ) {
 				logger( 'Error executing tool %s: %O', toolId, error );
 				throw error;

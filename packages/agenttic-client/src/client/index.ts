@@ -55,8 +55,7 @@ async function executeToolCallBatch(
 		try {
 			const executionResult = await toolProvider.executeTool(
 				toolId as string,
-				args,
-				toolCallId as string
+				args
 			);
 			const { result, returnToAgent, agentMessage } =
 				processToolExecutionResult( executionResult );
@@ -340,8 +339,7 @@ export function createClient( config: ClientConfig ): Client {
 					try {
 						const executionResult = await toolProvider.executeTool(
 							toolId as string,
-							args,
-							toolCallId as string
+							args
 						);
 						const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
 
@@ -513,12 +511,10 @@ export function createClient( config: ClientConfig ): Client {
 								arguments: args,
 							} = toolCall.data;
 							try {
-								const executionResult =
-									await toolProvider.executeTool(
-										toolId as string,
-										args,
-										toolCallId as string
-									);
+								const executionResult = await toolProvider.executeTool(
+									toolId as string,
+									args
+								);
 								const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
 
 								// Mark that at least one tool wants to return to agent

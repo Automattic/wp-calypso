@@ -233,11 +233,7 @@ export interface ToolExecutionResult {
 
 export interface ToolProvider {
 	getAvailableTools(): Promise< Tool[] >;
-	executeTool(
-		toolId: string,
-		args: any,
-		toolCallId?: string
-	): Promise< any | ToolExecutionResult >;
+	executeTool( toolId: string, args: any ): Promise< any | ToolExecutionResult >;
 }
 
 export interface ToolCallResult {
