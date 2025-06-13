@@ -11,7 +11,7 @@ export default function useDisplayVatNotices( {
 }: {
 	error: UpdateError | null;
 	success: boolean;
-	taxName: string;
+	taxName: string | undefined;
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
