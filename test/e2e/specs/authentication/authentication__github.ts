@@ -32,7 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 
 		it( 'Click on Login with GitHub button', async function () {
 			await Promise.all( [
-				page.waitForNavigation( { url: /.*github\.com\/login.*/ } ),
+				page.waitForURL( /.*github\.com\/login.*/ ),
 				loginPage.clickLoginWithGitHub(),
 			] );
 		} );
