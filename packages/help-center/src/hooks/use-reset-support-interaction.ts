@@ -19,7 +19,7 @@ export const useResetSupportInteraction = () => {
 			resolveInteraction( { interactionId: currentSupportInteraction.uuid } );
 
 			await queryClient.invalidateQueries( {
-				queryKey: [ 'support-interactions', 'get-interactions', 'help-center' ],
+				queryKey: [ 'support-interactions', 'get-interactions' ],
 			} );
 
 			return await startNewInteraction( {

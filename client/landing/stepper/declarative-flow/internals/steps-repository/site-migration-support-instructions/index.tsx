@@ -1,12 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { translate, useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { UserData } from 'calypso/lib/user/user';
@@ -41,7 +39,7 @@ const StepContent = () => {
 	);
 };
 
-export const SiteMigrationSupportInstructions: StepType = ( { stepName, flow } ) => {
+export const SiteMigrationSupportInstructions: StepType = () => {
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const [ query ] = useSearchParams();
@@ -98,33 +96,17 @@ export const SiteMigrationSupportInstructions: StepType = ( { stepName, flow } )
 
 	const headerText = translate( 'We’ll take it from here!' );
 
-	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
-
-	if ( isUsingStepContainerV2 ) {
-		return (
-			<>
-				<DocumentHead title={ headerText } />
-				<Step.CenteredColumnLayout
-					columnWidth={ 8 }
-					topBar={ <Step.TopBar leftElement={ null } /> }
-					heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
-				>
-					<StepContent />
-				</Step.CenteredColumnLayout>
-			</>
-		);
-	}
 	return (
-		<StepContainer
-			stepName={ stepName }
-			hideBack
-			formattedHeader={
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
-			}
-			isHorizontalLayout={ false }
-			stepContent={ <StepContent /> }
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ headerText } />
+			<Step.CenteredColumnLayout
+				columnWidth={ 8 }
+				topBar={ <Step.TopBar leftElement={ null } /> }
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+			>
+				<StepContent />
+			</Step.CenteredColumnLayout>
+		</>
 	);
 };
 

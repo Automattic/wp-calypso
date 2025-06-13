@@ -79,7 +79,6 @@
 		"onboarding/import-from-squarespace": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
-		"onboarding/step-container-v2-migration-flow": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

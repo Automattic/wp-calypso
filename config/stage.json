@@ -99,7 +99,6 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/interval-dropdown": true,
-		"onboarding/step-container-v2-migration-flow": true,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"plans/hosting-trial": true,

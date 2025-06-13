@@ -8,6 +8,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
 import { fetchMagicLoginAuthenticate } from 'calypso/state/login/magic-login/actions';
@@ -35,6 +36,7 @@ const VerifyLoginCode = ( {
 	const [ codeCharacters, setCodeCharacters ] = useState( Array( CODE_LENGTH ).fill( '' ) );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ showError, setShowError ] = useState( false );
+	const dispatch = useDispatch();
 
 	// Create refs for each input field to manage focus
 	const inputRefs = useRef( Array.from( { length: CODE_LENGTH }, () => createRef() ) );
@@ -152,9 +154,11 @@ const VerifyLoginCode = ( {
 		}
 
 		// Track magic code verification attempt
-		recordTracksEvent( 'calypso_login_magic_code_submit', {
-			code_length: verificationCode.length,
-		} );
+		dispatch(
+			recordTracksEvent( 'calypso_login_magic_code_submit', {
+				code_length: verificationCode.length,
+			} )
+		);
 
 		// Format: publicToken:code
 		const loginToken = `${ publicToken }:${ btoa( verificationCode ) }`;
