@@ -81,6 +81,7 @@ function useCachedContactDetailsForCheckoutForm(
 			} )
 			.then( ( didSkip: boolean ) => {
 				if ( ! isMounted.current ) {
+					didFillForm.current = false;
 					return false;
 				}
 				if ( didSkip ) {
@@ -91,7 +92,11 @@ function useCachedContactDetailsForCheckoutForm(
 			} )
 			.catch( ( error: Error ) => {
 				setShouldShowContactDetailsValidationErrors?.( true );
-				isMounted.current && setComplete( true );
+				if ( isMounted.current ) {
+					setComplete( true );
+				} else {
+					didFillForm.current = false;
+				}
 				// eslint-disable-next-line no-console
 				console.error( 'Error while autocompleting contact details:', error );
 				logToLogstash( {
