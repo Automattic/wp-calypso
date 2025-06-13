@@ -71,6 +71,7 @@ const MigrateSubscribersModal = ( {
 		? 'https://jetpack.com/support/newsletter/import-subscribers/#migrate-subscribers-from-a-word-press-com-site'
 		: 'https://wordpress.com/support/migrate-subscribers-from-another-site/';
 
+	// Keep the link external on jetpack cloud.
 	const supportPostId = ! isWPCOMSite ? null : 312690;
 
 	const selectionRender = (
