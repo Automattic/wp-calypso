@@ -1,6 +1,6 @@
 import {
-	Router,
 	createRoute,
+	createRouter,
 	createRootRoute,
 	redirect,
 	createLazyRoute,
@@ -566,7 +566,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree( config );
-	return new Router( {
+	return createRouter( {
 		routeTree,
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
@@ -578,6 +578,8 @@ export const getRouter = ( config: AppConfig ) => {
 		// "default", we can still customize it in CSS and add more transition
 		// areas.
 		defaultViewTransition: true,
+		scrollRestoration: true,
+		getScrollRestorationKey: ( location ) => location.pathname,
 	} );
 };
 
