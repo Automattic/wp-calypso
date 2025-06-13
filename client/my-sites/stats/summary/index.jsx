@@ -128,6 +128,11 @@ class StatsSummary extends Component {
 		}
 
 		const moduleQuery = merge( {}, statsQueryOptions, query );
+		// TODO: Refactor the query params for posts module.
+		if ( 'posts' === this.props.context.params.module ) {
+			moduleQuery.skip_archives = isEnabled( 'stats/archive-breakdown' ) ? '1' : '0';
+		}
+
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
 
