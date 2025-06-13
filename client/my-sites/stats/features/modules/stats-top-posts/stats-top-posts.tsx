@@ -81,7 +81,10 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
 	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
 
-	const statType = localStatType ?? query.viewType ?? mainStatType;
+	let statType = localStatType ?? query.viewType ?? mainStatType;
+	if ( ! isArchiveBreakdownEnabled ) {
+		statType = mainStatType;
+	}
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
