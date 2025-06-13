@@ -87,6 +87,9 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 			} else {
 				closeDropdown();
 			}
+		} else if ( event.key === 'Escape' && isKeyboardOpen ) {
+			event.preventDefault();
+			closeDropdown();
 		}
 	};
 
