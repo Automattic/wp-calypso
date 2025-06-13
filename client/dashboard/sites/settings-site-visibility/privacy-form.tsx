@@ -196,7 +196,7 @@ export function PrivacyForm( {
 											<Button
 												variant="secondary"
 												href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-													redirect_to: `/v2/sites/${ site.slug }/settings/site-visibility`,
+													redirect_to: window.location.pathname,
 												} ) }
 											>
 												{ __( 'Add new domain' ) }
