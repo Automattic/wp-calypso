@@ -343,6 +343,7 @@ export default function useOnboardingTourSections() {
 				id: 'agency-tiers',
 				title: translate( 'Agency Tiers' ),
 				bannerImage: OnboardingTourBannerAgencyTiers,
+				isDarkBanner: true,
 				content: {
 					title: translate( 'Resources and rewards tailored for your growth' ),
 					descriptions: [
