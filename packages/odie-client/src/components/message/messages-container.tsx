@@ -172,7 +172,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					aria-relevant="additions"
 				>
 					{ chat.messages.map( ( message ) => (
-						<div key={ message.created_at }>{ message.role === 'bot' && message.content }</div>
+						<div key={ message.created_at }>
+							{ [ 'bot', 'business' ].includes( message.role ) && message.content }
+						</div>
 					) ) }
 				</div>
 				<ChatDate chat={ chat } />
