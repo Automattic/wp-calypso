@@ -1,5 +1,6 @@
 import { Button, FoldableCard } from '@automattic/components';
 import { Site } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,6 +56,10 @@ function ExportMediaCard() {
 													<InlineSupportLink
 														supportContext="export-media-library"
 														showIcon={ false }
+														supportLink={ localizeUrl(
+															'https://wordpress.com/support/export-your-media-library/'
+														) }
+														supportPostId={ 278472 }
 													/>
 												),
 											},
