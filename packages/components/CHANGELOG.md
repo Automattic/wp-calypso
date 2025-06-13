@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Breaking changes
+
+- Remove `CoreBadge` component. Use `Badge` from `@automattic/ui` instead ([#104188](https://github.com/Automattic/wp-calypso/pull/104188)).
+
 ## 3.0.0
 
 ### Breaking changes
