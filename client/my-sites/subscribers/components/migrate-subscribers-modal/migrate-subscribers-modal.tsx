@@ -104,6 +104,7 @@ const MigrateSubscribersModal = ( {
 									supportLink={ localizeUrl( migrateSubscribersUrl ) }
 									showIcon={ ! supportPostId }
 									supportPostId={ supportPostId }
+									onClick={ supportPostId && onClose }
 								/>
 							),
 						}
