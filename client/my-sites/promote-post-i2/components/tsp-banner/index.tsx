@@ -1,6 +1,7 @@
-import { ExternalLink, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TspBannerImage from './tsp-banner-image';
 import './style.scss';
@@ -44,18 +45,19 @@ function TspBanner( props: TspBannerProps ) {
 									'Reach more people and spark conversations by promoting your content as a native Tumblr post, where users can like, reply, and engage directly with your ad.'
 								) }
 								&nbsp;
-								<ExternalLink
-									href={ localizeUrl(
+								<InlineSupportLink
+									supportContext="blaze_learn_more"
+									showIcon={ false }
+									supportLink={ localizeUrl(
 										'https://wordpress.com/support/promote-a-post/promote-your-content-with-tumblr-native-posts'
 									) }
-									target="_blank"
+									supportPostId={ 403203 }
 									onClick={ () => {
 										recordTracksEvent( 'calypso_dsp_tsp_banner_learn_more_click', {} );
 									} }
 								>
 									{ translate( 'Learn more' ) }
-									<Gridicon icon="external" size={ 16 } />
-								</ExternalLink>
+								</InlineSupportLink>
 							</div>
 							{ /* TODO: Start using "Try now" link after reaching this feature's MVP */ }
 							{ /* <div className="tsp-banner__link">
