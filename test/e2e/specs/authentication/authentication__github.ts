@@ -99,9 +99,9 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Verify successful login to WordPress.com', async function () {
-			// expect pattern like "https://wordpress.com/log-in/github/callback?service=github&code"
 			await page.waitForURL( /.*wordpress\.com\/log-in\/github\/callback.*/ );
-			await page.waitForNavigation( { url: /.*wordpress\.com\/sites.*/ } );
+			await page.waitForURL( /.*wordpress\.com\/sites.*/ );
+
 			expect( page.url() ).toMatch( /.*wordpress\.com\/sites.*/ );
 		} );
 
