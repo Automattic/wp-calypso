@@ -33,7 +33,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'General' ) } level={ 3 } />
+				<SectionHeader title={ __( 'General' ) } />
 				<SummaryButtonList>
 					<SiteVisibilitySettingsSummary site={ site } />
 					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
@@ -42,7 +42,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				</SummaryButtonList>
 			</VStack>
 			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'Server' ) } level={ 3 } />
+				<SectionHeader title={ __( 'Server' ) } />
 				<SummaryButtonList>
 					<WordPressSettingsSummary site={ site } />
 					<PHPSettingsSummary site={ site } />
