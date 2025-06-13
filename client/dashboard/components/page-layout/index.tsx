@@ -1,4 +1,5 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { CalloutOverlay } from '../callout-overlay';
 import './style.scss';
 
 const sizes = {
@@ -7,11 +8,13 @@ const sizes = {
 };
 
 function PageLayout( {
+	callout,
 	children,
 	header,
 	notices,
 	size = 'large',
 }: {
+	callout?: React.ReactNode;
 	children?: React.ReactNode;
 	header?: React.ReactNode;
 	notices?: React.ReactNode;
@@ -23,11 +26,19 @@ function PageLayout( {
 			className={ `dashboard-page-layout is-${ size }` }
 			style={ sizes[ size ] }
 		>
-			{ header }
-			{ notices }
-			<VStack spacing={ 6 } className="dashboard-page-layout__content">
-				{ children }
-			</VStack>
+			<CalloutOverlay
+				showCallout={ !! callout }
+				callout={ callout }
+				main={
+					<>
+						{ header }
+						{ notices }
+						<VStack spacing={ 6 } className="dashboard-page-layout__content">
+							{ children }
+						</VStack>
+					</>
+				}
+			/>
 		</VStack>
 	);
 }

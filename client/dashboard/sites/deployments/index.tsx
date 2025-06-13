@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -23,40 +22,39 @@ function SiteDeployments() {
 
 	const showIneligiblePlanCallout = ! site.plan || ! hasDeploymentsFeature( site.plan );
 
+	const callout = (
+		<Callout
+			icon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
+			title={ __( 'Deploy from GitHub' ) }
+			image={ illustrationUrl }
+			description={
+				<>
+					<Text as="p" variant="muted">
+						{ __(
+							'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+						) }
+					</Text>
+					<Text as="p" variant="muted">
+						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
+					</Text>
+				</>
+			}
+			actions={
+				<RouterLinkButton __next40pxDefaultSize variant="primary" to="#">
+					{ __( 'Upgrade plan' ) }
+				</RouterLinkButton>
+			}
+		/>
+	);
+
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> }>
-			<CalloutOverlay
-				showCallout={ showIneligiblePlanCallout }
-				callout={
-					<Callout
-						icon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
-						title={ __( 'Deploy from GitHub' ) }
-						image={ illustrationUrl }
-						description={
-							<>
-								<Text as="p" variant="muted">
-									{ __(
-										'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-									) }
-								</Text>
-								<Text as="p" variant="muted">
-									{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-								</Text>
-							</>
-						}
-						actions={
-							<RouterLinkButton __next40pxDefaultSize variant="primary" to="#">
-								{ __( 'Upgrade plan' ) }
-							</RouterLinkButton>
-						}
-					/>
-				}
-				main={
-					<DataViewsCard>
-						<></>
-					</DataViewsCard>
-				}
-			/>
+		<PageLayout
+			header={ <PageHeader title={ __( 'Deployments' ) } /> }
+			callout={ showIneligiblePlanCallout && callout }
+		>
+			<DataViewsCard>
+				<></>
+			</DataViewsCard>
 		</PageLayout>
 	);
 }

@@ -18,8 +18,12 @@ export function CalloutOverlay( { showCallout, callout, main }: CalloutOverlayPr
 			<VStack className="dashboard-callout-overlay" alignment="center">
 				{ callout }
 			</VStack>
-			{ /* The inert attribute is too new for our version of React to understand */ }
-			<div ref={ ( el ) => el?.setAttribute( 'inert', '' ) }>{ main }</div>
+			<div
+				// @ts-expect-error The inert attribute is too new for our version of React to understand.
+				inert="true"
+			>
+				{ main }
+			</div>
 		</>
 	);
 }
