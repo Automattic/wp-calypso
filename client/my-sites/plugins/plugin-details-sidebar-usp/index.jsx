@@ -5,6 +5,11 @@ import styled from '@emotion/styled';
 import { Fragment } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
+const PLUGIN_DETAILS_LINK_TYPES = {
+	NEW_TAB: 'NewTab',
+	HELP_CENTER: 'HelpCenter',
+};
+
 const Container = styled( FoldableCard )`
 	display: flex;
 	flex-direction: column;
@@ -114,10 +119,10 @@ const PluginDetailsSidebarUSP = ( {
 				links.map( ( link, idx ) => {
 					const { openIn, label, ...linkProps } = link;
 					let LinkComponent;
-					if ( openIn === 'NewTab' ) {
+					if ( openIn === PLUGIN_DETAILS_LINK_TYPES.NEW_TAB ) {
 						LinkComponent = ExternalLink;
 						linkProps.icon = true;
-					} else if ( openIn === 'HelpCenter' ) {
+					} else if ( openIn === PLUGIN_DETAILS_LINK_TYPES.HELP_CENTER ) {
 						LinkComponent = StyledInlineSupportLink;
 					} else {
 						LinkComponent = Link;
@@ -134,4 +139,5 @@ const PluginDetailsSidebarUSP = ( {
 	);
 };
 
+export { PLUGIN_DETAILS_LINK_TYPES };
 export default PluginDetailsSidebarUSP;

@@ -11,7 +11,9 @@ import { useSelector } from 'react-redux';
 import './style.scss';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
-import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
+import PluginDetailsSidebarUSP, {
+	PLUGIN_DETAILS_LINK_TYPES,
+} from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -55,19 +57,19 @@ const PluginDetailsSidebar = ( {
 		{
 			supportContext: 'general-support-options',
 			label: translate( 'How to get help!' ),
-			openIn: 'HelpCenter',
+			openIn: PLUGIN_DETAILS_LINK_TYPES.HELP_CENTER,
 		},
 		{
 			href: localizeUrl( 'https://automattic.com/privacy/' ),
 			label: translate( 'See privacy policy' ),
-			openIn: 'NewTab',
+			openIn: PLUGIN_DETAILS_LINK_TYPES.NEW_TAB,
 		},
 	];
 	documentation_url &&
 		supportLinks.unshift( {
 			href: documentation_url,
 			label: translate( 'View documentation' ),
-			openIn: 'NewTab',
+			openIn: PLUGIN_DETAILS_LINK_TYPES.NEW_TAB,
 		} );
 
 	const isPremiumVersionAvailable = !! premium_slug;
@@ -139,7 +141,11 @@ const PluginDetailsSidebar = ( {
 						'Take a look at the posibilities of this plugin before your commit.'
 					) }
 					links={ [
-						{ href: { demo_url }, label: translate( 'View live demo' ), openIn: 'NewTab' },
+						{
+							href: { demo_url },
+							label: translate( 'View live demo' ),
+							openIn: PLUGIN_DETAILS_LINK_TYPES.NEW_TAB,
+						},
 					] }
 					first
 				/>
