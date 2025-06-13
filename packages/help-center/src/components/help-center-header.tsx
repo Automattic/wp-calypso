@@ -132,7 +132,12 @@ const ChatEllipsisMenu = () => {
 					) }
 				</div>
 			</button>
-			<button tabIndex={ 0 } onClick={ toggleSoundNotifications }>
+			<button
+				tabIndex={ 0 }
+				onClick={ toggleSoundNotifications }
+				aria-pressed={ !! areSoundNotificationsEnabled }
+				aria-label={ __( 'Notification sound', __i18n_text_domain__ ) }
+			>
 				<ToggleControl
 					className="conversation-menu__notification-toggle"
 					label={ __( 'Notification sound', __i18n_text_domain__ ) }
