@@ -80,7 +80,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 			return (
 				<Notice>
 					{ __(
-						"Clients can't access the WordPress.com Help Center or hosting features on development sites. You may configure access after the site is launched."
+						'Clients can’t access the WordPress.com Help Center or hosting features on development sites. You may configure access after the site is launched.'
 					) }
 				</Notice>
 			);

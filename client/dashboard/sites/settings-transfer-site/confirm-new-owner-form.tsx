@@ -88,7 +88,7 @@ export function ConfirmNewOwnerForm( {
 					<Text lineHeight="20px">
 						{ createInterpolateElement(
 							__(
-								"Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
+								'Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner’s email below, or choose an existing user to start the transfer process.'
 							),
 							{
 								siteSlug: <strong>{ site.slug }</strong>,

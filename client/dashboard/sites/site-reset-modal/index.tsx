@@ -48,7 +48,7 @@ function InProgressContent( { progress }: { progress: number | undefined } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<ProgressBar className="reset-site-modal-progress-bar" value={ progressValue } />
-			<Text>{ __( "We're resetting your site. We'll email you once it's ready." ) }</Text>
+			<Text>{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }</Text>
 		</VStack>
 	);
 }
@@ -107,7 +107,7 @@ function SiteResetContent( {
 				{ createInterpolateElement(
 					/* translators: <siteDomain />: site domain */
 					__(
-						"Resetting <siteDomain /> will remove all of its content but keep the site and its URL up and running. You'll also lose any modifications you've made to your current theme. This cannot be undone."
+						'Resetting <siteDomain /> will remove all of its content but keep the site and its URL up and running. You’ll also lose any modifications you’ve made to your current theme. This cannot be undone.'
 					),
 					{
 						siteDomain: <strong>{ siteDomain }</strong>,

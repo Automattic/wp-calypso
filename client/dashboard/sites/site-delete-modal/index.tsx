@@ -50,7 +50,7 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	const renderWarningContent = () => {
 		if ( isAtomicRemovalInProgress ) {
 			return __(
-				"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
+				'We are still in the process of removing your previous plan. Please check back in a few minutes and you’ll be able to delete your site.'
 			);
 		}
 
