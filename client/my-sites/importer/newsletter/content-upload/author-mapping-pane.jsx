@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { verse, page, file } from '@wordpress/icons';
@@ -146,8 +147,12 @@ class AuthorMappingPane extends PureComponent {
 		}
 
 		const formattedTypes = fileTypes.map( ( [ type, count ] ) => {
+			/* translators: %(count)d is the number of files, %(type)s is the file extension (e.g. "avif", "svg") */
 			return translate( '%(count)d .%(type)s image', {
-				args: { count, type },
+				args: {
+					count: formatNumber( count ),
+					type,
+				},
 				count,
 			} );
 		} );
@@ -161,6 +166,7 @@ class AuthorMappingPane extends PureComponent {
 		);
 
 		if ( formattedTypes.length === 1 ) {
+			/* translators: %(files)s is a formatted string like "3 .avif images". {{learnMoreLink}} is a link to the documentation */
 			return translate(
 				'We were unable to import %(files)s. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 				{
@@ -173,6 +179,8 @@ class AuthorMappingPane extends PureComponent {
 		}
 
 		const lastType = formattedTypes.pop();
+		/* translators: %(files)s is a comma-separated list of file types (e.g. "3 .avif images, 1 .svg image"),
+		   %(lastFile)s is the last file type in the list. {{learnMoreLink}} is a link to the documentation */
 		return translate(
 			'We were unable to import %(files)s and %(lastFile)s. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 			{
