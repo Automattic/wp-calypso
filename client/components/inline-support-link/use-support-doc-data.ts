@@ -5,14 +5,9 @@ import type { ContextLinks, SupportDocData } from './types';
 import type { HelpCenterDispatch } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
-
 declare global {
 	interface Window {
-		wp: {
-			data: {
-				dispatch: ( store: string ) => HelpCenterDispatch[ 'dispatch' ];
-			};
-		};
+		wp: undefined | Record< string, any >;
 	}
 }
 
