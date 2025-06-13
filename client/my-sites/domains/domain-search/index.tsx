@@ -96,7 +96,11 @@ type DomainSearchProps = {
 		rootVendor?: string
 	) => void;
 	recordRemoveDomainButtonClick: ( domainName: string ) => void;
-	recordUseYourDomainButtonClick: ( section: string ) => void;
+	recordUseYourDomainButtonClick: (
+		section: string,
+		source: string | null,
+		flowName: string
+	) => void;
 	isSiteOnFreePlan?: boolean;
 	isSiteOnMonthlyPlan: boolean;
 	isDomainUpsell: boolean;
@@ -442,7 +446,9 @@ class DomainSearch extends Component< DomainSearchProps > {
 							selectedSite={ selectedSite }
 							recordAddDomainButtonClick={ this.props.recordAddDomainButtonClick }
 							recordRemoveDomainButtonClick={ this.props.recordRemoveDomainButtonClick }
-							recordUseYourDomainButtonClick={ this.props.recordUseYourDomainButtonClick }
+							recordUseYourDomainButtonClick={ ( section: string ) =>
+								this.props.recordUseYourDomainButtonClick( section, null, 'domains' )
+							}
 							submitDomainStepSelection={ this.props.submitDomainStepSelection }
 							designType={ this.props.designType }
 							setDesignType={ this.props.setDesignType }

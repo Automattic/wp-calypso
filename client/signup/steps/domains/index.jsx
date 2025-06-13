@@ -1304,7 +1304,7 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getAnalyticsSection() {
-		return this.props.analyticsSection ?? this.props.isDomainOnly ? 'domain-first' : 'signup';
+		return this.props.analyticsSection ?? ( this.props.isDomainOnly ? 'domain-first' : 'signup' );
 	}
 
 	getContentColumns() {
