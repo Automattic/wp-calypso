@@ -20,7 +20,7 @@ interface UseDuplicateReportFormDataReturn {
 	setStatsCheckedItems: ( value: BuildReportCheckedItemsState ) => void;
 	isLoading: boolean;
 	isDuplicating: boolean;
-	error: boolean;
+	error: Error | null;
 }
 
 export const useDuplicateReportFormData = (
