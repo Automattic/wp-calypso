@@ -211,7 +211,8 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	position: relative;
 
 	&:hover > .x-dropdown-content,
-	&:focus-within > .x-dropdown-content {
+	&:focus-within > .x-dropdown-content,
+	.x-dropdown-content.is-keyboard-open {
 		opacity: 1;
 		pointer-events: all;
 		transform: translateY(0) scale(1);
@@ -463,8 +464,8 @@ $x-dropdown-item-line-height: 19px;
 
 .x-dropdown-content {
 	z-index: 901;
-	position: absolute; /* 1 */
-	top: 55px; /* 1 */
+	position: absolute;
+	top: 55px;
 	padding: 12px 0;
 	opacity: 0;
 	left: -60px;
@@ -476,12 +477,6 @@ $x-dropdown-item-line-height: 19px;
 	transition: all 150ms cubic-bezier(0.1, 0.6, 0.2, 1);
 	transform: translateY(-6px) scale(0.9);
 	transform-origin: 29px 0;
-
-	&[aria-hidden="false"] { /* 2 */
-		opacity: 1;
-		pointer-events: all;
-		transform: translateY(0) scale(1);
-	}
 
 	ul {
 		@extend %x-list;

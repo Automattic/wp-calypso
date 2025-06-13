@@ -1,48 +1,54 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
 export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isKeyboardOpen, setIsKeyboardOpen ] = useState( false );
 	const dropdownRef = useRef< HTMLDivElement | null >( null );
+	const buttonRef = useRef< HTMLButtonElement | null >( null );
+
+	useEffect( () => {
+		const handleClick = ( event: MouseEvent ) => {
+			if (
+				buttonRef.current &&
+				! buttonRef.current.contains( event.target as Node ) &&
+				dropdownRef.current &&
+				! dropdownRef.current.contains( event.target as Node )
+			) {
+				setIsKeyboardOpen( false );
+				buttonRef.current.blur();
+			}
+		};
+
+		document.addEventListener( 'click', handleClick );
+		return () => {
+			document.removeEventListener( 'click', handleClick );
+		};
+	}, [] );
 
 	const handleFocus = () => {
-		if ( dropdownRef.current ) {
-			dropdownRef.current.setAttribute( 'aria-hidden', 'false' );
-			setIsOpen( true );
-		}
+		setIsKeyboardOpen( true );
 	};
 
-	const handleBlur = ( event: React.FocusEvent< HTMLButtonElement > ) => {
-		const relatedTarget = event.relatedTarget;
-		if (
-			relatedTarget instanceof Node &&
-			! event.currentTarget.parentElement?.contains( relatedTarget )
-		) {
-			if ( dropdownRef.current ) {
-				dropdownRef.current.setAttribute( 'aria-hidden', 'true' );
-				setIsOpen( false );
-			}
-		}
+	const handleBlur = () => {
+		setIsKeyboardOpen( false );
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
-			setIsOpen( ! isOpen );
-			if ( dropdownRef.current ) {
-				dropdownRef.current.setAttribute( 'aria-hidden', isOpen ? 'true' : 'false' );
-			}
+			setIsKeyboardOpen( ! isKeyboardOpen );
 		}
 	};
 
 	return (
 		<>
 			<button
+				ref={ buttonRef }
 				role="menuitem"
 				className={ `x-nav-link x-link ${ className || '' }` }
 				aria-haspopup="true"
-				aria-expanded={ isOpen }
+				aria-expanded={ isKeyboardOpen }
 				data-dropdown-trigger={ content }
 				tabIndex={ 0 }
 				onFocus={ handleFocus }
@@ -53,11 +59,10 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 			</button>
 			<div
 				ref={ dropdownRef }
-				className="x-dropdown-content"
+				className={ `x-dropdown-content ${ isKeyboardOpen ? 'is-keyboard-open' : '' }` }
 				data-dropdown-name={ content }
 				role="menu"
 				aria-label={ `${ content } submenu` }
-				aria-hidden="true"
 			></div>
 		</>
 	);
