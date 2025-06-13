@@ -15,7 +15,7 @@ export default function useOptionLabels() {
 
 	return {
 		[ MAIN_STAT_TYPE ]: {
-			tabLabel: translate( 'Post & pages' ),
+			tabLabel: translate( 'Posts & pages' ),
 			mainItemLabel: translate( 'Posts & pages' ),
 			analyticsId: 'posts',
 		},
