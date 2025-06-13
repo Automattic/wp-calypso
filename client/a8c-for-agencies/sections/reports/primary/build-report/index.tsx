@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	Button,
 	SelectControl,
@@ -19,9 +20,12 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { A4A_REPORTS_LINK } from '../../constants';
+import { useDispatch } from 'calypso/state';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { A4A_REPORTS_LINK, A4A_REPORTS_DASHBOARD_LINK } from '../../constants';
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
+import useSendReportMutation from '../../hooks/use-send-report-mutation';
 import { formatDate } from '../../lib/format-date';
 import type { BuildReportCheckedItemsState } from '../../types';
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
@@ -30,6 +34,7 @@ import './style.scss';
 
 const BuildReport = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const availableTimeframes = useMemo(
 		() => [
@@ -66,7 +71,7 @@ const BuildReport = () => {
 		setSelectedSite,
 		setClientEmail,
 		setCustomIntroText,
-		setSendMeACopy,
+		setSendCopyToTeam,
 		setTeammateEmails,
 		setStartDate,
 		setEndDate,
@@ -76,13 +81,35 @@ const BuildReport = () => {
 		error: duplicateError,
 	} = useDuplicateReportFormData( availableTimeframes, statsOptions );
 
+	// Mutation hook for sending reports
+	const sendReportMutation = useSendReportMutation( {
+		onSuccess: () => {
+			dispatch(
+				successNotice(
+					translate( 'Report queued successfully! Your client will receive it shortly.' ),
+					{ duration: 5000, displayOnNextPage: true, id: 'send-report-success' }
+				)
+			);
+			// Redirect to reports dashboard
+			page( A4A_REPORTS_DASHBOARD_LINK );
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice( error?.message || translate( 'Failed to send report. Please try again.' ), {
+					duration: 8000,
+					id: 'send-report-error',
+				} )
+			);
+		},
+	} );
+
 	const {
 		selectedSite,
 		selectedTimeframe,
 		startDate,
 		endDate,
 		clientEmail,
-		sendMeACopy,
+		sendCopyToTeam,
 		teammateEmails,
 		customIntroText,
 		statsCheckedItems,
@@ -142,6 +169,10 @@ const BuildReport = () => {
 		setShowValidationErrors( false );
 		setCurrentStep( ( prev ) => prev - 1 );
 	}, [] );
+
+	const handleSendReport = useCallback( () => {
+		sendReportMutation.mutate( formData );
+	}, [ sendReportMutation, formData ] );
 
 	const handleStep2CheckboxChange = useCallback(
 		( groupKey: 'stats', itemName: string ) => {
@@ -305,11 +336,11 @@ const BuildReport = () => {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ translate( 'Also send to your team' ) }
-							checked={ sendMeACopy }
-							onChange={ setSendMeACopy }
+							checked={ sendCopyToTeam }
+							onChange={ setSendCopyToTeam }
 							disabled={ isDuplicateLoading }
 						/>
-						{ sendMeACopy && (
+						{ sendCopyToTeam && (
 							<div>
 								<TextControl
 									__next40pxDefaultSize
@@ -413,8 +444,8 @@ const BuildReport = () => {
 		isEndDatePickerOpen,
 		clientEmail,
 		setClientEmail,
-		sendMeACopy,
-		setSendMeACopy,
+		sendCopyToTeam,
+		setSendCopyToTeam,
 		teammateEmails,
 		setTeammateEmails,
 		customIntroText,
@@ -431,7 +462,11 @@ const BuildReport = () => {
 		() => (
 			<div className="build-report__actions">
 				{ currentStep > 1 && (
-					<Button variant="secondary" onClick={ handlePrevStep }>
+					<Button
+						variant="secondary"
+						onClick={ handlePrevStep }
+						disabled={ sendReportMutation.isPending }
+					>
 						{ translate( 'Back' ) }
 					</Button>
 				) }
@@ -441,13 +476,28 @@ const BuildReport = () => {
 					</Button>
 				) }
 				{ currentStep === 3 && (
-					<Button variant="primary" onClick={ () => alert( 'Schedule and Send clicked' ) }>
-						{ translate( 'Send to client now' ) }
+					<Button
+						variant="primary"
+						onClick={ handleSendReport }
+						isBusy={ sendReportMutation.isPending }
+						disabled={ sendReportMutation.isPending }
+					>
+						{ sendReportMutation.isPending
+							? translate( 'Sending…' )
+							: translate( 'Send to client now' ) }
 					</Button>
 				) }
 			</div>
 		),
-		[ currentStep, handlePrevStep, translate, handleNextStep, isDuplicateLoading ]
+		[
+			currentStep,
+			handlePrevStep,
+			translate,
+			handleNextStep,
+			isDuplicateLoading,
+			handleSendReport,
+			sendReportMutation.isPending,
+		]
 	);
 
 	return (

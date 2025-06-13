@@ -26,6 +26,7 @@ const SelectSiteModal = ( {
 			onSiteSelect( {
 				blogId: selectedSite.rawSite.blog_id,
 				domain: selectedSite.site,
+				managedSiteId: selectedSite.id,
 			} );
 			onClose();
 		}

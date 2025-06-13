@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import useFetchReportById from './use-fetch-report-by-id';
-import type { BuildReportFormData, BuildReportCheckedItemsState } from '../types';
+import type {
+	BuildReportFormData,
+	BuildReportCheckedItemsState,
+	ReportFormAPIResponse,
+} from '../types';
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
 interface UseDuplicateReportFormDataReturn {
@@ -13,7 +17,7 @@ interface UseDuplicateReportFormDataReturn {
 	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
 	setClientEmail: ( value: string ) => void;
 	setCustomIntroText: ( value: string ) => void;
-	setSendMeACopy: ( value: boolean ) => void;
+	setSendCopyToTeam: ( value: boolean ) => void;
 	setTeammateEmails: ( value: string ) => void;
 	setStartDate: ( value: string | undefined ) => void;
 	setEndDate: ( value: string | undefined ) => void;
@@ -34,7 +38,11 @@ export const useDuplicateReportFormData = (
 	const sourceId = getQueryArg( window.location.href, 'sourceId' ) as unknown as number;
 	const isDuplicating = Boolean( sourceId );
 
-	const { data, isLoading, error } = useFetchReportById( isDuplicating ? sourceId : null );
+	const {
+		data: reportDetails,
+		isLoading,
+		error,
+	} = useFetchReportById( isDuplicating ? sourceId : null );
 
 	// Initialize default values
 	const today = new Date();
@@ -48,7 +56,7 @@ export const useDuplicateReportFormData = (
 	const [ selectedSite, setSelectedSite ] = useState< A4ASelectSiteItem | null >( null );
 	const [ clientEmail, setClientEmail ] = useState( '' );
 	const [ customIntroText, setCustomIntroText ] = useState( '' );
-	const [ sendMeACopy, setSendMeACopy ] = useState( false );
+	const [ sendCopyToTeam, setSendCopyToTeam ] = useState( false );
 	const [ teammateEmails, setTeammateEmails ] = useState( '' );
 	const [ startDate, setStartDate ] = useState< string | undefined >(
 		yesterday.toISOString().split( 'T' )[ 0 ]
@@ -61,12 +69,13 @@ export const useDuplicateReportFormData = (
 	);
 
 	const findSiteById = useCallback(
-		( siteId: number ): A4ASelectSiteItem | null => {
-			const foundSite = sites.find( ( site ) => site?.ID === siteId );
+		( reportData: ReportFormAPIResponse ): A4ASelectSiteItem | null => {
+			const foundSite = sites.find( ( site ) => site?.ID === reportData.blog_id );
 			if ( foundSite ) {
 				return {
 					blogId: foundSite.ID,
 					domain: foundSite.domain,
+					managedSiteId: reportData.managed_site_id,
 				};
 			}
 			return null;
@@ -74,7 +83,7 @@ export const useDuplicateReportFormData = (
 		[ sites ]
 	);
 
-	const reportData = data?.form_data;
+	const reportData = reportDetails?.data;
 
 	// Populate form data when report data is fetched
 	useEffect( () => {
@@ -82,12 +91,12 @@ export const useDuplicateReportFormData = (
 			return;
 		}
 
-		const site = findSiteById( reportData.blog_id );
+		const site = findSiteById( reportData );
 		setSelectedSite( site );
 		setSelectedTimeframe( reportData.timeframe );
-		setClientEmail( reportData.client_email?.join( ', ' ) || '' );
+		setClientEmail( reportData.client_emails?.join( ', ' ) || '' );
 		setCustomIntroText( reportData.custom_intro_text );
-		setSendMeACopy( reportData.send_copy_to_team );
+		setSendCopyToTeam( reportData.send_copy_to_team );
 		setTeammateEmails( reportData.teammate_emails?.join( ', ' ) || '' );
 		setStartDate( reportData.start_date );
 		setEndDate( reportData.end_date );
@@ -100,7 +109,7 @@ export const useDuplicateReportFormData = (
 		clientEmail,
 		startDate,
 		endDate,
-		sendMeACopy,
+		sendCopyToTeam,
 		teammateEmails,
 		customIntroText,
 		statsCheckedItems,
@@ -112,7 +121,7 @@ export const useDuplicateReportFormData = (
 		setSelectedSite,
 		setClientEmail,
 		setCustomIntroText,
-		setSendMeACopy,
+		setSendCopyToTeam,
 		setTeammateEmails,
 		setStartDate,
 		setEndDate,

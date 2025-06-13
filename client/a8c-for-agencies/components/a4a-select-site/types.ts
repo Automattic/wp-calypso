@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 export type A4ASelectSiteItem = {
 	blogId: number;
 	domain: string;
+	managedSiteId: number;
 };
 
 export interface A4ASelectSiteProps {

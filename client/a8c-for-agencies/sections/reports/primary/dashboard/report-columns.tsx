@@ -36,10 +36,11 @@ export const ReportStatusColumn = ( { status }: { status: 'sent' | 'pending' | '
 	return <StatusBadge statusProps={ { children: config.text, type: config.type as BadgeType } } />;
 };
 
-export const ReportDateColumn = ( { date }: { date: string | null } ) => {
+export const ReportDateColumn = ( { date }: { date: number | null } ) => {
 	if ( ! date ) {
 		return <Gridicon icon="minus" />;
 	}
 
-	return <FormattedDate date={ date } format="DD MMM YYYY" />;
+	const dateObj = new Date( date * 1000 );
+	return <FormattedDate date={ dateObj } format="DD MMM YYYY HH:mm" />;
 };

@@ -1,9 +1,9 @@
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
 export interface ReportFormData {
-	blog_id: number;
+	managed_site_id: number;
 	timeframe: string;
-	client_email: string[];
+	client_emails: string[];
 	start_date?: string;
 	end_date?: string;
 	send_copy_to_team: boolean;
@@ -11,12 +11,16 @@ export interface ReportFormData {
 	custom_intro_text: string;
 	stats_items: BuildReportCheckedItemsState;
 }
+
+export interface ReportFormAPIResponse extends ReportFormData {
+	managed_site_url: string;
+	blog_id: number;
+}
 export interface Report {
 	id: string;
-	site: string;
 	status: 'sent' | 'error' | 'pending';
-	created_at: string;
-	form_data: ReportFormData;
+	created_at: number;
+	data: ReportFormAPIResponse;
 }
 
 export interface SiteReports {
@@ -39,7 +43,7 @@ export type BuildReportFormData = {
 	clientEmail: string;
 	startDate?: string;
 	endDate?: string;
-	sendMeACopy: boolean;
+	sendCopyToTeam: boolean;
 	teammateEmails: string;
 	customIntroText: string;
 	statsCheckedItems: BuildReportCheckedItemsState;
