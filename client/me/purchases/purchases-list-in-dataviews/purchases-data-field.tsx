@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { Fields } from '@wordpress/dataviews';
-import { LocalizeProps } from 'i18n-calypso';
+import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
@@ -401,7 +401,12 @@ export function getMembershipsFieldDefinitions( {
 		},
 		{
 			id: 'description',
-			label: translate( 'Product Description' ),
+			label: fixMe( {
+				text: 'Product Description',
+				newCopy: translate( 'Product Description' ),
+				oldCopy: translate( 'Description' ),
+				translationOptions: { textOnly: true },
+			} ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
