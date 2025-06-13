@@ -107,8 +107,9 @@ export const useGetCombinedChat = (
 				} );
 			} catch ( error ) {
 				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
-					conversationId,
-					odieId,
+					conversation_id: conversationId,
+					odie_id: odieId,
+					error: error instanceof Error ? error.message : String( error ),
 				} );
 
 				startNewInteraction( {
@@ -128,6 +129,7 @@ export const useGetCombinedChat = (
 		canConnectToZendesk,
 		getZendeskConversation,
 		startNewInteraction,
+		isLoadingCanConnectToZendesk,
 	] );
 
 	return { mainChatState, setMainChatState };

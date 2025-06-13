@@ -11,7 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { siteOwnerTransferMutation } from '../../app/queries';
+import { siteOwnerTransferMutation } from '../../app/queries/site-owner-transfer';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import type { Site } from '../../data/types';
@@ -61,13 +61,11 @@ const List = ( { title, children }: { title: string; children: React.ReactNode }
 };
 
 export function StartSiteTransferForm( {
-	siteSlug,
 	site,
 	newOwnerEmail,
 	onSubmit,
 	onBack,
 }: {
-	siteSlug: string;
 	site: Site;
 	newOwnerEmail: string;
 	onSubmit: () => void;
@@ -79,13 +77,13 @@ export function StartSiteTransferForm( {
 		accept_undone: false,
 	} );
 
-	const mutation = useMutation( siteOwnerTransferMutation( siteSlug ) );
+	const mutation = useMutation( siteOwnerTransferMutation( site.ID ) );
 
 	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
-	const renderSiteSlug = () => <strong>{ siteSlug }</strong>;
+	const renderSiteSlug = () => <strong>{ site.slug }</strong>;
 
 	const renderNewOwnerEmail = () => <strong>{ newOwnerEmail }</strong>;
 

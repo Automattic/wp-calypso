@@ -1,5 +1,6 @@
-import { Gridicon, Popover } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Popover } from '@automattic/components';
+import { Button, Icon } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
 import usePopoverToggle from 'calypso/landing/subscriptions/hooks/use-popover-toggle';
@@ -31,7 +32,7 @@ const SubscriptionsEllipsisMenu = ( {
 				onClick={ onToggle }
 				ref={ buttonRef }
 				title={ toggleTitle }
-				icon={ <Gridicon icon="ellipsis" size={ 24 } /> }
+				icon={ <Icon icon={ moreVertical } size={ 24 } /> }
 			/>
 
 			<Popover

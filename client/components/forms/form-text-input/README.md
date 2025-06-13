@@ -40,3 +40,12 @@ Whether the input should be rendered with valid (success) styling.
 </table>
 
 Whether the value should be selected when the input is focused.
+
+### `hasCoreStyles`
+
+<table>
+	<tr><td>Type</td><td>Boolean</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Whether the input should be styled like a `@wordpress-components` text input.

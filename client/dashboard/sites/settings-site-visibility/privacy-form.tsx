@@ -27,7 +27,7 @@ const fields: Field< SiteSettings >[] = [
 				label: __( 'Coming soon' ),
 				value: 'coming-soon',
 				description: __(
-					'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+					'Your site is hidden from visitors behind a “Coming Soon” notice until it is ready for viewing.'
 				),
 			},
 			{

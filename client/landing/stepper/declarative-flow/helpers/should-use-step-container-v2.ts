@@ -1,4 +1,3 @@
-import configApi from '@automattic/calypso-config';
 import {
 	SITE_SETUP_FLOW,
 	ONBOARDING_FLOW,
@@ -17,18 +16,4 @@ const FLOWS_USING_STEP_CONTAINER_V2 = [
 
 export const shouldUseStepContainerV2 = ( flow: string ) => {
 	return FLOWS_USING_STEP_CONTAINER_V2.includes( flow );
-};
-
-export const shouldUseStepContainerV2MigrationFlow = ( flow: string ) => {
-	return (
-		configApi.isEnabled( 'onboarding/step-container-v2-migration-flow' ) &&
-		FLOWS_USING_STEP_CONTAINER_V2.includes( flow )
-	);
-};
-
-export const shouldUseStepContainerV2ImportFlow = ( flow: string ) => {
-	return (
-		configApi.isEnabled( 'onboarding/step-container-v2-import-flow' ) &&
-		FLOWS_USING_STEP_CONTAINER_V2.includes( flow )
-	);
 };
