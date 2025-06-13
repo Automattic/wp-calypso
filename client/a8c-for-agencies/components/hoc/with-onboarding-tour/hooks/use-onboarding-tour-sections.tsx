@@ -309,7 +309,7 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Check out Agency Tiers' ),
 							variant: 'secondary',
 							href: A4A_AGENCY_TIER_LINK,
-							onClick: () => onExplore( 'agency_tiers', onClose ),
+							onClick: () => onExplore( 'agency-tiers', onClose ),
 						},
 						{
 							label: translate( 'Next benefit' ),

@@ -142,8 +142,8 @@ export default function BillingDetails() {
 
 					<span className="billing-details__total-label billing-details__cost-label">
 						{ billing.isSuccess &&
-							translate( 'Cost for {{bold}}%(date)s{{/bold}}', {
-								components: { bold: <strong /> },
+							translate( 'Projected cost for {{bold}}%(date)s{{/bold}}', {
+								components: { bold: <strong style={ { whiteSpace: 'nowrap' } } /> },
 								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
 							} ) }
 
@@ -161,8 +161,9 @@ export default function BillingDetails() {
 			{ billing.isSuccess && useDailyPrices && billing.data.products.length > 0 && (
 				<Card compact className="billing-details__footer">
 					<small>
+						*&nbsp;
 						{ translate(
-							'* Estimate of the combined number of full days each license will be active for by the end of the current month, accounting for licenses that were newly issued or revoked.'
+							'The projected billing cost is calculated for each product based on the number of licenses you own for that product multiplied by the number of days each license will have been active for during the current month. This estimate accounts for licenses that were owned for only part of the month because they were issued or revoked within the current month.'
 						) }
 					</small>
 				</Card>

@@ -34,7 +34,7 @@ type StatTypeOptionType = {
 
 const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	period,
-	query,
+	query: queryFromProps,
 	moduleStrings,
 	className,
 	summaryUrl,
@@ -59,6 +59,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 			mainItemLabel: item.mainItemLabel,
 		};
 	} );
+
+	const query = {
+		...queryFromProps,
+		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
+	};
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
@@ -100,11 +105,12 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 
 	// Query both statTypes for the Traffic page module card to avoid loading when switching between controls.
 	// Only query one statType at a time to avoid loading plenty of data for the summary mode.
-	const shouldQuerySubStatType = ! summary || query.viewdType === subStatType;
+	const shouldQueryMainStatType = ! summary || statType === mainStatType;
+	const shouldQuerySubStatType = ! summary || statType === subStatType;
 
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && (
+			{ ! shouldGateStatsModule && siteId && shouldQueryMainStatType && (
 				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
 
