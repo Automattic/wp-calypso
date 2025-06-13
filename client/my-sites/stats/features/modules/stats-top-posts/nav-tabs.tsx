@@ -16,14 +16,14 @@ function NavTabs( { query }: StatsModulePostsProps ) {
 				title: item.tabLabel,
 				className: `stats-navigation__${ key }`,
 				path: getPathWithUpdatedQueryString( {
-					viewdType: key,
+					viewType: key,
 				} ),
 				analyticsId: item.analyticsId,
 			};
 		} );
 	}, [ optionLabels ] );
 
-	const selectedTab = query.viewdType || MAIN_STAT_TYPE;
+	const selectedTab = query.viewType || MAIN_STAT_TYPE;
 
 	return (
 		<TabPanel

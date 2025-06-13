@@ -7,7 +7,7 @@ export const SUB_STAT_TYPE = 'statsArchives';
 export type StatType = typeof MAIN_STAT_TYPE | typeof SUB_STAT_TYPE;
 
 export interface StatsModulePostsProps extends StatsDefaultModuleProps {
-	query: StatsQueryType & { viewdType?: StatType };
+	query: StatsQueryType & { viewType?: StatType };
 }
 
 export default function useOptionLabels() {
