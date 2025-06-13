@@ -109,10 +109,15 @@ export default function useOnboardingTourSections() {
 						),
 					],
 					hint: translate(
-						'{{b}}Pro tip:{{/b}} Sites hosted on Pressable come with Jetpack Complete (a $800+ value per site, annually) at no extra cost.',
+						'{{b}}Pro tip:{{/b}} Sites hosted on Pressable come with Jetpack Complete (a %(valuePerSite)s value per site, annually) at no extra cost.',
 						{
 							components: {
 								b: <b />,
+							},
+							args: {
+								valuePerSite: `${ formatCurrency( 800, 'USD', {
+									stripZeros: true,
+								} ) }+`,
 							},
 						}
 					),
