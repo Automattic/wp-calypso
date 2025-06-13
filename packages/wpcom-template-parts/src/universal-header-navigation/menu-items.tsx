@@ -1,14 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
 export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const dropdownRef = useRef< HTMLDivElement | null >( null );
 
 	const handleFocus = () => {
-		const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
-		if ( dropdown instanceof HTMLElement ) {
-			dropdown.setAttribute( 'aria-hidden', 'false' );
+		if ( dropdownRef.current ) {
+			dropdownRef.current.setAttribute( 'aria-hidden', 'false' );
 			setIsOpen( true );
 		}
 	};
@@ -19,9 +19,8 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 			relatedTarget instanceof Node &&
 			! event.currentTarget.parentElement?.contains( relatedTarget )
 		) {
-			const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
-			if ( dropdown instanceof HTMLElement ) {
-				dropdown.setAttribute( 'aria-hidden', 'true' );
+			if ( dropdownRef.current ) {
+				dropdownRef.current.setAttribute( 'aria-hidden', 'true' );
 				setIsOpen( false );
 			}
 		}
@@ -31,27 +30,36 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			setIsOpen( ! isOpen );
-			const dropdown = document.querySelector( `[data-dropdown-name="${ content }"]` );
-			if ( dropdown instanceof HTMLElement ) {
-				dropdown.setAttribute( 'aria-hidden', isOpen ? 'true' : 'false' );
+			if ( dropdownRef.current ) {
+				dropdownRef.current.setAttribute( 'aria-hidden', isOpen ? 'true' : 'false' );
 			}
 		}
 	};
 
 	return (
-		<button
-			role="menuitem"
-			className={ `x-nav-link x-link ${ className || '' }` }
-			aria-haspopup="true"
-			aria-expanded={ isOpen }
-			data-dropdown-trigger={ content }
-			tabIndex={ 0 }
-			onFocus={ handleFocus }
-			onBlur={ handleBlur }
-			onKeyDown={ handleKeyDown }
-		>
-			{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
-		</button>
+		<>
+			<button
+				role="menuitem"
+				className={ `x-nav-link x-link ${ className || '' }` }
+				aria-haspopup="true"
+				aria-expanded={ isOpen }
+				data-dropdown-trigger={ content }
+				tabIndex={ 0 }
+				onFocus={ handleFocus }
+				onBlur={ handleBlur }
+				onKeyDown={ handleKeyDown }
+			>
+				{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
+			</button>
+			<div
+				ref={ dropdownRef }
+				className="x-dropdown-content"
+				data-dropdown-name={ content }
+				role="menu"
+				aria-label={ `${ content } submenu` }
+				aria-hidden="true"
+			></div>
+		</>
 	);
 };
 
