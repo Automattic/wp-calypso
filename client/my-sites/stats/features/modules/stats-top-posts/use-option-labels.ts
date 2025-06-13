@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import type { StatsDefaultModuleProps, StatsQueryType } from '../types';
 
@@ -11,6 +12,10 @@ export interface StatsModulePostsProps extends StatsDefaultModuleProps {
 }
 
 export function validQueryViewType( statType: StatType = MAIN_STAT_TYPE ) {
+	if ( ! config.isEnabled( 'stats/archive-breakdown' ) ) {
+		return MAIN_STAT_TYPE;
+	}
+
 	return ! [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? MAIN_STAT_TYPE : statType;
 }
 
