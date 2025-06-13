@@ -8,9 +8,11 @@ exports[`TokenField render should render tokens 1`] = `
     <div
       class="token-field__input-container"
     >
-      <span
+      <button
+        aria-label="Deselect foo"
         class="token-field__token"
-        tabindex="-1"
+        tabindex="0"
+        type="button"
       >
         <span
           class="token-field__token-text"
@@ -28,10 +30,12 @@ exports[`TokenField render should render tokens 1`] = `
             xlink:href="gridicons.svg#gridicons-cross-small"
           />
         </svg>
-      </span>
-      <span
+      </button>
+      <button
+        aria-label="Deselect bar"
         class="token-field__token"
-        tabindex="-1"
+        tabindex="0"
+        type="button"
       >
         <span
           class="token-field__token-text"
@@ -49,7 +53,7 @@ exports[`TokenField render should render tokens 1`] = `
             xlink:href="gridicons.svg#gridicons-cross-small"
           />
         </svg>
-      </span>
+      </button>
       <input
         aria-activedescendant="option-undefined"
         aria-controls="options-list"

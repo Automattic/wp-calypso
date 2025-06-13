@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
-import { siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
+import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
+import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canViewSftpSettings, canViewSshSettings } from '../features';
 import type { Site } from '../../data/types';
@@ -16,12 +17,12 @@ export default function SftpSshSettingsSummary( {
 	density?: Density;
 } ) {
 	const { data: sftpUsers } = useQuery( {
-		...siteSftpUsersQuery( site.slug ),
+		...siteSftpUsersQuery( site.ID ),
 		enabled: canViewSftpSettings( site ),
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
-		...siteSshAccessStatusQuery( site.slug ),
+		...siteSshAccessStatusQuery( site.ID ),
 		enabled: canViewSshSettings( site ),
 	} );
 

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
-import { siteDefensiveModeQuery } from '../../app/queries';
+import { siteDefensiveModeSettingsQuery } from '../../app/queries/site-defensive-mode';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canViewDefensiveModeSettings } from '../features';
 import type { Site } from '../../data/types';
@@ -18,7 +18,7 @@ export default function DefensiveModeSettingsSummary( {
 	const canView = canViewDefensiveModeSettings( site );
 
 	const { data } = useQuery( {
-		...siteDefensiveModeQuery( site.slug ),
+		...siteDefensiveModeSettingsQuery( site.ID ),
 		enabled: canView,
 	} );
 

@@ -1,5 +1,4 @@
 import { Button, Gridicon, FormLabel, SelectDropdown } from '@automattic/components';
-import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -22,7 +21,6 @@ interface Props {
 	siteSlug: string | null;
 	title?: string;
 	subTitle?: string;
-	renderHeading?: boolean;
 	submit?: ( dependencies: { platform: ImporterPlatform; url: string } ) => void;
 	getFinalImporterUrl: (
 		siteSlug: string,
@@ -39,9 +37,6 @@ export default function ListStep( props: Props ) {
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const fromSite = urlQueryParams.get( 'from' );
-	const renderHeading = props.renderHeading ?? true;
-	const title = props.title;
-	const subTitle = props.subTitle;
 
 	// We need to remove the wix importer from the primary importers list.
 	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
@@ -73,12 +68,6 @@ export default function ListStep( props: Props ) {
 				</div>
 			) }
 			<div className="list__wrapper">
-				{ renderHeading && (
-					<div className="import__heading import__heading-center">
-						<Title>{ title }</Title>
-						<SubTitle>{ subTitle }</SubTitle>
-					</div>
-				) }
 				<div className="list__importers list__importers-primary">
 					{ primaryListOptions.map( ( x ) => (
 						<Button

@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { isNotAtomicJetpack, isMigrationInProgress } from 'calypso/sites-dashboard/utils';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
+import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ActiveDomainsCard from './active-domains-card';
