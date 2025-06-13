@@ -44,9 +44,13 @@
 		"@wordpress/base-styles": "5.23.0",
 		"@wordpress/compose": "7.23.0",
 		"@wordpress/element": "^6.23.0",
+		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/primitives": "^4.23.0",
-		"clsx": "^2.1.1"
+		"@wordpress/react-i18n": "^4.23.0",
+		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
+		"react-day-picker": "^9.7.0"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1",
