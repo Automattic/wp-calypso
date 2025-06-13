@@ -10,7 +10,21 @@ module.exports = {
 		'plugin/use-logical-properties-and-values': [
 			true,
 			{
-				ignore: [ 'width', 'min-width', 'max-width', 'height', 'min-height', 'max-height' ],
+				ignore: [
+					// Doesn't affect RTL styles
+					'width',
+					'min-width',
+					'max-width',
+					'height',
+					'min-height',
+					'max-height',
+					'margin-top',
+					'margin-bottom',
+					'padding-top',
+					'padding-bottom',
+					'top',
+					'bottom',
+				],
 			},
 		],
 	},
