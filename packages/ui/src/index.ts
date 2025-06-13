@@ -1,1 +1,1 @@
-// TODO
+export { Badge } from './badge';

@@ -2,4 +2,4 @@
 
 ### Enhancements
 
-- `SummaryButton`: Add component.
+- `Badge`: Add component (forked from `@wordpress/components`).
