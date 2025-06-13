@@ -234,7 +234,7 @@ export default function RadioButton( {
 			checked={ checked }
 			hidden={ hidden }
 			hideRadioButton={ hideRadioButton }
-			className={ `radio-button-wrapper${ checked ? ' is-checked' : '' }` }
+			className={ `${ checked ? 'is-checked' : '' }${ ! hideRadioButton ? ' has-highlight' : '' }` }
 			highlighted={ highlighted }
 		>
 			<Radio

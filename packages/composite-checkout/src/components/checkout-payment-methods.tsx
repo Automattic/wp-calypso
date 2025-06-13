@@ -91,15 +91,9 @@ export default function CheckoutPaymentMethods( {
 	}
 	debug( 'rendering paymentMethods', paymentMethods );
 
-	const isCardOnly = paymentMethods.length === 1 && paymentMethods[ 0 ].id === 'card';
-
 	return (
 		<CheckoutPaymentMethodsWrapper
-			className={ joinClasses( [
-				className,
-				'checkout-payment-methods',
-				isCardOnly ? 'is-card-only' : '',
-			] ) }
+			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
 		>
 			<div>
 				{ paymentMethods.map( ( method ) => (

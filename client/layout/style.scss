@@ -506,9 +506,8 @@ body.is-mobile-app-view {
 			color: #1d4fc4;;
 		}
 
-		.checkout-payment-methods.is-card-only .radio-button-wrapper {
+		.checkout-payment-methods .is-checked:not( .has-highlight ) {
 			border: #c3c4c7 1px solid;
-			border-radius: 3px;
 		}
 	}
 
