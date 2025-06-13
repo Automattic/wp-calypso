@@ -1,12 +1,5 @@
 import { Page } from 'playwright';
 
-const selectors = {
-	// Inputs
-	emailInput: 'input[id="login_field"]',
-	passwordInput: 'input[id="password"]',
-	codeInput: 'input[name="sms_otp"]',
-};
-
 /**
  * Represents the login screens shown by GitHub.
  */
@@ -59,12 +52,10 @@ export class GitHubLoginPage {
 	 * @param {string} email Username (GitHub) of the user.
 	 */
 	async enterEmail( email: string ): Promise< void > {
-		const locator = this.page.locator( selectors.emailInput );
-		await locator.fill( email );
+		await this.page.getByRole( 'textbox', { name: /username|login/i } ).fill( email );
 
 		// Wait for the password field to be visible
-		const passwordLocator = this.page.locator( selectors.passwordInput );
-		await passwordLocator.waitFor();
+		await this.page.getByRole( 'textbox', { name: /password/i } ).waitFor();
 	}
 
 	/**
@@ -73,8 +64,7 @@ export class GitHubLoginPage {
 	 * @param {string} password Password of the user.
 	 */
 	async enterPassword( password: string ): Promise< void > {
-		const locator = this.page.locator( selectors.passwordInput );
-		await locator.fill( password );
+		await this.page.getByRole( 'textbox', { name: /password/i } ).fill( password );
 	}
 
 	/**
@@ -83,7 +73,6 @@ export class GitHubLoginPage {
 	 * @param {string} code 2FA code of the user.
 	 */
 	async enter2FACode( code: string ): Promise< void > {
-		const locator = this.page.locator( selectors.codeInput );
-		await locator.fill( code );
+		await this.page.getByRole( 'textbox', { name: /code/i } ).fill( code );
 	}
 }
