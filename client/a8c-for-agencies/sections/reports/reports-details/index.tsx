@@ -7,6 +7,8 @@ import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { A4A_REPORTS_BUILD_LINK } from '../constants';
+import DeleteReportConfirmationDialog from '../delete-report-confirmation-dialog';
+import useHandleReportDelete from '../hooks/use-handle-report-delete';
 import ReportsMobileView from './mobile-view';
 import Reports from './reports';
 import type { SiteReports, Report } from '../types';
@@ -26,6 +28,9 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 	const dispatch = useDispatch();
 
 	const [ selectedReportTab, setSelectedReportTab ] = useState( REPORTS_ID );
+	const [ reportForDelete, setReportForDelete ] = useState< Report | null >( null );
+
+	const { handleDeleteReport, isPending: isDeletingReport } = useHandleReportDelete();
 
 	const itemData: ItemData = {
 		title: siteReports.site,
@@ -53,6 +58,15 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 					return report.status !== 'error';
 				},
 			},
+			{
+				id: 'delete-report',
+				label: translate( 'Delete report' ),
+				callback( items: Report[] ) {
+					const report = items[ 0 ];
+					dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_button_click' ) );
+					setReportForDelete( report );
+				},
+			},
 		],
 		[ dispatch, translate ]
 	);
@@ -76,12 +90,26 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 	);
 
 	return (
-		<ItemView
-			className="reports-details-items"
-			itemData={ itemData }
-			closeItemView={ closeSitePreviewPane }
-			features={ features }
-			hideNavIfSingleTab
-		/>
+		<>
+			<ItemView
+				className="reports-details-items"
+				itemData={ itemData }
+				closeItemView={ closeSitePreviewPane }
+				features={ features }
+				hideNavIfSingleTab
+			/>
+			{ reportForDelete && (
+				<DeleteReportConfirmationDialog
+					report={ reportForDelete }
+					onClose={ () => setReportForDelete( null ) }
+					onConfirm={ () => {
+						handleDeleteReport( reportForDelete, () => {
+							setReportForDelete( null );
+						} );
+					} }
+					isLoading={ isDeletingReport }
+				/>
+			) }
+		</>
 	);
 }
