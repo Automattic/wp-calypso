@@ -43,6 +43,10 @@
 
 	.migrate-subscribers-modal__form--container {
 		width: 100%;
+
+		.is-group-jetpack-cloud & p {
+			font-size: 1rem;
+		}
 	}
 
 	.migrate-subscriber__form-cancel-btn {
