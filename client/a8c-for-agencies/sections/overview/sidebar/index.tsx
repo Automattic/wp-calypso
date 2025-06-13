@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import OverviewSidebarAgencyTier from './agency-tier';
 import OverviewSidebarContactSupport from './contact-support';
@@ -19,7 +19,7 @@ const OverviewSidebar = () => {
 	const dispatch = useDispatch();
 
 	const onProgramIncentiveClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'a4a_overview_program_incentive_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_overview_program_incentive_click' ) );
 	}, [ dispatch ] );
 
 	return (
