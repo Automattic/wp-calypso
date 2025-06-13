@@ -1,4 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -6,49 +5,19 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
-import { siteLaunchMutation } from '../../app/queries/site';
-import type { Site } from '../../data/types';
 
 interface AgencyDevelopmentSiteLaunchModalProps {
-	site: Site;
+	isLaunching: boolean;
 	onClose: () => void;
+	onLaunch: () => void;
 }
 
 export default function AgencyDevelopmentSiteLaunchModal( {
-	site,
+	isLaunching,
 	onClose,
+	onLaunch,
 }: AgencyDevelopmentSiteLaunchModalProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const [ isLaunching, setIsLaunching ] = useState( false );
-	const mutation = useMutation( siteLaunchMutation( site.ID ) );
-
-	const handleLaunch = () => {
-		setIsLaunching( true );
-		mutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice(
-					__( 'Your site has been launched; now you can share it with the world!' ),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to launch site' ), {
-					type: 'snackbar',
-				} );
-			},
-			onSettled: () => {
-				setIsLaunching( false );
-				onClose();
-			},
-		} );
-	};
-
 	return (
 		<Modal title={ __( 'You’re about to launch this website' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
@@ -59,7 +28,7 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 					<Button disabled={ isLaunching } onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary" isBusy={ isLaunching } onClick={ handleLaunch }>
+					<Button variant="primary" isBusy={ isLaunching } onClick={ onLaunch }>
 						{ __( 'Launch site' ) }
 					</Button>
 				</HStack>

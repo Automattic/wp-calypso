@@ -16,6 +16,7 @@ export const SITE_FIELDS = [
 	'is_private',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
+	'lang',
 	'launch_status',
 	'site_migration',
 	'site_owner',
@@ -53,6 +54,7 @@ export interface SiteDomain {
 }
 
 export interface SitePlan {
+	product_id: number;
 	product_slug: string;
 	product_name: string;
 	product_name_short: string;
@@ -98,6 +100,7 @@ export interface Site {
 	is_wpcom_atomic: boolean;
 	is_wpcom_staging_site: boolean;
 	is_vip: boolean;
+	lang: string;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;

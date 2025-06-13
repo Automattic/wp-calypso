@@ -51,7 +51,6 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
-import HomeSurvey from '../home-survey';
 
 import './style.scss';
 
@@ -352,7 +351,6 @@ const HomeContent = ( {
 					allDomains={ allDomains }
 				/>
 			) }
-			{ ! celebrateLaunchModalIsOpen && <HomeSurvey /> }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>
 	);
