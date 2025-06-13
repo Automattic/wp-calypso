@@ -102,7 +102,7 @@ const MigrateSubscribersModal = ( {
 							Button: (
 								<InlineSupportLink
 									supportLink={ localizeUrl( migrateSubscribersUrl ) }
-									showIcon={ false }
+									showIcon={ ! supportPostId }
 									supportPostId={ supportPostId }
 								/>
 							),
