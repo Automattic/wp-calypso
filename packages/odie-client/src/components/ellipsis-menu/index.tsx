@@ -59,6 +59,7 @@ export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 					position={ position }
 					context={ popoverContext.current }
 					className={ popoverClasses }
+					focusOnShow
 				>
 					{ children }
 				</PopoverMenu>
