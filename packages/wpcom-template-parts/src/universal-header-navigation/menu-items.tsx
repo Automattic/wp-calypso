@@ -1,43 +1,103 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
+
+// Module-level state to track the currently open dropdown
+let currentOpenDropdown: string | null = null;
+const dropdownInstances = new Set< () => void >();
 
 export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 	const [ isKeyboardOpen, setIsKeyboardOpen ] = useState( false );
 	const dropdownRef = useRef< HTMLDivElement | null >( null );
 	const buttonRef = useRef< HTMLButtonElement | null >( null );
+	const contentString = String( content );
+
+	const closeDropdown = useCallback( () => {
+		setIsKeyboardOpen( false );
+		if ( currentOpenDropdown === contentString ) {
+			currentOpenDropdown = null;
+		}
+		// Remove focus from button when closing
+		if ( buttonRef.current ) {
+			buttonRef.current.blur();
+		}
+	}, [ contentString ] );
 
 	useEffect( () => {
-		const handleClick = ( event: MouseEvent ) => {
+		// Register this dropdown instance
+		dropdownInstances.add( closeDropdown );
+
+		// Global click handler
+		const handleGlobalClick = ( event: MouseEvent ) => {
 			if (
 				buttonRef.current &&
 				! buttonRef.current.contains( event.target as Node ) &&
 				dropdownRef.current &&
 				! dropdownRef.current.contains( event.target as Node )
 			) {
-				setIsKeyboardOpen( false );
-				buttonRef.current.blur();
+				closeDropdown();
 			}
 		};
 
-		document.addEventListener( 'click', handleClick );
+		document.addEventListener( 'click', handleGlobalClick );
+
 		return () => {
-			document.removeEventListener( 'click', handleClick );
+			// Cleanup
+			dropdownInstances.delete( closeDropdown );
+			document.removeEventListener( 'click', handleGlobalClick );
 		};
-	}, [] );
+	}, [ closeDropdown, contentString ] );
 
 	const handleFocus = () => {
+		// Close other dropdowns
+		if ( currentOpenDropdown && currentOpenDropdown !== contentString ) {
+			dropdownInstances.forEach( ( closeOther ) => {
+				if ( closeOther !== closeDropdown ) {
+					closeOther();
+				}
+			} );
+		}
+
+		currentOpenDropdown = contentString;
 		setIsKeyboardOpen( true );
 	};
 
 	const handleBlur = () => {
 		setIsKeyboardOpen( false );
+		if ( currentOpenDropdown === contentString ) {
+			currentOpenDropdown = null;
+		}
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
-			setIsKeyboardOpen( ! isKeyboardOpen );
+
+			if ( ! isKeyboardOpen ) {
+				// Close other dropdowns before opening this one
+				if ( currentOpenDropdown && currentOpenDropdown !== contentString ) {
+					dropdownInstances.forEach( ( closeOther ) => {
+						if ( closeOther !== closeDropdown ) {
+							closeOther();
+						}
+					} );
+				}
+				currentOpenDropdown = contentString;
+				setIsKeyboardOpen( true );
+			} else {
+				closeDropdown();
+			}
+		}
+	};
+
+	const handleMouseEnter = () => {
+		// Close any keyboard-opened dropdowns when hovering over a different menu item
+		if ( currentOpenDropdown && currentOpenDropdown !== contentString ) {
+			dropdownInstances.forEach( ( closeOther ) => {
+				if ( closeOther !== closeDropdown ) {
+					closeOther();
+				}
+			} );
 		}
 	};
 
@@ -54,6 +114,7 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 				onFocus={ handleFocus }
 				onBlur={ handleBlur }
 				onKeyDown={ handleKeyDown }
+				onMouseEnter={ handleMouseEnter }
 			>
 				{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
 			</button>
