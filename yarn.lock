@@ -5899,6 +5899,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gravatar-com/hovercards@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@gravatar-com/hovercards@npm:0.13.0"
+  checksum: 4e11057a0bec726aa282941ac82b7d25f5c29543a973de0f0dbb4adc9c2b1dc3ed8b7ad6ae93caca424f6f7e47cf3e6dad2651f67e4463de5c5f5805c82ea5f2
+  languageName: node
+  linkType: hard
+
 "@gravatar-com/quick-editor@npm:^0.8.0":
   version: 0.8.0
   resolution: "@gravatar-com/quick-editor@npm:0.8.0"
@@ -14592,6 +14599,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@fingerprintjs/fingerprintjs": "npm:3.4.2"
     "@github/webauthn-json": "npm:^2.1.1"
+    "@gravatar-com/hovercards": "npm:^0.13.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
     "@sentry/webpack-plugin": "npm:^1.21.0"
     "@stripe/react-stripe-js": "npm:^2.1.0"

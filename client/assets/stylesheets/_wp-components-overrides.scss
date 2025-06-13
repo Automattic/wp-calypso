@@ -176,8 +176,14 @@
 		--color-blaze-pro-darker: color-mix(in srgb, var(--color-blaze-pro), #000 13%);
 
 		--wp-components-color-accent: var(--color-blaze-pro);
+		--wp-components-color-accent-inverted: var(--studio-black);
 		--wp-components-color-accent-darker-10: var(--color-blaze-pro-darker);
 		--wp-components-color-accent-darker-20: var(--color-blaze-pro-darker);
+	}
+
+	.components-button.is-tertiary {
+		--wp-components-color-accent: var(--studio-gray-60);
+		--wp-components-color-accent-darker-20: var(--studio-gray-80);
 	}
 }
 

@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
@@ -5,6 +6,7 @@ import OnboardingTourBannerAgencyTiers from 'calypso/assets/images/a8c-for-agenc
 import OnboardingTourBannerGrowthCall from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-growth-call.svg';
 import OnboardingTourBannerMarketplace from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-marketplace.svg';
 import OnboardingTourBannerMigrations from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-migrations.svg';
+import OnboardingTourBannerPartnerDirectory from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-partner-directory.svg';
 import OnboardingTourBannerPurchases from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-purchases.svg';
 import OnboardingTourBannerReferrals from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-referrals.svg';
 import OnboardingTourBannerSites from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-sites.svg';
@@ -24,6 +26,7 @@ import {
 	A4A_AGENCY_TIER_LINK,
 	A4A_TEAM_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
 } from '../../../sidebar-menu/lib/constants';
 import useCurrentOnboardingSection from './use-current-onboarding-section';
 
@@ -106,10 +109,15 @@ export default function useOnboardingTourSections() {
 						),
 					],
 					hint: translate(
-						'{{b}}Pro tip:{{/b}} Sites hosted on Pressable come with Jetpack Complete (a $800+ value per site, annually) at no extra cost.',
+						'{{b}}Pro tip:{{/b}} Sites hosted on Pressable come with Jetpack Complete (a %(valuePerSite)s value per site, annually) at no extra cost.',
 						{
 							components: {
 								b: <b />,
+							},
+							args: {
+								valuePerSite: `${ formatCurrency( 800, 'USD', {
+									stripZeros: true,
+								} ) }+`,
 							},
 						}
 					),
@@ -139,7 +147,7 @@ export default function useOnboardingTourSections() {
 					title: translate( 'Buy at a discount or earn commission—your choice!' ),
 					descriptions: [
 						translate(
-							'You now have the freedom to choose how you work with clients. Purchase products and hosting directly and enjoy volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission on products without the billing headaches.'
+							'Our marketplace is a one-stop shop for all of your client hosting and product needs. Enjoy up to 80% off with volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission without the billing headaches.'
 						),
 						translate( 'Did we mention this is a recurring commission?' ),
 					],
@@ -200,7 +208,7 @@ export default function useOnboardingTourSections() {
 							"Send referrals through the marketplace, then head to your referrals dashboard to view total commissions, upcoming payouts, and the status of your clients' products and hosting."
 						),
 						translate(
-							'Have questions about commission rates and eligibility? Check the FAQ right in the Referrals dashboard.'
+							"You'll earn a 20% recurring commission for referring Pressable or WordPress.com hosting, and a 50% recurring commission for referring Woo or Jetpack products."
 						),
 					],
 				},
@@ -235,10 +243,15 @@ export default function useOnboardingTourSections() {
 						),
 					],
 					hint: translate(
-						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000*',
+						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to %(commission)s',
 						{
 							components: {
 								b: <b />,
+							},
+							args: {
+								commission: formatCurrency( 10000, 'USD', {
+									stripZeros: true,
+								} ),
 							},
 						}
 					),
@@ -268,7 +281,10 @@ export default function useOnboardingTourSections() {
 					title: translate( 'Learn. Pitch. Earn.' ),
 					descriptions: [
 						translate(
-							"If you build sites using WooCommerce, you're leaving money on the table by not using WooPayments, Woo's fully-integrated payments solution. "
+							"If you build sites using WooCommerce, you're leaving money on the table by not using WooPayments, Woo's fully-integrated payments solution."
+						),
+						translate(
+							"For any new client stores that you add WooPayments to, you'll earn a 5 BPS recurring commission on store sales."
 						),
 						translate(
 							"We've made it easy for you to learn about WooPayments, copy and paste a pitch to send to your clients, and track your earnings from your referrals all in one place."
@@ -287,6 +303,39 @@ export default function useOnboardingTourSections() {
 							label: translate( 'Next benefit' ),
 							variant: 'primary',
 							onClick: () => onNextBenefit( 'woopayments', onNext ),
+						},
+					];
+				},
+			},
+
+			{
+				id: 'partner-directory',
+				title: translate( 'Partner Directories' ),
+				bannerImage: OnboardingTourBannerPartnerDirectory,
+				isDarkBanner: true,
+				content: {
+					title: translate( 'Get leads from multiple agency directories' ),
+					descriptions: [
+						translate(
+							"By partnering with us, you're eligible to be listed on up to four agency directories across our Woo, Pressable, WordPress.com, and Jetpack sites."
+						),
+						translate(
+							'To get listed on these directories, you have to qualify for our Agency Partner tier and demonstrate expertise with each of the brands that you would like to be listed with.'
+						),
+					],
+				},
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Check out Partner Directories' ),
+							variant: 'secondary',
+							href: A4A_PARTNER_DIRECTORY_LINK,
+							onClick: () => onExplore( 'partner-directory', onClose ),
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => onNextBenefit( 'partner-directory', onNext ),
 						},
 					];
 				},
