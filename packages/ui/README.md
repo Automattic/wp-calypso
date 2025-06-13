@@ -13,7 +13,7 @@ yarn add @automattic/ui
 You will only need to load a single stylesheet for the `@automattic/ui` package (does not require separate RTL styles).
 
 ```js
-import "@automattic/ui/index.css";
+import "@automattic/ui/style.css";
 ```
 
 ## Development Workflow
