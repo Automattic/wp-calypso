@@ -312,6 +312,7 @@ export default function useOnboardingTourSections() {
 				id: 'partner-directory',
 				title: translate( 'Partner Directories' ),
 				bannerImage: OnboardingTourBannerPartnerDirectory,
+				isDarkBanner: true,
 				content: {
 					title: translate( 'Get leads from multiple agency directories' ),
 					descriptions: [
@@ -343,7 +344,6 @@ export default function useOnboardingTourSections() {
 				id: 'agency-tiers',
 				title: translate( 'Agency Tiers' ),
 				bannerImage: OnboardingTourBannerAgencyTiers,
-				isDarkBanner: true,
 				content: {
 					title: translate( 'Resources and rewards tailored for your growth' ),
 					descriptions: [
