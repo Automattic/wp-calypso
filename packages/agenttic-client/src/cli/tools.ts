@@ -42,7 +42,11 @@ export function createCLIToolProvider(): ToolProvider & {
 			);
 		},
 
-		async executeTool( toolId: string, args: any ): Promise< any > {
+		async executeTool(
+			toolId: string,
+			args: any,
+			toolCallId?: string
+		): Promise< any > {
 			const tool = registry.tools.get( toolId );
 			if ( ! tool ) {
 				throw new Error( `Tool not found: ${ toolId }` );
