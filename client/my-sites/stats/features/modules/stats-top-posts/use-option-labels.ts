@@ -10,6 +10,10 @@ export interface StatsModulePostsProps extends StatsDefaultModuleProps {
 	query: StatsQueryType & { viewType?: StatType };
 }
 
+export function validQueryViewType( statType: StatType = MAIN_STAT_TYPE ) {
+	return ! [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? MAIN_STAT_TYPE : statType;
+}
+
 export default function useOptionLabels() {
 	const translate = useTranslate();
 

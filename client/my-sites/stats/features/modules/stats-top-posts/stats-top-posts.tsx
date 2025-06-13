@@ -23,6 +23,7 @@ import useOptionLabels, {
 	SUB_STAT_TYPE,
 	StatType,
 	StatsModulePostsProps,
+	validQueryViewType,
 } from './use-option-labels';
 import type { StatsStateProps } from '../types';
 
@@ -81,7 +82,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
 	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
 
-	let statType = localStatType ?? query.viewType ?? mainStatType;
+	let statType = localStatType || validQueryViewType( query.viewType ) || mainStatType;
 	if ( ! isArchiveBreakdownEnabled ) {
 		statType = mainStatType;
 	}
