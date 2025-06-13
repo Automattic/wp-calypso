@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
@@ -237,10 +238,15 @@ export default function useOnboardingTourSections() {
 						),
 					],
 					hint: translate(
-						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000',
+						'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to %(commission)s',
 						{
 							components: {
 								b: <b />,
+							},
+							args: {
+								commission: formatCurrency( 10000, 'USD', {
+									stripZeros: true,
+								} ),
 							},
 						}
 					),
@@ -299,7 +305,7 @@ export default function useOnboardingTourSections() {
 
 			{
 				id: 'partner-directory',
-				title: translate( 'Partner Directories' ),
+				title: translate( 'Partner Directory' ),
 				bannerImage: OnboardingTourBannerPartnerDirectory,
 				content: {
 					title: translate( 'Get leads from multiple agency directories' ),
@@ -315,7 +321,7 @@ export default function useOnboardingTourSections() {
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'Check out Partner Directories' ),
+							label: translate( 'Check out Partner Directory' ),
 							variant: 'secondary',
 							href: A4A_PARTNER_DIRECTORY_LINK,
 							onClick: () => onExplore( 'partner-directory', onClose ),
