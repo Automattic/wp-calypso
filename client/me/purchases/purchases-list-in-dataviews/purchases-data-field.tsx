@@ -401,12 +401,13 @@ export function getMembershipsFieldDefinitions( {
 		},
 		{
 			id: 'description',
-			label: fixMe( {
-				text: 'Product Description',
-				newCopy: translate( 'Product Description' ),
-				oldCopy: translate( 'Description' ),
-				translationOptions: { textOnly: true },
-			} ),
+			label: String(
+				fixMe( {
+					text: 'Product Description',
+					newCopy: translate( 'Product Description', { textOnly: true } ),
+					oldCopy: translate( 'Description', { textOnly: true } ),
+				} )
+			),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
