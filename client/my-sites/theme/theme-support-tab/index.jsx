@@ -25,7 +25,7 @@ export default function ThemeSupportTab( { themeId } ) {
 					{ translate( 'Learn WordPress' ) }
 					<small>
 						{ translate(
-							'Follow along with beginner-friendly courses and build your first website or blog'
+							'Follow along with beginner-friendly courses and build your first website or blog.'
 						) }
 					</small>
 				</div>
@@ -42,7 +42,7 @@ export default function ThemeSupportTab( { themeId } ) {
 					}
 					rel="noreferrer"
 					target="_blank"
-					variant="primary"
+					variant="secondary"
 				>
 					{ translate( 'Watch a course' ) }
 				</Button>
@@ -55,7 +55,7 @@ export default function ThemeSupportTab( { themeId } ) {
 						<div className="theme__sheet-card-support-details">
 							{ translate( 'Discover comprehensive guides' ) }
 							<small>
-								{ translate( 'Explore deep-dive tutorials for every WordPress.com feature' ) }
+								{ translate( 'Explore deep-dive tutorials for every WordPress.com feature.' ) }
 							</small>
 						</div>
 						<Button
@@ -81,7 +81,7 @@ export default function ThemeSupportTab( { themeId } ) {
 							{ translate( 'Contact support' ) }
 							<small>
 								{ translate(
-									'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans'
+									'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.'
 								) }
 							</small>
 						</div>
