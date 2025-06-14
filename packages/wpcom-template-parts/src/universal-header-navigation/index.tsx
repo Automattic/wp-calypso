@@ -72,13 +72,6 @@ const UniversalNavbarHeader = ( {
 												<NonClickableItem
 													className="x-nav-link x-link"
 													content={ __( 'Products', __i18n_text_domain__ ) }
-												/>
-												<div
-													className="x-dropdown-content"
-													data-dropdown-name="products"
-													role="menu"
-													aria-label={ __( 'Products', __i18n_text_domain__ ) }
-													aria-hidden="true"
 												>
 													<ul>
 														<ClickableItem
@@ -165,19 +158,12 @@ const UniversalNavbarHeader = ( {
 															type="dropdown"
 														/>
 													</ul>
-												</div>
+												</NonClickableItem>
 											</li>
 											<li className="x-nav-item x-nav-item__wide" role="none">
 												<NonClickableItem
 													className="x-nav-link x-link"
 													content={ __( 'Features', __i18n_text_domain__ ) }
-												/>
-												<div
-													className="x-dropdown-content"
-													data-dropdown-name="features"
-													role="menu"
-													aria-label={ __( 'Features', __i18n_text_domain__ ) }
-													aria-hidden="true"
 												>
 													<ul>
 														<ClickableItem
@@ -231,19 +217,12 @@ const UniversalNavbarHeader = ( {
 															target="_self"
 														/>
 													</ul>
-												</div>
+												</NonClickableItem>
 											</li>
 											<li className="x-nav-item x-nav-item__wide" role="none">
 												<NonClickableItem
 													className="x-nav-link x-link"
 													content={ __( 'Resources', __i18n_text_domain__ ) }
-												/>
-												<div
-													className="x-dropdown-content"
-													data-dropdown-name="resources"
-													role="menu"
-													aria-label={ __( 'Resources', __i18n_text_domain__ ) }
-													aria-hidden="true"
 												>
 													<ul>
 														<ClickableItem
@@ -302,7 +281,7 @@ const UniversalNavbarHeader = ( {
 															target="_self"
 														/>
 													</ul>
-												</div>
+												</NonClickableItem>
 											</li>
 											<ClickableItem
 												className="x-nav-item x-nav-item__wide"

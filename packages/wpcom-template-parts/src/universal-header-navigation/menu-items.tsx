@@ -6,7 +6,11 @@ import { ClickableItemProps, MenuItemProps } from '../types';
 let currentOpenDropdown: string | null = null;
 const dropdownInstances = new Set< () => void >();
 
-export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
+interface NonClickableItemProps extends MenuItemProps {
+	children?: React.ReactNode;
+}
+
+export const NonClickableItem = ( { content, className, children }: NonClickableItemProps ) => {
 	const [ isKeyboardOpen, setIsKeyboardOpen ] = useState( false );
 	const dropdownRef = useRef< HTMLDivElement | null >( null );
 	const buttonRef = useRef< HTMLButtonElement | null >( null );
@@ -127,7 +131,9 @@ export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
 				data-dropdown-name={ content }
 				role="menu"
 				aria-label={ `${ content } submenu` }
-			></div>
+			>
+				{ children }
+			</div>
 		</>
 	);
 };
