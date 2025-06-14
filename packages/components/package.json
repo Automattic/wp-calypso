@@ -51,6 +51,7 @@
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/number-formatters": "^1.0.1",
 		"@automattic/typography": "workspace:^",
+		"@automattic/ui": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
