@@ -62,7 +62,7 @@ const robotFields: Field< SiteSettings & { isPrimaryDomainStaging: boolean } >[]
 		id: 'wpcom_discourage_search_engines',
 		label: __( 'Discourage search engines from indexing this site' ),
 		description: __(
-			'This does not block access to your site — it is up to search engines to honor your request.'
+			'This does not block access to your site—it is up to search engines to honor your request.'
 		),
 		isVisible: ( { wpcom_site_visibility }: SiteSettings ) => wpcom_site_visibility === 'public',
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
