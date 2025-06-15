@@ -30,7 +30,7 @@ class AuthorMappingPane extends PureComponent {
 			percentComplete: PropTypes.number,
 			statusMessage: PropTypes.string,
 			customData: PropTypes.shape( {
-				unsupportedFileTypes: PropTypes.object,
+				unsupportedFileTypes: PropTypes.objectOf( PropTypes.number ),
 				postsNumber: PropTypes.number,
 				pagesNumber: PropTypes.number,
 				attachmentsNumber: PropTypes.number,
@@ -148,7 +148,7 @@ class AuthorMappingPane extends PureComponent {
 
 		const formattedTypes = fileTypes.map( ( [ type, count ] ) => {
 			/* translators: %(count)s is the number of files, %(type)s is the file extension (e.g. "avif", "svg") */
-			return translate( '%(count)s .%(type)s image', {
+			return translate( '%(count)s .%(type)s image', '%(count)s .%(type)s images', {
 				args: {
 					count: formatNumber( count ),
 					type,
