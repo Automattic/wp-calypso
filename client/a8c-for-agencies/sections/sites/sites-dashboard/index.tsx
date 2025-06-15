@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState, useRef } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
+import { withOnboardingTour } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -45,7 +46,8 @@ import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
 import './sites-dataviews-style.scss';
-export default function SitesDashboard() {
+
+export function SitesDashboard() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
 
@@ -310,3 +312,5 @@ export default function SitesDashboard() {
 		</Layout>
 	);
 }
+
+export default withOnboardingTour( SitesDashboard );
