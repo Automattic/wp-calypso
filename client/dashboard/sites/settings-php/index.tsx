@@ -17,13 +17,14 @@ import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/s
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { canViewPHPSettings } from '../features';
-import SettingsCallout from '../settings-callout';
+import HostingFeatureCallout from '../hosting-feature-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const canView = canViewPHPSettings( site );
+	const canActivate = canViewPHPSettings( site, { assumeSiteIsAtomic: true } );
 
 	const { data: currentVersion } = useQuery( {
 		...sitePHPVersionQuery( site.ID ),
@@ -35,26 +36,6 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
-
-	if ( ! canView ) {
-		return (
-			<PageLayout
-				size="small"
-				header={
-					<SettingsPageHeader
-						title="PHP"
-						description={ sprintf(
-							/* translators: %s: plan name. Eg. 'Personal' */
-							__( 'Sites on the %s plan run on our recommended PHP version.' ),
-							site?.plan?.product_name_short
-						) }
-					/>
-				}
-			>
-				<SettingsCallout siteSlug={ siteSlug } tracksId="php" />
-			</PageLayout>
-		);
-	}
 
 	const { phpVersions } = getPHPVersions();
 
@@ -95,8 +76,17 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		} );
 	};
 
-	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
+	const renderContent = () => {
+		if ( ! canView ) {
+			return (
+				<HostingFeatureCallout
+					canActivate={ canActivate }
+					siteSlug={ siteSlug }
+					tracksId="settings-php"
+				/>
+			);
+		}
+		return (
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -123,6 +113,24 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 					</form>
 				</CardBody>
 			</Card>
+		);
+	};
+
+	const description =
+		canView || canActivate
+			? undefined
+			: sprintf(
+					/* translators: %s: plan name. Eg. 'Personal' */
+					__( 'Sites on the %s plan run on our recommended PHP version.' ),
+					site?.plan?.product_name_short
+			  );
+
+	return (
+		<PageLayout
+			size="small"
+			header={ <SettingsPageHeader title="PHP" description={ description } /> }
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }

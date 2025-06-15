@@ -6,7 +6,7 @@ import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
 import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
 import { canViewSftpSettings, canViewSshSettings } from '../features';
-import SettingsCallout from '../settings-callout';
+import HostingFeatureCallout from '../hosting-feature-callout';
 import SettingsPageHeader from '../settings-page-header';
 import calloutIllustrationUrl from './callout-illustration.svg';
 import EnableSftpCard from './enable-sftp-card';
@@ -27,10 +27,11 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 
-	if ( ! canViewSftpSettings( site ) ) {
-		return (
-			<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-				<SettingsCallout
+	const renderContent = () => {
+		if ( ! canViewSftpSettings( site ) ) {
+			return (
+				<HostingFeatureCallout
+					canActivate={ canViewSshSettings( site, { assumeSiteIsAtomic: true } ) }
 					siteSlug={ siteSlug }
 					icon={ file }
 					image={ calloutIllustrationUrl }
@@ -38,26 +39,32 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 					description={ __(
 						'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
 					) }
-					tracksId="sftp-ssh"
+					tracksId="settings-sftp-ssh"
 				/>
-			</PageLayout>
+			);
+		}
+
+		return (
+			<>
+				{ sftpEnabled ? (
+					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
+				) : (
+					<EnableSftpCard siteId={ site.ID } canUseSsh={ canViewSshSettings( site ) } />
+				) }
+				{ sftpEnabled && canViewSshSettings( site ) && (
+					<SshCard
+						siteId={ site.ID }
+						sftpUsers={ sftpUsers }
+						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
+					/>
+				) }
+			</>
 		);
-	}
+	};
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-			{ sftpEnabled ? (
-				<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
-			) : (
-				<EnableSftpCard siteId={ site.ID } canUseSsh={ canViewSshSettings( site ) } />
-			) }
-			{ sftpEnabled && canViewSshSettings( site ) && (
-				<SshCard
-					siteId={ site.ID }
-					sftpUsers={ sftpUsers }
-					sshEnabled={ sshAccessStatus?.setting === 'ssh' }
-				/>
-			) }
+			{ renderContent() }
 		</PageLayout>
 	);
 }

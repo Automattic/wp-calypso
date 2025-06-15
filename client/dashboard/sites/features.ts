@@ -1,15 +1,25 @@
 import { DotcomFeatures } from '../data/constants';
 import {
+	HostingFeaturePredicateOptions,
+	hasHostingFeature,
 	hasPlanFeature,
-	hasHostingFeatures,
-	hasAdvancedHostingFeatures,
 } from '../utils/site-features';
 import type { Site, User } from '../data/types';
 
+function siteHasPlanFeature( feature: DotcomFeatures ) {
+	return ( site: Site ) => hasPlanFeature( site, feature );
+}
+
+function siteHasHostingFeature( feature: DotcomFeatures ) {
+	return ( site: Site, opts: HostingFeaturePredicateOptions = {} ) =>
+		hasHostingFeature( site, feature, opts );
+}
+
 // Settings -> General
 
-export const canViewSubscriptionGiftingSettings = ( site: Site ) =>
-	hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING );
+export const canViewSubscriptionGiftingSettings = siteHasPlanFeature(
+	DotcomFeatures.SUBSCRIPTION_GIFTING
+);
 
 export const canViewAgencySettings = ( site: Site ) => site.is_wpcom_atomic;
 
@@ -20,32 +30,20 @@ export const canViewHundredYearPlanSettings = ( site: Site ) =>
 // Settings -> Server
 
 export const canViewWordPressSettings = ( site: Site ) => site.is_wpcom_staging_site;
-
-export const canViewPHPSettings = hasAdvancedHostingFeatures;
-
-export const canViewSftpSettings = hasAdvancedHostingFeatures;
-
-export const canViewSshSettings = ( site: Site ) =>
-	canViewSftpSettings( site ) && hasPlanFeature( site, DotcomFeatures.SSH );
-
-export const canViewDatabaseSettings = hasAdvancedHostingFeatures;
-
-export const canViewPrimaryDataCenterSettings = hasAdvancedHostingFeatures;
-
-export const canViewStaticFile404Settings = hasAdvancedHostingFeatures;
-
-export const canViewCachingSettings = hasHostingFeatures;
-
-export const canViewDefensiveModeSettings = hasAdvancedHostingFeatures;
+export const canViewCachingSettings = siteHasHostingFeature( DotcomFeatures.ATOMIC );
+export const canViewPHPSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
+export const canViewSftpSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
+export const canViewSshSettings = siteHasHostingFeature( DotcomFeatures.SSH );
+export const canViewDatabaseSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
+export const canViewPrimaryDataCenterSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
+export const canViewStaticFile404Settings = siteHasHostingFeature( DotcomFeatures.SFTP );
+export const canViewDefensiveModeSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
 
 // Settings -> Actions & danger zone
 
 export const canViewSiteActions = ( site: Site ) => ! site.is_wpcom_staging_site;
-
-export const canRestorePlanSoftware = ( site: Site ) => site.is_wpcom_atomic;
-
-export const canDuplicateSite = ( site: Site ) => hasPlanFeature( site, DotcomFeatures.COPY_SITE );
-
+export const canRestorePlanSoftware = siteHasHostingFeature( DotcomFeatures.ATOMIC );
+export const canDuplicateSite = siteHasPlanFeature( DotcomFeatures.COPY_SITE );
 export const canTransferSite = ( site: Site, user: User ) => {
 	const isAllowedSiteType = ! (
 		( site.jetpack && ! site.is_wpcom_atomic ) ||

@@ -5,34 +5,34 @@ import { addQueryArgs } from '@wordpress/url';
 import { useEffect, type ReactNode } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
-import calloutIllustrationUrl from './callout-illustration.svg';
+import illustrationUrl from './hosting-feature-upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
 
-interface SettingsCalloutProps extends Omit< CalloutProps, 'title' | 'description' > {
+interface HostingFeatureUpsellProps extends Omit< CalloutProps, 'title' | 'description' > {
 	siteSlug: string;
 	title?: string;
 	description?: ReactNode;
 	tracksId: string;
 }
 
-export default function SettingsCallout( {
+export default function HostingFeatureUpsell( {
 	siteSlug,
 	icon,
 	image,
 	title,
 	description,
 	tracksId,
-}: SettingsCalloutProps ) {
+}: HostingFeatureUpsellProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	useEffect( () => {
-		recordTracksEvent( 'calypso_settings_callout_impression', {
-			callout_id: tracksId,
+		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_impression', {
+			feature_id: tracksId,
 		} );
 	}, [ recordTracksEvent, tracksId ] );
 
 	const handleUpgradePlan = () => {
-		recordTracksEvent( 'calypso_settings_callout_click', {
-			callout_id: tracksId,
+		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_click', {
+			feature_id: tracksId,
 		} );
 
 		const backUrl = window.location.href.replace( window.location.origin, '' );
@@ -45,7 +45,7 @@ export default function SettingsCallout( {
 
 	const defaultProps = {
 		icon: settings,
-		image: calloutIllustrationUrl,
+		image: illustrationUrl,
 		title: __( 'Fine-tune your WordPress site' ),
 		description: __(
 			'Get under the hood—control caching, choose your PHP version, and test out upcoming WordPress releases.'

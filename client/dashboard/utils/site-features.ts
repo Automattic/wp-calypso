@@ -9,10 +9,18 @@ export function hasPlanFeature( site: Site, feature: DotcomFeatures ) {
 	return site.plan.features.active.includes( feature );
 }
 
-export function hasHostingFeatures( site: Site ) {
-	return site.is_wpcom_atomic && ! site.plan?.expired;
+export interface HostingFeaturePredicateOptions {
+	assumeSiteIsAtomic?: boolean;
 }
 
-export function hasAdvancedHostingFeatures( site: Site ) {
-	return hasHostingFeatures( site ) && hasPlanFeature( site, DotcomFeatures.SFTP );
+export function hasHostingFeature(
+	site: Site,
+	feature: DotcomFeatures,
+	opts: HostingFeaturePredicateOptions = {}
+) {
+	const isAtomic =
+		site.is_wpcom_atomic ||
+		( !! opts.assumeSiteIsAtomic && hasPlanFeature( site, DotcomFeatures.ATOMIC ) );
+
+	return isAtomic && ! site.plan?.expired && hasPlanFeature( site, feature );
 }

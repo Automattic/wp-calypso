@@ -18,7 +18,7 @@ import {
 } from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
 import { canViewStaticFile404Settings } from '../features';
-import SettingsCallout from '../settings-callout';
+import HostingFeatureCallout from '../hosting-feature-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
@@ -56,32 +56,19 @@ const form = {
 };
 
 export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: string } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewStaticFile404Settings( site );
+
 	const { data: currentSetting } = useQuery( {
 		...siteStaticFile404SettingQuery( site.ID ),
-		enabled: site && canViewStaticFile404Settings( site ),
+		enabled: canView,
 	} );
 	const mutation = useMutation( siteStaticFile404SettingMutation( site.ID ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { setting: string } >( {
 		setting: currentSetting ?? 'default',
 	} );
-
-	if ( ! site ) {
-		return null;
-	}
-
-	if ( ! canViewStaticFile404Settings( site ) ) {
-		return (
-			<PageLayout
-				size="small"
-				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
-			>
-				<SettingsCallout siteSlug={ siteSlug } tracksId="static-file-404" />
-			</PageLayout>
-		);
-	}
 
 	const isDirty = formData.setting !== currentSetting;
 	const { isPending } = mutation;
@@ -100,18 +87,18 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 		} );
 	};
 
-	return (
-		<PageLayout
-			size="small"
-			header={
-				<SettingsPageHeader
-					title={ __( 'Handling requests for nonexistent assets' ) }
-					description={ __(
-						'Choose how to handle requests for assets (like images, fonts, or JavaScript) that don’t exist on your site.'
-					) }
+	const renderContent = () => {
+		if ( ! canView ) {
+			return (
+				<HostingFeatureCallout
+					canActivate={ canViewStaticFile404Settings( site, { assumeSiteIsAtomic: true } ) }
+					siteSlug={ siteSlug }
+					tracksId="settings-static-file-404"
 				/>
-			}
-		>
+			);
+		}
+
+		return (
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -138,6 +125,22 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 					</form>
 				</CardBody>
 			</Card>
+		);
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Handling requests for nonexistent assets' ) }
+					description={ __(
+						'Choose how to handle requests for assets (like images, fonts, or JavaScript) that don’t exist on your site.'
+					) }
+				/>
+			}
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }
