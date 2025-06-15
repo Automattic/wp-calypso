@@ -147,8 +147,8 @@ class AuthorMappingPane extends PureComponent {
 		}
 
 		const formattedTypes = fileTypes.map( ( [ type, count ] ) => {
-			/* translators: %(count)d is the number of files, %(type)s is the file extension (e.g. "avif", "svg") */
-			return translate( '%(count)d .%(type)s image', {
+			/* translators: %(count)s is the number of files, %(type)s is the file extension (e.g. "avif", "svg") */
+			return translate( '%(count)s .%(type)s image', {
 				args: {
 					count: formatNumber( count ),
 					type,
