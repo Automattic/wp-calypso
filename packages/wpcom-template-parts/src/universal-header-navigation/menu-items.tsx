@@ -154,6 +154,7 @@ interface NonClickableItemProps extends MenuItemProps {
 export const NonClickableItem = ( { content, className, children }: NonClickableItemProps ) => {
 	const contentString = String( content );
 	const [ isHoverOpen, setIsHoverOpen ] = useState( false );
+	const [ wasOpenedViaKeyboard, setWasOpenedViaKeyboard ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const triggerButtonRef = useRef< HTMLButtonElement | null >( null );
@@ -167,12 +168,14 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 
 	const handleClose = () => {
 		setIsHoverOpen( false );
+		setWasOpenedViaKeyboard( false );
 		closeDropdown( dropdownId.current );
 	};
 
 	const handleOpen = ( viaKeyboard = false ) => {
 		openDropdown( dropdownId.current, triggerButtonRef.current || undefined, viaKeyboard );
 		setIsHoverOpen( true );
+		setWasOpenedViaKeyboard( viaKeyboard );
 	};
 
 	// Register this dropdown on mount and unregister on unmount
@@ -185,6 +188,25 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 			}
 		};
 	}, [] );
+
+	// Add global Escape key listener when dropdown is open
+	useEffect( () => {
+		const handleEscapeKey = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' && isHoverOpen ) {
+				event.preventDefault();
+				debug( 'Global Escape pressed - closing dropdown' );
+				handleClose();
+			}
+		};
+
+		if ( isHoverOpen ) {
+			document.addEventListener( 'keydown', handleEscapeKey );
+		}
+
+		return () => {
+			document.removeEventListener( 'keydown', handleEscapeKey );
+		};
+	}, [ isHoverOpen ] );
 
 	const handleMouseEnter = () => {
 		debug( 'Mouse enter - opening dropdown' );
@@ -217,6 +239,7 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					offset: 10,
 					animate: true,
 					expandOnMobile: true,
+					focusOnMount: wasOpenedViaKeyboard ? 'firstElement' : false,
 					onClose: () => {
 						debug( 'Popover closing' );
 						handleClose();
