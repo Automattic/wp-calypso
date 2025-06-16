@@ -6,9 +6,9 @@ export interface SiteSettings {
 	/**
 	 * @deprecated Use `wpcom_public_coming_soon` instead.
 	 */
-	wpcom_coming_soon?: number;
-	wpcom_public_coming_soon?: number;
-	wpcom_data_sharing_opt_out?: boolean;
+	wpcom_coming_soon?: number | string;
+	wpcom_public_coming_soon?: number | string;
+	wpcom_data_sharing_opt_out?: boolean | string;
 	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;

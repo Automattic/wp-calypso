@@ -134,7 +134,7 @@ export function PrivacyForm( {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const initialData = settingsToFormData( settings );
+	const initialData = fromSiteSettings( settings );
 	const [ formData, setFormData ] = useState( () => ( {
 		...initialData,
 		preventThirdPartySharing:
@@ -148,7 +148,7 @@ export function PrivacyForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formDataToSettings( formData ), {
+		mutation.mutate( toSiteSettings( formData ), {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
 			},
@@ -162,7 +162,7 @@ export function PrivacyForm( {
 		setFormData( ( data ) => {
 			const newFormData = { ...data, ...edits };
 
-			if ( edits.visibility !== undefined ) {
+			if ( edits.visibility === 'public' ) {
 				// Forget any previous edits to the discoverability controls when the visibility changes.
 				newFormData.discourageSearchEngines = initialData.discourageSearchEngines;
 				newFormData.preventThirdPartySharing =
@@ -173,7 +173,8 @@ export function PrivacyForm( {
 				newFormData.preventThirdPartySharing = true;
 			}
 
-			return newFormData;
+			// Ensure switching to 'coming-soon' or 'private' sets the correct values for the hidden checkbox settings.
+			return fromSiteSettings( toSiteSettings( newFormData ) );
 		} );
 	};
 
@@ -254,9 +255,11 @@ export function PrivacyForm( {
 	);
 }
 
-function settingsToFormData( settings: SiteSettings ): PrivacyFormData {
-	const { blog_public, wpcom_coming_soon, wpcom_public_coming_soon, wpcom_data_sharing_opt_out } =
-		settings;
+function fromSiteSettings( settings: SiteSettings ): PrivacyFormData {
+	const blog_public = Number( settings.blog_public );
+	const wpcom_coming_soon = Number( settings.wpcom_coming_soon );
+	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
+	const wpcom_data_sharing_opt_out = Boolean( settings.wpcom_data_sharing_opt_out );
 
 	let visibility: PrivacyFormData[ 'visibility' ];
 	let discourageSearchEngines;
@@ -279,7 +282,7 @@ function settingsToFormData( settings: SiteSettings ): PrivacyFormData {
 	};
 }
 
-function formDataToSettings( settings: PrivacyFormData ): Partial< SiteSettings > {
+function toSiteSettings( settings: PrivacyFormData ): Partial< SiteSettings > {
 	const { visibility, discourageSearchEngines, preventThirdPartySharing } = settings;
 
 	let blog_public;
