@@ -480,6 +480,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit',
 		post_id: 267100,
 	},
+	'sell-online-paypal': {
+		link: 'https://wordpress.com/support/pay-with-paypal/',
+		post_id: 168671,
+	},
 };
 
 export default contextLinks;
