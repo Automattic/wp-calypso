@@ -59,10 +59,12 @@ export const sanitizeSettings = ( settings ) => {
 			case 'jetpack_testimonial_posts_per_page':
 			case 'jetpack_portfolio_posts_per_page':
 			case 'post_by_email_address':
-			case 'newsletter_has_active_plan':
 				if ( settings[ key ] === 'regenerate' ) {
 					memo[ key ] = settings[ key ];
 				}
+				break;
+			// WordPress.com specific settings that should not be sent to Jetpack
+			case 'newsletter_has_active_plan':
 				break;
 			case 'infinite_scroll':
 				if ( settings[ key ] === 'default' ) {
