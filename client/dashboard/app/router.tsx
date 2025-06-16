@@ -356,7 +356,9 @@ const siteSettingsTransferSiteRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default siteSlug={ siteRoute.useParams().siteSlug } context="dashboard_v2" />
+			),
 		} )
 	)
 );

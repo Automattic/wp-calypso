@@ -8,7 +8,8 @@ import { siteByIdQuery } from './site';
 import type { SiteOwnerTransferConfirmation } from '../../data/site-owner-transfer';
 
 export const siteOwnerTransferMutation = ( siteId: number ) => ( {
-	mutationFn: ( data: { new_site_owner: string } ) => startSiteOwnerTransfer( siteId, data ),
+	mutationFn: ( data: { new_site_owner: string; context?: 'dashboard_v2' } ) =>
+		startSiteOwnerTransfer( siteId, data ),
 } );
 
 export const siteOwnerTransferEligibilityCheckMutation = ( siteId: number ) => ( {

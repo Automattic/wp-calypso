@@ -63,11 +63,13 @@ const List = ( { title, children }: { title: string; children: React.ReactNode }
 export function StartSiteTransferForm( {
 	site,
 	newOwnerEmail,
+	context,
 	onSubmit,
 	onBack,
 }: {
 	site: Site;
 	newOwnerEmail: string;
+	context?: string;
 	onSubmit: () => void;
 	onBack: () => void;
 } ) {
@@ -91,7 +93,7 @@ export function StartSiteTransferForm( {
 		event.preventDefault();
 
 		mutation.mutate(
-			{ new_site_owner: newOwnerEmail },
+			{ new_site_owner: newOwnerEmail, context },
 			{
 				onSuccess: () => {
 					onSubmit();

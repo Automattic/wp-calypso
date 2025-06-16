@@ -6,7 +6,10 @@ export interface SiteOwnerTransferConfirmation {
 	new_owner_email: string;
 }
 
-export async function startSiteOwnerTransfer( siteId: number, data: { new_site_owner: string } ) {
+export async function startSiteOwnerTransfer(
+	siteId: number,
+	data: { new_site_owner: string; context?: 'dashboard_v2' }
+) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-owner-transfer`,
@@ -15,11 +18,7 @@ export async function startSiteOwnerTransfer( siteId: number, data: { new_site_o
 		{
 			calypso_origin: window.location.origin,
 		},
-		{
-			// We need to update the check when modifying the base path for v2
-			context: window.location.pathname.startsWith( '/v2' ) ? 'dashboard_v2' : undefined,
-			...data,
-		}
+		data
 	);
 }
 

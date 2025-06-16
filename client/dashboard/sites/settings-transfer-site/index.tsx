@@ -44,7 +44,13 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 };
 
 // TODO: Use Stepper component when the design is ready.
-export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
+export default function SettingsTransferSite( {
+	siteSlug,
+	context,
+}: {
+	siteSlug: string;
+	context?: string;
+} ) {
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
@@ -91,6 +97,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 						<StartSiteTransferForm
 							newOwnerEmail={ newOwnerEmail }
 							site={ site }
+							context={ context }
 							onSubmit={ handleStartSiteTransfer }
 							onBack={ handleBack }
 						/>
