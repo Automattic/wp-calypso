@@ -3,19 +3,22 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useMemo } from 'react';
 import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
-export type AgencyProgramFormData = {
-	businessEmail: string;
-	firstName: string;
-	lastName: string;
-	jobTitle: string;
-	phoneNumber: string;
-	country: string;
-	servicesProvided: string[];
-	agencyWebsite?: string;
-	agencySize?: string;
-	agencyRevenue?: string;
-	clientSites: string;
-	subscribeToNewsletter: boolean;
+import { AgencyProgramFormData } from '../types';
+import useApplyAgencyProgramMutation from './use-apply-agency-program';
+
+const DEFAULT_FORM_DATA: AgencyProgramFormData = {
+	businessEmail: '',
+	firstName: '',
+	lastName: '',
+	jobTitle: '',
+	phoneNumber: '',
+	country: '',
+	servicesProvided: [],
+	agencyWebsite: '',
+	agencySize: '11-20',
+	agencyRevenue: '$500,000 - $1 mil.',
+	clientSites: '',
+	subscribeToNewsletter: false,
 };
 
 export default function useAgencyProgramForm() {
@@ -23,21 +26,13 @@ export default function useAgencyProgramForm() {
 	const translate = useTranslate();
 
 	const [ formData, setFormData ] = useState< AgencyProgramFormData >( {
-		businessEmail: '',
-		firstName: '',
-		lastName: '',
-		jobTitle: '',
-		phoneNumber: '',
-		country: '',
-		servicesProvided: [],
-		agencyWebsite: '',
-		agencySize: '',
-		agencyRevenue: '',
-		clientSites: '',
-		subscribeToNewsletter: false,
+		...DEFAULT_FORM_DATA,
 	} );
 
 	const [ validationError, setValidationError ] = useState< Record< string, string > >( {} );
+
+	const { mutate: applyAgencyProgram, isPending: isPendingApplication } =
+		useApplyAgencyProgramMutation();
 
 	const updateValidationError = useCallback(
 		( newState: Record< string, string > ) => {
@@ -45,6 +40,12 @@ export default function useAgencyProgramForm() {
 		},
 		[ setValidationError ]
 	);
+
+	const resetForm = useCallback( () => {
+		setFormData( {
+			...DEFAULT_FORM_DATA,
+		} );
+	}, [] );
 
 	const validate = useCallback(
 		async ( payload: Partial< AgencyProgramFormData > ) => {
@@ -145,5 +146,8 @@ export default function useAgencyProgramForm() {
 		validationError,
 		updateValidationError,
 		validate,
+		applyAgencyProgram,
+		isPendingApplication,
+		resetForm,
 	};
 }

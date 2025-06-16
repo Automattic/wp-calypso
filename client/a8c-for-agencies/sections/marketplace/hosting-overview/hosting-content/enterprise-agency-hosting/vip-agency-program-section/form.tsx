@@ -11,6 +11,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useAgencyProgramForm from './hooks/use-agency-program-form';
 
 export default function VipAgencyProgramForm() {
@@ -25,6 +26,9 @@ export default function VipAgencyProgramForm() {
 		validationError,
 		validate,
 		updateValidationError,
+		applyAgencyProgram,
+		isPendingApplication,
+		resetForm,
 	} = useAgencyProgramForm();
 
 	const onPrivacyPolicyLinkClick = () => {
@@ -54,8 +58,20 @@ export default function VipAgencyProgramForm() {
 			if ( error ) {
 				return;
 			}
+
+			applyAgencyProgram( formData, {
+				onSuccess: () => {
+					dispatch( successNotice( translate( 'Your request has been submitted successfully.' ) ) );
+					resetForm();
+				},
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'An error occurred while submitting your request.' ) )
+					);
+				},
+			} );
 		},
-		[ dispatch, formData, validate ]
+		[ dispatch, validate, formData, applyAgencyProgram, translate, resetForm ]
 	);
 
 	return (
@@ -277,6 +293,7 @@ export default function VipAgencyProgramForm() {
 				className="enterprise-agency-hosting__cta-button"
 				variant="primary"
 				onClick={ onSubmit }
+				isBusy={ isPendingApplication }
 			>
 				{ translate( 'Submit request' ) }
 			</Button>
