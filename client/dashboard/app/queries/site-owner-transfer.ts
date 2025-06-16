@@ -5,10 +5,13 @@ import {
 } from '../../data/site-owner-transfer';
 import { queryClient } from '../query-client';
 import { siteByIdQuery } from './site';
-import type { SiteOwnerTransferConfirmation } from '../../data/site-owner-transfer';
+import type {
+	SiteOwnerTransferConfirmation,
+	SiteOwnerTransferContext,
+} from '../../data/site-owner-transfer';
 
 export const siteOwnerTransferMutation = ( siteId: number ) => ( {
-	mutationFn: ( data: { new_site_owner: string; context?: 'dashboard_v2' } ) =>
+	mutationFn: ( data: { new_site_owner: string; context?: SiteOwnerTransferContext } ) =>
 		startSiteOwnerTransfer( siteId, data ),
 } );
 

@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 import { siteOwnerTransferMutation } from '../../app/queries/site-owner-transfer';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import type { Site } from '../../data/types';
+import type { Site, SiteOwnerTransferContext } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
 export type StartSiteTransferFormData = {
@@ -69,7 +69,7 @@ export function StartSiteTransferForm( {
 }: {
 	site: Site;
 	newOwnerEmail: string;
-	context?: string;
+	context?: SiteOwnerTransferContext;
 	onSubmit: () => void;
 	onBack: () => void;
 } ) {

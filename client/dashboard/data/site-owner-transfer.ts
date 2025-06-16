@@ -1,5 +1,7 @@
 import wpcom from 'calypso/lib/wp';
 
+export type SiteOwnerTransferContext = 'dashboard_v2';
+
 export interface SiteOwnerTransferConfirmation {
 	transfer: boolean;
 	email_sent: boolean;
@@ -8,7 +10,7 @@ export interface SiteOwnerTransferConfirmation {
 
 export async function startSiteOwnerTransfer(
 	siteId: number,
-	data: { new_site_owner: string; context?: 'dashboard_v2' }
+	data: { new_site_owner: string; context?: SiteOwnerTransferContext }
 ) {
 	return wpcom.req.post(
 		{
