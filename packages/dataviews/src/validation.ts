@@ -22,6 +22,11 @@ export function isItemValid< Item >(
 		fields.filter( ( { id } ) => !! form.fields?.includes( id ) )
 	);
 	return _fields.every( ( field ) => {
-		return field.isValid?.( item, { elements: field.elements } );
+		const result = field.isValid?.( item, { elements: field.elements } );
+		if ( typeof result === 'string' ) {
+			return false;
+		}
+
+		return result;
 	} );
 }
