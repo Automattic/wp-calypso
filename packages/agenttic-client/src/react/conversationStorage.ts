@@ -157,6 +157,13 @@ export async function storeConversation(
 		}
 	}
 
+	// Ignore TypeScript error for environments where sessionStorage might not be available
+	// @ts-ignore
+	if (typeof sessionStorage === 'undefined') {
+		// Handle case where sessionStorage is not available
+		return;
+	}
+
 	try {
 		// Serialize and store in sessionStorage
 		const stored: StoredConversation = {
@@ -165,6 +172,7 @@ export async function storeConversation(
 			lastUpdated: Date.now(),
 		};
 
+		// @ts-ignore
 		sessionStorage.setItem(
 			`${ STORAGE_KEY }_${ sessionId }`,
 			JSON.stringify( stored )
@@ -192,7 +200,14 @@ export async function loadConversation(
 	}
 
 	// Fallback to sessionStorage
+	// @ts-ignore
+	if (typeof sessionStorage === 'undefined') {
+		// Handle case where sessionStorage is not available
+		return [];
+	}
+
 	try {
+		// @ts-ignore
 		const stored = sessionStorage.getItem(
 			`${ STORAGE_KEY }_${ sessionId }`
 		);
@@ -223,7 +238,14 @@ export async function loadConversation(
 export async function clearConversation( sessionId: string ): Promise< void > {
 	conversationCache.delete( sessionId );
 
+	// @ts-ignore
+	if (typeof sessionStorage === 'undefined') {
+		// Handle case where sessionStorage is not available
+		return;
+	}
+
 	try {
+		// @ts-ignore
 		sessionStorage.removeItem( `${ STORAGE_KEY }_${ sessionId }` );
 	} catch ( error ) {
 		logger(
@@ -240,10 +262,18 @@ export async function clearConversation( sessionId: string ): Promise< void > {
 export async function clearAllConversations(): Promise< void > {
 	conversationCache.clear();
 
+	// @ts-ignore
+	if (typeof sessionStorage === 'undefined') {
+		// Handle case where sessionStorage is not available
+		return;
+	}
+
 	try {
 		// Remove all agenttic conversation keys from sessionStorage
 		const keysToRemove: string[] = [];
+		// @ts-ignore
 		for ( let i = 0; i < sessionStorage.length; i++ ) {
+			// @ts-ignore
 			const key = sessionStorage.key( i );
 			if ( key && key.startsWith( STORAGE_KEY ) ) {
 				keysToRemove.push( key );
@@ -251,6 +281,7 @@ export async function clearAllConversations(): Promise< void > {
 		}
 
 		for ( const key of keysToRemove ) {
+			// @ts-ignore
 			sessionStorage.removeItem( key );
 		}
 	} catch ( error ) {
@@ -271,8 +302,16 @@ export async function getStoredSessionIds(): Promise< string[] > {
 	sessionIds.push( ...conversationCache.keys() );
 
 	// From sessionStorage
+	// @ts-ignore
+	if (typeof sessionStorage === 'undefined') {
+		// Handle case where sessionStorage is not available
+		return sessionIds;
+	}
+
 	try {
+		// @ts-ignore
 		for ( let i = 0; i < sessionStorage.length; i++ ) {
+			// @ts-ignore
 			const key = sessionStorage.key( i );
 			if ( key && key.startsWith( STORAGE_KEY ) ) {
 				const sessionId = key.replace( `${ STORAGE_KEY }_`, '' );

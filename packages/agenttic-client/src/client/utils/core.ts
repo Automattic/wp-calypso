@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import type {
 	ClientContext,
 	ContextDataPart,
@@ -14,10 +13,15 @@ import type {
 } from '../types/index';
 
 /**
- * Generate a random string for IDs using UUID
+ * Generate a random 8-character alphanumeric string for IDs
  */
 export function generateRandomId(): string {
-	return uuidv4();
+	const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	for ( let i = 0; i < 8; i++ ) {
+		result += chars.charAt( Math.floor( Math.random() * chars.length ) );
+	}
+	return result;
 }
 
 /**
