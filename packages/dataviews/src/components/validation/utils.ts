@@ -29,7 +29,9 @@ const generateCallback = < Item extends unknown >(
 		return ( item: any, context?: ValidationContext ) => {
 			const value = item[ fieldId ];
 			return value === undefined || value === ''
-				? `${ fieldId } is required`
+				? `${
+						fieldId.charAt( 0 ).toUpperCase() + fieldId.slice( 1 )
+				  } is required`
 				: true;
 		};
 	}

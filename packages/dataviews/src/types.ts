@@ -16,7 +16,7 @@ import {
 	FormValidationState,
 	NormalizedRule,
 	Rules,
-} from './components/validator/types';
+} from './components/validation/types';
 
 export type SortDirection = 'asc' | 'desc';
 

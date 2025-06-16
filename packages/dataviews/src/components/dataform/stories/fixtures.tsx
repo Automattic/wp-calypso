@@ -18,22 +18,12 @@ export type FormData = {
 	name: string;
 	surname: string;
 	email: string;
-	job: string;
-	experience: number;
-	skills: string;
-	notifications: boolean;
-	role: string;
 };
 
 export const initialData: FormData = {
 	name: 'John',
 	surname: 'Doe',
 	email: 'john.doe@example.com',
-	job: 'developer',
-	experience: 5,
-	skills: 'JavaScript, React, WordPress',
-	notifications: true,
-	role: 'junior',
 };
 
 export const getFields = (): Field< FormData >[] => [
@@ -56,7 +46,7 @@ export const getFields = (): Field< FormData >[] => [
 			/>
 		),
 		isValid: ( item ) => {
-			return item.name.length > 5;
+			return item.name.length > 2;
 		},
 	},
 	{

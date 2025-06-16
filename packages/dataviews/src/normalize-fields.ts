@@ -21,7 +21,7 @@ import {
 	OPERATOR_IS_NONE,
 	SINGLE_SELECTION_OPERATORS,
 } from './constants';
-import { normalizeRules } from './components/validator/utils';
+import { normalizeRules } from './components/validation/utils';
 
 const getValueFromId =
 	( id: string ) =>
