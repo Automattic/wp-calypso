@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import HostingPlanSection from '../common/hosting-plan-section';
+import VipAgencyProgramSection from './vip-agency-program-section';
 
 import './style.scss';
 
@@ -131,6 +132,8 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					</div>
 				</HostingPlanSection.Details>
 			</HostingPlanSection>
+
+			<VipAgencyProgramSection />
 
 			<HostingAdditionalFeaturesSection
 				heading={ translate( 'VIP capabilities ' ) }
