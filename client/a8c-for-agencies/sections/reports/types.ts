@@ -23,6 +23,8 @@ export interface Report {
 	data: ReportFormAPIResponse;
 }
 
+export type ReportStatus = 'sent' | 'error' | 'pending' | 'processed';
+
 export interface SiteReports {
 	site: string;
 	reports: Report[];
