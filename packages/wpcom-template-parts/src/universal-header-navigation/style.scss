@@ -800,10 +800,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 .components-popover.x-nav-dropdown-popover {
-
-/*
- * Dropdown content
- */
+	// Restore the original smooth animation from the old dropdown system
+	transition: all 150ms cubic-bezier(0.1, 0.6, 0.2, 1);
 
 	.components-popover__content {
 		padding: 12px 0;
@@ -840,9 +838,9 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 			width: 100%;
 			border-radius: 0;
 			color: $x-color-link;
-			font-size: $x-dropdown-item-font-size;
+			font-size: 13px;
 			font-weight: $lp-font-weight-bold;
-			line-height: $x-dropdown-item-line-height;
+			line-height: 19px;
 			height: auto;
 			min-height: unset;
 			position: relative;
