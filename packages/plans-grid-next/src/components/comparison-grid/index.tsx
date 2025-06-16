@@ -5,26 +5,17 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import {
-	useState,
-	useCallback,
-	useEffect,
-	ChangeEvent,
-	Dispatch,
-	SetStateAction,
-	forwardRef,
-} from 'react';
+import { useState, useCallback, ChangeEvent, Dispatch, SetStateAction, forwardRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
-import usePlanBillingPeriod from '../../hooks/data-store/use-plan-billing-period';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
@@ -39,6 +30,7 @@ import HeaderPrice from '../shared/header-price';
 import HeaderPriceContextProvider from '../shared/header-price/header-price-context';
 import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
+import { useVisibleGridPlans } from './use-visible-grid-plans';
 import type {
 	GridPlan,
 	ComparisonGridExternalProps,
@@ -992,102 +984,15 @@ const ComparisonGrid = ( {
 	gridSize,
 	siteId,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
+	const { gridPlans, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
-	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
 
-	useEffect( () => {
-		setVisiblePlans( ( prev ) => {
-			let visibleLength = gridPlans.length;
-			switch ( gridSize ) {
-				case 'large':
-					visibleLength = 4;
-					break;
-				case 'medium':
-					visibleLength = 3;
-					break;
-				case 'smedium':
-				case 'small':
-					visibleLength = 2;
-					break;
-			}
-
-			// visible length changed, update with the current gridPlans
-			// - we don't care about previous order
-			if ( prev.length !== visibleLength ) {
-				return gridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
-			}
-
-			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
-			// - we care about previous order
-			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
-			if ( isPrevStale ) {
-				return prev.map( ( planSlug ) => {
-					const gridPlan = gridPlans.find(
-						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-					);
-
-					return gridPlan?.planSlug ?? planSlug;
-				} );
-			}
-
-			const isCurrentPlanVisible = !! currentSitePlanSlug && prev.includes( currentSitePlanSlug );
-
-			/**
-			 * Plans are sorted by least to most expensive unless:
-			 * - a current plan exists and
-			 * - the current plan's term matches the selected term and
-			 * - the current plan would not be displayed due to the number of plans that can be visible at once
-			 *
-			 * If those conditions are met:
-			 * - the current plan is placed at the start of the grid and
-			 * - the last plan is removed to maintain the expected number of visible plans
-			 */
-			if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
-				prev = [ currentSitePlanSlug, ...prev ].slice( 0, visibleLength );
-			}
-
-			// nothing to update
-			return prev;
-		} );
-	}, [
+	const { visibleGridPlans, onPlanChange } = useVisibleGridPlans( {
 		gridSize,
-		gridPlansIndex,
-		gridPlans,
 		currentSitePlanSlug,
-		currentPlanTerm,
-		selectedPlanTerm,
-	] );
-
-	const visibleGridPlans = useMemo(
-		() =>
-			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = gridPlans.find(
-					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-				);
-
-				if ( gridPlan ) {
-					acc.push( gridPlan );
-				}
-
-				return acc;
-			}, [] as GridPlan[] ),
-		[ visiblePlans, gridPlans ]
-	);
-
-	const onPlanChange = useCallback(
-		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
-
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
+		siteId,
+		intervalType,
+	} );
 
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
@@ -1138,7 +1043,7 @@ const ComparisonGrid = ( {
 	return (
 		<table className={ classes }>
 			<StickyGrid
-				visiblePlans={ visiblePlans.length }
+				visiblePlans={ visibleGridPlans.length }
 				element="thead"
 				disabled={ isBottomHeaderInView }
 				stickyClass="is-sticky-header-row"
@@ -1173,7 +1078,7 @@ const ComparisonGrid = ( {
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					plansLength={ visiblePlans.length }
+					plansLength={ visibleGridPlans.length }
 				/>
 			) ) }
 			<tbody>
