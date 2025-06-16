@@ -8,6 +8,6 @@ export type ContextLinks = Record< string, ContextLink >;
 
 export type SupportDocData = {
 	link: string;
-	postId: number;
+	postId?: number;
 	blogId?: number;
 };
