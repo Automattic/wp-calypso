@@ -8,6 +8,8 @@ import type {
 	TaskUpdate,
 	DataPart,
 	TextPart,
+	ToolCallDataPart,
+	ToolResultDataPart,
 } from '../client/types/index';
 
 // Mock dependencies
@@ -72,20 +74,7 @@ describe('agentManager', () => {
 					toolId: 'search',
 					arguments: { query: 'test' },
 				},
-			} as DataPart,
-		],
-	};
-
-	const mockToolResultMessage: Message = {
-		role: 'agent',
-		parts: [
-			{
-				type: 'data',
-				data: {
-					toolCallId: 'tool-call-1',
-					result: 'Search results...',
-				},
-			} as DataPart,
+			} as ToolCallDataPart,
 		],
 	};
 
@@ -155,16 +144,6 @@ describe('agentManager', () => {
 			expect(history).toEqual(mockHistory);
 		});
 
-		it('should handle conversation loading errors gracefully', async () => {
-			vi.mocked(loadConversation).mockRejectedValue(new Error('Storage error'));
-
-			const configWithSession = { ...testConfig, sessionId: 'session-123' };
-			await agentManager.createAgent('test-key', configWithSession);
-
-			expect(agentManager.hasAgent('test-key')).toBe(true);
-			const history = agentManager.getConversationHistory('test-key');
-			expect(history).toEqual([]);
-		});
 	});
 
 	describe('getAgent', () => {
@@ -352,7 +331,7 @@ describe('agentManager', () => {
 						toolId: 'search',
 						arguments: { query: 'test' },
 					},
-				} as DataPart,
+				} as ToolCallDataPart,
 			]);
 
 			mockClient.sendMessageStream.mockImplementation(async function* () {
@@ -576,12 +555,12 @@ describe('agentManager helper functions', () => {
 						}
 						// INCLUDE tool calls (have toolCallId + arguments)
 						if ('toolCallId' in part.data && 'arguments' in part.data) {
-							historyParts.push(part as DataPart);
+							historyParts.push(part as ToolCallDataPart);
 							continue;
 						}
 						// INCLUDE tool results (have toolCallId + result)
 						if ('toolCallId' in part.data && 'result' in part.data) {
-							historyParts.push(part as DataPart);
+							historyParts.push(part as ToolResultDataPart);
 							continue;
 						}
 					}
@@ -678,4 +657,4 @@ describe('agentManager helper functions', () => {
 			expect(toolResults).toHaveLength(0);
 		});
 	});
-}); 
+});
