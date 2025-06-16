@@ -21,6 +21,8 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 	const { data: supportStatus } = useSupportStatus();
 	const { data: geoData } = useGeoLocationQuery();
 
+	const defaultButtonLink = __( 'Need help?', __i18n_text_domain__ );
+
 	for ( const product of products ) {
 		if ( isDIFMProduct( product ) ) {
 			const hasPremiumSupport =
@@ -30,10 +32,12 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 				userFieldFlowName:
 					FLOWS_ZENDESK_FLOWNAME[ DIFM_FLOW as keyof typeof FLOWS_ZENDESK_FLOWNAME ],
 				hasPremiumSupport,
-				helpCenterButtonCopy: hasPremiumSupport ? __( 'Questions?', __i18n_text_domain__ ) : null,
+				helpCenterButtonCopy: hasPremiumSupport
+					? __( 'Questions?', __i18n_text_domain__ )
+					: defaultButtonLink,
 				helpCenterButtonLink: hasPremiumSupport
 					? __( 'Contact our site-building team', __i18n_text_domain__ )
-					: null,
+					: defaultButtonLink,
 			};
 		}
 		if ( product?.product_slug === PLAN_100_YEARS ) {
@@ -42,6 +46,7 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 				userFieldFlowName:
 					FLOWS_ZENDESK_FLOWNAME[ HUNDRED_YEAR_PLAN_FLOW as keyof typeof FLOWS_ZENDESK_FLOWNAME ],
 				hasPremiumSupport: true,
+				helpCenterButtonLink: defaultButtonLink,
 			};
 		}
 		if ( product?.extra?.is_hundred_year_domain ) {
@@ -50,6 +55,7 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 				userFieldFlowName:
 					FLOWS_ZENDESK_FLOWNAME[ HUNDRED_YEAR_DOMAIN_FLOW as keyof typeof FLOWS_ZENDESK_FLOWNAME ],
 				hasPremiumSupport: true,
+				helpCenterButtonLink: defaultButtonLink,
 			};
 		}
 	}
@@ -57,5 +63,6 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 	return {
 		hasPremiumSupport: false,
 		userFieldMessage: null,
+		helpCenterButtonLink: defaultButtonLink,
 	};
 }

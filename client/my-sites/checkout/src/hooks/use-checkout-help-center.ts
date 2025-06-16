@@ -45,8 +45,8 @@ export const useCheckoutHelpCenter = () => {
 			location: 'thank-you-help-center',
 		} );
 
+		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
 		if ( hasPremiumSupport ) {
-			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,
 				userFieldFlowName,
@@ -55,7 +55,7 @@ export const useCheckoutHelpCenter = () => {
 			} );
 			setNavigateToRoute( urlWithQueryArgs );
 		} else {
-			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
+			setNavigateToRoute( '/odie' );
 		}
 	};
 
