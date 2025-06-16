@@ -8,7 +8,7 @@ import { useMemo, useState } from '@wordpress/element';
  */
 import DataForm from '../index';
 import { initialData, getFields, getForm, type FormData } from './fixtures';
-import { Button } from '@wordpress/components';
+import { isItemValid } from '../../../validation';
 
 const meta = {
 	title: 'DataViews/DataForm/Validation',
@@ -24,16 +24,6 @@ const meta = {
 			control: { type: 'select' },
 			description: 'Chooses the label position of the layout.',
 			options: [ 'default', 'top', 'side', 'none' ],
-		},
-		minLength: {
-			control: { type: 'number' },
-			description: 'Minimum length for text fields',
-			defaultValue: 2,
-		},
-		maxLength: {
-			control: { type: 'number' },
-			description: 'Maximum length for text fields',
-			defaultValue: 10,
 		},
 	},
 };
@@ -57,15 +47,23 @@ const DataFormWithValidation = ( {
 		[ type, labelPosition ]
 	);
 
+	const isFormValid = useMemo(
+		() => isItemValid( post, fields, form ),
+		[ post, fields, form ]
+	);
+
 	return (
-		<DataForm< FormData >
-			fields={ fields }
-			form={ form }
-			data={ post }
-			onChange={ ( edits ) =>
-				setPost( ( prev ) => ( { ...prev, ...edits } ) )
-			}
-		/>
+		<>
+			<DataForm< FormData >
+				fields={ fields }
+				form={ form }
+				data={ post }
+				onChange={ ( edits ) =>
+					setPost( ( prev ) => ( { ...prev, ...edits } ) )
+				}
+			/>
+			<p>Form is valid: { isFormValid ? 'true' : 'false' }</p>
+		</>
 	);
 };
 
@@ -77,7 +75,5 @@ export const Default = {
 	},
 	args: {
 		type: 'regular',
-		minLength: 2,
-		maxLength: 10,
 	},
 };
