@@ -596,3 +596,11 @@ $image-height: 47px;
 :root {
 	--login-form-column-max-width: 327px;
 }
+
+.layout.is-section-login.is-grav-powered-client {
+	font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.wp-login__heading-text {
+		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	}
+}
