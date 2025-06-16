@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -48,10 +47,6 @@ function TspBanner( props: TspBannerProps ) {
 								<InlineSupportLink
 									supportContext="blaze_learn_more"
 									showIcon={ false }
-									supportLink={ localizeUrl(
-										'https://wordpress.com/support/promote-a-post/promote-your-content-with-tumblr-native-posts'
-									) }
-									supportPostId={ 403203 }
 									onClick={ () => {
 										recordTracksEvent( 'calypso_dsp_tsp_banner_learn_more_click', {} );
 									} }

@@ -321,8 +321,6 @@ export default function PromotedPosts( { tab }: Props ) {
 				<div className="promote-post-i2__top-bar-buttons">
 					<InlineSupportLink
 						supportContext="advertising"
-						supportLink={ localizeUrl( 'https://wordpress.com/support/promote-a-post/' ) }
-						supportPostId={ 213203 }
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
 					/>

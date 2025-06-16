@@ -39,6 +39,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/blaze-credits/',
 		post_id: 240330,
 	},
+	blaze_learn_more: {
+		link: 'https://wordpress.com/support/promote-a-post/promote-your-content-with-tumblr-native-posts',
+		post_id: 403203,
+	},
 	cancel_purchase: {
 		link: 'https://wordpress.com/support/manage-purchases/cancel-a-purchase/',
 		post_id: 267077,
