@@ -77,8 +77,6 @@ export function useVisibleGridPlans( {
 							getPlanClass( gridPlan.planSlug ) === getPlanClass( currentSitePlanSlug )
 				  )
 				: null;
-			const isCurrentPlanVisible =
-				usersGridPlanFromSelectedTerm && next.includes( usersGridPlanFromSelectedTerm.planSlug );
 			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
 
 			// visible length changed, update with the current gridPlans
@@ -108,6 +106,8 @@ export function useVisibleGridPlans( {
 				} );
 			}
 
+			const isCurrentPlanVisible =
+				usersGridPlanFromSelectedTerm && next.includes( usersGridPlanFromSelectedTerm.planSlug );
 			// Always move the users current plan (or the matching plan from the selected term) to the front of the comparison table
 			if ( usersGridPlanFromSelectedTerm && ! isCurrentPlanVisible ) {
 				next = [ usersGridPlanFromSelectedTerm.planSlug, ...next ].slice( 0, visibleLength );
