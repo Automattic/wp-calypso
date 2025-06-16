@@ -269,12 +269,19 @@ describe( 'CheckoutMain', () => {
 		await user.click( removeProductButton );
 
 		const restoreButton = await screen.findByText( 'Restore' );
-		expect( screen.queryByLabelText( 'foo.cash' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'foo.cash' ) ).not.toBeInTheDocument();
 
 		await user.click( restoreButton );
 
-		const restoredItem = await screen.findByLabelText( 'foo.cash' );
-		expect( restoredItem ).toBeInTheDocument();
+		await waitFor( () => {
+			screen
+				.getAllByText( 'foo.cash' )
+				.map( ( element ) => element.closest( '.checkout-line-item' ) )
+				.filter( ( container ): container is Element => container !== null )
+				.forEach( ( container ) => {
+					expect( container ).toBeInTheDocument();
+				} );
+		} );
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
