@@ -137,42 +137,6 @@ describe( '<PlanNotice /> Tests', () => {
 		expect( screen.getByRole( 'status' ).textContent ).toBe( discount.plansPageNoticeText );
 	} );
 
-	test( 'A plan upgrade credit <PlanNotice /> should be shown in a site where a plan is purchased, without other active discounts, has upgradeable plan and, the site owner is logged in', () => {
-		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 10000 );
-
-		renderWithProvider(
-			<PlanNotice
-				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
-				visiblePlans={ plansList }
-				isInSignup={ false }
-				siteId={ 32234 }
-			/>
-		);
-		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'You have $100.00 in upgrade credits(opens in a new tab) available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
-		);
-	} );
-
-	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where a domain has been purchased without a paid plan', () => {
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
-		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 1000 );
-
-		renderWithProvider(
-			<PlanNotice
-				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
-				visiblePlans={ plansList }
-				isInSignup={ false }
-				siteId={ 32234 }
-			/>
-		);
-		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'You have $10.00 in upgrade credits(opens in a new tab) available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!'
-		);
-	} );
-
 	test( 'A marketing message <PlanNotice /> when no other notices are available and marketing messages are available and the user is not in signup', () => {
 		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
 		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );

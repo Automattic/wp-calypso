@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
-import { siteQuery, siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
+import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
 import { canViewSftpSettings, canViewSshSettings } from '../features';
 import SettingsCallout from '../settings-callout';
@@ -12,22 +14,18 @@ import SftpCard from './sftp-card';
 import SshCard from './ssh-card';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: sftpUsers } = useQuery( {
-		...siteSftpUsersQuery( siteSlug ),
-		enabled: site && canViewSftpSettings( site ),
+		...siteSftpUsersQuery( site.ID ),
+		enabled: canViewSftpSettings( site ),
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
-		...siteSshAccessStatusQuery( siteSlug ),
-		enabled: site && canViewSshSettings( site ),
+		...siteSshAccessStatusQuery( site.ID ),
+		enabled: canViewSshSettings( site ),
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
-
-	if ( ! site ) {
-		return null;
-	}
 
 	if ( ! canViewSftpSettings( site ) ) {
 		return (
@@ -49,13 +47,13 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
 			{ sftpEnabled ? (
-				<SftpCard siteSlug={ site.slug } sftpUsers={ sftpUsers } />
+				<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
 			) : (
-				<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canViewSshSettings( site ) } />
+				<EnableSftpCard siteId={ site.ID } canUseSsh={ canViewSshSettings( site ) } />
 			) }
 			{ sftpEnabled && canViewSshSettings( site ) && (
 				<SshCard
-					siteSlug={ site.slug }
+					siteId={ site.ID }
 					sftpUsers={ sftpUsers }
 					sshEnabled={ sshAccessStatus?.setting === 'ssh' }
 				/>

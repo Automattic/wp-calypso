@@ -128,6 +128,11 @@ class StatsSummary extends Component {
 		}
 
 		const moduleQuery = merge( {}, statsQueryOptions, query );
+		// TODO: Refactor the query params for posts module.
+		if ( 'posts' === this.props.context.params.module ) {
+			moduleQuery.skip_archives = isEnabled( 'stats/archive-breakdown' ) ? '1' : '0';
+		}
+
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
 
@@ -430,11 +435,12 @@ class StatsSummary extends Component {
 					) }
 
 					{ /* TODO: Refactor to use the same component for both locations and posts */ }
-					{ this.props.context.params.module === 'posts' && (
-						<div className="stats-navigation stats-navigation--improved">
-							<PostsNavTabs query={ moduleQuery } />
-						</div>
-					) }
+					{ isEnabled( 'stats/archive-breakdown' ) &&
+						this.props.context.params.module === 'posts' && (
+							<div className="stats-navigation stats-navigation--improved">
+								<PostsNavTabs query={ moduleQuery } />
+							</div>
+						) }
 
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (

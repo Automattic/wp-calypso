@@ -12,9 +12,10 @@ export interface A4ASelectSiteProps {
 	trackingEvent?: string;
 	buttonLabel?: string;
 	className?: string;
-	onSiteSelect: ( siteId: number, siteDomain: string ) => void;
+	onSiteSelect: ( site: A4ASelectSiteItem ) => void;
 	title?: string;
 	subtitle?: ReactNode;
+	selectedSiteId?: number;
 }
 
 export interface A4ASelectSiteButtonProps {
@@ -25,12 +26,14 @@ export interface A4ASelectSiteButtonProps {
 
 export interface SelectSiteModalProps {
 	onClose: () => void;
-	onSiteSelect: ( siteId: number, siteDomain: string ) => void;
+	onSiteSelect: ( site: A4ASelectSiteItem ) => void;
 	title?: string;
 	subtitle?: ReactNode;
+	selectedSiteId?: number;
 }
 
 export interface SelectSiteTableProps {
 	selectedSite: A4ASelectSiteItem | null;
 	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
+	selectedSiteId?: number;
 }

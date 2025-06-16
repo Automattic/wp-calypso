@@ -202,9 +202,17 @@ export class ImportingPane extends PureComponent {
 						</ImporterActionButton>
 					</ImporterActionButtonContainer>
 				) }
-				{ showFallbackButton && (
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
-				) }
+				{ showFallbackButton &&
+					( isError ? (
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled
+							label={ this.props.translate( 'Try again' ) }
+						/>
+					) : (
+						<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
+					) ) }
 			</ImporterActionButtonContainer>
 		);
 	};

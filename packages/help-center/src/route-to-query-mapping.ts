@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 
 export const useQueryForRoute = ( currentRoute: string ) => {
 	const urlMapping = {
-		'/add-ons/': __( 'add-ons' ),
 		'/advertising/': __( 'advertising' ),
 		'/comments/': __( 'comments' ),
 		'/discover': __( 'discover blogs' ),
@@ -25,7 +24,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/settings/taxonomies/category/': __( 'site categories' ),
 		'/settings/taxonomies/post_tag/': __( 'post tag' ),
 		'/settings/writing/': __( 'writing settings' ),
-		'/sites': __( 'manage sites' ),
 		'/tags': __( 'tags' ),
 		'/woocommerce': __( 'woocommerce' ),
 		'/wp-admin/admin.php?page=akismet-key-config': __( 'site spam' ),

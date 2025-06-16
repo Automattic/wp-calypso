@@ -82,6 +82,7 @@
 		"@emotion/styled": "^11.11.0",
 		"@fingerprintjs/fingerprintjs": "3.4.2",
 		"@github/webauthn-json": "^2.1.1",
+		"@gravatar-com/hovercards": "^0.13.0",
 		"@paypal/react-paypal-js": "^8.7.0",
 		"@stripe/react-stripe-js": "^2.1.0",
 		"@stripe/stripe-js": "^1.54.2",

@@ -154,14 +154,19 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState( false );
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
+	const [ isFinished, setIsFinished ] = useState( false );
+	const [ percent, setPercent ] = useState( 0 );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
-	const { message, percent, currentEntry, status } = useSelector(
-		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
-	);
+	const {
+		message,
+		percent: restorePercent,
+		currentEntry,
+		status,
+	} = useSelector( ( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress ) );
 
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 	const browserSelectedList = useSelector( ( state ) =>
@@ -233,6 +238,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
+		setIsFinished( false );
+		setPercent( 0 );
 
 		// Track the restore confirmation event.
 		dispatch(
@@ -589,13 +596,22 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
-	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
 		( restoreInitiated && userHasRequestedRestore );
 
 	const shouldRenderConfirmation = ( ! isInProgress || ! isFinished ) && ! restoreInitiated;
+
+	useEffect( () => {
+		if ( inProgressRewindStatus === 'finished' ) {
+			setIsFinished( true );
+		}
+	}, [ dispatch, inProgressRewindStatus ] );
+
+	useEffect( () => {
+		setPercent( restorePercent );
+	}, [ dispatch, restorePercent ] );
 
 	useEffect( () => {
 		if ( isInProgress && ! userHasRequestedRestore ) {

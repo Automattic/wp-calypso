@@ -129,9 +129,15 @@ export default function Content( {
 					<h2>{ __( 'Step 2: Import your content to WordPress.com' ) }</h2>
 					<p>
 						{ createInterpolateElement(
-							__(
-								'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading Settings</a>, and change "Your homepage displays" to a static page.'
-							),
+							( fixMe( {
+								text: 'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading settings</a>, and change "Your homepage displays" to a static page.',
+								newCopy: __(
+									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading settings</a>, and change "Your homepage displays" to a static page.'
+								),
+								oldCopy: __(
+									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading Settings</a>, and change "Your homepage displays" to a static page.'
+								),
+							} ) || '' ) as string,
 							{
 								a: (
 									<a

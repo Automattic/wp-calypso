@@ -234,7 +234,7 @@ export const data: ComponentData[] = [
 		status: 'use-with-caution',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-datetimepicker--docs',
 		notes:
-			'If possible, use `DateCalendar` from `@automattic/components` instead. For the input fields, consider using an `InputControl` with `type="datetime-local"`.',
+			'If possible, use `DateCalendar` from `@automattic/components` instead. For the input fields, consider using an `TextControl` with `type="date"` or `type="datetime-local"`.',
 	},
 	{
 		id: 'disabled',
@@ -792,7 +792,7 @@ export const data: ComponentData[] = [
 		figma:
 			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=16530-21978',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-timepicker--docs',
-		notes: 'Consider using an `InputControl` with `type="datetime-local"` instead.',
+		notes: 'Consider using an `TextControl` with `type="date"` or `type="datetime-local"` instead.',
 	},
 	{
 		id: 'tip',

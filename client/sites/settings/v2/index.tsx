@@ -6,7 +6,11 @@ import { recordTracksEvent, recordPageView } from 'calypso/state/analytics/actio
 import Layout from './layout';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 
-export default function DashboardBackportSiteSettingsRenderer() {
+export default function DashboardBackportSiteSettingsRenderer( {
+	siteSlug,
+}: {
+	siteSlug?: string;
+} ) {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
@@ -23,29 +27,34 @@ export default function DashboardBackportSiteSettingsRenderer() {
 		[ dispatch ]
 	);
 
+	// Initialize the root instance.
 	useEffect( () => {
-		if ( ! containerRef.current ) {
+		if ( ! containerRef.current || rootInstanceRef.current ) {
 			return;
 		}
 
+		rootInstanceRef.current = createRoot( containerRef.current );
+		return () => {
+			const currentRoot = rootInstanceRef.current;
+			if ( currentRoot ) {
+				requestAnimationFrame( () => {
+					currentRoot.unmount();
+					rootInstanceRef.current = null;
+				} );
+			}
+		};
+	}, [] );
+
+	// Update the root instance upon dependency change.
+	useEffect( () => {
 		if ( ! rootInstanceRef.current ) {
-			rootInstanceRef.current = createRoot( containerRef.current );
+			return;
 		}
 
 		persistPromise.then( () => {
 			rootInstanceRef.current?.render( <Layout analyticsClient={ analyticsClient } /> );
 		} );
-
-		return () => {
-			if ( rootInstanceRef.current ) {
-				// Wait for the router to unmount.
-				setTimeout( () => {
-					rootInstanceRef.current?.unmount();
-					rootInstanceRef.current = null;
-				} );
-			}
-		};
-	}, [ analyticsClient ] );
+	}, [ analyticsClient, siteSlug ] );
 
 	return <div className="dashboard-backport-site-settings-root" ref={ containerRef } />;
 }

@@ -24,6 +24,10 @@
 		min-height: 0;
 	}
 
+	.components-panel__body-toggle {
+		justify-content: unset;
+	}
+
 	.site-preview-pane:has( & .dashboard-snackbars ) {
 		z-index: 176;
 	}
