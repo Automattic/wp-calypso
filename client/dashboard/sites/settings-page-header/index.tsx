@@ -1,33 +1,26 @@
-import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
-import { Link, useLocation } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { useRouter } from '@tanstack/react-router';
+import { Button } from '@wordpress/components';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import type { PageHeaderProps } from '../../components/page-header/types';
 
 export default function SettingsPageHeader( props: PageHeaderProps ) {
-	const location = useLocation();
 	const { siteSlug } = siteRoute.useParams();
-	const { title, ...otherProps } = props;
+	const router = useRouter();
 
-	const breadcrumbs = (
-		<Breadcrumbs
-			items={ [
-				{
-					label: __( 'Settings' ),
-					href: `/sites/${ siteSlug }/settings`,
-				},
-				{
-					label: title,
-					href: location.pathname,
-				},
-			] }
-			renderItemLink={ ( { href, label, ...rest } ) => (
-				<Link to={ href } { ...rest }>
-					{ label }
-				</Link>
-			) }
-		/>
+	const backButton = (
+		<Button
+			className="dashboard-page-header__back-button"
+			icon={ isRTL() ? chevronRight : chevronLeft }
+			onClick={ () => {
+				router.navigate( { to: `/sites/${ siteSlug }/settings` } );
+			} }
+		>
+			{ __( 'Settings' ) }
+		</Button>
 	);
-	return <PageHeader title={ title } breadcrumbs={ breadcrumbs } { ...otherProps } />;
+
+	return <PageHeader prefix={ backButton } { ...props } />;
 }

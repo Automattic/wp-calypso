@@ -404,8 +404,9 @@ function LineItemWrapper( {
 		}
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
 		const isMarketplace = product.extra?.is_marketplace_product;
+		const isA4A = product.extra?.isA4ASitelessCheckout;
 
-		if ( isJetpack || isAkismet || isMarketplace ) {
+		if ( isJetpack || isAkismet || isMarketplace || isA4A ) {
 			return true;
 		}
 

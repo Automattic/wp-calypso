@@ -38,21 +38,6 @@ export const SITE_OPTIONS = [
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export interface SiteDomain {
-	id: number;
-	domain: string;
-	blog_id: number;
-	owner: string;
-	expiry: string;
-	domain_status: {
-		status: string;
-	};
-	wpcom_domain: boolean;
-	sslStatus: string;
-	domain_type: string;
-	primary_domain: boolean;
-}
-
 export interface SitePlan {
 	product_id: number;
 	product_slug: string;
