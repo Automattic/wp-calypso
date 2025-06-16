@@ -1,12 +1,24 @@
 import { useTranslate } from 'i18n-calypso';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import VipAgencyProgramForm from './form';
 
 import './style.scss';
 
 export default function VipAgencyProgramSection() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const onVipAgencyProgramLinkClick = () => {
+		dispatch(
+			recordTracksEvent(
+				'calypso_a4a_marketplace_hosting_enterprise_vip_agency_program_link_click'
+			)
+		);
+	};
+
 	return (
 		<PageSection
 			className="vip-agency-program-section"
@@ -90,6 +102,30 @@ export default function VipAgencyProgramSection() {
 								),
 							] }
 						/>
+					</div>
+
+					<div className="vip-agency-program-section__aside-card">
+						<h4 className="vip-agency-program-section__aside-card-heading">
+							{ translate( 'Ready to take the next step?' ) }
+						</h4>
+
+						<p className="vip-agency-program-section__aside-card-description">
+							{ translate(
+								'Complete our interest form for consideration or visit the {{link}}WordPress VIP Agency Partner Program{{/link}} to learn more.',
+								{
+									components: {
+										link: (
+											<a
+												href="https://wpvip.com/why-become-a-wordpress-vip-partner-agency"
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ onVipAgencyProgramLinkClick }
+											/>
+										),
+									},
+								}
+							) }
+						</p>
 					</div>
 				</div>
 				<div className="vip-agency-program-section__main">

@@ -32,7 +32,7 @@
 .vip-agency-program-section__aside-section {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 32px;
 }
 
 
@@ -40,13 +40,17 @@
 	@include heading-large;
 }
 
-.vip-agency-program-section__main {
-	flex-grow: 1;
+.vip-agency-program-section__main,
+.vip-agency-program-section__aside-card {
 	border-radius: 8px; // stylelint-disable-line scales/radii
 	box-shadow: 0 3px 1px 0 #0000000A;
 	padding: 32px;
 	background-color: var(--color-surface);
 	max-width: 600px;
+}
+
+.vip-agency-program-section__main {
+	flex-grow: 1;
 }
 
 .a4a-form.vip-agency-program-form {
@@ -60,4 +64,19 @@
 .vip-agency-program-form__heading {
 	@include heading-large;
 	margin-block: 16px;
+}
+
+.vip-agency-program-section__aside-card {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-block-start: 32px;
+}
+
+.vip-agency-program-section__aside-card-heading {
+	@include heading-x-large;
+}
+
+.vip-agency-program-section__aside-card-description {
+	@include body-large;
 }
