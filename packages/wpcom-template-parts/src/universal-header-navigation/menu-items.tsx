@@ -167,9 +167,10 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 
 	// Register this dropdown on mount and unregister on unmount
 	useEffect( () => {
-		registerDropdown( dropdownId.current, handleClose );
+		const id = dropdownId.current;
+		registerDropdown( id, handleClose );
 		return () => {
-			unregisterDropdown( dropdownId.current );
+			unregisterDropdown( id );
 			if ( timeoutRef.current ) {
 				clearTimeout( timeoutRef.current );
 			}
