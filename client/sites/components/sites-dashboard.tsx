@@ -2,7 +2,6 @@ import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
-	useFilterDeletedSites,
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
@@ -91,6 +90,14 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
+const getSiteVisibility = ( statusSlug?: string, search?: string, isRestoringAccount = false ) => {
+	if ( statusSlug === 'deleted' ) {
+		return 'deleted';
+	}
+
+	return search || isRestoringAccount ? 'all' : 'visible';
+};
+
 export function showSitesPage( route: string, openInNewTab = false ) {
 	const currentParams = new URL( window.location.href ).searchParams;
 	const newUrl = new URL( route, window.location.origin );
@@ -162,19 +169,6 @@ const SitesDashboard = ( {
 			!! ( options?.theme_slug && isP2Theme( options.theme_slug ) )
 		);
 	};
-
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
-		[],
-		sitesFilterCallback,
-		'all',
-		[ 'is_a4a_dev_site', 'site_migration' ],
-		[ 'theme_slug' ],
-		// Don't fetch sites on narrow screens since it's not visible.
-		! selectedSite || isWide
-	);
-
-	useShowSiteCreationNotice( allSites, newSiteID );
-	useShowSiteTransferredNotice();
 
 	const siteStatusGroups = useSiteStatusGroups();
 
@@ -283,20 +277,29 @@ const SitesDashboard = ( {
 			?.slug as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		sitesFilterCallback,
+		// We don't want to show the deleted sites by default, so we fetch deleted sites only if a search
+		// keyword is entered, a status filter is applied, or the account is currently restoring.
+		getSiteVisibility( statusSlug, search, isRestoringAccount() ),
+		[ 'is_a4a_dev_site', 'site_migration' ],
+		[ 'theme_slug' ],
+		// Don't fetch sites on narrow screens since it's not visible.
+		! selectedSite || isWide
+	);
+
+	useShowSiteCreationNotice( allSites, newSiteID );
+	useShowSiteTransferredNotice();
+
 	// Filter sites list by status group.
 	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
 		status: statusSlug || 'all',
 		showHidden: true,
 	} );
 
-	// Remove deleted sites from default view
-	const filteredStatusGroup = useFilterDeletedSites( currentStatusGroup, {
-		shouldApplyFilter:
-			! search && ( ! statusSlug || statusSlug === 'all' ) && ! isRestoringAccount(),
-	} );
-
 	// Perform sorting actions
-	const sortedSites = useSitesListSorting( filteredStatusGroup, {
+	const sortedSites = useSitesListSorting( currentStatusGroup, {
 		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort?.direction || undefined,
