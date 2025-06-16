@@ -866,13 +866,7 @@ describe( 'utils', () => {
 					{
 						label: 'Homepage',
 						value: 59,
-						children: [
-							{
-								label: 'http://jetpack.com/',
-								value: 59,
-								link: 'http://jetpack.com/',
-							},
-						],
+						children: null,
 					},
 					{
 						label: 'Taxonomies',
@@ -1077,13 +1071,7 @@ describe( 'utils', () => {
 					{
 						label: 'Homepage',
 						value: 89,
-						children: [
-							{
-								label: 'http://jetpack.com/',
-								value: 89,
-								link: 'http://jetpack.com/',
-							},
-						],
+						children: null,
 					},
 					{
 						label: 'Categories',

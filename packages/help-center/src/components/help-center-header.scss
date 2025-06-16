@@ -136,6 +136,15 @@
 					fill: var( --studio-white );
 				}
 			}
+
+			&:not(:hover) {
+				background-color: unset;
+				color: var(--studio-gray-70);
+
+				svg {
+					fill: var(--studio-gray-70);
+				}
+			}
 		}
 	}
 

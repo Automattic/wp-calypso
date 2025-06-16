@@ -1,0 +1,11 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
+		"outDir": "dist",
+		"rootDir": "src",
+		"types": [ "@testing-library/jest-dom" ]
+	},
+	"include": [ "src" ]
+}

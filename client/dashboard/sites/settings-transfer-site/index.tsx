@@ -15,6 +15,7 @@ import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owne
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
 import { StartSiteTransferForm } from './start-site-transfer-form';
+import type { SiteOwnerTransferContext } from '../../data/types';
 
 const MIN_STEP = 0;
 
@@ -44,7 +45,13 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 };
 
 // TODO: Use Stepper component when the design is ready.
-export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
+export default function SettingsTransferSite( {
+	siteSlug,
+	context,
+}: {
+	siteSlug: string;
+	context?: SiteOwnerTransferContext;
+} ) {
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
@@ -91,6 +98,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 						<StartSiteTransferForm
 							newOwnerEmail={ newOwnerEmail }
 							site={ site }
+							context={ context }
 							onSubmit={ handleStartSiteTransfer }
 							onBack={ handleBack }
 						/>

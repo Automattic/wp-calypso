@@ -1,4 +1,4 @@
-import type { Icon, __experimentalHeading as Heading } from '@wordpress/components';
+import type { Icon } from '@wordpress/components';
 import type { ComponentProps, ReactNode } from 'react';
 
 export interface CalloutProps {
@@ -7,10 +7,10 @@ export interface CalloutProps {
 	 */
 	title: string;
 	/**
-	 * The level of the heading to be used for the title.
-	 * @default 6
+	 * The type of element to use for the title. Allows for the title can a heading element.
+	 * @default <Text>
 	 */
-	headingLevel?: ComponentProps< typeof Heading >[ 'level' ];
+	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
 	/**
 	 * A short paragraph providing supporting context or details to reinforce the title.
 	 * Elements will be arranged in a VStack with consistent spacing.

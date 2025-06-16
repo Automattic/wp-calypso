@@ -2,7 +2,7 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import SiteIcon from 'calypso/blocks/site-icon';
-import Gravatar from 'calypso/components/gravatar';
+import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
@@ -124,7 +124,7 @@ export default function ReaderAvatar( {
 
 	const avatarUrl = author?.wpcom_login ? getUserProfileUrl( author.wpcom_login ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
-		<Gravatar user={ author } size={ gravatarSize } />
+		<GravatarWithHovercards user={ author } size={ gravatarSize } />
 	);
 	const avatarElement = avatarUrl ? <a href={ avatarUrl }> { authorAvatar }</a> : authorAvatar;
 

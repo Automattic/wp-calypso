@@ -490,7 +490,8 @@ export const normalizers = {
 					accumulatedArchives.push( {
 						label: getArchiveKeyLabel( archiveKey ),
 						value: totalViews,
-						children,
+						// Show the Homepage without children if there are no other pages under it.
+						children: 'home' === archiveKey && children.length < 2 ? null : children,
 					} );
 				}
 			}

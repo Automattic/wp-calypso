@@ -187,13 +187,13 @@ $mobile-footer-height: 150px;
 	margin-block-end: 8px;
 
 	p {
-		@include body-small;
+		@include body-medium;
 		margin: 0;
 	}
 }
 
 .onboarding-tour-modal__section-content-hint {
-	@include body-small;
+	@include body-medium;
 	padding: 12px;
 	background-color: $hint-container-bg-color;
 }
