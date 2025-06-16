@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
 /* eslint-disable no-console */
@@ -99,89 +99,138 @@ interface NonClickableItemProps extends MenuItemProps {
 
 export const NonClickableItem = ( { content, className, children }: NonClickableItemProps ) => {
 	const contentString = String( content );
+	const [ isHoverOpen, setIsHoverOpen ] = useState( false );
+	const containerRef = useRef< HTMLDivElement >( null );
+	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+
+	const handleMouseEnter = () => {
+		debug( 'Mouse enter - opening dropdown' );
+		if ( timeoutRef.current ) {
+			clearTimeout( timeoutRef.current );
+			timeoutRef.current = null;
+		}
+		setIsHoverOpen( true );
+	};
+
+	const handleMouseLeave = () => {
+		debug( 'Mouse leave - closing dropdown with delay' );
+		// Add a small delay to prevent flickering when moving between trigger and dropdown
+		timeoutRef.current = setTimeout( () => {
+			setIsHoverOpen( false );
+		}, 150 );
+	};
+
+	// Clean up timeout on unmount
+	useEffect( () => {
+		return () => {
+			if ( timeoutRef.current ) {
+				clearTimeout( timeoutRef.current );
+			}
+		};
+	}, [] );
 
 	return (
-		<DropdownMenu
-			label={ `${ contentString } submenu` }
-			icon={ chevronDown }
-			className={ `x-nav-link x-link ${ className || '' }` }
-			popoverProps={ {
-				className: 'x-nav-dropdown-popover',
-				position: 'bottom',
-				noArrow: true,
-				offset: 10,
-				animate: true,
-				expandOnMobile: true,
-				onClose: () => debug( 'Popover closing' ),
-			} }
-			toggleProps={ {
-				className: 'x-nav-link x-link',
-				// @ts-ignore - data attributes are valid HTML props
-				'data-dropdown-trigger': content,
-				children: (
-					<>
-						{ contentString }
-						<span className="x-nav-link__chevron" />
-					</>
-				),
-			} }
-		>
-			{ ( { onClose }: { onClose: () => void } ) => {
-				debug( 'Dropdown render function called' );
-				return (
-					<>
-						{ React.Children.map( children, ( child ) => {
-							debug( 'Processing child:', child );
-							if ( React.isValidElement( child ) ) {
-								if ( child.type === 'ul' ) {
-									return (
-										<MenuGroup>
-											{ React.Children.map( child.props.children, ( menuItem ) => {
-												debug( 'Processing menu item:', menuItem );
-												if ( React.isValidElement( menuItem ) && menuItem.type === ClickableItem ) {
-													const {
-														urlValue,
-														content: itemContent,
-														target,
-													} = menuItem.props as ClickableItemProps;
-													return (
-														<MenuItem
-															key={ urlValue }
-															onClick={ () => {
-																debug( 'MenuItem clicked' );
-																// Create a temporary link element for tracking
-																const tempLink = document.createElement( 'a' );
-																tempLink.href = urlValue;
-																tempLink.className = 'x-dropdown-link';
-																tempLink.innerText = String( itemContent );
-																clickNavLinkEvent( tempLink );
+		<div ref={ containerRef } onMouseEnter={ handleMouseEnter } onMouseLeave={ handleMouseLeave }>
+			<DropdownMenu
+				label={ `${ contentString } submenu` }
+				icon={ chevronDown }
+				className={ `x-nav-link x-link ${ className || '' }` }
+				open={ isHoverOpen }
+				popoverProps={ {
+					className: 'x-nav-dropdown-popover',
+					position: 'bottom',
+					noArrow: true,
+					offset: 10,
+					animate: true,
+					expandOnMobile: true,
+					onClose: () => {
+						debug( 'Popover closing' );
+						setIsHoverOpen( false );
+					},
+				} }
+				toggleProps={ {
+					className: 'x-nav-link x-link',
+					// @ts-ignore - data attributes are valid HTML props
+					'data-dropdown-trigger': content,
+					onKeyDown: ( event: React.KeyboardEvent ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							event.preventDefault();
+							debug( 'Keyboard toggle - opening dropdown' );
+							setIsHoverOpen( ! isHoverOpen );
+						} else if ( event.key === 'Escape' && isHoverOpen ) {
+							event.preventDefault();
+							debug( 'Escape pressed - closing dropdown' );
+							setIsHoverOpen( false );
+						}
+					},
+					children: (
+						<>
+							{ contentString }
+							<span className="x-nav-link__chevron" />
+						</>
+					),
+				} }
+			>
+				{ ( { onClose }: { onClose: () => void } ) => {
+					debug( 'Dropdown render function called' );
+					return (
+						<>
+							{ React.Children.map( children, ( child ) => {
+								debug( 'Processing child:', child );
+								if ( React.isValidElement( child ) ) {
+									if ( child.type === 'ul' ) {
+										return (
+											<MenuGroup>
+												{ React.Children.map( child.props.children, ( menuItem ) => {
+													debug( 'Processing menu item:', menuItem );
+													if (
+														React.isValidElement( menuItem ) &&
+														menuItem.type === ClickableItem
+													) {
+														const {
+															urlValue,
+															content: itemContent,
+															target,
+														} = menuItem.props as ClickableItemProps;
+														return (
+															<MenuItem
+																key={ urlValue }
+																onClick={ () => {
+																	debug( 'MenuItem clicked' );
+																	// Create a temporary link element for tracking
+																	const tempLink = document.createElement( 'a' );
+																	tempLink.href = urlValue;
+																	tempLink.className = 'x-dropdown-link';
+																	tempLink.innerText = String( itemContent );
+																	clickNavLinkEvent( tempLink );
 
-																// Handle navigation
-																window.open( urlValue, target || '_self' );
-																onClose();
-															} }
-														>
-															{ itemContent }
-														</MenuItem>
-													);
-												}
-												return null;
-											} ) }
-										</MenuGroup>
-									);
-								} else if (
-									child.type === 'div' &&
-									child.props.className === 'x-dropdown-content-separator'
-								) {
-									debug( 'Rendering separator' );
-									return <hr className="x-dropdown-content-separator" />;
+																	// Handle navigation
+																	window.open( urlValue, target || '_self' );
+																	onClose();
+																} }
+															>
+																{ itemContent }
+															</MenuItem>
+														);
+													}
+													return null;
+												} ) }
+											</MenuGroup>
+										);
+									} else if (
+										child.type === 'div' &&
+										child.props.className === 'x-dropdown-content-separator'
+									) {
+										debug( 'Rendering separator' );
+										return <hr className="x-dropdown-content-separator" />;
+									}
 								}
-							}
-							return null;
-						} ) }
-					</>
-				);
-			} }
-		</DropdownMenu>
+								return null;
+							} ) }
+						</>
+					);
+				} }
+			</DropdownMenu>
+		</div>
 	);
 };
