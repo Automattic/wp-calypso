@@ -1,6 +1,5 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { persistPromise } from 'calypso/dashboard/app/query-client';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent, recordPageView } from 'calypso/state/analytics/actions';
 import Layout from './layout';
@@ -56,11 +55,9 @@ export default function DashboardBackportSiteSettingsRenderer( {
 			return;
 		}
 
-		persistPromise.then( () => {
-			rootInstanceRef.current?.render(
-				<Layout store={ store } analyticsClient={ analyticsClient } />
-			);
-		} );
+		rootInstanceRef.current?.render(
+			<Layout store={ store } analyticsClient={ analyticsClient } />
+		);
 	}, [ analyticsClient, store, siteSlug, feature ] );
 
 	return <div className="dashboard-backport-site-settings-root" ref={ containerRef } />;

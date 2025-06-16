@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
+import { persistPromise } from 'calypso/dashboard/app/query-client';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
@@ -25,6 +26,7 @@ import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
 import DashboardBackportSiteSettingsRenderer from './v2';
+import { createRouter } from './v2/layout';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
@@ -210,7 +212,7 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 /**
  * Backport Hosting Dashboard Site Settings page to the current one.
  */
-export function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
+export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
@@ -227,6 +229,8 @@ export function dashboardBackportSiteSettings( context: PageJSContext, next: () 
 			feature={ context.params.feature }
 		/>
 	);
+
+	await Promise.all( [ persistPromise, createRouter().load() ] );
 
 	next();
 }

@@ -12,9 +12,13 @@ const config = {
 	basePath: '/sites/settings/v2',
 };
 
+export function createRouter() {
+	return getRouter( config );
+}
+
 function RouterProviderWithAuth() {
 	const auth = useAuth();
-	const router = getRouter( config );
+	const router = createRouter();
 	return <RouterProvider router={ router } context={ { auth, config } } />;
 }
 
