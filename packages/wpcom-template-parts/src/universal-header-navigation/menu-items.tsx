@@ -4,14 +4,6 @@ import { chevronDown } from '@wordpress/icons';
 import React, { useState, useRef, useEffect } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
-/* eslint-disable no-console */
-const debug = ( ...args: unknown[] ) => {
-	if ( typeof window !== 'undefined' && window.localStorage.getItem( 'debug' ) ) {
-		console.log( '[NonClickableItem]', ...args );
-	}
-};
-/* eslint-enable no-console */
-
 // Module-level state to track which dropdown is currently open
 let currentOpenDropdown: string | null = null;
 const dropdownCloseCallbacks = new Map< string, () => void >();
@@ -33,7 +25,6 @@ const openDropdown = ( id: string, triggerElement?: HTMLElement, viaKeyboard = f
 	if ( currentOpenDropdown && currentOpenDropdown !== id ) {
 		const closeCallback = dropdownCloseCallbacks.get( currentOpenDropdown );
 		if ( closeCallback ) {
-			debug( `Closing previously open dropdown: ${ currentOpenDropdown }` );
 			closeCallback();
 		}
 	}
@@ -42,9 +33,7 @@ const openDropdown = ( id: string, triggerElement?: HTMLElement, viaKeyboard = f
 	// Update focus target to the trigger element of the newly opened dropdown
 	if ( triggerElement ) {
 		focusTargetOnClose = triggerElement;
-		debug( 'Set focus target to:', triggerElement );
 	}
-	debug( `Opened dropdown: ${ id }, via keyboard: ${ viaKeyboard }` );
 };
 
 const closeDropdown = ( id: string ) => {
@@ -52,7 +41,6 @@ const closeDropdown = ( id: string ) => {
 		currentOpenDropdown = null;
 		// Only move focus if the interaction was keyboard-initiated
 		if ( focusTargetOnClose && isKeyboardInteraction ) {
-			debug( 'Moving focus to:', focusTargetOnClose );
 			focusTargetOnClose.focus();
 		} else if ( ! isKeyboardInteraction ) {
 			// For mouse interactions, remove focus completely
@@ -62,7 +50,6 @@ const closeDropdown = ( id: string ) => {
 		}
 		focusTargetOnClose = null;
 		isKeyboardInteraction = false;
-		debug( `Closed dropdown: ${ id }` );
 	}
 };
 
@@ -194,7 +181,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 		const handleEscapeKey = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' && isHoverOpen ) {
 				event.preventDefault();
-				debug( 'Global Escape pressed - closing dropdown' );
 				handleClose();
 			}
 		};
@@ -209,7 +195,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 	}, [ isHoverOpen ] );
 
 	const handleMouseEnter = () => {
-		debug( 'Mouse enter - opening dropdown' );
 		if ( timeoutRef.current ) {
 			clearTimeout( timeoutRef.current );
 			timeoutRef.current = null;
@@ -218,7 +203,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 	};
 
 	const handleMouseLeave = () => {
-		debug( 'Mouse leave - closing dropdown with delay' );
 		// Add a small delay to prevent flickering when moving between trigger and dropdown
 		timeoutRef.current = setTimeout( () => {
 			handleClose();
@@ -241,7 +225,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					expandOnMobile: true,
 					focusOnMount: wasOpenedViaKeyboard ? 'firstElement' : false,
 					onClose: () => {
-						debug( 'Popover closing' );
 						handleClose();
 					},
 				} }
@@ -252,7 +235,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					onKeyDown: ( event: React.KeyboardEvent ) => {
 						if ( event.key === 'Enter' || event.key === ' ' ) {
 							event.preventDefault();
-							debug( 'Keyboard toggle - toggling dropdown' );
 							if ( isHoverOpen ) {
 								handleClose();
 							} else {
@@ -260,7 +242,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 							}
 						} else if ( event.key === 'Escape' && isHoverOpen ) {
 							event.preventDefault();
-							debug( 'Escape pressed - closing dropdown' );
 							handleClose();
 						}
 					},
@@ -283,17 +264,14 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 				} }
 			>
 				{ ( { onClose }: { onClose: () => void } ) => {
-					debug( 'Dropdown render function called' );
 					return (
 						<>
 							{ React.Children.map( children, ( child ) => {
-								debug( 'Processing child:', child );
 								if ( React.isValidElement( child ) ) {
 									if ( child.type === 'ul' ) {
 										return (
 											<MenuGroup>
 												{ React.Children.map( child.props.children, ( menuItem ) => {
-													debug( 'Processing menu item:', menuItem );
 													if (
 														React.isValidElement( menuItem ) &&
 														menuItem.type === ClickableItem
@@ -307,7 +285,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 															<MenuItem
 																key={ urlValue }
 																onClick={ () => {
-																	debug( 'MenuItem clicked' );
 																	// Create a temporary link element for tracking
 																	const tempLink = document.createElement( 'a' );
 																	tempLink.href = urlValue;
@@ -332,7 +309,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 										child.type === 'div' &&
 										child.props.className === 'x-dropdown-content-separator'
 									) {
-										debug( 'Rendering separator' );
 										return <hr className="x-dropdown-content-separator" />;
 									}
 								}
