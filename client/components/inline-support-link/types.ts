@@ -1,6 +1,6 @@
 export type ContextLink = {
 	link: string;
-	post_id: number;
+	post_id?: number;
 	blog_id?: number;
 };
 
