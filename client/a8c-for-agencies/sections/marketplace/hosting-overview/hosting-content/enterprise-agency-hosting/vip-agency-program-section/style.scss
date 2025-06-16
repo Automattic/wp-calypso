@@ -13,7 +13,7 @@
 	justify-content: space-around;
 	gap: 64px;
 
-	@include break-medium {
+	@include break-wide {
 		flex-direction: row;
 	}
 }
@@ -22,7 +22,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	max-width: 30%;
+
+
+	@include break-wide {
+		max-width: 30%;
+		padding-block-start: 64px;
+	}
 }
 
 .vip-agency-program-section__aside-heading {
@@ -32,7 +37,11 @@
 .vip-agency-program-section__aside-section {
 	display: flex;
 	flex-direction: column;
-	gap: 32px;
+	gap: 16px;
+
+	@include break-wide {
+		gap: 32px;
+	}
 }
 
 
