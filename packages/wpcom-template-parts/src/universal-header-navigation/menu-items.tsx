@@ -1,142 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { chevronDown } from '@wordpress/icons';
+import React from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
-// Module-level state to track the currently open dropdown
-let currentOpenDropdown: string | null = null;
-const dropdownInstances = new Set< () => void >();
-
-interface NonClickableItemProps extends MenuItemProps {
-	children?: React.ReactNode;
-}
-
-export const NonClickableItem = ( { content, className, children }: NonClickableItemProps ) => {
-	const [ isKeyboardOpen, setIsKeyboardOpen ] = useState( false );
-	const dropdownRef = useRef< HTMLDivElement | null >( null );
-	const buttonRef = useRef< HTMLButtonElement | null >( null );
-	const contentString = String( content );
-
-	const closeDropdown = useCallback( () => {
-		setIsKeyboardOpen( false );
-		if ( currentOpenDropdown === contentString ) {
-			currentOpenDropdown = null;
-		}
-		// Remove focus from button when closing
-		if ( buttonRef.current ) {
-			buttonRef.current.blur();
-		}
-	}, [ contentString ] );
-
-	useEffect( () => {
-		// Register this dropdown instance
-		dropdownInstances.add( closeDropdown );
-
-		// Global click handler
-		const handleGlobalClick = ( event: MouseEvent ) => {
-			if (
-				buttonRef.current &&
-				! buttonRef.current.contains( event.target as Node ) &&
-				dropdownRef.current &&
-				! dropdownRef.current.contains( event.target as Node )
-			) {
-				closeDropdown();
-			}
-		};
-
-		document.addEventListener( 'click', handleGlobalClick );
-
-		return () => {
-			// Cleanup
-			dropdownInstances.delete( closeDropdown );
-			document.removeEventListener( 'click', handleGlobalClick );
-		};
-	}, [ closeDropdown, contentString ] );
-
-	const handleFocus = () => {
-		// Close other dropdowns
-		if ( currentOpenDropdown && currentOpenDropdown !== contentString ) {
-			dropdownInstances.forEach( ( closeOther ) => {
-				if ( closeOther !== closeDropdown ) {
-					closeOther();
-				}
-			} );
-		}
-
-		currentOpenDropdown = contentString;
-		setIsKeyboardOpen( true );
-	};
-
-	const handleBlur = () => {
-		setIsKeyboardOpen( false );
-		if ( currentOpenDropdown === contentString ) {
-			currentOpenDropdown = null;
-		}
-	};
-
-	const handleKeyDown = ( event: React.KeyboardEvent ) => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			event.preventDefault();
-
-			if ( ! isKeyboardOpen ) {
-				// Close other dropdowns before opening this one
-				if ( currentOpenDropdown && currentOpenDropdown !== contentString ) {
-					dropdownInstances.forEach( ( closeOther ) => {
-						if ( closeOther !== closeDropdown ) {
-							closeOther();
-						}
-					} );
-				}
-				currentOpenDropdown = contentString;
-				setIsKeyboardOpen( true );
-			} else {
-				closeDropdown();
-			}
-		} else if ( event.key === 'Escape' && isKeyboardOpen ) {
-			event.preventDefault();
-			closeDropdown();
-		}
-	};
-
-	const handleMouseEnter = () => {
-		// Close any keyboard-opened dropdowns when hovering over a different menu item
-		if ( currentOpenDropdown && currentOpenDropdown !== contentString ) {
-			dropdownInstances.forEach( ( closeOther ) => {
-				if ( closeOther !== closeDropdown ) {
-					closeOther();
-				}
-			} );
-		}
-	};
-
-	return (
-		<>
-			<button
-				ref={ buttonRef }
-				role="menuitem"
-				className={ `x-nav-link x-link ${ className || '' }` }
-				aria-haspopup="true"
-				aria-expanded={ isKeyboardOpen }
-				data-dropdown-trigger={ content }
-				tabIndex={ 0 }
-				onFocus={ handleFocus }
-				onBlur={ handleBlur }
-				onKeyDown={ handleKeyDown }
-				onMouseEnter={ handleMouseEnter }
-			>
-				{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
-			</button>
-			<div
-				ref={ dropdownRef }
-				className={ `x-dropdown-content ${ isKeyboardOpen ? 'is-keyboard-open' : '' }` }
-				data-dropdown-name={ content }
-				role="menu"
-				aria-label={ `${ content } submenu` }
-			>
-				{ children }
-			</div>
-		</>
-	);
+/* eslint-disable no-console */
+const debug = ( ...args: unknown[] ) => {
+	if ( typeof window !== 'undefined' && window.localStorage.getItem( 'debug' ) ) {
+		console.log( '[NonClickableItem]', ...args );
+	}
 };
+/* eslint-enable no-console */
 
 const getParentElement = ( node: HTMLElement | null, pattern: RegExp ) => {
 	let parent = node;
@@ -216,5 +90,98 @@ export const ClickableItem = ( {
 				{ content }
 			</a>
 		</li>
+	);
+};
+
+interface NonClickableItemProps extends MenuItemProps {
+	children?: React.ReactNode;
+}
+
+export const NonClickableItem = ( { content, className, children }: NonClickableItemProps ) => {
+	const contentString = String( content );
+
+	return (
+		<DropdownMenu
+			label={ `${ contentString } submenu` }
+			icon={ chevronDown }
+			className={ `x-nav-link x-link ${ className || '' }` }
+			popoverProps={ {
+				className: 'x-nav-dropdown-popover',
+				position: 'bottom',
+				noArrow: true,
+				offset: 10,
+				animate: true,
+				expandOnMobile: true,
+				onClose: () => debug( 'Popover closing' ),
+			} }
+			toggleProps={ {
+				className: 'x-nav-link x-link',
+				// @ts-ignore - data attributes are valid HTML props
+				'data-dropdown-trigger': content,
+				children: (
+					<>
+						{ contentString }
+						<span className="x-nav-link__chevron" />
+					</>
+				),
+			} }
+		>
+			{ ( { onClose }: { onClose: () => void } ) => {
+				debug( 'Dropdown render function called' );
+				return (
+					<>
+						{ React.Children.map( children, ( child ) => {
+							debug( 'Processing child:', child );
+							if ( React.isValidElement( child ) ) {
+								if ( child.type === 'ul' ) {
+									return (
+										<MenuGroup>
+											{ React.Children.map( child.props.children, ( menuItem ) => {
+												debug( 'Processing menu item:', menuItem );
+												if ( React.isValidElement( menuItem ) && menuItem.type === ClickableItem ) {
+													const {
+														urlValue,
+														content: itemContent,
+														target,
+													} = menuItem.props as ClickableItemProps;
+													return (
+														<MenuItem
+															key={ urlValue }
+															onClick={ () => {
+																debug( 'MenuItem clicked' );
+																// Create a temporary link element for tracking
+																const tempLink = document.createElement( 'a' );
+																tempLink.href = urlValue;
+																tempLink.className = 'x-dropdown-link';
+																tempLink.innerText = String( itemContent );
+																clickNavLinkEvent( tempLink );
+
+																// Handle navigation
+																window.open( urlValue, target || '_self' );
+																onClose();
+															} }
+														>
+															{ itemContent }
+														</MenuItem>
+													);
+												}
+												return null;
+											} ) }
+										</MenuGroup>
+									);
+								} else if (
+									child.type === 'div' &&
+									child.props.className === 'x-dropdown-content-separator'
+								) {
+									debug( 'Rendering separator' );
+									return <hr className="x-dropdown-content-separator" />;
+								}
+							}
+							return null;
+						} ) }
+					</>
+				);
+			} }
+		</DropdownMenu>
 	);
 };

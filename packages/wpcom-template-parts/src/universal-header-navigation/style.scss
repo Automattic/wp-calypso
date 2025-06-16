@@ -218,6 +218,13 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 		transform: translateY(0) scale(1);
 		transition: all 150ms cubic-bezier(0.1, 0.6, 0.2, 1);
 	}
+
+	.components-button:focus:not(:disabled) {
+		box-shadow: none;
+		outline: 2px solid $studio-blue-50;
+		outline-offset: -2px;
+		border-radius: 2px;
+	}
 }
 
 button.x-nav-link.x-link,
@@ -898,3 +905,104 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 /* End site profiler section overrides */
+
+.components-dropdown-menu {
+	&.x-nav-link.x-link {
+		display: block;
+		border: none;
+		background: none;
+		box-shadow: none;
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		
+		.components-button {
+			@extend .x-nav-link;
+			width: 100%;
+			height: 100%;
+			justify-content: flex-start;
+			padding: inherit;
+			color: inherit;
+			font-size: inherit;
+			font-weight: inherit;
+			
+			&:focus:not(:disabled) {
+				box-shadow: none;
+				outline: 2px solid $studio-blue-50;
+				outline-offset: -2px;
+				border-radius: 2px;
+			}
+			
+			svg {
+				display: none;
+			}
+		}
+	}
+}
+
+.components-popover.x-nav-dropdown-popover {
+	margin-top: 10px !important;
+
+	.components-popover__content {
+		padding: 12px 0;
+		border: none;
+		background: $studio-white;
+		border-radius: 4px;
+		box-shadow: 0 9px 48px rgb(16 21 23 / 25%);
+		width: 210px;
+		
+		&::before {
+			background: inherit;
+			border-radius: 2px;
+			content: "";
+			height: 36px;
+			left: 90px;
+			position: absolute;
+			top: -2px;
+			transform: rotate(45deg);
+			width: 36px;
+			z-index: -1;
+		}
+	}
+
+	.components-menu-group {
+		padding: 0;
+		border: none;
+		
+		// Reset Gutenberg's default MenuItem styles
+		.components-menu-item__button {
+			padding: 6px 12px 6px 24px;
+			margin: 0;
+			width: 100%;
+			border-radius: 0;
+			color: $x-color-link;
+			font-size: $x-dropdown-item-font-size;
+			font-weight: $lp-font-weight-bold;
+			line-height: $x-dropdown-item-line-height;
+			height: auto;
+			min-height: unset;
+			
+			&:hover,
+			&:active,
+			&:focus {
+				background: $x-color-link-background-hover;
+				color: $x-color-link-hover;
+				opacity: 1;
+				transition-property: background, color;
+			}
+			
+			&:active {
+				background: $x-color-link-background-active;
+				color: $x-color-link-active;
+			}
+		}
+	}
+
+	hr.x-dropdown-content-separator {
+		height: 1px;
+		background: $x-color-content-separator;
+		margin: 9px 0 12px;
+		border: none;
+	}
+}
+
