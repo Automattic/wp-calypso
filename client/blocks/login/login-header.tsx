@@ -1,6 +1,5 @@
 import { useTranslate, TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
 import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
@@ -78,6 +77,8 @@ export function getHeaderText(
 			clientName = 'Akismet';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
+		} else if ( isA4AOAuth2Client( oauth2Client ) ) {
+			clientName = 'Automattic for Agencies';
 		}
 
 		headerText = clientName
@@ -142,16 +143,6 @@ export function getHeaderText(
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
-		}
-
-		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			headerText = translate(
-				'Howdy! Log in to Automattic for Agencies with your WordPress.com{{nbsp/}}account.',
-				{
-					components: { nbsp: <>&nbsp;</> },
-					comment: 'The {{nbsp/}} is a non-breaking space',
-				}
-			);
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
@@ -336,14 +327,6 @@ export function LoginHeader( {
 			preHeader = (
 				<div>
 					<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
-				</div>
-			);
-		}
-
-		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			preHeader = (
-				<div>
-					<A4APlusWpComLogo className="login__a4a-plus-wpcom-logo" size={ 32 } />
 				</div>
 			);
 		}

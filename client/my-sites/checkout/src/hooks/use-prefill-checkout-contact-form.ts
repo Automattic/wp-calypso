@@ -46,6 +46,16 @@ function useCachedContactDetailsForCheckoutForm(
 		};
 	}, [] );
 
+	// Set a max loading time. If for some reason fetching the contact details
+	// gets stuck, we don't want to block the user from entering info into the
+	// form. Auto-complete should be an enhancement, not a required feature.
+	const maxWaitTimeoutMs = 800;
+	useEffect( () => {
+		setTimeout( () => {
+			setComplete( true );
+		}, maxWaitTimeoutMs );
+	}, [] );
+
 	// When we have fetched or loaded contact details, send them to the
 	// `wpcom-checkout` data store for use by the checkout contact form.
 	useEffect( () => {
@@ -81,6 +91,7 @@ function useCachedContactDetailsForCheckoutForm(
 			} )
 			.then( ( didSkip: boolean ) => {
 				if ( ! isMounted.current ) {
+					didFillForm.current = false;
 					return false;
 				}
 				if ( didSkip ) {
@@ -91,7 +102,11 @@ function useCachedContactDetailsForCheckoutForm(
 			} )
 			.catch( ( error: Error ) => {
 				setShouldShowContactDetailsValidationErrors?.( true );
-				isMounted.current && setComplete( true );
+				if ( isMounted.current ) {
+					setComplete( true );
+				} else {
+					didFillForm.current = false;
+				}
 				// eslint-disable-next-line no-console
 				console.error( 'Error while autocompleting contact details:', error );
 				logToLogstash( {

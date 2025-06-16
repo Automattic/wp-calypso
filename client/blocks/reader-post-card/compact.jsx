@@ -70,7 +70,7 @@ const CompactPost = ( props ) => {
 					siteUrl={ post.feed_URL || post.site_URL }
 					followSource={ READER_DISCOVER }
 					iconSize={ 20 }
-					followingLabel={ translate( 'Unsubscribe' ) }
+					followingLabel={ translate( 'Subscribed' ) }
 				/>
 			) }
 			<ReaderPostEllipsisMenu

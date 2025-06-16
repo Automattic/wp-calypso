@@ -1,7 +1,7 @@
-import { Icon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
-import { omit } from 'lodash';
+import { localize } from 'i18n-calypso';
 import { createRef, Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
@@ -21,10 +21,11 @@ class FormPasswordInput extends Component {
 		this.setState( { hidePassword: ! this.state.hidePassword } );
 	};
 
-	hidden() {
+	getIsValueHidden() {
 		if ( this.props.hideToggle ) {
 			return true;
 		}
+
 		return this.props.submitting || this.state.hidePassword;
 	}
 
@@ -33,27 +34,33 @@ class FormPasswordInput extends Component {
 	};
 
 	render() {
-		const toggleVisibilityClasses = clsx( {
-			'form-password-input__toggle': true,
-			'form-password-input__toggle-visibility': ! this.props.hideToggle,
-		} );
+		const { hideToggle, submitting, isHidden, locale, translate, ...rest } = this.props;
+		const isValueHidden = this.getIsValueHidden();
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 		return (
 			<div className="form-password-input">
 				<FormTextInput
 					autoComplete="off"
-					{ ...omit( this.props, 'hideToggle', 'submitting' ) }
+					{ ...rest }
 					ref={ this.textFieldRef }
-					type={ this.hidden() ? 'password' : 'text' }
+					type={ isValueHidden ? 'password' : 'text' }
 				/>
 
-				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-					{ this.hidden() ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
-				</span>
+				<Button
+					className={ clsx( {
+						'form-password-input__toggle': true,
+						'form-password-input__toggle-visibility': ! hideToggle,
+					} ) }
+					onClick={ this.togglePasswordVisibility }
+					aria-hidden={ isHidden }
+					tabIndex={ isHidden ? -1 : undefined }
+					size="small"
+					icon={ isValueHidden ? unseen : seen }
+					label={ isValueHidden ? translate( 'Show password' ) : translate( 'Hide password' ) }
+				/>
 			</div>
 		);
 	}
 }
 
-export default FormPasswordInput;
+export default localize( FormPasswordInput );

@@ -1,4 +1,4 @@
-import { WordPressWordmark } from '@automattic/components';
+import { WordPressWordmark, GravatarTextLogo } from '@automattic/components';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
 import clsx from 'clsx';
@@ -22,6 +22,7 @@ interface Props {
 	isLeavingAllowed?: boolean;
 	shouldClearCartWhenLeaving?: boolean;
 	loadHelpCenterIcon?: boolean;
+	isGravatarDomain?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -30,6 +31,7 @@ const CheckoutMasterbar = ( {
 	siteSlug,
 	isLeavingAllowed,
 	loadHelpCenterIcon,
+	isGravatarDomain,
 }: Props ) => {
 	const translate = useTranslate();
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
@@ -43,11 +45,16 @@ const CheckoutMasterbar = ( {
 			return 'akismet';
 		}
 
+		if ( isGravatarDomain ) {
+			return 'gravatar';
+		}
+
 		return 'wpcom';
 	};
 	const checkoutType = getCheckoutType();
 
-	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
+	const showCloseButton =
+		isLeavingAllowed && ( checkoutType === 'wpcom' || checkoutType === 'gravatar' );
 
 	return (
 		<Masterbar
@@ -78,6 +85,7 @@ const CheckoutMasterbar = ( {
 					<JetpackLogo className="masterbar__jetpack-wordmark" full />
 				) }
 				{ checkoutType === 'akismet' && <AkismetLogo className="masterbar__akismet-wordmark" /> }
+				{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }

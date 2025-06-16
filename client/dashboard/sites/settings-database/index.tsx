@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -14,27 +14,23 @@ import { __ } from '@wordpress/i18n';
 import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { fetchPhpMyAdminToken } from '../../data';
-import { canAccessPhpMyAdmin } from '../../utils/site-features';
+import { fetchPhpMyAdminToken } from '../../data/site-hosting';
+import { canViewDatabaseSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import calloutIllustrationUrl from './callout-illustration.svg';
 import ResetPasswordModal from './reset-password-modal';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
 	const [ isResetPasswordModalOpen, setIsResetPasswordModalOpen ] = useState( false );
 
-	if ( ! site ) {
-		return null;
-	}
-
-	if ( ! canAccessPhpMyAdmin( site ) ) {
+	if ( ! canViewDatabaseSettings( site ) ) {
 		return (
 			<PageLayout
 				size="small"
@@ -55,6 +51,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 					description={ __(
 						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
 					) }
+					tracksId="database"
 				/>
 			</PageLayout>
 		);
@@ -64,7 +61,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		setIsFetchingToken( true );
 
 		try {
-			const { token } = await fetchPhpMyAdminToken( siteSlug );
+			const token = await fetchPhpMyAdminToken( site.ID );
 			if ( ! token ) {
 				throw new Error( 'No token found' );
 			}
@@ -150,7 +147,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 
 			{ isResetPasswordModalOpen && (
 				<ResetPasswordModal
-					siteSlug={ siteSlug }
+					siteId={ site.ID }
 					onClose={ () => setIsResetPasswordModalOpen( false ) }
 					onSuccess={ handleResetPasswordSuccess }
 					onError={ handleResetPasswordError }

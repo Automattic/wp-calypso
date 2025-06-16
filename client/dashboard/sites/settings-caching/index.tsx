@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Card,
@@ -14,23 +14,21 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
+import { siteBySlugQuery } from '../../app/queries/site';
 import {
-	siteQuery,
 	siteEdgeCacheStatusQuery,
 	siteEdgeCacheStatusMutation,
 	siteEdgeCacheClearMutation,
 	siteObjectCacheClearMutation,
-} from '../../app/queries';
+} from '../../app/queries/site-cache';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import {
-	canUpdateCaching,
-	isEdgeCacheAvailable as getIsEdgeCacheAvailable,
-} from '../../utils/site-features';
+import { canViewCachingSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
+import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@automattic/dataviews';
 
 type CachingFormData = {
@@ -51,16 +49,16 @@ const form = {
 };
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateCaching( site );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = site && canViewCachingSettings( site );
 
 	const { data: isEdgeCacheActive } = useQuery( {
-		...siteEdgeCacheStatusQuery( siteSlug ),
-		enabled: canUpdate,
+		...siteEdgeCacheStatusQuery( site.ID ),
+		enabled: canView,
 	} );
-	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( siteSlug ) );
-	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( siteSlug ) );
-	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( siteSlug ) );
+	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( site.ID ) );
+	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( site.ID ) );
+	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( site.ID ) );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -126,7 +124,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderCallout = () => {
-		return <SettingsCallout siteSlug={ siteSlug } />;
+		return <SettingsCallout siteSlug={ siteSlug } tracksId="caching" />;
 	};
 
 	const renderForm = () => {
@@ -240,7 +238,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const description = canUpdate
+	const description = canView
 		? createInterpolateElement(
 				__( 'Manage your site’s server-side caching. <link>Learn more</link>.' ),
 				{
@@ -254,7 +252,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			{ canUpdate ? (
+			{ canView ? (
 				<>
 					{ renderForm() }
 					{ renderActions() }

@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -8,41 +8,50 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { canUpdatePHPVersion } from '../../utils/site-features';
+import { canViewPHPSettings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdatePHPVersion( site );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewPHPSettings( site );
 
 	const { data: currentVersion } = useQuery( {
-		...sitePHPVersionQuery( siteSlug ),
-		enabled: canUpdate,
+		...sitePHPVersionQuery( site.ID ),
+		enabled: canView,
 	} );
-	const mutation = useMutation( sitePHPVersionMutation( siteSlug ) );
+	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
 
-	if ( ! site ) {
-		return null;
-	}
-
-	if ( ! canUpdate ) {
+	if ( ! canView ) {
 		return (
-			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
-				<SettingsCallout siteSlug={ siteSlug } />
+			<PageLayout
+				size="small"
+				header={
+					<SettingsPageHeader
+						title="PHP"
+						description={ sprintf(
+							/* translators: %s: plan name. Eg. 'Personal' */
+							__( 'Sites on the %s plan run on our recommended PHP version.' ),
+							site?.plan?.product_name_short
+						) }
+					/>
+				}
+			>
+				<SettingsCallout siteSlug={ siteSlug } tracksId="php" />
 			</PageLayout>
 		);
 	}

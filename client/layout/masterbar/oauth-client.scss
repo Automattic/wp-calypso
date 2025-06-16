@@ -136,12 +136,23 @@
 			padding-bottom: 145px;
 		}
 
-		.card:not(.gdpr-banner) {
-			background: none;
-			box-shadow: none;
-			margin: 0 auto;
-			max-width: 320px;
-			padding: 0;
+		.card {
+			&:not(.gdpr-banner) {
+				background: none;
+				box-shadow: none;
+				max-width: 320px;
+				padding: 0;
+			}
+
+			&:not(.two-factor-authentication__verification-code-form) {
+				margin: 0 auto;
+			}
+
+			// Allow for the illustration width
+			&.two-factor-authentication__push-notification-approval,
+			&.two-factor-authentication__actions {
+				max-width: 360px;
+			}
 		}
 
 		.layout__content {
@@ -576,11 +587,6 @@
 				order: 4;
 			}
 		}
-
-		.login__form-userdata label {
-			font-size: $font-title-small;
-			font-weight: 400;
-		}
 	}
 
 	.login__social-tos {
@@ -600,12 +606,14 @@
 }
 
 .jetpack-cloud {
-	--color-link: var(--studio-jetpack-green-40);
+	--color-link: var(--studio-jetpack-green-50);
 	--color-link-dark: var(--studio-jetpack-green-60);
 
 	input:focus:hover[type],
 	input:focus[type] {
-		box-shadow: 0 0 0 2px var(--color-primary-10);
+		&:not(.form-text-input-core-styles) {
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+		}
 	}
 
 	.button {
@@ -661,7 +669,6 @@
 		}
 	}
 
-	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--studio-jetpack-green-40);
 

@@ -5,6 +5,16 @@
 	position: relative;
 	z-index: 1;
 
+	.components-button.dashboard-page-header__back-button {
+		padding-left: 0;
+		padding-right: 0;
+
+		svg {
+			margin-left: -4px;
+			margin-right: -4px;
+		}
+	}
+
 	.dashboard-section-header__heading-row {
 		min-height: 32px;
 	}

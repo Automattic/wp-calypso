@@ -7,8 +7,7 @@ import { external } from '@wordpress/icons';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useSelector } from 'calypso/state';
-import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import SubscriberImportLimitNotice from 'calypso/my-sites/subscribers/components/subscriber-import-limit-notice';
 import { SubscribersStepProps } from '../types';
 import { normalizeFromSite } from '../utils';
 import SubscriberUploadForm from './upload-form';
@@ -37,8 +36,6 @@ export default function StepInitial( {
 		}
 		prevInProgress.current = importSelector?.inProgress;
 	}, [ importSelector?.inProgress, setAutoFetchData ] );
-
-	const isOnFreePlan = useSelector( ( state ) => isSiteOnFreePlan( state, selectedSite.ID ) );
 
 	return (
 		<Card>
@@ -74,31 +71,7 @@ export default function StepInitial( {
 					),
 				} ) }
 			</p>
-			{ isOnFreePlan && (
-				<p>
-					{ fixMe( {
-						text: 'Note: On the free plan, you can import up to 100 subscribers.',
-						newCopy: translate(
-							'Note: On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
-							{
-								components: {
-									supportLink: (
-										<InlineSupportLink
-											noWrap={ false }
-											showIcon={ false }
-											supportLink={ localizeUrl(
-												'https://wordpress.com/support/import-subscribers-to-a-newsletter/#import-limits'
-											) }
-											supportPostId={ 220199 }
-										/>
-									),
-								},
-							}
-						),
-						oldCopy: '',
-					} ) }
-				</p>
-			) }
+
 			<Button
 				href={ `https://${ normalizeFromSite( fromSite ) }/publish/subscribers` }
 				target="_blank"
@@ -111,6 +84,7 @@ export default function StepInitial( {
 			</Button>
 			<hr />
 			<h2>{ translate( 'Step 2: Import your subscribers' ) }</h2>
+			<SubscriberImportLimitNotice />
 			{ selectedSite.ID && (
 				<SubscriberUploadForm
 					siteId={ selectedSite.ID }

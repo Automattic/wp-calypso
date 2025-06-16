@@ -4,7 +4,7 @@ import { MenuGroup, MenuItem, SearchControl, Icon, Modal } from '@wordpress/comp
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
-import { sitesQuery } from '../../app/queries';
+import { sitesQuery } from '../../app/queries/sites';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import AddNewSite from '../add-new-site';
 import SiteIcon from '../site-icon';

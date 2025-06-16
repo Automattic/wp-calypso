@@ -11,8 +11,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
+import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
 import { SectionHeader } from '../../components/section-header';
+import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
 export type ConfirmNewOwnerFormData = {
@@ -33,11 +34,11 @@ const form = {
 };
 
 export function ConfirmNewOwnerForm( {
-	siteSlug,
+	site,
 	newOwnerEmail,
 	onSubmit,
 }: {
-	siteSlug: string;
+	site: Site;
 	newOwnerEmail: string;
 	onSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
@@ -45,7 +46,7 @@ export function ConfirmNewOwnerForm( {
 		email: newOwnerEmail,
 	} );
 
-	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( siteSlug ) );
+	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( site.ID ) );
 
 	const { createErrorNotice } = useDispatch( noticesStore );
 
@@ -79,43 +80,41 @@ export function ConfirmNewOwnerForm( {
 	};
 
 	return (
-		<>
-			<VStack style={ { padding: '8px 0 12px' } }>
-				<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
-				<Text lineHeight="20px">
-					{ createInterpolateElement(
-						__(
-							"Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
-						),
-						{
-							siteSlug: <strong>{ siteSlug }</strong>,
-						}
-					) }
-				</Text>
-			</VStack>
-			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 }>
-					{ /* TODO: Update the gap between each field */ }
-					<DataForm< ConfirmNewOwnerFormData >
-						data={ formData }
-						fields={ fields }
-						form={ form }
-						onChange={ ( edits: Partial< ConfirmNewOwnerFormData > ) => {
-							setFormData( ( data ) => ( { ...data, ...edits } ) );
-						} }
-					/>
-					<HStack justify="flex-start">
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ mutation.isPending }
-							disabled={ isSaveDisabled }
-						>
-							{ __( 'Continue' ) }
-						</Button>
-					</HStack>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 4 }>
+				<VStack>
+					<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
+					{ /* The description in SectionHeader appears in gray-700, so we need to use the Text component to apply that color explicitly. */ }
+					<Text lineHeight="20px">
+						{ createInterpolateElement(
+							__(
+								'Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner’s email below, or choose an existing user to start the transfer process.'
+							),
+							{
+								siteSlug: <strong>{ site.slug }</strong>,
+							}
+						) }
+					</Text>
 				</VStack>
-			</form>
-		</>
+				<DataForm< ConfirmNewOwnerFormData >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits: Partial< ConfirmNewOwnerFormData > ) => {
+						setFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
+				/>
+				<HStack justify="flex-start">
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ mutation.isPending }
+						disabled={ isSaveDisabled }
+					>
+						{ __( 'Continue' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</form>
 	);
 }

@@ -22,9 +22,9 @@ import {
 
 import './style.scss';
 
-const purchasesWideFields = [ 'site', 'product', 'status', 'payment-method' ];
-const purchasesDesktopFields = [ 'site', 'product', 'status' ];
-const purchasesMobileFields = [ 'product' ];
+const purchasesWideFields = [ 'status', 'payment-method' ];
+const purchasesDesktopFields = [ 'status' ];
+const purchasesMobileFields: string[] = [];
 const defaultPerPage = 10;
 const defaultSort = {
 	field: 'site',
@@ -34,8 +34,12 @@ export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: defaultPerPage,
-	titleField: 'purchase-id',
-	showTitle: false,
+	titleField: 'product',
+	showTitle: true,
+	mediaField: 'site',
+	showMedia: true,
+	descriptionField: 'description',
+	showDescription: true,
 	fields: purchasesDesktopFields,
 	sort: defaultSort,
 	layout: {},
@@ -44,7 +48,7 @@ export const purchasesDataView: View = {
 function alterUrlForViewProp(
 	url: URL,
 	urlKey: string,
-	currentViewPropValue: string | number | undefined,
+	currentViewPropValue: string | number | string[] | number[] | undefined,
 	defaultValue?: string | number | undefined
 ): void {
 	if ( currentViewPropValue && defaultValue && currentViewPropValue !== defaultValue ) {
@@ -97,7 +101,7 @@ function usePreservePurchasesViewInUrl( {
 			url.searchParams.get( urlSortDirection ) === 'asc' ? 'asc' : 'desc'
 		) as SortDirection;
 		if ( siteFilterValue ) {
-			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
+			filters.push( { value: siteFilterValue.split( ',' ), operator: 'isAny', field: 'site' } );
 		}
 		if ( expiringSoonValue ) {
 			filters.push( { value: expiringSoonValue, operator: 'is', field: 'expiring-soon' } );
@@ -280,14 +284,18 @@ export function PurchasesDataViews( {
 	);
 }
 
-const membershipsDesktopFields = [ 'site', 'product', 'status' ];
-const membershipsMobileFields = [ 'product' ];
+const membershipsDesktopFields = [ 'status' ];
+const membershipsMobileFields: string[] = [];
 export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: defaultPerPage,
-	titleField: 'purchase-id',
-	showTitle: false,
+	titleField: 'product',
+	showTitle: true,
+	mediaField: 'site',
+	showMedia: true,
+	descriptionField: 'description',
+	showDescription: true,
 	fields: membershipsDesktopFields,
 	sort: {
 		field: 'product',

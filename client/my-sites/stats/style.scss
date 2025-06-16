@@ -106,4 +106,17 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	}
 }
 
+.stats {
+	a,
+	a:visited  {
+		color: var(--theme-highlight-color);
+	}
+
+	a:hover,
+	a:focus,
+	a:active {
+		color: var(--color-accent-dark);
+	}
+}
+
 @import "calypso/my-sites/stats/grid-layout";

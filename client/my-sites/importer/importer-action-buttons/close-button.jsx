@@ -20,6 +20,7 @@ export class ImporterCloseButton extends PureComponent {
 			ID: PropTypes.number.isRequired,
 		} ),
 		isEnabled: PropTypes.bool.isRequired,
+		label: PropTypes.string,
 	};
 
 	handleClick = () => {
@@ -42,13 +43,14 @@ export class ImporterCloseButton extends PureComponent {
 			isEnabled,
 			isUploading,
 			translate,
+			label,
 		} = this.props;
 
 		const disabled = ! isEnabled || isUploading || appStates.UPLOADING === importerState;
 
 		return (
 			<ImporterActionButton disabled={ disabled } onClick={ this.handleClick }>
-				{ translate( 'Cancel', { context: 'verb, to Cancel an operation' } ) }
+				{ label || translate( 'Cancel', { context: 'verb, to Cancel an operation' } ) }
 			</ImporterActionButton>
 		);
 	}

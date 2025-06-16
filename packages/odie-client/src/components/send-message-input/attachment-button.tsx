@@ -7,7 +7,8 @@ export const AttachmentButton: React.FC< {
 	attachmentButtonRef?: React.RefObject< HTMLElement >;
 	onFileUpload: ( file: File ) => void;
 	isAttachingFile: boolean;
-} > = ( { attachmentButtonRef, onFileUpload, isAttachingFile } ) => {
+	isDisabled: boolean;
+} > = ( { attachmentButtonRef, onFileUpload, isAttachingFile, isDisabled } ) => {
 	return (
 		<FormFileUpload
 			accept="image/*"
@@ -17,7 +18,7 @@ export const AttachmentButton: React.FC< {
 					onFileUpload( file );
 				}
 			} }
-			disabled={ isAttachingFile }
+			disabled={ isAttachingFile || isDisabled }
 			aria-label={ __( 'Attach image', __i18n_text_domain__ ) }
 		>
 			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }

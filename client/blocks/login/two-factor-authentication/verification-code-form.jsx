@@ -1,12 +1,12 @@
 import { Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -164,9 +164,15 @@ class VerificationCodeForm extends Component {
 						{ smallPrint }
 					</FormFieldset>
 
-					<FormButton primary disabled={ this.state.isDisabled }>
+					<Button
+						type="submit"
+						variant="primary"
+						disabled={ this.state.isDisabled }
+						accessibleWhenDisabled
+						__next40pxDefaultSize
+					>
 						{ buttonText }
-					</FormButton>
+					</Button>
 				</Card>
 
 				<TwoFactorActions

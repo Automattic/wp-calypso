@@ -43,6 +43,7 @@ module.exports = {
 							'!@automattic/calypso-analytics',
 							'!@automattic/dataviews',
 							'!@automattic/number-formatters',
+							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

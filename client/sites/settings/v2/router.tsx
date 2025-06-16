@@ -8,31 +8,29 @@ import {
 	redirect,
 	type AnyRouter,
 } from '@tanstack/react-router';
-import {
-	siteQuery,
-	siteSettingsQuery,
-	siteStaticFile404Query,
-	siteWordPressVersionQuery,
-	sitePHPVersionQuery,
-	sitePrimaryDataCenterQuery,
-	siteEdgeCacheStatusQuery,
-	siteDefensiveModeQuery,
-	agencyBlogQuery,
-	siteSftpUsersQuery,
-	siteSshAccessStatusQuery,
-} from 'calypso/dashboard/app/queries';
+import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
+import { siteAgencyBlogQuery } from 'calypso/dashboard/app/queries/site-agency';
+import { siteEdgeCacheStatusQuery } from 'calypso/dashboard/app/queries/site-cache';
+import { siteDefensiveModeSettingsQuery } from 'calypso/dashboard/app/queries/site-defensive-mode';
+import { sitePHPVersionQuery } from 'calypso/dashboard/app/queries/site-php-version';
+import { sitePrimaryDataCenterQuery } from 'calypso/dashboard/app/queries/site-primary-data-center';
+import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
+import { siteSftpUsersQuery } from 'calypso/dashboard/app/queries/site-sftp';
+import { siteSshAccessStatusQuery } from 'calypso/dashboard/app/queries/site-ssh';
+import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/site-static-file-404';
+import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
-	canUpdatePHPVersion,
-	canUpdateDefensiveMode,
-	canUpdateHundredYearPlanFeatures,
-	canUpdateWordPressVersion,
-	canGetPrimaryDataCenter,
-	canSetStaticFile404Handling,
-	canUpdateCaching,
-	canUseSftp,
-	canUseSsh,
-} from 'calypso/dashboard/utils/site-features';
+	canViewWordPressSettings,
+	canViewPHPSettings,
+	canViewDefensiveModeSettings,
+	canViewPrimaryDataCenterSettings,
+	canViewStaticFile404Settings,
+	canViewHundredYearPlanSettings,
+	canViewCachingSettings,
+	canViewSshSettings,
+	canViewSftpSettings,
+} from 'calypso/dashboard/sites/features';
 import Root from './root';
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -56,8 +54,10 @@ const dashboardSiteSettingsCompatibilityRouteWithFeature = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '$siteSlug',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 	component: () => <Outlet />,
 } );
 
@@ -75,8 +75,10 @@ const settingsRoute = createRoute( {
 const siteVisibilityRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'site-visibility',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
@@ -88,8 +90,10 @@ const siteVisibilityRoute = createRoute( {
 const subscriptionGiftingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'subscription-gifting',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'subscription-gifting' )( {
@@ -102,9 +106,9 @@ const wordpressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateWordPressVersion( site ) ) {
-			await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewWordPressSettings( site ) ) {
+			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -119,9 +123,9 @@ const phpRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'php',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdatePHPVersion( site ) ) {
-			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewPHPSettings( site ) ) {
+			await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -147,9 +151,9 @@ const agencyRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'agency',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( site.is_wpcom_atomic ) {
-			await queryClient.ensureQueryData( agencyBlogQuery( site.ID ) );
+			await queryClient.ensureQueryData( siteAgencyBlogQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -164,9 +168,9 @@ const hundredYearPlanRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'hundred-year-plan',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateHundredYearPlanFeatures( site ) ) {
-			await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewHundredYearPlanSettings( site ) ) {
+			await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -181,9 +185,9 @@ const primaryDataCenterRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canGetPrimaryDataCenter( site ) ) {
-			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewPrimaryDataCenterSettings( site ) ) {
+			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -198,9 +202,9 @@ const staticFile404Route = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canSetStaticFile404Handling( site ) ) {
-			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewStaticFile404Settings( site ) ) {
+			await queryClient.ensureQueryData( siteStaticFile404SettingQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -215,9 +219,9 @@ const cachingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'caching',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateCaching( site ) ) {
-			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewCachingSettings( site ) ) {
+			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -232,9 +236,9 @@ const defensiveModeRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUpdateDefensiveMode( site ) ) {
-			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( canViewDefensiveModeSettings( site ) ) {
+			await queryClient.ensureQueryData( siteDefensiveModeSettingsQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -249,10 +253,11 @@ const sftpSshRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [
-			canUseSftp( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
-			canUseSsh( site ) && queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+			canViewSftpSettings( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
+			canViewSshSettings( site ) &&
+				queryClient.ensureQueryData( siteSshAccessStatusQuery( site.ID ) ),
 		] );
 	},
 } ).lazy( () =>

@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,9 +11,13 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteStaticFile404Query, siteStaticFile404Mutation } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import {
+	siteStaticFile404SettingQuery,
+	siteStaticFile404SettingMutation,
+} from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
-import { canSetStaticFile404Handling } from '../../utils/site-features';
+import { canViewStaticFile404Settings } from '../features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
@@ -53,12 +57,12 @@ const form = {
 
 export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentSetting } = useQuery( {
-		...siteStaticFile404Query( siteSlug ),
-		enabled: site && canSetStaticFile404Handling( site ),
+		...siteStaticFile404SettingQuery( site.ID ),
+		enabled: site && canViewStaticFile404Settings( site ),
 	} );
-	const mutation = useMutation( siteStaticFile404Mutation( siteSlug ) );
+	const mutation = useMutation( siteStaticFile404SettingMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState< { setting: string } >( {
 		setting: currentSetting ?? 'default',
@@ -68,13 +72,13 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 		return null;
 	}
 
-	if ( ! canSetStaticFile404Handling( site ) ) {
+	if ( ! canViewStaticFile404Settings( site ) ) {
 		return (
 			<PageLayout
 				size="small"
 				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
 			>
-				<SettingsCallout siteSlug={ siteSlug } />
+				<SettingsCallout siteSlug={ siteSlug } tracksId="static-file-404" />
 			</PageLayout>
 		);
 	}

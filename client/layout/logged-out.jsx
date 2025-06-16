@@ -113,7 +113,6 @@ const LayoutLoggedOut = ( {
 		! isJetpackLogin &&
 		! hasGravPoweredClientClass &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
-		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
@@ -341,6 +340,7 @@ export default withCurrentRoute(
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
+			const isA4AClient = isA4AOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
 					( ( ! isJetpackLogin &&
@@ -349,7 +349,8 @@ export default withCurrentRoute(
 						! isWooJPC ) ||
 						isStudioClient ||
 						isCrowdsignalClient ||
-						isBlazePro ) ) ||
+						isBlazePro ||
+						isA4AClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =
