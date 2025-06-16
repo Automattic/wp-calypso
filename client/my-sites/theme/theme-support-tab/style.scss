@@ -2,39 +2,36 @@
 @import "@wordpress/base-styles/variables";
 
 .theme__sheet-card-support {
-	display: flex;
 	align-items: center;
-
-	&:not(:last-child) {
-		margin-bottom: 0;
-	}
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: wrap;
-	}
+	display: grid;
+	gap: 0 20px;
+	grid-template-columns: 48px 1fr;
 
 	.gridicon {
 		color: var(--color-neutral-10);
-		flex: 0 0 auto;
-	}
+ 	}
 
-	.button {
-		flex: 0 0 auto;
+	.theme__sheet-card-support-details {
+		text-wrap: pretty;
 
-		@include breakpoint-deprecated( "<960px" ) {
-			flex: 1 1 100%;
-			margin-top: 20px;
-			text-align: center;
+		small {
+			display: block;
 		}
 	}
-}
 
-.theme__sheet-card-support-details {
-	flex: 1 1 20px;
-	padding: 0 20px;
+	.components-button {
+		grid-column: 2;
+		justify-self: start;
+		margin-top: 20px;
+	}
 
-	small {
-		display: block;
-		color: var(--color-grey-10);
+	@media (min-width: #{ ($break-small) }) and (max-width: #{ ($break-medium) }), (min-width: #{ ($break-wide) }) {
+		grid-template-columns: 48px 1fr auto;
+
+		.components-button {
+			grid-column: 3;
+			justify-self: end;
+			margin-top: 0;
+		}
 	}
 }
