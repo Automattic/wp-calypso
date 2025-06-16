@@ -11,15 +11,13 @@
 	"exports": {
 		".": {
 			"calypso:src": "./src/index.ts",
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
 		},
 		"./style.css": {
 			"import": "./dist/index.css",
 			"require": "./dist/index.css"
-		},
-		"./src/*": {
-			"calypso:src": "./src/*"
 		}
 	},
 	"sideEffects": [
