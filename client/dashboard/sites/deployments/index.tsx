@@ -31,6 +31,7 @@ function SiteDeployments() {
 					<Callout
 						icon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
 						title={ __( 'Deploy from GitHub' ) }
+						titleAs="h1"
 						image={ illustrationUrl }
 						description={
 							<>
