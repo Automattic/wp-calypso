@@ -41,7 +41,7 @@ $image-height: 47px;
 		text-align: center;
 	}
 
-	// Add Blaze Pro font styles for OAuth clients
+	/* Start: Blaze Pro OAuth client font styles for login page */
 	&.is-blaze-pro {
 		* {
 			font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -61,6 +61,7 @@ $image-height: 47px;
 			line-height: 25px;
 		}
 	}
+	/* End: Blaze Pro OAuth client font styles for login page */
 }
 
 .wp-login__heading-logo {
