@@ -59,6 +59,7 @@ export const sanitizeSettings = ( settings ) => {
 			case 'jetpack_testimonial_posts_per_page':
 			case 'jetpack_portfolio_posts_per_page':
 			case 'post_by_email_address':
+			case 'newsletter_has_active_plan':
 				if ( settings[ key ] === 'regenerate' ) {
 					memo[ key ] = settings[ key ];
 				}
