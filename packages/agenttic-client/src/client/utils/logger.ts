@@ -1,7 +1,7 @@
 import debug from 'debug';
 
 // Browser-compatible chalk handling
-const isBrowser = typeof window !== 'undefined';
+const isBrowser = typeof globalThis !== 'undefined' && 'window' in globalThis;
 const noOpColor = ( text: string ) => text;
 
 let chalk: any;

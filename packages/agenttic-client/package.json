@@ -60,6 +60,7 @@
 		"node": ">=18.0.0"
 	},
 	"devDependencies": {
+		"@types/debug": "^4.1.12",
 		"@types/node": "^20.0.0",
 		"tsup": "^8.0.0",
 		"typescript": "^5.0.0",
