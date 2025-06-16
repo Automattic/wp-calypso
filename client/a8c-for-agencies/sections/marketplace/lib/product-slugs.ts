@@ -25,7 +25,6 @@ export const PAYMENTS_PRODUCT_SLUGS = [
 	'woocommerce-stripe',
 	'woocommerce-klarna',
 	'woocommerce-paypal',
-	'woocommerce-klaviyo',
 ];
 
 export const SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS = [
@@ -49,6 +48,7 @@ export const CONVERSION_PRODUCT_SLUGS = [
 	'woocommerce-points-and-rewards',
 	'woocommerce-product-add-ons',
 	'woocommerce-product-bundles',
+	'woocommerce-klaviyo',
 ];
 
 export const CUSTOMER_SERVICE_PRODUCT_SLUGS = [
