@@ -51,7 +51,11 @@ const WooOauthMasterbar = () => {
 				<nav className="masterbar__woo-nav-wrapper">
 					<ul className="masterbar__woo-nav">
 						<li className="masterbar__woo-nav-item">
-							<a href="https://woocommerce.com" className="masterbar__woo-link">
+							<a
+								href="https://woocommerce.com"
+								className="masterbar__woo-link"
+								aria-label="WooCommerce"
+							>
 								<SVGIcon
 									name="woocommerce-logo"
 									icon={ WooLogo }

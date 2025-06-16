@@ -70,7 +70,10 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 						event.preventDefault();
 						// We need to use CSS.escape since we can have non latin chars in the hash
 						const target = node?.querySelector( `#${ CSS.escape( hash.slice( 1 ) ) }` );
-						if ( target ) {
+						if ( target instanceof HTMLElement ) {
+							target.setAttribute( 'tabindex', '-1' );
+							target.focus();
+
 							target.scrollIntoView();
 						}
 					};
@@ -135,7 +138,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				},
 			},
 		],
-		[ navigate, link, node ]
+		[ navigate, link, node, site?.domain ]
 	);
 
 	useEffect( () => {
