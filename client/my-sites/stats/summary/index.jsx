@@ -28,6 +28,7 @@ import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import { GEO_MODES } from '../features/modules/stats-locations/types';
 import PostsNavTabs from '../features/modules/stats-top-posts/nav-tabs';
+import { validQueryViewType as getValidTopPostStatType } from '../features/modules/stats-top-posts/use-option-labels';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
@@ -225,7 +226,7 @@ class StatsSummary extends Component {
 			case 'posts':
 				title = StatsStrings.posts.title;
 				path = 'posts';
-				statType = 'statsTopPosts';
+				statType = getValidTopPostStatType( moduleQuery?.viewType );
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
