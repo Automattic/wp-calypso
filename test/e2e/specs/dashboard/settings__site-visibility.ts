@@ -13,8 +13,8 @@ import {
 	UserSignupPage,
 	NewUserResponse,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
+import type { Page, Browser, BrowserContext } from 'playwright';
 
 declare const browser: Browser;
 
@@ -30,6 +30,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	let dashboardPage: DashboardPage;
 	let restAPIClient: RestAPIClient;
 	let site: NewSiteResponse;
+	let incognitoContext: BrowserContext;
 
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'sitevisibility',
@@ -82,12 +83,20 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		} );
 	} );
 
+	beforeEach( async function () {
+		incognitoContext = await browser.newContext();
+	} );
+
+	afterEach( async function () {
+		await incognitoContext.close();
+	} );
+
 	it( 'Can change site visibility to Private', async function () {
 		await page.getByRole( 'radio', { name: 'Private' } ).click();
 		await saveChanges( page );
 
 		// Open the site in a new incognito browser context to verify it's private
-		const incognitoPage = await browser.newPage();
+		const incognitoPage = await incognitoContext.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'Private Site' );
@@ -99,7 +108,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await saveChanges( page );
 
 		// Open the site in a new incognito browser context to verify it's coming soon
-		const incognitoPage = await browser.newPage();
+		const incognitoPage = await incognitoContext.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'coming soon' );
@@ -111,7 +120,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await saveChanges( page );
 
 		// Open the site in a new incognito browser context to verify it's public
-		const incognitoPage = await browser.newPage();
+		const incognitoPage = await incognitoContext.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).not.toContain( 'Private Site' );
