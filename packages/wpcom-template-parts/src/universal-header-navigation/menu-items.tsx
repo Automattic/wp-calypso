@@ -12,6 +12,60 @@ const debug = ( ...args: unknown[] ) => {
 };
 /* eslint-enable no-console */
 
+// Module-level state to track which dropdown is currently open
+let currentOpenDropdown: string | null = null;
+const dropdownCloseCallbacks = new Map< string, () => void >();
+// Track which dropdown button should receive focus when closing
+let focusTargetOnClose: HTMLElement | null = null;
+// Track if the current interaction was initiated by keyboard
+let isKeyboardInteraction = false;
+
+const registerDropdown = ( id: string, closeCallback: () => void ) => {
+	dropdownCloseCallbacks.set( id, closeCallback );
+};
+
+const unregisterDropdown = ( id: string ) => {
+	dropdownCloseCallbacks.delete( id );
+};
+
+const openDropdown = ( id: string, triggerElement?: HTMLElement, viaKeyboard = false ) => {
+	// Close the currently open dropdown if it's different from this one
+	if ( currentOpenDropdown && currentOpenDropdown !== id ) {
+		const closeCallback = dropdownCloseCallbacks.get( currentOpenDropdown );
+		if ( closeCallback ) {
+			debug( `Closing previously open dropdown: ${ currentOpenDropdown }` );
+			closeCallback();
+		}
+	}
+	currentOpenDropdown = id;
+	isKeyboardInteraction = viaKeyboard;
+	// Update focus target to the trigger element of the newly opened dropdown
+	if ( triggerElement ) {
+		focusTargetOnClose = triggerElement;
+		debug( 'Set focus target to:', triggerElement );
+	}
+	debug( `Opened dropdown: ${ id }, via keyboard: ${ viaKeyboard }` );
+};
+
+const closeDropdown = ( id: string ) => {
+	if ( currentOpenDropdown === id ) {
+		currentOpenDropdown = null;
+		// Only move focus if the interaction was keyboard-initiated
+		if ( focusTargetOnClose && isKeyboardInteraction ) {
+			debug( 'Moving focus to:', focusTargetOnClose );
+			focusTargetOnClose.focus();
+		} else if ( ! isKeyboardInteraction ) {
+			// For mouse interactions, remove focus completely
+			if ( document.activeElement && document.activeElement instanceof HTMLElement ) {
+				document.activeElement.blur();
+			}
+		}
+		focusTargetOnClose = null;
+		isKeyboardInteraction = false;
+		debug( `Closed dropdown: ${ id }` );
+	}
+};
+
 const getParentElement = ( node: HTMLElement | null, pattern: RegExp ) => {
 	let parent = node;
 	while ( parent && ! parent.className.match( pattern ) ) {
@@ -102,6 +156,35 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 	const [ isHoverOpen, setIsHoverOpen ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const triggerButtonRef = useRef< HTMLButtonElement | null >( null );
+
+	// Create a unique ID for this dropdown instance
+	const dropdownId = useRef(
+		`dropdown-${ contentString.toLowerCase().replace( /\s+/g, '-' ) }-${ Math.random()
+			.toString( 36 )
+			.substr( 2, 9 ) }`
+	);
+
+	const handleClose = () => {
+		setIsHoverOpen( false );
+		closeDropdown( dropdownId.current );
+	};
+
+	const handleOpen = ( viaKeyboard = false ) => {
+		openDropdown( dropdownId.current, triggerButtonRef.current || undefined, viaKeyboard );
+		setIsHoverOpen( true );
+	};
+
+	// Register this dropdown on mount and unregister on unmount
+	useEffect( () => {
+		registerDropdown( dropdownId.current, handleClose );
+		return () => {
+			unregisterDropdown( dropdownId.current );
+			if ( timeoutRef.current ) {
+				clearTimeout( timeoutRef.current );
+			}
+		};
+	}, [] );
 
 	const handleMouseEnter = () => {
 		debug( 'Mouse enter - opening dropdown' );
@@ -109,25 +192,16 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 			clearTimeout( timeoutRef.current );
 			timeoutRef.current = null;
 		}
-		setIsHoverOpen( true );
+		handleOpen( false ); // Mouse interaction
 	};
 
 	const handleMouseLeave = () => {
 		debug( 'Mouse leave - closing dropdown with delay' );
 		// Add a small delay to prevent flickering when moving between trigger and dropdown
 		timeoutRef.current = setTimeout( () => {
-			setIsHoverOpen( false );
+			handleClose();
 		}, 150 );
 	};
-
-	// Clean up timeout on unmount
-	useEffect( () => {
-		return () => {
-			if ( timeoutRef.current ) {
-				clearTimeout( timeoutRef.current );
-			}
-		};
-	}, [] );
 
 	return (
 		<div ref={ containerRef } onMouseEnter={ handleMouseEnter } onMouseLeave={ handleMouseLeave }>
@@ -145,7 +219,7 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					expandOnMobile: true,
 					onClose: () => {
 						debug( 'Popover closing' );
-						setIsHoverOpen( false );
+						handleClose();
 					},
 				} }
 				toggleProps={ {
@@ -155,19 +229,33 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					onKeyDown: ( event: React.KeyboardEvent ) => {
 						if ( event.key === 'Enter' || event.key === ' ' ) {
 							event.preventDefault();
-							debug( 'Keyboard toggle - opening dropdown' );
-							setIsHoverOpen( ! isHoverOpen );
+							debug( 'Keyboard toggle - toggling dropdown' );
+							if ( isHoverOpen ) {
+								handleClose();
+							} else {
+								handleOpen( true );
+							}
 						} else if ( event.key === 'Escape' && isHoverOpen ) {
 							event.preventDefault();
 							debug( 'Escape pressed - closing dropdown' );
-							setIsHoverOpen( false );
+							handleClose();
 						}
 					},
 					children: (
-						<>
+						<span
+							ref={ ( el ) => {
+								if ( el ) {
+									// Find the button parent and store it
+									const button = el.closest( 'button' );
+									if ( button ) {
+										triggerButtonRef.current = button as HTMLButtonElement;
+									}
+								}
+							} }
+						>
 							{ contentString }
 							<span className="x-nav-link__chevron" />
-						</>
+						</span>
 					),
 				} }
 			>
