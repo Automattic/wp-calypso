@@ -94,10 +94,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	const handleSubmit = ( data: DefensiveModeSettingsUpdate ) => {
 		mutation.mutate( data, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					data.active ? __( 'Defensive mode enabled.' ) : __( 'Defensive mode disabled.' ),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), {
+				createErrorNotice( __( 'Failed to save defensive mode settings.' ), {
 					type: 'snackbar',
 				} );
 			},

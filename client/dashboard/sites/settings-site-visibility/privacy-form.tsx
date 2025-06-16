@@ -150,10 +150,12 @@ export function PrivacyForm( {
 		e.preventDefault();
 		mutation.mutate( toSiteSettings( formData ), {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'Site visibility settings saved.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+				createErrorNotice( __( 'Failed to save site visibility settings.' ), {
+					type: 'snackbar',
+				} );
 			},
 		} );
 	};
