@@ -77,7 +77,6 @@ export default function InputWidget( {
 				data={ data }
 				field={ field }
 				onChange={ handleChange }
-				errorMessage={ undefined }
 			/>
 		</div>
 	);

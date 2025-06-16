@@ -22,7 +22,6 @@ import {
 	SINGLE_SELECTION_OPERATORS,
 } from './constants';
 import { normalizeRules } from './components/validator/utils';
-import { NormalizedRule } from './components/validator/types';
 
 const getValueFromId =
 	( id: string ) =>
@@ -122,14 +121,10 @@ export function normalizeFields< Item >(
 				);
 			};
 
-		const isValid =
-			field.isValid ??
-			function isValid( item, context ) {
-				return fieldTypeDefinition.isValid(
-					getValue( { item } ),
-					context
-				);
-			};
+		const normalizedIsValid = normalizeRules< Item >(
+			field.isValid ?? fieldTypeDefinition.isValid,
+			field.id
+		);
 
 		const Edit = getControl( field, fieldTypeDefinition );
 
@@ -146,10 +141,6 @@ export function normalizeFields< Item >(
 				 )( { item, field } );
 			};
 
-		const normalizedRules = field.rules
-			? normalizeRules( field.rules )
-			: ( [] as NormalizedRule< Item >[] );
-
 		const filterBy = getFilterBy( field, fieldTypeDefinition );
 
 		return {
@@ -159,7 +150,7 @@ export function normalizeFields< Item >(
 			getValue,
 			render,
 			sort,
-			isValid,
+			isValid: normalizedIsValid,
 			Edit,
 			enableHiding: field.enableHiding ?? true,
 			enableSorting:
@@ -167,7 +158,6 @@ export function normalizeFields< Item >(
 				fieldTypeDefinition.enableSorting ??
 				true,
 			filterBy,
-			rules: normalizedRules,
 		};
 	} );
 }

@@ -41,179 +41,72 @@ export const getFields = (): Field< FormData >[] => [
 		id: 'name',
 		label: 'First Name',
 		type: 'text',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
+		Edit: ( { field, data, onChange } ) => (
 			<ValidatedTextControl
 				label={ field.label }
 				value={ field.getValue( { item: data } ) }
 				onChange={ ( value: string ) =>
 					onChange( { [ field.id ]: value } )
 				}
-				customValidator={ () => errorMessage }
+				customValidator={ () => {
+					return field?.isValid?.( data )
+						? undefined
+						: 'Name must be longer than 5 characters';
+				} }
 			/>
 		),
-		rules: {
-			required: {
-				message: 'First name is required',
-				value: true,
-			},
-			minLength: {
-				message: 'Minimum length is 2',
-				value: 2,
-			},
+		isValid: ( item ) => {
+			return item.name.length > 5;
 		},
 	},
 	{
 		id: 'surname',
 		label: 'Last Name',
 		type: 'text',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
+		Edit: ( { field, data, onChange } ) => (
 			<ValidatedInputControl
 				label={ field.label }
 				value={ field.getValue( { item: data } ) }
 				onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
-				customValidator={ () => errorMessage }
+				customValidator={ () => {
+					const isValid = field?.isValid?.( data );
+					if ( typeof isValid === 'string' ) {
+						return isValid;
+					}
+
+					return undefined;
+				} }
 			/>
 		),
-		rules: {
-			required: {
-				message: 'Last name is required',
-				value: true,
-			},
-			minLength: {
-				message: 'Minimum length is 2',
-				value: 2,
-			},
+		isValid: {
+			isRequired: true,
 		},
 	},
 	{
 		id: 'email',
 		label: 'Email Address',
 		type: 'email',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
+		Edit: ( { field, data, onChange } ) => (
 			<ValidatedTextControl
 				label={ field.label }
 				value={ field.getValue( { item: data } ) }
 				onChange={ ( value: string ) =>
 					onChange( { [ field.id ]: value } )
 				}
-				customValidator={ () => errorMessage }
+				customValidator={ () => {
+					const isValid = field?.isValid?.( data );
+
+					if ( typeof isValid === 'boolean' ) {
+						return isValid ? undefined : 'Email is not valid';
+					}
+
+					return isValid;
+				} }
 				type="email"
 			/>
 		),
-		rules: {
-			required: {
-				message: 'Email is required',
-				value: true,
-			},
-		},
-	},
-	{
-		id: 'job',
-		label: 'Job Role',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
-			<ValidatedSelectControl
-				label={ field.label }
-				value={ field.getValue( { item: data } ) }
-				onChange={ ( value: string ) =>
-					onChange( { [ field.id ]: value } )
-				}
-				customValidator={ () => errorMessage }
-				options={ [
-					{ label: 'Developer', value: 'developer' },
-					{ label: 'Designer', value: 'designer' },
-					{
-						label: 'Product Manager',
-						value: 'product_manager',
-					},
-				] }
-			/>
-		),
-		rules: {
-			required: {
-				message: 'Please select a job role',
-				value: true,
-			},
-		},
-	},
-	{
-		id: 'experience',
-		label: 'Years of Experience',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
-			<ValidatedNumberControl
-				label={ field.label }
-				value={ field.getValue( { item: data } ) }
-				onChange={ ( value: number | undefined | string ) =>
-					onChange( { [ field.id ]: value } )
-				}
-				customValidator={ () => errorMessage }
-			/>
-		),
-		rules: {
-			required: {
-				message: 'Please enter your years of experience',
-				value: true,
-			},
-			min: {
-				message: 'Experience cannot be negative',
-				value: 0,
-			},
-			max: {
-				message: 'Experience cannot exceed 50 years',
-				value: 50,
-			},
-		},
-	},
-	{
-		id: 'skills',
-		label: 'Skills',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
-			<ValidatedTextareaControl
-				label={ field.label }
-				value={ field.getValue( { item: data } ) }
-				onChange={ ( value: string ) =>
-					onChange( { [ field.id ]: value } )
-				}
-				customValidator={ () => errorMessage }
-			/>
-		),
-		rules: {
-			required: {
-				message: 'Please list your skills',
-				value: true,
-			},
-		},
-	},
-	{
-		id: 'role',
-		label: 'Current Role',
-		Edit: ( { errorMessage, field, data, onChange } ) => (
-			<ValidatedSelectControl
-				label={ field.label }
-				value={ field.getValue( { item: data } ) }
-				onChange={ ( value: string ) => {
-					onChange( { [ field.id ]: value } );
-				} }
-				customValidator={ () => {
-					return errorMessage;
-				} }
-				options={ [
-					{ label: 'Junior', value: 'junior' },
-					{ label: 'Mid-level', value: 'mid' },
-					{ label: 'Senior', value: 'senior' },
-					{ label: 'Lead', value: 'lead' },
-				] }
-			/>
-		),
-		rules: {
-			validate: {
-				callback: ( value, field, data ) => {
-					if ( value === 'lead' && data.job === 'developer' ) {
-						return 'Lead role is not allowed';
-					}
-
-					return undefined;
-				},
-			},
+		isValid: ( item ) => {
+			return item.email.includes( '@' );
 		},
 	},
 ];
@@ -224,14 +117,5 @@ export const getForm = (
 ): Form => ( {
 	type,
 	labelPosition,
-	fields: [
-		'name',
-		'surname',
-		'email',
-		'job',
-		'experience',
-		'skills',
-		'notifications',
-		'role',
-	],
+	fields: [ 'name', 'surname', 'email' ],
 } );

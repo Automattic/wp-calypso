@@ -114,7 +114,9 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to validate the field.
 	 */
-	isValid: ( item: Item, context?: ValidationContext ) => boolean;
+	isValid:
+		| ( ( item: Item, context?: ValidationContext ) => boolean )
+		| Rules< Item >;
 
 	/**
 	 * Callback used to render an edit control for the field or control name.
@@ -190,7 +192,9 @@ export type Field< Item > = {
 	/**
 	 * Callback used to validate the field.
 	 */
-	isValid?: ( item: Item, context?: ValidationContext ) => boolean;
+	isValid?:
+		| ( ( item: Item, context?: ValidationContext ) => boolean )
+		| Rules< Item >;
 
 	/**
 	 * Callback used to decide if a field should be displayed.
@@ -226,16 +230,11 @@ export type Field< Item > = {
 	 * Defaults to `item[ field.id ]`.
 	 */
 	getValue?: ( args: { item: Item } ) => any;
-
-	/**
-	 * The validation schema for the field.
-	 */
-	rules?: Rules< Item >;
 };
 
 export type NormalizedField< Item > = Omit<
 	Field< Item >,
-	'Edit' | 'rules'
+	'Edit' | 'isValid'
 > & {
 	label: string;
 	header: string | ReactElement;
@@ -243,11 +242,10 @@ export type NormalizedField< Item > = Omit<
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
 	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
-	isValid: ( item: Item, context?: ValidationContext ) => boolean;
+	isValid: NormalizedRule< Item > | undefined;
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
-	rules: NormalizedRule< Item >[];
 };
 
 /**
@@ -262,7 +260,6 @@ export type DataFormControlProps< Item > = {
 	field: NormalizedField< Item >;
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
-	errorMessage: string | undefined;
 };
 
 export type DataViewRenderFieldProps< Item > = {
@@ -662,5 +659,4 @@ export interface FieldLayoutProps< Item > {
 	field: FormField;
 	onChange: ( value: any ) => void;
 	hideLabelFromVision?: boolean;
-	errorMessage: string | undefined;
 }

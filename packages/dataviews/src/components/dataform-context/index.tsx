@@ -7,39 +7,21 @@ import { createContext } from '@wordpress/element';
  * Internal dependencies
  */
 import type { NormalizedField } from '../../types';
-import { useValidation } from '../validator';
-import { FormValidationState } from '../validator/types';
 
 type DataFormContextType< Item > = {
 	fields: NormalizedField< Item >[];
-	validation: FormValidationState;
 };
 
 const DataFormContext = createContext< DataFormContextType< any > >( {
 	fields: [],
-	validation: {
-		setTouchedFields: () => {},
-		setErrors: () => {},
-		isFormValid: () => false,
-		touchedFields: [],
-		errorMessages: {},
-		removeError: () => {},
-	},
 } );
 
 export function DataFormProvider< Item >( {
 	fields,
-	validation: validationStateFromConsumer,
 	children,
-}: React.PropsWithChildren< {
-	fields: NormalizedField< Item >[];
-	validation?: FormValidationState;
-} > ) {
-	const validationStateFromHook = useValidation();
-
-	const validation = validationStateFromConsumer ?? validationStateFromHook;
+}: React.PropsWithChildren< { fields: NormalizedField< Item >[] } > ) {
 	return (
-		<DataFormContext.Provider value={ { fields, validation } }>
+		<DataFormContext.Provider value={ { fields } }>
 			{ children }
 		</DataFormContext.Provider>
 	);

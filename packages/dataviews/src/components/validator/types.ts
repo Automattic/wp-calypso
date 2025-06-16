@@ -1,4 +1,4 @@
-import { Field, NormalizedField } from '../../types';
+import { Field, ValidationContext } from '../../types';
 import { INPUT_VALIDATION_RULES } from './constant';
 
 export type FormValidationState = {
@@ -13,57 +13,13 @@ export type FormValidationState = {
 	isFormValid: boolean;
 };
 
-export type Rules< Item > = {
-	[ key in keyof typeof INPUT_VALIDATION_RULES ]?: Rule< Item >;
-};
-
-export type LengthRule = {
-	message: string;
-	value: number;
-};
-
-export type PatternRule = {
-	message: string;
-	value: string;
-};
-
-export type ValidateRule< Item > = {
-	callback: (
-		value: any,
-		field: NormalizedField< Item >,
-		data: Item
-	) => string | undefined;
-};
-
 export type RequiredRule = {
-	message: string;
-	value: boolean;
+	[ INPUT_VALIDATION_RULES.isRequired ]: boolean;
 };
 
-export type MinRule = {
-	message: string;
-	value: number;
-};
+export type Rules< Item > = RequiredRule;
 
-export type MaxRule = {
-	message: string;
-	value: number;
-};
-
-export type Rule< Item > =
-	| LengthRule
-	| PatternRule
-	| ValidateRule< Item >
-	| RequiredRule
-	| MinRule
-	| MaxRule;
-
-export type NormalizedRule< Item > = {
-	type: keyof typeof INPUT_VALIDATION_RULES;
-	message: string;
-	callback: (
-		value: any,
-		field?: NormalizedField< Item >,
-		item?: Item
-	) => string | undefined;
-};
+export type NormalizedRule< Item > = (
+	item: Item,
+	context?: ValidationContext
+) => boolean | string;

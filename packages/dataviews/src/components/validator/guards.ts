@@ -1,54 +1,18 @@
-import {
-	LengthRule,
-	MaxRule,
-	MinRule,
-	PatternRule,
-	RequiredRule,
-	Rule,
-	ValidateRule,
-} from './types';
-
-const isValidRegex = ( regex: string ) => {
-	try {
-		new RegExp( regex );
-		return true;
-	} catch ( error ) {
-		return false;
-	}
-};
+import { RequiredRule, Rules } from './types';
 
 export const isRequiredRule = < Item >(
-	rule: Rule< Item >
+	rule: Rules< Item >
 ): rule is RequiredRule => {
-	return 'value' in rule && typeof rule.value === 'boolean';
+	return 'isRequired' in rule && typeof rule.isRequired === 'boolean';
 };
 
-export const isLengthRule = < Item >(
-	rule: Rule< Item >
-): rule is LengthRule => {
-	return 'value' in rule && typeof rule.value === 'number';
-};
-
-export const isMinRule = < Item >( rule: Rule< Item > ): rule is MinRule => {
-	return 'value' in rule && typeof rule.value === 'number';
-};
-
-export const isMaxRule = < Item >( rule: Rule< Item > ): rule is MaxRule => {
-	return 'value' in rule && typeof rule.value === 'number';
-};
-
-export const isPatternRule = < Item >(
-	rule: Rule< Item >
-): rule is PatternRule => {
+export const isRulesObject = < Item >(
+	rule: unknown
+): rule is Rules< Item > => {
 	return (
-		'value' in rule &&
-		typeof rule.value === 'string' &&
-		isValidRegex( rule.value )
+		typeof rule === 'object' &&
+		rule !== null &&
+		'isRequired' in rule &&
+		typeof rule.isRequired === 'boolean'
 	);
-};
-
-export const isValidateRule = < Item >(
-	rule: Rule< Item >
-): rule is ValidateRule< Item > => {
-	return 'callback' in rule && typeof rule.callback === 'function';
 };
