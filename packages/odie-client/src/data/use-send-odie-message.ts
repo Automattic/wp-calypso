@@ -5,9 +5,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
-	ODIE_ERROR_MESSAGE,
 	ODIE_RATE_LIMIT_MESSAGE,
 	ODIE_EMAIL_FALLBACK_MESSAGE,
+	ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -56,7 +56,11 @@ export const useSendOdieMessage = () => {
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
 		If email support is forced, it will add an email fallback message.
 	*/
-	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
+	const addMessage = (
+		message: Message | Message[],
+		props?: Partial< Chat >,
+		fromError: boolean = false
+	) => {
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {
@@ -68,7 +72,10 @@ export const useSendOdieMessage = () => {
 					} ) );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
-					newConversation( { createdFrom: 'automatic_escalation' } );
+					newConversation( {
+						createdFrom: 'automatic_escalation',
+						fromError,
+					} );
 					return;
 				}
 			}
@@ -115,16 +122,37 @@ export const useSendOdieMessage = () => {
 				returnedChat.messages.length === 0 ||
 				! returnedChat.messages[ 0 ].content
 			) {
-				const errorMessage: Message = {
-					content: ODIE_ERROR_MESSAGE,
-					internal_message_id,
-					role: 'bot',
-					type: 'error',
-				};
+				// Handle empty/error response based on user eligibility
+				if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
+					// User is eligible for premium support - transfer to Zendesk
+					// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
+					newConversation( {
+						createdFrom: 'empty_response_error',
+						fromError: true,
+					} );
+				} else {
+					// User is not eligible for premium support - show error message with support buttons
+					const errorMessage: Message = {
+						content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+						internal_message_id,
+						role: 'bot',
+						type: 'message',
+						context: {
+							site_id: selectedSiteId ?? null,
+							flags: {
+								forward_to_human_support: true,
+								canned_response: false,
+								hide_disclaimer_content: false,
+								show_contact_support_msg: true,
+								show_ai_avatar: true,
+								is_error_message: true,
+							},
+						},
+					};
 
-				addMessage( errorMessage );
-
-				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+					addMessage( errorMessage, {}, true );
+					broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+				}
 				return;
 			}
 
@@ -156,14 +184,48 @@ export const useSendOdieMessage = () => {
 		},
 		onError: ( error ) => {
 			const isRateLimitError = error.message.includes( '429' );
-			const errorMessage: Message = {
-				content: isRateLimitError ? ODIE_RATE_LIMIT_MESSAGE : ODIE_ERROR_MESSAGE,
-				internal_message_id,
-				role: 'bot',
-				type: 'error',
-			};
-			addMessage( errorMessage );
-			broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+
+			if ( isRateLimitError ) {
+				// Handle rate limit error with standard rate limit message
+				const errorMessage: Message = {
+					content: ODIE_RATE_LIMIT_MESSAGE,
+					internal_message_id,
+					role: 'bot',
+					type: 'message',
+					context: undefined,
+				};
+				addMessage( errorMessage, {}, true );
+				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
+				// User is eligible for premium support - transfer to Zendesk
+				// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
+				newConversation( {
+					createdFrom: 'api_error',
+					fromError: true,
+				} );
+			} else {
+				// User is not eligible for premium support - show error message with support buttons
+				const errorMessage: Message = {
+					content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+					internal_message_id,
+					role: 'bot',
+					type: 'message',
+					context: {
+						site_id: selectedSiteId ?? null,
+						flags: {
+							forward_to_human_support: true,
+							canned_response: false,
+							hide_disclaimer_content: false,
+							show_contact_support_msg: true,
+							show_ai_avatar: true,
+							is_error_message: true,
+						},
+					},
+				};
+
+				addMessage( errorMessage, {}, true );
+				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+			}
 		},
 	} );
 };
