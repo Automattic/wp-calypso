@@ -17,7 +17,16 @@ const getUserFieldMessage = ( flowName: string, url?: string ) => {
 	}. URL: ${ url }`;
 };
 
-export function useProductsWithPremiumSupport( products: ResponseCartProduct[], url?: string ) {
+export function useProductsWithPremiumSupport(
+	products: ResponseCartProduct[],
+	url?: string
+): {
+	userFieldMessage: string | null;
+	userFieldFlowName?: string;
+	hasPremiumSupport: boolean;
+	helpCenterButtonCopy?: string;
+	helpCenterButtonLink: string;
+} {
 	const { data: supportStatus } = useSupportStatus();
 	const { data: geoData } = useGeoLocationQuery();
 
@@ -31,7 +40,7 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 				userFieldMessage: getUserFieldMessage( DIFM_FLOW, url ),
 				userFieldFlowName:
 					FLOWS_ZENDESK_FLOWNAME[ DIFM_FLOW as keyof typeof FLOWS_ZENDESK_FLOWNAME ],
-				hasPremiumSupport,
+				hasPremiumSupport: hasPremiumSupport || false,
 				helpCenterButtonCopy: hasPremiumSupport
 					? __( 'Questions?', __i18n_text_domain__ )
 					: defaultButtonLink,

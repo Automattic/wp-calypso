@@ -17,7 +17,11 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-export const useCheckoutHelpCenter = () => {
+export const useCheckoutHelpCenter = (): {
+	toggleHelpCenter: () => void;
+	helpCenterButtonCopy?: string;
+	helpCenterButtonLink: string;
+} => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
