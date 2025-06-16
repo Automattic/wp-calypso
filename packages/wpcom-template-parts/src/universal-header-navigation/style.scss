@@ -393,148 +393,6 @@ $x-dropdown-item-line-height: 19px;
 }
 
 /*
- * Dropdown background
- *
- * 1. The background element is split into 3 parts: top, middle, bottom. The top
- *    one contains the pointer.
- * 2. The middle part covers the rounding error gap that might appear when
- *    dropdown transforms are in place.
- * 3. The bottom part contains the very background that will be animated using
- *    negative translation. Its height will set programatically.
- */
-
-%x-dropdown-background-container {
-	position: absolute;
-	right: 0;
-	left: 0;
-	padding: 0 $x-dropdown-shadow-blur;
-	overflow: hidden;
-}
-
-.x-dropdown-top { /* 1 */
-	@extend %x-dropdown-background-container;
-	box-sizing: border-box;
-	top: -1 * $x-dropdown-shadow-blur;
-	height: 2 * $x-dropdown-shadow-blur;
-	padding-top: $x-dropdown-shadow-blur + $x-dropdown-background-offset-y;
-}
-
-.x-dropdown-middle { /* 2 */
-	position: absolute;
-	z-index: 1;
-	top: $x-dropdown-shadow-blur - 1px;
-	right: $x-dropdown-shadow-blur;
-	left: $x-dropdown-shadow-blur;
-	height: 2px;
-	background: $x-dropdown-background-color;
-}
-
-.x-dropdown-bottom { /* 3 */
-	@extend %x-dropdown-background-container;
-	top: $x-dropdown-shadow-blur;
-	height: 0; /* 3 */
-}
-
-%x-dropdown-background-fill {
-	position: relative;
-	border-radius: 4px;
-	background: $x-dropdown-background-color;
-	box-shadow: $x-dropdown-shadow-x $x-dropdown-shadow-y $x-dropdown-shadow-blur $x-dropdown-shadow-color;
-}
-
-.x-dropdown-top-fill {
-	@extend %x-dropdown-background-fill;
-	height: 2 * $x-dropdown-shadow-blur;
-
-	&::before {
-		background: $studio-white;
-		border-radius: 2px;
-		content: "";
-		height: 36px;
-		left: 90px;
-		position: absolute;
-		top: -1px;
-		transform: rotate(45deg);
-		width: 36px;
-		z-index: 0;
-	}
-}
-
-.x-dropdown-bottom-fill {
-	@extend %x-dropdown-background-fill;
-	top: -1 * $x-dropdown-shadow-blur;
-	height: 0; /* 3 */
-}
-
-/*
- * Dropdown content
- */
-
-.x-dropdown-content {
-	z-index: 901;
-	position: absolute;
-	top: 55px;
-	padding: 12px 0;
-	opacity: 0;
-	left: -60px;
-	background: #fff;
-	border-radius: 9px; /* stylelint-disable-line scales/radii */
-	box-shadow: 0 9px 48px rgb(16 21 23 / 25%);
-	width: 210px;
-	pointer-events: none;
-	transition: all 150ms cubic-bezier(0.1, 0.6, 0.2, 1);
-	transform: translateY(-6px) scale(0.9);
-	transform-origin: 29px 0;
-
-	ul {
-		@extend %x-list;
-	}
-
-	&::before {
-		background: inherit;
-		border-radius: 2px;
-		content: "";
-		height: 36px;
-		left: 90px;
-		position: absolute;
-		top: -1px;
-		transform: rotate(45deg);
-		width: 36px;
-		z-index: 0;
-	}
-}
-
-.x-dropdown-content-separator {
-	height: 1px;
-	background: $x-color-content-separator;
-	margin: 9px 0 12px;
-}
-
-.x-dropdown-link.x-dropdown-link { /* 3 */
-	display: block;
-	padding: 6px 12px 6px 24px;
-	font-size: $x-dropdown-item-font-size;
-	font-weight: $lp-font-weight-bold;
-	line-height: $x-dropdown-item-line-height;
-	color: $x-color-link;
-
-	&:hover,
-	&:active,
-	&:focus {
-		background: $x-color-link-background-hover;
-		color: $x-color-link-hover;
-		opacity: 1;
-		transition-property: background, color;
-	}
-
-	&:active {
-		background: $x-color-link-background-active;
-		color: $x-color-link-active;
-	}
-}
-
-
-/*
  * Mobile menu
  *
  * 1. The line height values are determined based on the `__lp-line-height`
@@ -942,6 +800,10 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 .components-popover.x-nav-dropdown-popover {
+
+/*
+ * Dropdown content
+ */
 
 	.components-popover__content {
 		padding: 12px 0;
