@@ -141,7 +141,9 @@ class AuthorMappingPane extends PureComponent {
 			return null;
 		}
 
-		const fileTypes = Object.entries( unsupportedFiles );
+		const fileTypes = Object.entries( unsupportedFiles ).filter( function ( entry ) {
+			return entry[ 1 ] > 0;
+		} );
 		if ( fileTypes.length === 0 ) {
 			return null;
 		}
