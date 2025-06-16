@@ -11,6 +11,9 @@ export { useClientTools } from './react/useClientTools';
 
 // Essential utilities for external consumers
 export {
+	createRequestId,
+	createTaskId,
+	createTextMessage,
 	extractToolCallsFromMessage,
 	extractTextFromMessage,
 } from './client/utils/core';
@@ -67,6 +70,9 @@ export type {
 
 // Constants
 export { A2AErrorCodes } from './client/types/index';
+
+// Client creation function
+export { createClient } from './client/index';
 
 // Agent Manager - Functional singleton for managing agent instances
 export { getAgentManager } from './react/agentManager';
