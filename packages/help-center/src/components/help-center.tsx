@@ -26,7 +26,7 @@ import '../styles.scss';
 const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
-	currentRoute = window.location.pathname + window.location.search,
+	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
