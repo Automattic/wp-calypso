@@ -1,11 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { translate } from 'i18n-calypso';
 import { useMemo, useState, ReactNode } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { manageDeploymentPage } from '../routes';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LogEntry, useCodeDeploymentsRunLogDetailQuery } from './use-code-deployment-run-log-query';
 import { DeploymentRun } from './use-code-deployment-run-query';
 
@@ -126,38 +123,6 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 };
 
 export const DeploymentRunLogs = ( { logEntries, run }: DeploymentRunLogsProps ) => {
-	const dispatch = useDispatch();
-	const siteSlug = useSelector( getSelectedSiteSlug );
-
-	const hasWorkflowValidationError = logEntries.some(
-		( entry ) => entry.level === 'error' && entry.message === 'Workflow validation failed'
-	);
-
-	if ( hasWorkflowValidationError ) {
-		dispatch(
-			errorNotice(
-				translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
-					components: {
-						a: (
-							<a
-								href={ manageDeploymentPage( siteSlug as string, run.code_deployment_id ) }
-								onClick={ () => {
-									dispatch(
-										recordTracksEvent( 'calypso_hosting_github_workflow_validation_failure_click' )
-									);
-								} }
-							/>
-						),
-					},
-				} ),
-				{
-					id: 'github-invalid-workflow-file',
-					isPersistent: true,
-				}
-			)
-		);
-	}
-
 	return (
 		<div css={ { padding: '16px', background: 'var(--color-neutral-0)' } }>
 			<div

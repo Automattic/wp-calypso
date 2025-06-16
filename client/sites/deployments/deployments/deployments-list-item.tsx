@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
@@ -88,11 +88,38 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		}
 	);
 
-	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
-		useState( false );
-
 	const run = deployment.current_deployment_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
+
+	useEffect( () => {
+		if ( run?.failure_code === 'workflow_run_failure' ) {
+			dispatch(
+				errorNotice(
+					translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
+						components: {
+							a: (
+								<a
+									href={ manageDeploymentPage( siteSlug as string, deployment.id ) }
+									onClick={ () => {
+										dispatch( removeNotice( 'github-invalid-workflow-file' ) );
+										dispatch(
+											recordTracksEvent(
+												'calypso_hosting_github_workflow_validation_failure_click'
+											)
+										);
+									} }
+								/>
+							),
+						},
+					} ),
+					{
+						id: 'github-invalid-workflow-file',
+						isPersistent: true,
+					}
+				)
+			);
+		}
+	}, [ run?.failure_code, dispatch, siteSlug, deployment.id ] );
 
 	const columns = run ? (
 		<>
@@ -113,6 +140,9 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	) : (
 		<DeploymentStarterMessage deployment={ deployment } />
 	);
+
+	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
+		useState( false );
 
 	return (
 		<>
