@@ -67,3 +67,7 @@ export type {
 
 // Constants
 export { A2AErrorCodes } from './client/types/index';
+
+// Agent Manager - Functional singleton for managing agent instances
+export { getAgentManager } from './react/agentManager';
+export type { AgentManager, AgentManagerConfig } from './react/agentManager';
