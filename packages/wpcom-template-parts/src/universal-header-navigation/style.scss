@@ -446,16 +446,17 @@ $x-dropdown-item-line-height: 19px;
 	@extend %x-dropdown-background-fill;
 	height: 2 * $x-dropdown-shadow-blur;
 
-	&::before { /* 1 */
-		content: "";
-		position: absolute;
-		top: 0;
-		left: round(( $x-dropdown-background-width - 36px ) * 0.5);
+	&::before {
+		background: $studio-white;
 		border-radius: 2px;
-		background: inherit;
-		width: 36px;
+		content: "";
 		height: 36px;
+		left: 90px;
+		position: absolute;
+		top: -1px;
 		transform: rotate(45deg);
+		width: 36px;
+		z-index: 0;
 	}
 }
 
@@ -496,10 +497,10 @@ $x-dropdown-item-line-height: 19px;
 		height: 36px;
 		left: 90px;
 		position: absolute;
-		top: -2px;
+		top: -1px;
 		transform: rotate(45deg);
 		width: 36px;
-		z-index: -1;
+		z-index: 0;
 	}
 }
 
@@ -952,22 +953,24 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		width: 210px;
 		
 		&::before {
-			background: inherit;
+			background: $studio-white;
 			border-radius: 2px;
 			content: "";
 			height: 36px;
 			left: 90px;
 			position: absolute;
-			top: -2px;
+			top: -1px;
 			transform: rotate(45deg);
 			width: 36px;
-			z-index: -1;
+			z-index: 0;
 		}
 	}
 
 	.components-menu-group {
 		padding: 0;
 		border: none;
+		position: relative;
+		z-index: 1;
 		
 		// Reset Gutenberg's default MenuItem styles
 		.components-menu-item__button {
@@ -981,6 +984,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 			line-height: $x-dropdown-item-line-height;
 			height: auto;
 			min-height: unset;
+			position: relative;
+			z-index: 1;
 			
 			&:hover,
 			&:active,
