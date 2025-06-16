@@ -1,0 +1,80 @@
+{
+	"name": "@automattic/ui",
+	"version": "1.0.0",
+	"description": "Automattic Design System UI components.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./style.css": {
+			"import": "./dist/index.css",
+			"require": "./dist/index.css"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/ui"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist",
+	"dependencies": {
+		"@wordpress/base-styles": "5.23.0",
+		"@wordpress/compose": "7.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/primitives": "^4.23.0",
+		"clsx": "^2.1.1"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@microsoft/api-extractor": "^7.52.8",
+		"@storybook/addon-actions": "^8.6.14",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
+		"esbuild": "^0.25.5",
+		"esbuild-sass-plugin": "^3.1.0",
+		"postcss": "^8.5.3",
+		"postcss-modules": "^6.0.1",
+		"sass-embedded": "^1.89.0",
+		"storybook": "^8.6.14",
+		"tsup": "^8.5.0",
+		"typescript": "^5.8.3"
+	},
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "yarn clean && yarn bundle",
+		"bundle": "tsup",
+		"prepack": "yarn build",
+		"storybook:start": "storybook dev -p 56851"
+	}
+}

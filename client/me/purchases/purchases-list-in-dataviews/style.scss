@@ -16,6 +16,29 @@
 
 	.dataviews-wrapper .dataviews-view-table__row .dataviews-view-table__actions-column {
 		text-align: right;
+		position: sticky;
+		right: 0;
+		background-color: var( --studio-white );
+
+		::after {
+			background-color: var( --color-border-subtle );
+			bottom: 0;
+			content: "";
+			display: block;
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 1px;
+		}
+
+		@include breakpoint-deprecated( ">480px" ) {
+			position: relative;
+			background-color: transparent;
+
+			::after {
+				display: none;
+			}
+		}
 	}
 
 	.dataviews-view-table__row {
@@ -41,19 +64,24 @@
 	.dataviews-view-table tr td:first-child,
 	.dataviews-view-table tr th:first-child {
 		padding-left: 24px;
-		max-width: 250px;
 	}
 
-	.dataviews-view-table__cell-content-wrapper .purchase-item__site {
-		margin-right: 16px;
+	.dataviews-view-table__cell-content-wrapper.dataviews-column-primary__media {
+		display: none;
 
-		.purchase-item__static-icon {
-			width: 36px;
+		@include breakpoint-deprecated( ">480px" ) {
+			display: flex;
 		}
 	}
 
-	.dataviews-view-table__cell-content-wrapper .purchase-item__information {
+	.purchase-item__information {
 		margin-right: 16px;
+		max-width: 250px;
+		flex: auto;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			max-width: 400px;
+		}
 
 		.purchase-item__title {
 			font-size: 16px;
@@ -66,10 +94,6 @@
 			text-decoration: none;
 		}
 
-		div {
-			max-width: 462px;
-		}
-
 		.purchase-item__purchase-type,
 		.purchase-item__purchase-type a.purchase-item__link {
 			overflow: hidden;
@@ -77,15 +101,15 @@
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__status {
-		flex: 0 1 300px;
 		margin-right: 16px;
+		max-width: 250px;
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__payment-method {
-		flex: 0 0 200px;
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
+		min-width: 175px;
 
 		.purchase-item__payment-method-card {
 			margin-right: 8px;
