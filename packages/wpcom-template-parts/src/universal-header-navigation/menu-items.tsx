@@ -4,12 +4,9 @@ import { chevronDown } from '@wordpress/icons';
 import React, { useState, useRef, useEffect } from 'react';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
-// Module-level state to track which dropdown is currently open
 let currentOpenDropdown: string | null = null;
 const dropdownCloseCallbacks = new Map< string, () => void >();
-// Track which dropdown button should receive focus when closing
 let focusTargetOnClose: HTMLElement | null = null;
-// Track if the current interaction was initiated by keyboard
 let isKeyboardInteraction = false;
 
 const registerDropdown = ( id: string, closeCallback: () => void ) => {
@@ -21,7 +18,6 @@ const unregisterDropdown = ( id: string ) => {
 };
 
 const openDropdown = ( id: string, triggerElement?: HTMLElement, viaKeyboard = false ) => {
-	// Close the currently open dropdown if it's different from this one
 	if ( currentOpenDropdown && currentOpenDropdown !== id ) {
 		const closeCallback = dropdownCloseCallbacks.get( currentOpenDropdown );
 		if ( closeCallback ) {
@@ -30,7 +26,6 @@ const openDropdown = ( id: string, triggerElement?: HTMLElement, viaKeyboard = f
 	}
 	currentOpenDropdown = id;
 	isKeyboardInteraction = viaKeyboard;
-	// Update focus target to the trigger element of the newly opened dropdown
 	if ( triggerElement ) {
 		focusTargetOnClose = triggerElement;
 	}
@@ -39,11 +34,9 @@ const openDropdown = ( id: string, triggerElement?: HTMLElement, viaKeyboard = f
 const closeDropdown = ( id: string ) => {
 	if ( currentOpenDropdown === id ) {
 		currentOpenDropdown = null;
-		// Only move focus if the interaction was keyboard-initiated
 		if ( focusTargetOnClose && isKeyboardInteraction ) {
 			focusTargetOnClose.focus();
 		} else if ( ! isKeyboardInteraction ) {
-			// For mouse interactions, remove focus completely
 			if ( document.activeElement && document.activeElement instanceof HTMLElement ) {
 				document.activeElement.blur();
 			}
@@ -146,7 +139,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const triggerButtonRef = useRef< HTMLButtonElement | null >( null );
 
-	// Create a unique ID for this dropdown instance
 	const dropdownId = useRef(
 		`dropdown-${ contentString.toLowerCase().replace( /\s+/g, '-' ) }-${ Math.random()
 			.toString( 36 )
@@ -165,7 +157,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 		setWasOpenedViaKeyboard( viaKeyboard );
 	};
 
-	// Register this dropdown on mount and unregister on unmount
 	useEffect( () => {
 		const id = dropdownId.current;
 		registerDropdown( id, handleClose );
@@ -177,7 +168,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 		};
 	}, [] );
 
-	// Add global Escape key listener when dropdown is open
 	useEffect( () => {
 		const handleEscapeKey = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' && isHoverOpen ) {
@@ -200,11 +190,10 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 			clearTimeout( timeoutRef.current );
 			timeoutRef.current = null;
 		}
-		handleOpen( false ); // Mouse interaction
+		handleOpen( false );
 	};
 
 	const handleMouseLeave = () => {
-		// Add a small delay to prevent flickering when moving between trigger and dropdown
 		timeoutRef.current = setTimeout( () => {
 			handleClose();
 		}, 150 );
@@ -250,7 +239,6 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 						<span
 							ref={ ( el ) => {
 								if ( el ) {
-									// Find the button parent and store it
 									const button = el.closest( 'button' );
 									if ( button ) {
 										triggerButtonRef.current = button as HTMLButtonElement;
@@ -286,14 +274,12 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 															<MenuItem
 																key={ urlValue }
 																onClick={ () => {
-																	// Create a temporary link element for tracking
 																	const tempLink = document.createElement( 'a' );
 																	tempLink.href = urlValue;
 																	tempLink.className = 'x-dropdown-link';
 																	tempLink.innerText = String( itemContent );
 																	clickNavLinkEvent( tempLink );
 
-																	// Handle navigation
 																	window.open( urlValue, target || '_self' );
 																	onClose();
 																} }
