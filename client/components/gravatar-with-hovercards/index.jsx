@@ -1,9 +1,12 @@
 import config from '@automattic/calypso-config';
+import { Popover } from '@automattic/components';
 import { Hovercards } from '@gravatar-com/hovercards/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
+import HovercardContent from './hovercard-content';
 
 import '@gravatar-com/hovercards/dist/style.css';
+import './styles.scss';
 
 // Create a single style element to control hovercard visibility. We do this because hovercards do
 // not clean up their child popovers when the component unmounts. While the useEffect unmount
@@ -125,10 +128,33 @@ function GravatarWithHovercards( props ) {
 	);
 }
 
-export default function GravatarWithHovercardsWrapper( props ) {
+function GravatarWithHovercardsWrapper( props ) {
 	if ( ! config.isEnabled( 'gravatar/hovercards' ) ) {
 		return <Gravatar { ...props } />;
 	}
 
 	return <GravatarWithHovercards { ...props } />;
+}
+
+export default function TestCustomHovercard( props ) {
+	const [ isVisible, setIsVisible ] = useState( false );
+	const containerRef = useRef( null );
+
+	return (
+		<div
+			ref={ containerRef }
+			onMouseEnter={ () => setIsVisible( true ) }
+			onMouseLeave={ () => setIsVisible( false ) }
+		>
+			<Gravatar { ...props } />
+			<Popover
+				isVisible={ isVisible }
+				context={ containerRef.current }
+				position="bottom right"
+				className="gravatar-hovercard__popover"
+			>
+				<HovercardContent { ...props } />
+			</Popover>
+		</div>
+	);
 }
