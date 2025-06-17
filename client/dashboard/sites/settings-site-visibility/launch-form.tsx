@@ -13,6 +13,7 @@ import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
 import { DotcomPlans } from '../../data/constants';
+import TrialUpsellNotice from './trial-upsell-notice';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -165,8 +166,11 @@ export function LaunchForm( {
 	};
 
 	return (
-		<Notice title={ __( 'Your site hasn’t been launched yet' ) } actions={ renderButton() }>
-			{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
-		</Notice>
+		<>
+			<TrialUpsellNotice site={ site } />
+			<Notice title={ __( 'Your site hasn’t been launched yet' ) } actions={ renderButton() }>
+				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
+			</Notice>
+		</>
 	);
 }
