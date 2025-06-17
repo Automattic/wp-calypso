@@ -150,7 +150,7 @@ const DEFAULT_LAYOUTS = {
 	},
 	grid: {
 		mediaField: 'preview',
-		fields: [],
+		fields: [ 'status' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
