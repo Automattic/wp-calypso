@@ -1,7 +1,7 @@
 // hooks/use-visible-grid-plans.ts
 import { getPlanClass } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { useState, useEffect, useMemo, useCallback, ChangeEvent } from 'react';
+import { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import { usePlansGridContext } from '../../grid-context';
 import usePlanBillingPeriod from '../../hooks/data-store/use-plan-billing-period';
 import { GridPlan, GridSize, SupportedUrlFriendlyTermType } from '../../types';
@@ -20,7 +20,7 @@ export function useVisibleGridPlans( {
 	siteId,
 	intervalType,
 }: UseVisibleGridPlansProps ) {
-	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
+	const [ visibleGridPlans, setVisibleGridPlans ] = useState< GridPlan[] >( [] );
 	const { gridPlans, gridPlansIndex } = usePlansGridContext();
 	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
 	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
@@ -52,9 +52,8 @@ export function useVisibleGridPlans( {
 	};
 
 	useEffect( () => {
-		setVisiblePlans( ( prev ) => {
+		setVisibleGridPlans( ( prev ) => {
 			let visibleLength = gridPlans.length;
-			let next = prev;
 
 			switch ( gridSize ) {
 				case 'large':
@@ -70,20 +69,22 @@ export function useVisibleGridPlans( {
 			}
 
 			// Find the user's current plan in the current term
-			// If a user has an annual business plan and the current term is bienneial, this will find the biennial business plan
 			const usersGridPlanFromSelectedTerm = currentSitePlanSlug
 				? gridPlans.find(
 						( gridPlan ) =>
 							getPlanClass( gridPlan.planSlug ) === getPlanClass( currentSitePlanSlug )
 				  )
 				: null;
-			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
 
-			// visible length changed, update with the current gridPlans
+			// Check if previous state is stale
+			const isPrevStale = prev.some( ( plan ) => ! gridPlansIndex[ plan.planSlug ] );
+
+			let next: GridPlan[] = prev;
+
+			// Handle visible length changes
 			if ( prev.length !== visibleLength ) {
-				// the user had a selected plan aleady
+				// If site has a plan, get a slice of plans that favors upgrades for comparison
 				if ( currentSitePlanSlug ) {
-					// get grid plans where we include the current plan and favor upgrades over downgrades
 					next = getSliceOfGridPlans(
 						gridPlans,
 						gridPlans.findIndex(
@@ -91,75 +92,56 @@ export function useVisibleGridPlans( {
 								getPlanClass( gridPlan.planSlug ) === getPlanClass( currentSitePlanSlug )
 						),
 						visibleLength
-					).map( ( { planSlug } ) => planSlug );
+					);
 				} else {
-					// no plan selected, just get plans starting at 0
-					next = gridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+					next = gridPlans.slice( 0, visibleLength );
 				}
 			} else if ( isPrevStale ) {
-				next = prev.map( ( planSlug ) => {
+				// Map existing plans to their new term equivalents
+				next = prev.map( ( plan ) => {
 					const gridPlan = gridPlans.find(
-						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( plan.planSlug )
 					);
-
-					return gridPlan?.planSlug ?? planSlug;
+					return gridPlan ?? plan;
 				} );
 			}
 
-			const isCurrentPlanVisible =
-				usersGridPlanFromSelectedTerm && next.includes( usersGridPlanFromSelectedTerm.planSlug );
-			// Always move the users current plan (or the matching plan from the selected term) to the front of the comparison table
-			if ( usersGridPlanFromSelectedTerm && ! isCurrentPlanVisible ) {
-				next = [ usersGridPlanFromSelectedTerm.planSlug, ...next ].slice( 0, visibleLength );
-			} else if ( usersGridPlanFromSelectedTerm ) {
-				const index = next.findIndex(
-					( planSlug ) =>
-						getPlanClass( planSlug ) === getPlanClass( usersGridPlanFromSelectedTerm.planSlug )
+			// Ensure current plan is visible and at the start
+			if ( usersGridPlanFromSelectedTerm ) {
+				const isCurrentPlanVisible = next.some(
+					( plan ) =>
+						getPlanClass( plan.planSlug ) === getPlanClass( usersGridPlanFromSelectedTerm.planSlug )
 				);
-				const removed = next.splice( index, 1 );
-				next.unshift( ...removed );
+
+				if ( ! isCurrentPlanVisible ) {
+					next = [ usersGridPlanFromSelectedTerm, ...next ].slice( 0, visibleLength );
+				} else {
+					const index = next.findIndex(
+						( plan ) =>
+							getPlanClass( plan.planSlug ) ===
+							getPlanClass( usersGridPlanFromSelectedTerm.planSlug )
+					);
+					const [ removed ] = next.splice( index, 1 );
+					next.unshift( removed );
+				}
 			}
 
 			return next;
 		} );
-	}, [
-		gridSize,
-		gridPlans,
-		currentSitePlanSlug,
-		currentPlanTerm,
-		selectedPlanTerm,
-		gridPlansIndex,
-	] );
+	}, [ gridSize, gridPlans, currentSitePlanSlug, currentPlanTerm, selectedPlanTerm ] );
 
-	// Update the visible plan slugs when one of the plan selectors is used
 	const onPlanChange = useCallback(
 		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
+			const newPlanSlug = event.currentTarget.value;
+			const newPlan = gridPlans.find( ( plan ) => plan.planSlug === newPlanSlug );
 
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
-
-	// This transforms the array of visible plan slugs into an array of grid plans
-	// this is what is actually consumed by the display components
-	const visibleGridPlans = useMemo(
-		() =>
-			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = gridPlans.find(
-					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+			if ( newPlan ) {
+				setVisibleGridPlans( ( prev ) =>
+					prev.map( ( plan ) => ( plan.planSlug === currentPlan ? newPlan : plan ) )
 				);
-
-				if ( gridPlan ) {
-					acc.push( gridPlan );
-				}
-
-				return acc;
-			}, [] as GridPlan[] ),
-		[ visiblePlans, gridPlans ]
+			}
+		},
+		[ gridPlans ]
 	);
 
 	return { visibleGridPlans, onPlanChange };
