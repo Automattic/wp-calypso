@@ -13,12 +13,12 @@ import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
 import { DotcomPlans } from '../../data/constants';
-import TrialUpsellNotice from './trial-upsell-notice';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
-} from './index';
+} from '../plans';
+import TrialUpsellNotice from './trial-upsell-notice';
 import type { AgencyBlog, Site } from '../../data/types';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {

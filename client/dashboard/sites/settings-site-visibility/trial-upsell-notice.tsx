@@ -5,16 +5,15 @@ import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import Notice from '../../components/notice';
 import { DotcomPlans } from '../../data/constants';
-import { isSitePlanLaunchable as getIsSitePlanLaunchable } from './index';
+import { isSitePlanLaunchable } from '../plans';
 import type { Site } from '../../data/types';
 
 export default function TrialUpsellNotice( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isSiteOnECommerceTrial = site.plan?.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY;
 	const isSiteOnMigrationTrial = site.plan?.product_slug === DotcomPlans.MIGRATION_TRIAL_MONTHLY;
-	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
 
-	if ( isSitePlanLaunchable ) {
+	if ( isSitePlanLaunchable( site ) ) {
 		return null;
 	}
 
