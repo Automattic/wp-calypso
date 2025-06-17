@@ -15,6 +15,29 @@ import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } f
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
 
+const getErrorMessageForSiteIdAndInternalMessageId = (
+	selectedSiteId: number | null | undefined,
+	internal_message_id: string
+): Message => {
+	return {
+		content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+		internal_message_id,
+		role: 'bot',
+		type: 'message',
+		context: {
+			site_id: selectedSiteId ?? null,
+			flags: {
+				forward_to_human_support: true,
+				canned_response: false,
+				hide_disclaimer_content: false,
+				show_contact_support_msg: true,
+				show_ai_avatar: true,
+				is_error_message: true,
+			},
+		},
+	};
+};
+
 /**
  * Sends a new message to ODIE.
  * If the chat_id is not set, it will create a new chat and send a message to the chat.
@@ -56,11 +79,15 @@ export const useSendOdieMessage = () => {
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
 		If email support is forced, it will add an email fallback message.
 	*/
-	const addMessage = (
-		message: Message | Message[],
-		props?: Partial< Chat >,
-		fromError: boolean = false
-	) => {
+	const addMessage = ( {
+		message,
+		props = {},
+		isFromError = false,
+	}: {
+		message: Message | Message[];
+		props?: Partial< Chat >;
+		isFromError: boolean;
+	} ) => {
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {
@@ -70,12 +97,14 @@ export const useSendOdieMessage = () => {
 						messages: [ ...prevChat.messages, ...[ ODIE_EMAIL_FALLBACK_MESSAGE ] ],
 						status: 'loaded',
 					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
 					newConversation( {
 						createdFrom: 'automatic_escalation',
-						fromError,
+						isFromError,
 					} );
+					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				}
 			}
@@ -128,30 +157,16 @@ export const useSendOdieMessage = () => {
 					// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
 					newConversation( {
 						createdFrom: 'empty_response_error',
-						fromError: true,
+						isFromError: true,
 					} );
 				} else {
 					// User is not eligible for premium support - show error message with support buttons
-					const errorMessage: Message = {
-						content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
-						internal_message_id,
-						role: 'bot',
-						type: 'message',
-						context: {
-							site_id: selectedSiteId ?? null,
-							flags: {
-								forward_to_human_support: true,
-								canned_response: false,
-								hide_disclaimer_content: false,
-								show_contact_support_msg: true,
-								show_ai_avatar: true,
-								is_error_message: true,
-							},
-						},
-					};
+					const errorMessage = getErrorMessageForSiteIdAndInternalMessageId(
+						selectedSiteId,
+						internal_message_id
+					);
 
-					addMessage( errorMessage, {}, true );
-					broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+					addMessage( { message: errorMessage, props: {}, isFromError: true } );
 				}
 				return;
 			}
@@ -176,8 +191,11 @@ export const useSendOdieMessage = () => {
 				context: returnedChat.messages[ 0 ].context,
 			};
 			setExperimentVariationName( returnedChat.experiment_name );
-			addMessage( botMessage, { odieId: returnedChat.chat_id } );
-			broadcastOdieMessage( botMessage, odieBroadcastClientId );
+			addMessage( {
+				message: botMessage,
+				props: { odieId: returnedChat.chat_id },
+				isFromError: false,
+			} );
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
@@ -194,37 +212,21 @@ export const useSendOdieMessage = () => {
 					type: 'message',
 					context: undefined,
 				};
-				addMessage( errorMessage, {}, true );
-				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 				// User is eligible for premium support - transfer to Zendesk
-				// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
 				newConversation( {
 					createdFrom: 'api_error',
-					fromError: true,
+					isFromError: true,
 				} );
 			} else {
 				// User is not eligible for premium support - show error message with support buttons
-				const errorMessage: Message = {
-					content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
-					internal_message_id,
-					role: 'bot',
-					type: 'message',
-					context: {
-						site_id: selectedSiteId ?? null,
-						flags: {
-							forward_to_human_support: true,
-							canned_response: false,
-							hide_disclaimer_content: false,
-							show_contact_support_msg: true,
-							show_ai_avatar: true,
-							is_error_message: true,
-						},
-					},
-				};
+				const errorMessage: Message = getErrorMessageForSiteIdAndInternalMessageId(
+					selectedSiteId,
+					internal_message_id
+				);
 
-				addMessage( errorMessage, {}, true );
-				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
 			}
 		},
 	} );

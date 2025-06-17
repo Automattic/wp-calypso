@@ -8,7 +8,7 @@ export const ODIE_ERROR_MESSAGE = __(
 );
 
 export const ODIE_ERROR_MESSAGE_NON_ELIGIBLE = __(
-	'Sorry, I am offline right now. Come back later or ask for help in our forums.',
+	'Sorry, I am offline right now. Come back later or ask for help in our forums:',
 	__i18n_text_domain__
 );
 

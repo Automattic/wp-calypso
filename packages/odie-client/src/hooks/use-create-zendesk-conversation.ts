@@ -13,13 +13,13 @@ export const useCreateZendeskConversation = (): ( ( {
 	interactionId,
 	section,
 	createdFrom,
-	fromError,
+	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
 	section?: string | null;
 	createdFrom?: string;
-	fromError?: boolean;
+	isFromError?: boolean;
 } ) => Promise< void > ) => {
 	const {
 		selectedSiteId,
@@ -47,13 +47,13 @@ export const useCreateZendeskConversation = (): ( ( {
 		interactionId = '',
 		section = '',
 		createdFrom = '',
-		fromError = false,
+		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
 		section?: string | null;
 		createdFrom?: string;
-		fromError?: boolean;
+		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
 		if (
@@ -71,7 +71,7 @@ export const useCreateZendeskConversation = (): ( ( {
 				? prevChat.messages
 				: [
 						...prevChat.messages,
-						...( fromError ? ODIE_ON_ERROR_TRANSFER_MESSAGE : ODIE_TRANSFER_MESSAGE ),
+						...( isFromError ? ODIE_ON_ERROR_TRANSFER_MESSAGE : ODIE_TRANSFER_MESSAGE ),
 				  ],
 			status: 'transfer',
 		} ) );
