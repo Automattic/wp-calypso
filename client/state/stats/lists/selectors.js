@@ -232,15 +232,9 @@ export function getSiteStatsViewSummary( state, siteId ) {
 		}
 
 		// Parse date components
-		const [ yearStr, monthStr, dayStr ] = dateStr.split( '-' );
+		const [ yearStr, monthStr ] = dateStr.split( '-' );
 		const year = parseInt( yearStr, 10 );
 		const month = parseInt( monthStr, 10 ) - 1; // Convert to 0-based month
-		const day = parseInt( dayStr, 10 );
-
-		// Validate parsed values
-		if ( isNaN( year ) || isNaN( month ) || isNaN( day ) ) {
-			return;
-		}
 
 		// Initialize year and month objects if they don't exist
 		if ( ! viewSummary[ year ] ) {
