@@ -10,10 +10,12 @@ export interface MainProps {
 	id?: string;
 	isLoggedOut?: boolean;
 	wideLayout?: boolean;
+	dataDocumentation?: string;
 }
 
 export default function Main( {
 	className = '',
+	dataDocumentation = undefined,
 	id = '',
 	children,
 	wideLayout = false,
@@ -28,7 +30,13 @@ export default function Main( {
 	} );
 
 	return (
-		<main className={ classes } id={ id || undefined } role="main" aria-label={ ariaLabel }>
+		<main
+			className={ classes }
+			id={ id || undefined }
+			role="main"
+			aria-label={ ariaLabel }
+			data-documentation={ dataDocumentation }
+		>
 			{ children }
 		</main>
 	);

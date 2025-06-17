@@ -151,6 +151,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 			className={ `inner-notice-container ${
 				! isOdysseyStats ? 'inner-notice-container--calypso' : ''
 			}` }
+			data-documentation={ learnMoreLink }
 		>
 			<NoticeBanner
 				level="info"

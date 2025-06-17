@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -156,7 +157,10 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main wideLayout>
+			<Main
+				wideLayout
+				dataDocumentation={ localizeUrl( 'https://wordpress.com/support/domains/' ) }
+			>
 				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass
 					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-site-domains-page' ] }
