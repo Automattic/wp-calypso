@@ -13,6 +13,7 @@ import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
 import {
+	isSiteLaunchable as getIsSiteLaunchable,
 	isSitePlanBigSkyTrial,
 	isSitePlanHostingTrial,
 	isSitePlanPaid,
@@ -118,6 +119,7 @@ export function LaunchForm( {
 	}
 
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
+	const isSiteLaunchable = getIsSiteLaunchable( site );
 	const shouldImmediatelyLaunch = isSitePlanPaidWithDomains || isSitePlanHostingTrial( site );
 
 	const getLaunchUrl = () => {
@@ -139,16 +141,23 @@ export function LaunchForm( {
 	};
 
 	const renderButton = () => {
+		const commonProps = {
+			size: 'compact' as const,
+			variant: 'primary' as const,
+			disabled: ! isSiteLaunchable,
+			isBusy: isLaunching,
+		};
+
 		if ( shouldImmediatelyLaunch ) {
 			return (
-				<Button size="compact" variant="primary" isBusy={ isLaunching } onClick={ onLaunchClick }>
+				<Button { ...commonProps } onClick={ onLaunchClick }>
 					{ __( 'Launch site' ) }
 				</Button>
 			);
 		}
 
 		return (
-			<Button size="compact" variant="primary" href={ getLaunchUrl() }>
+			<Button { ...commonProps } href={ getLaunchUrl() }>
 				{ __( 'Launch site' ) }
 			</Button>
 		);

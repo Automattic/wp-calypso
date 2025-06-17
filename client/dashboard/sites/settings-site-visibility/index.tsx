@@ -11,6 +11,7 @@ import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-m
 import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
 import { ShareSiteForm } from './share-site-form';
+import TrialUpsellNotice from './trial-upsell-notice';
 import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
@@ -91,6 +92,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 				/>
 			}
 		>
+			<TrialUpsellNotice site={ site } />
 			{ renderContent() }
 		</PageLayout>
 	);

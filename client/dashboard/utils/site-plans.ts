@@ -31,19 +31,23 @@ export const isSitePlanBigSkyTrial = ( site: Site ) => {
 };
 
 export const isSitePlanPaid = ( site: Site ) => {
-	if ( ! site.plan ) {
-		return false;
-	}
-
 	return ! [ DotcomPlans.JETPACK_FREE, DotcomPlans.FREE_PLAN ].includes(
-		site.plan.product_slug as DotcomPlans
+		site.plan?.product_slug as DotcomPlans
 	);
 };
 
 export const isSitePlanHostingTrial = ( site: Site ) => {
-	if ( ! site.plan ) {
-		return false;
-	}
+	return site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
+};
 
-	return site.plan.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
+export const isSiteOnECommerceTrial = ( site: Site ) => {
+	return site.plan?.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY;
+};
+
+export const isSiteOnMigrationTrial = ( site: Site ) => {
+	return site.plan?.product_slug === DotcomPlans.MIGRATION_TRIAL_MONTHLY;
+};
+
+export const isSiteLaunchable = ( site: Site ) => {
+	return ! isSiteOnECommerceTrial( site ) && ! isSiteOnMigrationTrial( site );
 };
