@@ -3,7 +3,7 @@ module.exports = {
 	plugins: [ 'stylelint-plugin-logical-css' ],
 	rules: {
 		'declaration-property-max-values': {
-			// Prevents shorthand left/right values (unclear for RTL)
+			// Prevents left/right values with shorthand property names (unclear for RTL)
 			margin: 3,
 			padding: 3,
 			'border-width': 3,
