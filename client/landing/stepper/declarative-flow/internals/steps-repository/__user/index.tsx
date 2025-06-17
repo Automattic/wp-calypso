@@ -43,6 +43,9 @@ const UserStepComponent: StepType = function UserStep( {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			reloadProxy();
 			requestAllBlogsAccess();
+			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+			// but follow-up API calls go to the closest DC, which may be different and might not
+			// have replicated the user data yet.
 			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
 		}
 		if ( ! isLoggedIn ) {
