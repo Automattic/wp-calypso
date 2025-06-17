@@ -1,0 +1,44 @@
+@import "@wordpress/base-styles/variables";
+
+.dashboard-dataviews-card {
+	.components-card__body {
+		padding-inline: 0;
+		padding-top: $grid-unit-10;
+		padding-bottom: 0;
+	}
+
+	.dataviews__view-actions,
+	.dataviews-filters__container,
+	.dataviews-footer,
+	.dataviews-view-grid {
+		padding-inline: $grid-unit-30;
+	}
+
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-inline-start: $grid-unit-30;
+	}
+
+	.dataviews-view-table tr td:last-child,
+	.dataviews-view-table tr th:last-child {
+		padding-inline-end: $grid-unit-30;
+	}
+
+	// Border radius to prevent cells with white backgrounds overflowing the card
+	// border's rounded corner. Card border radius defined in Gutenberg:
+	// https://github.com/WordPress/gutenberg/blob/de11ef92c9f6478fedb7bd5f56b1612943d5c7a9/packages/components/src/card/styles.ts#L15
+
+	.dataviews-view-table tr:last-child td:first-child {
+		border-bottom-left-radius: $radius-large - 1px; /* stylelint-disable-line scales/radii */
+	}
+
+	.dataviews-view-table tr:last-child td:last-child {
+		border-bottom-right-radius: $radius-large - 1px; /* stylelint-disable-line scales/radii */
+	}
+
+	.dataviews-footer {
+		border-bottom-left-radius: $radius-large - 1px; /* stylelint-disable-line scales/radii */
+		border-bottom-right-radius: $radius-large - 1px; /* stylelint-disable-line scales/radii */
+	}
+}
+

@@ -1,9 +1,10 @@
 import { Card, CardBody } from '@wordpress/components';
+import './styles.scss';
 
 function DataViewsCard( { children }: { children: React.ReactNode } ) {
 	return (
-		<Card>
-			<CardBody style={ { paddingLeft: 0, paddingRight: 0 } }>{ children }</CardBody>
+		<Card className="dashboard-dataviews-card">
+			<CardBody>{ children }</CardBody>
 		</Card>
 	);
 }
