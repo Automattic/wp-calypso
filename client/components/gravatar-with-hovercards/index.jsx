@@ -19,7 +19,9 @@ import '@gravatar-com/hovercards/dist/style.css';
 // visibility until verifying that their container ref is in the dom.
 // This issue is being tracked in https://github.com/Automattic/gravatar/issues/210
 // More details and gifs of these issues shown in https://github.com/Automattic/wp-calypso/pull/104136
-const createStyleElement = () => {
+const STYLE_ELEMENT_ID = 'gravatar-hovercard-style';
+
+const hideHovercards = () => {
 	let styleElement = document.getElementById( 'gravatar-hovercard-style' );
 	if ( ! styleElement ) {
 		styleElement = document.createElement( 'style' );
@@ -27,35 +29,26 @@ const createStyleElement = () => {
 		styleElement.textContent = '.gravatar-hovercard { display: none !important; }';
 		document.head.appendChild( styleElement );
 	}
-	return styleElement;
 };
 
-const hideHovercards = ( styleElement ) => {
-	if ( ! document.head.contains( styleElement ) ) {
-		document.head.appendChild( styleElement );
-	}
-};
-
-const showHovercards = ( styleElement ) => {
-	styleElement.remove();
+const showHovercards = () => {
+	const elements = document.querySelectorAll( `#${ STYLE_ELEMENT_ID }` );
+	elements.forEach( ( el ) => el.remove() );
 };
 
 function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
-	const styleElementRef = useRef( null );
 	const [ mountNode, setMountNode ] = useState( null );
 
 	useEffect( () => {
 		// Initialize style element only when component mounts
-		styleElementRef.current = createStyleElement();
+		hideHovercards();
 		return () => {
 			// Remove any lingering hovercards on unmount
 			const hovercards = document.querySelectorAll( '.gravatar-hovercard' );
 			hovercards.forEach( ( card ) => card.remove() );
 			// Ensure hovercards will remain hidden until container ref is verified for next hovercard
-			if ( styleElementRef.current ) {
-				hideHovercards( styleElementRef.current );
-			}
+			hideHovercards();
 		};
 	}, [] );
 
@@ -94,10 +87,10 @@ function GravatarWithHovercards( props ) {
 		setTimeout( () => {
 			// Only show the hovercard if our container is in the dom
 			if ( containerRef.current && document.body.contains( containerRef.current ) ) {
-				showHovercards( styleElementRef.current );
+				showHovercards();
 			} else {
 				hovercardElement?.remove();
-				hideHovercards( styleElementRef.current );
+				hideHovercards();
 			}
 		}, 0 );
 	};
@@ -107,7 +100,7 @@ function GravatarWithHovercards( props ) {
 			<HovercardContentPortal mountNode={ mountNode } { ...props } />
 			<Hovercards
 				onHovercardShown={ handleHovercardShown }
-				onHovercardHidden={ () => hideHovercards( styleElementRef.current ) }
+				onHovercardHidden={ () => hideHovercards() }
 			>
 				<Gravatar { ...props } />
 			</Hovercards>
