@@ -15,6 +15,8 @@ describe( 'actions', () => {
 		spy = jest.fn();
 	} );
 
+	const EndpointLimit = 200;
+
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
 			const successResponse = {
@@ -41,20 +43,20 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.3/me/billing-history' )
+					.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit )
 					.reply( 200, successResponse );
 			} );
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestBillingTransactions()( spy );
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestBillingTransactions()( spy );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: BILLING_TRANSACTIONS_REQUEST,
 				} );
 			} );
 
-			test( 'should dispatch receive action when request completes', () => {
-				return requestBillingTransactions()( spy ).then( () => {
+			test( 'should dispatch receive action when request completes', async () => {
+				await requestBillingTransactions()( spy ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: BILLING_TRANSACTIONS_RECEIVE,
 						past: successResponse.billing_history,
@@ -63,11 +65,86 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			test( 'should dispatch request success action when request completes', () => {
-				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( {
-						type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-					} );
+			test( 'should dispatch request success action when request completes', async () => {
+				await requestBillingTransactions()( spy );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
+				} );
+			} );
+		} );
+
+		describe( 'success with multiple calls', () => {
+			// Let's generate more than "EndpointLimit" past transactions
+			const billing_history = [];
+			for ( let i = 0; i < 2 * EndpointLimit - 1; i++ ) {
+				billing_history.push( {
+					id: Math.floor( Math.random() * 10000 ),
+					amount: '$1.23',
+					date: '2016-12-12T11:22:33+0000',
+					tax: '$0.20',
+					subtotal: '$1.03',
+				} );
+			}
+
+			const successResponse = {
+				billing_history,
+				upcoming_charges: [
+					{
+						id: '87654321',
+						amount: '$4.56',
+						tax: '$0.55',
+						subtotal: '$4.01',
+						date: '2016-12-12T11:22:33+0000',
+					},
+				],
+			};
+
+			const successResponse1 = {
+				billing_history: billing_history.slice( 0, EndpointLimit ),
+				upcoming_charges: successResponse.upcoming_charges,
+			};
+
+			const successResponse2 = {
+				billing_history: billing_history.slice( EndpointLimit ),
+				upcoming_charges: [],
+			};
+
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit )
+					.reply( 200, successResponse1 );
+
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get(
+						'/rest/v1.3/me/billing-history?limit=' + EndpointLimit + '&offset=' + EndpointLimit
+					)
+					.reply( 200, successResponse2 );
+			} );
+
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestBillingTransactions()( spy );
+
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST,
+				} );
+			} );
+
+			test( 'should dispatch receive action when request completes', async () => {
+				await requestBillingTransactions()( spy );
+
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_RECEIVE,
+					past: successResponse.billing_history,
+					upcoming: successResponse.upcoming_charges,
+				} );
+			} );
+
+			test( 'should dispatch request success action when request completes', async () => {
+				await requestBillingTransactions()( spy );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 				} );
 			} );
 		} );
@@ -79,7 +156,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.3/me/billing-history' )
+					.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit )
 					.reply( 403, {
 						error: 'authorization_required',
 						message,
