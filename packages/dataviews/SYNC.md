@@ -78,7 +78,7 @@ git checkout -b update/dataviews-package trunk
 git merge -Xsubtree=packages/dataviews/ dataviews-trunk
 ```
 
-`git checkout -b update/dataviews-package trunk` checks out a new  branch.
+`git checkout -b update/dataviews-package trunk` checks out a new branch.
 
 `git merge -Xsubtree=packages/dataviews/ dataviews-trunk` is the key step where the actual synchronization happens. It merges the dataviews-trunk branch (which you created with the subtree split in step 2) into your current branch. The `-Xsubtree=packages/dataviews/` option tells git to place files from the dataviews-trunk branch (which are at the root level) into Calypso's `packages/dataviews/` directory.
 
