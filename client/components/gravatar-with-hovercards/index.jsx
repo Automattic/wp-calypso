@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
 import { Hovercards } from '@gravatar-com/hovercards/react';
 import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
-import HovercardContent from './hovercard-content';
+import HovercardContentPortal from './hovercard-content';
 
 import '@gravatar-com/hovercards/dist/style.css';
-import './styles.scss';
 
 // Create a single style element to control hovercard visibility. We do this because hovercards do
 // not clean up their child popovers when the component unmounts. While the useEffect unmount
@@ -45,6 +43,7 @@ const showHovercards = ( styleElement ) => {
 function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
 	const styleElementRef = useRef( null );
+	const [ mountNode, setMountNode ] = useState( null );
 
 	useEffect( () => {
 		// Initialize style element only when component mounts
@@ -65,39 +64,26 @@ function GravatarWithHovercards( props ) {
 		if ( hovercardElement ) {
 			const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
 			if ( inner ) {
-				// Create new clean sections
+				// Create new clean Header section.
 				const newHeader = document.createElement( 'div' );
 				newHeader.className = 'gravatar-hovercard__header';
-
-				const newBody = document.createElement( 'div' );
-				newBody.className = 'gravatar-hovercard__body';
-
-				const newFooter = document.createElement( 'div' );
-				newFooter.className = 'gravatar-hovercard__footer';
 
 				// Query items to preserve.
 				const avatarLink = inner.querySelector( '.gravatar-hovercard__avatar-link' );
 				const nameElement = inner.querySelector( '.gravatar-hovercard__name' );
 				const description = inner.querySelector( '.gravatar-hovercard__description' );
 
-				// Add preserved items back to new sections.
-
-				// Header
+				// Add preserved items back to the header.
 				avatarLink && newHeader.appendChild( avatarLink );
 				nameElement && newHeader.appendChild( nameElement );
 				description && newHeader.appendChild( description );
 
-				// Body
-				// This is where we should add the primary site card with subscribe button.
-
-				// Footer
-				// This is where we should add the recommended blogs list.
-
-				// Clear inner and add only our new sections
+				// Clear inner and add only our new Header.
 				inner.innerHTML = '';
 				inner.appendChild( newHeader );
-				inner.appendChild( newBody );
-				inner.appendChild( newFooter );
+
+				// Components for the body and footer will enter through this via portal.
+				setMountNode( inner );
 			}
 		}
 
@@ -118,6 +104,7 @@ function GravatarWithHovercards( props ) {
 
 	return (
 		<div ref={ containerRef }>
+			<HovercardContentPortal mountNode={ mountNode } { ...props } />
 			<Hovercards
 				onHovercardShown={ handleHovercardShown }
 				onHovercardHidden={ () => hideHovercards( styleElementRef.current ) }
@@ -128,33 +115,10 @@ function GravatarWithHovercards( props ) {
 	);
 }
 
-function GravatarWithHovercardsWrapper( props ) {
+export default function GravatarWithHovercardsWrapper( props ) {
 	if ( ! config.isEnabled( 'gravatar/hovercards' ) ) {
 		return <Gravatar { ...props } />;
 	}
 
 	return <GravatarWithHovercards { ...props } />;
-}
-
-export default function TestCustomHovercard( props ) {
-	const [ isVisible, setIsVisible ] = useState( false );
-	const containerRef = useRef( null );
-
-	return (
-		<div
-			ref={ containerRef }
-			onMouseEnter={ () => setIsVisible( true ) }
-			onMouseLeave={ () => setIsVisible( false ) }
-		>
-			<Gravatar { ...props } />
-			<Popover
-				isVisible={ isVisible }
-				context={ containerRef.current }
-				position="bottom right"
-				className="gravatar-hovercard__popover"
-			>
-				<HovercardContent { ...props } />
-			</Popover>
-		</div>
-	);
 }
