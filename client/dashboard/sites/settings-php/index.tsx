@@ -85,10 +85,10 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		e.preventDefault();
 		mutation.mutate( formData.version, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'PHP version saved.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), {
+				createErrorNotice( __( 'Failed to save PHP version.' ), {
 					type: 'snackbar',
 				} );
 			},

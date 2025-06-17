@@ -8,8 +8,10 @@ import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 
 export default function DashboardBackportSiteSettingsRenderer( {
 	siteSlug,
+	feature,
 }: {
 	siteSlug?: string;
+	feature?: string;
 } ) {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -54,7 +56,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		persistPromise.then( () => {
 			rootInstanceRef.current?.render( <Layout analyticsClient={ analyticsClient } /> );
 		} );
-	}, [ analyticsClient, siteSlug ] );
+	}, [ analyticsClient, siteSlug, feature ] );
 
 	return <div className="dashboard-backport-site-settings-root" ref={ containerRef } />;
 }

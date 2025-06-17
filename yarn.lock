@@ -2184,6 +2184,8 @@ __metadata:
     postcss-modules: "npm:^6.0.1"
     sass-embedded: "npm:^1.89.0"
     storybook: "npm:^8.6.14"
+    stylelint: "npm:^16.15.0"
+    stylelint-plugin-logical-css: "npm:^1.2.3"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -35061,6 +35063,15 @@ __metadata:
   peerDependencies:
     stylelint: ^16.1.0
   checksum: a0a0ecd91f4d193bbe2cc3408228f8a2d8fcb2b2578d77233f86780c9247c796a04e16aad7a91d97cb918e2de34b6a8062bab66ee017c3835d855081d94f4828
+  languageName: node
+  linkType: hard
+
+"stylelint-plugin-logical-css@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "stylelint-plugin-logical-css@npm:1.2.3"
+  peerDependencies:
+    stylelint: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: d0ffd76edf56cc948fcee378a01dced8057a4093a5dc70f850cc76da03063bcafd6f044d3973bae97df02264e2f4cb024e52493e97039647b4ef7a826c8dbdba
   languageName: node
   linkType: hard
 

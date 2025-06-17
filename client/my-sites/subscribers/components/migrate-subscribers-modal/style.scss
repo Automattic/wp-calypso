@@ -43,36 +43,18 @@
 
 	.migrate-subscribers-modal__form--container {
 		width: 100%;
+
+		.is-group-jetpack-cloud & p {
+			font-size: 1rem;
+		}
 	}
 
 	.migrate-subscriber__form-cancel-btn {
 		box-shadow: unset;
 	}
 
-
-	.migrate-subscribers-modal__form--disclaimer {
-		font-size: $font-body-small;
-		line-height: 1.25;
-		color: var(--studio-gray-50);
-		margin-top: 16px;
-		strong {
-			white-space: nowrap;
-		}
-
-		a,
-		button {
-			font-size: $font-body-small;
-			color: var(--color-text);
-			text-decoration: underline;
-			height: unset;
-
-			&:hover {
-				color: var(--color-text-subtle);
-			}
-		}
-
-		.components-button {
-			padding: 0;
-		}
+	.sites-dropdown {
+		margin-top: 4px;
+		margin-bottom: 8px;
 	}
 }

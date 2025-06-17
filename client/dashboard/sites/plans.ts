@@ -1,6 +1,14 @@
 import { DotcomPlans } from '../data/constants';
 import type { Site } from '../data/types';
 
+export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlans[] ) => {
+	if ( ! site.plan ) {
+		return false;
+	}
+
+	return ! plans.includes( site.plan.product_slug as DotcomPlans );
+};
+
 export const isSitePlanBigSkyTrial = ( site: Site ) => {
 	if ( ! site.plan ) {
 		return false;
@@ -16,7 +24,7 @@ export const isSitePlanBigSkyTrial = ( site: Site ) => {
 		return true;
 	}
 
-	const bigSkyPlans = [
+	return isSitePlanNotOneOf( site, [
 		DotcomPlans.BUSINESS,
 		DotcomPlans.BUSINESS_MONTHLY,
 		DotcomPlans.BUSINESS_2_YEARS,
@@ -25,25 +33,16 @@ export const isSitePlanBigSkyTrial = ( site: Site ) => {
 		DotcomPlans.PREMIUM_MONTHLY,
 		DotcomPlans.PREMIUM_2_YEARS,
 		DotcomPlans.PREMIUM_3_YEARS,
-	];
-
-	return ! bigSkyPlans.includes( product_slug as DotcomPlans );
+	] );
 };
 
 export const isSitePlanPaid = ( site: Site ) => {
-	if ( ! site.plan ) {
-		return false;
-	}
-
-	return ! [ DotcomPlans.JETPACK_FREE, DotcomPlans.FREE_PLAN ].includes(
-		site.plan.product_slug as DotcomPlans
-	);
+	return isSitePlanNotOneOf( site, [ DotcomPlans.JETPACK_FREE, DotcomPlans.FREE_PLAN ] );
 };
 
-export const isSitePlanHostingTrial = ( site: Site ) => {
-	if ( ! site.plan ) {
-		return false;
-	}
-
-	return site.plan.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
+export const isSitePlanLaunchable = ( site: Site ) => {
+	return isSitePlanNotOneOf( site, [
+		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
+	] );
 };
