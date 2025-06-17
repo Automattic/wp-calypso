@@ -18,7 +18,7 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 	}
 
 	const handleClick = ( type?: string ) => {
-		recordTracksEvent( 'calypso_settings_trial_upsell_notice_click', { type } );
+		recordTracksEvent( 'calypso_dashboard_trial_upsell_notice_click', { type } );
 	};
 
 	const renderContent = () => {
@@ -55,7 +55,7 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_settings_trial_upsell_notice_impression" />
+			<ComponentViewTracker eventName="calypso_dashboard_trial_upsell_notice_impression" />
 			<Notice variant="warning">{ renderContent() }</Notice>
 		</>
 	);
