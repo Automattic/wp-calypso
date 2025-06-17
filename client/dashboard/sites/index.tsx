@@ -6,6 +6,8 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -98,9 +100,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			}
 
 			return (
-				<Button variant="link" href={ `/home/${ item.slug }` } style={ { position: 'absolute' } }>
-					{ label }
-				</Button>
+				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
 			);
 		},
 	},
@@ -289,5 +289,31 @@ export default function Sites() {
 				</DataViewsCard>
 			</PageLayout>
 		</>
+	);
+}
+
+function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+	const { recordTracksEvent } = useAnalytics();
+	const { ref } = useInView( {
+		triggerOnce: true,
+		onChange: ( inView ) => {
+			if ( inView ) {
+				recordTracksEvent( 'calypso_dashboard_site_launch_nag_inview' );
+			}
+		},
+	} );
+
+	return (
+		<Button
+			ref={ ref }
+			variant="link"
+			href={ href }
+			onClick={ () => {
+				recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+			} }
+			style={ { position: 'absolute' } }
+		>
+			{ children }
+		</Button>
 	);
 }
