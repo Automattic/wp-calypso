@@ -43,7 +43,7 @@ const UserStepComponent: StepType = function UserStep( {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			reloadProxy();
 			requestAllBlogsAccess();
-			dispatch( fetchCurrentUser() as unknown as AnyAction );
+			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
 		}
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
