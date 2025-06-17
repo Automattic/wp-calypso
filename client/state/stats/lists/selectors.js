@@ -199,7 +199,7 @@ export function getSiteStatsQueryDate( state, siteId, statType, query ) {
  * Returns a summary of site stats views organized by year and month
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
- * @returns {Object|null}      Stats View Summary or null if data is invalid
+ * @returns {Object}      Stats View Summary
  */
 export function getSiteStatsViewSummary( state, siteId ) {
 	const query = {
