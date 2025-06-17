@@ -220,6 +220,7 @@ class SharingButtonsOptions extends Component {
 						text={ translate(
 							"Encourage your community by giving readers the ability to show appreciation for one another's comments."
 						) }
+						supportPostId={ 88757 }
 						link={ localizeUrl( 'https://wordpress.com/support/comment-likes/' ) }
 						privacyLink={ false }
 						position="bottom left"
