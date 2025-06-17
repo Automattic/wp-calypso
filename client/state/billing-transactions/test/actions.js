@@ -15,7 +15,7 @@ describe( 'actions', () => {
 		spy = jest.fn();
 	} );
 
-	const EndpointLimit = 200;
+	const endpointLimit = 200;
 
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
