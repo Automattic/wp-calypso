@@ -56,9 +56,14 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		rootInstanceRef.current?.render(
-			<Layout store={ store } analyticsClient={ analyticsClient } />
+			<Layout
+				store={ store }
+				analyticsClient={ analyticsClient }
+				siteSlug={ siteSlug }
+				feature={ feature }
+			/>
 		);
-	}, [ analyticsClient, store, siteSlug, feature ] );
+	}, [ store, analyticsClient, siteSlug, feature ] );
 
 	return <div className="dashboard-backport-site-settings-root" ref={ containerRef } />;
 }

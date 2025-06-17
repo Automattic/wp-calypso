@@ -26,8 +26,9 @@ import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
 import DashboardBackportSiteSettingsRenderer from './v2';
-import { createRouter } from './v2/layout';
+import { router } from './v2/layout';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
+import type { RouteByPath } from '@tanstack/react-router';
 
 export function SettingsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
@@ -230,7 +231,13 @@ export async function dashboardBackportSiteSettings( context: PageJSContext, nex
 		/>
 	);
 
-	await Promise.all( [ persistPromise, createRouter().load() ] );
+	await Promise.all( [
+		persistPromise,
+		router.preloadRoute( {
+			to: router.routesByPath[ '/$siteSlug/' ] as RouteByPath,
+			params: { siteSlug: site?.slug },
+		} ),
+	] );
 
 	next();
 }
