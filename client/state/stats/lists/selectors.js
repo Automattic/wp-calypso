@@ -248,30 +248,26 @@ export function getSiteStatsViewSummary( state, siteId ) {
 		}
 
 		if ( ! viewSummary[ year ][ month ] ) {
-			const daysInMonth = new Date( year, month + 1, 0 ).getDate(); //When you set the day to 0, it gives you the last day of the previous month
+			const daysInMonth = new Date( year, month + 1, 0 ).getDate();
+			const isCurrentMonth = year === currentYear && month === currentMonth;
+			const daysToUse = isCurrentMonth ? currentDate.getDate() : daysInMonth;
 
 			viewSummary[ year ][ month ] = {
 				total: 0,
 				data: [],
 				average: 0,
-				daysInMonth,
+				daysInMonth: daysToUse,
 			};
 		}
 
 		// Add data to the summary
 		viewSummary[ year ][ month ].total += value;
 		viewSummary[ year ][ month ].data.push( item );
-	} );
 
-	// Calculate averages for all months
-	Object.entries( viewSummary ).forEach( ( [ year, months ] ) => {
-		Object.entries( months ).forEach( ( [ month, data ] ) => {
-			const isCurrentMonth = parseInt( year ) === currentYear && parseInt( month ) === currentMonth;
-			const daysToUse = isCurrentMonth ? currentDate.getDate() : data.daysInMonth;
-
-			// Calculate average with more precision
-			data.average = Math.round( ( data.total / daysToUse ) * 100 ) / 100;
-		} );
+		// Calculate average as integer
+		viewSummary[ year ][ month ].average = Math.round(
+			viewSummary[ year ][ month ].total / viewSummary[ year ][ month ].daysInMonth
+		);
 	} );
 
 	return viewSummary;
