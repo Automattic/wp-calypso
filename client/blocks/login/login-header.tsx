@@ -83,6 +83,16 @@ export function getHeaderText(
 			clientName = 'Jetpack Cloud';
 		} else if ( isJetpack ) {
 			clientName = 'Jetpack';
+		} else if ( isWCCOM ) {
+			if ( twoFactorEnabled ) {
+				headerText = translate( 'Authenticate your login' );
+			} else if ( currentQuery.lostpassword_flow ) {
+				headerText = translate( 'Log in to your account' );
+			} else if ( showContinueAsUser ) {
+				headerText = translate( 'Log in to your account' );
+			}
+
+			headerText = translate( 'Log in to Woo with WordPress.com' );
 		}
 
 		headerText = clientName
@@ -126,21 +136,8 @@ export function getHeaderText(
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
 	} else if ( oauth2Client ) {
-		if ( isWCCOM ) {
-			if ( twoFactorEnabled ) {
-				headerText = translate( 'Authenticate your login' );
-			} else if ( currentQuery.lostpassword_flow ) {
-				headerText = translate( 'Log in to your account' );
-			} else if ( showContinueAsUser ) {
-				headerText = (
-					<>
-						{ wccomFrom === 'nux'
-							? translate( 'Get started in minutes' )
-							: translate( 'Log in to your account' ) }
-					</>
-				);
-			}
-			headerText = translate( 'Log in to Woo with WordPress.com' );
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
