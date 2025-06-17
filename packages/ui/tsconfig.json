@@ -4,6 +4,8 @@
 		"allowJs": true,
 		"checkJs": false,
 		"outDir": "dist",
+		"declarationDir": "dist",
+		"emitDeclarationOnly": true,
 		"rootDir": "src",
 		"types": [ "@testing-library/jest-dom" ]
 	},
