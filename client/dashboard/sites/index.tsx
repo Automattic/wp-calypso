@@ -91,7 +91,18 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		filterBy: {
 			operators: [ 'is' ],
 		},
-		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
+		render: ( { item }: { item: Site } ) => {
+			const label = getSiteStatusLabel( item );
+			if ( item.launch_status !== 'unlaunched' ) {
+				return label;
+			}
+
+			return (
+				<Button variant="link" href={ `/home/${ item.slug }` } style={ { position: 'absolute' } }>
+					{ label }
+				</Button>
+			);
+		},
 	},
 	{
 		id: 'is_a8c',
