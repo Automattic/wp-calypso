@@ -4,26 +4,23 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Notice from '../../components/notice';
-import {
-	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
-	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
-	isSiteLaunchable,
-} from '../../utils/site-plans';
+import { DotcomPlans } from '../../data/constants';
+import { isSitePlanLaunchable as getIsSitePlanLaunchable } from './index';
 import type { Site } from '../../data/types';
 
 export default function TrialUpsellNotice( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const isSiteOnECommerceTrial = getIsSiteOnECommerceTrial( site );
-	const isSiteOnMigrationTrial = getIsSiteOnMigrationTrial( site );
-	const isLaunchable = isSiteLaunchable( site );
+	const isSiteOnECommerceTrial = site.plan?.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY;
+	const isSiteOnMigrationTrial = site.plan?.product_slug === DotcomPlans.MIGRATION_TRIAL_MONTHLY;
+	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
 
 	useEffect( () => {
-		if ( ! isLaunchable ) {
+		if ( ! isSitePlanLaunchable ) {
 			recordTracksEvent( 'calypso_settings_trial_upsell_notice_impression' );
 		}
-	}, [ recordTracksEvent, isLaunchable ] );
+	}, [ recordTracksEvent, isSitePlanLaunchable ] );
 
-	if ( isLaunchable ) {
+	if ( isSitePlanLaunchable ) {
 		return null;
 	}
 

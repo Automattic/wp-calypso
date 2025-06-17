@@ -12,12 +12,12 @@ import { addQueryArgs } from '@wordpress/url';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
+import { DotcomPlans } from '../../data/constants';
 import {
-	isSiteLaunchable as getIsSiteLaunchable,
+	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
-	isSitePlanHostingTrial,
 	isSitePlanPaid,
-} from '../../utils/site-plans';
+} from './index';
 import type { AgencyBlog, Site } from '../../data/types';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
@@ -118,9 +118,10 @@ export function LaunchForm( {
 		return null;
 	}
 
+	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
-	const isSiteLaunchable = getIsSiteLaunchable( site );
-	const shouldImmediatelyLaunch = isSitePlanPaidWithDomains || isSitePlanHostingTrial( site );
+	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
+	const shouldImmediatelyLaunch = isSitePlanPaidWithDomains || isSitePlanHostingTrial;
 
 	const getLaunchUrl = () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
@@ -144,7 +145,7 @@ export function LaunchForm( {
 		const commonProps = {
 			size: 'compact' as const,
 			variant: 'primary' as const,
-			disabled: ! isSiteLaunchable,
+			disabled: ! isSitePlanLaunchable,
 			isBusy: isLaunching,
 		};
 
