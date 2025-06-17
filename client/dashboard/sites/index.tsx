@@ -6,10 +6,10 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
+import ComponentViewTracker from '../components/component-view-tracker';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -294,26 +294,20 @@ export default function Sites() {
 
 function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { ref } = useInView( {
-		triggerOnce: true,
-		onChange: ( inView ) => {
-			if ( inView ) {
-				recordTracksEvent( 'calypso_dashboard_site_launch_nag_inview' );
-			}
-		},
-	} );
 
 	return (
-		<Button
-			ref={ ref }
-			variant="link"
-			href={ href }
-			onClick={ () => {
-				recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
-			} }
-			style={ { position: 'absolute' } }
-		>
-			{ children }
-		</Button>
+		<>
+			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
+			<Button
+				variant="link"
+				href={ href }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+				} }
+				style={ { position: 'absolute' } }
+			>
+				{ children }
+			</Button>
+		</>
 	);
 }
