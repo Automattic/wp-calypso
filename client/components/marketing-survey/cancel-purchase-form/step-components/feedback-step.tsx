@@ -29,7 +29,7 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 
 	const onDetailsChange = ( val: string ) => {
 		setDetails( val );
-		setTextAreaValue( '' ); // Reset textarea when changing sub-option
+		setTextAreaValue( '' );
 		props.onDetailsChange( val );
 	};
 
@@ -58,8 +58,8 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 					<TextareaControl
 						label={ translate( 'Can you please specify?' ) }
 						placeholder={ String( selectedReason.textPlaceholder ) }
-						value={ textAreaValue }
-						onChange={ onTextAreaChange }
+						value={ details }
+						onChange={ onDetailsChange }
 					/>
 				</div>
 			) }
