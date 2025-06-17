@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import OdieAssistantProvider from '@automattic/odie-client';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
@@ -20,6 +21,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import HelpCenterSmooch from './help-center-smooch';
+import HelpCenterTextSelection from './help-center-text-selection';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
@@ -37,7 +39,8 @@ const HelpCenter: React.FC< Container > = ( {
 			isMinimized: helpCenterSelect.getIsMinimized(),
 		};
 	}, [] );
-	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
+	const { currentUser, canConnectToZendesk, isLoadingCanConnectToZendesk, site } =
+		useHelpCenterContext();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk', 10, 'open' );
 	const hasOpenZendeskConversations =
@@ -72,7 +75,14 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<>
+		<OdieAssistantProvider
+			currentUser={ currentUser }
+			canConnectToZendesk={ canConnectToZendesk }
+			isLoadingCanConnectToZendesk={ isLoadingCanConnectToZendesk }
+			selectedSiteId={ site?.ID as number }
+			selectedSiteURL={ site?.URL as string }
+			isUserEligibleForPaidSupport
+		>
 			<HelpCenterContainer
 				handleClose={ handleClose }
 				hidden={ hidden }
@@ -82,7 +92,8 @@ const HelpCenter: React.FC< Container > = ( {
 			{ canConnectToZendesk && (
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
-		</>,
+			<HelpCenterTextSelection enabled />
+		</OdieAssistantProvider>,
 		portalParent
 	);
 };

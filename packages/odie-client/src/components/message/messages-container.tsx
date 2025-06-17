@@ -103,7 +103,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			return;
 		}
 
-		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
+		( chat?.status === 'loaded' || chat?.status === 'closed' || chat?.status === 'sending' ) &&
+			setChatMessagesLoaded( true );
 	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**

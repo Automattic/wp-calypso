@@ -5,6 +5,7 @@ export { SuccessScreen } from './components/ticket-success-screen';
 export { BackButton } from './components/back-button';
 export { HelpCenterContactForm } from './components/help-center-contact-form';
 export { default as HelpCenterInlineButton } from './components/help-center-inline-button';
+export { default as HelpCenterTextSelection } from './components/help-center-text-selection';
 export { default as Mail } from './icons/mail';
 export * from './support-variations';
 export * from './hooks/use-admin-results';
