@@ -3,6 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
+import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
 	ODIE_ERROR_MESSAGE,
@@ -36,6 +37,17 @@ export const useSendOdieMessage = () => {
 	const newConversation = useCreateZendeskConversation();
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
+	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
+		createdFrom?: string;
+		trigger: boolean;
+	} >( { trigger: false } );
+
+	useEffect( () => {
+		if ( shouldCreateConversation.trigger ) {
+			newConversation( { createdFrom: shouldCreateConversation.createdFrom } );
+			setShouldCreateConversation( { createdFrom: undefined, trigger: false } );
+		}
+	}, [ newConversation, shouldCreateConversation ] );
 
 	const {
 		botNameSlug,
@@ -66,9 +78,17 @@ export const useSendOdieMessage = () => {
 						messages: [ ...prevChat.messages, ...[ ODIE_EMAIL_FALLBACK_MESSAGE ] ],
 						status: 'loaded',
 					} ) );
+
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
-					newConversation( { createdFrom: 'automatic_escalation' } );
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+					} ) );
+
+					// Trigger the `newConversation` mutation to be run inside `useEffect`, so the latest `chat` state is used.
+					setShouldCreateConversation( { trigger: true, createdFrom: 'automatic_escalation' } );
+
 					return;
 				}
 			}
