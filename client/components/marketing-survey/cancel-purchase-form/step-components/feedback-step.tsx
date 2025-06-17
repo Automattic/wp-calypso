@@ -8,12 +8,13 @@ import { toSelectOption } from '../to-select-options';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type ChangeCallback = ( value: string ) => void;
+type DetailsChangeCallback = ( value: string, details?: string ) => void;
 
 type CancellationReasonProps = {
 	purchase: Purchase;
 	reasonCodes: string[];
 	onChange: ChangeCallback;
-	onDetailsChange: ChangeCallback;
+	onDetailsChange: DetailsChangeCallback;
 };
 
 function CancellationReason( { purchase, reasonCodes, ...props }: CancellationReasonProps ) {
