@@ -32,20 +32,19 @@ export function useVisibleGridPlans( {
 		}
 
 		const result = [ array[ i ] ]; // Always include the item at index i
-		let left = i - 1;
 		let right = i + 1;
+		let left = i - 1;
 
-		// Prefer elements to the right (higher index = greater)
-		while ( result.length < n && ( right < array.length || left >= 0 ) ) {
-			if ( right < array.length ) {
-				result.push( array[ right ] );
-				right++;
-			}
-			// Only add from the left if there is still space and no more right-side items
-			if ( result.length < n && left >= 0 ) {
-				result.push( array[ left ] );
-				left--;
-			}
+		// First add all upgrades (right side)
+		while ( result.length < n && right < array.length ) {
+			result.push( array[ right ] );
+			right++;
+		}
+
+		// Then add downgrades (left side) if we still have space
+		while ( result.length < n && left >= 0 ) {
+			result.push( array[ left ] );
+			left--;
 		}
 
 		return result;
@@ -97,7 +96,7 @@ export function useVisibleGridPlans( {
 					next = gridPlans.slice( 0, visibleLength );
 				}
 			} else if ( isPrevStale ) {
-				// Map existing plans to their new term equivalents
+				// Map existing plans to their new term equivalents, preserving order
 				next = prev.map( ( plan ) => {
 					const gridPlan = gridPlans.find(
 						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( plan.planSlug )
@@ -128,7 +127,14 @@ export function useVisibleGridPlans( {
 
 			return next;
 		} );
-	}, [ gridSize, gridPlans, currentSitePlanSlug, currentPlanTerm, selectedPlanTerm ] );
+	}, [
+		gridSize,
+		gridPlans,
+		currentSitePlanSlug,
+		currentPlanTerm,
+		selectedPlanTerm,
+		gridPlansIndex,
+	] );
 
 	const onPlanChange = useCallback(
 		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
@@ -144,5 +150,8 @@ export function useVisibleGridPlans( {
 		[ gridPlans ]
 	);
 
-	return { visibleGridPlans, onPlanChange };
+	return {
+		visibleGridPlans,
+		onPlanChange,
+	};
 }
