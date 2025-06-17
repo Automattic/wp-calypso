@@ -78,13 +78,13 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			onSuccess: () => {
 				createSuccessNotice(
 					formData.active
-						? __( 'Global edge caching enabled.' )
-						: __( 'Global edge caching disabled.' ),
+						? __( 'Global edge cache enabled.' )
+						: __( 'Global edge cache disabled.' ),
 					{ type: 'snackbar' }
 				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save global edge caching settings.' ), {
+				createErrorNotice( __( 'Failed to save global edge cache settings.' ), {
 					type: 'snackbar',
 				} );
 			},

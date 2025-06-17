@@ -78,13 +78,13 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				onSuccess: () => {
 					createSuccessNotice(
 						formData.wpcom_gifting_subscription
-							? __( 'Subscription gifting enabled.' )
-							: __( 'Subscription gifting disabled.' ),
+							? __( 'Gift subscription enabled.' )
+							: __( 'Gift subscription disabled.' ),
 						{ type: 'snackbar' }
 					);
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to save subscription gifting settings.' ), {
+					createErrorNotice( __( 'Failed to save gift subscription settings.' ), {
 						type: 'snackbar',
 					} );
 				},
