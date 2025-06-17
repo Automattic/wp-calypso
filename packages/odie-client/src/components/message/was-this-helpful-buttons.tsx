@@ -77,7 +77,7 @@ const WasThisHelpfulButtons = ( {
 	} );
 
 	return (
-		<div className={ containerClasses } aria-hidden={ rated }>
+		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
 				<span className={ questionClasses } aria-hidden={ rated }>
 					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
