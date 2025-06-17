@@ -447,31 +447,8 @@
 
 	}
 
-	// primary text rules
-	.login__form-header,
-	.signup-form__wrapper h3 {
-		font-weight: 600;
-		font-size: $font-title-small;
-		line-height: 32px;
-		margin-block: 8px;
-		text-align: center;
-	}
-
 	.login__form-post-header {
 		margin-top: 24px;
-	}
-
-	.login__form-header-wrapper,
-	.signup-form__wrapper {
-		padding: 32px 0 0;
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-		width: 100%;
-
-		>* {
-			max-width: 375px;
-		}
 	}
 
 	.wp-login__links,
