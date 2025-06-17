@@ -1,17 +1,18 @@
 import wpcom from 'calypso/lib/wp';
 
-const MAX_RETRIES = 3;
+const MAX_TRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 
 const isErrorResponse = ( response ) => {
 	return response?.body?.error || response?.code >= 400;
 };
 
-export async function rawCurrentUserFetch() {
+export async function rawCurrentUserFetch( { retry = false } = {} ) {
 	let retryCount = 0;
 	let lastError;
+	const maxRetries = retry ? MAX_TRIES : 0;
 
-	while ( retryCount <= MAX_RETRIES ) {
+	while ( retryCount <= maxRetries ) {
 		try {
 			const response = await wpcom.req.get( '/me', { meta: 'flags' } );
 
@@ -24,7 +25,7 @@ export async function rawCurrentUserFetch() {
 			lastError = error;
 			retryCount++;
 
-			if ( retryCount > MAX_RETRIES ) {
+			if ( retryCount > maxRetries ) {
 				break;
 			}
 
