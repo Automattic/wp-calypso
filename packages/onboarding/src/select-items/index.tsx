@@ -1,4 +1,5 @@
-import { Badge, Button } from '@automattic/components';
+import { Badge } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import './style.scss';
@@ -39,7 +40,6 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 					titleIcon,
 					actionText,
 					value,
-					isPrimary,
 					allItemClickable,
 					'aria-label': ariaLabel,
 				} ) => (
@@ -68,7 +68,7 @@ function SelectItems< T >( { className, items, onSelect, preventWidows }: Props<
 							</div>
 							{ actionText && (
 								<Button
-									primary={ isPrimary }
+									variant="secondary"
 									className="select-items__item-button"
 									onClick={ () => onSelect( value ) }
 									aria-hidden="true"
