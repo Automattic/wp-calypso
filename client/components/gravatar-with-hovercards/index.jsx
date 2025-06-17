@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Hovercards } from '@gravatar-com/hovercards/react';
 import { useEffect, useRef } from 'react';
 import Gravatar from '../gravatar';
+
 import '@gravatar-com/hovercards/dist/style.css';
 
 // Create a single style element to control hovercard visibility. We do this because hovercards do
@@ -57,6 +58,46 @@ function GravatarWithHovercards( props ) {
 	}, [] );
 
 	const handleHovercardShown = ( hash, hovercardElement ) => {
+		// Customize the hovercard.
+		if ( hovercardElement ) {
+			const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
+			if ( inner ) {
+				// Create new clean sections
+				const newHeader = document.createElement( 'div' );
+				newHeader.className = 'gravatar-hovercard__header';
+
+				const newBody = document.createElement( 'div' );
+				newBody.className = 'gravatar-hovercard__body';
+
+				const newFooter = document.createElement( 'div' );
+				newFooter.className = 'gravatar-hovercard__footer';
+
+				// Query items to preserve.
+				const avatarLink = inner.querySelector( '.gravatar-hovercard__avatar-link' );
+				const nameElement = inner.querySelector( '.gravatar-hovercard__name' );
+				const description = inner.querySelector( '.gravatar-hovercard__description' );
+
+				// Add preserved items back to new sections.
+
+				// Header
+				avatarLink && newHeader.appendChild( avatarLink );
+				nameElement && newHeader.appendChild( nameElement );
+				description && newHeader.appendChild( description );
+
+				// Body
+				// This is where we should add the primary site card with subscribe button.
+
+				// Footer
+				// This is where we should add the recommended blogs list.
+
+				// Clear inner and add only our new sections
+				inner.innerHTML = '';
+				inner.appendChild( newHeader );
+				inner.appendChild( newBody );
+				inner.appendChild( newFooter );
+			}
+		}
+
 		// Timeout to bump this check to the end of the callstack to avoid a race condition where
 		// this is evaluated after dismount but before dom update. This was happening about 5-10% of
 		// the time and makes it so hovering a gravatar does not trigger the hovercard until another
