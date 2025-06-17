@@ -220,7 +220,12 @@ export function dashboardBackportSiteSettings( context: PageJSContext, next: () 
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
-	context.primary = <DashboardBackportSiteSettingsRenderer siteSlug={ site?.slug } />;
+	context.primary = (
+		<DashboardBackportSiteSettingsRenderer
+			siteSlug={ site?.slug }
+			feature={ context.params.feature }
+		/>
+	);
 
 	next();
 }

@@ -76,10 +76,17 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		e.preventDefault();
 		edgeCacheStatusMutation.mutate( formData.active, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					formData.active
+						? __( 'Global edge cache enabled.' )
+						: __( 'Global edge cache disabled.' ),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+				createErrorNotice( __( 'Failed to save global edge cache settings.' ), {
+					type: 'snackbar',
+				} );
 			},
 		} );
 	};

@@ -144,7 +144,7 @@ const DotcomPreviewPane = ( {
 					visible: enabled && visible !== false,
 					selected,
 					onTabClick: () => {
-						if ( enabled && ! selected ) {
+						if ( enabled ) {
 							showSitesPage( defaultRoute );
 						}
 					},

@@ -1,9 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
-import { Modal, Button, ButtonGroup } from '@wordpress/components';
+import { Modal, ButtonGroup } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -70,6 +71,9 @@ const MigrateSubscribersModal = ( {
 		? 'https://jetpack.com/support/newsletter/import-subscribers/#migrate-subscribers-from-a-word-press-com-site'
 		: 'https://wordpress.com/support/migrate-subscribers-from-another-site/';
 
+	// Keep the link external on jetpack cloud.
+	const supportPostId = ! isWPCOMSite ? null : 312690;
+
 	const selectionRender = (
 		<div className="migrate-subscribers-modal__content">
 			<div className="migrate-subscribers-modal__form--container">
@@ -97,10 +101,11 @@ const MigrateSubscribersModal = ( {
 						translate( 'For more details, take a look at our <Button>support document</Button>.' ),
 						{
 							Button: (
-								<Button
-									variant="link"
-									target="_blank"
-									href={ localizeUrl( migrateSubscribersUrl ) }
+								<InlineSupportLink
+									supportLink={ localizeUrl( migrateSubscribersUrl ) }
+									showIcon={ ! supportPostId }
+									supportPostId={ supportPostId }
+									onClick={ supportPostId && onClose }
 								/>
 							),
 						}
