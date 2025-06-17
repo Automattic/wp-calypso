@@ -5,13 +5,13 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
 import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
-import { canViewSftpSettings, canViewSshSettings } from '../features';
-import HostingFeatureCallout from '../hosting-feature-callout';
+import { HostingFeatures, canViewSftpSettings, canViewSshSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import calloutIllustrationUrl from './callout-illustration.svg';
 import EnableSftpCard from './enable-sftp-card';
 import SftpCard from './sftp-card';
 import SshCard from './ssh-card';
+import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -27,25 +27,19 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 
-	const renderContent = () => {
-		if ( ! canViewSftpSettings( site ) ) {
-			return (
-				<HostingFeatureCallout
-					canActivate={ canViewSshSettings( site, { assumeSiteIsAtomic: true } ) }
-					siteSlug={ siteSlug }
-					icon={ file }
-					image={ calloutIllustrationUrl }
-					title={ __( 'Direct access to your site’s files' ) }
-					description={ __(
-						'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
-					) }
-					tracksId="settings-sftp-ssh"
-				/>
-			);
-		}
-
-		return (
-			<>
+	return (
+		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.SETTINGS_SFTP }
+				tracksFeatureId="settings-sftp-ssh"
+				upsellIcon={ file }
+				upsellImage={ upsellIllustrationUrl }
+				upsellTitle={ __( 'Direct access to your site’s files' ) }
+				upsellDescription={ __(
+					'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
+				) }
+			>
 				{ sftpEnabled ? (
 					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
 				) : (
@@ -58,13 +52,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
 					/>
 				) }
-			</>
-		);
-	};
-
-	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-			{ renderContent() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

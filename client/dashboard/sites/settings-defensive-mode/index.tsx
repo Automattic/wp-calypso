@@ -23,8 +23,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { canViewDefensiveModeSettings } from '../features';
-import HostingFeatureCallout from '../hosting-feature-callout';
+import { HostingFeatures, canViewDefensiveModeSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -68,11 +68,9 @@ const form = {
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const canView = canViewDefensiveModeSettings( site );
-
 	const { data } = useQuery( {
 		...siteDefensiveModeSettingsQuery( site.ID ),
-		enabled: canView,
+		enabled: canViewDefensiveModeSettings( site ),
 	} );
 	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -99,13 +97,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		} );
 	};
 
-	const { enabled, enabled_by_a11n, enabled_until } = data ?? {
-		enabled: false,
-		enabled_by_a11n: false,
-		enabled_until: 0,
-	};
-
 	const renderEnabled = () => {
+		if ( ! data ) {
+			return null;
+		}
+
+		const { enabled_by_a11n, enabled_until } = data;
+
 		const date = new Date( enabled_until * 1000 );
 		const enabledUntil = date.toLocaleString( undefined, {
 			year: 'numeric',
@@ -211,19 +209,6 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		);
 	};
 
-	const renderContent = () => {
-		if ( ! canView ) {
-			return (
-				<HostingFeatureCallout
-					canActivate={ canViewDefensiveModeSettings( site, { assumeSiteIsAtomic: true } ) }
-					siteSlug={ siteSlug }
-					tracksId="settings-defensive-mode"
-				/>
-			);
-		}
-		return enabled ? renderEnabled() : renderDisabled();
-	};
-
 	return (
 		<PageLayout
 			size="small"
@@ -241,7 +226,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				/>
 			}
 		>
-			{ renderContent() }
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.SETTINGS_DEFENSIVE_MODE }
+				tracksFeatureId="settings-defensive-mode"
+			>
+				{ data?.enabled ? renderEnabled() : renderDisabled() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

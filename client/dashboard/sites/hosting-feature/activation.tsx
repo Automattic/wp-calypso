@@ -1,7 +1,7 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
-import illustrationUrl from './hosting-feature-activation-illustration.svg';
+import illustrationUrl from './activation-illustration.svg';
 
 export default function HostingFeatureActivation() {
 	return (

@@ -1,50 +1,95 @@
 import { DotcomFeatures } from '../data/constants';
-import {
-	HostingFeaturePredicateOptions,
-	hasHostingFeature,
-	hasPlanFeature,
-} from '../utils/site-features';
+import { hasPlanFeature } from '../utils/site-features';
 import type { Site, User } from '../data/types';
 
-function siteHasPlanFeature( feature: DotcomFeatures ) {
-	return ( site: Site ) => hasPlanFeature( site, feature );
-}
+export const HostingFeatures = {
+	SETTINGS_PHP: DotcomFeatures.SFTP,
+	SETTINGS_SFTP: DotcomFeatures.SFTP,
+	SETTINGS_SSH: DotcomFeatures.SSH,
+	SETTINGS_DATABASE: DotcomFeatures.SFTP,
+	SETTINGS_PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
+	SETTINGS_STATIC_FILE_404: DotcomFeatures.SFTP,
+	SETTINGS_CACHING: DotcomFeatures.ATOMIC,
+	SETTINGS_DEFENSIVE_MODE: DotcomFeatures.SFTP,
+	SETTINGS_RESTORE_PLAN_SOFTWARE: DotcomFeatures.ATOMIC,
+} as const;
 
-function siteHasHostingFeature( feature: DotcomFeatures ) {
-	return ( site: Site, opts: HostingFeaturePredicateOptions = {} ) =>
-		hasHostingFeature( site, feature, opts );
+export type HostingFeatures = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
+
+export function hasHostingFeature( site: Site, feature: HostingFeatures ) {
+	return (
+		site.is_wpcom_atomic &&
+		! site.plan?.expired &&
+		hasPlanFeature( site, feature as DotcomFeatures )
+	);
 }
 
 // Settings -> General
 
-export const canViewSubscriptionGiftingSettings = siteHasPlanFeature(
-	DotcomFeatures.SUBSCRIPTION_GIFTING
-);
+export function canViewSubscriptionGiftingSettings( site: Site ) {
+	return hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING );
+}
 
-export const canViewAgencySettings = ( site: Site ) => site.is_wpcom_atomic;
+export function canViewAgencySettings( site: Site ) {
+	return site.is_wpcom_atomic;
+}
 
-export const canViewHundredYearPlanSettings = ( site: Site ) =>
-	hasPlanFeature( site, DotcomFeatures.LEGACY_CONTACT ) ||
-	hasPlanFeature( site, DotcomFeatures.LOCKED_MODE );
+export function canViewHundredYearPlanSettings( site: Site ) {
+	return (
+		hasPlanFeature( site, DotcomFeatures.LEGACY_CONTACT ) ||
+		hasPlanFeature( site, DotcomFeatures.LOCKED_MODE )
+	);
+}
 
 // Settings -> Server
 
-export const canViewWordPressSettings = ( site: Site ) => site.is_wpcom_staging_site;
-export const canViewCachingSettings = siteHasHostingFeature( DotcomFeatures.ATOMIC );
-export const canViewPHPSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
-export const canViewSftpSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
-export const canViewSshSettings = siteHasHostingFeature( DotcomFeatures.SSH );
-export const canViewDatabaseSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
-export const canViewPrimaryDataCenterSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
-export const canViewStaticFile404Settings = siteHasHostingFeature( DotcomFeatures.SFTP );
-export const canViewDefensiveModeSettings = siteHasHostingFeature( DotcomFeatures.SFTP );
+export function canViewWordPressSettings( site: Site ) {
+	return site.is_wpcom_staging_site;
+}
+
+export function canViewPHPSettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_PHP );
+}
+
+export function canViewSftpSettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_SFTP );
+}
+
+export function canViewSshSettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_SSH );
+}
+
+export function canViewPrimaryDataCenterSettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_PRIMARY_DATA_CENTER );
+}
+
+export function canViewStaticFile404Settings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_STATIC_FILE_404 );
+}
+
+export function canViewCachingSettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_CACHING );
+}
+
+export function canViewDefensiveModeSettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_DEFENSIVE_MODE );
+}
 
 // Settings -> Actions & danger zone
 
-export const canViewSiteActions = ( site: Site ) => ! site.is_wpcom_staging_site;
-export const canRestorePlanSoftware = siteHasHostingFeature( DotcomFeatures.ATOMIC );
-export const canDuplicateSite = siteHasPlanFeature( DotcomFeatures.COPY_SITE );
-export const canTransferSite = ( site: Site, user: User ) => {
+export function canViewSiteActions( site: Site ) {
+	return ! site.is_wpcom_staging_site;
+}
+
+export function canRestorePlanSoftware( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SETTINGS_RESTORE_PLAN_SOFTWARE );
+}
+
+export function canDuplicateSite( site: Site ) {
+	return hasPlanFeature( site, DotcomFeatures.COPY_SITE );
+}
+
+export function canTransferSite( site: Site, user: User ) {
 	const isAllowedSiteType = ! (
 		( site.jetpack && ! site.is_wpcom_atomic ) ||
 		site.is_wpcom_staging_site ||
@@ -55,4 +100,4 @@ export const canTransferSite = ( site: Site, user: User ) => {
 
 	const isSiteOwner = site.site_owner === user.ID;
 	return isAllowedSiteType && isSiteOwner;
-};
+}

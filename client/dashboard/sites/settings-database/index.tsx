@@ -18,11 +18,11 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data/site-hosting';
-import { canViewDatabaseSettings } from '../features';
-import HostingFeatureCallout from '../hosting-feature-callout';
+import { HostingFeatures } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import calloutIllustrationUrl from './callout-illustration.svg';
 import ResetPasswordModal from './reset-password-modal';
+import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -69,25 +69,29 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		);
 	};
 
-	const renderContent = () => {
-		if ( ! canViewDatabaseSettings( site ) ) {
-			return (
-				<HostingFeatureCallout
-					canActivate={ canViewDatabaseSettings( site, { assumeSiteIsAtomic: true } ) }
-					siteSlug={ siteSlug }
-					icon={ blockTable }
-					image={ calloutIllustrationUrl }
-					title={ __( 'Fast, familiar database access' ) }
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Database' ) }
 					description={ __(
-						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
+						'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 					) }
-					tracksId="settings-database"
 				/>
-			);
-		}
-
-		return (
-			<>
+			}
+		>
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.SETTINGS_DATABASE }
+				tracksFeatureId="settings-database"
+				upsellIcon={ blockTable }
+				upsellImage={ upsellIllustrationUrl }
+				upsellTitle={ __( 'Fast, familiar database access' ) }
+				upsellDescription={ __(
+					'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
+				) }
+			>
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -137,23 +141,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 						onError={ handleResetPasswordError }
 					/>
 				) }
-			</>
-		);
-	};
-
-	return (
-		<PageLayout
-			size="small"
-			header={
-				<SettingsPageHeader
-					title={ __( 'Database' ) }
-					description={ __(
-						'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-					) }
-				/>
-			}
-		>
-			{ renderContent() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

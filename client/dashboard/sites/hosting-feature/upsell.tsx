@@ -2,45 +2,51 @@ import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
-import illustrationUrl from './hosting-feature-upsell-illustration.svg';
+import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
+import type { Site } from '../../data/types';
 
-interface HostingFeatureUpsellProps extends Omit< CalloutProps, 'title' | 'description' > {
-	siteSlug: string;
-	title?: string;
-	description?: ReactNode;
-	tracksId: string;
+interface HostingFeatureUpsellProps {
+	site: Site;
+	tracksFeatureId: string;
+	icon?: CalloutProps[ 'icon' ];
+	image?: CalloutProps[ 'image' ];
+	title?: CalloutProps[ 'title' ];
+	description?: CalloutProps[ 'description' ];
 }
 
 export default function HostingFeatureUpsell( {
-	siteSlug,
+	site,
+	tracksFeatureId,
 	icon,
 	image,
 	title,
 	description,
-	tracksId,
 }: HostingFeatureUpsellProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_impression', {
-			feature_id: tracksId,
+			feature_id: tracksFeatureId,
 		} );
-	}, [ recordTracksEvent, tracksId ] );
+	}, [ recordTracksEvent, tracksFeatureId ] );
 
 	const handleUpgradePlan = () => {
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_click', {
-			feature_id: tracksId,
+			feature_id: tracksFeatureId,
 		} );
 
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
-		window.location.href = addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }/business`, {
-			cancel_to: backUrl,
-			redirect_to: backUrl,
-		} );
+		window.location.href = addQueryArgs(
+			`/checkout/${ encodeURIComponent( site.slug ) }/business`,
+			{
+				cancel_to: backUrl,
+				redirect_to: backUrl,
+			}
+		);
 	};
 
 	const defaultProps = {
