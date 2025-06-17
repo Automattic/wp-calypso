@@ -261,9 +261,14 @@ class CancelPurchaseForm extends Component {
 				isSubmitting: true,
 			} );
 
+			const useSubOption = this.state.questionOneDetails && this.state.questionOneText;
+			const responseValue = useSubOption
+				? this.state.questionOneDetails
+				: this.state.questionOneRadio;
+
 			const surveyData = {
 				'why-cancel': {
-					response: this.state.questionOneRadio,
+					response: responseValue,
 					text: this.state.questionOneText,
 				},
 				'next-adventure': {
