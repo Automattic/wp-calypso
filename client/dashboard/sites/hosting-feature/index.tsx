@@ -25,7 +25,13 @@ export default function HostingFeature( props: HostingFeatureProps ) {
 	}
 
 	if ( hasPlanFeature( site, feature ) ) {
-		return <HostingFeatureActivation />;
+		return (
+			<HostingFeatureActivation
+				site={ site }
+				feature={ feature }
+				tracksFeatureId={ tracksFeatureId }
+			/>
+		);
 	}
 
 	return (

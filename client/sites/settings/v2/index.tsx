@@ -5,11 +5,14 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent, recordPageView } from 'calypso/state/analytics/actions';
 import Layout from './layout';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
+import type { Store } from 'redux';
 
 export default function DashboardBackportSiteSettingsRenderer( {
+	store,
 	siteSlug,
 	feature,
 }: {
+	store: Store;
 	siteSlug?: string;
 	feature?: string;
 } ) {
@@ -54,9 +57,11 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		persistPromise.then( () => {
-			rootInstanceRef.current?.render( <Layout analyticsClient={ analyticsClient } /> );
+			rootInstanceRef.current?.render(
+				<Layout store={ store } analyticsClient={ analyticsClient } />
+			);
 		} );
-	}, [ analyticsClient, siteSlug, feature ] );
+	}, [ analyticsClient, store, siteSlug, feature ] );
 
 	return <div className="dashboard-backport-site-settings-root" ref={ containerRef } />;
 }
