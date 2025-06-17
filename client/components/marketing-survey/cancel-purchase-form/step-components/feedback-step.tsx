@@ -35,7 +35,7 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 
 	const onTextAreaChange = ( val: string ) => {
 		setTextAreaValue( val );
-		props.onDetailsChange( val );
+		props.onDetailsChange( val, details );
 	};
 
 	return (

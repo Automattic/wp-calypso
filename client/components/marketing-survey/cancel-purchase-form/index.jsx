@@ -174,12 +174,13 @@ class CancelPurchaseForm extends Component {
 		this.setState( newState );
 	};
 
-	onTextOneChange = ( eventOrValue ) => {
+	onTextOneChange = ( eventOrValue, detailsValue ) => {
 		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
 		const { purchaseIsAlreadyExtended } = this.state;
 		const newState = {
 			...this.state,
 			questionOneText: value,
+			questionOneDetails: detailsValue || this.state.questionOneDetails,
 			upsell:
 				getUpsellType( value, {
 					productSlug: this.props.purchase?.productSlug || '',
