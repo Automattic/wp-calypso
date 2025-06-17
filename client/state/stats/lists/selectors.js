@@ -226,12 +226,7 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 		const [ dateStr, value ] = item;
 
-		// Validate date format (YYYY-MM-DD)
-		if ( ! /^\d{4}-\d{2}-\d{2}$/.test( dateStr ) ) {
-			return;
-		}
-
-		// Parse date components
+		// Parse date components - date format (YYYY-MM-DD)
 		const [ yearStr, monthStr ] = dateStr.split( '-' );
 		const year = parseInt( yearStr, 10 );
 		const month = parseInt( monthStr, 10 ) - 1; // Convert to 0-based month
