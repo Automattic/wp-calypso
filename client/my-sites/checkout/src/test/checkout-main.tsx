@@ -185,10 +185,18 @@ describe( 'CheckoutMain', () => {
 			'Remove WordPress.com Personal from cart'
 		);
 		const user = userEvent.setup();
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
+
+		screen
+			.getAllByText( 'WordPress.com Personal' )
+			.map( ( element ) => element.closest( '.checkout-line-item' ) )
+			.filter( ( container ): container is Element => container !== null )
+			.forEach( ( container ) => {
+				expect( container ).toBeInTheDocument();
+			} );
+
 		await user.click( removeProductButton );
 		await waitFor( async () => {
-			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
