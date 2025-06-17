@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import Notice from '../../components/notice';
 import { DotcomPlans } from '../../data/constants';
 import { isSitePlanLaunchable as getIsSitePlanLaunchable } from './index';
@@ -13,12 +13,6 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 	const isSiteOnECommerceTrial = site.plan?.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY;
 	const isSiteOnMigrationTrial = site.plan?.product_slug === DotcomPlans.MIGRATION_TRIAL_MONTHLY;
 	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
-
-	useEffect( () => {
-		if ( ! isSitePlanLaunchable ) {
-			recordTracksEvent( 'calypso_settings_trial_upsell_notice_impression' );
-		}
-	}, [ recordTracksEvent, isSitePlanLaunchable ] );
 
 	if ( isSitePlanLaunchable ) {
 		return null;
@@ -60,5 +54,10 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 		);
 	};
 
-	return <Notice variant="warning">{ renderContent() }</Notice>;
+	return (
+		<>
+			<ComponentViewTracker eventName="calypso_settings_trial_upsell_notice_impression" />
+			<Notice variant="warning">{ renderContent() }</Notice>
+		</>
+	);
 }
