@@ -144,14 +144,14 @@ const GoogleAnalyticsJetpackForm = ( {
 								{ translate(
 									'A free analytics tool that offers additional insights into your site.'
 								) }{ ' ' }
-								<a
+								<InlineSupportLink
 									onClick={ recordSupportLinkClick }
-									href={ analyticsSupportUrl }
-									target="_blank"
-									rel="noreferrer"
+									showIcon={ false }
+									supportPostId={ 98905 }
+									supportLink={ analyticsSupportUrl }
 								>
 									{ translate( 'Learn more' ) }
-								</a>
+								</InlineSupportLink>
 							</p>
 						</div>
 					</div>
@@ -225,7 +225,11 @@ const GoogleAnalyticsJetpackForm = ( {
 									{
 										components: {
 											a: (
-												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
+												<InlineSupportLink
+													showIcon={ false }
+													supportPostId={ 98905 }
+													supportLink={ analyticsSupportUrl }
+												/>
 											),
 										},
 									}

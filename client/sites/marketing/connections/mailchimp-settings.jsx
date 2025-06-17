@@ -5,6 +5,7 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import QueryMailchimpLists from 'calypso/components/data/query-mailchimp-lists';
 import QueryMailchimpSettings from 'calypso/components/data/query-mailchimp-settings';
 import FormSelect from 'calypso/components/forms/form-select';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { getAllLists } from 'calypso/state/mailchimp/lists/selectors';
@@ -56,13 +57,13 @@ const MailchimpSettings = ( {
 					{ translate(
 						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 					) }
-					<a
-						href={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
-						target="_blank"
-						rel="noopener noreferrer"
+					<InlineSupportLink
+						showIcon={ false }
+						supportPostId={ 152657 }
+						supportLink={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
 					>
 						{ translate( 'Learn more.' ) }
-					</a>
+					</InlineSupportLink>
 				</p>
 			</div>
 		</div>
