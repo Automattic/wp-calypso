@@ -41,7 +41,7 @@ describe( 'actions', () => {
 			};
 
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit )
 				.reply( 200, successResponse );
 
 			test( 'should dispatch fetch action when thunk triggered', async () => {
@@ -66,9 +66,9 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'success with multiple calls', () => {
-			// Let's generate more than "EndpointLimit" past transactions
+			// Let's generate more than "endpointLimit" past transactions
 			const billing_history = [];
-			for ( let i = 0; i < 2 * EndpointLimit - 1; i++ ) {
+			for ( let i = 0; i < 2 * endpointLimit - 1; i++ ) {
 				billing_history.push( {
 					id: Math.floor( Math.random() * 10000 ),
 					amount: '$1.23',
@@ -92,21 +92,21 @@ describe( 'actions', () => {
 			};
 
 			const successResponse1 = {
-				billing_history: billing_history.slice( 0, EndpointLimit ),
+				billing_history: billing_history.slice( 0, endpointLimit ),
 				upcoming_charges: successResponse.upcoming_charges,
 			};
 
 			const successResponse2 = {
-				billing_history: billing_history.slice( EndpointLimit ),
+				billing_history: billing_history.slice( endpointLimit ),
 				upcoming_charges: [],
 			};
 
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit )
 				.reply( 200, successResponse1 );
 
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit + '&offset=' + EndpointLimit )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit + '&offset=' + endpointLimit )
 				.reply( 200, successResponse2 );
 
 			test( 'should dispatch fetch action when thunk triggered', async () => {
@@ -135,7 +135,7 @@ describe( 'actions', () => {
 				'An active access token must be used to query information about the current user.';
 
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.3/me/billing-history?limit=' + EndpointLimit )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit )
 				.reply( 403, {
 					error: 'authorization_required',
 					message,
