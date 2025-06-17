@@ -9,7 +9,7 @@ import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useSelector } from 'calypso/state';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { canCurrentUserManageEnvironmentOptions } from 'calypso/state/sites/selectors/can-current-user-manage-environment-options';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
@@ -191,15 +191,9 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
-	const hasEnvironmentPermission = useSelector( ( state ) => {
-		if ( site.is_wpcom_staging_site ) {
-			return canCurrentUser( state, site.options?.wpcom_production_blog_id, 'manage_options' );
-		}
-		return (
-			canCurrentUser( state, site.options?.wpcom_staging_blog_ids?.[ 0 ], 'manage_options' ) ??
-			false
-		);
-	} );
+	const hasEnvironmentPermission = useSelector( ( state ) =>
+		canCurrentUserManageEnvironmentOptions( state, site )
+	);
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
