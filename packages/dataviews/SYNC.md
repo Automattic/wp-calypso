@@ -65,7 +65,7 @@ git switch --detach gutenberg/trunk
 git subtree split --prefix=packages/dataviews/ --branch=dataviews-trunk
 ```
 
-`git switch --detach gutenberg/trunk` positioning you at the exact state of the Gutenberg project's trunk branch so you can access the source files you want to sync from. This allows us to grab files from a specific point in another repository's history without creating or modifying local branches.
+`git switch --detach gutenberg/trunk` positions you at the exact state of the Gutenberg project's trunk branch so you can access the source files you want to sync from. This allows us to grab files from a specific point in another repository's history without creating or modifying local branches.
 
 `git subtree split --prefix=packages/dataviews/ --branch=dataviews-trunk` creates a clean, standalone branch that contains just the Gutenberg DataViews package as if it were always a separate repository. This makes it much easier to merge or sync with the local Calypso DataViews package since the file paths will align and the history will be focused only on the relevant changes.
 
