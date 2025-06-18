@@ -39,6 +39,8 @@ const showHovercards = () => {
 function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
 	const [ mountNode, setMountNode ] = useState( null );
+	// Depending on how/where the user info is built, the property name may be different.
+	const login = props.user?.wpcom_login || props.user?.user_login || props.user?.username;
 
 	useEffect( () => {
 		// Initialize style element only when component mounts
@@ -65,6 +67,23 @@ function GravatarWithHovercards( props ) {
 				const avatarLink = inner.querySelector( '.gravatar-hovercard__avatar-link' );
 				const nameElement = inner.querySelector( '.gravatar-hovercard__name' );
 				const description = inner.querySelector( '.gravatar-hovercard__description' );
+
+				// Update links to reader profile if login is available.
+				if ( login ) {
+					if ( avatarLink ) {
+						avatarLink.href = `/reader/users/${ login }`;
+						avatarLink.removeAttribute( 'target' );
+					}
+
+					if ( nameElement ) {
+						const nameLink = document.createElement( 'a' );
+						nameLink.href = `/reader/users/${ login }`;
+						nameLink.className = 'gravatar-hovercard__name-link';
+						nameLink.textContent = nameElement.textContent;
+						nameElement.textContent = '';
+						nameElement.appendChild( nameLink );
+					}
+				}
 
 				// Add preserved items back to the header.
 				avatarLink && newHeader.appendChild( avatarLink );
