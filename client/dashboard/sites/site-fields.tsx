@@ -1,0 +1,29 @@
+import { useQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import { siteUptimeQuery } from '../app/queries/site-uptime';
+import { TextBlur } from '../components/text-blur';
+import { getSiteUptime } from '../utils/site-uptime';
+import type { Site } from '../data/types';
+
+export function Uptime( { site }: { site: Site } ) {
+	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const { data: uptime, isLoading } = useQuery( {
+		...siteUptimeQuery( site.ID, { period: 'week' } ),
+		enabled: site.is_wpcom_atomic && inView,
+		staleTime: 1000 * 60 * 60, // 1 hour
+	} );
+
+	if ( ! site.is_wpcom_atomic ) {
+		return '-';
+	}
+
+	const renderContent = () => {
+		if ( isLoading ) {
+			return <TextBlur>100%</TextBlur>;
+		}
+
+		return getSiteUptime( uptime )?.label ?? '-';
+	};
+
+	return <span ref={ ref }>{ renderContent() }</span>;
+}
