@@ -143,7 +143,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'last_published',
 		label: __( 'Last published' ),
-		getValue: ( { item }: { item: Site } ) => item.options?.updated_at,
+		getValue: ( { item }: { item: Site } ) => item.options?.updated_at ?? '',
 		render: ( { item }: { item: Site } ) =>
 			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 	},
