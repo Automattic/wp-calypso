@@ -7,7 +7,7 @@
 - Add new filter operators: `before`, `after`, `beforeInc`, and `afterInc` for date fields.
 - Adjust the spacing of the `DataForm` based on the type.
 - Sync with Gutenberg packages/dataviews. It bundles `@wordpress/dataviews` 4.21.0 plus https://github.com/WordPress/gutenberg/pull/70435 (fix alignment between label and control in DataForms layout).
-- Update SYNC.md docs to include information on rebasing existing sync branches on top of Calypso trunk.
+- Update SYNC.md docs to include information on rebasing existing sync branches on top of Calypso trunk and other frequently asked questions.
 
 
 ## 0.2.1
