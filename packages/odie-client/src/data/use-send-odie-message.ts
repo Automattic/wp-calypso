@@ -5,15 +5,38 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
-	ODIE_ERROR_MESSAGE,
 	ODIE_RATE_LIMIT_MESSAGE,
 	ODIE_EMAIL_FALLBACK_MESSAGE,
+	ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
+
+const getErrorMessageForSiteIdAndInternalMessageId = (
+	selectedSiteId: number | null | undefined,
+	internal_message_id: string
+): Message => {
+	return {
+		content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+		internal_message_id,
+		role: 'bot',
+		type: 'message',
+		context: {
+			site_id: selectedSiteId ?? null,
+			flags: {
+				forward_to_human_support: true,
+				canned_response: false,
+				hide_disclaimer_content: false,
+				show_contact_support_msg: true,
+				show_ai_avatar: true,
+				is_error_message: true,
+			},
+		},
+	};
+};
 
 /**
  * Sends a new message to ODIE.
@@ -56,7 +79,15 @@ export const useSendOdieMessage = () => {
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
 		If email support is forced, it will add an email fallback message.
 	*/
-	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
+	const addMessage = ( {
+		message,
+		props = {},
+		isFromError = false,
+	}: {
+		message: Message | Message[];
+		props?: Partial< Chat >;
+		isFromError: boolean;
+	} ) => {
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {
@@ -66,9 +97,14 @@ export const useSendOdieMessage = () => {
 						messages: [ ...prevChat.messages, ...[ ODIE_EMAIL_FALLBACK_MESSAGE ] ],
 						status: 'loaded',
 					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
-					newConversation( { createdFrom: 'automatic_escalation' } );
+					newConversation( {
+						createdFrom: 'automatic_escalation',
+						isFromError,
+					} );
+					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				}
 			}
@@ -115,16 +151,23 @@ export const useSendOdieMessage = () => {
 				returnedChat.messages.length === 0 ||
 				! returnedChat.messages[ 0 ].content
 			) {
-				const errorMessage: Message = {
-					content: ODIE_ERROR_MESSAGE,
-					internal_message_id,
-					role: 'bot',
-					type: 'error',
-				};
+				// Handle empty/error response based on user eligibility
+				if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
+					// User is eligible for premium support - transfer to Zendesk
+					// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
+					newConversation( {
+						createdFrom: 'empty_response_error',
+						isFromError: true,
+					} );
+				} else {
+					// User is not eligible for premium support - show error message with support buttons
+					const errorMessage = getErrorMessageForSiteIdAndInternalMessageId(
+						selectedSiteId,
+						internal_message_id
+					);
 
-				addMessage( errorMessage );
-
-				broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+					addMessage( { message: errorMessage, props: {}, isFromError: true } );
+				}
 				return;
 			}
 
@@ -148,22 +191,43 @@ export const useSendOdieMessage = () => {
 				context: returnedChat.messages[ 0 ].context,
 			};
 			setExperimentVariationName( returnedChat.experiment_name );
-			addMessage( botMessage, { odieId: returnedChat.chat_id } );
-			broadcastOdieMessage( botMessage, odieBroadcastClientId );
+			addMessage( {
+				message: botMessage,
+				props: { odieId: returnedChat.chat_id },
+				isFromError: false,
+			} );
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
 		},
 		onError: ( error ) => {
 			const isRateLimitError = error.message.includes( '429' );
-			const errorMessage: Message = {
-				content: isRateLimitError ? ODIE_RATE_LIMIT_MESSAGE : ODIE_ERROR_MESSAGE,
-				internal_message_id,
-				role: 'bot',
-				type: 'error',
-			};
-			addMessage( errorMessage );
-			broadcastOdieMessage( errorMessage, odieBroadcastClientId );
+
+			if ( isRateLimitError ) {
+				// Handle rate limit error with standard rate limit message
+				const errorMessage: Message = {
+					content: ODIE_RATE_LIMIT_MESSAGE,
+					internal_message_id,
+					role: 'bot',
+					type: 'message',
+					context: undefined,
+				};
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
+				// User is eligible for premium support - transfer to Zendesk
+				newConversation( {
+					createdFrom: 'api_error',
+					isFromError: true,
+				} );
+			} else {
+				// User is not eligible for premium support - show error message with support buttons
+				const errorMessage: Message = getErrorMessageForSiteIdAndInternalMessageId(
+					selectedSiteId,
+					internal_message_id
+				);
+
+				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+			}
 		},
 	} );
 };

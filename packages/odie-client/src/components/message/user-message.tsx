@@ -11,6 +11,8 @@ import {
 	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
 	ODIE_THIRD_PARTY_MESSAGE_CONTENT,
 	ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT,
+	ODIE_ERROR_MESSAGE,
+	ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import {
@@ -32,11 +34,13 @@ const getDisplayMessage = (
 	isRequestingHumanSupport: boolean,
 	messageContent: string,
 	hasCannedResponse?: boolean,
-	forceEmailSupport?: boolean
+	forceEmailSupport?: boolean,
+	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
 		return ODIE_THIRD_PARTY_MESSAGE_CONTENT;
 	}
+
 	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
 		return messageContent;
 	}
@@ -45,11 +49,15 @@ const getDisplayMessage = (
 		return ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT;
 	}
 
+	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
+		return ODIE_ERROR_MESSAGE_NON_ELIGIBLE;
+	}
+
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
 		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
 
-	return forwardMessage;
+	return isErrorMessage ? ODIE_ERROR_MESSAGE : forwardMessage;
 };
 
 export const UserMessage = ( {
@@ -88,9 +96,9 @@ export const UserMessage = ( {
 		isRequestingHumanSupport,
 		message.content,
 		hasCannedResponse,
-		forceEmailSupport
+		forceEmailSupport,
+		message?.context?.flags?.is_error_message
 	);
-
 	const displayingThirdPartyMessage =
 		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 

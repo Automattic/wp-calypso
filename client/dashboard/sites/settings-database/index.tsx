@@ -18,44 +18,17 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data/site-hosting';
-import { canViewDatabaseSettings } from '../features';
-import SettingsCallout from '../settings-callout';
+import { HostingFeatures } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import calloutIllustrationUrl from './callout-illustration.svg';
 import ResetPasswordModal from './reset-password-modal';
+import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
 	const [ isResetPasswordModalOpen, setIsResetPasswordModalOpen ] = useState( false );
-
-	if ( ! canViewDatabaseSettings( site ) ) {
-		return (
-			<PageLayout
-				size="small"
-				header={
-					<SettingsPageHeader
-						title={ __( 'Database' ) }
-						description={ __(
-							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-						) }
-					/>
-				}
-			>
-				<SettingsCallout
-					siteSlug={ siteSlug }
-					icon={ blockTable }
-					image={ calloutIllustrationUrl }
-					title={ __( 'Fast, familiar database access' ) }
-					description={ __(
-						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
-					) }
-					tracksId="database"
-				/>
-			</PageLayout>
-		);
-	}
 
 	const handleOpenPhpMyAdmin = async () => {
 		setIsFetchingToken( true );
@@ -108,51 +81,67 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						<VStack spacing={ 2 }>
-							<Text size="15px" weight={ 500 } lineHeight="20px">
-								phpMyAdmin
-							</Text>
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.DATABASE }
+				tracksFeatureId="settings-database"
+				upsellIcon={ blockTable }
+				upsellImage={ upsellIllustrationUrl }
+				upsellTitle={ __( 'Fast, familiar database access' ) }
+				upsellDescription={ __(
+					'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
+				) }
+			>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<VStack spacing={ 2 }>
+								<Text size="15px" weight={ 500 } lineHeight="20px">
+									phpMyAdmin
+								</Text>
+								<Text variant="muted" lineHeight="20px">
+									{ __(
+										'phpMyAdmin is a free open source software tool that allows you to administer your site’s MySQL database over the Web.'
+									) }
+								</Text>
+							</VStack>
+							<VStack>
+								<Notice density="medium">
+									{ __(
+										'Managing a database can be tricky and it’s not necessary for your site to function.'
+									) }
+								</Notice>
+							</VStack>
+							<HStack justify="flex-start" expanded={ false } as="span">
+								<Button
+									variant="primary"
+									isBusy={ isFetchingToken }
+									onClick={ handleOpenPhpMyAdmin }
+								>
+									{ __( 'Open phpMyAdmin ↗' ) }
+								</Button>
+							</HStack>
 							<Text variant="muted" lineHeight="20px">
-								{ __(
-									'phpMyAdmin is a free open source software tool that allows you to administer your site’s MySQL database over the Web.'
+								{ createInterpolateElement(
+									__( 'Having problems with access? Try <link>resetting the password</link>.' ),
+									{
+										link: <Button variant="link" onClick={ handleResetPasswordClick } />,
+									}
 								) }
 							</Text>
 						</VStack>
-						<VStack>
-							<Notice density="medium">
-								{ __(
-									'Managing a database can be tricky and it’s not necessary for your site to function.'
-								) }
-							</Notice>
-						</VStack>
-						<HStack justify="flex-start" expanded={ false } as="span">
-							<Button variant="primary" isBusy={ isFetchingToken } onClick={ handleOpenPhpMyAdmin }>
-								{ __( 'Open phpMyAdmin ↗' ) }
-							</Button>
-						</HStack>
-						<Text variant="muted" lineHeight="20px">
-							{ createInterpolateElement(
-								__( 'Having problems with access? Try <link>resetting the password</link>.' ),
-								{
-									link: <Button variant="link" onClick={ handleResetPasswordClick } />,
-								}
-							) }
-						</Text>
-					</VStack>
-				</CardBody>
-			</Card>
+					</CardBody>
+				</Card>
 
-			{ isResetPasswordModalOpen && (
-				<ResetPasswordModal
-					siteId={ site.ID }
-					onClose={ () => setIsResetPasswordModalOpen( false ) }
-					onSuccess={ handleResetPasswordSuccess }
-					onError={ handleResetPasswordError }
-				/>
-			) }
+				{ isResetPasswordModalOpen && (
+					<ResetPasswordModal
+						siteId={ site.ID }
+						onClose={ () => setIsResetPasswordModalOpen( false ) }
+						onSuccess={ handleResetPasswordSuccess }
+						onError={ handleResetPasswordError }
+					/>
+				) }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

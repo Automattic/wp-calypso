@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -76,14 +72,14 @@ function setupUserEvent() {
 }
 
 describe( 'DateCalendar', () => {
-	let today;
-	let tomorrow;
-	let yesterday;
-	let currentMonth;
-	let nextMonth;
-	let nextNextMonth;
-	let prevMonth;
-	let prevPrevMonth;
+	let today: Date;
+	let tomorrow: Date;
+	let yesterday: Date;
+	let currentMonth: Date;
+	let nextMonth: Date;
+	let nextNextMonth: Date;
+	let prevMonth: Date;
+	let prevPrevMonth: Date;
 
 	beforeAll( () => {
 		jest.useFakeTimers();

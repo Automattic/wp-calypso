@@ -30,7 +30,8 @@ function Site() {
 									onClick={ () => onToggle() }
 								>
 									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<SiteIcon site={ site } size={ 16 } /> { site.name }
+										<SiteIcon site={ site } size={ 16 } />{ ' ' }
+										{ site.name || new URL( site.URL ).hostname }
 									</div>
 								</Button>
 							) }

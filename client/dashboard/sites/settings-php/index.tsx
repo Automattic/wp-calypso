@@ -16,18 +16,17 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { canViewPHPSettings } from '../features';
-import SettingsCallout from '../settings-callout';
+import { hasPlanFeature } from '../../utils/site-features';
+import { HostingFeatures, canViewPHPSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const canView = canViewPHPSettings( site );
-
 	const { data: currentVersion } = useQuery( {
 		...sitePHPVersionQuery( site.ID ),
-		enabled: canView,
+		enabled: canViewPHPSettings( site ),
 	} );
 	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -35,26 +34,6 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
-
-	if ( ! canView ) {
-		return (
-			<PageLayout
-				size="small"
-				header={
-					<SettingsPageHeader
-						title="PHP"
-						description={ sprintf(
-							/* translators: %s: plan name. Eg. 'Personal' */
-							__( 'Sites on the %s plan run on our recommended PHP version.' ),
-							site?.plan?.product_name_short
-						) }
-					/>
-				}
-			>
-				<SettingsCallout siteSlug={ siteSlug } tracksId="php" />
-			</PageLayout>
-		);
-	}
 
 	const { phpVersions } = getPHPVersions();
 
@@ -95,34 +74,47 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		} );
 	};
 
+	const description = hasPlanFeature( site, HostingFeatures.PHP )
+		? undefined
+		: sprintf(
+				/* translators: %s: plan name. Eg. 'Personal' */
+				__( 'Sites on the %s plan run on our recommended PHP version.' ),
+				site?.plan?.product_name_short
+		  );
+
 	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<DataForm< { version: string } >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: { version?: string } ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<HStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</HStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
+		<PageLayout
+			size="small"
+			header={ <SettingsPageHeader title="PHP" description={ description } /> }
+		>
+			<HostingFeature site={ site } feature={ HostingFeatures.PHP } tracksFeatureId="settings-php">
+				<Card>
+					<CardBody>
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 4 }>
+								<DataForm< { version: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { version?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<HStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</HStack>
+							</VStack>
+						</form>
+					</CardBody>
+				</Card>
+			</HostingFeature>
 		</PageLayout>
 	);
 }

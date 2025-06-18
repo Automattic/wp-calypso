@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Breaking changes
+
+- Remove `DateCalendar` and `DateRangeCalendar` components. Use from `@automattic/ui` instead ([#104224](https://github.com/Automattic/wp-calypso/pull/104224)).
+
 ## 3.0.0
 
 ### Breaking changes

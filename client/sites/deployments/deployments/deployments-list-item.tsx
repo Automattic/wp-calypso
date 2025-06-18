@@ -2,12 +2,11 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
@@ -20,6 +19,7 @@ import { DeploymentStatus, DeploymentStatusValue } from './deployment-status';
 import { DeploymentsListItemActions } from './deployments-list-item-actions';
 import { CodeDeploymentData } from './use-code-deployments-query';
 import { useCreateCodeDeploymentRun } from './use-create-code-deployment-run';
+import { useWorkflowValidationError } from './use-workflow-validation-error';
 
 const noticeOptions = {
 	duration: 3000,
@@ -34,6 +34,8 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	const dispatch = useDispatch();
 	const locale = useLocale();
 	const { __ } = useI18n();
+	const { showWorkflowValidationError, shouldShowWorkflowError } =
+		useWorkflowValidationError( dispatch );
 
 	const { triggerManualDeployment, isPending: isTriggeringDeployment } = useCreateCodeDeploymentRun(
 		deployment.blog_id,
@@ -51,26 +53,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 				);
 
 				if ( error.code === 'invalid_workflow_file' ) {
-					dispatch(
-						errorNotice(
-							translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
-								components: {
-									a: (
-										<a
-											href={ manageDeploymentPage( siteSlug as string, deployment.id ) }
-											onClick={ () => {
-												dispatch( removeNotice( 'github-invalid-workflow-file' ) );
-											} }
-										/>
-									),
-								},
-							} ),
-							{
-								id: 'github-invalid-workflow-file',
-								isPersistent: true,
-							}
-						)
-					);
+					showWorkflowValidationError( siteSlug as string, deployment.id );
 				} else {
 					dispatch(
 						errorNotice(
@@ -88,11 +71,26 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		}
 	);
 
-	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
-		useState( false );
-
 	const run = deployment.current_deployment_run;
 	const [ installation, repo ] = deployment.repository_name.split( '/' );
+
+	useEffect( () => {
+		if (
+			run?.failure_code === 'workflow_run_failure' &&
+			run?.id &&
+			shouldShowWorkflowError( run.id )
+		) {
+			showWorkflowValidationError( siteSlug as string, deployment.id, run.id );
+		}
+	}, [
+		run?.failure_code,
+		run?.id,
+		dispatch,
+		siteSlug,
+		deployment.id,
+		showWorkflowValidationError,
+		shouldShowWorkflowError,
+	] );
 
 	const columns = run ? (
 		<>
@@ -113,6 +111,9 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	) : (
 		<DeploymentStarterMessage deployment={ deployment } />
 	);
+
+	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
+		useState( false );
 
 	return (
 		<>
