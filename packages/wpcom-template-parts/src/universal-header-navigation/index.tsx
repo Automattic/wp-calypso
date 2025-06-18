@@ -374,11 +374,7 @@ const UniversalNavbarHeader = ( {
 							onClick={ () => setMobileMenuOpen( false ) }
 						/>
 						<div className="x-menu-content">
-							<button
-								className="x-menu-button x-link"
-								onClick={ () => setMobileMenuOpen( false ) }
-								tabIndex={ -1 }
-							>
+							<button className="x-menu-button x-link" onClick={ () => setMobileMenuOpen( false ) }>
 								<span className="x-hidden">
 									{ __( 'Close the navigation menu', __i18n_text_domain__ ) }
 								</span>
