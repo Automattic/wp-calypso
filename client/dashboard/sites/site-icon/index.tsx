@@ -4,7 +4,11 @@ import type { Site } from '../../data/types';
 import './style.scss';
 
 export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
-	const dims = { width: size, height: size };
+	const dims = {
+		width: size,
+		height: size,
+		style: { width: size, height: size },
+	};
 	const ico = site.icon?.ico;
 	const src = useMemo( () => {
 		if ( ! ico ) {
@@ -19,21 +23,18 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 	}, [ ico ] );
 
 	if ( ico ) {
-		return (
-			<img
-				className="site-icon"
-				src={ src }
-				alt={ site.name }
-				{ ...dims }
-				loading="lazy"
-				style={ { width: size, height: size } }
-			/>
-		);
+		return <img className="site-icon" src={ src } alt={ site.name } { ...dims } loading="lazy" />;
 	}
 
+	const hash = site.ID.toString( 8 ).repeat( 32 ).substring( 0, 32 );
+
 	return (
-		<div className="site-letter" style={ { ...dims, fontSize: size * 0.5 } }>
-			<span>{ site.name.charAt( 0 ) }</span>
-		</div>
+		<img
+			className="site-icon"
+			src={ `https://www.gravatar.com/avatar/${ hash }?s=96&f=y&d=color` }
+			alt={ site.name }
+			{ ...dims }
+			loading="lazy"
+		/>
 	);
 }
