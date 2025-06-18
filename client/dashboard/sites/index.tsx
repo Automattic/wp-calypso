@@ -303,7 +303,7 @@ export default function Sites() {
 								},
 							} );
 						} }
-						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+						renderItemLink={ ( { item, ...props } ) => (
 							<Link to={ `/sites/${ item.slug }` } { ...props } />
 						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
