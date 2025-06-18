@@ -237,6 +237,7 @@ export function PurchasesDataViews( {
 
 	const purchasesDataFields = usePurchasesFieldDefinitions( {
 		sites: sitesWithPurchases,
+		getManagePurchaseUrlFor,
 	} );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );

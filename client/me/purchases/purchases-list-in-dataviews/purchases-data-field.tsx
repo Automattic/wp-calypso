@@ -6,7 +6,7 @@ import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
-import { MembershipSubscription } from 'calypso/lib/purchases/types';
+import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { Icon, MembershipType, MembershipTerms } from '../membership-item';
@@ -65,12 +65,14 @@ export function getPurchasesFieldDefinitions( {
 	moment,
 	paymentMethods,
 	sites,
+	getManagePurchaseUrlFor,
 	fieldIds,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
 	sites: SiteDetails[];
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
@@ -90,7 +92,7 @@ export function getPurchasesFieldDefinitions( {
 			console.error( 'Cannot display manage purchase page for subscription without ID' );
 			return;
 		}
-		page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+		page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
 	};
 
 	const fields: Fields< Purchases.Purchase > = [
