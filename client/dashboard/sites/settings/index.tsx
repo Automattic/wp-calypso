@@ -26,10 +26,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
-	if ( ! settings ) {
-		return null;
-	}
-
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<VStack spacing={ 3 }>

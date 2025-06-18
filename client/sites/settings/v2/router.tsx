@@ -57,7 +57,7 @@ const siteRoute = createRoute( {
 	path: '$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 	component: () => <Outlet />,
 } );

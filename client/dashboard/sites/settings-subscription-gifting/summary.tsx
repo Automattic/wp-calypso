@@ -12,11 +12,18 @@ export default function SubscriptionGiftingSettingsSummary( {
 	density,
 }: {
 	site: Site;
-	settings: SiteSettings;
+	settings?: SiteSettings;
 	density?: Density;
 } ) {
 	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
 		return null;
+	}
+
+	let badges;
+	if ( settings ) {
+		badges = settings.wpcom_gifting_subscription
+			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
+			: [ { text: __( 'Disabled' ) } ];
 	}
 	return (
 		<RouterLinkSummaryButton
@@ -24,11 +31,7 @@ export default function SubscriptionGiftingSettingsSummary( {
 			title={ __( 'Accept a gift subscription' ) }
 			density={ density }
 			decoration={ <Icon icon={ heading } /> }
-			badges={
-				settings.wpcom_gifting_subscription
-					? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-					: [ { text: __( 'Disabled' ) } ]
-			}
+			badges={ badges }
 		/>
 	);
 }
