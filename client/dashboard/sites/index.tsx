@@ -50,15 +50,22 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Site' ),
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
+		render: ( { field, item } ) => (
+			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+				{ field.getValue( { item } ) }
+			</span>
+		),
 	},
 	{
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => (
-			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
-		),
 		getValue: ( { item } ) => new URL( item.URL ).hostname,
+		render: ( { field, item } ) => (
+			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+				{ field.getValue( { item } ) }
+			</span>
+		),
 	},
 	{
 		id: 'icon.ico',
