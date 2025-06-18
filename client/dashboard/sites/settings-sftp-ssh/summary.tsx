@@ -31,7 +31,7 @@ export default function SftpSshSettingsSummary( {
 	const sshEnabled = sshAccessStatus?.setting === 'ssh';
 
 	const badges = [
-		{
+		canViewSftpSettings( site ) && {
 			text: sftpEnabled ? __( 'SFTP enabled' ) : __( 'SFTP disabled' ),
 			intent: sftpEnabled ? ( 'success' as const ) : undefined,
 		},

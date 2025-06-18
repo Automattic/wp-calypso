@@ -79,10 +79,10 @@ const WasThisHelpfulButtons = ( {
 	return (
 		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
-				<span className={ questionClasses }>
+				<span className={ questionClasses } aria-hidden={ rated }>
 					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
 				</span>
-				<span className={ thanksClasses }>
+				<span className={ thanksClasses } aria-hidden={ ! rated }>
 					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
 				</span>
 			</div>
@@ -91,6 +91,8 @@ const WasThisHelpfulButtons = ( {
 					className={ buttonLikedClasses }
 					onClick={ () => handleIsHelpful( true ) }
 					disabled={ notLiked }
+					tabIndex={ rated ? -1 : undefined }
+					aria-hidden={ rated }
 					aria-label={ __( 'Yes, this was helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsUpIcon className={ thumbsUpClasses } />
@@ -99,6 +101,8 @@ const WasThisHelpfulButtons = ( {
 					className={ buttonDislikedClasses }
 					onClick={ () => handleIsHelpful( false ) }
 					disabled={ liked }
+					tabIndex={ rated ? -1 : undefined }
+					aria-hidden={ rated }
 					aria-label={ __( 'No, this was not helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
