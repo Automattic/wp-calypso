@@ -95,6 +95,35 @@ yarn
 git push -u origin update/dataviews-package
 ```
 
+### Keeping your sync branch update to date with wp-calypso
+
+Sometimes you'll need to ensure your sync branch is working on top of the latest changes from Calypso trunk. For example, a Calypso update that affects your branch's CI build.
+
+When working from a linear commit history, you can normally rebase using `git rebase origin/trunk`.
+
+For commits created by git subtree operations however, a regular rebase might linearize subtree merges, potentially losing important history markers.
+
+For this reason it's important to use the `--rebase-merges` flag. `--rebase-merges` ensures we preserve the merge structure of subtree commits ([reference](https://git-scm.com/docs/git-rebase#Documentation/git-rebase.txt---rebase-mergesrebase-cousinsno-rebase-cousins)).
+
+
+```sh
+# 1. Make sure you're working from the sync branch.
+git checkout update/dataviews-package
+
+# 2. Fetch latest changes
+git fetch origin
+
+# 3. Rebase using --rebase-merges to preserve the merge structure of subtree commits
+git rebase --rebase-merges origin/trunk
+
+# 4. Check that it worked - the commit history should be preserved. You should see your branch, including the subtree merge on top of the latest Calypso commits
+git log --oneline --graph -10
+
+# 5. Push your changes
+git push --force-with-lease
+```
+
+
 ## Merge into wp-calypso
 
 Once the initial sync or the update is complete (there's a new Pull Request available in wp-calypso), it's time to merge the upstream changes into wp-calypso. **We need to merge the changes via a merge commit** for the histories to remain connected and subsequent updates work properly. This is how we do it:
