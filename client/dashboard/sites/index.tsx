@@ -58,6 +58,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		render: ( { item }: { item: Site } ) => (
 			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
 		),
+		getValue: ( { item } ) => new URL( item.URL ).hostname,
 	},
 	{
 		id: 'icon.ico',
