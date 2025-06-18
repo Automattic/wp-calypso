@@ -13,8 +13,16 @@
 
 .a4a-onboarding-tour-snackbar {
 	position: fixed;
-	bottom: 64px;
-	right: 64px;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+
+	@include break-mobile {
+		bottom: 64px;
+		right: 64px;
+		top: auto;
+		left: auto;
+	}
 
 	.components-snackbar__icon {
 		fill: var(--color-text-inverted);

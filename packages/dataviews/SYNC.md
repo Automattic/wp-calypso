@@ -65,12 +65,28 @@ git switch --detach gutenberg/trunk
 git subtree split --prefix=packages/dataviews/ --branch=dataviews-trunk
 ```
 
-3. Prepare a PR to update wp-calypso. This is a regular git merge. It's merging the dataviews-trunk branch into the packages/dataviews folder in this repository.
+`git switch --detach gutenberg/trunk` positions you at the exact state of the Gutenberg project's trunk branch so you can access the source files you want to sync from. This allows us to grab files from a specific point in another repository's history without creating or modifying local branches.
+
+`git subtree split --prefix=packages/dataviews/ --branch=dataviews-trunk` creates a clean, standalone branch that contains just the Gutenberg DataViews package as if it were always a separate repository. This makes it much easier to merge or sync with the local Calypso DataViews package since the file paths will align and the history will be focused only on the relevant changes.
+
+This command processes the entire repository history to find commits that touched Gutenberg's `packages/dataviews/` directory, so it might take a few minutes.
+
+3. Prepare a PR to update wp-calypso. This is a regular git merge. It's merging the dataviews-trunk branch into the packages/dataviews folder in this repository. 
 
 ```sh
 git checkout -b update/dataviews-package trunk
 git merge -Xsubtree=packages/dataviews/ dataviews-trunk
 ```
+
+`git checkout -b update/dataviews-package trunk` checks out a new branch.
+
+`git merge -Xsubtree=packages/dataviews/ dataviews-trunk` is the key step where the actual synchronization happens. It merges the dataviews-trunk branch (which you created with the subtree split in step 2) into your current branch. The `-Xsubtree=packages/dataviews/` option tells git to place files from the dataviews-trunk branch (which are at the root level) into Calypso's `packages/dataviews/` directory.
+
+The merge may stop if git was unable to resolve conflicts automatically. If that's the case, resolve them manually and continue the merge process (`git merge --continue`). This is expected, and it’s [how the git merge algorithm works](https://oandre.gal/git-merge/). This happens when both Calypso’s DataViews and Gutenberg’s DataViews changed the same part of a file.
+
+Typical conflicts you may encounter when syncing from upstream:
+
+- The `package.json` version. `@wordpress/dataviews` and `@automattic/dataviews` have each their own version sequence. When pulling changes from upstream, resolve this conflict by using the version number we maintain in this repository to release `@automattic/dataviews`.
 
 4. Push to wp-calypso.
 
@@ -78,12 +94,6 @@ git merge -Xsubtree=packages/dataviews/ dataviews-trunk
 yarn
 git push -u origin update/dataviews-package
 ```
-
-In the 3rd step, the merge may stop if git was unable to resolve conflicts automatically. If that's the case, resolve them manually and continue the merge process (`git merge --continue`). This is expected, and it’s [how the git merge algorithm works](https://oandre.gal/git-merge/). This happens when both Calypso’s DataViews and Gutenberg’s DataViews changed the same part of a file.
-
-Typical conflicts you may encounter when syncing from upstream:
-
-- The `package.json` version. `@wordpress/dataviews` and `@automattic/dataviews` have each their own version sequence. When pulling changes from upstream, resolve this conflict by using the version number we maintain in this repository to release `@automattic/dataviews`.
 
 ## Merge into wp-calypso
 

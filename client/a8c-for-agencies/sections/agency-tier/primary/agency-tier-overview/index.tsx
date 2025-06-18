@@ -26,7 +26,7 @@ export default function AgencyTierOverview() {
 
 	const agency = useSelector( getActiveAgency );
 
-	const title = translate( 'Agency Tier and benefits' );
+	const title = translate( 'Agency tiers and benefits' );
 	const benefits = getTierBenefits( translate );
 
 	const currentAgencyTier = agency?.tier?.id;
