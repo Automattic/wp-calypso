@@ -119,7 +119,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 				)
 			);
 		}
-	}, [ run?.failure_code, dispatch, siteSlug, deployment.id ] );
+	}, [ run?.failure_code, run?.id, dispatch, siteSlug, deployment.id ] );
 
 	const columns = run ? (
 		<>
