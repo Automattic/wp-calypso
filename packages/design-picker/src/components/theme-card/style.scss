@@ -80,6 +80,13 @@ $theme-card-info-margin-top: 16px;
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
+
+	&:hover,
+	&:focus-within {
+		.theme-card__image-container {
+			border-color: var(--studio-blue-50);
+		}
+	}
 }
 
 .theme-card__image {

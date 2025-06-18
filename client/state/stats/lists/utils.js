@@ -474,14 +474,15 @@ export const normalizers = {
 			} else {
 				const hasItems = Array.isArray( archiveItems ) && archiveItems.length > 0;
 
-				if ( hasItems ) {
+				// Ignore the Homepage item as it should be shown in the Posts & pages list.
+				if ( 'home' !== archiveKey && hasItems ) {
 					let totalViews = 0;
 
 					const children = archiveItems.map( ( item ) => {
 						totalViews += item.views;
 
 						return {
-							label: [ 'home', 'search' ].includes( archiveKey ) ? item.href : item.value,
+							label: [ 'search' ].includes( archiveKey ) ? item.href : item.value,
 							value: item.views,
 							link: item.href,
 						};
@@ -490,8 +491,7 @@ export const normalizers = {
 					accumulatedArchives.push( {
 						label: getArchiveKeyLabel( archiveKey ),
 						value: totalViews,
-						// Show the Homepage without children if there are no other pages under it.
-						children: 'home' === archiveKey && children.length < 2 ? null : children,
+						children: children,
 					} );
 				}
 			}

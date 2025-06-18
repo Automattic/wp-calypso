@@ -1,3 +1,4 @@
+import pagejs from '@automattic/calypso-router';
 import {
 	Outlet,
 	Router,
@@ -317,7 +318,7 @@ const isCompatibilityRoute = ( router: AnyRouter, url: string ) => {
 const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 	let lastPath = '';
 
-	// Sync TanStack Router's history to the browser history.
+	// Sync TanStack Router's history to the browser history (pagejs).
 	router.history.subscribe( () => {
 		const { pathname, search } = router.history.location;
 		const newUrl = `${ pathname }${ search }`;
@@ -328,7 +329,7 @@ const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 		}
 
 		if ( window.location.pathname + window.location.search !== newUrl ) {
-			window.history.pushState( null, '', newUrl );
+			pagejs.show( newUrl );
 			lastPath = newUrl;
 		}
 	} );

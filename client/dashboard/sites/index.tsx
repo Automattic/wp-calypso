@@ -1,17 +1,21 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
+import ComponentViewTracker from '../components/component-view-tracker';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
@@ -45,6 +49,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'name',
 		label: __( 'Site' ),
 		enableGlobalSearch: true,
+		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
 	},
 	{
 		id: 'URL',
@@ -91,7 +96,21 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		filterBy: {
 			operators: [ 'is' ],
 		},
-		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
+		render: ( { item }: { item: Site } ) => {
+			const label = getSiteStatusLabel( item );
+			if ( item.launch_status !== 'unlaunched' ) {
+				return label;
+			}
+
+			return (
+				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
+			);
+		},
+	},
+	{
+		id: 'wp_version',
+		label: __( 'WP version' ),
+		getValue: ( { item }: { item: Site } ) => getFormattedWordPressVersion( item ),
 	},
 	{
 		id: 'is_a8c',
@@ -139,18 +158,25 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		},
 		enableSorting: false,
 	},
+	{
+		id: 'last_published',
+		label: __( 'Last published' ),
+		getValue: ( { item } ) => item.options?.updated_at ?? '',
+		render: ( { item } ) =>
+			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+	},
 ];
 
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
+		fields: [ 'subscribers_count', 'status', 'backups', 'protect', 'wp_version' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
 	grid: {
 		mediaField: 'preview',
-		fields: [],
+		fields: [ 'status' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
@@ -277,6 +303,25 @@ export default function Sites() {
 					/>
 				</DataViewsCard>
 			</PageLayout>
+		</>
+	);
+}
+
+function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<>
+			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
+			<ExternalLink
+				href={ href }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+				} }
+				style={ { position: 'absolute' } }
+			>
+				{ children }
+			</ExternalLink>
 		</>
 	);
 }

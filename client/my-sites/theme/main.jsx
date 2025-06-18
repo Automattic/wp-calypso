@@ -36,7 +36,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -56,7 +55,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getProductionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -82,12 +80,10 @@ import {
 	isPremiumThemeAvailable,
 	isSiteEligibleForBundledSoftware,
 	isWpcomTheme as isThemeWpcom,
-	isWporgTheme,
 	getCanonicalTheme,
 	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemeForumUrl,
 	getThemeRequestErrors,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
@@ -111,6 +107,7 @@ import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
+import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
 
@@ -348,21 +345,6 @@ class ThemeSheet extends Component {
 		} );
 	};
 
-	trackButtonClick = ( context ) => {
-		this.props.recordTracksEvent( 'calypso_theme_sheet_button_click', {
-			theme_name: this.props.themeId,
-			button_context: context,
-		} );
-	};
-
-	trackContactUsClick = () => {
-		this.trackButtonClick( 'help' );
-	};
-
-	trackThemeForumClick = () => {
-		this.trackButtonClick( 'theme_forum' );
-	};
-
 	previewAction = ( event, type, source ) => {
 		const { isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
@@ -581,7 +563,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderSectionContent = () => {
-		const { isPremium, supportDocumentation } = this.props;
+		const { isPremium, supportDocumentation, themeId } = this.props;
 
 		return (
 			<div className="theme__sheet-content">
@@ -596,7 +578,7 @@ class ThemeSheet extends Component {
 					<>
 						{ this.renderOverviewTab() }
 						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
-						{ this.renderSupportTab() }
+						<ThemeSupportTab themeId={ themeId } />
 					</>
 				) }
 			</div>
@@ -815,104 +797,6 @@ class ThemeSheet extends Component {
 			</div>
 		);
 		/* eslint-enable react/no-danger */
-	};
-
-	renderSupportContactUsCard = ( buttonCount ) => {
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="help-outline" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ this.props.translate( 'Need extra help?' ) }
-					<small>{ this.props.translate( 'Get in touch with our support team' ) }</small>
-				</div>
-				<Button
-					primary={ buttonCount === 1 }
-					href="/help/contact/"
-					onClick={ this.trackContactUsClick }
-				>
-					{ this.props.translate( 'Contact us' ) }
-				</Button>
-			</Card>
-		);
-	};
-
-	renderSupportThemeForumCard = ( buttonCount ) => {
-		if ( ! this.props.forumUrl ) {
-			return null;
-		}
-
-		const description = this.props.isWporg
-			? this.props.translate( 'Get help from the theme author and WordPress.org community' )
-			: this.props.translate( 'Get help from volunteers and staff' );
-
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="comment" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ this.props.translate( 'Have a question about this theme?' ) }
-					<small>{ description }</small>
-				</div>
-				<Button
-					primary={ buttonCount === 1 }
-					href={ localizeUrl( this.props.forumUrl ) }
-					onClick={ this.trackThemeForumClick }
-				>
-					{ this.props.translate( 'Visit forum' ) }
-				</Button>
-			</Card>
-		);
-	};
-
-	renderSupportTab = () => {
-		const {
-			author,
-			isCurrentUserPaid,
-			isStandaloneJetpack,
-			forumUrl,
-			isWpcomTheme,
-			isLoggedIn,
-			translate,
-		} = this.props;
-		let buttonCount = 1;
-		let renderedTab = null;
-
-		if ( isLoggedIn ) {
-			renderedTab = (
-				<div>
-					{ isCurrentUserPaid &&
-						( isWpcomTheme || author === 'Automattic' ) &&
-						! isStandaloneJetpack &&
-						this.renderSupportContactUsCard( buttonCount++ ) }
-					{ forumUrl && this.renderSupportThemeForumCard( buttonCount++ ) }
-				</div>
-			);
-
-			// No card has been rendered
-			if ( buttonCount === 1 ) {
-				renderedTab = (
-					<Card className="theme__sheet-card-support">
-						<Gridicon icon="notice-outline" size={ 48 } />
-						<div className="theme__sheet-card-support-details">
-							{ translate(
-								'Help and support for this theme is not offered by WordPress.com. {{InlineSupportLink/}}',
-								{
-									components: {
-										InlineSupportLink: (
-											<InlineSupportLink supportContext="themes-unsupported" showIcon={ false } />
-										),
-									},
-								}
-							) }
-							<small>
-								{ translate( 'Contact the theme developer directly for help with this theme.' ) }
-							</small>
-						</div>
-					</Card>
-				);
-			}
-		}
-
-		return renderedTab;
 	};
 
 	getDefaultOptionLabel = () => {
@@ -1349,7 +1233,6 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
 		const backPath = getBackPath( state );
-		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
 		const error = theme
 			? false
@@ -1386,9 +1269,7 @@ export default connect(
 			siteSlug,
 			backPath,
 			tabFilter: queryArgs?.tab_filter,
-			isCurrentUserPaid,
 			isWpcomTheme,
-			isWporg: isWporgTheme( state, themeId ),
 			isWpcomStaging,
 			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
@@ -1405,7 +1286,6 @@ export default connect(
 			isThemeBundleWooCommerce: isThemeWooCommerce( state, themeId ),
 			isSiteWooExpressFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
-			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),

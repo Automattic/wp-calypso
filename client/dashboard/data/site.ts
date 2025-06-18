@@ -34,6 +34,7 @@ export const SITE_OPTIONS = [
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
+	'updated_at',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
@@ -62,6 +63,7 @@ export interface SiteOptions {
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	software_version: string;
+	updated_at?: string;
 }
 
 export interface Site {

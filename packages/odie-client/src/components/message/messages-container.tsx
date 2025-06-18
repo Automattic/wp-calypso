@@ -172,7 +172,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					aria-relevant="additions"
 				>
 					{ chat.messages.map( ( message ) => (
-						<div key={ message.created_at }>
+						<div key={ `${ message.internal_message_id }` }>
 							{ [ 'bot', 'business' ].includes( message.role ) && message.content }
 						</div>
 					) ) }
@@ -196,7 +196,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							const displayChatWithSupportLabel =
 								! nextMessage?.context?.flags?.show_contact_support_msg &&
 								message.context?.flags?.show_contact_support_msg &&
-								! chatHasEnded;
+								! chatHasEnded &&
+								! message.context?.flags?.is_error_message;
 
 							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
 
