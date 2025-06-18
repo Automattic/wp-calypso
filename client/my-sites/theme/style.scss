@@ -744,44 +744,6 @@ $button-border: 4px;
 	}
 }
 
-.theme__sheet-card-support {
-	display: flex;
-	align-items: center;
-
-	&:not(:last-child) {
-		margin-bottom: 0;
-	}
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: wrap;
-	}
-
-	.gridicon {
-		color: var(--color-neutral-10);
-		flex: 0 0 auto;
-	}
-
-	.button {
-		flex: 0 0 auto;
-
-		@include breakpoint-deprecated( "<960px" ) {
-			flex: 1 1 100%;
-			margin-top: 20px;
-			text-align: center;
-		}
-	}
-}
-
-.theme__sheet-card-support-details {
-	flex: 1 1 20px;
-	padding: 0 20px;
-
-	small {
-		display: block;
-		color: var(--color-grey-10);
-	}
-}
-
 .theme__sheet-footer-line {
 	color: var(--color-neutral-10);
 	border-top: 1px solid var(--color-neutral-10);

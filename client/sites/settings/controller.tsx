@@ -222,6 +222,7 @@ export function dashboardBackportSiteSettings( context: PageJSContext, next: () 
 	// fires its own page view events.
 	context.primary = (
 		<DashboardBackportSiteSettingsRenderer
+			store={ context.store }
 			siteSlug={ site?.slug }
 			feature={ context.params.feature }
 		/>

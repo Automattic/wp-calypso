@@ -7,6 +7,10 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
+							// Allowed: calypso/components/async-load
+							'!calypso/components',
+							'calypso/components/*',
+							'!calypso/components/async-load',
 							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',
