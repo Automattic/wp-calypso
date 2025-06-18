@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { CoreBadge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -450,9 +450,9 @@ class MasterbarLoggedIn extends Component {
 
 		return badges.length > 0
 			? badges.map( ( badge ) => (
-					<CoreBadge className="masterbar__info-badge" key={ badge }>
+					<Badge className="masterbar__info-badge" key={ badge }>
 						{ badge }
-					</CoreBadge>
+					</Badge>
 			  ) )
 			: null;
 	}
@@ -506,7 +506,7 @@ class MasterbarLoggedIn extends Component {
 								<div className="masterbar__site-info">
 									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 									<div className="masterbar__info-badges">
-										<CoreBadge className="masterbar__info-badge">{ sitePlanName }</CoreBadge>
+										<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 									</div>
 								</div>
 							) }

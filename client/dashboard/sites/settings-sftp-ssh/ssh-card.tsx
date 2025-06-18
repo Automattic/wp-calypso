@@ -1,5 +1,5 @@
-import { CoreBadge } from '@automattic/components';
 import { DataForm } from '@automattic/dataviews';
+import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -59,7 +59,7 @@ const SshKeyCard = ( {
 							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
 							<Text variant="muted">{ siteSshKey.sha256 }</Text>
 						</VStack>
-						<CoreBadge intent="info" style={ { height: '24px' } }>
+						<Badge intent="info" style={ { height: '24px' } }>
 							{ sprintf(
 								/* translators: %s is when the SSH key was attached. */
 								__( 'Attached on %s' ),
@@ -68,7 +68,7 @@ const SshKeyCard = ( {
 									timeStyle: 'medium',
 								} ).format( new Date( siteSshKey.attached_at ) )
 							) }
-						</CoreBadge>
+						</Badge>
 					</VStack>
 					<Button
 						icon={ trash }

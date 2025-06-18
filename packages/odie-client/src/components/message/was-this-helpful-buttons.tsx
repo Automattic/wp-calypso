@@ -92,7 +92,6 @@ const WasThisHelpfulButtons = ( {
 					onClick={ () => handleIsHelpful( true ) }
 					disabled={ notLiked }
 					tabIndex={ rated ? -1 : undefined }
-					aria-hidden={ rated }
 					aria-label={ __( 'Yes, this was helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsUpIcon className={ thumbsUpClasses } />
@@ -102,7 +101,6 @@ const WasThisHelpfulButtons = ( {
 					onClick={ () => handleIsHelpful( false ) }
 					disabled={ liked }
 					tabIndex={ rated ? -1 : undefined }
-					aria-hidden={ rated }
 					aria-label={ __( 'No, this was not helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
