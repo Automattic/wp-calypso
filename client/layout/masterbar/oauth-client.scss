@@ -228,10 +228,6 @@
 			}
 		}
 
-		.login__form-signup-link {
-			display: none;
-		}
-
 		.auth-form__separator {
 			padding: 10px 0;
 			&::before,
@@ -473,11 +469,6 @@
 	.login__form-terms {
 		font-size: $font-body-extra-small;
 		margin-bottom: 1em;
-	}
-
-	.login__form-signup-link {
-		font-size: $font-body;
-		line-height: 24px;
 	}
 
 	.masterbar__oauth-client {
