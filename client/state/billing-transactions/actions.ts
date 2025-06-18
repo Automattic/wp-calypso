@@ -30,28 +30,25 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 				upcoming_charges,
 				billing_history_total,
 			}: {
-				billing_history: BillingTransaction[];
-				upcoming_charges: UpcomingCharge[];
-				billing_history_total: number;
+				billing_history?: BillingTransaction[];
+				upcoming_charges?: UpcomingCharge[];
+				billing_history_total?: number;
 			} = await wp.req.get( url, {
 				apiVersion: '1.3',
 			} );
-
-			const fullBillingHistory = billing_history;
-			if ( billing_history.length === limit && billing_history_total !== limit ) {
+			const fullBillingHistory = billing_history ?? [];
+			if ( fullBillingHistory.length === limit && ( billing_history_total ?? 0 ) !== limit ) {
 				// If we have exactly the limit number of transactions (and this is not the full total), it means there are more transactions to fetch.
-				let nextData = [];
 				do {
 					// Fetch the next page of transactions.
-					const offset_url = url + '&offset=' + billing_history.length;
+					const offset_url = url + '&offset=' + fullBillingHistory.length;
 
 					const res = await wp.req.get( offset_url, {
 						apiVersion: '1.3',
 					} );
 
 					fullBillingHistory.push( ...res.billing_history );
-					nextData = res.billing_history;
-				} while ( nextData.length === limit );
+				} while ( fullBillingHistory.length < ( billing_history_total ?? 0 ) );
 			}
 
 			dispatch( {
