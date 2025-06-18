@@ -162,7 +162,7 @@ export function list( context, next ) {
 				{ useDataViewPurchasesList ? (
 					<PurchasesListDataView
 						noticeType={ context.params.noticeType }
-						getManagePurchaseUrlFor={ managePurchase }
+						getManagePurchaseUrlFor={ managePurchaseUrl }
 					/>
 				) : (
 					<PurchasesList noticeType={ context.params.noticeType } />
