@@ -12,7 +12,10 @@
 	"exports": {
 		".": {
 			"calypso:src": "./src/index.ts",
-			"types": "./dist/index.d.ts",
+			"types": {
+				"import": "./dist/index.d.ts",
+				"require": "./dist/index.d.cts"
+			},
 			"import": "./dist/index.js",
 			"require": "./dist/index.cjs"
 		},
