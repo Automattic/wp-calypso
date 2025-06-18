@@ -14,6 +14,7 @@ import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
@@ -105,6 +106,11 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		},
 	},
 	{
+		id: 'wp_version',
+		label: __( 'WP version' ),
+		getValue: ( { item }: { item: Site } ) => getFormattedWordPressVersion( item ),
+	},
+	{
 		id: 'is_a8c',
 		type: 'boolean',
 		label: __( 'A8C Owned' ),
@@ -155,7 +161,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
+		fields: [ 'subscribers_count', 'status', 'backups', 'protect', 'wp_version' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
