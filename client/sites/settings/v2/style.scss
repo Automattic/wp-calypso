@@ -34,15 +34,6 @@
 }
 
 .is-global.is-section-site-settings {
-	// Stick the loading line to the top of the content.
-	.hosting-dashboard-item-view__content {
-		position: relative;
-
-		.loading-line-wrapper {
-			position: absolute;
-		}
-	}
-
 	// BaseControl currently has an override for the label to accommodate the use case where the label is shown next to the control.
 	// In site settings forms, the label is above the control for regular fields so we need to override this override for UI consistency.
 	.dataforms-layouts-regular__field .components-base-control__label {
