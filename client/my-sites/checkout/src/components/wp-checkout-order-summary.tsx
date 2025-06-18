@@ -394,6 +394,11 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
+const CheckoutSummaryRefundWindowsContainer = styled.p`
+	margin: 0;
+	padding: 0;
+`;
+
 export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
@@ -495,10 +500,10 @@ export function CheckoutSummaryRefundWindows( {
 	return (
 		<>
 			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
-			<CheckoutSummaryFeaturesListItem>
+			<CheckoutSummaryRefundWindowsContainer>
 				{ ! includeRefundIcon && <WPCheckoutCheckIcon /> }
 				{ highlight ? <strong>{ text }</strong> : text }
-			</CheckoutSummaryFeaturesListItem>
+			</CheckoutSummaryRefundWindowsContainer>
 		</>
 	);
 }
@@ -608,7 +613,9 @@ export function CheckoutSummaryFeaturesList( props: {
 				/>
 			) }
 
-			<CheckoutSummaryRefundWindows cart={ responseCart } />
+			<CheckoutSummaryFeaturesListItem>
+				<CheckoutSummaryRefundWindows cart={ responseCart } />
+			</CheckoutSummaryFeaturesListItem>
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }

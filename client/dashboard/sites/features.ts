@@ -47,12 +47,14 @@ export const canRestorePlanSoftware = ( site: Site ) => site.is_wpcom_atomic;
 export const canDuplicateSite = ( site: Site ) => hasPlanFeature( site, DotcomFeatures.COPY_SITE );
 
 export const canTransferSite = ( site: Site, user: User ) => {
-	// TODO: The following types of the site are not allowed to transfer the ownership:
-	// * NonAtomicJetpackSite
-	// * P2 Hub
-	// * WP For Teams
-	// * VIP Site
-	// * Staging site
-	// We may need to handle this via endpoint somewhere. See canCurrentUserStartSiteOwnerTransfer.
-	return site.site_owner === user.ID;
+	const isAllowedSiteType = ! (
+		( site.jetpack && ! site.is_wpcom_atomic ) ||
+		site.is_wpcom_staging_site ||
+		site.is_vip ||
+		!! site.options?.p2_hub_blog_id ||
+		site.options?.is_wpforteams_site
+	);
+
+	const isSiteOwner = site.site_owner === user.ID;
+	return isAllowedSiteType && isSiteOwner;
 };
