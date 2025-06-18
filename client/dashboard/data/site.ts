@@ -31,10 +31,10 @@ export const SITE_OPTIONS = [
 	'admin_url',
 	'is_redirect',
 	'is_wpforteams_site',
-	'updated_at',
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
+	'updated_at',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
