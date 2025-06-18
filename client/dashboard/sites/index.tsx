@@ -48,6 +48,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'name',
 		label: __( 'Site' ),
 		enableGlobalSearch: true,
+		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
 	},
 	{
 		id: 'URL',
