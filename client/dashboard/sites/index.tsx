@@ -19,6 +19,7 @@ import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
 import { EngagementStat, Uptime } from './site-fields';
 import SiteIcon from './site-icon';
+import SitePHPVersion from './site-php-version';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type {
@@ -194,6 +195,12 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'likes',
 		label: __( 'Likes' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
+		enableSorting: false,
+	},
+	{
+		id: 'php_version',
+		label: __( 'PHP version' ),
+		render: ( { item }: { item: Site } ) => <SitePHPVersion site={ item } />,
 		enableSorting: false,
 	},
 ];
