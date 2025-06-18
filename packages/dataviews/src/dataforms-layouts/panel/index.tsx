@@ -226,14 +226,21 @@ export default function FormPanelField< Item >( {
 					{ fieldLabel }
 				</div>
 				<div className="dataforms-layouts-panel__field-control">
-					<PanelDropdown
-						field={ field }
-						popoverAnchor={ popoverAnchor }
-						fieldDefinition={ fieldDefinition }
-						data={ data }
-						onChange={ onChange }
-						labelPosition={ labelPosition }
-					/>
+					{ fieldDefinition.Edit === false ? (
+						<fieldDefinition.render
+							item={ data }
+							field={ fieldDefinition }
+						/>
+					) : (
+						<PanelDropdown
+							field={ field }
+							popoverAnchor={ popoverAnchor }
+							fieldDefinition={ fieldDefinition }
+							data={ data }
+							onChange={ onChange }
+							labelPosition={ labelPosition }
+						/>
+					) }
 				</div>
 			</VStack>
 		);
@@ -242,14 +249,21 @@ export default function FormPanelField< Item >( {
 	if ( labelPosition === 'none' ) {
 		return (
 			<div className="dataforms-layouts-panel__field">
-				<PanelDropdown
-					field={ field }
-					popoverAnchor={ popoverAnchor }
-					fieldDefinition={ fieldDefinition }
-					data={ data }
-					onChange={ onChange }
-					labelPosition={ labelPosition }
-				/>
+				{ fieldDefinition.Edit === false ? (
+					<fieldDefinition.render
+						item={ data }
+						field={ fieldDefinition }
+					/>
+				) : (
+					<PanelDropdown
+						field={ field }
+						popoverAnchor={ popoverAnchor }
+						fieldDefinition={ fieldDefinition }
+						data={ data }
+						onChange={ onChange }
+						labelPosition={ labelPosition }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -262,14 +276,21 @@ export default function FormPanelField< Item >( {
 		>
 			<div className={ labelClassName }>{ fieldLabel }</div>
 			<div className="dataforms-layouts-panel__field-control">
-				<PanelDropdown
-					field={ field }
-					popoverAnchor={ popoverAnchor }
-					fieldDefinition={ fieldDefinition }
-					data={ data }
-					onChange={ onChange }
-					labelPosition={ labelPosition }
-				/>
+				{ fieldDefinition.Edit === false ? (
+					<fieldDefinition.render
+						item={ data }
+						field={ fieldDefinition }
+					/>
+				) : (
+					<PanelDropdown
+						field={ field }
+						popoverAnchor={ popoverAnchor }
+						fieldDefinition={ fieldDefinition }
+						data={ data }
+						onChange={ onChange }
+						labelPosition={ labelPosition }
+					/>
+				) }
 			</div>
 		</HStack>
 	);

@@ -41,7 +41,7 @@ export function getControl< Item >(
 	field: Field< Item >,
 	fieldTypeDefinition: FieldTypeDefinition< Item >
 ) {
-	if ( typeof field.Edit === 'function' ) {
+	if ( typeof field.Edit === 'function' || field.Edit === false ) {
 		return field.Edit;
 	}
 

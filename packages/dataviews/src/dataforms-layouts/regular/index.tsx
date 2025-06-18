@@ -84,7 +84,10 @@ export default function FormRegularField< Item >( {
 		( fieldDef ) => fieldDef.id === field.id
 	);
 
-	if ( ! fieldDefinition || ! fieldDefinition.Edit ) {
+	if (
+		! fieldDefinition ||
+		( ! fieldDefinition.Edit && fieldDefinition.Edit !== false )
+	) {
 		return null;
 	}
 	if ( labelPosition === 'side' ) {
@@ -99,13 +102,20 @@ export default function FormRegularField< Item >( {
 					{ fieldDefinition.label }
 				</div>
 				<div className="dataforms-layouts-regular__field-control">
-					<fieldDefinition.Edit
-						key={ fieldDefinition.id }
-						data={ data }
-						field={ fieldDefinition }
-						onChange={ onChange }
-						hideLabelFromVision
-					/>
+					{ fieldDefinition.Edit === false ? (
+						<fieldDefinition.render
+							item={ data }
+							field={ fieldDefinition }
+						/>
+					) : (
+						<fieldDefinition.Edit
+							key={ fieldDefinition.id }
+							data={ data }
+							field={ fieldDefinition }
+							onChange={ onChange }
+							hideLabelFromVision
+						/>
+					) }
 				</div>
 			</HStack>
 		);
@@ -113,14 +123,21 @@ export default function FormRegularField< Item >( {
 
 	return (
 		<div className="dataforms-layouts-regular__field">
-			<fieldDefinition.Edit
-				data={ data }
-				field={ fieldDefinition }
-				onChange={ onChange }
-				hideLabelFromVision={
-					labelPosition === 'none' ? true : hideLabelFromVision
-				}
-			/>
+			{ fieldDefinition.Edit === false ? (
+				<fieldDefinition.render
+					item={ data }
+					field={ fieldDefinition }
+				/>
+			) : (
+				<fieldDefinition.Edit
+					data={ data }
+					field={ fieldDefinition }
+					onChange={ onChange }
+					hideLabelFromVision={
+						labelPosition === 'none' ? true : hideLabelFromVision
+					}
+				/>
+			) }
 		</div>
 	);
 }

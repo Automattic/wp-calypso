@@ -16,5 +16,9 @@ const FORM_FIELD_LAYOUTS = [
 ];
 
 export function getFormFieldLayout( type: string ) {
-	return FORM_FIELD_LAYOUTS.find( ( layout ) => layout.type === type );
+	const foundLayout = FORM_FIELD_LAYOUTS.find(
+		( layout ) => layout.type === type
+	);
+
+	return foundLayout;
 }
