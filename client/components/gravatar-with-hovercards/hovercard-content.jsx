@@ -43,7 +43,7 @@ function HovercardContent( props ) {
 		}
 	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
 
-	if ( ! user.ID ) {
+	if ( ! userID ) {
 		return null;
 	}
 
@@ -78,6 +78,7 @@ function HovercardContent( props ) {
 							className="gravatar-hovercard__primary-blog-card-follow-button"
 							siteUrl={ primaryBlogUrl }
 							hasButtonStyle
+							followSource="gravatar-hovercard"
 						/>
 					</div>
 				) }
