@@ -9,6 +9,8 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 
+import './styles.scss';
+
 function HovercardContent( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -69,9 +71,9 @@ function HovercardContent( props ) {
 								) }
 							</div>
 						</div>
-						<div className="gravatar-hovercard__primary-blog-card-description">
+						<p className="gravatar-hovercard__primary-blog-card-description">
 							{ site?.description }
-						</div>
+						</p>
 						<ReaderFollowButton
 							className="gravatar-hovercard__primary-blog-card-follow-button"
 							siteUrl={ primaryBlogUrl }
