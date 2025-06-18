@@ -343,7 +343,7 @@ const UniversalNavbarHeader = ( {
 											role="menuitem"
 											className="x-nav-link x-nav-link__menu x-link"
 											aria-haspopup="true"
-											aria-expanded="false"
+											aria-expanded={ isMobileMenuOpen }
 											onClick={ () => setMobileMenuOpen( true ) }
 										>
 											<span className="x-hidden">{ __( 'Menu', __i18n_text_domain__ ) }</span>
@@ -365,7 +365,7 @@ const UniversalNavbarHeader = ( {
 						className={ isMobileMenuOpen ? 'x-menu x-menu__active x-menu__open' : 'x-menu' }
 						role="menu"
 						aria-label={ __( 'WordPress.com Navigation Menu', __i18n_text_domain__ ) }
-						aria-hidden="true"
+						aria-hidden={ ! isMobileMenuOpen }
 					>
 						{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 						<div
@@ -383,7 +383,7 @@ const UniversalNavbarHeader = ( {
 									<span></span>
 								</span>
 							</button>
-							<div className="x-menu-list">
+							<div className="x-menu-list" aria-hidden={ ! isMobileMenuOpen }>
 								<div className="x-menu-list-title">
 									{ __( 'Get Started', __i18n_text_domain__ ) }
 								</div>
@@ -416,7 +416,7 @@ const UniversalNavbarHeader = ( {
 							</div>
 							{ variant !== 'minimal' ? (
 								<>
-									<div className="x-menu-list">
+									<div className="x-menu-list" aria-hidden={ ! isMobileMenuOpen }>
 										<div className="x-hidden">{ __( 'About', __i18n_text_domain__ ) }</div>
 										<ul className="x-menu-grid">
 											<ClickableItem
@@ -427,7 +427,7 @@ const UniversalNavbarHeader = ( {
 											/>
 										</ul>
 									</div>
-									<div className="x-menu-list">
+									<div className="x-menu-list" aria-hidden={ ! isMobileMenuOpen }>
 										<div className="x-menu-list-title">
 											{ __( 'Products', __i18n_text_domain__ ) }
 										</div>
@@ -502,7 +502,7 @@ const UniversalNavbarHeader = ( {
 											/>
 										</ul>
 									</div>
-									<div className="x-menu-list">
+									<div className="x-menu-list" aria-hidden={ ! isMobileMenuOpen }>
 										<div className="x-menu-list-title">
 											{ __( 'Features', __i18n_text_domain__ ) }
 										</div>
@@ -554,7 +554,7 @@ const UniversalNavbarHeader = ( {
 											/>
 										</ul>
 									</div>
-									<div className="x-menu-list">
+									<div className="x-menu-list" aria-hidden={ ! isMobileMenuOpen }>
 										<div className="x-menu-list-title">
 											{ __( 'Resources', __i18n_text_domain__ ) }
 										</div>
