@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/tabindex-no-positive */
 import { type AddOnMeta, AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -162,15 +163,17 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	);
 
 	return (
-		<>
+		// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+		<div tabIndex={ 1 }>
 			<CustomSelectControl
 				__next40pxDefaultSize
 				hideLabelFromVision
 				options={ selectControlOptions || [] }
 				value={ selectedOption }
 				onChange={ handleOnChange }
-				label=""
+				label={ translate( 'Storage options for this plan' ) }
 			/>
+
 			{ selectedStorageAddOn?.prices?.formattedMonthlyPrice && (
 				<div className="plans-grid-next-storage-dropdown__addon-offset-price-container">
 					<span className="plans-grid-next-storage-dropdown__addon-offset-price">
@@ -180,7 +183,7 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 					</span>
 				</div>
 			) }
-		</>
+		</div>
 	);
 };
 
