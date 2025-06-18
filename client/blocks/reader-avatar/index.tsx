@@ -21,6 +21,7 @@ export type ReaderAvatarAuthor = {
 
 type ReaderAvatarProps = {
 	author?: ReaderAvatarAuthor | null; // An author object to pull the author info from.
+	className?: string;
 	siteIcon?: string; // URL to the site icon image.
 	feedIcon?: string; // URL to the feed icon image.
 	siteUrl?: string; // If present, the avatar will be linked to this URL.
@@ -42,6 +43,7 @@ export default function ReaderAvatar( {
 	siteIcon,
 	feedIcon,
 	siteUrl,
+	className,
 	isCompact = false,
 	preferGravatar = false,
 	preferBlavatar = false,
@@ -107,7 +109,7 @@ export default function ReaderAvatar( {
 		gravatarSize = iconSize;
 	}
 
-	const classes = clsx( 'reader-avatar', {
+	const classes = clsx( 'reader-avatar', className, {
 		'is-compact': isCompact,
 		'has-site-and-author-icon': hasBothIcons,
 		'has-site-icon': hasSiteIcon,
