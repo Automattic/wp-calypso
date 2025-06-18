@@ -229,8 +229,12 @@ export const setNewMessagingChat = function* ( {
 	yield setShowHelpCenter( true );
 };
 
-export const setNavigateToOdie = function* () {
-	yield setNavigateToRoute( '/odie' );
+export const setNavigateToOdie = function* ( message?: string ) {
+	const url = addQueryArgs( '/odie', {
+		provider: 'odie',
+		...( message && { initialMessage: message } ),
+	} );
+	yield setNavigateToRoute( url );
 	yield setShowHelpCenter( true );
 };
 

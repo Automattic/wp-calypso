@@ -39,3 +39,43 @@ export const useFormulateQuestion = () => {
 		},
 	} );
 };
+
+type FormulateQuestionsApiResponse = {
+	questions?: string[];
+	status?: number;
+	headers?: Record< string, string >;
+};
+
+/**
+ * Formulates multiple questions from selected text and URL.
+ * This hook only calls the API and returns the result without adding messages to chat.
+ * @returns useMutation return object.
+ */
+export const useFormulatedQuestions = () => {
+	return useMutation< string[], Error, FormulateQuestionData >( {
+		mutationFn: async ( { selectedText, url }: FormulateQuestionData ): Promise< string[] > => {
+			const response: FormulateQuestionsApiResponse = await ( canAccessWpcomApis()
+				? wpcomRequest( {
+						method: 'POST',
+						path: '/odie/formulate_questions',
+						apiNamespace: 'wpcom/v2',
+						body: {
+							selected_text: selectedText,
+							url: url,
+						},
+				  } )
+				: apiFetch( {
+						path: '/help-center/odie/formulate_questions',
+						method: 'POST',
+						data: {
+							selected_text: selectedText,
+							url: url,
+						},
+				  } ) );
+
+			// Safely extract the array from the typed response
+			const questions: string[] = response.questions ?? [];
+			return questions;
+		},
+	} );
+};

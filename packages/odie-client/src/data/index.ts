@@ -9,3 +9,4 @@ export { useOdieChat } from './use-odie-chat';
 export { useSendOdieFeedback } from './use-send-odie-feedback';
 export { useGetSupportInteractionById } from './use-get-support-interaction-by-id';
 export { useFormulateQuestion } from './use-formulate-question';
+export { useFormulatedQuestions } from './use-formulate-question';
