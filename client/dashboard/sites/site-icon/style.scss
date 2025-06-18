@@ -2,4 +2,5 @@
 
 .site-icon {
 	border-radius: $radius-small;
+	filter: saturate(0.6) brightness(1.2);
 }
