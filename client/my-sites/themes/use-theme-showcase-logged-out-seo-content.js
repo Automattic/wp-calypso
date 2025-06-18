@@ -27,10 +27,10 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 		() => ( {
 			recommended: {
 				all: {
-					title: translate( 'WordPress Themes' ),
+					title: translate( 'WordPress Themes | 1000s of Options for All WordPress Sites' ),
 					header: translate( 'Find the perfect theme for your website' ),
 					description: translate(
-						"Beautiful and responsive WordPress themes. Choose from free and premium options for all types of websites. Then, activate the one that's best for you."
+						'Professional WordPress themes for business, blogs, and ecommerce. 1000+ mobile-responsive designs with easy customization. Browse free and premium.'
 					),
 				},
 				free: {
