@@ -11,6 +11,7 @@ import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
@@ -138,6 +139,13 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			);
 		},
 		enableSorting: false,
+	},
+	{
+		id: 'last-published',
+		label: __( 'Last published' ),
+		render: ( { item }: { item: Site } ) =>
+			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+		enableSorting: true,
 	},
 ];
 

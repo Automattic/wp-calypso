@@ -31,6 +31,7 @@ export const SITE_OPTIONS = [
 	'admin_url',
 	'is_redirect',
 	'is_wpforteams_site',
+	'updated_at',
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
@@ -62,6 +63,7 @@ export interface SiteOptions {
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	software_version: string;
+	updated_at?: string;
 }
 
 export interface Site {
