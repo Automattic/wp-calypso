@@ -15,6 +15,8 @@ import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isAndroidOAuth2Client,
+	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -109,15 +111,19 @@ export class LoginLinks extends Component {
 	};
 
 	renderBackLink() {
+		const { isWhiteLogin, oauth2Client, query, translate } = this.props;
+
 		if (
-			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
-			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isWhiteLogin
+			isAndroidOAuth2Client( oauth2Client ) ||
+			isIosOAuth2Client( oauth2Client ) ||
+			isCrowdsignalOAuth2Client( oauth2Client ) ||
+			isJetpackCloudOAuth2Client( oauth2Client ) ||
+			isWhiteLogin
 		) {
 			return null;
 		}
 
-		const redirectTo = this.props.query?.redirect_to;
+		const redirectTo = query?.redirect_to;
 		if ( redirectTo ) {
 			const { pathname, searchParams: redirectToQuery } = getUrlParts( redirectTo );
 
@@ -138,8 +144,8 @@ export class LoginLinks extends Component {
 				const { hostname } = getUrlParts( redirectToQuery.get( 'site_url' ) );
 				const linkText = hostname
 					? // translators: hostname is a the hostname part of the URL. eg "google.com"
-					  this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
-					: this.props.translate( 'Back' );
+					  translate( 'Back to %(hostname)s', { args: { hostname } } )
+					: translate( 'Back' );
 
 				return (
 					<ExternalLink className="wp-login__site-return-link" href={ returnToSiteUrl }>
@@ -153,7 +159,7 @@ export class LoginLinks extends Component {
 		return (
 			<LoggedOutFormBackLink
 				classes={ { 'logged-out-form__link-item': false } }
-				oauth2Client={ this.props.oauth2Client }
+				oauth2Client={ oauth2Client }
 				recordClick={ this.recordBackToWpcomLinkClick }
 			/>
 		);
