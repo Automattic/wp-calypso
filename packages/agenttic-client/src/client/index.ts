@@ -643,6 +643,19 @@ export function createClient( config: ClientConfig ): Client {
 										toolProvider
 									);
 
+									// Yield an update with the tool results for the UI to capture
+									if ( moreResults.length > 0 ) {
+										yield {
+											id: finalTask.id,
+											status: {
+												state: 'working',
+												message: { role: 'agent', parts: moreResults }, // Simple message with just the results
+											},
+											final: false,
+											text: '',
+										};
+									}
+
 									if ( moreShouldReturn ) {
 										// Include conversation history with additional tool results
 										const moreHistoryDataParts = withHistory
