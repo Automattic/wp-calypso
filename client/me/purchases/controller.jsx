@@ -160,7 +160,10 @@ export function list( context, next ) {
 		return (
 			<PurchasesWrapper>
 				{ useDataViewPurchasesList ? (
-					<PurchasesListDataView noticeType={ context.params.noticeType } />
+					<PurchasesListDataView
+						noticeType={ context.params.noticeType }
+						getManagePurchaseUrlFor={ managePurchase }
+					/>
 				) : (
 					<PurchasesList noticeType={ context.params.noticeType } />
 				) }

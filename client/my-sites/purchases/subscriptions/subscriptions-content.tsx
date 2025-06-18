@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
@@ -96,6 +97,10 @@ export default function SubscriptionsContentWrapper() {
 	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const sites = useSelector( getSites ).filter( isValueTruthy );
+	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = useCallback(
+		( siteSlug, purchaseId ) => `/purchases/subscriptions/${ siteSlug }/${ purchaseId }`,
+		[]
+	);
 
 	if ( config.isEnabled( 'purchases/purchase-list-dataview' ) ) {
 		if ( ! selectedSiteId ) {
@@ -119,7 +124,13 @@ export default function SubscriptionsContentWrapper() {
 		if ( purchases.length < 1 ) {
 			return <NoPurchasesMessage />;
 		}
-		return <PurchasesDataViews purchases={ purchases } sites={ sites } />;
+		return (
+			<PurchasesDataViews
+				purchases={ purchases }
+				sites={ sites }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+			/>
+		);
 	}
 
 	return (
