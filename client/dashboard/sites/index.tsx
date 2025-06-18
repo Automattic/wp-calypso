@@ -6,7 +6,9 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../app/analytics';
+import { siteMediaStorageQuery } from '../app/queries/site-media-storage';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import ComponentViewTracker from '../components/component-view-tracker';
@@ -200,6 +202,29 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'php_version',
 		label: __( 'PHP version' ),
 		render: ( { item }: { item: Site } ) => <PHPVersion site={ item } />,
+	},
+	{
+		id: 'storage',
+		label: __( 'Storage' ),
+		render: function Storage( { item }: { item: Site } ) {
+			const { ref, inView } = useInView( {
+				triggerOnce: true,
+				fallbackInView: true,
+			} );
+
+			const { data: mediaStorage } = useQuery( {
+				...siteMediaStorageQuery( item.ID ),
+				enabled: inView,
+			} );
+
+			const value = mediaStorage
+				? `${ Math.round(
+						( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100
+				  ) }%`
+				: null;
+
+			return <span ref={ ref }>{ value }</span>;
+		},
 		enableSorting: false,
 	},
 ];
