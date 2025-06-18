@@ -876,10 +876,10 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.login form,
 		.signup-form {
 			max-width: 405px;
 			margin: 0 auto;
+			padding-top: 24px;
 
 			input.form-text-input {
 				border-color: #bbb;
@@ -891,7 +891,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
-			.login form,
 			.signup-form {
 				max-width: 515px;
 				margin: 48px auto;
@@ -1011,10 +1010,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		span.social-buttons__service-name {
-			font-weight: 600;
-		}
-
 		.auth-form__social-buttons-tos {
 			text-align: center;
 			line-height: 16px;
@@ -1039,10 +1034,6 @@ $breakpoint-mobile: 660px;
 			@media (max-width: $break-mobile) {
 				display: none !important;
 			}
-		}
-
-		.signup-form {
-			padding-top: 24px;
 		}
 
 		.auth-form__social-buttons {
@@ -1356,18 +1347,7 @@ $breakpoint-mobile: 660px;
 			flex-direction: column;
 		}
 
-		.wp-login__main.main {
-			max-width: 758px;
-		}
-
 		.login form.is-woo-passwordless {
-			display: flex;
-			flex-direction: row;
-			margin-top: 48px;
-			padding: 0;
-			justify-content: center;
-			max-width: 758px;
-
 			@media (max-width: $break-medium) {
 				flex-direction: column;
 			}
@@ -2045,7 +2025,7 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.is-woo-com-oauth,
+.woo,
 .layout.is-jetpack-woo-dna-flow {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
