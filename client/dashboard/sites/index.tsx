@@ -1,7 +1,7 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -298,8 +298,7 @@ function ComingSoonStatusButton( { href, children }: { href: string; children: R
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
-			<Button
-				variant="link"
+			<ExternalLink
 				href={ href }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
@@ -307,7 +306,7 @@ function ComingSoonStatusButton( { href, children }: { href: string; children: R
 				style={ { position: 'absolute' } }
 			>
 				{ children }
-			</Button>
+			</ExternalLink>
 		</>
 	);
 }
