@@ -65,8 +65,7 @@
 				-webkit-box-orient: vertical;
 			}
 
-			.gravatar-hovercard__primary-blog-card-follow-button,
-			.gravatar-hovercard__primary-blog-card-unfollow-button:hover {
+			.gravatar-hovercard__primary-blog-card-follow-button {
 				width: 100%;
 				justify-content: center;
 
@@ -77,6 +76,9 @@
 					}
 					svg path {
 						fill: var( --color-accent );
+					}
+					&:hover svg path {
+						fill: var( --color-text );
 					}
 				}
 			}
