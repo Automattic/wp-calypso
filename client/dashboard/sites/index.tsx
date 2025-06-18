@@ -118,7 +118,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'wp_version',
 		label: __( 'WP version' ),
-		getValue: ( { item }: { item: Site } ) => getFormattedWordPressVersion( item ),
+		getValue: ( { item } ) => getFormattedWordPressVersion( item ),
 	},
 	{
 		id: 'is_a8c',
