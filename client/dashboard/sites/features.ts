@@ -3,15 +3,15 @@ import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
 import type { Site, User } from '../data/types';
 
 export const HostingFeatures = {
-	SETTINGS_PHP: DotcomFeatures.SFTP,
-	SETTINGS_SFTP: DotcomFeatures.SFTP,
-	SETTINGS_SSH: DotcomFeatures.SSH,
-	SETTINGS_DATABASE: DotcomFeatures.SFTP,
-	SETTINGS_PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
-	SETTINGS_STATIC_FILE_404: DotcomFeatures.SFTP,
-	SETTINGS_CACHING: DotcomFeatures.ATOMIC,
-	SETTINGS_DEFENSIVE_MODE: DotcomFeatures.SFTP,
-	SETTINGS_RESTORE_PLAN_SOFTWARE: DotcomFeatures.ATOMIC,
+	PHP: DotcomFeatures.SFTP,
+	SFTP: DotcomFeatures.SFTP,
+	SSH: DotcomFeatures.SSH,
+	DATABASE: DotcomFeatures.SFTP,
+	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
+	STATIC_FILE_404: DotcomFeatures.SFTP,
+	CACHING: DotcomFeatures.ATOMIC,
+	DEFENSIVE_MODE: DotcomFeatures.SFTP,
+	RESTORE_PLAN_SOFTWARE: DotcomFeatures.ATOMIC,
 } as const;
 
 export type HostingFeatures = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
@@ -40,31 +40,31 @@ export function canViewWordPressSettings( site: Site ) {
 }
 
 export function canViewPHPSettings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_PHP );
+	return hasAtomicFeature( site, HostingFeatures.PHP );
 }
 
 export function canViewSftpSettings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_SFTP );
+	return hasAtomicFeature( site, HostingFeatures.SFTP );
 }
 
 export function canViewSshSettings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_SSH );
+	return hasAtomicFeature( site, HostingFeatures.SSH );
 }
 
 export function canViewPrimaryDataCenterSettings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_PRIMARY_DATA_CENTER );
+	return hasAtomicFeature( site, HostingFeatures.PRIMARY_DATA_CENTER );
 }
 
 export function canViewStaticFile404Settings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_STATIC_FILE_404 );
+	return hasAtomicFeature( site, HostingFeatures.STATIC_FILE_404 );
 }
 
 export function canViewCachingSettings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_CACHING );
+	return hasAtomicFeature( site, HostingFeatures.CACHING );
 }
 
 export function canViewDefensiveModeSettings( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_DEFENSIVE_MODE );
+	return hasAtomicFeature( site, HostingFeatures.DEFENSIVE_MODE );
 }
 
 // Settings -> Actions & danger zone
@@ -74,7 +74,7 @@ export function canViewSiteActions( site: Site ) {
 }
 
 export function canRestorePlanSoftware( site: Site ) {
-	return hasAtomicFeature( site, HostingFeatures.SETTINGS_RESTORE_PLAN_SOFTWARE );
+	return hasAtomicFeature( site, HostingFeatures.RESTORE_PLAN_SOFTWARE );
 }
 
 export function canDuplicateSite( site: Site ) {

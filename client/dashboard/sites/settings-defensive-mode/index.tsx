@@ -228,7 +228,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		>
 			<HostingFeature
 				site={ site }
-				feature={ HostingFeatures.SETTINGS_DEFENSIVE_MODE }
+				feature={ HostingFeatures.DEFENSIVE_MODE }
 				tracksFeatureId="settings-defensive-mode"
 			>
 				{ data?.enabled ? renderEnabled() : renderDisabled() }

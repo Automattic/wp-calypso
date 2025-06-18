@@ -74,7 +74,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		} );
 	};
 
-	const description = hasPlanFeature( site, HostingFeatures.SETTINGS_PHP )
+	const description = hasPlanFeature( site, HostingFeatures.PHP )
 		? undefined
 		: sprintf(
 				/* translators: %s: plan name. Eg. 'Personal' */
@@ -87,11 +87,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 			size="small"
 			header={ <SettingsPageHeader title="PHP" description={ description } /> }
 		>
-			<HostingFeature
-				site={ site }
-				feature={ HostingFeatures.SETTINGS_PHP }
-				tracksFeatureId="settings-php"
-			>
+			<HostingFeature site={ site } feature={ HostingFeatures.PHP } tracksFeatureId="settings-php">
 				<Card>
 					<CardBody>
 						<form onSubmit={ handleSubmit }>

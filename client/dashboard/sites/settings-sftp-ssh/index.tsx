@@ -31,7 +31,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
 			<HostingFeature
 				site={ site }
-				feature={ HostingFeatures.SETTINGS_SFTP }
+				feature={ HostingFeatures.SFTP }
 				tracksFeatureId="settings-sftp-ssh"
 				upsellIcon={ file }
 				upsellImage={ upsellIllustrationUrl }

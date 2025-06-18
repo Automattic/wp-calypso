@@ -240,7 +240,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const description = hasPlanFeature( site, HostingFeatures.SETTINGS_CACHING )
+	const description = hasPlanFeature( site, HostingFeatures.CACHING )
 		? createInterpolateElement(
 				__( 'Manage your site’s server-side caching. <link>Learn more</link>' ),
 				{
@@ -267,7 +267,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		>
 			<HostingFeature
 				site={ site }
-				feature={ HostingFeatures.SETTINGS_CACHING }
+				feature={ HostingFeatures.CACHING }
 				tracksFeatureId="settings-caching"
 			>
 				{ renderForm() }

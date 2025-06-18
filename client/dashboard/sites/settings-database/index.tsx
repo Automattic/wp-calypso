@@ -83,7 +83,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		>
 			<HostingFeature
 				site={ site }
-				feature={ HostingFeatures.SETTINGS_DATABASE }
+				feature={ HostingFeatures.DATABASE }
 				tracksFeatureId="settings-database"
 				upsellIcon={ blockTable }
 				upsellImage={ upsellIllustrationUrl }
