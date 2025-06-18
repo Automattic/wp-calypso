@@ -14,6 +14,7 @@ import { default as text } from './text';
 import { default as datetime } from './datetime';
 import { default as boolean } from './boolean';
 import { default as media } from './media';
+import { default as array } from './array';
 import { renderFromElements } from '../utils';
 import { ALL_OPERATORS, OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
 
@@ -48,6 +49,10 @@ export default function getFieldTypeDefinition< Item >(
 
 	if ( 'media' === type ) {
 		return media;
+	}
+
+	if ( 'array' === type ) {
+		return array;
 	}
 
 	// This is a fallback for fields that don't provide a type.

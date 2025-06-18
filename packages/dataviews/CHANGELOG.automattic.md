@@ -10,6 +10,7 @@
 - Update SYNC.md docs to include information on rebasing existing sync branches on top of Calypso trunk and other frequently asked questions.
 - Hide the label in input widgets to prevent duplicate labels in the filter UI.
 - Add new filter operator: `between`.
+- Implement the `array` field type definition.
 
 ## 0.2.1
 
