@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import { persistPromise } from 'calypso/dashboard/app/query-client';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
@@ -26,9 +25,7 @@ import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
 import DashboardBackportSiteSettingsRenderer from './v2';
-import { router } from './v2/layout';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
-import type { RouteByPath } from '@tanstack/react-router';
 
 export function SettingsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
@@ -229,14 +226,6 @@ export async function dashboardBackportSiteSettings( context: PageJSContext, nex
 			feature={ feature }
 		/>
 	);
-
-	await Promise.all( [
-		persistPromise,
-		router.preloadRoute( {
-			to: router.routesByPath[ '/$siteSlug/' ] as RouteByPath,
-			params: { siteSlug: siteSlug },
-		} ),
-	] );
 
 	next();
 }

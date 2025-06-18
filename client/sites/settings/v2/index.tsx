@@ -3,13 +3,13 @@ import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
 import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
-import { queryClient } from 'calypso/dashboard/app/query-client';
+import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent, recordPageView } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import Layout from './layout';
+import Layout, { router } from './layout';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import type { Store } from 'redux';
 
@@ -65,15 +65,22 @@ export default function DashboardBackportSiteSettingsRenderer( {
 			return;
 		}
 
-		rootInstanceRef.current?.render(
-			<Layout
-				store={ store }
-				analyticsClient={ analyticsClient }
-				siteSlug={ siteSlug }
-				feature={ feature }
-			/>
-		);
-	}, [ store, analyticsClient, siteSlug, feature ] );
+		Promise.all( [
+			persistPromise,
+			router.preloadRoute( {
+				to: `/${ siteSlug }`,
+			} ),
+		] ).then( () => {
+			rootInstanceRef.current?.render(
+				<Layout
+					store={ store }
+					analyticsClient={ analyticsClient }
+					siteSlug={ siteSlug }
+					feature={ feature }
+				/>
+			);
+		} );
+	}, [ store, analyticsClient, user, siteSlug, feature ] );
 
 	// Use data already available in Redux to seed the React Query cache and avoid redundant data fetching.
 	useEffect( () => {
