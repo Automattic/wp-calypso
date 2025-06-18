@@ -74,6 +74,7 @@ export default function InputWidget( {
 	return (
 		<div className="dataviews-filters__user-input-widget">
 			<field.Edit
+				hideLabelFromVision={ true }
 				data={ data }
 				field={ field }
 				onChange={ handleChange }
