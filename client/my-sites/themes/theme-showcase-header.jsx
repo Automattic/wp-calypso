@@ -12,7 +12,7 @@ import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
 const shouldSkipTitleFormatting = ( { filter, tier } ) => {
-	return filter === 'recommended' && tier === 'all';
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
 };
 
 export default function ThemeShowcaseHeader( {
