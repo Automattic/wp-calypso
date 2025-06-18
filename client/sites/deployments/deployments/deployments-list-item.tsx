@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { CalypsoDispatch } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
@@ -28,6 +29,36 @@ const noticeOptions = {
 interface DeploymentsListItemProps {
 	deployment: CodeDeploymentData;
 }
+
+const showWorkflowValidationError = (
+	dispatch: CalypsoDispatch,
+	siteSlug: string,
+	deploymentId: number
+) => {
+	dispatch(
+		errorNotice(
+			translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
+				components: {
+					a: (
+						<a
+							href={ manageDeploymentPage( siteSlug, deploymentId ) }
+							onClick={ () => {
+								dispatch( removeNotice( 'github-invalid-workflow-file' ) );
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_github_workflow_validation_failure_click' )
+								);
+							} }
+						/>
+					),
+				},
+			} ),
+			{
+				id: 'github-invalid-workflow-file',
+				isPersistent: true,
+			}
+		)
+	);
+};
 
 export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -51,26 +82,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 				);
 
 				if ( error.code === 'invalid_workflow_file' ) {
-					dispatch(
-						errorNotice(
-							translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
-								components: {
-									a: (
-										<a
-											href={ manageDeploymentPage( siteSlug as string, deployment.id ) }
-											onClick={ () => {
-												dispatch( removeNotice( 'github-invalid-workflow-file' ) );
-											} }
-										/>
-									),
-								},
-							} ),
-							{
-								id: 'github-invalid-workflow-file',
-								isPersistent: true,
-							}
-						)
-					);
+					showWorkflowValidationError( dispatch, siteSlug as string, deployment.id );
 				} else {
 					dispatch(
 						errorNotice(
@@ -93,31 +105,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 
 	useEffect( () => {
 		if ( run?.failure_code === 'workflow_run_failure' ) {
-			dispatch(
-				errorNotice(
-					translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
-						components: {
-							a: (
-								<a
-									href={ manageDeploymentPage( siteSlug as string, deployment.id ) }
-									onClick={ () => {
-										dispatch( removeNotice( 'github-invalid-workflow-file' ) );
-										dispatch(
-											recordTracksEvent(
-												'calypso_hosting_github_workflow_validation_failure_click'
-											)
-										);
-									} }
-								/>
-							),
-						},
-					} ),
-					{
-						id: 'github-invalid-workflow-file',
-						isPersistent: true,
-					}
-				)
-			);
+			showWorkflowValidationError( dispatch, siteSlug as string, deployment.id );
 		}
 	}, [ run?.failure_code, run?.id, dispatch, siteSlug, deployment.id ] );
 
