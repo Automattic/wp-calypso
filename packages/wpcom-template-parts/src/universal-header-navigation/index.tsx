@@ -3,7 +3,7 @@ import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
@@ -25,6 +25,23 @@ const UniversalNavbarHeader = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
+
+	// Handle Escape key to close dropdowns
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' ) {
+				// Remove focus from the currently focused element to close any open dropdown
+				if ( document.activeElement instanceof HTMLElement ) {
+					document.activeElement.blur();
+				}
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeyDown );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeyDown );
+		};
+	}, [] );
 
 	if ( ! startUrl ) {
 		startUrl = addQueryArgs(
