@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SiteExcerptData } from '@automattic/sites';
 import { DropdownMenu, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
@@ -5,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
+import EnvironmentIcon from './site-environment-icons/environment-icon';
 
 import './site-environment-switcher.scss';
 
@@ -46,6 +48,8 @@ export default function SiteEnvironmentSwitcher( {
 		onChange( siteIdToChange as number );
 	};
 
+	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
+
 	return (
 		<DropdownMenu
 			icon={ chevronDownSmall }
@@ -56,7 +60,7 @@ export default function SiteEnvironmentSwitcher( {
 				),
 			} }
 			popoverProps={ {
-				position: 'bottom',
+				placement: stagingSitesRedesign ? 'bottom-start' : 'bottom',
 				className: 'site-preview-pane__site-switcher-dropdown-menu',
 			} }
 			controls={ [
@@ -64,11 +68,17 @@ export default function SiteEnvironmentSwitcher( {
 					title: __( 'Production' ),
 					onClick: () => setEnvironment( productionSiteId ),
 					isActive: ! site.is_wpcom_staging_site,
+					...( stagingSitesRedesign && {
+						icon: () => <EnvironmentIcon type="production" />,
+					} ),
 				},
 				{
 					title: __( 'Staging' ),
 					onClick: () => setEnvironment( stagingSiteId ),
 					isActive: site.is_wpcom_staging_site,
+					...( stagingSitesRedesign && {
+						icon: () => <EnvironmentIcon type="staging" />,
+					} ),
 				},
 			] }
 		/>
