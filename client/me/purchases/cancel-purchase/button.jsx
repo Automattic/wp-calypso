@@ -66,8 +66,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = async () => {
-		const { translate } = this.props;
-
 		if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
 		}
@@ -86,8 +84,7 @@ class CancelPurchaseButton extends Component {
 			if ( result.success ) {
 				this.setState( {
 					cancellationCompleted: true,
-					cancellationMessage:
-						result.message || translate( 'Your subscription has been cancelled.' ),
+					cancellationMessage: result.message,
 				} );
 			} else {
 				this.cancellationFailed( result.error );
@@ -123,8 +120,21 @@ class CancelPurchaseButton extends Component {
 			const success = await cancelPurchaseAsync( purchase.id );
 
 			if ( success ) {
-				// Don't clear purchases or refresh plans here - do it after survey completion
-				return { success: true };
+				const purchaseName = getName( purchase );
+				const subscriptionEndDate = this.props.moment( purchase.expiryDate ).format( 'LL' );
+
+				return {
+					success: true,
+					message: translate(
+						'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.',
+						{
+							args: {
+								purchaseName,
+								subscriptionEndDate,
+							},
+						}
+					),
+				};
 			}
 
 			return {
