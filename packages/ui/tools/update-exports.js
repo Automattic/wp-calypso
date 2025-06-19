@@ -1,6 +1,6 @@
 /* eslint-disable import/no-nodejs-modules */
 import fs from 'node:fs';
-import { entrypoints } from './constants.js';
+import { entrypoints } from '../entrypoints.js';
 
 const packageJson = JSON.parse( fs.readFileSync( 'package.json', 'utf8' ) );
 

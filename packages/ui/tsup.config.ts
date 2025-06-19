@@ -1,6 +1,6 @@
 import { postcssModules, sassPlugin } from 'esbuild-sass-plugin';
 import { defineConfig } from 'tsup';
-import { entrypoints } from './tools/constants.js';
+import { entrypoints } from './entrypoints.js';
 
 const entry = Object.values( entrypoints ).map( ( entrypoint ) => `./src/${ entrypoint }` );
 
