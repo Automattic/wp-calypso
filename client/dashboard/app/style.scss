@@ -41,3 +41,11 @@ a {
 #wpcom {
 	font-size: $font-size-medium;
 }
+
+// Utility classes
+
+.truncate {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

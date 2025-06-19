@@ -55,11 +55,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 					<RouterLinkMenuItem key={ site.ID } to={ `/sites/${ site.slug }` } onClick={ onClose }>
 						<div style={ { display: 'flex', gap: '8px', alignItems: 'center', width: '100%' } }>
 							<SiteIcon site={ site } size={ 24 } />
-							<span
-								style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
-							>
-								{ fields[ 0 ].getValue( { item: site } ) }
-							</span>
+							<span className="truncate">{ fields[ 0 ].getValue( { item: site } ) }</span>
 						</div>
 					</RouterLinkMenuItem>
 				) ) }
