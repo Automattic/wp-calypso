@@ -160,19 +160,20 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
-					{ ...( isArchiveBreakdownEnabled && ! summary
-						? {
-								toggleControl: (
-									<SimplifiedSegmentedControl
-										options={ options }
-										initialSelected={ statType }
-										onSelect={ onStatTypeChange }
-									/>
-								),
-								mainItemLabel: options.find( ( option ) => option.value === statType )
-									?.mainItemLabel,
-						  }
-						: null ) }
+					toggleControl={
+						isArchiveBreakdownEnabled &&
+						! summary && (
+							<SimplifiedSegmentedControl
+								options={ options }
+								initialSelected={ statType }
+								onSelect={ onStatTypeChange }
+							/>
+						)
+					}
+					mainItemLabel={
+						isArchiveBreakdownEnabled &&
+						options.find( ( option ) => option.value === statType )?.mainItemLabel
+					}
 				/>
 			) }
 			{ presentEmptyUI && (
