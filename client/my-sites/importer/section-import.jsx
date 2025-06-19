@@ -116,7 +116,7 @@ class SectionImport extends Component {
 	} );
 
 	state = {
-		showSuccessScreen: true,
+		showSuccessScreen: false,
 	};
 
 	showSuccessScreen = () => {
