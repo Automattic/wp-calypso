@@ -1,5 +1,7 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	Metrics,
 	PerformanceMetricsHistory,
@@ -141,23 +143,11 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 				<p>
 					{ getMetricValuations( translate )[ activeTab ].explanation }
 					&nbsp;
-					{ isPerformanceScoreSelected ? (
-						<a
-							href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ translate( 'See calculator ↗' ) }
-						</a>
-					) : (
-						<a
-							href={ `https://web.dev/articles/${ encodeURIComponent( activeTab ) }` }
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ translate( 'Learn more ↗' ) }
-						</a>
-					) }
+					<InlineSupportLink
+						supportLink={ localizeUrl( getMetricValuations( translate )[ activeTab ].docsUrl ) }
+					>
+						{ translate( 'Learn more ↗' ) }
+					</InlineSupportLink>
 				</p>
 				<div className="core-web-vitals-display__ranges">
 					<div className="range">
