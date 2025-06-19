@@ -572,6 +572,9 @@ export class Login extends Component {
 			);
 		}
 
+		const isLostPassword =
+			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
+
 		const shouldUseWideHeading =
 			isStudioAppOAuth2Client( oauth2Client ) ||
 			isFromAkismet ||
@@ -602,7 +605,7 @@ export class Login extends Component {
 									<HeadingSubText
 										isSocialFirst={ isSocialFirst }
 										twoFactorAuthType={ twoFactorAuthType }
-										lostPassword={ currentRoute === '/log-in/lostpassword' }
+										isLostPassword={ isLostPassword }
 									/>
 								}
 							/>
