@@ -36,10 +36,11 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 			} = await wp.req.get( url, {
 				apiVersion: '1.3',
 			} );
+			let billingHistoryTotal = billing_history_total ?? 0;
 			const fullBillingHistory = billing_history ?? [];
-			if ( fullBillingHistory.length === limit && ( billing_history_total ?? 0 ) !== limit ) {
+			if ( fullBillingHistory.length === limit && billingHistoryTotal !== limit ) {
 				// If we have exactly the limit number of transactions (and this is not the full total), it means there are more transactions to fetch.
-				do {
+				while ( fullBillingHistory.length < billingHistoryTotal ) {
 					// Fetch the next page of transactions.
 					const offset_url = url + '&offset=' + fullBillingHistory.length;
 
@@ -47,8 +48,9 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 						apiVersion: '1.3',
 					} );
 
+					billingHistoryTotal = res.billing_history_total ?? 0;
 					fullBillingHistory.push( ...res.billing_history );
-				} while ( fullBillingHistory.length < ( billing_history_total ?? 0 ) );
+				}
 			}
 
 			dispatch( {
