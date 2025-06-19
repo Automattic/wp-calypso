@@ -47,15 +47,18 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		}
 	}, [ score ] );
 
-	const generateFeedbackMessage = ( score: 'good' | 'bad' ): Message => {
-		return {
-			content: score === 'good' ? __( 'Good 👍' ) : __( 'Bad 👎' ),
-			payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
-			metadata: { rated: true },
-			role: 'user',
-			type: 'message',
-		} as Message;
-	};
+	const generateFeedbackMessage = useCallback(
+		( score: 'good' | 'bad' ): Message => {
+			return {
+				content: score === 'good' ? __( 'Good 👍' ) : __( 'Bad 👎' ),
+				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
+				metadata: { rated: true },
+				role: 'user',
+				type: 'message',
+			};
+		},
+		[ __ ]
+	);
 
 	const postScore = useCallback(
 		async ( score: 'good' | 'bad' ) => {
@@ -97,10 +100,10 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 					<p>{ __( 'Was this helpful?' ) }</p>
 				</div>
 				<div className="odie-conversation-feedback__thumbs">
-					<Button onClick={ () => postScore( 'good' ) } rel="noreferrer">
+					<Button onClick={ () => postScore( 'good' ) }>
 						<ThumbsUpIcon />
 					</Button>
-					<Button onClick={ () => postScore( 'bad' ) } rel="noreferrer">
+					<Button onClick={ () => postScore( 'bad' ) }>
 						<ThumbsDownIcon />
 					</Button>
 				</div>

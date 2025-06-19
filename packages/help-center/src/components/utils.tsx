@@ -39,9 +39,8 @@ export const getLastMessage = ( {
 		return null;
 	}
 
-	const filteredMessages = conversation.messages.filter(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( message ) => ( message as any ).type !== 'form'
+	const filteredMessages = conversation.messages.filter( ( message ) =>
+		'type' in message ? message.type !== 'form' : true
 	);
 	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
 };

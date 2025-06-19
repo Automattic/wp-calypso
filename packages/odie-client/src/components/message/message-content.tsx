@@ -31,14 +31,15 @@ export const MessageContent = ( {
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		isFeedbackMessage && 'odie-chatbox-message-conversation-feedback',
-		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
+		{
+			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
+			'odie-chatbox-message-no-avatar': message?.context?.flags?.show_ai_avatar === false,
+		}
 	);
 
-	const containerClasses = clsx(
-		'odie-chatbox-message-sources-container',
-		isNextMessageFromSameSender && 'next-chat-message-same-sender'
-	);
+	const containerClasses = clsx( 'odie-chatbox-message-sources-container', {
+		'next-chat-message-same-sender': isNextMessageFromSameSender,
+	} );
 
 	const isMessageWithEscalationOption =
 		message.role === 'bot' &&
