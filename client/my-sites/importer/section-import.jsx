@@ -39,7 +39,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './section-import.scss';
-import { SuccessPanel } from './success-panel';
+import CelebrateLaunchModal from './celebration-modal';
 
 /**
  * Configuration mapping import engines to associated import components.
@@ -116,11 +116,15 @@ class SectionImport extends Component {
 	} );
 
 	state = {
-		showSuccessScreen: true,
+		showSuccessScreen: false,
 	};
 
 	showSuccessScreen = () => {
 		this.setState( { showSuccessScreen: true } );
+	};
+
+	closeSuccessScreen = () => {
+		this.setState( { showSuccessScreen: false } );
 	};
 
 	handleStateChanges = () => {
@@ -355,13 +359,16 @@ class SectionImport extends Component {
 			( importItem ) => importItem.importerState === appStates.IMPORT_SUCCESS
 		);
 
-		if ( this.state.showSuccessScreen ) {
-			return <SuccessPanel site={ site } importerId={ importSuccess?.importerId } />;
-		}
-
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Import Content' ) } />
+				{ this.state.showSuccessScreen && (
+					<CelebrateLaunchModal
+						setModalIsOpen={ this.closeSuccessScreen }
+						site={ site }
+						importerId={ importSuccess?.importerId }
+					/>
+				) }
 				<NavigationHeader
 					screenOptionsTab="import.php"
 					navigationItems={ [] }
