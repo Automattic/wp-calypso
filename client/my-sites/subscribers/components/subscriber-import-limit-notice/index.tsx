@@ -4,18 +4,30 @@ import { Notice } from '@wordpress/components';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
-export default function SubscriberImportLimitNotice() {
+export default function SubscriberImportLimitNotice( {
+	closeModal = () => {},
+}: {
+	closeModal?: () => void;
+} ) {
 	const translate = useTranslate();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const currentPlan = selectedSite?.plan?.product_slug || '';
 	const isOnFreePlan = isFreePlan( currentPlan ) || isJetpackFreePlan( currentPlan );
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, selectedSite?.ID ) );
 
 	if ( ! isOnFreePlan || ! selectedSite?.ID ) {
 		return null;
 	}
+
+	const supportLink = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/import-subscribers/#add-up-to-100-subscribers'
+		: 'https://wordpress.com/support/import-subscribers-to-a-newsletter/#import-limits';
+	const supportPostId = ! isWPCOMSite ? null : 220199;
 
 	return (
 		<Notice status="info" isDismissible={ false } className="subscribers-import-limit-notice">
@@ -28,11 +40,10 @@ export default function SubscriberImportLimitNotice() {
 							supportLink: (
 								<InlineSupportLink
 									noWrap={ false }
-									showIcon={ false }
-									supportLink={ localizeUrl(
-										'https://wordpress.com/support/import-subscribers-to-a-newsletter/#import-limits'
-									) }
-									supportPostId={ 220199 }
+									showIcon={ ! supportPostId }
+									supportLink={ localizeUrl( supportLink ) }
+									supportPostId={ supportPostId }
+									onClick={ supportPostId && closeModal }
 								/>
 							),
 							upgradeLink: <a href={ `/plans/${ selectedSite.slug }` } />,

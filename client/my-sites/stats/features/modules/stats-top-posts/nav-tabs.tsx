@@ -5,7 +5,11 @@ import {
 	getPathWithUpdatedQueryString,
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
-import useOptionLabels, { MAIN_STAT_TYPE, StatsModulePostsProps } from './use-option-labels';
+import useOptionLabels, {
+	MAIN_STAT_TYPE,
+	StatsModulePostsProps,
+	validQueryViewType,
+} from './use-option-labels';
 
 function NavTabs( { query }: StatsModulePostsProps ) {
 	const optionLabels = useOptionLabels();
@@ -16,14 +20,14 @@ function NavTabs( { query }: StatsModulePostsProps ) {
 				title: item.tabLabel,
 				className: `stats-navigation__${ key }`,
 				path: getPathWithUpdatedQueryString( {
-					viewdType: key,
+					viewType: key,
 				} ),
 				analyticsId: item.analyticsId,
 			};
 		} );
 	}, [ optionLabels ] );
 
-	const selectedTab = query.viewdType || MAIN_STAT_TYPE;
+	const selectedTab = validQueryViewType( query.viewType ) || MAIN_STAT_TYPE;
 
 	return (
 		<TabPanel

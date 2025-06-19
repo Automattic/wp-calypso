@@ -12,6 +12,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import useSubscriberCountQuery from '../../queries/use-subscriber-count-query';
 import { useRecordExport } from '../../tracks';
+
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
@@ -71,7 +72,6 @@ const SubscribersHeaderPopover = ( {
 				isVisible={ isVisible }
 				context={ buttonRef.current }
 				className="subscriber-popover"
-				focusOnShow={ false }
 			>
 				{ hasSubscribers ? (
 					<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>

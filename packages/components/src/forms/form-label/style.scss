@@ -1,12 +1,10 @@
 @import "@automattic/typography/styles/variables";
 
 .form-label {
-	&:not(.form-label-core-styles) {
-		display: block;
-		font-size: $font-body-small;
-		font-weight: 600;
-		margin-bottom: 5px;
-	}
+	display: block;
+	font-size: $font-body-small;
+	font-weight: 600;
+	margin-bottom: 5px;
 
 	.form-label__required {
 		color: var(--color-error);
@@ -27,8 +25,6 @@
 }
 
 .form-label-core-styles {
-	display: block;
-	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 1.4;
 	color: var(--color-neutral-100);

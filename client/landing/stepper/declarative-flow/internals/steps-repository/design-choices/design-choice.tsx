@@ -28,7 +28,7 @@ const DesignChoice = ( {
 }: Props ) => (
 	<button
 		className={ clsx( 'design-choice', className ) }
-		aria-label={ title }
+		aria-label={ `${ title }. ${ description }` }
 		onClick={ () => onSelect( destination ) }
 		style={ {
 			backgroundImage: bgImageSrc ? `url(${ bgImageSrc })` : undefined,

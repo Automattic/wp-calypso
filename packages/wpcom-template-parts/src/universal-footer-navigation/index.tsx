@@ -242,6 +242,11 @@ export const PureUniversalNavbarFooter = ( {
 										</span>
 									</a>
 								</li>
+								<li>
+									<a href={ localizeUrl( 'https://wordpress.com/accessibility/' ) } target="_self">
+										{ __( 'Accessibility', __i18n_text_domain__ ) }
+									</a>
+								</li>
 							</ul>
 						</div>
 						<div>

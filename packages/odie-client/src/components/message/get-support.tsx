@@ -15,6 +15,7 @@ interface GetSupportProps {
 	isUserEligibleForPaidSupport?: boolean;
 	canConnectToZendesk?: boolean;
 	forceEmailSupport?: boolean;
+	forceAIConversation?: boolean;
 }
 
 interface ButtonConfig {
@@ -31,6 +32,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	isUserEligibleForPaidSupport,
 	canConnectToZendesk = false,
 	forceEmailSupport = false,
+	forceAIConversation = false,
 } ) => {
 	const navigate = useNavigate();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -84,10 +86,17 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					} );
 				}
 
-				if ( canConnectToZendesk || contextCanConnectToZendesk ) {
+				if ( forceAIConversation ) {
+					buttons.push( {
+						text: __( 'Get support', __i18n_text_domain__ ),
+						action: async () => {
+							onClickAdditionalEvent?.( 'chat-ai' );
+							navigate( '/odie' );
+						},
+					} );
+				} else if ( canConnectToZendesk || contextCanConnectToZendesk ) {
 					buttons.push( {
 						text: __( 'Chat with support', __i18n_text_domain__ ),
-						waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
 						action: async () => {
 							onClickAdditionalEvent?.( 'chat' );
 							resetSupportInteraction().then( ( interaction ) => {

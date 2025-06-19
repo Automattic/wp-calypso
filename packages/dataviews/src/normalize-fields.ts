@@ -17,6 +17,7 @@ import type {
 import { getControl } from './dataform-controls';
 import {
 	ALL_OPERATORS,
+	OPERATOR_BETWEEN,
 	OPERATOR_IS_ANY,
 	OPERATOR_IS_NONE,
 	SINGLE_SELECTION_OPERATORS,
@@ -52,7 +53,9 @@ function getFilterBy< Item >(
 
 		// Assign default values if no operator was provided.
 		if ( ! operators || ! Array.isArray( operators ) ) {
-			operators = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
+			operators = !! fieldTypeDefinition.filterBy
+				? fieldTypeDefinition.filterBy.defaultOperators
+				: [];
 		}
 
 		// Make sure only valid operators are included.
@@ -64,6 +67,13 @@ function getFilterBy< Item >(
 			validOperators.includes( operator )
 		);
 
+		// The `between` operator is not supported when elements are provided.
+		if ( field.elements && operators.includes( OPERATOR_BETWEEN ) ) {
+			operators = operators.filter(
+				( operator ) => operator !== OPERATOR_BETWEEN
+			);
+		}
+
 		// Do not allow mixing single & multiselection operators.
 		// Remove multiselection operators if any of the single selection ones is present.
 		const hasSingleSelectionOperator = operators.some( ( operator ) =>
@@ -71,7 +81,10 @@ function getFilterBy< Item >(
 		);
 		if ( hasSingleSelectionOperator ) {
 			operators = operators.filter( ( operator ) =>
-				SINGLE_SELECTION_OPERATORS.includes( operator )
+				// The 'Between' operator is unique as it can be combined with single selection operators.
+				[ ...SINGLE_SELECTION_OPERATORS, OPERATOR_BETWEEN ].includes(
+					operator
+				)
 			);
 		}
 
@@ -91,8 +104,16 @@ function getFilterBy< Item >(
 		return false;
 	}
 
+	let defaultOperators = fieldTypeDefinition.filterBy.defaultOperators;
+	// The `between` operator is not supported when elements are provided.
+	if ( field.elements && defaultOperators.includes( OPERATOR_BETWEEN ) ) {
+		defaultOperators = defaultOperators.filter(
+			( operator ) => operator !== OPERATOR_BETWEEN
+		);
+	}
+
 	return {
-		operators: fieldTypeDefinition.filterBy.defaultOperators,
+		operators: defaultOperators,
 	};
 }
 

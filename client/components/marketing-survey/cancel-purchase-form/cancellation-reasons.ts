@@ -40,7 +40,7 @@ export interface CancellationReason extends CancellationReasonBase {
 	/**
 	 * Options for the sub category select
 	 */
-	selectOptions?: CancellationReasonBase[];
+	selectOptions?: CancellationReason[];
 }
 
 /**
@@ -71,65 +71,89 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'price/budget',
 		get label() {
-			return translate( 'Price/Budget' );
+			return translate( 'Too expensive' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
 				value: 'tooExpensive',
 				get label() {
-					return translate( 'It’s too expensive.' );
+					return translate( 'The plan is too expensive for the features offered.' );
 				},
 			},
 			{
-				value: 'wantCheaperPlan',
+				value: 'lackOfCustomization',
 				get label() {
-					return translate( 'I want a cheaper plan.' );
+					return translate( 'Lack of customization features (e.g., colors, fonts, themes).' );
 				},
 			},
 			{
 				value: 'freeIsGoodEnough',
 				get label() {
-					return translate( 'Free is good enough for me.' );
+					return translate( 'The free plan is sufficient for my current needs.' );
+				},
+			},
+			{
+				value: 'foundBetterValue',
+				get label() {
+					return translate( 'I found a competitor with better pricing/value.' );
+				},
+			},
+			{
+				value: 'budgetConstraints',
+				get label() {
+					return translate( 'Budget constraints / Can no longer afford it.' );
+				},
+			},
+			{
+				value: 'otherPriceValue',
+				get label() {
+					return translate( 'Something else related to price/value.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more about your price/value concern' );
 				},
 			},
 		],
 	},
 	{
-		value: 'couldNotFinish',
+		value: 'tooHardToUse',
 		get label() {
-			return translate( 'Couldn’t finish my site' );
+			return translate( 'Too hard to use' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'noTime',
+				value: 'complicatedDashboard',
 				get label() {
-					return translate( 'I don’t have time.' );
+					return translate( 'The platform/dashboard is too complicated or confusing to navigate.' );
 				},
 			},
 			{
-				value: 'needProfessionalHelp',
+				value: 'difficultEditor',
 				get label() {
-					return translate( 'Need professional help to build my site.' );
+					return translate( 'The website editor is difficult or unintuitive to use.' );
 				},
 			},
 			{
-				value: 'siteIsNotReady',
+				value: 'tooMuchTimeToLearn',
 				get label() {
-					return translate( 'My site is not ready.' );
+					return translate( 'It takes too much time to learn how to use the platform.' );
 				},
 			},
 			{
-				value: 'cannotFindWhatIWanted',
+				value: 'inadequateOnboarding',
 				get label() {
-					return translate( 'Couldn’t find what I wanted.' );
+					return translate( 'Onboarding or tutorials were not helpful enough.' );
 				},
 			},
 			{
-				value: 'tooComplicated',
+				value: 'otherTooHardToUse',
 				get label() {
-					return translate( 'It’s too complicated for me.' );
+					return translate( 'Something else related to too hard to use.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],
@@ -142,39 +166,48 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'otherFeatures',
+				value: 'cannotInstallPlugins',
 				get label() {
-					return translate( 'Other features' );
+					return translate(
+						'Cannot install desired plugins (e.g., from WordPress.org or third-party).'
+					);
 				},
 			},
 			{
-				value: 'eCommerceFeatures',
+				value: 'cannotUploadThemes',
 				get label() {
-					return translate( 'eCommerce features' );
+					return translate( 'Cannot upload custom themes.' );
 				},
 			},
 			{
-				value: 'customization',
+				value: 'limitedCustomization',
 				get label() {
-					return translate( 'Customization / CSS' );
+					return translate(
+						'Limited design or customization options (e.g., layout, specific elements).'
+					);
 				},
 			},
 			{
-				value: 'cannotUsePlugin',
+				value: 'missingFunctionality',
 				get label() {
-					return translate( 'Can’t use a plugin' );
+					return translate(
+						'Lacking specific functionality I need (e.g., e-commerce, specific integrations, advanced SEO tools).'
+					);
 				},
 			},
 			{
-				value: 'cannotUseTheme',
+				value: 'coreFeaturesMissing',
 				get label() {
-					return translate( 'Can’t use a theme' );
+					return translate( 'Core features I expected are only available on a much higher plan.' );
 				},
 			},
 			{
-				value: 'loadingTime',
+				value: 'otherMissingFeatures',
 				get label() {
-					return translate( 'Loading time' );
+					return translate( 'Something else related to features/flexibility.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],
@@ -182,26 +215,41 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'technicalIssues',
 		get label() {
-			return translate( 'Technical issues' );
+			return translate( 'Technical problems' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'tooComplicated',
+				value: 'tooSlow',
 				get label() {
-					return translate( 'It’s too complicated for me.' );
+					return translate( 'Site is slow or experiences performance issues.' );
 				},
 			},
 			{
-				value: 'seoIssues',
+				value: 'bugsOrGlitches',
 				get label() {
-					return translate( 'SEO issues' );
+					return translate( 'Encountered bugs, errors, or glitches.' );
 				},
 			},
 			{
-				value: 'loadingTime',
+				value: 'migrationProblems',
 				get label() {
-					return translate( 'Loading time' );
+					return translate( 'Problems migrating my existing site or content.' );
+				},
+			},
+			{
+				value: 'downtime',
+				get label() {
+					return translate( 'Site was down or inaccessible.' );
+				},
+			},
+			{
+				value: 'otherTechnicalIssues',
+				get label() {
+					return translate( 'Something else related to technical problems.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],
@@ -209,26 +257,149 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'domain',
 		get label() {
-			return translate( 'Domain' );
+			return translate( 'Problems with domain' );
 		},
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'didNotGetFreeDomain',
+				value: 'troubleConnectingOrTransferring',
 				get label() {
-					return translate( 'I didn’t get a free domain.' );
+					return translate( 'Trouble connecting or transferring my existing domain.' );
 				},
 			},
 			{
-				value: 'otherDomainIssues',
+				value: 'confusedAboutDomains',
 				get label() {
-					return translate( 'Other domain issues' );
+					return translate( 'Confused about how domains work with the WordPress.com plan.' );
 				},
 			},
 			{
-				value: 'domainConnection',
+				value: 'domainIncorrect',
 				get label() {
-					return translate( 'Problem connecting my domain' );
+					return translate( 'Didn’t get the domain name I expected / My domain is incorrect.' );
+				},
+			},
+			{
+				value: 'otherDomain',
+				get label() {
+					return translate( 'Something else related to domains.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
+		],
+	},
+	{
+		value: 'wrongPlanOrSite',
+		get label() {
+			return translate( 'Wrong plan or site' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'wrongPlan',
+				get label() {
+					return translate( 'I purchased this plan by mistake.' );
+				},
+			},
+			{
+				value: 'wrongSite',
+				get label() {
+					return translate( 'I meant to upgrade a different website or account.' );
+				},
+			},
+			{
+				value: 'noMatch',
+				get label() {
+					return translate( 'The plan I chose didn’t match what I thought I was buying.' );
+				},
+			},
+			{
+				value: 'otherWrongPlanOrSite',
+				get label() {
+					return translate( 'Something else related to an accidental purchase.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
+		],
+	},
+	{
+		value: 'badSupport',
+		get label() {
+			return translate( 'Bad support experience' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'slowOrUnhelpful',
+				get label() {
+					return translate( 'Support was unhelpful or slow to respond.' );
+				},
+			},
+			{
+				value: 'noHumanSupport',
+				get label() {
+					return translate( 'Could not easily reach a human support agent.' );
+				},
+			},
+			{
+				value: 'AIInsufficient',
+				get label() {
+					return translate( 'AI/automated support was not sufficient for my issue.' );
+				},
+			},
+			{
+				value: 'otherBadSupport',
+				get label() {
+					return translate( 'Something else related to support.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
+				},
+			},
+		],
+	},
+	{
+		value: 'noLongerNeedSite',
+		get label() {
+			return translate( 'No longer need a site' );
+		},
+		selectOptions: [
+			PLACEHOLDER,
+			{
+				value: 'projectChanged',
+				get label() {
+					return translate( 'My project/business plans have changed.' );
+				},
+			},
+			{
+				value: 'justExploring',
+				get label() {
+					return translate( 'I was just exploring/testing the platform.' );
+				},
+			},
+			{
+				value: 'noLongerNeedSite',
+				get label() {
+					return translate( 'I no longer need this website/service.' );
+				},
+			},
+			{
+				value: 'mayReturn',
+				get label() {
+					return translate( 'Temporary cancellation, I might return.' );
+				},
+			},
+			{
+				value: 'otherNoLongerNeedSite',
+				get label() {
+					return translate( 'Something else related to changed needs.' );
+				},
+				get textPlaceholder() {
+					return translate( 'Please tell us more' );
 				},
 			},
 		],

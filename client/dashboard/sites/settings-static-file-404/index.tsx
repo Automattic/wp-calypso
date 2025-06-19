@@ -17,8 +17,8 @@ import {
 	siteStaticFile404SettingMutation,
 } from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
-import { canViewStaticFile404Settings } from '../features';
-import SettingsCallout from '../settings-callout';
+import { HostingFeatures, canViewStaticFile404Settings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@automattic/dataviews';
 
@@ -56,32 +56,17 @@ const form = {
 };
 
 export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: string } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentSetting } = useQuery( {
 		...siteStaticFile404SettingQuery( site.ID ),
-		enabled: site && canViewStaticFile404Settings( site ),
+		enabled: canViewStaticFile404Settings( site ),
 	} );
 	const mutation = useMutation( siteStaticFile404SettingMutation( site.ID ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { setting: string } >( {
 		setting: currentSetting ?? 'default',
 	} );
-
-	if ( ! site ) {
-		return null;
-	}
-
-	if ( ! canViewStaticFile404Settings( site ) ) {
-		return (
-			<PageLayout
-				size="small"
-				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
-			>
-				<SettingsCallout siteSlug={ siteSlug } tracksId="static-file-404" />
-			</PageLayout>
-		);
-	}
 
 	const isDirty = formData.setting !== currentSetting;
 	const { isPending } = mutation;
@@ -112,32 +97,38 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<DataForm< { setting: string } >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: { setting?: string } ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<HStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</HStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.STATIC_FILE_404 }
+				tracksFeatureId="settings-static-file-404"
+			>
+				<Card>
+					<CardBody>
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 4 }>
+								<DataForm< { setting: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { setting?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<HStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</HStack>
+							</VStack>
+						</form>
+					</CardBody>
+				</Card>
+			</HostingFeature>
 		</PageLayout>
 	);
 }

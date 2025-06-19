@@ -5,8 +5,7 @@ import './style.scss';
 export default function ReferralsFooter() {
 	const translate = useTranslate();
 
-	const link =
-		'https://agencieshelp.automattic.com/knowledge-base/about-automattic-for-agencies/#payout-calculation-and-schedule';
+	const link = 'https://automattic.com/for-agencies/program-incentives/';
 
 	return (
 		<div className="referrals-footer">

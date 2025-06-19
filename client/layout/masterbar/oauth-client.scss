@@ -447,31 +447,8 @@
 
 	}
 
-	// primary text rules
-	.login__form-header,
-	.signup-form__wrapper h3 {
-		font-weight: 600;
-		font-size: $font-title-small;
-		line-height: 32px;
-		margin-block: 8px;
-		text-align: center;
-	}
-
 	.login__form-post-header {
 		margin-top: 24px;
-	}
-
-	.login__form-header-wrapper,
-	.signup-form__wrapper {
-		padding: 32px 0 0;
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-		width: 100%;
-
-		>* {
-			max-width: 375px;
-		}
 	}
 
 	.wp-login__links,
@@ -548,45 +525,6 @@
 
 	.layout__content {
 		padding-top: 90px;
-	}
-
-	main.wp-login__main.main {
-		background: var(--studio-white);
-		padding-bottom: 0;
-		max-width: 640px;
-		border: 1px solid var(--studio-gray-5);
-
-		.card.login__form,
-		.card.auth-form__social {
-			box-shadow: none;
-		}
-
-		.wp-login__container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.login__form {
-			display: flex;
-			flex-direction: column;
-
-			.login__form-userdata {
-				order: 1;
-			}
-
-			.login__form-terms {
-				order: 2;
-			}
-
-			.login__form-action {
-				order: 3;
-			}
-
-			.login__form-signup-link {
-				order: 4;
-			}
-		}
 	}
 
 	.login__social-tos {
