@@ -39,6 +39,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './section-import.scss';
+import { SuccessPanel } from './success-panel';
 
 /**
  * Configuration mapping import engines to associated import components.
@@ -114,6 +115,14 @@ class SectionImport extends Component {
 		afterStartImport?.();
 	} );
 
+	state = {
+		showSuccessScreen: true,
+	};
+
+	showSuccessScreen = () => {
+		this.setState( { showSuccessScreen: true } );
+	};
+
 	handleStateChanges = () => {
 		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
@@ -128,6 +137,10 @@ class SectionImport extends Component {
 						? bytesToFilesizeRange( importItem.file.size )
 						: null,
 				};
+			}
+
+			if ( importerState === appStates.IMPORT_SUCCESS && ! this.state.showSuccessScreen ) {
+				this.showSuccessScreen();
 			}
 
 			this.trackImporterStateChange( importerState, importerId, eventProps );
@@ -165,7 +178,6 @@ class SectionImport extends Component {
 			this.onceAutoStartImport();
 		}
 	}
-
 	componentDidUpdate() {
 		if ( this.props.isImporterStatusHydrated ) {
 			this.onceAutoStartImport();
@@ -339,6 +351,13 @@ class SectionImport extends Component {
 		);
 
 		const hasUnifiedImporter = isEnabled( 'importer/unified' );
+		const importSuccess = this.props.siteImports.find(
+			( importItem ) => importItem.importerState === appStates.IMPORT_SUCCESS
+		);
+
+		if ( this.state.showSuccessScreen ) {
+			return <SuccessPanel site={ site } importerId={ importSuccess?.importerId } />;
+		}
 
 		return (
 			<Main>

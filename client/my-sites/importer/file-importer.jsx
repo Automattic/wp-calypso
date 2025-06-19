@@ -10,7 +10,6 @@ import { appStates } from 'calypso/state/imports/constants';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
-import SuccessPanel from './success-panel';
 import UploadingPane from './uploading-pane';
 
 import './file-importer.scss';
@@ -148,7 +147,6 @@ class FileImporter extends PureComponent {
 						hideActionButtons={ hideActionButtons }
 					/>
 				) }
-				{ isImportSuccess && <SuccessPanel site={ site } importerStatus={ importerStatus } /> }
 			</Card>
 		);
 	}
