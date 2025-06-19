@@ -97,6 +97,12 @@ export function getPurchasesFieldDefinitions( {
 		page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
 	};
 
+	const isTransferredOwnership = ( purchase: Purchases.Purchase ) => {
+		return transferredOwnershipPurchases.some(
+			( transferredPurchase ) => transferredPurchase.id === purchase.id
+		);
+	};
+
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'site',
@@ -161,21 +167,25 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
-							<Button
-								variant="link"
-								title={ translate( 'Manage purchase', { textOnly: true } ) }
-								label={ translate( 'Manage purchase', { textOnly: true } ) }
-								onClick={ () => goToPurchase( item ) }
-							>
-								{ getDisplayName( item ) }
-							</Button>
-							&nbsp;
-							<OwnerInfo
-								purchase={ item }
-								isTransferredOwnership={ transferredOwnershipPurchases.some(
-									( transferredPurchase ) => transferredPurchase.id === item.id
-								) }
-							/>
+							{ isTransferredOwnership( item ) ? (
+								<div>
+									{ getDisplayName( item ) }
+									&nbsp;
+									<OwnerInfo
+										purchase={ item }
+										isTransferredOwnership={ isTransferredOwnership( item ) }
+									/>
+								</div>
+							) : (
+								<Button
+									variant="link"
+									title={ translate( 'Manage purchase', { textOnly: true } ) }
+									label={ translate( 'Manage purchase', { textOnly: true } ) }
+									onClick={ () => goToPurchase( item ) }
+								>
+									{ getDisplayName( item ) }
+								</Button>
+							) }
 						</div>
 					</div>
 				);
