@@ -1,7 +1,7 @@
 /**
  * SiteEnvironmentIcon component
  *
- * Renders an environment icon (Production or Staging) based on the type prop
+ * Renders site environment icon (Production or Staging) based on the type prop
  */
 
 type SiteEnvironmentType = 'production' | 'staging';
