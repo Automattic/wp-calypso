@@ -50,7 +50,9 @@ const useSupportDocData = ( {
 	} );
 
 	const site = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
+	);
 
 	// Lazy load the supportPostId and supportLink by supportContext if not provided.
 	const shouldLoadSupportDocData = supportContext && ! supportPostId && ! supportLink;
