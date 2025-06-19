@@ -134,7 +134,6 @@ interface NonClickableItemProps extends MenuItemProps {
 export const NonClickableItem = ( { content, className, children }: NonClickableItemProps ) => {
 	const contentString = String( content );
 	const [ isHoverOpen, setIsHoverOpen ] = useState( false );
-	const [ wasOpenedViaKeyboard, setWasOpenedViaKeyboard ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const triggerButtonRef = useRef< HTMLButtonElement | null >( null );
@@ -147,14 +146,12 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 
 	const handleClose = () => {
 		setIsHoverOpen( false );
-		setWasOpenedViaKeyboard( false );
 		closeDropdown( dropdownId.current );
 	};
 
 	const handleOpen = ( viaKeyboard = false ) => {
 		openDropdown( dropdownId.current, triggerButtonRef.current || undefined, viaKeyboard );
 		setIsHoverOpen( true );
-		setWasOpenedViaKeyboard( viaKeyboard );
 	};
 
 	useEffect( () => {
@@ -214,7 +211,7 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					offset: 10,
 					animate: true,
 					expandOnMobile: true,
-					focusOnMount: wasOpenedViaKeyboard ? true : false,
+					focusOnMount: true,
 					onClose: () => {
 						handleClose();
 					},
