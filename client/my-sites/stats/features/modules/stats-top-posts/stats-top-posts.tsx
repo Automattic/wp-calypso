@@ -24,7 +24,7 @@ import useOptionLabels, {
 	SUB_STAT_TYPE,
 	StatType,
 	StatsModulePostsProps,
-	validQueryViewType,
+	getValidQueryViewType,
 } from './use-option-labels';
 import type { StatsStateProps } from '../types';
 
@@ -89,7 +89,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
 
 	const statType =
-		localStatType || validQueryViewType( query.viewType, supportsArchiveStats ) || mainStatType;
+		localStatType || getValidQueryViewType( query.viewType, supportsArchiveStats ) || mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )

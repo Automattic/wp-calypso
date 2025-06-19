@@ -11,7 +11,7 @@ export interface StatsModulePostsProps extends StatsDefaultModuleProps {
 	query: StatsQueryType & { viewType?: StatType };
 }
 
-export function validQueryViewType(
+export function getValidQueryViewType(
 	statType: StatType = MAIN_STAT_TYPE,
 	supportsArchiveStats = false
 ) {

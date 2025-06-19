@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useOptionLabels, {
 	MAIN_STAT_TYPE,
 	StatsModulePostsProps,
-	validQueryViewType,
+	getValidQueryViewType,
 } from './use-option-labels';
 
 function NavTabs( { query }: StatsModulePostsProps ) {
@@ -35,7 +35,8 @@ function NavTabs( { query }: StatsModulePostsProps ) {
 		} );
 	}, [ optionLabels ] );
 
-	const selectedTab = validQueryViewType( query.viewType, supportsArchiveStats ) || MAIN_STAT_TYPE;
+	const selectedTab =
+		getValidQueryViewType( query.viewType, supportsArchiveStats ) || MAIN_STAT_TYPE;
 
 	return (
 		<TabPanel
