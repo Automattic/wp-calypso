@@ -39,7 +39,7 @@ interface Props {
 	purchaseListUrl: string; // The URL of the purchase page to redirect to.
 	isVisible: boolean;
 	onClose: () => void;
-	onClickFinalConfirm: () => void;
+	onSurveyComplete: () => void;
 	flowType: string;
 	translate?: () => void;
 	isAkismet?: boolean;
@@ -285,8 +285,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			);
 		}
 
-		// call back to the parent component to actually cancel the subscription
-		props.onClickFinalConfirm();
+		if ( props.onSurveyComplete ) {
+			props.onSurveyComplete();
+		}
 
 		// record tracks event
 		// this uses the same event name as the main product cancellation form

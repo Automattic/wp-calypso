@@ -323,9 +323,9 @@ class CancelPurchaseButton extends Component {
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
-		const closeDialogAndProceed = () => {
+		const handleSurveyComplete = () => {
 			this.closeDialog();
-			return onClick();
+			this.submitCancelAndRefundPurchase();
 		};
 
 		const planName = getName( purchase );
@@ -349,7 +349,7 @@ class CancelPurchaseButton extends Component {
 						purchase={ purchase }
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
-						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
+						onSurveyComplete={ handleSurveyComplete }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
@@ -365,7 +365,7 @@ class CancelPurchaseButton extends Component {
 						purchaseListUrl={ purchaseListUrl }
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
-						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
+						onSurveyComplete={ handleSurveyComplete }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						isAkismet={ isAkismet }
 					/>
@@ -375,7 +375,7 @@ class CancelPurchaseButton extends Component {
 					<MarketPlaceSubscriptionsDialog
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ closeDialogAndProceed }
+						removePlan={ handleSurveyComplete }
 						planName={ planName }
 						activeSubscriptions={ activeSubscriptions }
 						sectionHeadingText={ translate( 'Cancel %(plan)s', {

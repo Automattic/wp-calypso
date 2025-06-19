@@ -63,7 +63,7 @@ class CancelPurchaseForm extends Component {
 		purchase: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
-		onClickFinalConfirm: PropTypes.func.isRequired,
+		onSurveyComplete: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 		cancelBundledDomain: PropTypes.bool,
@@ -298,7 +298,9 @@ class CancelPurchaseForm extends Component {
 			}
 		}
 
-		this.props.onClickFinalConfirm();
+		if ( this.props.onSurveyComplete ) {
+			this.props.onSurveyComplete();
+		}
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
