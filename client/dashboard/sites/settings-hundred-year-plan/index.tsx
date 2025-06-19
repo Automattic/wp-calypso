@@ -78,10 +78,14 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 			{ ...formData },
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+					createSuccessNotice( __( 'Settings saved.' ), {
+						type: 'snackbar',
+					} );
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+					createErrorNotice( __( 'Failed to save settings.' ), {
+						type: 'snackbar',
+					} );
 				},
 			}
 		);

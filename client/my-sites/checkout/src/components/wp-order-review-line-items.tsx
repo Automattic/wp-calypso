@@ -243,12 +243,14 @@ export function WPOrderReviewLineItems( {
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
+				<WPOrderReviewListItem>
+					<NonProductLineItem
+						subtotal
+						lineItem={ creditsLineItem }
+						isSummary={ isSummary }
+						isPwpoUser={ isPwpoUser }
+					/>
+				</WPOrderReviewListItem>
 			) }
 		</WPOrderReviewList>
 	);

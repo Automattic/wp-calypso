@@ -547,7 +547,7 @@ export default function CheckoutMainContent( {
 			);
 		}
 
-		const headingText = translate( "Almost there – we're currently finalizing your order." );
+		const headingText = translate( 'Almost there—we’re currently finalizing your order.' );
 
 		return (
 			<WPCheckoutCompletedWrapper>
@@ -905,9 +905,9 @@ export default function CheckoutMainContent( {
 							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
 							rightElement={
 								<span className="checkout-skip-button">
-									<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
+									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+										{ helpCenterButtonLink }
 									</Step.LinkButton>
 								</span>
 							}

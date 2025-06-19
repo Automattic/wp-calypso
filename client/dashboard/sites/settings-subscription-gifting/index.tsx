@@ -76,10 +76,17 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 			{ ...formData },
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+					createSuccessNotice(
+						formData.wpcom_gifting_subscription
+							? __( 'Gift subscription enabled.' )
+							: __( 'Gift subscription disabled.' ),
+						{ type: 'snackbar' }
+					);
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+					createErrorNotice( __( 'Failed to save gift subscription settings.' ), {
+						type: 'snackbar',
+					} );
 				},
 			}
 		);

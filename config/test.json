@@ -43,6 +43,7 @@
 		"google-my-business": false,
 		"help": true,
 		"hosting-server-settings-enhancements": true,
+		"hosting/staging-sites-redesign": false,
 		"importers/newsletter": true,
 		"importers/substack": true,
 		"individual-subscriber-stats": false,

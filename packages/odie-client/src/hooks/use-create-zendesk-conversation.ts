@@ -3,7 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-import { ODIE_TRANSFER_MESSAGE } from '../constants';
+import { ODIE_ON_ERROR_TRANSFER_MESSAGE, ODIE_TRANSFER_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
@@ -13,11 +13,13 @@ export const useCreateZendeskConversation = (): ( ( {
 	interactionId,
 	section,
 	createdFrom,
+	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
 	section?: string | null;
 	createdFrom?: string;
+	isFromError?: boolean;
 } ) => Promise< void > ) => {
 	const {
 		selectedSiteId,
@@ -45,11 +47,13 @@ export const useCreateZendeskConversation = (): ( ( {
 		interactionId = '',
 		section = '',
 		createdFrom = '',
+		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
 		section?: string | null;
 		createdFrom?: string;
+		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
 		if (
@@ -65,7 +69,10 @@ export const useCreateZendeskConversation = (): ( ( {
 			...prevChat,
 			messages: avoidTransfer
 				? prevChat.messages
-				: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
+				: [
+						...prevChat.messages,
+						...( isFromError ? ODIE_ON_ERROR_TRANSFER_MESSAGE : ODIE_TRANSFER_MESSAGE ),
+				  ],
 			status: 'transfer',
 		} ) );
 

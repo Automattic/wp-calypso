@@ -137,7 +137,7 @@ export default function () {
 	 */
 	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/sites/settings/v2/*',
+		'/sites/settings/v2/:site/:feature?',
 		siteSelection,
 		navigation,
 		dashboardBackportSiteSettings,

@@ -81,6 +81,7 @@ export default function InputWidget( {
 			direction="column"
 		>
 			<field.Edit
+				hideLabelFromVision={ true }
 				data={ data }
 				field={ field }
 				operator={ currentFilter.operator }
