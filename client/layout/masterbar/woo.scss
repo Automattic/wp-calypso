@@ -769,14 +769,6 @@ $breakpoint-mobile: 660px;
 		text-align: center;
 	}
 
-	.login__lostpassword-form {
-		margin-top: 50px;
-
-		.login__form-action {
-			margin: 16px 0 52px;
-		}
-	}
-
 	// Signup styles
 	.step-wrapper {
 		margin: 0 auto 50px;
@@ -1094,28 +1086,6 @@ $breakpoint-mobile: 660px;
 			// Hide form validation icon
 			svg {
 				display: none;
-			}
-		}
-
-		// Lost password
-		.login__lostpassword-form {
-			display: flex;
-			flex-direction: column;
-			padding: 48px 24px 32px;
-
-			@media (max-width: $break-mobile) {
-				padding: 32px 16px 28px;
-			}
-
-			.login__form-action {
-				margin-top: 24px;
-			}
-
-			input[type="email"].form-text-input {
-				margin-bottom: 0;
-			}
-			.form-input-validation {
-				padding-bottom: 0;
 			}
 		}
 
@@ -1628,11 +1598,6 @@ $breakpoint-mobile: 660px;
 
 		.login__lostpassword-form {
 			margin-bottom: 44px;
-
-			.login__form-action {
-				margin: 24px 0 0;
-				width: 100%;
-			}
 
 			.login__form-userdata {
 				width: 100%;
