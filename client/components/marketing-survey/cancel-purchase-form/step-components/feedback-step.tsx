@@ -21,7 +21,7 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 	const translate = useTranslate();
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
-	const [ textAreaValue, setTextAreaValue ] = useState( '' );
+	const [ feedbackValue, setFeedbackValue ] = useState( '' );
 	const reasons = getCancellationReasons( reasonCodes, { productSlug: purchase.productSlug } );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
 	const selectedSubOption = selectedReason?.selectOptions?.find(
@@ -30,12 +30,12 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 
 	const onDetailsChange = ( val: string ) => {
 		setDetails( val );
-		setTextAreaValue( '' );
+		setFeedbackValue( '' );
 		props.onDetailsChange( val );
 	};
 
 	const onTextAreaChange = ( val: string ) => {
-		setTextAreaValue( val );
+		setFeedbackValue( val );
 		props.onDetailsChange( val, details );
 	};
 
@@ -48,7 +48,7 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 					options={ reasons.map( toSelectOption ) }
 					onChange={ ( val ) => {
 						onDetailsChange( '' );
-						setTextAreaValue( '' );
+						setFeedbackValue( '' );
 						setValue( val );
 						props.onChange( val );
 					} }
@@ -79,7 +79,7 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 					<TextareaControl
 						label={ translate( 'Can you please specify?' ) }
 						placeholder={ String( selectedSubOption.textPlaceholder ) }
-						value={ textAreaValue }
+						value={ feedbackValue }
 						onChange={ onTextAreaChange }
 					/>
 				</div>
