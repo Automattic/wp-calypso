@@ -113,6 +113,24 @@ class StatsSummary extends Component {
 
 			case 'statsTopPosts':
 				return 'posts';
+			case 'statsReferrers':
+				return 'referrers';
+			case 'statsClicks':
+				return 'clicks';
+			case 'statsCountryViews':
+				return 'countryviews';
+			case 'statsTopAuthors':
+				return 'authors';
+			case 'statsVideoPlays':
+				return 'videoplays';
+			case 'statsFileDownloads':
+				return 'filedownloads';
+			case 'statsSearchTerms':
+				return 'searchterms';
+			case 'statsUTM':
+				return 'utm';
+			case 'statsDevices':
+				return 'devices';
 			default:
 				return '';
 		}
@@ -132,7 +150,6 @@ class StatsSummary extends Component {
 		let summaryView;
 		let chartTitle;
 		let barChart;
-		let path;
 		let statType;
 
 		const { period, endOf } = this.props.period;
@@ -165,11 +182,10 @@ class StatsSummary extends Component {
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
 				title = translate( 'Referrers' );
-				path = 'referrers';
 				statType = 'statsReferrers';
 				summaryView = (
 					<Fragment key="referrers-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleReferrers
 							moduleStrings={ StatsStrings.referrers }
 							period={ this.props.period }
@@ -183,11 +199,10 @@ class StatsSummary extends Component {
 
 			case 'clicks':
 				title = translate( 'Clicks' );
-				path = 'clicks';
 				statType = 'statsClicks';
 				summaryView = (
 					<Fragment key="clicks-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleClicks
 							moduleStrings={ StatsStrings.clicks }
 							period={ this.props.period }
@@ -201,11 +216,10 @@ class StatsSummary extends Component {
 
 			case 'countryviews':
 				title = translate( 'Countries' );
-				path = 'countryviews';
 				statType = 'statsCountryViews';
 				summaryView = (
 					<Fragment key="countries-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						{ isEnabled( 'stats/locations' ) ? (
 							<StatsModuleLocations
 								moduleStrings={ StatsStrings.countries }
@@ -230,11 +244,10 @@ class StatsSummary extends Component {
 
 			case 'locations':
 				title = translate( 'Locations' );
-				path = 'locations';
 				statType = 'statsCountryViews';
 				summaryView = (
 					<Fragment key="countries-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleLocations
 							moduleStrings={ StatsStrings.countries }
 							period={ this.props.period }
@@ -267,13 +280,12 @@ class StatsSummary extends Component {
 
 			case 'authors':
 				title = translate( 'Authors' );
-				path = 'authors';
 				statType = 'statsTopAuthors';
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
 					<Fragment key="authors-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleAuthors
 							moduleStrings={ StatsStrings.authors }
 							period={ this.props.period }
@@ -289,7 +301,6 @@ class StatsSummary extends Component {
 
 			case 'videoplays':
 				title = translate( 'Videos' );
-				path = 'videoplays';
 				statType = 'statsVideoPlays';
 				moduleQuery.complete_stats = 1;
 				summaryView = (
@@ -297,7 +308,7 @@ class StatsSummary extends Component {
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
 								It can't use the shared header as long as the CSV download button stays there. */ }
 						<VideoPressStatsModule
-							path={ path }
+							path={ this.getPath( statType ) }
 							moduleStrings={ StatsStrings.videoplays }
 							period={ this.props.period }
 							query={ query }
@@ -311,11 +322,10 @@ class StatsSummary extends Component {
 
 			case 'filedownloads':
 				title = translate( 'File Downloads' );
-				path = 'filedownloads';
 				statType = 'statsFileDownloads';
 				summaryView = (
 					<Fragment key="filedownloads-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleDownloads
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }
@@ -370,11 +380,10 @@ class StatsSummary extends Component {
 
 			case 'searchterms':
 				title = translate( 'Search Terms' );
-				path = 'searchterms';
 				statType = 'statsSearchTerms';
 				summaryView = (
 					<Fragment key="search-terms-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleSearch
 							moduleStrings={ StatsStrings.search }
 							period={ this.props.period }
@@ -391,7 +400,6 @@ class StatsSummary extends Component {
 				break;
 			case 'utm': {
 				title = translate( 'UTM insights' );
-				path = 'utm';
 				statType = 'statsUTM';
 				summaryView = <></>; // done inline to use context values
 				break;
@@ -399,7 +407,6 @@ class StatsSummary extends Component {
 			case 'devices': {
 				// TODO: finish after the Traffic page.
 				title = translate( 'Devices' );
-				path = 'devices';
 				statType = 'statsDevices';
 
 				summaryView = <></>;
@@ -433,7 +440,7 @@ class StatsSummary extends Component {
 									<DownloadCsv
 										statType={ statType }
 										query={ moduleQuery }
-										path={ this.getPath( statType ) || path }
+										path={ this.getPath( statType ) }
 										period={ this.props.period }
 										skipQuery
 										hideIfNoData
@@ -468,7 +475,12 @@ class StatsSummary extends Component {
 									<>
 										{ supportsUTMStats || isInternal ? (
 											<>
-												{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+												{ this.renderSummaryHeader(
+													this.getPath( statType ),
+													statType,
+													false,
+													moduleQuery
+												) }
 												<StatsModuleUTM
 													siteId={ siteId }
 													period={ this.props.period }
