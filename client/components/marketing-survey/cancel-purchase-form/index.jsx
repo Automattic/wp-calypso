@@ -16,6 +16,7 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
 import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
@@ -758,11 +759,13 @@ class CancelPurchaseForm extends Component {
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>
 							{ cancellationCompleted && cancellationMessage && (
-								<div className="cancel-purchase-form__success-notice">
-									<div className="cancel-purchase-form__success-message">
-										{ cancellationMessage }
-									</div>
-								</div>
+								<Notice
+									status="is-success"
+									className="cancel-purchase-form__success-notice"
+									showDismiss={ false }
+								>
+									{ cancellationMessage }
+								</Notice>
 							) }
 							{ this.surveyContent() }
 						</BlankCanvas.Content>

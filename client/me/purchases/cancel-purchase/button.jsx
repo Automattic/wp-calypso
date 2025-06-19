@@ -63,6 +63,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = async () => {
+		const { translate } = this.props;
+
 		if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
 		}
@@ -86,7 +88,7 @@ class CancelPurchaseButton extends Component {
 				this.setState( {
 					cancellationCompleted: true,
 					cancellationMessage:
-						result.message || 'Your subscription has been successfully cancelled.',
+						result.message || translate( 'Your subscription has been cancelled.' ),
 				} );
 			} else {
 				// If cancellation fails, show error but keep dialog open

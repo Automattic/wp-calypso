@@ -13,6 +13,7 @@ import JetpackCancellationOfferAccepted from 'calypso/components/marketing-surve
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import Notice from 'calypso/components/notice';
 import { getName, isExpired } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
@@ -405,9 +406,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return (
 				<div className="cancel-jetpack-form__confirm-step">
 					{ cancellationCompleted && cancellationMessage && (
-						<div className="cancel-jetpack-form__success-notice">
-							<div className="cancel-jetpack-form__success-message">{ cancellationMessage }</div>
-						</div>
+						<Notice status="is-success">
+							<p>{ cancellationMessage }</p>
+						</Notice>
 					) }
 					<FormattedHeader
 						brandFont
