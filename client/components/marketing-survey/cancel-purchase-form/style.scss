@@ -455,6 +455,13 @@
 	margin-right: 1rem;
 }
 
+.cancel-purchase-form__notice-container {
+	display: flex;
+	justify-content: center;
+}
+
 .cancel-purchase-form__success-notice {
 	margin-bottom: 24px;
+	align-self: center;
+	width: fit-content;
 }

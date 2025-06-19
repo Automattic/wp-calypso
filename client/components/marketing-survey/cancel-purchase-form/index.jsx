@@ -759,9 +759,15 @@ class CancelPurchaseForm extends Component {
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>
 							{ cancellationCompleted && cancellationMessage && (
-								<Notice status="is-success" className="cancel-purchase-form__success-notice">
-									{ cancellationMessage }
-								</Notice>
+								<div className="cancel-purchase-form__notice-container">
+									<Notice
+										status="is-success"
+										className="cancel-purchase-form__success-notice"
+										theme="light"
+									>
+										{ cancellationMessage }
+									</Notice>
+								</div>
 							) }
 							{ this.surveyContent() }
 						</BlankCanvas.Content>
