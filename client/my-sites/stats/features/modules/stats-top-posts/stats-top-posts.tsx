@@ -62,10 +62,9 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
 		: 'stats-top-posts-and-pages-analyze-content-performance';
 
-	const query = {
-		...queryFromProps,
-		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
-	};
+	const query = isArchiveBreakdownEnabled
+		? queryFromProps
+		: { ...queryFromProps, skip_archives: '0' };
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
