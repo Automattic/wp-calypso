@@ -9,8 +9,7 @@ import '@gravatar-com/hovercards/dist/style.css';
 function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
 	const [ mountNode, setMountNode ] = useState( null );
-	// Depending on how/where the user info is built, the property name may be different.
-	const login = props.user?.wpcom_login || props.user?.user_login || props.user?.username;
+	const [ gravatarData, setGravatarData ] = useState( {} );
 
 	useEffect( () => {
 		return () => {
@@ -25,42 +24,9 @@ function GravatarWithHovercards( props ) {
 		if ( hovercardElement ) {
 			const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
 			if ( inner ) {
-				// Create new clean Header section.
-				const newHeader = document.createElement( 'div' );
-				newHeader.className = 'gravatar-hovercard__header';
-
-				// Query items to preserve.
-				const avatarLink = inner.querySelector( '.gravatar-hovercard__avatar-link' );
-				const nameElement = inner.querySelector( '.gravatar-hovercard__name' );
-				const description = inner.querySelector( '.gravatar-hovercard__description' );
-
-				// Update links to reader profile if login is available.
-				if ( login ) {
-					if ( avatarLink ) {
-						avatarLink.href = `/reader/users/${ login }`;
-						avatarLink.removeAttribute( 'target' );
-					}
-
-					if ( nameElement ) {
-						const nameLink = document.createElement( 'a' );
-						nameLink.href = `/reader/users/${ login }`;
-						nameLink.className = 'gravatar-hovercard__name-link';
-						nameLink.textContent = nameElement.textContent;
-						nameElement.textContent = '';
-						nameElement.appendChild( nameLink );
-					}
-				}
-
-				// Add preserved items back to the header.
-				avatarLink && newHeader.appendChild( avatarLink );
-				nameElement && newHeader.appendChild( nameElement );
-				description && newHeader.appendChild( description );
-
-				// Clear inner and add only our new Header.
 				inner.innerHTML = '';
-				inner.appendChild( newHeader );
 
-				// Components for the body and footer will enter through this via portal.
+				// Our custom components for the card will render through this portal.
 				setMountNode( inner );
 			}
 		}
@@ -71,12 +37,17 @@ function GravatarWithHovercards( props ) {
 		return containerRef.current && document.body.contains( containerRef.current );
 	};
 
+	const onFetchProfileSuccess = ( hash, data ) => {
+		setGravatarData( data );
+	};
+
 	return (
 		<div ref={ containerRef }>
-			<HovercardContentPortal mountNode={ mountNode } { ...props } />
+			<HovercardContentPortal mountNode={ mountNode } gravatarData={ gravatarData } { ...props } />
 			<Hovercards
 				onHovercardShown={ handleHovercardShown }
 				onCanShowHovercard={ shouldShowHovercard }
+				onFetchProfileSuccess={ onFetchProfileSuccess }
 			>
 				<Gravatar { ...props } />
 			</Hovercards>
