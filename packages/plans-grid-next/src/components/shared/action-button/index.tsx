@@ -81,7 +81,7 @@ const ActionButton = ( {
 	);
 
 	const {
-		primary: { callback, text, status, variant },
+		primary: { callback, text, status, variant, ariaLabel },
 		postButtonText,
 	} = useAction( {
 		availableForPurchase,
@@ -125,15 +125,6 @@ const ActionButton = ( {
 	const nonDefaultStorageOptionSelected =
 		selectedStorageOptionForPlan && defaultStorageOption !== selectedStorageOptionForPlan;
 
-	const accessiblePriceLabel = translate( 'Get %(plan)s plan for %(priceString)s per month', {
-		args: {
-			plan: planTitle,
-			priceString,
-		},
-		comment:
-			'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium $10',
-	} ).toString();
-
 	let actionButton = (
 		<PlanButton
 			planSlug={ planSlug }
@@ -141,7 +132,7 @@ const ActionButton = ( {
 			busy={ busy }
 			disabled={ ! callback || 'disabled' === status }
 			classes={ variant === 'secondary' ? 'is-secondary' : '' }
-			ariaLabel={ accessiblePriceLabel }
+			ariaLabel={ String( ariaLabel || '' ) }
 		>
 			{ text }
 		</PlanButton>
@@ -188,7 +179,7 @@ const ActionButton = ( {
 							onClick={ callback }
 							busy={ busy }
 							borderless
-							ariaLabel={ accessiblePriceLabel }
+							ariaLabel={ String( ariaLabel || '' ) }
 						>
 							{ text }
 						</PlanButton>
@@ -198,11 +189,11 @@ const ActionButton = ( {
 				<>
 					<PlanButton
 						planSlug={ planSlug }
-						disabled={ ! callback || status === 'disabled' }
+						disabled={ ! callback || 'disabled' === status }
 						busy={ busy }
 						onClick={ callback }
 						current={ current }
-						ariaLabel={ accessiblePriceLabel }
+						ariaLabel={ String( ariaLabel || '' ) }
 					>
 						{ text }
 					</PlanButton>
