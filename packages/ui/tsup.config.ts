@@ -8,6 +8,8 @@ export default defineConfig( {
 	experimentalDts: true,
 	sourcemap: true,
 	format: [ 'esm', 'cjs' ],
+	// TODO Remove this once WP Core has `wp-react-i18n` bundled.
+	noExternal: [ '@wordpress/react-i18n' ],
 	outDir: 'dist',
 	esbuildPlugins: [
 		sassPlugin( {
