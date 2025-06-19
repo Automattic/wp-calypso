@@ -8,13 +8,19 @@ A library of React components that adhere to the Automattic Design System, to be
 yarn add @automattic/ui
 ```
 
-## Stylesheet
+## Usage
 
-You will only need to load a single stylesheet for the `@automattic/ui` package (does not require separate RTL styles).
+You can either import individual components or the entire library.
 
-```js
-import "@automattic/ui/style.css";
+```tsx
+import { Badge } from '@automattic/ui/badge';
+
+<Badge intent="success">Active</Badge>;
 ```
+
+## Styling
+
+It is assumed that your build system is set up to handle CSS imports. The components import CSS files to apply styles. If you are using a bundler like Webpack or Vite, ensure that you have the appropriate loaders/plugins configured to handle CSS files.
 
 ## Development Workflow
 
