@@ -61,6 +61,10 @@ class CancelPurchaseButton extends Component {
 		cancellationMessage: '',
 	};
 
+	setDisabled = ( disabled ) => {
+		this.setState( { disabled } );
+	};
+
 	handleCancelPurchaseClick = async () => {
 		const { translate } = this.props;
 
@@ -86,10 +90,10 @@ class CancelPurchaseButton extends Component {
 						result.message || translate( 'Your subscription has been cancelled.' ),
 				} );
 			} else {
-				this.props.errorNotice( result.error );
+				this.cancellationFailed( result.error );
 			}
 		} catch ( error ) {
-			this.props.errorNotice( error.message );
+			this.cancellationFailed( error.message );
 		}
 	};
 
@@ -184,8 +188,7 @@ class CancelPurchaseButton extends Component {
 				this.setDisabled( false );
 
 				if ( error ) {
-					this.props.errorNotice( error.message );
-					this.cancellationFailed();
+					this.cancellationFailed( error.message );
 					return;
 				}
 
@@ -206,12 +209,12 @@ class CancelPurchaseButton extends Component {
 			const res = await extendPurchaseWithFreeMonth( purchase.id );
 			if ( res.status === 'completed' ) {
 				this.props.refreshSitePlans( purchase.siteId );
+				this.props.clearPurchases();
 				this.props.successNotice( res.message, { displayOnNextPage: true } );
 				page.redirect( this.props.purchaseListUrl );
 			}
 		} catch ( err ) {
-			this.props.errorNotice( err.message );
-			this.cancellationFailed();
+			this.cancellationFailed( err.message );
 		} finally {
 			this.setDisabled( false );
 		}
@@ -269,6 +272,23 @@ class CancelPurchaseButton extends Component {
 		}
 		// Redirect to purchase list after survey is completed
 		page( this.props.purchaseListUrl );
+	};
+
+	cancellationFailed = ( errorMessage ) => {
+		// Close the dialog and return to initial state
+		this.setState( {
+			showDialog: false,
+			cancellationCompleted: false,
+			cancellationMessage: '',
+		} );
+
+		// Notify parent component that cancellation failed
+		if ( this.props.onSurveyComplete ) {
+			this.props.onSurveyComplete();
+		}
+
+		// Show error notice
+		this.props.errorNotice( errorMessage );
 	};
 
 	render() {
