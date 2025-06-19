@@ -69,7 +69,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	},
 	{
 		id: 'icon.ico',
-		label: __( 'Media' ),
+		label: __( 'Site icon' ),
 		render: ( { item } ) => <SiteIcon site={ item } />,
 		enableSorting: false,
 	},
@@ -123,7 +123,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'is_a8c',
 		type: 'boolean',
-		label: __( 'A8C Owned' ),
+		label: __( 'A8C owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
@@ -220,6 +220,7 @@ export default function Sites() {
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
 	);
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
+
 	const defaultView = useMemo(
 		() =>
 			hasA8CSites
@@ -236,6 +237,7 @@ export default function Sites() {
 				: DEFAULT_VIEW,
 		[ hasA8CSites ]
 	);
+
 	const view = useMemo(
 		() => ( {
 			...defaultView,
@@ -248,11 +250,21 @@ export default function Sites() {
 		} ),
 		[ defaultView, viewOptions ]
 	);
-	const fields = useMemo(
-		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
-		[ hasA8CSites ]
-	);
+
+	const fields = useMemo( () => {
+		const excludedFields = new Set< string >();
+
+		if ( hasA8CSites ) {
+			excludedFields.add( 'is_a8c' );
+		}
+
+		if ( view.type === 'grid' ) {
+			excludedFields.add( 'icon.ico' );
+		}
+
+		return DEFAULT_FIELDS.filter( ( field ) => ! excludedFields.has( field.id ) );
+	}, [ hasA8CSites, view.type ] );
+
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
