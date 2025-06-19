@@ -252,17 +252,17 @@ export default function Sites() {
 	);
 
 	const fields = useMemo( () => {
-		const excludedFields = new Set< string >();
+		return DEFAULT_FIELDS.filter( ( field ) => {
+			if ( field.id === 'is_a8c' && ! hasA8CSites ) {
+				return false;
+			}
 
-		if ( hasA8CSites ) {
-			excludedFields.add( 'is_a8c' );
-		}
+			if ( field.id === 'icon.ico' && view.type === 'grid' ) {
+				return false;
+			}
 
-		if ( view.type === 'grid' ) {
-			excludedFields.add( 'icon.ico' );
-		}
-
-		return DEFAULT_FIELDS.filter( ( field ) => ! excludedFields.has( field.id ) );
+			return true;
+		} );
 	}, [ hasA8CSites, view.type ] );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
