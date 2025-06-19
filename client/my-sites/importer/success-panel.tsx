@@ -10,6 +10,7 @@ import './success-panel.scss';
 interface Props {
 	importerId?: string;
 	site?: SiteDetails;
+	onResetImport: () => void;
 }
 
 export const SuccessPanel = ( props: Props ) => {
@@ -45,7 +46,7 @@ export const SuccessPanel = ( props: Props ) => {
 						<Button href={ site?.URL } variant="primary">
 							{ translate( 'View your site' ) }
 						</Button>
-						<Button href={ `/import/${ site?.slug }` } variant="tertiary">
+						<Button onClick={ props.onResetImport } variant="tertiary">
 							{ translate( 'Import more content' ) }
 						</Button>
 					</div>

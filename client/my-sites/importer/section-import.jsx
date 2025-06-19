@@ -123,6 +123,10 @@ class SectionImport extends Component {
 		this.setState( { showSuccessScreen: true } );
 	};
 
+	closeSuccessScreen = () => {
+		this.setState( { showSuccessScreen: false } );
+	};
+
 	handleStateChanges = () => {
 		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
@@ -356,7 +360,13 @@ class SectionImport extends Component {
 		);
 
 		if ( this.state.showSuccessScreen ) {
-			return <SuccessPanel site={ site } importerId={ importSuccess?.importerId } />;
+			return (
+				<SuccessPanel
+					onResetImport={ () => this.closeSuccessScreen() }
+					site={ site }
+					importerId={ importSuccess?.importerId }
+				/>
+			);
 		}
 
 		return (
