@@ -138,17 +138,25 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	);
 	const selectedStorageAddOnStorage = selectedStorageAddOn?.quantity ?? 0;
 
+	const planStorageString = useStorageString( planStorage );
+	const selectedAddOnStorageString = useStorageString( selectedStorageAddOnStorage );
+	const accessibleOptionName = selectedStorageAddOnStorage
+		? translate( '%(planStorageString)s + %(addOnStorageString)s', {
+				args: {
+					planStorageString,
+					addOnStorageString: selectedAddOnStorageString,
+				},
+		  } )
+		: planStorageString;
+
 	const selectedOption = {
 		key: selectedStorageOptionForPlan,
-		name: (
-			<StorageDropdownOption
-				price={ selectedStorageAddOn?.prices?.formattedMonthlyPrice }
-				planStorage={ planStorage }
-				addOnStorage={ selectedStorageAddOnStorage }
-				priceOnSeparateLine
-			/>
-		 ) as unknown as string,
+		name: accessibleOptionName as string,
 	};
+
+	const accessibleDescription = translate( 'Currently selected storage option: %(storageOption)s', {
+		args: { storageOption: accessibleOptionName },
+	} );
 
 	const handleOnChange = useCallback(
 		( { selectedItem }: { selectedItem: { key: string } } ) => {
@@ -172,6 +180,7 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 				value={ selectedOption }
 				onChange={ handleOnChange }
 				label={ translate( 'Storage options for this plan' ) }
+				describedBy={ accessibleDescription as string }
 			/>
 
 			{ selectedStorageAddOn?.prices?.formattedMonthlyPrice && (
