@@ -23,6 +23,7 @@
 .dashboard-callout__title {
 	@include heading-large;
 	color: $gray-900;
+	margin: 0;
 }
 
 .dashboard-callout__image {

@@ -1,11 +1,12 @@
 import SummaryButton from '@automattic/components/src/summary-button';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
-import { siteQuery, sitePrimaryDataCenterQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { canViewPrimaryDataCenterSettings } from '../features';
@@ -13,10 +14,10 @@ import SettingsPageHeader from '../settings-page-header';
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: primaryDataCenter } = useQuery( {
-		...sitePrimaryDataCenterQuery( siteSlug ),
-		enabled: site && canViewPrimaryDataCenterSettings( site ),
+		...sitePrimaryDataCenterQuery( site.ID ),
+		enabled: canViewPrimaryDataCenterSettings( site ),
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();

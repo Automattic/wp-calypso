@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Card,
@@ -11,22 +11,23 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
+import { siteBySlugQuery } from '../../app/queries/site';
 import {
-	siteQuery,
 	siteEdgeCacheStatusQuery,
 	siteEdgeCacheStatusMutation,
 	siteEdgeCacheClearMutation,
 	siteObjectCacheClearMutation,
-} from '../../app/queries';
+} from '../../app/queries/site-cache';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { canViewCachingSettings } from '../features';
-import SettingsCallout from '../settings-callout';
+import { hasPlanFeature } from '../../utils/site-features';
+import { HostingFeatures, canViewCachingSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@automattic/dataviews';
@@ -49,16 +50,14 @@ const form = {
 };
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canView = site && canViewCachingSettings( site );
-
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: isEdgeCacheActive } = useQuery( {
-		...siteEdgeCacheStatusQuery( siteSlug ),
-		enabled: canView,
+		...siteEdgeCacheStatusQuery( site.ID ),
+		enabled: canViewCachingSettings( site ),
 	} );
-	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( siteSlug ) );
-	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( siteSlug ) );
-	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( siteSlug ) );
+	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( site.ID ) );
+	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( site.ID ) );
+	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( site.ID ) );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -76,10 +75,17 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		e.preventDefault();
 		edgeCacheStatusMutation.mutate( formData.active, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					formData.active
+						? __( 'Global edge cache enabled.' )
+						: __( 'Global edge cache disabled.' ),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+				createErrorNotice( __( 'Failed to save global edge cache settings.' ), {
+					type: 'snackbar',
+				} );
 			},
 		} );
 	};
@@ -121,10 +127,6 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		handleClearObjectCache();
 
 		setIsClearingAllCaches( true );
-	};
-
-	const renderCallout = () => {
-		return <SettingsCallout siteSlug={ siteSlug } tracksId="caching" />;
 	};
 
 	const renderForm = () => {
@@ -238,28 +240,39 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const description = canView
+	const description = hasPlanFeature( site, HostingFeatures.CACHING )
 		? createInterpolateElement(
-				__( 'Manage your site’s server-side caching. <link>Learn more</link>.' ),
+				__( 'Manage your site’s server-side caching. <link>Learn more</link>' ),
 				{
 					link: <InlineSupportLink supportContext="hosting-edge-cache" />,
 				}
 		  )
-		: '';
+		: createInterpolateElement(
+				sprintf(
+					/* translators: %s: plan name. Eg. 'Personal' */
+					__(
+						'Caching is managed for you on the %s plan. The cache is cleared automatically as you make changes to your site. <link>Learn more</link>'
+					),
+					site?.plan?.product_name_short
+				),
+				{
+					link: <InlineSupportLink supportContext="hosting-edge-cache" />,
+				}
+		  );
 
 	return (
 		<PageLayout
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			{ canView ? (
-				<>
-					{ renderForm() }
-					{ renderActions() }
-				</>
-			) : (
-				renderCallout()
-			) }
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.CACHING }
+				tracksFeatureId="settings-caching"
+			>
+				{ renderForm() }
+				{ renderActions() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

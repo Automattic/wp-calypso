@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { domainsQuery } from '../app/queries';
+import { domainsQuery } from '../app/queries/domains';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';

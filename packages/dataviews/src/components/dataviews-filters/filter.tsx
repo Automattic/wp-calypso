@@ -43,6 +43,11 @@ import {
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
+	OPERATOR_BETWEEN,
 } from '../../constants';
 import type {
 	Filter,
@@ -247,6 +252,71 @@ const FilterText = ( {
 		);
 	}
 
+	if ( filterInView?.operator === OPERATOR_BEFORE ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is before: 2024-01-01". */
+				__( '<Name>%1$s is before: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_AFTER ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is after: 2024-01-01". */
+				__( '<Name>%1$s is after: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_BEFORE_INC ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is on or before: 2024-01-01". */
+				__( '<Name>%1$s is on or before: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_AFTER_INC ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is on or after: 2024-01-01". */
+				__( '<Name>%1$s is on or after: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_BETWEEN ) {
+		const { label } = activeElements[ 0 ];
+
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Min value. 3: Max value. e.g.: "Item count between (inc): 10-180". */
+				__(
+					'<Name>%1$s between (inc): </Name><Value>%2$s-%3$s</Value>'
+				),
+				filter.name,
+				label[ 0 ],
+				label[ 1 ]
+			),
+			filterTextWrappers
+		);
+	}
+
 	return sprintf(
 		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
 		__( 'Unknown status for %1$s' ),
@@ -285,6 +355,7 @@ function OperatorSelector( {
 					options={ operatorOptions }
 					onChange={ ( newValue ) => {
 						const operator = newValue as Operator;
+						const currentOperator = currentFilter?.operator;
 						const newFilters = currentFilter
 							? [
 									...( view.filters ?? [] ).map(
@@ -292,8 +363,18 @@ function OperatorSelector( {
 											if (
 												_filter.field === filter.field
 											) {
+												// Reset the value only when switching between "between" and any other operator to avoid invalid values.
+												const isSwitchingBetween =
+													currentOperator ===
+														OPERATOR_BETWEEN ||
+													operator ===
+														OPERATOR_BETWEEN;
+
 												return {
 													..._filter,
+													value: isSwitchingBetween
+														? undefined
+														: _filter.value,
 													operator,
 												};
 											}

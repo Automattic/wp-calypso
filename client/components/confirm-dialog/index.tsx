@@ -1,4 +1,5 @@
 import { Modal } from '@wordpress/components';
+import clsx from 'clsx';
 import { ComponentProps } from 'react';
 import './style.scss';
 
@@ -23,12 +24,19 @@ interface ConfirmDialogProps {
 	children: React.ReactNode;
 	title: string;
 	style?: React.CSSProperties;
+	className?: string;
 }
 
-export const ConfirmDialog = ( { onRequestClose, children, title, style }: ConfirmDialogProps ) => {
+export const ConfirmDialog = ( {
+	onRequestClose,
+	children,
+	title,
+	style,
+	className,
+}: ConfirmDialogProps ) => {
 	return (
 		<Modal
-			className="confirm-dialog"
+			className={ clsx( 'confirm-dialog', className ) }
 			onRequestClose={ onRequestClose }
 			title={ title }
 			style={ style }

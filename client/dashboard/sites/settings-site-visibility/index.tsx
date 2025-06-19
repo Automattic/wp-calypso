@@ -1,7 +1,10 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { siteLaunchMutation, siteBySlugQuery } from '../../app/queries/site';
+import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
@@ -11,16 +14,39 @@ import { ShareSiteForm } from './share-site-form';
 import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+	const settingsMutation = useMutation( siteSettingsMutation( site.ID ) );
+	const launchMutation = useMutation( siteLaunchMutation( site.ID ) );
 
 	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
 		useState( false );
 
-	if ( ! settings || ! site ) {
+	if ( ! settings ) {
 		return null;
 	}
+
+	const handleLaunch = () => {
+		launchMutation.mutate( undefined, {
+			onSuccess: () => {
+				createSuccessNotice(
+					__( 'Your site has been launched; now you can share it with the world!' ),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice( error.message || __( 'Failed to launch site' ), {
+					type: 'snackbar',
+				} );
+			},
+			onSettled: () => {
+				setIsAgencyDevelopmentSiteLaunchModalOpen( false );
+			},
+		} );
+	};
 
 	const renderContent = () => {
 		if ( site.launch_status === 'unlaunched' ) {
@@ -34,20 +60,25 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 							/>
 							{ isAgencyDevelopmentSiteLaunchModalOpen && (
 								<AgencyDevelopmentSiteLaunchModal
-									site={ site }
+									isLaunching={ launchMutation.isPending }
 									onClose={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( false ) }
+									onLaunch={ handleLaunch }
 								/>
 							) }
 						</>
 					) : (
-						<LaunchForm site={ site } />
+						<LaunchForm
+							site={ site }
+							isLaunching={ launchMutation.isPending }
+							onLaunchClick={ handleLaunch }
+						/>
 					) }
 					{ site.is_coming_soon && <ShareSiteForm site={ site } /> }
 				</>
 			);
 		}
 
-		return <PrivacyForm site={ site } settings={ settings } mutation={ mutation } />;
+		return <PrivacyForm site={ site } settings={ settings } mutation={ settingsMutation } />;
 	};
 
 	return (

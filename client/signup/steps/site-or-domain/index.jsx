@@ -64,10 +64,41 @@ class SiteOrDomain extends Component {
 			// translators: %s is a domain name
 			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
 		}
+		const buyADomainDescription = translate( 'Add a site later.' );
+
+		const newSiteTitle = translate( 'New site' );
+		const newSiteDescription = translate(
+			'Customize and launch your site. Free domain for the first year on annual plans.',
+			{
+				comment: 'Description for new site option, periods added for screen reader pause',
+			}
+		);
+		const newSiteVisualDescription = translate(
+			'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+			{
+				components: {
+					strong: <strong />,
+					br: <br aria-hidden="true" />,
+				},
+			}
+		);
+
+		const existingSiteTitle = translate( 'Existing WordPress.com site' );
+		const existingSiteDescription = translate(
+			'Use the domain with a site you already started. Free domain for the first year on annual plans.'
+		);
+		const existingSiteVisualDescription = translate(
+			'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+			{
+				components: {
+					strong: <strong />,
+					br: <br aria-hidden="true" />,
+				},
+			}
+		);
 
 		const choices = [];
 
-		const buyADomainDescription = translate( 'Add a site later.' );
 		choices.push( {
 			key: 'domain',
 			title: buyADomainTitle,
@@ -75,45 +106,41 @@ class SiteOrDomain extends Component {
 			icon: null,
 			titleIcon: globe,
 			value: 'domain',
-			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			actionText: <Gridicon icon="chevron-right" size={ 18 } aria-hidden="true" />,
+			actionButtonLabel: translate( 'Select %(title)s', {
+				args: { title: buyADomainTitle },
+			} ),
 			allItemClickable: true,
+			'aria-label': `${ buyADomainTitle }. ${ buyADomainDescription }`,
 		} );
 		choices.push( {
 			key: 'page',
-			title: translate( 'New site' ),
-			description: translate(
-				'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-				{
-					components: {
-						strong: <strong />,
-						br: <br />,
-					},
-				}
-			),
+			title: newSiteTitle,
+			description: newSiteVisualDescription,
 			icon: null,
 			titleIcon: addCard,
 			value: 'page',
-			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			actionText: <Gridicon icon="chevron-right" size={ 18 } aria-hidden="true" />,
+			actionButtonLabel: translate( 'Select %(title)s', {
+				args: { title: newSiteTitle },
+			} ),
 			allItemClickable: true,
+			'aria-label': `${ newSiteTitle }. ${ newSiteDescription }`,
 		} );
 		if ( isLoggedIn && siteCount > 0 ) {
 			choices.push( {
 				key: 'existing-site',
-				title: translate( 'Existing WordPress.com site' ),
-				description: translate(
-					'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-					{
-						components: {
-							strong: <strong />,
-							br: <br />,
-						},
-					}
-				),
+				title: existingSiteTitle,
+				description: existingSiteVisualDescription,
 				icon: null,
 				titleIcon: layout,
 				value: 'existing-site',
-				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+				actionText: <Gridicon icon="chevron-right" size={ 18 } aria-hidden="true" />,
+				actionButtonLabel: translate( 'Select %(title)s', {
+					args: { title: existingSiteTitle },
+				} ),
 				allItemClickable: true,
+				'aria-label': `${ existingSiteTitle }. ${ existingSiteDescription }`,
 			} );
 		}
 

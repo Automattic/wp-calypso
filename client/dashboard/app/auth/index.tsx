@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { fetchUser } from '../../data';
+import { fetchUser } from '../../data/me';
 import type { User } from '../../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];

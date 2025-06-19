@@ -7,10 +7,21 @@ export const ODIE_ERROR_MESSAGE = __(
 	__i18n_text_domain__
 );
 
-export const ODIE_RATE_LIMIT_MESSAGE = __(
+export const ODIE_ERROR_MESSAGE_NON_ELIGIBLE = __(
+	'Sorry, I am offline right now. Come back later or ask for help in our forums:',
+	__i18n_text_domain__
+);
+
+export const ODIE_RATE_LIMIT_MESSAGE_CONTENT = __(
 	"Hi there! You've hit your AI usage limit. Upgrade your plan for unlimited Wapuu support! You can still get user support using the buttons below.",
 	__i18n_text_domain__
 );
+
+export const ODIE_RATE_LIMIT_MESSAGE: Message = {
+	content: ODIE_RATE_LIMIT_MESSAGE_CONTENT,
+	role: 'bot',
+	type: 'message',
+};
 
 export const ODIE_FORWARD_TO_FORUMS_MESSAGE = __(
 	'It sounds like you want to talk to a human. Human support is only available for our [paid plans](https://wordpress.com/pricing/). For community support, visit our forums:',
@@ -32,6 +43,22 @@ export const ODIE_TRANSFER_MESSAGE: Message[] = [
 				hide_disclaimer_content: true,
 				show_contact_support_msg: false,
 				show_ai_avatar: false,
+			},
+			site_id: null,
+		},
+	},
+];
+
+export const ODIE_ON_ERROR_TRANSFER_MESSAGE: Message[] = [
+	{
+		content: ODIE_ERROR_MESSAGE,
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: false,
+				show_ai_avatar: true,
 			},
 			site_id: null,
 		},

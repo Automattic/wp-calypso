@@ -1,17 +1,21 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { sitesQuery } from '../app/queries';
+import { useAnalytics } from '../app/analytics';
+import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
+import ComponentViewTracker from '../components/component-view-tracker';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
@@ -45,19 +49,28 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'name',
 		label: __( 'Site' ),
 		enableGlobalSearch: true,
+		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
+		render: ( { field, item } ) => (
+			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+				{ field.getValue( { item } ) }
+			</span>
+		),
 	},
 	{
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => (
-			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
+		getValue: ( { item } ) => new URL( item.URL ).hostname,
+		render: ( { field, item } ) => (
+			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+				{ field.getValue( { item } ) }
+			</span>
 		),
 	},
 	{
 		id: 'icon.ico',
-		label: __( 'Media' ),
-		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
+		label: __( 'Site icon' ),
+		render: ( { item } ) => <SiteIcon site={ item } />,
 		enableSorting: false,
 	},
 	{
@@ -68,12 +81,12 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'backups',
 		type: 'boolean',
 		label: __( 'Backups' ),
-		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
+		getValue: ( { item } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
 			{ value: false, label: __( 'Disabled' ) },
 		],
-		render: ( { item }: { item: Site } ) =>
+		render: ( { item } ) =>
 			item.plan?.features?.active?.includes( 'backups' ) ? (
 				<Icon icon={ check } />
 			) : (
@@ -86,17 +99,31 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'status',
 		label: __( 'Status' ),
-		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
+		getValue: ( { item } ) => getSiteStatus( item ),
 		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
 		filterBy: {
 			operators: [ 'is' ],
 		},
-		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
+		render: ( { item } ) => {
+			const label = getSiteStatusLabel( item );
+			if ( item.launch_status !== 'unlaunched' ) {
+				return label;
+			}
+
+			return (
+				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
+			);
+		},
+	},
+	{
+		id: 'wp_version',
+		label: __( 'WP version' ),
+		getValue: ( { item } ) => getFormattedWordPressVersion( item ),
 	},
 	{
 		id: 'is_a8c',
 		type: 'boolean',
-		label: __( 'A8C Owned' ),
+		label: __( 'A8C owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
@@ -104,12 +131,12 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+		render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
 	},
 	{
 		id: 'preview',
 		label: __( 'Preview' ),
-		render: function PreviewRender( { item }: { item: Site } ) {
+		render: function PreviewRender( { item } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
 			const { is_deleted, is_private, URL: url } = item;
 			// If the site is a private A8C site, X-Frame-Options is set to same
@@ -139,18 +166,25 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		},
 		enableSorting: false,
 	},
+	{
+		id: 'last_published',
+		label: __( 'Last published' ),
+		getValue: ( { item } ) => item.options?.updated_at ?? '',
+		render: ( { item } ) =>
+			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+	},
 ];
 
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
+		fields: [ 'subscribers_count', 'status', 'backups', 'protect', 'wp_version' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
 	grid: {
 		mediaField: 'preview',
-		fields: [],
+		fields: [ 'status' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
@@ -186,6 +220,7 @@ export default function Sites() {
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
 	);
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
+
 	const defaultView = useMemo(
 		() =>
 			hasA8CSites
@@ -202,6 +237,7 @@ export default function Sites() {
 				: DEFAULT_VIEW,
 		[ hasA8CSites ]
 	);
+
 	const view = useMemo(
 		() => ( {
 			...defaultView,
@@ -214,11 +250,21 @@ export default function Sites() {
 		} ),
 		[ defaultView, viewOptions ]
 	);
-	const fields = useMemo(
-		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
-		[ hasA8CSites ]
-	);
+
+	const fields = useMemo( () => {
+		return DEFAULT_FIELDS.filter( ( field ) => {
+			if ( field.id === 'is_a8c' && ! hasA8CSites ) {
+				return false;
+			}
+
+			if ( field.id === 'icon.ico' && view.type === 'grid' ) {
+				return false;
+			}
+
+			return true;
+		} );
+	}, [ hasA8CSites, view.type ] );
+
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
@@ -248,7 +294,7 @@ export default function Sites() {
 			>
 				<DataViewsCard>
 					<DataViews< Site >
-						getItemId={ ( item ) => item.ID }
+						getItemId={ ( item ) => item.ID.toString() }
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }
@@ -269,7 +315,7 @@ export default function Sites() {
 								},
 							} );
 						} }
-						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+						renderItemLink={ ( { item, ...props } ) => (
 							<Link to={ `/sites/${ item.slug }` } { ...props } />
 						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
@@ -277,6 +323,25 @@ export default function Sites() {
 					/>
 				</DataViewsCard>
 			</PageLayout>
+		</>
+	);
+}
+
+function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<>
+			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
+			<ExternalLink
+				href={ href }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+				} }
+				style={ { position: 'absolute' } }
+			>
+				{ children }
+			</ExternalLink>
 		</>
 	);
 }

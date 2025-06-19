@@ -1,10 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus } from '@automattic/help-center/src/hooks';
 import {
 	useCanConnectToZendeskMessaging,
 	useZendeskMessagingAvailability,
 } from '@automattic/zendesk-client';
+import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -14,7 +15,6 @@ import type { FC } from 'react';
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
 
 type Props = {
-	borderless?: boolean;
 	chatIntent?: ChatIntent;
 	className?: string;
 	initialMessage: string;
@@ -42,7 +42,6 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
 	}
 }
 const ChatButton: FC< Props > = ( {
-	borderless = true,
 	chatIntent = 'SUPPORT',
 	children,
 	className = '',
@@ -118,10 +117,10 @@ const ChatButton: FC< Props > = ( {
 	return (
 		<Button
 			className={ classes }
-			primary={ primary }
-			borderless={ borderless }
+			variant={ primary ? 'primary' : 'link' }
 			onClick={ handleClick }
 			title={ __( 'Contact us' ) }
+			size="compact"
 		>
 			{ getChildren() }
 		</Button>

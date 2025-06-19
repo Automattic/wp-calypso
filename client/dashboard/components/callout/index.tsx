@@ -2,7 +2,7 @@ import {
 	Card,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
+	__experimentalText as Text,
 	Icon,
 } from '@wordpress/components';
 import { forwardRef } from 'react';
@@ -12,12 +12,12 @@ import './styles.scss';
 function UnforwardedCallout(
 	{
 		title,
+		titleAs: TitleComponent = Text,
 		icon,
 		image,
 		imageAlt,
 		description,
 		actions,
-		headingLevel = 6,
 		variant = 'default',
 	}: CalloutProps,
 	ref: React.ForwardedRef< HTMLElement >
@@ -33,9 +33,7 @@ function UnforwardedCallout(
 			>
 				<VStack justify="flex-start" alignment="flex-start" spacing="4">
 					{ icon && <Icon icon={ icon } /> }
-					<Heading level={ headingLevel } className="dashboard-callout__title">
-						{ title }
-					</Heading>
+					<TitleComponent className="dashboard-callout__title">{ title }</TitleComponent>
 					{ description }
 					{ actions }
 				</VStack>

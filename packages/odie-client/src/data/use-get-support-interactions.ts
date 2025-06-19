@@ -1,3 +1,4 @@
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 import type { SupportProvider } from '../types';
@@ -15,11 +16,12 @@ export const useGetSupportInteractions = (
 	freshness = 0
 ) => {
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
+	const isTestMode = isTestModeEnvironment();
+
 	return useQuery( {
-		// eslint-disable-next-line
-		queryKey: [ 'support-interactions', 'get-interactions', provider, status, freshness ],
+		queryKey: [ 'support-interactions', 'get-interactions', provider, freshness, path, isTestMode ],
 		queryFn: async () => {
-			const response = await handleSupportInteractionsFetch( 'GET', path );
+			const response = await handleSupportInteractionsFetch( 'GET', path, isTestMode );
 
 			if ( response.length === 0 ) {
 				return null;

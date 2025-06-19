@@ -2,7 +2,7 @@
  * External dependencies
  */
 import removeAccents from 'remove-accents';
-
+import { getDate } from '@wordpress/date';
 /**
  * Internal dependencies
  */
@@ -17,9 +17,14 @@ import {
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
+	OPERATOR_BETWEEN,
 } from './constants';
 import { normalizeFields } from './normalize-fields';
 import type { Field, View } from './types';
@@ -216,6 +221,71 @@ export function filterSortAndPaginate< Item >(
 									String( filter.value ).toLowerCase()
 								)
 						);
+					} );
+				} else if (
+					filter.operator === OPERATOR_BEFORE &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue < filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_AFTER &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue > filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_BEFORE_INC &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue <= filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_AFTER_INC &&
+					filter.value !== undefined
+				) {
+					const filterValue = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue >= filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_BETWEEN &&
+					Array.isArray( filter.value ) &&
+					filter.value.length === 2 &&
+					filter.value[ 0 ] !== undefined &&
+					filter.value[ 1 ] !== undefined
+				) {
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = field.getValue( { item } );
+						if (
+							typeof fieldValue === 'number' ||
+							fieldValue instanceof Date ||
+							typeof fieldValue === 'string'
+						) {
+							return (
+								fieldValue >= filter.value[ 0 ] &&
+								fieldValue <= filter.value[ 1 ]
+							);
+						}
+						return false;
 					} );
 				}
 			}

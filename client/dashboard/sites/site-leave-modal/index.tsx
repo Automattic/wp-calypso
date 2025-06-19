@@ -15,11 +15,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import {
-	leaveSiteMutation,
-	siteHasPurchasesCancelableQuery,
-	siteUserMeQuery,
-} from '../../app/queries';
+import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
+import { siteCurrentUserQuery, siteUserDeleteMutation } from '../../app/queries/site-users';
 import RouterLinkButton from '../../components/router-link-button';
 import type { Site, User } from '../../data/types';
 
@@ -99,8 +96,8 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
-	const { data: me } = useQuery( siteUserMeQuery( site.slug ) );
-	const mutation = useMutation( leaveSiteMutation( site.slug ) );
+	const { data: me } = useQuery( siteCurrentUserQuery( site.ID ) );
+	const mutation = useMutation( siteUserDeleteMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState< SiteLeaveFormData >( {
 		confirmed: false,
@@ -197,7 +194,7 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 export default function SiteLeaveModal( { site, onClose }: SiteLeaveModalProps ) {
 	const { user } = useAuth();
 	const { data: hasPurchasesCancelable, isLoading: isLoadingHasPurchasesCancelable } = useQuery(
-		siteHasPurchasesCancelableQuery( site.slug, user.ID )
+		siteHasCancelablePurchasesQuery( site.ID, user.ID )
 	);
 
 	if ( isLoadingHasPurchasesCancelable ) {

@@ -1,24 +1,30 @@
+import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import blazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.png';
 import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';
 import studioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
 import wpJobManagerLogo from 'calypso/assets/images/icons/wp-job-manager.png';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import {
 	isCrowdsignalOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isStudioAppOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isBlazeProOAuth2Client,
+	isA4AOAuth2Client,
+	isJetpackCloudOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 
 interface Props {
 	isFromAkismet?: boolean;
+	isJetpack?: boolean;
 }
 
-const HeadingLogo = ( { isFromAkismet }: Props ) => {
+const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
 	let logo = null;
@@ -32,6 +38,12 @@ const HeadingLogo = ( { isFromAkismet }: Props ) => {
 		logo = <img src={ wpJobManagerLogo } alt="WP Job Manager Logo" />;
 	} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ blazeProLogo } alt="Blaze Pro Logo" />;
+	} else if ( isA4AOAuth2Client( oauth2Client ) ) {
+		logo = <A4APlusWpComLogo size={ 32 } />;
+	} else if ( isJetpack ) {
+		logo = <JetpackLogo size={ 64 } />;
+	} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+		logo = <JetpackPlusWpComLogo size={ 32 } />;
 	} else if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		/**
 		 * Leave last to avoid overriding other grav-powered client logos.

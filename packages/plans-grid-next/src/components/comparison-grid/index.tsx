@@ -228,7 +228,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 		border-right: none;
 		justify-content: center;
 
-		&:first-of-type {
+		&:first-of-type:not( .popular-plan-parent-class ) {
 			padding-inline-start: 0;
 		}
 		&:last-of-type {

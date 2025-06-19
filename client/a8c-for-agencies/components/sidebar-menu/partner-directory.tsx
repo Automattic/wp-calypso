@@ -12,15 +12,15 @@ type Props = {
 	path: string;
 };
 
-export default function ( { path }: Props ) {
+export default function PartnerDirectory( { path }: Props ) {
 	const translate = useTranslate();
 	const menuItems = usePartnerDirectoryMenuItems( path );
 
 	return (
 		<Sidebar
 			path={ A4A_PARTNER_DIRECTORY_LINK }
-			title={ translate( 'Partner Directory' ) }
-			description={ translate( 'Boost your agency’s visibility across Automattic platforms.' ) }
+			title={ translate( 'Partner Directories' ) }
+			description={ translate( "Boost your agency's visibility across Automattic platforms." ) }
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),
 				icon: chevronLeft,

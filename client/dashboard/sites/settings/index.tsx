@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteQuery, siteSettingsQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -22,12 +23,8 @@ import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-
-	if ( ! site || ! settings ) {
-		return null;
-	}
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>

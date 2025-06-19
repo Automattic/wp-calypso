@@ -1,5 +1,5 @@
-import { CoreBadge } from '@automattic/components';
 import { DataForm } from '@automattic/dataviews';
+import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -26,12 +26,12 @@ import {
 	siteSshKeysQuery,
 	siteSshKeysAttachMutation,
 	siteSshKeysDetachMutation,
-	profileSshKeysQuery,
-} from '../../app/queries';
+} from '../../app/queries/site-ssh';
+import { sshKeysQuery } from '../../app/queries/ssh';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
+import type { SftpUser, SiteSshKey, UserSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
 
 type SshCardFormData = {
@@ -59,7 +59,7 @@ const SshKeyCard = ( {
 							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
 							<Text variant="muted">{ siteSshKey.sha256 }</Text>
 						</VStack>
-						<CoreBadge intent="info" style={ { height: '24px' } }>
+						<Badge intent="info" style={ { height: '24px' } }>
 							{ sprintf(
 								/* translators: %s is when the SSH key was attached. */
 								__( 'Attached on %s' ),
@@ -68,7 +68,7 @@ const SshKeyCard = ( {
 									timeStyle: 'medium',
 								} ).format( new Date( siteSshKey.attached_at ) )
 							) }
-						</CoreBadge>
+						</Badge>
 					</VStack>
 					<Button
 						icon={ trash }
@@ -84,33 +84,30 @@ const SshKeyCard = ( {
 };
 
 export default function SshCard( {
-	siteSlug,
+	siteId,
 	sftpUsers,
 	sshEnabled,
 }: {
-	siteSlug: string;
+	siteId: number;
 	sftpUsers: SftpUser[];
 	sshEnabled: boolean;
 } ) {
 	const { user } = useAuth();
-	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteSlug ) );
-	const { data: profileSshKeys, error: profileSshKeysError } = useQuery<
-		ProfileSshKey[],
-		{ code: string }
-	>( {
-		...profileSshKeysQuery(),
-		enabled: sshEnabled,
-	} );
-	const toggleSshAccessMutation = useMutation(
-		! sshEnabled
-			? siteSshAccessEnableMutation( siteSlug )
-			: siteSshAccessDisableMutation( siteSlug )
+	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
+	const { data: userSshKeys, error: userSshKeysError } = useQuery< UserSshKey[], { code: string } >(
+		{
+			...sshKeysQuery(),
+			enabled: sshEnabled,
+		}
 	);
-	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteSlug ) );
-	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteSlug ) );
+	const toggleSshAccessMutation = useMutation(
+		! sshEnabled ? siteSshAccessEnableMutation( siteId ) : siteSshAccessDisableMutation( siteId )
+	);
+	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteId ) );
+	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const userLocale = user.locale_variant || user.language || 'en';
-	const hasProfileSshKeys = profileSshKeys && profileSshKeys.length > 0;
+	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
 		ssh_key: 'default',
@@ -252,7 +249,7 @@ export default function SshCard( {
 						value={ field.getValue( { item: data } ) ?? '' }
 						help={ field.description }
 						options={ field.elements }
-						disabled={ ! hasProfileSshKeys }
+						disabled={ ! hasUserSshKeys }
 						onChange={ ( newValue: any ) =>
 							onChange( {
 								[ field.id ]: newValue,
@@ -264,10 +261,10 @@ export default function SshCard( {
 					/>
 				);
 			},
-			elements: hasProfileSshKeys
-				? profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
-						label: `${ user.username }-${ profileSshKey.name }`,
-						value: profileSshKey.name,
+			elements: hasUserSshKeys
+				? userSshKeys.map( ( userSshKey: UserSshKey ) => ( {
+						label: `${ user.username }-${ userSshKey.name }`,
+						value: userSshKey.name,
 				  } ) )
 				: [
 						{
@@ -283,7 +280,7 @@ export default function SshCard( {
 		fields: [ 'connection_command', 'ssh_key' ],
 	};
 
-	if ( profileSshKeysError?.code === 'reauthorization_required' ) {
+	if ( userSshKeysError?.code === 'reauthorization_required' ) {
 		const currentPath = window.location.pathname;
 		const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 		window.location.href = loginUrl;
@@ -298,7 +295,7 @@ export default function SshCard( {
 						title={ __( 'SSH' ) }
 						description={ createInterpolateElement(
 							__(
-								"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
+								'SSH lets you access your site’s backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>.'
 							),
 							{
 								wpCliLink: <ExternalLink href="https://wp-cli.org/" children={ null } />,
@@ -329,7 +326,7 @@ export default function SshCard( {
 							<Button
 								variant="primary"
 								isBusy={ attachSshKeyMutation.isPending }
-								disabled={ ! hasProfileSshKeys }
+								disabled={ ! hasUserSshKeys }
 								onClick={ handleAttachSshKey }
 							>
 								{ __( 'Attach SSH key to site' ) }

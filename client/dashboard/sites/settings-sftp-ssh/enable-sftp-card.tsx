@@ -14,20 +14,20 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteSftpUsersCreateMutation } from '../../app/queries';
+import { siteSftpUsersCreateMutation } from '../../app/queries/site-sftp';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 
 export default function EnableSftpCard( {
-	siteSlug,
+	siteId,
 	canUseSsh,
 }: {
-	siteSlug: string;
+	siteId: number;
 	canUseSsh: boolean;
 } ) {
-	const mutation = useMutation( siteSftpUsersCreateMutation( siteSlug ) );
+	const mutation = useMutation( siteSftpUsersCreateMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleCreateCredentials = () => {
@@ -59,10 +59,10 @@ export default function EnableSftpCard( {
 						description={
 							canUseSsh
 								? __(
-										"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
+										'Access and edit your website’s files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line.'
 								  )
 								: __(
-										"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
+										'Access and edit your website’s files directly by creating SFTP credentials and using an SFTP client.'
 								  )
 						}
 						level={ 3 }

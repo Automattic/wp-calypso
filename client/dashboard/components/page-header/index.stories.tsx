@@ -1,4 +1,3 @@
-import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
 import { Meta, StoryObj } from '@storybook/react';
 import { Button, Icon, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { help, wordpress, moreVertical } from '@wordpress/icons';
@@ -65,17 +64,6 @@ export const FullExample: Story = {
 		title: 'Site Customization',
 		description: 'Make your site look exactly how you want it to',
 		decoration: <Icon icon={ wordpress } />,
-		breadcrumbs: (
-			<Breadcrumbs
-				items={ [
-					{ label: 'Dashboard', href: 'javascript:void(0)' },
-					{ label: 'Appearance', href: 'javascript:void(0)' },
-					{ label: 'Customize', href: 'javascript:void(0)' },
-					{ label: 'Theme', href: 'javascript:void(0)' },
-					{ label: 'Advanced', href: 'javascript:void(0)' },
-				] }
-			/>
-		),
 		actions: (
 			<>
 				<Button icon={ help } variant="tertiary" __next40pxDefaultSize>

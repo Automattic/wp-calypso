@@ -14,7 +14,7 @@
 		font-weight: 500 !important;
 		line-height: 1;
 	}
-	
+
 	.dashboard-section-header.is-level-2 .dashboard-section-header__heading {
 		font-size: 15px;
 		line-height: 20px;
@@ -22,6 +22,10 @@
 
 	.dataforms-layouts-regular__field {
 		min-height: 0;
+	}
+
+	.components-panel__body-toggle {
+		justify-content: unset;
 	}
 
 	.site-preview-pane:has( & .dashboard-snackbars ) {

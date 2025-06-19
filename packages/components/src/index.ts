@@ -57,10 +57,8 @@ export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
 export { default as SummaryButton } from './summary-button';
-export { CoreBadge } from './core-badge';
 export { default as Menu } from './menu';
 export { Tabs } from './tabs';
-export { DateCalendar, DateRangeCalendar, TZDate } from './calendar';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';
@@ -70,3 +68,4 @@ export { VIPLogo } from './logos/vip-logo';
 export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
 export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
+export { GravatarTextLogo } from './logos/gravatar-text-logo';

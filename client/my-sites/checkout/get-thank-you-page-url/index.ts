@@ -86,6 +86,7 @@ export interface PostCheckoutUrlArguments {
 	feature?: string;
 	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
+	isGravatarDomain?: boolean;
 	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
@@ -132,6 +133,7 @@ export default function getThankYouPageUrl( {
 	cart,
 	sitelessCheckoutType,
 	isJetpackNotAtomic,
+	isGravatarDomain,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
@@ -369,8 +371,14 @@ export default function getThankYouPageUrl( {
 		! urlFromCookie.includes( '/start/setup-site' )
 	) {
 		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+		let newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
+
+		if ( isGravatarDomain ) {
+			newBlogReceiptUrl = addGravatarDomainQueryParam( newBlogReceiptUrl );
+			debug( 'adding Gravatar domain query param to new blog receipt URL', newBlogReceiptUrl );
+		}
+
 		return newBlogReceiptUrl;
 	}
 
@@ -407,7 +415,7 @@ export default function getThankYouPageUrl( {
 		return getUrlWithQueryParam( urlFromCookie, noticeType );
 	}
 
-	const fallbackUrl = getFallbackDestination( {
+	let fallbackUrl = getFallbackDestination( {
 		receiptIdOrPlaceholder,
 		siteSlug,
 		adminUrl,
@@ -419,6 +427,12 @@ export default function getThankYouPageUrl( {
 		redirectTo,
 	} );
 	debug( 'returning fallback url', fallbackUrl );
+
+	if ( isGravatarDomain ) {
+		fallbackUrl = addGravatarDomainQueryParam( fallbackUrl );
+		debug( 'adding Gravatar domain query param to fallback URL', fallbackUrl );
+	}
+
 	return getUrlWithQueryParam( fallbackUrl );
 }
 
@@ -821,4 +835,8 @@ function doesCartContainGoogleAppsWithoutDomainReceipt( cart: ResponseCart ): bo
 		return true;
 	}
 	return false;
+}
+
+function addGravatarDomainQueryParam( url: string ): string {
+	return addQueryArgs( { isGravatarDomain: '1' }, url );
 }

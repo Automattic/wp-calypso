@@ -169,10 +169,11 @@ const useMainMenuItems = ( path: string ) => {
 							icon: commentAuthorAvatar,
 							path: '/dashboard',
 							link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-							title: translate( 'Partner Directory' ),
+							title: translate( 'Partner Directories' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Partner Directory',
 							},
+							withChevron: true,
 						},
 				  ]
 				: [] ),
@@ -208,7 +209,7 @@ const useMainMenuItems = ( path: string ) => {
 							icon: starEmpty,
 							path: '/',
 							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tier' ),
+							title: translate( 'Agency Tiers' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
 							},

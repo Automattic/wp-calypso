@@ -1,6 +1,7 @@
 import { createSelector } from '@automattic/state-utils';
 import treeSelect from '@automattic/tree-select';
 import { get, map, flatten } from 'lodash';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
 
@@ -195,10 +196,10 @@ export function getSiteStatsQueryDate( state, siteId, statType, query ) {
 }
 
 /**
- * Returns the date of the last site stats query
+ * Returns a summary of site stats views organized by year and month
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
- * @returns {Object}           Stats View Summary
+ * @returns {Object}      Stats View Summary
  */
 export function getSiteStatsViewSummary( state, siteId ) {
 	const query = {
@@ -207,46 +208,56 @@ export function getSiteStatsViewSummary( state, siteId ) {
 	};
 	const viewData = getSiteStatsForQuery( state, siteId, 'statsVisits', query );
 
-	if ( ! viewData || ! viewData.data ) {
+	// Validate input data
+	if ( ! viewData?.data || ! Array.isArray( viewData.data ) ) {
 		return null;
 	}
 
 	const viewSummary = {};
+	const currentDate = getMomentSiteZone( state, siteId ).toDate();
+	const currentYear = currentDate.getFullYear();
+	const currentMonth = currentDate.getMonth();
 
 	viewData.data.forEach( ( item ) => {
-		const [ date, value ] = item;
-		const newDate = new Date( date );
-		const years = newDate.getFullYear();
-		const months = newDate.getMonth();
-
-		if ( ! viewSummary[ years ] ) {
-			viewSummary[ years ] = {};
+		// Validate item structure
+		if ( ! Array.isArray( item ) || item.length !== 2 ) {
+			return;
 		}
 
-		if ( ! viewSummary[ years ][ months ] ) {
-			viewSummary[ years ][ months ] = {
+		const [ dateStr, value ] = item;
+
+		// Parse date components - date format (YYYY-MM-DD)
+		const [ yearStr, monthStr ] = dateStr.split( '-' );
+		const year = parseInt( yearStr, 10 );
+		const month = parseInt( monthStr, 10 ) - 1; // Convert to 0-based month
+
+		// Initialize year and month objects if they don't exist
+		if ( ! viewSummary[ year ] ) {
+			viewSummary[ year ] = {};
+		}
+
+		if ( ! viewSummary[ year ][ month ] ) {
+			const daysInMonth = new Date( year, month + 1, 0 ).getDate();
+			const isCurrentMonth = year === currentYear && month === currentMonth;
+			const daysToUse = isCurrentMonth ? currentDate.getDate() : daysInMonth;
+
+			viewSummary[ year ][ month ] = {
 				total: 0,
 				data: [],
 				average: 0,
-				daysInMonth: new Date( years, months + 1, 0 ).getDate(),
+				daysInMonth: daysToUse,
 			};
 		}
-		viewSummary[ years ][ months ].total += value;
-		viewSummary[ years ][ months ].data.push( item );
-		const average =
-			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
-		viewSummary[ years ][ months ].average = Math.round( average );
+
+		// Add data to the summary
+		viewSummary[ year ][ month ].total += value;
+		viewSummary[ year ][ month ].data.push( item );
+
+		// Calculate average as integer
+		viewSummary[ year ][ month ].average = Math.round(
+			viewSummary[ year ][ month ].total / viewSummary[ year ][ month ].daysInMonth
+		);
 	} );
-
-	// With the current month, calculate the average based on the days passed so far in the month
-	const date = new Date();
-	const thisMonth =
-		viewSummary[ date.getFullYear() ] && viewSummary[ date.getFullYear() ][ date.getMonth() ];
-
-	if ( thisMonth ) {
-		thisMonth.daysInMonth = date.getDate();
-		thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
-	}
 
 	return viewSummary;
 }

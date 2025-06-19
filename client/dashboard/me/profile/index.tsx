@@ -17,17 +17,17 @@ import {
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { profileQuery, profileMutation } from '../../app/queries';
+import { profileQuery, profileMutation } from '../../app/queries/profile';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
-import type { Profile as ProfileType } from '../../data/types';
+import type { UserProfile } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
 import './style.scss';
 
-const fields: Field< ProfileType >[] = [
+const fields: Field< UserProfile >[] = [
 	{
 		id: 'user_login',
 		label: __( 'Username' ),
@@ -118,8 +118,8 @@ const form = {
 
 export default function Profile() {
 	const { data: serverData } = useQuery( profileQuery() );
-	const [ localData, setLocalData ] = useState< Partial< ProfileType > | undefined >();
-	const [ savingData, setSavingData ] = useState< Partial< ProfileType > | undefined >();
+	const [ localData, setLocalData ] = useState< Partial< UserProfile > | undefined >();
+	const [ savingData, setSavingData ] = useState< Partial< UserProfile > | undefined >();
 	const data = useMemo(
 		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
 		[ serverData, savingData, localData ]
@@ -135,7 +135,7 @@ export default function Profile() {
 		!! localData &&
 		!! serverData &&
 		Object.entries( localData ).some( ( [ key, value ] ) => {
-			return serverData[ key as keyof ProfileType ] !== value;
+			return serverData[ key as keyof UserProfile ] !== value;
 		} );
 	let saveButtonLabel = __( 'Save' );
 
@@ -204,11 +204,11 @@ export default function Profile() {
 					<Card>
 						<CardBody>
 							<VStack spacing={ 4 } alignment="left">
-								<DataForm< ProfileType >
+								<DataForm< UserProfile >
 									data={ data }
 									fields={ fields }
 									form={ form }
-									onChange={ ( edits: Partial< ProfileType > ) => {
+									onChange={ ( edits: Partial< UserProfile > ) => {
 										setLocalData( ( current ) => ( { ...current, ...edits } ) );
 									} }
 								/>

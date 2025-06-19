@@ -1,0 +1,87 @@
+.gravatar-hovercard {
+	// Ensure our styles take precedence over the default styles
+	.gravatar-hovercard__inner {
+		.gravatar-hovercard__primary-blog-card {
+			background: var( --color-main-background );
+			border: 1px solid var( --color-border-subtle );
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 6px;
+			padding: 12px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			margin-top: 12px;
+
+			.gravatar-hovercard__primary-blog-card-header {
+				display: flex;
+				align-items: center;
+				margin-bottom: 12px;
+			}
+
+			.gravatar-hovercard__primary-blog-card-site-icon.reader-avatar {
+				margin-right: 12px;
+				display: inline-block;
+				max-height: unset;
+
+				.site-icon {
+					border-radius: 4px;
+				}
+			}
+
+			.gravatar-hovercard__primary-blog-card-site-info {
+				flex-grow: 1;
+				min-width: 0; // Enable text truncation
+			}
+
+			.gravatar-hovercard__primary-blog-card-site-title {
+				font-size: 14px;
+				font-weight: 600;
+				line-height: 1.3;
+				margin: 0;
+				color: var( --color-text );
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.gravatar-hovercard__primary-blog-card-username {
+				font-size: 12px;
+				line-height: 1.4;
+				margin: 2px 0 0;
+				color: var( --color-text-subtle );
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.gravatar-hovercard__primary-blog-card-description {
+				font-size: 13px;
+				line-height: 1.4;
+				margin: 0 0 16px;
+				color: var( --color-text );
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				line-clamp: 2;
+				-webkit-box-orient: vertical;
+			}
+
+			.gravatar-hovercard__primary-blog-card-follow-button {
+				width: 100%;
+				justify-content: center;
+
+				&.is-following {
+					border-color: var( --color-accent );
+					.follow-button__label {
+						color: var( --color-accent );
+					}
+					svg path {
+						fill: var( --color-accent );
+					}
+					&:hover svg path {
+						fill: var( --color-text );
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,65 +1,58 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
-import { siteQuery, siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
+import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
-import { canViewSftpSettings, canViewSshSettings } from '../features';
-import SettingsCallout from '../settings-callout';
+import { HostingFeatures, canViewSftpSettings, canViewSshSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import calloutIllustrationUrl from './callout-illustration.svg';
 import EnableSftpCard from './enable-sftp-card';
 import SftpCard from './sftp-card';
 import SshCard from './ssh-card';
+import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: sftpUsers } = useQuery( {
-		...siteSftpUsersQuery( siteSlug ),
-		enabled: site && canViewSftpSettings( site ),
+		...siteSftpUsersQuery( site.ID ),
+		enabled: canViewSftpSettings( site ),
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
-		...siteSshAccessStatusQuery( siteSlug ),
-		enabled: site && canViewSshSettings( site ),
+		...siteSshAccessStatusQuery( site.ID ),
+		enabled: canViewSshSettings( site ),
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 
-	if ( ! site ) {
-		return null;
-	}
-
-	if ( ! canViewSftpSettings( site ) ) {
-		return (
-			<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-				<SettingsCallout
-					siteSlug={ siteSlug }
-					icon={ file }
-					image={ calloutIllustrationUrl }
-					title={ __( 'Direct access to your site’s files' ) }
-					description={ __(
-						'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
-					) }
-					tracksId="sftp-ssh"
-				/>
-			</PageLayout>
-		);
-	}
-
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-			{ sftpEnabled ? (
-				<SftpCard siteSlug={ site.slug } sftpUsers={ sftpUsers } />
-			) : (
-				<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canViewSshSettings( site ) } />
-			) }
-			{ sftpEnabled && canViewSshSettings( site ) && (
-				<SshCard
-					siteSlug={ site.slug }
-					sftpUsers={ sftpUsers }
-					sshEnabled={ sshAccessStatus?.setting === 'ssh' }
-				/>
-			) }
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.SFTP }
+				tracksFeatureId="settings-sftp-ssh"
+				upsellIcon={ file }
+				upsellImage={ upsellIllustrationUrl }
+				upsellTitle={ __( 'Direct access to your site’s files' ) }
+				upsellDescription={ __(
+					'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
+				) }
+			>
+				{ sftpEnabled ? (
+					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
+				) : (
+					<EnableSftpCard siteId={ site.ID } canUseSsh={ canViewSshSettings( site ) } />
+				) }
+				{ sftpEnabled && canViewSshSettings( site ) && (
+					<SshCard
+						siteId={ site.ID }
+						sftpUsers={ sftpUsers }
+						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
+					/>
+				) }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

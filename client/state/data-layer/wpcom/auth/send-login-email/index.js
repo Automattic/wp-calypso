@@ -44,15 +44,29 @@ export const sendLoginEmail = ( action ) => {
 			? [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } ]
 			: [] ),
 		...( requestLoginEmailFormFlow
-			? [ recordTracksEventWithClientId( 'calypso_login_email_link_submit' ) ]
+			? [
+					recordTracksEventWithClientId( 'calypso_login_email_link_submit', {
+						token_type: tokenType,
+						flow: flow,
+					} ),
+			  ]
 			: [] ),
 		...( loginFormFlow
-			? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link' ) ]
+			? [
+					recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link', {
+						token_type: tokenType,
+						flow: flow,
+					} ),
+			  ]
 			: [] ),
 		...( createAccount
 			? [
 					recordTracksEventWithClientId(
-						'calypso_login_block_login_form_send_account_create_magic_link'
+						'calypso_login_block_login_form_send_account_create_magic_link',
+						{
+							token_type: tokenType,
+							flow: flow,
+						}
 					),
 			  ]
 			: [] ),
@@ -86,7 +100,15 @@ export const sendLoginEmail = ( action ) => {
 };
 
 export const onSuccess = (
-	{ email, showGlobalNotices, infoNoticeId = null, loginFormFlow, requestLoginEmailFormFlow },
+	{
+		email,
+		showGlobalNotices,
+		infoNoticeId = null,
+		loginFormFlow,
+		requestLoginEmailFormFlow,
+		tokenType,
+		flow,
+	},
 	response
 ) => [
 	...( loginFormFlow || requestLoginEmailFormFlow
@@ -96,10 +118,20 @@ export const onSuccess = (
 		  ]
 		: [] ),
 	...( requestLoginEmailFormFlow
-		? [ recordTracksEventWithClientId( 'calypso_login_email_link_success' ) ]
+		? [
+				recordTracksEventWithClientId( 'calypso_login_email_link_success', {
+					token_type: tokenType,
+					flow: flow,
+				} ),
+		  ]
 		: [] ),
 	...( loginFormFlow
-		? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_success' ) ]
+		? [
+				recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_success', {
+					token_type: tokenType,
+					flow: flow,
+				} ),
+		  ]
 		: [] ),
 	// Default Global Notice Handling
 	...( showGlobalNotices
@@ -113,7 +145,14 @@ export const onSuccess = (
 ];
 
 export const onError = (
-	{ showGlobalNotices, infoNoticeId = null, loginFormFlow, requestLoginEmailFormFlow },
+	{
+		showGlobalNotices,
+		infoNoticeId = null,
+		loginFormFlow,
+		requestLoginEmailFormFlow,
+		tokenType,
+		flow,
+	},
 	error
 ) => [
 	...( loginFormFlow || requestLoginEmailFormFlow
@@ -129,6 +168,8 @@ export const onError = (
 				recordTracksEventWithClientId( 'calypso_login_email_link_failure', {
 					error_code: error.error,
 					error_message: error.message,
+					token_type: tokenType,
+					flow: flow,
 				} ),
 		  ]
 		: [] ),
@@ -137,6 +178,8 @@ export const onError = (
 				recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_failure', {
 					error_code: error.error,
 					error_message: error.message,
+					token_type: tokenType,
+					flow: flow,
 				} ),
 		  ]
 		: [] ),

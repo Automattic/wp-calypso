@@ -14,7 +14,7 @@ export const useStartSupportInteraction = () => {
 			event_external_id: crypto.randomUUID(),
 		} );
 		await queryClient.invalidateQueries( {
-			queryKey: [ 'support-interactions', 'get-interactions', 'help-center' ],
+			queryKey: [ 'support-interactions', 'get-interactions' ],
 		} );
 		setCurrentSupportInteraction( interaction );
 	};

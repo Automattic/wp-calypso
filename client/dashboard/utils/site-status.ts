@@ -4,11 +4,11 @@ import type { Site } from '../data/types';
 export const STATUS_LABELS = {
 	public: __( 'Public' ),
 	private: __( 'Private' ),
-	coming_soon: __( 'Coming Soon' ),
+	coming_soon: __( 'Coming soon' ),
 	deleted: __( 'Deleted' ),
 	redirect: __( 'Redirect' ),
-	migration_pending: __( 'Migration Pending' ),
-	migration_started: __( 'Migration Started' ),
+	migration_pending: __( 'Migration pending' ),
+	migration_started: __( 'Migration started' ),
 };
 
 export function getSiteStatus( item: Site ) {

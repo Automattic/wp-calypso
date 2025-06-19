@@ -39,6 +39,19 @@ import useVatDetails from './vat-info/use-vat-details';
 
 const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
+/**
+ * Returns the previous page URL if it is one of the two purchases lists
+ * (account-level or site-level), including query strings.
+ * @returns string|undefined
+ */
+function usePreviousUrlIfPurchasesList() {
+	const previousRoute = useSelector( getPreviousRoute );
+	return /\/me\/purchases\/?[^/]*$/.test( previousRoute ) ||
+		/\/purchases\/subscriptions\/?[^/]*$/.test( previousRoute )
+		? previousRoute
+		: undefined;
+}
+
 function useLogPurchasesError( message ) {
 	return useCallback(
 		( error ) => {
@@ -150,7 +163,11 @@ export function list( context, next ) {
 		return (
 			<PurchasesWrapper>
 				{ useDataViewPurchasesList ? (
-					<PurchasesListDataView userId={ userId } noticeType={ context.params.noticeType } />
+					<PurchasesListDataView
+						userId={ userId }
+						noticeType={ context.params.noticeType }
+						getManagePurchaseUrlFor={ managePurchaseUrl }
+					/>
 				) : (
 					<PurchasesList userId={ userId } noticeType={ context.params.noticeType } />
 				) }
@@ -202,8 +219,7 @@ export function vatDetails( context, next ) {
 export function managePurchase( context, next ) {
 	const ManagePurchasesWrapper = localize( () => {
 		const classes = 'manage-purchase';
-		const previousRoute = useSelector( getPreviousRoute );
-		const purchaseListUrl = previousRoute.includes( '/purchases' ) ? previousRoute : undefined;
+		const purchaseListUrl = usePreviousUrlIfPurchasesList();
 
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
@@ -250,7 +266,11 @@ export function managePurchaseByOwnership( context, next ) {
 }
 
 export function addNewPaymentMethod( context, next ) {
-	context.primary = <AddNewPaymentMethod />;
+	const AddNewPaymentMethodTopWrapper = () => {
+		const purchaseListUrl = usePreviousUrlIfPurchasesList();
+		return <AddNewPaymentMethod purchaseListUrl={ purchaseListUrl } />;
+	};
+	context.primary = <AddNewPaymentMethodTopWrapper />;
 	next();
 }
 

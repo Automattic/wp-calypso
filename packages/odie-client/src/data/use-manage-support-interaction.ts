@@ -1,4 +1,5 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
@@ -9,16 +10,17 @@ import type { SupportInteraction, SupportInteractionEvent } from '../types';
  */
 export const useManageSupportInteraction = () => {
 	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
-
+	const isTestMode = isTestModeEnvironment();
 	/**
 	 * Start a new support interaction.
 	 */
 	const startNewInteraction = useMutation( {
-		mutationKey: [ 'support-interaction', 'new-conversation' ],
+		mutationKey: [ 'support-interaction', 'new-conversation', isTestMode ],
 		mutationFn: ( eventData: SupportInteractionEvent ) =>
 			handleSupportInteractionsFetch(
 				'POST',
 				null,
+				isTestMode,
 				eventData
 			) as unknown as Promise< SupportInteraction >,
 		onSuccess: (
@@ -43,7 +45,7 @@ export const useManageSupportInteraction = () => {
 		Error,
 		{ interactionId: string; eventData: SupportInteractionEvent }
 	>( {
-		mutationKey: [ 'support-interaction', 'add-event' ],
+		mutationKey: [ 'support-interaction', 'add-event', isTestMode ],
 		mutationFn: ( {
 			interactionId,
 			eventData,
@@ -54,6 +56,7 @@ export const useManageSupportInteraction = () => {
 			handleSupportInteractionsFetch(
 				'POST',
 				`/${ interactionId }/events`,
+				isTestMode,
 				eventData
 			) as unknown as Promise< SupportInteraction >,
 		onSuccess: (
@@ -74,9 +77,11 @@ export const useManageSupportInteraction = () => {
 	 * Resolve a support interaction.
 	 */
 	const resolveInteraction = useMutation( {
-		mutationKey: [ 'support-interaction', 'resolve' ],
+		mutationKey: [ 'support-interaction', 'resolve', isTestMode ],
 		mutationFn: ( { interactionId }: { interactionId: string } ) =>
-			handleSupportInteractionsFetch( 'PUT', `/${ interactionId }/status`, { status: 'resolved' } ),
+			handleSupportInteractionsFetch( 'PUT', `/${ interactionId }/status`, isTestMode, {
+				status: 'resolved',
+			} ),
 	} ).mutate;
 
 	return {

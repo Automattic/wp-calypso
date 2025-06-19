@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { CoreBadge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -27,6 +27,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -74,6 +75,7 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -289,6 +291,7 @@ class MasterbarLoggedIn extends Component {
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
+			isGravatarDomain,
 		} = this.props;
 
 		return (
@@ -302,6 +305,7 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
 	}
@@ -446,9 +450,9 @@ class MasterbarLoggedIn extends Component {
 
 		return badges.length > 0
 			? badges.map( ( badge ) => (
-					<CoreBadge className="masterbar__info-badge" key={ badge }>
+					<Badge className="masterbar__info-badge" key={ badge }>
 						{ badge }
-					</CoreBadge>
+					</Badge>
 			  ) )
 			: null;
 	}
@@ -502,7 +506,7 @@ class MasterbarLoggedIn extends Component {
 								<div className="masterbar__site-info">
 									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 									<div className="masterbar__info-badges">
-										<CoreBadge className="masterbar__info-badge">{ sitePlanName }</CoreBadge>
+										<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 									</div>
 								</div>
 							) }
@@ -870,6 +874,7 @@ export default connect(
 			isAtomicAndEditingToolkitDeactivated:
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 		};
 	},
 	{

@@ -77,9 +77,14 @@ export type Operator =
 	| 'greaterThan'
 	| 'lessThanOrEqual'
 	| 'greaterThanOrEqual'
+	| 'before'
+	| 'after'
+	| 'beforeInc'
+	| 'afterInc'
 	| 'contains'
 	| 'notContains'
-	| 'startsWith';
+	| 'startsWith'
+	| 'between';
 
 export type FieldType =
 	| 'text'
@@ -245,6 +250,13 @@ export type DataFormControlProps< Item > = {
 	field: NormalizedField< Item >;
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
+	/**
+	/**
+	 * The currently selected filter operator for this field.
+	 *
+	 * Used by DataViews filters to determine which control to render based on the operator type.
+	 */
+	operator?: Operator;
 };
 
 export type DataViewRenderFieldProps< Item > = {

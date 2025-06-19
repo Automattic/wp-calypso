@@ -17,6 +17,7 @@ interface SiteFaviconProps {
 	size?: number;
 	className?: string;
 	fallback?: SiteFaviconFallback;
+	lazy?: boolean;
 }
 
 const SiteFavicon = ( {
@@ -25,6 +26,7 @@ const SiteFavicon = ( {
 	size = 40,
 	className = '',
 	fallback = 'color',
+	lazy = false,
 }: SiteFaviconProps ) => {
 	const { __ } = useI18n();
 	const siteColor = color ?? 'linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4)';
@@ -59,7 +61,7 @@ const SiteFavicon = ( {
 
 	return (
 		<div className={ clsx( 'site-favicon', className, defaultFaviconClass ) }>
-			<SiteIcon siteId={ blogId } size={ size } defaultIcon={ defaultFavicon } />
+			<SiteIcon siteId={ blogId } size={ size } defaultIcon={ defaultFavicon } lazy={ lazy } />
 		</div>
 	);
 };

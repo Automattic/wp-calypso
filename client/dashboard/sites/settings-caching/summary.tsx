@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { next } from '@wordpress/icons';
-import { siteEdgeCacheStatusQuery } from '../../app/queries';
+import { siteEdgeCacheStatusQuery } from '../../app/queries/site-cache';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canViewCachingSettings } from '../features';
 import { isEdgeCacheAvailable } from './utils';
@@ -19,7 +19,7 @@ export default function CachingSettingsSummary( {
 	const canView = site && canViewCachingSettings( site );
 
 	const { data: isEdgeCacheActive } = useQuery( {
-		...siteEdgeCacheStatusQuery( site.slug ),
+		...siteEdgeCacheStatusQuery( site.ID ),
 		enabled: canView,
 	} );
 

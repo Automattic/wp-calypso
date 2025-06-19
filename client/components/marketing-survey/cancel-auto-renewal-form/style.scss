@@ -1,14 +1,15 @@
 .cancel-auto-renewal-form__dialog {
-	max-width: 472px;
+	max-width: 580px;
 }
 
 .cancel-auto-renewal-form__form-fieldset {
 	margin-bottom: 0;
 }
 
-.cancel-auto-renewal-form__chat-button {
-	float: left;
+.components-button.cancel-auto-renewal-form__chat-button {
 	font-size: 0.875rem;
 	position: initial;
 	transform: none;
+	display: inline-block;
+	margin-right: auto;
 }

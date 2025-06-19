@@ -1,10 +1,11 @@
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { getMigrationStatus } from 'calypso/data/site-migration';
 import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
-import { getMigrationStatus, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
+import { MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import type { SiteExcerptData } from '@automattic/sites';

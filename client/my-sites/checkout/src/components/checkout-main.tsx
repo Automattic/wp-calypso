@@ -21,6 +21,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -145,6 +146,7 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
@@ -282,6 +284,7 @@ export default function CheckoutMain( {
 		connectAfterCheckout,
 		adminUrl,
 		fromSiteSlug,
+		isGravatarDomain,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
@@ -545,6 +548,23 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
+	let gravatarColors = {};
+	let gravatarFontWeights = {};
+
+	if ( isGravatarDomain ) {
+		gravatarColors = {
+			primary: '#1d4fc4',
+			primaryBorder: '#001c5f',
+			primaryOver: '#002e9b',
+			success: '#1d4fc4',
+			discount: '#1d4fc4',
+		};
+
+		gravatarFontWeights = {
+			bold: '700',
+		};
+	}
+
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -570,7 +590,8 @@ export default function CheckoutMain( {
 			: {};
 	const theme = {
 		...checkoutTheme,
-		colors: { ...checkoutTheme.colors, ...jetpackColors, ...a4aColors },
+		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
 	const isCheckoutV2ExperimentLoading = false;

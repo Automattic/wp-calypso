@@ -47,7 +47,6 @@ export const useGetCombinedChat = (
 
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
-		previousUuidRef.current = currentSupportInteraction?.uuid;
 		if (
 			! currentSupportInteraction?.uuid ||
 			isOdieChatLoading ||
@@ -56,6 +55,8 @@ export const useGetCombinedChat = (
 		) {
 			return;
 		}
+
+		previousUuidRef.current = currentSupportInteraction?.uuid;
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
@@ -107,8 +108,9 @@ export const useGetCombinedChat = (
 				} );
 			} catch ( error ) {
 				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
-					conversationId,
-					odieId,
+					conversation_id: conversationId,
+					odie_id: odieId,
+					error: error instanceof Error ? error.message : String( error ),
 				} );
 
 				startNewInteraction( {
@@ -128,6 +130,7 @@ export const useGetCombinedChat = (
 		canConnectToZendesk,
 		getZendeskConversation,
 		startNewInteraction,
+		isLoadingCanConnectToZendesk,
 	] );
 
 	return { mainChatState, setMainChatState };

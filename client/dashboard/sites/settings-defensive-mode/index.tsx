@@ -1,6 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -15,12 +14,17 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import {
+	siteDefensiveModeSettingsQuery,
+	siteDefensiveModeSettingsMutation,
+} from '../../app/queries/site-defensive-mode';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { canViewDefensiveModeSettings } from '../features';
+import { HostingFeatures, canViewDefensiveModeSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -63,46 +67,43 @@ const form = {
 };
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canView = site && canViewDefensiveModeSettings( site );
-
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useQuery( {
-		...siteDefensiveModeQuery( siteSlug ),
-		enabled: canView,
+		...siteDefensiveModeSettingsQuery( site.ID ),
+		enabled: canViewDefensiveModeSettings( site ),
 	} );
-	const mutation = useMutation( siteDefensiveModeMutation( siteSlug ) );
+	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { ttl: string } >( {
 		ttl: availableTtls[ 0 ].value,
 	} );
 
-	if ( ! canView ) {
-		throw notFound();
-	}
-
-	if ( ! data ) {
-		return null;
-	}
-
 	const { isPending } = mutation;
 
 	const handleSubmit = ( data: DefensiveModeSettingsUpdate ) => {
 		mutation.mutate( data, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					data.active ? __( 'Defensive mode enabled.' ) : __( 'Defensive mode disabled.' ),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), {
+				createErrorNotice( __( 'Failed to save defensive mode settings.' ), {
 					type: 'snackbar',
 				} );
 			},
 		} );
 	};
 
-	const { enabled, enabled_by_a11n, enabled_until } = data;
-
 	const renderEnabled = () => {
+		if ( ! data ) {
+			return null;
+		}
+
+		const { enabled_by_a11n, enabled_until } = data;
+
 		const date = new Date( enabled_until * 1000 );
 		const enabledUntil = date.toLocaleString( undefined, {
 			year: 'numeric',
@@ -126,6 +127,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					! enabled_by_a11n && (
 						<Button
 							variant="primary"
+							size="compact"
 							type="submit"
 							isBusy={ isPending }
 							disabled={ isPending }
@@ -190,6 +192,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 								/>
 								<HStack justify="flex-start">
 									<Button
+										__next40pxDefaultSize
 										variant="primary"
 										type="submit"
 										isBusy={ isPending }
@@ -214,7 +217,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					title={ __( 'Defensive mode' ) }
 					description={ createInterpolateElement(
 						__(
-							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>.'
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>'
 						),
 						{
 							link: <InlineSupportLink supportContext="hosting-defensive-mode" />,
@@ -223,7 +226,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				/>
 			}
 		>
-			{ enabled ? renderEnabled() : renderDisabled() }
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.DEFENSIVE_MODE }
+				tracksFeatureId="settings-defensive-mode"
+			>
+				{ data?.enabled ? renderEnabled() : renderDisabled() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

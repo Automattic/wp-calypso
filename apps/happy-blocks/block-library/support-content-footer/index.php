@@ -117,7 +117,7 @@ if ( 'home' === $current_page_slug ) {
 	<?php
 } elseif ( 'contact' === $current_page_slug ) {
 	?>
-	<div class="happy-blocks-new-support-content-footer">
+	<div class="happy-blocks-new-support-content-footer contact-page">
 		<div class="support-content-resources">
 			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/sites?help-center=wapuu' ) ); ?>" class="support-content-resource">
 				<div class="support-content-resource__content">
@@ -165,6 +165,36 @@ if ( 'home' === $current_page_slug ) {
 			</a>
 		</div>
 	</div>
+	<?php
+} elseif ( 'courses-2' === $current_page_slug ) {
+	?>
+		<div class="happy-blocks-new-support-content-footer">
+			<h2 class="support-footer__heading"><?php esc_html_e( 'Continue your learning journey', 'happy-blocks' ); ?></h2>
+			<div class="support-content-resources">
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides/' ) ); ?>" class="support-content-resource">
+					<div class="support-content-resource__content">
+						<div class="support-footer__icon-wrapper">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+  <path fill="#fff" d="M18 5.5H6a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5ZM6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm1 5h1.5v1.5H7V9Zm1.5 4.5H7V15h1.5v-1.5ZM10 9h7v1.5h-7V9Zm7 4.5h-7V15h7v-1.5Z"/>
+</svg>
+						</div>
+						<h3 class="support-footer__card-title"><?php esc_html_e( 'Browse our guides', 'happy-blocks' ); ?></h3>
+						<p class="support-footer__card-description"><?php esc_html_e( 'Find step-by-step solutions to common questions in our comprehensive guides.', 'happy-blocks' ); ?></p>
+					</div>
+				</a>
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/blog/' ) ); ?>" class="support-content-resource">
+					<div class="support-content-resource__content">
+						<div class="support-footer__icon-wrapper">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+  <path fill="#fff" fill-rule="evenodd" d="M6 5.5h12a.5.5 0 0 1 .5.5v7H14a2 2 0 0 1-4 0H5.5V6a.5.5 0 0 1 .5-.5Zm-.5 9V18a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5v-3.5h-3.3a3.5 3.5 0 0 1-6.4 0H5.5ZM4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5Z" clip-rule="evenodd"/>
+</svg>
+						</div>
+						<h3 class="support-footer__card-title"><?php esc_html_e( 'Subscribe to our blog', 'happy-blocks' ); ?></h3>
+						<p class="support-footer__card-description"><?php esc_html_e( 'Sign up to get tips, tutorials, and all the latest news straight to your inbox.', 'happy-blocks' ); ?></p>
+					</div>
+				</a>
+			</div>
+		</div>
 	<?php
 } else {
 	?>

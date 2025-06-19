@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { TextControl } from '@wordpress/components';
+import { Button, TextControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -419,9 +419,10 @@ export class LoginForm extends Component {
 						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<Button
-									borderless
+									variant="link"
 									className="login__form-change-username"
 									onClick={ this.resetView }
+									size="small"
 								>
 									<Gridicon icon="arrow-left" size={ 18 } />
 
@@ -436,7 +437,7 @@ export class LoginForm extends Component {
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
-							label={ this.props.translate( 'Email Address or Username' ) }
+							label={ this.props.translate( 'Email address or username' ) }
 							disabled={ isFormDisabled || this.isPasswordView() }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
@@ -487,10 +488,11 @@ export class LoginForm extends Component {
 						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
 							<Button
-								primary
+								variant="primary"
 								disabled={ isFormDisabled }
 								onClick={ this.handleWooCommerceSubmit }
 								type="submit"
+								__next40pxDefaultSize
 							>
 								{ this.getLoginButtonText() }
 							</Button>
@@ -505,6 +507,7 @@ export class LoginForm extends Component {
 									handleLogin={ this.handleSocialLogin }
 									trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 									socialServiceResponse={ this.props.socialServiceResponse }
+									isJetpack={ this.props.isJetpack }
 								/>
 							</div>
 						) }
@@ -516,12 +519,18 @@ export class LoginForm extends Component {
 
 	renderChangeUsername() {
 		return (
-			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
+			<Button
+				type="button"
+				className="login__form-change-username"
+				onClick={ this.resetView }
+				variant="link"
+				size="compact"
+			>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ includes( this.state.usernameOrEmail, '@' )
-					? this.props.translate( 'Change Email Address' )
-					: this.props.translate( 'Change Username' ) }
-			</button>
+					? this.props.translate( 'Change email address' )
+					: this.props.translate( 'Change username' ) }
+			</Button>
 		);
 	}
 
@@ -546,10 +555,10 @@ export class LoginForm extends Component {
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
 				<span className="screen-reader-text">
-					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
+					{ this.props.translate( 'WordPress.com Email address or username' ) }
 				</span>
 				{ ! this.props.isJetpack && (
-					<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
+					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 				) }
 			</>
 		);
@@ -836,7 +845,9 @@ export class LoginForm extends Component {
 								</p>
 							) }
 
-							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
+							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
+								{ this.renderUsernameorEmailLabel() }
+							</FormLabel>
 
 							<FormTextInput
 								autoCapitalize="off"
@@ -852,6 +863,7 @@ export class LoginForm extends Component {
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
 								disabled={ isFormDisabled || this.isPasswordView() }
+								hasCoreStyles
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -940,7 +952,9 @@ export class LoginForm extends Component {
 								} ) }
 								aria-hidden={ isPasswordHidden }
 							>
-								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+									{ this.props.translate( 'Password' ) }
+								</FormLabel>
 
 								<FormPasswordInput
 									autoCapitalize="off"
@@ -955,6 +969,8 @@ export class LoginForm extends Component {
 									value={ this.state.password }
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+									hasCoreStyles
+									isHidden={ isPasswordHidden }
 								/>
 
 								{ requestError && requestError.field === 'password' && (
@@ -977,34 +993,6 @@ export class LoginForm extends Component {
 								buttonText={ this.getLoginButtonText() }
 							/>
 						</div>
-
-						{ ! isBlazePro && isJetpack && (
-							<p className="login__form-jetpack-terms">
-								{ this.props.translate(
-									'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and ' +
-										'to {{privacyLink}}sync your site’s data{{/privacyLink}} with us. We’ll check if that ' +
-										'email is linked to an existing WordPress.com account or create a new one instantly. ',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-											privacyLink: (
-												<a
-													href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</p>
-						) }
 
 						{ ! hideSignupLink && isOauthLogin && (
 							<p className={ clsx( 'login__form-signup-link' ) }>
@@ -1057,35 +1045,6 @@ export class LoginForm extends Component {
 			! isFromGravatarQuickEditor &&
 			! isGravatarFlowWithEmail;
 
-		if ( isJetpack ) {
-			return (
-				<div className="login__form-jetpack">
-					{ shouldShowSocialLoginForm && (
-						<SocialLoginForm
-							lastUsedAuthenticationMethod={
-								showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
-							}
-							handleLogin={ this.handleSocialLogin }
-							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ false }
-							isWoo={ isWoo }
-							isSocialFirst={
-								isSocialFirst || ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin )
-							}
-							magicLoginLink={ null }
-							qrLoginLink={ this.getQrLoginLink() }
-						/>
-					) }
-
-					<FormDivider />
-
-					{ this.renderLoginCard() }
-				</div>
-			);
-		}
-
 		return (
 			<>
 				{ this.renderLoginCard() }
@@ -1106,6 +1065,7 @@ export class LoginForm extends Component {
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
+							isJetpack={ isJetpack }
 						/>
 					</Fragment>
 				) }
@@ -1122,6 +1082,7 @@ export class LoginForm extends Component {
 			isWoo,
 			isBlazePro,
 			isSocialFirst,
+			isJetpack,
 		} = this.props;
 
 		const socialToS = this.props.translate(
@@ -1158,6 +1119,7 @@ export class LoginForm extends Component {
 						trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 						socialServiceResponse={ this.props.socialServiceResponse }
 						shouldRenderToS
+						isJetpack={ isJetpack }
 					/>
 				</Fragment>
 			) : null;

@@ -5,11 +5,13 @@ import {
 	A4A_REPORTS_LINK,
 	A4A_REPORTS_OVERVIEW_LINK,
 	A4A_REPORTS_DASHBOARD_LINK,
+	A4A_REPORTS_BUILD_LINK,
 } from './constants';
 import {
 	reportsLandingContext,
 	reportsOverviewContext,
 	reportsDashboardContext,
+	reportsBuildContext,
 } from './controller';
 
 export default function () {
@@ -25,6 +27,13 @@ export default function () {
 		A4A_REPORTS_DASHBOARD_LINK,
 		requireAccessContext,
 		reportsDashboardContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_REPORTS_BUILD_LINK,
+		requireAccessContext,
+		reportsBuildContext,
 		makeLayout,
 		clientRender
 	);

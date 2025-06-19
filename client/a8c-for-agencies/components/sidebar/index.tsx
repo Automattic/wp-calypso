@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import A4AContactSupportWidget, { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import ProvideFeedback from '../a4a-feedback/provide-feedback';
+import { withOnboardingTour } from '../hoc/with-onboarding-tour';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
@@ -150,4 +151,4 @@ const A4ASidebar = ( {
 	);
 };
 
-export default A4ASidebar;
+export default withOnboardingTour( A4ASidebar );

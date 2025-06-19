@@ -5,7 +5,7 @@ import { persistQueryClient } from '@tanstack/react-query-persist-client';
 export const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
-			staleTime: 0,
+			staleTime: 1000 * 60 * 1, // 1 minute
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
 		},
@@ -18,7 +18,7 @@ const maxAge = 1000 * 60 * 60 * 24; // 24 hours
 const [ , persistPromise ] = persistQueryClient( {
 	queryClient,
 	persister,
-	buster: '2', // Bump when query data shape changes.
+	buster: '3', // Bump when query data shape changes.
 	maxAge,
 	dehydrateOptions: {
 		shouldDehydrateQuery: ( { meta } ) => {

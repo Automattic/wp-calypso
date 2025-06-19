@@ -223,7 +223,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getIncludedDomainPurchase', () => {
-		test( 'should return included domain with subscription', () => {
+		test( 'should return included domain registration with subscription', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -262,7 +262,7 @@ describe( 'selectors', () => {
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
 		} );
 
-		test( 'should not return included domain with subscription if the domain has a non-zero amount', () => {
+		test( 'should not return included domain registration with subscription if the domain registration has a non-zero amount', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -285,6 +285,71 @@ describe( 'selectors', () => {
 							blog_id: '123',
 							meta: 'wordpress.com',
 							product_slug: 'domain_map',
+						},
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false,
+				},
+			};
+
+			const subscriptionPurchase = getPurchases( state ).find(
+				( purchase ) => purchase.productSlug === 'value_bundle'
+			);
+
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ) ).toBeFalsy();
+		} );
+
+		test( 'should return included domain transfer with subscription', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							meta: 'dev.live',
+							blog_id: '123',
+							product_slug: 'domain_transfer',
+						},
+						{
+							ID: '82867',
+							blog_id: '123',
+							product_slug: 'value_bundle',
+							included_domain: 'dev.live',
+						},
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false,
+				},
+			};
+
+			const subscriptionPurchase = getPurchases( state ).find(
+				( purchase ) => purchase.productSlug === 'value_bundle'
+			);
+
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
+		} );
+
+		test( 'should not return included domain transfer with subscription if the domain transfer has a non-zero amount', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							meta: 'dev.live',
+							blog_id: '123',
+							product_slug: 'domain_transfer',
+						},
+						{
+							ID: '82867',
+							blog_id: '123',
+							product_slug: 'value_bundle',
+							included_domain: 'dev.live',
+							included_domain_purchase_amount: 25,
 						},
 					],
 					error: null,

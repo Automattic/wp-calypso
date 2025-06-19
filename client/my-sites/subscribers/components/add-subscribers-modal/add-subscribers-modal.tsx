@@ -12,7 +12,7 @@ import {
 import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -23,6 +23,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import SubscriberImportLimitNotice from '../subscriber-import-limit-notice';
 import { StaleImportJobsNotice } from './stale-job-notice';
 
 import './style.scss';
@@ -143,9 +144,13 @@ const AddSubscribersModal = ( {
 								icon={ reusableBlock }
 								title={ translate( 'Import from Substack' ) }
 								text={
-									isJetpack
-										? translate( 'Quickly bring your free and paid subscribers.' )
-										: translate( 'Quickly bring your subscribers (and even your content!).' )
+									fixMe( {
+										text: 'Migrate your content along with your free and paid subscribers.',
+										newCopy: translate(
+											'Migrate your content along with your free and paid subscribers.'
+										),
+										oldCopy: translate( 'Quickly bring your free and paid subscribers.' ),
+									} ) as string
 								}
 								onClick={ importFromSubstack }
 							/>
@@ -180,6 +185,7 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
+					<SubscriberImportLimitNotice closeModal={ onClose } />
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
@@ -228,6 +234,7 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
+					<SubscriberImportLimitNotice closeModal={ onClose } />
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }

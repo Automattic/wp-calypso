@@ -9,7 +9,6 @@ import {
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
 	isStudioAppOAuth2Client,
@@ -183,11 +182,6 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
 
 	// jetpack cloud cannot have users being sent to WordPress.com
 	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-		return false;
-	}
-
-	// Automattic for Agencies cannot have users being sent to WordPress.com
-	if ( isA4AOAuth2Client( oauth2Client ) ) {
 		return false;
 	}
 

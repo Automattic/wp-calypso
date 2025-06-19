@@ -8,13 +8,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import filesize from 'filesize';
-import { siteMediaStorageQuery } from '../../app/queries';
+import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
+import type { Site } from '../../data/types';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-export default function StorageCard( { siteSlug }: { siteSlug: string } ) {
-	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( siteSlug ) );
+export default function StorageCard( { site }: { site: Site } ) {
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
 	return (
 		<OverviewCard
 			title={ __( 'Storage' ) }
@@ -61,7 +62,7 @@ export default function StorageCard( { siteSlug }: { siteSlug: string } ) {
 						: undefined
 				}
 			/>
-			<ExternalLink href={ `/add-ons/${ siteSlug }` }>{ __( 'Buy more' ) }</ExternalLink>
+			<ExternalLink href={ `/add-ons/${ site.slug }` }>{ __( 'Buy more' ) }</ExternalLink>
 		</OverviewCard>
 	);
 }

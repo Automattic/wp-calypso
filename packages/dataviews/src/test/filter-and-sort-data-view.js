@@ -385,15 +385,15 @@ describe( 'filters', () => {
 		expect( result.map( ( r ) => r.title ) ).toContain( 'Mars' );
 	} );
 
-	it( 'should filter using LESS THAN operator for datetime', () => {
+	it( 'should filter using BEFORE operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'lessThan',
-						value: '1970-01-01',
+						operator: 'before',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -401,20 +401,20 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) < new Date( '1970-01-01' )
+				( item ) => new Date( item.date ) < new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );
 
-	it( 'should filter using GREATER THAN operator for datetime', () => {
+	it( 'should filter using AFTER operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'greaterThan',
-						value: '2000-01-01',
+						operator: 'after',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -422,20 +422,20 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) > new Date( '2000-01-01' )
+				( item ) => new Date( item.date ) > new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );
 
-	it( 'should filter using LESS THAN OR EQUAL operator for datetime', () => {
+	it( 'should filter using BEFORE (inc) operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'lessThanOrEqual',
-						value: '1970-01-01',
+						operator: 'beforeInc',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -443,20 +443,20 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) <= new Date( '1970-01-01' )
+				( item ) => new Date( item.date ) <= new Date( '2020-01-01' )
 			)
 		).toBe( true );
 	} );
 
-	it( 'should filter using GREATER THAN OR EQUAL operator for datetime', () => {
+	it( 'should filter using AFTER (inc) operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
 			{
 				filters: [
 					{
 						field: 'date',
-						operator: 'greaterThanOrEqual',
-						value: '2000-01-01',
+						operator: 'afterInc',
+						value: '2020-01-01',
 					},
 				],
 			},
@@ -464,9 +464,83 @@ describe( 'filters', () => {
 		);
 		expect(
 			result.every(
-				( item ) => new Date( item.date ) >= new Date( '2000-01-01' )
+				( item ) => new Date( item.date ) >= new Date( '2020-01-01' )
 			)
 		).toBe( true );
+	} );
+
+	it( 'should filter numbers inclusively between min and max using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'between',
+						value: [ 10, 30 ],
+					},
+				],
+			},
+			fields
+		);
+		expect( result.map( ( r ) => r.title ).sort() ).toEqual( [
+			'Neptune',
+			'Uranus',
+		] );
+	} );
+
+	it( 'should filter numbers inclusively at the edges using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'between',
+						value: [ 28, 28 ],
+					},
+				],
+			},
+			fields
+		);
+		expect( result.map( ( r ) => r.title ) ).toEqual( [ 'Uranus' ] );
+	} );
+
+	it( 'should filter dates inclusively between min and max using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'between',
+						value: [ '1977-08-20', '1989-08-25' ],
+					},
+				],
+			},
+			fields
+		);
+		const allInRange = result.every(
+			( r ) => r.date >= '1977-08-20' && r.date <= '1989-08-25'
+		);
+		expect( allInRange ).toBe( true );
+	} );
+
+	it( 'should return no results if min > max using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'between',
+						value: [ 30, 10 ],
+					},
+				],
+			},
+			fields
+		);
+		expect( result ).toHaveLength( 0 );
 	} );
 } );
 

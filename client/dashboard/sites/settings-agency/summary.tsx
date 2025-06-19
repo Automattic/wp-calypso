@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { home } from '@wordpress/icons';
-import { agencyBlogQuery, siteSettingsQuery } from '../../app/queries';
+import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
+import { siteSettingsQuery } from '../../app/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
@@ -14,9 +15,9 @@ export default function AgencySettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const { data: siteSettings } = useQuery( siteSettingsQuery( site.slug ) );
+	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
 	const { data: agencyBlog } = useQuery( {
-		...agencyBlogQuery( site.ID ),
+		...siteAgencyBlogQuery( site.ID ),
 		enabled: site.is_wpcom_atomic,
 	} );
 
