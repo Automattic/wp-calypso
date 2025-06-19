@@ -1,6 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { dispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ContextLinks, SupportDocData } from './types';
 import type { HelpCenterDispatch } from '@automattic/data-stores';
 
@@ -46,12 +49,21 @@ const useSupportDocData = ( {
 		blogId: 0, // support.wordpress.com is the default blog used for support links
 	} );
 
+	const site = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+
 	// Lazy load the supportPostId and supportLink by supportContext if not provided.
 	const shouldLoadSupportDocData = supportContext && ! supportPostId && ! supportLink;
 
 	const [ isLoading, setIsLoading ] = useState( shouldLoadSupportDocData );
 
 	const openSupportDoc = async () => {
+		// The Help Center doesn't work in Jetpack sites, so we open the link in a new tab.
+		if ( isJetpack ) {
+			window.open( supportDocData.link, '_blank' );
+			return;
+		}
+
 		// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
 		const { setShowSupportDoc } = await loadHelpCenterDispatch();
 		setShowSupportDoc( supportDocData.link, supportDocData.postId, supportDocData.blogId );
