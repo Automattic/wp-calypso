@@ -105,7 +105,21 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			operators: [ 'is' ],
 		},
 		render: ( { item } ) => {
-			return <SiteStatus site={ item } />;
+			// The dataview's field value container uses `overflow:hidden` to prevent any of the fields
+			// from overflowing. This hack ensures that the link's focus ring isn't obscured.
+			return (
+				<SiteStatus
+					site={ item }
+					style={ {
+						display: 'inline-block',
+						maxWidth: 'calc(100% - 4px)',
+						margin: '0 2px',
+						overflow: 'hidden',
+						whiteSpace: 'nowrap',
+						textOverflow: 'ellipsis',
+					} }
+				/>
+			);
 		},
 	},
 	{
