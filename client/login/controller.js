@@ -369,15 +369,18 @@ export function redirectLostPassword( context, next ) {
 		return;
 	}
 
-	const state = context.store.getState();
-	const oauth2Client = getCurrentOAuth2Client( state );
+	// const state = context.store.getState();
+	// const oauth2Client = getCurrentOAuth2Client( state );
 
-	const shouldRedirectToLostPassword = () =>
-		! getIsBlazePro( state ) && ! isWooOAuth2Client( oauth2Client ) && ! isWooJPCFlow( state );
+	// const shouldRedirectToLostPassword = () =>
+	// 	! getIsBlazePro( state ) &&
+	// 	! isWooOAuth2Client( oauth2Client ) &&
+	// 	! isJetpackCloudOAuth2Client( oauth2Client ) &&
+	// 	! isWooJPCFlow( state );
 
-	if ( shouldRedirectToLostPassword() ) {
-		return context.redirect( 301, '/wp-login.php?action=lostpassword' );
-	}
+	// if ( shouldRedirectToLostPassword() ) {
+	// 	return context.redirect( 301, '/wp-login.php?action=lostpassword' );
+	// }
 
 	next();
 }

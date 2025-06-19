@@ -271,62 +271,62 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( this.props.isWCCOM || this.props.isBlazePro || this.props.isWooJPC ) {
-			return (
-				<a
-					className="login__lost-password-link"
-					href="/"
-					onClick={ ( event ) => {
-						event.preventDefault();
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-						page(
-							login( {
-								redirectTo: this.props.redirectTo,
-								locale: this.props.locale,
-								action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
-								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-								from: get( this.props.currentQuery, 'from' ),
-							} )
-						);
-					} }
-				>
-					{ this.props.translate( 'Lost your password?' ) }
-				</a>
-			);
-		}
-
-		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
-
-		// If we got here coming from Jetpack Cloud login page, we want to go back
-		// to it after we finish the process
-		if (
-			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			isA4AOAuth2Client( this.props.oauth2Client )
-		) {
-			const currentUrl = new URL( window.location.href );
-			currentUrl.searchParams.append( 'lostpassword_flow', true );
-			const queryArgs = {
-				redirect_to: currentUrl.toString(),
-
-				// This parameter tells WPCOM that we are coming from Jetpack.com,
-				// so it can present the user a Lost password page that works in
-				// the context of Jetpack.com.
-				client_id: this.props.oauth2Client.id,
-			};
-			lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
-		}
-
+		// if ( this.props.isWCCOM || this.props.isBlazePro || this.props.isWooJPC ) {
 		return (
 			<a
-				href={ lostPasswordUrl }
-				key="lost-password-link"
 				className="login__lost-password-link"
-				onClick={ this.recordResetPasswordLinkClick }
-				rel="external"
+				href="/"
+				onClick={ ( event ) => {
+					event.preventDefault();
+					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+					page(
+						login( {
+							redirectTo: this.props.redirectTo,
+							locale: this.props.locale,
+							action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
+							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+							from: get( this.props.currentQuery, 'from' ),
+						} )
+					);
+				} }
 			>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
 		);
+		// }
+
+		// let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
+
+		// // If we got here coming from Jetpack Cloud login page, we want to go back
+		// // to it after we finish the process
+		// if (
+		// 	isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+		// 	isA4AOAuth2Client( this.props.oauth2Client )
+		// ) {
+		// 	const currentUrl = new URL( window.location.href );
+		// 	currentUrl.searchParams.append( 'lostpassword_flow', true );
+		// 	const queryArgs = {
+		// 		redirect_to: currentUrl.toString(),
+
+		// 		// This parameter tells WPCOM that we are coming from Jetpack.com,
+		// 		// so it can present the user a Lost password page that works in
+		// 		// the context of Jetpack.com.
+		// 		client_id: this.props.oauth2Client.id,
+		// 	};
+		// 	lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
+		// }
+
+		// return (
+		// 	<a
+		// 		href={ lostPasswordUrl }
+		// 		key="lost-password-link"
+		// 		className="login__lost-password-link"
+		// 		onClick={ this.recordResetPasswordLinkClick }
+		// 		rel="external"
+		// 	>
+		// 		{ this.props.translate( 'Lost your password?' ) }
+		// 	</a>
+		// );
 	}
 
 	renderSignUpLink( signupLinkText ) {
