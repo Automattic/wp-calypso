@@ -113,7 +113,7 @@ export const getMarketingFeaturesData = (
 			}
 		);
 
-		result.splice( 2, 0, {
+		result.splice( 3, 0, {
 			title: translate( 'Want to connect with your audience on Facebook and Instagram?' ),
 			description: facebookDescription,
 			categories: [ 'share', 'new' ],
