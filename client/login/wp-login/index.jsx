@@ -27,8 +27,6 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
-	isAndroidOAuth2Client,
-	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -141,15 +139,10 @@ export class Login extends Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isWhiteLogin, oauth2Client, translate } = this.props;
-		const isOauthLogin = !! oauth2Client;
+		const { isJetpack, isWhiteLogin, translate } = this.props;
+		const isOauthLogin = !! this.props.oauth2Client;
 
-		if (
-			isJetpack ||
-			isWhiteLogin ||
-			isAndroidOAuth2Client( oauth2Client ) ||
-			isIosOAuth2Client( oauth2Client )
-		) {
+		if ( isJetpack || isWhiteLogin ) {
 			return null;
 		}
 
