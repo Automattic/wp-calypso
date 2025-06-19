@@ -4,9 +4,9 @@ import { DropdownMenu, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import SiteEnvironmentIcon from 'calypso/sites/components/site-preview-pane/site-environment-icon';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import EnvironmentIcon from './site-environment-icons/environment-icon';
 
 import './site-environment-switcher.scss';
 
@@ -69,7 +69,7 @@ export default function SiteEnvironmentSwitcher( {
 					onClick: () => setEnvironment( productionSiteId ),
 					isActive: ! site.is_wpcom_staging_site,
 					...( stagingSitesRedesign && {
-						icon: () => <EnvironmentIcon type="production" />,
+						icon: () => <SiteEnvironmentIcon type="production" />,
 					} ),
 				},
 				{
@@ -77,7 +77,7 @@ export default function SiteEnvironmentSwitcher( {
 					onClick: () => setEnvironment( stagingSiteId ),
 					isActive: site.is_wpcom_staging_site,
 					...( stagingSitesRedesign && {
-						icon: () => <EnvironmentIcon type="staging" />,
+						icon: () => <SiteEnvironmentIcon type="staging" />,
 					} ),
 				},
 			] }

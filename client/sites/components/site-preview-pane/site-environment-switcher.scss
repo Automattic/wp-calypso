@@ -19,21 +19,14 @@
 
 	.components-dropdown-menu__menu
 		.components-dropdown-menu__menu-item.is-active
-		svg.environment-icon,
-	.components-dropdown-menu__menu .components-menu-item.is-active svg.environment-icon {
+		.site-environment-icon,
+	.components-dropdown-menu__menu .components-menu-item.is-active .site-environment-icon {
 		background: none;
 		box-shadow: none;
 	}
 
-	svg.environment-icon {
+	.site-environment-icon {
 		fill: none;
-		background: none;
-		box-shadow: none;
-		border-radius: 0;
-
-		rect {
-			fill: var( --fill-color, inherit );
-		}
 	}
 }
 

@@ -1,10 +1,16 @@
 /**
- * Environment Icon component
+ * SiteEnvironmentIcon component
  *
  * Renders an environment icon (Production or Staging) based on the type prop
  */
 
-export default function EnvironmentIcon( { type = 'production' } ) {
+type EnvironmentType = 'production' | 'staging';
+
+interface SiteEnvironmentIconProps {
+	type?: EnvironmentType;
+}
+
+export default function SiteEnvironmentIcon( { type = 'production' }: SiteEnvironmentIconProps ) {
 	const colors = {
 		production: {
 			primary: '#4AB866',
@@ -14,19 +20,18 @@ export default function EnvironmentIcon( { type = 'production' } ) {
 			primary: '#F0B849',
 			secondary: '#F0B849',
 		},
-	};
+	} as const;
 
-	const { primary, secondary } = colors[ type ] || colors.production;
+	const { primary, secondary } = colors[ type ];
 
 	return (
 		<svg
-			className="environment-icon"
+			className="site-environment-icon"
 			width="24"
 			height="24"
 			viewBox="0 0 24 24"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
-			style={ { '--fill-color': primary } }
 		>
 			<rect x="4" y="4" width="16" height="16" rx="8" fill={ primary } />
 			<rect
