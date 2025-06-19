@@ -29,6 +29,12 @@ export async function cancelPurchaseFlow(
 
 	await page.getByRole( 'button', { name: 'Submit' } ).click();
 
+	await page
+		.getByRole( 'combobox', { name: 'Where is your next adventure taking you?' } )
+		.selectOption( feedback.customReasonText );
+
+	await page.getByRole( 'textbox', { name: 'Can you please specify?' } ).fill( feedback.reason );
+
 	await Promise.all( [
 		page.waitForNavigation( { timeout: 30 * 1000 } ),
 		page.getByRole( 'button', { name: /Submit and (remove|cancel) plan/ } ).click(),
