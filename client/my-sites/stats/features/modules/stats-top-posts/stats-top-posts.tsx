@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -46,7 +47,12 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
+	const { supportsArchiveStats } = useSelector( ( state: object ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
+
+	const isArchiveBreakdownEnabled: boolean =
+		config.isEnabled( 'stats/archive-breakdown' ) && supportsArchiveStats;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
@@ -82,7 +88,8 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
 	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
 
-	const statType = localStatType || validQueryViewType( query.viewType ) || mainStatType;
+	const statType =
+		localStatType || validQueryViewType( query.viewType, supportsArchiveStats ) || mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
