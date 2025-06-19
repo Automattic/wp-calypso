@@ -72,7 +72,6 @@ class CancelPurchase extends Component {
 	state = {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
-		cancellationInProgress: false,
 		surveyShown: false,
 	};
 
@@ -89,8 +88,7 @@ class CancelPurchase extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		// Don't redirect if we're in the middle of a cancellation flow or if the survey is being shown
-		if ( this.state.cancellationInProgress || this.state.surveyShown ) {
+		if ( this.state.surveyShown ) {
 			return;
 		}
 
@@ -111,20 +109,11 @@ class CancelPurchase extends Component {
 			return false;
 		}
 
-		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
-
-		// If the purchase is no longer valid for cancellation (e.g., already cancelled),
-		// we should still allow the component to stay mounted to show the survey
 		const isValidForCancellation =
 			canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
 
-		// If the purchase is not valid for cancellation but we're in the middle of a cancellation flow,
-		// allow the component to stay mounted
-		if (
-			! isValidForCancellation &&
-			( this.state.cancellationInProgress || this.state.surveyShown )
-		) {
+		if ( ! isValidForCancellation && this.state.surveyShown ) {
 			return true;
 		}
 
@@ -151,11 +140,11 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		this.setState( { cancellationInProgress: true, surveyShown: true } );
+		this.setState( { surveyShown: true } );
 	};
 
 	onSurveyComplete = () => {
-		this.setState( { cancellationInProgress: false, surveyShown: false } );
+		this.setState( { surveyShown: false } );
 	};
 
 	getActiveMarketplaceSubscriptions() {

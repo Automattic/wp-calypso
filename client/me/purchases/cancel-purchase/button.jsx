@@ -57,7 +57,6 @@ class CancelPurchaseButton extends Component {
 		disabled: false,
 		showDialog: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
-		cancellationInProgress: false,
 		cancellationCompleted: false,
 		cancellationMessage: '',
 	};
@@ -69,19 +68,15 @@ class CancelPurchaseButton extends Component {
 			return this.goToCancelConfirmation();
 		}
 
-		// Set cancellation state immediately to prevent redirects
 		this.setState( {
 			showDialog: true,
-			cancellationInProgress: true,
 			cancellationCompleted: false,
 		} );
 
-		// Notify parent component that cancellation is starting
 		if ( this.props.onCancellationStart ) {
 			this.props.onCancellationStart();
 		}
 
-		// Start the cancellation API call in the background
 		try {
 			const result = await this.submitCancelAndRefundPurchase();
 			if ( result.success ) {
@@ -91,13 +86,9 @@ class CancelPurchaseButton extends Component {
 						result.message || translate( 'Your subscription has been cancelled.' ),
 				} );
 			} else {
-				// If cancellation fails, show error but keep dialog open
-				this.setState( { cancellationInProgress: false, cancellationCompleted: false } );
 				this.props.errorNotice( result.error );
 			}
 		} catch ( error ) {
-			// If cancellation fails, show error but keep dialog open
-			this.setState( { cancellationInProgress: false, cancellationCompleted: false } );
 			this.props.errorNotice( error.message );
 		}
 	};
@@ -106,11 +97,9 @@ class CancelPurchaseButton extends Component {
 		this.setState( {
 			showDialog: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
-			cancellationInProgress: false,
 			cancellationCompleted: false,
 			cancellationMessage: '',
 		} );
-		// Notify parent component that survey is completed (even if cancelled)
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
 		}
@@ -342,7 +331,6 @@ class CancelPurchaseButton extends Component {
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
-						cancellationInProgress={ this.state.cancellationInProgress }
 						cancellationCompleted={ this.state.cancellationCompleted }
 						cancellationMessage={ this.state.cancellationMessage }
 					/>
@@ -358,7 +346,6 @@ class CancelPurchaseButton extends Component {
 						onSurveyComplete={ this.handleSurveyComplete }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						isAkismet={ isAkismet }
-						cancellationInProgress={ this.state.cancellationInProgress }
 						cancellationCompleted={ this.state.cancellationCompleted }
 						cancellationMessage={ this.state.cancellationMessage }
 					/>
