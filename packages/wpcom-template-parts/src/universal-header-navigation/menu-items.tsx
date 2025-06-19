@@ -206,6 +206,7 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 				icon={ chevronDown }
 				className={ `x-nav-link x-link ${ className || '' }` }
 				open={ isHoverOpen }
+				disableOpenOnArrowDown
 				popoverProps={ {
 					className: 'x-nav-dropdown-popover',
 					position: 'bottom',
@@ -222,15 +223,15 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					className: 'x-nav-link x-link',
 					// @ts-ignore - data attributes are valid HTML props
 					'data-dropdown-trigger': content,
+					onFocus: () => {
+						// Open dropdown when tabbing to the trigger
+						if ( ! isHoverOpen ) {
+							handleOpen( true );
+						}
+					},
 					onKeyDown: ( event: React.KeyboardEvent ) => {
-						if ( event.key === 'Enter' || event.key === ' ' ) {
-							event.preventDefault();
-							if ( isHoverOpen ) {
-								handleClose();
-							} else {
-								handleOpen( true );
-							}
-						} else if ( event.key === 'Escape' && isHoverOpen ) {
+						// Only handle Escape to close - remove Enter/Space opening
+						if ( event.key === 'Escape' && isHoverOpen ) {
 							event.preventDefault();
 							handleClose();
 						}
