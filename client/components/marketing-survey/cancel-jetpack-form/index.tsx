@@ -406,9 +406,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return (
 				<div className="cancel-jetpack-form__confirm-step">
 					{ cancellationCompleted && cancellationMessage && (
-						<Notice status="is-success">
-							<p>{ cancellationMessage }</p>
-						</Notice>
+						<Notice status="is-success">{ cancellationMessage }</Notice>
 					) }
 					<FormattedHeader
 						brandFont

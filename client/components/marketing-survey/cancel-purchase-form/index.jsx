@@ -759,11 +759,7 @@ class CancelPurchaseForm extends Component {
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>
 							{ cancellationCompleted && cancellationMessage && (
-								<Notice
-									status="is-success"
-									className="cancel-purchase-form__success-notice"
-									showDismiss={ false }
-								>
+								<Notice status="is-success" className="cancel-purchase-form__success-notice">
 									{ cancellationMessage }
 								</Notice>
 							) }
