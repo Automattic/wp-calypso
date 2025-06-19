@@ -22,10 +22,6 @@ export default function DefensiveModeSettingsSummary( {
 		enabled: canView,
 	} );
 
-	if ( ! canView ) {
-		return null;
-	}
-
 	const getBadge = () => {
 		if ( ! data ) {
 			return [];
