@@ -406,12 +406,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return (
 				<div className="cancel-jetpack-form__confirm-step">
 					{ cancellationCompleted && cancellationMessage && (
-						<div style={ { display: 'flex', justifyContent: 'center' } }>
-							<Notice
-								status="is-success"
-								className="cancel-jetpack-form__success-notice"
-								theme="light"
-							>
+						<div className="cancel-jetpack-form__notice-container">
+							<Notice status="is-success" className="cancel-jetpack-form__notice" theme="light">
 								{ cancellationMessage }
 							</Notice>
 						</div>
