@@ -498,7 +498,6 @@ export class Login extends Component {
 			isWoo,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
-			wccomFrom,
 			twoFactorEnabled,
 		} = this.props;
 
@@ -550,7 +549,6 @@ export class Login extends Component {
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
-			wccomFrom,
 			twoFactorEnabled,
 			currentQuery,
 			translate

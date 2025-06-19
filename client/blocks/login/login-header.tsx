@@ -62,7 +62,6 @@ export function getHeaderText(
 	isFromAkismet: boolean,
 	isFromAutomatticForAgenciesPlugin: boolean,
 	isGravPoweredClient: boolean,
-	wccomFrom: string,
 	twoFactorEnabled: boolean,
 	currentQuery: Record< string, string >,
 	translate: ( arg0: string, arg1?: object ) => TranslateResult,
