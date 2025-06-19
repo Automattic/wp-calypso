@@ -214,7 +214,7 @@ export const NonClickableItem = ( { content, className, children }: NonClickable
 					offset: 10,
 					animate: true,
 					expandOnMobile: true,
-					focusOnMount: wasOpenedViaKeyboard ? 'firstElement' : false,
+					focusOnMount: wasOpenedViaKeyboard ? true : false,
 					onClose: () => {
 						handleClose();
 					},
