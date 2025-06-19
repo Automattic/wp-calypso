@@ -12,6 +12,8 @@
 - Add new filter operator: `between`.
 - Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
 - Fix the background color of the action column if the row is selected
+- Allow readonly fields in DataForm when Edit is set to `false`.
+
 
 ## 0.2.1
 
