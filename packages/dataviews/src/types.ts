@@ -12,11 +12,7 @@ import type { SetSelection } from './private-types';
  * WordPress dependencies
  */
 import type { useFocusOnMount } from '@wordpress/compose';
-import {
-	FormValidationState,
-	NormalizedRule,
-	Rules,
-} from './components/validation/types';
+import { NormalizedRule, Rules } from './components/validation/types';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -659,7 +655,6 @@ export interface DataFormProps< Item > {
 	fields: Field< Item >[];
 	form: Form;
 	onChange: ( value: Record< string, any > ) => void;
-	validation?: FormValidationState;
 }
 
 export interface FieldLayoutProps< Item > {
