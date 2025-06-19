@@ -23,7 +23,6 @@ import {
 	hasSubmittedCSATRating,
 } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
-import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
@@ -160,7 +159,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
 	const chatHasCSATMessage = hasCSATMessage( chat );
 	const displayCSAT = chatHasCSATMessage && ! hasSubmittedCSATRating( chat );
 	return (
@@ -227,10 +225,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						{ chat.provider === 'odie' && (
 							<>
 								{ ! forceEmailSupport && <ViewMostRecentOpenConversationNotice /> }
-								{ availableStatusWithFeedback.includes( chat.status ) && (
+								{ chat.status === 'sending' && (
 									<div className="odie-chatbox__action-message">
-										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
-										{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+										<ThinkingPlaceholder />
 									</div>
 								) }
 							</>

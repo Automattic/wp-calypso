@@ -210,11 +210,13 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	display: none;
 	position: relative;
 
-	&:hover > .x-dropdown-content {
-		opacity: 1;
-		pointer-events: all;
-		transform: translateY(0) scale(1);
-		transition: all 450ms cubic-bezier(0.5, 1, 0.89, 1);
+	&:hover,&:focus-within {
+		> .x-dropdown-content {
+			opacity: 1;
+			pointer-events: all;
+			transform: translateY(0) scale(1);
+			transition: all 450ms cubic-bezier(0.5, 1, 0.89, 1);
+		}
 	}
 }
 
