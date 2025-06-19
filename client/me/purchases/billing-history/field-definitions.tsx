@@ -21,10 +21,12 @@ function renderServiceNameDescription(
 ) {
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
+	const shouldShowDomain =
+		transaction.domain && ! transaction.domain.startsWith( 'siteless.marketplace.wp.com' );
 	return (
 		<div>
 			<strong>{ plan }</strong>
-			{ transaction.domain && <small>{ transaction.domain }</small> }
+			{ shouldShowDomain && <small>{ transaction.domain }</small> }
 			{ termLabel && <small>{ termLabel }</small> }
 			{ transaction.licensed_quantity && (
 				<small>{ renderTransactionQuantitySummary( transaction, translate ) }</small>

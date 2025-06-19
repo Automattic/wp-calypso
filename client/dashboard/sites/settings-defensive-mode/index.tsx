@@ -1,6 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -24,7 +23,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { canViewDefensiveModeSettings } from '../features';
+import { HostingFeatures, canViewDefensiveModeSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -68,11 +68,9 @@ const form = {
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const canView = canViewDefensiveModeSettings( site );
-
 	const { data } = useQuery( {
 		...siteDefensiveModeSettingsQuery( site.ID ),
-		enabled: canView,
+		enabled: canViewDefensiveModeSettings( site ),
 	} );
 	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -80,14 +78,6 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	const [ formData, setFormData ] = useState< { ttl: string } >( {
 		ttl: availableTtls[ 0 ].value,
 	} );
-
-	if ( ! canView ) {
-		throw notFound();
-	}
-
-	if ( ! data ) {
-		return null;
-	}
 
 	const { isPending } = mutation;
 
@@ -107,9 +97,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		} );
 	};
 
-	const { enabled, enabled_by_a11n, enabled_until } = data;
-
 	const renderEnabled = () => {
+		if ( ! data ) {
+			return null;
+		}
+
+		const { enabled_by_a11n, enabled_until } = data;
+
 		const date = new Date( enabled_until * 1000 );
 		const enabledUntil = date.toLocaleString( undefined, {
 			year: 'numeric',
@@ -133,6 +127,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					! enabled_by_a11n && (
 						<Button
 							variant="primary"
+							size="compact"
 							type="submit"
 							isBusy={ isPending }
 							disabled={ isPending }
@@ -197,6 +192,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 								/>
 								<HStack justify="flex-start">
 									<Button
+										__next40pxDefaultSize
 										variant="primary"
 										type="submit"
 										isBusy={ isPending }
@@ -221,7 +217,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					title={ __( 'Defensive mode' ) }
 					description={ createInterpolateElement(
 						__(
-							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>.'
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>'
 						),
 						{
 							link: <InlineSupportLink supportContext="hosting-defensive-mode" />,
@@ -230,7 +226,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				/>
 			}
 		>
-			{ enabled ? renderEnabled() : renderDisabled() }
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.DEFENSIVE_MODE }
+				tracksFeatureId="settings-defensive-mode"
+			>
+				{ data?.enabled ? renderEnabled() : renderDisabled() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

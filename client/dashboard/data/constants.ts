@@ -1,4 +1,5 @@
 export enum DotcomFeatures {
+	ATOMIC = 'atomic',
 	SUBSCRIPTION_GIFTING = 'subscription-gifting',
 	COPY_SITE = 'copy-site',
 	LEGACY_CONTACT = 'legacy-contact',

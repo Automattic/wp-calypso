@@ -239,8 +239,6 @@ function WPNonProductLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
 } ) {
-	const id = lineItem.id;
-	const itemSpanId = `checkout-line-item-${ id }`;
 	const label = lineItem.label;
 	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
@@ -261,11 +259,9 @@ function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.type }
 		>
-			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ label }
-			</LineItemTitle>
+			<LineItemTitle isSummary={ isSummary }>{ label }</LineItemTitle>
 
-			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+			<span className="checkout-line-item__price">
 				<LineItemPrice actualAmount={ actualAmountDisplay } />
 			</span>
 
@@ -1356,7 +1352,6 @@ function CheckoutLineItem( {
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 } > ) {
-	const id = product.uuid;
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
@@ -1369,7 +1364,6 @@ function CheckoutLineItem( {
 			product.product_slug.startsWith( 'wp_mp_theme' )
 	);
 	const { formStatus } = useFormStatus();
-	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isPlaceholder, setIsPlaceholder ] = useState( false );
 	const hasRemoveFromCartModal = getHasRemoveFromCartModal( {
@@ -1496,7 +1490,7 @@ function CheckoutLineItem( {
 					<GiftBadgeWithText />
 				</MobileGiftWrapper>
 			) }
-			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+			<LineItemTitle isSummary={ isSummary }>
 				{ label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
@@ -1505,7 +1499,7 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+			<span className="checkout-line-item__price">
 				{ shouldShowComparison ? (
 					<>
 						<LineItemPrice

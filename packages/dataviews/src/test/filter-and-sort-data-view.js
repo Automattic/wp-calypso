@@ -468,6 +468,80 @@ describe( 'filters', () => {
 			)
 		).toBe( true );
 	} );
+
+	it( 'should filter numbers inclusively between min and max using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'between',
+						value: [ 10, 30 ],
+					},
+				],
+			},
+			fields
+		);
+		expect( result.map( ( r ) => r.title ).sort() ).toEqual( [
+			'Neptune',
+			'Uranus',
+		] );
+	} );
+
+	it( 'should filter numbers inclusively at the edges using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'between',
+						value: [ 28, 28 ],
+					},
+				],
+			},
+			fields
+		);
+		expect( result.map( ( r ) => r.title ) ).toEqual( [ 'Uranus' ] );
+	} );
+
+	it( 'should filter dates inclusively between min and max using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'between',
+						value: [ '1977-08-20', '1989-08-25' ],
+					},
+				],
+			},
+			fields
+		);
+		const allInRange = result.every(
+			( r ) => r.date >= '1977-08-20' && r.date <= '1989-08-25'
+		);
+		expect( allInRange ).toBe( true );
+	} );
+
+	it( 'should return no results if min > max using BETWEEN operator', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'satellites',
+						operator: 'between',
+						value: [ 30, 10 ],
+					},
+				],
+			},
+			fields
+		);
+		expect( result ).toHaveLength( 0 );
+	} );
 } );
 
 describe( 'sorting', () => {

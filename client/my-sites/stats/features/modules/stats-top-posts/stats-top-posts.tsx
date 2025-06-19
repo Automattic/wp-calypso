@@ -154,6 +154,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					query={ query }
 					statType={ statType }
 					showSummaryLink={ !! summary }
+					summaryLinkModifier={ ( link: string ) => `${ link }&viewType=${ statType }` }
 					className={ className }
 					summary={ summary }
 					listItemClassName={ listItemClassName }

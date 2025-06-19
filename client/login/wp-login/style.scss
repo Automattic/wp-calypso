@@ -40,6 +40,28 @@ $image-height: 47px;
 	.step-container-v2__heading {
 		text-align: center;
 	}
+
+	/* Start: Blaze Pro OAuth client font styles for login page */
+	&.is-blaze-pro {
+		* {
+			font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		}
+
+		.wp-login__heading-text {
+			font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: 2rem;
+			font-weight: 700;
+			line-height: 40px;
+		}
+
+		.wp-login__heading-subtext {
+			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: rem(18px);
+			font-weight: 500;
+			line-height: 25px;
+		}
+	}
+	/* End: Blaze Pro OAuth client font styles for login page */
 }
 
 .wp-login__heading-logo {
@@ -586,6 +608,8 @@ $image-height: 47px;
 		}
 	}
 }
+
+
 
 /* stylelint-disable scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {

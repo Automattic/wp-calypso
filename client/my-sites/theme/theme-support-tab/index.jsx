@@ -15,7 +15,8 @@ export default function ThemeSupportTab( { themeId } ) {
 	const dispatch = useDispatch();
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { setNavigateToOdie, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setNavigateToOdie, setShowHelpCenter, setNavigateToRoute } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	return (
 		<>
@@ -62,6 +63,7 @@ export default function ThemeSupportTab( { themeId } ) {
 							__next40pxDefaultSize
 							onClick={ () => {
 								setShowHelpCenter( true );
+								setNavigateToRoute( '/' );
 								dispatch(
 									recordTracksEvent( 'calypso_theme_sheet_button_click', {
 										theme_name: themeId,

@@ -6,36 +6,6 @@ import HovercardContentPortal from './hovercard-content';
 
 import '@gravatar-com/hovercards/dist/style.css';
 
-// Create a single style element to control hovercard visibility. We do this because hovercards do
-// not clean up their child popovers when the component unmounts. While the useEffect unmount
-// cleanup works for removing existing hovercard popovers on unmount, there are cirumstances where
-// hovercards will not appear until after this runs causing them to appear on the next page. An
-// example of this is mousing over and clicking a Gravatar quickly, triggering navigation before the
-// hovercard has initially appeared. In this circumstance the hovercard then appears after
-// navigation and the cleanup attempt. Other methods, such as checking a container ref
-// onHovercardShown to see if we need to remove the outdated popover, do remove the popovers but
-// have a jarring flickering effect as the hovercard is still initially visible before removal.
-// Controlling visiblity this way prevents the flickering in cleanup: we ensure hovercards have no
-// visibility until verifying that their container ref is in the dom.
-// This issue is being tracked in https://github.com/Automattic/gravatar/issues/210
-// More details and gifs of these issues shown in https://github.com/Automattic/wp-calypso/pull/104136
-const STYLE_ELEMENT_ID = 'gravatar-hovercard-style';
-
-const hideHovercards = () => {
-	let styleElement = document.getElementById( 'gravatar-hovercard-style' );
-	if ( ! styleElement ) {
-		styleElement = document.createElement( 'style' );
-		styleElement.id = 'gravatar-hovercard-style';
-		styleElement.textContent = '.gravatar-hovercard { display: none !important; }';
-		document.head.appendChild( styleElement );
-	}
-};
-
-const showHovercards = () => {
-	const elements = document.querySelectorAll( `#${ STYLE_ELEMENT_ID }` );
-	elements.forEach( ( el ) => el.remove() );
-};
-
 function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
 	const [ mountNode, setMountNode ] = useState( null );
@@ -43,14 +13,10 @@ function GravatarWithHovercards( props ) {
 	const login = props.user?.wpcom_login || props.user?.user_login || props.user?.username;
 
 	useEffect( () => {
-		// Initialize style element only when component mounts
-		hideHovercards();
 		return () => {
 			// Remove any lingering hovercards on unmount
 			const hovercards = document.querySelectorAll( '.gravatar-hovercard' );
 			hovercards.forEach( ( card ) => card.remove() );
-			// Ensure hovercards will remain hidden until container ref is verified for next hovercard
-			hideHovercards();
 		};
 	}, [] );
 
@@ -98,20 +64,11 @@ function GravatarWithHovercards( props ) {
 				setMountNode( inner );
 			}
 		}
+	};
 
-		// Timeout to bump this check to the end of the callstack to avoid a race condition where
-		// this is evaluated after dismount but before dom update. This was happening about 5-10% of
-		// the time and makes it so hovering a gravatar does not trigger the hovercard until another
-		// unhover/rehover.
-		setTimeout( () => {
-			// Only show the hovercard if our container is in the dom
-			if ( containerRef.current && document.body.contains( containerRef.current ) ) {
-				showHovercards();
-			} else {
-				hovercardElement?.remove();
-				hideHovercards();
-			}
-		}, 0 );
+	const shouldShowHovercard = () => {
+		// Only show the hovercard if the container is in the dom.
+		return containerRef.current && document.body.contains( containerRef.current );
 	};
 
 	return (
@@ -119,7 +76,7 @@ function GravatarWithHovercards( props ) {
 			<HovercardContentPortal mountNode={ mountNode } { ...props } />
 			<Hovercards
 				onHovercardShown={ handleHovercardShown }
-				onHovercardHidden={ () => hideHovercards() }
+				onCanShowHovercard={ shouldShowHovercard }
 			>
 				<Gravatar { ...props } />
 			</Hovercards>

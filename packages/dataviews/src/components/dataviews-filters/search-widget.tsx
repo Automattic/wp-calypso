@@ -18,13 +18,8 @@ import { search, check } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import type {
-	Filter,
-	NormalizedFilter,
-	View,
-	NormalizedField,
-	Option,
-} from '../../types';
+import { getCurrentValue } from './utils';
+import type { Filter, NormalizedFilter, View, Option } from '../../types';
 
 interface SearchWidgetProps {
 	view: View;
@@ -37,26 +32,6 @@ interface SearchWidgetProps {
 function normalizeSearchInput( input = '' ) {
 	return removeAccents( input.trim().toLowerCase() );
 }
-
-const EMPTY_ARRAY: [] = [];
-const getCurrentValue = (
-	filterDefinition: NormalizedFilter,
-	currentFilter?: Filter
-) => {
-	if ( filterDefinition.singleSelection ) {
-		return currentFilter?.value;
-	}
-
-	if ( Array.isArray( currentFilter?.value ) ) {
-		return currentFilter.value;
-	}
-
-	if ( ! Array.isArray( currentFilter?.value ) && !! currentFilter?.value ) {
-		return [ currentFilter.value ];
-	}
-
-	return EMPTY_ARRAY;
-};
 
 const getNewValue = (
 	filterDefinition: NormalizedFilter,
