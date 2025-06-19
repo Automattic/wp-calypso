@@ -77,8 +77,7 @@
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "yarn clean && yarn bundle",
-		"bundle": "tsup",
+		"build": "yarn clean && tsup",
 		"prepack": "yarn build",
 		"storybook:start": "storybook dev -p 56851"
 	}

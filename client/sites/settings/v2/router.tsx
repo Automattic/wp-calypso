@@ -315,11 +315,26 @@ const isCompatibilityRoute = ( router: AnyRouter, url: string ) => {
 	);
 };
 
-const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
-	let lastPath = '';
+let lastPath = '';
 
+export const syncBrowserHistoryToRouter = ( router: AnyRouter ) => {
+	const currentPath = `${ window.location.pathname }${ window.location.search }`;
+	const basepath = router.options.basepath;
+
+	// Avoid handling routes outside of the basepath.
+	if ( basepath && ! currentPath.startsWith( basepath ) ) {
+		return;
+	}
+
+	if ( currentPath !== lastPath ) {
+		router.navigate( { to: currentPath, replace: true } );
+		lastPath = currentPath;
+	}
+};
+
+export const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 	// Sync TanStack Router's history to the browser history (pagejs).
-	router.history.subscribe( () => {
+	return router.history.subscribe( () => {
 		const { pathname, search } = router.history.location;
 		const newUrl = `${ pathname }${ search }`;
 
@@ -331,21 +346,6 @@ const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 		if ( window.location.pathname + window.location.search !== newUrl ) {
 			pagejs.show( newUrl );
 			lastPath = newUrl;
-		}
-	} );
-
-	window.addEventListener( 'popstate', () => {
-		const currentPath = `${ window.location.pathname }${ window.location.search }`;
-		const basepath = router.options.basepath;
-
-		// Avoid handling routes outside of the basepath.
-		if ( basepath && ! currentPath.startsWith( basepath ) ) {
-			return;
-		}
-
-		if ( currentPath !== lastPath ) {
-			router.navigate( { to: currentPath, replace: true } );
-			lastPath = currentPath;
 		}
 	} );
 };
@@ -365,6 +365,5 @@ export const getRouter = ( { basePath }: { basePath: string } ) => {
 		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
 	} );
 
-	syncMemoryRouterToBrowserHistory( router );
 	return router;
 };

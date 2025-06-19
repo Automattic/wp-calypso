@@ -478,15 +478,17 @@ export const normalizers = {
 				if ( 'home' !== archiveKey && hasItems ) {
 					let totalViews = 0;
 
-					const children = archiveItems.map( ( item ) => {
-						totalViews += item.views;
+					const children = archiveItems
+						.filter( ( i ) => !! i.value )
+						.map( ( item ) => {
+							totalViews += item.views;
 
-						return {
-							label: [ 'search' ].includes( archiveKey ) ? item.href : item.value,
-							value: item.views,
-							link: item.href,
-						};
-					} );
+							return {
+								label: item.value,
+								value: item.views,
+								link: item.href,
+							};
+						} );
 
 					accumulatedArchives.push( {
 						label: getArchiveKeyLabel( archiveKey ),

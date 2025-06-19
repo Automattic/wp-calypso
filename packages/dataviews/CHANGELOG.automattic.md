@@ -2,13 +2,14 @@
 
 ## Next
 
-- Update the field type definitions to declare the default and valid operators they support. Fields with no `type` property can use all operators and, if none is provided in the field's config, they'll display `is` and `isNot`.
+- Update the field type definitions to declare the default and valid operators they support. Fields with no `type` property can use all operators; if none is provided in the field's config, they'll use `is` and `isNot` by default.
 - Add a story for each FieldTypeDefinition.
 - Add new filter operators: `before`, `after`, `beforeInc`, and `afterInc` for date fields.
 - Adjust the spacing of the `DataForm` based on the type.
 - Sync with Gutenberg packages/dataviews. It bundles `@wordpress/dataviews` 4.21.0 plus https://github.com/WordPress/gutenberg/pull/70435 (fix alignment between label and control in DataForms layout).
 - Update SYNC.md docs to include information on rebasing existing sync branches on top of Calypso trunk and other frequently asked questions.
-
+- Hide the label in input widgets to prevent duplicate labels in the filter UI.
+- Add new filter operator: `between`.
 
 ## 0.2.1
 

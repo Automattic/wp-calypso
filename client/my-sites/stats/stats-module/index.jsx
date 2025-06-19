@@ -36,6 +36,7 @@ class StatsModule extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
+		summaryLinkModifier: PropTypes.func,
 		translate: PropTypes.func,
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
@@ -58,6 +59,7 @@ class StatsModule extends Component {
 		valueField: 'value',
 		minutesLimit: 30,
 		isRealTime: false,
+		summaryLinkModifier: ( link ) => link,
 	};
 
 	state = {
@@ -181,7 +183,7 @@ class StatsModule extends Component {
 	}
 
 	getSummaryLink() {
-		const { summary, period, path, siteSlug, query } = this.props;
+		const { summary, period, path, siteSlug, query, summaryLinkModifier } = this.props;
 		if ( summary ) {
 			return;
 		}
@@ -199,7 +201,7 @@ class StatsModule extends Component {
 			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
 		}
 
-		return url;
+		return summaryLinkModifier( url );
 	}
 
 	isAllTimeList() {

@@ -1,0 +1,97 @@
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import { useSelector, useDispatch } from 'calypso/state';
+import { requestSite } from 'calypso/state/reader/sites/actions';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { requestUser } from 'calypso/state/reader/users/actions';
+import getReaderUser from 'calypso/state/selectors/get-reader-user';
+
+import './styles.scss';
+
+function HovercardContent( props ) {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const { user } = props;
+
+	// Prefer wpcom_id when it is given. Sometimes ID is specific to another site and wpcom_id is
+	// accurate. Use ID as a fallback as sometimes wpcom_id isn't provided (like self user data).
+	const userID = user.wpcom_id || user.ID;
+
+	// For some reason there are places where the user object passes in primary blog of -1. Lets
+	// find the read one with this selector.
+	const readerUserData = useSelector( ( state ) => getReaderUser( state, userID, true ) );
+	const { display_name: displayName } = readerUserData || {};
+
+	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
+	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) );
+	const primaryBlogUrl = site?.URL;
+
+	useEffect( () => {
+		if ( ! userID ) {
+			// This isnt a wpcom user, skip requesting data.
+			return;
+		}
+
+		if ( ! site ) {
+			dispatch( requestSite( primaryBlogId ) );
+		}
+		if ( ! readerUserData ) {
+			dispatch( requestUser( userID, true ) );
+		}
+	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
+
+	if ( ! userID ) {
+		return null;
+	}
+
+	return (
+		<>
+			<div className="gravatar-hovercard__body">
+				{ primaryBlogUrl && (
+					<div className="gravatar-hovercard__primary-blog-card">
+						<div className="gravatar-hovercard__primary-blog-card-header">
+							<ReaderAvatar
+								isCompact
+								siteIcon={ site?.icon?.img || site?.icon?.ico }
+								className="gravatar-hovercard__primary-blog-card-site-icon"
+							/>
+							<div className="gravatar-hovercard__primary-blog-card-site-info">
+								<h5 className="gravatar-hovercard__primary-blog-card-site-title">{ site.title }</h5>
+								{ displayName && (
+									<p className="gravatar-hovercard__primary-blog-card-username">
+										{ translate( 'By %(displayName)s', {
+											args: {
+												displayName: displayName || '',
+											},
+										} ) }
+									</p>
+								) }
+							</div>
+						</div>
+						<p className="gravatar-hovercard__primary-blog-card-description">
+							{ site?.description }
+						</p>
+						<ReaderFollowButton
+							className="gravatar-hovercard__primary-blog-card-follow-button"
+							siteUrl={ primaryBlogUrl }
+							hasButtonStyle
+							followSource="gravatar-hovercard"
+						/>
+					</div>
+				) }
+			</div>
+			<div className="gravatar-hovercard__footer">{ /* TODO: Add recommended blogs list */ }</div>
+		</>
+	);
+}
+
+export default function HovercardContentPortal( { mountNode, ...props } ) {
+	if ( ! mountNode ) {
+		return null;
+	}
+
+	return ReactDOM.createPortal( <HovercardContent { ...props } />, mountNode );
+}
