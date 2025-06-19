@@ -262,8 +262,8 @@ class CancelPurchaseForm extends Component {
 				isSubmitting: true,
 			} );
 
-			const useSubOption = this.state.questionOneDetails && this.state.questionOneText;
-			const responseValue = useSubOption
+			const hasSubOption = this.state.questionOneDetails && this.state.questionOneText;
+			const responseValue = hasSubOption
 				? this.state.questionOneDetails
 				: this.state.questionOneRadio;
 
