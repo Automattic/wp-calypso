@@ -4,10 +4,10 @@
  * Renders an environment icon (Production or Staging) based on the type prop
  */
 
-type EnvironmentType = 'production' | 'staging';
+type SiteEnvironmentType = 'production' | 'staging';
 
 interface SiteEnvironmentIconProps {
-	type?: EnvironmentType;
+	type?: SiteEnvironmentType;
 }
 
 export default function SiteEnvironmentIcon( { type = 'production' }: SiteEnvironmentIconProps ) {
