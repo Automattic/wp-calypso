@@ -583,6 +583,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/pay-with-paypal/',
 		post_id: 168671,
 	},
+	'update-contact-information-email-or-name-changes': {
+		link: 'https://wordpress.com/support/domains/update-contact-information/#email-or-name-changes',
+		post_id: 3441,
+	},
 };
 
 export default contextLinks;
