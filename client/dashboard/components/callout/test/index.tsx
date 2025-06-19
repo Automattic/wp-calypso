@@ -2,12 +2,11 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { Callout } from '../index';
 
 describe( 'Callout', () => {
 	test( 'renders title and description', () => {
-		render( <Callout title="Test Title" description={ <p>Helpful content</p> } /> );
+		render( <Callout title="Test Title" titleAs="h6" description={ <p>Helpful content</p> } /> );
 		expect(
 			screen.getByRole( 'heading', {
 				name: 'Test Title',

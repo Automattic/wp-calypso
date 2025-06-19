@@ -114,7 +114,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 
 	return (
 		<VStack spacing={ 3 }>
-			<SectionHeader title={ __( 'Danger zone' ) } />
+			<SectionHeader title={ __( 'Danger zone' ) } level={ 3 } />
 			<ActionList>{ actions }</ActionList>
 		</VStack>
 	);

@@ -3,11 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from '@wordpress/element';
+import { Flex } from '@wordpress/components';
+import fastDeepEqual from 'fast-deep-equal/es6';
 
 /**
  * Internal dependencies
  */
 import type { View, NormalizedFilter, NormalizedField } from '../../types';
+import { getCurrentValue } from './utils';
 
 interface UserInputWidgetProps {
 	view: View;
@@ -34,7 +37,7 @@ export default function InputWidget( {
 		return null;
 	}
 
-	const currentValue = currentFilter.value;
+	const currentValue = getCurrentValue( filter, currentFilter );
 
 	const data = useMemo( () => {
 		return ( view.filters ?? [] ).reduce(
@@ -49,7 +52,7 @@ export default function InputWidget( {
 	const handleChange = useCallback(
 		( data: Record< string, any > ) => {
 			const nextValue = data[ field.id ];
-			if ( nextValue === currentValue ) {
+			if ( fastDeepEqual( nextValue, currentValue ) ) {
 				return;
 			}
 
@@ -68,16 +71,22 @@ export default function InputWidget( {
 				),
 			} );
 		},
-		[ currentValue, field, onChangeView, view, filter, currentFilter ]
+		[ field, onChangeView, view, filter, currentFilter ]
 	);
 
 	return (
-		<div className="dataviews-filters__user-input-widget">
+		<Flex
+			className="dataviews-filters__user-input-widget"
+			gap={ 2.5 }
+			direction="column"
+		>
 			<field.Edit
+				hideLabelFromVision={ true }
 				data={ data }
 				field={ field }
+				operator={ currentFilter.operator }
 				onChange={ handleChange }
 			/>
-		</div>
+		</Flex>
 	);
 }

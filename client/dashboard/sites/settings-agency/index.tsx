@@ -95,10 +95,10 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 				{ ...formData },
 				{
 					onSuccess: () => {
-						createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+						createSuccessNotice( __( 'Agency settings saved.' ), { type: 'snackbar' } );
 					},
 					onError: () => {
-						createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+						createErrorNotice( __( 'Failed to save agency settings.' ), { type: 'snackbar' } );
 					},
 				}
 			);

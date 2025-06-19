@@ -12,8 +12,8 @@
 		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
 }
 
-$inter: Inter, $sans;
-$sfProText: "SF Pro Text", $sans;
+$inter: Inter, $sans; // for general
+$sfProText: "SF Pro Text", $sans; // for sub title
 $colorBlack: #1f1f1f;
 
 body.is-section-signup {
@@ -363,6 +363,7 @@ body.is-section-signup {
 				width: 360px;
 
 				.formatted-header__title {
+					font-family: $inter;
 					font-size: 2rem;
 					font-weight: 700;
 					line-height: 40px;
@@ -565,7 +566,6 @@ body.is-section-signup {
 
 	.wp-login__container {
 		.wp-login__main-footer {
-			margin-top: 48px;
 			text-align: center;
 		}
 

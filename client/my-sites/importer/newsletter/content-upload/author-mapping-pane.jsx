@@ -1,10 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { verse, page, file } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import AuthorMapping from 'calypso/my-sites/importer/author-mapping-item';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
@@ -26,6 +29,12 @@ class AuthorMappingPane extends PureComponent {
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			statusMessage: PropTypes.string,
+			customData: PropTypes.shape( {
+				unsupportedFileTypes: PropTypes.objectOf( PropTypes.number ),
+				postsNumber: PropTypes.number,
+				pagesNumber: PropTypes.number,
+				attachmentsNumber: PropTypes.number,
+			} ),
 		} ),
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
@@ -124,6 +133,70 @@ class AuthorMappingPane extends PureComponent {
 		}
 	};
 
+	getUnsupportedFilesMessage() {
+		const { translate } = this.props;
+		const unsupportedFiles = this.props.importerStatus?.customData?.unsupportedFileTypes;
+
+		if ( ! unsupportedFiles ) {
+			return null;
+		}
+
+		const fileTypes = Object.entries( unsupportedFiles ).filter( function ( entry ) {
+			return entry[ 1 ] > 0;
+		} );
+		if ( fileTypes.length === 0 ) {
+			return null;
+		}
+
+		const formattedTypes = fileTypes.map( ( [ type, count ] ) => {
+			/* translators: %(count)s is the number of files, %(type)s is the file extension (e.g. "avif", "svg") */
+			return translate( '%(count)s .%(type)s image', '%(count)s .%(type)s images', {
+				args: {
+					count: formatNumber( count ),
+					type,
+				},
+				count,
+			} );
+		} );
+
+		const learnMoreLink = (
+			<InlineSupportLink
+				showIcon={ false }
+				supportLink={ localizeUrl( 'https://wordpress.com/support/accepted-filetypes/#images' ) }
+				supportPostId={ 2037 }
+			/>
+		);
+
+		if ( formattedTypes.length === 1 ) {
+			/* translators: %(files)s is a formatted string like "3 .avif images". {{learnMoreLink}} is a link to the documentation */
+			return translate(
+				'We were unable to import %(files)s. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+				{
+					args: { files: formattedTypes[ 0 ] },
+					components: {
+						learnMoreLink,
+					},
+				}
+			);
+		}
+
+		const lastType = formattedTypes.pop();
+		/* translators: %(files)s is a comma-separated list of file types (e.g. "3 .avif images, 1 .svg image"),
+		   %(lastFile)s is the last file type in the list. {{learnMoreLink}} is a link to the documentation */
+		return translate(
+			'We were unable to import %(files)s and %(lastFile)s. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+			{
+				args: {
+					files: formattedTypes.join( ', ' ),
+					lastFile: lastType,
+				},
+				components: {
+					learnMoreLink,
+				},
+			}
+		);
+	}
+
 	componentDidMount() {
 		recordTracksEvent( 'calypso_site_importer_map_authors_single' );
 	}
@@ -152,9 +225,15 @@ class AuthorMappingPane extends PureComponent {
 		const posts = importerStatus?.customData?.postsNumber || 0;
 		const pages = importerStatus?.customData?.pagesNumber || 0;
 		const attachments = importerStatus?.customData?.attachmentsNumber || 0;
+		const unsupportedFilesMessage = this.getUnsupportedFilesMessage();
 
 		return (
 			<div className="importer__mapping-pane">
+				{ unsupportedFilesMessage && (
+					<Notice status="warning" className="importer__notice" isDismissible={ false }>
+						{ unsupportedFilesMessage }
+					</Notice>
+				) }
 				<Notice status="success" className="importer__notice" isDismissible={ false }>
 					<p>{ this.props.translate( 'All set! We’ve found:' ) }</p>
 					<div className="importer__notice-stats">
@@ -210,8 +289,8 @@ class AuthorMappingPane extends PureComponent {
 	}
 }
 
-const withTotalUsers = createHigherOrderComponent(
-	( Component ) => ( props ) => {
+const withTotalUsers = createHigherOrderComponent( ( Component ) => {
+	const WithTotalUsers = ( props ) => {
 		const { siteId } = props;
 		const { data } = useUsersQuery( siteId, {
 			authors_only: 1,
@@ -220,8 +299,11 @@ const withTotalUsers = createHigherOrderComponent(
 		const totalUsers = data?.total ?? 0;
 
 		return <Component totalUsers={ totalUsers } { ...props } />;
-	},
-	'withTotalUsers'
-);
+	};
+	WithTotalUsers.displayName = `WithTotalUsers(${
+		Component.displayName || Component.name || 'Component'
+	})`;
+	return WithTotalUsers;
+}, 'withTotalUsers' );
 
 export default localize( withTotalUsers( AuthorMappingPane ) );

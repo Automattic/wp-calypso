@@ -38,7 +38,7 @@ function SiteOverview() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ site.name }
+					title={ site.name || new URL( site.URL ).hostname }
 					actions={
 						site.options?.admin_url && (
 							<Button

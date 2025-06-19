@@ -44,15 +44,17 @@ export function SettingsSidebar() {
 	return (
 		<Sidebar>
 			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
-			{ areAdvancedHostingFeaturesSupported && (
-				<>
-					<SidebarItem href={ `/sites/settings/server/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/database/${ slug }` }>
-						{ __( 'Database' ) }
-					</SidebarItem>
-				</>
-			) }
+			{ areAdvancedHostingFeaturesSupported && [
+				<SidebarItem key="server" href={ `/sites/settings/server/${ slug }` }>
+					{ __( 'Server' ) }
+				</SidebarItem>,
+				<SidebarItem key="sftp-ssh" href={ `/sites/settings/sftp-ssh/${ slug }` }>
+					{ sftpSshTitle }
+				</SidebarItem>,
+				<SidebarItem key="database" href={ `/sites/settings/database/${ slug }` }>
+					{ __( 'Database' ) }
+				</SidebarItem>,
+			] }
 			{ areHostingFeaturesSupported && (
 				<SidebarItem href={ `/sites/settings/performance/${ slug }` }>
 					{ __( 'Performance' ) }
@@ -208,17 +210,22 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 /**
  * Backport Hosting Dashboard Site Settings page to the current one.
  */
-export function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
-	const state = context.store.getState();
-	const site = getSelectedSite( state );
+export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
+	const { site: siteSlug, feature } = context.params;
 
 	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
-	context.primary = <DashboardBackportSiteSettingsRenderer siteSlug={ site?.slug } />;
+	context.primary = (
+		<DashboardBackportSiteSettingsRenderer
+			store={ context.store }
+			siteSlug={ siteSlug }
+			feature={ feature }
+		/>
+	);
 
 	next();
 }

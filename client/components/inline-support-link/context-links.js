@@ -99,6 +99,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/followers/',
 		post_id: 5444,
 	},
+	'general-support-options': {
+		link: 'https://wordpress.com/support/help-support-options/',
+		post_id: 149,
+	},
 	'getting-started-video': {
 		link: 'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
 		post_id: 158974,
@@ -475,6 +479,10 @@ const contextLinks = {
 	'plans-upgrade-credit': {
 		link: 'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit',
 		post_id: 267100,
+	},
+	'sell-online-paypal': {
+		link: 'https://wordpress.com/support/pay-with-paypal/',
+		post_id: 168671,
 	},
 };
 

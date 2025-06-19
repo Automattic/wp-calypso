@@ -16,6 +16,7 @@ export const SITE_FIELDS = [
 	'is_private',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
+	'lang',
 	'launch_status',
 	'site_migration',
 	'site_owner',
@@ -33,26 +34,13 @@ export const SITE_OPTIONS = [
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
+	'updated_at',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export interface SiteDomain {
-	id: number;
-	domain: string;
-	blog_id: number;
-	owner: string;
-	expiry: string;
-	domain_status: {
-		status: string;
-	};
-	wpcom_domain: boolean;
-	sslStatus: string;
-	domain_type: string;
-	primary_domain: boolean;
-}
-
 export interface SitePlan {
+	product_id: number;
 	product_slug: string;
 	product_name: string;
 	product_name_short: string;
@@ -75,6 +63,7 @@ export interface SiteOptions {
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	software_version: string;
+	updated_at?: string;
 }
 
 export interface Site {
@@ -98,6 +87,7 @@ export interface Site {
 	is_wpcom_atomic: boolean;
 	is_wpcom_staging_site: boolean;
 	is_vip: boolean;
+	lang: string;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;

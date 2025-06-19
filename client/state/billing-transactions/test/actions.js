@@ -1,3 +1,4 @@
+import nock from 'nock';
 import {
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
@@ -5,7 +6,6 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useNock from 'calypso/test-helpers/use-nock';
 import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 
 describe( 'actions', () => {
@@ -14,6 +14,8 @@ describe( 'actions', () => {
 	beforeEach( () => {
 		spy = jest.fn();
 	} );
+
+	const endpointLimit = 200;
 
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
@@ -38,36 +40,92 @@ describe( 'actions', () => {
 				],
 			};
 
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.get( '/rest/v1.3/me/billing-history' )
-					.reply( 200, successResponse );
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit )
+				.reply( 200, successResponse );
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestBillingTransactions()( spy );
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestBillingTransactions()( spy );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: BILLING_TRANSACTIONS_REQUEST,
 				} );
-			} );
 
-			test( 'should dispatch receive action when request completes', () => {
-				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( {
-						type: BILLING_TRANSACTIONS_RECEIVE,
-						past: successResponse.billing_history,
-						upcoming: successResponse.upcoming_charges,
-					} );
+				// should dispatch receive action when request completes'
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_RECEIVE,
+					past: successResponse.billing_history,
+					upcoming: successResponse.upcoming_charges,
+				} );
+
+				// should dispatch request success action when request completes'
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 				} );
 			} );
+		} );
 
-			test( 'should dispatch request success action when request completes', () => {
-				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( {
-						type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-					} );
+		describe( 'success with multiple calls', () => {
+			// Let's generate more than "endpointLimit" past transactions
+			const billing_history = [];
+			for ( let i = 0; i < 2 * endpointLimit - 1; i++ ) {
+				billing_history.push( {
+					id: Math.floor( Math.random() * 10000 ),
+					amount: '$1.23',
+					date: '2016-12-12T11:22:33+0000',
+					tax: '$0.20',
+					subtotal: '$1.03',
+				} );
+			}
+
+			const successResponse = {
+				billing_history,
+				upcoming_charges: [
+					{
+						id: '87654321',
+						amount: '$4.56',
+						tax: '$0.55',
+						subtotal: '$4.01',
+						date: '2016-12-12T11:22:33+0000',
+					},
+				],
+			};
+
+			const successResponse1 = {
+				billing_history: billing_history.slice( 0, endpointLimit ),
+				upcoming_charges: successResponse.upcoming_charges,
+			};
+
+			const successResponse2 = {
+				billing_history: billing_history.slice( endpointLimit ),
+				upcoming_charges: [],
+			};
+
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit )
+				.reply( 200, successResponse1 );
+
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit + '&offset=' + endpointLimit )
+				.reply( 200, successResponse2 );
+
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestBillingTransactions()( spy );
+
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST,
+				} );
+
+				// should dispatch receive action when request completes'
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_RECEIVE,
+					past: successResponse.billing_history,
+					upcoming: successResponse.upcoming_charges,
+				} );
+
+				// should dispatch request success action when request completes'
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 				} );
 			} );
 		} );
@@ -76,24 +134,20 @@ describe( 'actions', () => {
 			const message =
 				'An active access token must be used to query information about the current user.';
 
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.get( '/rest/v1.3/me/billing-history' )
-					.reply( 403, {
-						error: 'authorization_required',
-						message,
-					} );
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.3/me/billing-history?limit=' + endpointLimit )
+				.reply( 403, {
+					error: 'authorization_required',
+					message,
+				} );
 
-			test( 'should dispatch request failure action when request fails', () => {
-				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( {
-						type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
-						error: expect.objectContaining( {
-							message,
-						} ),
-					} );
+			test( 'should dispatch request failure action when request fails', async () => {
+				await requestBillingTransactions()( spy );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
+					error: expect.objectContaining( {
+						message,
+					} ),
 				} );
 			} );
 		} );
@@ -103,23 +157,19 @@ describe( 'actions', () => {
 		const receiptId = 12345678;
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
-					.reply( 200, { success: true } );
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
+				.reply( 200, { success: true } );
 
-			test( 'should dispatch send success action when request completes', () => {
+			test( 'should dispatch send success action when request completes', async () => {
 				const { notice, type } = successNotice( 'Your receipt was sent by email successfully.' );
-				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( {
-						notice: {
-							...notice,
-							noticeId: expect.any( String ),
-						},
-						type,
-					} );
+				await sendBillingReceiptEmail( receiptId )( spy );
+				expect( spy ).toHaveBeenCalledWith( {
+					notice: {
+						...notice,
+						noticeId: expect.any( String ),
+					},
+					type,
 				} );
 			} );
 		} );
@@ -128,28 +178,24 @@ describe( 'actions', () => {
 			const message =
 				'An active access token must be used to query information about the current user.';
 
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
-					.reply( 403, {
-						error: 'authorization_required',
-						message,
-					} );
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
+				.reply( 403, {
+					error: 'authorization_required',
+					message,
+				} );
 
-			test( 'should dispatch send failure action when request fails', () => {
+			test( 'should dispatch send failure action when request fails', async () => {
 				const { notice, type } = errorNotice(
 					'There was a problem sending your receipt. Please try again later or contact support.'
 				);
-				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( {
-						notice: {
-							...notice,
-							noticeId: expect.any( String ),
-						},
-						type,
-					} );
+				await sendBillingReceiptEmail( receiptId )( spy );
+				expect( spy ).toHaveBeenCalledWith( {
+					notice: {
+						...notice,
+						noticeId: expect.any( String ),
+					},
+					type,
 				} );
 			} );
 		} );

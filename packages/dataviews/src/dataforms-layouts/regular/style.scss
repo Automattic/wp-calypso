@@ -17,9 +17,9 @@
 	min-height: $grid-unit-40;
 	display: flex;
 	align-items: center;
-	padding: 6px 0; // Matches button to ensure alignment
 	line-height: $grid-unit-05 * 5;
 	hyphens: auto;
+	align-self: center;
 }
 
 .dataforms-layouts-regular__field-control {

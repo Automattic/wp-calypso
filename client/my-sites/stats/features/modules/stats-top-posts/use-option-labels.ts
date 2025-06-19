@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import type { StatsDefaultModuleProps, StatsQueryType } from '../types';
 
@@ -7,7 +8,15 @@ export const SUB_STAT_TYPE = 'statsArchives';
 export type StatType = typeof MAIN_STAT_TYPE | typeof SUB_STAT_TYPE;
 
 export interface StatsModulePostsProps extends StatsDefaultModuleProps {
-	query: StatsQueryType & { viewdType?: StatType };
+	query: StatsQueryType & { viewType?: StatType };
+}
+
+export function validQueryViewType( statType: StatType = MAIN_STAT_TYPE ) {
+	if ( ! config.isEnabled( 'stats/archive-breakdown' ) ) {
+		return MAIN_STAT_TYPE;
+	}
+
+	return ! [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? MAIN_STAT_TYPE : statType;
 }
 
 export default function useOptionLabels() {
@@ -15,7 +24,7 @@ export default function useOptionLabels() {
 
 	return {
 		[ MAIN_STAT_TYPE ]: {
-			tabLabel: translate( 'Post & pages' ),
+			tabLabel: translate( 'Posts & pages' ),
 			mainItemLabel: translate( 'Posts & pages' ),
 			analyticsId: 'posts',
 		},

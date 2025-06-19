@@ -1,12 +1,17 @@
 import wpcom from 'calypso/lib/wp';
 
+export type SiteOwnerTransferContext = 'dashboard_v2';
+
 export interface SiteOwnerTransferConfirmation {
 	transfer: boolean;
 	email_sent: boolean;
 	new_owner_email: string;
 }
 
-export async function startSiteOwnerTransfer( siteId: number, data: { new_site_owner: string } ) {
+export async function startSiteOwnerTransfer(
+	siteId: number,
+	data: { new_site_owner: string; context?: SiteOwnerTransferContext }
+) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-owner-transfer`,
@@ -15,10 +20,7 @@ export async function startSiteOwnerTransfer( siteId: number, data: { new_site_o
 		{
 			calypso_origin: window.location.origin,
 		},
-		{
-			context: 'dashboard_v2',
-			...data,
-		}
+		data
 	);
 }
 

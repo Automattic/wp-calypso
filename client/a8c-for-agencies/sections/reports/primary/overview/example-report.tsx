@@ -87,7 +87,7 @@ export default function ExampleReport() {
 					<div className="example-report__url">{ reportData.siteUrl }</div>
 					<div className="example-report__message">
 						{ translate(
-							'Hey Mary! Here\'s the monthly report for your site! Notice how the "Repair services" page is lower in traffic than "Book a showing". Let\'s jump on a call to disucss how we can boost that page.'
+							'Hey Mary! Here\'s the monthly report for your site! Notice how the "Repair services" page is lower in traffic than "Book a showing". Let\'s jump on a call to discuss how we can boost that page.'
 						) }
 						<br />
 

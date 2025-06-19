@@ -171,6 +171,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				} ) }
 				ref={ messagesContainerRef }
 			>
+				<div
+					className="screen-reader-text"
+					aria-live="polite"
+					aria-atomic="false"
+					aria-relevant="additions"
+				>
+					{ chat.messages.map( ( message ) => (
+						<div key={ `${ message.internal_message_id }` }>
+							{ [ 'bot', 'business' ].includes( message.role ) && message.content }
+						</div>
+					) ) }
+				</div>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
@@ -190,7 +202,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							const displayChatWithSupportLabel =
 								! nextMessage?.context?.flags?.show_contact_support_msg &&
 								message.context?.flags?.show_contact_support_msg &&
-								! chatHasEnded;
+								! chatHasEnded &&
+								! message.context?.flags?.is_error_message;
 
 							const displayChatWithSupportEndedLabel =
 								! chatHasCSATMessage && ! nextMessage && chatHasEnded;

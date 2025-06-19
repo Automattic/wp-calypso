@@ -24,6 +24,8 @@ interface TestSiteOptions {
 	blog_public: 0 | 1 | -1;
 	wpcom_public_coming_soon: 0 | 1;
 	wpcom_data_sharing_opt_out: boolean;
+	domains?: string[];
+	primary_domain?: string;
 }
 
 const siteId = 123;
@@ -32,29 +34,50 @@ const siteSlug = 'test-site';
 // Only mocks site and settings fields that are necessary for the tests.
 // Feel free to add more fields as they are needed.
 function mockTestSite( options: TestSiteOptions ) {
+	const {
+		blog_public,
+		wpcom_public_coming_soon,
+		wpcom_data_sharing_opt_out,
+		domains = [ siteSlug ],
+		primary_domain = options.domains?.[ 0 ] || siteSlug,
+	} = options;
+
+	const domainObjects = domains.map( ( domain ) => {
+		return {
+			domain,
+			blog_id: siteId,
+			wpcom_domain: domain.endsWith( '.wordpress.com' ) || domain.endsWith( '.wpcomstaging.com' ),
+			is_wpcom_staging_domain: domain.endsWith( '.wpcomstaging.com' ),
+			primary_domain: domain === primary_domain,
+		};
+	} );
+
 	const site = {
 		ID: siteId,
-		slug: siteSlug,
+		slug: primary_domain,
 		launch_status: 'launched',
 	};
 
 	const settings = {
 		settings: {
-			blog_public: options.blog_public,
-			wpcom_public_coming_soon: options.wpcom_public_coming_soon,
-			wpcom_data_sharing_opt_out: options.wpcom_data_sharing_opt_out,
+			blog_public,
+			wpcom_public_coming_soon,
+			wpcom_data_sharing_opt_out,
 		},
 	};
 
 	const scope = nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ siteSlug }` )
+		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
 		.reply( 200, site )
-		.get( `/rest/v1.4/sites/${ siteId }/settings` )
+		.get( `/rest/v1.4/sites/${ site.ID }/settings` )
 		.query( true )
-		.reply( 200, settings );
+		.reply( 200, settings )
+		.get( `/rest/v1.2/sites/${ site.ID }/domains` )
+		.query( true )
+		.reply( 200, { domains: domainObjects } );
 
-	return { site, settings, scope };
+	return { site, settings, domains: domainObjects, scope };
 }
 
 function mockSettingsSaved( settings: nock.DataMatcherMap ) {
@@ -362,6 +385,130 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( preventThirdPartyCheckbox ).toBeChecked();
 
 			await user.click( notCrawlableCheckbox );
+			await user.click( saveButton );
+
+			expect( saveButton ).toBeDisabled();
+
+			await waitFor( () => {
+				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( saveButton ).toBeEnabled();
+			} );
+		} );
+
+		test( 'wpcomstaging warning shows "Add new domain" button when the site has no other domains', async () => {
+			mockTestSite( {
+				blog_public: 1,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+				domains: [ 'site.wpcomstaging.com' ],
+			} );
+
+			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
+				expect(
+					screen.getByText( /This domain is intended for temporary use/ )
+				).toBeInTheDocument();
+			} );
+			const domainButton = screen.getByRole( 'link', {
+				name: 'Add new domain',
+			} );
+
+			expect( domainButton ).toHaveAttribute(
+				'href',
+				expect.stringMatching( /^\/domains\/add\/[^/]+.wpcomstaging.com/ )
+			);
+		} );
+
+		test( 'wpcomstaging warning shows "Manage domains" button when the site has non dotcom domains they could switch to', async () => {
+			mockTestSite( {
+				blog_public: 1,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+				domains: [ 'site.wpcomstaging.com', 'example.com' ],
+				primary_domain: 'site.wpcomstaging.com',
+			} );
+
+			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
+				expect(
+					screen.getByText( /This domain is intended for temporary use/ )
+				).toBeInTheDocument();
+			} );
+			const domainButton = screen.getByRole( 'link', {
+				name: 'Manage domains',
+			} );
+
+			expect( domainButton ).toHaveAttribute(
+				'href',
+				expect.stringMatching( /^\/domains\/manage\/[^/]+.wpcomstaging.com/ )
+			);
+		} );
+
+		test( 'checkboxes disabled for wpcomstaging sites', async () => {
+			mockTestSite( {
+				blog_public: 1,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+				domains: [ 'site.wpcomstaging.com' ],
+			} );
+
+			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
+				expect(
+					screen.getByText( /This domain is intended for temporary use/ )
+				).toBeInTheDocument();
+			} );
+
+			const notCrawlableCheckbox = screen.getByRole( 'checkbox', {
+				name: /Discourage search engines/,
+			} );
+			const preventThirdPartyCheckbox = screen.getByRole( 'checkbox', {
+				name: /Prevent third-party/,
+			} );
+
+			expect( notCrawlableCheckbox ).toBeDisabled();
+			expect( notCrawlableCheckbox ).toBeChecked();
+			expect( preventThirdPartyCheckbox ).toBeDisabled();
+			expect( preventThirdPartyCheckbox ).toBeChecked();
+		} );
+
+		test( 'make a wpcomstaging site public still sets blog_public=1 (even though under the hood it does not get indexed)', async () => {
+			const user = userEvent.setup();
+
+			mockTestSite( {
+				blog_public: -1,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+				domains: [ 'site.wpcomstaging.com' ],
+			} );
+			const scope = mockSettingsSaved( {
+				blog_public: 1,
+				wpcom_data_sharing_opt_out: false,
+				wpcom_public_coming_soon: 0,
+				wpcom_coming_soon: 0,
+			} );
+
+			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'radio', { name: 'Private' } ) ).toBeChecked();
+			} );
+			const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+
+			await user.click( screen.getByRole( 'radio', { name: 'Public' } ) );
+
+			await waitFor( () => {
+				expect(
+					screen.getByText( /This domain is intended for temporary use/ )
+				).toBeInTheDocument();
+			} );
+
 			await user.click( saveButton );
 
 			expect( saveButton ).toBeDisabled();

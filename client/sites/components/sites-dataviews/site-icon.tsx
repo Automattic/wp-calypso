@@ -67,6 +67,7 @@ export default function SiteIcon( {
 				blogId={ site.ID }
 				fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
 				size={ size }
+				lazy
 			/>
 		</ThumbnailLink>
 	);

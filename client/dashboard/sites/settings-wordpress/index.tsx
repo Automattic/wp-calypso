@@ -65,10 +65,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		e.preventDefault();
 		mutation.mutate( formData.version, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'WordPress version saved.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), {
+				createErrorNotice( __( 'Failed to save WordPress version.' ), {
 					type: 'snackbar',
 				} );
 			},

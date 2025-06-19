@@ -9,8 +9,8 @@ const OverviewBody = () => {
 	return (
 		<div className="overview-body">
 			{ ! isEnabled( 'a4a-unified-onboarding-tour' ) && <OverviewBodyIntroCards /> }
-			<OverviewBodyEvents />
 			<OverviewBodyNextSteps />
+			<OverviewBodyEvents />
 			<OverviewBodyHosting />
 			<OverviewBodyProducts />
 		</div>
