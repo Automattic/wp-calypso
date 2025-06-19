@@ -48,7 +48,6 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 					options={ reasons.map( toSelectOption ) }
 					onChange={ ( val ) => {
 						onDetailsChange( '' );
-						setFeedbackValue( '' );
 						setValue( val );
 						props.onChange( val );
 					} }
