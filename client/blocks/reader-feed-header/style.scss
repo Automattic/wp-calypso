@@ -3,6 +3,24 @@
 	margin-bottom: 16px;
 	z-index: z-index(".reader-feed-header", ".reader-feed-header__site");
 
+	h1 {
+		display: inline;
+	}
+
+	// If the site title test in the link is marked a different ltr/rtl format than the interface,
+	// ensure this parent site title class is set to that direction.
+	&:has( h1 a[direction="ltr"] ) {
+		.reader-feed-header__site-title {
+			direction: ltr #{"/*rtl:ignore*/"};
+		}
+	}
+
+	&:has( h1 a[direction="rtl"] ) {
+		.reader-feed-header__site-title {
+			direction: rtl #{"/*rtl:ignore*/"};
+		}
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-bottom: 16px;
 	}

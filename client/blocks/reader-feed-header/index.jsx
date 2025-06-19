@@ -90,9 +90,11 @@ class FeedHeader extends Component {
 						<div className="reader-feed-header__site-title">
 							{ narrowDisplay && siteIconElement }
 							<AutoDirection>
-								<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-									{ siteTitle }
-								</a>
+								<h1>
+									<a className="reader-feed-header__site-title-link" href={ siteUrl }>
+										{ siteTitle }
+									</a>
+								</h1>
 							</AutoDirection>
 							{ site && (
 								<span className="reader-feed-header__site-badge">
