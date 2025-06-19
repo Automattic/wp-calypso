@@ -28,7 +28,10 @@ import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import { GEO_MODES } from '../features/modules/stats-locations/types';
 import PostsNavTabs from '../features/modules/stats-top-posts/nav-tabs';
-import { validQueryViewType as getValidTopPostStatType } from '../features/modules/stats-top-posts/use-option-labels';
+import {
+	validQueryViewType as getValidTopPostStatType,
+	SUB_STAT_TYPE as TOP_POSTS_SUB_STAT_TYPE,
+} from '../features/modules/stats-top-posts/use-option-labels';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
@@ -91,6 +94,28 @@ class StatsSummary extends Component {
 				context={ this.props.context }
 			/>
 		);
+	}
+
+	getPath( statType ) {
+		if ( statType === 'statsCountryViews' ) {
+			const geoMode = this.props.context.query.geoMode;
+			const geoModeLabel =
+				geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
+					? GEO_MODES[ geoMode ]
+					: 'country';
+
+			return `locations-${ geoModeLabel }`;
+		}
+
+		switch ( statType ) {
+			case TOP_POSTS_SUB_STAT_TYPE:
+				return 'archives';
+
+			case 'statsTopPosts':
+				return 'posts';
+			default:
+				return '';
+		}
 	}
 
 	render() {
@@ -225,11 +250,10 @@ class StatsSummary extends Component {
 
 			case 'posts':
 				title = StatsStrings.posts.title;
-				path = 'posts';
 				statType = getValidTopPostStatType( moduleQuery?.viewType );
 				summaryView = (
 					<Fragment key="posts-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( this.getPath( statType ), statType, false, moduleQuery ) }
 						<StatsModuleTopPosts
 							moduleStrings={ StatsStrings.posts }
 							period={ this.props.period }
@@ -387,12 +411,6 @@ class StatsSummary extends Component {
 
 		const { module } = this.props.context.params;
 
-		const geoMode = this.props.context.query.geoMode;
-		const geoModeLabel =
-			geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
-				? GEO_MODES[ geoMode ]
-				: 'country';
-
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -415,7 +433,7 @@ class StatsSummary extends Component {
 									<DownloadCsv
 										statType={ statType }
 										query={ moduleQuery }
-										path={ statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path }
+										path={ this.getPath( statType ) || path }
 										period={ this.props.period }
 										skipQuery
 										hideIfNoData
