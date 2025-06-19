@@ -4,12 +4,13 @@ import { fixMe, useTranslate } from 'i18n-calypso';
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
+	lostPassword: boolean;
 }
 
-const HeadingSubText = ( { isSocialFirst, twoFactorAuthType }: Props ) => {
+const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, lostPassword }: Props ) => {
 	const translate = useTranslate();
 
-	if ( ! isSocialFirst || twoFactorAuthType ) {
+	if ( ! isSocialFirst || twoFactorAuthType || lostPassword ) {
 		return null;
 	}
 

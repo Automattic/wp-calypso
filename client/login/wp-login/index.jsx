@@ -498,6 +498,7 @@ export class Login extends Component {
 			isWoo,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
+			currentRoute,
 			twoFactorEnabled,
 		} = this.props;
 
@@ -601,6 +602,7 @@ export class Login extends Component {
 									<HeadingSubText
 										isSocialFirst={ isSocialFirst }
 										twoFactorAuthType={ twoFactorAuthType }
+										lostPassword={ currentRoute === '/log-in/lostpassword' }
 									/>
 								}
 							/>
