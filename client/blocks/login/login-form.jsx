@@ -986,7 +986,7 @@ export class LoginForm extends Component {
 						{ ! isBlazePro &&
 							! isJetpack &&
 							! isAndroidOAuth2Client( oauth2Client ) &&
-							! isIosOAuth2Client( oauth2Client )(
+							! isIosOAuth2Client( oauth2Client ) && (
 								<p className="login__form-terms">{ renderTerms() }</p>
 							) }
 

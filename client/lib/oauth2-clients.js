@@ -17,6 +17,7 @@ export const isGravatarFlowOAuth2Client = ( oauth2Client ) => {
 export const isGravatarOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 1854 || isGravatarFlowOAuth2Client( oauth2Client );
 };
+
 export const isIosOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 11;
 };
