@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import BlogStickers from 'calypso/blocks/blog-stickers';
 import SiteIcon from 'calypso/blocks/site-icon';
+import AutoDirection from 'calypso/components/auto-direction';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import withDimensions from 'calypso/lib/with-dimensions';
 import {
@@ -88,9 +89,11 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__details">
 						<div className="reader-feed-header__site-title">
 							{ narrowDisplay && siteIconElement }
-							<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-								{ siteTitle }
-							</a>
+							<AutoDirection>
+								<a className="reader-feed-header__site-title-link" href={ siteUrl }>
+									{ siteTitle }
+								</a>
+							</AutoDirection>
 							{ site && (
 								<span className="reader-feed-header__site-badge">
 									<ReaderFeedHeaderSiteBadge site={ site } />
@@ -98,7 +101,9 @@ class FeedHeader extends Component {
 								</span>
 							) }
 						</div>
-						<div className="reader-feed-header__description">{ description }</div>
+						<AutoDirection>
+							<div className="reader-feed-header__description">{ description }</div>
+						</AutoDirection>
 						{ ! wideDisplay && followerCount && (
 							<div className="reader-feed-header__follow-count">
 								{ ' ' }
