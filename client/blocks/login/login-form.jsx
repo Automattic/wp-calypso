@@ -29,7 +29,12 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isAndroidOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
+	isIosOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -978,9 +983,12 @@ export class LoginForm extends Component {
 							</div>
 						</div>
 
-						{ ! isBlazePro && ! isJetpack && (
-							<p className="login__form-terms">{ renderTerms() }</p>
-						) }
+						{ ! isBlazePro &&
+							! isJetpack &&
+							! isAndroidOAuth2Client( oauth2Client ) &&
+							! isIosOAuth2Client( oauth2Client )(
+								<p className="login__form-terms">{ renderTerms() }</p>
+							) }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
