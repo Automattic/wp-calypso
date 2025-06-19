@@ -1,8 +1,8 @@
 import { postcssModules, sassPlugin } from 'esbuild-sass-plugin';
 import { defineConfig } from 'tsup';
-import { entrypoints } from './entrypoints.js';
+import pkg from './package.json' assert { type: 'json' };
 
-const entry = Object.values( entrypoints ).map( ( entrypoint ) => `./src/${ entrypoint }` );
+const entry = Object.values( pkg.exports ).map( ( entry ) => entry[ 'calypso:src' ] );
 
 export default defineConfig( {
 	entry,
@@ -24,5 +24,4 @@ export default defineConfig( {
 			} ),
 		} ),
 	],
-	onSuccess: 'node tools/update-exports.js',
 } );
