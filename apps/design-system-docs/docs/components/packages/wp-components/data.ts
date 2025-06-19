@@ -72,6 +72,16 @@ export const data: ComponentData[] = [
 		notes: 'Planned for deprecation.',
 	},
 	{
+		id: 'badge',
+		name: 'Badge',
+		whereUsed: 'global',
+		status: 'stable',
+		figma:
+			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=19297-39220&t=YhMXMUEdznvUwLv9-4',
+		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-badge--docs',
+		notes: 'Still a private API. If possible, use `Badge` from `@automattic/ui` instead.',
+	},
+	{
 		id: 'base-control',
 		name: 'BaseControl',
 		whereUsed: 'global',
@@ -225,7 +235,7 @@ export const data: ComponentData[] = [
 		whereUsed: 'global',
 		status: 'use-with-caution',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-datepicker--docs',
-		notes: 'If possible, use `DateCalendar` from `@automattic/components` instead.',
+		notes: 'If possible, use `DateCalendar` from `@automattic/ui` instead.',
 	},
 	{
 		id: 'date-time-picker',
@@ -234,7 +244,7 @@ export const data: ComponentData[] = [
 		status: 'use-with-caution',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-datetimepicker--docs',
 		notes:
-			'If possible, use `DateCalendar` from `@automattic/components` instead. For the input fields, consider using an `TextControl` with `type="date"` or `type="datetime-local"`.',
+			'If possible, use `DateCalendar` from `@automattic/ui` instead. For the input fields, consider using an `TextControl` with `type="date"` or `type="datetime-local"`.',
 	},
 	{
 		id: 'disabled',
