@@ -482,7 +482,7 @@ export const normalizers = {
 						totalViews += item.views;
 
 						return {
-							label: [ 'search' ].includes( archiveKey ) ? item.href : item.value,
+							label: item.value,
 							value: item.views,
 							link: item.href,
 						};
