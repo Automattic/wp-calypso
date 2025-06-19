@@ -59,7 +59,7 @@ export interface PurchasesListConnectedProps {
 	isUserBlocked: boolean;
 	availableSessions: number[];
 	siteId: number | null;
-	userId: number | undefined;
+	userId?: number;
 }
 
 function MembershipSubscriptions( {
@@ -115,7 +115,7 @@ const PurchasesListDataView: React.FC<
 
 	const allPurchases = useMemo( () => {
 		if ( allPurchasesLoaded ) {
-			return [ ...purchases, ...transferredOwnershipPurchases ];
+			return [ ...( purchases || [] ), ...transferredOwnershipPurchases ];
 		}
 		return [];
 	}, [ allPurchasesLoaded, purchases, transferredOwnershipPurchases ] );
@@ -137,7 +137,7 @@ const PurchasesListDataView: React.FC<
 		content = <PurchasesSite isPlaceholder />;
 	}
 
-	if ( allPurchases && allPurchasesLoaded && allPurchases.length ) {
+	if ( allPurchases.length ) {
 		content = (
 			<PurchasesDataViews
 				purchases={ allPurchases }
@@ -151,7 +151,6 @@ const PurchasesListDataView: React.FC<
 		purchases &&
 		! purchases.length &&
 		! subscriptions.length &&
-		transferredOwnershipPurchases &&
 		! transferredOwnershipPurchases.length
 	) {
 		if ( ! sites.length ) {
@@ -229,5 +228,5 @@ export default connect( ( state: AppState ) => ( {
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-	userId: getCurrentUserId( state ) ?? undefined,
+	userId: getCurrentUserId( state ),
 } ) )( withStoredPaymentMethods( PurchasesListDataView, { type: 'card', expired: true } ) );
