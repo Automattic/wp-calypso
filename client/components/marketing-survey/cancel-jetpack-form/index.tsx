@@ -43,6 +43,9 @@ interface Props {
 	flowType: string;
 	translate?: () => void;
 	isAkismet?: boolean;
+	cancellationInProgress?: boolean;
+	cancellationCompleted?: boolean;
+	cancellationMessage?: string;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -396,12 +399,19 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 */
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
+		const { cancellationCompleted, cancellationMessage } = props;
 
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return (
-				<>
+				<div className="cancel-jetpack-form__confirm-step">
+					{ cancellationCompleted && cancellationMessage && (
+						<div className="cancel-jetpack-form__success-notice">
+							<div className="cancel-jetpack-form__success-message">{ cancellationMessage }</div>
+						</div>
+					) }
 					<FormattedHeader
-						headerText={ translate( 'Confirm removal' ) }
+						brandFont
+						headerText={ translate( 'Sorry to see you go' ) }
 						subHeaderText={
 							/* Translators: productName is the name of a Jetpack product. */
 							translate(
@@ -413,10 +423,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 								}
 							)
 						}
-						align="center"
-						isSecondary
 					/>
-				</>
+				</div>
 			);
 		}
 

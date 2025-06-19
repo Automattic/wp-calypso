@@ -72,6 +72,8 @@ class CancelPurchase extends Component {
 	state = {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
+		cancellationInProgress: false,
+		surveyShown: false,
 	};
 
 	static defaultProps = {
@@ -87,6 +89,11 @@ class CancelPurchase extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		// Don't redirect if we're in the middle of a cancellation flow or if the survey is being shown
+		if ( this.state.cancellationInProgress || this.state.surveyShown ) {
+			return;
+		}
+
 		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
 			this.redirect();
 			return;
@@ -107,7 +114,21 @@ class CancelPurchase extends Component {
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
+		// If the purchase is no longer valid for cancellation (e.g., already cancelled),
+		// we should still allow the component to stay mounted to show the survey
+		const isValidForCancellation =
+			canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
+
+		// If the purchase is not valid for cancellation but we're in the middle of a cancellation flow,
+		// allow the component to stay mounted
+		if (
+			! isValidForCancellation &&
+			( this.state.cancellationInProgress || this.state.surveyShown )
+		) {
+			return true;
+		}
+
+		return isValidForCancellation;
 	};
 
 	redirect = () => {
@@ -127,6 +148,14 @@ class CancelPurchase extends Component {
 
 	onCancelConfirmationStateChange = ( newState ) => {
 		this.setState( newState );
+	};
+
+	onCancellationStart = () => {
+		this.setState( { cancellationInProgress: true, surveyShown: true } );
+	};
+
+	onSurveyComplete = () => {
+		this.setState( { cancellationInProgress: false, surveyShown: false } );
 	};
 
 	getActiveMarketplaceSubscriptions() {
@@ -264,6 +293,8 @@ class CancelPurchase extends Component {
 				purchaseListUrl={ purchaseListUrl }
 				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+				onCancellationStart={ this.onCancellationStart }
+				onSurveyComplete={ this.onSurveyComplete }
 			/>
 		);
 	};

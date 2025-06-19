@@ -70,6 +70,9 @@ class CancelPurchaseForm extends Component {
 		includedDomainPurchase: PropTypes.object,
 		linkedPurchases: PropTypes.array,
 		skipRemovePlanSurvey: PropTypes.bool,
+		cancellationInProgress: PropTypes.bool,
+		cancellationCompleted: PropTypes.bool,
+		cancellationMessage: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -726,7 +729,7 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 	render() {
-		const { purchase, site } = this.props;
+		const { purchase, site, cancellationCompleted, cancellationMessage } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( ! surveyStep ) {
@@ -753,7 +756,16 @@ class CancelPurchaseForm extends Component {
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
-						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
+						<BlankCanvas.Content>
+							{ cancellationCompleted && cancellationMessage && (
+								<div className="cancel-purchase-form__success-notice">
+									<div className="cancel-purchase-form__success-message">
+										{ cancellationMessage }
+									</div>
+								</div>
+							) }
+							{ this.surveyContent() }
+						</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div
