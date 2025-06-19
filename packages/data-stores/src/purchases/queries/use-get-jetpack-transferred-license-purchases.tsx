@@ -20,7 +20,7 @@ export function getUseTransferredPurchasesOptions(
 		queryKey,
 		queryFn: async (): Promise< Purchase[] > => {
 			const purchases: RawPurchase[] = await wpcomRequest( {
-				path: '/me/purchases/transferred-owner',
+				path: '/me/purchases/transferred',
 				apiVersion: '1.1',
 			} );
 
