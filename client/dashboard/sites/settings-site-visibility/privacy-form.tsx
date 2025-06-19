@@ -22,9 +22,17 @@ import type { Site, SiteSettings } from '../../data/types';
 import type { Field, Form } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
-const visibilityFields: Field< SiteSettings >[] = [
+// The raw SiteSettings don't map nicely to the controls in the form. Mapping from SiteSettings to
+// PrivacyFormData allows us to create a more user-friendly form.
+interface PrivacyFormData {
+	visibility: 'coming-soon' | 'public' | 'private';
+	discourageSearchEngines: boolean;
+	preventThirdPartySharing: boolean;
+}
+
+const visibilityFields: Field< PrivacyFormData >[] = [
 	{
-		id: 'wpcom_site_visibility',
+		id: 'visibility',
 		Edit: 'toggleGroup',
 		elements: [
 			{
@@ -52,19 +60,19 @@ const visibilityFields: Field< SiteSettings >[] = [
 
 const visibilityForm = {
 	type: 'regular',
-	fields: [ { id: 'wpcom_site_visibility', labelPosition: 'none' } ],
+	fields: [ { id: 'visibility', labelPosition: 'none' } ],
 } satisfies Form;
 
 // This form also has access to `isPrimaryDomainStaging` which isn't a persisted setting, but is data
 // needed to determine whether the checkboxes should be disabled.
-const robotFields: Field< SiteSettings & { isPrimaryDomainStaging: boolean } >[] = [
+const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } >[] = [
 	{
-		id: 'wpcom_discourage_search_engines',
+		id: 'discourageSearchEngines',
 		label: __( 'Discourage search engines from indexing this site' ),
 		description: __(
 			'This does not block access to your site—it is up to search engines to honor your request.'
 		),
-		isVisible: ( { wpcom_site_visibility }: SiteSettings ) => wpcom_site_visibility === 'public',
+		isVisible: ( { visibility } ) => visibility === 'public',
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
 			<CheckboxControl
 				__nextHasNoMarginBottom
@@ -79,13 +87,13 @@ const robotFields: Field< SiteSettings & { isPrimaryDomainStaging: boolean } >[]
 		),
 	},
 	{
-		id: 'wpcom_prevent_third_party_sharing',
+		id: 'preventThirdPartySharing',
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
 			<CheckboxControl
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : field.label }
 				checked={ data.isPrimaryDomainStaging || field.getValue( { item: data } ) }
-				disabled={ data.isPrimaryDomainStaging || data.wpcom_discourage_search_engines }
+				disabled={ data.isPrimaryDomainStaging || data.discourageSearchEngines }
 				onChange={ () => {
 					onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
 				} }
@@ -100,13 +108,13 @@ const robotFields: Field< SiteSettings & { isPrimaryDomainStaging: boolean } >[]
 			/>
 		),
 		label: __( 'Prevent third-party sharing for this site' ),
-		isVisible: ( { wpcom_site_visibility }: SiteSettings ) => wpcom_site_visibility === 'public',
+		isVisible: ( { visibility } ) => visibility === 'public',
 	},
 ];
 
 const robotForm = {
 	type: 'regular',
-	fields: [ 'wpcom_discourage_search_engines', 'wpcom_prevent_third_party_sharing' ],
+	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 
 export function PrivacyForm( {
@@ -125,49 +133,50 @@ export function PrivacyForm( {
 	const hasNonWpcomDomain = domains.some( ( domain ) => ! domain.wpcom_domain );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const [ formData, setFormData ] = useState( {
-		wpcom_site_visibility: settings.wpcom_site_visibility,
-		wpcom_discourage_search_engines: settings.wpcom_discourage_search_engines,
-		wpcom_prevent_third_party_sharing:
-			settings.wpcom_discourage_search_engines || settings.wpcom_prevent_third_party_sharing,
-	} );
 
-	const isDirty = Object.entries( formData ).some(
-		( [ key, value ] ) => settings[ key as keyof SiteSettings ] !== value
+	const initialData = fromSiteSettings( settings );
+	const [ formData, setFormData ] = useState( () => ( {
+		...initialData,
+		preventThirdPartySharing:
+			initialData.discourageSearchEngines || initialData.preventThirdPartySharing,
+	} ) );
+
+	const isDirty = Object.entries( initialData ).some(
+		( [ key, value ] ) => formData[ key as keyof PrivacyFormData ] !== value
 	);
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{ ...formData },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
-				},
-			}
-		);
+		mutation.mutate( toSiteSettings( formData ), {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Site visibility settings saved.' ), { type: 'snackbar' } );
+			},
+			onError: () => {
+				createErrorNotice( __( 'Failed to save site visibility settings.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
-	const handleChange = ( edits: Partial< SiteSettings > ) => {
+	const handleChange = ( edits: Partial< PrivacyFormData > ) => {
 		setFormData( ( data ) => {
 			const newFormData = { ...data, ...edits };
 
-			if ( edits.wpcom_site_visibility !== undefined ) {
+			if ( edits.visibility === 'public' ) {
 				// Forget any previous edits to the discoverability controls when the visibility changes.
-				newFormData.wpcom_discourage_search_engines = settings.wpcom_discourage_search_engines;
-				newFormData.wpcom_prevent_third_party_sharing =
-					settings.wpcom_discourage_search_engines || settings.wpcom_prevent_third_party_sharing;
+				newFormData.discourageSearchEngines = initialData.discourageSearchEngines;
+				newFormData.preventThirdPartySharing =
+					initialData.discourageSearchEngines || initialData.preventThirdPartySharing;
 			}
-			if ( edits.wpcom_discourage_search_engines === true ) {
+			if ( edits.discourageSearchEngines === true ) {
 				// Checking the search engine box forces the third party checkbox too.
-				newFormData.wpcom_prevent_third_party_sharing = true;
+				newFormData.preventThirdPartySharing = true;
 			}
 
-			return newFormData;
+			// Ensure switching to 'coming-soon' or 'private' sets the correct values for the hidden checkbox settings.
+			return fromSiteSettings( toSiteSettings( newFormData ) );
 		} );
 	};
 
@@ -177,13 +186,13 @@ export function PrivacyForm( {
 				<CardBody>
 					<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
 						<VStack spacing={ 4 }>
-							<DataForm< SiteSettings >
+							<DataForm< PrivacyFormData >
 								data={ formData }
 								fields={ visibilityFields }
 								form={ visibilityForm }
 								onChange={ handleChange }
 							/>
-							{ formData.wpcom_site_visibility === 'public' && isPrimaryDomainStaging && (
+							{ formData.visibility === 'public' && isPrimaryDomainStaging && (
 								<Notice
 									variant="warning"
 									density="medium"
@@ -219,7 +228,7 @@ export function PrivacyForm( {
 									) }
 								</Notice>
 							) }
-							<DataForm< SiteSettings & { isPrimaryDomainStaging: boolean } >
+							<DataForm< PrivacyFormData & { isPrimaryDomainStaging: boolean } >
 								data={ { ...formData, isPrimaryDomainStaging } }
 								fields={ robotFields }
 								form={ robotForm }
@@ -241,8 +250,67 @@ export function PrivacyForm( {
 				</CardBody>
 			</Card>
 
-			{ settings.wpcom_site_visibility === 'coming-soon' &&
-				formData.wpcom_site_visibility === 'coming-soon' && <ShareSiteForm site={ site } /> }
+			{ site.is_coming_soon && formData.visibility === 'coming-soon' && (
+				<ShareSiteForm site={ site } />
+			) }
 		</>
 	);
+}
+
+function fromSiteSettings( settings: SiteSettings ): PrivacyFormData {
+	const blog_public = Number( settings.blog_public );
+	const wpcom_coming_soon = Number( settings.wpcom_coming_soon );
+	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
+	const wpcom_data_sharing_opt_out = Boolean( settings.wpcom_data_sharing_opt_out );
+
+	let visibility: PrivacyFormData[ 'visibility' ];
+	let discourageSearchEngines;
+
+	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
+		visibility = 'coming-soon';
+		discourageSearchEngines = false;
+	} else if ( blog_public === -1 ) {
+		visibility = 'private';
+		discourageSearchEngines = false;
+	} else {
+		visibility = 'public';
+		discourageSearchEngines = blog_public === 0;
+	}
+
+	return {
+		visibility,
+		discourageSearchEngines,
+		preventThirdPartySharing: Boolean( wpcom_data_sharing_opt_out ),
+	};
+}
+
+function toSiteSettings( settings: PrivacyFormData ): Partial< SiteSettings > {
+	const { visibility, discourageSearchEngines, preventThirdPartySharing } = settings;
+
+	let blog_public;
+	let wpcom_public_coming_soon;
+	let wpcom_data_sharing_opt_out;
+
+	if ( visibility === 'coming-soon' ) {
+		blog_public = 0;
+		wpcom_public_coming_soon = 1;
+		wpcom_data_sharing_opt_out = false;
+	} else if ( visibility === 'private' ) {
+		blog_public = -1;
+		wpcom_public_coming_soon = 0;
+		wpcom_data_sharing_opt_out = false;
+	} else {
+		blog_public = discourageSearchEngines ? 0 : 1;
+		wpcom_public_coming_soon = 0;
+		wpcom_data_sharing_opt_out = preventThirdPartySharing;
+	}
+
+	return {
+		blog_public,
+		wpcom_public_coming_soon,
+		wpcom_data_sharing_opt_out,
+
+		// Take opportunity, while the user is switching visibility settings, to disable the legacy coming soon setting.
+		wpcom_coming_soon: 0,
+	};
 }

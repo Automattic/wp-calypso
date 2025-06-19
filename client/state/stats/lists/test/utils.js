@@ -864,11 +864,6 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Homepage',
-						value: 59,
-						children: null,
-					},
-					{
 						label: 'Taxonomies',
 						value: 9,
 						children: [
@@ -930,20 +925,15 @@ describe( 'utils', () => {
 					},
 					{
 						label: 'Searches',
-						value: 4,
+						value: 3,
 						children: [
 							{
-								label: 'http://jetpack.com/?s=I+can',
+								label: 'I can',
 								value: 2,
 								link: 'http://jetpack.com/?s=I+can',
 							},
 							{
-								label: 'http://jetpack.com/?s=',
-								value: 1,
-								link: 'http://jetpack.com/?s=',
-							},
-							{
-								label: 'http://jetpack.com/?s=plugin',
+								label: 'plugin',
 								value: 1,
 								link: 'http://jetpack.com/?s=plugin',
 							},
@@ -1069,11 +1059,6 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Homepage',
-						value: 89,
-						children: null,
-					},
-					{
 						label: 'Categories',
 						value: 51,
 						children: [
@@ -1139,37 +1124,6 @@ describe( 'utils', () => {
 						],
 					},
 					{
-						label: 'Searches',
-						value: 9,
-						children: [
-							{
-								label: 'http://jetpack.com/?s=',
-								value: 4,
-								link: 'http://jetpack.com/?s=',
-							},
-							{
-								label: 'http://jetpack.com/?s=I+can',
-								value: 2,
-								link: 'http://jetpack.com/?s=I+can',
-							},
-							{
-								label: 'http://jetpack.com/?s=my+website+is+not+active',
-								value: 1,
-								link: 'http://jetpack.com/?s=my+website+is+not+active',
-							},
-							{
-								label: 'http://jetpack.com/?s=Ani',
-								value: 1,
-								link: 'http://jetpack.com/?s=Ani',
-							},
-							{
-								label: 'http://jetpack.com/?s=plugin',
-								value: 1,
-								link: 'http://jetpack.com/?s=plugin',
-							},
-						],
-					},
-					{
 						label: 'Dates',
 						value: 7,
 						children: [
@@ -1182,6 +1136,32 @@ describe( 'utils', () => {
 								label: '2023/06',
 								value: 3,
 								link: 'http://jetpack.com/2023/06',
+							},
+						],
+					},
+					{
+						label: 'Searches',
+						value: 5,
+						children: [
+							{
+								label: 'I can',
+								value: 2,
+								link: 'http://jetpack.com/?s=I+can',
+							},
+							{
+								label: 'my website is not active',
+								value: 1,
+								link: 'http://jetpack.com/?s=my+website+is+not+active',
+							},
+							{
+								label: 'Ani',
+								value: 1,
+								link: 'http://jetpack.com/?s=Ani',
+							},
+							{
+								label: 'plugin',
+								value: 1,
+								link: 'http://jetpack.com/?s=plugin',
 							},
 						],
 					},

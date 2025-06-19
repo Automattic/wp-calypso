@@ -59,6 +59,7 @@ export const ClickableItem = ( {
 	type,
 	typeClassName,
 	target,
+	tabIndex,
 }: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -79,9 +80,9 @@ export const ClickableItem = ( {
 				className={ typeClassName ? typeClassName : `x-${ type }-link x-link` }
 				href={ urlValue }
 				title={ titleValue }
-				tabIndex={ -1 }
 				target={ target }
 				onClick={ onClick }
+				tabIndex={ tabIndex }
 			>
 				{ content }
 			</a>
