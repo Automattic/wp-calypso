@@ -284,6 +284,7 @@ class CancelPurchase extends Component {
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				onCancellationStart={ this.onCancellationStart }
 				onSurveyComplete={ this.onSurveyComplete }
+				moment={ this.props.moment }
 			/>
 		);
 	};

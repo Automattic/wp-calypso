@@ -46,6 +46,7 @@ class CancelPurchaseButton extends Component {
 		activeSubscriptions: PropTypes.array,
 		onCancellationStart: PropTypes.func,
 		onSurveyComplete: PropTypes.func,
+		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -170,7 +171,6 @@ class CancelPurchaseButton extends Component {
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
 			} );
 
-			// Don't clear purchases or refresh plans here - do it after survey completion
 			return { success: true, message: response.message };
 		} catch ( error ) {
 			return { success: false, error: error.message };
@@ -253,7 +253,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleMarketplaceSubscriptions = async ( isPlanRefundable ) => {
-		// If the site has active Marketplace subscriptions, remove these as well
 		if ( this.shouldHandleMarketplaceSubscriptions() ) {
 			return Promise.all(
 				this.props.activeSubscriptions.map( async ( s ) => {
@@ -270,34 +269,28 @@ class CancelPurchaseButton extends Component {
 	handleSurveyComplete = () => {
 		this.closeDialog();
 
-		// Clear purchases and refresh plans after survey completion
 		if ( this.state.cancellationCompleted ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
 		}
 
-		// Notify parent component that survey is completed
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
 		}
-		// Redirect to purchase list after survey is completed
 		page( this.props.purchaseListUrl );
 	};
 
 	cancellationFailed = ( errorMessage ) => {
-		// Close the dialog and return to initial state
 		this.setState( {
 			showDialog: false,
 			cancellationCompleted: false,
 			cancellationMessage: '',
 		} );
 
-		// Notify parent component that cancellation failed
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
 		}
 
-		// Show error notice
 		this.props.errorNotice( errorMessage );
 	};
 
@@ -305,7 +298,6 @@ class CancelPurchaseButton extends Component {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 
 		const onClick = ( () => {
-			// Always use handleCancelPurchaseClick for all cancellation scenarios
 			return this.handleCancelPurchaseClick;
 		} )();
 
