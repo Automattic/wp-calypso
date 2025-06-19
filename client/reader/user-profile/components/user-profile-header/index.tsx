@@ -79,27 +79,29 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 						>
 							{ avatarElement }
 						</div>
-						{ user.display_name }
+						<AutoDirection>
+							<h1>{ user.display_name }</h1>
+						</AutoDirection>
 					</div>
 					{ user.bio && (
-						<AutoDirection>
-							<div className="user-profile-header__bio">
-								<p className="user-profile-header__bio-desc">
+						<div className="user-profile-header__bio">
+							<p className="user-profile-header__bio-desc">
+								<AutoDirection>
 									<span ref={ bioRef } className="user-profile-header__bio-desc-text">
 										{ user.bio }
 									</span>
-									{ isClamped && user.profile_URL && (
-										<>
-											<span className="user-profile-header__bio-desc-fader"></span>
-											<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
-												{ translate( 'Read More' ) }{ ' ' }
-												<Icon width={ 18 } height={ 18 } icon={ external } />
-											</a>
-										</>
-									) }
-								</p>
-							</div>
-						</AutoDirection>
+								</AutoDirection>
+								{ isClamped && user.profile_URL && (
+									<>
+										<span className="user-profile-header__bio-desc-fader"></span>
+										<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
+											{ translate( 'Read More' ) }{ ' ' }
+											<Icon width={ 18 } height={ 18 } icon={ external } />
+										</a>
+									</>
+								) }
+							</p>
+						</div>
 					) }
 				</div>
 			</header>
