@@ -8,7 +8,6 @@ import {
 	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isA4AOAuth2Client,
-	isJetpackCloudOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -60,6 +59,7 @@ const enhanceContextWithLogin = ( context ) => {
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
+	const isJetpackLogin = isJetpack === 'jetpack';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
 	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
@@ -70,18 +70,17 @@ const enhanceContextWithLogin = ( context ) => {
 	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
 	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
 	const isA4AClient = isA4AOAuth2Client( oauth2Client );
-	const isJetpackLogin = isJetpack === 'jetpack';
-	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
-		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false && ! isWooJPC ) ||
+		( ! isJetpackLogin &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false &&
+			! isWooJPC ) ||
 		isPartnerPortalClient ||
 		isStudioLogin ||
 		isCrowdsignalLogin ||
 		isBlazePro ||
-		isA4AClient ||
-		isJetpackCloudClient ||
-		isJetpackLogin;
+		isA4AClient;
 
 	context.primary = (
 		<WPLogin

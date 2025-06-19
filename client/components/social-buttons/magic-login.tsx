@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-code';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -12,14 +11,12 @@ import './style.scss';
 
 type MagicLoginButtonProps = {
 	loginUrl: string;
-	isJetpack?: boolean;
 };
 
-export const MagicLoginButton = ( { loginUrl, isJetpack }: MagicLoginButtonProps ) => {
+export const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
 	const dispatch = useDispatch();
-	const isMagicCodeEnabled = shouldUseMagicCode( { isJetpack } );
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_login_magic_login_request_click', {
@@ -41,11 +38,7 @@ export const MagicLoginButton = ( { loginUrl, isJetpack }: MagicLoginButtonProps
 			__next40pxDefaultSize
 		>
 			<MailIcon width="20" height="20" isDisabled={ isDisabled } />
-			<span className="social-buttons__service-name">
-				{ isMagicCodeEnabled
-					? translate( 'Email me a login code' )
-					: translate( 'Email me a login link' ) }
-			</span>
+			<span className="social-buttons__service-name">{ translate( 'Email me a login link' ) }</span>
 		</Button>
 	);
 };

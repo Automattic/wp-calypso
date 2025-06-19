@@ -79,10 +79,6 @@ export function getHeaderText(
 			clientName = 'Blaze Pro';
 		} else if ( isA4AOAuth2Client( oauth2Client ) ) {
 			clientName = 'Automattic for Agencies';
-		} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			clientName = 'Jetpack Cloud';
-		} else if ( isJetpack ) {
-			clientName = 'Jetpack';
 		}
 
 		headerText = clientName
@@ -145,9 +141,17 @@ export function getHeaderText(
 			headerText = translate( 'Log in to your account' );
 		}
 
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
+		}
+
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				headerText = translate( 'Log in to WP Cloud with WordPress.com' );
+			} else if ( document.location.search?.includes( 'jetpack' ) ) {
+				headerText = translate(
+					'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
+				);
 			} else {
 				headerText = translate(
 					'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
@@ -169,6 +173,10 @@ export function getHeaderText(
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
+	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
+		headerText = translate(
+			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
+		);
 	}
 
 	if ( isFromAutomatticForAgenciesPlugin ) {
@@ -315,6 +323,14 @@ export function LoginHeader( {
 			}
 		}
 
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			preHeader = (
+				<div>
+					<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
+				</div>
+			);
+		}
+
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				preHeader = (
@@ -418,11 +434,13 @@ export function LoginHeader( {
 			);
 		}
 		postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
+	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
+		preHeader = <p className="login__jetpack-pre-header">{ translate( 'Log in or sign up' ) }</p>;
+		header = <p className="login__jetpack-header">{ headerText }</p>;
 	} else if ( fromSite ) {
 		// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 		postHeader = <VisitSite siteSlug={ fromSite } />;
 	}
-
 	if ( isFromAutomatticForAgenciesPlugin ) {
 		preHeader = (
 			<svg

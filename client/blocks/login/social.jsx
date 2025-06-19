@@ -25,7 +25,6 @@ class SocialLoginForm extends Component {
 		isSocialFirst: PropTypes.bool,
 		lastUsedAuthenticationMethod: PropTypes.string,
 		resetLastUsedAuthenticationMethod: PropTypes.func,
-		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -71,11 +70,7 @@ class SocialLoginForm extends Component {
 		{
 			service: 'magic-login',
 			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
-				<MagicLoginButton
-					loginUrl={ this.props.magicLoginLink }
-					key={ 4 }
-					isJetpack={ this.props.isJetpack }
-				/>
+				<MagicLoginButton loginUrl={ this.props.magicLoginLink } key={ 4 } />
 			),
 		},
 		{
