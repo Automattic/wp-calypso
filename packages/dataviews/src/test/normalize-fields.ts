@@ -113,6 +113,7 @@ describe( 'normalizeFields: default getValue', () => {
 					'greaterThan',
 					'lessThanOrEqual',
 					'greaterThanOrEqual',
+					'between',
 				],
 			} );
 		} );
