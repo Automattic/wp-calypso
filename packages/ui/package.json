@@ -19,7 +19,34 @@
 			"import": "./dist/index.js",
 			"require": "./dist/index.cjs"
 		},
-		"./style.css": "./dist/index.css"
+		"./badge": {
+			"calypso:src": "./src/badge/index.tsx",
+			"types": {
+				"import": "./dist/badge/index.d.ts",
+				"require": "./dist/badge/index.d.cts"
+			},
+			"import": "./dist/badge/index.js",
+			"require": "./dist/badge/index.cjs"
+		},
+		"./calendar": {
+			"calypso:src": "./src/calendar/index.tsx",
+			"types": {
+				"import": "./dist/calendar/index.d.ts",
+				"require": "./dist/calendar/index.d.cts"
+			},
+			"import": "./dist/calendar/index.js",
+			"require": "./dist/calendar/index.cjs"
+		}
+	},
+	"typesVersions": {
+		"*": {
+			"badge": [
+				"./dist/badge/index.d.cts"
+			],
+			"calendar": [
+				"./dist/calendar/index.d.cts"
+			]
+		}
 	},
 	"sideEffects": [
 		"*.css",
