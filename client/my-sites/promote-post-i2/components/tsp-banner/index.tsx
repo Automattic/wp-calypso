@@ -2,6 +2,9 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TspBannerImage from './tsp-banner-image';
 import './style.scss';
 
@@ -16,6 +19,9 @@ function TspBanner( props: TspBannerProps ) {
 	const onBannerToggle = () => {
 		props.onToggle();
 	};
+
+	const site = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 
 	const isCollapsed = props.isCollapsed;
 
@@ -50,6 +56,8 @@ function TspBanner( props: TspBannerProps ) {
 									onClick={ () => {
 										recordTracksEvent( 'calypso_dsp_tsp_banner_learn_more_click', {} );
 									} }
+									// The Help Center doesn't work in Jetpack sites
+									showSupportModal={ isJetpack }
 								>
 									{ translate( 'Learn more' ) }
 								</InlineSupportLink>
