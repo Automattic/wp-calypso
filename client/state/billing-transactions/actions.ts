@@ -48,8 +48,15 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 						apiVersion: '1.3',
 					} );
 
+					const newBillingHistoryChunk = res.billing_history ?? [];
+					if ( newBillingHistoryChunk.length === 0 ) {
+						// Prevent potential infinite loop if no more transactions are returned.
+						break;
+					}
+					fullBillingHistory.push( ...newBillingHistoryChunk );
+
+					// Value is updated in case the value changes in the back-end
 					billingHistoryTotal = res.billing_history_total ?? 0;
-					fullBillingHistory.push( ...res.billing_history );
 				}
 			}
 
