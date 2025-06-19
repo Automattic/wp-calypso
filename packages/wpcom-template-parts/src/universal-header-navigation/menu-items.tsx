@@ -59,6 +59,7 @@ export const ClickableItem = ( {
 	type,
 	typeClassName,
 	target,
+	tabIndex,
 }: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -81,6 +82,7 @@ export const ClickableItem = ( {
 				title={ titleValue }
 				target={ target }
 				onClick={ onClick }
+				tabIndex={ tabIndex }
 			>
 				{ content }
 			</a>

@@ -23,6 +23,8 @@ const UniversalNavbarHeader = ( {
 	const { __ } = useI18n();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const isEnglishLocale = useIsEnglishLocale();
+	// Allow tabbing in mobile version only when the menu is open
+	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
 
 	if ( ! startUrl ) {
 		startUrl = addQueryArgs(
@@ -399,6 +401,7 @@ const UniversalNavbarHeader = ( {
 											}
 											urlValue={ startUrl }
 											type="menu"
+											tabIndex={ mobileMenuTabIndex }
 										/>
 										<ClickableItem
 											titleValue=""
@@ -410,6 +413,7 @@ const UniversalNavbarHeader = ( {
 											}
 											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
 											type="menu"
+											tabIndex={ mobileMenuTabIndex }
 										/>
 									</ul>
 								) }
@@ -424,6 +428,7 @@ const UniversalNavbarHeader = ( {
 												content={ __( 'Plans & Pricing', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/pricing/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 										</ul>
 									</div>
@@ -437,30 +442,35 @@ const UniversalNavbarHeader = ( {
 												content={ __( 'WordPress Hosting', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/hosting/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Domain Names', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/domains/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'AI Website Builder', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Website Builder', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/website-builder/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Create a Blog', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/create-blog/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
@@ -472,12 +482,14 @@ const UniversalNavbarHeader = ( {
 													true
 												) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Professional Email', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/professional-email/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											{ isEnglishLocale && (
 												<ClickableItem
@@ -486,6 +498,7 @@ const UniversalNavbarHeader = ( {
 													urlValue={ localizeUrl( '//wordpress.com/website-design-service/' ) }
 													type="menu"
 													target="_self"
+													tabIndex={ mobileMenuTabIndex }
 												/>
 											) }
 											<ClickableItem
@@ -493,12 +506,14 @@ const UniversalNavbarHeader = ( {
 												content={ __( 'Commerce', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Enterprise', __i18n_text_domain__ ) }
 												urlValue="https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav"
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 										</ul>
 									</div>
@@ -512,6 +527,7 @@ const UniversalNavbarHeader = ( {
 												content={ __( 'Overview', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/features/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
@@ -523,6 +539,7 @@ const UniversalNavbarHeader = ( {
 													true
 												) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
@@ -534,6 +551,7 @@ const UniversalNavbarHeader = ( {
 													true
 												) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
@@ -545,12 +563,14 @@ const UniversalNavbarHeader = ( {
 													true
 												) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Google Apps', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/google/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 										</ul>
 									</div>
@@ -564,48 +584,56 @@ const UniversalNavbarHeader = ( {
 												content={ __( 'WordPress.com Support', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/support/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'News', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/blog/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Website Building Tips', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/go/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Business Name Generator', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/business-name-generator/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Logo Maker', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/logo-maker/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Discover New Posts', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/discover/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Popular Tags', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Blog Search', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
 												type="menu"
+												tabIndex={ mobileMenuTabIndex }
 											/>
 										</ul>
 									</div>
