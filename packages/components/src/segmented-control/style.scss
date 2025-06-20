@@ -35,6 +35,7 @@
 	&:not(.is-selected) {
 		.segmented-control__link.disabled {
 			cursor: not-allowed;
+			opacity: 0.7;
 			color: var(--color-neutral-30);
 			background-color: var(--color-neutral-0);
 		}
