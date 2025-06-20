@@ -338,22 +338,28 @@ function UnlaunchedStatusLink( { href, children }: { href: string; children: Rea
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
-			<ExternalLink
-				href={ href }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
-				} }
+			<span
 				style={ {
-					display: 'inline-block',
-					maxWidth: 'calc(100% - 4px)',
-					margin: '0 2px',
-					overflow: 'hidden',
-					whiteSpace: 'nowrap',
-					textOverflow: 'ellipsis',
+					display: 'inline-flex',
+					maxWidth: '100%',
+					padding: '0 2px',
+					boxSizing: 'border-box',
 				} }
 			>
-				{ children }
-			</ExternalLink>
+				<ExternalLink
+					href={ href }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+					} }
+					style={ {
+						overflow: 'hidden',
+						whiteSpace: 'nowrap',
+						textOverflow: 'ellipsis',
+					} }
+				>
+					{ children }
+				</ExternalLink>
+			</span>
 		</>
 	);
 }
