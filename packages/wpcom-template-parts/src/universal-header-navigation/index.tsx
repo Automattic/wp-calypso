@@ -28,6 +28,17 @@ const UniversalNavbarHeader = ( {
 
 	// Handle dropdown management to ensure only one is open at a time
 	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' ) {
+				const activeElement = document.activeElement;
+				if ( activeElement && activeElement.closest( '[role="menu"], .x-dropdown-content' ) ) {
+					if ( activeElement instanceof HTMLElement ) {
+						activeElement.blur();
+					}
+				}
+			}
+		};
+
 		const closeOtherDropdowns = ( currentNavItem: Element ) => {
 			document.querySelectorAll( '.x-nav-item__wide' ).forEach( ( item ) => {
 				if ( item !== currentNavItem ) {
@@ -53,10 +64,12 @@ const UniversalNavbarHeader = ( {
 
 		document.addEventListener( 'focusin', handleInteraction );
 		document.addEventListener( 'mouseenter', handleInteraction, true );
+		document.addEventListener( 'keydown', handleKeyDown );
 
 		return () => {
 			document.removeEventListener( 'focusin', handleInteraction );
 			document.removeEventListener( 'mouseenter', handleInteraction, true );
+			document.removeEventListener( 'keydown', handleKeyDown );
 		};
 	}, [] );
 
