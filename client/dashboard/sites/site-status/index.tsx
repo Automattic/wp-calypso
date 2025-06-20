@@ -4,25 +4,26 @@ import ComponentViewTracker from '../../components/component-view-tracker';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import type { Site } from '../../data/types';
 
-function ComingSoonStatusLink( {
-	href,
-	children,
-	style,
-}: {
-	href: string;
-	children: React.ReactNode;
-	style?: React.CSSProperties;
-} ) {
+function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
 			<ExternalLink
-				style={ style }
 				href={ href }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+				} }
+				// The dataview's field value container uses `overflow:hidden` to prevent any of the fields
+				// from overflowing. This hack ensures that the link's focus ring isn't obscured.
+				style={ {
+					display: 'inline-block',
+					maxWidth: 'calc(100% - 4px)',
+					margin: '0 2px',
+					overflow: 'hidden',
+					whiteSpace: 'nowrap',
+					textOverflow: 'ellipsis',
 				} }
 			>
 				{ children }
@@ -31,15 +32,11 @@ function ComingSoonStatusLink( {
 	);
 }
 
-export default function SiteStatus( { site, style }: { site: Site; style?: React.CSSProperties } ) {
+export default function SiteStatus( { site }: { site: Site } ) {
 	const label = getSiteStatusLabel( site );
 	if ( site.launch_status !== 'unlaunched' ) {
-		return <span style={ style }>{ label }</span>;
+		return label;
 	}
 
-	return (
-		<ComingSoonStatusLink href={ `/home/${ site.slug }` } style={ style }>
-			{ label }
-		</ComingSoonStatusLink>
-	);
+	return <ComingSoonStatusButton href={ `/home/${ site.slug }` }>{ label }</ComingSoonStatusButton>;
 }
