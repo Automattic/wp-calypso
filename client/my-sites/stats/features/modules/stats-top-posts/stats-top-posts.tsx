@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -31,6 +32,7 @@ type StatTypeOptionType = {
 	value: StatType;
 	label: string;
 	mainItemLabel: string;
+	analyticsId: string;
 };
 
 const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
@@ -61,6 +63,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 			value: key as StatType,
 			label: item.tabLabel,
 			mainItemLabel: item.mainItemLabel,
+			analyticsId: item.analyticsId,
 		};
 	} );
 
@@ -83,7 +86,13 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		: isRequestingTopPostsData;
 
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
-	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => {
+		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
+			stat_type: option.analyticsId,
+		} );
+
+		setLocalStatType( option.value );
+	};
 
 	const statType = localStatType || validQueryViewType( query.viewType ) || mainStatType;
 
