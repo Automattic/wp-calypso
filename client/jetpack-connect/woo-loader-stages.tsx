@@ -8,7 +8,7 @@ export const ConnectingYourAccountStage = {
 	text: __(
 		'There are more than 150 WooCommerce meetups held all over the world! A great way to meet fellow store owners.'
 	),
-	duration: 8000,
+	duration: 10000,
 	progress: 70,
 };
 
