@@ -335,31 +335,19 @@ export default function Sites() {
 function UnlaunchedStatusLink( { href, children }: { href: string; children: React.ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
 
+	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
+	// uses `overflow:hidden` to prevent any of the fields from overflowing.
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
-			<span
-				style={ {
-					display: 'inline-flex',
-					maxWidth: '100%',
-					padding: '0 2px',
-					boxSizing: 'border-box',
+			<ExternalLink
+				href={ href }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
 				} }
 			>
-				<ExternalLink
-					href={ href }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
-					} }
-					style={ {
-						overflow: 'hidden',
-						whiteSpace: 'nowrap',
-						textOverflow: 'ellipsis',
-					} }
-				>
-					{ children }
-				</ExternalLink>
-			</span>
+				{ children }
+			</ExternalLink>
 		</>
 	);
 }
