@@ -1,7 +1,13 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter, Link } from '@tanstack/react-router';
-import { Button, Modal, ExternalLink, Icon } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	Button,
+	Modal,
+	ExternalLink,
+	Icon,
+} from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
@@ -38,9 +44,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
 		render: ( { field, item } ) => (
-			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
-				{ field.getValue( { item } ) }
-			</span>
+			<Link to={ `/sites/${ item.slug }` }>{ field.getValue( { item } ) }</Link>
 		),
 	},
 	{
@@ -49,9 +53,13 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => new URL( item.URL ).hostname,
 		render: ( { field, item } ) => (
-			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+			<Text
+				as="span"
+				variant="muted"
+				style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+			>
 				{ field.getValue( { item } ) }
-			</span>
+			</Text>
 		),
 	},
 	{
@@ -117,7 +125,10 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			// origin.
 			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
 			return (
-				<>
+				<Link
+					to={ `/sites/${ item.slug }` }
+					style={ { display: 'block', height: '100%', width: '100%' } }
+				>
 					{ resizeListener }
 					{ iframeDisabled && (
 						<div
@@ -135,7 +146,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 					{ width && ! iframeDisabled && (
 						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
 					) }
-				</>
+				</Link>
 			);
 		},
 		enableSorting: false,
@@ -396,9 +407,6 @@ export default function Sites() {
 								},
 							} );
 						} }
-						renderItemLink={ ( { item, ...props } ) => (
-							<Link to={ `/sites/${ item.slug }` } { ...props } />
-						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>
