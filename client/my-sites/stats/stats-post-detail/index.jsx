@@ -1,9 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual, flowRight } from 'lodash';
@@ -15,6 +13,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
+import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -41,8 +40,6 @@ import StatsPlaceholder from '../stats-module/placeholder';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 
-const HELP_CENTER_STORE = HelpCenter.register();
-
 class StatsPostDetail extends Component {
 	static propTypes = {
 		path: PropTypes.string,
@@ -61,7 +58,7 @@ class StatsPostDetail extends Component {
 			url: PropTypes.string,
 		} ),
 		editUrl: PropTypes.string,
-		setShowSupportDoc: PropTypes.func,
+		openSupportDoc: PropTypes.func,
 	};
 
 	state = {
@@ -304,9 +301,7 @@ class StatsPostDetail extends Component {
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
 							actionCallback={ () => {
-								this.props.setShowSupportDoc(
-									localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' )
-								);
+								this.props.openSupportDoc();
 							} }
 						/>
 					) }
@@ -343,14 +338,11 @@ class StatsPostDetail extends Component {
 const StatsPostDetailWrapper = ( props ) => {
 	const lastScreen = useStatsNavigationHistory();
 
-	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
-
+	const { openSupportDoc } = useSupportDocData( {
+		supportLink: localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' ),
+	} );
 	return (
-		<StatsPostDetail
-			{ ...props }
-			lastScreen={ lastScreen }
-			setShowSupportDoc={ setShowSupportDoc }
-		/>
+		<StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openSupportDoc } />
 	);
 };
 
