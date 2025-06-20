@@ -17,7 +17,7 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
-import { Uptime } from './site-fields';
+import { EngagementStat, Uptime } from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -178,6 +178,24 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'uptime',
 		label: __( 'Uptime' ),
 		render: ( { item } ) => <Uptime site={ item } />,
+		enableSorting: false,
+	},
+	{
+		id: 'visitors',
+		label: __( 'Visitors' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
+		enableSorting: false,
+	},
+	{
+		id: 'views',
+		label: __( 'Views' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
+		enableSorting: false,
+	},
+	{
+		id: 'likes',
+		label: __( 'Likes' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
 		enableSorting: false,
 	},
 ];
