@@ -25,7 +25,7 @@ export const CreatingYourAccountStage = {
 
 // This is a placeholder stage that is used so the progress bar can reach 100%
 export const PlaceholderStage = {
-	title: __( 'Creating your account' ),
+	title: __( 'Connecting your account' ),
 	image: SetupImage,
 	label: __( '#FunWooFact:' ),
 	text: __(
