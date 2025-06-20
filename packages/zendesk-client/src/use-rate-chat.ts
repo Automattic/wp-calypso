@@ -3,7 +3,6 @@ import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type CSATPayload = {
-	jwt: string;
 	ticket_id: number;
 	score: string;
 	comment?: string;
@@ -23,7 +22,7 @@ export const useRateChat = () => {
 				  } )
 				: apiFetch( {
 						global: true,
-						path: '/help-center/zendesk/csat',
+						path: '/help-center/csat',
 						method: 'POST',
 						data: payload,
 				  } as APIFetchOptions );

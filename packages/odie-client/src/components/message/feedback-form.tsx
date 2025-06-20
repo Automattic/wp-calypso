@@ -1,6 +1,5 @@
 import {
 	useRateChat,
-	useAuthenticateZendeskMessaging,
 	getBadRatingReasons,
 	isTestModeEnvironment,
 } from '@automattic/zendesk-client';
@@ -8,7 +7,6 @@ import { Button, TextareaControl, SelectControl, Spinner } from '@wordpress/comp
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message, MessageAction } from '../../types';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
@@ -18,16 +16,11 @@ type FeedbackFormProps = {
 };
 
 export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
-	const { isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const { __ } = useI18n();
 	const [ score, setScore ] = useState< 'good' | 'bad' | '' >( '' );
 	const [ comment, setComment ] = useState( '' );
 	const [ reason, setReason ] = useState( '' );
 	const [ isFormHidden, setIsFormHidden ] = useState( false );
-	const { data: authData } = useAuthenticateZendeskMessaging(
-		isUserEligibleForPaidSupport,
-		'messenger'
-	);
 	const feedbackRef = useRef< HTMLDivElement | null >( null );
 	const ticketId = useMemo( () => {
 		if ( ! chatFeedbackOptions.length ) {
@@ -62,18 +55,18 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 
 	const postScore = useCallback(
 		async ( score: 'good' | 'bad' ) => {
-			if ( ! authData?.jwt || ! score ) {
+			if ( ! score ) {
 				return;
 			}
 
 			setScore( score );
 			await sendMessage( generateFeedbackMessage( score ) );
 		},
-		[ authData?.jwt, sendMessage, generateFeedbackMessage ]
+		[ sendMessage, generateFeedbackMessage ]
 	);
 
 	const postCSAT = useCallback( async () => {
-		if ( ! authData?.jwt || ! ticketId || ! score ) {
+		if ( ! ticketId || ! score ) {
 			return;
 		}
 
@@ -84,14 +77,13 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		}
 
 		await rateChat( {
-			jwt: authData.jwt,
 			ticket_id: ticketId,
 			score,
 			comment,
 			reason_id: reason,
 			test_mode: isTestModeEnvironment(),
 		} );
-	}, [ rateChat, authData?.jwt, ticketId, score, comment, reason ] );
+	}, [ rateChat, ticketId, score, comment, reason ] );
 
 	return (
 		<>
