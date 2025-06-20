@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
@@ -207,7 +208,6 @@ class StatsModule extends Component {
 	isAllTimeList() {
 		const { summary, statType } = this.props;
 		const summarizedTypes = [
-			'statsTopPosts',
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
@@ -218,6 +218,12 @@ class StatsModule extends Component {
 			'statsEmailsOpen',
 			'statsEmailsClick',
 		];
+
+		// TODO: Remove this once the archive breakdown is enabled by default.
+		if ( ! config.isEnabled( 'stats/archive-breakdown' ) ) {
+			summarizedTypes.push( 'statsTopPosts' );
+		}
+
 		return summary && includes( summarizedTypes, statType );
 	}
 
@@ -333,7 +339,7 @@ class StatsModule extends Component {
 						)
 					}
 					additionalColumns={ additionalColumns }
-					splitHeader={ !! toggleControl || !! additionalColumns }
+					splitHeader={ !! toggleControl || !! additionalColumns || !! mainItemLabel }
 					toggleControl={ toggleControl }
 					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
