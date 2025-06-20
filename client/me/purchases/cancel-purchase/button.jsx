@@ -83,6 +83,10 @@ class CancelPurchaseButton extends Component {
 		try {
 			const result = await this.submitCancelAndRefundPurchase();
 			if ( result.success ) {
+				// Handle marketplace subscriptions if any
+				const refundable = hasAmountAvailableToRefund( this.props.purchase );
+				await this.handleMarketplaceSubscriptions( refundable );
+
 				this.setState( {
 					cancellationCompleted: true,
 					cancellationMessage: result.message,
