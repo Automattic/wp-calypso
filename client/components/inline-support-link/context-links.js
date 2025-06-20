@@ -591,6 +591,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/change-name-servers/#step-1-find-your-new-name-servers',
 		post_id: 41383,
 	},
+	'60-day-transfer-lock': {
+		link: 'https://wordpress.com/support/domains/update-contact-information/#60-day-transfer-lock',
+		post_id: 3441,
+	},
 };
 
 export default contextLinks;

@@ -18,12 +18,7 @@ const TransferLockOptOutForm = ( props ) => (
 			<span>
 				{ props.translate( "Opt-out of the 60-day transfer lock. {{link}}What's this?{{/link}}.", {
 					components: {
-						link: (
-							<InlineSupportLink
-								supportContext="update-contact-information-email-or-name-changes"
-								showIcon={ false }
-							/>
-						),
+						link: <InlineSupportLink supportContext="60-day-transfer-lock" showIcon={ false } />,
 					},
 				} ) }
 			</span>
