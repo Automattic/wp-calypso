@@ -395,8 +395,7 @@ body.is-section-signup {
 		}
 	}
 
-	.logged-out-form__links,
-	.login__lost-password-footer {
+	.logged-out-form__links {
 		align-items: center;
 		display: flex;
 		flex-direction: row;
@@ -433,11 +432,6 @@ body.is-section-signup {
 		font-weight: 500;
 		line-height: 25px;
 		text-align: center;
-	}
-
-	.login__lost-password-footer {
-		max-width: $login-form-max-width;
-		margin: 0 auto;
 	}
 
 	// Log in Styles

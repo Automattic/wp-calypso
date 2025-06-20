@@ -656,8 +656,7 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.login__two-factor-footer,
-	.login__lost-password-footer {
+	.login__two-factor-footer {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -1559,13 +1558,6 @@ $breakpoint-mobile: 660px;
 
 			input[type="email"].form-text-input {
 				margin-bottom: 0;
-			}
-		}
-
-		.login__lost-password-footer {
-			@media (max-width: $break-mobile) {
-				margin-bottom: 32px;
-				align-items: center;
 			}
 		}
 

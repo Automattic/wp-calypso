@@ -452,29 +452,6 @@ class Login extends Component {
 							from={ get( currentQuery, 'from' ) }
 						/>
 					</div>
-					{ ! isWooJPC && ! isBlazePro && (
-						<div className="login__lost-password-footer">
-							<p className="login__lost-password-no-account">
-								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
-									components: {
-										signupLink,
-									},
-								} ) }
-							</p>
-						</div>
-					) }
-					{ isBlazePro && (
-						<div className="login__lost-password-footer">
-							<p className="login__lost-password-no-account">
-								<span>{ translate( 'Don’t have an account?' ) }&nbsp;</span>
-								{ translate( '{{signupLink}}Sign up{{/signupLink}}', {
-									components: {
-										signupLink,
-									},
-								} ) }
-							</p>
-						</div>
-					) }
 				</Fragment>
 			);
 		}
