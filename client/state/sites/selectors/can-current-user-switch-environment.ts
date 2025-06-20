@@ -11,7 +11,7 @@ import type { AppState } from 'calypso/types';
  * @param {SiteExcerptData} site Site data
  * @returns {boolean} Whether the user has manage_options capability
  */
-export const canCurrentUserManageEnvironmentOptions = createSelector(
+export const canCurrentUserSwitchEnvironment = createSelector(
 	( state: AppState, site: SiteExcerptData ) => {
 		const otherEnvironmentSiteID = site.is_wpcom_staging_site
 			? site.options?.wpcom_production_blog_id

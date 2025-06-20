@@ -9,7 +9,7 @@ import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useSelector } from 'calypso/state';
-import { canCurrentUserManageEnvironmentOptions } from 'calypso/state/sites/selectors/can-current-user-manage-environment-options';
+import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
@@ -192,7 +192,7 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.UNSET;
 
 	const hasEnvironmentPermission = useSelector( ( state ) =>
-		canCurrentUserManageEnvironmentOptions( state, site )
+		canCurrentUserSwitchEnvironment( state, site )
 	);
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
