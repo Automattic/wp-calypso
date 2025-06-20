@@ -17,10 +17,10 @@ import {
 	isBlazeProOAuth2Client,
 	isA4AOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 interface Props {
 	isFromAkismet?: boolean;
@@ -29,6 +29,7 @@ interface Props {
 
 const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWoo = useSelector( getIsWoo );
 
 	let logo = null;
 	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
@@ -43,11 +44,7 @@ const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 		logo = <img src={ blazeProLogo } alt="Blaze Pro Logo" />;
 	} else if ( isA4AOAuth2Client( oauth2Client ) ) {
 		logo = <A4APlusWpComLogo size={ 32 } />;
-	} else if ( isJetpack ) {
-		logo = <JetpackLogo size={ 64 } />;
-	} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-		logo = <JetpackPlusWpComLogo size={ 32 } />;
-	} else if ( isWooOAuth2Client( oauth2Client ) ) {
+	} else if ( isWoo ) {
 		logo = (
 			<SVGIcon
 				name="woocommerce-logo"
@@ -58,6 +55,10 @@ const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 				viewBox="0 0 64 24"
 			/>
 		);
+	} else if ( isJetpack ) {
+		logo = <JetpackLogo size={ 64 } />;
+	} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+		logo = <JetpackPlusWpComLogo size={ 32 } />;
 	} else if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		/**
 		 * Leave last to avoid overriding other grav-powered client logos.
