@@ -5,7 +5,7 @@ const ICONS = {
 	storybook: <IconStorybook />,
 };
 
-export const IconLink = ( { href, type }: { href: string; type: 'storybook' } ) => {
+export const IconLink = ( { href, type }: { href: string; type: keyof typeof ICONS } ) => {
 	return (
 		<Button
 			__next40pxDefaultSize

@@ -301,7 +301,6 @@ export const data: ComponentData[] = [
 		whereUsed: 'editor',
 		status: 'stable',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-focalpointpicker--docs',
-		notes: 'Needs Figma component.',
 	},
 	{
 		id: 'font-size-picker',
