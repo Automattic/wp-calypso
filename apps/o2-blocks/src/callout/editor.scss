@@ -1,0 +1,64 @@
+/**
+ * Editor-only styles for Callout Block
+ *
+ * These styles are only loaded in the block editor, not on the frontend.
+ */
+
+/**
+ * Icon Picker Component
+ *
+ * Grid-based icon selection interface for the block editor.
+ */
+.o2-blocks-callout__icon-picker {
+	margin-bottom: 16px;
+}
+
+/**
+ * Icon Picker Grid
+ *
+ * Grid layout for icon selection buttons.
+ */
+.o2-blocks-callout__icon-picker-grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	overflow-y: auto;
+	max-height: 310px;
+	padding: 8px;
+	gap: 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+/**
+ * Icon Picker Buttons
+ *
+ * Individual icon selection buttons with selected state styling.
+ */
+.o2-blocks-callout__icon-picker-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	padding: 4px;
+	border-width: 1px;
+	border-color: #ddd;
+	background-color: transparent;
+}
+
+.o2-blocks-callout__icon-picker-button--selected {
+	border-width: 2px;
+	background-color: #f0f0f0;
+}
+
+/**
+ * Icon Picker Selected Info
+ *
+ * Text display for currently selected icon name.
+ */
+.o2-blocks-callout__icon-picker-selected-info {
+	margin-top: 8px;
+	color: #666;
+	font-size: 12px;
+}

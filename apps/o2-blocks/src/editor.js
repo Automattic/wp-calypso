@@ -1,5 +1,7 @@
 import './category';
 import './callout/editor';
+import './callout-icon/editor';
+import './callout-header/editor';
 import './editor-notes/editor';
 import './p2-autocomplete/editor';
 import './prev-next/editor';

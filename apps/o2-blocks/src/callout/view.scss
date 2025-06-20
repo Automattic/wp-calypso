@@ -47,7 +47,16 @@ $callout-template-colors: (
  * 1.3 Callout Icon Styles
  *
  * Icon styling for inline-block layout alongside header text.
+ * Includes styles for the WordPress block wrapper.
  */
+.o2-blocks-callout [data-type="a8c/callout-icon"] {
+	display: inline-block !important;
+	vertical-align: top;
+	width: 2em;
+	height: 2em;
+	margin: 0 6px 0 0;
+}
+
 .o2-blocks-callout .o2-blocks-callout__icon {
 	display: inline-block;
 	vertical-align: top;
@@ -56,7 +65,7 @@ $callout-template-colors: (
 	box-sizing: border-box;
 	width: 2em;
 	height: 2em;
-	margin: 0 6px 0 0;
+	margin: 0;
 	padding: 0;
 	border: 0.2em solid;
 	border-radius: 50%;
@@ -84,13 +93,21 @@ $callout-template-colors: (
  * 1.5 Callout Header Styles
  *
  * Header text styling positioned next to the icon.
+ * Includes styles for the WordPress block wrapper.
  */
+.o2-blocks-callout [data-type="a8c/callout-header"] {
+	display: inline-block !important;
+	vertical-align: top;
+	width: calc(100% - 2em - 12px - 0.4em);
+	margin: 6px 0 0 6px;
+}
+
 .o2-blocks-callout .o2-blocks-callout__header {
 	display: inline-block;
 	vertical-align: top;
 	min-height: 2em;
-	width: calc(100% - 2em - 12px - 0.4em);
-	margin: 6px 0 0 6px;
+	width: 100%;
+	margin: 0;
 	padding: 0;
 	font-weight: 600;
 	line-height: 1.4;
@@ -135,74 +152,4 @@ $callout-template-colors: (
 	.o2-blocks-callout__icon .dashicons {
 		color: inherit;
 	}
-}
-
-
-/**
- * 2.0 Editor Styles
- *
- * Styles specific to the block editor interface.
- */
-
-
-/**
- * 2.1 Icon Picker Component
- *
- * Grid-based icon selection interface for the block editor.
- */
-.o2-blocks-callout__icon-picker {
-	margin-bottom: 16px;
-}
-
-
-/**
- * 2.2 Icon Picker Grid
- *
- * Grid layout for icon selection buttons.
- */
-.o2-blocks-callout__icon-picker-grid {
-	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	overflow-y: auto;
-	max-height: 310px;
-	padding: 8px;
-	gap: 8px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-}
-
-
-/**
- * 2.3 Icon Picker Buttons
- *
- * Individual icon selection buttons with selected state styling.
- */
-.o2-blocks-callout__icon-picker-button {
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	width: 32px !important;
-	height: 32px !important;
-	min-width: 32px !important;
-	padding: 4px !important;
-	border-width: 1px !important;
-	border-color: #ddd !important;
-	background-color: transparent !important;
-}
-
-.o2-blocks-callout__icon-picker-button--selected {
-	border-width: 2px !important;
-	background-color: #f0f0f0 !important;
-}
-
-
-/**
- * 2.4 Icon Picker Selected Info
- *
- * Text display for currently selected icon name.
- */
-.o2-blocks-callout__icon-picker-selected-info {
-	margin-top: 8px;
-	color: #666;
-	font-size: 12px;
 }

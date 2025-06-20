@@ -1,6 +1,13 @@
+/**
+ * Callout Block - Main Editor Component
+ *
+ * A styled callout box with icon, header, and content sections.
+ * Includes template system and customization controls.
+ */
+
 import { InnerBlocks, InspectorControls, ColorPalette } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
-import { CustomSelectControl, PanelBody, Button, Dashicon } from '@wordpress/components';
+import { CustomSelectControl, PanelBody, Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
@@ -12,9 +19,11 @@ import {
 } from './constants';
 import { transforms } from './transform';
 
-import './style.scss';
+import './editor.scss';
+import './view.scss';
 
-// Utility functions
+// === UTILITY FUNCTIONS ===
+
 const getIcon = ( templateName, customIcon = '' ) => {
 	if ( customIcon ) {
 		return customIcon.startsWith( 'dashicons-' ) ? customIcon : `dashicons-${ customIcon }`;
@@ -67,7 +76,6 @@ const useCalloutStyles = ( templateName, customColor ) => {
 	return { currentColor, customStyle };
 };
 
-// Hook for block editor functionality
 const useBlockEditor = ( clientId ) => {
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 	const innerBlocks = useSelect(
@@ -99,15 +107,17 @@ const useTemplateHandler = ( templateName, customIcon, setAttributes, updateIcon
 	);
 };
 
-const useColorHandler = ( customColor, setAttributes ) => {
+const useColorHandler = ( customColor, setAttributes, updateIconBlockColor ) => {
 	return useCallback(
 		( color ) => {
 			const normalizedColor = normalizeColor( color );
 			if ( normalizedColor !== customColor ) {
 				setAttributes( { customColor: normalizedColor } );
+				// Also update the icon block's color
+				updateIconBlockColor( normalizedColor );
 			}
 		},
-		[ customColor, setAttributes ]
+		[ customColor, setAttributes, updateIconBlockColor ]
 	);
 };
 
@@ -135,7 +145,6 @@ const IconPicker = ( { customIcon, currentColor, onIconChange, templateName } ) 
 			<div className="o2-blocks-callout__icon-picker-grid">
 				{ CALLOUT_PANEL_DASHICONS.map( ( iconName ) => {
 					const isSelected = currentIconName === iconName;
-					const iconNameWithoutPrefix = iconName.replace( 'dashicons-', '' );
 
 					return (
 						<Button
@@ -150,10 +159,10 @@ const IconPicker = ( { customIcon, currentColor, onIconChange, templateName } ) 
 							} }
 							title={ iconName }
 						>
-							<Dashicon
-								icon={ iconNameWithoutPrefix }
-								size={ 20 }
+							<span
+								className={ `dashicons ${ iconName }` }
 								style={ { color: currentColor } }
+								aria-hidden="true"
 							/>
 						</Button>
 					);
@@ -212,18 +221,14 @@ const ColorControls = ( { customColor, onColorChange } ) => (
 	</PanelBody>
 );
 
-const CalloutBlock = ( { templateName, customStyle, customIcon } ) => {
+const CalloutBlock = ( { templateName, customStyle, customIcon, customColor } ) => {
 	const getCalloutBlockStructure = ( template, icon = '' ) => {
 		return [
 			[
-				'core/paragraph',
+				'a8c/callout-icon',
 				{
-					content: `<span class="dashicons ${ getIcon(
-						template,
-						icon
-					) }" aria-hidden="true"></span>`,
-					placeholder: ' ',
-					className: 'o2-blocks-callout__icon',
+					iconName: getIcon( template, icon ),
+					iconColor: getCurrentColor( template, customColor ),
 					lock: {
 						move: true,
 						remove: true,
@@ -231,10 +236,9 @@ const CalloutBlock = ( { templateName, customStyle, customIcon } ) => {
 				},
 			],
 			[
-				'core/paragraph',
+				'a8c/callout-header',
 				{
-					placeholder: __( 'Header' ),
-					className: 'o2-blocks-callout__header',
+					content: '',
 					lock: {
 						move: true,
 						remove: true,
@@ -272,21 +276,31 @@ const Edit = ( { attributes, setAttributes, clientId } ) => {
 
 	const updateIconBlock = useCallback(
 		( newTemplate, newCustomIcon = '' ) => {
-			const iconBlock = innerBlocks?.find(
-				( block ) => block.attributes?.className === 'o2-blocks-callout__icon'
-			);
+			const iconBlock = innerBlocks?.find( ( block ) => block.name === 'a8c/callout-icon' );
 
 			if ( iconBlock ) {
 				const newIcon = getIcon( newTemplate, newCustomIcon );
-				const expectedContent = `<span class="dashicons ${ newIcon }" aria-hidden="true"></span>`;
+				const newColor = getCurrentColor( newTemplate, customColor );
 
-				// Only update if content actually changed
-				if ( iconBlock.attributes.content !== expectedContent ) {
-					updateBlockAttributes( iconBlock.clientId, {
-						content: expectedContent,
-						placeholder: ' ',
-					} );
-				}
+				// Update the icon block attributes
+				updateBlockAttributes( iconBlock.clientId, {
+					iconName: newIcon,
+					iconColor: newColor,
+				} );
+			}
+		},
+		[ innerBlocks, updateBlockAttributes, customColor ]
+	);
+
+	const updateIconBlockColor = useCallback(
+		( newColor ) => {
+			const iconBlock = innerBlocks?.find( ( block ) => block.name === 'a8c/callout-icon' );
+
+			if ( iconBlock ) {
+				// Update only the icon color
+				updateBlockAttributes( iconBlock.clientId, {
+					iconColor: newColor,
+				} );
 			}
 		},
 		[ innerBlocks, updateBlockAttributes ]
@@ -294,7 +308,7 @@ const Edit = ( { attributes, setAttributes, clientId } ) => {
 
 	const handlers = {
 		template: useTemplateHandler( templateName, customIcon, setAttributes, updateIconBlock ),
-		color: useColorHandler( customColor, setAttributes ),
+		color: useColorHandler( customColor, setAttributes, updateIconBlockColor ),
 		icon: useIconHandler( customIcon, templateName, setAttributes, updateIconBlock ),
 	};
 
@@ -322,12 +336,13 @@ const Edit = ( { attributes, setAttributes, clientId } ) => {
 				templateName={ templateName }
 				customStyle={ customStyle }
 				customIcon={ customIcon }
+				customColor={ customColor }
 			/>
 		</>
 	);
 };
 
-const save = ( { attributes } ) => {
+const Save = ( { attributes } ) => {
 	const { calloutTemplate: templateName = 'custom', customColor } = attributes;
 	const customStyle =
 		templateName === 'custom'
@@ -376,6 +391,6 @@ registerBlockType( 'a8c/callout', {
 		},
 	},
 	edit: Edit,
-	save,
+	save: Save,
 	transforms,
 } );
