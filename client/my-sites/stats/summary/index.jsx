@@ -43,6 +43,12 @@ import VideoPressStatsModule from '../videopress-stats-module';
 import './style.scss';
 
 class StatsSummary extends Component {
+	constructor( props ) {
+		super( props );
+		this.cachedStatsStrings = null;
+		this.cachedSupportsArchiveStats = null;
+	}
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 
@@ -100,7 +106,14 @@ class StatsSummary extends Component {
 			shouldGateStatsCsvDownload,
 			lastScreen,
 		} = this.props;
-		const StatsStrings = statsStringsFactory( supportsArchiveStats );
+
+		// Simple memoization for StatsStrings
+		// TODO: Refactor to use useMemo
+		if ( this.cachedSupportsArchiveStats !== supportsArchiveStats ) {
+			this.cachedStatsStrings = statsStringsFactory( supportsArchiveStats );
+			this.cachedSupportsArchiveStats = supportsArchiveStats;
+		}
+		const StatsStrings = this.cachedStatsStrings;
 
 		const summaryViews = [];
 		let title;
