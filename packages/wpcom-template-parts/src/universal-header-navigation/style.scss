@@ -203,6 +203,11 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 		margin: 11px 18px 0 9px;
 		padding: 8px 9px !important;
 		text-decoration: none !important;
+
+		&:focus {
+			box-shadow: inset 0 0 0 1px var(--studio-white), 0 0 0 2px var(--studio-blue-50);
+			outline: 2px solid transparent;
+		}
 	}
 }
 
@@ -263,9 +268,10 @@ button.x-nav-link.x-link {
 		opacity: 0.35;
 	}
 
-	&:not(:active):focus::before {
+	&:not(:active):focus:not(.cta-btn-nav)::before {
 		content: "";
 		opacity: 1;
+		border: 2px solid rgba($studio-blue-50, 0.8);
 	}
 }
 

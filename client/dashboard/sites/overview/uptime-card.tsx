@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { VisuallyHidden } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
 import { siteUptimeQuery } from '../../a../../app/queries/site-uptime';
 import { TextBlur } from '../../components/text-blur';
@@ -10,41 +10,25 @@ import type { Site } from '../../data/types';
 import './style.scss';
 
 function UptimeCardEnabled( { siteId }: { siteId: number } ) {
-	const { data: siteUptime } = useQuery( siteUptimeQuery( siteId ) );
-
-	let uptimePercentage;
-
-	if ( siteUptime ) {
-		const { upDays, downDays } = Object.entries( siteUptime ).reduce(
-			( accumulator, [ , { status } = {} ] ) => {
-				accumulator[ status === 'up' ? 'upDays' : 'downDays' ] += 1;
-				return accumulator;
-			},
-			{ upDays: 0, downDays: 0 }
-		);
-		uptimePercentage = Math.round( ( ( upDays / ( upDays + downDays ) ) * 1000 ) / 10 );
-	}
-
-	/* translators: %s: percentage of site uptime. Eg. 99% */
-	const percentageString = __( '%s%%' );
+	const { data: uptime } = useQuery( siteUptimeQuery( siteId ) );
 
 	return (
 		<OverviewCard
 			title={ __( 'Uptime' ) }
 			icon={ connection }
 			heading={
-				uptimePercentage === undefined ? (
+				! uptime ? (
 					<>
-						<TextBlur>{ sprintf( percentageString, '100' ) }</TextBlur>
+						<TextBlur>100%</TextBlur>
 						<VisuallyHidden>{ __( 'Loading…' ) }</VisuallyHidden>
 					</>
 				) : (
-					sprintf( percentageString, uptimePercentage )
+					`${ uptime }%`
 				)
 			}
 			metaText={ __( 'Past 30 days' ) }
 		>
-			<OverviewCardProgressBar value={ uptimePercentage } />
+			<OverviewCardProgressBar value={ uptime } />
 		</OverviewCard>
 	);
 }

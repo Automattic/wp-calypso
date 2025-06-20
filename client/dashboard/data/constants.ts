@@ -24,3 +24,8 @@ export enum DotcomPlans {
 	PREMIUM_2_YEARS = 'value_bundle-2y',
 	PREMIUM_3_YEARS = 'value_bundle-3y',
 }
+
+export enum JetpackModules {
+	STATS = 'stats',
+	MONITOR = 'monitor',
+}

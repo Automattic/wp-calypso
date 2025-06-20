@@ -10,24 +10,22 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { TextBlur } from '../../components/text-blur';
+import { hasAtomicFeature } from '../../utils/site-features';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { HostingFeatures } from '../features';
+import { PHPVersion } from '../site-fields';
 import SitePreview from '../site-preview';
 import type { Site } from '../../data/types';
-
-function PHPVersion( { siteId }: { siteId: number } ) {
-	return useQuery( sitePHPVersionQuery( siteId ) ).data ?? <TextBlur>X.Y</TextBlur>;
-}
-
 /**
  * SiteCard component to display site information in a card format
  */
 export default function SiteCard( { site }: { site: Site } ) {
-	const { URL: url, is_private, is_wpcom_atomic } = site;
+	const { URL: url, is_private } = site;
 	const wpVersion = getFormattedWordPressVersion( site );
+	const hasPHPFeature = hasAtomicFeature( site, HostingFeatures.PHP );
 
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
@@ -69,12 +67,12 @@ export default function SiteCard( { site }: { site: Site } ) {
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
-					{ ( wpVersion || is_wpcom_atomic ) && (
+					{ ( wpVersion || hasPHPFeature ) && (
 						<HStack justify="space-between">
 							{ wpVersion && <Field title={ __( 'WordPress' ) }>{ wpVersion }</Field> }
-							{ is_wpcom_atomic && (
+							{ hasPHPFeature && (
 								<Field title={ __( 'PHP' ) }>
-									<PHPVersion siteId={ site.ID } />
+									<PHPVersion site={ site } />
 								</Field>
 							) }
 						</HStack>
