@@ -31,10 +31,7 @@ const UniversalNavbarHeader = ( {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
 				const activeElement = document.activeElement;
-				if (
-					activeElement &&
-					activeElement.closest( '[role="menu"], .x-dropdown-content, .x-menu' )
-				) {
+				if ( activeElement && activeElement.closest( '[role="menu"], .x-dropdown-content' ) ) {
 					if ( activeElement instanceof HTMLElement ) {
 						activeElement.blur();
 					}
