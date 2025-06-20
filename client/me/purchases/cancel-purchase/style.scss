@@ -226,12 +226,12 @@
 	p {
 		margin-bottom: 16px;
 		font-size: $font-body-small;
-		line-height: 1.4;
+		line-height: 20px;
 	}
 
 	.cancel-purchase__atomic-revert-changes-list {
 		list-style: none;
-		margin: 0 0 16px 0;
+		margin: 10px 0 16px 0;
 		padding: 0;
 
 		li {
@@ -239,7 +239,7 @@
 			align-items: flex-start;
 			margin-bottom: 12px;
 			font-size: $font-body-small;
-			line-height: 1.4;
+			line-height: 20px;
 
 			.cancel-purchase__atomic-revert-changes--item-notice {
 				flex-shrink: 0;

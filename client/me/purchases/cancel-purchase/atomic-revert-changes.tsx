@@ -83,7 +83,7 @@ const AtomicRevertChanges: React.FC< AtomicRevertChangesProps > = ( {
 					<li key={ index }>
 						<Gridicon
 							className="cancel-purchase__atomic-revert-changes--item-notice"
-							size={ 24 }
+							size={ 18 }
 							icon="notice-outline"
 						/>
 						<span>{ change }</span>
