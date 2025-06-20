@@ -66,5 +66,9 @@ module.exports.plugins = ( { chunkFilename, filename } ) => [
 		},
 	} ),
 	new MiniCSSWithRTLPlugin(),
-	new WebpackRTLPlugin(),
+	new WebpackRTLPlugin( {
+		options: {
+			clean: false,
+		},
+	} ),
 ];
