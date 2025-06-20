@@ -146,25 +146,25 @@
 		interface langauage. This prevents the fader and link from appearing on the correct side of the
 		description. */
 		.user-profile-header__bio-desc-text[direction="ltr"] ~ .user-profile-header__bio-desc-fader {
-			right: 0 #{"/*rtl:ignore*/"};
-			left: auto #{"/*rtl:ignore*/"};
-			background: linear-gradient(to right, transparent 0%, #fff 25%) #{"/*rtl:ignore*/"};
+			right: 0 #{"/*!rtl:ignore*/"};
+			left: auto #{"/*!rtl:ignore*/"};
+			background: linear-gradient(to right, transparent 0%, #fff 25%) #{"/*!rtl:ignore*/"};
 		}
 
 		.user-profile-header__bio-desc-text[direction="rtl"] ~ .user-profile-header__bio-desc-fader {
-			left: 0 #{"/*rtl:ignore*/"};
-			right: auto #{"/*rtl:ignore*/"};
-			background: linear-gradient(to left, transparent 0%, #fff 25%) #{"/*rtl:ignore*/"};
+			left: 0 #{"/*!rtl:ignore*/"};
+			right: auto #{"/*!rtl:ignore*/"};
+			background: linear-gradient(to left, transparent 0%, #fff 25%) #{"/*!rtl:ignore*/"};
 		}
 
 		.user-profile-header__bio-desc-text[direction="ltr"] ~ .user-profile-header__bio-desc-link {
-			right: 0 #{"/*rtl:ignore*/"};
-			left: auto #{"/*rtl:ignore*/"};
+			right: 0 #{"/*!rtl:ignore*/"};
+			left: auto #{"/*!rtl:ignore*/"};
 		}
 
 		.user-profile-header__bio-desc-text[direction="rtl"] ~ .user-profile-header__bio-desc-link {
-			left: 0 #{"/*rtl:ignore*/"};
-			right: auto #{"/*rtl:ignore*/"};
+			left: 0 #{"/*!rtl:ignore*/"};
+			right: auto #{"/*!rtl:ignore*/"};
 		}
 	}
 }

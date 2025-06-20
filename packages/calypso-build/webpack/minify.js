@@ -123,12 +123,7 @@ module.exports = ( {
 		...terserOptions,
 	};
 	cssMinimizerOptions = {
-		preset: [
-			'default',
-			{
-				discardComments: false,
-			},
-		],
+		preset: 'default',
 		...cssMinimizerOptions,
 	};
 

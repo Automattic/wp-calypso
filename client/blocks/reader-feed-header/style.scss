@@ -11,13 +11,13 @@
 	// ensure this parent site title class is set to that direction.
 	&:has( h1 a[direction="ltr"] ) {
 		.reader-feed-header__site-title {
-			direction: ltr #{"/*rtl:ignore*/"};
+			direction: ltr #{"/*!rtl:ignore*/"};
 		}
 	}
 
 	&:has( h1 a[direction="rtl"] ) {
 		.reader-feed-header__site-title {
-			direction: rtl #{"/*rtl:ignore*/"};
+			direction: rtl #{"/*!rtl:ignore*/"};
 		}
 	}
 
