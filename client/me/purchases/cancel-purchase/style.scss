@@ -241,11 +241,11 @@
 			font-size: $font-body-small;
 			line-height: 1.4;
 
-			.cancel-purchase__atomic-revert-changes--item-cross-small {
+			.cancel-purchase__atomic-revert-changes--item-notice {
 				flex-shrink: 0;
 				margin-inline-end: 8px;
 				margin-top: 2px;
-				color: var(--color-error-40);
+				color: var(--color-warning);
 			}
 
 			span {
