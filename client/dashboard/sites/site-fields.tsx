@@ -7,13 +7,14 @@ import type { Site } from '../data/types';
 
 export function Uptime( { site }: { site: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isEligible = site.jetpack_modules?.includes( 'monitor' );
+
 	const { data: uptime, isLoading } = useQuery( {
-		...siteUptimeQuery( site.ID, { period: 'week' } ),
-		enabled: site.is_wpcom_atomic && inView,
-		staleTime: 1000 * 60 * 60, // 1 hour
+		...siteUptimeQuery( site.ID, 'week' ),
+		enabled: isEligible && inView,
 	} );
 
-	if ( ! site.is_wpcom_atomic ) {
+	if ( ! isEligible ) {
 		return '-';
 	}
 

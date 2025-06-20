@@ -1,4 +1,3 @@
-import { __, sprintf } from '@wordpress/i18n';
 import type { SiteUptime } from '../data/site-jetpack-monitor-uptime';
 
 export function getSiteUptime( uptimes?: Record< string, SiteUptime > ) {
@@ -26,10 +25,6 @@ export function getSiteUptime( uptimes?: Record< string, SiteUptime > ) {
 
 	return {
 		value: summaryUptime,
-		label: sprintf(
-			/* translators: %s is the uptime percentage. Example for a resulting string: 99% */
-			__( '%s%%' ),
-			summaryUptime
-		),
+		label: `${ summaryUptime }%`,
 	};
 }

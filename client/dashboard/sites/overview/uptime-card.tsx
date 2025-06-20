@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { VisuallyHidden } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
 import { siteUptimeQuery } from '../../a../../app/queries/site-uptime';
 import { TextBlur } from '../../components/text-blur';
@@ -12,9 +12,6 @@ import './style.scss';
 
 function UptimeCardEnabled( { siteId }: { siteId: number } ) {
 	const { data: siteUptime } = useQuery( siteUptimeQuery( siteId ) );
-
-	/* translators: %s: percentage of site uptime. Eg. 99% */
-	const percentageString = __( '%s%%' );
 	const uptime = getSiteUptime( siteUptime );
 
 	return (
@@ -24,7 +21,7 @@ function UptimeCardEnabled( { siteId }: { siteId: number } ) {
 			heading={
 				! uptime ? (
 					<>
-						<TextBlur>{ sprintf( percentageString, '100' ) }</TextBlur>
+						<TextBlur>100%</TextBlur>
 						<VisuallyHidden>{ __( 'Loading…' ) }</VisuallyHidden>
 					</>
 				) : (

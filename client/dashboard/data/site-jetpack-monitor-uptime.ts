@@ -7,13 +7,13 @@ export interface SiteUptime {
 
 export async function fetchSiteUptime(
 	siteId: number,
-	options: { period?: string } = {}
+	period?: string
 ): Promise< Record< string, SiteUptime > | undefined > {
 	return wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/jetpack-monitor-uptime`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{ period: options.period ?? '30 days' }
+		{ period: period ?? '30 days' }
 	);
 }
