@@ -26,7 +26,7 @@ export const ViewMostRecentOpenConversationNotice = () => {
 		if ( supportInteraction ) {
 			setCurrentSupportInteraction( supportInteraction );
 			if ( ! location.pathname.includes( '/odie' ) ) {
-				navigate( '/odie' );
+				navigate( `/odie/${ mostRecentSupportInteractionId }` );
 			}
 		} else {
 			navigate( '/chat-history' );

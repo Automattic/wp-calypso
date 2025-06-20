@@ -257,13 +257,15 @@ export const HelpCenterContactButton: FC = () => {
 	const { recentConversations } = useGetHistoryChats();
 	const { __ } = useI18n();
 
+	const supportInteractionId = recentConversations[ 0 ]?.metadata?.supportInteractionId;
+
 	return (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }
 				eventName="calypso_inlinehelp_morehelp_click"
 				buttonTextEventProp="Still need help?"
-				redirectTo="/odie"
+				redirectTo={ `/odie/${ supportInteractionId }` }
 			>
 				{ __( 'Still need help?', __i18n_text_domain__ ) }
 			</HelpCenterFooterButton>
