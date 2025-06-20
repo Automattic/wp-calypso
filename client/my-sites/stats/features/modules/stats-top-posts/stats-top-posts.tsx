@@ -139,19 +139,33 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					path="posts"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate(
-								'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
-										),
-									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
-								}
-							) }
+							{ isArchiveBreakdownEnabled
+								? translate(
+										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  )
+								: translate(
+										'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  ) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }
