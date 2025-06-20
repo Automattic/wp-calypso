@@ -19,6 +19,7 @@ import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -207,9 +208,11 @@ function useHidePurchasesFieldsAtCertainWidths( {
 export function PurchasesDataViews( {
 	purchases,
 	sites,
+	getManagePurchaseUrlFor,
 }: {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 } ) {
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
@@ -234,6 +237,7 @@ export function PurchasesDataViews( {
 
 	const purchasesDataFields = usePurchasesFieldDefinitions( {
 		sites: sitesWithPurchases,
+		getManagePurchaseUrlFor,
 	} );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
@@ -258,11 +262,11 @@ export function PurchasesDataViews( {
 						console.error( 'Cannot display manage purchase page for subscription without ID' );
 						return;
 					}
-					page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+					page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
 				},
 			},
 		],
-		[ translate ]
+		[ translate, getManagePurchaseUrlFor ]
 	);
 
 	const getItemId = ( item: Purchases.Purchase ) => {

@@ -139,6 +139,7 @@ class CancelPurchaseForm extends Component {
 			atomicRevertCheckOne: false,
 			atomicRevertCheckTwo: false,
 			purchaseIsAlreadyExtended: false,
+			isNextAdventureValid: true,
 		};
 	}
 
@@ -173,12 +174,13 @@ class CancelPurchaseForm extends Component {
 		this.setState( newState );
 	};
 
-	onTextOneChange = ( eventOrValue ) => {
+	onTextOneChange = ( eventOrValue, detailsValue ) => {
 		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
 		const { purchaseIsAlreadyExtended } = this.state;
 		const newState = {
 			...this.state,
 			questionOneText: value,
+			questionOneDetails: detailsValue || this.state.questionOneDetails,
 			upsell:
 				getUpsellType( value, {
 					productSlug: this.props.purchase?.productSlug || '',
@@ -231,6 +233,10 @@ class CancelPurchaseForm extends Component {
 		this.setState( newState );
 	};
 
+	onNextAdventureValidationChange = ( isValid ) => {
+		this.setState( { isNextAdventureValid: isValid } );
+	};
+
 	// Because of the legacy reason, we can't just use `flowType` here.
 	// Instead we have to map it to the data keys defined way before `flowType` is introduced.
 	getSurveyDataType = () => {
@@ -256,9 +262,14 @@ class CancelPurchaseForm extends Component {
 				isSubmitting: true,
 			} );
 
+			const hasSubOption = this.state.questionOneDetails && this.state.questionOneText;
+			const responseValue = hasSubOption
+				? this.state.questionOneDetails
+				: this.state.questionOneRadio;
+
 			const surveyData = {
 				'why-cancel': {
-					response: this.state.questionOneRadio,
+					response: responseValue,
 					text: this.state.questionOneText,
 				},
 				'next-adventure': {
@@ -405,6 +416,7 @@ class CancelPurchaseForm extends Component {
 					onSelectNextAdventure={ this.onRadioTwoChange }
 					onChangeNextAdventureDetails={ this.onTextTwoChange }
 					onChangeText={ this.onTextThreeChange }
+					onValidationChange={ this.onNextAdventureValidationChange }
 				/>
 			);
 		}
@@ -513,6 +525,11 @@ class CancelPurchaseForm extends Component {
 
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
 			if ( this.state.questionTwoRadio === 'anotherReasonTwo' && ! this.state.questionTwoText ) {
+				return false;
+			}
+
+			// For plan cancellations, require a valid selection from the adventure dropdown
+			if ( ! this.state.isNextAdventureValid ) {
 				return false;
 			}
 

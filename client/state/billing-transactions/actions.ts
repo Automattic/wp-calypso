@@ -28,28 +28,36 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 			const {
 				billing_history,
 				upcoming_charges,
+				billing_history_total,
 			}: {
-				billing_history: BillingTransaction[];
-				upcoming_charges: UpcomingCharge[];
+				billing_history?: BillingTransaction[];
+				upcoming_charges?: UpcomingCharge[];
+				billing_history_total?: number;
 			} = await wp.req.get( url, {
 				apiVersion: '1.3',
 			} );
-
-			const fullBillingHistory = billing_history;
-			if ( billing_history.length === limit ) {
-				// If we have exactly the limit number of transactions, it means there are more transactions to fetch.
-				let nextData = [];
-				do {
+			let billingHistoryTotal = billing_history_total ?? 0;
+			const fullBillingHistory = billing_history ?? [];
+			if ( fullBillingHistory.length === limit && billingHistoryTotal !== limit ) {
+				// If we have exactly the limit number of transactions (and this is not the full total), it means there are more transactions to fetch.
+				while ( fullBillingHistory.length < billingHistoryTotal ) {
 					// Fetch the next page of transactions.
-					const offset_url = url + '&offset=' + billing_history.length;
+					const offset_url = url + '&offset=' + fullBillingHistory.length;
 
 					const res = await wp.req.get( offset_url, {
 						apiVersion: '1.3',
 					} );
 
-					fullBillingHistory.push( ...res.billing_history );
-					nextData = res.billing_history;
-				} while ( nextData.length === limit );
+					const newBillingHistoryChunk = res.billing_history ?? [];
+					if ( newBillingHistoryChunk.length === 0 ) {
+						// Prevent potential infinite loop if no more transactions are returned.
+						break;
+					}
+					fullBillingHistory.push( ...newBillingHistoryChunk );
+
+					// Value is updated in case the value changes in the back-end
+					billingHistoryTotal = res.billing_history_total ?? 0;
+				}
 			}
 
 			dispatch( {
