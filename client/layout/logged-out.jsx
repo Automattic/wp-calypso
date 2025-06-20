@@ -146,6 +146,7 @@ const LayoutLoggedOut = ( {
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+		'jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 	};
 
 	let masterbar = null;
@@ -327,7 +328,6 @@ export default withCurrentRoute(
 			const isAkismet = isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			);
-			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const oauth2Client = getCurrentOAuth2Client( state );
@@ -337,27 +337,27 @@ export default withCurrentRoute(
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isA4AClient = isA4AOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
-					( ( ! isJetpackLogin &&
-						Boolean( currentQuery?.client_id ) === false &&
+					( ( Boolean( currentQuery?.client_id ) === false &&
 						Boolean( currentQuery?.oauth2_client_id ) === false &&
 						! isWooJPC ) ||
 						isStudioClient ||
 						isCrowdsignalClient ||
 						isBlazePro ||
-						isA4AClient ) ) ||
+						isA4AClient ||
+						isJetpackCloudClient ||
+						isJetpackLogin ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =
-				isJetpackLogin ||
-				( isWhiteLogin && ! isBlazePro ) ||
-				isJetpackWooDnaFlow ||
-				isInvitationURL;
+				( isWhiteLogin && ! isBlazePro ) || isJetpackWooDnaFlow || isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
