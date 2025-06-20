@@ -206,12 +206,12 @@ body.is-section-reader {
 
 		// If the site name is marked with ltr or rtl, ensure we use that directionality.
 		&:has( span[direction="ltr"]) {
-			/*rtl:ignore*/
+			/*!rtl:ignore*/
 			direction: ltr;
 		}
 
 		&:has( span[direction="rtl"]) {
-			/*rtl:ignore*/
+			/*!rtl:ignore*/
 			direction: rtl;
 		}
 	}
