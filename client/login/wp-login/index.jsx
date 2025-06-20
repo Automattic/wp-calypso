@@ -379,7 +379,6 @@ export class Login extends Component {
 			socialConnect,
 			twoFactorAuthType,
 			locale,
-			isLoginView,
 			signupUrl,
 			isWCCOM,
 			isBlazePro,
