@@ -44,9 +44,11 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
+import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
@@ -67,6 +69,7 @@ class CancelPurchase extends Component {
 		purchaseId: PropTypes.number.isRequired,
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
+		atomicTransfer: PropTypes.object,
 	};
 
 	state = {
@@ -370,6 +373,11 @@ class CancelPurchase extends Component {
 							cancellationFeatures={ cancellationFeatures }
 						/>
 
+						<AtomicRevertChanges
+							atomicTransfer={ this.props.atomicTransfer }
+							purchase={ purchase }
+						/>
+
 						<CancelPurchaseDomainOptions
 							includedDomainPurchase={ this.props.includedDomainPurchase }
 							cancelBundledDomain={ this.state.cancelBundledDomain }
@@ -452,5 +460,6 @@ export default connect( ( state, props ) => {
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
 		isHundredYearDomain: selectedDomain?.isHundredYearDomain,
+		atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 	};
 } )( localize( withLocalizedMoment( CancelPurchase ) ) );

@@ -219,3 +219,48 @@
 	margin-bottom: 10px;
 	width: 50%;
 }
+
+.cancel-purchase__atomic-revert-changes {
+	margin-bottom: 24px;
+
+	p {
+		margin-bottom: 16px;
+		font-size: $font-body-small;
+		line-height: 1.4;
+	}
+
+	.cancel-purchase__atomic-revert-changes-list {
+		list-style: none;
+		margin: 0 0 16px 0;
+		padding: 0;
+
+		li {
+			display: flex;
+			align-items: flex-start;
+			margin-bottom: 12px;
+			font-size: $font-body-small;
+			line-height: 1.4;
+
+			.cancel-purchase__atomic-revert-changes--item-cross-small {
+				flex-shrink: 0;
+				margin-inline-end: 8px;
+				margin-top: 2px;
+				color: var(--color-error-40);
+			}
+
+			span {
+				flex: 1;
+			}
+		}
+	}
+
+	.cancel-purchase__atomic-revert-changes-note {
+		font-size: $font-body-extra-small;
+		color: var(--color-text-subtle);
+		font-style: italic;
+		margin-top: 16px;
+		padding: 12px;
+		background-color: var(--studio-gray-0);
+		border-radius: 4px;
+	}
+}
