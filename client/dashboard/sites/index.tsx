@@ -17,6 +17,7 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
+import { EngagementStat, Uptime, PHPVersion, MediaStorage } from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -110,9 +111,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 				return label;
 			}
 
-			return (
-				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
-			);
+			return <UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>;
 		},
 	},
 	{
@@ -172,6 +171,41 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		getValue: ( { item } ) => item.options?.updated_at ?? '',
 		render: ( { item } ) =>
 			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+	},
+	{
+		id: 'uptime',
+		label: __( 'Uptime' ),
+		render: ( { item } ) => <Uptime site={ item } />,
+		enableSorting: false,
+	},
+	{
+		id: 'visitors',
+		label: __( 'Visitors' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
+		enableSorting: false,
+	},
+	{
+		id: 'views',
+		label: __( 'Views' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
+		enableSorting: false,
+	},
+	{
+		id: 'likes',
+		label: __( 'Likes' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
+		enableSorting: false,
+	},
+	{
+		id: 'php_version',
+		label: __( 'PHP version' ),
+		render: ( { item }: { item: Site } ) => <PHPVersion site={ item } />,
+	},
+	{
+		id: 'storage',
+		label: __( 'Storage' ),
+		render: ( { item } ) => <MediaStorage site={ item } />,
+		enableSorting: false,
 	},
 ];
 
@@ -327,9 +361,11 @@ export default function Sites() {
 	);
 }
 
-function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+function UnlaunchedStatusLink( { href, children }: { href: string; children: React.ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
 
+	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
+	// uses `overflow:hidden` to prevent any of the fields from overflowing.
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
@@ -338,7 +374,6 @@ function ComingSoonStatusButton( { href, children }: { href: string; children: R
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
 				} }
-				style={ { position: 'absolute' } }
 			>
 				{ children }
 			</ExternalLink>

@@ -5,8 +5,18 @@ import type { ContextLinks, SupportDocData } from './types';
 import type { HelpCenterDispatch } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
+declare global {
+	interface Window {
+		wp: undefined | Record< string, any >;
+	}
+}
 
 const loadHelpCenterDispatch = async () => {
+	// Check if the help center store is already loaded in the window object.
+	if ( typeof window !== 'undefined' && window.wp?.data?.dispatch?.( HELP_CENTER_STORE ) ) {
+		return window.wp.data.dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ];
+	}
+
 	// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
 	if ( ! dispatch( HELP_CENTER_STORE ) ) {
 		const { HelpCenter: HelpCenterStore } = await import(
