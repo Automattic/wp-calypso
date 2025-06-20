@@ -6,7 +6,6 @@ import type { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { createGetValidationErrors } from './components/validation/utils';
 import {
 	ALL_OPERATORS,
 	OPERATOR_BETWEEN,
@@ -21,7 +20,10 @@ import type {
 	NormalizedField,
 	NormalizedFilterByConfig,
 } from './types';
-import { normalizeIsValid } from './components/validation';
+import {
+	normalizeIsValid,
+	createGetValidationErrors,
+} from './components/validation';
 
 const getValueFromId =
 	( id: string ) =>
