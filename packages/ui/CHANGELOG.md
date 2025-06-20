@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Bug Fixes
+
+- I18n: Replace `@wordpress/react-i18n` with `@wordpress/i18n` package to avoid missing dependency issue when used in WordPress ([#104325](https://github.com/Automattic/wp-calypso/pull/104325)).
+
 ## 1.0.0
 
 ### Enhancements

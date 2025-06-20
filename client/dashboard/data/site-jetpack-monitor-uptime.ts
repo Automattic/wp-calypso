@@ -1,15 +1,19 @@
 import wpcom from 'calypso/lib/wp';
 
 export interface SiteUptime {
-	[ key: string ]: { status: string; downtime_in_minutes?: number };
+	status: 'up' | 'down' | 'monitor_inactive';
+	downtime_in_minutes?: number;
 }
 
-export async function fetchSiteUptime( siteId: number ): Promise< SiteUptime | undefined > {
+export async function fetchSiteUptime(
+	siteId: number,
+	period?: string
+): Promise< Record< string, SiteUptime > > {
 	return wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/jetpack-monitor-uptime`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{ period: '30 days' }
+		{ period: period ?? '30 days' }
 	);
 }
