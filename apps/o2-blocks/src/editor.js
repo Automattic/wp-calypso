@@ -1,4 +1,5 @@
 import './category';
+import './callout/editor';
 import './editor-notes/editor';
 import './p2-autocomplete/editor';
 import './prev-next/editor';

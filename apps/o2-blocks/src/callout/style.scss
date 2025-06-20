@@ -1,0 +1,208 @@
+/**
+ * 1.0 Callout Block Styles
+ *
+ * Base styles for the callout block component with icon, header, and content sections.
+ * Includes responsive design and editor-specific styles.
+ */
+
+
+/**
+ * 1.1 Callout Template Color Variables
+ *
+ * Color definitions that match the CALLOUT_TEMPLATES in constants.js
+ */
+$callout-template-colors: (
+	"example": #c475bd,    /* Same as Purple in COLOR_PALETTE */
+	"info": #618df2,       /* Same as Simplenote Blue */
+	"warning": #f86368,    /* Same as Red */
+	"tip": #09b585,        /* Same as Celadon */
+	"custom": #646970      /* Same as Gray50 */
+);
+
+
+/**
+ * 1.2 Base Callout Styles
+ *
+ * Main container styles with defensive CSS for consistent behavior
+ * across different contexts.
+ */
+.o2-blocks-callout {
+	position: relative;
+	isolation: isolate;
+	box-sizing: border-box;
+	margin: 20px 0;
+	padding: 25px 25px 15px;
+	border-left: 6px solid;
+	border-radius: 4px;
+	background-color: #fefefe;
+	box-shadow:
+		0 0.2rem 0.5rem rgba(0, 0, 0, 0.05),
+		0 0 0.05rem rgba(0, 0, 0, 0.1);
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+
+/**
+ * 1.3 Callout Icon Styles
+ *
+ * Icon styling for inline-block layout alongside header text.
+ */
+.o2-blocks-callout .o2-blocks-callout__icon {
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	min-height: unset;
+	box-sizing: border-box;
+	width: 2em;
+	height: 2em;
+	margin: 0 6px 0 0;
+	padding: 0;
+	border: 0.2em solid;
+	border-radius: 50%;
+	font-size: 1rem;
+	transition: color 0s ease-in-out, border-color 0s ease-in-out;
+}
+
+
+/**
+ * 1.4 Dashicon Styles
+ *
+ * Styles for the dashicon element inside the callout icon.
+ */
+.o2-blocks-callout .o2-blocks-callout__icon .dashicons {
+	vertical-align: middle;
+	width: auto;
+	height: auto;
+	font-size: 1em;
+	line-height: 1;
+	transition: color 0s ease-in-out;
+}
+
+
+/**
+ * 1.5 Callout Header Styles
+ *
+ * Header text styling positioned next to the icon.
+ */
+.o2-blocks-callout .o2-blocks-callout__header {
+	display: inline-block;
+	vertical-align: top;
+	min-height: 2em;
+	width: calc(100% - 2em - 12px - 0.4em);
+	margin: 6px 0 0 6px;
+	padding: 0;
+	font-weight: 600;
+	line-height: 1.4;
+	transition: color 0s ease-in-out, border-color 0s ease-in-out;
+}
+
+
+/**
+ * 1.6 Callout Template Specific Styles
+ *
+ * Generated styles for each callout template using the color map.
+ */
+@each $template, $color in $callout-template-colors {
+	.o2-blocks-callout--#{$template} {
+		border-left-color: #{$color};
+		transition: color 0s ease-in-out, border-color 0s ease-in-out;
+
+		.o2-blocks-callout__icon,
+		.o2-blocks-callout__header {
+			border-color: #{$color};
+			color: #{$color};
+		}
+	}
+}
+
+
+/**
+ * 1.7 Custom Callout Styles
+ *
+ * Special handling for custom callouts using CSS custom properties.
+ */
+.o2-blocks-callout--custom {
+	border-left-color: var(--custom-color, #{map-get($callout-template-colors, "custom")});
+	transition: color 0s ease-in-out, border-color 0s ease-in-out;
+
+	.o2-blocks-callout__icon,
+	.o2-blocks-callout__header {
+		border-color: var(--custom-color, #{map-get($callout-template-colors, "custom")});
+		color: var(--custom-color, #{map-get($callout-template-colors, "custom")});
+	}
+
+	.o2-blocks-callout__icon .dashicons {
+		color: inherit;
+	}
+}
+
+
+/**
+ * 2.0 Editor Styles
+ *
+ * Styles specific to the block editor interface.
+ */
+
+
+/**
+ * 2.1 Icon Picker Component
+ *
+ * Grid-based icon selection interface for the block editor.
+ */
+.o2-blocks-callout__icon-picker {
+	margin-bottom: 16px;
+}
+
+
+/**
+ * 2.2 Icon Picker Grid
+ *
+ * Grid layout for icon selection buttons.
+ */
+.o2-blocks-callout__icon-picker-grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	overflow-y: auto;
+	max-height: 310px;
+	padding: 8px;
+	gap: 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+
+/**
+ * 2.3 Icon Picker Buttons
+ *
+ * Individual icon selection buttons with selected state styling.
+ */
+.o2-blocks-callout__icon-picker-button {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 32px !important;
+	padding: 4px !important;
+	border-width: 1px !important;
+	border-color: #ddd !important;
+	background-color: transparent !important;
+}
+
+.o2-blocks-callout__icon-picker-button--selected {
+	border-width: 2px !important;
+	background-color: #f0f0f0 !important;
+}
+
+
+/**
+ * 2.4 Icon Picker Selected Info
+ *
+ * Text display for currently selected icon name.
+ */
+.o2-blocks-callout__icon-picker-selected-info {
+	margin-top: 8px;
+	color: #666;
+	font-size: 12px;
+}
