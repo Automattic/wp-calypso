@@ -4,15 +4,13 @@ import { __ } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
 import { siteUptimeQuery } from '../../a../../app/queries/site-uptime';
 import { TextBlur } from '../../components/text-blur';
-import { getSiteUptime } from '../../utils/site-uptime';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { Site } from '../../data/types';
 
 import './style.scss';
 
 function UptimeCardEnabled( { siteId }: { siteId: number } ) {
-	const { data: siteUptime } = useQuery( siteUptimeQuery( siteId ) );
-	const uptime = getSiteUptime( siteUptime );
+	const { data: uptime } = useQuery( siteUptimeQuery( siteId ) );
 
 	return (
 		<OverviewCard
@@ -25,12 +23,12 @@ function UptimeCardEnabled( { siteId }: { siteId: number } ) {
 						<VisuallyHidden>{ __( 'Loading…' ) }</VisuallyHidden>
 					</>
 				) : (
-					uptime.label
+					`${ uptime }%`
 				)
 			}
 			metaText={ __( 'Past 30 days' ) }
 		>
-			<OverviewCardProgressBar value={ uptime?.value } />
+			<OverviewCardProgressBar value={ uptime } />
 		</OverviewCard>
 	);
 }

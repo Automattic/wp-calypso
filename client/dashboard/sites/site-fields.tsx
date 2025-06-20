@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { siteUptimeQuery } from '../app/queries/site-uptime';
 import { TextBlur } from '../components/text-blur';
-import { getSiteUptime } from '../utils/site-uptime';
 import type { Site } from '../data/types';
 
 export function Uptime( { site }: { site: Site } ) {
@@ -23,7 +22,7 @@ export function Uptime( { site }: { site: Site } ) {
 			return <TextBlur>100%</TextBlur>;
 		}
 
-		return getSiteUptime( uptime )?.label ?? '-';
+		return uptime ? `${ uptime }%` : '-';
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
