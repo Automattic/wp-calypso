@@ -140,7 +140,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					titleNodes={
 						<StatsInfoArea>
 							{ translate(
-								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+								'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
