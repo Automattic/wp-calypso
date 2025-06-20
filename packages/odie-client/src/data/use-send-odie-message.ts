@@ -227,14 +227,8 @@ export const useSendOdieMessage = () => {
 
 			if ( isRateLimitError ) {
 				// Handle rate limit error with standard rate limit message
-				const errorMessage: Message = {
-					content: ODIE_RATE_LIMIT_MESSAGE,
-					internal_message_id,
-					role: 'bot',
-					type: 'message',
-					context: undefined,
-				};
-				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+				const message: Message = { ...ODIE_RATE_LIMIT_MESSAGE, internal_message_id };
+				addMessage( { message, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 				// User is eligible for premium support - transfer to Zendesk
 				newConversation( {

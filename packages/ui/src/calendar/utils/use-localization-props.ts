@@ -1,5 +1,4 @@
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import type { Modifiers, BaseProps } from '../types';
 
@@ -45,8 +44,6 @@ export const useLocalizationProps = ( {
 	timeZone: BaseProps[ 'timeZone' ];
 	mode: 'single' | 'range';
 } ) => {
-	const { __ } = useI18n();
-
 	return useMemo( () => {
 		// ie. April 2025
 		const monthNameFormatter = new Intl.DateTimeFormat( locale.code, {

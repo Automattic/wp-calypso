@@ -17,6 +17,7 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
+import { Uptime } from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -172,6 +173,12 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		getValue: ( { item } ) => item.options?.updated_at ?? '',
 		render: ( { item } ) =>
 			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+	},
+	{
+		id: 'uptime',
+		label: __( 'Uptime' ),
+		render: ( { item } ) => <Uptime site={ item } />,
+		enableSorting: false,
 	},
 ];
 
