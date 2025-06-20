@@ -176,8 +176,6 @@ const useHeaderText = () => {
 		switch ( pathname ) {
 			case '/':
 				return __( 'Help Center', __i18n_text_domain__ );
-			case '/contact-options':
-				return __( 'Contact Options', __i18n_text_domain__ );
 			case '/inline-chat':
 				return __( 'Live Chat', __i18n_text_domain__ );
 			case '/contact-form':

@@ -37,7 +37,6 @@ const MyApp = () => (
 - `enabled?: boolean` - Toggle chat component visibility.
 - `initialUserMessage?: string | null | undefined` - Set an initial message from the user.
 - `isMinimized?: boolean` - Tells if parent component app is minimized.
-- `extraContactOptions?: ReactNode` - Show extra options for exiting the chat.
 - `children?: ReactNode` - Child components within the provider.
 
 ## Context API
