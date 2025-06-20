@@ -13,9 +13,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { TextBlur } from '../../components/text-blur';
+import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
-import SiteStatus from '../site-status';
 import type { Site } from '../../data/types';
 
 function PHPVersion( { siteId }: { siteId: number } ) {
@@ -67,9 +67,7 @@ export default function SiteCard( { site }: { site: Site } ) {
 						</ExternalLink>
 					</Field>
 					<HStack justify="space-between">
-						<Field title={ __( 'Status' ) }>
-							<SiteStatus site={ site } />
-						</Field>
+						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
 					{ ( wpVersion || is_wpcom_atomic ) && (
 						<HStack justify="space-between">

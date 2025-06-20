@@ -1,24 +1,25 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
+import ComponentViewTracker from '../components/component-view-tracker';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import TimeSince from '../components/time-since';
-import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
+import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
 import { Uptime } from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
-import SiteStatus from './site-status';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type {
 	Field,
@@ -105,7 +106,14 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			operators: [ 'is' ],
 		},
 		render: ( { item } ) => {
-			return <SiteStatus site={ item } />;
+			const label = getSiteStatusLabel( item );
+			if ( item.launch_status !== 'unlaunched' ) {
+				return label;
+			}
+
+			return (
+				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
+			);
 		},
 	},
 	{
@@ -322,6 +330,25 @@ export default function Sites() {
 					/>
 				</DataViewsCard>
 			</PageLayout>
+		</>
+	);
+}
+
+function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<>
+			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
+			<ExternalLink
+				href={ href }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
+				} }
+				style={ { position: 'absolute' } }
+			>
+				{ children }
+			</ExternalLink>
 		</>
 	);
 }
