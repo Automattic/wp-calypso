@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -63,6 +64,7 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -213,7 +215,7 @@ const DotcomPreviewPane = ( {
 			itemData={ itemData }
 			closeItemView={ closeSitePreviewPane }
 			features={ features }
-			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
+			className={ site.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : '' }
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
