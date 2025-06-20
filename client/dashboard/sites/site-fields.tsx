@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useInView } from 'react-intersection-observer';
+import { siteMediaStorageQuery } from '../app/queries/site-media-storage';
 import { sitePHPVersionQuery } from '../app/queries/site-php-version';
 import { siteEngagementStatsQuery } from '../app/queries/site-stats';
 import { siteUptimeQuery } from '../app/queries/site-uptime';
@@ -90,4 +91,26 @@ export function PHPVersion( { site }: { site: Site } ) {
 	}
 
 	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
+}
+
+export function MediaStorage( { site }: { site: Site } ) {
+	const { ref, inView } = useInView( {
+		triggerOnce: true,
+		fallbackInView: true,
+	} );
+
+	const { data: mediaStorage, isLoading } = useQuery( {
+		...siteMediaStorageQuery( site.ID ),
+		enabled: inView,
+	} );
+
+	const value = mediaStorage ? (
+		`${
+			Math.round( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+		}%`
+	) : (
+		<IneligibleIndicator />
+	);
+
+	return <span ref={ ref }>{ ! isLoading ? value : <LoadingIndicator label="100%" /> }</span>;
 }
