@@ -84,40 +84,42 @@ class FeedHeader extends Component {
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
-				<Card className="reader-feed-header__site">
-					{ ! narrowDisplay && siteIconElement }
-					<div className="reader-feed-header__details">
-						<div className="reader-feed-header__site-title">
-							{ narrowDisplay && siteIconElement }
-							<AutoDirection>
+				<AutoDirection>
+					<Card className="reader-feed-header__site">
+						{ ! narrowDisplay && siteIconElement }
+						<div className="reader-feed-header__details">
+							<div className="reader-feed-header__site-title">
+								{ narrowDisplay && siteIconElement }
+
 								<h1>
 									<a className="reader-feed-header__site-title-link" href={ siteUrl }>
 										{ siteTitle }
 									</a>
 								</h1>
-							</AutoDirection>
-							{ site && (
-								<span className="reader-feed-header__site-badge">
-									<ReaderFeedHeaderSiteBadge site={ site } />
-									<BlogStickers blogId={ site.ID } />
-								</span>
+
+								{ site && (
+									<span className="reader-feed-header__site-badge">
+										<ReaderFeedHeaderSiteBadge site={ site } />
+										<BlogStickers blogId={ site.ID } />
+									</span>
+								) }
+							</div>
+
+							<div className="reader-feed-header__description">{ description }</div>
+
+							{ ! wideDisplay && followerCount && (
+								<div className="reader-feed-header__follow-count">
+									{ ' ' }
+									{ translate( '%s subscriber', '%s subscribers', {
+										count: followerCount,
+										args: [ formatNumber( followerCount ) ],
+										comment: '%s is the number of subscribers. For example: "12,000,000"',
+									} ) }
+								</div>
 							) }
 						</div>
-						<AutoDirection>
-							<div className="reader-feed-header__description">{ description }</div>
-						</AutoDirection>
-						{ ! wideDisplay && followerCount && (
-							<div className="reader-feed-header__follow-count">
-								{ ' ' }
-								{ translate( '%s subscriber', '%s subscribers', {
-									count: followerCount,
-									args: [ formatNumber( followerCount ) ],
-									comment: '%s is the number of subscribers. For example: "12,000,000"',
-								} ) }
-							</div>
-						) }
-					</div>
-				</Card>
+					</Card>
+				</AutoDirection>
 				{ ! wideDisplay && (
 					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
 				) }

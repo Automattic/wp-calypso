@@ -46,49 +46,47 @@ function HovercardContent( props ) {
 	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
 
 	return (
-		<>
-			{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
-			<div className="gravatar-hovercard__header">
-				<a className="gravatar-hovercard__avatar-link" href={ profileUrl }>
-					<img
-						className="gravatar-hovercard__avatar"
-						src={ gravatarData.avatarUrl }
-						alt={ gravatarData.displayName }
-						width={ 104 }
-						height={ 104 }
-					/>
-				</a>
+		<AutoDirection>
+			{ /* Note AutoDirection needs a single child to work recursively, hence the wrapping fragments. */ }
+			<>
+				{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
 
-				<a className="gravatar-hovercard__name-link" href={ profileUrl }>
-					<AutoDirection>
+				<div className="gravatar-hovercard__header">
+					<a className="gravatar-hovercard__avatar-link" href={ profileUrl }>
+						<img
+							className="gravatar-hovercard__avatar"
+							src={ gravatarData.avatarUrl }
+							alt={ gravatarData.displayName }
+							width={ 104 }
+							height={ 104 }
+						/>
+					</a>
+
+					<a className="gravatar-hovercard__name-link" href={ profileUrl }>
 						<h4 className="gravatar-hovercard__name">{ gravatarData.displayName }</h4>
-					</AutoDirection>
-				</a>
+					</a>
 
-				<AutoDirection>
 					<p className="gravatar-hovercard__description">{ gravatarData.description }</p>
-				</AutoDirection>
-			</div>
-			{ /* Below is custom for wpcom users, and can use wpcom data more freely */ }
-			{ userID && (
-				<>
-					<div className="gravatar-hovercard__body">
-						{ primaryBlogUrl && (
-							<div className="gravatar-hovercard__primary-blog-card">
-								<div className="gravatar-hovercard__primary-blog-card-header">
-									<ReaderAvatar
-										isCompact
-										siteIcon={ site?.icon?.img || site?.icon?.ico }
-										className="gravatar-hovercard__primary-blog-card-site-icon"
-									/>
-									<div className="gravatar-hovercard__primary-blog-card-site-info">
-										<AutoDirection>
+				</div>
+
+				{ /* Below is custom for wpcom users, and can use wpcom data more freely */ }
+				{ userID && (
+					<>
+						<div className="gravatar-hovercard__body">
+							{ primaryBlogUrl && (
+								<div className="gravatar-hovercard__primary-blog-card">
+									<div className="gravatar-hovercard__primary-blog-card-header">
+										<ReaderAvatar
+											isCompact
+											siteIcon={ site?.icon?.img || site?.icon?.ico }
+											className="gravatar-hovercard__primary-blog-card-site-icon"
+										/>
+										<div className="gravatar-hovercard__primary-blog-card-site-info">
 											<h5 className="gravatar-hovercard__primary-blog-card-site-title">
 												{ site.title }
 											</h5>
-										</AutoDirection>
-										{ displayName && (
-											<AutoDirection>
+
+											{ displayName && (
 												<p className="gravatar-hovercard__primary-blog-card-username">
 													{ translate( 'By %(displayName)s', {
 														args: {
@@ -96,31 +94,31 @@ function HovercardContent( props ) {
 														},
 													} ) }
 												</p>
-											</AutoDirection>
-										) }
+											) }
+										</div>
 									</div>
-								</div>
-								<AutoDirection>
+
 									<p className="gravatar-hovercard__primary-blog-card-description">
 										{ site?.description }
 									</p>
-								</AutoDirection>
 
-								<ReaderFollowButton
-									className="gravatar-hovercard__primary-blog-card-follow-button"
-									siteUrl={ primaryBlogUrl }
-									hasButtonStyle
-									followSource="gravatar-hovercard"
-								/>
-							</div>
-						) }
-					</div>
-					<div className="gravatar-hovercard__footer">
-						{ /* TODO: Add recommended blogs list */ }
-					</div>
-				</>
-			) }
-		</>
+									<ReaderFollowButton
+										className="gravatar-hovercard__primary-blog-card-follow-button"
+										siteUrl={ primaryBlogUrl }
+										hasButtonStyle
+										followSource="gravatar-hovercard"
+									/>
+								</div>
+							) }
+						</div>
+
+						<div className="gravatar-hovercard__footer">
+							{ /* TODO: Add recommended blogs list */ }
+						</div>
+					</>
+				) }
+			</>
+		</AutoDirection>
 	);
 }
 

@@ -71,39 +71,39 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 				>
 					{ avatarElement }
 				</div>
-				<div className="user-profile-header__details">
-					<div className="user-profile-header__display-name">
-						<div
-							className="user-profile-header__avatar user-profile-header__avatar-mobile"
-							data-testid="mobile-avatar"
-						>
-							{ avatarElement }
-						</div>
-						<AutoDirection>
+				<AutoDirection>
+					<div className="user-profile-header__details">
+						<div className="user-profile-header__display-name">
+							<div
+								className="user-profile-header__avatar user-profile-header__avatar-mobile"
+								data-testid="mobile-avatar"
+							>
+								{ avatarElement }
+							</div>
+
 							<h1>{ user.display_name }</h1>
-						</AutoDirection>
-					</div>
-					{ user.bio && (
-						<div className="user-profile-header__bio">
-							<p className="user-profile-header__bio-desc">
-								<AutoDirection>
+						</div>
+						{ user.bio && (
+							<div className="user-profile-header__bio">
+								<p className="user-profile-header__bio-desc">
 									<span ref={ bioRef } className="user-profile-header__bio-desc-text">
 										{ user.bio }
 									</span>
-								</AutoDirection>
-								{ isClamped && user.profile_URL && (
-									<>
-										<span className="user-profile-header__bio-desc-fader"></span>
-										<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
-											{ translate( 'Read More' ) }{ ' ' }
-											<Icon width={ 18 } height={ 18 } icon={ external } />
-										</a>
-									</>
-								) }
-							</p>
-						</div>
-					) }
-				</div>
+
+									{ isClamped && user.profile_URL && (
+										<>
+											<span className="user-profile-header__bio-desc-fader"></span>
+											<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
+												{ translate( 'Read More' ) }{ ' ' }
+												<Icon width={ 18 } height={ 18 } icon={ external } />
+											</a>
+										</>
+									) }
+								</p>
+							</div>
+						) }
+					</div>
+				</AutoDirection>
 			</header>
 			<SectionNav enforceTabsView selectedText={ selectedTab }>
 				<NavTabs>
