@@ -3,7 +3,7 @@ import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
@@ -25,6 +25,40 @@ const UniversalNavbarHeader = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
+
+	// Handle dropdown management to ensure only one is open at a time
+	useEffect( () => {
+		const closeOtherDropdowns = ( currentNavItem: Element ) => {
+			document.querySelectorAll( '.x-nav-item__wide' ).forEach( ( item ) => {
+				if ( item !== currentNavItem ) {
+					const focusedElement = item.querySelector( ':focus' );
+					if ( focusedElement instanceof HTMLElement ) {
+						focusedElement.blur();
+					}
+				}
+			} );
+		};
+
+		const handleInteraction = ( event: Event ) => {
+			const target = event.target;
+			if ( ! ( target instanceof HTMLElement ) ) {
+				return;
+			}
+
+			const navItem = target.closest( '.x-nav-item__wide' );
+			if ( navItem ) {
+				closeOtherDropdowns( navItem );
+			}
+		};
+
+		document.addEventListener( 'focusin', handleInteraction );
+		document.addEventListener( 'mouseenter', handleInteraction, true );
+
+		return () => {
+			document.removeEventListener( 'focusin', handleInteraction );
+			document.removeEventListener( 'mouseenter', handleInteraction, true );
+		};
+	}, [] );
 
 	if ( ! startUrl ) {
 		startUrl = addQueryArgs(
