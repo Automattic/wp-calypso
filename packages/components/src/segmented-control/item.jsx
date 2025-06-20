@@ -11,16 +11,22 @@ class SegmentedControlItem extends Component {
 		value: PropTypes.string,
 		onClick: PropTypes.func,
 		index: PropTypes.number,
+		disabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		selected: false,
+		disabled: false,
 	};
 
 	handleKeyEvent = ( event ) => {
 		switch ( event.keyCode ) {
 			case 13: // enter
 			case 32: // space
+				if ( this.props.disabled ) {
+					return;
+				}
+
 				event.preventDefault();
 				document.activeElement.click();
 				break;
@@ -35,6 +41,7 @@ class SegmentedControlItem extends Component {
 
 		const linkClassName = clsx( 'segmented-control__link', {
 			[ `item-index-${ this.props.index }` ]: this.props.index != null,
+			disabled: this.props.disabled,
 		} );
 
 		return (
