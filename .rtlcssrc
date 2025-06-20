@@ -1,6 +1,7 @@
 {
 	"options": {
-		"processUrls": { "atrule": true, "decl": false }
+		"processUrls": { "atrule": true, "decl": false },
+		"clean": false
 	}
 }
 
