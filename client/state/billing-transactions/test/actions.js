@@ -29,6 +29,7 @@ describe( 'actions', () => {
 						subtotal: '$1.03',
 					},
 				],
+				billing_history_total: 1,
 				upcoming_charges: [
 					{
 						id: '87654321',
@@ -78,8 +79,9 @@ describe( 'actions', () => {
 				} );
 			}
 
-			const successResponse = {
+			const totalSuccessResponse = {
 				billing_history,
+				billing_history_total: billing_history.length,
 				upcoming_charges: [
 					{
 						id: '87654321',
@@ -93,11 +95,13 @@ describe( 'actions', () => {
 
 			const successResponse1 = {
 				billing_history: billing_history.slice( 0, endpointLimit ),
-				upcoming_charges: successResponse.upcoming_charges,
+				billing_history_total: totalSuccessResponse.billing_history_total,
+				upcoming_charges: totalSuccessResponse.upcoming_charges,
 			};
 
 			const successResponse2 = {
 				billing_history: billing_history.slice( endpointLimit ),
+				billing_history_total: totalSuccessResponse.billing_history_total,
 				upcoming_charges: [],
 			};
 
@@ -119,8 +123,8 @@ describe( 'actions', () => {
 				// should dispatch receive action when request completes'
 				expect( spy ).toHaveBeenCalledWith( {
 					type: BILLING_TRANSACTIONS_RECEIVE,
-					past: successResponse.billing_history,
-					upcoming: successResponse.upcoming_charges,
+					past: totalSuccessResponse.billing_history,
+					upcoming: totalSuccessResponse.upcoming_charges,
 				} );
 
 				// should dispatch request success action when request completes'
