@@ -18,7 +18,7 @@ export const siteUptimeQuery = ( siteId: number, period?: string ) => ( {
 		);
 
 		if ( ! upDays && ! downDays ) {
-			return null;
+			return undefined;
 		}
 
 		// Calculate the uptime percentage.
