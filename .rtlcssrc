@@ -1,7 +1,7 @@
 {
 	"options": {
-		"processUrls": { "atrule": true, "decl": false }
-		"preserveComments": true
+		"processUrls": { "atrule": true, "decl": false },
+		"clean": false
 	}
 }
 
