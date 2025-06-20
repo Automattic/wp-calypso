@@ -16,7 +16,7 @@ import { hasAtomicFeature } from '../../utils/site-features';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { HostingFeatures } from '../features';
-import SitePHPVersion from '../site-php-version';
+import { PHPVersion } from '../site-fields';
 import SitePreview from '../site-preview';
 import type { Site } from '../../data/types';
 /**
@@ -72,7 +72,7 @@ export default function SiteCard( { site }: { site: Site } ) {
 							{ wpVersion && <Field title={ __( 'WordPress' ) }>{ wpVersion }</Field> }
 							{ hasPHPFeature && (
 								<Field title={ __( 'PHP' ) }>
-									<SitePHPVersion site={ site } />
+									<PHPVersion site={ site } />
 								</Field>
 							) }
 						</HStack>

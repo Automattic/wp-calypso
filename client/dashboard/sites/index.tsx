@@ -17,9 +17,8 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
-import { EngagementStat, Uptime } from './site-fields';
+import { EngagementStat, Uptime, PHPVersion } from './site-fields';
 import SiteIcon from './site-icon';
-import SitePHPVersion from './site-php-version';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type {
@@ -200,7 +199,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'php_version',
 		label: __( 'PHP version' ),
-		render: ( { item }: { item: Site } ) => <SitePHPVersion site={ item } />,
+		render: ( { item }: { item: Site } ) => <PHPVersion site={ item } />,
 		enableSorting: false,
 	},
 ];
