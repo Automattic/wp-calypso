@@ -6,6 +6,8 @@ import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-r
 import { render as testingLibraryRender, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import SiteVisibilitySettings from '../index';
 
 function render( ui: React.ReactElement ) {
@@ -13,10 +15,14 @@ function render( ui: React.ReactElement ) {
 	const router = createRouter( {
 		routeTree: createRootRoute( { component: () => ui } ),
 	} );
+	const mockStore = configureStore( [] );
+	const store = mockStore();
 	return testingLibraryRender(
-		<QueryClientProvider client={ queryClient }>
-			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
-		</QueryClientProvider>
+		<Provider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
+			</QueryClientProvider>
+		</Provider>
 	);
 }
 
