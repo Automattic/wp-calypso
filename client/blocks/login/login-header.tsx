@@ -3,7 +3,6 @@ import { capitalize } from 'lodash';
 import VisitSite from 'calypso/blocks/visit-site';
 import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
-import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { getPluginTitle } from 'calypso/lib/login';
 import {
@@ -65,7 +64,6 @@ export function getHeaderText(
 	twoFactorEnabled: boolean,
 	currentQuery: Record< string, string >,
 	translate: ( arg0: string, arg1?: object ) => TranslateResult,
-	showContinueAsUser: boolean = false,
 	twoStepNonce: string | null = null
 ): TranslateResult {
 	let headerText = translate( 'Log in to your account' );
@@ -83,14 +81,6 @@ export function getHeaderText(
 		} else if ( isJetpack ) {
 			clientName = 'Jetpack';
 		} else if ( isWCCOM ) {
-			if ( twoFactorEnabled ) {
-				headerText = translate( 'Authenticate your login' );
-			} else if ( currentQuery.lostpassword_flow ) {
-				headerText = translate( 'Log in to your account' );
-			} else if ( showContinueAsUser ) {
-				headerText = translate( 'Log in to your account' );
-			}
-
 			headerText = translate( 'Log in to Woo with WordPress.com' );
 		}
 
@@ -218,7 +208,6 @@ export function LoginHeader( {
 		twoFactorEnabled,
 		currentQuery,
 		translate,
-		showContinueAsUser,
 		twoStepNonce
 	);
 
@@ -256,59 +245,6 @@ export function LoginHeader( {
 			);
 		}
 	} else if ( oauth2Client ) {
-		if ( isWCCOM ) {
-			if ( wccomFrom === 'cart' ) {
-				preHeader = <WooCommerceConnectCartHeader />;
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate(
-							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
-						) }
-					</p>
-				);
-			} else if ( twoFactorEnabled ) {
-				header = <h3>{ headerText }</h3>;
-			} else if ( currentQuery.lostpassword_flow ) {
-				header = <h3>{ headerText }</h3>;
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate(
-							"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
-						) }
-					</p>
-				);
-			} else if ( showContinueAsUser ) {
-				header = <h3>{ headerText }</h3>;
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ wccomFrom === 'nux'
-							? translate( "First, select the account you'd like to use." )
-							: translate( "Select the account you'd like to use." ) }
-					</p>
-				);
-			} else {
-				header = <h3>{ headerText }</h3>;
-				const poweredByWpCom = (
-					<>
-						{ translate( 'Log in with your WordPress.com account.' ) }{ ' ' }
-						<br className="hide-on-desktop" />
-					</>
-				);
-
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ poweredByWpCom }
-						{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
-							components: {
-								signupLink,
-								br: <br />,
-							},
-						} ) }
-					</p>
-				);
-			}
-		}
-
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				preHeader = (
