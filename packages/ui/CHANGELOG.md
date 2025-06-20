@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Enhancements
+
+- `Bundling`: Expose each component build separately to allow importing individual components. ([#104334](https://github.com/Automattic/wp-calypso/pull/104334)).
+
 ### Bug Fixes
 
 - I18n: Replace `@wordpress/react-i18n` with `@wordpress/i18n` package to avoid missing dependency issue when used in WordPress ([#104325](https://github.com/Automattic/wp-calypso/pull/104325)).
