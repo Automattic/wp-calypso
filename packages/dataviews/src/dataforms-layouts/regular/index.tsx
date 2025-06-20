@@ -124,10 +124,19 @@ export default function FormRegularField< Item >( {
 	return (
 		<div className="dataforms-layouts-regular__field">
 			{ fieldDefinition.Edit === false ? (
-				<fieldDefinition.render
-					item={ data }
-					field={ fieldDefinition }
-				/>
+				<>
+					{ ! hideLabelFromVision && labelPosition !== 'none' && (
+						<div className="dataforms-layouts-regular__field-label">
+							{ fieldDefinition.label }
+						</div>
+					) }
+					<div className="dataforms-layouts-regular__field-control">
+						<fieldDefinition.render
+							item={ data }
+							field={ fieldDefinition }
+						/>
+					</div>
+				</>
 			) : (
 				<fieldDefinition.Edit
 					data={ data }
