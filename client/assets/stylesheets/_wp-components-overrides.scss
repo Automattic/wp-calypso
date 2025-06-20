@@ -44,9 +44,17 @@
 	--wp-components-color-accent: var(--color-accent);
 }
 
-/* Jetpack */
-.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
-	.components-button:not(.is-destructive) {
+/*
+ * Jetpack
+ * --------------------------------------------------------------------------------
+ * Note: The increased specificity here overrides the is-link button styles
+ * added by Stepper and other components. It is not always the desired behavior.
+ * In login, we want to use the Jetpack green color for buttons, but not for links.
+ * We therefore apply :not(.is-link) to avoid overriding the is-link styles.
+ * --------------------------------------------------------------------------------
+ */
+.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+	.components-button:not(.is-link):not(.is-destructive) {
 		--wp-components-color-accent: var(--studio-jetpack-green-50);
 		--wp-components-color-accent-darker-10: var(--studio-jetpack-green-60);
 		--wp-components-color-accent-darker-20: var(--studio-jetpack-green-60);

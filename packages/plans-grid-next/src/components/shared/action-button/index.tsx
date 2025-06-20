@@ -81,7 +81,7 @@ const ActionButton = ( {
 	);
 
 	const {
-		primary: { callback, text, status, variant },
+		primary: { callback, text, status, variant, ariaLabel },
 		postButtonText,
 	} = useAction( {
 		availableForPurchase,
@@ -132,6 +132,7 @@ const ActionButton = ( {
 			busy={ busy }
 			disabled={ ! callback || 'disabled' === status }
 			classes={ variant === 'secondary' ? 'is-secondary' : '' }
+			ariaLabel={ String( ariaLabel || '' ) }
 		>
 			{ text }
 		</PlanButton>
@@ -160,6 +161,7 @@ const ActionButton = ( {
 					classes="is-storage-upgradeable"
 					href={ storageAddOnCheckoutHref }
 					busy={ busy }
+					ariaLabel={ translate( 'Upgrade storage for this plan' ).toString() }
 				>
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
@@ -172,7 +174,13 @@ const ActionButton = ( {
 						{ freeTrialText }
 					</PlanButton>
 					{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-						<PlanButton planSlug={ planSlug } onClick={ callback } busy={ busy } borderless>
+						<PlanButton
+							planSlug={ planSlug }
+							onClick={ callback }
+							busy={ busy }
+							borderless
+							ariaLabel={ String( ariaLabel || '' ) }
+						>
 							{ text }
 						</PlanButton>
 					) }
@@ -185,6 +193,7 @@ const ActionButton = ( {
 						busy={ busy }
 						onClick={ callback }
 						current={ current }
+						ariaLabel={ String( ariaLabel || '' ) }
 					>
 						{ text }
 					</PlanButton>
