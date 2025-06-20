@@ -30,9 +30,14 @@ const UniversalNavbarHeader = ( {
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
-				// Remove focus from the currently focused element to close any open dropdown
-				if ( document.activeElement instanceof HTMLElement ) {
-					document.activeElement.blur();
+				const activeElement = document.activeElement;
+				if (
+					activeElement &&
+					activeElement.closest( '[role="menu"], .x-dropdown-content, .x-menu' )
+				) {
+					if ( activeElement instanceof HTMLElement ) {
+						activeElement.blur();
+					}
 				}
 			}
 		};
