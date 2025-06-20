@@ -158,7 +158,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
-						path="/odie/:interactionId?"
+						path="/odie"
 						element={
 							<HelpCenterChat
 								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }

@@ -78,7 +78,7 @@ export const HelpCenterSupportChatMessage = ( {
 
 	return (
 		<Link
-			to={ `/odie/${ supportInteraction?.uuid }` }
+			to="/odie"
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
 				setCurrentSupportInteraction( supportInteraction );
