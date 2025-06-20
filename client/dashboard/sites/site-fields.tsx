@@ -7,7 +7,7 @@ import type { Site } from '../data/types';
 
 export function Uptime( { site }: { site: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site.jetpack_modules?.includes( 'monitor' );
+	const isEligible = !! site.jetpack_modules?.includes( 'monitor' );
 
 	const { data: uptime, isLoading } = useQuery( {
 		...siteUptimeQuery( site.ID, 'week' ),
