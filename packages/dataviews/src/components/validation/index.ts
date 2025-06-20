@@ -1,1 +1,1 @@
-export { normalizeRules } from './utils';
+export { normalizeIsValid } from './utils';

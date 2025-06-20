@@ -35,8 +35,6 @@ const DataFormWithValidation = ( {
 }: {
 	type: 'regular' | 'panel';
 	labelPosition: 'top' | 'side' | 'none';
-	minLength: number;
-	maxLength: number;
 } ) => {
 	const [ post, setPost ] = useState< FormData >( initialData );
 

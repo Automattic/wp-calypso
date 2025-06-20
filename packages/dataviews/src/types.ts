@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ReactElement, ComponentType, ComponentProps } from 'react';
+import type { ComponentProps, ComponentType, ReactElement } from 'react';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import type { SetSelection } from './private-types';
  * WordPress dependencies
  */
 import type { useFocusOnMount } from '@wordpress/compose';
-import { NormalizedRule, Rules } from './components/validation/types';
+import { NormalizedIsValid, Rules } from './components/validation/types';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -111,7 +111,7 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to validate the field.
 	 */
-	isValid:
+	isValid?:
 		| ( ( item: Item, context?: ValidationContext ) => boolean )
 		| Rules< Item >;
 
@@ -239,7 +239,8 @@ export type NormalizedField< Item > = Omit<
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
 	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
-	isValid: NormalizedRule< Item > | undefined;
+	isValid: NormalizedIsValid< Item >;
+	getValidationErrors: ( item: Item ) => Array< string >;
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;

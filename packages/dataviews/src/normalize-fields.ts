@@ -6,23 +6,22 @@ import type { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { createGetValidationErrors } from './components/validation/utils';
+import {
+	ALL_OPERATORS,
+	OPERATOR_BETWEEN,
+	SINGLE_SELECTION_OPERATORS,
+} from './constants';
+import { getControl } from './dataform-controls';
 import getFieldTypeDefinition from './field-types';
 import type {
 	DataViewRenderFieldProps,
 	Field,
 	FieldTypeDefinition,
-	NormalizedFilterByConfig,
 	NormalizedField,
+	NormalizedFilterByConfig,
 } from './types';
-import { getControl } from './dataform-controls';
-import {
-	ALL_OPERATORS,
-	OPERATOR_BETWEEN,
-	OPERATOR_IS_ANY,
-	OPERATOR_IS_NONE,
-	SINGLE_SELECTION_OPERATORS,
-} from './constants';
-import { normalizeRules } from './components/validation/utils';
+import { normalizeIsValid } from './components/validation';
 
 const getValueFromId =
 	( id: string ) =>
@@ -142,9 +141,14 @@ export function normalizeFields< Item >(
 				);
 			};
 
-		const normalizedIsValid = normalizeRules< Item >(
+		const normalizedIsValid = normalizeIsValid< Item >(
 			field.isValid ?? fieldTypeDefinition.isValid,
-			field.id
+			getValue
+		);
+
+		const getValidationErrors = createGetValidationErrors(
+			field,
+			getValue
 		);
 
 		const Edit = getControl( field, fieldTypeDefinition );
@@ -172,6 +176,7 @@ export function normalizeFields< Item >(
 			render,
 			sort,
 			isValid: normalizedIsValid,
+			getValidationErrors,
 			Edit,
 			enableHiding: field.enableHiding ?? true,
 			enableSorting:

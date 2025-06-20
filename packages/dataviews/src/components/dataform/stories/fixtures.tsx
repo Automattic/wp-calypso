@@ -41,7 +41,7 @@ export const getFields = (): Field< FormData >[] => [
 				customValidator={ () => {
 					return field?.isValid?.( data )
 						? undefined
-						: 'Name must be longer than 5 characters';
+						: 'Name must be longer than 2 characters';
 				} }
 			/>
 		),
@@ -59,12 +59,8 @@ export const getFields = (): Field< FormData >[] => [
 				value={ field.getValue( { item: data } ) }
 				onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
 				customValidator={ () => {
-					const isValid = field?.isValid?.( data );
-					if ( typeof isValid === 'string' ) {
-						return isValid;
-					}
-
-					return undefined;
+					const errors = field.getValidationErrors( data );
+					return errors.length > 0 ? errors[ 0 ] : undefined;
 				} }
 			/>
 		),
@@ -84,13 +80,9 @@ export const getFields = (): Field< FormData >[] => [
 					onChange( { [ field.id ]: value } )
 				}
 				customValidator={ () => {
-					const isValid = field?.isValid?.( data );
+					const isValid = field.isValid( data );
 
-					if ( typeof isValid === 'boolean' ) {
-						return isValid ? undefined : 'Email is not valid';
-					}
-
-					return isValid;
+					return isValid ? undefined : 'Email is not valid';
 				} }
 				type="email"
 			/>
