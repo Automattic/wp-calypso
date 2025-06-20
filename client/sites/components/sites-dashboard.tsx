@@ -90,12 +90,21 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
-const getSiteVisibility = ( statusSlug?: string, search?: string, isRestoringAccount = false ) => {
+const getSiteVisibility = (
+	// By default only 'visible' sites are fetched.
+	// Depending upon the context, a wider set of sites can be fetched instead.
+	// Fetch all sites if a search keyword is entered, if including p2s regardless
+	// of their visibility (e.g. on the p2s list) or if restoring an account.
+	statusSlug?: string,
+	search?: string,
+	isRestoringAccount = false,
+	includeA8CSites = false
+) => {
 	if ( statusSlug === 'deleted' ) {
 		return 'deleted';
 	}
 
-	return search || isRestoringAccount ? 'all' : 'visible';
+	return search || isRestoringAccount || includeA8CSites ? 'all' : 'visible';
 };
 
 export function showSitesPage( route: string, openInNewTab = false ) {
@@ -277,12 +286,18 @@ const SitesDashboard = ( {
 			?.slug as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
+	const hasA8CSitesFilter =
+		dataViewsState.filters?.some(
+			( { field, operator, value } ) => field === 'is_a8c' && operator === 'is' && value === true
+		) ?? false;
+
+	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
+
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		sitesFilterCallback,
-		// We don't want to show the deleted sites by default, so we fetch deleted sites only if a search
-		// keyword is entered, a status filter is applied, or the account is currently restoring.
-		getSiteVisibility( statusSlug, search, isRestoringAccount() ),
+		// By default only 'visible' sites are fetched
+		getSiteVisibility( statusSlug, search, isRestoringAccount(), includeA8CSites ),
 		[ 'is_a4a_dev_site', 'site_migration' ],
 		[ 'theme_slug' ],
 		// Don't fetch sites on narrow screens since it's not visible.
@@ -304,13 +319,6 @@ const SitesDashboard = ( {
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
-
-	const hasA8CSitesFilter =
-		dataViewsState.filters?.some(
-			( { field, operator, value } ) => field === 'is_a8c' && operator === 'is' && value === true
-		) ?? false;
-
-	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
 
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
