@@ -152,8 +152,8 @@ const LayoutLoggedOut = ( {
 
 	let masterbar = null;
 
+	// TODO: figure out how refreshColorScheme is used in the rest of the app, and remove this.
 	useEffect( () => {
-		// TODO: remove this useEffect when login pages are unified.
 		isWooJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
 
@@ -375,7 +375,11 @@ export default withCurrentRoute(
 				isInStepContainerV2FlowContext( currentRoute, currentQuery );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
-			// TODO: remove isWooJPC check.
+			/**
+			 * This is a mechanism to set a color scheme for WooJPC pages, from the current URL.
+			 *
+			 * TODO: there is a possiblity this is not utilized. If that's the case, we can remove this call.
+			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
 			return {
