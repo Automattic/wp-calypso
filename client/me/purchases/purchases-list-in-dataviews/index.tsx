@@ -64,7 +64,7 @@ export interface PurchasesListConnectedProps {
 	isUserBlocked: boolean;
 	availableSessions: number[];
 	siteId: number | null;
-	userId?: number;
+	userId?: number | null;
 }
 
 function MembershipSubscriptions( {
@@ -98,7 +98,7 @@ const PurchasesListDataView: React.FC<
 		data: transferredOwnershipPurchases = [],
 		isLoading,
 		isSuccess: hasLoadedTransferredOwnershipPurchases,
-	} = useGetJetpackTransferredLicensePurchases( { userId } );
+	} = useGetJetpackTransferredLicensePurchases( { userId: userId || undefined } );
 
 	const isDataLoading = useCallback( () => {
 		if (
