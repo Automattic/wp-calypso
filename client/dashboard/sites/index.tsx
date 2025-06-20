@@ -111,9 +111,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 				return label;
 			}
 
-			return (
-				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
-			);
+			return <UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>;
 		},
 	},
 	{
@@ -334,7 +332,7 @@ export default function Sites() {
 	);
 }
 
-function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+function UnlaunchedStatusLink( { href, children }: { href: string; children: React.ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
@@ -345,7 +343,14 @@ function ComingSoonStatusButton( { href, children }: { href: string; children: R
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
 				} }
-				style={ { position: 'absolute' } }
+				style={ {
+					display: 'inline-block',
+					maxWidth: 'calc(100% - 4px)',
+					margin: '0 2px',
+					overflow: 'hidden',
+					whiteSpace: 'nowrap',
+					textOverflow: 'ellipsis',
+				} }
 			>
 				{ children }
 			</ExternalLink>
