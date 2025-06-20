@@ -55,6 +55,7 @@ class SegmentedControlItem extends Component {
 					role="radio"
 					tabIndex={ 0 }
 					aria-checked={ this.props.selected }
+					aria-disabled={ this.props.disabled }
 					onKeyDown={ this.handleKeyEvent }
 				>
 					<span className="segmented-control__text">{ this.props.children }</span>
