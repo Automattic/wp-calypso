@@ -115,12 +115,6 @@
 		}
 	}
 
-	#content.layout__content {
-		@include break-mobile {
-			padding-top: 10rem;
-		}
-	}
-
 	.magic-login__link-expired {
 		padding-inline: 1rem;
 		padding-top: 0;
