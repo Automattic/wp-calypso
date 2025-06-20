@@ -31,7 +31,7 @@ $callout-template-colors: (
 	isolation: isolate;
 	box-sizing: border-box;
 	margin: 20px 0;
-	padding: 25px 25px 15px;
+	padding: 25px 25px 20px;
 	border-left: 6px solid;
 	border-radius: 4px;
 	background-color: #fefefe;
@@ -50,16 +50,15 @@ $callout-template-colors: (
  * Includes styles for the WordPress block wrapper.
  */
 .o2-blocks-callout [data-type="a8c/callout-icon"] {
-	display: inline-block !important;
-	vertical-align: top;
+	display: inline-block;
+	vertical-align: middle;
 	width: 2em;
 	height: 2em;
-	margin: 0 6px 0 0;
 }
 
 .o2-blocks-callout .o2-blocks-callout__icon {
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: middle;
 	text-align: center;
 	min-height: unset;
 	box-sizing: border-box;
@@ -96,21 +95,19 @@ $callout-template-colors: (
  * Includes styles for the WordPress block wrapper.
  */
 .o2-blocks-callout [data-type="a8c/callout-header"] {
-	display: inline-block !important;
-	vertical-align: top;
-	width: calc(100% - 2em - 12px - 0.4em);
-	margin: 6px 0 0 6px;
+	display: inline-block;
+	vertical-align: middle;
+	width: calc(100% - 2em - 0.4em - 12px );
 }
 
 .o2-blocks-callout .o2-blocks-callout__header {
 	display: inline-block;
-	vertical-align: top;
-	min-height: 2em;
-	width: 100%;
-	margin: 0;
+	vertical-align: middle;
+	line-height: revert;
+	width: calc(100% - 2em - 0.4em - 18px );
+	margin: 0 0 0 12px;
 	padding: 0;
 	font-weight: 600;
-	line-height: 1.4;
 	transition: color 0s ease-in-out, border-color 0s ease-in-out;
 }
 
