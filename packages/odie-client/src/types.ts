@@ -169,6 +169,10 @@ export type Message = {
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
 
+export type RPCPayload = {
+	data: ReturnedChat;
+};
+
 export type ReturnedChat = {
 	chat_id: number;
 	messages: Message[];

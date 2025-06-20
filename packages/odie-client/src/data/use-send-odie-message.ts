@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -5,6 +6,8 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	ODIE_RATE_LIMIT_MESSAGE,
 	ODIE_EMAIL_FALLBACK_MESSAGE,
@@ -15,6 +18,8 @@ import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
+
+const BASE_URL = '/odie';
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
 	selectedSiteId: number | null | undefined,
@@ -44,7 +49,12 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  * If the chat_id is not set, it will create a new chat and send a message to the chat.
  * @returns useMutation return object.
  */
-export const useSendOdieMessage = () => {
+export const useSendOdieMessage = ( api_version: string | null = '2' ) => {
+	// QUICK FIX TODO: Remove this or improve it later.
+	const user = useSelector( getCurrentUser ) as unknown as { ID: number | null } | null;
+
+	const userId = user?.ID ?? null;
+
 	const { currentSupportInteraction, odieId } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		const currentSupportInteraction = store.getCurrentSupportInteraction();
@@ -140,13 +150,15 @@ export const useSendOdieMessage = () => {
 		} ) );
 	};
 
-	return useMutation< ReturnedChat, Error, Message >( {
-		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
-			const chatIdSegment = odieId ? `/${ odieId }` : '';
+	const fetchOdieMessage = async ( message: Message ): Promise< ReturnedChat > => {
+		const chatIdSegment = odieId ? `/${ odieId }` : '';
+
+		// Version 1 (default): current behavior
+		if ( ! api_version || api_version === '1' ) {
 			return canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'POST',
-						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+						path: `${ BASE_URL }/chat/${ botNameSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
 						body: {
 							message: message.content,
@@ -155,7 +167,7 @@ export const useSendOdieMessage = () => {
 						},
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+						path: `/help-center${ BASE_URL }/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
 						data: {
 							message: message.content,
@@ -163,7 +175,72 @@ export const useSendOdieMessage = () => {
 							context: { selectedSiteId },
 						},
 				  } );
-		},
+		}
+
+		// Version 2: ai/gent endpoint, all params in body, user_id: '0'
+		if ( api_version === '2' ) {
+			const rpcPayload = {
+				jsonrpc: '2.0',
+				id: String( Date.now() ),
+				method: 'tasks/send',
+				params: {
+					message: {
+						role: 'user',
+						parts: [
+							{
+								type: 'text',
+								text: message.content,
+							},
+						],
+					},
+					constructor_arguments: {
+						chat_id: odieId || undefined,
+						message: message.content,
+						agent_version: version ?? null,
+						blog_id: selectedSiteId,
+						user_id: userId || 0,
+						agent_slug: botNameSlug,
+					},
+				},
+			};
+
+			const response = canAccessWpcomApis()
+				? await wpcomRequest( {
+						method: 'POST',
+						path: '/ai/agent/configurable',
+						apiNamespace: 'wpcom/v2',
+						body: rpcPayload,
+				  } )
+				: await apiFetch( {
+						path: '/help-center/ai/agent/configurable',
+						method: 'POST',
+						data: rpcPayload,
+				  } );
+
+			const responseTyped = response as {
+				result: {
+					status: {
+						message: {
+							parts: Array< {
+								data: ReturnedChat;
+							} >;
+						};
+					};
+				};
+			};
+
+			// Adapt to new response structure
+			const data = responseTyped?.result?.status?.message?.parts?.[ 0 ]?.data;
+
+			return data;
+		}
+
+		// Default fallback
+		return Promise.reject( new Error( `Unknown version: ${ version }` ) );
+	};
+
+	return useMutation< ReturnedChat, Error, Message >( {
+		mutationFn: fetchOdieMessage,
 		onMutate: () => {
 			setChatStatus( 'sending' );
 		},
