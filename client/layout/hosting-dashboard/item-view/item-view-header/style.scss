@@ -1,12 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/components/src/styles/typography';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 $blueberry-color: #3858e9;
 
 .hosting-dashboard-item-view__header {
-
 	.hosting-dashboard-item-view__header-content {
 		.hosting-dashboard-item-view__header-info {
 			display: flex;
@@ -28,7 +27,7 @@ $blueberry-color: #3858e9;
 				display: flex;
 				gap: 16px;
 				font-family: $font-sf-pro-text;
-				font-size: rem(14px);
+				font-size: rem( 14px );
 				color: #101517;
 				letter-spacing: -0.15px;
 
@@ -38,6 +37,14 @@ $blueberry-color: #3858e9;
 					padding: 0;
 					height: auto;
 					text-transform: capitalize;
+				}
+			}
+
+			.hosting-dashboard-item-view__header-add-staging {
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: none;
 				}
 			}
 		}
@@ -62,7 +69,7 @@ $blueberry-color: #3858e9;
 		margin-inline-end: 12px;
 	}
 
-	@media (min-width: $break-large) {
+	@media ( min-width: $break-large ) {
 		.hosting-dashboard-item-view__header-favicon {
 			margin-inline-end: 24px;
 			position: relative;
@@ -80,23 +87,22 @@ $blueberry-color: #3858e9;
 
 				.hosting-dashboard-item-view__header-title {
 					@include heading-2x-large;
-					color: var(--color-text-black);
+					color: var( --color-text-black );
 					padding: 4px 0;
 				}
 
 				.hosting-dashboard-item-view__header-summary {
-
 					.hosting-dashboard-item-view__header-summary-link {
 						display: flex;
 						gap: 2px;
 						align-items: center;
 						@include body-large;
-						color: var(--color-accent-70);
+						color: var( --color-accent-70 );
 						width: fit-content;
 						text-decoration: none;
 
 						&:hover {
-							color: var(--color-link-dark);
+							color: var( --color-link-dark );
 							text-decoration: underline;
 						}
 
@@ -110,7 +116,7 @@ $blueberry-color: #3858e9;
 		}
 	}
 
-	@media (max-width: $break-large) {
+	@media ( max-width: $break-large ) {
 		display: flex;
 		padding: 24px 24px 8px;
 
@@ -125,17 +131,16 @@ $blueberry-color: #3858e9;
 
 				.hosting-dashboard-item-view__header-title {
 					@include heading-medium;
-					color: var(--color-text-black);
+					color: var( --color-text-black );
 					padding: 6px 0 4px 0;
 				}
 
 				.hosting-dashboard-item-view__header-summary {
-
 					.hosting-dashboard-item-view__header-summary-link {
 						display: flex;
 						align-items: center;
 						@include body-medium;
-						color: var(--color-accent-70);
+						color: var( --color-accent-70 );
 						width: fit-content;
 						text-decoration: none;
 
@@ -144,7 +149,6 @@ $blueberry-color: #3858e9;
 						}
 					}
 				}
-
 			}
 		}
 	}

@@ -336,6 +336,105 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,
 	},
+	'stats-authors': {
+		link: 'https://wordpress.com/support/stats/analyze-content-performance/#check-author-performance',
+		post_id: 404034,
+	},
+	'stats-authors-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#authors',
+	},
+	'stats-clicks': {
+		link: 'https://wordpress.com/support/stats/analyze-content-performance/#analyze-clicks',
+		post_id: 404034,
+	},
+	'stats-clicks-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#clicks',
+	},
+	'stats-comments': {
+		link: 'https://wordpress.com/support/stats/learn-insights-about-your-website/',
+		post_id: 276101,
+	},
+	'stats-comments-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/insights-dashboard/#comments',
+	},
+	'stats-countries': {
+		link: 'https://wordpress.com/support/stats/understand-your-sites-traffic/#countries',
+		post_id: 276080,
+	},
+	'stats-countries-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#countries',
+	},
+	'stats-devices': {
+		link: 'https://wordpress.com/support/stats/audience-insights/#devices',
+		post_id: 404413,
+	},
+	'stats-devices-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#devices-stats',
+	},
+	'stats-downloads': {
+		link: 'https://wordpress.com/support/stats/analyze-content-performance/#track-file-downloads',
+		post_id: 404034,
+	},
+	'stats-emails': {
+		link: 'https://wordpress.com/support/stats/view-subscriber-stats/#email-opens-and-clicks',
+		post_id: 404454,
+	},
+	'stats-emails-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/subscribers-stats/#emails-section',
+	},
+	'stats-search-terms': {
+		link: 'https://wordpress.com/support/stats/understand-traffic-sources/#analyze-search-terms',
+		post_id: 404387,
+	},
+	'stats-search-terms-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#search-terms',
+	},
+	'stats-locations': {
+		link: 'https://wordpress.com/support/stats/audience-insights/#locations',
+		post_id: 404413,
+	},
+	'stats-locations-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#views-by-locations',
+	},
+	'stats-referrers': {
+		link: 'https://wordpress.com/support/stats/understand-traffic-sources/#identify-referrers',
+		post_id: 404387,
+	},
+	'stats-referrers-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#referrers',
+	},
+	'stats-tags': {
+		link: 'https://wordpress.com/support/stats/learn-insights-about-your-website/#all-time-insights',
+		post_id: 276101,
+	},
+	'stats-tags-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/insights-dashboard/#tags-categories',
+	},
+	'stats-top-posts-and-pages-analyze-content-performance': {
+		link: 'https://wordpress.com/support/stats/analyze-content-performance/#view-posts-pages-traffic',
+		post_id: 404034,
+	},
+	'stats-top-posts-and-pages-analyze-content-performance-jetpack': {
+		link: `https://jetpack.com/support/jetpack-stats/traffic-dashboard/#analyzing-popular-posts-and-pages`,
+	},
+	'stats-posts-amp-pages': {
+		link: 'https://wordpress.com/support/stats/understand-your-sites-traffic/',
+		post_id: 276080,
+	},
+	'stats-utm': {
+		link: 'https://wordpress.com/support/stats/understand-traffic-sources/#use-utm-parameters',
+		post_id: 404387,
+	},
+	'stats-utm-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/#harnessing-utm-stats-for-precision-tracking',
+	},
+	'stats-videos': {
+		link: 'https://wordpress.com/support/stats/analyze-content-performance/#see-video-traffic',
+		post_id: 404034,
+	},
+	'stats-videos-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-videopress/add-video-block-editor/video-stats/',
+	},
 	'subscribe-block': {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/',
 		post_id: 170164,

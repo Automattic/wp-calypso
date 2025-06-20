@@ -1,6 +1,6 @@
 import { PLAN_FREE, getPlan } from '@automattic/calypso-products';
 import { useEffect } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, getLocaleData } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -35,6 +35,11 @@ export const usePurchasePlanNotification = (
 		}
 
 		const plan = getPlan( sitePlanSlug );
+		// Only display the notification after translation data has been loaded
+		const localeSlug = getLocaleData()[ '' ].localeSlug;
+		if ( ! localeSlug ) {
+			return;
+		}
 
 		dispatch(
 			successNotice(

@@ -4,7 +4,7 @@ type ShouldUseMagicCodeProps = {
 	/**
 	 * Whether the login is for a Jetpack site.
 	 */
-	isJetpack: boolean;
+	isJetpack?: boolean;
 };
 
 /**
