@@ -11,6 +11,7 @@
 - Hide the label in input widgets to prevent duplicate labels in the filter UI.
 - Add new filter operator: `between`.
 - Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
+- Fix the background color of the action column if the row is selected
 
 ## 0.2.1
 
