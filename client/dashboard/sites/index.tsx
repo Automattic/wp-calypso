@@ -4,7 +4,6 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, Modal, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
@@ -17,7 +16,7 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
-import { EngagementStat, Uptime, PHPVersion, MediaStorage } from './site-fields';
+import { EngagementStat, LastBackup, Uptime, PHPVersion, MediaStorage } from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -79,23 +78,9 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Subscribers' ),
 	},
 	{
-		id: 'backups',
-		type: 'boolean',
-		label: __( 'Backups' ),
-		getValue: ( { item } ) => !! item.plan?.features?.active?.includes( 'backups' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		render: ( { item } ) =>
-			item.plan?.features?.active?.includes( 'backups' ) ? (
-				<Icon icon={ check } />
-			) : (
-				__( 'Disabled' )
-			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
+		id: 'backup',
+		label: __( 'Backup' ),
+		render: ( { item } ) => <LastBackup site={ item } />,
 	},
 	{
 		id: 'status',
@@ -212,7 +197,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect', 'wp_version' ],
+		fields: [ 'status', 'visitors', 'subscribers_count', 'wp_version' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},

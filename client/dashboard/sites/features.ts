@@ -3,6 +3,7 @@ import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
 import type { Site, User } from '../data/types';
 
 export const HostingFeatures = {
+	BACKUPS: DotcomFeatures.BACKUPS,
 	PHP: DotcomFeatures.SFTP,
 	SFTP: DotcomFeatures.SFTP,
 	SSH: DotcomFeatures.SSH,
