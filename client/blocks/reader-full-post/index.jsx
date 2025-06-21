@@ -48,6 +48,7 @@ import {
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
 import { showSelectedPost } from 'calypso/reader/utils';
+import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { userCan } from 'calypso/state/posts/utils';
@@ -96,6 +97,7 @@ export class FullPostView extends Component {
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		isAutomattician: PropTypes.bool,
+		commentsApiDisabled: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -612,6 +614,7 @@ export class FullPostView extends Component {
 			postId,
 			hasOrganization,
 			isWPForTeamsItem,
+			commentsApiDisabled,
 		} = this.props;
 
 		if ( post.is_error ) {
@@ -808,7 +811,7 @@ export class FullPostView extends Component {
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ shouldShowComments( post ) && (
+								{ ! commentsApiDisabled && shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow
 										post={ post }
@@ -898,6 +901,7 @@ export default connect(
 			currentPath,
 			referralStream: getPreviousPath( state ),
 			previousRoute: getPreviousRoute( state ),
+			commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
 		};
 
 		if ( ! isExternal && siteId ) {

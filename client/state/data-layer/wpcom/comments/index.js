@@ -11,7 +11,7 @@ import {
 	COMMENTS_EMPTY,
 	COMMENTS_EMPTY_SUCCESS,
 } from 'calypso/state/action-types';
-import { requestCommentsList } from 'calypso/state/comments/actions';
+import { requestCommentsList, setCommentsApiDisabled } from 'calypso/state/comments/actions';
 import {
 	getPostOldestCommentDate,
 	getPostNewestCommentDate,
@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/comments/selectors';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
@@ -75,6 +76,7 @@ export const fetchPostComments = ( action ) => ( dispatch, getState ) => {
 					before,
 					offset,
 				} ),
+				retryPolicy: noRetry(),
 			},
 			action
 		)
@@ -113,17 +115,27 @@ export const addComments = ( action, { comments, found } ) => {
 };
 
 export const announceFailure =
-	( { siteId, postId } ) =>
+	( { siteId, postId }, error ) =>
 	( dispatch, getState ) => {
+		// Return early if API calls are disabled
+		if (
+			error?.name === 'UnauthorizedError' &&
+			error?.message === 'API calls to this blog have been disabled.' &&
+			error?.status === 403
+		) {
+			dispatch( setCommentsApiDisabled( siteId ) );
+			return;
+		}
+
 		const post = getSitePost( getState(), siteId, postId );
 		const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
-		const error = postTitle
-			? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
+		const errorMessage = postTitle
+			? translate( 'Could not retrieve comments for "%(postTitle)s"', { args: { postTitle } } )
 			: translate( 'Could not retrieve comments for post' );
 
 		const environment = config( 'env_id' );
 		if ( environment === 'development' ) {
-			dispatch( errorNotice( error, { duration: 5000 } ) );
+			dispatch( errorNotice( errorMessage, { duration: 5000 } ) );
 		}
 	};
 

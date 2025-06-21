@@ -16,6 +16,7 @@ import {
 	COMMENTS_TOGGLE_INLINE_EXPANDED,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
+	COMMENTS_API_DISABLED,
 } from 'calypso/state/action-types';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
@@ -376,4 +377,14 @@ export const toggleInlineCommentsExpanded = ( { siteId, postId, streamKey } ) =>
 		postId,
 		streamKey,
 	},
+} );
+
+/**
+ * Creates an action that sets comments API disabled state for a site
+ * @param {number} siteId Site identifier
+ * @returns {Object} Action that sets comments API disabled state
+ */
+export const setCommentsApiDisabled = ( siteId ) => ( {
+	type: COMMENTS_API_DISABLED,
+	siteId,
 } );
