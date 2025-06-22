@@ -107,11 +107,13 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		},
 		render: ( { item } ) => {
 			const label = getSiteStatusLabel( item );
-			if ( item.launch_status !== 'unlaunched' ) {
-				return label;
+			if ( item.launch_status === 'unlaunched' && ! item.is_deleted ) {
+				return (
+					<UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>
+				);
 			}
 
-			return <UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>;
+			return label;
 		},
 	},
 	{
