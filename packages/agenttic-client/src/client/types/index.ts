@@ -108,6 +108,8 @@ export interface Message {
 	role: 'user' | 'agent';
 	parts: Part[];
 	metadata?: Record< string, unknown >;
+	id?: string; // TODO: this should be messageId according to the spec but we need to update API before we can change this.
+	kind?: 'message'; // Optional for backwards compatibility
 }
 
 export interface TaskStatus {
@@ -233,7 +235,12 @@ export interface ToolExecutionResult {
 
 export interface ToolProvider {
 	getAvailableTools(): Promise< Tool[] >;
-	executeTool( toolId: string, args: any ): Promise< any | ToolExecutionResult >;
+	executeTool(
+		toolId: string,
+		args: any,
+		messageId?: string,
+		toolCallId?: string
+	): Promise< any | ToolExecutionResult >;
 }
 
 export interface ToolCallResult {

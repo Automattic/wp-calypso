@@ -36,10 +36,12 @@ const DEFAULT_TIMEOUT = 120000;
  * Execute a batch of tool calls and return their results
  * @param toolCalls
  * @param toolProvider
+ * @param messageId
  */
 async function executeToolCallBatch(
 	toolCalls: ToolCallDataPart[],
-	toolProvider: any
+	toolProvider: any,
+	messageId?: string
 ): Promise< {
 	results: ToolResultDataPart[];
 	shouldReturnToAgent: boolean;
@@ -55,7 +57,9 @@ async function executeToolCallBatch(
 		try {
 			const executionResult = await toolProvider.executeTool(
 				toolId as string,
-				args
+				args,
+				messageId,
+				toolCallId as string 
 			);
 			const { result, returnToAgent, agentMessage } =
 				processToolExecutionResult( executionResult );
@@ -513,7 +517,9 @@ export function createClient( config: ClientConfig ): Client {
 							try {
 								const executionResult = await toolProvider.executeTool(
 									toolId as string,
-									args
+									args,
+									update.status?.message?.id, // TODO: this should be messageId according to the spec but we need to update API before we can change this.
+									toolCallId as string 
 								);
 								const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
 
@@ -640,7 +646,8 @@ export function createClient( config: ClientConfig ): Client {
 										shouldReturnToAgent: moreShouldReturn,
 									} = await executeToolCallBatch(
 										continuedToolCalls,
-										toolProvider
+										toolProvider,
+										finalTask.status?.message?.id // TODO: this should be messageId according to the spec but we need to update API before we can change this.
 									);
 
 									// Yield an update with the tool results for the UI to capture
