@@ -3,6 +3,7 @@
  */
 import removeAccents from 'remove-accents';
 import { getDate } from '@wordpress/date';
+import { subDays, subWeeks, subMonths, subYears } from 'date-fns';
 /**
  * Internal dependencies
  */
@@ -27,6 +28,8 @@ import {
 	OPERATOR_BETWEEN,
 	OPERATOR_ON,
 	OPERATOR_NOT_ON,
+	OPERATOR_IN_THE_PAST,
+	OPERATOR_OVER,
 } from './constants';
 import { normalizeFields } from './normalize-fields';
 import type { Field, View } from './types';
@@ -36,6 +39,28 @@ function normalizeSearchInput( input = '' ) {
 }
 
 const EMPTY_ARRAY: [] = [];
+
+/**
+ * Calculates a date offset from now.
+ *
+ * @param value Number of units to offset.
+ * @param unit  Unit of time to offset.
+ * @returns     Date offset from now.
+ */
+function getRelativeDate( value: number, unit: string ): Date {
+	switch ( unit ) {
+		case 'days':
+			return subDays( new Date(), value );
+		case 'weeks':
+			return subWeeks( new Date(), value );
+		case 'months':
+			return subMonths( new Date(), value );
+		case 'years':
+			return subYears( new Date(), value );
+		default:
+			return new Date();
+	}
+}
 
 /**
  * Applies the filtering, sorting and pagination to the raw data based on the view configuration.
@@ -306,6 +331,40 @@ export function filterSortAndPaginate< Item >(
 							);
 						}
 						return false;
+					} );
+				} else if (
+					filter.operator === OPERATOR_IN_THE_PAST &&
+					filter.value !== undefined &&
+					filter.value.value !== undefined &&
+					filter.value.unit !== undefined
+				) {
+					const targetDate = getRelativeDate(
+						filter.value.value,
+						filter.value.unit
+					);
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return (
+							fieldValue >= targetDate && fieldValue <= new Date()
+						);
+					} );
+				} else if (
+					filter.operator === OPERATOR_OVER &&
+					filter.value !== undefined &&
+					filter.value.value !== undefined &&
+					filter.value.unit !== undefined
+				) {
+					const targetDate = getRelativeDate(
+						filter.value.value,
+						filter.value.unit
+					);
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = getDate(
+							field.getValue( { item } )
+						);
+						return fieldValue < targetDate;
 					} );
 				}
 			}

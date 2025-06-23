@@ -50,6 +50,8 @@ import {
 	OPERATOR_BETWEEN,
 	OPERATOR_ON,
 	OPERATOR_NOT_ON,
+	OPERATOR_IN_THE_PAST,
+	OPERATOR_OVER,
 } from '../../constants';
 import type {
 	Filter,
@@ -342,6 +344,30 @@ const FilterText = ( {
 			filterTextWrappers
 		);
 	}
+
+	if ( filterInView?.operator === OPERATOR_IN_THE_PAST ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is in the past: 1 days". */
+				__( '<Name>%1$s is in the past: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				`${ activeElements[ 0 ].value.value } ${ activeElements[ 0 ].value.unit }`
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_OVER ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is over: 1 days ago". */
+				__( '<Name>%1$s is over: </Name><Value>%2$s</Value> ago' ),
+				filter.name,
+				`${ activeElements[ 0 ].value.value } ${ activeElements[ 0 ].value.unit }`
+			),
+			filterTextWrappers
+		);
+	}
 	return sprintf(
 		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
 		__( 'Unknown status for %1$s' ),
@@ -388,16 +414,25 @@ function OperatorSelector( {
 											if (
 												_filter.field === filter.field
 											) {
-												// Reset the value only when switching between "between" and any other operator to avoid invalid values.
-												const isSwitchingBetween =
-													currentOperator ===
-														OPERATOR_BETWEEN ||
-													operator ===
-														OPERATOR_BETWEEN;
+												// Reset the value only when switching between operators that have different value types.
+												const OPETATORS_NEED_VALUE_RESET =
+													[
+														OPERATOR_BETWEEN,
+														OPERATOR_IN_THE_PAST,
+														OPERATOR_OVER,
+													];
+												const needValueReset =
+													currentOperator &&
+													( OPETATORS_NEED_VALUE_RESET.includes(
+														currentOperator
+													) ||
+														OPETATORS_NEED_VALUE_RESET.includes(
+															operator
+														) );
 
 												return {
 													..._filter,
-													value: isSwitchingBetween
+													value: needValueReset
 														? undefined
 														: _filter.value,
 													operator,

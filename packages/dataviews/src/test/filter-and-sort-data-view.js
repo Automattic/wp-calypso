@@ -1,3 +1,6 @@
+/** External dependencies */
+import { subDays, subYears } from 'date-fns';
+
 /**
  * Internal dependencies
  */
@@ -5,6 +8,10 @@ import { filterSortAndPaginate } from '../filter-and-sort-data-view';
 import { data, fields } from '../components/dataviews/stories/fixtures';
 
 describe( 'filters', () => {
+	afterAll( () => {
+		jest.useRealTimers();
+	} );
+
 	it( 'should return empty if the data is empty', () => {
 		expect( filterSortAndPaginate( null, {}, [] ) ).toStrictEqual( {
 			data: [],
@@ -639,6 +646,98 @@ describe( 'filters', () => {
 			fields
 		);
 		expect( result ).toHaveLength( 0 );
+	} );
+
+	it( 'should filter using IN_THE_PAST operator for datetime (days)', () => {
+		const testData = [
+			{ title: 'Recent', date: subDays( new Date(), 7 ) },
+			{ title: 'Old', date: subDays( new Date(), 14 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'inThePast',
+						value: { value: 7, unit: 'days' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 0 ] ] );
+	} );
+
+	it( 'should filter using OVER operator for datetime (days)', () => {
+		const testData = [
+			{ title: 'Recent', date: subDays( new Date(), 7 ) },
+			{ title: 'Old', date: subDays( new Date(), 14 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'over',
+						value: { value: 7, unit: 'days' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 1 ] ] );
+	} );
+
+	it( 'should filter using IN_THE_PAST operator for datetime (years)', () => {
+		const testData = [
+			{ title: 'Recent', date: subYears( new Date(), 1 ) },
+			{ title: 'Old', date: subYears( new Date(), 2 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'inThePast',
+						value: { value: 1, unit: 'years' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 0 ] ] );
+	} );
+
+	it( 'should filter using OVER operator for datetime (years)', () => {
+		const testData = [
+			{ title: 'Recent', date: subYears( new Date(), 1 ) },
+			{ title: 'Old', date: subYears( new Date(), 2 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'over',
+						value: { value: 1, unit: 'years' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 1 ] ] );
 	} );
 } );
 
