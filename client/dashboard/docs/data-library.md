@@ -17,7 +17,7 @@ The data library is organized around these key principles:
 The data library consist of two layers:
 
 - data source
-- data fetching (with state management)
+- data queries (with state management)
 
 ## Data source: `client/dashboard/data/`
 
@@ -53,7 +53,7 @@ export type SiteResetStatus = {
 
 An "index" `client/dashboard/data/types.ts` is provided, which re-exports all data types from all endpoints. This allows for easy import of all data types from the dashboard components.
 
-## Data fetching: `client/dashboard/app/queries/`
+## Data queries (fetching and mutation): `client/dashboard/app/queries/`
 
 The dashboard uses a combination of route loaders and component-level queries to fetch data, all using TanStack Query. This allows for both prefetching data for routes and fetching data on-demand within components.
 
