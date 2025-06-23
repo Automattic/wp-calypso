@@ -2,8 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import { isRefundable } from 'calypso/lib/purchases';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -11,9 +11,7 @@ type AtomicRevertChangesProps = {
 	atomicTransfer: {
 		created_at?: string;
 	};
-	purchase: {
-		expiryDate: string;
-	};
+	purchase: Purchase;
 	onConfirmationChange: ( isChecked: boolean ) => void;
 };
 
@@ -87,12 +85,6 @@ const AtomicRevertChanges = ( {
 			/>
 		</div>
 	);
-};
-
-AtomicRevertChanges.propTypes = {
-	atomicTransfer: PropTypes.object,
-	purchase: PropTypes.object.isRequired,
-	onConfirmationChange: PropTypes.func.isRequired,
 };
 
 export default AtomicRevertChanges;

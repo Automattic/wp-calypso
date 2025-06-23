@@ -224,7 +224,7 @@
 	margin-bottom: 24px;
 
 	p {
-		margin-bottom: 16px;
+		margin: 16px 0 8px 0;
 		font-size: $font-body-small;
 		line-height: 20px;
 	}
@@ -266,6 +266,8 @@
 
 	// Style the checkbox without background and border
 	.components-checkbox-control {
+		margin: 24px 0;
+
 		.components-checkbox-control__input-container {
 			.components-checkbox-control__input {
 				&:checked {
