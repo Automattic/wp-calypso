@@ -34,18 +34,11 @@ const AtomicRevertChanges = ( {
 		// Site will become private
 		changes.push( translate( 'Set your site to private.' ) );
 
-		// Site will revert to original state
-		changes.push(
-			translate(
-				'Your site will revert to its original settings and theme from before the first plugin or custom theme was installed'
-			)
-		);
-
 		// Plugins and themes will be removed
 		if ( ! isRefundable( purchase ) ) {
 			changes.push(
 				translate(
-					'Any themes and plugins you have installed will be removed on %(expiryDate)s, along with their data',
+					'Any themes and plugins you have installed will be removed on %(expiryDate)s, along with their data.',
 					{
 						args: {
 							expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
