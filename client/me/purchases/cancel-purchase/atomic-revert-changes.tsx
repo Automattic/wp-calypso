@@ -13,16 +13,18 @@ type AtomicRevertChangesProps = {
 	};
 	purchase: Purchase;
 	onConfirmationChange: ( isChecked: boolean ) => void;
+	needsAtomicRevertConfirmation: boolean;
 };
 
 const AtomicRevertChanges = ( {
 	atomicTransfer,
 	purchase,
 	onConfirmationChange,
+	needsAtomicRevertConfirmation,
 }: AtomicRevertChangesProps ) => {
 	const translate = useTranslate();
 
-	// Only show for non-refundable plans with atomic transfer
+	// Only show if there's an atomic transfer
 	if ( ! atomicTransfer?.created_at ) {
 		return null;
 	}
@@ -72,10 +74,12 @@ const AtomicRevertChanges = ( {
 					</li>
 				) ) }
 			</ul>
-			<CheckboxControl
-				label={ translate( 'I understand my site will change when my plan expires.' ) }
-				onChange={ onConfirmationChange }
-			/>
+			{ needsAtomicRevertConfirmation && (
+				<CheckboxControl
+					label={ translate( 'I understand my site will change when my plan expires.' ) }
+					onChange={ onConfirmationChange }
+				/>
+			) }
 		</div>
 	);
 };

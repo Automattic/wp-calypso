@@ -391,6 +391,9 @@ class CancelPurchase extends Component {
 							atomicTransfer={ this.props.atomicTransfer }
 							purchase={ purchase }
 							onConfirmationChange={ this.onAtomicRevertConfirmationChange }
+							needsAtomicRevertConfirmation={
+								this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
+							}
 						/>
 
 						<CancelPurchaseDomainOptions
