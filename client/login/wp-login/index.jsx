@@ -346,25 +346,22 @@ export class Login extends Component {
 			signupUrl,
 			isWCCOM,
 			isBlazePro,
-			currentQuery,
 			isWooJPC,
-			currentRoute,
+			action,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
 			return this.renderGravPoweredLoginBlockFooter();
 		}
 
-		if (
-			( currentQuery.lostpassword_flow === 'true' && isWooJPC ) ||
-			// We don't want to show lost password option if the user is already on lost password's page
-			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
-		) {
-			return null;
-		}
-
 		if ( isSocialFirst ) {
-			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />;
+			return (
+				<LoginFooter
+					action={ action }
+					signupUrl={ signupUrl }
+					lostPasswordLink={ this.getLostPasswordLink() }
+				/>
+			);
 		}
 
 		const shouldRenderFooter = ! socialConnect && ! isWCCOM && ! isBlazePro && ! isWooJPC;
