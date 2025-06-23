@@ -65,7 +65,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		),
 		supportsArchiveStats: version_greater_than_or_equal(
 			statsAdminVersion,
-			'0.26.3',
+			'0.27.0',
 			isOdysseyStats
 		),
 		shouldUseStatsBuiltInPurchasesApi: version_greater_than_or_equal(
