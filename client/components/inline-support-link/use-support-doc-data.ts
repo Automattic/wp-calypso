@@ -1,9 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { dispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ContextLinks, SupportDocData } from './types';
 import type { HelpCenterDispatch } from '@automattic/data-stores';
 
@@ -13,6 +10,25 @@ declare global {
 		wp: undefined | Record< string, any >;
 	}
 }
+
+declare const configData: {
+	blog_id: number;
+	initial_state: {
+		sites: {
+			items: Record< number, { jetpack: boolean; options: { is_wpcom_atomic: boolean } } >;
+		};
+	};
+};
+
+/**
+ * This code is one of the *fun* codes that run in many many places (Calypso client, Dashboard v2, wp-admin, wp-admin Atomic, wp-admin Jetpack).
+ * Each of these places has different ways to manage their state. So we cannot use a simple selector to check if the site is Jetpack (thus doesn't have the Help Center).
+ * So I hacked around this by checking the configData object, which is available in all the places.
+ */
+const site =
+	typeof configData !== 'undefined' &&
+	configData?.initial_state?.sites?.items[ configData.blog_id ];
+const helpCenterUnavailable = site && site?.jetpack && ! site?.options?.is_wpcom_atomic;
 
 const loadHelpCenterDispatch = async () => {
 	// Check if the help center store is already loaded in the window object.
@@ -49,11 +65,6 @@ const useSupportDocData = ( {
 		blogId: 0, // support.wordpress.com is the default blog used for support links
 	} );
 
-	const site = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) =>
-		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
-	);
-
 	// Lazy load the supportPostId and supportLink by supportContext if not provided.
 	const shouldLoadSupportDocData = supportContext && ! supportPostId && ! supportLink;
 
@@ -61,7 +72,7 @@ const useSupportDocData = ( {
 
 	const openSupportDoc = async () => {
 		// The Help Center doesn't work in Jetpack sites, so we open the link in a new tab.
-		if ( isJetpack ) {
+		if ( helpCenterUnavailable ) {
 			window.open( supportDocData.link, '_blank' );
 			return;
 		}
