@@ -1,10 +1,7 @@
-import { useCallback } from '@wordpress/element';
 import { isEmpty } from 'lodash';
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -62,34 +59,4 @@ export function useSignupUrl( { pathname, locale, signupUrl }: UseSignupUrlOptio
 		effectiveLocale,
 		effectivePathname
 	);
-}
-
-interface UseSignupLinkComponentOptions extends UseSignupUrlOptions {}
-
-/**
- * Hook to get a signup link component with correct logout and redirect logic.
- * Returns a self-closing <a> element with no children, matching the original getSignupLinkComponent.
- */
-export function useSignupLinkComponent( {
-	pathname,
-	locale,
-	signupUrl,
-}: UseSignupLinkComponentOptions = {} ): React.ReactElement | null {
-	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const url = useSignupUrl( { pathname, locale, signupUrl } );
-
-	const handleClick = useCallback(
-		( event: React.MouseEvent< HTMLAnchorElement > ) => {
-			event.preventDefault();
-			if ( isLoggedIn ) {
-				dispatch( redirectToLogout( url ) );
-			} else {
-				window.location.href = url;
-			}
-		},
-		[ dispatch, isLoggedIn, url ]
-	);
-
-	return <a href={ url } onClick={ handleClick } />;
 }
