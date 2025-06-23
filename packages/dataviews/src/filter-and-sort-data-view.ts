@@ -334,9 +334,8 @@ export function filterSortAndPaginate< Item >(
 					} );
 				} else if (
 					filter.operator === OPERATOR_IN_THE_PAST &&
-					filter.value !== undefined &&
-					filter.value.value !== undefined &&
-					filter.value.unit !== undefined
+					filter.value?.value !== undefined &&
+					filter.value?.unit !== undefined
 				) {
 					const targetDate = getRelativeDate(
 						filter.value.value,
@@ -352,9 +351,8 @@ export function filterSortAndPaginate< Item >(
 					} );
 				} else if (
 					filter.operator === OPERATOR_OVER &&
-					filter.value !== undefined &&
-					filter.value.value !== undefined &&
-					filter.value.unit !== undefined
+					filter.value?.value !== undefined &&
+					filter.value?.unit !== undefined
 				) {
 					const targetDate = getRelativeDate(
 						filter.value.value,
