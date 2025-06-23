@@ -76,6 +76,7 @@ class CancelPurchase extends Component {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
 		surveyShown: false,
+		atomicRevertConfirmed: false,
 	};
 
 	static defaultProps = {
@@ -148,6 +149,10 @@ class CancelPurchase extends Component {
 
 	onSurveyComplete = () => {
 		this.setState( { surveyShown: false } );
+	};
+
+	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
+		this.setState( { atomicRevertConfirmed: isConfirmed } );
 	};
 
 	getActiveMarketplaceSubscriptions() {
@@ -275,11 +280,20 @@ class CancelPurchase extends Component {
 			purchaseListUrl,
 			getConfirmCancelDomainUrlFor,
 		} = this.props;
+
+		// Check if we need atomic revert confirmation
+		const needsAtomicRevertConfirmation =
+			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
+
+		const isDisabled =
+			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
+			( needsAtomicRevertConfirmation && ! this.state.atomicRevertConfirmed );
+
 		return (
 			<CancelPurchaseButton
 				purchase={ purchase }
 				includedDomainPurchase={ includedDomainPurchase }
-				disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
+				disabled={ isDisabled }
 				siteSlug={ siteSlug }
 				cancelBundledDomain={ this.state.cancelBundledDomain }
 				purchaseListUrl={ purchaseListUrl }
@@ -376,6 +390,7 @@ class CancelPurchase extends Component {
 						<AtomicRevertChanges
 							atomicTransfer={ this.props.atomicTransfer }
 							purchase={ purchase }
+							onConfirmationChange={ this.onAtomicRevertConfirmationChange }
 						/>
 
 						<CancelPurchaseDomainOptions

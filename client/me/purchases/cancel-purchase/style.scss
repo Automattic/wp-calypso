@@ -263,4 +263,22 @@
 		background-color: var(--studio-gray-0);
 		border-radius: 4px;
 	}
+
+	// Style the checkbox without background and border
+	.components-checkbox-control {
+		.components-checkbox-control__input-container {
+			.components-checkbox-control__input {
+				&:checked {
+					background-color: #007cba;
+					border-color: #007cba;
+				}
+			}
+		}
+
+		.components-checkbox-control__label {
+			font-size: 14px;
+			color: #1d2327;
+			line-height: 1.4;
+		}
+	}
 }
