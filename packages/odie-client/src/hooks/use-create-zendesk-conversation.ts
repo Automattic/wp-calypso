@@ -15,6 +15,37 @@ declare const process: {
 	};
 };
 
+const logMessageData = ( {
+	createdFrom,
+	selectedSiteId,
+	selectedSiteURL,
+	userFieldFlowName,
+	section,
+}: {
+	createdFrom: string;
+	selectedSiteId?: number | null;
+	selectedSiteURL?: string | null;
+	userFieldFlowName?: string | null;
+	section: string | null;
+} ) => {
+	const stackTrace = Error().stack;
+
+	process.env.NODE_ENV === 'production' &&
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'No chat ID on Zendesk chat',
+			extra: {
+				createdFrom,
+				selectedSiteId,
+				selectedSiteURL,
+				userFieldFlowName,
+				section,
+				stackTrace,
+			},
+			tags: [ 'no-chat-id-on-zd-chat' ],
+		} );
+};
+
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
@@ -84,22 +115,13 @@ export const useCreateZendeskConversation = (): ( ( {
 		} ) );
 
 		if ( ! chatId ) {
-			const stackTrace = Error().stack;
-
-			process.env.NODE_ENV === 'production' &&
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'No chat ID on Zendesk chat',
-					extra: {
-						createdFrom,
-						selectedSiteId,
-						selectedSiteURL,
-						userFieldFlowName,
-						section,
-						stackTrace,
-					},
-					tags: [ 'no-chat-id-on-zd-chat' ],
-				} );
+			logMessageData( {
+				createdFrom,
+				selectedSiteId,
+				selectedSiteURL,
+				userFieldFlowName,
+				section,
+			} );
 		}
 
 		await submitUserFields( {
