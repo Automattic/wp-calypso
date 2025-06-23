@@ -26,10 +26,16 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
+import { useSelector } from 'calypso/state';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSiteSlug, isSitePreviewable, isSimpleSite } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteSlug,
+	isSitePreviewable,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
@@ -338,12 +344,29 @@ class StatsPostDetail extends Component {
 const StatsPostDetailWrapper = ( props ) => {
 	const lastScreen = useStatsNavigationHistory();
 
-	const { openSupportDoc } = useSupportDocData( {
-		supportLink: localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' ),
-	} );
-	return (
-		<StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openSupportDoc } />
+	const supportLink = localizeUrl(
+		'https://wordpress.com/support/getting-more-views-and-traffic/'
 	);
+
+	const { openSupportDoc } = useSupportDocData( {
+		supportLink,
+	} );
+
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const openDoc = () => {
+		if ( isJetpack ) {
+			setTimeout( () => window.open( supportLink, '_blank' ), 250 );
+		} else {
+			openSupportDoc();
+		}
+	};
+
+	return <StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openDoc } />;
 };
 
 const connectComponent = connect( ( state, { postId } ) => {

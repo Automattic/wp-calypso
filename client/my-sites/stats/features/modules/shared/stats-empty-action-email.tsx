@@ -16,10 +16,16 @@ import type { StatsEmptyActionProps } from './';
 const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state as any, siteId ) );
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const supportLink = localizeUrl(
+		isJetpack ? JETPACK_SUPPORT_NEWSLETTER_URL : NEWSLETTER_SUPPORT_URL
+	);
 
 	const { openSupportDoc } = useSupportDocData( {
-		supportLink: localizeUrl( isJetpack ? JETPACK_SUPPORT_NEWSLETTER_URL : NEWSLETTER_SUPPORT_URL ),
+		supportLink,
 	} );
 
 	return (
@@ -35,7 +41,13 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) =>
 
 				// If the site is a Jetpack site, use the Jetpack links.
 				// Otherwise, use the WordPress.com links.
-				openSupportDoc();
+
+				if ( isJetpack ) {
+					// open in new tab
+					setTimeout( () => window.open( supportLink, '_blank' ), 250 );
+				} else {
+					openSupportDoc();
+				}
 			} }
 		/>
 	);

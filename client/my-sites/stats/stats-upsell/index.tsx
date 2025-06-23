@@ -13,6 +13,7 @@ import useSupportDocData from 'calypso/components/inline-support-link/use-suppor
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { statTypeToPlan } from '../stat-type-to-plan';
 
@@ -56,6 +57,10 @@ export default function StatsUpsell( {
 	const localizeUrl = useLocalizeUrl();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const redirectTo = encodeURIComponent( window.location.href );
+
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const learnMoreLink = localizeUrl( 'https://wordpress.com/support/stats/' );
 
@@ -109,7 +114,11 @@ export default function StatsUpsell( {
 
 	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		openSupportDoc();
+		if ( isJetpack ) {
+			setTimeout( () => window.open( learnMoreLink, '_blank' ), 250 );
+		} else {
+			openSupportDoc();
+		}
 
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_learn_more`, {
 			stat_type: statType,
