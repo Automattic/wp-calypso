@@ -1,7 +1,7 @@
 .dataviews-view-grid {
 	margin-bottom: auto;
 	grid-template-rows: max-content;
-	padding: 0 $grid-unit-60 $grid-unit-30;
+	padding: 0 $grid-unit-30 $grid-unit-30;
 	container-type: inline-size;
 
 	@media not (prefers-reduced-motion) {
@@ -76,10 +76,6 @@
 		position: relative;
 		font-size: 12px;
 		line-height: 16px;
-
-		&:not(:empty) {
-			padding: 0 0 $grid-unit-15;
-		}
 
 		.dataviews-view-grid__field-value:not(:empty) {
 			min-height: $grid-unit-30;

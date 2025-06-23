@@ -15,7 +15,7 @@
 	}
 	td,
 	th {
-		padding: $grid-unit-15;
+		padding: $grid-unit-20 $grid-unit-15;
 		white-space: nowrap;
 
 		&.dataviews-view-table__actions-column {
@@ -55,7 +55,7 @@
 
 		td:first-child,
 		th:first-child {
-			padding-left: $grid-unit-60;
+			padding-left: $grid-unit-30;
 
 			.dataviews-view-table-header-button {
 				margin-left: - #{$grid-unit-10};
@@ -64,7 +64,7 @@
 
 		td:last-child,
 		th:last-child {
-			padding-right: $grid-unit-60;
+			padding-right: $grid-unit-30;
 		}
 
 		&:last-child {
@@ -242,12 +242,12 @@
 @container (max-width: 430px) {
 	.dataviews-view-table tr td:first-child,
 	.dataviews-view-table tr th:first-child {
-		padding-left: $grid-unit-30;
+		padding-left: $grid-unit-15;
 	}
 
 	.dataviews-view-table tr td:last-child,
 	.dataviews-view-table tr th:last-child {
-		padding-right: $grid-unit-30;
+		padding-right: $grid-unit-15;
 	}
 }
 

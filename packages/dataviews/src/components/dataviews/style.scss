@@ -14,7 +14,7 @@
 .dataviews__view-actions,
 .dataviews-filters__container {
 	box-sizing: border-box;
-	padding: $grid-unit-20 $grid-unit-60;
+	padding: $grid-unit-30;
 	flex-shrink: 0;
 	position: sticky;
 	left: 0;
@@ -40,7 +40,7 @@
 @container (max-width: 430px) {
 	.dataviews__view-actions,
 	.dataviews-filters__container {
-		padding: $grid-unit-15 $grid-unit-30;
+		padding: $grid-unit-15;
 	}
 
 	.dataviews-no-results,
