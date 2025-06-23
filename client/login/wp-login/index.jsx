@@ -348,6 +348,7 @@ export class Login extends Component {
 			isBlazePro,
 			isWooJPC,
 			action,
+			isLoginView,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
@@ -358,6 +359,7 @@ export class Login extends Component {
 			return (
 				<LoginFooter
 					action={ action }
+					isLoginView={ isLoginView }
 					signupUrl={ signupUrl }
 					lostPasswordLink={ this.getLostPasswordLink() }
 				/>

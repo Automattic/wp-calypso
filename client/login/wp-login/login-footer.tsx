@@ -12,6 +12,7 @@ interface LoginFooterProps {
 	shouldRenderTos: boolean;
 	action?: string;
 	signupUrl?: string;
+	isLoginView?: boolean;
 }
 
 const recordBackToWpcomLinkClick = () => {
@@ -23,17 +24,19 @@ const LoginFooter = ( {
 	shouldRenderTos,
 	action,
 	signupUrl: signupUrlProp,
+	isLoginView,
 }: LoginFooterProps ) => {
 	const translate = useTranslate();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 	const signupUrl = useSignupUrl( { signupUrl: signupUrlProp } );
+	const shouldRenderSignupLink = 'lostpassword' === action && false;
 
 	if ( ! lostPasswordLink && ! shouldRenderTos ) {
 		return null;
 	}
 
-	if ( 'lostpassword' === action ) {
+	if ( shouldRenderSignupLink ) {
 		return (
 			<div className="wp-login__main-footer">
 				<div className="wp-login__main-footer-back-link">
@@ -47,21 +50,23 @@ const LoginFooter = ( {
 		);
 	}
 
-	return (
-		<div className="wp-login__main-footer">
-			{ shouldRenderTos && <SocialTos /> }
-			{ lostPasswordLink }
-			{ isVIPClient && (
-				<LoggedOutFormBackLink
-					classes={ {
-						'wp-login__main-footer-back-link': true,
-					} }
-					oauth2Client={ oauth2Client }
-					recordClick={ recordBackToWpcomLinkClick }
-				/>
-			) }
-		</div>
-	);
+	if ( isLoginView ) {
+		return (
+			<div className="wp-login__main-footer">
+				{ shouldRenderTos && <SocialTos /> }
+				{ lostPasswordLink }
+				{ isVIPClient && (
+					<LoggedOutFormBackLink
+						classes={ {
+							'wp-login__main-footer-back-link': true,
+						} }
+						oauth2Client={ oauth2Client }
+						recordClick={ recordBackToWpcomLinkClick }
+					/>
+				) }
+			</div>
+		);
+	}
 };
 
 export default LoginFooter;
