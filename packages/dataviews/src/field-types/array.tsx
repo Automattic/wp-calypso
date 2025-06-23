@@ -60,7 +60,7 @@ const arrayFieldType: FieldTypeDefinition< any > = {
 	isValid,
 	Edit: null, // Not implemented yet
 	render,
-	enableSorting: false,
+	enableSorting: true,
 	filterBy: {
 		defaultOperators: [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ],
 		validOperators: [
