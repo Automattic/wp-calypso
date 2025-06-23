@@ -180,7 +180,6 @@ export type Field< Item > = {
 
 	/**
 	 * Callback used to render an edit control for the field.
-	 * Set to `false` to treat the field as readonly.
 	 */
 	Edit?: ComponentType< DataFormControlProps< Item > > | string;
 
