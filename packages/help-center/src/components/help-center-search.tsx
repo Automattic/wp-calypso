@@ -10,6 +10,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { SearchResult } from '../types';
+import { HelpCenterClosureNotice } from './help-center-closure-notice';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
@@ -93,6 +94,11 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	return (
 		<div className="inline-help__search">
 			{ ! canConnectToZendesk && <NewThirdPartyCookiesNotice /> }
+			<HelpCenterClosureNotice
+				displayAt="2025-06-20 00:00Z"
+				closesAt="2025-06-21 00:00Z"
+				reopensAt="2025-06-22 07:00Z"
+			/>
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }

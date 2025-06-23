@@ -11,7 +11,7 @@ type Props = {
 	displayAt: string;
 	closesAt: string;
 	reopensAt: string;
-	enabled: boolean;
+	disabled?: boolean;
 };
 
 function inBetween( start: Date, end: Date ) {
@@ -19,10 +19,15 @@ function inBetween( start: Date, end: Date ) {
 	return date >= start && date <= end;
 }
 
-export function HelpCenterClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Props ) {
+export function HelpCenterClosureNotice( {
+	displayAt,
+	closesAt,
+	reopensAt,
+	disabled = false,
+}: Props ) {
 	const { __ } = useI18n();
 
-	if ( ! enabled ) {
+	if ( disabled ) {
 		return null;
 	}
 

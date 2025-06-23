@@ -163,7 +163,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					displayAt="2023-12-26 00:00Z"
 					closesAt="2023-12-31 00:00Z"
 					reopensAt="2024-01-02 07:00Z"
-					enabled={ ! renderEmail.render }
+					disabled={ renderEmail.render }
 				/>
 				{ renderEmail.render
 					? renderEmailOption()
