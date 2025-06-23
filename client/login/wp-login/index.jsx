@@ -582,7 +582,8 @@ export class Login extends Component {
 			isBlazePro ||
 			isJetpack ||
 			isJetpackCloudOAuth2Client( oauth2Client ) ||
-			isWoo;
+			isWoo ||
+			isVIPOAuth2Client( oauth2Client );
 
 		return (
 			<>
