@@ -19,8 +19,10 @@
 	box-sizing: border-box;
 	display: inline flow-root;
 	color: colors.$gray-900;
+	background-color: colors.$white;
 	font-size: 13px;
 	font-weight: 400;
+	z-index: 0; // Required to ensure the calendar is rendered above the background.
 
 	*, *::before, *::after {
 		box-sizing: border-box;
