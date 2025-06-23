@@ -11,25 +11,6 @@ declare global {
 	}
 }
 
-declare const configData: {
-	blog_id: number;
-	initial_state: {
-		sites: {
-			items: Record< number, { jetpack: boolean; options: { is_wpcom_atomic: boolean } } >;
-		};
-	};
-};
-
-/**
- * This code is one of the *fun* codes that run in many many places (Calypso client, Dashboard v2, wp-admin, wp-admin Atomic, wp-admin Jetpack).
- * Each of these places has different ways to manage their state. So we cannot use a simple selector to check if the site is Jetpack (thus doesn't have the Help Center).
- * So I hacked around this by checking the configData object, which is available in all the places.
- */
-const site =
-	typeof configData !== 'undefined' &&
-	configData?.initial_state?.sites?.items[ configData.blog_id ];
-const helpCenterUnavailable = site && site?.jetpack && ! site?.options?.is_wpcom_atomic;
-
 const loadHelpCenterDispatch = async () => {
 	// Check if the help center store is already loaded in the window object.
 	if ( typeof window !== 'undefined' && window.wp?.data?.dispatch?.( HELP_CENTER_STORE ) ) {
@@ -71,12 +52,6 @@ const useSupportDocData = ( {
 	const [ isLoading, setIsLoading ] = useState( shouldLoadSupportDocData );
 
 	const openSupportDoc = async () => {
-		// The Help Center doesn't work in Jetpack sites, so we open the link in a new tab.
-		if ( helpCenterUnavailable ) {
-			window.open( supportDocData.link, '_blank' );
-			return;
-		}
-
 		// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
 		const { setShowSupportDoc } = await loadHelpCenterDispatch();
 		setShowSupportDoc( supportDocData.link, supportDocData.postId, supportDocData.blogId );

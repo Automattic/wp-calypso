@@ -1,7 +1,9 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type Props = {
 	type: 'campaigns' | 'posts';
@@ -9,8 +11,10 @@ type Props = {
 
 export default function EmptyPromotionList( props: Props ) {
 	const { type } = props;
-
-	const isRunningInWpAdmin = useIsRunningInWpAdmin();
+	const siteId = useSelector( getSelectedSiteId );
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const translate = useTranslate();
 
@@ -27,7 +31,7 @@ export default function EmptyPromotionList( props: Props ) {
 						<InlineSupportLink
 							supportContext="advertising"
 							showIcon={ false }
-							showSupportModal={ ! isRunningInWpAdmin }
+							showSupportModal={ ! isSelfHosted }
 						/>
 					),
 				},

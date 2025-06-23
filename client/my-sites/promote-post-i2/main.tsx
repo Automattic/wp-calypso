@@ -37,6 +37,7 @@ import {
 } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import BlazePluginBanner from './components/blaze-plugin-banner';
@@ -109,6 +110,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		keyValue: 'post-0', // post 0 means to open post selector in widget
 		entrypoint: 'promoted_posts-header',
 	} );
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
@@ -323,6 +327,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
+						showSupportModal={ ! isSelfHosted }
 					/>
 					<Button
 						variant="primary"
