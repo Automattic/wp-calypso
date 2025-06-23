@@ -1,29 +1,29 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter, Link } from '@tanstack/react-router';
-import {
-	__experimentalText as Text,
-	Button,
-	Modal,
-	ExternalLink,
-	Icon,
-} from '@wordpress/components';
+import { __experimentalText as Text, Button, Modal, Icon } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
-import ComponentViewTracker from '../components/component-view-tracker';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import TimeSince from '../components/time-since';
-import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
-import { EngagementStat, LastBackup, Uptime, PHPVersion, MediaStorage } from './site-fields';
+import {
+	EngagementStat,
+	LastBackup,
+	MediaStorage,
+	PHPVersion,
+	Plan,
+	Status,
+	Uptime,
+} from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -79,6 +79,12 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableSorting: false,
 	},
 	{
+		id: 'plan',
+		label: __( 'Plan' ),
+		getValue: ( { item } ) => item.plan?.product_name_short ?? '',
+		render: ( { item } ) => <Plan site={ item } />,
+	},
+	{
 		id: 'status',
 		label: __( 'Status' ),
 		getValue: ( { item } ) => getSiteStatus( item ),
@@ -86,16 +92,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		filterBy: {
 			operators: [ 'is' ],
 		},
-		render: ( { item } ) => {
-			const label = getSiteStatusLabel( item );
-			if ( item.launch_status === 'unlaunched' && ! item.is_deleted ) {
-				return (
-					<UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>
-				);
-			}
-
-			return label;
-		},
+		render: ( { item } ) => <Status site={ item } />,
 	},
 	{
 		id: 'wp_version',
@@ -412,26 +409,6 @@ export default function Sites() {
 					/>
 				</DataViewsCard>
 			</PageLayout>
-		</>
-	);
-}
-
-function UnlaunchedStatusLink( { href, children }: { href: string; children: React.ReactNode } ) {
-	const { recordTracksEvent } = useAnalytics();
-
-	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
-	// uses `overflow:hidden` to prevent any of the fields from overflowing.
-	return (
-		<>
-			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
-			<ExternalLink
-				href={ href }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
-				} }
-			>
-				{ children }
-			</ExternalLink>
 		</>
 	);
 }
