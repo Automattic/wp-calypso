@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { dispatch } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import type { ContextLinks, SupportDocData } from './types';
 import type { HelpCenterDispatch } from '@automattic/data-stores';
 
@@ -39,6 +39,7 @@ const useSupportDocData = ( {
 } ): {
 	supportDocData: SupportDocData | null;
 	openSupportDoc: () => Promise< void > | void;
+	setSupportDocData: Dispatch< SetStateAction< SupportDocData > >;
 } => {
 	const [ supportDocData, setSupportDocData ] = useState< SupportDocData >( {
 		link: supportLink ? localizeUrl( supportLink ) : supportLink,
@@ -51,11 +52,11 @@ const useSupportDocData = ( {
 
 	const [ isLoading, setIsLoading ] = useState( shouldLoadSupportDocData );
 
-	const openSupportDoc = async () => {
+	const openSupportDoc = useCallback( async () => {
 		// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
 		const { setShowSupportDoc } = await loadHelpCenterDispatch();
 		setShowSupportDoc( supportDocData.link, supportDocData.postId, supportDocData.blogId );
-	};
+	}, [ supportDocData.blogId, supportDocData.link, supportDocData.postId ] );
 
 	useEffect( () => {
 		const loadSupportDocDataByContext = async ( context: string ) => {
@@ -86,6 +87,7 @@ const useSupportDocData = ( {
 	return {
 		supportDocData: ! isLoading ? supportDocData : null,
 		openSupportDoc,
+		setSupportDocData,
 	};
 };
 
