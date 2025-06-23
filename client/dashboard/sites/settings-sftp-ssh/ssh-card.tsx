@@ -282,7 +282,7 @@ export default function SshCard( {
 
 	if ( userSshKeysError?.code === 'reauthorization_required' ) {
 		const currentPath = window.location.pathname;
-		const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+		const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 		window.location.href = loginUrl;
 		return null;
 	}
