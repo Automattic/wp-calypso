@@ -185,7 +185,7 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
-					<SubscriberImportLimitNotice closeModal={ onClose } />
+					{ ! isUploading && <SubscriberImportLimitNotice closeModal={ onClose } /> }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
@@ -234,7 +234,7 @@ const AddSubscribersModal = ( {
 							</span>
 						</Notice>
 					) }
-					<SubscriberImportLimitNotice closeModal={ onClose } />
+					{ ! isUploading && <SubscriberImportLimitNotice closeModal={ onClose } /> }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }

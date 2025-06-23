@@ -15,7 +15,11 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { MembershipSubscription, Purchase } from 'calypso/lib/purchases/types';
+import {
+	GetManagePurchaseUrlFor,
+	MembershipSubscription,
+	Purchase,
+} from 'calypso/lib/purchases/types';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
@@ -43,6 +47,7 @@ import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view'
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 }
 
 export interface PurchasesListConnectedProps {
@@ -118,7 +123,13 @@ function PurchasesListDataView(
 	}
 
 	if ( purchases && purchases.length ) {
-		content = <PurchasesDataViews purchases={ purchases } sites={ sites } />;
+		content = (
+			<PurchasesDataViews
+				purchases={ purchases }
+				sites={ sites }
+				getManagePurchaseUrlFor={ props.getManagePurchaseUrlFor }
+			/>
+		);
 	}
 
 	if ( purchases && ! purchases.length && ! subscriptions.length ) {

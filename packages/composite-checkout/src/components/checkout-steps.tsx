@@ -921,27 +921,28 @@ const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement 
 			? props.theme.colors.textColorDark
 			: props.theme.colors.textColorDisabled };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
 	flex: 1;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
-	}
+	margin-right: 8px;
 `;
 
 interface StepTitleProps {
 	isComplete?: boolean;
 	isActive?: boolean;
-	fullWidth?: boolean;
 }
 
-const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
-	font-size: 20px;
+const StepHeaderWrapper = styled.div< StepHeaderProps & HTMLAttributes< HTMLDivElement > >`
 	display: flex;
 	width: 100%;
 	align-items: center;
 	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
+`;
+
+const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	margin: 0;
+	flex: 1;
 `;
 
 interface StepHeaderProps {
@@ -982,21 +983,19 @@ function CheckoutStepHeader( {
 	const shouldShowEditButton = canEditStep && !! onEdit;
 
 	return (
-		<StepHeader
+		<StepHeaderWrapper
 			isComplete={ isComplete }
 			isActive={ isActive }
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
-			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
-				{ stepNumber || null }
-			</Stepper>
-			<StepTitle
-				fullWidth={ ! shouldShowEditButton }
-				isComplete={ isComplete }
-				isActive={ isActive }
-			>
-				{ title }
-			</StepTitle>
+			<StepHeader isComplete={ isComplete } isActive={ isActive }>
+				<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
+					{ stepNumber || null }
+				</Stepper>
+				<StepTitle isComplete={ isComplete } isActive={ isActive }>
+					{ title }
+				</StepTitle>
+			</StepHeader>
 			{ shouldShowEditButton && (
 				<HeaderEditButton
 					className="checkout-step__edit-button"
@@ -1007,7 +1006,7 @@ function CheckoutStepHeader( {
 					{ editButtonText || __( 'Edit' ) }
 				</HeaderEditButton>
 			) }
-		</StepHeader>
+		</StepHeaderWrapper>
 	);
 }
 

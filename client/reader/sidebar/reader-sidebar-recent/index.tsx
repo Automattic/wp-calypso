@@ -5,6 +5,7 @@ import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import AutoDirection from 'calypso/components/auto-direction';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -124,16 +125,18 @@ const ReaderSidebarRecent = ( {
 					key={ site.ID }
 					selected={ isRecentStream && site.feed_ID === selectedSiteFeedId }
 				>
-					<MenuItemLink
-						href={ `/reader/recent/${ site.feed_ID }` }
-						className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-						onClick={ () => trackMenuClick( site.feed_ID ) }
-					>
-						<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 24 } />
-						<span title={ site.name } className="reader-sidebar-recent__site-name">
-							{ site.name }
-						</span>
-					</MenuItemLink>
+					<AutoDirection>
+						<MenuItemLink
+							href={ `/reader/recent/${ site.feed_ID }` }
+							className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
+							onClick={ () => trackMenuClick( site.feed_ID ) }
+						>
+							<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 24 } />
+							<span title={ site.name } className="reader-sidebar-recent__site-name">
+								{ site.name }
+							</span>
+						</MenuItemLink>
+					</AutoDirection>
 				</MenuItem>
 			) ) }
 			{ shouldShowViewMoreButton && (

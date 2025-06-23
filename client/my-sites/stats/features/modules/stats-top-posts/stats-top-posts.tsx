@@ -1,19 +1,20 @@
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { TOP_POSTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
@@ -31,6 +32,7 @@ type StatTypeOptionType = {
 	value: StatType;
 	label: string;
 	mainItemLabel: string;
+	analyticsId: string;
 };
 
 const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
@@ -46,20 +48,14 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
-		: TOP_POSTS_SUPPORT_URL;
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
-	const optionLabels = useOptionLabels();
-	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
-		return {
-			value: key as StatType,
-			label: item.tabLabel,
-			mainItemLabel: item.mainItemLabel,
-		};
-	} );
+	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
+	const supportContext = isSiteJetpackNotAtomic
+		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
+		: 'stats-top-posts-and-pages-analyze-content-performance';
 
 	const query = {
 		...queryFromProps,
@@ -80,13 +76,40 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		: isRequestingTopPostsData;
 
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
-	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => {
+		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
+			stat_type: option.analyticsId,
+		} );
+
+		setLocalStatType( option.value );
+	};
 
 	const statType = localStatType || validQueryViewType( query.viewType ) || mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
+
+	// Get the archives data to check if we should disable the archives option.
+	const archivesData = useSelector( ( state ) =>
+		getSiteStatsNormalizedData( state, siteId, subStatType, query )
+	) as [ id: number, label: string ];
+
+	const optionLabels = useOptionLabels();
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+			analyticsId: item.analyticsId,
+			// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
+			disabled:
+				isArchiveBreakdownEnabled &&
+				key === subStatType &&
+				! isRequestingArchivesData &&
+				! archivesData.length,
+		};
+	} );
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( mainStatType );
@@ -136,17 +159,33 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					path="posts"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate(
-								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
-									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
-								}
-							) }
+							{ isArchiveBreakdownEnabled
+								? translate(
+										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  )
+								: translate(
+										'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  ) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }
@@ -160,19 +199,20 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
-					{ ...( isArchiveBreakdownEnabled && ! summary
-						? {
-								toggleControl: (
-									<SimplifiedSegmentedControl
-										options={ options }
-										initialSelected={ statType }
-										onSelect={ onStatTypeChange }
-									/>
-								),
-								mainItemLabel: options.find( ( option ) => option.value === statType )
-									?.mainItemLabel,
-						  }
-						: null ) }
+					toggleControl={
+						isArchiveBreakdownEnabled &&
+						! summary && (
+							<SimplifiedSegmentedControl
+								options={ options }
+								initialSelected={ statType }
+								onSelect={ onStatTypeChange }
+							/>
+						)
+					}
+					mainItemLabel={
+						isArchiveBreakdownEnabled &&
+						options.find( ( option ) => option.value === statType )?.mainItemLabel
+					}
 				/>
 			) }
 			{ presentEmptyUI && (
@@ -189,7 +229,9 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',
 								}

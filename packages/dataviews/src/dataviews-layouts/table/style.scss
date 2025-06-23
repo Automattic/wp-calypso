@@ -119,6 +119,14 @@
 			&:hover {
 				background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08);
 			}
+
+			.dataviews-view-table__actions-column--sticky {
+				background-color: color-mix(in srgb, rgb(var(--wp-admin-theme-color--rgb)) 4%, $white);
+			}
+
+			&:hover .dataviews-view-table__actions-column--sticky {
+				background-color: color-mix(in srgb, rgb(var(--wp-admin-theme-color--rgb)) 8%, $white);
+			}
 		}
 	}
 	thead {
