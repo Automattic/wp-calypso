@@ -2,8 +2,8 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import './style.scss';
 
 const sizes = {
-	large: { maxWidth: '1200px' },
-	small: { maxWidth: '600px' },
+	large: { maxWidth: '1344px' },
+	small: { maxWidth: '660px' },
 };
 
 function PageLayout( {
