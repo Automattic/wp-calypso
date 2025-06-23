@@ -2,6 +2,7 @@ import { Count } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -42,7 +43,9 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 					<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 16 } />
 
 					<span className="sidebar__menu-item-sitename">
-						{ site.name }
+						<AutoDirection>
+							<span>{ site.name }</span>
+						</AutoDirection>
 						<span className="sidebar__menu-item-last-updated">
 							{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 						</span>

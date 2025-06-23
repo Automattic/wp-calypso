@@ -518,7 +518,7 @@ export class Login extends Component {
 					'is-jetpack': isJetpack,
 				} ) }
 			>
-				{ this.renderI18nSuggestions() }
+				{ ! isWhiteLogin && this.renderI18nSuggestions() }
 
 				<DocumentHead
 					title={ translate( 'Log In' ) }
@@ -534,6 +534,8 @@ export class Login extends Component {
 				/>
 
 				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+
+				{ isWhiteLogin && this.renderI18nSuggestions() }
 			</Main>
 		);
 
