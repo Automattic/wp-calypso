@@ -115,7 +115,7 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to render an edit control for the field or control name.
 	 */
-	Edit: ComponentType< DataFormControlProps< Item > > | string | false | null;
+	Edit: ComponentType< DataFormControlProps< Item > > | string | null;
 
 	/**
 	 * Callback used to render the field.
@@ -126,6 +126,11 @@ export type FieldTypeDefinition< Item > = {
 	 * The filter config for the field.
 	 */
 	filterBy: FilterConfigForType | false;
+
+	/**
+	 * Whether the field is editable.
+	 */
+	enableEditing?: boolean;
 
 	/**
 	 * Whether the field is sortable.
@@ -177,7 +182,7 @@ export type Field< Item > = {
 	 * Callback used to render an edit control for the field.
 	 * Set to `false` to treat the field as readonly.
 	 */
-	Edit?: ComponentType< DataFormControlProps< Item > > | string | false;
+	Edit?: ComponentType< DataFormControlProps< Item > > | string;
 
 	/**
 	 * Callback used to sort the field.
@@ -193,6 +198,11 @@ export type Field< Item > = {
 	 * Callback used to decide if a field should be displayed.
 	 */
 	isVisible?: ( item: Item ) => boolean;
+
+	/**
+	 * Whether the field is editable.
+	 */
+	enableEditing?: boolean;
 
 	/**
 	 * Whether the field is sortable.
@@ -231,9 +241,10 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
-	Edit: ComponentType< DataFormControlProps< Item > > | false | null;
+	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
+	enableEditing: boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;

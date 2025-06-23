@@ -176,6 +176,10 @@ export function normalizeFields< Item >(
 			sort,
 			isValid,
 			Edit,
+			enableEditing:
+				field.enableEditing ??
+				fieldTypeDefinition.enableEditing ??
+				true,
 			enableHiding: field.enableHiding ?? true,
 			enableSorting:
 				field.enableSorting ??

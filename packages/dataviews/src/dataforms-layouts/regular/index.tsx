@@ -84,10 +84,7 @@ export default function FormRegularField< Item >( {
 		( fieldDef ) => fieldDef.id === field.id
 	);
 
-	if (
-		! fieldDefinition ||
-		( ! fieldDefinition.Edit && fieldDefinition.Edit !== false )
-	) {
+	if ( ! fieldDefinition || ! fieldDefinition.Edit ) {
 		return null;
 	}
 	if ( labelPosition === 'side' ) {
@@ -102,7 +99,7 @@ export default function FormRegularField< Item >( {
 					{ fieldDefinition.label }
 				</div>
 				<div className="dataforms-layouts-regular__field-control">
-					{ fieldDefinition.Edit === false ? (
+					{ fieldDefinition.enableEditing === false ? (
 						<fieldDefinition.render
 							item={ data }
 							field={ fieldDefinition }
@@ -123,7 +120,7 @@ export default function FormRegularField< Item >( {
 
 	return (
 		<div className="dataforms-layouts-regular__field">
-			{ fieldDefinition.Edit === false ? (
+			{ fieldDefinition.enableEditing === false ? (
 				<>
 					{ ! hideLabelFromVision && labelPosition !== 'none' && (
 						<div className="dataforms-layouts-regular__field-label">
