@@ -415,24 +415,24 @@ function OperatorSelector( {
 												_filter.field === filter.field
 											) {
 												// Reset the value only when switching between operators that have different value types.
-												const OPETATORS_NEED_VALUE_RESET =
+												const OPETATORS_SHOULD_RESET_VALUE =
 													[
 														OPERATOR_BETWEEN,
 														OPERATOR_IN_THE_PAST,
 														OPERATOR_OVER,
 													];
-												const needValueReset =
+												const shouldResetValue =
 													currentOperator &&
-													( OPETATORS_NEED_VALUE_RESET.includes(
+													( OPETATORS_SHOULD_RESET_VALUE.includes(
 														currentOperator
 													) ||
-														OPETATORS_NEED_VALUE_RESET.includes(
+														OPETATORS_SHOULD_RESET_VALUE.includes(
 															operator
 														) );
 
 												return {
 													..._filter,
-													value: needValueReset
+													value: shouldResetValue
 														? undefined
 														: _filter.value,
 													operator,
