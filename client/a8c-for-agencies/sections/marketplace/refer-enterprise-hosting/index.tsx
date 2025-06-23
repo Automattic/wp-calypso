@@ -12,6 +12,9 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
+import ReferEnterpriseHostingForm from './form';
+
+import './style.scss';
 
 export function ReferEnterpriseHosting() {
 	const translate = useTranslate();
@@ -22,33 +25,37 @@ export function ReferEnterpriseHosting() {
 			title={ translate( 'Refer Enterprise Hosting' ) }
 			wide
 		>
-			<LayoutTop>
-				<A4AAgencyApprovalNotice />
-				<LayoutHeader>
-					<Breadcrumb
-						items={ [
-							{
-								label: translate( 'Marketplace' ),
-								href: A4A_MARKETPLACE_LINK,
-							},
-							{
-								label: translate( 'Hosting' ),
-								href: A4A_MARKETPLACE_HOSTING_LINK,
-							},
-							{
-								label: translate( 'Refer Enterprise Hosting' ),
-							},
-						] }
-						hideOnMobile
-					/>
+			<div className="refer-enterprise-hosting__top">
+				<LayoutTop>
+					<A4AAgencyApprovalNotice />
+					<LayoutHeader>
+						<Breadcrumb
+							items={ [
+								{
+									label: translate( 'Marketplace' ),
+									href: A4A_MARKETPLACE_LINK,
+								},
+								{
+									label: translate( 'Hosting' ),
+									href: A4A_MARKETPLACE_HOSTING_LINK,
+								},
+								{
+									label: translate( 'Refer Enterprise Hosting' ),
+								},
+							] }
+							hideOnMobile
+						/>
 
-					<Actions>
-						<MobileSidebarNavigation />
-					</Actions>
-				</LayoutHeader>
-			</LayoutTop>
+						<Actions>
+							<MobileSidebarNavigation />
+						</Actions>
+					</LayoutHeader>
+				</LayoutTop>
+			</div>
 
-			<LayoutBody>test</LayoutBody>
+			<LayoutBody>
+				<ReferEnterpriseHostingForm />
+			</LayoutBody>
 		</Layout>
 	);
 }
