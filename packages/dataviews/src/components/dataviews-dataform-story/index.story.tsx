@@ -307,7 +307,7 @@ export const Media = ( {
 	);
 };
 
-export const ArrayText = ( {
+export const Array = ( {
 	type,
 	labelPosition,
 }: {
