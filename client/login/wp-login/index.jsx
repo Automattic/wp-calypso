@@ -50,7 +50,6 @@ import { withEnhancers } from 'calypso/state/utils';
 import HeadingLogo from './components/heading-logo';
 import HeadingSubText from './components/heading-subtext';
 import LoginFooter from './login-footer';
-import LoginLinks from './login-links';
 
 import './style.scss';
 
@@ -364,55 +363,6 @@ export class Login extends Component {
 		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
 	}
 
-	renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) {
-		const {
-			isWhiteLogin,
-			isGravPoweredClient,
-			socialConnect,
-			twoFactorAuthType,
-			locale,
-			signupUrl,
-			isWCCOM,
-			isBlazePro,
-			isWooJPC,
-			isLoginView,
-		} = this.props;
-
-		if ( isGravPoweredLoginPage ) {
-			return this.renderGravPoweredLoginBlockFooter();
-		}
-
-		if ( isSocialFirst ) {
-			return (
-				<LoginFooter
-					isLoginView={ isLoginView }
-					lostPasswordLink={ this.getLostPasswordLink() }
-					loginLink={ this.getLoginLink() }
-				/>
-			);
-		}
-
-		const shouldRenderFooter = ! socialConnect && ! isWCCOM && ! isBlazePro && ! isWooJPC;
-
-		if ( shouldRenderFooter ) {
-			return (
-				<LoginLinks
-					locale={ locale }
-					twoFactorAuthType={ twoFactorAuthType }
-					isWhiteLogin={ isWhiteLogin }
-					isGravPoweredClient={ isGravPoweredClient }
-					signupUrl={ signupUrl }
-					usernameOrEmail={ this.state.usernameOrEmail }
-					oauth2Client={ this.props.oauth2Client }
-					getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
-					renderSignUpLink={ this.renderSignUpLink.bind( this ) }
-				/>
-			);
-		}
-
-		return null;
-	}
-
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -430,6 +380,7 @@ export class Login extends Component {
 			signupUrl,
 			action,
 			currentRoute,
+			isLoginView,
 		} = this.props;
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
@@ -456,7 +407,19 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				footer={ this.renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) }
+				footer={
+					isGravPoweredLoginPage ? (
+						this.renderGravPoweredLoginBlockFooter()
+					) : (
+						<LoginFooter
+							action={ action }
+							isLoginView={ isLoginView }
+							signupUrl={ signupUrl }
+							lostPasswordLink={ this.getLostPasswordLink() }
+							loginLink={ this.getLoginLink() }
+						/>
+					)
+				}
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
