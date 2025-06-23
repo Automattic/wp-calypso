@@ -67,7 +67,7 @@ const AtomicRevertChanges = ( {
 					<li key={ index }>
 						<Gridicon
 							className="cancel-purchase__atomic-revert-changes--item-notice"
-							size={ 18 }
+							size={ 24 }
 							icon="notice-outline"
 						/>
 						<span>{ change }</span>
