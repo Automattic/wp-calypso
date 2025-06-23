@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
@@ -59,7 +58,6 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
-	const hasEnTranslation = useHasEnTranslation();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
@@ -160,7 +158,6 @@ const DotcomPreviewPane = ( {
 		isAtomicSite,
 		isPlanExpired,
 		__,
-		hasEnTranslation,
 		isSimpleSite,
 		site,
 		selectedSiteFeature,
