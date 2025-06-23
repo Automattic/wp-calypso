@@ -586,7 +586,7 @@ export const themeFields: Field< Theme >[] = [
 	{
 		id: 'tags',
 		label: 'Tags',
-		render: ( { item } ) => item.tags.join( ', ' ),
+		type: 'array',
 	},
 ];
 
@@ -737,15 +737,6 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'Solar system', label: 'Solar system' },
 			{ value: 'Ice giant', label: 'Ice giant' },
 		],
-		filterBy: {
-			operators: [ 'isAny', 'isNone', 'isAll', 'isNotAll' ],
-		},
-		getValue: ( { item } ) => {
-			return item.categories;
-		},
-		render: ( { item } ) => {
-			return item.categories.join( ',' );
-		},
-		enableSorting: false,
+		type: 'array',
 	},
 ];

@@ -62,16 +62,6 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
 		: 'stats-top-posts-and-pages-analyze-content-performance';
 
-	const optionLabels = useOptionLabels();
-	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
-		return {
-			value: key as StatType,
-			label: item.tabLabel,
-			mainItemLabel: item.mainItemLabel,
-			analyticsId: item.analyticsId,
-		};
-	} );
-
 	const query = {
 		...queryFromProps,
 		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
@@ -105,6 +95,27 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
+
+	// Get the archives data to check if we should disable the archives option.
+	const archivesData = useSelector( ( state ) =>
+		getSiteStatsNormalizedData( state, siteId, subStatType, query )
+	) as [ id: number, label: string ];
+
+	const optionLabels = useOptionLabels();
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+			analyticsId: item.analyticsId,
+			// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
+			disabled:
+				isArchiveBreakdownEnabled &&
+				key === subStatType &&
+				! isRequestingArchivesData &&
+				! archivesData.length,
+		};
+	} );
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( mainStatType );
