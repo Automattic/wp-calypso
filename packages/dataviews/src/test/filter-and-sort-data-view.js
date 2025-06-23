@@ -8,10 +8,6 @@ import { filterSortAndPaginate } from '../filter-and-sort-data-view';
 import { data, fields } from '../components/dataviews/stories/fixtures';
 
 describe( 'filters', () => {
-	afterAll( () => {
-		jest.useRealTimers();
-	} );
-
 	it( 'should return empty if the data is empty', () => {
 		expect( filterSortAndPaginate( null, {}, [] ) ).toStrictEqual( {
 			data: [],
