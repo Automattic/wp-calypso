@@ -37,7 +37,7 @@ export async function fetchSiteResetStatus( siteId: number ): Promise< SiteReset
 }
 ```
 
-We usually return the raw response from the API. If you need to filter the response, you can do so in the data fetching layer via TanStack's [select](https://tanstack.com/query/latest/docs/framework/react/guides/render-optimizations#select) option.
+We usually return the raw response from the API. If you need to process the response (e.g. filter), you can do so in the data fetching layer via TanStack's [select](https://tanstack.com/query/latest/docs/framework/react/guides/render-optimizations#select) option.
 
 ### Data types
 
