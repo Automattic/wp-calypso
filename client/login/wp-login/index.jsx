@@ -522,15 +522,16 @@ export class Login extends Component {
 			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
 
 		const shouldUseWideHeading =
-			isStudioAppOAuth2Client( oauth2Client ) ||
-			isFromAkismet ||
-			isCrowdsignalOAuth2Client( oauth2Client ) ||
-			isBlazePro ||
-			isJetpack ||
-			isJetpackCloudOAuth2Client( oauth2Client ) ||
-			isWoo ||
-			isVIPOAuth2Client( oauth2Client ) ||
-			isPartnerPortalOAuth2Client( oauth2Client );
+			'lostpassword' !== action &&
+			( isStudioAppOAuth2Client( oauth2Client ) ||
+				isFromAkismet ||
+				isCrowdsignalOAuth2Client( oauth2Client ) ||
+				isBlazePro ||
+				isJetpack ||
+				isJetpackCloudOAuth2Client( oauth2Client ) ||
+				isWoo ||
+				isVIPOAuth2Client( oauth2Client ) ||
+				isPartnerPortalOAuth2Client( oauth2Client ) );
 
 		return (
 			<>
@@ -557,6 +558,7 @@ export class Login extends Component {
 										isSocialFirst={ isSocialFirst }
 										twoFactorAuthType={ twoFactorAuthType }
 										isLostPassword={ isLostPassword }
+										action={ action }
 									/>
 								}
 							/>
