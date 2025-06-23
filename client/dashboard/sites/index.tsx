@@ -323,14 +323,8 @@ export default function Sites() {
 	}, [ hasA8CSites, view.type ] );
 
 	const actions = useMemo( () => {
-		return getDefaultActions( router ).filter( ( action ) => {
-			if ( action.id === 'admin' && view.type === 'grid' ) {
-				return false;
-			}
-
-			return true;
-		} );
-	}, [ view.type.router ] );
+		return getDefaultActions( router );
+	}, [ router ] );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
