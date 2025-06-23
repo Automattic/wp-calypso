@@ -1,6 +1,6 @@
 import { Dropdown, Button, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { chevronDownSmall, cloudDownload, cloudUpload } from '@wordpress/icons';
+import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 
 interface SyncDropdownProps {
 	className?: string;
@@ -19,7 +19,7 @@ export default function SyncDropdown( { className, environment }: SyncDropdownPr
 			popoverProps={ { placement: 'bottom-end' } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
-					icon={ chevronDownSmall }
+					icon={ chevronDown }
 					iconPosition="right"
 					variant="secondary"
 					aria-expanded={ isOpen }
