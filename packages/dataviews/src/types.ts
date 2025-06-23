@@ -248,7 +248,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
-	readonly: boolean;
+	readOnly: boolean;
 };
 
 /**
