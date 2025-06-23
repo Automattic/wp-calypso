@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual, flowRight } from 'lodash';
@@ -39,6 +41,8 @@ import StatsPlaceholder from '../stats-module/placeholder';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 class StatsPostDetail extends Component {
 	static propTypes = {
 		path: PropTypes.string,
@@ -57,6 +61,7 @@ class StatsPostDetail extends Component {
 			url: PropTypes.string,
 		} ),
 		editUrl: PropTypes.string,
+		setShowSupportDoc: PropTypes.func,
 	};
 
 	state = {
@@ -298,10 +303,11 @@ class StatsPostDetail extends Component {
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
-							actionURL={ localizeUrl(
-								'https://wordpress.com/support/getting-more-views-and-traffic/'
-							) }
-							actionTarget="blank"
+							actionCallback={ () => {
+								this.props.setShowSupportDoc(
+									localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' )
+								);
+							} }
 						/>
 					) }
 
@@ -336,7 +342,16 @@ class StatsPostDetail extends Component {
 
 const StatsPostDetailWrapper = ( props ) => {
 	const lastScreen = useStatsNavigationHistory();
-	return <StatsPostDetail { ...props } lastScreen={ lastScreen } />;
+
+	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	return (
+		<StatsPostDetail
+			{ ...props }
+			lastScreen={ lastScreen }
+			setShowSupportDoc={ setShowSupportDoc }
+		/>
+	);
 };
 
 const connectComponent = connect( ( state, { postId } ) => {

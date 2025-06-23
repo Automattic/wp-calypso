@@ -94,7 +94,7 @@ import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
 import { WooLoader } from './woo-loader';
-import { ConnectingYourAccountStage, OpeningTheDoorsStage } from './woo-loader-stages';
+import { ConnectingYourAccountStage, PlaceholderStage } from './woo-loader-stages';
 
 /**
  * Constants
@@ -1270,7 +1270,7 @@ export class JetpackAuthorize extends Component {
 					shouldCloseOnEsc={ false }
 					isDismissible={ false }
 				>
-					<WooLoader stages={ [ ConnectingYourAccountStage, OpeningTheDoorsStage ] } />
+					<WooLoader stages={ [ ConnectingYourAccountStage, PlaceholderStage ] } />
 				</Modal>
 			);
 		}

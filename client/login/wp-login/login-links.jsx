@@ -11,11 +11,7 @@ import { connect } from 'react-redux';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isJetpackCloudOAuth2Client,
-	isGravPoweredOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -109,11 +105,7 @@ export class LoginLinks extends Component {
 	};
 
 	renderBackLink() {
-		if (
-			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
-			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isWhiteLogin
-		) {
+		if ( this.props.isWhiteLogin ) {
 			return null;
 		}
 

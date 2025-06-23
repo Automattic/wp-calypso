@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import clsx from 'clsx';
+
+/**
  * WordPress dependencies
  */
 import { useContext, useMemo } from '@wordpress/element';
@@ -85,7 +90,12 @@ export default function FormRegularField< Item >( {
 	if ( labelPosition === 'side' ) {
 		return (
 			<HStack className="dataforms-layouts-regular__field">
-				<div className="dataforms-layouts-regular__field-label">
+				<div
+					className={ clsx(
+						'dataforms-layouts-regular__field-label',
+						`dataforms-layouts-regular__field-label--label-position-${ labelPosition }`
+					) }
+				>
 					{ fieldDefinition.label }
 				</div>
 				<div className="dataforms-layouts-regular__field-control">

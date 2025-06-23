@@ -37,6 +37,7 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
+		"dashboard/v2/backport/site-settings": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"global-styles/on-personal-plan": false,

@@ -52,7 +52,9 @@ function getFilterBy< Item >(
 
 		// Assign default values if no operator was provided.
 		if ( ! operators || ! Array.isArray( operators ) ) {
-			operators = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
+			operators = !! fieldTypeDefinition.filterBy
+				? fieldTypeDefinition.filterBy.defaultOperators
+				: [];
 		}
 
 		// Make sure only valid operators are included.

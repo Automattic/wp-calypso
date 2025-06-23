@@ -2,7 +2,7 @@
 
 ## Next
 
-- Update the field type definitions to declare the default and valid operators they support. Fields with no `type` property can use all operators and, if none is provided in the field's config, they'll display `is` and `isNot`.
+- Update the field type definitions to declare the default and valid operators they support. Fields with no `type` property can use all operators; if none is provided in the field's config, they'll use `is` and `isNot` by default.
 - Add a story for each FieldTypeDefinition.
 - Add new filter operators: `before`, `after`, `beforeInc`, and `afterInc` for date fields.
 - Adjust the spacing of the `DataForm` based on the type.
@@ -11,6 +11,8 @@
 - Hide the label in input widgets to prevent duplicate labels in the filter UI.
 - Add new filter operator: `between`.
 - Implement the `array` field type definition.
+- Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
+- Fix the background color of the action column if the row is selected
 
 ## 0.2.1
 

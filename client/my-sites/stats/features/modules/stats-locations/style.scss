@@ -108,17 +108,17 @@ $locations-horizontal-bar-width: 380px;
 				display: inherit;
 			}
 		}
+
+		.stats__summary--narrow-mobile {
+			.stats-card--column-header {
+				padding: 0;
+			}
+		}
 	}
 
 	.stats-card-skeleton.locations-skeleton {
 		&.stats-card-skeleton--with-hero .stats-card__content {
 			flex-direction: column;
-		}
-	}
-
-	.stats__summary--narrow-mobile {
-		.stats-card--column-header {
-			padding: 0;
 		}
 	}
 }

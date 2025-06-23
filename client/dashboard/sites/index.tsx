@@ -4,7 +4,6 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, Modal, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
@@ -17,6 +16,7 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
+import { EngagementStat, LastBackup, Uptime, PHPVersion, MediaStorage } from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -69,7 +69,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	},
 	{
 		id: 'icon.ico',
-		label: __( 'Media' ),
+		label: __( 'Site icon' ),
 		render: ( { item } ) => <SiteIcon site={ item } />,
 		enableSorting: false,
 	},
@@ -78,23 +78,10 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Subscribers' ),
 	},
 	{
-		id: 'backups',
-		type: 'boolean',
-		label: __( 'Backups' ),
-		getValue: ( { item } ) => !! item.plan?.features?.active?.includes( 'backups' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		render: ( { item } ) =>
-			item.plan?.features?.active?.includes( 'backups' ) ? (
-				<Icon icon={ check } />
-			) : (
-				__( 'Disabled' )
-			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
+		id: 'backup',
+		label: __( 'Backup' ),
+		render: ( { item } ) => <LastBackup site={ item } />,
+		enableSorting: false,
 	},
 	{
 		id: 'status',
@@ -106,13 +93,13 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		},
 		render: ( { item } ) => {
 			const label = getSiteStatusLabel( item );
-			if ( item.launch_status !== 'unlaunched' ) {
-				return label;
+			if ( item.launch_status === 'unlaunched' && ! item.is_deleted ) {
+				return (
+					<UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>
+				);
 			}
 
-			return (
-				<ComingSoonStatusButton href={ `/home/${ item.slug }` }>{ label }</ComingSoonStatusButton>
-			);
+			return label;
 		},
 	},
 	{
@@ -123,7 +110,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'is_a8c',
 		type: 'boolean',
-		label: __( 'A8C Owned' ),
+		label: __( 'A8C owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
@@ -173,12 +160,47 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		render: ( { item } ) =>
 			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 	},
+	{
+		id: 'uptime',
+		label: __( 'Uptime' ),
+		render: ( { item } ) => <Uptime site={ item } />,
+		enableSorting: false,
+	},
+	{
+		id: 'visitors',
+		label: __( 'Visitors' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
+		enableSorting: false,
+	},
+	{
+		id: 'views',
+		label: __( 'Views' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
+		enableSorting: false,
+	},
+	{
+		id: 'likes',
+		label: __( 'Likes' ),
+		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
+		enableSorting: false,
+	},
+	{
+		id: 'php_version',
+		label: __( 'PHP version' ),
+		render: ( { item }: { item: Site } ) => <PHPVersion site={ item } />,
+	},
+	{
+		id: 'storage',
+		label: __( 'Storage' ),
+		render: ( { item } ) => <MediaStorage site={ item } />,
+		enableSorting: false,
+	},
 ];
 
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect', 'wp_version' ],
+		fields: [ 'status', 'visitors', 'subscribers_count', 'wp_version' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
@@ -220,6 +242,7 @@ export default function Sites() {
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
 	);
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
+
 	const defaultView = useMemo(
 		() =>
 			hasA8CSites
@@ -236,6 +259,7 @@ export default function Sites() {
 				: DEFAULT_VIEW,
 		[ hasA8CSites ]
 	);
+
 	const view = useMemo(
 		() => ( {
 			...defaultView,
@@ -248,11 +272,21 @@ export default function Sites() {
 		} ),
 		[ defaultView, viewOptions ]
 	);
-	const fields = useMemo(
-		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
-		[ hasA8CSites ]
-	);
+
+	const fields = useMemo( () => {
+		return DEFAULT_FIELDS.filter( ( field ) => {
+			if ( field.id === 'is_a8c' && ! hasA8CSites ) {
+				return false;
+			}
+
+			if ( field.id === 'icon.ico' && view.type === 'grid' ) {
+				return false;
+			}
+
+			return true;
+		} );
+	}, [ hasA8CSites, view.type ] );
+
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
@@ -315,9 +349,11 @@ export default function Sites() {
 	);
 }
 
-function ComingSoonStatusButton( { href, children }: { href: string; children: React.ReactNode } ) {
+function UnlaunchedStatusLink( { href, children }: { href: string; children: React.ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
 
+	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
+	// uses `overflow:hidden` to prevent any of the fields from overflowing.
 	return (
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
@@ -326,7 +362,6 @@ function ComingSoonStatusButton( { href, children }: { href: string; children: R
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
 				} }
-				style={ { position: 'absolute' } }
 			>
 				{ children }
 			</ExternalLink>

@@ -13,7 +13,10 @@
 	align-items: center;
 	line-height: $grid-unit-05 * 5;
 	hyphens: auto;
-	align-self: center;
+
+	&--label-position-side {
+		align-self: center;
+	}
 }
 
 .dataforms-layouts-panel__field-control {

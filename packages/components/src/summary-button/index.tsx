@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
@@ -39,12 +39,15 @@ function UnforwardedSummaryButton(
 		onClick,
 		disabled,
 		density = 'low',
+		...props
 	}: SummaryButtonProps,
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
 	return (
 		<Button
+			// Forward additional props to support standard attributes like mouse events.
+			{ ...props }
 			ref={ ref }
 			href={ href }
 			onClick={ onClick }

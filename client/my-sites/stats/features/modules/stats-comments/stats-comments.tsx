@@ -1,24 +1,23 @@
-import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { comment } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { STAT_TYPE_COMMENTS } from 'calypso/my-sites/stats/constants';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_INSIGHTS } from '../../../const';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
@@ -56,17 +55,18 @@ type HeaderToggleOptionType = {
 	label: string;
 };
 
-const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-const supportUrl = isOdysseyStats
-	? `${ JETPACK_SUPPORT_URL_INSIGHTS }#comments`
-	: INSIGHTS_SUPPORT_URL;
-
 const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = STAT_TYPE_COMMENTS;
 	const moduleTitle = translate( 'Comments' );
 	const [ activeFilter, setActiveFilter ] = useState< string >( 'top-authors' );
+
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-comments-jetpack' : 'stats-comments';
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -131,7 +131,9 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
 								}
@@ -173,7 +175,9 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
 								}

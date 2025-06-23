@@ -53,7 +53,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName } = useHelpCenterContext();
 	const { startNewInteraction } = useManageSupportInteraction();
-	const { data } = useSupportStatus();
+	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { data: openSupportInteractions, isLoading: isLoadingOpenSupportInteractions } =
 		useGetSupportInteractions( null, 1, 'open' );
 	const { data: resolvedSupportInteractions, isLoading: isLoadingResolvedSupportInteractions } =
@@ -161,6 +161,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						path="/odie"
 						element={
 							<HelpCenterChat
+								isLoadingStatus={ isLoadingSupportStatus }
 								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 								userFieldFlowName={ userFieldFlowName }
 							/>

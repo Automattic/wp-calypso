@@ -6,9 +6,8 @@ import type { Config } from '@docusaurus/types';
 
 const config: Config = {
 	title: 'Automattic Design System',
-	tagline: 'TODO: Do we have a tagline?',
-	// TODO: Add a favicon
-	favicon: 'img/favicon.ico',
+	tagline: 'Build sustainably with WordPress and Automattic components.',
+	favicon: 'img/ds-favicon.png',
 
 	// TODO: Set the production url here
 	url: 'https://your-docusaurus-site.example.com',
@@ -53,11 +52,9 @@ const config: Config = {
 		// TODO: Replace with your project's social card
 		image: 'img/docusaurus-social-card.jpg',
 		navbar: {
-			title: 'A8C DS',
 			logo: {
 				alt: 'Automattic Design System',
-				// TODO: Replace with the our logo
-				src: 'img/logo.svg',
+				src: 'img/ds-logo.png',
 			},
 			items: [
 				{

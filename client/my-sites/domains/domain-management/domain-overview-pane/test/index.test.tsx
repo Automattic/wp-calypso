@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { QueryParams } from '../../dataviews/query-params';
@@ -105,10 +105,19 @@ describe( 'DomainOverviewPane', () => {
 	const renderComponent = ( props = {} ) => {
 		const mockStore = configureStore();
 		const store = mockStore( createState() );
+		const queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: {
+					retry: false,
+				},
+			},
+		} );
 		return render(
-			<Provider store={ store }>
-				<DomainOverviewPane { ...defaultProps } { ...props } queryParams={ queryParams } />
-			</Provider>
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<DomainOverviewPane { ...defaultProps } { ...props } queryParams={ queryParams } />
+				</Provider>
+			</QueryClientProvider>
 		);
 	};
 
