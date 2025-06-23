@@ -4,7 +4,11 @@ import { useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { ReportDateColumn, ReportStatusColumn } from '../primary/dashboard/report-columns';
+import {
+	ReportDateColumn,
+	ReportStatusColumn,
+	ReportTimeframeColumn,
+} from '../primary/dashboard/report-columns';
 import type { Report } from '../types';
 import type { Action } from 'calypso/a8c-for-agencies/components/list-item-cards';
 
@@ -13,7 +17,7 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'status', 'createdAt' ],
+		fields: [ 'status', 'timeframe', 'createdAt' ],
 	} );
 
 	const fields = useMemo(
@@ -23,6 +27,20 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 				label: translate( 'Status' ),
 				getValue: () => '-',
 				render: ( { item }: { item: Report } ) => <ReportStatusColumn status={ item.status } />,
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'timeframe',
+				label: translate( 'Timeframe' ),
+				getValue: () => '-',
+				render: ( { item }: { item: Report } ) => (
+					<ReportTimeframeColumn
+						timeframe={ item.data.timeframe }
+						startDate={ item.data.start_date }
+						endDate={ item.data.end_date }
+					/>
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},

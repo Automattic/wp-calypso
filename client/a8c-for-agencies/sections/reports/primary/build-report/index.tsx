@@ -15,6 +15,7 @@ import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { getAvailableTimeframes } from 'calypso/a8c-for-agencies/sections/reports/lib/timeframes';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -36,15 +37,7 @@ const BuildReport = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const availableTimeframes = useMemo(
-		() => [
-			{ label: translate( 'Last 30 days' ), value: '30_days' },
-			{ label: translate( 'Last 7 days' ), value: '7_days' },
-			{ label: translate( 'Last 24 hours' ), value: '24_hours' },
-			{ label: translate( 'Custom range' ), value: 'custom' },
-		],
-		[ translate ]
-	);
+	const availableTimeframes = useMemo( () => getAvailableTimeframes( translate ), [ translate ] );
 
 	// Checkbox groups for Step 2
 	const statsOptions = useMemo(

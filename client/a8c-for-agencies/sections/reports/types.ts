@@ -1,8 +1,15 @@
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
+export type TimeframeValue = '7_days' | '24_hours' | '30_days' | 'custom';
+
+export interface TimeframeOption {
+	label: string;
+	value: TimeframeValue;
+}
+
 export interface ReportFormData {
 	managed_site_id: number;
-	timeframe: string;
+	timeframe: TimeframeValue;
 	client_emails: string[];
 	start_date?: string;
 	end_date?: string;
@@ -41,7 +48,7 @@ export type BuildReportCheckedItemsState = Record< string, boolean >;
 
 export type BuildReportFormData = {
 	selectedSite: A4ASelectSiteItem | null;
-	selectedTimeframe: string;
+	selectedTimeframe: TimeframeValue;
 	clientEmail: string;
 	startDate?: string;
 	endDate?: string;

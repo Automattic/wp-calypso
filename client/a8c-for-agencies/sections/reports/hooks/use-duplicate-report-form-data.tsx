@@ -8,12 +8,14 @@ import type {
 	BuildReportFormData,
 	BuildReportCheckedItemsState,
 	ReportFormAPIResponse,
+	TimeframeOption,
+	TimeframeValue,
 } from '../types';
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
 interface UseDuplicateReportFormDataReturn {
 	formData: BuildReportFormData;
-	setSelectedTimeframe: ( value: string ) => void;
+	setSelectedTimeframe: ( value: TimeframeValue ) => void;
 	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
 	setClientEmail: ( value: string ) => void;
 	setCustomIntroText: ( value: string ) => void;
@@ -28,7 +30,7 @@ interface UseDuplicateReportFormDataReturn {
 }
 
 export const useDuplicateReportFormData = (
-	availableTimeframes: { label: string; value: string }[],
+	availableTimeframes: TimeframeOption[],
 	statsOptions: { label: string; value: string }[]
 ): UseDuplicateReportFormDataReturn => {
 	const translate = useTranslate();
@@ -93,7 +95,7 @@ export const useDuplicateReportFormData = (
 
 		const site = findSiteById( reportData );
 		setSelectedSite( site );
-		setSelectedTimeframe( reportData.timeframe );
+		setSelectedTimeframe( reportData.timeframe || '30_days' );
 		setClientEmail( reportData.client_emails?.join( ', ' ) || '' );
 		setCustomIntroText( reportData.custom_intro_text );
 		setSendCopyToTeam( reportData.send_copy_to_team );
