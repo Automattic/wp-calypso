@@ -142,7 +142,7 @@ function PanelDropdown< Item >( {
 						fieldLabel
 					) }
 					onClick={ onToggle }
-					disabled={ fieldDefinition.enableEditing === false }
+					disabled={ fieldDefinition.readOnly === true }
 					accessibleWhenDisabled
 				>
 					<fieldDefinition.render

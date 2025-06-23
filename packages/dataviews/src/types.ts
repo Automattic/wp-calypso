@@ -128,9 +128,10 @@ export type FieldTypeDefinition< Item > = {
 	filterBy: FilterConfigForType | false;
 
 	/**
-	 * Whether the field is editable.
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
 	 */
-	enableEditing?: boolean;
+	readOnly?: boolean;
 
 	/**
 	 * Whether the field is sortable.
@@ -199,11 +200,6 @@ export type Field< Item > = {
 	isVisible?: ( item: Item ) => boolean;
 
 	/**
-	 * Whether the field is editable.
-	 */
-	enableEditing?: boolean;
-
-	/**
 	 * Whether the field is sortable.
 	 */
 	enableSorting?: boolean;
@@ -229,6 +225,12 @@ export type Field< Item > = {
 	filterBy?: FilterByConfig | false;
 
 	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
+
+	/**
 	 * Callback used to retrieve the value of the field from the item.
 	 * Defaults to `item[ field.id ]`.
 	 */
@@ -243,10 +245,10 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
-	enableEditing: boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
+	readonly: boolean;
 };
 
 /**

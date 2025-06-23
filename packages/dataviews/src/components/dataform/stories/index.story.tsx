@@ -125,13 +125,13 @@ const fields = [
 		id: 'filesize',
 		label: 'File Size',
 		type: 'integer' as const,
-		enableEditing: false,
+		readOnly: true,
 	},
 	{
 		id: 'dimensions',
 		label: 'Dimensions',
 		type: 'text' as const,
-		enableEditing: false,
+		readOnly: true,
 	},
 ] as Field< SamplePost >[];
 

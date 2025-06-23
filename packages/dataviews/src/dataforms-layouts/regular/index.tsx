@@ -99,7 +99,7 @@ export default function FormRegularField< Item >( {
 					{ fieldDefinition.label }
 				</div>
 				<div className="dataforms-layouts-regular__field-control">
-					{ fieldDefinition.enableEditing === false ? (
+					{ fieldDefinition.readOnly === true ? (
 						<fieldDefinition.render
 							item={ data }
 							field={ fieldDefinition }
@@ -120,7 +120,7 @@ export default function FormRegularField< Item >( {
 
 	return (
 		<div className="dataforms-layouts-regular__field">
-			{ fieldDefinition.enableEditing === false ? (
+			{ fieldDefinition.readOnly === true ? (
 				<>
 					{ ! hideLabelFromVision && labelPosition !== 'none' && (
 						<div className="dataforms-layouts-regular__field-label">
