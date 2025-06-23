@@ -81,6 +81,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'backup',
 		label: __( 'Backup' ),
 		render: ( { item } ) => <LastBackup site={ item } />,
+		enableSorting: false,
 	},
 	{
 		id: 'status',
