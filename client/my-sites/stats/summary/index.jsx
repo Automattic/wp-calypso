@@ -29,7 +29,7 @@ import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-
 import { GEO_MODES } from '../features/modules/stats-locations/types';
 import PostsNavTabs from '../features/modules/stats-top-posts/nav-tabs';
 import {
-	validQueryViewType as getValidTopPostStatType,
+	getValidQueryViewType,
 	SUB_STAT_TYPE as TOP_POSTS_SUB_STAT_TYPE,
 	MAIN_STAT_TYPE as TOP_POSTS_MAIN_STAT_TYPE,
 } from '../features/modules/stats-top-posts/use-option-labels';
@@ -275,7 +275,7 @@ class StatsSummary extends Component {
 			case 'posts':
 				title = StatsStrings.posts.title;
 				path = 'posts';
-				statType = getValidTopPostStatType( moduleQuery?.viewType );
+				statType = getValidQueryViewType( moduleQuery?.viewType );
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
