@@ -1,9 +1,10 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Modal, ExternalLink } from '@wordpress/components';
+import { useNavigate, useRouter, Link } from '@tanstack/react-router';
+import { Button, Modal, ExternalLink, Icon } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
@@ -28,21 +29,7 @@ import type {
 	ViewGrid,
 	Filter,
 } from '@automattic/dataviews';
-
-const actions = [
-	{
-		id: 'admin',
-		isPrimary: true,
-		label: __( 'WP Admin' ),
-		callback: ( sites: Site[] ) => {
-			const site = sites[ 0 ];
-			if ( site.options?.admin_url ) {
-				window.location.href = site.options.admin_url;
-			}
-		},
-		isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
-	},
-];
+import type { AnyRouter } from '@tanstack/react-router';
 
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{
@@ -221,6 +208,53 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
+const getDefaultActions = ( router: AnyRouter ) => {
+	return [
+		{
+			id: 'admin',
+			isPrimary: true,
+			icon: <Icon icon={ wordpress } />,
+			label: __( 'WP admin ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				if ( site.options?.admin_url ) {
+					window.open( site.options.admin_url, '_blank' );
+				}
+			},
+			isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
+		},
+		{
+			id: 'site',
+			label: __( 'Visit site ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				if ( site.URL ) {
+					window.open( site.URL, '_blank' );
+				}
+			},
+			isEligible: ( item: Site ) => ( item.is_deleted || ! item.URL ? false : true ),
+		},
+		{
+			id: 'domains',
+			label: __( 'Domains ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				window.open( `/domains/manage/${ site.slug }` );
+			},
+			isEligible: ( item: Site ) => ! item.is_deleted,
+		},
+		{
+			id: 'settings',
+			label: __( 'Settings' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
+			},
+			isEligible: ( item: Site ) => ! item.is_deleted,
+		},
+	];
+};
+
 const getFetchSitesOptions = (
 	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
 ): FetchSitesOptions => {
@@ -237,6 +271,7 @@ const getFetchSitesOptions = (
 
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
+	const router = useRouter();
 	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
@@ -286,6 +321,16 @@ export default function Sites() {
 			return true;
 		} );
 	}, [ hasA8CSites, view.type ] );
+
+	const actions = useMemo( () => {
+		return getDefaultActions( router ).filter( ( action ) => {
+			if ( action.id === 'admin' && view.type === 'grid' ) {
+				return false;
+			}
+
+			return true;
+		} );
+	}, [ view.type.router ] );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
