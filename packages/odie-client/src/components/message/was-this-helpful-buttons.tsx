@@ -86,7 +86,7 @@ const WasThisHelpfulButtons = ( {
 					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
 				</span>
 			</div>
-			<span className="odie-feedback-component-button-container">
+			<div className="odie-feedback-component-button-container">
 				<button
 					className={ buttonLikedClasses }
 					onClick={ () => handleIsHelpful( true ) }
@@ -105,7 +105,7 @@ const WasThisHelpfulButtons = ( {
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
 				</button>
-			</span>
+			</div>
 		</div>
 	);
 };
