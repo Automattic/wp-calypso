@@ -22,7 +22,7 @@ export function getValidQueryViewType(
 		return MAIN_STAT_TYPE;
 	}
 
-	return ! [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? MAIN_STAT_TYPE : statType;
+	return [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? statType : MAIN_STAT_TYPE;
 }
 
 export default function useOptionLabels() {

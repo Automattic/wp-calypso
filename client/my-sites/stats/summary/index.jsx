@@ -28,6 +28,11 @@ import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import { GEO_MODES } from '../features/modules/stats-locations/types';
 import PostsNavTabs from '../features/modules/stats-top-posts/nav-tabs';
+import {
+	validQueryViewType as getValidTopPostStatType,
+	SUB_STAT_TYPE as TOP_POSTS_SUB_STAT_TYPE,
+	MAIN_STAT_TYPE as TOP_POSTS_MAIN_STAT_TYPE,
+} from '../features/modules/stats-top-posts/use-option-labels';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
@@ -75,12 +80,40 @@ class StatsSummary extends Component {
 		}
 	}
 
+	getPath( statType, path ) {
+		if ( statType === 'statsCountryViews' ) {
+			const geoMode = this.props.context.query.geoMode;
+			const geoModeLabel =
+				geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
+					? GEO_MODES[ geoMode ]
+					: 'country';
+
+			return `${ path }-${ geoModeLabel }`;
+		}
+
+		switch ( statType ) {
+			case TOP_POSTS_MAIN_STAT_TYPE:
+				return 'posts';
+
+			case TOP_POSTS_SUB_STAT_TYPE:
+				return 'archives';
+
+			default:
+				return path;
+		}
+	}
+
 	renderSummaryHeader( path, statType, hideNavigation, query ) {
 		const period = this.props.period;
 
 		const headerCSVButton = (
 			<div className="stats-module__header-nav-button">
-				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+				<DownloadCsv
+					statType={ statType }
+					query={ query }
+					path={ this.getPath( statType, path ) }
+					period={ period }
+				/>
 			</div>
 		);
 
@@ -242,7 +275,7 @@ class StatsSummary extends Component {
 			case 'posts':
 				title = StatsStrings.posts.title;
 				path = 'posts';
-				statType = 'statsTopPosts';
+				statType = getValidTopPostStatType( moduleQuery?.viewType );
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -403,12 +436,6 @@ class StatsSummary extends Component {
 
 		const { module } = this.props.context.params;
 
-		const geoMode = this.props.context.query.geoMode;
-		const geoModeLabel =
-			geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
-				? GEO_MODES[ geoMode ]
-				: 'country';
-
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -431,7 +458,7 @@ class StatsSummary extends Component {
 									<DownloadCsv
 										statType={ statType }
 										query={ moduleQuery }
-										path={ statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path }
+										path={ this.getPath( statType, path ) }
 										period={ this.props.period }
 										skipQuery
 										hideIfNoData

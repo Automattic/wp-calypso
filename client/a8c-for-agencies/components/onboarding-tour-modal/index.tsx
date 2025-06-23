@@ -115,7 +115,11 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 							key={ menuItem.id }
 							onClick={ () => {
 								setCurrentSectionId( menuItem.id );
-								window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ menuItem.id }`;
+								window.history.replaceState(
+									window.history.state,
+									'',
+									`${ ONBOARDING_TOUR_HASH }-${ menuItem.id }`
+								);
 								dispatch(
 									recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_click', {
 										section: menuItem.id,
@@ -169,7 +173,11 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 								currentSectionId={ currentSectionId }
 								setCurrentSectionId={ ( sectionId ) => {
 									setCurrentSectionId( sectionId );
-									window.location.hash = `${ ONBOARDING_TOUR_HASH }-${ sectionId }`;
+									window.history.replaceState(
+										window.history.state,
+										'',
+										`${ ONBOARDING_TOUR_HASH }-${ sectionId }`
+									);
 									dispatch(
 										recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_swipe', {
 											section: sectionId,
