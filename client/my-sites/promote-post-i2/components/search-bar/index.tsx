@@ -256,7 +256,26 @@ export default function SearchBar( props: Props ) {
 		} );
 	};
 
-	const getSortLabel = () => {
+	const getPostSortLabel = () => {
+		let selectedSortOption = sortOption.orderBy;
+		if ( selectedSortOption === 'clicks_total' || selectedSortOption === 'impressions_total' ) {
+			selectedSortOption = `${ selectedSortOption }|${ sortOption.order }`;
+		}
+
+		const selectedOption = sortOptions.find( ( item ) => item.value === selectedSortOption )?.label;
+
+		if ( selectedOption ) {
+			return isDesktop
+				? translate( 'Sort: %(sortOption)s', {
+						args: { sortOption: selectedOption },
+				  } )
+				: selectedOption;
+		}
+
+		return isDesktop ? translate( 'Sort: Last published' ) : translate( 'Recently published' );
+	};
+
+	const getCampaignSortLabel = () => {
 		let selectedSortOption = campaignSortOption.orderBy;
 		if (
 			campaignSortOption.orderBy === 'clicks_total' ||
@@ -356,7 +375,7 @@ export default function SearchBar( props: Props ) {
 							onSelect={ onChangeOrderOption }
 							options={ sortOptions }
 							initialSelected={ sortOption.orderBy }
-							selectedText={ getSortLabel() }
+							selectedText={ getPostSortLabel() }
 						/>
 					</>
 				) }
@@ -386,7 +405,7 @@ export default function SearchBar( props: Props ) {
 							onSelect={ onCampaignChangeOrderOption }
 							options={ campaignSortOptions }
 							initialSelected={ campaignSortOption.orderBy }
-							selectedText={ getSortLabel() }
+							selectedText={ getCampaignSortLabel() }
 						/>
 					</>
 				) }

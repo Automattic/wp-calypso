@@ -8,6 +8,7 @@ import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';
 
+// TODO: remove this after discussing the design after unification.
 const WooOauthMasterbar = () => {
 	function goBack() {
 		window.history.back();

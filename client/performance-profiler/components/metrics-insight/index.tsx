@@ -84,7 +84,7 @@ const Header = styled.div`
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
-		width: 15px;
+		width: 20px;
 		text-align: right;
 	}
 `;

@@ -8,25 +8,19 @@ import { Spinner } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
-import { Button } from '@wordpress/components';
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { backup, comment, Icon } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { FC, ReactNode, ReactElement } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { FC } from 'react';
+import { Link } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
 import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import {
-	useChatStatus,
-	useGetHistoryChats,
-	useShouldRenderEmailOption,
-	useStillNeedHelpURL,
-} from '../hooks';
+import { useChatStatus, useShouldRenderEmailOption } from '../hooks';
 import { Mail } from '../icons';
 import { HelpCenterClosureNotice } from './help-center-closure-notice';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
@@ -183,101 +177,5 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					  ) }
 			</div>
 		</div>
-	);
-};
-
-const HelpCenterFooterButton = ( {
-	children,
-	eventName,
-	buttonTextEventProp,
-	redirectTo,
-	icon,
-}: {
-	children: ReactNode;
-	eventName: string;
-	buttonTextEventProp: string;
-	redirectTo: string;
-	icon: ReactElement;
-} ) => {
-	const { url, isLoading } = useStillNeedHelpURL();
-	const { sectionName } = useHelpCenterContext();
-	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
-	const navigate = useNavigate();
-	const [ isCreatingChat, setIsCreatingChat ] = useState( false );
-	const handleContactButtonClicked = ( {
-		eventName,
-		buttonTextEventProp,
-	}: {
-		eventName: string;
-		buttonTextEventProp: string;
-	} ) => {
-		recordTracksEvent( eventName, {
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-			button_type: buttonTextEventProp,
-		} );
-	};
-
-	const redirectionURL = () => {
-		if ( buttonTextEventProp === 'Still need help?' ) {
-			if ( isLoading ) {
-				return '';
-			}
-			return redirectToWpcom ? { pathname: url } : url;
-		}
-		return redirectTo;
-	};
-
-	const handleClick = async () => {
-		setIsCreatingChat( true );
-		handleContactButtonClicked( {
-			eventName: eventName,
-			buttonTextEventProp: buttonTextEventProp,
-		} );
-
-		setIsCreatingChat( false );
-		const url = redirectionURL();
-		navigate( url );
-	};
-
-	return (
-		<Button
-			onClick={ handleClick }
-			disabled={ isCreatingChat }
-			className="button help-center-contact-page__button"
-		>
-			<Icon icon={ icon } />
-			{ children }
-		</Button>
-	);
-};
-
-export const HelpCenterContactButton: FC = () => {
-	const { recentConversations } = useGetHistoryChats();
-	const { __ } = useI18n();
-
-	return (
-		<>
-			<HelpCenterFooterButton
-				icon={ comment }
-				eventName="calypso_inlinehelp_morehelp_click"
-				buttonTextEventProp="Still need help?"
-				redirectTo="/odie"
-			>
-				{ __( 'Still need help?', __i18n_text_domain__ ) }
-			</HelpCenterFooterButton>
-
-			{ recentConversations.length > 1 && (
-				<HelpCenterFooterButton
-					icon={ backup }
-					eventName="calypso_inlinehelp_history_click"
-					buttonTextEventProp="History"
-					redirectTo="/chat-history"
-				>
-					{ __( 'History', __i18n_text_domain__ ) }
-				</HelpCenterFooterButton>
-			) }
-		</>
 	);
 };

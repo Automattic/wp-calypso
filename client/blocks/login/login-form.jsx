@@ -1118,7 +1118,7 @@ export class LoginForm extends Component {
 						handleLogin={ this.handleSocialLogin }
 						trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						shouldRenderToS
+						shouldRenderToS={ false }
 						isJetpack={ isJetpack }
 					/>
 				</Fragment>

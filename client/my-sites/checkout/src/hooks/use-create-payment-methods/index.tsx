@@ -400,6 +400,7 @@ function useCreateRazorpay( {
  */
 export default function useCreatePaymentMethods( {
 	contactDetailsType,
+	currentTaxCountryCode,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
@@ -410,6 +411,7 @@ export default function useCreatePaymentMethods( {
 	storedCards,
 }: {
 	contactDetailsType: ContactDetailsType;
+	currentTaxCountryCode: string | undefined;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
@@ -517,8 +519,12 @@ export default function useCreatePaymentMethods( {
 		cartKey,
 	} );
 
-	// The order is the order of Payment Methods in Checkout.
-	return [
+	// The order of this array is the order that Payment Methods will be
+	// displayed in Checkout, although not all payment methods here will be
+	// listed; the list of allowed payment methods is returned by the shopping
+	// cart which will be used to filter this list in
+	// `filterAppropriatePaymentMethods()`.
+	let paymentMethods = [
 		...existingCardMethods,
 		stripeMethod,
 		applePayMethod,
@@ -537,4 +543,30 @@ export default function useCreatePaymentMethods( {
 		bancontactMethod,
 		razorpayMethod,
 	].filter( isValueTruthy );
+
+	// In Germany, PayPal is the preferred option, so we display it before
+	// credit cards. See https://wp.me/pxLjZ-9aA
+	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
+		paymentMethods = [
+			...existingCardMethods,
+			paypalExpressMethod,
+			paypalPPCPMethod,
+			stripeMethod,
+			applePayMethod,
+			googlePayMethod,
+			freePaymentMethod,
+			idealMethod,
+			sofortMethod,
+			netbankingMethod,
+			pixMethod,
+			alipayMethod,
+			p24Method,
+			epsMethod,
+			wechatMethod,
+			bancontactMethod,
+			razorpayMethod,
+		].filter( isValueTruthy );
+	}
+
+	return paymentMethods;
 }

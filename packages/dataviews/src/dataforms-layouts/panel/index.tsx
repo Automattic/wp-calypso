@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import clsx from 'clsx';
+
+/**
  * WordPress dependencies
  */
 import {
@@ -192,6 +197,10 @@ export default function FormPanelField< Item >( {
 		return fieldDef.id === field.id;
 	} );
 	const labelPosition = field.labelPosition ?? 'side';
+	const labelClassName = clsx(
+		'dataforms-layouts-panel__field-label',
+		`dataforms-layouts-panel__field-label--label-position-${ labelPosition }`
+	);
 
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the popover's anchor updates.
@@ -211,7 +220,7 @@ export default function FormPanelField< Item >( {
 		return (
 			<VStack className="dataforms-layouts-panel__field" spacing={ 0 }>
 				<div
-					className="dataforms-layouts-panel__field-label"
+					className={ labelClassName }
 					style={ { paddingBottom: 0 } }
 				>
 					{ fieldLabel }
@@ -251,9 +260,7 @@ export default function FormPanelField< Item >( {
 			ref={ setPopoverAnchor }
 			className="dataforms-layouts-panel__field"
 		>
-			<div className="dataforms-layouts-panel__field-label">
-				{ fieldLabel }
-			</div>
+			<div className={ labelClassName }>{ fieldLabel }</div>
 			<div className="dataforms-layouts-panel__field-control">
 				<PanelDropdown
 					field={ field }

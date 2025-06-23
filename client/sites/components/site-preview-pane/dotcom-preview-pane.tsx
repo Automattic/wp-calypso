@@ -3,7 +3,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
-import { getMigrationStatus } from 'calypso/data/site-migration';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
@@ -63,7 +63,7 @@ const DotcomPreviewPane = ( {
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
-	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+	const isInProgress = isMigrationInProgress( site );
 	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
@@ -167,7 +167,7 @@ const DotcomPreviewPane = ( {
 	] );
 
 	const itemData: ItemData = {
-		title: isMigrationPending ? __( 'Incoming Migration' ) : site.title,
+		title: isInProgress ? __( 'Incoming Migration' ) : site.title,
 		subtitle: site.slug,
 		url: site.URL,
 		blogId: site.ID,
@@ -211,10 +211,10 @@ const DotcomPreviewPane = ( {
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
-				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
+				siteIconFallback: isInProgress ? 'migration' : 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () => {
-					if ( isMigrationPending ) {
+					if ( isInProgress ) {
 						return <SiteStatus site={ site } />;
 					}
 

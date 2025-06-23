@@ -533,18 +533,21 @@ $image-height: 47px;
 		align-self: center;
 		max-width: var(--login-form-column-max-width);
 
-		.wp-login__main-footer-help-docs {
+		.wp-login__main-footer-help-docs,
+		.wp-login__main-footer-back-link {
 			margin-top: 16px;
 		}
 
 		.wp-login__main-footer-help-docs,
-		.login__lost-password-link {
+		.login__lost-password-link,
+		.wp-login__main-footer-back-link {
 			font-size: $font-body-small;
 			display: block;
 		}
 
 		.login__lost-password-link,
-		.wp-login__main-footer-help-docs a {
+		.wp-login__main-footer-help-docs a,
+		a.wp-login__main-footer-back-link {
 			color: var(--studio-gray-90, #1d2327);
 			font-weight: 500;
 			text-align: center;
