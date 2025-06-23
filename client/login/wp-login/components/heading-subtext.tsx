@@ -5,10 +5,9 @@ interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
 	action?: string;
-	isLostPassword?: boolean;
 }
 
-const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, action, isLostPassword }: Props ) => {
+const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, action }: Props ) => {
 	const translate = useTranslate();
 
 	if ( ! isSocialFirst || twoFactorAuthType ) {
@@ -66,7 +65,7 @@ const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, action, isLostPassw
 	 */
 	return (
 		<span className="wp-login__heading-subtext">
-			{ 'lostpassword' === action || isLostPassword
+			{ 'lostpassword' === action
 				? translate(
 						"Please enter your username or email address. You'll receive a link to create a new password via email."
 				  )

@@ -460,7 +460,6 @@ export class Login extends Component {
 			isWoo,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
-			currentRoute,
 			twoFactorEnabled,
 		} = this.props;
 
@@ -517,9 +516,6 @@ export class Login extends Component {
 			translate
 		);
 
-		const isLostPassword =
-			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
-
 		const shouldUseWideHeading =
 			'lostpassword' !== action &&
 			( isStudioAppOAuth2Client( oauth2Client ) ||
@@ -556,7 +552,6 @@ export class Login extends Component {
 									<HeadingSubText
 										isSocialFirst={ isSocialFirst }
 										twoFactorAuthType={ twoFactorAuthType }
-										isLostPassword={ isLostPassword }
 										action={ action }
 									/>
 								}
