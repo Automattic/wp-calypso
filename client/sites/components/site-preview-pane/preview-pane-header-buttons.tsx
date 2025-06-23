@@ -6,7 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
-import SyncDropdown from 'calypso/dashboard/sites/sync/sync-dropdown';
+import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
