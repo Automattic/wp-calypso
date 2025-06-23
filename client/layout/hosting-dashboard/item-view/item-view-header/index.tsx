@@ -124,6 +124,14 @@ export default function ItemViewHeader( {
 											itemData.subtitle
 										) }
 
+										{ extraProps && extraProps.subtitleExtra ? (
+											<span>
+												<extraProps.subtitleExtra />
+											</span>
+										) : (
+											''
+										) }
+
 										{ showAddStagingButton && isEnabled( 'hosting/staging-sites-redesign' ) && (
 											<Button
 												variant="link"
@@ -134,14 +142,6 @@ export default function ItemViewHeader( {
 											>
 												{ translate( 'Add staging site' ) }
 											</Button>
-										) }
-
-										{ extraProps && extraProps.subtitleExtra ? (
-											<span>
-												<extraProps.subtitleExtra />
-											</span>
-										) : (
-											''
 										) }
 									</div>
 

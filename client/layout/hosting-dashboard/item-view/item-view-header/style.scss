@@ -46,6 +46,10 @@ $blueberry-color: #3858e9;
 				&:hover {
 					text-decoration: none;
 				}
+
+				&.components-button.has-icon {
+					padding: 0;
+				}
 			}
 		}
 
