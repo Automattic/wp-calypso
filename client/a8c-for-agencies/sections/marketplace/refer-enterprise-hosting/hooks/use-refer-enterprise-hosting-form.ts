@@ -18,8 +18,8 @@ const DEFAULT_FORM_DATA: ReferEnterpriseHostingFormData = {
 	email: '',
 	website: '',
 	opportunityDescription: '',
-	leadType: undefined,
-	includeRfp: false,
+	leadType: 'other',
+	includeRfp: undefined,
 };
 
 export default function useReferEnterpriseHostingForm() {
@@ -123,7 +123,7 @@ export default function useReferEnterpriseHostingForm() {
 	);
 
 	const updateFormData = useCallback(
-		( name: string, value: string | string[] | boolean ) => {
+		( name: string, value: string | string[] | boolean | File | undefined ) => {
 			setFormData( ( prev ) => ( { ...prev, [ name ]: value } ) );
 		},
 		[ setFormData ]

@@ -15,5 +15,6 @@ export type ReferEnterpriseHostingFormData = {
 
 	opportunityDescription: string;
 	leadType?: 'media' | 'public' | 'other';
-	includeRfp?: boolean;
+	includeRfp?: 'yes' | 'no';
+	rfpFile?: File;
 };

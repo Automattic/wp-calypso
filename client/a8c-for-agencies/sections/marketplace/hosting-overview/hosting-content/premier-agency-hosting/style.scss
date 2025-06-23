@@ -118,13 +118,3 @@
 	@include body-small;
 	color: var(--color-neutral-80);
 }
-
-.enterprise-agency-hosting__cta-buttons {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-
-	a {
-		text-decoration: none;
-	}
-}
