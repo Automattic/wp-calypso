@@ -16,6 +16,7 @@ import {
 	marketplaceHostingContext,
 	marketplaceProductsContext,
 	downloadProductsContext,
+	marketplaceReferEnterpriseHostingContext,
 } from './controller';
 
 export default function () {
@@ -25,6 +26,14 @@ export default function () {
 		A4A_MARKETPLACE_PRODUCTS_LINK,
 		requireAccessContext,
 		marketplaceProductsContext,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`${ A4A_MARKETPLACE_HOSTING_LINK }/refer-enterprise-hosting`,
+		requireAccessContext,
+		marketplaceReferEnterpriseHostingContext,
 		makeLayout,
 		clientRender
 	);
