@@ -1,5 +1,11 @@
 ## Unreleased
 
+## Next
+
+### Enhancements
+
+- `DateCalendar`: Ensure proper stacking context and background to support pseudo-element selection styles
+
 ## 1.0.1
 
 ### Bug Fixes
