@@ -8,6 +8,7 @@ import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
+import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -202,6 +203,14 @@ const DotcomPreviewPane = ( {
 		selectedFeatureId: selectedSiteFeature,
 	} );
 
+	const isReverting =
+		stagingStatus === StagingSiteStatus.INITIATE_REVERTING ||
+		stagingStatus === StagingSiteStatus.REVERTING;
+	const isProduction = site.is_wpcom_atomic && ! site.is_wpcom_staging_site;
+	const hasNoStagingSites = ! site.options?.wpcom_staging_blog_ids?.length;
+
+	const shouldShowProductionBadge = isProduction && ( hasNoStagingSites || isReverting );
+
 	return (
 		<ItemView
 			itemData={ itemData }
@@ -216,6 +225,10 @@ const DotcomPreviewPane = ( {
 				subtitleExtra: () => {
 					if ( isInProgress ) {
 						return <SiteStatus site={ site } />;
+					}
+
+					if ( stagingSitesRedesign && shouldShowProductionBadge ) {
+						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 
 					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
