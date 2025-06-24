@@ -1,14 +1,15 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
-import { getMigrationStatus } from 'calypso/data/site-migration';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useSelector } from 'calypso/state';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
@@ -62,7 +63,8 @@ const DotcomPreviewPane = ( {
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
-	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+	const isInProgress = isMigrationInProgress( site );
+	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -165,7 +167,7 @@ const DotcomPreviewPane = ( {
 	] );
 
 	const itemData: ItemData = {
-		title: isMigrationPending ? __( 'Incoming Migration' ) : site.title,
+		title: isInProgress ? __( 'Incoming Migration' ) : site.title,
 		subtitle: site.slug,
 		url: site.URL,
 		blogId: site.ID,
@@ -189,17 +191,9 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
-	const hasStagingSitePermission = stagingSites?.some(
-		( stagingSite ) => stagingSite.user_has_permission
+	const hasEnvironmentPermission = useSelector( ( state ) =>
+		canCurrentUserSwitchEnvironment( state, site )
 	);
-
-	const hasManageOptionsPermission = useSelector( ( state ) => {
-		if ( site.is_wpcom_staging_site ) {
-			return canCurrentUser( state, site.options?.wpcom_production_blog_id, 'manage_options' );
-		}
-
-		return canCurrentUser( state, site.ID, 'manage_options' );
-	} );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
@@ -213,23 +207,18 @@ const DotcomPreviewPane = ( {
 			itemData={ itemData }
 			closeItemView={ closeSitePreviewPane }
 			features={ features }
-			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
+			className={ site.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : '' }
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
-				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
+				siteIconFallback: isInProgress ? 'migration' : 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () => {
-					if ( isMigrationPending ) {
+					if ( isInProgress ) {
 						return <SiteStatus site={ site } />;
 					}
 
-					if (
-						( hasStagingSitePermission &&
-							! site.is_wpcom_staging_site &&
-							isStagingStatusFinished ) ||
-						( hasManageOptionsPermission && site.is_wpcom_staging_site )
-					) {
+					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
 					}
 				},

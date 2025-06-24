@@ -11,12 +11,18 @@ export interface StatsModulePostsProps extends StatsDefaultModuleProps {
 	query: StatsQueryType & { viewType?: StatType };
 }
 
-export function validQueryViewType( statType: StatType = MAIN_STAT_TYPE ) {
-	if ( ! config.isEnabled( 'stats/archive-breakdown' ) ) {
+export function getValidQueryViewType(
+	statType: StatType = MAIN_STAT_TYPE,
+	supportsArchiveStats = false
+) {
+	const isArchiveBreakdownFlag = config.isEnabled( 'stats/archive-breakdown' );
+	const isArchiveBreakdownEnabled = isArchiveBreakdownFlag && supportsArchiveStats;
+
+	if ( ! isArchiveBreakdownEnabled ) {
 		return MAIN_STAT_TYPE;
 	}
 
-	return ! [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? MAIN_STAT_TYPE : statType;
+	return [ MAIN_STAT_TYPE, SUB_STAT_TYPE ].includes( statType ) ? statType : MAIN_STAT_TYPE;
 }
 
 export default function useOptionLabels() {

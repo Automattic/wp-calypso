@@ -21,7 +21,7 @@
 	}
 }
 
-.layout.is-jetpack-login {
+.layout.is-jetpack-login:not(.woo) {
 	background-color: #fff;
 
 	&, .empty-content__title {
@@ -112,12 +112,6 @@
 			margin-top: 40px;
 			transform: translateX(-50%);
 			width: 48px;
-		}
-	}
-
-	#content.layout__content {
-		@include break-mobile {
-			padding-top: 10rem;
 		}
 	}
 

@@ -1,4 +1,6 @@
 export enum DotcomFeatures {
+	ATOMIC = 'atomic',
+	BACKUPS = 'backups',
 	SUBSCRIPTION_GIFTING = 'subscription-gifting',
 	COPY_SITE = 'copy-site',
 	LEGACY_CONTACT = 'legacy-contact',
@@ -22,4 +24,9 @@ export enum DotcomPlans {
 	PREMIUM_MONTHLY = 'value_bundle_monthly',
 	PREMIUM_2_YEARS = 'value_bundle-2y',
 	PREMIUM_3_YEARS = 'value_bundle-3y',
+}
+
+export enum JetpackModules {
+	STATS = 'stats',
+	MONITOR = 'monitor',
 }

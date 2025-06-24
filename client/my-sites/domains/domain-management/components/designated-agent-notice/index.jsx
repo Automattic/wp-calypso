@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from '@automattic/urls';
+import { DOMAIN_REGISTRATION_AGREEMENTS } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 import './style.scss';
 
@@ -31,11 +32,7 @@ const DesignatedAgentNotice = ( props ) => (
 							/>
 						),
 						supportLink: (
-							<a
-								href={ localizeUrl( DESIGNATED_AGENT ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
+							<InlineSupportLink supportContext="domain-designated-agent" showIcon={ false } />
 						),
 					},
 				}

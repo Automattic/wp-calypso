@@ -16,6 +16,7 @@ export const SITE_FIELDS = [
 	'is_private',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
+	'hosting_provider_guess',
 	'lang',
 	'launch_status',
 	'site_migration',
@@ -34,6 +35,7 @@ export const SITE_OPTIONS = [
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
+	'updated_at',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
@@ -62,6 +64,7 @@ export interface SiteOptions {
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	software_version: string;
+	updated_at?: string;
 }
 
 export interface Site {
@@ -95,6 +98,7 @@ export interface Site {
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
+	hosting_provider_guess?: string;
 }
 
 export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {

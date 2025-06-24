@@ -1,7 +1,7 @@
-import { DotcomFeatures } from '../data/constants';
+import { DotcomFeatures, JetpackModules } from '../data/constants';
 import type { Site } from '../data/types';
 
-export function hasPlanFeature( site: Site, feature: DotcomFeatures ) {
+export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures }` ) {
 	if ( ! site.plan ) {
 		return false;
 	}
@@ -9,10 +9,10 @@ export function hasPlanFeature( site: Site, feature: DotcomFeatures ) {
 	return site.plan.features.active.includes( feature );
 }
 
-export function hasHostingFeatures( site: Site ) {
-	return site.is_wpcom_atomic && ! site.plan?.expired;
+export function hasAtomicFeature( site: Site, feature: `${ DotcomFeatures }` ) {
+	return site.is_wpcom_atomic && ! site.plan?.expired && hasPlanFeature( site, feature );
 }
 
-export function hasAdvancedHostingFeatures( site: Site ) {
-	return hasHostingFeatures( site ) && hasPlanFeature( site, DotcomFeatures.SFTP );
+export function hasJetpackModule( site: Site, module: `${ JetpackModules }` ) {
+	return site.jetpack && site.jetpack_modules?.includes( module );
 }

@@ -1,4 +1,4 @@
-import { Button, Modal } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -17,7 +17,7 @@ import LayoutHeader, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { A4A_REPORTS_BUILD_LINK } from '../../constants';
-import ExampleReport from './example-report';
+import ExampleReportModal from '../../example-report-modal';
 
 import './style.scss';
 
@@ -170,17 +170,10 @@ export default function ReportsOverview() {
 				</PageSectionColumns>
 			</LayoutBody>
 
-			{ showExampleModal && (
-				<Modal
-					title={ translate( 'Example client report' ) }
-					onRequestClose={ () => setShowExampleModal( false ) }
-					className="reports-overview__example-report-modal"
-					bodyOpenClassName="reports-overview__example-report-modal-body"
-					isFullScreen
-				>
-					<ExampleReport />
-				</Modal>
-			) }
+			<ExampleReportModal
+				isVisible={ showExampleModal }
+				onClose={ () => setShowExampleModal( false ) }
+			/>
 		</Layout>
 	);
 }

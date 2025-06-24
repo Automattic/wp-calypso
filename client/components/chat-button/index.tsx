@@ -98,7 +98,7 @@ const ChatButton: FC< Props > = ( {
 			onClick?.();
 			setNewMessagingChat( { initialMessage, section, siteUrl, siteId } );
 		} else {
-			setNavigateToRoute( '/contact-options' );
+			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 			onClick?.();
 		}

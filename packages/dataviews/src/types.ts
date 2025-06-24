@@ -83,7 +83,8 @@ export type Operator =
 	| 'afterInc'
 	| 'contains'
 	| 'notContains'
-	| 'startsWith';
+	| 'startsWith'
+	| 'between';
 
 export type FieldType =
 	| 'text'
@@ -91,7 +92,8 @@ export type FieldType =
 	| 'datetime'
 	| 'media'
 	| 'boolean'
-	| 'email';
+	| 'email'
+	| 'array';
 
 export type ValidationContext = {
 	elements?: Option[];
@@ -125,6 +127,12 @@ export type FieldTypeDefinition< Item > = {
 	 * The filter config for the field.
 	 */
 	filterBy: FilterConfigForType | false;
+
+	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
 
 	/**
 	 * Whether the field is sortable.
@@ -218,6 +226,12 @@ export type Field< Item > = {
 	filterBy?: FilterByConfig | false;
 
 	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
+
+	/**
 	 * Callback used to retrieve the value of the field from the item.
 	 * Defaults to `item[ field.id ]`.
 	 */
@@ -235,6 +249,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
+	readOnly: boolean;
 };
 
 /**
@@ -249,6 +264,13 @@ export type DataFormControlProps< Item > = {
 	field: NormalizedField< Item >;
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
+	/**
+	/**
+	 * The currently selected filter operator for this field.
+	 *
+	 * Used by DataViews filters to determine which control to render based on the operator type.
+	 */
+	operator?: Operator;
 };
 
 export type DataViewRenderFieldProps< Item > = {

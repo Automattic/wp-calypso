@@ -210,20 +210,20 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 /**
  * Backport Hosting Dashboard Site Settings page to the current one.
  */
-export function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
-	const state = context.store.getState();
-	const site = getSelectedSite( state );
+export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
+	const { site: siteSlug, feature } = context.params;
 
 	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
 	context.primary = (
 		<DashboardBackportSiteSettingsRenderer
-			siteSlug={ site?.slug }
-			feature={ context.params.feature }
+			store={ context.store }
+			siteSlug={ siteSlug }
+			feature={ feature }
 		/>
 	);
 

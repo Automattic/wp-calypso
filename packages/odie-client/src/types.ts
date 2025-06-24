@@ -15,7 +15,6 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	extraContactOptions?: ReactNode;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
@@ -42,7 +41,6 @@ export type OdieAssistantProviderProps = {
 	isUserEligibleForPaidSupport?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
-	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
@@ -133,6 +131,7 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
+		is_error_message?: boolean;
 	};
 };
 

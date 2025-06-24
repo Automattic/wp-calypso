@@ -164,9 +164,9 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 				total: results[ 1 ]?.data?.total_subscribers,
 				paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 				free_subscribers:
-					results[ 1 ]?.data?.email_subscribers !== undefined &&
+					results[ 1 ]?.data?.total_subscribers !== undefined &&
 					results[ 1 ]?.data?.paid_subscribers !== undefined
-						? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
+						? results[ 1 ].data.total_subscribers - results[ 1 ].data.paid_subscribers
 						: null,
 				social_followers: results[ 1 ]?.data?.social_followers,
 				is_owner_subscribed: results[ 0 ]?.data?.is_owner_subscribed,
@@ -185,9 +185,9 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 			total: results[ 1 ]?.data?.total_subscribers,
 			paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
-				results[ 1 ]?.data?.email_subscribers !== undefined &&
+				results[ 1 ]?.data?.total_subscribers !== undefined &&
 				results[ 1 ]?.data?.paid_subscribers !== undefined
-					? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
+					? results[ 1 ].data.total_subscribers - results[ 1 ].data.paid_subscribers
 					: null,
 			social_followers: results[ 1 ]?.data?.social_followers,
 			is_owner_subscribed: results[ 2 ]?.data?.is_owner_subscribed,

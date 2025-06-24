@@ -1,17 +1,25 @@
 import page from '@automattic/calypso-router';
 import { TabPanel } from '@wordpress/components';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	getPathWithUpdatedQueryString,
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useOptionLabels, {
 	MAIN_STAT_TYPE,
 	StatsModulePostsProps,
-	validQueryViewType,
+	getValidQueryViewType,
 } from './use-option-labels';
 
 function NavTabs( { query }: StatsModulePostsProps ) {
+	const siteId = useSelector( getSelectedSiteId );
+	const { supportsArchiveStats } = useSelector( ( state: object ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
+
 	const optionLabels = useOptionLabels();
 	const tabPanelTabs = useMemo( () => {
 		return Object.entries( optionLabels ).map( ( [ key, item ] ) => {
@@ -27,7 +35,8 @@ function NavTabs( { query }: StatsModulePostsProps ) {
 		} );
 	}, [ optionLabels ] );
 
-	const selectedTab = validQueryViewType( query.viewType ) || MAIN_STAT_TYPE;
+	const selectedTab =
+		getValidQueryViewType( query.viewType, supportsArchiveStats ) || MAIN_STAT_TYPE;
 
 	return (
 		<TabPanel

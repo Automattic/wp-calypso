@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -171,8 +172,17 @@ describe( 'domainManagementPaneView', () => {
 		const paneViewHandler = domainController.domainManagementPaneView( DOMAIN_OVERVIEW );
 		paneViewHandler( pageContext, mockNext );
 
+		const queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: {
+					retry: false,
+				},
+			},
+		} );
 		const { container } = render(
-			<Provider store={ testStore }>{ pageContext.primary as React.ReactElement }</Provider>
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ testStore }>{ pageContext.primary as React.ReactElement }</Provider>
+			</QueryClientProvider>
 		);
 		expect( container ).toBeInTheDocument();
 		expect( mockNext ).toHaveBeenCalled();
@@ -215,8 +225,17 @@ describe( 'domainManagementPaneView', () => {
 		const paneViewHandler = domainController.domainManagementPaneView( DOMAIN_OVERVIEW );
 		paneViewHandler( pageContext, mockNext );
 
+		const queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: {
+					retry: false,
+				},
+			},
+		} );
 		const { container } = render(
-			<Provider store={ testStore }>{ pageContext.primary as React.ReactElement }</Provider>
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ testStore }>{ pageContext.primary as React.ReactElement }</Provider>
+			</QueryClientProvider>
 		);
 		expect( container ).toBeInTheDocument();
 		expect( pageContext.primary.props ).toMatchObject( {

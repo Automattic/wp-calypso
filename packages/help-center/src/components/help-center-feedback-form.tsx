@@ -67,7 +67,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 					<div className="odie-chatbox-dislike-feedback-message">
 						<p>
 							{ __(
-								'Would you like to contact our support team? Select an option below:',
+								'Would you like to get support? Select an option below:',
 								__i18n_text_domain__
 							) }
 						</p>
@@ -77,6 +77,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 						isUserEligibleForPaidSupport={ isEligibleForChat }
 						canConnectToZendesk={ canConnectToZendesk }
 						forceEmailSupport={ forceEmailSupport }
+						forceAIConversation
 					/>
 				</>
 			) }

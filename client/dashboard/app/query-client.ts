@@ -5,7 +5,7 @@ import { persistQueryClient } from '@tanstack/react-query-persist-client';
 export const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
-			staleTime: 0,
+			staleTime: 1000 * 60 * 1, // 1 minute
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
 		},

@@ -27,7 +27,7 @@ function AdminHelpCenterContent() {
 		) {
 			setShowHelpCenter( false );
 		}
-	}, [ masterbarNotificationsButton.classList, setShowHelpCenter ] );
+	}, [ masterbarNotificationsButton?.classList, setShowHelpCenter ] );
 
 	useEffect( () => {
 		if ( masterbarNotificationsButton ) {

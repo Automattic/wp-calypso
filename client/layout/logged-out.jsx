@@ -30,6 +30,7 @@ import {
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -145,11 +146,14 @@ const LayoutLoggedOut = ( {
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
+		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+		'jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 	};
 
 	let masterbar = null;
 
+	// TODO: figure out how refreshColorScheme is used in the rest of the app, and remove this.
 	useEffect( () => {
 		isWooJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
@@ -160,7 +164,7 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( isBlazePro && isWhiteLogin ) {
+	if ( ( isBlazePro || isWoo ) && isWhiteLogin ) {
 		/**
 		 * This effectively removes the masterbar completely from Login pages (only).
 		 * However, in some cases, we want the styles imported from the masterbar to be applied.
@@ -327,7 +331,6 @@ export default withCurrentRoute(
 			const isAkismet = isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			);
-			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const oauth2Client = getCurrentOAuth2Client( state );
@@ -337,27 +340,30 @@ export default withCurrentRoute(
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
+			const isWoo = getIsWoo( state );
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isA4AClient = isA4AOAuth2Client( oauth2Client );
+			const isVIPClient = isVIPOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				( currentRoute.startsWith( '/log-in' ) &&
-					( ( ! isJetpackLogin &&
-						Boolean( currentQuery?.client_id ) === false &&
-						Boolean( currentQuery?.oauth2_client_id ) === false &&
-						! isWooJPC ) ||
+					( ( Boolean( currentQuery?.client_id ) === false &&
+						Boolean( currentQuery?.oauth2_client_id ) === false ) ||
 						isStudioClient ||
 						isCrowdsignalClient ||
 						isBlazePro ||
-						isA4AClient ) ) ||
+						isA4AClient ||
+						isWoo ||
+						isJetpackCloudClient ||
+						isJetpackLogin ||
+						isVIPClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =
-				isJetpackLogin ||
-				( isWhiteLogin && ! isBlazePro ) ||
-				isJetpackWooDnaFlow ||
-				isInvitationURL;
+				( isWhiteLogin && ! isBlazePro ) || isJetpackWooDnaFlow || isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
@@ -372,6 +378,11 @@ export default withCurrentRoute(
 				isInStepContainerV2FlowContext( currentRoute, currentQuery );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
+			/**
+			 * This is a mechanism to set a color scheme for WooJPC pages, from the current URL.
+			 *
+			 * TODO: there is a possiblity this is not utilized. If that's the case, we can remove this call.
+			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
 			return {
