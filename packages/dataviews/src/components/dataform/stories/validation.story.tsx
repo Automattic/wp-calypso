@@ -9,6 +9,7 @@ import { useMemo, useState } from '@wordpress/element';
 import DataForm from '../index';
 import { initialData, getFields, getForm, type FormData } from './fixtures';
 import { isItemValid } from '../../../validation';
+import { getAllValidationErrors } from '../../validation';
 
 const meta = {
 	title: 'DataViews/DataForm/Validation',
@@ -61,6 +62,12 @@ const DataFormWithValidation = ( {
 				}
 			/>
 			<p>Form is valid: { isFormValid ? 'true' : 'false' }</p>
+			<p>
+				Validation errors:{ ' ' }
+				{ JSON.stringify(
+					getAllValidationErrors( post, fields, form )
+				) }
+			</p>
 		</>
 	);
 };
