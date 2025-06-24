@@ -26,7 +26,10 @@ export const normalizeIsValid = < Item, >(
 	}
 
 	if ( typeof rules === 'function' ) {
-		return rules;
+		return ( item: Item, context?: ValidationContext ) => {
+			const value = getValue( { item } );
+			return rules( value, context );
+		};
 	}
 
 	return () => true;
