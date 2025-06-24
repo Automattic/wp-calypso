@@ -14,7 +14,7 @@
 - Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
 - Fix the background color of the action column if the row is selected
 - Allow readonly fields in DataForm when `readOnly` is set to `true`.
-
+- Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality.
 
 ## 0.2.1
 
