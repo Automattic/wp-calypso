@@ -179,18 +179,20 @@ class CancelPurchaseForm extends Component {
 	};
 
 	onTextOneChange = ( eventOrValue, detailsValue ) => {
+		const { downgradeClick, freeMonthOfferClick, purchase } = this.props;
 		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
-		const { purchaseIsAlreadyExtended } = this.state;
+		const { purchaseIsAlreadyExtended, questionOneDetails } = this.state;
 		const newState = {
 			...this.state,
 			questionOneText: value,
-			questionOneDetails: detailsValue || this.state.questionOneDetails,
+			questionOneDetails: detailsValue || questionOneDetails,
 			upsell:
 				getUpsellType( value, {
-					productSlug: this.props.purchase?.productSlug || '',
+					productSlug: purchase?.productSlug || '',
 					canRefund: !! parseFloat( this.getRefundAmount() ),
-					canDowngrade: !! this.props.downgradeClick,
-					canOfferFreeMonth: !! this.props.freeMonthOfferClick && ! purchaseIsAlreadyExtended,
+					canDowngrade: !! downgradeClick,
+					canOfferFreeMonth:
+						!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
 				} ) || '',
 		};
 		this.setState( newState );
