@@ -44,7 +44,7 @@ import {
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
 } from '../onboarding-tours';
-import DashboardBackportSitesList from '../v2';
+import DashboardBackportSitesList from '../v2/sites-list';
 import { OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
