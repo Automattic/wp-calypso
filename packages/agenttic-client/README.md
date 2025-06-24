@@ -392,7 +392,7 @@ JETPACK_JWT=your-jwt-token-here
 ```typescript
 interface UseAgentConfig {
 	agentId: string; // Required: Agent identifier
-	agentUrl?: string; // Optional: Custom agent URL
+	agentUrl: string; // Agent URL
 	authProvider?: AuthProvider; // Optional: Authentication provider
 	contextProvider?: ContextProvider; // Optional: Context provider
 	toolProvider?: ToolProvider; // Optional: Tool provider

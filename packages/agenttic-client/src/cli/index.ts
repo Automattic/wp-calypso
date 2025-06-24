@@ -2,7 +2,17 @@
 
 // Load environment variables from .env file
 import { config } from 'dotenv';
-config();
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get the current file's directory
+const __filename = fileURLToPath( import.meta.url );
+const __dirname = dirname( __filename );
+
+// Look for .env files in multiple locations
+config( { path: join( __dirname, '../../../../.env' ) } ); // Project root
+config( { path: join( __dirname, '../../../.env' ) } ); // Package root
+config(); // Current working directory
 
 import { cliLog, enableDebug, logger } from '../client/utils/logger';
 import { createTextMessage } from '../client/utils/index';
@@ -21,15 +31,22 @@ process.env.FORCE_COLOR = '1';
 // Create require for CommonJS modules in ESM
 const require = createRequire( import.meta.url );
 
-// Default agent base URL
-const DEFAULT_AGENT_BASE_URL =
-	'https://public-api.wordpress.com/wpcom/v2/ai/agent';
+// Get agent base URL from environment
+const DEFAULT_AGENT_BASE_URL = process.env.AGENT_API_BASE_URL || 'default';
+
+if ( DEFAULT_AGENT_BASE_URL === 'default' ) {
+	cliLog.error( '❌ AGENT_API_BASE_URL environment variable is required' );
+	cliLog.info(
+		'Please set AGENT_API_BASE_URL in your .env file or environment'
+	);
+	process.exit( 1 );
+}
 
 // Default agent name
 const DEFAULT_AGENT = 'big-sky';
 
-// Default SOCKS proxy for debugging/development
-const DEFAULT_PROXY = 'socks://127.0.0.1:8080';
+// Default SOCKS proxy for debugging/development from environment
+const DEFAULT_PROXY = process.env.DEFAULT_PROXY || '';
 
 /**
  * Parse command line arguments
@@ -39,7 +56,7 @@ function parseArgs(): CLIOptions {
 	const options: CLIOptions = {
 		url: DEFAULT_AGENT_BASE_URL,
 		agentId: DEFAULT_AGENT,
-		proxy: DEFAULT_PROXY, // Set default proxy
+		proxy: DEFAULT_PROXY || undefined, // Set default proxy from env, undefined if empty
 	};
 
 	for ( let i = 0; i < args.length; i++ ) {
@@ -165,11 +182,11 @@ INTERACTIVE MODE:
 
 AGENT SELECTION:
   By default, connects to the 'big-sky' agent.
-  Base URL: https://public-api.wordpress.com/wpcom/v2/ai/agent/
+  Base URL: configured via AGENT_API_BASE_URL environment variable
   
   Use --agent to specify a different agent:
-    --agent big-sky     → https://public-api.wordpress.com/wpcom/v2/ai/agent/big-sky
-    --agent custom      → https://public-api.wordpress.com/wpcom/v2/ai/agent/custom
+    --agent big-sky     → {AGENT_API_BASE_URL}/big-sky
+    --agent custom      → {AGENT_API_BASE_URL}/custom
   
   Use --url for completely custom URLs:
     --url https://my-agent.com/api
@@ -183,7 +200,7 @@ AUTHENTICATION:
   3. .env file with any of the above variables
 
 PROXY:
-  Default proxy is socks://127.0.0.1:8080 for debugging.
+  Default proxy can be set via DEFAULT_PROXY environment variable.
   Use --no-proxy to disable or -p to specify a different proxy.
 
 EXAMPLES:

@@ -24,7 +24,7 @@ import {
  */
 export interface RequestConfig {
 	agentId: string;
-	agentUrl?: string;
+	agentUrl: string;
 	authProvider?: AuthProvider;
 	timeout: number;
 	proxy?: string;
@@ -32,23 +32,14 @@ export interface RequestConfig {
 }
 
 /**
- * Default base agent URL
- */
-const DEFAULT_AGENT_URL = 'https://public-api.wordpress.com/wpcom/v2/ai/agent';
-
-/**
  * Construct the full agent URL from base URL and agent ID
  *
- * @param agentUrl - Base agent URL (optional, uses default if not provided)
+ * @param agentUrl - Base agent URL (required)
  * @param agentId  - Agent ID to append to the URL
  * @return Full agent URL
  */
-function constructAgentUrl(
-	agentUrl: string | undefined,
-	agentId: string
-): string {
-	const baseUrl = agentUrl || DEFAULT_AGENT_URL;
-	return `${ baseUrl }/${ agentId }`;
+function constructAgentUrl( agentUrl: string, agentId: string ): string {
+	return `${ agentUrl }/${ agentId }`;
 }
 
 /**

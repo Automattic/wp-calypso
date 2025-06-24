@@ -1,7 +1,7 @@
 import type { Message } from '../client/types/index';
 
 export interface CLIOptions {
-	url?: string;
+	url: string;
 	agentId: string;
 	message?: string;
 	token?: string;
