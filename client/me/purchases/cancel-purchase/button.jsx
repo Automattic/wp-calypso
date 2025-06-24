@@ -337,6 +337,7 @@ class CancelPurchaseButton extends Component {
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
+					scary
 					onClick={
 						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
 					}
