@@ -124,7 +124,7 @@
 
 	.retention-option {
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		padding: 16px 10px;
+		padding: 16px 12px;
 		border-radius: 4px;
 		cursor: pointer;
 
@@ -175,8 +175,8 @@
 			padding: 0 8px;
 			visibility: hidden;
 
-			.gridicon {
-				vertical-align: text-top;
+			.icon {
+				vertical-align: text-bottom;
 			}
 
 			&.is-visible {

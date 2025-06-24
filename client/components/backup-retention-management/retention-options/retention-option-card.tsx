@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, starFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -66,7 +66,8 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 					'is-visible': upgradeRequired,
 				} ) }
 			>
-				<Gridicon icon="star" size={ 12 } /> { translate( 'Upgrade required' ) }
+				<Icon icon={ starFilled } size={ 14 } className="icon" />
+				{ translate( 'Upgrade required' ) }
 			</div>
 		</div>
 	);
