@@ -85,13 +85,9 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		<div className="disclaimer">
 			{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 			{ createInterpolateElement(
-				sprintf(
-					/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
-					'<button>%(website)s</button>.',
-					{
-						website: getButtonText(),
-					}
-				),
+				sprintf( '<button>%(button_text)s</button>.', {
+					button_text: getButtonText(),
+				} ),
 				{
 					button: <button onClick={ handleClick } className="odie-button-link" />,
 				}
