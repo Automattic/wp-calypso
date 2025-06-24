@@ -1,6 +1,6 @@
 import type { Site } from '../data/types';
 
-export function isJetpackNotAtomic( site: Site ) {
+export function isSelfHostedJetpackConnected( site: Site ) {
 	return site.jetpack_connection && ! site.is_wpcom_atomic;
 }
 

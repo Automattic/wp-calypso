@@ -8,9 +8,11 @@ module.exports = {
 						group: [
 							'calypso/*',
 							// Allowed: calypso/components/async-load
+							// Allowed: calypso/components/jetpack-logo
 							'!calypso/components',
 							'calypso/components/*',
 							'!calypso/components/async-load',
+							'!calypso/components/jetpack-logo',
 							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',

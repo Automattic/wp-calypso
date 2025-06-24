@@ -1,6 +1,6 @@
 import { DotcomFeatures } from '../data/constants';
 import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
-import { isJetpackNotAtomic, isP2 } from '../utils/site-types';
+import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '../data/types';
 
 export const HostingFeatures = {
@@ -33,8 +33,8 @@ export function canManageSite( site: Site ) {
 		return false;
 	}
 
-	// Jetpack sites are not supported, yet.
-	if ( isJetpackNotAtomic( site ) ) {
+	// Self-hosted Jetpack-connected sites are not supported, yet.
+	if ( isSelfHostedJetpackConnected( site ) ) {
 		return false;
 	}
 
