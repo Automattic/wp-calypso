@@ -1,36 +1,23 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
-import { Icon, external, plus } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
+import { Icon, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import SiteFavicon from 'calypso/blocks/site-favicon';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
-import {
-	useGetLockQuery,
-	USE_STAGING_SITE_LOCK_QUERY_KEY,
-} from 'calypso/sites/staging-site/hooks/use-get-lock-query';
-import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
 import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
-import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ItemData, ItemViewHeaderExtraProps } from '../types';
+import HeaderStagingSiteButton from './header-staging-site-button';
 
 import './style.scss';
 
@@ -53,8 +40,6 @@ export default function ItemViewHeader( {
 	extraProps,
 }: Props ) {
 	const dispatch = useDispatch();
-	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 	const selectedSite = useSelector( getSelectedSite );
@@ -80,73 +65,6 @@ export default function ItemViewHeader( {
 
 	const shouldDisplayVersionNumbers =
 		! itemData.hideEnvDataInHeader && isAtomic && ( wpVersion || phpVersion );
-
-	const { data: stagingSites = [], isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
-		enabled: ! itemData.hideEnvDataInHeader && isAtomic,
-	} );
-
-	// Staging site creation functionality
-	const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
-	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
-	const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
-	const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
-
-	const removeAllNotices = useCallback( () => {
-		dispatch( removeNotice( stagingSiteAddSuccessNoticeId ) );
-		dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
-		dispatch( removeNotice( stagingSiteDeleteSuccessNoticeId ) );
-		dispatch( removeNotice( stagingSiteDeleteFailureNoticeId ) );
-	}, [ dispatch ] );
-
-	const { addStagingSite, isLoading: isLoadingAddStagingSite } = useAddStagingSiteMutation(
-		siteId,
-		{
-			onMutate: () => {
-				removeAllNotices();
-			},
-			onSuccess: ( response ) => {
-				queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
-				dispatch( fetchAutomatedTransferStatus( response.id ) );
-			},
-			onError: ( error ) => {
-				queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
-						code: error.code,
-					} )
-				);
-				dispatch(
-					errorNotice(
-						// translators: "reason" is why adding the staging site failed.
-						sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
-						{
-							id: stagingSiteAddFailureNoticeId,
-						}
-					)
-				);
-			},
-		}
-	);
-
-	const { data: lock, isLoading: isLoadingLockQuery } = useGetLockQuery( siteId, {
-		enabled: isAtomic,
-		refetchInterval: () => {
-			return isLoadingAddStagingSite ? 5000 : 0;
-		},
-	} );
-
-	const showAddStagingButton =
-		! isLoadingStagingSites &&
-		! isLoadingLockQuery &&
-		stagingSites.length === 0 &&
-		isAtomic &&
-		! lock;
-
-	const onAddClick = useCallback( () => {
-		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
-		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-		addStagingSite( { name: '' } );
-	}, [ dispatch, siteId, addStagingSite ] );
 
 	const handlePhpVersionClick = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_php_version_click' ) );
@@ -199,18 +117,11 @@ export default function ItemViewHeader( {
 											itemData.subtitle
 										) }
 
-										{ showAddStagingButton && isEnabled( 'hosting/staging-sites-redesign' ) && (
-											<Button
-												variant="link"
-												onClick={ onAddClick }
-												disabled={ isLoadingAddStagingSite }
-												className="hosting-dashboard-item-view__header-add-staging"
-												icon={ plus }
-												iconPosition="right"
-											>
-												{ translate( 'Add staging site' ) }
-											</Button>
-										) }
+										<HeaderStagingSiteButton
+											siteId={ siteId }
+											isAtomic={ isAtomic }
+											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
+										/>
 
 										{ extraProps && extraProps.subtitleExtra ? (
 											<span>
