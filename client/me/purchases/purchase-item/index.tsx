@@ -50,6 +50,7 @@ import {
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
+import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
 	isTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
@@ -750,8 +751,9 @@ class PurchaseItem extends Component<
 			transferredOwnershipPurchases = [],
 		} = this.props;
 
-		const isTransferredOwnership = transferredOwnershipPurchases.some(
-			( transferredPurchase ) => transferredPurchase.id === purchase.id
+		const isOwnershipTransferred = isTransferredOwnership(
+			purchase.id,
+			transferredOwnershipPurchases
 		);
 
 		return (
@@ -770,7 +772,7 @@ class PurchaseItem extends Component<
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchase={ purchase } isTransferredOwnership={ isTransferredOwnership } />
+						<OwnerInfo purchase={ purchase } isTransferredOwnership={ isOwnershipTransferred } />
 					</div>
 
 					<div className="purchase-item__purchase-type">
@@ -832,14 +834,15 @@ class PurchaseItem extends Component<
 			'purchase-item--disconnected': isDisconnectedSite,
 		} );
 
-		const isTransferredOwnership = transferredOwnershipPurchases.some(
-			( transferredPurchase ) => transferredPurchase.id === purchase.id
+		const isOwnershipTransferred = isTransferredOwnership(
+			purchase.id,
+			transferredOwnershipPurchases
 		);
 
 		let onClick;
 		let href;
 
-		if ( getManagePurchaseUrlFor && slug && ! isTransferredOwnership ) {
+		if ( getManagePurchaseUrlFor && slug && ! isOwnershipTransferred ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).

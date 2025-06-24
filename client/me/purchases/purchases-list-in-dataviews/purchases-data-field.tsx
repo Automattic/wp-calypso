@@ -9,6 +9,7 @@ import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib
 import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
+import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import { Icon, MembershipType, MembershipTerms } from '../membership-item';
 import {
 	PurchaseItemSiteIcon,
@@ -97,12 +98,6 @@ export function getPurchasesFieldDefinitions( {
 		page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
 	};
 
-	const isTransferredOwnership = ( purchase: Purchases.Purchase ) => {
-		return transferredOwnershipPurchases.some(
-			( transferredPurchase ) => transferredPurchase.id === purchase.id
-		);
-	};
-
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'site',
@@ -167,13 +162,16 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
-							{ isTransferredOwnership( item ) ? (
+							{ isTransferredOwnership( item.id, transferredOwnershipPurchases ) ? (
 								<div>
 									{ getDisplayName( item ) }
 									&nbsp;
 									<OwnerInfo
 										purchase={ item }
-										isTransferredOwnership={ isTransferredOwnership( item ) }
+										isTransferredOwnership={ isTransferredOwnership(
+											item.id,
+											transferredOwnershipPurchases
+										) }
 									/>
 								</div>
 							) : (

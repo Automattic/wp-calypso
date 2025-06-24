@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setRoute } from 'calypso/state/route/actions';
+import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
@@ -253,10 +254,11 @@ export function PurchasesDataViews( {
 				label: translate( 'Manage purchase', { textOnly: true } ),
 				isEligible: ( item: Purchases.Purchase ) => {
 					// Hide manage button for transferred ownership purchases
-					const isTransferredOwnership = transferredOwnershipPurchases.some(
-						( transferredPurchase ) => transferredPurchase.id === item.id
+					const hasTransferredOwnership = isTransferredOwnership(
+						item.id,
+						transferredOwnershipPurchases
 					);
-					return Boolean( item.domain && item.id ) && ! isTransferredOwnership;
+					return Boolean( item.domain && item.id ) && ! hasTransferredOwnership;
 				},
 				callback: ( items: Purchases.Purchase[] ) => {
 					const siteUrl = items[ 0 ].domain;
