@@ -167,15 +167,20 @@ class CancelPurchaseButton extends Component {
 	};
 
 	cancelAndRefund = async ( purchase ) => {
-		const { cancelBundledDomain } = this.props;
+		const { cancelBundledDomain, translate } = this.props;
 
 		try {
-			const response = await cancelAndRefundPurchaseAsync( purchase.id, {
+			await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: purchase.productId,
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
 			} );
 
-			return { success: true, message: response.message };
+			return {
+				success: true,
+				message: translate(
+					'Your refund has been processed and your purchase removed. Before you go, please answer a few quick questions.'
+				),
+			};
 		} catch ( error ) {
 			return { success: false, error: error.message };
 		}

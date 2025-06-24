@@ -739,6 +739,7 @@ class CancelPurchaseForm extends Component {
 										status="is-success"
 										className="cancel-purchase-form__notice"
 										theme="light"
+										showDismiss={ false }
 									>
 										{ cancellationMessage }
 									</Notice>
