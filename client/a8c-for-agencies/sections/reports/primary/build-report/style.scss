@@ -111,3 +111,19 @@
 		padding: 16px;
 	}
 }
+
+.build-report__loading-state {
+	display: flex;
+	padding-block: 16px;
+	align-items: center;
+
+	svg {
+		margin: 5px 10px 5px 0;
+	}
+}
+
+.build-report__loading-actions,
+.build-report__error-actions {
+	display: flex;
+	gap: 8px;
+}

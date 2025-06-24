@@ -7,10 +7,12 @@ import {
 	TextControl,
 	DatePicker,
 	Popover,
+	Spinner,
 } from '@wordpress/components';
 import { Icon, error } from '@wordpress/icons';
+import { getQueryArg, addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -22,10 +24,15 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { A4A_REPORTS_LINK, A4A_REPORTS_DASHBOARD_LINK } from '../../constants';
+import { errorNotice } from 'calypso/state/notices/actions';
+import {
+	A4A_REPORTS_LINK,
+	A4A_REPORTS_DASHBOARD_LINK,
+	A4A_REPORTS_BUILD_LINK,
+} from '../../constants';
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
+import usePollReportStatus from '../../hooks/use-poll-report-status';
 import useSendReportMutation from '../../hooks/use-send-report-mutation';
 import { formatDate } from '../../lib/format-date';
 import type { BuildReportCheckedItemsState } from '../../types';
@@ -57,6 +64,8 @@ const BuildReport = () => {
 		[ translate ]
 	);
 
+	const [ currentStep, setCurrentStep ] = useState( 1 );
+
 	// Use the custom hook for form data management
 	const {
 		formData,
@@ -74,27 +83,37 @@ const BuildReport = () => {
 		error: duplicateError,
 	} = useDuplicateReportFormData( availableTimeframes, statsOptions );
 
-	// Mutation hook for sending reports
 	const sendReportMutation = useSendReportMutation( {
-		onSuccess: () => {
-			dispatch(
-				successNotice(
-					translate( 'Report queued successfully! Your client will receive it shortly.' ),
-					{ duration: 5000, displayOnNextPage: true, id: 'send-report-success' }
-				)
-			);
-			// Redirect to reports dashboard
-			page( A4A_REPORTS_DASHBOARD_LINK );
+		onSuccess: ( data ) => {
+			page.redirect( addQueryArgs( A4A_REPORTS_BUILD_LINK, { reportId: data.id } ) );
 		},
 		onError: ( error ) => {
 			dispatch(
-				errorNotice( error?.message || translate( 'Failed to send report. Please try again.' ), {
-					duration: 8000,
-					id: 'send-report-error',
-				} )
+				errorNotice(
+					error?.message || translate( 'Failed to generate report. Please try again.' ),
+					{
+						duration: 8000,
+						id: 'generate-report-error',
+					}
+				)
 			);
 		},
 	} );
+
+	const reportId = getQueryArg( window.location.href, 'reportId' ) as unknown as number;
+
+	// Poll report status when reportId exists
+	const {
+		isProcessed,
+		isPending: isReportPending,
+		isErrorStatus: isReportErrorStatus,
+	} = usePollReportStatus( reportId );
+
+	useEffect( () => {
+		if ( reportId ) {
+			setCurrentStep( 3 );
+		}
+	}, [ reportId ] );
 
 	const {
 		selectedSite,
@@ -113,8 +132,6 @@ const BuildReport = () => {
 	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
 	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
 	const [ showValidationErrors, setShowValidationErrors ] = useState( false );
-
-	const [ currentStep, setCurrentStep ] = useState( 1 );
 
 	// Get validation errors for current step
 	const validationErrors = useFormValidation( currentStep, formData );
@@ -155,8 +172,14 @@ const BuildReport = () => {
 		}
 
 		setShowValidationErrors( false );
-		setCurrentStep( ( prev ) => prev + 1 );
-	}, [ hasErrors, validationErrors ] );
+
+		// If moving from step 2, create the report
+		if ( currentStep === 2 ) {
+			sendReportMutation.mutate( formData );
+		} else {
+			setCurrentStep( ( prev ) => prev + 1 );
+		}
+	}, [ hasErrors, validationErrors, currentStep, sendReportMutation, formData ] );
 
 	const handlePrevStep = useCallback( () => {
 		setShowValidationErrors( false );
@@ -164,8 +187,8 @@ const BuildReport = () => {
 	}, [] );
 
 	const handleSendReport = useCallback( () => {
-		sendReportMutation.mutate( formData );
-	}, [ sendReportMutation, formData ] );
+		// TODO: Implement send report functionality
+	}, [] );
 
 	const handleStep2CheckboxChange = useCallback(
 		( groupKey: 'stats', itemName: string ) => {
@@ -181,6 +204,9 @@ const BuildReport = () => {
 	);
 
 	const stepContent = useMemo( () => {
+		const isCreatingReport = sendReportMutation.isPending;
+		const isLoading = isDuplicateLoading || isCreatingReport;
+
 		switch ( currentStep ) {
 			case 1:
 				return (
@@ -191,7 +217,7 @@ const BuildReport = () => {
 
 						<div className="build-report__field">
 							<A4ASelectSite
-								isDisabled={ isDuplicateLoading }
+								isDisabled={ isLoading }
 								selectedSiteId={ selectedSite?.blogId }
 								onSiteSelect={ ( site: A4ASelectSiteItem ) => setSelectedSite( site ) }
 								buttonLabel={ selectedSite?.domain || translate( 'Choose a site to report on' ) }
@@ -212,7 +238,7 @@ const BuildReport = () => {
 							value={ selectedTimeframe }
 							options={ availableTimeframes }
 							onChange={ setSelectedTimeframe }
-							disabled={ isDuplicateLoading }
+							disabled={ isLoading }
 						/>
 
 						{ selectedTimeframe === 'custom' && (
@@ -318,7 +344,7 @@ const BuildReport = () => {
 										: undefined
 								}
 								data-field="clientEmail"
-								disabled={ isDuplicateLoading }
+								disabled={ isLoading }
 							/>
 							{ hasFieldError( 'clientEmail' ) && (
 								<div className="build-report__error-message">
@@ -331,7 +357,7 @@ const BuildReport = () => {
 							label={ translate( 'Also send to your team' ) }
 							checked={ sendCopyToTeam }
 							onChange={ setSendCopyToTeam }
-							disabled={ isDuplicateLoading }
+							disabled={ isLoading }
 						/>
 						{ sendCopyToTeam && (
 							<div>
@@ -349,7 +375,7 @@ const BuildReport = () => {
 									}
 									placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
 									data-field="teammateEmails"
-									disabled={ isDuplicateLoading }
+									disabled={ isLoading }
 								/>
 								{ hasFieldError( 'teammateEmails' ) && (
 									<div className="build-report__error-message">
@@ -374,6 +400,7 @@ const BuildReport = () => {
 							onChange={ setCustomIntroText }
 							rows={ 3 }
 							help={ translate( 'Add a short note or update for your client.' ) }
+							disabled={ isLoading }
 						/>
 
 						<h3 className="build-report__group-label">{ translate( 'Stats' ) }</h3>
@@ -384,6 +411,7 @@ const BuildReport = () => {
 								label={ item.label }
 								checked={ statsCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'stats', item.value ) }
+								disabled={ isLoading }
 							/>
 						) ) }
 						{ hasFieldError( 'statsCheckedItems' ) && (
@@ -394,104 +422,186 @@ const BuildReport = () => {
 					</>
 				);
 			case 3:
+				if ( reportId ) {
+					if ( isReportPending ) {
+						return (
+							<>
+								<h2 className="build-report__step-title">
+									{ translate( 'Step 3 of 3: Generating your report' ) }
+								</h2>
+								<p className="build-report__loading-state build-report__content-description">
+									<Spinner /> { translate( 'Please wait while we generate your report…' ) }
+								</p>
+							</>
+						);
+					}
+
+					if ( isReportErrorStatus ) {
+						return (
+							<>
+								<h2 className="build-report__step-title">
+									{ translate( 'Step 3 of 3: Report generation failed' ) }
+								</h2>
+								<p className="build-report__step-description">
+									{ translate( 'There was an error generating your report.' ) }
+								</p>
+							</>
+						);
+					}
+
+					if ( isProcessed ) {
+						return (
+							<>
+								<h2 className="build-report__step-title">
+									{ translate( 'Step 3 of 3: Send your report' ) }
+								</h2>
+
+								<p className="build-report__step-description">
+									{ translate(
+										'Your report is ready for sending. Checkout the preview, then click "Send to client now".'
+									) }
+									<br />
+									{ translate( "We'll take it from there!" ) }
+								</p>
+
+								<Button
+									variant="secondary"
+									onClick={ () => alert( 'Send test report clicked' ) }
+									className="build-report__preview-button"
+								>
+									{ translate( 'Send me a preview' ) }
+								</Button>
+							</>
+						);
+					}
+				}
 				return (
 					<>
 						<h2 className="build-report__step-title">
-							{ translate( 'Step 3 of 3: Send your report' ) }
+							{ translate( 'Step 3 of 3: Unkown report status' ) }
 						</h2>
 
 						<p className="build-report__step-description">
-							{ translate(
-								'Your report is ready for sending. Checkout the preview, then click "Send to client now".'
-							) }
-							<br />
-							{ translate( "We'll take it from there!" ) }
+							{ translate( 'There was an error generating your report.' ) }
 						</p>
-
-						<Button
-							variant="secondary"
-							onClick={ () => alert( 'Send test report clicked' ) }
-							className="build-report__preview-button"
-						>
-							{ translate( 'Send me a preview' ) }
-						</Button>
 					</>
 				);
+
 			default:
 				return null;
 		}
 	}, [
+		availableTimeframes,
+		clientEmail,
 		currentStep,
-		translate,
+		customIntroText,
+		endDate,
+		getFieldError,
+		handleStep2CheckboxChange,
+		hasFieldError,
 		isDuplicateLoading,
+		isEndDatePickerOpen,
+		isProcessed,
+		isReportErrorStatus,
+		isReportPending,
+		isStartDatePickerOpen,
+		reportId,
 		selectedSite?.blogId,
 		selectedSite?.domain,
-		hasFieldError,
-		getFieldError,
 		selectedTimeframe,
-		availableTimeframes,
-		setSelectedTimeframe,
-		startDate,
-		isStartDatePickerOpen,
-		endDate,
-		isEndDatePickerOpen,
-		clientEmail,
-		setClientEmail,
 		sendCopyToTeam,
-		setSendCopyToTeam,
-		teammateEmails,
-		setTeammateEmails,
-		customIntroText,
+		sendReportMutation.isPending,
+		setClientEmail,
 		setCustomIntroText,
-		statsOptions,
-		setSelectedSite,
-		setStartDate,
 		setEndDate,
+		setSelectedSite,
+		setSelectedTimeframe,
+		setSendCopyToTeam,
+		setStartDate,
+		setTeammateEmails,
+		startDate,
 		statsCheckedItems,
-		handleStep2CheckboxChange,
+		statsOptions,
+		teammateEmails,
+		translate,
 	] );
 
-	const actions = useMemo(
-		() => (
+	const actions = useMemo( () => {
+		const isCreatingReport = sendReportMutation.isPending;
+		const isLoading = isDuplicateLoading || isCreatingReport;
+
+		return (
 			<div className="build-report__actions">
-				{ currentStep > 1 && (
-					<Button
-						variant="secondary"
-						onClick={ handlePrevStep }
-						disabled={ sendReportMutation.isPending }
-					>
-						{ translate( 'Back' ) }
-					</Button>
-				) }
-				{ currentStep < 3 && (
-					<Button variant="primary" onClick={ handleNextStep } disabled={ isDuplicateLoading }>
+				{ currentStep < 2 && (
+					<Button variant="primary" onClick={ handleNextStep } disabled={ isLoading }>
 						{ translate( 'Next' ) }
 					</Button>
 				) }
+				{ currentStep === 2 && (
+					<>
+						<Button variant="secondary" onClick={ handlePrevStep } disabled={ isLoading }>
+							{ translate( 'Back' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ handleNextStep }
+							isBusy={ isCreatingReport }
+							disabled={ isLoading }
+						>
+							{ isCreatingReport
+								? translate( 'Generating report…' )
+								: translate( 'Generate Report' ) }
+						</Button>
+					</>
+				) }
 				{ currentStep === 3 && (
-					<Button
-						variant="primary"
-						onClick={ handleSendReport }
-						isBusy={ sendReportMutation.isPending }
-						disabled={ sendReportMutation.isPending }
-					>
-						{ sendReportMutation.isPending
-							? translate( 'Sending…' )
-							: translate( 'Send to client now' ) }
-					</Button>
+					<>
+						{ reportId && isProcessed ? (
+							<>
+								<Button
+									variant="secondary"
+									onClick={ () => {
+										page.redirect( removeQueryArgs( window.location.pathname, 'reportId' ) );
+										setCurrentStep( 1 );
+									} }
+								>
+									{ translate( 'Start over' ) }
+								</Button>
+								<Button variant="primary" onClick={ handleSendReport }>
+									{ translate( 'Send to client now' ) }
+								</Button>
+							</>
+						) : (
+							<>
+								<Button
+									variant="secondary"
+									onClick={ () => {
+										page.redirect( removeQueryArgs( window.location.pathname, 'reportId' ) );
+										setCurrentStep( 1 );
+									} }
+								>
+									{ translate( 'Start over' ) }
+								</Button>
+								<Button variant="primary" href={ A4A_REPORTS_DASHBOARD_LINK }>
+									{ translate( 'Send later' ) }
+								</Button>
+							</>
+						) }
+					</>
 				) }
 			</div>
-		),
-		[
-			currentStep,
-			handlePrevStep,
-			translate,
-			handleNextStep,
-			isDuplicateLoading,
-			handleSendReport,
-			sendReportMutation.isPending,
-		]
-	);
+		);
+	}, [
+		sendReportMutation.isPending,
+		isDuplicateLoading,
+		currentStep,
+		handleNextStep,
+		translate,
+		handlePrevStep,
+		handleSendReport,
+		reportId,
+		isProcessed,
+	] );
 
 	return (
 		<Layout className="build-report" title={ title } wide>
