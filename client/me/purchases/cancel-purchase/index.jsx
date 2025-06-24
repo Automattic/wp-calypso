@@ -375,6 +375,18 @@ class CancelPurchase extends Component {
 
 				<div className="cancel-purchase__inner-wrapper">
 					<div className="cancel-purchase__left">
+						<CancelPurchaseDomainOptions
+							includedDomainPurchase={ this.props.includedDomainPurchase }
+							cancelBundledDomain={ this.state.cancelBundledDomain }
+							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+							purchase={ purchase }
+						/>
+
+						{ this.props.includedDomainPurchase && (
+							<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
+								{ this.props.translate( 'What happens when you cancel' ) }
+							</h2>
+						) }
 						<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
 
 						<CancelPurchaseRefundInformation
@@ -394,13 +406,6 @@ class CancelPurchase extends Component {
 							needsAtomicRevertConfirmation={
 								this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
 							}
-						/>
-
-						<CancelPurchaseDomainOptions
-							includedDomainPurchase={ this.props.includedDomainPurchase }
-							cancelBundledDomain={ this.state.cancelBundledDomain }
-							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
-							purchase={ purchase }
 						/>
 
 						{ ! cancellationFeatures.length ? (
@@ -447,8 +452,10 @@ class CancelPurchase extends Component {
 					</div>
 
 					<div className="cancel-purchase__right">
-						<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-						<SupportLink usage="cancel-purchase" purchase={ purchase } />
+						<div className="cancel-purchase__sticky-sidebar">
+							<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+							<SupportLink usage="cancel-purchase" purchase={ purchase } />
+						</div>
 					</div>
 				</div>
 			</Card>

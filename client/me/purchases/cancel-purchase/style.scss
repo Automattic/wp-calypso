@@ -87,7 +87,19 @@
 
 		.cancel-purchase__right {
 			grid-column: 3;
+			position: relative
 		}
+
+		.cancel-purchase__sticky-sidebar {
+			position: sticky;
+			top: 24px;
+			left: 0;
+		}
+	}
+
+	.formatted-header__title--cancellation-flow {
+		margin-bottom: 8px;
+		padding: 0;
 	}
 }
 
