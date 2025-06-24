@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -47,8 +47,8 @@ import {
 	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
 import {
 	formatCents,
 	formatNumber,
@@ -104,6 +104,9 @@ enum ChartSourceDateRanges {
 	LAST_7_DAYS = 'last_7_days',
 	LAST_14_DAYS = 'last_14_days',
 	LAST_30_DAYS = 'last_30_days',
+	LAST_3_MONTHS = 'last_3_months',
+	LAST_6_MONTHS = 'last_6_months',
+	LAST_YEAR = 'last_year',
 	WHOLE_CAMPAIGN = 'whole_campaign',
 }
 
@@ -113,6 +116,9 @@ const ChartSourceDateRangeLabels = {
 	[ ChartSourceDateRanges.LAST_7_DAYS ]: __( 'Last 7 days' ),
 	[ ChartSourceDateRanges.LAST_14_DAYS ]: __( 'Last 14 days' ),
 	[ ChartSourceDateRanges.LAST_30_DAYS ]: __( 'Last 30 days' ),
+	[ ChartSourceDateRanges.LAST_3_MONTHS ]: __( 'Last 3 months' ),
+	[ ChartSourceDateRanges.LAST_6_MONTHS ]: __( 'Last 6 months' ),
+	[ ChartSourceDateRanges.LAST_YEAR ]: __( 'Last year' ),
 	[ ChartSourceDateRanges.WHOLE_CAMPAIGN ]: __( 'Whole Campaign' ),
 };
 
@@ -126,7 +132,6 @@ const setHideTspMetricsBannerCookie = ( value: boolean ) => {
 };
 
 export default function CampaignItemDetails( props: Props ) {
-	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -136,6 +141,9 @@ export default function CampaignItemDetails( props: Props ) {
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const { campaign, isLoading, siteId } = props;
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	const campaignId = campaign?.campaign_id || 0;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
@@ -353,6 +361,16 @@ export default function CampaignItemDetails( props: Props ) {
 			case ChartSourceDateRanges.LAST_30_DAYS:
 				startDate.setDate( effectiveEndDate.getDate() - 30 );
 				break;
+			case ChartSourceDateRanges.LAST_3_MONTHS:
+				startDate.setDate( effectiveEndDate.getDate() - 92 );
+				break;
+			case ChartSourceDateRanges.LAST_6_MONTHS:
+				startDate.setDate( effectiveEndDate.getDate() - 183 );
+				break;
+			case ChartSourceDateRanges.LAST_YEAR:
+				startDate.setDate( effectiveEndDate.getDate() - 365 );
+				break;
+
 			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
 				if ( campaign?.start_date ) {
 					startDate = new Date( campaign.start_date );
@@ -371,10 +389,43 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
 		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
-		const newResolution =
-			newDateRange === ChartSourceDateRanges.YESTERDAY || activeDays < 3
-				? ChartResolution.Hour
-				: ChartResolution.Day;
+		let newResolution: ChartResolution;
+
+		switch ( newDateRange ) {
+			case ChartSourceDateRanges.YESTERDAY:
+			case ChartSourceDateRanges.LAST_7_DAYS:
+				newResolution = ChartResolution.Hour;
+				break;
+
+			case ChartSourceDateRanges.LAST_30_DAYS:
+				newResolution = ChartResolution.Day;
+				break;
+
+			case ChartSourceDateRanges.LAST_6_MONTHS:
+			case ChartSourceDateRanges.LAST_3_MONTHS:
+				newResolution = ChartResolution.Week;
+				break;
+
+			case ChartSourceDateRanges.LAST_YEAR:
+				newResolution = ChartResolution.Month;
+				break;
+
+			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
+				if ( activeDays < 3 ) {
+					newResolution = ChartResolution.Hour;
+				} else if ( activeDays <= 30 ) {
+					newResolution = ChartResolution.Day;
+				} else if ( activeDays < 183 ) {
+					newResolution = ChartResolution.Week;
+				} else {
+					newResolution = ChartResolution.Month;
+				}
+				break;
+
+			default:
+				newResolution = ChartResolution.Day;
+				break;
+		}
 
 		const newStartDate = getChartStartDate( newDateRange );
 
@@ -480,7 +531,6 @@ export default function CampaignItemDetails( props: Props ) {
 					fillRule="evenodd"
 					clipRule="evenodd"
 					d="M8 16.3193C12.4183 16.3193 16 12.7376 16 8.31934C16 3.90106 12.4183 0.319336 8 0.319336C3.58172 0.319336 0 3.90106 0 8.31934C0 12.7376 3.58172 16.3193 8 16.3193ZM13.375 11.9755C14.085 10.9338 14.5 9.67502 14.5 8.31934C14.5 7.08407 14.1554 5.92928 13.5571 4.94585L12.2953 5.75845C12.7428 6.50748 13 7.38337 13 8.31934C13 9.37572 12.6724 10.3556 12.1132 11.1629L13.375 11.9755ZM11.4245 13.8451L10.6121 12.5836C9.85194 13.0503 8.95739 13.3193 8 13.3193C7.04263 13.3193 6.1481 13.0503 5.38791 12.5836L4.57552 13.8451C5.56993 14.4627 6.74332 14.8193 8 14.8193C9.2567 14.8193 10.4301 14.4627 11.4245 13.8451ZM2.62498 11.9755C1.91504 10.9338 1.5 9.67503 1.5 8.31934C1.5 7.08405 1.84458 5.92926 2.44287 4.94582L3.70473 5.75842C3.25718 6.50745 3 7.38336 3 8.31934C3 9.37573 3.32761 10.3556 3.88678 11.1629L2.62498 11.9755ZM5.20588 4.17229C6.00361 3.63376 6.96508 3.31934 8 3.31934C9.03494 3.31934 9.99643 3.63377 10.7942 4.17232L11.6065 2.91084C10.5746 2.22134 9.33424 1.81934 8 1.81934C6.66578 1.81934 5.42544 2.22133 4.39351 2.91081L5.20588 4.17229ZM8 11.8193C9.933 11.8193 11.5 10.2523 11.5 8.31934C11.5 6.38634 9.933 4.81934 8 4.81934C6.067 4.81934 4.5 6.38634 4.5 8.31934C4.5 10.2523 6.067 11.8193 8 11.8193Z"
-					fill="#1E1E1E"
 				/>
 			</svg>
 		</span>
@@ -553,6 +603,36 @@ export default function CampaignItemDetails( props: Props ) {
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_30_DAYS ),
 					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_30_DAYS ],
 					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_30_DAYS,
+				},
+			],
+		},
+		{
+			condition: activeDays > 92,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_3_MONTHS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_3_MONTHS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_3_MONTHS,
+				},
+			],
+		},
+		{
+			condition: activeDays > 183,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_6_MONTHS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_6_MONTHS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_6_MONTHS,
+				},
+			],
+		},
+		{
+			condition: activeDays > 365,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_YEAR ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_YEAR ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_YEAR,
 				},
 			],
 		},
@@ -704,7 +784,7 @@ export default function CampaignItemDetails( props: Props ) {
 			</div>
 			<div className="campaign-item-details__main-stats-row ">
 				<div>
-					<span className="campaign-item-details__label">{ translate( 'Replies' ) }</span>
+					<span className="campaign-item-details__label">{ translate( 'Replies' ) } &#42;</span>
 					<span className="campaign-item-details__text">
 						<span className="wp-brand-font">
 							{ ! isLoading ? repliesFormatted : <FlexibleSkeleton /> }
@@ -745,6 +825,25 @@ export default function CampaignItemDetails( props: Props ) {
 						) }
 					</div>
 				) }
+
+				<div className="campaign-items-details__reply-disclaimer">
+					&#42;&nbsp;
+					{ translate(
+						'Some replies may have been hidden, blocked, or removed due to {{tumblrGuideline}}Tumblr guidelines {{externalIcon/}}{{/tumblrGuideline}} violation',
+						{
+							components: {
+								tumblrGuideline: (
+									<a
+										href="https://www.tumblr.com/policy/en/user-guidelines"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+								externalIcon: <Gridicon icon="external" size={ 16 } />,
+							},
+						}
+					) }
+				</div>
 			</div>
 		</>
 	);
@@ -1497,7 +1596,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
-									showSupportModal={ ! isRunningInWpAdmin }
+									showSupportModal={ ! isSelfHosted }
 								>
 									{ translate( 'View documentation' ) }
 									<Gridicon icon="external" size={ 16 } />

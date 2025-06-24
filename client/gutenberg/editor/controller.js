@@ -1,8 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
-import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
-import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -21,7 +19,6 @@ import {
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CalypsoifyIframe from './calypsoify-iframe';
 import { Placeholder } from './placeholder';
 
 const noop = () => {};
@@ -226,68 +223,6 @@ export const redirect = async ( context, next ) => {
 	return next();
 };
 
-function getPressThisData( query ) {
-	const { url, text, title, comment_content, comment_author } = query;
-
-	return url ? { url, text, title, comment_content, comment_author } : null;
-}
-
-function getBloggingPromptData( query ) {
-	const { answer_prompt } = query;
-	return answer_prompt ? { answer_prompt } : null;
-}
-
-function getSessionStorageOneTimeValue( key ) {
-	const value = window.sessionStorage.getItem( key );
-	window.sessionStorage.removeItem( key );
-	return value;
-}
-
-export const post = ( context, next ) => {
-	recordPageView( context.path, 'iFramed Editor', {
-		iframedEditor: true,
-		previousPath: context.previousPath,
-	} );
-
-	const postId = getPostID( context );
-	const postType = determinePostType( context );
-	const jetpackCopy = parseInt( context.query[ 'jetpack-copy' ] );
-
-	// Check if this value is an integer.
-	const duplicatePostId = Number.isInteger( jetpackCopy ) ? jetpackCopy : null;
-
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const pressThisData = getPressThisData( context.query );
-	const bloggingPromptData = getBloggingPromptData( context.query );
-	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
-
-	// Set postId on state.editor.postId, so components like editor revisions can read from it.
-	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
-
-	// Set post type on state.posts.[ id ].type, so components like document head can read from it.
-	context.store.dispatch( { type: POST_EDIT, post: { type: postType }, siteId, postId } );
-
-	context.primary = (
-		<CalypsoifyIframe
-			key={ postId }
-			postId={ postId }
-			postType={ postType }
-			duplicatePostId={ duplicatePostId }
-			pressThisData={ pressThisData }
-			bloggingPromptData={ bloggingPromptData }
-			parentPostId={ parentPostId }
-			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
-			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
-			showDraftPostModal={ getSessionStorageOneTimeValue(
-				'wpcom_signup_complete_show_draft_post_modal'
-			) }
-		/>
-	);
-
-	return next();
-};
-
 export const exitPost = ( context, next ) => {
 	const postId = getPostID( context );
 	const siteId = getSelectedSiteId( context.store.getState() );
@@ -295,6 +230,14 @@ export const exitPost = ( context, next ) => {
 		context.store.dispatch( stopEditingPost( siteId, postId ) );
 	}
 	next();
+};
+
+export const redirectPostEditor = async ( context ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+	return window.location.replace( addQueryArgs( context.query, `${ siteAdminUrl }post-new.php` ) );
 };
 
 /**

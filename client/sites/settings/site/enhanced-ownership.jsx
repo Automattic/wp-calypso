@@ -1,7 +1,7 @@
 import {
 	WPCOM_FEATURES_LEGACY_CONTACT,
 	WPCOM_FEATURES_LOCKED_MODE,
-} from '@automattic/calypso-products/src';
+} from '@automattic/calypso-products';
 import { Button, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';

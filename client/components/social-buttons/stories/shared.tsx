@@ -4,7 +4,7 @@ import { AppleLoginButton } from '../apple';
 import { GitHubLoginButton } from '../github';
 import { GoogleSocialButton } from '../google';
 import { MagicLoginButton } from '../magic-login';
-import { QrCodeLoginButton } from '../qr-code';
+import QrCodeLoginButton from '../qr-code';
 import { UsernameOrEmailButton } from '../username-or-email';
 import type { StoryFn, StoryObj } from '@storybook/react';
 import './style.scss';
@@ -43,9 +43,19 @@ export const WooWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export const JetpackWrapper = ( Story: StoryFn ) => (
+export const JetpackCloudWrapper = ( Story: StoryFn ) => (
 	<div className="jetpack-cloud">
 		<Story />
+	</div>
+);
+
+export const JetpackLoginWrapper = ( Story: StoryFn ) => (
+	<div className="layout is-jetpack-login">
+		<div className="login is-jetpack" style={ { maxWidth: '360px', padding: '30px' } }>
+			<div className="login__form">
+				<Story />
+			</div>
+		</div>
 	</div>
 );
 

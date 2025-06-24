@@ -247,6 +247,9 @@ $y-axis-padding: 0 20px;
 	@media (max-width: $break-mobile) {
 		display: none;
 	}
+	@container (inline-size < #{$break-mobile}) {
+		display: none;
+	}
 }
 
 // Chart legend option (list item)
@@ -364,6 +367,7 @@ $y-axis-padding: 0 20px;
 	// The tooltip doesn't trigger pointer events to prevent causing a premature
 	// mouseleave event when the tooltip is hovered over
 	pointer-events: none;
+
 	.popover__inner {
 		width: 230px;
 		text-align: left;
@@ -415,6 +419,7 @@ $y-axis-padding: 0 20px;
 	&.is-streak {
 		.popover__inner {
 			width: 160px;
+
 			li {
 				height: 14px;
 
@@ -431,6 +436,7 @@ $y-axis-padding: 0 20px;
 						font-weight: 600;
 					}
 				}
+
 				.value {
 					float: none;
 				}
@@ -440,6 +446,7 @@ $y-axis-padding: 0 20px;
 }
 
 .chart__tooltip .module-content-list-item {
+
 	// @TODO Integrate styles with Stats
 	&.is-date-label {
 		font-size: $font-body-extra-small;
@@ -467,7 +474,7 @@ $y-axis-padding: 0 20px;
 			min-width: 0;
 
 			&::before {
-				@include long-content-fade( $color: var( --color-neutral-60 ) );
+				@include long-content-fade($color: var(--color-neutral-60));
 				position: relative;
 				left: -30px;
 				width: 30px;

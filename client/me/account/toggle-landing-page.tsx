@@ -11,10 +11,12 @@ import { SITES_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/
 function ToggleLandingPageSettings() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { sitesAsLandingPage, readerAsLandingPage } = useSelector( ( state ) => ( {
-		sitesAsLandingPage: getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage,
-		readerAsLandingPage: getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage,
-	} ) );
+	const sitesAsLandingPage = useSelector(
+		( state ) => getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage
+	);
+	const readerAsLandingPage = useSelector(
+		( state ) => getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage
+	);
 
 	let selectedOption = 'default';
 	if ( sitesAsLandingPage ) {

@@ -3,7 +3,7 @@ import { people, seen, wordpress, backup, starEmpty, comment, envelope } from '@
 import OverviewCard, { OverviewCardProgressBar } from './';
 
 const meta = {
-	title: 'Dashboard/OverviewCard',
+	title: 'client/dashboard/OverviewCard',
 	component: OverviewCard,
 	parameters: {
 		layout: 'centered',

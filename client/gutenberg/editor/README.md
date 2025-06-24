@@ -2,7 +2,7 @@
 
 ## Editor Selection Flows
 
-See [`getSelectedEditor`](../../state/selectors/get-selected-editor.js) and [`getEditorUrl`](../../state/selectors/get-editor-url.js).
+See [`getSelectedEditor`](../../state/selectors/get-selected-editor.js).
 
 ## Style Overrides
 

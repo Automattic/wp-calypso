@@ -1,5 +1,4 @@
-import { PatternRenderer } from '@automattic/block-renderer';
-import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
+import { PatternRenderer, usePatternsRendererContext } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';

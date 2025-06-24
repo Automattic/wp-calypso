@@ -1,10 +1,16 @@
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 
 function DomainConnectNotFoundError( { translate } ) {
-	const emptyContentTitle = translate( "Uh oh. That method isn't supported.", {
-		comment: 'Message displayed when requested Domain Connect URL path is not supported',
+	const emptyContentTitle = fixMe( {
+		text: "That method isn't supported.",
+		newCopy: translate( "That method isn't supported.", {
+			comment: 'Message displayed when requested Domain Connect URL path is not supported',
+		} ),
+		oldCopy: translate( "Uh oh. That method isn't supported.", {
+			comment: 'Message displayed when requested Domain Connect URL path is not supported',
+		} ),
 	} );
 	const emptyContentMessage = translate(
 		'Check with the service provider that sent you here for more information.',
@@ -15,11 +21,7 @@ function DomainConnectNotFoundError( { translate } ) {
 
 	return (
 		<Main>
-			<EmptyContentComponent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ emptyContentTitle }
-				line={ emptyContentMessage }
-			/>
+			<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage } />
 		</Main>
 	);
 }

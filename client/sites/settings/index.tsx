@@ -25,6 +25,7 @@ import {
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
+	dashboardBackportSiteSettings,
 	serverSettings,
 	sftpSshSettings,
 	databaseSettings,
@@ -32,6 +33,7 @@ import {
 	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 	redirectToSiteSettingsIfHostingFeaturesNotSupported,
 } from './controller';
+import { redirectToHostingDashboardBackportIfEnabled } from './v2/controller';
 
 export default function () {
 	page( '/sites/settings/site', siteSelection, sites, makeLayout, clientRender );
@@ -40,6 +42,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectToHostingDashboardBackportIfEnabled,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -81,6 +84,7 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -93,6 +97,7 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -105,6 +110,7 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -117,10 +123,25 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,
 		siteDashboard( SETTINGS_PERFORMANCE ),
+		makeLayout,
+		clientRender
+	);
+
+	/**
+	 * Settings V2
+	 */
+	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/settings/v2/:site/:feature?',
+		siteSelection,
+		navigation,
+		dashboardBackportSiteSettings,
+		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
 		clientRender
 	);

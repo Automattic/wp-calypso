@@ -2,7 +2,7 @@ import { JetpackLogo } from '../index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof JetpackLogo > = {
-	title: 'packages/components/Logos/JetpackLogo',
+	title: 'Unaudited/Logos/JetpackLogo',
 	component: JetpackLogo,
 };
 export default meta;

@@ -40,6 +40,8 @@ export type CampaignChartStatsResponse = {
 export enum ChartResolution {
 	Hour = 'hour',
 	Day = 'day',
+	Week = 'week',
+	Month = 'month',
 }
 
 export const useCampaignChartStatsQuery = (

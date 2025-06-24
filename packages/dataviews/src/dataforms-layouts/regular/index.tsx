@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import clsx from 'clsx';
+
+/**
  * WordPress dependencies
  */
 import { useContext, useMemo } from '@wordpress/element';
@@ -79,23 +84,35 @@ export default function FormRegularField< Item >( {
 		( fieldDef ) => fieldDef.id === field.id
 	);
 
-	if ( ! fieldDefinition ) {
+	if ( ! fieldDefinition || ! fieldDefinition.Edit ) {
 		return null;
 	}
 	if ( labelPosition === 'side' ) {
 		return (
 			<HStack className="dataforms-layouts-regular__field">
-				<div className="dataforms-layouts-regular__field-label">
+				<div
+					className={ clsx(
+						'dataforms-layouts-regular__field-label',
+						`dataforms-layouts-regular__field-label--label-position-${ labelPosition }`
+					) }
+				>
 					{ fieldDefinition.label }
 				</div>
 				<div className="dataforms-layouts-regular__field-control">
-					<fieldDefinition.Edit
-						key={ fieldDefinition.id }
-						data={ data }
-						field={ fieldDefinition }
-						onChange={ onChange }
-						hideLabelFromVision
-					/>
+					{ fieldDefinition.readOnly === true ? (
+						<fieldDefinition.render
+							item={ data }
+							field={ fieldDefinition }
+						/>
+					) : (
+						<fieldDefinition.Edit
+							key={ fieldDefinition.id }
+							data={ data }
+							field={ fieldDefinition }
+							onChange={ onChange }
+							hideLabelFromVision
+						/>
+					) }
 				</div>
 			</HStack>
 		);
@@ -103,14 +120,30 @@ export default function FormRegularField< Item >( {
 
 	return (
 		<div className="dataforms-layouts-regular__field">
-			<fieldDefinition.Edit
-				data={ data }
-				field={ fieldDefinition }
-				onChange={ onChange }
-				hideLabelFromVision={
-					labelPosition === 'none' ? true : hideLabelFromVision
-				}
-			/>
+			{ fieldDefinition.readOnly === true ? (
+				<>
+					{ ! hideLabelFromVision && labelPosition !== 'none' && (
+						<div className="dataforms-layouts-regular__field-label">
+							{ fieldDefinition.label }
+						</div>
+					) }
+					<div className="dataforms-layouts-regular__field-control">
+						<fieldDefinition.render
+							item={ data }
+							field={ fieldDefinition }
+						/>
+					</div>
+				</>
+			) : (
+				<fieldDefinition.Edit
+					data={ data }
+					field={ fieldDefinition }
+					onChange={ onChange }
+					hideLabelFromVision={
+						labelPosition === 'none' ? true : hideLabelFromVision
+					}
+				/>
+			) }
 		</div>
 	);
 }

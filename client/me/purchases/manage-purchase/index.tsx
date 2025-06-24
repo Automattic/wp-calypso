@@ -69,7 +69,6 @@ import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -173,6 +172,7 @@ import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
 import type { FilteredPlan, PlanSlug } from '@automattic/calypso-products';
+import type { SupportedSlugs } from '@automattic/components/src/product-icon/config';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TracksProps } from 'calypso/lib/purchases';
 import type {

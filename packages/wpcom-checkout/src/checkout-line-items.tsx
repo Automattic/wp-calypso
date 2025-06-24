@@ -20,16 +20,16 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
 import {
+	Button,
 	CheckoutModal,
 	FormStatus,
 	useFormStatus,
-	Button,
 	Theme,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren, useRef } from 'react';
+import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import {
 	getIntroductoryOfferIntervalDisplay,
@@ -37,6 +37,7 @@ import {
 } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
+import { LoadingCard, LoadingCopy, LoadingRow } from './loading-card';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
 import type { LineItemType } from './types';
@@ -83,15 +84,22 @@ export const LineItem = styled( CheckoutLineItem )< {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	padding: 20px 0;
+	padding: 16px 0;
 
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
-	font-size: 1.1em;
+	font-size: ${ ( { shouldShowComparison } ) => ( shouldShowComparison ? '20px' : '1.1em' ) };
+
 	position: relative;
 
 	.checkout-line-item__price {
 		position: relative;
+
+		${ ( { shouldShowComparison } ) =>
+			shouldShowComparison &&
+			`
+				display: flex;
+			` }
 	}
 `;
 
@@ -150,7 +158,7 @@ const UpgradeCreditPopover = styled( Popover )< { theme?: Theme } >`
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
-	color: ${ ( props ) => props.theme.colors.success };
+	color: ${ ( props ) => props.theme.colors.discount };
 	display: block;
 `;
 
@@ -169,6 +177,9 @@ const LineItemTitle = styled.div< {
 	display: flex;
 	gap: 0.5em;
 	font-size: inherit;
+`;
+const LineItemSublabelTitle = styled.div`
+	flex: 1;
 `;
 
 const LineItemPriceWrapper = styled.span`
@@ -228,8 +239,6 @@ function WPNonProductLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
 } ) {
-	const id = lineItem.id;
-	const itemSpanId = `checkout-line-item-${ id }`;
 	const label = lineItem.label;
 	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
@@ -250,11 +259,9 @@ function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.type }
 		>
-			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ label }
-			</LineItemTitle>
+			<LineItemTitle isSummary={ isSummary }>{ label }</LineItemTitle>
 
-			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+			<span className="checkout-line-item__price">
 				<LineItemPrice actualAmount={ actualAmountDisplay } />
 			</span>
 
@@ -604,6 +611,54 @@ function returnModalCopy(
 	}
 }
 
+function getHasRemoveFromCartModal( {
+	product,
+	hasBundledDomainsInCart,
+	hasMarketplaceProductsInCart,
+	isPwpoUser = false,
+}: {
+	product: ResponseCartProduct;
+	hasBundledDomainsInCart: boolean;
+	hasMarketplaceProductsInCart: boolean;
+	isPwpoUser?: boolean;
+} ) {
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser
+	);
+	const isRenewal = isWpComProductRenewal( product );
+
+	switch ( productType ) {
+		case 'gift purchase':
+			return true;
+
+		case 'plan with marketplace dependencies':
+			return true;
+
+		case 'plan with domain dependencies': {
+			if ( isRenewal ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		case 'plan':
+			return false;
+
+		case 'domain':
+			return false;
+
+		case 'coupon':
+			return true;
+
+		default:
+			return false;
+	}
+}
+
 function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 	return <ProductTier product={ product } />;
 }
@@ -632,7 +687,15 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	return null;
 }
 
-export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
+export function LineItemSublabelAndPrice( {
+	product,
+	shouldShowComparison,
+	compareToPrice,
+}: {
+	product: ResponseCartProduct;
+	shouldShowComparison?: boolean;
+	compareToPrice?: number;
+} ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
 	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
@@ -786,6 +849,67 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				{ translate( 'billed annually' ) } { price }
 			</>
 		);
+	}
+
+	if ( shouldShowComparison && compareToPrice ) {
+		const monthlyPrice = formatCurrency( compareToPrice, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+		const showCrossedOutPrice =
+			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
+			compareToPrice;
+		if ( isMonthlyProduct( product ) ) {
+			return (
+				<>
+					<LineItemSublabelTitle>{ translate( 'Billed every month' ) }</LineItemSublabelTitle>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
+				</>
+			);
+		}
+
+		if ( isYearly( product ) ) {
+			return (
+				<>
+					<LineItemSublabelTitle>{ translate( 'Billed every year' ) }</LineItemSublabelTitle>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
+				</>
+			);
+		}
+
+		if ( isBiennially( product ) ) {
+			return (
+				<>
+					<LineItemSublabelTitle>{ translate( 'Billed every 2 years' ) }</LineItemSublabelTitle>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
+				</>
+			);
+		}
+
+		if ( isTriennially( product ) ) {
+			return (
+				<>
+					<LineItemSublabelTitle>{ translate( 'Billed every 3 years' ) }</LineItemSublabelTitle>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
+				</>
+			);
+		}
 	}
 
 	const shouldRenderBasicTermSublabel =
@@ -1066,9 +1190,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	return null;
 }
 
-function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
+function IntroductoryOfferCallout( {
+	product,
+	isStreamlinedPrice,
+}: {
+	product: ResponseCartProduct;
+	isStreamlinedPrice?: boolean;
+} ) {
 	const translate = useTranslate();
-	const introductoryOffer = getItemIntroductoryOfferDisplay( translate, product );
+	const introductoryOffer = getItemIntroductoryOfferDisplay(
+		translate,
+		product,
+		isStreamlinedPrice
+	);
 
 	if ( ! introductoryOffer ) {
 		return null;
@@ -1185,30 +1319,39 @@ function CheckoutLineItem( {
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
+	isRestorable = false,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
+	restorableProducts,
+	setRestorableProducts,
 	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
+	shouldShowComparison,
+	compareToPrice,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
+	isRestorable?: boolean;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
+	restorableProducts?: ResponseCartProduct[];
+	setRestorableProducts?: Dispatch< SetStateAction< ResponseCartProduct[] > >;
 	isPwpoUser?: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
+	shouldShowComparison?: boolean;
+	compareToPrice?: number;
 } > ) {
-	const id = product.uuid;
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
@@ -1221,8 +1364,14 @@ function CheckoutLineItem( {
 			product.product_slug.startsWith( 'wp_mp_theme' )
 	);
 	const { formStatus } = useFormStatus();
-	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const [ isPlaceholder, setIsPlaceholder ] = useState( false );
+	const hasRemoveFromCartModal = getHasRemoveFromCartModal( {
+		product,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser,
+	} );
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
@@ -1255,6 +1404,25 @@ function CheckoutLineItem( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+
+	let pricePerMonth = 0;
+	let originalPricePerMonth = 0;
+	if ( shouldShowComparison ) {
+		pricePerMonth = Math.round(
+			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 )
+		);
+		originalPricePerMonth = product.item_original_monthly_cost_integer;
+	}
+
+	const monthlyAmountDisplay = formatCurrency( pricePerMonth, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const originalMonthlyAmountDisplay = formatCurrency( originalPricePerMonth, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
 	const isDiscounted = Boolean(
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
@@ -1268,6 +1436,49 @@ function CheckoutLineItem( {
 		coupon: responseCart.coupon,
 	} );
 
+	const removeProductFromCartAndSetAsRestorable = async () => {
+		if ( ! ( hasDeleteButton && removeProductFromCart ) ) {
+			return;
+		}
+
+		setIsPlaceholder( true );
+
+		let product_uuids_to_remove = [ product.uuid ];
+
+		// Gifts need to be all or nothing, to prevent leaving
+		// the site in a state where it requires other purchases
+		// in order to actually work correctly for the period of
+		// the gift (for example, gifting a plan renewal without
+		// a domain renewal would likely lead the site's domain
+		// to expire soon afterwards).
+		if ( product.is_gift_purchase ) {
+			product_uuids_to_remove = responseCart.products
+				.filter( ( cart_product ) => cart_product.is_gift_purchase )
+				.map( ( cart_product ) => cart_product.uuid );
+		}
+
+		await Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+		} );
+
+		setRestorableProducts?.( [ ...( restorableProducts || [] ), product ] );
+
+		onRemoveProduct?.( label );
+	};
+
+	if ( isPlaceholder ) {
+		return (
+			<LoadingCard>
+				<LoadingRow>
+					<LoadingCopy noMargin width="150px" />
+					<LoadingCopy noMargin width="45px" />
+				</LoadingRow>
+				<LoadingCopy height="35px" width="225px" />
+				<LoadingCopy width="100px" />
+			</LoadingCard>
+		);
+	}
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1279,7 +1490,7 @@ function CheckoutLineItem( {
 					<GiftBadgeWithText />
 				</MobileGiftWrapper>
 			) }
-			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+			<LineItemTitle isSummary={ isSummary }>
 				{ label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
@@ -1288,11 +1499,23 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice
-					actualAmount={ actualAmountDisplay }
-					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
-				/>
+			<span className="checkout-line-item__price">
+				{ shouldShowComparison ? (
+					<>
+						<LineItemPrice
+							actualAmount={ monthlyAmountDisplay }
+							crossedOutAmount={ isDiscounted ? originalMonthlyAmountDisplay : undefined }
+						/>{ ' ' }
+						{ translate( '/month' ) }
+					</>
+				) : (
+					<>
+						<LineItemPrice
+							actualAmount={ actualAmountDisplay }
+							crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+						/>
+					</>
+				) }
 			</span>
 
 			{ ! containsPartnerCoupon && (
@@ -1302,9 +1525,16 @@ function CheckoutLineItem( {
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
 						<LineItemMeta>
-							<LineItemSublabelAndPrice product={ product } />
+							<LineItemSublabelAndPrice
+								product={ product }
+								shouldShowComparison={ shouldShowComparison }
+								compareToPrice={ compareToPrice }
+							/>
 							<DomainDiscountCallout product={ product } />
-							<IntroductoryOfferCallout product={ product } />
+							<IntroductoryOfferCallout
+								product={ product }
+								isStreamlinedPrice={ shouldShowComparison }
+							/>
 							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>
 					</>
@@ -1336,7 +1566,16 @@ function CheckoutLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setIsModalVisible( true );
+								if ( isRestorable ) {
+									if ( hasRemoveFromCartModal ) {
+										setIsModalVisible( true );
+									} else {
+										removeProductFromCartAndSetAsRestorable();
+									}
+								} else {
+									setIsModalVisible( true );
+								}
+
 								onRemoveProductClick?.( label );
 							} }
 						>
@@ -1349,26 +1588,7 @@ function CheckoutLineItem( {
 						closeModal={ () => {
 							setIsModalVisible( false );
 						} }
-						primaryAction={ () => {
-							let product_uuids_to_remove = [ product.uuid ];
-
-							// Gifts need to be all or nothing, to prevent leaving
-							// the site in a state where it requires other purchases
-							// in order to actually work correctly for the period of
-							// the gift (for example, gifting a plan renewal without
-							// a domain renewal would likely lead the site's domain
-							// to expire soon afterwards).
-							if ( product.is_gift_purchase ) {
-								product_uuids_to_remove = responseCart.products
-									.filter( ( cart_product ) => cart_product.is_gift_purchase )
-									.map( ( cart_product ) => cart_product.uuid );
-							}
-
-							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-								// Nothing needs to be done here. CartMessages will display the error to the user.
-							} );
-							onRemoveProduct?.( label );
-						} }
+						primaryAction={ removeProductFromCartAndSetAsRestorable }
 						cancelAction={ () => {
 							onRemoveProductCancel?.( label );
 						} }

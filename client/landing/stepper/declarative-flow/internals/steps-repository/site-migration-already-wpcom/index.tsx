@@ -1,10 +1,7 @@
-import { Step, StepContainer } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import Form from './components/form';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -18,7 +15,7 @@ const extractDomainFromUrl = ( url: string ) => {
 	}
 };
 
-const SiteMigrationAlreadyWPCOM: StepType = ( { stepName, flow, navigation } ) => {
+const SiteMigrationAlreadyWPCOM: StepType = ( { navigation } ) => {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' )!;
@@ -45,42 +42,16 @@ const SiteMigrationAlreadyWPCOM: StepType = ( { stepName, flow, navigation } ) =
 		navigation?.submit?.();
 	};
 
-	if ( shouldUseStepContainerV2MigrationFlow( flow ) ) {
-		return (
-			<>
-				<DocumentHead title={ translate( 'Your site is already on WordPress.com' ) } />
-				<Step.CenteredColumnLayout
-					columnWidth={ 8 }
-					topBar={
-						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
-					}
-					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
-				>
-					<Form onComplete={ onSubmit } />
-				</Step.CenteredColumnLayout>
-			</>
-		);
-	}
-
 	return (
 		<>
 			<DocumentHead title={ translate( 'Your site is already on WordPress.com' ) } />
-			<StepContainer
-				stepName={ stepName }
-				flowName={ flow }
-				goBack={ navigation?.goBack }
-				formattedHeader={
-					<FormattedHeader
-						subHeaderAs="div"
-						headerText={ title }
-						subHeaderText={ subHeaderText }
-						align="center"
-					/>
-				}
-				isFullLayout
-				stepContent={ <Form onComplete={ onSubmit } /> }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			<Step.CenteredColumnLayout
+				columnWidth={ 8 }
+				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
+			>
+				<Form onComplete={ onSubmit } />
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

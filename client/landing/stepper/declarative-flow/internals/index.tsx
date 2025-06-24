@@ -73,6 +73,8 @@ export const FlowRenderer: React.FC< {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
 	const isValidStep = params.step != null && stepPaths.includes( currentStepRoute );
+	// Type as any, because we don't which flow is this.
+	const stepsProps: any = 'useStepsProps' in flow ? flow.useStepsProps?.() : undefined;
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
@@ -206,6 +208,7 @@ export const FlowRenderer: React.FC< {
 				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
+				{ ...stepsProps?.[ step.slug ] }
 			/>
 		);
 	};

@@ -1,16 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	ExternalLink,
 	Button,
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
 import { siteRoute } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
@@ -27,46 +28,34 @@ import './style.scss';
 
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( site.ID ) );
 
-	if ( ! data ) {
+	if ( ! engagementStats ) {
 		return;
 	}
-	const {
-		site,
-		mediaStorage,
-		siteMonitorUptime,
-		phpVersion,
-		currentPlan,
-		primaryDomain,
-		engagementStats,
-	} = data;
 	return (
 		<PageLayout
-			title={ site.name }
-			actions={
-				<>
-					<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
-					{ site.options?.admin_url && (
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							href={ site.options.admin_url }
-							icon={ wordpress }
-						>
-							{ __( 'WP Admin' ) }
-						</Button>
-					) }
-				</>
+			header={
+				<PageHeader
+					title={ site.name || new URL( site.URL ).hostname }
+					actions={
+						site.options?.admin_url && (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ site.options.admin_url }
+								icon={ wordpress }
+							>
+								{ __( 'WP Admin' ) }
+							</Button>
+						)
+					}
+				/>
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar
-					site={ site }
-					phpVersion={ phpVersion }
-					primaryDomain={ primaryDomain }
-					currentPlan={ currentPlan }
-				/>
+				<Sidebar site={ site } />
 				<VStack spacing={ 8 }>
 					<Card style={ { padding: '16px' } }>
 						<VStack>
@@ -87,8 +76,8 @@ function SiteOverview() {
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
-						<UptimeCard siteMonitorUptime={ siteMonitorUptime } />
-						<StorageCard mediaStorage={ mediaStorage } />
+						<UptimeCard site={ site } />
+						<StorageCard site={ site } />
 					</OverviewSection>
 				</VStack>
 			</HStack>

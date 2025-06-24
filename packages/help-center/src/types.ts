@@ -80,6 +80,7 @@ interface Availability {
 	is_presales_chat_open: boolean;
 	is_precancellation_chat_open: boolean;
 	force_email_support: boolean;
+	force_email_support_test: boolean;
 	is_difm_chat_open: boolean;
 }
 

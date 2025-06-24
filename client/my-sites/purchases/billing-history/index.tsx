@@ -53,7 +53,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
-			<QueryBillingTransactions />
+			<QueryBillingTransactions transactionType="past" />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader
 					title={ titles.sectionTitle }

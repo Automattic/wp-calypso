@@ -15,7 +15,6 @@ import {
 	isRequestingPostsForQueryIgnoringPage,
 	getEditedPost,
 	getPostEdits,
-	getEditedPostValue,
 	getPostPreviewUrl,
 	getSitePostsByTerm,
 } from '../selectors';
@@ -1416,99 +1415,6 @@ describe( 'selectors', () => {
 			expect( postEdits ).toEqual( {
 				title: 'Hello World!',
 			} );
-		} );
-	} );
-
-	describe( 'getEditedPostValue()', () => {
-		test( 'should return undefined if the post does not exist', () => {
-			const editedPostValue = getEditedPostValue(
-				{
-					posts: {
-						items: {},
-						queries: {},
-						edits: {},
-					},
-				},
-				2916284,
-				841,
-				'title'
-			);
-
-			expect( editedPostValue ).toBeUndefined();
-		} );
-
-		test( 'should return the assigned post value', () => {
-			const postObject = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-			};
-			const editedPostValue = getEditedPostValue(
-				{
-					posts: {
-						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-						},
-						queries: {
-							2916284: new PostQueryManager( {
-								items: { 841: postObject },
-							} ),
-						},
-						edits: {
-							2916284: {
-								841: [ { title: 'Hello World!' } ],
-							},
-						},
-					},
-				},
-				2916284,
-				841,
-				'title'
-			);
-
-			expect( editedPostValue ).toEqual( 'Hello World!' );
-		} );
-
-		test( 'should return the assigned nested post value', () => {
-			const postObject = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				discussion: {
-					comments_open: true,
-				},
-			};
-			const editedPostValue = getEditedPostValue(
-				{
-					posts: {
-						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-						},
-						queries: {
-							2916284: new PostQueryManager( {
-								items: { 841: postObject },
-							} ),
-						},
-						edits: {
-							2916284: {
-								841: [
-									{
-										discussion: {
-											pings_open: true,
-										},
-									},
-								],
-							},
-						},
-					},
-				},
-				2916284,
-				841,
-				'discussion.pings_open'
-			);
-
-			expect( editedPostValue ).toBe( true );
 		} );
 	} );
 

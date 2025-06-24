@@ -19,6 +19,7 @@ import type {
 } from '../types';
 
 const FEEDBACK_PREFERENCE = 'a4a-feedback';
+const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
 const redirectToDefaultUrl = ( redirectUrl?: string ) => {
 	if ( redirectUrl ) {
@@ -42,7 +43,14 @@ const getUpdatedPreference = (
 	};
 };
 
-const useShowFeedback = ( type: FeedbackType ) => {
+const isWithinSevenDays = ( date: string ): boolean => {
+	const startDate = new Date( date ).getTime();
+	const currentDate = Date.now();
+	const diffInMs = Math.abs( currentDate - startDate );
+	return diffInMs <= SEVEN_DAYS_IN_MS;
+};
+
+const useShowFeedback = ( type: FeedbackType, startDate?: string | null ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -63,10 +71,12 @@ const useShowFeedback = ( type: FeedbackType ) => {
 	const feedbackSubmitTimestamp = feedbackTimestamp?.[ type ]?.lastSubmittedAt;
 	const feedbackSkipTimestamp = feedbackTimestamp?.[ type ]?.lastSkippedAt;
 
-	// Checking if the feedback was submitted or skipped
+	// Checking if the feedback was submitted or skipped and if we're within the date window
 	const showFeedback = useMemo( () => {
-		return ! feedbackSubmitTimestamp && ! feedbackSkipTimestamp;
-	}, [ feedbackSubmitTimestamp, feedbackSkipTimestamp ] );
+		const hasNotInteracted = ! feedbackSubmitTimestamp && ! feedbackSkipTimestamp;
+		const isWithinDateWindow = startDate ? isWithinSevenDays( startDate ) : true;
+		return hasNotInteracted && isWithinDateWindow;
+	}, [ feedbackSubmitTimestamp, feedbackSkipTimestamp, startDate ] );
 
 	const feedbackProps: FeedbackProps = useMemo(
 		() => getA4AfeedbackProps( type, translate, args ),

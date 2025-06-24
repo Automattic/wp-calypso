@@ -8,6 +8,9 @@ async function fetchZendeskConfig(): Promise< boolean > {
 	return validResponse;
 }
 
+/**
+ * This hook verifies connectivity to Zendesk's messaging service by making a config request and manages automatic retries with error tracking.
+ */
 export function useCanConnectToZendeskMessaging( enabled = true ) {
 	const queryClient = useQueryClient();
 	const [ shouldRefetch, setShouldRefetch ] = useState( false );

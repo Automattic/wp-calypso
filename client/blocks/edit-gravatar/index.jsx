@@ -18,6 +18,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { receiveGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
@@ -37,20 +38,29 @@ export class EditGravatar extends Component {
 		user: PropTypes.object,
 		recordClickButtonEvent: PropTypes.func,
 		recordAvatarUpdatedEvent: PropTypes.func,
+		receiveGravatarDetails: PropTypes.func,
 	};
 
 	quickEditor = null;
 
 	componentDidMount() {
-		const { user, setCurrentUser: setUser, recordAvatarUpdatedEvent } = this.props;
+		const {
+			user,
+			setCurrentUser: setUser,
+			recordAvatarUpdatedEvent,
+			receiveGravatarDetails: updateGravatarDetails,
+		} = this.props;
 
 		this.quickEditor = new GravatarQuickEditorCore( {
 			email: user.email,
 			scope: [ 'avatars' ],
+			utm: 'wpcomme',
 			onProfileUpdated: () => {
 				recordAvatarUpdatedEvent();
 				// Update the avatar URL to force a refresh.
 				setUser( { ...user, avatar_URL: addQueryArgs( user.avatar_URL, { ver: Date.now() } ) } );
+				// Update Gravatar details
+				updateGravatarDetails( { has_gravatar: true } );
 			},
 		} );
 
@@ -197,5 +207,6 @@ export default connect(
 		setCurrentUser,
 		recordClickButtonEvent,
 		recordAvatarUpdatedEvent,
+		receiveGravatarDetails,
 	}
 )( localize( EditGravatar ) );

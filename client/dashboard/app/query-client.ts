@@ -1,12 +1,11 @@
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
-import { TWO_STEP_QUERY_KEY } from './auth';
 
 export const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
-			staleTime: 0,
+			staleTime: 1000 * 60 * 1, // 1 minute
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
 		},
@@ -19,11 +18,11 @@ const maxAge = 1000 * 60 * 60 * 24; // 24 hours
 const [ , persistPromise ] = persistQueryClient( {
 	queryClient,
 	persister,
-	buster: '1', // Bump when query data shape changes.
+	buster: '3', // Bump when query data shape changes.
 	maxAge,
 	dehydrateOptions: {
-		shouldDehydrateQuery: ( { queryKey } ) => {
-			if ( TWO_STEP_QUERY_KEY === queryKey ) {
+		shouldDehydrateQuery: ( { meta } ) => {
+			if ( meta?.persist === false ) {
 				return false;
 			}
 			return true;

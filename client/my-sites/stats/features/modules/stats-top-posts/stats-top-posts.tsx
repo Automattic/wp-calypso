@@ -1,27 +1,44 @@
 import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { TOP_POSTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
+import useOptionLabels, {
+	MAIN_STAT_TYPE,
+	SUB_STAT_TYPE,
+	StatType,
+	StatsModulePostsProps,
+	getValidQueryViewType,
+} from './use-option-labels';
+import type { StatsStateProps } from '../types';
 
-const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
+type StatTypeOptionType = {
+	value: StatType;
+	label: string;
+	mainItemLabel: string;
+	analyticsId: string;
+};
+
+const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	period,
-	query,
+	query: queryFromProps,
 	moduleStrings,
 	className,
 	summaryUrl,
@@ -31,21 +48,77 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsTopPosts';
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
-		: TOP_POSTS_SUPPORT_URL;
-
-	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsModule = useShouldGateStats( statType );
-
-	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
-		isRequestingSiteStatsForQuery( state, siteId, statType, query )
+	const { supportsArchiveStats } = useSelector( ( state: object ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
+
+	const isArchiveBreakdownEnabled: boolean =
+		config.isEnabled( 'stats/archive-breakdown' ) && supportsArchiveStats;
+
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const supportContext = isSiteJetpackNotAtomic
+		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
+		: 'stats-top-posts-and-pages-analyze-content-performance';
+
+	const query = {
+		...queryFromProps,
+		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
+	};
+
+	const mainStatType = MAIN_STAT_TYPE;
+	const subStatType = SUB_STAT_TYPE;
+
+	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
+		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
+	);
+	const isRequestingArchivesData = useSelector( ( state: StatsStateProps ) =>
+		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
+	);
+	const isRequestingData = isArchiveBreakdownEnabled
+		? isRequestingTopPostsData || isRequestingArchivesData
+		: isRequestingTopPostsData;
+
+	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => {
+		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
+			stat_type: option.analyticsId,
+		} );
+
+		setLocalStatType( option.value );
+	};
+
+	const statType =
+		localStatType || getValidQueryViewType( query.viewType, supportsArchiveStats ) || mainStatType;
+
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
+
+	// Get the archives data to check if we should disable the archives option.
+	const archivesData = useSelector( ( state ) =>
+		getSiteStatsNormalizedData( state, siteId, subStatType, query )
+	) as [ id: number, label: string ];
+
+	const optionLabels = useOptionLabels();
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+			analyticsId: item.analyticsId,
+			// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
+			disabled:
+				isArchiveBreakdownEnabled &&
+				key === subStatType &&
+				! isRequestingArchivesData &&
+				! archivesData.length,
+		};
+	} );
+
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( mainStatType );
 
 	const hasData = !! data?.length;
 	// TODO: Is there a way to show the Skeleton loader for real-time data?
@@ -60,11 +133,24 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		? ! hasData && ! presentLoadingUI
 		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
+	// Query both statTypes for the Traffic page module card to avoid loading when switching between controls.
+	// Only query one statType at a time to avoid loading plenty of data for the summary mode.
+	const shouldQueryMainStatType = ! summary || statType === mainStatType;
+	const shouldQuerySubStatType = ! summary || statType === subStatType;
+
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && statType && (
-				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+			{ ! shouldGateStatsModule && siteId && shouldQueryMainStatType && (
+				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
+
+			{ ! shouldGateStatsModule &&
+				siteId &&
+				isArchiveBreakdownEnabled &&
+				shouldQuerySubStatType && (
+					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+				) }
+
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
 					isLoading={ isRequestingData }
@@ -79,17 +165,33 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					path="posts"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate(
-								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
-									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
-								}
-							) }
+							{ isArchiveBreakdownEnabled
+								? translate(
+										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  )
+								: translate(
+										'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  ) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }
@@ -97,11 +199,26 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					showSummaryLink={ !! summary }
+					summaryLinkModifier={ ( link: string ) => `${ link }&viewType=${ statType }` }
 					className={ className }
 					summary={ summary }
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
+					toggleControl={
+						isArchiveBreakdownEnabled &&
+						! summary && (
+							<SimplifiedSegmentedControl
+								options={ options }
+								initialSelected={ statType }
+								onSelect={ onStatTypeChange }
+							/>
+						)
+					}
+					mainItemLabel={
+						isArchiveBreakdownEnabled &&
+						options.find( ( option ) => option.value === statType )?.mainItemLabel
+					}
 				/>
 			) }
 			{ presentEmptyUI && (
@@ -118,7 +235,9 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',
 								}

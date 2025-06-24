@@ -8,7 +8,9 @@
 }
 
 .reader-post-options-menu__popover .popover__menu .popover__menu-item {
+	align-items: center;
 	display: flex;
+	gap: 8px;
 
 	&.follow-button:hover,
 	&.follow-button:focus {
@@ -22,6 +24,20 @@
 				fill: var(--color-text-inverted);
 			}
 		}
+	}
+
+	&:hover,
+	&:focus {
+		svg {
+			path {
+				fill: var(--color-text-inverted);
+			}
+		}
+	}
+
+	svg {
+		height: 24px;
+		width: 24px;
 	}
 }
 
@@ -217,15 +233,7 @@
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
-			margin-bottom: 5px;
-
-			> .follow-button {
-				padding-bottom: 5px;
-			}
-		}
-
-		.ellipsis-menu__toggle {
-			padding-bottom: 36px;
+			margin-bottom: 16px;
 		}
 
 		.reader-excerpt {

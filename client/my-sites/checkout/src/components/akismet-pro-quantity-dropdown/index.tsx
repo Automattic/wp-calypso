@@ -146,11 +146,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	const translate = useTranslate();
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
-			preventWidows( translate( '1 Site' ) ),
-			preventWidows( translate( '2 Sites' ) ),
-			preventWidows( translate( '3 Sites' ) ),
-			preventWidows( translate( '4 Sites' ) ),
-			preventWidows( translate( 'Unlimited sites (Akismet Business)' ) ),
+			preventWidows( translate( '500 spam calls/mo, up to 1 site' ) ),
+			preventWidows( translate( '1000 spam calls/mo, up to 2 sites' ) ),
+			preventWidows( translate( '1500 spam calls/mo, up to 3 sites' ) ),
+			preventWidows( translate( '2000 spam calls/mo, up to 4 sites' ) ),
+			preventWidows( translate( '5000 spam calls/mo, unlimited sites (Akismet Business)' ) ),
 		];
 		const AkBusinessDropdownPosition = dropdownOptions.length;
 		return {

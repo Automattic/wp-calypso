@@ -199,12 +199,6 @@
 	}
 }
 
-.import-layout__column {
-	display: flex;
-	flex-direction: column;
-	flex-basis: 100%;
-}
-
 .import-layout__center {
 	background-color: var(--contrastColor);
 	tab-size: 4;

@@ -293,6 +293,7 @@ const StagingToProductionSync = ( {
 					}
 					confirmLabel={ translate( 'Synchronize' ) }
 					cancelLabel={ translate( 'Cancel' ) }
+					isSynchronize
 				>
 					<span>{ translate( 'Synchronize' ) }</span>
 				</ConfirmationModal>
@@ -322,6 +323,7 @@ const ProductionToStagingSync = ( {
 				modalSize="medium"
 				confirmLabel={ translate( 'Synchronize' ) }
 				cancelLabel={ translate( 'Cancel' ) }
+				isSynchronize
 			>
 				<span>{ translate( 'Synchronize' ) }</span>
 			</ConfirmationModal>

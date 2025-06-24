@@ -20,7 +20,6 @@ import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
-import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -53,11 +52,11 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName } = useHelpCenterContext();
 	const { startNewInteraction } = useManageSupportInteraction();
-	const { data } = useSupportStatus();
+	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { data: openSupportInteractions, isLoading: isLoadingOpenSupportInteractions } =
-		useGetSupportInteractions( 'help-center', 1, 'open' );
+		useGetSupportInteractions( null, 1, 'open' );
 	const { data: resolvedSupportInteractions, isLoading: isLoadingResolvedSupportInteractions } =
-		useGetSupportInteractions( 'help-center', 1, 'resolved' );
+		useGetSupportInteractions( null, 1, 'resolved' );
 
 	const { currentSupportInteraction, navigateToRoute, isMinimized, allowPremiumSupport } =
 		useSelect( ( select ) => {
@@ -86,9 +85,11 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
+		if ( isLoadingOpenSupportInteractions || isLoadingResolvedSupportInteractions ) {
+			return;
+		}
+
 		if (
-			! isLoadingOpenSupportInteractions &&
-			! isLoadingResolvedSupportInteractions &&
 			openSupportInteractions === null &&
 			resolvedSupportInteractions === null &&
 			! currentSupportInteraction
@@ -96,6 +97,15 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			startNewInteraction( {
 				event_source: 'help-center',
 				event_external_id: crypto.randomUUID(),
+			} );
+			recordTracksEvent( 'calypso_helpcenter_new_interaction_started', {
+				pathname: location.pathname,
+				search: location.search,
+				section: sectionName,
+				location: 'help-center',
+				event_source: 'help-center',
+				is_free_user: ! isUserEligibleForPaidSupport,
+				user_field_flow_name: userFieldFlowName,
 			} );
 		} else if (
 			( openSupportInteractions || resolvedSupportInteractions ) &&
@@ -143,13 +153,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				<Routes>
 					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
 					<Route path="/post" element={ <HelpCenterArticle /> } />
-					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
 						path="/odie"
 						element={
 							<HelpCenterChat
+								isLoadingStatus={ isLoadingSupportStatus }
 								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 								userFieldFlowName={ userFieldFlowName }
 							/>

@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
@@ -18,6 +19,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		hasTwoStepEnhancedSecurity: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		twoStepSmsPhoneNumber: PropTypes.string,
+		isEmailVerified: PropTypes.bool,
 	};
 
 	render() {
@@ -29,6 +31,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 			twoStepSmsPhoneNumber,
 			hasTwoStepSecurityKeyEnabled,
 			hasTwoStepEnhancedSecurity,
+			isEmailVerified,
 		} = this.props;
 
 		if ( ! areUserSettingsLoaded ) {
@@ -38,7 +41,13 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		let icon;
 		let description;
 
-		if ( ! hasTwoStepSmsEnabled && ! hasTwoStepEnabled ) {
+		// Email verification is prioritized over other two-factor authentication conditions.
+		if ( ! isEmailVerified ) {
+			icon = getWarningIcon();
+			description = translate(
+				'To enable Two-Step Authentication, please verify your email address first.'
+			);
+		} else if ( ! hasTwoStepSmsEnabled && ! hasTwoStepEnabled ) {
 			icon = getWarningIcon();
 			description = translate( 'You do not have two-step authentication enabled.' );
 		} else {
@@ -97,6 +106,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 				materialIcon={ icon }
 				text={ translate( 'Two-Step Authentication' ) }
 				description={ description }
+				disabled={ ! isEmailVerified }
 			/>
 		);
 	}
@@ -109,4 +119,5 @@ export default connect( ( state ) => ( {
 	twoStepSmsPhoneNumber: getUserSetting( state, 'two_step_sms_phone_number' ),
 	hasTwoStepSecurityKeyEnabled: getUserSetting( state, 'two_step_security_key_enabled' ),
 	hasTwoStepEnhancedSecurity: getUserSetting( state, 'two_step_enhanced_security' ),
+	isEmailVerified: isCurrentUserEmailVerified( state ),
 } ) )( localize( SecurityCheckupTwoFactorAuthentication ) );

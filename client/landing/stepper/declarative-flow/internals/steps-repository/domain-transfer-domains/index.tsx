@@ -1,8 +1,11 @@
 import { MaterialIcon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { GOOGLE_TRANSFER, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import {
+	StepContainer,
+	GOOGLE_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
+} from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

@@ -12,7 +12,6 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import { preventWidows } from 'calypso/lib/formatting';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -106,9 +105,7 @@ class SocialSignupForm extends Component {
 				} ) }
 			>
 				{ ! compact && (
-					<p className="auth-form__social-text">
-						{ preventWidows( translate( 'Or create an account using:' ) ) }
-					</p>
+					<p className="auth-form__social-text">{ translate( 'Or create an account using:' ) }</p>
 				) }
 
 				<div className="auth-form__social-buttons">

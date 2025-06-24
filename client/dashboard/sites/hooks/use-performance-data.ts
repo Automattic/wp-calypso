@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { siteSettingsQuery, basicMetricsQuery, performanceInsightsQuery } from '../../app/queries';
+import { basicMetricsQuery, performanceInsightsQuery } from '../../app/queries/performance';
+import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { UrlPerformanceInsights } from '../../data/types';
 
 interface PerformanceData {
@@ -11,7 +12,7 @@ interface PerformanceData {
 	isLoading: boolean;
 }
 
-export function usePerformanceData( siteId: string, url: string ): PerformanceData {
+export function usePerformanceData( siteId: number, url: string ): PerformanceData {
 	const { data: siteSettings, isLoading: isLoadingSiteSettings } = useQuery( {
 		...siteSettingsQuery( siteId ),
 		refetchOnWindowFocus: false,
@@ -19,8 +20,7 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 		enabled: !! siteId,
 	} );
 
-	const wpcomPerformanceReportUrl: string =
-		siteSettings?.settings?.wpcom_performance_report_url || '';
+	const wpcomPerformanceReportUrl: string = siteSettings?.wpcom_performance_report_url || '';
 	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 
 	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery( {

@@ -1,28 +1,38 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { isEqual, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { isHttps } from 'calypso/lib/url';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
-import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import {
+	useStatsNavigationHistory,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
+import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
+import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSiteSlug, isSitePreviewable, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
@@ -30,6 +40,8 @@ import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -44,6 +56,12 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
+		lastScreen: PropTypes.shape( {
+			text: PropTypes.string,
+			url: PropTypes.string,
+		} ),
+		editUrl: PropTypes.string,
+		setShowSupportDoc: PropTypes.func,
 	};
 
 	state = {
@@ -56,12 +74,14 @@ class StatsPostDetail extends Component {
 			insights: this.props.translate( 'Insights' ),
 			store: this.props.translate( 'Store' ),
 			ads: this.props.translate( 'Ads' ),
+			subscribers: this.props.translate( 'Subscribers' ),
 		};
 		const possibleBackLinks = {
 			traffic: '/stats/day/',
 			insights: '/stats/insights/',
 			store: '/stats/store/',
 			ads: '/stats/ads/',
+			subscribers: '/stats/subscribers/',
 		};
 		// We track the parent tab via sessionStorage.
 		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
@@ -83,6 +103,22 @@ class StatsPostDetail extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context } = this.props;
+		recordCurrentScreen( 'postDetails', {
+			queryParams: context.query,
+			period: null,
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { context } = this.props;
+		if ( ! isEqual( prevProps.context, this.props.context ) ) {
+			recordCurrentScreen( 'postDetails', {
+				queryParams: context.query,
+				period: null,
+			} );
+		}
 	}
 
 	openPreview = () => {
@@ -116,7 +152,9 @@ class StatsPostDetail extends Component {
 	}
 
 	hasDontSendEmailPostToSubs( metadata ) {
-		return metadata?.some( ( { key } ) => key === '_jetpack_dont_email_post_to_subs' );
+		return metadata?.some(
+			( { key, value } ) => key === '_jetpack_dont_email_post_to_subs' && !! value
+		);
 	}
 
 	getPost() {
@@ -163,10 +201,14 @@ class StatsPostDetail extends Component {
 			postId,
 			siteId,
 			translate,
-			siteSlug,
+			editUrl,
 			showViewLink,
 			previewUrl,
 			supportsUTMStats,
+			isSubscriptionsModuleActive,
+			supportsEmailStats,
+			isSimple,
+			lastScreen,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -188,7 +230,7 @@ class StatsPostDetail extends Component {
 		}
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
-		const postDetailPageClasses = clsx( 'stats has-fixed-nav', {
+		const postDetailPageClasses = clsx( 'stats', {
 			'is-odyssey-stats': isWPAdmin,
 		} );
 
@@ -196,14 +238,26 @@ class StatsPostDetail extends Component {
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
 		const backLinkProps = {
-			text: navigationItems[ 0 ].label,
-			url: navigationItems[ 0 ].href,
+			text: lastScreen.text,
+			url: lastScreen.url,
 		};
+
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
 			// Remove the default logo for Odyssey stats.
 			titleLogo: null,
 		};
+
+		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
+		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
+		const isEmailTabsAvailable =
+			subscriptionsEnabled &&
+			postId > 0 &&
+			! passedPost?.dont_email_post_to_subs &&
+			passedPost?.date &&
+			// The Newsletter Stats data was never backfilled (internal ref pdDOJh-1Uy-p2).
+			new Date( passedPost?.date ) >= new Date( '2023-05-30' ) &&
+			supportsEmailStats;
 
 		return (
 			<Main fullWidthLayout>
@@ -213,28 +267,31 @@ class StatsPostDetail extends Component {
 				/>
 				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 				<div className={ postDetailPageClasses }>
-					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
-						<PageHeader
-							backLinkProps={ backLinkProps }
-							titleProps={ titleProps }
-							rightSection={
-								showViewLink && (
-									<CoreButton onClick={ this.openPreview } variant="primary">
-										<span>{ actionLabel }</span>
-									</CoreButton>
-								)
-							}
-						/>
-					) : (
-						<NavigationHeader navigationItems={ navigationItems }>
-							{ showViewLink && (
-								<Button onClick={ this.openPreview }>
+					<PageHeader
+						backLinkProps={ backLinkProps }
+						titleProps={ titleProps }
+						rightSection={
+							showViewLink && (
+								<CoreButton onClick={ this.openPreview } variant="primary">
 									<span>{ actionLabel }</span>
-								</Button>
+								</CoreButton>
+							)
+						}
+					/>
+
+					{ isEmailTabsAvailable && (
+						<div
+							className={ clsx(
+								'stats-navigation',
+								'stats-navigation--modernized',
+								'stats-navigation--improved'
 							) }
-						</NavigationHeader>
+						>
+							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
+						</div>
 					) }
 
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
@@ -246,12 +303,11 @@ class StatsPostDetail extends Component {
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
-							actionURL={ localizeUrl(
-								'https://wordpress.com/support/getting-more-views-and-traffic/'
-							) }
-							actionTarget="blank"
-							illustration={ IllustrationStats }
-							illustrationWidth={ 150 }
+							actionCallback={ () => {
+								this.props.setShowSupportDoc(
+									localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' )
+								);
+							} }
 						/>
 					) }
 
@@ -277,20 +333,42 @@ class StatsPostDetail extends Component {
 					externalUrl={ previewUrl }
 					onClose={ this.closePreview }
 				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
+					<Button href={ editUrl }>{ translate( 'Edit' ) }</Button>
 				</WebPreview>
 			</Main>
 		);
 	}
 }
 
+const StatsPostDetailWrapper = ( props ) => {
+	const lastScreen = useStatsNavigationHistory();
+
+	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	return (
+		<StatsPostDetail
+			{ ...props }
+			lastScreen={ lastScreen }
+			setShowSupportDoc={ setShowSupportDoc }
+		/>
+	);
+};
+
 const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
-	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const isSimple = isSimpleSite( state, siteId );
+	const previewUrl = getMappedPreviewUrl( state, siteId, postId );
+	const isOdyssey = config.isEnabled( 'is_odyssey' );
+	const adminBaseUrl = getSiteAdminUrlFromState( state, siteId );
+	const editUrl = isOdyssey
+		? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
+		: `/post/${ siteId }/${ postId }`;
+	const showViewLink =
+		( isOdyssey || isPreviewable ) && previewUrl !== null && isHttps( previewUrl );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -301,11 +379,15 @@ const connectComponent = connect( ( state, { postId } ) => {
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
-		previewUrl: getPostPreviewUrl( state, siteId, postId ),
+		showViewLink,
+		editUrl,
+		previewUrl: previewUrl,
 		siteId,
 		supportsUTMStats,
+		isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
+		supportsEmailStats,
+		isSimple,
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );

@@ -1,6 +1,6 @@
 import SelectDropdown from '.';
 
-export default { component: SelectDropdown, title: 'packages/components/SelectDropdown' };
+export default { component: SelectDropdown, title: 'Unaudited/SelectDropdown' };
 
 const Template = ( args ) => {
 	return <SelectDropdown { ...args } />;

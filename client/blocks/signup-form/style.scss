@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 .signup-form-social-first {
 	display: grid;
@@ -20,7 +21,7 @@
 	}
 }
 
-.signup-form .signup-form__input.form-text-input {
+.signup-form .signup-form__input.form-text-input[type] {
 	margin-bottom: 20px;
 	transition: none;
 
@@ -68,10 +69,6 @@
 			margin: 10px 0 0;
 		}
 	}
-}
-
-.auth-form__social-buttons .social-buttons__button {
-	border-radius: 4px;
 }
 
 .auth-form__social-buttons-tos a {
@@ -279,7 +276,6 @@ body.is-section-accept-invite {
 			}
 		}
 	}
-
 }
 
 .card.auth-form__social.is-signup {
@@ -371,14 +367,7 @@ body.is-section-accept-invite {
 		}
 	}
 
-	/**
-	* Akismet Signup
-	*/
-	@at-root .is-akismet & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			--color-accent: var(--color-akismet);
-		}
-	}
+
 }
 
 .is-woo-passwordless .signup-form .auth-form__separator {

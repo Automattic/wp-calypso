@@ -3,7 +3,7 @@ import {
 	useBatchCreateMonitorSettingsMutation,
 	useCreateMonitorSettingsMutation,
 } from 'calypso/data/plugins/use-monitor-settings-mutation';
-import { useSelector } from 'calypso/state';
+import { useSelector, useStore } from 'calypso/state';
 import { JETPACK_MODULE_ACTIVATE_SUCCESS } from 'calypso/state/action-types';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
@@ -61,11 +61,12 @@ export function useCreateMonitor( siteSlug: SiteSlug ) {
 }
 
 export function useCreateMonitors() {
+	const store = useStore();
 	const { createMonitorSettings } = useBatchCreateMonitorSettingsMutation();
-	const state = useSelector( ( state ) => state );
 
 	const createMonitors = useCallback(
 		( siteSlugs: SiteSlug[] ) => {
+			const state = store.getState();
 			const siteIds = siteSlugs.map( ( slug ) => getSiteId( state, slug ) );
 			const siteUrls = siteIds.map( ( siteId ) => getSiteUrl( state, siteId as number ) );
 
@@ -80,7 +81,7 @@ export function useCreateMonitors() {
 				} );
 			} );
 		},
-		[ createMonitorSettings, state ]
+		[ createMonitorSettings, store ]
 	);
 
 	return {

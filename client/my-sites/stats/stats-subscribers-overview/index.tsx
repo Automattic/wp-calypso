@@ -1,6 +1,6 @@
-import { CountCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
 
 interface SubscribersOverviewProps {

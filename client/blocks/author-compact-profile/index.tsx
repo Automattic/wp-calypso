@@ -66,9 +66,14 @@ export default function AuthorCompactProfile( props: AuthorCompactProfileProps )
 
 	return (
 		<div className={ classes }>
-			<a href={ streamUrl } className="author-compact-profile__avatar-link">
-				<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author || {} } />
-			</a>
+			<div className="author-compact-profile__avatar-link">
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					siteUrl={ streamUrl }
+					author={ author || {} }
+				/>
+			</div>
 			<div className="author-compact-profile__names">
 				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>

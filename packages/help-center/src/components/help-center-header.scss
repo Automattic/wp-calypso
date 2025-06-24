@@ -96,7 +96,7 @@
 
 .conversation-menu__wrapper {
 	padding: 4px 0;
-    text-align: center;
+	text-align: center;
 
 	svg {
 		fill: var(--studio-gray-70);
@@ -107,6 +107,7 @@
 		svg {
 			fill: var(--wp-components-color-gray-600, #949494);
 		}
+		color: var(--wp-components-color-gray-600, #949494);
 	}
 
 	button {
@@ -133,6 +134,15 @@
 
 				svg {
 					fill: var( --studio-white );
+				}
+			}
+
+			&:not(:hover) {
+				background-color: unset;
+				color: var(--studio-gray-70);
+
+				svg {
+					fill: var(--studio-gray-70);
 				}
 			}
 		}

@@ -35,7 +35,6 @@
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
-		"current-site/stale-cart-notice": false,
 		"jetpack-cloud": true,
 		"individual-subscriber-stats": true,
 		"jetpack/backup-messaging-i3": true,
@@ -56,8 +55,6 @@
 		"jetpack/manage-sites-v2-menu": false,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
-		"jetpack/simplify-pricing-structure": false,
-		"jetpack/social-plans-v1": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/streamline-license-purchases": false,
 		"layout/app-banner": false,
@@ -68,13 +65,14 @@
 		"newsletter-categories": true,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
+		"purchases/purchase-list-dataview": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"subscribers-helper-library": true,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false,
-		"importers/newsletter": true
+		"importers/newsletter": true,
+		"jetpack/crm-downloads": true
 	},
 	"enable_all_sections": false,
 	"sections": {

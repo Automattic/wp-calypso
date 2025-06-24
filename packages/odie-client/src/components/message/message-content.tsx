@@ -1,9 +1,9 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { zendeskMessageConverter } from '../../utils';
+import { isCSATMessage, zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import ErrorMessage from './error-message';
-import { FeedbackContent } from './feedback-content';
+import { FeedbackForm } from './feedback-form';
 import { IntroductionMessage } from './introduction-message';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -15,6 +15,7 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender,
 	displayChatWithSupportLabel,
 	displayChatWithSupportEndedLabel,
+	displayCSAT,
 }: {
 	message: Message;
 	messageHeader: React.ReactNode;
@@ -22,24 +23,30 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender?: boolean;
 	displayChatWithSupportLabel?: boolean;
 	displayChatWithSupportEndedLabel?: boolean;
+	displayCSAT?: boolean;
 } ) => {
 	const { __ } = useI18n();
+	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
-	);
-	const isFeedbackMessage = message.type === 'conversation-feedback' && message?.meta?.feedbackUrl;
-
-	const containerClasses = clsx(
-		'odie-chatbox-message-sources-container',
-		( isNextMessageFromSameSender || isFeedbackMessage ) && 'next-chat-message-same-sender'
+		{
+			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
+			'odie-chatbox-message-no-avatar': message?.context?.flags?.show_ai_avatar === false,
+		}
 	);
 
-	const isMessageWithOnlyText =
-		message.context?.flags?.hide_disclaimer_content ||
-		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
+	const containerClasses = clsx( 'odie-chatbox-message-sources-container', {
+		'next-chat-message-same-sender': isNextMessageFromSameSender,
+	} );
+
+	const isMessageWithEscalationOption =
+		message.role === 'bot' &&
+		! (
+			message.context?.flags?.hide_disclaimer_content ||
+			message.context?.question_tags?.inquiry_type === 'user-is-greeting'
+		);
 
 	// This will parse text messages sent from users to Zendesk.
 	const parseTextMessage = ( message: Message ): Message => {
@@ -61,6 +68,9 @@ export const MessageContent = ( {
 
 	return (
 		<>
+			{ isFeedbackMessage && (
+				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			) }
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
 					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
@@ -72,12 +82,12 @@ export const MessageContent = ( {
 						<UserMessage
 							message={ markdownMessageContent }
 							isDisliked={ isDisliked }
-							isMessageWithoutEscalationOption={ isMessageWithOnlyText }
+							isMessageWithEscalationOption={ isMessageWithEscalationOption }
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ isFeedbackMessage && (
-						<FeedbackContent content={ message.content } meta={ message?.meta } />
+					{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
+						<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
 					) }
 				</div>
 			</div>

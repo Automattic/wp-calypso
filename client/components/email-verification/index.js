@@ -24,7 +24,7 @@ export default function emailVerification( context, next ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'new_email_result' ) );
 		setTimeout( () => {
 			const message = i18n.translate(
-				"Email confirmed! Please consider updating your domain's contact email to match your new email address."
+				'Email address updated. Make sure you update your contact information for any registered domains.'
 			);
 			const notice = successNotice( message, {
 				duration: 10000,

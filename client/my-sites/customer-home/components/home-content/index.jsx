@@ -17,6 +17,7 @@ import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-doma
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -50,6 +51,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
+import HomeSurvey from '../home-survey';
 
 import './style.scss';
 
@@ -102,6 +104,8 @@ const HomeContent = ( {
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
+
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
 			setCelebrateLaunchModalIsOpen( true );
@@ -145,12 +149,7 @@ const HomeContent = ( {
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
-		return (
-			<EmptyContent
-				title={ preventWidows( title ) }
-				illustration="/calypso/images/illustrations/error.svg"
-			/>
-		);
+		return <EmptyContent title={ preventWidows( title ) } />;
 	}
 
 	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
@@ -353,6 +352,7 @@ const HomeContent = ( {
 					allDomains={ allDomains }
 				/>
 			) }
+			{ ! celebrateLaunchModalIsOpen && <HomeSurvey /> }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>
 	);

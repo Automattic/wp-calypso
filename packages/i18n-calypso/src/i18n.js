@@ -1,12 +1,9 @@
-import { EventEmitter } from 'events';
 import interpolateComponents from '@automattic/interpolate-components';
 import sprintf from '@tannin/sprintf';
 import debugFactory from 'debug';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import LRU from 'lru';
 import Tannin from 'tannin';
-
-const GEO_LOCATION_ENDPOINT_URL = 'https://public-api.wordpress.com/geo/';
 
 /**
  * Module variables
@@ -145,62 +142,20 @@ function I18N() {
 	};
 	this.componentUpdateHooks = [];
 	this.translateHooks = [];
-	this.stateObserver = new EventEmitter();
-	// Because the higher-order component can wrap a ton of React components,
-	// we need to bump the number of listeners to infinity and beyond
-	// FIXME: still valid?
-	this.stateObserver.setMaxListeners( 0 );
+	this.subscribers = new Set();
 	// default configuration
 	this.configure();
 }
 
 I18N.throwErrors = false;
 
-/**
- * Fetches geolocation data from the specified endpoint URL.
- * If the fetch operation fails, it logs a warning message to the console.
- * Used for currencies: when the user is inside the US using USD,
- * they should only see `$` and not `US$`.
- *
- * This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`.
- * This is to determine the country code to provide better USD formatting.
- * By default, the currency symbol for USD will be based on the locale (unlike other currency codes which
- * use a hard-coded list of overrides); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`.
- * However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$`
- * regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
- *
- * In the US, users will expect to see USD prices rendered with the currency symbol `$`.
- * However, there are many other currencies which use `$` as their currency symbol (eg: `CAD`).
- * This package tries to prevent confusion between these symbols by using an international version of the symbol
- * when the locale does not match the currency. So if your locale is `en-CA`, USD prices will be rendered with the symbol `US$`.
- *
- * However, this relies on the user having set their interface language to something other than `en-US`/`en`,
- * and many English-speaking non-US users still have that interface language (eg: there's no English locale available
- * in our settings for Argentinian English so such users would probably still have `en`).
- * As a result, those users will see a price with `$` and could be misled about what currency is being displayed.
- * `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
- */
-I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
-	const geoData = await globalThis
-		.fetch?.( GEO_LOCATION_ENDPOINT_URL )
-		.then( ( response ) => response.json() )
-		.catch( ( error ) => {
-			warn( 'Fetching geolocation for format-currency failed.', error );
-		} );
-
-	callback?.( 'string' === typeof geoData?.country_short ? geoData.country_short : '' );
+I18N.prototype.subscribe = function ( callback ) {
+	this.subscribers.add( callback );
+	return () => this.subscribers.delete( callback );
 };
 
-I18N.prototype.on = function ( ...args ) {
-	this.stateObserver.on( ...args );
-};
-
-I18N.prototype.off = function ( ...args ) {
-	this.stateObserver.off( ...args );
-};
-
-I18N.prototype.emit = function ( ...args ) {
-	this.stateObserver.emit( ...args );
+I18N.prototype.emitChange = function () {
+	this.subscribers.forEach( ( callback ) => callback() );
 };
 
 /**
@@ -304,7 +259,7 @@ I18N.prototype.setLocale = function ( localeData ) {
 
 	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
-	this.stateObserver.emit( 'change' );
+	this.emitChange();
 };
 
 I18N.prototype.getLocale = function () {
@@ -347,7 +302,7 @@ I18N.prototype.addTranslations = function ( localeData ) {
 		}
 	}
 
-	this.stateObserver.emit( 'change' );
+	this.emitChange();
 };
 
 /**
@@ -371,14 +326,18 @@ I18N.prototype.hasTranslation = function () {
  * @param {string} options.text - The text to check for translation.
  * @param {string | Object} options.newCopy - The translation to return if the text is translated.
  * @param {string | Object | undefined } options.oldCopy - The fallback to return if the text is not translated.
+ * @param {Object} options.translationOptions - The options to pass to the `hasTranslation` method, e.g. translation context.
  */
-I18N.prototype.fixMe = function ( { text, newCopy, oldCopy } ) {
+I18N.prototype.fixMe = function ( { text, newCopy, oldCopy, translationOptions = {} } ) {
 	if ( typeof text !== 'string' ) {
 		warn( 'fixMe() requires an object with a proper text property (string)' );
 		return null;
 	}
 
-	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {
+	if (
+		[ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) ||
+		this.hasTranslation( text, translationOptions )
+	) {
 		return newCopy;
 	}
 
@@ -448,7 +407,7 @@ I18N.prototype.translate = function () {
  */
 I18N.prototype.reRenderTranslations = function () {
 	debug( 'Re-rendering all translations due to external request' );
-	this.stateObserver.emit( 'change' );
+	this.emitChange();
 };
 
 I18N.prototype.registerComponentUpdateHook = function ( callback ) {

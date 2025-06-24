@@ -5,6 +5,8 @@
 - Dropped Babel presets. They have been moved to `@automattic/calypso-babel-config`. The new packge should be a drop in replacement, anywhere you were using `@automattic/calypso-build/babel/dependencies` you can use `@automattic/calypso-babel-config/presets/dependencies` (same for the other presets)
 - Dropped Jest presets. They have been moved to `@automattic/calypso-jest`. . The new packge should be a drop in replacement, you can use `preset: @automattic/calypso-jest` in your Jest config.
 - Added `build-app-languages` command that takes a `pot` file and builds translations file off of it based on `https://widgets.wp.com/languages/calypso`.
+- Updated dependencies:
+  - postcss-custom-properties to ^12.0.0
 
 ## 10.0.0
 

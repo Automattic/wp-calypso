@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 
 		it( 'Back shows the URL capture form', async () => {
 			await startImportFlow.clickBack();
-			await startImportFlow.validateURLCapturePage();
+			await startImportFlow.validateURLMigrationFlow();
 		} );
 	} );
 

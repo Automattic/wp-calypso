@@ -136,7 +136,7 @@ export class EmailClient {
 	 * @throws {Error} IF the message did not have any links.
 	 */
 	getMagicLink( message: Message ): URL {
-		const link = message.text?.links?.pop();
+		const link = message.text?.links?.shift();
 
 		if ( ! link ) {
 			throw new Error( 'Message did not contain text links. ' );

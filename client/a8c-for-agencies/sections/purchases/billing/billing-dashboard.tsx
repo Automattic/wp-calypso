@@ -41,7 +41,7 @@ export default function BillingDashboard() {
 							onClick={ onIssueNewLicenseClick }
 							primary
 						>
-							{ translate( 'Issue New License' ) }
+							{ translate( 'Issue new license' ) }
 						</Button>
 					</Actions>
 				</LayoutHeader>

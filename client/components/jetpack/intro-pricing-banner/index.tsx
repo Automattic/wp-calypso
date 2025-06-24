@@ -4,7 +4,6 @@ import { useEffect, useMemo } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
-import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	GUARANTEE_DAYS,
@@ -79,30 +78,26 @@ const IntroPricingBanner: React.FC = () => {
 				<div className="intro-pricing-banner__content">
 					{ shouldShowNoticeVAT && (
 						<div className="intro-pricing-banner__item is-centered-mobile">
-							<span className="intro-pricing-banner__item-label">
-								{ preventWidows( translate( 'Prices do not include VAT' ) ) }
-							</span>
+							<p className="intro-pricing-banner__item-label">
+								{ translate( 'Prices do not include VAT' ) }
+							</p>
 						</div>
 					) }
 					<div className="intro-pricing-banner__item">
 						<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
-						<span className="intro-pricing-banner__item-label">
-							{ preventWidows(
-								translate( 'Get up to %(percent)d% off your first year', {
-									args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-								} )
-							) }
-						</span>
+						<p className="intro-pricing-banner__item-label">
+							{ translate( 'Get up to %(percent)d% off your first year', {
+								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+							} ) }
+						</p>
 					</div>
 					<div className="intro-pricing-banner__item">
 						<img className="intro-pricing-banner__item-icon" src={ guaranteeBadge } alt="" />
-						<span className="intro-pricing-banner__item-label">
-							{ preventWidows(
-								translate( '%(days)d day money back guarantee.', {
-									args: { days: GUARANTEE_DAYS },
-								} )
-							) }
-						</span>
+						<p className="intro-pricing-banner__item-label">
+							{ translate( '%(days)d day money back guarantee.', {
+								args: { days: GUARANTEE_DAYS },
+							} ) }
+						</p>
 					</div>
 					{ shouldShowCart && hasCrossed && (
 						<CloudCart cartStyle={ isSmallScreen ? {} : { left: clientRect.left } } />

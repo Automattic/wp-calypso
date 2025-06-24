@@ -4,7 +4,7 @@ import type { RenderThumbFunction } from '../types';
 import type { StoryFn, Meta } from '@storybook/react';
 
 export default {
-	title: 'packages/components/Pricing Slider',
+	title: 'client/my-sites/Pricing Slider',
 	component: PricingSlider,
 } as Meta< typeof PricingSlider >;
 

@@ -20,6 +20,9 @@ const getAssetType = ( asset ) => {
 
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
+/**
+ * @returns {import('express').RequestHandler}
+ */
 export default () => {
 	let assetsFile = null;
 	let assetsFileModified = 0;

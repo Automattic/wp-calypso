@@ -779,8 +779,13 @@ const Settings = ( {
 				{ ! domain.isHundredYearDomain && (
 					<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }
-				{ ! domain.isHundredYearDomain && (
-					<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				{ ! domain.isHundredYearDomain && ! isLoadingPurchase && (
+					<DomainDeleteInfoCard
+						selectedSite={ selectedSite }
+						domain={ domain }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
 				) }
 				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>

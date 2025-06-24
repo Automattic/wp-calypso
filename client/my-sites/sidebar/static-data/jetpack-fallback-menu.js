@@ -115,6 +115,13 @@ export default function jetpackMenu( { siteDomain, hasUnifiedImporter } ) {
 					type: 'submenu-item',
 					url: `/jetpack-search/${ siteDomain }`,
 				},
+				{
+					parent: 'jetpack',
+					slug: 'jetpack-forms-admin',
+					title: translate( 'Forms' ),
+					type: 'submenu-item',
+					url: `https://${ siteDomain }/wp-admin/admin.php?page=jetpack-forms-admin`,
+				},
 			],
 		},
 		{

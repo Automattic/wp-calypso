@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 :root {
 	--color-light-backdrop: var( --studio-white );
@@ -376,7 +377,7 @@
 body.is-section-plugins .hosting-dashboard-layout,
 .is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
 	.hosting-dashboard-layout-with-columns__container {
-		background-color: var( --studio-gray-0 );
+		background-color: var( --color-main-background );
 	}
 	.dataviews-wrapper {
 		margin: auto;

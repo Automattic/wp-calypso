@@ -93,13 +93,13 @@ function getCurrentCommitShortChecksum() {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
-	const disableHelpCenterAutoOpen = isSupportSession || !! req.cookies.ssp;
+	const isSSP = !! req.cookies.ssp;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
 		isSupportSession,
-		disableHelpCenterAutoOpen,
+		isSSP,
 		isLoggedIn,
 	};
 
@@ -115,12 +115,16 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		request.cookies.sensitive_pixel_option
 	);
 
+	const countryCodeCookie = request.cookies.country_code;
+	const validCountryCodeCookie =
+		countryCodeCookie && countryCodeCookie !== 'unknown' ? countryCodeCookie : undefined;
+
 	const showGdprBanner = shouldSeeCookieBanner(
-		request.cookies.country_code || geoIPCountryCode,
+		validCountryCodeCookie || geoIPCountryCode,
 		trackingPrefs
 	);
 
-	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+	if ( ! validCountryCodeCookie && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 

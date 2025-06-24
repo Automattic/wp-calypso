@@ -1,6 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -30,6 +29,8 @@ import {
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -89,7 +90,6 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
-	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -101,16 +101,7 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage =
-		sectionName === 'reader' &&
-		( pathNameWithoutLocale.startsWith( '/tag/' ) || pathNameWithoutLocale.startsWith( '/tags' ) );
 	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
-
-	const isReaderDiscoverPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
-
-	const isReaderSearchPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/reader/search' );
 
 	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
 	const hasGravPoweredClientClass =
@@ -123,7 +114,6 @@ const LayoutLoggedOut = ( {
 		! isJetpackLogin &&
 		! hasGravPoweredClientClass &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
-		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
@@ -156,11 +146,14 @@ const LayoutLoggedOut = ( {
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
+		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+		'jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 	};
 
 	let masterbar = null;
 
+	// TODO: figure out how refreshColorScheme is used in the rest of the app, and remove this.
 	useEffect( () => {
 		isWooJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
@@ -171,16 +164,19 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+	if ( ( isBlazePro || isWoo ) && isWhiteLogin ) {
+		/**
+		 * This effectively removes the masterbar completely from Login pages (only).
+		 * However, in some cases, we want the styles imported from the masterbar to be applied.
+		 * They are more generic and affect the whole page, unfortunately.
+		 * For that, importing OauthClientMasterbar suffices to apply those styles, until refactored (we are in the process ofrefactoring).
+		 */
 		masterbar = null;
-	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	} else if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+		masterbar = null;
+	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! masterbarIsHidden ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
-
-		// Force masterbar for all Crowdsignal OAuth pages
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			classes[ 'has-no-masterbar' ] = false;
-		}
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
@@ -200,12 +196,9 @@ const LayoutLoggedOut = ( {
 			'subscriptions',
 			'theme',
 			'themes',
-		].includes( sectionName ) &&
-		! isReaderTagPage &&
-		! isReaderSearchPage &&
-		! isReaderDiscoverPage
+		].includes( sectionName )
 	) {
-		const nonMonochromeSections = [ 'plugins' ];
+		const nonMonochromeSections = [ 'plugins', 'themes', 'theme' ];
 
 		const className = clsx( {
 			'is-style-monochrome':
@@ -338,7 +331,6 @@ export default withCurrentRoute(
 			const isAkismet = isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			);
-			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const oauth2Client = getCurrentOAuth2Client( state );
@@ -346,23 +338,37 @@ export default withCurrentRoute(
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-			const isWPComLogin =
-				currentRoute.startsWith( '/log-in' ) &&
-				! isJetpackLogin &&
-				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
-			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
+			const isWooJPC = isWooJPCFlow( state );
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
+			const isWoo = getIsWoo( state );
+
+			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
+			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
+			const isA4AClient = isA4AOAuth2Client( oauth2Client );
+			const isVIPClient = isVIPOAuth2Client( oauth2Client );
+			const isWhiteLogin =
+				( currentRoute.startsWith( '/log-in' ) &&
+					( ( Boolean( currentQuery?.client_id ) === false &&
+						Boolean( currentQuery?.oauth2_client_id ) === false ) ||
+						isStudioClient ||
+						isCrowdsignalClient ||
+						isBlazePro ||
+						isA4AClient ||
+						isWoo ||
+						isJetpackCloudClient ||
+						isJetpackLogin ||
+						isVIPClient ) ) ||
+				isPartnerPortal;
+
 			const noMasterbarForRoute =
-				isJetpackLogin ||
-				( isWhiteLogin && ! isBlazePro ) ||
-				isJetpackWooDnaFlow ||
-				isInvitationURL;
+				( isWhiteLogin && ! isBlazePro ) || isJetpackWooDnaFlow || isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
-			const isWooJPC = isWooJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||
@@ -372,6 +378,11 @@ export default withCurrentRoute(
 				isInStepContainerV2FlowContext( currentRoute, currentQuery );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
+			/**
+			 * This is a mechanism to set a color scheme for WooJPC pages, from the current URL.
+			 *
+			 * TODO: there is a possiblity this is not utilized. If that's the case, we can remove this call.
+			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
 			return {

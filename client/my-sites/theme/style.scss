@@ -1,4 +1,6 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $theme-sheet-content-max-width: 1462px;
 $theme-sheet-content-padding-x: 20px;
@@ -40,8 +42,6 @@ $button-border: 4px;
 	}
 
 	&.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		&.layout.is-logged-in .layout__content {
 			min-height: 100vh;
 
@@ -53,11 +53,14 @@ $button-border: 4px;
 		.layout__primary > * {
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
 			padding-bottom: 0;
+
+			@include break-small {
+				border: 1px solid $gray-200;
+			}
 		}
 	}
 
@@ -366,16 +369,16 @@ $button-border: 4px;
 		}
 	}
 
-    &.is-clickable {
-      cursor: pointer;
+	&.is-clickable {
+		cursor: pointer;
 
-      &:hover,
-      &:focus {
-          .theme-preview__frame-wrapper {
-              opacity: 0.8;
-          }
-      }
-    }
+		&:hover,
+		&:focus {
+			.theme-preview__frame-wrapper {
+				opacity: 0.8;
+			}
+		}
+	}
 
 	.theme-preview__container {
 		position: relative;
@@ -738,44 +741,6 @@ $button-border: 4px;
 		display: inline-block;
 		position: relative;
 		z-index: 0;
-	}
-}
-
-.theme__sheet-card-support {
-	display: flex;
-	align-items: center;
-
-	&:not(:last-child) {
-		margin-bottom: 0;
-	}
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: wrap;
-	}
-
-	.gridicon {
-		color: var(--color-neutral-10);
-		flex: 0 0 auto;
-	}
-
-	.button {
-		flex: 0 0 auto;
-
-		@include breakpoint-deprecated( "<960px" ) {
-			flex: 1 1 100%;
-			margin-top: 20px;
-			text-align: center;
-		}
-	}
-}
-
-.theme__sheet-card-support-details {
-	flex: 1 1 20px;
-	padding: 0 20px;
-
-	small {
-		display: block;
-		color: var(--color-neutral-light);
 	}
 }
 

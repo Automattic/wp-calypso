@@ -1,7 +1,24 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
+import { sortBy, camelCase, get, filter, map, flatten, capitalize } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+
+function getArchiveKeyLabel( key ) {
+	const archiveKeyLabelMap = {
+		author: translate( 'Authors' ),
+		cat: translate( 'Categories' ),
+		err: translate( 'Error' ),
+		home: translate( 'Homepage' ),
+		search: translate( 'Searches' ),
+		tag: translate( 'Tags' ),
+		tax: translate( 'Taxonomies' ),
+		date: translate( 'Dates' ),
+		multiple: translate( 'Aggregated' ),
+		other: translate( 'Others' ),
+	};
+
+	return archiveKeyLabelMap[ key ] ?? capitalize( key );
+}
 
 /**
  * Returns a string of the moment format for the period. Supports store stats
@@ -84,11 +101,12 @@ export function parseAvatar( avatarUrl ) {
 
 /**
  * Builds data into escaped array for CSV export
- * @param   {Object} data   Normalized stats data object
- * @param   {string} parent Label of parent
- * @returns {Array}         CSV Row
+ * @param   {Object} data                                               Normalized stats data object
+ * @param   {string} parent                                             Label of parent
+ * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
+ * @returns {Array}                                                     CSV Row
  */
-export function buildExportArray( data, parent = null ) {
+export function buildExportArray( data, parent = null, modifierFn = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
@@ -102,9 +120,13 @@ export function buildExportArray( data, parent = null ) {
 		exportData = [ [ '"' + escapedLabel + '"', data.value, data.actions[ 0 ].data ] ];
 	}
 
+	if ( modifierFn ) {
+		exportData = [ modifierFn( exportData[ 0 ], data ) ];
+	}
+
 	if ( data.children ) {
 		const childData = map( data.children, ( child ) => {
-			return buildExportArray( child, label );
+			return buildExportArray( child, label, modifierFn );
 		} );
 
 		exportData = exportData.concat( flatten( childData ) );
@@ -393,6 +415,96 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized payload from `/sites/{ site }/stats/archives`
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Normalized stats data
+	 */
+	statsArchives: ( data, query ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
+		const archivesData = get( data, dataPath, [] );
+
+		const archives = Object.keys( archivesData ).reduce( ( accumulatedArchives, archiveKey ) => {
+			const archiveItems = archivesData[ archiveKey ];
+
+			// Taxonomy items are grouped by taxonomy term.
+			if ( 'tax' === archiveKey ) {
+				let totalTaxViews = 0;
+
+				const taxItems = Object.keys( archiveItems ).map( ( taxKey ) => {
+					const taxItem = archiveItems[ taxKey ];
+					const hasSubItems = Array.isArray( taxItem ) && taxItem.length > 0;
+					let itemViews = 0;
+
+					if ( hasSubItems ) {
+						const children = taxItem.map( ( item ) => {
+							itemViews += item.views;
+							totalTaxViews += item.views;
+
+							return {
+								label: item.value,
+								value: item.views,
+								link: item.href,
+							};
+						} );
+
+						return {
+							label: taxKey,
+							value: itemViews,
+							children,
+						};
+					}
+
+					return {
+						label: taxKey,
+						value: itemViews,
+					};
+				} );
+
+				accumulatedArchives.push( {
+					label: getArchiveKeyLabel( archiveKey ),
+					value: totalTaxViews,
+					children: taxItems,
+				} );
+			} else {
+				const hasItems = Array.isArray( archiveItems ) && archiveItems.length > 0;
+
+				// Ignore the Homepage item as it should be shown in the Posts & pages list.
+				if ( 'home' !== archiveKey && hasItems ) {
+					let totalViews = 0;
+
+					const children = archiveItems
+						.filter( ( i ) => !! i.value )
+						.map( ( item ) => {
+							totalViews += item.views;
+
+							return {
+								label: item.value,
+								value: item.views,
+								link: item.href,
+							};
+						} );
+
+					accumulatedArchives.push( {
+						label: getArchiveKeyLabel( archiveKey ),
+						value: totalViews,
+						children: children,
+					} );
+				}
+			}
+
+			return accumulatedArchives;
+		}, [] );
+
+		return archives.sort( ( a, b ) => b.value - a.value );
+	},
+
+	/**
 	 * Returns a normalized payload from `/sites/{ site }/stats/country-views`
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query
@@ -459,6 +571,42 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized data for the `stats/video-plays` API request with `complete_stats` query param set to `1`
+	 * This returns more enriched data about the video plays, including impressions, watch time, and retention rate.
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Parsed data array
+	 */
+	statsVideoPlaysCompleteStats: ( data, query = {} ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ],
+			[]
+		);
+
+		const normalizedData = videoPlaysData.map( ( item ) => {
+			return {
+				post_id: item.post_id,
+				label: item.title,
+				views: item.views,
+				impressions: item.impressions,
+				watch_time: item.watch_time,
+				retention_rate: item.retention_rate,
+			};
+		} );
+
+		return [
+			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
+			...normalizedData,
+		];
+	},
+
+	/**
 	 * Returns a normalized statsVideoPlays array, ready for use in stats-module
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query
@@ -471,6 +619,12 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const isCompleteStats = query.complete_stats;
+
+		if ( isCompleteStats ) {
+			return normalizers.statsVideoPlaysCompleteStats( data, query, siteId, site );
+		}
+
 		const videoPlaysData = get(
 			data,
 			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],
@@ -527,6 +681,38 @@ export const normalizers = {
 		} );
 
 		return { total_wpcom, total_email, total, subscribers };
+	},
+
+	statsUTM( originalData ) {
+		if ( ! Array.isArray( originalData ) ) {
+			return [];
+		}
+
+		const newData = [];
+
+		// Flatten the data into a shallow array.
+		originalData.forEach( ( row ) => {
+			newData.push( row );
+			const children = row?.children;
+			if ( children ) {
+				const newChildren = children.map( ( child ) => {
+					return { ...child, context: row.label };
+				} );
+				newData.push( ...newChildren );
+			}
+		} );
+
+		return newData.map( ( row ) => {
+			// Label should include parent context if present.
+			// ie: "parent label > child label" -- including surrounding quotes.
+			let label = row?.context ? `${ row.context } > ${ row.label }` : row.label;
+			label = label.replace( /"/g, '""' ); // Escape double quotes
+
+			return {
+				label,
+				value: row.value,
+			};
+		} );
 	},
 
 	statsCommentFollowers( data ) {

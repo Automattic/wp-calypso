@@ -142,7 +142,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete={ section + ' postal-code' }
+				autoComplete={ `section-${ section } postal-code` }
 				isError={ postalCode?.isTouched && ! isValid( postalCode ) }
 				errorMessage={
 					postalCode?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) )
@@ -174,7 +174,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete={ section + ' city' }
+				autoComplete={ `section-${ section } city` }
 				isError={ city?.isTouched && ! isValid( city ) }
 				errorMessage={ city?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) ) }
 			/>
@@ -231,7 +231,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete="organization"
+				autoComplete={ `section-${ section } organization` }
 			/>
 		);
 	}
@@ -259,7 +259,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete="address"
+				autoComplete={ `section-${ section } street-address` }
 			/>
 		);
 	}

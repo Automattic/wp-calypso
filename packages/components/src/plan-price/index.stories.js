@@ -52,6 +52,6 @@ export const Default = () => {
 };
 
 export default {
-	title: 'packages/components/PlanPrice',
+	title: 'Unaudited/PlanPrice',
 	component: PlanPrice,
 };

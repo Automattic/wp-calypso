@@ -36,8 +36,8 @@ const useUnsubscribeModal = (
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
 			const link = isJetpackCloud()
-				? `/monetize/supporters/${ selectedSiteSlug }`
-				: `/earn/supporters/${ selectedSiteSlug }`;
+				? `/monetize/paid-subscriptions/${ selectedSiteSlug }`
+				: `/earn/paid-subscriptions/${ selectedSiteSlug }`;
 			navigate( link ?? '' );
 		} else if (
 			action === UnsubscribeActionType.Unsubscribe &&

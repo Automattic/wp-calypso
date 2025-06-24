@@ -268,7 +268,16 @@ describe( 'DataViews component', () => {
 					} }
 					actions={ actions }
 					isItemClickable={ () => true }
-					onClickItem={ onClickItemCallback }
+					renderItemLink={ ( { item, ...props } ) => (
+						<a
+							href={ '#' }
+							onClick={ ( event ) => {
+								event.preventDefault();
+								onClickItemCallback( item );
+							} }
+							{ ...props }
+						/>
+					) }
 				/>
 			);
 			const titleField = screen.getByText( data[ 0 ].title );
@@ -335,7 +344,16 @@ describe( 'DataViews component', () => {
 					} }
 					actions={ actions }
 					isItemClickable={ () => true }
-					onClickItem={ mediaClickItemCallback }
+					renderItemLink={ ( { item, ...props } ) => (
+						<a
+							href={ '#' }
+							onClick={ ( event ) => {
+								event.preventDefault();
+								mediaClickItemCallback( item );
+							} }
+							{ ...props }
+						/>
+					) }
 				/>
 			);
 			const imageField = screen.getByTestId(

@@ -1,15 +1,15 @@
-import { Button, Gridicon, WordPressLogo } from '@automattic/components';
+import { Gridicon, WordPressLogo } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AutomatticLogo from 'calypso/components/automattic-logo';
-import FormButton from 'calypso/components/forms/form-button';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import SignupSubmitButton from './signup-submit-button';
 import SocialSignupForm from './social';
-
 import './crowdsignal.scss';
 
 class CrowdsignalSignupForm extends Component {
@@ -76,9 +76,10 @@ class CrowdsignalSignupForm extends Component {
 							</p>
 
 							<Button
-								primary
+								variant="primary"
 								href={ this.props.loginLink }
 								className="signup-form__crowdsignal-wpcom"
+								__next40pxDefaultSize
 							>
 								<WordPressLogo size={ 20 } />
 								<span>{ translate( 'Sign in with WordPress.com' ) }</span>
@@ -91,8 +92,10 @@ class CrowdsignalSignupForm extends Component {
 								/>
 							) }
 							<Button
+								variant="primary"
 								className="signup-form__crowdsignal-show-form"
 								onClick={ this.showSignupForm }
+								__next40pxDefaultSize
 							>
 								{ translate( 'Create a WordPress.com Account' ) }
 							</Button>
@@ -113,12 +116,12 @@ class CrowdsignalSignupForm extends Component {
 								{ this.props.formFields }
 
 								<LoggedOutFormFooter>
-									<FormButton
+									<SignupSubmitButton
 										className="signup-form__crowdsignal-submit"
-										disabled={ this.props.submitting || this.props.disabled }
+										isDisabled={ this.props.submitting || this.props.disabled }
 									>
 										{ translate( 'Create a WordPress.com Account' ) }
-									</FormButton>
+									</SignupSubmitButton>
 
 									<p className="signup-form__crowdsignal-learn-more">
 										{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
@@ -147,13 +150,11 @@ class CrowdsignalSignupForm extends Component {
 					/>
 
 					<Button
-						borderless
-						compact
 						className="signup-form__crowdsignal-prev-button"
 						onClick={ this.hideSignupForm }
 						disabled={ this.props.submitting }
 					>
-						<Gridicon icon="arrow-left" />
+						<Gridicon icon="arrow-left" size={ 18 } />
 						<span>{ translate( 'Back' ) }</span>
 					</Button>
 				</div>

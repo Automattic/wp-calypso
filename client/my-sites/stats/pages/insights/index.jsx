@@ -1,13 +1,10 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_FEATURE_PAGE_INSIGHTS, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -16,6 +13,7 @@ import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -29,11 +27,10 @@ import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
 import StatsModuleListing from '../shared/stats-module-listing';
 
-function StatsInsights() {
+function StatsInsights( { context } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const reduxDispatch = useDispatch();
@@ -51,11 +48,25 @@ function StatsInsights() {
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
 	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
-	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
-	// Track the last viewed tab.
-	// Necessary to properly configure the fixed navigation headers.
-	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
+	useEffect(
+		() =>
+			// Necessary to properly configure the fixed navigation headers.
+			sessionStorage.setItem( 'jp-stats-last-tab', 'insights' ),
+		[]
+	); // Track the last viewed tab.
+
+	useEffect( () => {
+		const query = context.query;
+		recordCurrentScreen(
+			'insights',
+			{
+				queryParams: query,
+				period: null,
+			},
+			true
+		);
+	}, [ context.query ] );
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
@@ -67,17 +78,7 @@ function StatsInsights() {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className={ insightsPageClasses }>
-				{ ! isStatsNavigationImprovementEnabled ? (
-					<NavigationHeader
-						className="stats__section-header modernized-header"
-						title={ STATS_PRODUCT_NAME }
-						subtitle={ translate( "View your site's performance and learn from trends." ) }
-						screenReader={ navItems.insights?.label }
-						navigationItems={ [] }
-					></NavigationHeader>
-				) : (
-					<PageHeader />
-				) }
+				<PageHeader />
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
 					<div id="my-stats-content" className="stats-content">

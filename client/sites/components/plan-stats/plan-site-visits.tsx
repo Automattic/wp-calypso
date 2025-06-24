@@ -188,9 +188,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 				: `/stats/month/${ siteSlug }`;
 
 		return (
-			<Button
-				variant="link"
-				css={ { textDecoration: 'none !important', fontSize: 'inherit' } }
+			<a
 				href={ statsPageUrl }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_hosting_overview_visit_stats_click' ) );
@@ -199,7 +197,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 				{ translate( 'Visit stats', {
 					comment: 'A link taking the user to more detailed site statistics',
 				} ) }
-			</Button>
+			</a>
 		);
 	};
 

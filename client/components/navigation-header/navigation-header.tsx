@@ -1,13 +1,16 @@
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { isSameOrigin } from 'calypso/lib/navigate';
+import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import './navigation-header.scss';
 
 // Type definitions for the props
 interface BackLinkProps {
 	url?: string;
 	text?: string;
-	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
+	onBackClick?: () => void;
 }
 
 export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
@@ -42,18 +45,31 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	backLinkProps,
 	titleElement,
 	headElement = backLinkProps?.url && (
-		<a
+		<button
 			className="calypso-navigation-header__back-link"
-			href={ backLinkProps?.url }
-			onClick={ ( e ) => {
+			type="button"
+			aria-label={ backLinkProps?.text || translate( 'Back' ) }
+			onClick={ () => {
+				popCurrentScreenFromHistory();
+
 				if ( backLinkProps?.onBackClick ) {
-					e.preventDefault();
-					backLinkProps.onBackClick( e );
+					backLinkProps.onBackClick();
+				} else if ( backLinkProps?.url ) {
+					// Resolve the relative links with the calypso-router.
+					if (
+						! backLinkProps?.url.startsWith( 'http://' ) &&
+						! backLinkProps?.url.startsWith( 'https://' )
+					) {
+						page( backLinkProps.url );
+					} else if ( isSameOrigin( backLinkProps.url ) ) {
+						// If the URL is on the same site, navigate to it.
+						window.location.href = backLinkProps.url;
+					}
 				}
 			} }
 		>
 			← { backLinkProps?.text ?? translate( 'Back' ) }
-		</a>
+		</button>
 	),
 	rightSection,
 	hasScreenOptionsTab,
@@ -66,10 +82,8 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 					{ titleProps.titleLogo }
 				</span>
 			) }
-			{ titleProps?.title && titleProps?.titleLogo ? (
+			{ titleProps?.title && (
 				<span className="calypso-navigation-header__title-text">{ titleProps?.title }</span>
-			) : (
-				titleProps?.title
 			) }
 		</h1>
 	);
@@ -83,7 +97,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 			} ) }
 			{ ...rest }
 		>
-			<div className="calypso-navigation-header__head">{ headElement }</div>
+			{ headElement && <div className="calypso-navigation-header__head">{ headElement }</div> }
 			<div className="calypso-navigation-header__body">
 				<div className="calypso-navigation-header__left-section">{ finalTitleElement }</div>
 				{ rightSection && (

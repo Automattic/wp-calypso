@@ -1,6 +1,6 @@
 import { usePrevious } from '@wordpress/compose';
 import { useEffect, useRef } from 'react';
-import type { View } from '@wordpress/dataviews';
+import type { View } from '@automattic/dataviews';
 
 // DataViews' pagination always resets when the search component is mounted, even though the search term has not changed.
 // This is a bug which has a fix in https://github.com/WordPress/gutenberg/pull/61307.

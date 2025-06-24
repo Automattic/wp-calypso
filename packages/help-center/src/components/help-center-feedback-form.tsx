@@ -2,12 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useSupportStatus } from '../data/use-support-status';
-import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
+import { useChatStatus } from '../hooks';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
-import { generateContactOnClickEvent } from './utils';
 
 import './help-center-feedback-form.scss';
 
@@ -16,11 +13,8 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
-	const { data } = useSupportStatus();
-	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
+	const { isEligibleForChat, forceEmailSupport } = useChatStatus();
 	const { canConnectToZendesk } = useHelpCenterContext();
-	const navigate = useNavigate();
-	const resetSupportInteraction = useResetSupportInteraction();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
@@ -58,13 +52,8 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 		recordTracksEvent( 'calypso_odie_chat_get_support', {
 			location: 'article-feedback',
 			destination,
-			is_user_eligible: isUserEligibleForPaidSupport,
+			is_user_eligible: isEligibleForChat,
 		} );
-		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
-		if ( isUserEligibleForPaidSupport ) {
-			await resetSupportInteraction();
-			navigate( '/odie' );
-		}
 	};
 
 	return (
@@ -78,15 +67,17 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 					<div className="odie-chatbox-dislike-feedback-message">
 						<p>
 							{ __(
-								'Would you like to contact our support team? Select an option below:',
+								'Would you like to get support? Select an option below:',
 								__i18n_text_domain__
 							) }
 						</p>
 					</div>
 					<GetSupport
 						onClickAdditionalEvent={ handleContactSupportClick }
-						isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+						isUserEligibleForPaidSupport={ isEligibleForChat }
 						canConnectToZendesk={ canConnectToZendesk }
+						forceEmailSupport={ forceEmailSupport }
+						forceAIConversation
 					/>
 				</>
 			) }

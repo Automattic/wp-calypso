@@ -25,7 +25,6 @@ export const A4A_REFERRALS_LINK = '/referrals';
 export const A4A_REFERRALS_DASHBOARD = `${ A4A_REFERRALS_LINK }/dashboard`;
 export const A4A_REFERRALS_PAYMENT_SETTINGS = `${ A4A_REFERRALS_LINK }/payment-settings`;
 export const A4A_REFERRALS_FAQ = `${ A4A_REFERRALS_LINK }/faq`;
-export const A4A_REFERRALS_ARCHIVED = `${ A4A_REFERRALS_LINK }/archived`;
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;
 export const A4A_UNASSIGNED_LICENSES_LINK = `${ A4A_LICENSES_LINK }/unassigned`;
 export const A4A_BILLING_LINK = `${ A4A_PURCHASES_LINK }/billing`;

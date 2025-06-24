@@ -1,7 +1,7 @@
-import { load } from '@automattic/fingerprintjs';
+import { load } from '@fingerprintjs/fingerprintjs';
 
 let fingerprint;
-async function loadFingerprint() {
+export async function loadFingerprint() {
 	const agent = await load( { monitoring: false } );
 	const result = await agent.get();
 	fingerprint = result.visitorId;

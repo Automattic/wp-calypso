@@ -98,6 +98,21 @@ export class DropdownFilters extends Component {
 
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
+		const { translate } = this.props;
+
+		let ariaLabel = '';
+		if ( hasFilterValues ) {
+			ariaLabel = translate(
+				'Filter, %(filterCount)s filter applied',
+				'Filter, %(filterCount)s filters applied',
+				{
+					count: this.getFiltercounts(),
+					args: { filterCount: this.getFiltercounts() },
+				}
+			);
+		} else {
+			ariaLabel = translate( 'Filter, no filters applied' );
+		}
 
 		return (
 			<div
@@ -113,8 +128,8 @@ export class DropdownFilters extends Component {
 					ref={ this.button }
 					onClick={ this.togglePopover }
 				>
-					<span className="search-filters__dropdown-filters-button-text">
-						{ this.props.translate( 'Filter' ) }
+					<span className="search-filters__dropdown-filters-button-text" aria-label={ ariaLabel }>
+						{ translate( 'Filter' ) }
 						{ hasFilterValues && <Count primary count={ this.getFiltercounts() } /> }
 					</span>
 				</Button>

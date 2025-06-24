@@ -60,9 +60,7 @@ class NotificationCommentsSettings extends Component {
 
 				<Card>
 					<FormSectionHeading>{ translate( 'Comments on other sites' ) }</FormSectionHeading>
-					<p>
-						{ translate( 'Control your notification settings when you comment on other blogs.' ) }
-					</p>
+					<p>{ translate( 'Manage notifications for comments you leave on other sites.' ) }</p>
 					{ this.renderForm() }
 				</Card>
 			</Main>

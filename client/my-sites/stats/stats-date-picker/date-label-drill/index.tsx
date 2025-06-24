@@ -15,8 +15,6 @@ const DateLabelDrill = ( { children, previousDisplayDate }: DateLabelDrillProps 
 
 	useEffect( () => {
 		setIsAnimated( true );
-		// Remove the flag after the drill-up action button is shown.
-		sessionStorage.removeItem( 'jetpack_stats_date_range_is_drilling_down' );
 	}, [] );
 
 	const goBack = () => {

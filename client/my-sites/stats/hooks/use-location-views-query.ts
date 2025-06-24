@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { normalizers } from 'calypso/state/stats/lists/utils';
 import getDefaultQueryParams from './default-query-params';
 import { processQueryParams, QueryStatsParams } from './utils';
 
@@ -43,18 +42,6 @@ const useLocationViewsQuery = < T = StatsLocationViewsData >(
 		...options,
 		queryKey: [ 'stats', 'location-views', siteId, geoMode, JSON.stringify( finalQuery ) ],
 		queryFn: () => queryStatsLocationViews( siteId, geoMode, processQueryParams( finalQuery ) ),
-		select: ( data ) => {
-			const normalizedStats = normalizers.statsCountryViews(
-				data as StatsLocationViewsData,
-				query
-			);
-
-			if ( ! Array.isArray( normalizedStats ) ) {
-				return [];
-			}
-
-			return query?.max ? normalizedStats.slice( 0, query.max ) : normalizedStats;
-		},
 		staleTime: 1000 * 60 * 5, // Cache for 5 minutes
 	} );
 };

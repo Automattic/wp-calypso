@@ -92,7 +92,7 @@ export default function PluginRowFormatter( {
 	);
 
 	const { activation, autoupdate } = useSelector( ( state ) =>
-		getAllowedPluginActions( item, state, selectedSite )
+		getAllowedPluginActions( state, item, selectedSite )
 	);
 
 	if ( selectedSite ) {

@@ -410,17 +410,6 @@ function getAvailabilityNotice(
 				message = translate( 'Sorry, WordPress.com does not support the %(tld)s TLD.', {
 					args: { tld },
 				} );
-			} else {
-				/* translators: %s: TLD (eg .com, .pl) */
-				message = translate(
-					'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
-					{
-						args: { tld },
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
 			}
 			break;
 		case domainAvailability.UNKNOWN:

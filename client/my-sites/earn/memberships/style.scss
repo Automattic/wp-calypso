@@ -167,7 +167,7 @@ body.is-section-earn.theme-default.color-scheme {
 	color: var(--studio-gray-70);
 }
 
-.supporters-list {
+.paid-subscriptions-list {
 	margin: 20px 0 0;
 
 	.row {
@@ -182,12 +182,12 @@ body.is-section-earn.theme-default.color-scheme {
 			flex: 1;
 		}
 
-		.supporters-list__checkbox-column,
-		.supporters-list__profile-column,
-		.supporters-list__offer-type-column,
-		.supporters-list__total-column,
-		.supporters-list__since-column,
-		.supporters-list__menu-column {
+		.paid-subscriptions-list__checkbox-column,
+		.paid-subscriptions-list__profile-column,
+		.paid-subscriptions-list__offer-type-column,
+		.paid-subscriptions-list__total-column,
+		.paid-subscriptions-list__since-column,
+		.paid-subscriptions-list__menu-column {
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: 20px;
@@ -195,16 +195,16 @@ body.is-section-earn.theme-default.color-scheme {
 			color: $studio-gray-60;
 		}
 
-		.supporters-list__profile-column {
+		.paid-subscriptions-list__profile-column {
 			display: flex;
 			align-items: center;
 			flex: 2;
 			min-width: 0;
 		}
 
-		.supporters-list__offer-type-column {
+		.paid-subscriptions-list__offer-type-column {
 			flex: 2;
-			.supporters-list__offer-type-title {
+			.paid-subscriptions-list__offer-type-title {
 				font-weight: 600;
 				/* stylelint-disable-next-line unit-allowed-list */
 				max-width: 28ch;
@@ -212,13 +212,13 @@ body.is-section-earn.theme-default.color-scheme {
 				white-space: nowrap;
 				text-overflow: ellipsis;
 			}
-			.supporters-list__offer-type-price {
+			.paid-subscriptions-list__offer-type-price {
 				font-size: $font-body-extra-small;
 				color: $studio-gray-40;
 			}
 		}
 
-		.supporters-list__menu-column {
+		.paid-subscriptions-list__menu-column {
 			flex-basis: 48px;
 			flex-grow: initial;
 
@@ -249,12 +249,12 @@ body.is-section-earn.theme-default.color-scheme {
 		}
 	}
 
-	.supporters-list__user-profile {
+	.paid-subscriptions-list__user-profile {
 		display: flex;
 		align-items: center;
 		min-width: 0;
 
-		.supporters-list__user-image {
+		.paid-subscriptions-list__user-image {
 			height: 40px;
 			width: 40px;
 			border-radius: 50%;
@@ -262,7 +262,7 @@ body.is-section-earn.theme-default.color-scheme {
 			flex: 0;
 		}
 
-		.supporters-list__user-details {
+		.paid-subscriptions-list__user-details {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -270,7 +270,7 @@ body.is-section-earn.theme-default.color-scheme {
 			overflow: hidden;
 			min-width: 0;
 
-			.supporters-list__user-name {
+			.paid-subscriptions-list__user-name {
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -279,7 +279,7 @@ body.is-section-earn.theme-default.color-scheme {
 				min-width: 0;
 			}
 
-			.supporters-list__user-email {
+			.paid-subscriptions-list__user-email {
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -293,22 +293,22 @@ body.is-section-earn.theme-default.color-scheme {
 }
 
 @media (max-width: $break-large) {
-	.supporters-list {
+	.paid-subscriptions-list {
 		padding-left: 16px;
 		padding-right: 16px;
 
-		.supporters-list__since-column {
+		.paid-subscriptions-list__since-column {
 			display: none;
 		}
 	}
 }
 
 @media (max-width: $break-medium) {
-	.supporters-list {
+	.paid-subscriptions-list {
 		padding-left: 16px;
 		padding-right: 16px;
 
-		.supporters-list__offer-type-column {
+		.paid-subscriptions-list__offer-type-column {
 			display: none;
 		}
 	}

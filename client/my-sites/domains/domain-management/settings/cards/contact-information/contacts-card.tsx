@@ -117,7 +117,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					components: {
 						a: (
 							<InlineSupportLink
-								supportContext="public-vs-private-registration-and-gdpr"
+								supportContext="domain-registrations-and-privacy"
 								showIcon={ false }
 							/>
 						),

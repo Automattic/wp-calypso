@@ -23,7 +23,9 @@ import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import { Downgrade } from './downgrade';
@@ -36,6 +38,19 @@ import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
 
 const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
+
+/**
+ * Returns the previous page URL if it is one of the two purchases lists
+ * (account-level or site-level), including query strings.
+ * @returns string|undefined
+ */
+function usePreviousUrlIfPurchasesList() {
+	const previousRoute = useSelector( getPreviousRoute );
+	return /\/me\/purchases\/?[^/]*$/.test( previousRoute ) ||
+		/\/purchases\/subscriptions\/?[^/]*$/.test( previousRoute )
+		? previousRoute
+		: undefined;
+}
 
 function useLogPurchasesError( message ) {
 	return useCallback(
@@ -145,7 +160,10 @@ export function list( context, next ) {
 		return (
 			<PurchasesWrapper>
 				{ useDataViewPurchasesList ? (
-					<PurchasesListDataView noticeType={ context.params.noticeType } />
+					<PurchasesListDataView
+						noticeType={ context.params.noticeType }
+						getManagePurchaseUrlFor={ managePurchaseUrl }
+					/>
 				) : (
 					<PurchasesList noticeType={ context.params.noticeType } />
 				) }
@@ -197,6 +215,7 @@ export function vatDetails( context, next ) {
 export function managePurchase( context, next ) {
 	const ManagePurchasesWrapper = localize( () => {
 		const classes = 'manage-purchase';
+		const purchaseListUrl = usePreviousUrlIfPurchasesList();
 
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
@@ -209,6 +228,7 @@ export function managePurchase( context, next ) {
 					<ManagePurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
+						purchaseListUrl={ purchaseListUrl }
 					/>
 				</Main>
 			</PurchasesWrapper>
@@ -242,7 +262,11 @@ export function managePurchaseByOwnership( context, next ) {
 }
 
 export function addNewPaymentMethod( context, next ) {
-	context.primary = <AddNewPaymentMethod />;
+	const AddNewPaymentMethodTopWrapper = () => {
+		const purchaseListUrl = usePreviousUrlIfPurchasesList();
+		return <AddNewPaymentMethod purchaseListUrl={ purchaseListUrl } />;
+	};
+	context.primary = <AddNewPaymentMethodTopWrapper />;
 	next();
 }
 

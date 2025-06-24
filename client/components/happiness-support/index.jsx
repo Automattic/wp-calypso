@@ -8,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import supportImage from 'calypso/assets/images/illustrations/dotcom-support.svg';
 import SupportButton from 'calypso/components/support-button';
-import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -44,17 +43,15 @@ export class HappinessSupport extends Component {
 		const components = {
 			strong: <strong />,
 		};
-		return preventWidows(
-			isJetpackFreePlan
-				? translate(
-						'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
-						{ components }
-				  )
-				: translate(
-						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
-						{ components }
-				  )
-		);
+		return isJetpackFreePlan
+			? translate(
+					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
+					{ components }
+			  )
+			: translate(
+					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
+					{ components }
+			  );
 	}
 
 	getSupportButtons() {

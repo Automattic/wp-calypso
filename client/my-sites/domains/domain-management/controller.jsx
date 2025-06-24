@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
+import { isFreeUrlDomainName } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
@@ -40,7 +40,6 @@ const sitesDashboardGlobalStyles = css`
 				.layout__primary > main {
 					background: var( --color-surface );
 					border-radius: 8px;
-					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
 					overflow: hidden;
 					max-width: none;
 				}

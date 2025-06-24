@@ -79,9 +79,11 @@
 		.email-frequency-cell,
 		.date-cell,
 		.new-posts-cell,
-		.new-comments-cell {
+		.new-comments-cell,
+		.unsubscribe-action-cell {
 			@extend %site-subscriptions-list-default-text;
 		}
+
 
 		.new-posts-cell,
 		.new-comments-cell {
@@ -103,6 +105,7 @@
 		.actions-cell {
 			flex-basis: 36px;
 			flex-grow: initial;
+			margin: 0 5px;
 
 			.gridicon {
 				fill: $studio-gray-50;
@@ -117,12 +120,7 @@
 	}
 
 	@media (max-width: $break-large) {
-		.new-posts-cell {
-			display: none;
-		}
-	}
-
-	@media (max-width: $break-medium) {
+		.new-posts-cell,
 		.email-frequency-cell {
 			display: none;
 		}

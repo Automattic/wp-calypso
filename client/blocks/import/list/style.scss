@@ -23,14 +23,6 @@ html[dir="rtl"] {
 	}
 }
 
-.is-section-stepper > .wpcom-site > .import-list {
-	padding: 2rem 0;
-
-	@include break-small {
-		padding: 3.75rem 0 0 0;
-	}
-}
-
 .import__onboarding-page {
 	.import-layout {
 		flex-direction: column;

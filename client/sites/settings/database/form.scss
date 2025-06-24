@@ -34,6 +34,10 @@
 
 .phpmyadmin-card__questions {
 	margin-bottom: 1.5em;
+
+	button {
+		justify-content: flex-start;
+	}
 }
 
 .phpmyadmin-card__db-warning {

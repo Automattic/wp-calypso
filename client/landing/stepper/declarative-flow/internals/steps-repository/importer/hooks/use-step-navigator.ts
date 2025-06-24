@@ -39,7 +39,13 @@ export function useStepNavigator(
 	}
 
 	function goToImportCapturePage() {
-		navigation.goToStep?.( 'import' );
+		const migrationUrl = `/setup/site-migration?siteSlug=${ siteSlug }&ref=importer`;
+		const urlWithFromParam = fromSite ? `${ migrationUrl }&from=${ fromSite }` : migrationUrl;
+
+		navigation.submit?.( {
+			type: 'redirect',
+			url: urlWithFromParam,
+		} );
 	}
 
 	function goToImportContentOnlyPage() {

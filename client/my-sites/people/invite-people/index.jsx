@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Card, Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -737,8 +737,11 @@ class InvitePeople extends Component {
 				<Main>
 					<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 					<EmptyContent
-						title={ translate( 'Oops, only administrators can invite other people' ) }
-						illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+						title={ fixMe( {
+							text: 'Only administrators can invite other people',
+							newCopy: translate( 'Only administrators can invite other people' ),
+							oldCopy: translate( 'Oops, only administrators can invite other people' ),
+						} ) }
 					/>
 				</Main>
 			);

@@ -136,12 +136,23 @@
 			padding-bottom: 145px;
 		}
 
-		.card:not(.gdpr-banner) {
-			background: none;
-			box-shadow: none;
-			margin: 0 auto;
-			max-width: 320px;
-			padding: 0;
+		.card {
+			&:not(.gdpr-banner) {
+				background: none;
+				box-shadow: none;
+				max-width: 320px;
+				padding: 0;
+			}
+
+			&:not(.two-factor-authentication__verification-code-form) {
+				margin: 0 auto;
+			}
+
+			// Allow for the illustration width
+			&.two-factor-authentication__push-notification-approval,
+			&.two-factor-authentication__actions {
+				max-width: 360px;
+			}
 		}
 
 		.layout__content {
@@ -191,12 +202,6 @@
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;
-			}
-
-			input[type="text"],
-			input[type="email"],
-			input[type="password"] {
-				padding: 10px 20px;
 			}
 		}
 
@@ -273,25 +278,9 @@
 		}
 
 		.magic-login form {
-
-			input[type="text"],
-			input[type="email"],
-			input[type="password"] {
-				padding: 10px 20px;
-			}
-
 			label {
 				color: var(--color-text);
 				font-weight: 400;
-			}
-		}
-
-		.magic-login .button {
-			margin: 0;
-
-			&:disabled {
-				background-color: var(--color-neutral-5);
-				color: var(--color-text-inverted);
 			}
 		}
 
@@ -458,31 +447,8 @@
 
 	}
 
-	// primary text rules
-	.login__form-header,
-	.signup-form__wrapper h3 {
-		font-weight: 600;
-		font-size: $font-title-small;
-		line-height: 32px;
-		margin-block: 8px;
-		text-align: center;
-	}
-
 	.login__form-post-header {
 		margin-top: 24px;
-	}
-
-	.login__form-header-wrapper,
-	.signup-form__wrapper {
-		padding: 32px 0 0;
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-		width: 100%;
-
-		>* {
-			max-width: 375px;
-		}
 	}
 
 	.wp-login__links,
@@ -561,50 +527,6 @@
 		padding-top: 90px;
 	}
 
-	main.wp-login__main.main {
-		background: var(--studio-white);
-		padding-bottom: 0;
-		max-width: 640px;
-		border: 1px solid var(--studio-gray-5);
-
-		.card.login__form,
-		.card.auth-form__social {
-			box-shadow: none;
-		}
-
-		.wp-login__container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.login__form {
-			display: flex;
-			flex-direction: column;
-
-			.login__form-userdata {
-				order: 1;
-			}
-
-			.login__form-terms {
-				order: 2;
-			}
-
-			.login__form-action {
-				order: 3;
-			}
-
-			.login__form-signup-link {
-				order: 4;
-			}
-		}
-
-		.login__form-userdata label {
-			font-size: $font-title-small;
-			font-weight: 400;
-		}
-	}
-
 	.login__social-tos {
 		font-size: $font-body-small;
 		line-height: 24px;
@@ -622,12 +544,17 @@
 }
 
 .jetpack-cloud {
+	--color-link: var(--studio-jetpack-green-50);
+	--color-link-dark: var(--studio-jetpack-green-60);
+
 	input:focus:hover[type],
 	input:focus[type] {
-		box-shadow: 0 0 0 2px var(--color-primary-10);
+		&:not(.form-text-input-core-styles) {
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+		}
 	}
 
-	.button:not(.social-buttons__button) {
+	.button {
 		color: var(--studio-jetpack-green-60);
 		background: var(--studio-white);
 		border: 1px solid var(--studio-jetpack-green-40);
@@ -680,9 +607,6 @@
 		}
 	}
 
-	a,
-	a:visited,
-	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--studio-jetpack-green-40);
 
@@ -690,86 +614,6 @@
 		&:focus {
 			color: var(--studio-jetpack-green-60);
 		}
-	}
-
-	.social-buttons__button {
-		--color-accent: var(--studio-jetpack-green-40);
-	}
-}
-
-.a8c-for-agencies {
-	input:focus:hover[type],
-	input:focus[type] {
-		box-shadow: 0 0 0 2px var(--color-primary-10);
-	}
-
-	.button:not(.social-buttons__button) {
-		color: var(--color-primary-60);
-		background: var(--studio-white);
-		border: 1px solid var(--color-primary-40);
-		border-radius: 2px;
-
-		&:hover,
-		&:focus {
-			background: var(--color-primary-0);
-		}
-
-		&:active {
-			background: var(--color-primary-5);
-			border-color: var(--color-primary-40);
-			border-width: 1px;
-		}
-
-		&[disabled]:active {
-			border-width: 1px;
-		}
-
-		&[disabled],
-		&:disabled {
-			color: var(--studio-gray-10);
-			border-color: var(--color-gray-10);
-			background: var(--studio-white);
-		}
-	}
-
-	.button.is-primary {
-		color: var(--studio-white);
-		background: var(--color-primary-40);
-		border-color: var(--color-primary-40);
-
-		&:hover,
-		&:focus {
-			background: var(--color-primary-30);
-			border-color: var(--color-primary-30);
-		}
-
-		&:active {
-			background: var(--color-primary-50);
-			border-color: var(--color-primary-50);
-		}
-
-		&[disabled],
-		&:disabled {
-			color: var(--studio-white);
-			background: var(--studio-gray-10);
-			border-color: var(--studio-gray-10);
-		}
-	}
-
-	a,
-	a:visited,
-	.login__form-change-username,
-	.wp-login__links button {
-		color: var(--color-primary-40);
-
-		&:hover,
-		&:focus {
-			color: var(--color-primary-60);
-		}
-	}
-
-	.social-buttons__button {
-		--color-accent: var(--color-primary-40);
 	}
 }
 

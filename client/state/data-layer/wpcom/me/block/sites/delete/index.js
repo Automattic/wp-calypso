@@ -6,7 +6,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { READER_SITE_UNBLOCK } from 'calypso/state/reader/action-types';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 
@@ -31,7 +31,7 @@ export function fromApi( response ) {
 }
 
 export function receiveSiteUnblock() {
-	return plainNotice( translate( 'The site has been successfully unblocked.' ), {
+	return successNotice( translate( 'The site has been successfully unblocked.' ), {
 		duration: 5000,
 	} );
 }

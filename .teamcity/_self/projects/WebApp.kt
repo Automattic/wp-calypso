@@ -456,6 +456,26 @@ object RunAllUnitTests : BuildType({
 			""".trimIndent()
 		}
 		bashNodeScript {
+			name = "Check DataViews changelog"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -e
+
+				# List files affected by the branch's commits
+				CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+
+				# If there are changes within the DataViews package (excluding package.json),
+				# ensure CHANGELOG.automattic.md has been updated too.
+				if grep ^packages/dataviews/ <<< "${'$'}CHANGES" | grep -vq ^packages/dataviews/package.json; then
+					if ! grep -q ^packages/dataviews/CHANGELOG.automattic.md <<< "${'$'}CHANGES"; then
+						echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
+						echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
+						exit 1
+					fi
+				fi
+			""".trimIndent()
+		}
+		bashNodeScript {
 			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
@@ -651,12 +671,19 @@ object CheckCodeStyleBranch : BuildType({
 				fi
 			"""
 		}
-
+		bashNodeScript {
+			name = "Run code quality linters"
+			scriptContent = """
+				yarn run lint:unused-state-action-types
+				yarn run lint:config-defaults
+			"""
+		}
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
 				# In the future, we may add the stylelint cache here.
 				yarn run lint:css
+				yarn run lint:mixedindent
 			"""
 		}
 	}

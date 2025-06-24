@@ -4,33 +4,14 @@ import {
 	NOTIFICATION_SETTINGS_FETCH,
 	NOTIFICATION_SETTINGS_FETCH_COMPLETE,
 	NOTIFICATION_SETTINGS_FETCH_FAILED,
-	NOTIFICATION_SETTINGS_REQUEST,
 	NOTIFICATION_SETTINGS_SAVE,
 	NOTIFICATION_SETTINGS_SAVE_COMPLETE,
 	NOTIFICATION_SETTINGS_SAVE_FAILED,
-	NOTIFICATION_SETTINGS_UPDATE,
 	NOTIFICATION_SETTINGS_TOGGLE_SETTING,
 } from 'calypso/state/action-types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
-import 'calypso/state/data-layer/wpcom/me/notification/settings';
 import 'calypso/state/notification-settings/init';
-
-/**
- * Returns an action object to signal the request of the current user notification settings.
- * @returns {Object} action object
- */
-export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS_REQUEST } );
-
-/**
- * Returns an action object to signal the arrival of the requested notification settings.
- * @param  {Object} settings User Notification Settings
- * @returns {Object}          action object
- */
-export const updateNotificationSettings = ( settings ) => ( {
-	type: NOTIFICATION_SETTINGS_UPDATE,
-	settings,
-} );
 
 export const toggle = ( source, stream, setting ) => ( dispatch ) => {
 	dispatch( {
@@ -78,13 +59,13 @@ function buildSavePayload( source, settings ) {
 	}
 }
 
-export const showSaveSuccessNotice = () =>
+const showSaveSuccessNotice = () =>
 	successNotice( translate( 'Settings saved successfully!' ), {
 		id: 'notif-settings-save',
 		duration: 4000,
 	} );
 
-export const showSaveErrorNotice = () =>
+const showSaveErrorNotice = () =>
 	errorNotice( translate( 'There was a problem saving your changes. Please, try again.' ), {
 		id: 'notif-settings-save',
 	} );

@@ -33,14 +33,14 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^8.6.9",
-		"@storybook/addon-controls": "^8.6.9",
-		"@storybook/addon-docs": "^8.6.9",
-		"@storybook/react-webpack5": "^8.6.9",
+		"@storybook/addon-actions": "^8.6.14",
+		"@storybook/addon-controls": "^8.6.14",
+		"@storybook/addon-docs": "^8.6.14",
+		"@storybook/react-webpack5": "^8.6.14",
 		"postcss": "^8.5.3",
-		"storybook": "^8.6.9",
-		"typescript": "^5.8.2",
-		"webpack": "^5.97.1"
+		"storybook": "^8.6.14",
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"react": "^18.0.0",
@@ -49,7 +49,7 @@
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",
 		"@dnd-kit/sortable": "^10.0.0",
-		"@dnd-kit/utilities": "^3.2.1",
-		"@wordpress/compose": "^7.22.0"
+		"@dnd-kit/utilities": "^3.2.2",
+		"@wordpress/compose": "^7.23.0"
 	}
 }

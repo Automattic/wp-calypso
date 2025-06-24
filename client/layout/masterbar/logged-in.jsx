@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
-import { isEcommercePlan } from '@automattic/calypso-products/src';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { CoreBadge } from '@automattic/components';
-import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -13,7 +12,6 @@ import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -29,6 +27,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -40,7 +39,6 @@ import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
 	getSiteSlug,
 	isJetpackSite,
@@ -53,30 +51,17 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
-import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import {
-	getMostRecentlySelectedSiteId,
-	getSectionGroup,
-	getSectionName,
-} from 'calypso/state/ui/selectors';
+import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './masterbar-notifications/notifications-button';
 
-const MOBILE_BREAKPOINT = '<480px';
-const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
-
 class MasterbarLoggedIn extends Component {
-	state = {
-		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
-		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
-	};
-
 	static propTypes = {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
@@ -88,21 +73,10 @@ class MasterbarLoggedIn extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
-		isInEditor: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
+		isGravatarDomain: PropTypes.bool,
 	};
-
-	subscribeToViewPortChanges() {
-		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
-			MOBILE_BREAKPOINT,
-			( isMobile ) => this.setState( { isMobile } )
-		);
-		this.unsubscribeResponsiveMenuViewPortChanges = subscribeIsWithinBreakpoint(
-			IS_RESPONSIVE_MENU_BREAKPOINT,
-			( isResponsiveMenu ) => this.setState( { isResponsiveMenu } )
-		);
-	}
 
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
@@ -122,12 +96,6 @@ class MasterbarLoggedIn extends Component {
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
-		this.subscribeToViewPortChanges();
-	}
-
-	componentWillUnmount() {
-		this.unsubscribeToViewPortChanges?.();
-		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
 
 	handleToggleMobileMenu = () => {
@@ -247,16 +215,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	getHomeUrl() {
-		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
-		// eslint-disable-next-line no-nested-ternary
-		return hasNoSites || isSiteTrialExpired
-			? '/sites'
-			: isCustomerHomeEnabled
-			? `/home/${ siteSlug }`
-			: getStatsPathForTab( 'day', siteSlug );
-	}
-
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
@@ -333,6 +291,7 @@ class MasterbarLoggedIn extends Component {
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
+			isGravatarDomain,
 		} = this.props;
 
 		return (
@@ -346,6 +305,7 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
 	}
@@ -489,7 +449,11 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		return badges.length > 0
-			? badges.map( ( badge ) => <CoreBadge key={ badge }>{ badge }</CoreBadge> )
+			? badges.map( ( badge ) => (
+					<Badge className="masterbar__info-badge" key={ badge }>
+						{ badge }
+					</Badge>
+			  ) )
 			: null;
 	}
 
@@ -542,7 +506,7 @@ class MasterbarLoggedIn extends Component {
 								<div className="masterbar__site-info">
 									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 									<div className="masterbar__info-badges">
-										<CoreBadge>{ sitePlanName }</CoreBadge>
+										<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 									</div>
 								</div>
 							) }
@@ -738,7 +702,12 @@ class MasterbarLoggedIn extends Component {
 						args: { display_name: user.display_name },
 					} ) }
 				</span>
-				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 16 } />
+				<Gravatar
+					className="masterbar__item-howdy-gravatar"
+					role="presentation"
+					user={ user }
+					size={ 16 }
+				/>
 			</Item>
 		);
 	}
@@ -821,44 +790,12 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderBackHomeButton() {
-		const { translate } = this.props;
-
-		return (
-			<Item
-				tipTarget="back-home"
-				className="masterbar__item-back"
-				icon="chevron-left"
-				tooltip={ translate( 'Back' ) }
-				url={ this.getHomeUrl() }
-			/>
-		);
-	}
-
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
-		const { isMobile, isResponsiveMenu } = this.state;
+		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
-		}
-
-		// Editor specific masterbar, only shows back to home button and help center as these are hidden on mobile views
-		// from the desktop version of the editor.
-		// The desktop version of the editor has no masterbar at all so we only do this for mobile.
-		if ( isInEditor && ( isMobile || isResponsiveMenu ) ) {
-			return (
-				<Masterbar>
-					<div className="masterbar__section masterbar__section--left">
-						{ this.renderBackHomeButton() }
-					</div>
-					<div className="masterbar__section masterbar__section--right">
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
-					</div>
-				</Masterbar>
-			);
 		}
 
 		return (
@@ -901,7 +838,6 @@ export default connect(
 		const isClassicView = site && siteUsesWpAdminInterface( site );
 
 		return {
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
@@ -920,7 +856,6 @@ export default connect(
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
-			isInEditor: getSectionName( state ) === 'gutenberg-editor',
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, siteId ),
 			isClassicView,
@@ -930,7 +865,6 @@ export default connect(
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			currentRoute: getCurrentRoute( state ),
-			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
@@ -940,6 +874,7 @@ export default connect(
 			isAtomicAndEditingToolkitDeactivated:
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 		};
 	},
 	{

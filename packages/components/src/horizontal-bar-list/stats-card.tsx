@@ -134,7 +134,11 @@ const StatsCard = ( props: StatsCardProps ) => {
 			>
 				{ !! heroElement && (
 					<div className={ `${ BASE_CLASS_NAME }--hero` }>
-						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }
+						{ splitHeader && (
+							<div className={ clsx( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
+								{ titleNode }
+							</div>
+						) }
 						{ heroElement }
 					</div>
 				) }

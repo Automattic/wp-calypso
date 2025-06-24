@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InfoPopover from 'calypso/components/info-popover';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -17,11 +18,10 @@ import {
 	getVideoPressPlaysComplete,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
 import DatePicker from '../stats-date-picker';
-import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-
 import '../stats-module/style.scss';
 import './style.scss';
 
@@ -118,6 +118,7 @@ class VideoPressStatsModule extends Component {
 			siteSlug,
 			translate,
 			siteAdminUrl,
+			siteId,
 		} = this.props;
 
 		let completeVideoStats = [];
@@ -170,16 +171,14 @@ class VideoPressStatsModule extends Component {
 			page( url );
 		};
 
-		const csvData = [
-			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
-			...completeVideoStats,
-		];
-
 		// Calculate max views only
 		const maxViews = this.getMaxValue( completeVideoStats, 'views' );
 
 		return (
 			<div>
+				{ siteId && statType && query && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				{ summary && (
 					<div className="stats-module__date-picker-header">
 						<h3>
@@ -207,17 +206,7 @@ class VideoPressStatsModule extends Component {
 							</div>
 						}
 						href={ ! summary ? summaryLink : null }
-					>
-						{ summary && (
-							<DownloadCsv
-								statType={ statType }
-								data={ csvData }
-								query={ query }
-								path={ path }
-								period={ period }
-							/>
-						) }
-					</SectionHeader>
+					/>
 					<div className="videopress-stats-module__grid">
 						<div className="videopress-stats-module__header-row-wrapper">
 							<div className="videopress-stats-module__grid-header">{ translate( 'Title' ) }</div>
@@ -291,7 +280,11 @@ class VideoPressStatsModule extends Component {
 							</div>
 						) ) }
 					</div>
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+					{ noData && (
+						<div className="videopress-stats-module__empty-module">
+							<EmptyModuleCardVideo />
+						</div>
+					) }
 					{ hasError && <ErrorPanel /> }
 					<StatsModulePlaceholder isLoading={ isLoading } />
 				</Card>

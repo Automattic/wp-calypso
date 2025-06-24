@@ -156,10 +156,14 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
 						{ adCreativeUrl && (
-							<div
-								className="campaign-item__header-image"
-								style={ { backgroundImage: `url(${ adCreativeUrl })` } }
-							></div>
+							<div className="campaign-item__header-image">
+								<img
+									src={ adCreativeUrl }
+									alt={ translate( 'For campaign %(name)s', {
+										args: { name },
+									} ).toString() }
+								/>
+							</div>
 						) }
 						<div className="campaign-item__title-row">
 							<div className="campaign-item__post-type">{ getPostType( type ) }</div>
@@ -176,7 +180,12 @@ export default function CampaignItem( props: Props ) {
 							variant="primary"
 							className="campaign-item__view-link"
 						>
-							{ __( 'Details' ) }
+							<span aria-hidden="true">{ __( 'Details' ) }</span>
+							<span className="sr-only">
+								{ translate( 'View details for %(name)s', {
+									args: { name },
+								} ) }
+							</span>
 						</Button>
 					</div>
 				</div>
@@ -229,7 +238,12 @@ export default function CampaignItem( props: Props ) {
 					onClick={ navigateToDetailsPage }
 					className="campaign-item__post-details-button"
 				>
-					{ __( 'Details' ) }
+					<span aria-hidden="true">{ __( 'Details' ) }</span>
+					<span className="sr-only">
+						{ translate( 'View details for %(name)s', {
+							args: { name },
+						} ) }
+					</span>
 				</Button>
 			</td>
 		</tr>

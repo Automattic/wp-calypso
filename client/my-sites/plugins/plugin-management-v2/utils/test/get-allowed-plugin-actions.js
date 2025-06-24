@@ -17,7 +17,7 @@ describe( 'getAllowedPluginActions', () => {
 	it.each( [ [ 'randomstring' ], [ 'jetpack' ] ] )(
 		'returns true for activation and auto-updates if no site is selected',
 		( slug ) => {
-			const result = getAllowedPluginActions( { slug }, {} );
+			const result = getAllowedPluginActions( {}, { slug } );
 			expect( result.activation ).toBe( true );
 			expect( result.autoupdate ).toBe( true );
 		}
@@ -34,7 +34,7 @@ describe( 'getAllowedPluginActions', () => {
 				isJetpackSite.mockReturnValue( false );
 				isSiteAutomatedTransfer.mockReturnValue( false );
 
-				const result = getAllowedPluginActions( { slug }, {}, {} );
+				const result = getAllowedPluginActions( {}, { slug }, {} );
 				expect( result.activation ).toBe( false );
 				expect( result.autoupdate ).toBe( false );
 			}
@@ -46,7 +46,7 @@ describe( 'getAllowedPluginActions', () => {
 				isJetpackSite.mockReturnValue( true );
 				isSiteAutomatedTransfer.mockReturnValue( false );
 
-				const result = getAllowedPluginActions( { slug }, {}, {} );
+				const result = getAllowedPluginActions( {}, { slug }, {} );
 				expect( result.activation ).toBe( true );
 				expect( result.autoupdate ).toBe( true );
 			}
@@ -65,7 +65,7 @@ describe( 'getAllowedPluginActions', () => {
 				( slug ) => {
 					siteHasFeature.mockReturnValue( true );
 
-					const result = getAllowedPluginActions( { slug }, {}, {} );
+					const result = getAllowedPluginActions( {}, { slug }, {} );
 					expect( result.activation ).toBe( true );
 					expect( result.autoupdate ).toBe( true );
 				}
@@ -76,7 +76,7 @@ describe( 'getAllowedPluginActions', () => {
 				( slug ) => {
 					siteHasFeature.mockReturnValue( false );
 
-					const result = getAllowedPluginActions( { slug }, {}, {} );
+					const result = getAllowedPluginActions( {}, { slug }, {} );
 					expect( result.activation ).toBe( false );
 					expect( result.autoupdate ).toBe( false );
 				}
@@ -95,7 +95,7 @@ describe( 'getAllowedPluginActions', () => {
 				isJetpackSite.mockReturnValue( false );
 				isSiteAutomatedTransfer.mockReturnValue( false );
 
-				const result = getAllowedPluginActions( { slug }, {}, {} );
+				const result = getAllowedPluginActions( {}, { slug }, {} );
 				expect( result.activation ).toBe( false );
 				expect( result.autoupdate ).toBe( false );
 			}
@@ -107,7 +107,7 @@ describe( 'getAllowedPluginActions', () => {
 				isJetpackSite.mockReturnValue( true );
 				isSiteAutomatedTransfer.mockReturnValue( false );
 
-				const result = getAllowedPluginActions( { slug }, {}, {} );
+				const result = getAllowedPluginActions( {}, { slug }, {} );
 				expect( result.activation ).toBe( true );
 				expect( result.autoupdate ).toBe( true );
 			}
@@ -119,7 +119,7 @@ describe( 'getAllowedPluginActions', () => {
 				isJetpackSite.mockReturnValue( true );
 				isSiteAutomatedTransfer.mockReturnValue( false );
 
-				const result = getAllowedPluginActions( { slug }, {}, {} );
+				const result = getAllowedPluginActions( {}, { slug }, {} );
 				expect( result.activation ).toBe( true );
 				expect( result.autoupdate ).toBe( true );
 			}
@@ -137,7 +137,7 @@ describe( 'getAllowedPluginActions', () => {
 				( slug ) => {
 					siteHasFeature.mockReturnValue( true );
 
-					const result = getAllowedPluginActions( { slug }, {}, {} );
+					const result = getAllowedPluginActions( {}, { slug }, {} );
 					expect( result.activation ).toBe( false );
 					expect( result.autoupdate ).toBe( false );
 				}
@@ -148,7 +148,7 @@ describe( 'getAllowedPluginActions', () => {
 				( slug ) => {
 					siteHasFeature.mockReturnValue( false );
 
-					const result = getAllowedPluginActions( { slug }, {}, {} );
+					const result = getAllowedPluginActions( {}, { slug }, {} );
 					expect( result.activation ).toBe( false );
 					expect( result.autoupdate ).toBe( false );
 				}

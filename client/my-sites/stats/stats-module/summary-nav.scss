@@ -28,10 +28,6 @@ $summary-nav-swap-width: 661px;
 		padding-bottom: 24px;
 	}
 
-	@media (min-width: $summary-nav-swap-width) and (max-width: $break-medium) {
-		padding: $summary-medium-padding;
-	}
-
 	@media (max-width: $summary-nav-swap-width) {
 		padding: 0;
 		border-bottom: $summary-small-border;
@@ -70,10 +66,6 @@ $summary-nav-swap-width: 661px;
 		padding: 0;
 	}
 
-	@media (max-width: $summary-nav-swap-width) {
-		padding: $summary-medium-padding;
-	}
-
 	@media (max-width: $break-small) {
 		padding: $summary-small-padding;
 	}
@@ -107,10 +99,6 @@ $summary-nav-swap-width: 661px;
 
 	.stats-summary-nav__gated-icon {
 		vertical-align: middle;
-	}
-
-	@media (max-width: $break-medium) {
-		padding: $summary-medium-padding;
 	}
 
 	@media (max-width: $break-small) {

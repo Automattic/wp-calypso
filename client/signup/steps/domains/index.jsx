@@ -11,6 +11,8 @@ import {
 	Step,
 	isNewHostedSiteCreationFlow,
 	NEW_HOSTED_SITE_FLOW,
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { getQueryArg } from '@wordpress/url';
@@ -496,9 +498,9 @@ class RenderDomainsStepComponent extends Component {
 
 		this.props.setDesignType( this.getDesignType() );
 
-		// For the `domain-for-gravatar` flow, add an extra `is_gravatar_domain` property to the domain registration product,
+		// For the domain for Gravatar flow, add an extra `is_gravatar_domain` property to the domain registration product,
 		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
-		if ( this.props.flowName === 'domain-for-gravatar' ) {
+		if ( isDomainForGravatarFlow( this.props.flowName ) ) {
 			const domainForGravatarItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
@@ -657,7 +659,7 @@ class RenderDomainsStepComponent extends Component {
 		const { flowName } = this.props;
 		return [
 			'domain',
-			'domain-for-gravatar',
+			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
 		].includes( flowName );
@@ -667,7 +669,7 @@ class RenderDomainsStepComponent extends Component {
 		const { flowName } = this.props;
 		return [
 			'domain',
-			'domain-for-gravatar',
+			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
 		].includes( flowName );
@@ -1420,7 +1422,7 @@ class RenderDomainsStepComponent extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( 'domain-for-gravatar' === flowName ) {
+		} else if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {

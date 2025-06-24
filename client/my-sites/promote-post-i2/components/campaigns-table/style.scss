@@ -168,6 +168,13 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			min-width: 108px;
 			width: 108px; // TODO: adjust height and width for mobile devices as well.
 		}
+
+		img{
+			height: 100%;
+			width: 100%;
+			object-fit: cover;
+			display: block;
+		}
 	}
 }
 

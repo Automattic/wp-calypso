@@ -6,7 +6,6 @@ import footerCardAltBackground from 'calypso/assets/images/jetpack/jp-licensing-
 import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
-import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
@@ -63,7 +62,7 @@ const LicensingActivation: FC< Props > = ( {
 						) }
 					</div>
 					<h1 className={ clsx( 'licensing-activation__title', { 'is-loading': isLoading } ) }>
-						{ preventWidows( title ) }
+						{ title }
 					</h1>
 					{ children }
 

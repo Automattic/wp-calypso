@@ -106,8 +106,17 @@
 }
 
 @include breakpoint-deprecated( "<960px" ) {
-	// Don't show environment badge on smaller screens. It just gets in the way.
 	.environment-badge {
-		display: none;
+		right: 20px;
+
+		&.hovered {
+			display: flex;
+			flex-wrap: wrap-reverse;
+			justify-content: flex-end;
+			padding-left: 20px;
+		}
+	}
+	.bug-report {
+		margin-top: -10px;
 	}
 }

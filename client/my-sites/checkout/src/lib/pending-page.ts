@@ -26,6 +26,7 @@ export interface PendingPageRedirectOptions {
 	 *  If this is true, we will force to use https://wordpress.com as the origin for the pending page.
 	 */
 	fromExternalCheckout?: boolean;
+	isGravatarDomain?: boolean;
 }
 
 export interface RedirectInstructions {
@@ -198,6 +199,7 @@ export function addUrlToPendingPageRedirect(
 		receiptId = ':receiptId',
 		fromSiteSlug,
 		fromExternalCheckout,
+		isGravatarDomain,
 	} = options;
 
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
@@ -212,6 +214,9 @@ export function addUrlToPendingPageRedirect(
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
 	if ( fromSiteSlug ) {
 		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
+	}
+	if ( isGravatarDomain ) {
+		successUrlObject.searchParams.set( 'isGravatarDomain', '1' );
 	}
 	if ( urlType === 'relative' && ! fromExternalCheckout ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;

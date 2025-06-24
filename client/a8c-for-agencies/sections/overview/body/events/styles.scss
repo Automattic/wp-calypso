@@ -1,0 +1,26 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-events {
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-block-end: 32px;
+}
+
+.a4a-event__date--klaviyo {
+	color: var(--color-klaviyo);
+}
+
+.a4a-event__date--woo {
+	color: var(--color-woo);
+}
+
+.a4a-event__image--klaviyo {
+	background-size: 90%;
+}
+
+.a4a-event__image--woo {
+	background-size: auto 110%;
+}

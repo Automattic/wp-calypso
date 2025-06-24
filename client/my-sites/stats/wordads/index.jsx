@@ -11,17 +11,14 @@ import { stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
-import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { canAccessWordAds } from 'calypso/state/sites/selectors';
@@ -146,7 +143,6 @@ class WordAds extends Component {
 			this.props;
 
 		const { period, endOf } = this.props.period;
-		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		const yesterday = moment.utc().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
 
@@ -179,20 +175,10 @@ class WordAds extends Component {
 				/>
 
 				<div className={ wordAdsPageClasses }>
-					{ ! isStatsNavigationImprovementEnabled ? (
-						<NavigationHeader
-							className="stats__section-header modernized-header"
-							title={ STATS_PRODUCT_NAME }
-							subtitle={ translate( 'See how ads are performing on your site.' ) }
-							screenReader={ navItems.wordads?.label }
-						></NavigationHeader>
-					) : (
-						<PageHeader />
-					) }
+					<PageHeader />
 
 					{ ! canAccessAds && (
 						<EmptyContent
-							illustration={ illustration404 }
 							title={
 								! canUpgradeToUseWordAds
 									? translate( 'You are not authorized to view this page' )

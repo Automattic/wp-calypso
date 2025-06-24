@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
-import ReaderBackButton from 'calypso/reader/components/back-button';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import { getSelectedTabTitle, FIRST_POSTS_TAB, ADD_NEW_TAB, REDDIT_TAB } from '../../helper';
@@ -51,7 +50,6 @@ export default function DiscoverHeaderAndNavigation(
 
 	return (
 		<>
-			<ReaderBackButton />
 			<NavigationHeader
 				title={ translate( 'Discover' ) }
 				subtitle={ subHeaderText }

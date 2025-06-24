@@ -181,13 +181,11 @@
 		a,
 		a:visited,
 		button.is-link {
-			text-decoration: underline;
 			color: var(--color-text-inverted);
 			line-height: inherit;
 
 			&:hover {
 				color: var(--color-text-inverted);
-				text-decoration: none;
 			}
 
 			.is-transparent-info & {
@@ -384,10 +382,10 @@ a.calypso-notice__action {
 			a,
 			a:visited,
 			button.is-link {
-				color: var(--color-link);
+				color: var(--color-link-dark);
 
 				&:hover {
-					color: var(--color-link);
+					color: var(--color-link-dark);
 				}
 			}
 		}

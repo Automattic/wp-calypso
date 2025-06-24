@@ -133,19 +133,25 @@ $blueberry-color: #3858e9;
 		}
 	}
 
+	&__navigation-header {
+		margin-bottom: 24px;
+	}
+
+	&__blog-stickers {
+		margin: 0 0 24px;
+		padding: 16px;
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 4px;
+		font-size: 14px;
+		color: var(--color-text-subtle);
+	}
+
 }
 
 .hosting-overview__domain-to-plan-credit-notice {
 	grid-column: 1 / -1;
 	text-wrap: pretty;
-}
-
-.hosting-overview__navigation-header {
-	grid-column: 1 / -1;
-
-	&.navigation-header {
-		margin-bottom: 16px;
-	}
 }
 
 .hosting-overview__navigation-header,
@@ -332,7 +338,7 @@ $blueberry-color: #3858e9;
 
 	.domains-table__primary-domain-label {
 		background-color: inherit;
-		color: var(--studio-green-40, #00a32a);
+		color: var(--studio-green-60);
 		font-family: "SF Pro", $sans;
 		font-size: $font-body-extra-small;
 		font-weight: 500;

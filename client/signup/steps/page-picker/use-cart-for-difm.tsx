@@ -149,11 +149,10 @@ function getDummyCartProducts( {
 				productSlug: activePlanScheme.product_slug,
 				productOriginalName: activePlanScheme.product_name,
 				itemSubTotal: activePlanScheme.cost_smallest_unit,
-				productDisplayCost:
-					formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) + '*',
+				productDisplayCost: formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
 				subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
 					args: {
 						planPrice: formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {

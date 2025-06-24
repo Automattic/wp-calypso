@@ -17,7 +17,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso-cli#readme",
 	"dependencies": {
 		"commander": "^5.1.0",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"globby": "^10.0.2",
 		"xgettext-js": "^3.0.0"
 	},

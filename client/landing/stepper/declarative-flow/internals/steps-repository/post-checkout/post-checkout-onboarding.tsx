@@ -130,7 +130,10 @@ const PostCheckoutOnboarding: StepType = ( { flow, navigation } ) => {
 			return providedDependencies;
 		} );
 
-		submit?.();
+		submit?.( {
+			siteId: site.ID,
+			siteSlug,
+		} );
 	}, [
 		site,
 		siteSlug,

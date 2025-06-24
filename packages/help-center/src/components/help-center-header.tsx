@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { useGetMostRecentOpenConversation } from '@automattic/odie-client/src/hooks/use-get-most-recent-open-conversation';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -78,7 +78,7 @@ const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const navigate = useNavigate();
-	const { totalNumberOfConversations } = useGetMostRecentOpenConversation();
+	const { recentConversations } = useGetHistoryChats();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -95,7 +95,7 @@ const ChatEllipsisMenu = () => {
 
 	const handleViewChats = () => {
 		recordTracksEvent( 'calypso_inlinehelp_view_open_chats_menu', {
-			total_number_of_conversations: totalNumberOfConversations,
+			total_number_of_conversations: recentConversations.length,
 		} );
 
 		navigate( '/chat-history' );
@@ -108,38 +108,46 @@ const ChatEllipsisMenu = () => {
 
 	return (
 		<EllipsisMenu
-			popoverClassName="help-center help-center__container-header-menu"
+			popoverClassName="help-center help-center__container-header-menu conversation-menu__wrapper"
 			position="bottom"
 			trackEventProps={ { source: 'help_center' } }
+			ariaLabel={ __( 'Chat options', __i18n_text_domain__ ) }
 		>
-			<div className="conversation-menu__wrapper">
-				<button onClick={ clearChat }>
-					<Icon icon={ comment } />
-					<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
-				</button>
-				<Button onClick={ handleViewChats } disabled={ totalNumberOfConversations === 0 }>
-					<Icon icon={ scheduled } />
-					<div>
-						{ _n(
-							'View recent chat',
-							'View recent chats',
-							totalNumberOfConversations,
-							__i18n_text_domain__
-						) }
-					</div>
-				</Button>
-				<button onClick={ toggleSoundNotifications }>
-					<ToggleControl
-						className="conversation-menu__notification-toggle"
-						label={ __( 'Notification sound', __i18n_text_domain__ ) }
-						checked={ areSoundNotificationsEnabled }
-						onChange={ ( newValue ) => {
-							setAreSoundNotificationsEnabled( newValue );
-						} }
-						__nextHasNoMarginBottom
-					/>
-				</button>
-			</div>
+			<button tabIndex={ 0 } onClick={ clearChat }>
+				<Icon icon={ comment } />
+				<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
+			</button>
+			<button
+				tabIndex={ 0 }
+				onClick={ handleViewChats }
+				disabled={ recentConversations.length < 2 }
+			>
+				<Icon icon={ scheduled } />
+				<div>
+					{ _n(
+						'View recent chat',
+						'View recent chats',
+						recentConversations.length,
+						__i18n_text_domain__
+					) }
+				</div>
+			</button>
+			<button
+				tabIndex={ 0 }
+				onClick={ toggleSoundNotifications }
+				aria-pressed={ !! areSoundNotificationsEnabled }
+				aria-label={ __( 'Notification sound', __i18n_text_domain__ ) }
+			>
+				<ToggleControl
+					className="conversation-menu__notification-toggle"
+					label={ __( 'Notification sound', __i18n_text_domain__ ) }
+					checked={ areSoundNotificationsEnabled }
+					onChange={ ( newValue ) => {
+						setAreSoundNotificationsEnabled( newValue );
+					} }
+					__nextHasNoMarginBottom
+				/>
+			</button>
 		</EllipsisMenu>
 	);
 };
@@ -168,8 +176,6 @@ const useHeaderText = () => {
 		switch ( pathname ) {
 			case '/':
 				return __( 'Help Center', __i18n_text_domain__ );
-			case '/contact-options':
-				return __( 'Contact Options', __i18n_text_domain__ );
 			case '/inline-chat':
 				return __( 'Live Chat', __i18n_text_domain__ );
 			case '/contact-form':

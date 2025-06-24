@@ -625,7 +625,10 @@ export class FullPostView extends Component {
 
 		const isDefaultLayout = this.props.layout !== 'recent';
 		const siteName = getSiteName( { site, post } );
-		const classes = { 'reader-full-post': true };
+		const classes = {
+			'reader-full-post': true,
+			'is-reddit-post': post.is_reddit_post,
+		};
 		const showRelatedPosts = post && ! post.is_external && post.site_ID && isDefaultLayout;
 		const relatedPostsFromOtherSitesTitle = translate(
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',

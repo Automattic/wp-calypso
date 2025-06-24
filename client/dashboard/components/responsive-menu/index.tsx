@@ -4,6 +4,7 @@ import { menu } from '@wordpress/icons';
 import React from 'react';
 import Menu from '../menu';
 import RouterLinkMenuItem from '../router-link-menu-item';
+import type { ActiveOptions } from '@tanstack/react-router';
 
 type ResponsiveMenuProps = {
 	children: React.ReactNode;
@@ -65,6 +66,7 @@ ResponsiveMenu.Item = function MenuItem(
 	props: {
 		to: string;
 		children: React.ReactNode;
+		activeOptions?: ActiveOptions;
 	}
 ) {
 	// This is going to be replaced with the right menu item depending on the screen size.

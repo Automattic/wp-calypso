@@ -1,8 +1,10 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SectionHeader from 'calypso/components/section-header';
 import useAppPasswordsQuery from 'calypso/data/application-passwords/use-app-passwords-query';
@@ -20,6 +22,8 @@ function ApplicationPasswords() {
 
 	const [ applicationName, setApplicationName ] = useState( '' );
 	const [ showAddPasswordForm, setShowAddPasswordForm ] = useState( false );
+
+	const isMobile = useMobileBreakpoint();
 
 	const { data: appPasswords } = useAppPasswordsQuery();
 	const {
@@ -48,7 +52,7 @@ function ApplicationPasswords() {
 	};
 
 	return (
-		<Fragment>
+		<div className="application-passwords">
 			<SectionHeader label={ translate( 'Application passwords' ) }>
 				{ ! newAppPassword && (
 					<Button
@@ -60,11 +64,13 @@ function ApplicationPasswords() {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="plus-small" size={ 16 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						{ translate( 'Add new application password' ) }
+						{ isMobile
+							? translate( 'Add New', { context: 'application password' } )
+							: translate( 'Add new application password' ) }
 					</Button>
 				) }
 			</SectionHeader>
-			<Card>
+			<CompactCard>
 				{ newAppPassword ? (
 					<NewAppPassword
 						newAppPassword={ newAppPassword }
@@ -77,7 +83,6 @@ function ApplicationPasswords() {
 					/>
 				) : (
 					<NewAppPasswordForm
-						appPasswords={ appPasswords }
 						isSubmitting={ isCreatingAppPassword }
 						addingPassword={ showAddPasswordForm }
 						onSubmit={ ( appName ) => {
@@ -92,26 +97,30 @@ function ApplicationPasswords() {
 					/>
 				) }
 
-				<p className="application-passwords__nobot">
-					<>
-						{ translate(
-							'With Two-Step Authentication active, you can generate a custom password for ' +
-								'each third-party application you authorize to use your WordPress.com account. ' +
-								'You can revoke access for an individual application here if you ever need to.'
-						) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 263616 }
-							showIcon={ false }
-							supportLink={ localizeUrl(
-								'https://wordpress.com/support/security/two-step-authentication/application-specific-passwords'
-							) }
-						/>
-					</>
-				</p>
+				{ ! newAppPassword && (
+					<FormSettingExplanation className="application-passwords__explanation">
+						<>
+							{ translate(
+								'With Two-Step Authentication active, you can generate a custom password for ' +
+									'each third-party application you authorize to use your WordPress.com account. ' +
+									'You can revoke access for an individual application here if you ever need to.'
+							) }{ ' ' }
+							<InlineSupportLink
+								supportPostId={ 263616 }
+								showIcon={ false }
+								supportLink={ localizeUrl(
+									'https://wordpress.com/support/security/two-step-authentication/application-specific-passwords'
+								) }
+							/>
+						</>
+					</FormSettingExplanation>
+				) }
+			</CompactCard>
 
+			{ ! showAddPasswordForm && ! newAppPassword && (
 				<AppPasswordsList appPasswords={ appPasswords } />
-			</Card>
-		</Fragment>
+			) }
+		</div>
 	);
 }
 

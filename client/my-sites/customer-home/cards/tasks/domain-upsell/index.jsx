@@ -5,7 +5,7 @@ import {
 	domainProductSlugs,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { useDomainSuggestions } from '@automattic/domain-picker/src';
+import { useDomainSuggestions } from '@automattic/domain-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';

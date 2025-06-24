@@ -51,7 +51,7 @@ const props = {
 	columns: [
 		{
 			key: 'plugin',
-			header: translate( 'Installed Plugins' ),
+			header: translate( 'Installed plugins' ),
 		},
 	],
 	rowFormatter: function ( props ): React.ReactNode {

@@ -9,7 +9,7 @@ export {
 	SiteHub,
 	SidebarNavigationItem,
 	SidebarNavigationScreen,
-} from './components/';
+} from './components';
 
 export { NavigableRegion } from './interface';
 

@@ -126,7 +126,7 @@
 
 		&__status-success,
 		&__status-premium {
-			color: var(--studio-green-50);
+			color: var(--studio-green-60);
 		}
 
 		&__status-verifying,
@@ -144,8 +144,8 @@
 		gap: 2px;
 
 		&__active {
-			fill: var(--studio-green-50);
-			color: var(--studio-green-50);
+			fill: var(--studio-green-60);
+			color: var(--studio-green-60);
 		}
 
 		&__pending,

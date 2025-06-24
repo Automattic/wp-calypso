@@ -24,6 +24,10 @@
 	}
 }
 
+.profile__settings .profile__public-url {
+	font-size: $font-body-small;
+}
+
 .profile__is_dev_account-fieldset-is-loading {
 	.components-form-toggle {
 		> * {

@@ -15,7 +15,7 @@ export default function Text< Item >( {
 	onChange,
 	hideLabelFromVision,
 }: DataFormControlProps< Item > ) {
-	const { id, label, placeholder } = field;
+	const { id, label, placeholder, description } = field;
 	const value = field.getValue( { item: data } );
 
 	const onChangeControl = useCallback(
@@ -31,6 +31,7 @@ export default function Text< Item >( {
 			label={ label }
 			placeholder={ placeholder }
 			value={ value ?? '' }
+			help={ description }
 			onChange={ onChangeControl }
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom

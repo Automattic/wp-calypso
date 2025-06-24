@@ -1,24 +1,24 @@
 @keyframes slide-right {
-    0% {
-        transform: translateX(-24px);
-    }
-    100% {
-        transform: translateX(0);
-    }
+	0% {
+		transform: translateX(-24px);
+	}
+	100% {
+		transform: translateX(0);
+	}
 }
 
 .date-label-drill {
-    display: inline-block;
-    
-    svg {
-        cursor: pointer;
+	display: inline-block;
+	
+	svg {
+		cursor: pointer;
 
-        &:hover {
-            fill: var(--color-primary);
-        }
-    }
+		&:hover {
+			fill: var(--color-primary);
+		}
+	}
 }
 
 .date-label-drill--is-animated {
-    animation: slide-right 0.5s ease-out forwards;
+	animation: slide-right 0.5s ease-out forwards;
 }

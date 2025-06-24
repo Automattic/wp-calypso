@@ -129,7 +129,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 			</HostingPlanSection>
 
 			<HostingAdditionalFeaturesSection
-				heading={ translate( 'VIP Capabilities ' ) }
+				heading={ translate( 'VIP capabilities ' ) }
 				subheading={ translate( 'The leading content platform' ) }
 				description={ translate(
 					'Combine the ease of WordPress with enterprise-grade security and scalability.'

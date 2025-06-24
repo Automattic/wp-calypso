@@ -1,5 +1,4 @@
-import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
-import { FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products/src/constants/features';
+import { FEATURE_TYPE_JETPACK_SCAN, PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';

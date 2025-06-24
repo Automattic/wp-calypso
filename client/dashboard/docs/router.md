@@ -19,16 +19,13 @@ Routes use loaders to prefetch data before rendering. This ensures that componen
 
 ```typescript
 loader: () =>
-  maybeAwaitFetch({
-    queryKey: ['profile'],
-    queryFn: fetchProfile,
-  }),
+  queryClient.ensureQueryData(profileQuery()),
 ```
 
 later the component can use the `useQuery` hook to access the data:
 
 ```typescript
-const { data: profile } = useQuery(['profile'], fetchProfile);
+const { data: profile } = useQuery(profileQuery());
 ```
 
 ## Adding New Routes
@@ -49,7 +46,7 @@ beforeLoad: async () => {
   const twoStep = await fetchTwoStep();
   if ( twoStep.two_step_reauthorization_required ) {
     const currentPath = window.location.pathname;
-    const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+    const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
     window.location.href = loginUrl;
   }
 },

@@ -1,11 +1,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
 
 .calypso-navigation-header {
 	background-color: var(--wp-components-color-background, #fff);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-	padding: 24px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 
 	&__head {
 		display: flex;
@@ -16,7 +19,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 32px;
 		padding-bottom: 24px;
 	}
 
@@ -28,6 +30,7 @@
 	&__right-section {
 		display: flex;
 		align-items: center;
+		margin-left: 12px;
 
 		.components-button {
 			height: 32px;
@@ -35,13 +38,18 @@
 		}
 	}
 
+	// Increased specificity to override the default link color for anchor elements on Atomic.
+	& &__back-link {
+		color: var(--wp-components-color-gray-600, #666);
+	}
+
 	&__back-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		color: var(--wp-components-color-gray-600, #666);
 		font-size: $default-font-size;
 		transition: color 0.2s ease;
+		cursor: pointer;
 
 		&:hover {
 			color: var(--wp-components-color-gray-900, $gray-900);
@@ -59,9 +67,9 @@
 		color: var(--wp-components-color-gray-900, $gray-900);
 		display: flex;
 		align-items: center;
-		gap: 10px;
-		line-height: 1;
-		height: 32px;
+		gap: 12px;
+		line-height: 1.2;
+		min-height: 32px;
 
 		@media (max-width: $break-small) {
 			font-size: 20px;

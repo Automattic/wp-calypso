@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { blaze } from '@automattic/components/src/icons';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';

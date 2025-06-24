@@ -416,8 +416,8 @@
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-        align-self: flex-start;
-        margin-inline-start: auto;
+		align-self: flex-start;
+		margin-inline-start: auto;
 	}
 }
 

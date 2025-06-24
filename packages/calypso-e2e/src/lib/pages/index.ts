@@ -38,6 +38,8 @@ export * from './blaze-campaign-page';
 export * from './feedback-inbox-page';
 export * from './subscribers-page';
 export * from './subscription-management-page';
+export * from './logged-out-home-page';
+export * from './logged-out-themes-page';
 
 export * from './external';
 export * from './me';

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
@@ -77,12 +76,6 @@ jest.mock( '../persistence-utils', () => ( {
 	isSsoApproved: ( clientId ) => clientId === APPROVE_SSO_CLIENT_ID,
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = () => '';
-	mock.isEnabled = jest.fn();
-	return mock;
-} );
-
 function renderWithRedux( ui ) {
 	return renderWithProvider( ui, {
 		reducers: {
@@ -96,13 +89,8 @@ function renderWithRedux( ui ) {
 
 let windowOpenSpy;
 
-// If feature flag is jetpack/magic-link-signup then false, else true
 beforeEach( () => {
 	windowOpenSpy = jest.spyOn( global.window, 'open' ).mockImplementation( jest.fn() );
-	config.isEnabled.mockImplementation( ( flag ) => {
-		const disabledFlags = [ 'jetpack/magic-link-signup' ];
-		return ! disabledFlags.includes( flag );
-	} );
 } );
 
 afterEach( () => {

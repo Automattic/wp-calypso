@@ -1,9 +1,9 @@
 import { FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
@@ -230,7 +230,7 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				<LoggedOutForm onSubmit={ onSubmit }>
+				<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 					{ currentUser && currentUser.username && (
 						<Notice
 							showDismiss={ false }
@@ -282,9 +282,15 @@ class RequestLoginEmailForm extends Component {
 							/>
 						) }
 						<div className="magic-login__form-action">
-							<FormButton primary disabled={ ! submitEnabled } busy={ isSubmitButtonBusy }>
+							<Button
+								variant="primary"
+								disabled={ ! submitEnabled }
+								isBusy={ isSubmitButtonBusy }
+								type="submit"
+								__next40pxDefaultSize
+							>
 								{ submitButtonLabel || buttonLabel }
-							</FormButton>
+							</Button>
 						</div>
 					</FormFieldset>
 				</LoggedOutForm>

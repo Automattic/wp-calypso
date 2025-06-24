@@ -16,13 +16,13 @@ $header-compact-height-mobile: 128px;
 	.products-overview__top {
 		max-height: auto;
 		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg ) no-repeat top right $header-background-color;
-        border-block-end: none;
+		border-block-end: none;
 		position: sticky;
 		top: 0;
 		z-index: 100;
 		overflow: hidden;
 		box-sizing: border-box;
-    }
+	}
 
 	.hosting-dashboard-layout__header > * {
 		z-index: 10;

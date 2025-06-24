@@ -5,11 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
-import {
-	useIsPlaygroundEligible,
-	isPlaygroundEligible,
-} from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
-import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -24,11 +20,11 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
-import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
+import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
@@ -57,10 +53,9 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
-		...( isPlaygroundEligible() ? [ STEPS.PLAYGROUND ] : [] ),
 	];
 
-	return stepsWithRequiredLogin( steps );
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -70,8 +65,7 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const isPlaygroundEligible = useIsPlaygroundEligible();
-		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
+
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -92,23 +86,19 @@ const onboarding: FlowV2< typeof initialize > = {
 		const coupon = useQuery().get( 'coupon' );
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
-
-		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
+		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
-		const getPostCheckoutDestination = (
-			providedDependencies: ProvidedDependencies,
-			isPlaygroundEligible: boolean
-		): [ string, string | null ] => {
+		const getPostCheckoutDestination = async (
+			providedDependencies: ProvidedDependencies
+		): Promise< [ string, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = isPlaygroundEligible
-				? getQueryArg( window.location.href, 'playground' )
-				: null;
+			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -135,7 +125,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( isMvpOnboarding ) {
+			if ( await isSimplifiedOnboarding() ) {
 				return [
 					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
@@ -232,10 +222,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( [
-						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...products.filter( ( product ) => product !== null ),
-					] );
+					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
@@ -243,12 +230,11 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
+					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] = getPostCheckoutDestination(
-						providedDependencies,
-						isPlaygroundEligible
-					);
+					const [ destination, backDestination ] =
+						await getPostCheckoutDestination( providedDependencies );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );

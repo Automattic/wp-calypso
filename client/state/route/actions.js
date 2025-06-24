@@ -1,4 +1,4 @@
-import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
+import { ROUTE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';
 
@@ -13,14 +13,5 @@ export function setRoute( path, query = {} ) {
 		type: ROUTE_SET,
 		path,
 		query,
-	};
-}
-
-/**
- * Action to forget what the last non-editor route was.
- */
-export function clearLastNonEditorRoute() {
-	return {
-		type: ROUTE_CLEAR_LAST_NON_EDITOR,
 	};
 }

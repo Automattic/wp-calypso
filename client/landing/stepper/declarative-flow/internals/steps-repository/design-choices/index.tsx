@@ -31,7 +31,7 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
 
-	const documentHeaderText = translate( 'Bring your vision to life' );
+	const documentHeaderText = translate( 'How would you like to design your site?' );
 	const headerText = translate(
 		'Time to build your site!{{br/}}How would you like to get started?',
 		{
@@ -72,7 +72,7 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 		<>
 			<DesignChoice
 				title={ translate( 'Choose a theme' ) }
-				description={ translate( 'Choose one of our professionally designed themes.' ) }
+				description={ translate( 'Our professionally designed themes make starting easy.' ) }
 				imageSrc={ themesIllustrationImage }
 				destination="design-setup"
 				onSelect={ handleSubmit }
@@ -82,7 +82,9 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 				<DesignChoice
 					className="design-choices__try-big-sky"
 					title={ translate( 'Create your site with AI' ) }
-					description={ translate( 'Tell our AI what you need, and watch it come to life.' ) }
+					description={ translate(
+						'Tell the AI what you need, and watch it build a custom site in seconds.'
+					) }
 					bgImageSrc={ hiBigSky }
 					destination="launch-big-sky"
 					onSelect={ ( destination ) => {

@@ -4,7 +4,7 @@ import { DataHelper } from '../..';
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
-	backLink: '.navigation-link:text("Back")',
+	backLink: '.navigation-link:text("Back"), button:text-matches("Back")',
 	dontHaveASiteButton: 'button:text-matches("choose a content platform", "i")',
 	migrationModalCancel: 'button.action-buttons__cancel',
 	// Inputs
@@ -19,7 +19,8 @@ const selectors = {
 
 	// Headers
 	setupHeader: 'h1:text("Themes")',
-	startBuildingHeader: ( text: string ) => `h1.onboarding-title:text("${ text }")`,
+	startBuildingHeader: ( text: string ) =>
+		`h1:text("${ text }"), h1.onboarding-title:text("${ text }")`,
 
 	importModal: 'div.import__confirm-modal',
 
@@ -76,6 +77,13 @@ export class StartImportFlow {
 	 */
 	async validateURLCapturePage(): Promise< void > {
 		await this.page.waitForURL( /.*setup\/site-setup\/import.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the URL capture page.
+	 */
+	async validateURLMigrationFlow(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/site-migration.*/ );
 	}
 
 	/**

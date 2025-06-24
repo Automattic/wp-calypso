@@ -37,14 +37,3 @@ export const referralsFAQContext: Callback = ( context, next ) => {
 	context.secondary = <ReferralsSidebar path={ context.path } />;
 	next();
 };
-
-export const referralsArchivedContext: Callback = ( context, next ) => {
-	context.primary = (
-		<>
-			<PageViewTracker title="Referrals > Archived" path={ context.path } />
-			<ReferralsOverview isArchiveView />
-		</>
-	);
-	context.secondary = <ReferralsSidebar path={ context.path } />;
-	next();
-};

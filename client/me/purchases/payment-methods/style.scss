@@ -80,10 +80,6 @@ $card_width: $font-body * 3.75; // roughly 60px wide
 			flex-basis: 100%; // Ensures full-width name/VPA line
 			font-size: $font-body;
 			gap: 0.5rem;
-
-			.components-badge {
-				flex-shrink: 0;
-			}
 		}
 
 		&__number,

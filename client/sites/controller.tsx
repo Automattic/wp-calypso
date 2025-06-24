@@ -59,7 +59,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 export function sitesDashboard( context: Context, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
-			background: var( --studio-gray-0 );
+			background: var( --color-main-background, #fcfcfc );
 
 			.layout__content {
 				// Add border around everything
@@ -94,7 +94,6 @@ export function sitesDashboard( context: Context, next: () => void ) {
 				.layout__primary > main {
 					background: var( --color-surface );
 					border-radius: 8px;
-					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
 					height: calc( 100vh - 32px );
 					overflow: auto;
 				}

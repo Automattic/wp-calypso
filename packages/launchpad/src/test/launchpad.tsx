@@ -46,7 +46,7 @@ describe( 'LaunchpadInternal', () => {
 		renderComponent();
 
 		jest.clearAllMocks();
-		await userEvent.click( screen.getByRole( 'button', { name: /Task 1/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Select to task 1/ } ) );
 
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_launchpad_task_clicked', {

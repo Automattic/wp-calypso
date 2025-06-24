@@ -1,0 +1,13 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-callout-overlay {
+	position: absolute;
+	min-height: calc( 100% - 2 * 161px ) !important; // Overriding VStack style
+	width: calc( 100% - 2 * $grid-unit-20 );
+	top: 0;
+	left: 0;
+	padding: 161px $grid-unit-20;
+	background: linear-gradient(180deg, rgba(252, 252, 252, 0.65) 0%, #FCFCFC 100%);
+	backdrop-filter: blur(3px);
+	z-index: 1;
+}

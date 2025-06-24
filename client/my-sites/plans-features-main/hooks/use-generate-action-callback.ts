@@ -10,6 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -18,7 +19,7 @@ import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
 import { useNonOwnerHandler } from './use-non-owner-handler';
@@ -105,12 +106,15 @@ function useUpgradeHandler( {
 
 function useDowngradeHandler( {
 	siteSlug,
+	siteUrl,
 	currentPlan,
 }: {
 	siteSlug?: string | null;
+	siteUrl?: string | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setNewMessagingChat } = useDispatch( HELP_CENTER_STORE );
+	const { setNewMessagingChat, setNavigateToOdie } = useDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
@@ -120,12 +124,23 @@ function useDowngradeHandler( {
 				return;
 			}
 
-			setNewMessagingChat( {
-				initialMessage: 'User wants to downgrade plan.',
-				siteUrl: siteSlug,
-			} );
+			if ( canConnectToZendeskMessaging ) {
+				setNewMessagingChat( {
+					initialMessage: 'User wants to downgrade plan.',
+					siteUrl,
+				} );
+			} else {
+				setNavigateToOdie();
+			}
 		},
-		[ currentPlan?.purchaseId, setNewMessagingChat, siteSlug ]
+		[
+			currentPlan?.purchaseId,
+			setNewMessagingChat,
+			siteUrl,
+			siteSlug,
+			canConnectToZendeskMessaging,
+			setNavigateToOdie,
+		]
 	);
 }
 
@@ -151,6 +166,7 @@ function useGenerateActionCallback( {
 	coupon?: string;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
@@ -164,6 +180,7 @@ function useGenerateActionCallback( {
 	const handleUpgradeClick = useUpgradeHandler( { siteSlug, coupon, cartHandler } );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
+		siteUrl: siteUrl || '',
 		currentPlan,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
@@ -215,7 +232,6 @@ function useGenerateActionCallback( {
 				await handleNonOwnerClick( { availableForPurchase } );
 				return;
 			}
-
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&

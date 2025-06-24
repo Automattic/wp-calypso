@@ -1,7 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import { Icon, external } from '@wordpress/icons';
+import { Icon, external, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
@@ -9,6 +10,7 @@ import SiteFavicon from 'calypso/blocks/site-favicon';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
@@ -65,6 +67,12 @@ export default function ItemViewHeader( {
 	const shouldDisplayVersionNumbers =
 		! itemData.hideEnvDataInHeader && isAtomic && ( wpVersion || phpVersion );
 
+	const { data: stagingSites = [], isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
+		enabled: ! itemData.hideEnvDataInHeader && isAtomic,
+	} );
+
+	const showAddStagingButton = ! isLoadingStagingSites && stagingSites.length === 0 && isAtomic;
+
 	const handlePhpVersionClick = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_php_version_click' ) );
 	};
@@ -114,6 +122,18 @@ export default function ItemViewHeader( {
 											</Button>
 										) : (
 											itemData.subtitle
+										) }
+
+										{ showAddStagingButton && isEnabled( 'hosting/staging-sites-redesign' ) && (
+											<Button
+												variant="link"
+												href={ `/staging-site/${ selectedSite?.domain }` }
+												className="hosting-dashboard-item-view__header-add-staging"
+												icon={ plus }
+												iconPosition="right"
+											>
+												{ translate( 'Add staging site' ) }
+											</Button>
 										) }
 
 										{ extraProps && extraProps.subtitleExtra ? (

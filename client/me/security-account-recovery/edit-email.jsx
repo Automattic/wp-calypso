@@ -1,8 +1,8 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -14,7 +14,6 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 	static propTypes = {
 		storedEmail: PropTypes.string,
 		onSave: PropTypes.func,
-		onCancel: PropTypes.func,
 		onDelete: PropTypes.func,
 	};
 
@@ -22,14 +21,9 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		storedEmail: null,
 	};
 
-	emailInputRef = createRef();
 	state = {
 		email: this.props.storedEmail || null,
 	};
-
-	componentDidMount() {
-		this.focusInput();
-	}
 
 	renderValidation = () => {
 		let validation = null;
@@ -59,15 +53,16 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		return (
 			<div className={ this.props.className }>
 				<FormFieldset>
+					<FormLabel htmlFor="email">{ this.props.translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
 						isError={ this.state.isInvalid }
 						onKeyUp={ this.onKeyUp }
+						id="email"
 						name="email"
 						ref={ this.emailInputRef }
 						value={ this.state.email }
 						onChange={ this.handleChange }
 					/>
-
 					{ this.renderValidation() }
 					{ this.renderExplanation() }
 				</FormFieldset>
@@ -78,15 +73,10 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 					saveText={ this.props.translate( 'Save Email' ) }
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
-					onCancel={ this.onCancel }
 				/>
 			</div>
 		);
 	}
-
-	focusInput = () => {
-		this.emailInputRef.current.focus();
-	};
 
 	isSavable = () => {
 		if ( ! this.state.email ) {
@@ -119,10 +109,6 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		}
 
 		this.props.onSave( email );
-	};
-
-	onCancel = () => {
-		this.props.onCancel();
 	};
 
 	onDelete = () => {

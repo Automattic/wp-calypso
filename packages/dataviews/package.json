@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/dataviews",
-	"version": "0.1.0",
+	"version": "0.2.1",
 	"description": "DataViews is a component that provides an API to render datasets using different types of layouts (table, grid, list, etc.).",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
@@ -15,7 +15,7 @@
 	},
 	"engines": {
 		"node": ">=18.12.0",
-		"npm": ">=8.19.2"
+		"npm": ">=8.19.4"
 	},
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -40,17 +40,18 @@
 	"sideEffects": false,
 	"dependencies": {
 		"@ariakit/react": "^0.4.15",
-		"@wordpress/base-styles": "^5.22.0",
-		"@wordpress/components": "^29.8.0",
-		"@wordpress/compose": "^7.22.0",
-		"@wordpress/data": "^10.22.0",
-		"@wordpress/element": "^6.22.0",
-		"@wordpress/i18n": "^5.22.0",
-		"@wordpress/icons": "^10.22.0",
-		"@wordpress/primitives": "^4.22.0",
-		"@wordpress/private-apis": "^1.22.0",
-		"@wordpress/warning": "^3.22.0",
+		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/compose": "^7.23.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/primitives": "^4.23.0",
+		"@wordpress/private-apis": "^1.23.0",
+		"@wordpress/warning": "^3.23.0",
 		"clsx": "^2.1.1",
+		"fast-deep-equal": "^3.1.3",
 		"remove-accents": "^0.5.0"
 	},
 	"peerDependencies": {
@@ -64,12 +65,12 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@types/jest": "^29.5.14",
-		"@wordpress/postcss-plugins-preset": "^5.22.0",
+		"@wordpress/postcss-plugins-preset": "^5.23.0",
 		"postcss": "^8.5.3",
 		"postcss-local-keyframes": "^0.0.2",
 		"sass": "1.54.0",
-		"storybook": "^8.6.9",
-		"typescript": "5.8.2"
+		"storybook": "^8.6.14",
+		"typescript": "5.8.3"
 	},
 	"scripts": {
 		"build": "yarn run build:js && yarn run build:style && yarn run build:wp",

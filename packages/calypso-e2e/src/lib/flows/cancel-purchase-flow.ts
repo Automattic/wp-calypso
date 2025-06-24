@@ -30,7 +30,7 @@ export async function cancelPurchaseFlow(
 	await page.getByRole( 'button', { name: 'Submit' } ).click();
 
 	await Promise.all( [
-		page.waitForNavigation(),
+		page.waitForNavigation( { timeout: 30 * 1000 } ),
 		page.getByRole( 'button', { name: /Submit and (remove|cancel) plan/ } ).click(),
 	] );
 }
@@ -72,7 +72,7 @@ export async function cancelAtomicPurchaseFlow(
 	}
 
 	await Promise.all( [
-		page.waitForNavigation(),
+		page.waitForNavigation( { timeout: 30 * 1000 } ),
 		page.getByRole( 'button', { name: /Submit and cancel plan/ } ).click(),
 	] );
 }

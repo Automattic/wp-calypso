@@ -21,6 +21,7 @@ class DomainSkipSuggestion extends Component {
 				hidePrice
 				onButtonClick={ this.props.onButtonClick }
 				showChevron={ false }
+				ariaLabel={ buttonContent }
 				// tracksButtonClickSource={ this.props.tracksButtonClickSource }
 			>
 				<div className="domain-skip-suggestion__domain-description">

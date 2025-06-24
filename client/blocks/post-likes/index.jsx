@@ -95,9 +95,14 @@ class PostLikes extends PureComponent {
 		} else {
 			noLikesLabel = translate( 'There are no likes on this post yet.' );
 		}
+		// Previously we only checked for sortedLikes, but this was always an array and thus truthy
+		// => bypassed the loading state. We can check for likes instead, which is falsy until
+		// loaded as an array. However, for future proofing I am treating this as if it may be
+		// initialized as an empty array and checking its length vs the count.
+		const areLikesLoading = ! likes || ( likeCount && likes?.length === 0 );
 
 		// Prevent loading for postId `0`
-		const isLoading = !! postId && ! sortedLikes;
+		const isLoading = !! postId && areLikesLoading;
 
 		const classes = clsx( 'post-likes', {
 			'has-display-names': showDisplayNames,
