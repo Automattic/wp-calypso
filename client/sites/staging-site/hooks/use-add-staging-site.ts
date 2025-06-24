@@ -8,6 +8,7 @@ interface MutationVariables {
 
 interface MutationResponse {
 	message: string;
+	id: number;
 }
 
 interface MutationError {

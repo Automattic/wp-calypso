@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -152,6 +153,11 @@ export const StagingSiteCard = ( {
 		( Boolean( stagingSite.user_has_permission ) && ! lock );
 
 	const showAddStagingSiteCard = useMemo( () => {
+		// Don't show the "Add staging site" card if the hosting/staging-sites-redesign feature flag is enabled
+		// since the functionality has been moved to the hosting dashboard header
+		if ( isEnabled( 'hosting/staging-sites-redesign' ) ) {
+			return false;
+		}
 		return hasCompletedInitialLoading && ! stagingSite.id && isStagingSiteTransferComplete === true;
 	}, [ hasCompletedInitialLoading, isStagingSiteTransferComplete, stagingSite ] );
 
