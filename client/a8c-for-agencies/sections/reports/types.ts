@@ -57,3 +57,42 @@ export type BuildReportFormData = {
 	customIntroText: string;
 	statsCheckedItems: BuildReportCheckedItemsState;
 };
+
+export interface ReportError extends Error {
+	data: {
+		status: number;
+		message: string;
+	};
+}
+
+export interface UseDuplicateReportFormDataHandlers {
+	setSelectedTimeframe: ( value: TimeframeValue ) => void;
+	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
+	setClientEmail: ( value: string ) => void;
+	setCustomIntroText: ( value: string ) => void;
+	setSendCopyToTeam: ( value: boolean ) => void;
+	setTeammateEmails: ( value: string ) => void;
+	setStartDate: ( value: string | undefined ) => void;
+	setEndDate: ( value: string | undefined ) => void;
+	setStatsCheckedItems: ( value: BuildReportCheckedItemsState ) => void;
+}
+
+export interface UseDuplicateReportFormDataReturn {
+	formData: BuildReportFormData;
+	handlers: UseDuplicateReportFormDataHandlers;
+	isLoading: boolean;
+	isDuplicating: boolean;
+	error: Error | null;
+}
+
+export interface BuildReportState {
+	sendReportMutation: { isPending: boolean };
+	reportId: number | null;
+	isDuplicateLoading: boolean;
+	isReportPending: boolean;
+	isReportError: boolean;
+	isReportErrorStatus: boolean;
+	isProcessed: boolean;
+	showValidationErrors: boolean;
+	validationErrors: Array< { field: string; message: string } >;
+}

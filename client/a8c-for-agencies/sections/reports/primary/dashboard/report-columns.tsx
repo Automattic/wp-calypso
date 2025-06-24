@@ -27,7 +27,7 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 	const statusConfig = {
 		pending: { type: 'warning', text: translate( 'Pending' ) },
 		processed: { type: 'success', text: translate( 'Ready' ) },
-		sent: { type: 'success', text: translate( 'Ready' ) },
+		sent: { type: 'success', text: translate( 'Sent' ) },
 		error: { type: 'error', text: translate( 'Error' ) },
 	};
 

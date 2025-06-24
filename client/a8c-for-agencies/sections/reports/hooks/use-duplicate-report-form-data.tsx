@@ -3,42 +3,27 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
+import { getStatsOptions } from '../lib/stat-options';
+import { getAvailableTimeframes } from '../lib/timeframes';
 import useFetchReportById from './use-fetch-report-by-id';
 import type {
 	BuildReportFormData,
 	BuildReportCheckedItemsState,
 	ReportFormAPIResponse,
-	TimeframeOption,
-	TimeframeValue,
+	UseDuplicateReportFormDataReturn,
 } from '../types';
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
-interface UseDuplicateReportFormDataReturn {
-	formData: BuildReportFormData;
-	setSelectedTimeframe: ( value: TimeframeValue ) => void;
-	setSelectedSite: ( site: A4ASelectSiteItem | null ) => void;
-	setClientEmail: ( value: string ) => void;
-	setCustomIntroText: ( value: string ) => void;
-	setSendCopyToTeam: ( value: boolean ) => void;
-	setTeammateEmails: ( value: string ) => void;
-	setStartDate: ( value: string | undefined ) => void;
-	setEndDate: ( value: string | undefined ) => void;
-	setStatsCheckedItems: ( value: BuildReportCheckedItemsState ) => void;
-	isLoading: boolean;
-	isDuplicating: boolean;
-	error: Error | null;
-}
-
-export const useDuplicateReportFormData = (
-	availableTimeframes: TimeframeOption[],
-	statsOptions: { label: string; value: string }[]
-): UseDuplicateReportFormDataReturn => {
+export const useDuplicateReportFormData = (): UseDuplicateReportFormDataReturn => {
 	const translate = useTranslate();
 	const sites = useSelector( getSites );
 
 	// Get sourceId from URL parameters
 	const sourceId = getQueryArg( window.location.href, 'sourceId' ) as unknown as number;
 	const isDuplicating = Boolean( sourceId );
+
+	const availableTimeframes = getAvailableTimeframes( translate );
+	const statsOptions = getStatsOptions( translate );
 
 	const {
 		data: reportDetails,
@@ -119,15 +104,17 @@ export const useDuplicateReportFormData = (
 
 	return {
 		formData,
-		setSelectedTimeframe,
-		setSelectedSite,
-		setClientEmail,
-		setCustomIntroText,
-		setSendCopyToTeam,
-		setTeammateEmails,
-		setStartDate,
-		setEndDate,
-		setStatsCheckedItems,
+		handlers: {
+			setSelectedTimeframe,
+			setSelectedSite,
+			setClientEmail,
+			setCustomIntroText,
+			setSendCopyToTeam,
+			setTeammateEmails,
+			setStartDate,
+			setEndDate,
+			setStatsCheckedItems,
+		},
 		isLoading,
 		isDuplicating,
 		error,
