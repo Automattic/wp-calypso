@@ -23,6 +23,7 @@ export const SITE_FIELDS = [
 	'site_owner',
 	'options',
 	'jetpack',
+	'jetpack_connection',
 	'jetpack_modules',
 ];
 
@@ -97,6 +98,7 @@ export interface Site {
 	};
 	site_owner: number;
 	jetpack: boolean;
+	jetpack_connection: boolean;
 	jetpack_modules: string[] | null;
 	hosting_provider_guess?: string;
 }

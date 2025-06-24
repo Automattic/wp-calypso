@@ -1,5 +1,6 @@
 import { DotcomFeatures } from '../data/constants';
 import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
+import { isJetpackNotAtomic, isP2 } from '../utils/site-types';
 import type { Site, User } from '../data/types';
 
 export const HostingFeatures = {
@@ -16,6 +17,29 @@ export const HostingFeatures = {
 } as const;
 
 export type HostingFeatures = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
+
+export function canManageSite( site: Site ) {
+	if ( site.is_deleted || ! site.capabilities.manage_options ) {
+		return false;
+	}
+
+	// P2 sites are not supported.
+	if ( isP2( site ) ) {
+		return false;
+	}
+
+	// VIP sites are not supported, yet.
+	if ( site.is_vip ) {
+		return false;
+	}
+
+	// Jetpack sites are not supported, yet.
+	if ( isJetpackNotAtomic( site ) ) {
+		return false;
+	}
+
+	return true;
+}
 
 // Settings -> General
 
@@ -87,8 +111,7 @@ export function canTransferSite( site: Site, user: User ) {
 		( site.jetpack && ! site.is_wpcom_atomic ) ||
 		site.is_wpcom_staging_site ||
 		site.is_vip ||
-		!! site.options?.p2_hub_blog_id ||
-		site.options?.is_wpforteams_site
+		isP2( site )
 	);
 
 	const isSiteOwner = site.site_owner === user.ID;

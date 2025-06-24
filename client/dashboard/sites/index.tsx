@@ -15,6 +15,7 @@ import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
+import { canManageSite } from './features';
 import {
 	EngagementStat,
 	LastBackup,
@@ -269,7 +270,7 @@ const getDefaultActions = ( router: AnyRouter ) => {
 				const site = sites[ 0 ];
 				window.open( `/domains/manage/${ site.slug }` );
 			},
-			isEligible: ( item: Site ) => ! item.is_deleted,
+			isEligible: ( item: Site ) => canManageSite( item ),
 		},
 		{
 			id: 'settings',
@@ -278,7 +279,7 @@ const getDefaultActions = ( router: AnyRouter ) => {
 				const site = sites[ 0 ];
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! item.is_deleted,
+			isEligible: ( item: Site ) => canManageSite( item ),
 		},
 	];
 };
