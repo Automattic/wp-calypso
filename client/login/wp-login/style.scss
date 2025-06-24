@@ -111,7 +111,7 @@ $image-height: 47px;
 }
 
 .wp-login__links,
-.wp-login__footer {
+.grav-powered-login__page-footer {
 
 	a,
 	a:visited,
@@ -160,27 +160,13 @@ $image-height: 47px;
 	}
 }
 
-.wp-login__footer {
+.grav-powered-login__page-footer {
 	position: absolute;
 	bottom: 0;
 	left: 0;
 	height: $image-height;
 	line-height: $image-height;
 	width: 100%;
-}
-
-.wp-login__footer--jetpack {
-	background: var(--color-surface);
-	border-top: solid 1px var(--color-neutral-5);
-	text-align: center;
-
-	img {
-		display: block;
-		margin: 0 auto;
-	}
-}
-
-.wp-login__footer--oauth {
 	display: flex;
 	justify-content: center;
 
@@ -527,7 +513,7 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__main-footer {
+	.wp-login__login-block-footer {
 		display: flex;
 		flex-direction: column;
 		align-self: center;
@@ -535,7 +521,7 @@ $image-height: 47px;
 		gap: 1em;
 
 		.login__lost-password-link,
-		.wp-login__main-footer-back-link {
+		.wp-login__login-block-footer-back-link {
 			font-size: $font-body-small;
 			display: inline-flex;
 			align-items: center;
@@ -544,8 +530,8 @@ $image-height: 47px;
 		}
 
 		.login__lost-password-link,
-		.wp-login__main-footer-back-link a,
-		a.wp-login__main-footer-back-link {
+		.wp-login__login-block-footer-back-link a,
+		a.wp-login__login-block-footer-back-link {
 			color: var(--studio-gray-90, #1d2327);
 			font-weight: 500;
 		}

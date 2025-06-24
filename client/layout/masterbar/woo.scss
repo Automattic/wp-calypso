@@ -724,10 +724,6 @@ $breakpoint-mobile: 660px;
 		background: #fff;
 	}
 
-	.wp-login__footer--oauth {
-		display: none;
-	}
-
 	.app-promo.magic-link-app-promo {
 		padding: 24px;
 	}
@@ -1319,7 +1315,7 @@ $breakpoint-mobile: 660px;
 			margin-bottom: 10px;
 		}
 
-		.wp-login__main-footer {
+		.wp-login__login-block-footer {
 			display: flex;
 			align-items: center;
 			width: 100%;

@@ -14,7 +14,7 @@ const recordBackToWpcomLinkClick = () => {
 	recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 };
 
-const LoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: LoginFooterProps ) => {
+const LoginBlockFooter = ( { lostPasswordLink, isLoginView, loginLink }: LoginFooterProps ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
@@ -24,14 +24,14 @@ const LoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: LoginFooterP
 
 	if ( isLoginView ) {
 		return (
-			<div className="wp-login__main-footer">
+			<div className="wp-login__login-block-footer">
 				{ lostPasswordLink }
 				{ isVIPClient && (
 					<LoggedOutFormBackLink
 						classes={ {
-							'wp-login__main-footer-back-link': true,
 							'logged-out-form__link-item': false,
 							'logged-out-form__back-link': false,
+							'wp-login__login-block-footer-back-link': true,
 						} }
 						oauth2Client={ oauth2Client }
 						recordClick={ recordBackToWpcomLinkClick }
@@ -44,4 +44,4 @@ const LoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: LoginFooterP
 	return <div className="wp-login__main-footer">{ loginLink }</div>;
 };
 
-export default LoginFooter;
+export default LoginBlockFooter;

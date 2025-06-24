@@ -363,23 +363,6 @@
 			}
 		}
 
-		.wp-login__footer--oauth {
-			align-items: center;
-			box-sizing: border-box;
-			flex-direction: column;
-			height: auto;
-			padding: 20px 20px 78px;
-
-			@include breakpoint-deprecated(">660px") {
-				flex-direction: row;
-				justify-content: space-between;
-			}
-		}
-
-		.wp-login__footer-links a {
-			color: var(--color-text);
-		}
-
 		.wp-login__links {
 			padding: 20px 0 15px;
 

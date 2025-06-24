@@ -345,10 +345,6 @@ body.is-section-signup {
 		border: none;
 	}
 
-	.wp-login__footer--oauth {
-		display: none;
-	}
-
 	.signup__step {
 		.step-wrapper__header {
 			display: flex;
@@ -559,7 +555,7 @@ body.is-section-signup {
 	}
 
 	.wp-login__container {
-		.wp-login__main-footer {
+		.wp-login__login-block-footer {
 			text-align: center;
 		}
 

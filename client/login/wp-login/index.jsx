@@ -24,11 +24,9 @@ import {
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
-	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -49,7 +47,9 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import HeadingLogo from './components/heading-logo';
 import HeadingSubText from './components/heading-subtext';
-import LoginFooter from './login-footer';
+import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
+import GravPoweredLoginPageFooter from './gravatar/grav-powered-login-page-footer';
+import LoginBlockFooter from './login-block-footer';
 
 import './style.scss';
 
@@ -135,131 +135,6 @@ export class Login extends Component {
 		}
 
 		return <LocaleSuggestions locale={ locale } path={ path } />;
-	}
-
-	renderFooter() {
-		const { isWhiteLogin, translate } = this.props;
-		const isOauthLogin = !! this.props.oauth2Client;
-
-		if ( isWhiteLogin ) {
-			return null;
-		}
-
-		return (
-			<div
-				className={ clsx( 'wp-login__footer', {
-					'wp-login__footer--oauth': isOauthLogin,
-					'wp-login__footer--jetpack': ! isOauthLogin,
-				} ) }
-			>
-				{ isOauthLogin ? (
-					<div className="wp-login__footer-links">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/about/' ) }
-							rel="noopener noreferrer"
-							target="_blank"
-							title={ translate( 'About' ) }
-						>
-							{ translate( 'About' ) }
-						</a>
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							rel="noopener noreferrer"
-							target="_blank"
-							title={ translate( 'Privacy' ) }
-						>
-							{ translate( 'Privacy' ) }
-						</a>
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							rel="noopener noreferrer"
-							target="_blank"
-							title={ translate( 'Terms of Service' ) }
-						>
-							{ translate( 'Terms of Service' ) }
-						</a>
-					</div>
-				) : (
-					<img
-						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
-						alt="Powered by Jetpack"
-					/>
-				) }
-			</div>
-		);
-	}
-
-	renderGravPoweredLoginBlockFooter() {
-		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
-
-		const isGravatar = isGravatarOAuth2Client( oauth2Client );
-		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
-		const isFromGravatarQuickEditor = isGravatar && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
-		const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQuery?.email_address );
-		const shouldShowSignupLink =
-			! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
-		const magicLoginUrl = login( {
-			locale,
-			twoFactorAuthType: 'link',
-			oauth2ClientId: currentQuery?.client_id,
-			redirectTo: currentQuery?.redirect_to,
-			gravatarFrom: currentQuery?.gravatar_from,
-			gravatarFlow: isGravatarFlow,
-			emailAddress: currentQuery?.email_address,
-		} );
-		const currentUrl = new URL( window.location.href );
-		currentUrl.searchParams.append( 'lostpassword_flow', true );
-		const lostPasswordUrl = addQueryArgs(
-			{
-				redirect_to: currentUrl.toString(),
-				client_id: currentQuery?.client_id,
-			},
-			lostPassword( { locale } )
-		);
-		const signupUrl = getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
-
-		return (
-			<>
-				<hr className="grav-powered-login__divider" />
-				<div className="grav-powered-login__footer">
-					<a
-						href={ magicLoginUrl }
-						onClick={ () =>
-							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
-						}
-					>
-						{ isGravatar
-							? translate( 'Email me a login code.' )
-							: translate( 'Email me a login link.' ) }
-					</a>
-					<a
-						href={ lostPasswordUrl }
-						onClick={ () =>
-							this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
-						}
-					>
-						{ translate( 'Lost your password?' ) }
-					</a>
-					{ shouldShowSignupLink && (
-						<div>
-							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
-								components: {
-									signupLink: <a href={ signupUrl } />,
-								},
-							} ) }
-						</div>
-					) }
-					<div>
-						{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
-							components: {
-								a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
-							},
-						} ) }
-					</div>
-				</div>
-			</>
-		);
 	}
 
 	recordResetPasswordLinkClick = () => {
@@ -409,9 +284,9 @@ export class Login extends Component {
 				fromSite={ fromSite }
 				footer={
 					isGravPoweredLoginPage ? (
-						this.renderGravPoweredLoginBlockFooter()
+						<GravPoweredLoginBlockFooter />
 					) : (
-						<LoginFooter
+						<LoginBlockFooter
 							action={ action }
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
@@ -552,7 +427,7 @@ export class Login extends Component {
 					</Step.CenteredColumnLayout>
 				) }
 				{ ! isWhiteLogin && mainContent }
-				{ this.renderFooter() }
+				{ ! isWhiteLogin && <GravPoweredLoginPageFooter /> }
 			</>
 		);
 	}
