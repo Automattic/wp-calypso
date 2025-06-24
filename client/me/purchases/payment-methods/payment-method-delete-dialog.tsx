@@ -73,16 +73,16 @@ const PaymentMethodDeleteDialog = ( {
 								</tr>
 							</thead>
 							<tbody>
-								{ associatedSubscriptions.map( ( subscription: Purchase ) => (
-									<tr key={ subscription.id }>
+								{ associatedSubscriptions.map( ( purchase: Purchase ) => (
+									<tr key={ purchase.id }>
 										<td className="payment-method-delete-dialog__affected-subscription-details-product">
-											<strong>{ subscription.productName }</strong>
+											<strong>{ purchase.productName }</strong>
 											<span className="payment-method-delete-dialog__affected-subscription-domain">
-												{ subscription.meta || subscription.domain }
+												{ purchase.meta || purchase.domain }
 											</span>
 										</td>
 										<td className="payment-method-delete-dialog__affected-subscription-details-renew-date fixed">
-											{ moment( subscription.renewDate ).format( 'll' ) }
+											{ moment( purchase.renewDate ).format( 'll' ) }
 										</td>
 									</tr>
 								) ) }
