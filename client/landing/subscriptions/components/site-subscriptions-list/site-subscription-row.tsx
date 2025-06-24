@@ -1,10 +1,10 @@
 import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, FormToggle } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo, useRef, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import {
@@ -20,10 +20,18 @@ import {
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	addRecommendedBlogsSite,
+	removeRecommendedBlogsSite,
+	requestRecommendedBlogsListItems,
+} from 'calypso/state/reader/lists/actions';
+import { isSiteInRecommendedBlogsList } from 'calypso/state/reader/lists/selectors';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
+import type { AppState } from 'calypso/types';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -97,6 +105,29 @@ const SiteSubscriptionRow = ( {
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const currentUserName = useSelector( getCurrentUserName );
+
+	// Check if site is in recommended blogs list
+	const isInRecommendedList = useSelector( ( state: AppState ) =>
+		currentUserName
+			? isSiteInRecommendedBlogsList( state, currentUserName, Number( blog_id ) )
+			: false
+	);
+
+	const [ isRecommended, setIsRecommended ] = useState( isInRecommendedList );
+	const [ isUpdatingRecommendation, setIsUpdatingRecommendation ] = useState( false );
+
+	// Request recommended blogs list items when user is available
+	useEffect( () => {
+		if ( currentUserName ) {
+			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
+		}
+	}, [ currentUserName, dispatch ] );
+
+	// Update local state when selector value changes
+	useEffect( () => {
+		setIsRecommended( isInRecommendedList );
+	}, [ isInRecommendedList ] );
 
 	const isCompactLayout = layout === 'compact';
 
@@ -265,6 +296,24 @@ const SiteSubscriptionRow = ( {
 		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
 	};
 
+	const handleRecommendToggle = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		if ( isUpdatingRecommendation || ! currentUserName || typeof currentUserName !== 'string' ) {
+			return;
+		}
+
+		const newValue = event.target.checked;
+		setIsUpdatingRecommendation( true );
+		setIsRecommended( newValue );
+
+		if ( newValue ) {
+			dispatch( addRecommendedBlogsSite( Number( blog_id ), currentUserName ) );
+		} else {
+			dispatch( removeRecommendedBlogsSite( Number( blog_id ), currentUserName ) );
+		}
+
+		setIsUpdatingRecommendation( false );
+	};
+
 	return ! isDeleted ? (
 		<HStack as="li" alignment="center" className="row site-subscription-row" role="row">
 			<span className="title-cell" role="cell">
@@ -353,6 +402,13 @@ const SiteSubscriptionRow = ( {
 			) }
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
+			</span>
+			<span className="recommend-cell" role="cell">
+				<FormToggle
+					checked={ isRecommended }
+					onChange={ handleRecommendToggle }
+					disabled={ ! currentUserName || typeof currentUserName !== 'string' }
+				/>
 			</span>
 			<span className="unsubscribe-action-cell" role="cell">
 				<Button variant="secondary" onClick={ onUnsubscribe }>

@@ -34,7 +34,7 @@
 		.title-cell {
 			display: flex;
 			align-items: center;
-			flex: 1.83;
+			flex: 2.3;
 			min-width: 0;
 		}
 
@@ -75,15 +75,9 @@
 			@extend %site-subscriptions-list-site-url;
 		}
 
-		.title-cell,
-		.email-frequency-cell,
-		.date-cell,
-		.new-posts-cell,
-		.new-comments-cell,
-		.unsubscribe-action-cell {
+		[role="columnheader"] {
 			@extend %site-subscriptions-list-default-text;
 		}
-
 
 		.new-posts-cell,
 		.new-comments-cell {
@@ -100,6 +94,10 @@
 			.red {
 				fill: var(--color-error);
 			}
+		}
+
+		.recommend-cell {
+			display: flex;
 		}
 
 		.actions-cell {
@@ -121,7 +119,7 @@
 	}
 
 	@media (max-width: $break-xlarge) {
-		.new-comments-cell {
+		.new-comments-cell, .recommend-cell {
 			display: none;
 		}
 	}
