@@ -7,10 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
-import {
-	useGetLockQuery,
-	USE_STAGING_SITE_LOCK_QUERY_KEY,
-} from 'calypso/sites/staging-site/hooks/use-get-lock-query';
+import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,12 +19,14 @@ import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
 	isAtomic: boolean;
+	isStagingSite: boolean;
 	hideEnvDataInHeader?: boolean;
 }
 
 export default function HeaderStagingSiteButton( {
 	siteId,
 	isAtomic,
+	isStagingSite,
 	hideEnvDataInHeader = false,
 }: HeaderStagingSiteButtonProps ) {
 	const dispatch = useDispatch();
@@ -37,7 +36,7 @@ export default function HeaderStagingSiteButton( {
 	// Notice IDs for staging site operations
 	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
-	const { data: stagingSites = [], isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
+	const { data: stagingSites = [] } = useStagingSite( siteId, {
 		enabled: ! hideEnvDataInHeader && isAtomic,
 	} );
 
@@ -78,19 +77,7 @@ export default function HeaderStagingSiteButton( {
 		}
 	);
 
-	const { data: lock, isLoading: isLoadingLockQuery } = useGetLockQuery( siteId, {
-		enabled: isAtomic,
-		refetchInterval: () => {
-			return isLoadingAddStagingSite ? 5000 : 0;
-		},
-	} );
-
-	const showAddStagingButton =
-		! isLoadingStagingSites &&
-		! isLoadingLockQuery &&
-		stagingSites.length === 0 &&
-		isAtomic &&
-		! lock;
+	const showAddStagingButton = stagingSites.length === 0 && isAtomic && ! isStagingSite;
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );

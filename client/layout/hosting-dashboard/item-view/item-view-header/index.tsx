@@ -120,6 +120,7 @@ export default function ItemViewHeader( {
 										<HeaderStagingSiteButton
 											siteId={ siteId }
 											isAtomic={ isAtomic }
+											isStagingSite={ isStagingSite }
 											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
 										/>
 
