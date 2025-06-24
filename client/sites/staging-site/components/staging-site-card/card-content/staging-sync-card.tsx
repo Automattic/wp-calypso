@@ -18,7 +18,7 @@ import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useCheckSyncStatus } from '../../../hooks/use-site-sync-status';
 import { ConfirmationModal } from '../confirmation-modal';
 import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
@@ -160,6 +160,7 @@ const StagingToProductionSync = ( {
 	isSqlsOptionDisabled,
 	isSiteWooStore,
 	isSqlSyncOptionChecked,
+	stagingSiteId,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -172,6 +173,7 @@ const StagingToProductionSync = ( {
 	isSqlsOptionDisabled: boolean;
 	isSiteWooStore?: boolean;
 	isSqlSyncOptionChecked?: boolean;
+	stagingSiteId: number;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -233,7 +235,7 @@ const StagingToProductionSync = ( {
 
 	return (
 		<>
-			<QueryRewindState siteId={ 245123902 } />
+			<QueryRewindState siteId={ stagingSiteId } />
 			{ showSyncPanel && (
 				<div className="staging-site-card">
 					<OptionsTreeTitle>{ translate( 'Synchronize this data:' ) }</OptionsTreeTitle>
@@ -503,6 +505,7 @@ export const SiteSyncCard = ( {
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
+	const stagingSiteId = useSelector( getSelectedSiteId ) || 0;
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
@@ -523,8 +526,9 @@ export const SiteSyncCard = ( {
 	}, [] );
 
 	const browserCheckList = useSelector( ( state ) =>
-		getBackupBrowserCheckList( state, productionSiteId )
+		getBackupBrowserCheckList( state, stagingSiteId )
 	);
+
 	const onPushInternal = useCallback( () => {
 		resetSyncStatus();
 		dispatch( removeNotice( stagingSiteSyncSuccess ) );
@@ -635,6 +639,7 @@ export const SiteSyncCard = ( {
 					isSqlsOptionDisabled={ false }
 					isSiteWooStore={ isSiteWooStore }
 					isSqlSyncOptionChecked={ isSqlSyncOptionChecked }
+					stagingSiteId={ stagingSiteId }
 				/>
 			) }
 			{ selectedOption !== actionForType && (
