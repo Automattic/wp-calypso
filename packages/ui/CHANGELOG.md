@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-- `DateCalendar`: Ensure proper stacking context and background to support pseudo-element selection styles
+- `DateCalendar` and `DateRangeCalendar`: Ensure proper stacking context and background to support pseudo-element selection styles ([#104401](https://github.com/Automattic/wp-calypso/pull/104401)).
 
 ## 1.0.1
 
