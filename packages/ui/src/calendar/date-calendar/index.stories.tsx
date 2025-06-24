@@ -97,13 +97,6 @@ const meta: Meta< typeof DateCalendar > = {
 		onMonthChange: fn(),
 		onSelect: fn(),
 	},
-	decorators: [
-		( Story ) => (
-			<div style={ { background: '#f0f0f0', padding: '8px' } }>
-				<Story />
-			</div>
-		),
-	],
 };
 export default meta;
 
