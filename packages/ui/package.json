@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/ui",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Automattic Design System UI components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
