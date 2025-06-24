@@ -191,7 +191,10 @@ function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_sites_plan_renew_nag_impression" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
+				properties={ { product_slug: site.plan?.product_slug, source } }
+			/>
 			<ExternalLink
 				href={
 					isTrial
