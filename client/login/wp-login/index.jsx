@@ -347,7 +347,6 @@ export class Login extends Component {
 			isWCCOM,
 			isBlazePro,
 			isWooJPC,
-			action,
 			isLoginView,
 		} = this.props;
 
@@ -357,12 +356,7 @@ export class Login extends Component {
 
 		if ( isSocialFirst ) {
 			return (
-				<LoginFooter
-					action={ action }
-					isLoginView={ isLoginView }
-					signupUrl={ signupUrl }
-					lostPasswordLink={ this.getLostPasswordLink() }
-				/>
+				<LoginFooter isLoginView={ isLoginView } lostPasswordLink={ this.getLostPasswordLink() } />
 			);
 		}
 
