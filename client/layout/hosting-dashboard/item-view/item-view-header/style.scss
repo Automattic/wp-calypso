@@ -115,6 +115,12 @@ $blueberry-color: #3858e9;
 							outline: thin dotted;
 						}
 					}
+
+					> span {
+						display: inline-flex;
+						align-items: center;
+						height: 24px;
+					}
 				}
 			}
 		}
