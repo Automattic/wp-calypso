@@ -22,7 +22,7 @@
 	background-color: colors.$white;
 	font-size: 13px;
 	font-weight: 400;
-	z-index: 0; // Required to ensure the calendar is rendered above the background.
+	z-index: 0; // Create a stacking context and render on top of the background.
 
 	*, *::before, *::after {
 		box-sizing: border-box;
