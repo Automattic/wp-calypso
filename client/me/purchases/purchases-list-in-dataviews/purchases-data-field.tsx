@@ -159,20 +159,18 @@ export function getPurchasesFieldDefinitions( {
 				);
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const hasTransferredOwnership = isTransferredOwnership(
+					item.id,
+					transferredOwnershipPurchases
+				);
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
-							{ isTransferredOwnership( item.id, transferredOwnershipPurchases ) ? (
+							{ hasTransferredOwnership ? (
 								<div>
 									{ getDisplayName( item ) }
 									&nbsp;
-									<OwnerInfo
-										purchase={ item }
-										isTransferredOwnership={ isTransferredOwnership(
-											item.id,
-											transferredOwnershipPurchases
-										) }
-									/>
+									<OwnerInfo purchase={ item } isTransferredOwnership={ hasTransferredOwnership } />
 								</div>
 							) : (
 								<Button
