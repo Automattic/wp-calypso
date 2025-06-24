@@ -25,6 +25,8 @@ import {
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
 	OPERATOR_BETWEEN,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
 } from './constants';
 import { normalizeFields } from './normalize-fields';
 import type { Field, View } from './types';
@@ -141,6 +143,24 @@ export function filterSortAndPaginate< Item >(
 				} else if ( filter.operator === OPERATOR_IS_NOT ) {
 					filteredData = filteredData.filter( ( item ) => {
 						return filter.value !== field.getValue( { item } );
+					} );
+				} else if (
+					filter.operator === OPERATOR_ON &&
+					filter.value !== undefined
+				) {
+					const filterDate = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldDate = getDate( field.getValue( { item } ) );
+						return filterDate.getTime() === fieldDate.getTime();
+					} );
+				} else if (
+					filter.operator === OPERATOR_NOT_ON &&
+					filter.value !== undefined
+				) {
+					const filterDate = getDate( filter.value );
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldDate = getDate( field.getValue( { item } ) );
+						return filterDate.getTime() !== fieldDate.getTime();
 					} );
 				} else if (
 					filter.operator === OPERATOR_LESS_THAN &&

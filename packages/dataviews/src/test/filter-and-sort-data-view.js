@@ -469,6 +469,103 @@ describe( 'filters', () => {
 		).toBe( true );
 	} );
 
+	it( 'should filter using ON operator for datetime with exact date match', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'on',
+						value: '2020-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect( result.length ).toBe( 2 );
+		expect( result[ 0 ].title ).toBe( 'Neptune' );
+	} );
+
+	it( 'should filter using ON operator for datetime with different date formats', () => {
+		// Test that '2019-03-01T00:00:00Z' matches '2019-03-01'
+		const testData = [
+			{ title: 'Test Item 1', date: '2019-03-01T00:00:00Z' },
+			{ title: 'Test Item 2', date: '2019-03-02' },
+		];
+		const testFields = [
+			{
+				id: 'date',
+				type: 'datetime',
+				getValue: ( { item } ) => item.date,
+			},
+		];
+
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'on',
+						value: '2019-03-01',
+					},
+				],
+			},
+			testFields
+		);
+		expect( result.length ).toBe( 1 );
+		expect( result[ 0 ].title ).toBe( 'Test Item 1' );
+	} );
+
+	it( 'should filter using NOT_ON operator for datetime', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'notOn',
+						value: '2020-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect( result.length ).toBe( 9 );
+		expect( result.map( ( r ) => r.title ) ).not.toContain( 'Neptune' );
+	} );
+
+	it( 'should filter using NOT_ON operator for datetime with different date formats', () => {
+		// Test that '2019-03-01T00:00:00Z' does not match '2019-03-02'
+		const testData = [
+			{ title: 'Test Item 1', date: '2019-03-01T00:00:00Z' },
+			{ title: 'Test Item 2', date: '2019-03-02T00:00:00Z' },
+		];
+		const testFields = [
+			{
+				id: 'date',
+				type: 'datetime',
+				getValue: ( { item } ) => item.date,
+			},
+		];
+
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'notOn',
+						value: '2019-03-01',
+					},
+				],
+			},
+			testFields
+		);
+		expect( result.length ).toBe( 1 );
+		expect( result[ 0 ].title ).toBe( 'Test Item 2' );
+	} );
 	it( 'should filter numbers inclusively between min and max using BETWEEN operator', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,

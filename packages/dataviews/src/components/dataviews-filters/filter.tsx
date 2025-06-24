@@ -48,6 +48,8 @@ import {
 	OPERATOR_BEFORE_INC,
 	OPERATOR_AFTER_INC,
 	OPERATOR_BETWEEN,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
 } from '../../constants';
 import type {
 	Filter,
@@ -317,6 +319,29 @@ const FilterText = ( {
 		);
 	}
 
+	if ( filterInView?.operator === OPERATOR_ON ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is on: 2024-01-01". */
+				__( '<Name>%1$s is on: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_NOT_ON ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is not on: 2024-01-01". */
+				__( '<Name>%1$s is not on: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
 	return sprintf(
 		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
 		__( 'Unknown status for %1$s' ),

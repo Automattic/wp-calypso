@@ -84,7 +84,9 @@ export type Operator =
 	| 'contains'
 	| 'notContains'
 	| 'startsWith'
-	| 'between';
+	| 'between'
+	| 'on'
+	| 'notOn';
 
 export type FieldType =
 	| 'text'

@@ -9,8 +9,8 @@ import type {
 } from '../types';
 import { renderFromElements } from '../utils';
 import {
-	OPERATOR_IS,
-	OPERATOR_IS_NOT,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
 	OPERATOR_BEFORE,
 	OPERATOR_AFTER,
 	OPERATOR_BEFORE_INC,
@@ -47,16 +47,16 @@ export default {
 	enableSorting: true,
 	filterBy: {
 		defaultOperators: [
-			OPERATOR_IS,
-			OPERATOR_IS_NOT,
+			OPERATOR_ON,
+			OPERATOR_NOT_ON,
 			OPERATOR_BEFORE,
 			OPERATOR_AFTER,
 			OPERATOR_BEFORE_INC,
 			OPERATOR_AFTER_INC,
 		],
 		validOperators: [
-			OPERATOR_IS,
-			OPERATOR_IS_NOT,
+			OPERATOR_ON,
+			OPERATOR_NOT_ON,
 			OPERATOR_BEFORE,
 			OPERATOR_AFTER,
 			OPERATOR_BEFORE_INC,
