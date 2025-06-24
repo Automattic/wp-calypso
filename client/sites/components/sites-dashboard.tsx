@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -43,6 +44,7 @@ import {
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
 } from '../onboarding-tours';
+import DashboardBackportSitesList from '../v2';
 import { OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
@@ -448,16 +450,20 @@ const SitesDashboard = ( {
 						sitesCount={ paginatedSites.length }
 					/>
 
-					<DotcomSitesDataViews
-						sites={ paginatedSites }
-						siteType={ siteType }
-						isLoading={ isLoading || ! initialSortApplied }
-						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-						selectedItem={ selectedSite }
-						sitePreviewPane={ sitePreviewPane }
-					/>
+					{ ! selectedSite && isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
+						<DashboardBackportSitesList />
+					) : (
+						<DotcomSitesDataViews
+							sites={ paginatedSites }
+							siteType={ siteType }
+							isLoading={ isLoading || ! initialSortApplied }
+							paginationInfo={ getSitesPagination( filteredSites, perPage ) }
+							dataViewsState={ dataViewsState }
+							setDataViewsState={ setDataViewsState }
+							selectedItem={ selectedSite }
+							sitePreviewPane={ sitePreviewPane }
+						/>
+					) }
 				</LayoutColumn>
 			) }
 

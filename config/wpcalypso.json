@@ -37,6 +37,7 @@
 		"current-site/notice": true,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-settings": true,
+		"dashboard/v2/backport/sites-list": false,
 		"design-picker/use-assembler-styles": true,
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
