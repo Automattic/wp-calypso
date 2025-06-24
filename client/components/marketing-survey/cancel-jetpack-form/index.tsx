@@ -74,7 +74,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 
 		return steps.CANCELLATION_REASON_STEP;
-	}, [ flowType ] );
+	}, [ flowType, purchase ] );
 	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
@@ -400,18 +400,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 */
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
-		const { cancellationCompleted, cancellationMessage } = props;
+		const { cancellationMessage } = props;
 
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return (
 				<div className="cancel-jetpack-form__confirm-step">
-					{ cancellationCompleted && cancellationMessage && (
-						<div className="cancel-jetpack-form__notice-container">
-							<Notice status="is-success" className="cancel-jetpack-form__notice" theme="light">
-								{ cancellationMessage }
-							</Notice>
-						</div>
-					) }
 					<FormattedHeader
 						brandFont
 						headerText={ translate( 'Sorry to see you go' ) }
@@ -450,11 +443,19 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// follow similar pattern used in the Jetpack disconnection flow
 			// make sure the user has the ability to skip the question
 			return (
-				<JetpackCancellationSurvey
-					onAnswerChange={ onSurveyAnswerChange }
-					selectedAnswerId={ surveyAnswerId }
-					isAkismet={ !! props?.isAkismet }
-				/>
+				<>
+					<div className="cancel-jetpack-form__notice-container">
+						<Notice status="is-success" className="cancel-jetpack-form__notice" theme="light">
+							{ cancellationMessage }
+						</Notice>
+					</div>
+
+					<JetpackCancellationSurvey
+						onAnswerChange={ onSurveyAnswerChange }
+						selectedAnswerId={ surveyAnswerId }
+						isAkismet={ !! props?.isAkismet }
+					/>
+				</>
 			);
 		}
 
