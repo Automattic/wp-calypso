@@ -275,7 +275,7 @@ class StatsSummary extends Component {
 			case 'posts':
 				title = StatsStrings.posts.title;
 				path = 'posts';
-				statType = getValidQueryViewType( moduleQuery?.viewType );
+				statType = getValidQueryViewType( moduleQuery?.viewType, supportsArchiveStats );
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
