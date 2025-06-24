@@ -43,6 +43,28 @@ form {
 				margin: 0;
 			}
 
+/*			.card.login__form:lang(ar),
+			.card.login__form:lang(he),
+			.card.login__form:lang(id),
+			.card.login__form:lang(it),
+			.card.login__form:lang(ja),
+			.card.login__form:lang(pt-br),
+			.card.login__form:lang(tr),
+			.card.auth-form__social:lang(ar),
+			.card.auth-form__social:lang(he),
+			.card.auth-form__social:lang(id),
+			.card.auth-form__social:lang(it),
+			.card.auth-form__social:lang(ja),
+			.card.auth-form__social:lang(pt-br),
+			.card.auth-form__social:lang(tr) {
+				flex-shrink: 0;
+			}*/
+
+			.card.login__form:not(:lang(en)),
+			.card.auth-form__social:not(:lang(en)) {
+				flex-shrink: 0;
+			}
+
 			.card.login__form {
 				display: flex;
 				flex-direction: column;
