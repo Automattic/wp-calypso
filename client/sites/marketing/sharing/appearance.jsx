@@ -145,6 +145,7 @@ class SharingButtonsAppearance extends Component {
 						text={ translate(
 							'Give your readers the ability to show appreciation for your posts.'
 						) }
+						supportPostId={ 7294 }
 						link={ localizeUrl( 'https://wordpress.com/support/likes/' ) }
 						privacyLink={ false }
 						position="bottom left"

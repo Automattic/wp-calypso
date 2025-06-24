@@ -86,6 +86,7 @@
 		"login/magic-login": true,
 		"login/use-magic-code": true,
 		"mailchimp": true,
+		"marketing-force-facebook-display": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,

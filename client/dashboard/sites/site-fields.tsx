@@ -1,16 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	ExternalLink,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
+import { useAnalytics } from '../app/analytics';
+import { useAuth } from '../app/auth';
 import { siteBackupLastEntryQuery } from '../app/queries/site-backups';
 import { siteMediaStorageQuery } from '../app/queries/site-media-storage';
 import { sitePHPVersionQuery } from '../app/queries/site-php-version';
 import { siteEngagementStatsQuery } from '../app/queries/site-stats';
 import { siteUptimeQuery } from '../app/queries/site-uptime';
+import ComponentViewTracker from '../components/component-view-tracker';
 import { TextBlur } from '../components/text-blur';
 import TimeSince from '../components/time-since';
 import { JetpackModules } from '../data/constants';
 import { hasAtomicFeature, hasJetpackModule } from '../utils/site-features';
+import { getSiteStatusLabel } from '../utils/site-status';
 import { HostingFeatures } from './features';
+import { isSitePlanTrial } from './plans';
 import type { Site } from '../data/types';
 
 function IneligibleIndicator() {
@@ -147,4 +157,99 @@ export function MediaStorage( { site }: { site: Site } ) {
 	);
 
 	return <span ref={ ref }>{ ! isLoading ? value : <LoadingIndicator label="100%" /> }</span>;
+}
+
+function SiteLaunchNag( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
+	// uses `overflow:hidden` to prevent any of the fields from overflowing.
+	return (
+		<>
+			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
+			<ExternalLink
+				href={ `/home/${ site.slug }` }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
+				} }
+			>
+				{ getSiteStatusLabel( site ) }
+			</ExternalLink>
+		</>
+	);
+}
+
+function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
+	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
+
+	if ( site.site_owner !== user.ID ) {
+		return null;
+	}
+
+	const isTrial = isSitePlanTrial( site );
+
+	return (
+		<>
+			<ComponentViewTracker
+				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
+				properties={ { product_slug: site.plan?.product_slug, source } }
+			/>
+			<ExternalLink
+				href={
+					isTrial
+						? `/plans/${ site.slug }`
+						: `/checkout/${ site.slug }/${ site.plan?.product_slug }`
+				}
+				onClick={ () => {
+					recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', {
+						product_slug: site.plan?.product_slug,
+						source,
+					} );
+				} }
+			>
+				{ isTrial ? __( 'Upgrade' ) : __( 'Renew plan' ) }
+			</ExternalLink>
+		</>
+	);
+}
+
+export function Status( { site }: { site: Site } ) {
+	if ( site.is_deleted ) {
+		return <Text isDestructive>{ __( 'Deleted' ) }</Text>;
+	}
+
+	if ( site.plan?.expired ) {
+		return (
+			<VStack spacing={ 1 }>
+				<Text isDestructive>{ __( 'Plan expired' ) }</Text>
+				<PlanRenewNag site={ site } source="status" />
+			</VStack>
+		);
+	}
+
+	if ( site.launch_status === 'unlaunched' ) {
+		return <SiteLaunchNag site={ site } />;
+	}
+
+	return getSiteStatusLabel( site );
+}
+
+export function Plan( { site }: { site: Site } ) {
+	if ( site.plan?.expired ) {
+		return (
+			<VStack spacing={ 1 }>
+				<Text isDestructive>
+					{ sprintf(
+						/* translators: %s: plan name */
+						__( '%s-expired' ),
+						site.plan?.product_name_short
+					) }
+				</Text>
+				<PlanRenewNag site={ site } source="plan" />
+			</VStack>
+		);
+	}
+
+	return site.plan?.product_name_short;
 }

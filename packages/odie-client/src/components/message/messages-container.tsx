@@ -16,7 +16,12 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
+import {
+	interactionHasZendeskEvent,
+	interactionHasEnded,
+	hasCSATMessage,
+	hasSubmittedCSATRating,
+} from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -154,6 +159,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
+	const chatHasCSATMessage = hasCSATMessage( chat );
+	const displayCSAT = chatHasCSATMessage && ! hasSubmittedCSATRating( chat );
 	return (
 		<>
 			<div
@@ -196,7 +203,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								! chatHasEnded &&
 								! message.context?.flags?.is_error_message;
 
-							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
+							const displayChatWithSupportEndedLabel =
+								! chatHasCSATMessage && ! nextMessage && chatHasEnded;
 
 							return (
 								<ChatMessage
@@ -209,6 +217,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 									) }
 									displayChatWithSupportLabel={ displayChatWithSupportLabel }
 									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
+									displayCSAT={ displayCSAT }
 								/>
 							);
 						} ) }

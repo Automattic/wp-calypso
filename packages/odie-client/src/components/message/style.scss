@@ -213,6 +213,7 @@ $blueberry-color: #3858e9;
 		flex-wrap: wrap;
 		gap: 8px;
 		flex-direction: row;
+
 		.odie-introduction-message-content__conversation_feedback {
 			flex: 2;
 		}
@@ -224,6 +225,84 @@ $blueberry-color: #3858e9;
 				gap: 4px;
 			}
 		}
+
+		.odie-conversation__feedback {
+			width: 100%;
+			margin-left: 30px;
+			display: flex;
+			gap: 76px;
+			align-items: center;
+
+			&.has_message {
+				display: none;
+			}
+
+			p {
+				background-color: unset !important;
+				font-weight: 600;
+			}
+
+			.odie-conversation-feedback__thumbs {
+				display: flex;
+				gap: 8px;
+
+				button {
+					border: solid 0.5px var(--studio-gray-5);
+					padding: 6px;
+				}
+			}
+		}
+
+		.odie-rating-feedback-message {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			padding: 8px 0;
+
+			> div {
+				border-radius: 8px 8px 0 8px; /* stylelint-disable-line scales/radii */
+				background: var(--studio-wordpress-blue, #3858e9);
+				width: 80%;
+				padding: 16px;
+				max-width: 256px;
+				box-sizing: border-box;
+				color: var(--studio-white);
+				font-size: 0.875rem;
+			}
+		}
+
+
+		.odie-conversation-feedback__message {
+			padding: 12px 44px;
+
+			h3 {
+				font-weight: 500;
+				line-height: 24px;
+			}
+
+			p {
+				padding: 12px 0;
+				background-color: unset !important;
+				color: var( --studio-gray-80 );
+				line-height: 20px;
+			}
+
+			.odie-conversation-feedback__reason {
+				padding-bottom: 12px;
+			}
+
+			button.is-primary {
+				margin-top: 10px;
+    			margin-right: 8px;
+			}
+		}
+	}
+
+	.odie-conversation__feedback-loading {
+		width: 100%;
+		text-align: center;
+		margin: 12px;
 	}
 }
 
