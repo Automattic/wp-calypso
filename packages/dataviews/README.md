@@ -642,6 +642,21 @@ Parameters:
 
 Returns a boolean indicating if the item is valid (true) or not (false).
 
+### `getAllValidationErrors`
+
+Utility is used to collect all validation errors for the given item according to the current fields and form configuration.
+
+Parameters:
+
+-   `item`: the item, as described in the "data" property of DataForm.
+-   `fields`: the fields config, as described in the "fields" property of DataForm.
+-   `form`: the form config, as described in the "form" property of DataForm.
+
+Returns an array of validation error objects, where each object contains:
+-   `field`: the unique identifier of the field that failed validation.
+-   `messages`: array of error messages describing the validation failures.
+
+
 ## Actions API
 
 ### `id`
@@ -1052,15 +1067,37 @@ Example:
 
 Function to validate a field's value.
 
--   Type: function.
+-   Type: function or object.
 -   Optional.
--   Args
+-   Args (when function):
     -   `item`: the data to validate
     -   `context`: an object containing the following props:
         -   `elements`: the elements defined by the field
 -   Returns a boolean, indicating if the field is valid or not.
 
-Example:
+The `isValid` property supports two validation approaches:
+
+1. **Function-based validation**: A callback function that receives the item and optional context to perform custom validation logic.
+
+2. **Rule-based validation**: An object with validation rules that can be easily serialized and stored.
+
+#### Rule-based validation
+
+When using rule-based validation, you can specify validation rules as an object:
+
+```js
+{
+	isValid: {
+		isRequired: true
+	}
+}
+```
+
+**Available rules:**
+
+-   `isRequired`: boolean - When `true`, the field must have a value that is not `undefined`, `null`, or an empty string. If the field is empty, it will generate the error message `"{field.id} is required"`.
+
+#### Function-based validation
 
 ```js
 // Custom isValid function.
@@ -1071,22 +1108,7 @@ Example:
 }
 ```
 
-```js
-// If the field defines a type,
-// it'll get a default isValid function for the type.
-{
-	type: 'number',
-}
-```
-
-```js
-// Even if the field provides a type,
-// the field can override the default isValid function.
-{
-	type: 'number',
-	isValid: ( item, context ) => { /* Custom function. */ }
-}
-```
+**Note:** Function-based validation only returns `true` or `false` and does not generate error messages.
 
 ### `isVisible`
 
