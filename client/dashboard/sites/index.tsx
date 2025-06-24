@@ -1,23 +1,29 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Modal, ExternalLink } from '@wordpress/components';
+import { useNavigate, useRouter, Link } from '@tanstack/react-router';
+import { __experimentalText as Text, Button, Modal, Icon } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
+import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { useAnalytics } from '../app/analytics';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
-import ComponentViewTracker from '../components/component-view-tracker';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import TimeSince from '../components/time-since';
-import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import AddNewSite from './add-new-site';
-import { EngagementStat, Uptime, PHPVersion, MediaStorage } from './site-fields';
+import {
+	EngagementStat,
+	LastBackup,
+	MediaStorage,
+	PHPVersion,
+	Plan,
+	Status,
+	Uptime,
+} from './site-fields';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { FetchSitesOptions, Site } from '../data/types';
@@ -29,21 +35,7 @@ import type {
 	ViewGrid,
 	Filter,
 } from '@automattic/dataviews';
-
-const actions = [
-	{
-		id: 'admin',
-		isPrimary: true,
-		label: __( 'WP Admin' ),
-		callback: ( sites: Site[] ) => {
-			const site = sites[ 0 ];
-			if ( site.options?.admin_url ) {
-				window.location.href = site.options.admin_url;
-			}
-		},
-		isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
-	},
-];
+import type { AnyRouter } from '@tanstack/react-router';
 
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{
@@ -52,9 +44,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
 		render: ( { field, item } ) => (
-			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
-				{ field.getValue( { item } ) }
-			</span>
+			<Link to={ `/sites/${ item.slug }` }>{ field.getValue( { item } ) }</Link>
 		),
 	},
 	{
@@ -63,9 +53,13 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => new URL( item.URL ).hostname,
 		render: ( { field, item } ) => (
-			<span style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+			<Text
+				as="span"
+				variant="muted"
+				style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+			>
 				{ field.getValue( { item } ) }
-			</span>
+			</Text>
 		),
 	},
 	{
@@ -79,23 +73,16 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Subscribers' ),
 	},
 	{
-		id: 'backups',
-		type: 'boolean',
-		label: __( 'Backups' ),
-		getValue: ( { item } ) => !! item.plan?.features?.active?.includes( 'backups' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		render: ( { item } ) =>
-			item.plan?.features?.active?.includes( 'backups' ) ? (
-				<Icon icon={ check } />
-			) : (
-				__( 'Disabled' )
-			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
+		id: 'backup',
+		label: __( 'Backup' ),
+		render: ( { item } ) => <LastBackup site={ item } />,
+		enableSorting: false,
+	},
+	{
+		id: 'plan',
+		label: __( 'Plan' ),
+		getValue: ( { item } ) => item.plan?.product_name_short ?? '',
+		render: ( { item } ) => <Plan site={ item } />,
 	},
 	{
 		id: 'status',
@@ -105,14 +92,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		filterBy: {
 			operators: [ 'is' ],
 		},
-		render: ( { item } ) => {
-			const label = getSiteStatusLabel( item );
-			if ( item.launch_status !== 'unlaunched' ) {
-				return label;
-			}
-
-			return <UnlaunchedStatusLink href={ `/home/${ item.slug }` }>{ label }</UnlaunchedStatusLink>;
-		},
+		render: ( { item } ) => <Status site={ item } />,
 	},
 	{
 		id: 'wp_version',
@@ -142,7 +122,10 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			// origin.
 			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
 			return (
-				<>
+				<Link
+					to={ `/sites/${ item.slug }` }
+					style={ { display: 'block', height: '100%', width: '100%' } }
+				>
 					{ resizeListener }
 					{ iframeDisabled && (
 						<div
@@ -160,7 +143,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 					{ width && ! iframeDisabled && (
 						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
 					) }
-				</>
+				</Link>
 			);
 		},
 		enableSorting: false,
@@ -207,12 +190,32 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		render: ( { item } ) => <MediaStorage site={ item } />,
 		enableSorting: false,
 	},
+	{
+		id: 'host',
+		label: __( 'Host' ),
+		getValue: ( { item } ) => {
+			const provider = item.hosting_provider_guess;
+			if ( ! provider || provider === 'automattic' ) {
+				return 'WordPress.com';
+			}
+
+			switch ( provider ) {
+				case 'jurassic_ninja':
+					return 'Jurassic Ninja';
+				case 'pressable':
+					return 'Pressable';
+			}
+
+			return provider;
+		},
+		render: ( { field, item } ) => field.getValue( { item } ),
+	},
 ];
 
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'status', 'backups', 'protect', 'wp_version' ],
+		fields: [ 'status', 'visitors', 'subscribers_count', 'wp_version' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
@@ -233,6 +236,53 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
+const getDefaultActions = ( router: AnyRouter ) => {
+	return [
+		{
+			id: 'admin',
+			isPrimary: true,
+			icon: <Icon icon={ wordpress } />,
+			label: __( 'WP admin ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				if ( site.options?.admin_url ) {
+					window.open( site.options.admin_url, '_blank' );
+				}
+			},
+			isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
+		},
+		{
+			id: 'site',
+			label: __( 'Visit site ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				if ( site.URL ) {
+					window.open( site.URL, '_blank' );
+				}
+			},
+			isEligible: ( item: Site ) => ( item.is_deleted || ! item.URL ? false : true ),
+		},
+		{
+			id: 'domains',
+			label: __( 'Domains ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				window.open( `/domains/manage/${ site.slug }` );
+			},
+			isEligible: ( item: Site ) => ! item.is_deleted,
+		},
+		{
+			id: 'settings',
+			label: __( 'Settings' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
+			},
+			isEligible: ( item: Site ) => ! item.is_deleted,
+		},
+	];
+};
+
 const getFetchSitesOptions = (
 	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
 ): FetchSitesOptions => {
@@ -249,6 +299,7 @@ const getFetchSitesOptions = (
 
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
+	const router = useRouter();
 	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
@@ -298,6 +349,10 @@ export default function Sites() {
 			return true;
 		} );
 	}, [ hasA8CSites, view.type ] );
+
+	const actions = useMemo( () => {
+		return getDefaultActions( router );
+	}, [ router ] );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
@@ -349,34 +404,11 @@ export default function Sites() {
 								},
 							} );
 						} }
-						renderItemLink={ ( { item, ...props } ) => (
-							<Link to={ `/sites/${ item.slug }` } { ...props } />
-						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>
 				</DataViewsCard>
 			</PageLayout>
-		</>
-	);
-}
-
-function UnlaunchedStatusLink( { href, children }: { href: string; children: React.ReactNode } ) {
-	const { recordTracksEvent } = useAnalytics();
-
-	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
-	// uses `overflow:hidden` to prevent any of the fields from overflowing.
-	return (
-		<>
-			<ComponentViewTracker eventName="calypso_dashboard_site_launch_nag_impression" />
-			<ExternalLink
-				href={ href }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_site_launch_nag_click' );
-				} }
-			>
-				{ children }
-			</ExternalLink>
 		</>
 	);
 }

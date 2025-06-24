@@ -102,20 +102,6 @@ export const UserMessage = ( {
 	const displayingThirdPartyMessage =
 		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
-	const renderExtraContactOptions = () => {
-		const handleContactSupportClick = ( destination: string ) => {
-			trackEvent( 'chat_get_support', {
-				location: 'user-message',
-				destination,
-			} );
-		};
-		return (
-			chat.provider === 'odie' && (
-				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
-			)
-		);
-	};
-
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
@@ -175,7 +161,16 @@ export const UserMessage = ( {
 					} ) }
 				>
 					<Sources message={ message } />
-					{ isRequestingHumanSupport && renderExtraContactOptions() }
+					{ isRequestingHumanSupport && (
+						<GetSupport
+							onClickAdditionalEvent={ ( destination ) => {
+								trackEvent( 'chat_get_support', {
+									location: 'user-message',
+									destination,
+								} );
+							} }
+						/>
+					) }
 					{ isMessageShowingDisclaimer && renderDisclaimers() }
 				</div>
 			) }

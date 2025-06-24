@@ -39,6 +39,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/blaze-credits/',
 		post_id: 240330,
 	},
+	blaze_learn_more: {
+		link: 'https://wordpress.com/support/promote-a-post/promote-your-content-with-tumblr-native-posts',
+		post_id: 403203,
+	},
 	cancel_purchase: {
 		link: 'https://wordpress.com/support/manage-purchases/cancel-a-purchase/',
 		post_id: 267077,
@@ -582,6 +586,18 @@ const contextLinks = {
 	'sell-online-paypal': {
 		link: 'https://wordpress.com/support/pay-with-paypal/',
 		post_id: 168671,
+	},
+	'update-contact-information-email-or-name-changes': {
+		link: 'https://wordpress.com/support/domains/update-contact-information/#email-or-name-changes',
+		post_id: 3441,
+	},
+	'change-name-servers-finding-out-new-ns': {
+		link: 'https://wordpress.com/support/domains/change-name-servers/#step-1-find-your-new-name-servers',
+		post_id: 41383,
+	},
+	'60-day-transfer-lock': {
+		link: 'https://wordpress.com/support/domains/update-contact-information/#60-day-transfer-lock',
+		post_id: 3441,
 	},
 };
 

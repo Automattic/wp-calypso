@@ -29,7 +29,7 @@ import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-
 import { GEO_MODES } from '../features/modules/stats-locations/types';
 import PostsNavTabs from '../features/modules/stats-top-posts/nav-tabs';
 import {
-	validQueryViewType as getValidTopPostStatType,
+	getValidQueryViewType,
 	SUB_STAT_TYPE as TOP_POSTS_SUB_STAT_TYPE,
 	MAIN_STAT_TYPE as TOP_POSTS_MAIN_STAT_TYPE,
 } from '../features/modules/stats-top-posts/use-option-labels';
@@ -47,9 +47,13 @@ import VideoPressStatsModule from '../videopress-stats-module';
 
 import './style.scss';
 
-const StatsStrings = statsStringsFactory();
-
 class StatsSummary extends Component {
+	constructor( props ) {
+		super( props );
+		this.cachedStatsStrings = null;
+		this.cachedSupportsArchiveStats = null;
+	}
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 
@@ -131,9 +135,19 @@ class StatsSummary extends Component {
 			statsQueryOptions,
 			siteId,
 			supportsUTMStats,
+			supportsArchiveStats,
 			shouldGateStatsCsvDownload,
 			lastScreen,
 		} = this.props;
+
+		// Simple memoization for StatsStrings
+		// TODO: Refactor to use useMemo
+		if ( this.cachedSupportsArchiveStats !== supportsArchiveStats ) {
+			this.cachedStatsStrings = statsStringsFactory( supportsArchiveStats );
+			this.cachedSupportsArchiveStats = supportsArchiveStats;
+		}
+		const StatsStrings = this.cachedStatsStrings;
+
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -141,6 +155,9 @@ class StatsSummary extends Component {
 		let barChart;
 		let path;
 		let statType;
+
+		const isArchiveBreakdownEnabled =
+			isEnabled( 'stats/archive-breakdown' ) && supportsArchiveStats;
 
 		const { period, endOf } = this.props.period;
 		const query = {
@@ -163,7 +180,7 @@ class StatsSummary extends Component {
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		// TODO: Refactor the query params for posts module.
 		if ( 'posts' === this.props.context.params.module ) {
-			moduleQuery.skip_archives = isEnabled( 'stats/archive-breakdown' ) ? '1' : '0';
+			moduleQuery.skip_archives = isArchiveBreakdownEnabled ? '1' : '0';
 		}
 
 		const urlParams = new URLSearchParams( this.props.context.querystring );
@@ -258,7 +275,7 @@ class StatsSummary extends Component {
 			case 'posts':
 				title = StatsStrings.posts.title;
 				path = 'posts';
-				statType = getValidTopPostStatType( moduleQuery?.viewType );
+				statType = getValidQueryViewType( moduleQuery?.viewType, supportsArchiveStats );
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -462,12 +479,11 @@ class StatsSummary extends Component {
 					) }
 
 					{ /* TODO: Refactor to use the same component for both locations and posts */ }
-					{ isEnabled( 'stats/archive-breakdown' ) &&
-						this.props.context.params.module === 'posts' && (
-							<div className="stats-navigation stats-navigation--improved">
-								<PostsNavTabs query={ moduleQuery } />
-							</div>
-						) }
+					{ isArchiveBreakdownEnabled && this.props.context.params.module === 'posts' && (
+						<div className="stats-navigation stats-navigation--improved">
+							<PostsNavTabs query={ moduleQuery } />
+						</div>
+					) }
 
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (
@@ -510,13 +526,17 @@ const StatsSummaryWrapper = ( props ) => {
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 
-	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const { supportsUTMStats, supportsArchiveStats } = getEnvStatsFeatureSupportChecks(
+		state,
+		siteId
+	);
 
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		supportsUTMStats,
+		supportsArchiveStats,
 		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),
 	};
 } )( localize( StatsSummaryWrapper ) );

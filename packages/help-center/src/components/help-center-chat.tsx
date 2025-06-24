@@ -8,19 +8,21 @@ import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
-import { ExtraContactOptions } from './help-center-extra-contact-option';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
+	isLoadingStatus,
 	isUserEligibleForPaidSupport,
 	userFieldFlowName,
 }: {
+	isLoadingStatus: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	userFieldFlowName?: string;
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
-	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
+	// Before issuing a redirect, make sure the status is loaded.
+	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
 	const { currentUser, site, canConnectToZendesk, isLoadingCanConnectToZendesk } =
 		useHelpCenterContext();
 	const { search } = useLocation();
@@ -51,9 +53,6 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
-			extraContactOptions={
-				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />
-			}
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

@@ -37,6 +37,7 @@ import {
 } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import BlazePluginBanner from './components/blaze-plugin-banner';
@@ -45,7 +46,6 @@ import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import TspBanner from './components/tsp-banner';
-import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
@@ -104,13 +104,15 @@ const setTspBannerCollapsedCookie = ( value: boolean ) => {
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
-	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: 'post-0', // post 0 means to open post selector in widget
 		entrypoint: 'promoted_posts-header',
 	} );
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
@@ -325,7 +327,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInWpAdmin }
+						showSupportModal={ ! isSelfHosted }
 					/>
 					<Button
 						variant="primary"

@@ -18,6 +18,8 @@ type SamplePost = {
 	date: string;
 	birthdate: string;
 	password?: string;
+	filesize?: number;
+	dimensions?: string;
 };
 
 const meta = {
@@ -119,6 +121,18 @@ const fields = [
 		type: 'boolean' as const,
 		Edit: 'checkbox',
 	},
+	{
+		id: 'filesize',
+		label: 'File Size',
+		type: 'integer' as const,
+		readOnly: true,
+	},
+	{
+		id: 'dimensions',
+		label: 'Dimensions',
+		type: 'text' as const,
+		readOnly: true,
+	},
 ] as Field< SamplePost >[];
 
 export const Default = ( {
@@ -139,6 +153,8 @@ export const Default = ( {
 		birthdate: '1950-02-23T12:00:00',
 		sticky: false,
 		can_comment: false,
+		filesize: 1024,
+		dimensions: '1920x1080',
 	} );
 
 	const form = useMemo(
@@ -157,6 +173,8 @@ export const Default = ( {
 				'date',
 				'birthdate',
 				'can_comment',
+				'filesize',
+				'dimensions',
 			],
 		} ),
 		[ type, labelPosition ]
@@ -192,6 +210,8 @@ const CombinedFieldsComponent = ( {
 		reviewer: 'fulano',
 		date: '2021-01-01T12:00:00',
 		birthdate: '1950-02-23T12:00:00',
+		filesize: 1024,
+		dimensions: '1920x1080',
 	} );
 
 	const form = useMemo(
@@ -207,6 +227,8 @@ const CombinedFieldsComponent = ( {
 				},
 				'order',
 				'author',
+				'filesize',
+				'dimensions',
 			],
 		} ),
 		[ type, labelPosition ]

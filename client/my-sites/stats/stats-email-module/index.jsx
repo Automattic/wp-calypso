@@ -37,7 +37,7 @@ class StatsEmailModule extends Component {
 	render() {
 		const { path, data, postId, statType, query, isLoading } = this.props;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const moduleStrings = statsStrings( this.props.isJetpack )[ path ];
+		const moduleStrings = statsStrings( false, this.props.isJetpack )[ path ];
 		// TODO: Support error state in redux store
 		const hasError = false;
 		const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );

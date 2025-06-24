@@ -45,15 +45,18 @@ export interface FetchDashboardSitesArgsInterface {
 	agencyId?: number;
 }
 
-const useFetchDashboardSites = ( {
-	isPartnerOAuthTokenLoaded,
-	searchQuery,
-	currentPage,
-	filter,
-	sort,
-	perPage,
-	agencyId,
-}: FetchDashboardSitesArgsInterface ) => {
+const useFetchDashboardSites = (
+	{
+		isPartnerOAuthTokenLoaded,
+		searchQuery,
+		currentPage,
+		filter,
+		sort,
+		perPage,
+		agencyId,
+	}: FetchDashboardSitesArgsInterface,
+	isEnabled = true
+) => {
 	let queryKey = [
 		'jetpack-agency-dashboard-sites',
 		searchQuery,
@@ -106,7 +109,7 @@ const useFetchDashboardSites = ( {
 				totalFavorites: data.total_favorites,
 			};
 		},
-		enabled: isAgencyOrPartnerAuthEnabled,
+		enabled: isAgencyOrPartnerAuthEnabled && isEnabled,
 	} );
 };
 

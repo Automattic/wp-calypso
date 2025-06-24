@@ -2,7 +2,6 @@ import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
-	useFilterDeletedSites,
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
@@ -91,6 +90,23 @@ const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	return isDesktop ? desktopFields : mobileFields;
 };
 
+const getSiteVisibility = (
+	// By default only 'visible' sites are fetched.
+	// Depending upon the context, a wider set of sites can be fetched instead.
+	// Fetch all sites if a search keyword is entered, if including p2s regardless
+	// of their visibility (e.g. on the p2s list) or if restoring an account.
+	statusSlug?: string,
+	search?: string,
+	isRestoringAccount = false,
+	includeA8CSites = false
+) => {
+	if ( statusSlug === 'deleted' ) {
+		return 'deleted';
+	}
+
+	return search || isRestoringAccount || includeA8CSites ? 'all' : 'visible';
+};
+
 export function showSitesPage( route: string, openInNewTab = false ) {
 	const currentParams = new URL( window.location.href ).searchParams;
 	const newUrl = new URL( route, window.location.origin );
@@ -162,19 +178,6 @@ const SitesDashboard = ( {
 			!! ( options?.theme_slug && isP2Theme( options.theme_slug ) )
 		);
 	};
-
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
-		[],
-		sitesFilterCallback,
-		'all',
-		[ 'is_a4a_dev_site', 'site_migration' ],
-		[ 'theme_slug' ],
-		// Don't fetch sites on narrow screens since it's not visible.
-		! selectedSite || isWide
-	);
-
-	useShowSiteCreationNotice( allSites, newSiteID );
-	useShowSiteTransferredNotice();
 
 	const siteStatusGroups = useSiteStatusGroups();
 
@@ -283,31 +286,39 @@ const SitesDashboard = ( {
 			?.slug as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
-	// Filter sites list by status group.
-	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
-		status: statusSlug || 'all',
-		showHidden: true,
-	} );
-
-	// Remove deleted sites from default view
-	const filteredStatusGroup = useFilterDeletedSites( currentStatusGroup, {
-		shouldApplyFilter:
-			! search && ( ! statusSlug || statusSlug === 'all' ) && ! isRestoringAccount(),
-	} );
-
-	// Perform sorting actions
-	const sortedSites = useSitesListSorting( filteredStatusGroup, {
-		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
-			?.sortKey as SitesSortKey,
-		sortOrder: dataViewsState.sort?.direction || undefined,
-	} );
-
 	const hasA8CSitesFilter =
 		dataViewsState.filters?.some(
 			( { field, operator, value } ) => field === 'is_a8c' && operator === 'is' && value === true
 		) ?? false;
 
 	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
+
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		sitesFilterCallback,
+		// By default only 'visible' sites are fetched
+		getSiteVisibility( statusSlug, search, isRestoringAccount(), includeA8CSites ),
+		[ 'is_a4a_dev_site', 'site_migration' ],
+		[ 'theme_slug' ],
+		// Don't fetch sites on narrow screens since it's not visible.
+		! selectedSite || isWide
+	);
+
+	useShowSiteCreationNotice( allSites, newSiteID );
+	useShowSiteTransferredNotice();
+
+	// Filter sites list by status group.
+	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
+		status: statusSlug || 'all',
+		showHidden: true,
+	} );
+
+	// Perform sorting actions
+	const sortedSites = useSitesListSorting( currentStatusGroup, {
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
+			?.sortKey as SitesSortKey,
+		sortOrder: dataViewsState.sort?.direction || undefined,
+	} );
 
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {

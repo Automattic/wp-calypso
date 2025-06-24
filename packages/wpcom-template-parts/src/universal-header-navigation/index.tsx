@@ -26,7 +26,7 @@ const UniversalNavbarHeader = ( {
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
 
-	// Handle Escape key to close dropdowns
+	// Handle dropdown management to ensure only one is open at a time
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
@@ -39,8 +39,36 @@ const UniversalNavbarHeader = ( {
 			}
 		};
 
+		const closeOtherDropdowns = ( currentNavItem: Element ) => {
+			document.querySelectorAll( '.x-nav-item__wide' ).forEach( ( item ) => {
+				if ( item !== currentNavItem ) {
+					const focusedElement = item.querySelector( ':focus' );
+					if ( focusedElement instanceof HTMLElement ) {
+						focusedElement.blur();
+					}
+				}
+			} );
+		};
+
+		const handleInteraction = ( event: Event ) => {
+			const target = event.target;
+			if ( ! ( target instanceof HTMLElement ) ) {
+				return;
+			}
+
+			const navItem = target.closest( '.x-nav-item__wide' );
+			if ( navItem ) {
+				closeOtherDropdowns( navItem );
+			}
+		};
+
+		document.addEventListener( 'focusin', handleInteraction );
+		document.addEventListener( 'mouseenter', handleInteraction, true );
 		document.addEventListener( 'keydown', handleKeyDown );
+
 		return () => {
+			document.removeEventListener( 'focusin', handleInteraction );
+			document.removeEventListener( 'mouseenter', handleInteraction, true );
 			document.removeEventListener( 'keydown', handleKeyDown );
 		};
 	}, [] );

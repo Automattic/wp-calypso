@@ -71,8 +71,6 @@ export const data: ComponentData[] = [
 		name: 'Badge',
 		whereUsed: 'global',
 		status: 'stable',
-		figma:
-			'https://www.figma.com/design/804HN2REV2iap2ytjRQ055/WordPress-Design-System?node-id=19297-39220&t=YhMXMUEdznvUwLv9-4',
 		docs: 'https://wordpress.github.io/gutenberg/?path=/docs/components-badge--docs',
 		notes: 'Still a private API. If possible, use `Badge` from `@automattic/ui` instead.',
 	},

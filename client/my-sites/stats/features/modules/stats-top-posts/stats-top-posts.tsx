@@ -7,7 +7,9 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -23,7 +25,7 @@ import useOptionLabels, {
 	SUB_STAT_TYPE,
 	StatType,
 	StatsModulePostsProps,
-	validQueryViewType,
+	getValidQueryViewType,
 } from './use-option-labels';
 import type { StatsStateProps } from '../types';
 
@@ -31,6 +33,7 @@ type StatTypeOptionType = {
 	value: StatType;
 	label: string;
 	mainItemLabel: string;
+	analyticsId: string;
 };
 
 const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
@@ -45,24 +48,19 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const { supportsArchiveStats } = useSelector( ( state: object ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
+
+	const isArchiveBreakdownEnabled: boolean =
+		config.isEnabled( 'stats/archive-breakdown' ) && supportsArchiveStats;
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
-
-	const isArchiveBreakdownEnabled: boolean = config.isEnabled( 'stats/archive-breakdown' );
 	const supportContext = isSiteJetpackNotAtomic
 		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
 		: 'stats-top-posts-and-pages-analyze-content-performance';
-
-	const optionLabels = useOptionLabels();
-	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
-		return {
-			value: key as StatType,
-			label: item.tabLabel,
-			mainItemLabel: item.mainItemLabel,
-		};
-	} );
 
 	const query = {
 		...queryFromProps,
@@ -83,13 +81,41 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		: isRequestingTopPostsData;
 
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
-	const onStatTypeChange = ( option: StatTypeOptionType ) => setLocalStatType( option.value );
+	const onStatTypeChange = ( option: StatTypeOptionType ) => {
+		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
+			stat_type: option.analyticsId,
+		} );
 
-	const statType = localStatType || validQueryViewType( query.viewType ) || mainStatType;
+		setLocalStatType( option.value );
+	};
+
+	const statType =
+		localStatType || getValidQueryViewType( query.viewType, supportsArchiveStats ) || mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
+
+	// Get the archives data to check if we should disable the archives option.
+	const archivesData = useSelector( ( state ) =>
+		getSiteStatsNormalizedData( state, siteId, subStatType, query )
+	) as [ id: number, label: string ];
+
+	const optionLabels = useOptionLabels();
+	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+		return {
+			value: key as StatType,
+			label: item.tabLabel,
+			mainItemLabel: item.mainItemLabel,
+			analyticsId: item.analyticsId,
+			// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
+			disabled:
+				isArchiveBreakdownEnabled &&
+				key === subStatType &&
+				! isRequestingArchivesData &&
+				! archivesData.length,
+		};
+	} );
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( mainStatType );
@@ -139,19 +165,33 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					path="posts"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate(
-								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
-										),
-									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
-								}
-							) }
+							{ isArchiveBreakdownEnabled
+								? translate(
+										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  )
+								: translate(
+										'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+										{
+											comment: '{{link}} links to support documentation.',
+											components: {
+												link: (
+													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+												),
+											},
+											context:
+												'Stats: Link in a popover for the Posts & Pages when the module has data',
+										}
+								  ) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }

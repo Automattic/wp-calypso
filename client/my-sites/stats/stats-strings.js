@@ -4,18 +4,14 @@ import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from './const';
 
-/**
- * Stats strings factory for various stats modules.
- * @param {boolean|null} isSiteJetpackNotAtomic
- * @returns Object
- */
-export default function ( isSiteJetpackNotAtomic = false ) {
+export default function ( supportsArchiveStats = false, isSiteJetpackNotAtomic = false ) {
 	const isArchiveBreakdownFlag = isEnabled( 'stats/archive-breakdown' );
+	const isArchiveBreakdownEnabled = isArchiveBreakdownFlag && supportsArchiveStats;
 
 	const statsStrings = {};
 
 	statsStrings.posts = {
-		title: isArchiveBreakdownFlag
+		title: isArchiveBreakdownEnabled
 			? translate( 'Most viewed', { context: 'Stats: title of module', textOnly: true } )
 			: translate( 'Posts & pages', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),

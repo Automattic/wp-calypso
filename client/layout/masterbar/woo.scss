@@ -342,8 +342,6 @@ $breakpoint-mobile: 660px;
 
 	&.is-section-signup .layout__content,
 	.layout__content {
-		padding-top: 85px;
-
 		@media (max-width: $break-mobile) {
 			padding-top: 50px;
 			padding-bottom: 80px;
@@ -447,45 +445,6 @@ $breakpoint-mobile: 660px;
 		margin-top: 25px;
 	}
 
-	.auth-form__social-buttons {
-		align-items: center;
-
-		@media (max-width: $break-mobile) {
-			align-items: flex-start;
-		}
-
-		button.social-buttons__button.button {
-			border: 0;
-			text-align: center;
-			padding-bottom: 0;
-			padding-left: 0;
-			padding-right: 0;
-			width: 196px;
-
-			svg {
-				border: 1px solid var(--studio-gray-10);
-				border-radius: 24px; /* stylelint-disable-line scales/radii */
-				padding: 12px;
-			}
-		}
-
-		.social-buttons__service-name {
-			margin-left: 16px;
-			font-weight: 500;
-		}
-
-		.login__social-tos {
-			margin: 0 auto 2.5em;
-			max-width: 100%;
-			order: -1;
-
-			a {
-				font-size: inherit;
-				line-height: inherit;
-			}
-		}
-	}
-
 	.step-wrapper,
 	.wp-login__main.main,
 	.magic-login.main {
@@ -507,7 +466,6 @@ $breakpoint-mobile: 660px;
 		margin-top: 50px;
 	}
 
-	.wp-login__container,
 	.magic-login,
 	.step-wrapper,
 	.jetpack-connect__main-logo {
@@ -537,7 +495,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.login form,
 	.wp-login__links,
 	.login__social-connect-prompt,
 	.magic-login__request-link,
@@ -780,19 +737,6 @@ $breakpoint-mobile: 660px;
 		padding: 24px;
 	}
 
-	.auth-form__social-buttons-tos {
-		margin-top: 24px;
-		font-size: $woo-font-size-small;
-		line-height: 18px;
-		color: $gray-50;
-		text-align: left;
-
-		a {
-			color: $gray-50;
-			font-size: inherit;
-		}
-	}
-
 	.login__lost-password-form-wrapper {
 		// Loading lost password form module is very fast, so we don't need to show a visual placeholder, just need to have the space reserved. Otherwise we will see a flash of content.
 		.async-load__placeholder {
@@ -823,14 +767,6 @@ $breakpoint-mobile: 660px;
 
 	.logged-out-form__links {
 		text-align: center;
-	}
-
-	.login__lostpassword-form {
-		margin-top: 50px;
-
-		.login__form-action {
-			margin: 16px 0 52px;
-		}
 	}
 
 	// Signup styles
@@ -885,91 +821,11 @@ $breakpoint-mobile: 660px;
 		color: var(--color-primary);
 	}
 
-	.auth-form__social {
-		max-width: 100%;
-		padding: 40px 0 14px;
-		border-top: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		@media (max-width: $break-mobile) {
-			align-items: flex-start;
-		}
-
-		p {
-			color: var(--studio-gray-60);
-			font-size: $woo-font-size-small;
-		}
-
-		a {
-			font-size: $woo-font-size-small;
-		}
-
-		button {
-			padding: 0;
-		}
-
-		.auth-form__social-buttons-tos {
-			text-align: left;
-			color: $gray-50;
-
-			a {
-				line-height: 18px;
-			}
-		}
-	}
-
-	.auth-form__social-buttons button {
-		text-align: start;
-		box-shadow: none;
-		border: 0;
-
-		svg {
-			border: 1px solid var(--studio-gray-10);
-			border-radius: 24px; /* stylelint-disable-line scales/radii */
-			padding: 12px;
-			margin-top: 0;
-		}
-	}
-
 	&.is-woocommerce-core-profiler-flow {
 		background: #fff;
 
 		* {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-		}
-
-		input[type="text"].form-text-input,
-		input[type="email"].form-text-input,
-		input[type="password"].form-text-input,
-		input[type="tel"].form-text-input,
-		textarea.form-text-input {
-			&:focus,
-			&:hover,
-			&:focus:hover {
-				border-color: var(--wp-admin-theme-color);
-				outline: none;
-				box-shadow: none;
-			}
-		}
-
-		.masterbar {
-			display: flex;
-		}
-
-		.masterbar__woo-nav-item:first-child {
-			margin-right: auto;
-		}
-
-		.masterbar__no-thanks-button {
-			color: var(--wp-admin-theme-color);
-			font-size: $woo-font-body-extra-small;
-			text-decoration: none;
-		}
-
-		.masterbar__woo-link {
-			display: flex;
 		}
 
 		.wp-login__container,
@@ -980,10 +836,10 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.login form,
 		.signup-form {
 			max-width: 405px;
 			margin: 0 auto;
+			padding-top: 24px;
 
 			input.form-text-input {
 				border-color: #bbb;
@@ -995,7 +851,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
-			.login form,
 			.signup-form {
 				max-width: 515px;
 				margin: 48px auto;
@@ -1115,10 +970,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		span.social-buttons__service-name {
-			font-weight: 600;
-		}
-
 		.auth-form__social-buttons-tos {
 			text-align: center;
 			line-height: 16px;
@@ -1143,10 +994,6 @@ $breakpoint-mobile: 660px;
 			@media (max-width: $break-mobile) {
 				display: none !important;
 			}
-		}
-
-		.signup-form {
-			padding-top: 24px;
 		}
 
 		.auth-form__social-buttons {
@@ -1210,28 +1057,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		// Lost password
-		.login__lostpassword-form {
-			display: flex;
-			flex-direction: column;
-			padding: 48px 24px 32px;
-
-			@media (max-width: $break-mobile) {
-				padding: 32px 16px 28px;
-			}
-
-			.login__form-action {
-				margin-top: 24px;
-			}
-
-			input[type="email"].form-text-input {
-				margin-bottom: 0;
-			}
-			.form-input-validation {
-				padding-bottom: 0;
-			}
-		}
-
 		.login__lostpassword-subtitle a {
 			line-height: inherit;
 		}
@@ -1274,7 +1099,8 @@ $breakpoint-mobile: 660px;
 
 		h1,
 		h2,
-		h3 {
+		h3,
+		.wp-login__heading-text {
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
 		}
@@ -1394,11 +1220,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.layout__content {
-			padding-top: 80px;
-		}
-
-		.wp-login__container,
 		.magic-login,
 		.step-wrapper,
 		.jetpack-connect__main-logo {
@@ -1464,18 +1285,7 @@ $breakpoint-mobile: 660px;
 			flex-direction: column;
 		}
 
-		.wp-login__main.main {
-			max-width: 758px;
-		}
-
 		.login form.is-woo-passwordless {
-			display: flex;
-			flex-direction: row;
-			margin-top: 48px;
-			padding: 0;
-			justify-content: center;
-			max-width: 758px;
-
 			@media (max-width: $break-medium) {
 				flex-direction: column;
 			}
@@ -1533,16 +1343,6 @@ $breakpoint-mobile: 660px;
 					max-width: $max-width;
 				}
 			}
-
-			.login__lost-password-link {
-				color: var(--woo-purple-40);
-				text-align: center;
-				font-weight: 400;
-				font-size: $woo-font-size-base;
-				line-height: 20px;
-				margin-block-start: 24px;
-				text-decoration: underline;
-			}
 		}
 
 		.signup-form {
@@ -1553,66 +1353,6 @@ $breakpoint-mobile: 660px;
 			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
 				padding: 0;
 				margin: 24px 0 0 0;
-			}
-		}
-
-		.auth-form__social {
-			max-width: 100%;
-			padding: 40px 0 14px;
-			border-top: 0;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			.auth-form__social-buttons {
-				width: 100%;
-
-				.auth-form__social-buttons-container {
-					gap: 16px;
-					width: 100%;
-				}
-
-				.social-buttons__button {
-					padding: 8px 16px;
-
-					> span {
-						color: var(--studio-gray-100);
-						font-family: $woo-inter-font;
-						font-size: 1rem;
-						margin-left: -20px;
-						margin-right: auto;
-					}
-				}
-
-				.social-icons {
-					border: 0;
-					padding: 0;
-				}
-
-				.login__social-tos {
-					margin: 0 auto 2.5em;
-					max-width: 100%;
-					order: -1;
-
-					a {
-						font-size: inherit;
-						line-height: inherit;
-					}
-				}
-			}
-
-			.auth-form__social-buttons-tos {
-				margin-top: 32px;
-				font-size: $woo-font-size-small;
-				line-height: 18px;
-				color: $gray-50;
-				text-align: center;
-
-				a {
-					color: $gray-50;
-					line-height: 18px;
-					font-size: inherit;
-				}
 			}
 		}
 
@@ -1817,11 +1557,6 @@ $breakpoint-mobile: 660px;
 		.login__lostpassword-form {
 			margin-bottom: 44px;
 
-			.login__form-action {
-				margin: 24px 0 0;
-				width: 100%;
-			}
-
 			.login__form-userdata {
 				width: 100%;
 			}
@@ -2002,14 +1737,6 @@ $breakpoint-mobile: 660px;
 			margin-bottom: 15px;
 		}
 
-		.login__lost-password-link {
-			color: var(--wp-admin-theme-color);
-
-			&:hover {
-				color: var(--wp-admin-theme-color);
-			}
-		}
-
 		.login__form-forgot-password {
 			font-size: rem(12px);
 			text-underline-offset: 2px;
@@ -2085,31 +1812,9 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		input[type="text"].form-text-input,
-		input[type="email"].form-text-input,
-		input[type="password"].form-text-input,
-		input[type="tel"].form-text-input {
-			border-radius: 2px;
-			border: 1px solid var(--Gutenberg-Gray-500, #bbb);
-			background: var(--Gutenberg-White, #fff);
-			&:hover,
-			&:focus,
-			&:focus:hover {
-				border: 2px solid var(--Gutenberg-Gray-500, #bbb);
-			}
-		}
-
 		.verification-code-form__help-text,
 		.security-key-form__help-text {
 			font-size: 1rem;
-		}
-
-		.wp-login__main-footer {
-			.login__lost-password-link {
-				font-weight: inherit;
-				font-size: rem(13px);
-				text-decoration: none;
-			}
 		}
 
 		.login form.two-factor-authentication__verification-code-form-wrapper {
@@ -2213,7 +1918,7 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.is-woo-com-oauth,
+.woo,
 .layout.is-jetpack-woo-dna-flow {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
@@ -2291,10 +1996,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	.login__lost-password-no-account a {
-		@include link-woo;
-	}
-
-	.login__lost-password-link {
 		@include link-woo;
 	}
 

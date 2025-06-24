@@ -16,6 +16,7 @@ export const SITE_FIELDS = [
 	'is_private',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
+	'hosting_provider_guess',
 	'lang',
 	'launch_status',
 	'site_migration',
@@ -97,6 +98,7 @@ export interface Site {
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
+	hosting_provider_guess?: string;
 }
 
 export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {

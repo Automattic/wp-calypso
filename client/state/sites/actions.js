@@ -108,7 +108,7 @@ export function requestSites() {
 		return wpcom.req
 			.get( '/me/sites', {
 				apiVersion: '1.2',
-				site_visibility: 'all',
+				site_visibility: 'visible',
 				include_domain_only: true,
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,

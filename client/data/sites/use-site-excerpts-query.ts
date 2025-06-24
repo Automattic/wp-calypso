@@ -11,10 +11,10 @@ import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites'
 
 export const USE_SITE_EXCERPTS_QUERY_KEY = 'sites-dashboard-sites-data';
 
-export type SiteVisibility = 'all' | 'deleted';
+export type SiteVisibility = 'all' | 'visible' | 'deleted';
 
 const fetchSites = (
-	site_visibility: SiteVisibility = 'all',
+	site_visibility: SiteVisibility = 'visible',
 	siteFilter = config< string[] >( 'site_filter' ),
 	additional_fields: string[] = [],
 	additional_options: string[] = []
@@ -42,7 +42,7 @@ export const useSiteExcerptsQueryInvalidator = () => {
 export const useSiteExcerptsQuery = (
 	fetchFilter?: string[],
 	sitesFilterFn?: ( site: SiteExcerptData ) => boolean,
-	site_visibility: SiteVisibility = 'all',
+	site_visibility: SiteVisibility = 'visible',
 	additional_fields: string[] = [],
 	additional_options: string[] = [],
 	enabled = true

@@ -182,6 +182,7 @@ export function normalizeFields< Item >(
 				fieldTypeDefinition.enableSorting ??
 				true,
 			filterBy,
+			readOnly: field.readOnly ?? fieldTypeDefinition.readOnly ?? false,
 		};
 	} );
 }
