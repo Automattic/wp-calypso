@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import type { Report } from '../types';
 
 type Props = {
@@ -19,18 +20,18 @@ export default function DeleteReportConfirmationDialog( {
 
 	return (
 		<A4AConfirmationDialog
-			title={ translate( 'Are you sure you want to delete this report?' ) }
+			title={ translate( 'Delete this report?' ) }
 			onClose={ onClose }
 			onConfirm={ onConfirm }
-			closeLabel={ translate( 'Keep report' ) }
+			closeLabel={ translate( 'Cancel' ) }
 			ctaLabel={ translate( 'Delete report' ) }
 			isDestructive
 			isLoading={ isLoading }
 		>
 			{ translate(
-				'This report for {{strong}}%(siteName)s{{/strong}} will be permanently deleted. This action cannot be undone. {{br/}}{{br/}}Note: If the report is already queued for sending, it may still be delivered.',
+				"The report for {{strong}}%(siteName)s{{/strong}} will be deleted permanently. This can't be undone. {{br/}}{{br/}}If it's already scheduled to be sent, it may still go out.",
 				{
-					args: { siteName: report.site },
+					args: { siteName: urlToSlug( report.data.managed_site_url ) },
 					components: {
 						strong: <strong />,
 						br: <br />,
