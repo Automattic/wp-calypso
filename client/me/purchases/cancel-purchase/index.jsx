@@ -382,11 +382,14 @@ class CancelPurchase extends Component {
 							purchase={ purchase }
 						/>
 
-						{ this.props.includedDomainPurchase && (
-							<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
-								{ this.props.translate( 'What happens when you cancel' ) }
-							</h2>
-						) }
+						{ this.props.includedDomainPurchase &&
+							this.props.atomicTransfer?.created_at &&
+							! isRefundable( purchase ) && (
+								<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
+									{ this.props.translate( 'What happens when you cancel' ) }
+								</h2>
+							) }
+
 						<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
 
 						<CancelPurchaseRefundInformation
@@ -397,15 +400,6 @@ class CancelPurchase extends Component {
 						<CancelPurchaseFeatureList
 							purchase={ purchase }
 							cancellationFeatures={ cancellationFeatures }
-						/>
-
-						<AtomicRevertChanges
-							atomicTransfer={ this.props.atomicTransfer }
-							purchase={ purchase }
-							onConfirmationChange={ this.onAtomicRevertConfirmationChange }
-							needsAtomicRevertConfirmation={
-								this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
-							}
 						/>
 
 						{ ! cancellationFeatures.length ? (
@@ -434,7 +428,17 @@ class CancelPurchase extends Component {
 							</>
 						) : (
 							<>
+								<AtomicRevertChanges
+									atomicTransfer={ this.props.atomicTransfer }
+									purchase={ purchase }
+									onConfirmationChange={ this.onAtomicRevertConfirmationChange }
+									needsAtomicRevertConfirmation={
+										this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
+									}
+								/>
+
 								<p>{ this.renderFullText() }</p>
+
 								<div className="cancel-purchase__confirm-buttons">
 									{ this.renderCancelButton() }
 									<FormButton
