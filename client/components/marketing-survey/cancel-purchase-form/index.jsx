@@ -545,33 +545,6 @@ class CancelPurchaseForm extends Component {
 		return ! disableButtons && ! isSubmitting;
 	}
 
-	getFinalActionText() {
-		const { flowType, translate, disableButtons, purchase } = this.props;
-		const { isSubmitting, solution } = this.state;
-		const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
-		const isCancelling = disableButtons || isSubmitting;
-
-		if ( isCancelling && ! solution ) {
-			return isRemoveFlow ? translate( 'Removing…' ) : translate( 'Cancelling…' );
-		}
-
-		if ( isPlan( purchase ) ) {
-			if ( this.state.surveyStep === UPSELL_STEP ) {
-				return isRemoveFlow
-					? translate( 'Remove my current plan' )
-					: translate( 'Cancel my current plan' );
-			}
-
-			return isRemoveFlow
-				? translate( 'Submit and remove plan' )
-				: translate( 'Submit and cancel plan' );
-		}
-
-		return isRemoveFlow
-			? translate( 'Submit and remove product' )
-			: translate( 'Submit and cancel product' );
-	}
-
 	renderStepButtons = () => {
 		const { translate, disableButtons } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
@@ -607,7 +580,7 @@ class CancelPurchaseForm extends Component {
 						disabled={ ! this.canGoNext() }
 						onClick={ this.onSubmit }
 					>
-						{ this.getFinalActionText() }
+						{ translate( 'Submit' ) }
 					</GutenbergButton>
 					<GutenbergButton
 						isSecondary
@@ -630,7 +603,7 @@ class CancelPurchaseForm extends Component {
 				disabled={ ! this.canGoNext() }
 				onClick={ this.onSubmit }
 			>
-				{ this.getFinalActionText() }
+				{ translate( 'Submit' ) }
 			</GutenbergButton>
 		);
 	};
