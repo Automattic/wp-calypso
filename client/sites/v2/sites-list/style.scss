@@ -6,6 +6,7 @@
 
 	.dashboard-page-layout {
 		height: 100%;
+		justify-content: flex-start;
 		align-self: center;
 		margin: 0;
 		padding: 0;
@@ -21,6 +22,7 @@
 
 	.components-card-body {
 		height: 100%;
+		padding: 0;
 	}
 
 	.dataviews-wrapper {
