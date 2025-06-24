@@ -213,7 +213,7 @@ function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 
 export function Status( { site }: { site: Site } ) {
 	if ( site.is_deleted ) {
-		return <IneligibleIndicator />;
+		return __( 'Deleted' );
 	}
 
 	if ( site.plan?.expired ) {
