@@ -203,10 +203,14 @@ const DotcomPreviewPane = ( {
 	const isReverting =
 		stagingStatus === StagingSiteStatus.INITIATE_REVERTING ||
 		stagingStatus === StagingSiteStatus.REVERTING;
+	const isTransfering =
+		stagingStatus === StagingSiteStatus.INITIATE_TRANSFERRING ||
+		stagingStatus === StagingSiteStatus.TRANSFERRING;
 	const isProduction = site.is_wpcom_atomic && ! site.is_wpcom_staging_site;
 	const hasNoStagingSites = ! site.options?.wpcom_staging_blog_ids?.length;
 
-	const shouldShowProductionBadge = isProduction && ( hasNoStagingSites || isReverting );
+	const shouldShowProductionBadge =
+		isProduction && ( hasNoStagingSites || isTransfering || isReverting );
 
 	return (
 		<ItemView
