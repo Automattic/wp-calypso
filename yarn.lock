@@ -1174,7 +1174,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/domain-search@workspace:packages/domain-search":
+"@automattic/domain-search@workspace:^, @automattic/domain-search@workspace:packages/domain-search":
   version: 0.0.0-use.local
   resolution: "@automattic/domain-search@workspace:packages/domain-search"
   dependencies:
@@ -14935,6 +14935,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
+    "@automattic/domain-search": "workspace:^"
     "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"

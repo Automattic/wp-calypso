@@ -38,6 +38,7 @@
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/design-preview": "workspace:^",
 		"@automattic/domain-picker": "workspace:^",
+		"@automattic/domain-search": "workspace:^",
 		"@automattic/domains-table": "workspace:^",
 		"@automattic/explat-client": "workspace:^",
 		"@automattic/explat-client-react-helpers": "workspace:^",
