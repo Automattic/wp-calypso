@@ -1,4 +1,4 @@
-import { ValidationContext } from '../../types';
+import { DataFormControlProps, ValidationContext } from '../../types';
 import { INPUT_VALIDATION_RULES } from './constant';
 
 export type RequiredRule = {
@@ -20,3 +20,14 @@ export type NormalizedIsValid< Item > = (
 	item: Item,
 	context?: ValidationContext
 ) => boolean;
+
+type RequiredConstraint = {
+	required: boolean;
+};
+
+export type HTMLConstraintAttributes< Item > = {
+	constraints: RequiredConstraint;
+};
+
+export type DataFormControlPropsWithConstraints< Item > =
+	DataFormControlProps< Item > & Partial< HTMLConstraintAttributes< Item > >;

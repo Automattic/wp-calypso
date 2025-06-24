@@ -7,14 +7,15 @@ import { useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function Text< Item >( {
 	data,
 	field,
 	onChange,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	...props
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, label, placeholder, description } = field;
 	const value = field.getValue( { item: data } );
 
@@ -26,6 +27,8 @@ export default function Text< Item >( {
 		[ id, onChange ]
 	);
 
+	const constraints = props.constraints;
+
 	return (
 		<TextControl
 			label={ label }
@@ -36,6 +39,7 @@ export default function Text< Item >( {
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			hideLabelFromVision={ hideLabelFromVision }
+			required={ constraints?.required ?? false }
 		/>
 	);
 }

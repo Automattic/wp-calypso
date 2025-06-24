@@ -6,15 +6,18 @@ import { CheckboxControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function Checkbox< Item >( {
 	field,
 	onChange,
 	data,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, getValue, label, description } = field;
+
+	const required = constraints?.required ?? false;
 
 	return (
 		<CheckboxControl
@@ -25,6 +28,7 @@ export default function Checkbox< Item >( {
 			onChange={ () =>
 				onChange( { [ id ]: ! getValue( { item: data } ) } )
 			}
+			required={ required }
 		/>
 	);
 }

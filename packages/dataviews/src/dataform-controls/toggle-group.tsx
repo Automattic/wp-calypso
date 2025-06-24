@@ -10,14 +10,15 @@ import { useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function ToggleGroup< Item >( {
 	data,
 	field,
 	onChange,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id } = field;
 	const value = field.getValue( { item: data } );
 
@@ -28,6 +29,8 @@ export default function ToggleGroup< Item >( {
 			} ),
 		[ id, onChange ]
 	);
+
+	const required = constraints?.required ?? false;
 
 	if ( field.elements ) {
 		const selectedOption = field.elements.find(
@@ -43,6 +46,7 @@ export default function ToggleGroup< Item >( {
 				onChange={ onChangeControl }
 				value={ value }
 				hideLabelFromVision={ hideLabelFromVision }
+				required={ required }
 			>
 				{ field.elements.map( ( el ) => (
 					<ToggleGroupControlOption

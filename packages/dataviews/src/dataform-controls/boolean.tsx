@@ -6,15 +6,18 @@ import { BaseControl, ToggleControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function Boolean< Item >( {
 	field,
 	onChange,
 	data,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, getValue, label } = field;
+
+	const required = constraints?.required ?? false;
 	if ( hideLabelFromVision ) {
 		return (
 			<BaseControl>
@@ -25,6 +28,7 @@ export default function Boolean< Item >( {
 					onChange={ () =>
 						onChange( { [ id ]: ! getValue( { item: data } ) } )
 					}
+					required={ required }
 				/>
 			</BaseControl>
 		);
@@ -39,6 +43,7 @@ export default function Boolean< Item >( {
 				onChange={ () =>
 					onChange( { [ id ]: ! getValue( { item: data } ) } )
 				}
+				required={ required }
 			/>
 		</BaseControl>
 	);

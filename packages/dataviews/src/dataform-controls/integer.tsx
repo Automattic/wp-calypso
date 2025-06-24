@@ -13,18 +13,21 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { OPERATOR_BETWEEN } from '../constants';
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
+import { DataFormControlProps } from '../types';
 
 function BetweenControls< Item >( {
 	id,
 	value,
 	onChange,
 	hideLabelFromVision,
+	required,
 }: {
 	id: string;
 	value: any;
 	onChange: DataFormControlProps< Item >[ 'onChange' ];
 	hideLabelFromVision?: boolean;
+	required?: boolean;
 } ) {
 	const [ min = '', max = '' ] = Array.isArray( value ) ? value : [];
 
@@ -57,6 +60,7 @@ function BetweenControls< Item >( {
 					onChange={ onChangeMin }
 					__next40pxDefaultSize
 					hideLabelFromVision={ hideLabelFromVision }
+					required={ required }
 				/>
 				<NumberControl
 					label={ __( 'Max.' ) }
@@ -65,6 +69,7 @@ function BetweenControls< Item >( {
 					onChange={ onChangeMax }
 					__next40pxDefaultSize
 					hideLabelFromVision={ hideLabelFromVision }
+					required={ required }
 				/>
 			</Flex>
 		</BaseControl>
@@ -77,7 +82,8 @@ export default function Integer< Item >( {
 	onChange,
 	hideLabelFromVision,
 	operator,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, label, description } = field;
 	const value = field.getValue( { item: data } ) ?? '';
 	const onChangeControl = useCallback(
@@ -88,6 +94,8 @@ export default function Integer< Item >( {
 		[ id, onChange ]
 	);
 
+	const required = constraints?.required ?? false;
+
 	if ( operator === OPERATOR_BETWEEN ) {
 		return (
 			<BetweenControls
@@ -95,6 +103,7 @@ export default function Integer< Item >( {
 				value={ value }
 				onChange={ onChange }
 				hideLabelFromVision={ hideLabelFromVision }
+				required={ required }
 			/>
 		);
 	}
@@ -107,6 +116,7 @@ export default function Integer< Item >( {
 			onChange={ onChangeControl }
 			__next40pxDefaultSize
 			hideLabelFromVision={ hideLabelFromVision }
+			required={ required }
 		/>
 	);
 }

@@ -7,14 +7,15 @@ import { useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function Email< Item >( {
 	data,
 	field,
 	onChange,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, label, placeholder, description } = field;
 	const value = field.getValue( { item: data } );
 
@@ -25,6 +26,8 @@ export default function Email< Item >( {
 			} ),
 		[ id, onChange ]
 	);
+
+	const required = constraints?.required ?? false;
 
 	return (
 		<TextControl
@@ -37,6 +40,7 @@ export default function Email< Item >( {
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			hideLabelFromVision={ hideLabelFromVision }
+			required={ required }
 		/>
 	);
 }

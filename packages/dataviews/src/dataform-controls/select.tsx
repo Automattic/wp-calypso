@@ -8,14 +8,15 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function Select< Item >( {
 	data,
 	field,
 	onChange,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, label } = field;
 	const value = field.getValue( { item: data } ) ?? '';
 	const onChangeControl = useCallback(
@@ -48,6 +49,7 @@ export default function Select< Item >( {
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			hideLabelFromVision={ hideLabelFromVision }
+			required={ constraints?.required ?? false }
 		/>
 	);
 }

@@ -7,14 +7,15 @@ import { useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import type { DataFormControlProps } from '../types';
+import { DataFormControlPropsWithConstraints } from '../components/validation';
 
 export default function Radio< Item >( {
 	data,
 	field,
 	onChange,
 	hideLabelFromVision,
-}: DataFormControlProps< Item > ) {
+	constraints,
+}: DataFormControlPropsWithConstraints< Item > ) {
 	const { id, label } = field;
 	const value = field.getValue( { item: data } );
 
@@ -26,6 +27,8 @@ export default function Radio< Item >( {
 		[ id, onChange ]
 	);
 
+	const required = constraints?.required ?? false;
+
 	if ( field.elements ) {
 		return (
 			<RadioControl
@@ -34,6 +37,7 @@ export default function Radio< Item >( {
 				options={ field.elements }
 				selected={ value }
 				hideLabelFromVision={ hideLabelFromVision }
+				required={ required }
 			/>
 		);
 	}

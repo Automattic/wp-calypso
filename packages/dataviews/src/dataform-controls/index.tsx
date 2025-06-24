@@ -6,11 +6,8 @@ import type { ComponentType } from 'react';
 /**
  * Internal dependencies
  */
-import type {
-	DataFormControlProps,
-	Field,
-	FieldTypeDefinition,
-} from '../types';
+import type { Field, FieldTypeDefinition } from '../types';
+import boolean from './boolean';
 import checkbox from './checkbox';
 import datetime from './datetime';
 import email from './email';
@@ -19,10 +16,15 @@ import radio from './radio';
 import select from './select';
 import text from './text';
 import toggleGroup from './toggle-group';
-import boolean from './boolean';
+import {
+	DataFormControlPropsWithConstraints,
+	injectConstraintsProp,
+} from '../components/validation';
 
 interface FormControls {
-	[ key: string ]: ComponentType< DataFormControlProps< any > >;
+	[ key: string ]: ComponentType<
+		DataFormControlPropsWithConstraints< any >
+	>;
 }
 
 const FORM_CONTROLS: FormControls = {
@@ -54,7 +56,10 @@ export function getControl< Item >(
 	}
 
 	if ( typeof fieldTypeDefinition.Edit === 'string' ) {
-		return getControlByType( fieldTypeDefinition.Edit );
+		return injectConstraintsProp(
+			getControlByType( fieldTypeDefinition.Edit ),
+			field.isValid
+		);
 	}
 
 	return fieldTypeDefinition.Edit;

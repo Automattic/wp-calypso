@@ -1,9 +1,14 @@
-import { Field, ValidationContext } from '../../types';
+import { ComponentType } from 'react';
+import { DataFormControlProps, Field, ValidationContext } from '../../types';
 import { isRequiredRule, isRulesObject } from './guards';
 
-import { NormalizedIsValid, Rules } from './types';
+import {
+	DataFormControlPropsWithConstraints,
+	NormalizedIsValid,
+	Rules,
+} from './types';
 
-export const normalizeIsValid = < Item >(
+export const normalizeIsValid = < Item, >(
 	rules:
 		| ( ( item: Item, context?: ValidationContext ) => boolean )
 		| Rules< Item >
@@ -32,7 +37,7 @@ const generateCallback = < Item extends unknown >(
 	return () => true;
 };
 
-const generateIsRequiredRuleCallback = < Item >(
+const generateIsRequiredRuleCallback = < Item, >(
 	getValue: ( args: { item: Item } ) => any
 ) => {
 	return ( item: Item, context?: ValidationContext ) => {
@@ -42,7 +47,7 @@ const generateIsRequiredRuleCallback = < Item >(
 };
 
 export const createGetValidationErrors =
-	< Item >(
+	< Item, >(
 		field: Field< Item >,
 		getValue: ( args: { item: Item } ) => any
 	) =>
@@ -68,3 +73,24 @@ export const createGetValidationErrors =
 			[] as string[]
 		);
 	};
+
+export const injectConstraintsProp = < Item, >(
+	Component: ComponentType< DataFormControlPropsWithConstraints< Item > >,
+	rules: Rules< Item > | undefined
+) => {
+	if ( ! rules ) {
+		return Component;
+	}
+
+	if ( typeof rules === 'function' ) {
+		return Component;
+	}
+
+	if ( isRequiredRule( rules ) ) {
+		return ( props: DataFormControlProps< Item > ) => (
+			<Component { ...props } constraints={ { required: true } } />
+		);
+	}
+
+	return Component;
+};
