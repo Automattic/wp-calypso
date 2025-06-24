@@ -424,25 +424,6 @@
 		margin-top: 0;
 	}
 
-	.login {
-		&.is-jetpack-cloud,
-		&.is-a4a {
-			width: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			form {
-				width: 100%;
-			}
-
-			> :last-child:not(.wp-login__links) {
-				margin-bottom: 64px;
-			}
-		}
-
-	}
-
 	.login__form-post-header {
 		margin-top: 24px;
 	}

@@ -606,8 +606,10 @@ class Login extends Component {
 				className={ clsx( 'login', {
 					'is-akismet': isFromAkismet,
 					'is-jetpack': isJetpack,
+					// TODO: Confirm if `is-jetpack-cloud` is needed
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
+					// TODO: Confirm if `is-a4a` is needed
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
 				} ) }
 			>
