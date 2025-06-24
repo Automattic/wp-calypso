@@ -566,6 +566,7 @@ describe( 'filters', () => {
 		expect( result.length ).toBe( 1 );
 		expect( result[ 0 ].title ).toBe( 'Test Item 2' );
 	} );
+
 	it( 'should filter numbers inclusively between min and max using BETWEEN operator', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
