@@ -63,7 +63,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
-		"@automattic/components": "workspace:^",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@types/jest": "^29.5.14",
 		"@wordpress/postcss-plugins-preset": "^5.23.0",

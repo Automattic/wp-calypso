@@ -68,21 +68,4 @@ export { VIPLogo } from './logos/vip-logo';
 export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
 export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
-
-// Validated Form Controls
-export { ValidatedTextControl } from './validated-form-controls/components/text-control';
-export { ValidatedInputControl } from './validated-form-controls/components/input-control';
-export { ValidatedSelectControl } from './validated-form-controls/components/select-control';
-export { ValidatedNumberControl } from './validated-form-controls/components/number-control';
-export { ValidatedTextareaControl } from './validated-form-controls/components/textarea-control';
-export { ValidatedToggleControl } from './validated-form-controls/components/toggle-control';
-export { ValidatedRadioControl } from './validated-form-controls/components/radio-control';
-export { ValidatedCheckboxControl } from './validated-form-controls/components/checkbox-control';
-export { ValidatedComboboxControl } from './validated-form-controls/components/combobox-control';
-export { ValidatedCustomSelectControl } from './validated-form-controls/components/custom-select-control';
-export { ValidatedToggleGroupControl } from './validated-form-controls/components/toggle-group-control';
-export { ValidatedRangeControl } from './validated-form-controls/components/range-control';
-
-// Export types
-export type { ValidatedControlProps } from './validated-form-controls/components/types';
 export { GravatarTextLogo } from './logos/gravatar-text-logo';
