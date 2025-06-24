@@ -4,14 +4,17 @@ import { Notice as WPNotice } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
+import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
@@ -21,6 +24,7 @@ import { ConfirmationModal } from '../confirmation-modal';
 import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
 const stagingSiteSyncSuccess = 'staging-site-sync-success';
+import './style.scss';
 
 const STAGING_SYNC_JETPACK_ERROR_CODES = [
 	'staging_site_cannot_sync_staging',
@@ -229,8 +233,9 @@ const StagingToProductionSync = ( {
 
 	return (
 		<>
+			<QueryRewindState siteId={ 245123902 } />
 			{ showSyncPanel && (
-				<>
+				<div className="staging-site-card">
 					<OptionsTreeTitle>{ translate( 'Synchronize this data:' ) }</OptionsTreeTitle>
 					<SyncOptionsPanel
 						reset={ ! isSyncInProgress }
@@ -239,7 +244,8 @@ const StagingToProductionSync = ( {
 						onChange={ onSelectItems }
 						isSqlsOptionDisabled={ isSqlsOptionDisabled }
 					></SyncOptionsPanel>
-				</>
+					<FileBrowser rewindId={ 1750775633.056 } />
+				</div>
 			) }
 			<ConfirmationModalContainer>
 				<ConfirmationModal
@@ -516,6 +522,9 @@ export const SiteSyncCard = ( {
 		);
 	}, [] );
 
+	const browserCheckList = useSelector( ( state ) =>
+		getBackupBrowserCheckList( state, productionSiteId )
+	);
 	const onPushInternal = useCallback( () => {
 		resetSyncStatus();
 		dispatch( removeNotice( stagingSiteSyncSuccess ) );
@@ -523,9 +532,12 @@ export const SiteSyncCard = ( {
 			onPush?.();
 		}
 		if ( type === 'staging' ) {
-			onPush?.( transformSelectedItems( selectedItems ) );
+			// TODO: Get the browser node from the state and use it to get the rewindId
+			const includePaths = browserCheckList.includeList.map( ( item ) => item.id );
+			// onPush?.( transformSelectedItems( selectedItems ) );
+			onPush?.( includePaths );
 		}
-	}, [ dispatch, onPush, resetSyncStatus, selectedItems, transformSelectedItems, type ] );
+	}, [ browserCheckList.includeList, dispatch, onPush, resetSyncStatus, type ] );
 
 	const syncError = error || checkStatusError;
 	const onPullInternal = useCallback( () => {
