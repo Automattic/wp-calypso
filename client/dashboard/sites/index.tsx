@@ -204,12 +204,14 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 				return 'WordPress.com';
 			}
 
-			// Normalize the provider name to title case.
-			return provider
-				.replace( /[-_]/g, ' ' )
-				.split( ' ' )
-				.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
-				.join( ' ' );
+			switch ( provider ) {
+				case 'jurassic_ninja':
+					return 'Jurassic Ninja';
+				case 'pressable':
+					return 'Pressable';
+			}
+
+			return provider;
 		},
 		render: ( { field, item } ) => field.getValue( { item } ),
 	},
