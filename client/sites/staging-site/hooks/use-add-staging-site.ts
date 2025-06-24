@@ -1,5 +1,7 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 import wp from 'calypso/lib/wp';
+import { requestSite } from 'calypso/state/sites/actions';
 import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
 
 interface MutationVariables {
@@ -7,7 +9,10 @@ interface MutationVariables {
 }
 
 interface MutationResponse {
-	message: string;
+	id: number;
+	name: string;
+	url: string;
+	user_has_permission: boolean;
 }
 
 interface MutationError {
@@ -22,6 +27,8 @@ export const useAddStagingSiteMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+
 	const mutation = useMutation( {
 		mutationFn: () =>
 			wp.req.post( {
@@ -30,11 +37,16 @@ export const useAddStagingSiteMutation = (
 			} ),
 		...options,
 		mutationKey: [ ADD_STAGING_SITE_MUTATION_KEY, siteId ],
-		onSuccess: async ( ...args ) => {
+		onSuccess: async ( response, variables, context ) => {
 			await queryClient.invalidateQueries( {
 				queryKey: [ USE_STAGING_SITE_QUERY_KEY, siteId ],
 			} );
-			options.onSuccess?.( ...args );
+
+			if ( response.id ) {
+				dispatch( requestSite( response.id ) );
+			}
+
+			options.onSuccess?.( response, variables, context );
 		},
 	} );
 
