@@ -34,7 +34,6 @@ import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
-import 'calypso/state/data-layer/wpcom/read/lists/recommended-blogs';
 import 'calypso/state/reader/init';
 
 // Type definitions based on API usage patterns
