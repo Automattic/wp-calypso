@@ -105,6 +105,29 @@
 
 			.dataviews-view-table__actions-column {
 				text-align: right;
+				position: sticky;
+				right: 0;
+				background-color: var( --studio-white );
+
+				::after {
+					background-color: var( --color-border-subtle );
+					bottom: 0;
+					content: "";
+					display: block;
+					left: 0;
+					position: absolute;
+					top: 0;
+					width: 1px;
+				}
+
+				@include breakpoint-deprecated( ">480px" ) {
+					position: relative;
+					background-color: transparent;
+
+					::after {
+						display: none;
+					}
+				}
 			}
 		}
 
