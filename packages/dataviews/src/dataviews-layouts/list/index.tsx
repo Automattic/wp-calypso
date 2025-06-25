@@ -199,7 +199,11 @@ function ListItem< Item >( {
 	const renderedMediaField =
 		showMedia && mediaField?.render ? (
 			<div className="dataviews-view-list__media-wrapper">
-				<mediaField.render item={ item } field={ mediaField } />
+				<mediaField.render
+					item={ item }
+					field={ mediaField }
+					sizes="52px"
+				/>
 			</div>
 		) : null;
 

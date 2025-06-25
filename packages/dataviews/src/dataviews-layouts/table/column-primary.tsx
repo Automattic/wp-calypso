@@ -44,7 +44,11 @@ function ColumnPrimary< Item >( {
 		<HStack spacing={ 3 } justify="flex-start">
 			{ mediaField && (
 				<div className="dataviews-view-table__cell-content-wrapper dataviews-column-primary__media">
-					<mediaField.render item={ item } field={ mediaField } />
+					<mediaField.render
+						item={ item }
+						field={ mediaField }
+						sizes="32px"
+					/>
 				</div>
 			) }
 			<VStack spacing={ 0 }>

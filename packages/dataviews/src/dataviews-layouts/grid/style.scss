@@ -117,26 +117,14 @@
 }
 
 .dataviews-view-grid.dataviews-view-grid {
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 	/**
 	 * Breakpoints were adjusted from media queries breakpoints to account for
 	 * the sidebar width. This was done to match the existing styles we had.
 	 */
 	@container (max-width: 480px) {
-		grid-template-columns: repeat(1, minmax(0, 1fr));
 		padding-left: $grid-unit-30;
 		padding-right: $grid-unit-30;
-	}
-	@container (min-width: 480px) {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-	@container (min-width: 780px) {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-	@container (min-width: 1140px) {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
-	@container (min-width: 1520px) {
-		grid-template-columns: repeat(5, minmax(0, 1fr));
 	}
 }
 

@@ -60,6 +60,7 @@ interface GridItemProps< Item > {
 	regularFields: NormalizedField< Item >[];
 	badgeFields: NormalizedField< Item >[];
 	hasBulkActions: boolean;
+	sizes: string;
 }
 
 function GridItem< Item >( {
@@ -78,6 +79,7 @@ function GridItem< Item >( {
 	regularFields,
 	badgeFields,
 	hasBulkActions,
+	sizes,
 }: GridItemProps< Item > ) {
 	const { showTitle = true, showMedia = true, showDescription = true } = view;
 	const hasBulkAction = useHasAPossibleBulkAction( actions, item );
@@ -85,7 +87,7 @@ function GridItem< Item >( {
 	const instanceId = useInstanceId( GridItem );
 	const isSelected = selection.includes( id );
 	const renderedMediaField = mediaField?.render ? (
-		<mediaField.render item={ item } field={ mediaField } />
+		<mediaField.render item={ item } field={ mediaField } sizes={ sizes } />
 	) : null;
 	const renderedTitleField =
 		showTitle && titleField?.render ? (
@@ -293,6 +295,15 @@ function ViewGrid< Item >( {
 				gridTemplateColumns: `repeat(${ usedPreviewSize }, minmax(0, 1fr))`,
 		  }
 		: {};
+
+	// The default grid items don't grow above this size.
+	let sizes = '400px';
+	if ( usedPreviewSize ) {
+		// This is a very approximate calculation dividing the viewport by the number of columns.
+		// It should still provide significant benefits in terms of download size.
+		sizes = `${ 100 / usedPreviewSize }vw`;
+	}
+
 	return (
 		<>
 			{ hasData && (
@@ -323,6 +334,7 @@ function ViewGrid< Item >( {
 								regularFields={ regularFields }
 								badgeFields={ badgeFields }
 								hasBulkActions={ hasBulkActions }
+								sizes={ sizes }
 							/>
 						);
 					} ) }

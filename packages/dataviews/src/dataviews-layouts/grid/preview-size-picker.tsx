@@ -14,7 +14,7 @@ import type { ViewGrid } from '../../types';
 const viewportBreaks: {
 	[ key: string ]: { min: number; max: number; default: number };
 } = {
-	xhuge: { min: 3, max: 6, default: 5 },
+	xhuge: { min: 3, max: 6, default: 6 },
 	huge: { min: 2, max: 4, default: 4 },
 	xlarge: { min: 2, max: 3, default: 3 },
 	large: { min: 1, max: 2, default: 2 },
