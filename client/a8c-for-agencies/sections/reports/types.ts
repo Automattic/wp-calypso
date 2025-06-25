@@ -46,8 +46,6 @@ export interface ReportsApiResponse {
 
 export type BuildReportCheckedItemsState = Record< string, boolean >;
 
-export type TimeframeValue = '7_days' | '24_hours' | '30_days' | 'custom';
-
 export type BuildReportFormData = {
 	selectedSite: A4ASelectSiteItem | null;
 	selectedTimeframe: TimeframeValue;
