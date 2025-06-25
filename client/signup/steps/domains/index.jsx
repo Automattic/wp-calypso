@@ -952,9 +952,11 @@ class RenderDomainsStepComponent extends Component {
 		);
 		this.props.submitSignupStep( stepDependencies, providedDependencies );
 
-		const productToRemove = cart.products.find(
-			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
-		);
+		const productToRemove = multiDomainDefaultPlan
+			? cart.products.find(
+					( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
+			  )
+			: null;
 
 		if ( productToRemove && productToRemove.uuid ) {
 			shoppingCartManager.removeProductFromCart( productToRemove.uuid ).then( () => {
