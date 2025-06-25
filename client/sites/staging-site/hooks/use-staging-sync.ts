@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, useIsMutating } from '@tanstack/react-
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
-type MutationVariables = string[] | undefined;
+type MutationVariables = string[] | { types: string; includePaths: string } | undefined;
 
 interface PushStagingMutationResponse {
 	message: string;
@@ -53,14 +53,15 @@ export const usePullFromStagingMutation = (
 	>
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async ( options ) =>
-			wp.req.post(
+		mutationFn: async ( options ) => {
+			return wp.req.post(
 				{
 					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ options, allow_woo_sync: 1 }
-			),
+			);
+		},
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
 		onSuccess: async ( ...args ) => {

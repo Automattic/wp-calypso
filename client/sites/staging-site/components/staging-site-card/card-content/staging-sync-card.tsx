@@ -138,7 +138,9 @@ const SyncWarningContainer = styled.div( {
 interface SyncCardProps {
 	type: 'production' | 'staging';
 	onPull: ( ( items?: string[] ) => void ) | ( () => void );
-	onPush: ( ( items?: string[] ) => void ) | ( () => void );
+	onPush:
+		| ( ( items?: string[] | { types: string; includePaths: string } ) => void )
+		| ( () => void );
 	disabled: boolean;
 	productionSiteId: number;
 	siteUrls: {
@@ -246,7 +248,8 @@ const StagingToProductionSync = ( {
 						onChange={ onSelectItems }
 						isSqlsOptionDisabled={ isSqlsOptionDisabled }
 					></SyncOptionsPanel>
-					<FileBrowser rewindId={ 1750775633.056 } />
+					{ /*  TODO: Query and get the proper rewindId from the state  */ }
+					<FileBrowser rewindId={ 1750870090.93 } />
 				</div>
 			) }
 			<ConfirmationModalContainer>
@@ -537,9 +540,9 @@ export const SiteSyncCard = ( {
 		}
 		if ( type === 'staging' ) {
 			// TODO: Get the browser node from the state and use it to get the rewindId
-			const includePaths = browserCheckList.includeList.map( ( item ) => item.id );
+			const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 			// onPush?.( transformSelectedItems( selectedItems ) );
-			onPush?.( includePaths );
+			onPush?.( { types: 'paths', includePaths } );
 		}
 	}, [ browserCheckList.includeList, dispatch, onPush, resetSyncStatus, type ] );
 
