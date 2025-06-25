@@ -450,7 +450,9 @@ const SitesDashboard = ( {
 						sitesCount={ paginatedSites.length }
 					/>
 
-					{ ! selectedSite && isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
+					{ ! selectedSite &&
+					siteType === DEFAULT_SITE_TYPE &&
+					isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
 						<AsyncLoad require="../v2/sites-list" placeholder={ null } />
 					) : (
 						<DotcomSitesDataViews
