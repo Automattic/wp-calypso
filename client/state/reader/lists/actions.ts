@@ -34,14 +34,33 @@ import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
+import 'calypso/state/data-layer/wpcom/read/lists/recommended-blogs';
 import 'calypso/state/reader/init';
+
+// Type definitions based on API usage patterns
+interface ReaderList {
+	ID?: number;
+	title: string;
+	slug: string;
+	description?: string;
+	owner: string;
+	is_owner?: boolean;
+	is_public?: boolean;
+	is_immutable?: boolean;
+}
+
+interface ErrorInfo {
+	error: unknown;
+	owner?: string;
+	slug?: string;
+}
 
 /**
  * Returns an action object to signal that list objects have been received.
  * @param  {Array}  lists Lists received
  * @returns {Object}       Action object
  */
-export function receiveLists( lists ) {
+export function receiveLists( lists: ReaderList[] ) {
 	return {
 		type: READER_LISTS_RECEIVE,
 		lists,
@@ -58,7 +77,7 @@ export function requestSubscribedLists() {
 	};
 }
 
-export function createReaderList( list ) {
+export function createReaderList( list: ReaderList ) {
 	return { type: READER_LIST_CREATE, list };
 }
 
@@ -68,20 +87,21 @@ export function createReaderList( list ) {
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
  */
-export function requestList( listOwner, listSlug ) {
+export function requestList( listOwner: string, listSlug: string ) {
 	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
 /**
  * Receive a single Reader list.
- * @param  {Object}  data List
+ * @param  {Object}  data List data
+ * @param  {Object}  data.list Reader list object
  * @returns {Object}       Action object
  */
-export function receiveReaderList( data ) {
+export function receiveReaderList( data: { list: ReaderList } ) {
 	return { type: READER_LIST_RECEIVE, data };
 }
 
-export function handleRequestListFailure( errorInfo ) {
+export function handleRequestListFailure( errorInfo: ErrorInfo ) {
 	return {
 		type: READER_LIST_REQUEST_FAILURE,
 		error: errorInfo.error,
@@ -90,14 +110,14 @@ export function handleRequestListFailure( errorInfo ) {
 	};
 }
 
-export function receiveCreateReaderList( data ) {
+export function receiveCreateReaderList( data: { list: ReaderList } ) {
 	return {
 		type: READER_LIST_CREATE_SUCCESS,
 		data,
 	};
 }
 
-export function handleCreateReaderListFailure( errorInfo ) {
+export function handleCreateReaderListFailure( errorInfo: ErrorInfo ) {
 	return {
 		type: READER_LIST_CREATE_FAILURE,
 		error: errorInfo.error,
@@ -112,7 +132,7 @@ export function handleCreateReaderListFailure( errorInfo ) {
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
  */
-export function followList( listOwner, listSlug ) {
+export function followList( listOwner: string, listSlug: string ) {
 	return {
 		type: READER_LIST_FOLLOW,
 		listOwner,
@@ -125,7 +145,7 @@ export function followList( listOwner, listSlug ) {
  * @param  {Object} list Followed list
  * @returns {Object} Action object
  */
-export function receiveFollowList( list ) {
+export function receiveFollowList( list: ReaderList ) {
 	return {
 		type: READER_LIST_FOLLOW_RECEIVE,
 		list,
@@ -138,7 +158,7 @@ export function receiveFollowList( list ) {
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
  */
-export function unfollowList( listOwner, listSlug ) {
+export function unfollowList( listOwner: string, listSlug: string ) {
 	return {
 		type: READER_LIST_UNFOLLOW,
 		listOwner,
@@ -151,7 +171,7 @@ export function unfollowList( listOwner, listSlug ) {
  * @param  {Object} list Unfollowed list
  * @returns {Object}    Action object
  */
-export function receiveUnfollowList( list ) {
+export function receiveUnfollowList( list: ReaderList ) {
 	return {
 		type: READER_LIST_UNFOLLOW_RECEIVE,
 		list,
@@ -163,7 +183,7 @@ export function receiveUnfollowList( list ) {
  * @param   {Object} list List details to save
  * @returns {Object} Action object
  */
-export function updateReaderList( list ) {
+export function updateReaderList( list: ReaderList ) {
 	if ( ! list || ! list.owner || ! list.slug || ! list.title ) {
 		throw new Error( 'List owner, slug and title are required' );
 	}
@@ -176,10 +196,11 @@ export function updateReaderList( list ) {
 
 /**
  * Handle updated list object from the API.
- * @param   {Object} data List to save
+ * @param   {Object} data List data
+ * @param   {Object} data.list List to save
  * @returns {Object} Action object
  */
-export function receiveUpdatedListDetails( data ) {
+export function receiveUpdatedListDetails( data: { list: ReaderList } ) {
 	return {
 		type: READER_LIST_UPDATE_SUCCESS,
 		data,
@@ -192,7 +213,7 @@ export function receiveUpdatedListDetails( data ) {
  * @param   {Object} list List details to save
  * @returns {Object} Action object
  */
-export function handleUpdateListDetailsError( error, list ) {
+export function handleUpdateListDetailsError( error: unknown, list: ReaderList ) {
 	return {
 		type: READER_LIST_UPDATE_FAILURE,
 		error,
@@ -200,19 +221,24 @@ export function handleUpdateListDetailsError( error, list ) {
 	};
 }
 
-export const requestReaderListItems = ( listOwner, listSlug ) => ( {
+export const requestReaderListItems = ( listOwner: string, listSlug: string ) => ( {
 	type: READER_LIST_ITEMS_REQUEST,
 	listOwner,
 	listSlug,
 } );
 
-export const receiveReaderListItems = ( listId, listItems ) => ( {
+export const receiveReaderListItems = ( listId: number, listItems: unknown ) => ( {
 	type: READER_LIST_ITEMS_RECEIVE,
 	listId,
 	listItems,
 } );
 
-export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
+export const deleteReaderListFeed = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	feedId: number
+) => ( {
 	type: READER_LIST_ITEM_DELETE_FEED,
 	listId,
 	listOwner,
@@ -220,7 +246,12 @@ export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => (
 	feedId,
 } );
 
-export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
+export const deleteReaderListSite = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	siteId: number
+) => ( {
 	type: READER_LIST_ITEM_DELETE_SITE,
 	listId,
 	listOwner,
@@ -228,7 +259,13 @@ export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => (
 	siteId,
 } );
 
-export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug ) => ( {
+export const deleteReaderListTag = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	tagId: number,
+	tagSlug: string
+) => ( {
 	type: READER_LIST_ITEM_DELETE_TAG,
 	listId,
 	listOwner,
@@ -237,7 +274,12 @@ export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug
 	tagSlug,
 } );
 
-export const addReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
+export const addReaderListFeed = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	feedId: number
+) => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
@@ -245,7 +287,12 @@ export const addReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
 	feedId,
 } );
 
-export const addReaderListFeedByUrl = ( listId, listOwner, listSlug, feedUrl ) => ( {
+export const addReaderListFeedByUrl = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	feedUrl: string
+) => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
@@ -253,7 +300,12 @@ export const addReaderListFeedByUrl = ( listId, listOwner, listSlug, feedUrl ) =
 	feedUrl,
 } );
 
-export const addReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
+export const addReaderListSite = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	siteId: number
+) => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
@@ -261,7 +313,12 @@ export const addReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
 	siteId,
 } );
 
-export const addReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
+export const addReaderListTag = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	tagSlug: string
+) => ( {
 	type: READER_LIST_ITEM_ADD_TAG,
 	listId,
 	listOwner,
@@ -269,7 +326,12 @@ export const addReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
 	tagSlug,
 } );
 
-export const receiveAddReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
+export const receiveAddReaderListFeed = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	feedId: number
+) => ( {
 	type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
 	listId,
 	listOwner,
@@ -277,7 +339,13 @@ export const receiveAddReaderListFeed = ( listId, listOwner, listSlug, feedId ) 
 	feedId,
 } );
 
-export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, tagId ) => ( {
+export const receiveAddReaderListTag = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	tagSlug: string,
+	tagId: number
+) => ( {
 	type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	listId,
 	listOwner,
@@ -286,14 +354,14 @@ export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, t
 	tagId,
 } );
 
-export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
+export const deleteReaderList = ( listId: number, listOwner: string, listSlug: string ) => ( {
 	type: READER_LIST_DELETE,
 	listId,
 	listOwner,
 	listSlug,
 } );
 
-export function requestUserLists( userLogin ) {
+export function requestUserLists( userLogin: string ) {
 	return {
 		type: READER_USER_LISTS_REQUEST,
 		userLogin,
