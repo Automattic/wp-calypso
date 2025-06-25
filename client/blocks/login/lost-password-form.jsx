@@ -148,7 +148,14 @@ const LostPasswordForm = ( {
 					value={ userLogin }
 					isError={ showError }
 					onBlur={ validateUserLogin }
-					onChange={ ( event ) => setUserLogin( event.target.value.trim() ) }
+					onChange={ ( event ) => {
+						const newValue = event.target.value.trim();
+						setUserLogin( newValue );
+						// Clear error immediately when user starts typing to fix input
+						if ( error ) {
+							setError( null );
+						}
+					} }
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>
