@@ -17,6 +17,7 @@ import {
 	OPERATOR_AFTER_INC,
 	OPERATOR_IN_THE_PAST,
 	OPERATOR_OVER,
+	OPERATOR_BETWEEN,
 } from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
@@ -57,6 +58,7 @@ export default {
 			OPERATOR_AFTER_INC,
 			OPERATOR_IN_THE_PAST,
 			OPERATOR_OVER,
+			OPERATOR_BETWEEN,
 		],
 		validOperators: [
 			OPERATOR_ON,
@@ -67,6 +69,7 @@ export default {
 			OPERATOR_AFTER_INC,
 			OPERATOR_IN_THE_PAST,
 			OPERATOR_OVER,
+			OPERATOR_BETWEEN,
 		],
 	},
 } satisfies FieldTypeDefinition< any >;

@@ -1007,6 +1007,7 @@ __metadata:
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
     "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/ui": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jest": "npm:^29.5.14"
     "@wordpress/base-styles": "npm:^5.23.0"

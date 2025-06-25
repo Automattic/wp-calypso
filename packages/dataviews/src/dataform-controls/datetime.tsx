@@ -6,17 +6,35 @@ import {
 	TimePicker,
 	VisuallyHidden,
 	SelectControl,
+	__experimentalInputControl as InputControl,
 	__experimentalNumberControl as NumberControl,
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * External dependencies
+ */
+import { DateCalendar, DateRangeCalendar } from '@automattic/ui';
+import { format, isValid } from 'date-fns';
+
+/**
  * Internal dependencies
  */
 import type { DataFormControlProps } from '../types';
-import { OPERATOR_IN_THE_PAST, OPERATOR_OVER } from '../constants';
+import {
+	OPERATOR_IN_THE_PAST,
+	OPERATOR_OVER,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
+	OPERATOR_BETWEEN,
+} from '../constants';
 
 const TIME_UNITS_OPTIONS = {
 	[ OPERATOR_IN_THE_PAST ]: [
@@ -33,7 +51,143 @@ const TIME_UNITS_OPTIONS = {
 	],
 };
 
-function RelativeDateControls( {
+const CALENDAR_OPERATORS = [
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
+	OPERATOR_BEFORE,
+	OPERATOR_AFTER,
+	OPERATOR_BEFORE_INC,
+	OPERATOR_AFTER_INC,
+	OPERATOR_BETWEEN,
+];
+const RANGE_OPERATORS = [ OPERATOR_BETWEEN ];
+
+function CalendarDateControl( {
+	id,
+	value,
+	onChange,
+	label,
+	hideLabelFromVision,
+}: {
+	id: string;
+	value: Date | undefined;
+	onChange: ( value: any ) => void;
+	label: string;
+	hideLabelFromVision?: boolean;
+} ) {
+	const onSelectDate = useCallback(
+		( newDate: Date | undefined | null ) => {
+			const dateValue = newDate
+				? format( newDate, 'yyyy-MM-dd' )
+				: undefined;
+			onChange( { [ id ]: dateValue } );
+		},
+		[ id, onChange ]
+	);
+
+	return (
+		<BaseControl
+			__nextHasNoMarginBottom
+			className="dataviews-controls__datetime"
+			label={ label }
+			hideLabelFromVision={ hideLabelFromVision }
+		>
+			<VStack spacing={ 4 }>
+				<InputControl
+					__next40pxDefaultSize
+					type="date"
+					value={ value ? format( value, 'yyyy-MM-dd' ) : '' }
+					onChange={ ( nextValue ) => {
+						onChange( { [ id ]: nextValue } );
+					} }
+				/>
+				<DateCalendar
+					style={ { width: '100%' } }
+					selected={ value }
+					onSelect={ onSelectDate }
+					autoFocus
+					defaultMonth={ value ? new Date( value ) : new Date() }
+				/>
+			</VStack>
+		</BaseControl>
+	);
+}
+
+function CalendarDateRangeControl( {
+	id,
+	value,
+	onChange,
+	label,
+	hideLabelFromVision,
+}: {
+	id: string;
+	value: [ Date, Date ] | undefined;
+	onChange: ( value: any ) => void;
+	label: string;
+	hideLabelFromVision?: boolean;
+} ) {
+	const [ from, to ] = Array.isArray( value ) ? value : [];
+	const selectedRange = {
+		from: from && new Date( from ),
+		to: to && new Date( to ),
+	};
+
+	const onSelectRange = useCallback(
+		(
+			newRange:
+				| { from: Date | undefined; to?: Date | undefined }
+				| undefined
+		) => {
+			if ( newRange?.from && newRange?.to ) {
+				const fromDate = format( newRange.from, 'yyyy-MM-dd' );
+				const toDate = format( newRange.to, 'yyyy-MM-dd' );
+				onChange( { [ id ]: [ fromDate, toDate ] } );
+			}
+		},
+		[ id, onChange ]
+	);
+
+	return (
+		<BaseControl
+			__nextHasNoMarginBottom
+			className="dataviews-controls__datetime"
+			label={ label }
+			hideLabelFromVision={ hideLabelFromVision }
+		>
+			<VStack spacing={ 4 }>
+				<VStack spacing={ 2.5 }>
+					<InputControl
+						__next40pxDefaultSize
+						type="date"
+						label={ __( 'From' ) }
+						value={ from ? format( from, 'yyyy-MM-dd' ) : '' }
+						onChange={ ( nextValue ) => {
+							onChange( { [ id ]: nextValue, to } );
+						} }
+					/>
+					<InputControl
+						__next40pxDefaultSize
+						type="date"
+						label={ __( 'To' ) }
+						value={ to ? format( to, 'yyyy-MM-dd' ) : '' }
+						onChange={ ( nextValue ) => {
+							onChange( { [ id ]: from, to: nextValue } );
+						} }
+					/>
+				</VStack>
+				<DateRangeCalendar
+					style={ { width: '100%' } }
+					selected={ selectedRange }
+					onSelect={ onSelectRange }
+					autoFocus
+					defaultMonth={ selectedRange?.from || new Date() }
+				/>
+			</VStack>
+		</BaseControl>
+	);
+}
+
+function RelativeDateControl( {
 	id,
 	value,
 	onChange,
@@ -115,13 +269,41 @@ export default function DateTime< Item >( {
 
 	if ( operator === OPERATOR_IN_THE_PAST || operator === OPERATOR_OVER ) {
 		return (
-			<RelativeDateControls
+			<RelativeDateControl
 				id={ id }
 				value={ value && typeof value === 'object' ? value : {} }
 				onChange={ onChange }
 				label={ label }
 				hideLabelFromVision={ hideLabelFromVision }
 				options={ TIME_UNITS_OPTIONS[ operator ] }
+			/>
+		);
+	}
+
+	if ( operator && CALENDAR_OPERATORS.includes( operator ) ) {
+		if ( RANGE_OPERATORS.includes( operator ) ) {
+			return (
+				<CalendarDateRangeControl
+					id={ id }
+					value={ value }
+					onChange={ onChange }
+					label={ label }
+					hideLabelFromVision={ hideLabelFromVision }
+				/>
+			);
+		}
+
+		return (
+			<CalendarDateControl
+				id={ id }
+				value={
+					typeof value === 'string' && isValid( new Date( value ) )
+						? new Date( value )
+						: undefined
+				}
+				onChange={ onChange }
+				label={ label }
+				hideLabelFromVision={ hideLabelFromVision }
 			/>
 		);
 	}
