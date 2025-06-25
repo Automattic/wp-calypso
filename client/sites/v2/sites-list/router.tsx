@@ -1,8 +1,8 @@
 import {
-	Router,
 	createLazyRoute,
 	createRootRoute,
 	createRoute,
+	createRouter,
 	redirect,
 } from '@tanstack/react-router';
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
@@ -14,7 +14,7 @@ const rootRoute = createRootRoute( { component: Root } );
 
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: '/',
+	path: 'sites',
 	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites' ).then( ( d ) =>
@@ -24,35 +24,57 @@ const sitesRoute = createRoute( {
 	)
 );
 
+const dummySitesOverviewRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'overview/$siteSlug',
+	component: () => null,
+} );
+
 const sitesOverviewCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) => {
-		throw redirect( { href: `${ window.location.origin }/overview/${ siteSlug }` } );
+	path: '/sites/$siteSlug',
+	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		throw redirect( { to: `/overview/${ siteSlug }`, replace: true } );
 	},
+} );
+
+const dummySitesSettingsRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/settings/v2/$siteSlug',
+	component: () => null,
 } );
 
 const sitesSettingsCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'sites/$siteSlug/settings',
-	loader: ( { params: { siteSlug } } ) => {
-		throw redirect( { href: `${ window.location.origin }/sites/settings/v2/${ siteSlug }` } );
+	path: '/sites/$siteSlug/settings',
+	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		throw redirect( { to: `/sites/settings/v2/${ siteSlug }` } );
 	},
 } );
 
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		sitesRoute,
+		dummySitesOverviewRoute,
 		sitesOverviewCompatibilityRoute,
+		dummySitesSettingsRoute,
 		sitesSettingsCompatibilityRoute,
 	] );
 
+const compatibilityRoutes = [ sitesOverviewCompatibilityRoute, sitesSettingsCompatibilityRoute ];
+
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
-	createBrowserHistoryAndMemoryRouterSync();
+	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
 
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
-	const router = new Router( {
+	const router = createRouter( {
 		...getRouterOptions(),
 		routeTree,
 		basepath: basePath,

@@ -8,7 +8,7 @@ import { getRouter, syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory
 
 // Serves a similar purpose to AppConfig form v2 dashboard.
 const config = {
-	basePath: '/sites',
+	basePath: '/',
 };
 
 export const router = getRouter( config );

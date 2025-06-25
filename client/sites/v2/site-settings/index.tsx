@@ -12,6 +12,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import Layout, { router } from './layout';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import type { Store } from 'redux';
+import './style.scss';
 
 export default function DashboardBackportSiteSettingsRenderer( {
 	store,
@@ -51,10 +52,8 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		return () => {
 			const currentRoot = rootInstanceRef.current;
 			if ( currentRoot ) {
-				requestAnimationFrame( () => {
-					currentRoot.unmount();
-					rootInstanceRef.current = null;
-				} );
+				currentRoot.unmount();
+				rootInstanceRef.current = null;
 			}
 		};
 	}, [] );

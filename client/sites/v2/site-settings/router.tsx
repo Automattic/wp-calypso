@@ -5,7 +5,6 @@ import {
 	createRootRoute,
 	createRoute,
 	redirect,
-	type AnyRouter,
 } from '@tanstack/react-router';
 import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { siteAgencyBlogQuery } from 'calypso/dashboard/app/queries/site-agency';
@@ -301,21 +300,13 @@ const createRouteTree = () =>
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
-const isCompatibilityRoute = ( router: AnyRouter, url: string ) => {
-	const matches = router.matchRoutes( url );
-	if ( ! matches ) {
-		return false;
-	}
-
-	return matches.some(
-		( match: { routeId: string } ) =>
-			match.routeId === dashboardSiteSettingsCompatibilityRouteRoot.id ||
-			match.routeId === dashboardSiteSettingsCompatibilityRouteWithFeature.id
-	);
-};
+const compatibilityRoutes = [
+	dashboardSiteSettingsCompatibilityRouteRoot,
+	dashboardSiteSettingsCompatibilityRouteWithFeature,
+];
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
-	createBrowserHistoryAndMemoryRouterSync( { isCompatibilityRoute } );
+	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
 
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();

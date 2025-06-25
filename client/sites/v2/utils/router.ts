@@ -1,7 +1,7 @@
 import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
 import { getQueryArgs } from '@wordpress/url';
-import type { AnyRouter } from '@tanstack/react-router';
+import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 
 export function getRouterOptions() {
 	return {
@@ -17,9 +17,9 @@ export function getRouterOptions() {
 }
 
 export function createBrowserHistoryAndMemoryRouterSync( {
-	isCompatibilityRoute,
+	compatibilityRoutes,
 }: {
-	isCompatibilityRoute?: ( router: AnyRouter, url: string ) => boolean;
+	compatibilityRoutes?: AnyRoute[];
 } = {} ) {
 	let lastPath = '';
 
@@ -42,14 +42,26 @@ export function createBrowserHistoryAndMemoryRouterSync( {
 		}
 	};
 
+	const isCompatibilityRoute = ( router: AnyRouter, url: string ) => {
+		const matches = router.matchRoutes( url );
+		if ( ! matches ) {
+			return false;
+		}
+
+		const compatibilityRouteIds = compatibilityRoutes?.map( ( route: AnyRoute ) => route.id ) ?? [];
+		return matches.some( ( match: { routeId: string } ) =>
+			compatibilityRouteIds.includes( match.routeId )
+		);
+	};
+
 	const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 		// Sync TanStack Router's history to the browser history (pagejs).
-		return router.history.subscribe( () => {
-			const { pathname, search } = router.history.location;
+		return router.history.subscribe( ( { location }: { location: Location } ) => {
+			const { pathname, search } = location;
 			const newUrl = `${ pathname }${ search }`;
 
 			// Avoid pushing redirect routes to the browser history.
-			if ( isCompatibilityRoute && isCompatibilityRoute( router, newUrl ) ) {
+			if ( compatibilityRoutes && isCompatibilityRoute( router, newUrl ) ) {
 				return;
 			}
 

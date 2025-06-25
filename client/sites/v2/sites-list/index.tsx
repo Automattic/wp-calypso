@@ -36,10 +36,8 @@ export default function DashboardBackportSitesList() {
 		return () => {
 			const currentRoot = rootInstanceRef.current;
 			if ( currentRoot ) {
-				requestAnimationFrame( () => {
-					currentRoot.unmount();
-					rootInstanceRef.current = null;
-				} );
+				currentRoot.unmount();
+				rootInstanceRef.current = null;
 			}
 		};
 	}, [] );
@@ -53,7 +51,7 @@ export default function DashboardBackportSitesList() {
 		Promise.all( [
 			persistPromise,
 			router.preloadRoute( {
-				to: '/',
+				to: '/sites',
 			} ),
 		] ).then( () => {
 			rootInstanceRef.current?.render( <Layout analyticsClient={ analyticsClient } /> );
