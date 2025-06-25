@@ -63,6 +63,7 @@ export default function BuildReportContent( {
 		showValidationErrors,
 		validationErrors,
 	} = state;
+
 	const {
 		setSelectedSite,
 		setSelectedTimeframe,

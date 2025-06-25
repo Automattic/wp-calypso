@@ -11,6 +11,7 @@ import type {
 	BuildReportCheckedItemsState,
 	ReportFormAPIResponse,
 	UseDuplicateReportFormDataReturn,
+	TimeframeValue,
 } from '../types';
 import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-select-site/types';
 
@@ -37,7 +38,7 @@ export const useDuplicateReportFormData = (): UseDuplicateReportFormDataReturn =
 	yesterday.setDate( today.getDate() - 1 );
 
 	// Form state
-	const [ selectedTimeframe, setSelectedTimeframe ] = useState(
+	const [ selectedTimeframe, setSelectedTimeframe ] = useState< TimeframeValue >(
 		availableTimeframes[ 0 ]?.value || '30_days'
 	);
 	const [ selectedSite, setSelectedSite ] = useState< A4ASelectSiteItem | null >( null );
