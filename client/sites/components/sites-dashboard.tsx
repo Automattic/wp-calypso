@@ -13,6 +13,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
@@ -44,7 +45,6 @@ import {
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
 } from '../onboarding-tours';
-import DashboardBackportSitesList from '../v2/sites-list';
 import { OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
@@ -451,7 +451,7 @@ const SitesDashboard = ( {
 					/>
 
 					{ ! selectedSite && isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
-						<DashboardBackportSitesList />
+						<AsyncLoad require="../v2/sites-list" placeholder={ null } />
 					) : (
 						<DotcomSitesDataViews
 							sites={ paginatedSites }
