@@ -178,6 +178,11 @@ export function receiveUnfollowList( list: ReaderList ): ReaderListAction {
  * @returns Action object
  */
 export function updateReaderList( list: ReaderList ): ReaderListAction {
+	// Validate required properties to prevent runtime errors in JavaScript components
+	if ( ! list || ! list.title || ! list.slug || ! list.owner ) {
+		throw new Error( 'updateReaderList: list must have title, slug, and owner properties' );
+	}
+
 	return {
 		type: READER_LIST_UPDATE,
 		list,
