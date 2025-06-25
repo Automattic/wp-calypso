@@ -16,6 +16,7 @@
 - Allow readonly fields in DataForm when `readOnly` is set to `true`.
 - Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality.
 - Add new filter operator: `inThePast`, `over` for date fields.
+- Update the datetime controls to use the new calendar components for filtering
 
 ## 0.2.1
 
