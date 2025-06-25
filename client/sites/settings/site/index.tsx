@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -31,6 +32,7 @@ export function SiteSettings( props: any ) {
 	const isAtomicAndEditingToolkitDeactivated = isAtomic && editingToolkitIsActive === false;
 	const siteIsWpcom = useSelectedSiteSelector( isWpcomSite );
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
+	const isStagingRedesignEnabled = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const additionalProps = {
 		site,
@@ -41,6 +43,10 @@ export function SiteSettings( props: any ) {
 		isWpcomStagingSite,
 	};
 
+	// Show administration tools for staging sites when feature flag is enabled
+	const shouldShowAdministrationTools =
+		! isWpcomStagingSite || ( isWpcomStagingSite && isStagingRedesignEnabled );
+
 	return (
 		<Panel className="settings-site">
 			<NavigationHeader
@@ -48,7 +54,7 @@ export function SiteSettings( props: any ) {
 				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
 			/>
 			<SiteSettingsForm { ...props } { ...additionalProps } />
-			{ ! isWpcomStagingSite && (
+			{ shouldShowAdministrationTools && (
 				<>
 					<QuerySitePurchases siteId={ siteId } />
 					<AdministrationTools source={ SOURCE_SETTINGS_ADMINISTRATION } />

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, fixMe } from 'i18n-calypso';
 import { Component } from 'react';
@@ -17,6 +18,7 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
@@ -255,6 +257,8 @@ export default connect(
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
+		const isStaging = isSiteWpcomStaging( state, siteId );
+		const isStagingRedesignEnabled = config.isEnabled( 'hosting/staging-sites-redesign' );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -270,6 +274,28 @@ export default connect(
 			! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
 		const showLeaveSite = sitePurchasesLoaded && ! isP2;
+
+		// For staging sites, only show delete site action when feature flag is enabled
+		if ( isStaging && isStagingRedesignEnabled ) {
+			return {
+				site,
+				isAtomic,
+				copySiteUrl,
+				siteSlug,
+				purchasesError: getPurchasesError( state ),
+				cloneUrl,
+				showChangeAddress: false,
+				showClone: false,
+				showRestorePlanSoftware: false,
+				showDeleteContent: false,
+				showDeleteSite: sitePurchasesLoaded,
+				showManageConnection: false,
+				showStartSiteTransfer: false,
+				showLeaveSite: false,
+				siteId,
+				hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+			};
+		}
 
 		return {
 			site,

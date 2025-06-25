@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
@@ -17,7 +18,15 @@ function canDeleteSite( state: AppState, siteId: number | null ) {
 		return false;
 	}
 
-	if ( isSiteWpcomStaging( state, siteId ) ) {
+	// Allow staging sites to be deleted only when the feature flag is enabled
+	const isStaging = isSiteWpcomStaging( state, siteId );
+	const isStagingRedesignEnabled = config.isEnabled( 'hosting/staging-sites-redesign' );
+	if ( isStaging && isStagingRedesignEnabled ) {
+		return true;
+	}
+
+	// Block staging sites when feature flag is disabled
+	if ( isStaging ) {
 		return false;
 	}
 
