@@ -103,6 +103,7 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 					report={ reportForDelete }
 					onClose={ () => setReportForDelete( null ) }
 					onConfirm={ () => {
+						dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_confirm_click' ) );
 						handleDeleteReport( reportForDelete, () => {
 							setReportForDelete( null );
 						} );
