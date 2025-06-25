@@ -122,11 +122,13 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 								'Recommending a blog adds it to your public profile and helps others discover it in Reader.'
 							) }
 						>
-							<Icon
-								className="site-subscriptions-list__recommend-tooltip-icon"
-								icon={ info }
-								size={ 16 }
-							/>
+							<span>
+								<Icon
+									className="site-subscriptions-list__recommend-tooltip-icon"
+									icon={ info }
+									size={ 16 }
+								/>
+							</span>
 						</Tooltip>
 					</span>
 				) }

@@ -19,6 +19,7 @@ import {
 	useRecordPostEmailsToggle,
 	useRecordCommentEmailsToggle,
 	useRecordPostEmailsSetFrequency,
+	useRecordRecommendToggle,
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
@@ -149,6 +150,7 @@ const SiteSubscriptionRow = ( {
 	const recordPostEmailsSetFrequency = useRecordPostEmailsSetFrequency();
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const recordSiteResubscribed = useRecordSiteResubscribed();
+	const recordRecommendToggle = useRecordRecommendToggle();
 
 	const unsubscribeCallback = () => {
 		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
@@ -277,7 +279,11 @@ const SiteSubscriptionRow = ( {
 	};
 
 	const handleRecommendToggle = () => {
+		const newRecommendedState = ! isRecommended;
 		toggleRecommended();
+
+		// Record tracks event
+		recordRecommendToggle( newRecommendedState, { blog_id } );
 	};
 
 	return ! isDeleted ? (
@@ -369,7 +375,7 @@ const SiteSubscriptionRow = ( {
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
-			{ isRecommendedBlogsEnabled && (
+			{ isRecommendedBlogsEnabled && isLoggedIn && (
 				<span className="recommend-cell" role="cell">
 					<FormToggle
 						checked={ isRecommended }
