@@ -42,14 +42,13 @@ function RelativeDateControls( {
 	options,
 }: {
 	id: string;
-	value: any;
+	value: { value?: string | number; unit?: string };
 	onChange: ( value: any ) => void;
 	label: string;
 	hideLabelFromVision?: boolean;
 	options: { value: string; label: string }[];
 } ) {
-	const { value: relValue = '', unit = options[ 0 ].value } =
-		value && typeof value === 'object' ? value : {};
+	const { value: relValue = '', unit = options[ 0 ].value } = value;
 
 	const onChangeValue = useCallback(
 		( newValue: string | undefined ) =>
@@ -118,7 +117,7 @@ export default function DateTime< Item >( {
 		return (
 			<RelativeDateControls
 				id={ id }
-				value={ value }
+				value={ value && typeof value === 'object' ? value : {} }
 				onChange={ onChange }
 				label={ label }
 				hideLabelFromVision={ hideLabelFromVision }
