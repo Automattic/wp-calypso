@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -96,7 +97,26 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 
 export default function DangerZone( { site }: { site: Site } ) {
 	const { user } = useAuth();
+	const isStagingRedesignEnabled = config.isEnabled( 'hosting/staging-sites-redesign' );
 
+	// For staging sites, only show the danger zone if the redesign feature flag is enabled
+	if ( site.is_wpcom_staging_site ) {
+		if ( ! isStagingRedesignEnabled ) {
+			return null;
+		}
+
+		// For staging sites, only show the delete action
+		return (
+			<VStack spacing={ 3 }>
+				<SectionHeader title={ __( 'Danger zone' ) } level={ 3 } />
+				<ActionList>
+					<SiteDeleteAction key="delete-site" site={ site } />
+				</ActionList>
+			</VStack>
+		);
+	}
+
+	// For non-staging sites, use the existing logic
 	if ( ! canViewSiteActions( site ) ) {
 		return null;
 	}
