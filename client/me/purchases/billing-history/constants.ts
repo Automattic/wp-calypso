@@ -6,8 +6,8 @@ export const DEFAULT_PER_PAGE = 10;
 export const defaultSortField: string = 'date';
 
 export const wideFields = [ 'date', 'service', 'type', 'amount' ];
-export const desktopFields = [ 'date', 'service', 'type', 'amount' ];
-export const mobileFields = [ 'date', 'service' ];
+export const desktopFields = [ 'date', 'service' ];
+export const mobileFields = [ 'service' ];
 
 export const defaultDataViewsState: View = {
 	type: 'table',
