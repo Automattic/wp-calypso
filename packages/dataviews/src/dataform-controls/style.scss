@@ -7,3 +7,11 @@
 .dataviews-controls__datetime-unit {
 	flex: 1 1 50%;
 }
+
+.dataviews-controls__datetime-preset {
+	border: 1px solid #ddd;
+
+	&:active {
+		background-color: $black;
+	}
+}
