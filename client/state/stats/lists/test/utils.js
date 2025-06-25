@@ -864,6 +864,11 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						label: 'Homepage',
+						value: 59,
+						children: null,
+					},
+					{
 						label: 'Taxonomies',
 						value: 9,
 						children: [
@@ -1058,6 +1063,11 @@ describe( 'utils', () => {
 						}
 					)
 				).toEqual( [
+					{
+						label: 'Homepage',
+						value: 89,
+						children: null,
+					},
 					{
 						label: 'Categories',
 						value: 51,
