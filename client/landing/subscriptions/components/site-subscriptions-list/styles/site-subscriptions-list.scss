@@ -95,6 +95,12 @@
 
 		.recommend-cell {
 			display: flex;
+			align-items: center;
+
+			.site-subscriptions-list__recommend-tooltip-icon {
+				cursor: pointer;
+				flex: 0.5 !important;
+			}
 		}
 
 		.actions-cell {
@@ -137,4 +143,10 @@
 
 .new-comments-tooltip__content {
 	width: 200px;
+}
+
+div[id^="portal/tooltip"] .components-tooltip.site-subscriptions-list__recommend-tooltip {
+	font-size: $font-body-small;
+	max-width: 240px;
+	text-align: left;
 }

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
+import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
+import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -112,9 +113,21 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="email-frequency-cell" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
-				{ isRecommendedBlogsEnabled && (
+				{ isRecommendedBlogsEnabled && isLoggedIn && (
 					<span className="recommend-cell" role="columnheader">
 						{ translate( 'Recommend' ) }
+						<Tooltip
+							className="site-subscriptions-list__recommend-tooltip"
+							text={ translate(
+								'Recommending a blog adds it to your public profile and helps others discover it in Reader.'
+							) }
+						>
+							<Icon
+								className="site-subscriptions-list__recommend-tooltip-icon"
+								icon={ info }
+								size={ 16 }
+							/>
+						</Tooltip>
 					</span>
 				) }
 				<span className="unsubscribe-action-cell" role="columnheader">
