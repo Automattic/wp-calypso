@@ -32,7 +32,6 @@ export default function BuildReportContent( {
 	currentStep,
 	formData,
 	state,
-
 	handlers,
 }: BuildReportContentProps ) {
 	const translate = useTranslate();
@@ -40,6 +39,8 @@ export default function BuildReportContent( {
 	// Internal state for date pickers
 	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
 	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
+
+	const [ isSendPreview, setIsSendPreview ] = useState( false );
 
 	const {
 		selectedSite,
@@ -56,6 +57,7 @@ export default function BuildReportContent( {
 	const {
 		isDuplicateLoading,
 		sendReportMutation,
+		sendReportEmailMutation,
 		reportId,
 		isReportPending,
 		isReportErrorStatus,
@@ -106,7 +108,20 @@ export default function BuildReportContent( {
 	);
 
 	const isCreatingReport = sendReportMutation.isPending;
+	const isSendingPreview = isSendPreview && sendReportEmailMutation.isPending;
 	const isLoadingState = isDuplicateLoading || isCreatingReport;
+
+	const handleSendPreview = useCallback( () => {
+		if ( reportId ) {
+			setIsSendPreview( true );
+			sendReportEmailMutation.mutate(
+				{ reportId, preview: true },
+				{
+					onSettled: () => setIsSendPreview( false ),
+				}
+			);
+		}
+	}, [ reportId, sendReportEmailMutation ] );
 
 	const availableTimeframes = getAvailableTimeframes( translate );
 	const statsOptions = getStatsOptions( translate );
@@ -368,10 +383,14 @@ export default function BuildReportContent( {
 							</p>
 							<Button
 								variant="secondary"
-								onClick={ () => alert( 'Send test report clicked' ) }
+								onClick={ handleSendPreview }
 								className="build-report__preview-button"
+								isBusy={ isSendingPreview }
+								disabled={ isSendingPreview }
 							>
-								{ translate( 'Send me a preview' ) }
+								{ isSendingPreview
+									? translate( 'Sending preview…' )
+									: translate( 'Send me a preview' ) }
 							</Button>
 						</>
 					);
