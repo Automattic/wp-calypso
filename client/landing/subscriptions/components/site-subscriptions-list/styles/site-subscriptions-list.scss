@@ -13,6 +13,7 @@
 		border-block-end: 1px solid $studio-gray-5;
 		padding-top: 20px;
 		padding-bottom: 20px;
+		@extend %site-subscriptions-list-default-text;
 
 		* {
 			flex: 1;
@@ -73,10 +74,6 @@
 
 		.title-url {
 			@extend %site-subscriptions-list-site-url;
-		}
-
-		[role="columnheader"] {
-			@extend %site-subscriptions-list-default-text;
 		}
 
 		.new-posts-cell,
