@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Spinner } from '@wordpress/components';
 import { Icon, error } from '@wordpress/icons';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -12,11 +13,12 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { A4A_REPORTS_LINK, A4A_REPORTS_BUILD_LINK } from '../../constants';
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
 import usePollReportStatus from '../../hooks/use-poll-report-status';
+import useSendReportEmailMutation from '../../hooks/use-send-report-email-mutation';
 import useSendReportMutation from '../../hooks/use-send-report-mutation';
 import BuildReportActions from './build-report-actions';
 import BuildReportContent from './build-report-content';
@@ -47,6 +49,25 @@ const BuildReport = () => {
 				errorNotice( error?.message || translate( 'Failed to prepare report. Please try again.' ), {
 					duration: 8000,
 					id: 'prepare-report-error',
+				} )
+			);
+		},
+	} );
+
+	const sendReportEmailMutation = useSendReportEmailMutation( {
+		onSuccess: () => {
+			dispatch(
+				successNotice( translate( 'Report sent successfully!' ), {
+					duration: 5000,
+					id: 'send-report-success',
+				} )
+			);
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice( error?.message || translate( 'Failed to send report. Please try again.' ), {
+					duration: 8000,
+					id: 'send-report-error',
 				} )
 			);
 		},
@@ -107,6 +128,7 @@ const BuildReport = () => {
 	const state: BuildReportState = {
 		isDuplicateLoading,
 		sendReportMutation,
+		sendReportEmailMutation,
 		reportId,
 		isReportPending,
 		isReportErrorStatus,
@@ -150,10 +172,15 @@ const BuildReport = () => {
 										'Get started by choosing the details to include for your client below.'
 								  ) }
 						</p>
-						{ duplicateError && (
+						{ duplicateError && ! isDuplicateLoading && (
 							<div className="build-report__content-note">
 								<Icon icon={ error } />
 								{ translate( 'Note: Some data could not be duplicated.' ) }
+							</div>
+						) }
+						{ isDuplicateLoading && (
+							<div className="build-report__content-note">
+								<Spinner /> { translate( 'Please wait while we prepare your report…' ) }
 							</div>
 						) }
 					</div>
