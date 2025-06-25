@@ -38,6 +38,13 @@ import type {
 } from '@automattic/dataviews';
 import type { AnyRouter } from '@tanstack/react-router';
 
+function getSiteManagementUrl( site: Site ) {
+	if ( canManageSite( site ) ) {
+		return `/sites/${ site.slug }`;
+	}
+	return site.options?.admin_url;
+}
+
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
@@ -45,7 +52,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
 		render: ( { field, item } ) => (
-			<Link to={ `/sites/${ item.slug }` }>{ field.getValue( { item } ) }</Link>
+			<Link to={ getSiteManagementUrl( item ) }>{ field.getValue( { item } ) }</Link>
 		),
 	},
 	{
@@ -124,7 +131,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
 			return (
 				<Link
-					to={ `/sites/${ item.slug }` }
+					to={ getSiteManagementUrl( item ) }
 					style={ { display: 'block', height: '100%', width: '100%' } }
 				>
 					{ resizeListener }
