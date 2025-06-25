@@ -1,48 +1,12 @@
-import { useTranslate, TranslateResult, fixMe } from 'i18n-calypso';
+import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-import VisitSite from 'calypso/blocks/visit-site';
-import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
-	isGravatarFlowOAuth2Client,
 	isPartnerPortalOAuth2Client,
-	isGravatarOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import './login-header.scss';
-
-interface LoginHeaderProps {
-	action: string;
-	currentQuery: Record< string, string >;
-	fromSite: string | null;
-	isFromAkismet: boolean;
-	isFromAutomatticForAgenciesPlugin: boolean;
-	isGravPoweredClient: boolean;
-	isGravPoweredLoginPage: boolean;
-	isJetpack: boolean;
-	isManualRenewalImmediateLoginAttempt: boolean;
-	isSignupExistingAccount: boolean;
-	isSocialFirst: boolean;
-	isWCCOM: boolean;
-	isBlazePro: boolean;
-	linkingSocialService: string;
-	oauth2Client: {
-		title: string;
-		icon: string;
-		name: string;
-	} | null;
-	socialConnect: boolean;
-	twoStepNonce: string | null;
-	wccomFrom: string;
-	isWooJPC: boolean;
-	twoFactorAuthType: string;
-	twoFactorEnabled: boolean;
-	initialQuery: { 'client-id': string; redirect_to: string } | null;
-	getSignupLinkComponent: () => JSX.Element;
-	showContinueAsUser: boolean;
-}
 
 export function getHeaderText(
 	isSocialFirst: boolean,
@@ -88,7 +52,7 @@ export function getHeaderText(
 					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
 					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
 						args: { client: clientName },
-						components: { span: <span className="login-header-text__client-name" /> },
+						components: { span: <span className="wp-login__login-block-header-client-name" /> },
 					} ),
 					oldCopy: translate( 'Log in to WordPress.com' ),
 			  } ) as TranslateResult )
@@ -126,10 +90,6 @@ export function getHeaderText(
 	} else if ( currentQuery.lostpassword_flow === 'true' ) {
 		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
-		}
-
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				headerText = translate( 'Log in to WP Cloud with WordPress.com' );
@@ -158,86 +118,4 @@ export function getHeaderText(
 	}
 
 	return headerText;
-}
-
-export function LoginHeader( {
-	action,
-	currentQuery,
-	fromSite,
-	isFromAkismet,
-	isFromAutomatticForAgenciesPlugin,
-	isGravPoweredLoginPage,
-	isJetpack,
-	isManualRenewalImmediateLoginAttempt,
-	isSocialFirst,
-	isWCCOM,
-	linkingSocialService,
-	oauth2Client,
-	socialConnect,
-	twoStepNonce,
-	isWooJPC,
-	twoFactorAuthType,
-	twoFactorEnabled,
-}: LoginHeaderProps ) {
-	const translate = useTranslate();
-
-	const headerText = getHeaderText(
-		isSocialFirst,
-		twoFactorAuthType,
-		isManualRenewalImmediateLoginAttempt,
-		socialConnect,
-		linkingSocialService,
-		action,
-		oauth2Client,
-		isWooJPC,
-		isJetpack,
-		isWCCOM,
-		isFromAkismet,
-		isFromAutomatticForAgenciesPlugin,
-		true, // isGravPoweredClient is always true
-		twoFactorEnabled,
-		currentQuery,
-		translate,
-		twoStepNonce
-	);
-
-	const preHeader = null;
-	const header = null;
-	let postHeader = null;
-
-	if ( isGravPoweredLoginPage ) {
-		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
-		);
-
-		postHeader = (
-			<p className="login__header-subtitle">
-				{ isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail
-					? translate( 'Please log in with your email and password.' )
-					: translate(
-							'If you prefer logging in with a password, or a social media account, choose below:'
-					  ) }
-			</p>
-		);
-	} else if ( fromSite ) {
-		// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
-		postHeader = <VisitSite siteSlug={ fromSite } />;
-	}
-
-	return (
-		<div className="login__form-header-wrapper">
-			<GravatarLoginLogo
-				iconUrl={ oauth2Client?.icon }
-				alt={ oauth2Client?.title || '' }
-				isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
-			/>
-			{ preHeader }
-			<div className="login__form-header">{ header || headerText }</div>
-			{ postHeader }
-		</div>
-	);
 }

@@ -22,6 +22,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
+import GravPoweredLoginBlockHeader from 'calypso/login/wp-login/gravatar/grav-powered-login-block-header';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -56,7 +57,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { LoginHeader } from './login-header';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -614,8 +614,8 @@ class Login extends Component {
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
 				} ) }
 			>
-				{ ! isWhiteLogin && (
-					<LoginHeader
+				{ isGravPoweredClient && (
+					<GravPoweredLoginBlockHeader
 						action={ action }
 						currentQuery={ currentQuery }
 						fromSite={ fromSite }

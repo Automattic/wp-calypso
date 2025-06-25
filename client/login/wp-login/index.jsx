@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
-import { getHeaderText } from 'calypso/blocks/login/login-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -28,6 +27,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
+import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
 	recordTracksEventWithClientId as recordTracksEvent,
