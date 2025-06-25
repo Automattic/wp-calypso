@@ -16,6 +16,7 @@ import { logStashLoadErrorEvent } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
+	// testing!
 	logStashLoadErrorEvent( 'checkout_system_decider', error );
 };
 
