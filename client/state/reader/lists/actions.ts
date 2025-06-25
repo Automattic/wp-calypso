@@ -35,31 +35,26 @@ import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
 import 'calypso/state/reader/init';
+import type { ReaderList, Item as ListItem } from 'calypso/reader/list-manage/types';
 
-// Type definitions based on API usage patterns
-interface ReaderList {
-	ID?: number;
-	title: string;
-	slug: string;
-	description?: string;
-	owner: string;
-	is_owner?: boolean;
-	is_public?: boolean;
-	is_immutable?: boolean;
-}
-
+// Local type definitions
 interface ErrorInfo {
 	error: unknown;
 	owner?: string;
 	slug?: string;
 }
 
+interface ReaderListAction {
+	type: string;
+	[ key: string ]: unknown;
+}
+
 /**
  * Returns an action object to signal that list objects have been received.
- * @param  {Array}  lists Lists received
- * @returns {Object}       Action object
+ * @param lists - Lists received
+ * @returns Action object
  */
-export function receiveLists( lists: ReaderList[] ) {
+export function receiveLists( lists: ReaderList[] ): ReaderListAction {
 	return {
 		type: READER_LISTS_RECEIVE,
 		lists,
@@ -68,39 +63,39 @@ export function receiveLists( lists: ReaderList[] ) {
 
 /**
  * Request the current user's subscribed lists.
- * @returns {Object}       Action object
+ * @returns Action object
  */
-export function requestSubscribedLists() {
+export function requestSubscribedLists(): ReaderListAction {
 	return {
 		type: READER_LISTS_REQUEST,
 	};
 }
 
-export function createReaderList( list: ReaderList ) {
+export function createReaderList( list: ReaderList ): ReaderListAction {
 	return { type: READER_LIST_CREATE, list };
 }
 
 /**
  * Request a single Reader list.
- * @param  {string}  listOwner List owner
- * @param  {string}  listSlug List slug
- * @returns {Object}       Action object
+ * @param listOwner - List owner
+ * @param listSlug - List slug
+ * @returns Action object
  */
-export function requestList( listOwner: string, listSlug: string ) {
+export function requestList( listOwner: string, listSlug: string ): ReaderListAction {
 	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
 /**
  * Receive a single Reader list.
- * @param  {Object}  data List data
- * @param  {Object}  data.list Reader list object
- * @returns {Object}       Action object
+ * @param data - List data
+ * @param data.list - Reader list object
+ * @returns Action object
  */
-export function receiveReaderList( data: { list: ReaderList } ) {
+export function receiveReaderList( data: { list: ReaderList } ): ReaderListAction {
 	return { type: READER_LIST_RECEIVE, data };
 }
 
-export function handleRequestListFailure( errorInfo: ErrorInfo ) {
+export function handleRequestListFailure( errorInfo: ErrorInfo ): ReaderListAction {
 	return {
 		type: READER_LIST_REQUEST_FAILURE,
 		error: errorInfo.error,
@@ -109,14 +104,14 @@ export function handleRequestListFailure( errorInfo: ErrorInfo ) {
 	};
 }
 
-export function receiveCreateReaderList( data: { list: ReaderList } ) {
+export function receiveCreateReaderList( data: { list: ReaderList } ): ReaderListAction {
 	return {
 		type: READER_LIST_CREATE_SUCCESS,
 		data,
 	};
 }
 
-export function handleCreateReaderListFailure( errorInfo: ErrorInfo ) {
+export function handleCreateReaderListFailure( errorInfo: ErrorInfo ): ReaderListAction {
 	return {
 		type: READER_LIST_CREATE_FAILURE,
 		error: errorInfo.error,
@@ -127,11 +122,11 @@ export function handleCreateReaderListFailure( errorInfo: ErrorInfo ) {
 
 /**
  * Follow a list.
- * @param  {string}  listOwner List owner
- * @param  {string}  listSlug List slug
- * @returns {Object}       Action object
+ * @param listOwner - List owner
+ * @param listSlug - List slug
+ * @returns Action object
  */
-export function followList( listOwner: string, listSlug: string ) {
+export function followList( listOwner: string, listSlug: string ): ReaderListAction {
 	return {
 		type: READER_LIST_FOLLOW,
 		listOwner,
@@ -141,10 +136,10 @@ export function followList( listOwner: string, listSlug: string ) {
 
 /**
  * Receive a successful list follow.
- * @param  {Object} list Followed list
- * @returns {Object} Action object
+ * @param list - Followed list
+ * @returns Action object
  */
-export function receiveFollowList( list: ReaderList ) {
+export function receiveFollowList( list: ReaderList ): ReaderListAction {
 	return {
 		type: READER_LIST_FOLLOW_RECEIVE,
 		list,
@@ -153,11 +148,11 @@ export function receiveFollowList( list: ReaderList ) {
 
 /**
  * Unfollow a list.
- * @param  {string}  listOwner List owner
- * @param  {string}  listSlug List slug
- * @returns {Object}       Action object
+ * @param listOwner - List owner
+ * @param listSlug - List slug
+ * @returns Action object
  */
-export function unfollowList( listOwner: string, listSlug: string ) {
+export function unfollowList( listOwner: string, listSlug: string ): ReaderListAction {
 	return {
 		type: READER_LIST_UNFOLLOW,
 		listOwner,
@@ -167,10 +162,10 @@ export function unfollowList( listOwner: string, listSlug: string ) {
 
 /**
  * Receive a successful list unfollow.
- * @param  {Object} list Unfollowed list
- * @returns {Object}    Action object
+ * @param list - Unfollowed list
+ * @returns Action object
  */
-export function receiveUnfollowList( list: ReaderList ) {
+export function receiveUnfollowList( list: ReaderList ): ReaderListAction {
 	return {
 		type: READER_LIST_UNFOLLOW_RECEIVE,
 		list,
@@ -179,14 +174,10 @@ export function receiveUnfollowList( list: ReaderList ) {
 
 /**
  * Triggers a network request to update a list's details.
- * @param   {Object} list List details to save
- * @returns {Object} Action object
+ * @param list - List details to save
+ * @returns Action object
  */
-export function updateReaderList( list: ReaderList ) {
-	if ( ! list || ! list.owner || ! list.slug || ! list.title ) {
-		throw new Error( 'List owner, slug and title are required' );
-	}
-
+export function updateReaderList( list: ReaderList ): ReaderListAction {
 	return {
 		type: READER_LIST_UPDATE,
 		list,
@@ -195,11 +186,11 @@ export function updateReaderList( list: ReaderList ) {
 
 /**
  * Handle updated list object from the API.
- * @param   {Object} data List data
- * @param   {Object} data.list List to save
- * @returns {Object} Action object
+ * @param data - List data
+ * @param data.list - List to save
+ * @returns Action object
  */
-export function receiveUpdatedListDetails( data: { list: ReaderList } ) {
+export function receiveUpdatedListDetails( data: { list: ReaderList } ): ReaderListAction {
 	return {
 		type: READER_LIST_UPDATE_SUCCESS,
 		data,
@@ -208,11 +199,11 @@ export function receiveUpdatedListDetails( data: { list: ReaderList } ) {
 
 /**
  * Handle an error from the list update API.
- * @param   {Error}  error Error during the list update process
- * @param   {Object} list List details to save
- * @returns {Object} Action object
+ * @param error - Error during the list update process
+ * @param list - List details to save
+ * @returns Action object
  */
-export function handleUpdateListDetailsError( error: unknown, list: ReaderList ) {
+export function handleUpdateListDetailsError( error: unknown, list: ReaderList ): ReaderListAction {
 	return {
 		type: READER_LIST_UPDATE_FAILURE,
 		error,
@@ -220,13 +211,19 @@ export function handleUpdateListDetailsError( error: unknown, list: ReaderList )
 	};
 }
 
-export const requestReaderListItems = ( listOwner: string, listSlug: string ) => ( {
+export const requestReaderListItems = (
+	listOwner: string,
+	listSlug: string
+): ReaderListAction => ( {
 	type: READER_LIST_ITEMS_REQUEST,
 	listOwner,
 	listSlug,
 } );
 
-export const receiveReaderListItems = ( listId: number, listItems: unknown ) => ( {
+export const receiveReaderListItems = (
+	listId: number,
+	listItems: ListItem[]
+): ReaderListAction => ( {
 	type: READER_LIST_ITEMS_RECEIVE,
 	listId,
 	listItems,
@@ -237,7 +234,7 @@ export const deleteReaderListFeed = (
 	listOwner: string,
 	listSlug: string,
 	feedId: number
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_DELETE_FEED,
 	listId,
 	listOwner,
@@ -250,7 +247,7 @@ export const deleteReaderListSite = (
 	listOwner: string,
 	listSlug: string,
 	siteId: number
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_DELETE_SITE,
 	listId,
 	listOwner,
@@ -264,7 +261,7 @@ export const deleteReaderListTag = (
 	listSlug: string,
 	tagId: number,
 	tagSlug: string
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_DELETE_TAG,
 	listId,
 	listOwner,
@@ -278,7 +275,7 @@ export const addReaderListFeed = (
 	listOwner: string,
 	listSlug: string,
 	feedId: number
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
@@ -291,7 +288,7 @@ export const addReaderListFeedByUrl = (
 	listOwner: string,
 	listSlug: string,
 	feedUrl: string
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
@@ -304,7 +301,7 @@ export const addReaderListSite = (
 	listOwner: string,
 	listSlug: string,
 	siteId: number
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
@@ -317,7 +314,7 @@ export const addReaderListTag = (
 	listOwner: string,
 	listSlug: string,
 	tagSlug: string
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_ADD_TAG,
 	listId,
 	listOwner,
@@ -330,7 +327,7 @@ export const receiveAddReaderListFeed = (
 	listOwner: string,
 	listSlug: string,
 	feedId: number
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
 	listId,
 	listOwner,
@@ -344,7 +341,7 @@ export const receiveAddReaderListTag = (
 	listSlug: string,
 	tagSlug: string,
 	tagId: number
-) => ( {
+): ReaderListAction => ( {
 	type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	listId,
 	listOwner,
@@ -353,14 +350,18 @@ export const receiveAddReaderListTag = (
 	tagId,
 } );
 
-export const deleteReaderList = ( listId: number, listOwner: string, listSlug: string ) => ( {
+export const deleteReaderList = (
+	listId: number,
+	listOwner: string,
+	listSlug: string
+): ReaderListAction => ( {
 	type: READER_LIST_DELETE,
 	listId,
 	listOwner,
 	listSlug,
 } );
 
-export function requestUserLists( userLogin: string ) {
+export function requestUserLists( userLogin: string ): ReaderListAction {
 	return {
 		type: READER_USER_LISTS_REQUEST,
 		userLogin,
