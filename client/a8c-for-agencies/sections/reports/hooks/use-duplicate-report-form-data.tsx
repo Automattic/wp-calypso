@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { getStatsOptions } from '../lib/stat-options';
 import { getAvailableTimeframes } from '../lib/timeframes';
 import useFetchReportById from './use-fetch-report-by-id';
@@ -18,6 +19,7 @@ import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-
 export const useDuplicateReportFormData = (): UseDuplicateReportFormDataReturn => {
 	const translate = useTranslate();
 	const sites = useSelector( getSites );
+	const isFetchingSites = useSelector( isRequestingSites );
 
 	// Get sourceId from URL parameters
 	const sourceId = getQueryArg( window.location.href, 'sourceId' ) as unknown as number;
@@ -28,7 +30,7 @@ export const useDuplicateReportFormData = (): UseDuplicateReportFormDataReturn =
 
 	const {
 		data: reportDetails,
-		isLoading,
+		isLoading: isLoadingReport,
 		error,
 	} = useFetchReportById( isDuplicating ? sourceId : null );
 
@@ -72,6 +74,8 @@ export const useDuplicateReportFormData = (): UseDuplicateReportFormDataReturn =
 	);
 
 	const reportData = reportDetails?.data;
+
+	const isLoading = isLoadingReport || ( isFetchingSites && ! sites.length );
 
 	// Populate form data when report data is fetched
 	useEffect( () => {
