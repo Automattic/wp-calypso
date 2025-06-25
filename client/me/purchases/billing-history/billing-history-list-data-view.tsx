@@ -44,7 +44,7 @@ export default function BillingHistoryListDataView( {
 		viewState.view.perPage ?? 100
 	);
 	const translate = useTranslate();
-	const fields = useFieldDefinitions( transactions );
+	const fields = useFieldDefinitions( transactions, getReceiptUrlFor );
 
 	const handleViewChange = ( view: View ) => viewState.updateView( view );
 
