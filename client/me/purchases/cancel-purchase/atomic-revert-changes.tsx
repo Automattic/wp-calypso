@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
-import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useState } from 'react';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { isRefundable } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -23,6 +24,7 @@ const AtomicRevertChanges = ( {
 	needsAtomicRevertConfirmation,
 }: AtomicRevertChangesProps ) => {
 	const translate = useTranslate();
+	const [ isConfirmed, setIsConfirmed ] = useState( false );
 
 	// Only show if there's an atomic transfer
 	if ( ! atomicTransfer?.created_at ) {
@@ -59,6 +61,12 @@ const AtomicRevertChanges = ( {
 
 	const changes = getChangesList();
 
+	const handleCheckboxChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const checked = event.target.checked;
+		setIsConfirmed( checked );
+		onConfirmationChange( checked );
+	};
+
 	return (
 		<div className="cancel-purchase__atomic-revert-changes">
 			<p>{ translate( 'We will also make these changes to your site:' ) }</p>
@@ -75,10 +83,10 @@ const AtomicRevertChanges = ( {
 				) ) }
 			</ul>
 			{ needsAtomicRevertConfirmation && (
-				<CheckboxControl
-					label={ translate( 'I understand my site will change when my plan expires.' ) }
-					onChange={ onConfirmationChange }
-				/>
+				<label className="cancel-purchase__atomic-revert-checkbox-label">
+					<FormCheckbox checked={ isConfirmed } onChange={ handleCheckboxChange } />
+					<span>{ translate( 'I understand my site will change when my plan expires.' ) }</span>
+				</label>
 			) }
 		</div>
 	);

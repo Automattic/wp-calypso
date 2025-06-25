@@ -278,5 +278,16 @@
 			}
 		}
 	}
+
+	.cancel-purchase__atomic-revert-checkbox-label {
+		display: inline-block;
+		font-size: $font-body-small;
+		line-height: 1.4;
+		margin-bottom: 24px;
+
+		.form-label {
+			margin: 1.5em 0;
+		}
+	}
 }
 
