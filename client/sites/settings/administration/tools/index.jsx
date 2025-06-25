@@ -87,6 +87,8 @@ class SiteTools extends Component {
 			siteId,
 			headerTitle,
 			source,
+			isStaging,
+			isStagingRedesignEnabled,
 		} = this.props;
 
 		const { modalOpen } = this.state;
@@ -113,10 +115,17 @@ class SiteTools extends Component {
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
 
-		const deleteSite = translate( 'Delete your site permanently' );
-		const deleteSiteText = translate(
-			"Delete all your posts, pages, media, and data, and give up your site's address."
-		);
+		const deleteSite =
+			isStaging && isStagingRedesignEnabled
+				? translate( 'Delete staging site' )
+				: translate( 'Delete your site permanently' );
+		const deleteSiteText =
+			isStaging && isStagingRedesignEnabled
+				? translate( 'Delete staging site and all of its posts, pages, media, and data.' )
+				: translate(
+						"Delete all your posts, pages, media, and data, and give up your site's address."
+				  );
+
 		const manageConnectionTitle = translate( 'Manage your connection' );
 		const manageConnectionText = translate(
 			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
@@ -294,6 +303,8 @@ export default connect(
 				showLeaveSite: false,
 				siteId,
 				hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+				isStaging,
+				isStagingRedesignEnabled,
 			};
 		}
 
@@ -314,6 +325,8 @@ export default connect(
 			showLeaveSite,
 			siteId,
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+			isStaging,
+			isStagingRedesignEnabled,
 		};
 	},
 	{
