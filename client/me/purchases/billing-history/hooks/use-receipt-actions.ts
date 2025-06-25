@@ -52,14 +52,14 @@ export function useReceiptActions(
 			{
 				id: 'view-receipt',
 				label: translate( 'View receipt' ),
-				isPrimary: true,
+				isPrimary: false,
 				iconName: 'pages',
 				callback: ( items: BillingTransaction[] ) => handleViewReceipt( items, getReceiptUrlFor ),
 			},
 			{
 				id: 'email-receipt',
 				label: translate( 'Email receipt' ),
-				isPrimary: true,
+				isPrimary: false,
 				iconName: 'mail',
 				callback: ( items: BillingTransaction[] ) => handleEmailReceipt( items, dispatch ),
 			},
