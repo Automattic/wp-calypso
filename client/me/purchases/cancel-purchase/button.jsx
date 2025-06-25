@@ -279,15 +279,11 @@ class CancelPurchaseButton extends Component {
 		if ( this.state.cancellationCompleted ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
-		}
 
-		// Show success notice for Jetpack cancellations
-		if ( this.props.isJetpack || this.props.isAkismet ) {
-			const purchaseName = getName( this.props.purchase );
-			const successMessage = this.props.translate( 'You successfully canceled your purchase', {
-				args: { purchaseName },
-			} );
-			this.props.successNotice( successMessage, { displayOnNextPage: true } );
+			// Show success notice after survey completion using the API response message
+			if ( this.state.cancellationMessage ) {
+				this.props.successNotice( this.state.cancellationMessage, { displayOnNextPage: true } );
+			}
 		}
 
 		if ( this.props.onSurveyComplete ) {
