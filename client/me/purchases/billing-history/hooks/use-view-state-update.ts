@@ -1,12 +1,13 @@
+import { View } from '@wordpress/dataviews';
 import { useState, useCallback, useMemo } from 'react';
 import { defaultDataViewsState } from '../constants';
-import type { ViewState, ViewStateUpdate, SortableField, Filter, Sort } from '../data-views-types';
+import type { SortableField, Filter, Sort } from '../data-views-types';
 
 type Filters = undefined | Filter[];
 
 interface ViewStateUpdateResult {
-	view: ViewState;
-	updateView: ( newView: ViewStateUpdate ) => void;
+	view: View;
+	updateView: ( newView: View ) => void;
 }
 
 function scrollToTop(): void {
@@ -45,18 +46,14 @@ function areFiltersEqual( a: Filters, b: Filters ): boolean {
 	);
 }
 
-function handlePageUpdate( updatedView: ViewState, newView: ViewStateUpdate ): void {
+function handlePageUpdate( updatedView: View, newView: View ): void {
 	if ( newView.page !== undefined ) {
 		updatedView.page = newView.page;
 		scrollToTop();
 	}
 }
 
-function handlePerPageUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
+function handlePerPageUpdate( updatedView: View, currentView: View, newView: View ): void {
 	if ( newView.perPage !== undefined && newView.perPage !== currentView.perPage ) {
 		updatedView.perPage = newView.perPage;
 		updatedView.page = 1;
@@ -64,11 +61,7 @@ function handlePerPageUpdate(
 	}
 }
 
-function handleSortUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
+function handleSortUpdate( updatedView: View, currentView: View, newView: View ): void {
 	if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
 		if ( verifySortField( newView.sort.field ) ) {
 			updatedView.sort = {
@@ -83,11 +76,7 @@ function handleSortUpdate(
 	}
 }
 
-function handleFiltersUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
+function handleFiltersUpdate( updatedView: View, currentView: View, newView: View ): void {
 	if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
 		updatedView.filters = newView.filters;
 		if ( newView.page === undefined ) {
@@ -97,11 +86,7 @@ function handleFiltersUpdate(
 	}
 }
 
-function handleSearchUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
+function handleSearchUpdate( updatedView: View, currentView: View, newView: View ): void {
 	if ( newView.search !== undefined && newView.search !== currentView.search ) {
 		updatedView.search = newView.search;
 		if ( newView.page === undefined ) {
@@ -111,16 +96,16 @@ function handleSearchUpdate(
 	}
 }
 
-function handleFieldsUpdate( updatedView: ViewState, newView: ViewStateUpdate ): void {
+function handleFieldsUpdate( updatedView: View, newView: View ): void {
 	if ( newView.fields !== undefined ) {
 		updatedView.fields = newView.fields;
 	}
 }
 
 export function useViewStateUpdate(): ViewStateUpdateResult {
-	const [ view, setView ] = useState< ViewState >( defaultDataViewsState );
+	const [ view, setView ] = useState< View >( defaultDataViewsState );
 
-	const updateView = useCallback( ( newView: ViewStateUpdate ) => {
+	const updateView = useCallback( ( newView: View ) => {
 		setView( ( currentView ) => {
 			const updatedView = { ...currentView };
 
