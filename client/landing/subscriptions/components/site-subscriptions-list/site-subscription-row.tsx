@@ -3,10 +3,11 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack, Button, FormToggle } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
+import { useRecommendedSite } from 'calypso/landing/subscriptions/hooks/use-recommended-site';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -22,16 +23,9 @@ import {
 } from 'calypso/landing/subscriptions/tracks';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
-import {
-	addRecommendedBlogsSite,
-	removeRecommendedBlogsSite,
-	requestRecommendedBlogsListItems,
-} from 'calypso/state/reader/lists/actions';
-import { isSiteInRecommendedBlogsList } from 'calypso/state/reader/lists/selectors';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
-import type { AppState } from 'calypso/types';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -107,27 +101,8 @@ const SiteSubscriptionRow = ( {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
 
-	// Check if site is in recommended blogs list
-	const isInRecommendedList = useSelector( ( state: AppState ) =>
-		currentUserName
-			? isSiteInRecommendedBlogsList( state, currentUserName, Number( blog_id ) )
-			: false
-	);
-
-	const [ isRecommended, setIsRecommended ] = useState( isInRecommendedList );
-	const [ isUpdatingRecommendation, setIsUpdatingRecommendation ] = useState( false );
-
-	// Request recommended blogs list items when user is available
-	useEffect( () => {
-		if ( currentUserName ) {
-			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
-		}
-	}, [ currentUserName, dispatch ] );
-
-	// Update local state when selector value changes
-	useEffect( () => {
-		setIsRecommended( isInRecommendedList );
-	}, [ isInRecommendedList ] );
+	// Use custom hook for recommended site functionality
+	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( blog_id ) );
 
 	const isCompactLayout = layout === 'compact';
 
@@ -296,22 +271,8 @@ const SiteSubscriptionRow = ( {
 		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
 	};
 
-	const handleRecommendToggle = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		if ( isUpdatingRecommendation || ! currentUserName || typeof currentUserName !== 'string' ) {
-			return;
-		}
-
-		const newValue = event.target.checked;
-		setIsUpdatingRecommendation( true );
-		setIsRecommended( newValue );
-
-		if ( newValue ) {
-			dispatch( addRecommendedBlogsSite( Number( blog_id ), currentUserName ) );
-		} else {
-			dispatch( removeRecommendedBlogsSite( Number( blog_id ), currentUserName ) );
-		}
-
-		setIsUpdatingRecommendation( false );
+	const handleRecommendToggle = () => {
+		toggleRecommended();
 	};
 
 	return ! isDeleted ? (

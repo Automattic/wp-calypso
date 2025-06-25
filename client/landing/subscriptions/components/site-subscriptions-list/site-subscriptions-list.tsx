@@ -1,6 +1,10 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
 import { Notice, NoticeType } from '../notice';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
@@ -17,12 +21,21 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	layout = 'full',
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const currentUserName = useSelector( getCurrentUserName );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const { filterOption, searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 	const { subscriptions, totalCount } = data;
 
 	const isCompactLayout = layout === 'compact';
+
+	// Fetch recommended blogs data once for all subscription rows
+	useEffect( () => {
+		if ( currentUserName ) {
+			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
+		}
+	}, [ currentUserName, dispatch ] );
 
 	if ( error ) {
 		return (
