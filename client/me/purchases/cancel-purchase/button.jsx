@@ -177,9 +177,7 @@ class CancelPurchaseButton extends Component {
 
 			return {
 				success: true,
-				message: translate(
-					'Your refund has been processed and your purchase removed. Before you go, please answer a few quick questions.'
-				),
+				message: translate( 'Your refund has been processed and your purchase removed.' ),
 			};
 		} catch ( error ) {
 			return { success: false, error: error.message };
