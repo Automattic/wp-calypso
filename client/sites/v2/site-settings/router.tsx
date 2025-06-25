@@ -29,8 +29,8 @@ import {
 	canViewSshSettings,
 	canViewSftpSettings,
 } from 'calypso/dashboard/sites/features';
+import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
-import Root from './root';
 
 const rootRoute = createRootRoute( { component: Root } );
 

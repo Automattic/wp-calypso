@@ -7,8 +7,8 @@ import {
 } from '@tanstack/react-router';
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
+import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
-import Root from './root';
 
 const rootRoute = createRootRoute( { component: Root } );
 

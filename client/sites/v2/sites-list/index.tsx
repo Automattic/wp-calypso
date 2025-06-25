@@ -1,30 +1,18 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
 import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client';
-import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent, recordPageView } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useAnalyticsClient } from '../hooks/use-analytics-client';
 import Layout, { router } from './layout';
-import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
+import './style.scss';
 
 export default function DashboardBackportSitesList() {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
-	const dispatch = useDispatch();
-
-	const analyticsClient: AnalyticsClient = useMemo(
-		() => ( {
-			recordTracksEvent( eventName, properties ) {
-				dispatch( recordTracksEvent( eventName, properties ) );
-			},
-			recordPageView( url, title ) {
-				dispatch( recordPageView( url, title ) );
-			},
-		} ),
-		[ dispatch ]
-	);
+	const analyticsClient = useAnalyticsClient();
 
 	// Initialize the root instance.
 	useEffect( () => {
