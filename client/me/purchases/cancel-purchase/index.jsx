@@ -287,7 +287,7 @@ class CancelPurchase extends Component {
 
 		const isDisabled =
 			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
-			( needsAtomicRevertConfirmation && ! this.state.atomicRevertConfirmed );
+			( needsAtomicRevertConfirmation && ! this.state.atomicRevertConfirmed && isPlan( purchase ) );
 
 		return (
 			<CancelPurchaseButton
