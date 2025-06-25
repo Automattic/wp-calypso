@@ -57,7 +57,11 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 
 					<Button
 						className="enterprise-agency-hosting__cta-button"
-						href="https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
+						href={
+							isReferMode
+								? 'https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a'
+								: 'https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a'
+						}
 						onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
 						target="_blank"
 						variant="primary"
