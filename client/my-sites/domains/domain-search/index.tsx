@@ -1,4 +1,4 @@
-import { isFreePlanProduct, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
@@ -20,7 +20,6 @@ import {
 	domainTransfer,
 	domainRegistration,
 	ObjectWithProducts,
-	planItem,
 } from 'calypso/lib/cart-values/cart-items';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
@@ -116,8 +115,6 @@ type DomainSearchProps = {
 	setDesignType: ( designType: string ) => void;
 	fetchUsernameSuggestion: ( username: string ) => void;
 };
-
-const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 
 class DomainSearch extends Component< DomainSearchProps > {
 	isMounted = false;
@@ -435,7 +432,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 							analyticsSection="domains"
 							flowName="domains/add"
 							stepName="domains-search"
-							multiDomainDefaultPlan={ multiDomainDefaultPlan }
 							cart={ this.props.cart }
 							productsList={ this.props.productsList }
 							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
