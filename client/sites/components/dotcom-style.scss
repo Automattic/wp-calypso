@@ -336,7 +336,7 @@
 	&.hosting-dashboard-layout,
 	.hosting-dashboard-layout-column,
 	.hosting-dashboard-layout-with-columns__container {
-		overflow: visible;
+		overflow: hidden;
 		height: calc(100vh - 32px - var(--masterbar-height));
 	}
 

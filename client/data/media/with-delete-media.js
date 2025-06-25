@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDeleteMediaMutation } from 'calypso/data/media/use-delete-media-mutation';
 import { deleteMedia as deleteMediaAction } from 'calypso/state/media/actions';
-import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 export const withDeleteMedia = createHigherOrderComponent(
@@ -16,7 +15,6 @@ export const withDeleteMedia = createHigherOrderComponent(
 		const { mutateAsync } = useDeleteMediaMutation( {
 			onSuccess( mediaItem, { siteId } ) {
 				dispatch( deleteMediaAction( siteId, mediaItem.ID ) );
-				dispatch( gutenframeUpdateImageBlocks( mediaItem, 'deleted' ) );
 			},
 		} );
 

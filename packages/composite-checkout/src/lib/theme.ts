@@ -54,6 +54,9 @@ export type Theme = {
 	fontSize: {
 		small: string;
 	};
+	borderRadius: {
+		small: string;
+	};
 };
 
 const theme: Theme = {
@@ -67,7 +70,7 @@ const theme: Theme = {
 		highlightBorder: colorStudio.colors[ 'WordPress Blue 80' ],
 		highlightOver: colorStudio.colors[ 'WordPress Blue 60' ],
 		success: colorStudio.colors[ 'Green 30' ],
-		discount: colorStudio.colors[ 'Green 30' ],
+		discount: colorStudio.colors[ 'Green 60' ],
 		disabledPaymentButtons: colorStudio.colors[ 'Gray 5' ],
 		disabledPaymentButtonsAccent: colorStudio.colors[ 'Gray 20' ],
 		disabledButtons: colorStudio.colors[ 'White' ],
@@ -78,7 +81,7 @@ const theme: Theme = {
 		textColor: colorStudio.colors[ 'Gray 60' ],
 		textColorLight: colorStudio.colors[ 'Gray 50' ],
 		textColorDark: colorStudio.colors[ 'Gray 100' ],
-		textColorDisabled: colorStudio.colors[ 'Gray 10' ],
+		textColorDisabled: colorStudio.colors[ 'Gray 50' ],
 		error: swatches.red50,
 		warningBackground: swatches.red0,
 		outline: colorStudio.colors[ 'WordPress Blue 30' ],
@@ -108,6 +111,9 @@ const theme: Theme = {
 	},
 	fontSize: {
 		small: '14px',
+	},
+	borderRadius: {
+		small: '2px',
 	},
 };
 

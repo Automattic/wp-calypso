@@ -4,7 +4,7 @@ import { translate } from 'i18n-calypso';
 import 'calypso/state/a8c-for-agencies/init';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeActionOptions } from 'calypso/state/notices/types';
-import { APIError, Agency, AgencyThunkAction } from '../types';
+import { APIError, Agency, AgencyThunkAction, UserBillingType } from '../types';
 import {
 	JETPACK_GET_AGENCIES_ERROR,
 	JETPACK_GET_AGENCIES_REQUEST,
@@ -64,11 +64,18 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 	};
 }
 
-export function setAgencyClientUser( isClientUser: boolean ): AgencyThunkAction {
+export function setAgencyClientUser( {
+	isClientUser,
+	billingType,
+}: {
+	isClientUser: boolean;
+	billingType: UserBillingType;
+} ): AgencyThunkAction {
 	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_SET_AGENCY_CLIENT_USER,
 			isClientUser,
+			billingType,
 		} );
 	};
 }

@@ -18,7 +18,7 @@ const DesignPickerDesignTitle: FC< Props > = ( {
 	siteSlug,
 } ) => (
 	<div className="design-picker-design-title__container">
-		{ designTitle }
+		<span className="design-picker-design-title__design-title">{ designTitle }</span>
 		<ThemeTierBadge
 			className="design-picker-design-title__theme-tier-badge"
 			isLockedStyleVariation={ false }

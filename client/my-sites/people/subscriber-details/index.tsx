@@ -123,7 +123,7 @@ export default function SubscriberDetails( props: Props ) {
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'Users' ) }
-				subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
+				subtitle={ translate( 'People who have subscribed to your site and users.' ) }
 			/>
 
 			<HeaderCake isCompact onClick={ onBackClick }>

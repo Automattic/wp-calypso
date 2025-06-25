@@ -1,6 +1,5 @@
-import { useLocale } from '@automattic/i18n-utils/src/locale-context';
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils/src/utils';
-import { translate } from 'i18n-calypso';
+import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
+import { translate, TranslateResult } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -19,7 +18,7 @@ import './style.scss';
 
 interface Tab {
 	slug: string;
-	title: string;
+	title: TranslateResult;
 	path: string;
 }
 
@@ -70,7 +69,9 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		},
 		{
 			slug: LATEST_TAB,
-			title: translate( 'Latest' ),
+			title: translate( 'Latest', {
+				context: 'latest blog posts',
+			} ),
 			path: '/discover/latest',
 		},
 	];

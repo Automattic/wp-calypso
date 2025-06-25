@@ -14,10 +14,7 @@ import { SidebarNavigationItem, SidebarNavigationContext, createNavState } from 
  */
 import type { Meta, StoryObj } from '@storybook/react';
 
-type IconName = keyof typeof allIcons;
-
 const { Icon, ...allIcons } = allIconComponents;
-const iconNames = Object.keys( allIcons ) as IconName[];
 
 /**
  * Storybook metadata
@@ -25,48 +22,73 @@ const iconNames = Object.keys( allIcons ) as IconName[];
 const meta: Meta< typeof SidebarNavigationItem > = {
 	title: 'Components/SidebarNavigationItem',
 	component: SidebarNavigationItem,
+	tags: [ 'autodocs' ],
 	argTypes: {
 		icon: {
-			control: 'select',
-			options: [ ...iconNames, 'none' ],
+			control: {
+				type: 'select',
+				labels: {
+					'': 'No icon',
+				},
+			},
+			options: [ '', ...Object.keys( allIcons ) ],
+			mapping: {
+				'': undefined,
+				...Object.entries( allIcons ).reduce(
+					( acc, [ name, icon ] ) => ( {
+						...acc,
+						[ name ]: icon,
+					} ),
+					{}
+				),
+			},
 		},
-		as: {
+		size: {
 			control: 'select',
-			options: [ 'button', 'a' ],
+			options: [ 'small', 'medium', 'large' ],
 		},
 	},
+	decorators: [
+		function WithNavigationContext( Story ) {
+			const [ navState ] = useState( createNavState() );
+
+			return (
+				<SidebarNavigationContext.Provider value={ navState }>
+					<Story />
+				</SidebarNavigationContext.Provider>
+			);
+		},
+	],
 };
 
 export default meta;
 
 type Story = StoryObj< typeof SidebarNavigationItem >;
 
-export const Default: Story = {
-	render: function Template( args ) {
-		const { icon: iconName, children, ...validArgs } = args;
-
-		// Pick the icon component based on the icon name.
-		const iconKey = iconName as unknown as IconName;
-		const icon = allIcons?.[ iconKey ] || allIcons.capturePhoto;
-
-		const [ navState ] = useState( createNavState() );
-		return (
-			<SidebarNavigationContext.Provider value={ navState }>
-				<SidebarNavigationItem { ...validArgs } icon={ icon }>
-					{ children }
-				</SidebarNavigationItem>
-			</SidebarNavigationContext.Provider>
-		);
+/**
+ * This story demonstrates how the component renders a `<button>` element
+ * when the `onClick` prop is provided.
+ */
+export const WithOnClickHandler: Story = {
+	args: {
+		onClick: fn(),
+		children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
+		icon: allIcons.capturePhoto,
 	},
 };
 
-Default.storyName = 'SidebarNavigationItem';
-Default.args = {
-	children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
-	onClick: fn(),
+/**
+ * This story demonstrates how the component renders a `<a>` element
+ * when the `to` prop is provided
+ */
+export const WithToProp: Story = {
+	args: {
+		to: '/home',
+		children: __( 'Home', 'a8c-site-admin' ),
+		icon: allIcons.home,
+	},
 };
 
-// Add a story for the suffix prop.
 export const WithChevronSuffix: Story = {
 	args: {
 		children: __( 'More options', 'a8c-site-admin' ),

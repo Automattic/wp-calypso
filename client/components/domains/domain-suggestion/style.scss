@@ -2,7 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 
 .domain-suggestion {
+	display: flex;
 	flex-direction: column;
+
+	&.card {
+		padding: 16px 12px;
+
+		@include break-mobile {
+			padding: 16px 24px;
+		}
+	}
 
 	@include break-mobile {
 		flex-direction: row;
@@ -10,7 +19,6 @@
 	}
 
 	.domain-suggestion__content-domain {
-		align-items: center;
 		justify-content: space-between;
 	}
 
@@ -27,6 +35,10 @@
 
 	.domain-registration-suggestion__domain-title {
 		font-size: $font-body;
+
+		@include break-small {
+			white-space: nowrap;
+		}
 
 		.domain-registration-suggestion__domain-title-name {
 			color: var(--studio-gray-60);
@@ -57,12 +69,11 @@
 	@include break-mobile {
 		flex-direction: row;
 		align-items: center;
-		padding: 15px 20px;
 	}
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( ">480px" ) {
-			flex-direction: row;
+			flex-direction: column;
 			align-items: center;
 		}
 	}
@@ -108,13 +119,17 @@
 	width: 100%;
 	min-height: 32px;
 	gap: 16px;
+	display: flex;
+	flex-direction: column;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 	}
 
-	.notice.is-compact {
+	.calypso-notice.is-compact {
 		margin: 0 0 0 8px;
 		color: var(--color-text-inverted);
 
@@ -130,12 +145,12 @@
 			background: var(--color-warning);
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			padding: 4px 8px;
 		}
 	}
 
-	.notice__icon-wrapper {
+	.calypso-notice__icon-wrapper {
 		display: none;
 	}
 
@@ -169,6 +184,9 @@
 }
 
 .domain-registration-suggestion__title-info {
+	display: flex;
+	align-items: center;
+
 	@include breakpoint-deprecated( ">800px" ) {
 		max-width: 55%;
 	}
@@ -222,14 +240,6 @@
 	}
 }
 
-.domain-registration-suggestion__domain-title-tld {
-	word-break: normal;
-}
-
-.domain-suggestion__action-container {
-	height: 40px;
-}
-
 .domain-suggestion__price-container,
 .domain-suggestion__action-container {
 	flex: 0 0 auto;
@@ -250,17 +260,15 @@
 
 .button.domain-suggestion__action {
 	width: 100%;
-	height: 40px;
 	min-width: 130px;
+	min-height: 40px;
 	text-align: center;
 	padding: 0.25em 3em;
-	margin-top: 10px;
 	margin-left: 0;
 
 	@media (min-width: 660px) {
 		width: auto;
 		flex: 1 0 auto;
-		margin-top: 0;
 	}
 
 	.is-placeholder & {
@@ -329,14 +337,19 @@
 }
 
 .domain-product-price {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	max-width: 100%;
 }
 
 body.is-section-stepper,
 body.is-section-signup {
-	svg {
-		padding-top: 0;
-		margin-right: 0;
+	&:not(:has(.step-container-v2)) {
+		svg:not(.jetpack-logo, .social-buttons__button svg) {
+			padding-top: 0;
+			margin-right: 0;
+		}
 	}
 
 	.domain-registration-suggestion__badges {
@@ -397,10 +410,6 @@ body.is-section-signup {
 		.domain-product-price__price {
 			font-size: $font-body-small;
 			font-weight: initial;
-
-			&:not(.domain-product-price__free-price) {
-				color: var(--color-neutral-40);
-			}
 		}
 
 		&.is-clickable:hover {
@@ -425,18 +434,12 @@ body.is-section-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
-			white-space: normal;
 		}
 
 		&:not(.featured-domain-suggestion) {
 			background: none;
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			border-top: 1px solid #fff; /*This white border is to prevent jumpiness while showing borders on hover*/
-			padding: 16px 20px;
-
-			@include break-mobile {
-				padding: 16px 24px;
-			}
 
 			.domain-registration-suggestion__domain-title {
 				.domain-registration-suggestion__domain-title-name {

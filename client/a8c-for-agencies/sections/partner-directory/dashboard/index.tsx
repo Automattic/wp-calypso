@@ -7,7 +7,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -99,15 +98,13 @@ const PartnerDirectoryDashboard = () => {
 	const onSubmitPublishProfileSuccess = useCallback(
 		( response: Agency ) => {
 			// Update the store with the new agency data
-			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
+			if ( response ) {
+				dispatch( setActiveAgency( { ...agency, ...response } ) );
+			}
 
-			reduxDispatch(
-				successNotice( translate( 'Your profile has been saved!' ), {
-					duration: 6000,
-				} )
-			);
+			dispatch( successNotice( translate( 'Your profile has been saved!' ), { duration: 6000 } ) );
 		},
-		[ agency, translate ]
+		[ agency, translate, dispatch ]
 	);
 
 	const { onSubmit: submitPublishProfile, isSubmitting: isSubmittingPublishProfile } =
@@ -212,7 +209,6 @@ const PartnerDirectoryDashboard = () => {
 
 	const programLinks = (
 		<StepSection
-			applyCoreStyles
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
@@ -265,7 +261,7 @@ const PartnerDirectoryDashboard = () => {
 						{
 							// Application approved, but the Directory page is not available yet
 							application.key === 'approved' && ! brandMeta.isAvailable
-								? translate( 'This partner directory is launching soon.' )
+								? translate( 'This Partner Directory is launching soon.' )
 								: ''
 						}
 					</div>
@@ -291,9 +287,7 @@ const PartnerDirectoryDashboard = () => {
 
 						return (
 							<StepSectionItem
-								applyCoreStyles
 								key={ application.brand }
-								isNewLayout
 								iconClassName={ clsx( brandMeta.className ) }
 								icon={ brandMeta.icon }
 								heading={ application.brand }
@@ -302,7 +296,6 @@ const PartnerDirectoryDashboard = () => {
 						);
 					} ) }
 				<StepSection
-					applyCoreStyles
 					className="partner-directory-dashboard__edit-section"
 					heading={ translate( "Edit your agency's information" ) }
 				>
@@ -344,10 +337,8 @@ const PartnerDirectoryDashboard = () => {
 					'List your agency in our partner directories. Showcase your skills, attract clients, and grow your business.'
 				) }
 			</div>
-			<StepSection applyCoreStyles heading={ translate( 'How do I start?' ) }>
+			<StepSection heading={ translate( 'How do I start?' ) }>
 				<StepSectionItem
-					applyCoreStyles
-					isNewLayout
 					className={
 						currentApplicationStep > 0 ? 'partner-directory-dashboard__checked-step' : ''
 					}
@@ -392,8 +383,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					applyCoreStyles
-					isNewLayout
 					className={
 						currentApplicationStep > 1 ? 'partner-directory-dashboard__checked-step' : ''
 					}
@@ -413,8 +402,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					applyCoreStyles
-					isNewLayout
 					stepNumber={ currentApplicationStep > 2 ? undefined : 3 }
 					icon={ currentApplicationStep > 2 ? check : undefined }
 					heading={ translate( 'New clients will find you' ) }

@@ -6,6 +6,14 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"types": "dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -31,6 +39,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.5.4"
+		"typescript": "^5.8.3"
 	}
 }

@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import i18n from 'i18n-calypso';
+import { fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
 import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
@@ -96,9 +96,15 @@ export default function Content( {
 					<h2>{ __( 'Step 1: Export your content from Substack' ) }</h2>
 					<p>
 						{ createInterpolateElement(
-							__(
-								'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
-							),
+							( fixMe( {
+								text: 'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.',
+								newCopy: __(
+									'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
+								),
+								oldCopy: __(
+									'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
+								),
+							} ) || '' ) as string,
 							{
 								strong: <strong />,
 							}
@@ -122,24 +128,26 @@ export default function Content( {
 					<hr />
 					<h2>{ __( 'Step 2: Import your content to WordPress.com' ) }</h2>
 					<p>
-						{ i18n.fixMe( {
-							text: 'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to Reading Settings, and change "Your homepage displays" to a static page.',
-							newCopy: createInterpolateElement(
-								__(
+						{ createInterpolateElement(
+							( fixMe( {
+								text: 'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading settings</a>, and change "Your homepage displays" to a static page.',
+								newCopy: __(
+									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading settings</a>, and change "Your homepage displays" to a static page.'
+								),
+								oldCopy: __(
 									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading Settings</a>, and change "Your homepage displays" to a static page.'
 								),
-								{
-									a: (
-										<a
-											href={ `${ selectedSite.URL }/wp-admin/options-reading.php` }
-											target="_blank"
-											rel="noreferrer noopener"
-										/>
-									),
-								}
-							),
-							oldCopy: __( '' ),
-						} ) }
+							} ) || '' ) as string,
+							{
+								a: (
+									<a
+										href={ `${ selectedSite.URL }/wp-admin/options-reading.php` }
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
+							}
+						) }
 					</p>
 				</>
 			) }

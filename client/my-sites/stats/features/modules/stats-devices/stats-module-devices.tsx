@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { mobile } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -13,7 +13,6 @@ import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -103,7 +102,6 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SIZE ]: {
@@ -147,7 +145,6 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				label: entry[ 1 ].selectLabel, // optionLabels object value
 			} ) ) }
 			initialSelected={ selectedOption }
-			// @ts-expect-error TODO: missing TS type
 			onSelect={ changeViewButton }
 		/>
 	);
@@ -156,18 +153,16 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const supportUrl = isSiteJetpackNotAtomic
-		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` )
-		: localizeUrl( `${ SUPPORT_URL }#devices` );
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-devices-jetpack' : 'stats-devices';
 
 	const titleNodes = (
-		<StatsInfoArea isNew>
+		<StatsInfoArea>
 			{ translate(
 				'The {{link}}devices and browsers{{/link}} your visitors use to access your website.',
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+						link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 					},
 					context: 'Stats: Info popover content when the Devices module has data.',
 				}
@@ -179,45 +174,41 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	return (
 		<>
-			{ isNewEmptyStateEnabled && (
-				<>
-					{ showLoader && (
-						<StatsCardSkeleton
-							isLoading={ isFetching }
-							className={ className }
-							title={ devicesStrings.title }
-							type={ 3 }
-						/>
-					) }
-					{ ! showLoader &&
-						! data?.length && ( // no data and new empty state enabled
-							<StatsCard
-								className={ className }
-								title={ devicesStrings.title }
-								titleNodes={ <StatsInfoArea isNew /> }
-								isEmpty
-								emptyMessage={
-									<EmptyModuleCard
-										icon={ mobile }
-										description={ translate(
-											'The {{link}}devices and browsers{{/link}} your visitors use to access your site will display here.',
-											{
-												comment: '{{link}} links to support documentation.',
-												components: {
-													link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
-												},
-												context: 'Stats: Info box label when the Devices module is empty',
-											}
-										) }
-									/>
-								}
-							/>
-						) }
-				</>
+			{ showLoader && (
+				<StatsCardSkeleton
+					isLoading={ isFetching }
+					className={ className }
+					title={ devicesStrings.title }
+					type={ 3 }
+				/>
 			) }
-
-			{ ( ! isNewEmptyStateEnabled ||
-				( isNewEmptyStateEnabled && ! showLoader && !! data?.length ) ) && (
+			{ ! showLoader &&
+				! data?.length && ( // no data and new empty state enabled
+					<StatsCard
+						className={ className }
+						title={ devicesStrings.title }
+						titleNodes={ <StatsInfoArea /> }
+						isEmpty
+						emptyMessage={
+							<EmptyModuleCard
+								icon={ mobile }
+								description={ translate(
+									'The {{link}}devices and browsers{{/link}} your visitors use to access your site will display here.',
+									{
+										comment: '{{link}} links to support documentation.',
+										components: {
+											link: (
+												<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+											),
+										},
+										context: 'Stats: Info box label when the Devices module is empty',
+									}
+								) }
+							/>
+						}
+					/>
+				) }
+			{ ! showLoader && !! data?.length && (
 				<>
 					{
 						// Use dedicated StatsCard for the screen size chart section.
@@ -234,35 +225,24 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 								isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
 								emptyMessage={ devicesStrings.empty }
 							>
-								{ /* Remove StatsModulePlaceholder component and showLoader check when clearing `stats/empty-module-traffic` feature flag */ }
-								{ showLoader ? (
-									<StatsModulePlaceholder isLoading={ showLoader } />
-								) : (
-									<div className="stats-card--body__chart">
-										<PieChart
-											data={ chartData }
-											startAngle={ 0 }
-											svgSize={ 224 }
-											donut
-											hasTooltip
-										/>
-										<PieChartLegend
-											data={ chartData }
-											onlyPercent
-											svgElement={
-												<svg
-													width="15"
-													height="14"
-													viewBox="0 0 15 14"
-													fill="none"
-													xmlns="http://www.w3.org/2000/svg"
-												>
-													<rect x="0.5" width="14" height="14" rx="3" />
-												</svg>
-											}
-										/>
-									</div>
-								) }
+								<div className="stats-card--body__chart">
+									<PieChart data={ chartData } startAngle={ 0 } svgSize={ 224 } donut hasTooltip />
+									<PieChartLegend
+										data={ chartData }
+										onlyPercent
+										svgElement={
+											<svg
+												width="15"
+												height="14"
+												viewBox="0 0 15 14"
+												fill="none"
+												xmlns="http://www.w3.org/2000/svg"
+											>
+												<rect x="0.5" width="14" height="14" rx="3" />
+											</svg>
+										}
+									/>
+								</div>
 							</StatsCard>
 						) : (
 							// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.

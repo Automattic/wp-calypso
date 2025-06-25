@@ -29,8 +29,6 @@ import {
 import { login } from 'calypso/lib/paths';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
-import { isP2Flow } from 'calypso/signup/is-flow';
-import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getFlowDestination,
@@ -281,6 +279,8 @@ export class UserStep extends Component {
 							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 						}
 					);
+				} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+					subHeaderText = translate( 'First, create your WordPress.com account.' );
 				} else {
 					subHeaderText = translate(
 						'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -300,7 +300,7 @@ export class UserStep extends Component {
 
 		const redirectToAfterLoginUrl = getRedirectToAfterLoginUrl( this.props );
 
-		if ( redirectToAfterLoginUrl?.startsWith( '/setup/hosted-site-migration' ) ) {
+		if ( redirectToAfterLoginUrl?.startsWith( '/setup/site-migration' ) ) {
 			subHeaderText = translate(
 				'Pick an option to start moving your site to the world’s best WordPress host.'
 			);
@@ -566,11 +566,7 @@ export class UserStep extends Component {
 	}
 
 	submitButtonText() {
-		const { translate, flowName, isWCCOM } = this.props;
-
-		if ( isP2Flow( flowName ) ) {
-			return translate( 'Continue' );
-		}
+		const { translate, isWCCOM } = this.props;
 
 		if ( isWCCOM ) {
 			return translate( 'Get started' );
@@ -640,31 +636,6 @@ export class UserStep extends Component {
 		);
 	}
 
-	renderP2SignupStep() {
-		return (
-			<P2StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( 'Sign up' ) }
-				subHeaderText={ this.props.translate(
-					"First, let's create your account. We recommend you use the {{strong}}same email address you use at work.{{/strong}}",
-					{
-						components: { strong: <strong /> },
-					}
-				) }
-				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
-					args: {
-						currentStep: 1,
-						totalSteps: 3,
-					},
-				} ) }
-			>
-				{ this.renderSignupForm() }
-			</P2StepWrapper>
-		);
-	}
-
 	renderGravatarSignupStep() {
 		const { flowName, stepName, positionInFlow, translate, oauth2Client } = this.props;
 
@@ -706,12 +677,12 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.userCreationComplete() && ! this.props.isWCCOM ) {
+		if (
+			this.userCreationComplete() &&
+			! this.props.isWCCOM &&
+			! isPartnerPortalOAuth2Client( this.props.oauth2Client )
+		) {
 			return null; // return nothing so that we don't see the completed signup form flash but skip for Woo because it need to keep the form until the user is redirected back to original page (e.g. WooCommerce.com).
-		}
-
-		if ( isP2Flow( this.props.flowName ) ) {
-			return this.renderP2SignupStep();
 		}
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {

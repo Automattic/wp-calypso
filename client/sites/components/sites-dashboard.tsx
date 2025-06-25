@@ -16,6 +16,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
+import { useCurrentRoute } from 'calypso/components/route';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -50,7 +51,7 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import type { View } from '@wordpress/dataviews';
+import type { View } from '@automattic/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -303,7 +304,7 @@ const SitesDashboard = ( {
 
 	const hasA8CSitesFilter =
 		dataViewsState.filters?.some(
-			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
+			( { field, operator, value } ) => field === 'is_a8c' && operator === 'is' && value === true
 		) ?? false;
 
 	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
@@ -382,8 +383,17 @@ const SitesDashboard = ( {
 		}
 	};
 
+	const { currentSection, currentRoute } = useCurrentRoute() as {
+		currentSection: false | { group?: string; name?: string };
+		currentRoute: string;
+	};
 	const showSiteDashboard = useSelector( ( state ) =>
-		shouldShowSiteDashboard( state, selectedSite?.ID ?? null )
+		shouldShowSiteDashboard( {
+			state,
+			siteId: selectedSite?.ID ?? null,
+			section: currentSection as { group?: string },
+			route: currentRoute,
+		} )
 	);
 	if ( !! selectedSite && ! showSiteDashboard ) {
 		return null;

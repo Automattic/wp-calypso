@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
-import { Button, CompactCard } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
+import { Button } from '@wordpress/components';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -74,7 +75,7 @@ class PaymentMethodList extends Component<
 
 	renderAddPaymentMethodButton() {
 		return (
-			<Button primary compact onClick={ this.goToAddPaymentMethod }>
+			<Button variant="primary" size="compact" onClick={ this.goToAddPaymentMethod }>
 				{ this.props.translate( 'Add payment method' ) }
 			</Button>
 		);

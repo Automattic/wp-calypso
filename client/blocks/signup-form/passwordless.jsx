@@ -20,6 +20,7 @@ import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import SignupSubmitButton from './signup-submit-button';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -312,14 +313,12 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<Button
-					type="submit"
-					primary
-					busy={ isSubmitting }
-					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
+				<SignupSubmitButton
+					isBusy={ isSubmitting }
+					isDisabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
-				</Button>
+				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);

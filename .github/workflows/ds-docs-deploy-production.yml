@@ -1,0 +1,51 @@
+name: Deploy Design System Docs to Production
+
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - apps/design-system-docs/**
+      - .github/actions/build-design-system-docs/action.yml
+      - .github/workflows/ds-docs-deploy-production.yml
+
+concurrency:
+  group: deploy-production-design-system-docs
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the PR code
+      - uses: actions/checkout@v4
+
+      # 2. Build the Design System Docs site
+      - uses: ./.github/actions/build-design-system-docs
+
+      # 3. Upload over SSH to the production server
+      - name: Sync to production server
+        env:
+          # See: https://wp.me/p9o2xV-5Da#comment-11607
+          SSH_USER: ${{ secrets.DESIGN_SYSTEM_PRODUCTION_SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.DESIGN_SYSTEM_PRODUCTION_SSH_KEY }}
+          # Generated via: `ssh-keyscan -t ssh-ed25519 sftp.wp.com`. Stored as a secret not because
+          # it's sensitive, but to make it easier to change without code revisions.
+          SSH_HOST_PUBLIC_KEY: ${{ secrets.DESIGN_SYSTEM_PRODUCTION_SSH_PUBLIC_KEY }}
+        run: |
+          printf '%s' "$SSH_PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+
+          # Write known_hosts with public key for strict key checking
+          mkdir -p ~/.ssh
+          echo "sftp.wp.com ssh-ed25519 $SSH_HOST_PUBLIC_KEY" > ~/.ssh/known_hosts
+
+          # Copy the built site to the production server
+          scp -r -i key.pem \
+            -o UserKnownHostsFile=~/.ssh/known_hosts \
+            -o StrictHostKeyChecking=yes \
+            apps/design-system-docs/dist/* \
+            "$SSH_USER@sftp.wp.com:/srv/htdocs/"
+
+          rm key.pem

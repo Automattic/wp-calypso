@@ -27,15 +27,12 @@ export class GoogleDrive extends SharingService {
 
 	didKeyringConnectionSucceed( availableExternalAccounts ) {
 		if ( availableExternalAccounts.length === 0 ) {
-			this.props.failCreateConnection( {
-				message: [
-					this.props.translate( 'The Google Drive connection could not be made.', {
-						context: 'Sharing: Jetpack Social connection error',
-					} ),
-					' ',
-					' ',
-				],
-			} );
+			this.props.warningNotice(
+				this.props.translate( 'The Google Drive connection could not be made.', {
+					context: 'Sharing: Jetpack Social connection error',
+				} ),
+				{ id: 'publicize' }
+			);
 			this.setState( { isConnecting: false } );
 			return false;
 		}

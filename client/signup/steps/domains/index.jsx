@@ -1,15 +1,28 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
-import { isWithThemeFlow, isHostingSignupFlow, isOnboardingFlow } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
+import {
+	isWithThemeFlow,
+	isHostingSignupFlow,
+	isOnboardingFlow,
+	StepContainer,
+	isAIBuilderFlow,
+	isTailoredSignupFlow,
+	Step,
+	isNewHostedSiteCreationFlow,
+	NEW_HOSTED_SITE_FLOW,
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
+} from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { getQueryArg } from '@wordpress/url';
+import { withViewportMatch } from '@wordpress/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -20,6 +33,12 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import {
+	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
+	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
+	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -76,10 +95,14 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
-import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
+import {
+	getExternalBackUrl,
+	shouldUseMultipleDomainsInCart,
+	sortProductsByPriceDescending,
+} from './utils';
 import './style.scss';
 
-export class RenderDomainsStep extends Component {
+class RenderDomainsStepComponent extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		shoppingCartManager: PropTypes.any,
@@ -98,6 +121,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		recordTracksEvent: PropTypes.func,
+		allowSkipWithoutSearch: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -148,6 +172,26 @@ export class RenderDomainsStep extends Component {
 			props.goToNextStep();
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
+
+		// Get playground ID from either GET param or localStorage
+		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
+		const playgroundIdFromStorage = window.localStorage.getItem( PG_ID );
+		const playgroundIdTimestamp = window.localStorage.getItem( PG_TS );
+		const playgroundId =
+			playgroundIdFromUrl ||
+			( Date.now() - playgroundIdTimestamp < PG_ID_VALIDITY ? playgroundIdFromStorage : null );
+
+		// Clean up localStorage regardless of whether we used the value
+		window.localStorage.removeItem( PG_ID );
+		window.localStorage.removeItem( PG_TS );
+
+		// Update URL if we got the ID from localStorage
+		if ( playgroundId && playgroundIdFromStorage && ! playgroundIdFromUrl ) {
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'playground', playgroundId );
+			window.history.replaceState( {}, '', url.toString() );
+		}
+
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
@@ -162,6 +206,7 @@ export class RenderDomainsStep extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
+			playgroundId,
 		};
 	}
 
@@ -453,9 +498,9 @@ export class RenderDomainsStep extends Component {
 
 		this.props.setDesignType( this.getDesignType() );
 
-		// For the `domain-for-gravatar` flow, add an extra `is_gravatar_domain` property to the domain registration product,
+		// For the domain for Gravatar flow, add an extra `is_gravatar_domain` property to the domain registration product,
 		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
-		if ( this.props.flowName === 'domain-for-gravatar' ) {
+		if ( isDomainForGravatarFlow( this.props.flowName ) ) {
 			const domainForGravatarItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
@@ -612,12 +657,22 @@ export class RenderDomainsStep extends Component {
 
 	shouldHideDomainExplainer = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
+		return [
+			'domain',
+			DOMAIN_FOR_GRAVATAR_FLOW,
+			'onboarding-with-email',
+			NEW_HOSTED_SITE_FLOW,
+		].includes( flowName );
 	};
 
 	shouldHideUseYourDomain = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
+		return [
+			'domain',
+			DOMAIN_FOR_GRAVATAR_FLOW,
+			'onboarding-with-email',
+			NEW_HOSTED_SITE_FLOW,
+		].includes( flowName );
 	};
 
 	shouldDisplayDomainOnlyExplainer = () => {
@@ -697,7 +752,7 @@ export class RenderDomainsStep extends Component {
 						return ! this.state.domainsWithMappingError.includes( product.meta );
 					} );
 					// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-					const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
+					const sortedProducts = sortProductsByPriceDescending( productsInCart );
 					this.props.shoppingCartManager
 						.replaceProductsInCart( sortedProducts )
 						.then( () => {
@@ -736,29 +791,6 @@ export class RenderDomainsStep extends Component {
 		}
 
 		this.setState( { isCartPendingUpdateDomain: null } );
-	}
-
-	sortProductsByPriceDescending( productsInCart ) {
-		// Sort products by price descending, considering promotions.
-		const getSortingValue = ( product ) => {
-			if ( product.item_subtotal_integer !== 0 ) {
-				return product.item_subtotal_integer;
-			}
-
-			// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
-			const nonZeroPrices =
-				product.cost_overrides
-					?.map( ( override ) => override.new_price * 100 )
-					.filter( ( price ) => price > 0 ) || [];
-
-			return nonZeroPrices.length
-				? Math.min( ...nonZeroPrices )
-				: product.item_original_cost_integer;
-		};
-
-		return productsInCart.sort( ( a, b ) => {
-			return getSortingValue( b ) - getSortingValue( a );
-		} );
 	}
 
 	removeDomainClickHandler = ( domain ) => async () => {
@@ -926,6 +958,29 @@ export class RenderDomainsStep extends Component {
 		} );
 	};
 
+	getDomainsMiniCart = ( domainsInCart ) => {
+		const cartIsLoading = this.props.shoppingCartManager.isLoading;
+
+		if ( cartIsLoading && domainsInCart.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<DomainsMiniCart
+				isMobile={ ! this.props.isDesktop }
+				domainsInCart={ domainsInCart }
+				domainRemovalQueue={ this.state.domainRemovalQueue }
+				flowName={ this.props.flowName }
+				removeDomainClickHandler={ this.removeDomainClickHandler }
+				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
+				goToNext={ this.goToNext }
+				handleSkip={ this.handleSkip }
+				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+				freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
+			/>
+		);
+	};
+
 	getSideContent = () => {
 		const { flowName } = this.props;
 		const domainsInCart = getDomainsInCart( this.props.cart );
@@ -942,8 +997,6 @@ export class RenderDomainsStep extends Component {
 			domainsInCart.push( ...additionalDomains );
 		}
 
-		const cartIsLoading = this.props.shoppingCartManager.isLoading;
-
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
 				className={ clsx( 'domains__domain-side-content', {
@@ -957,26 +1010,14 @@ export class RenderDomainsStep extends Component {
 		) : null;
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
+		const shouldShowSkip = this.props.allowSkipWithoutSearch || hasSearchedDomains;
 
-		return (
-			<div className="domains__domain-side-content-container">
-				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
-					<DomainsMiniCart
-						domainsInCart={ domainsInCart }
-						temporaryCart={ this.state.temporaryCart }
-						domainRemovalQueue={ this.state.domainRemovalQueue }
-						cartIsLoading={ cartIsLoading }
-						flowName={ flowName }
-						removeDomainClickHandler={ this.removeDomainClickHandler }
-						isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
-						goToNext={ this.goToNext }
-						handleSkip={ this.handleSkip }
-						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-						freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
-					/>
-				) : (
-					! this.shouldHideDomainExplainer() &&
-					hasSearchedDomains && (
+		const content = [
+			shouldUseMultipleDomainsInCart( flowName ) &&
+			( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected )
+				? this.getDomainsMiniCart( domainsInCart )
+				: ! this.shouldHideDomainExplainer() &&
+				  shouldShowSkip && (
 						<div className="domains__domain-side-content domains__free-domain">
 							<SideExplainer
 								onClick={ this.handleDomainExplainerClick }
@@ -988,17 +1029,31 @@ export class RenderDomainsStep extends Component {
 								flowName={ flowName }
 							/>
 						</div>
-					)
-				) }
-				{ useYourDomain }
-				{ this.shouldDisplayDomainOnlyExplainer() && (
-					<div className="domains__domain-side-content">
-						<SideExplainer
-							onClick={ this.handleDomainExplainerClick }
-							type="free-domain-only-explainer"
-						/>
-					</div>
-				) }
+				  ),
+			useYourDomain,
+			this.shouldDisplayDomainOnlyExplainer() && (
+				<div className="domains__domain-side-content">
+					<SideExplainer
+						onClick={ this.handleDomainExplainerClick }
+						type="free-domain-only-explainer"
+					/>
+				</div>
+			),
+		];
+
+		const nonEmptyElements = Children.toArray( content ).filter( isValidElement );
+
+		if ( nonEmptyElements.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<div
+				className={ clsx( 'domains__domain-side-content-container', {
+					'is-sticky': !! useYourDomain,
+				} ) }
+			>
+				{ nonEmptyElements }
 			</div>
 		);
 	};
@@ -1085,10 +1140,10 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				sideContent={ this.getSideContent() }
+				sideContent={ ! shouldUseStepContainerV2( this.props.flowName ) && this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
-					this.isHostingFlow()
+					isHostingSignupFlow( this.props.flowName )
 						? this.props.translate( 'Stand out with a short and memorable domain' )
 						: undefined
 				}
@@ -1146,7 +1201,6 @@ export class RenderDomainsStep extends Component {
 					initialMode={ queryObject.step ?? inputMode.domainInput }
 					onNextStep={ this.setCurrentFlowStep }
 					isSignupStep
-					showHeader={ false }
 					onTransfer={ this.handleAddTransfer }
 					onConnect={ this.onUseMyDomainConnect }
 					onSkip={ () => this.handleSkip( undefined, false ) }
@@ -1155,16 +1209,30 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
-
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, translate } = this.props;
+		const { isAllDomains, stepSectionName, flowName, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( this.isHostingFlow() ) {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Help your site stand out with a custom domain. Not sure yet? {{decideLater}}Decide later{{/decideLater}}.',
+				{
+					components: {
+						decideLater: (
+							<Step.LinkButton
+								css={ { color: 'inherit !important' } }
+								onClick={ () => this.handleSkip( undefined, true ) }
+							/>
+						),
+					},
+				}
+			);
+		}
+
+		if ( isHostingSignupFlow( flowName ) ) {
 			const components = {
 				span: (
 					<button
@@ -1179,13 +1247,6 @@ export class RenderDomainsStep extends Component {
 				'Find the perfect domain for your exciting new project or {{span}}decide later{{/span}}.',
 				{ components }
 			);
-		}
-
-		if (
-			shouldUseMultipleDomainsInCart( flowName ) &&
-			! [ 'use-your-domain' ].includes( stepSectionName )
-		) {
-			return translate( 'Find and claim one or more domain names.' );
 		}
 
 		if ( ! stepSectionName ) {
@@ -1226,7 +1287,7 @@ export class RenderDomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	renderContent() {
+	getContentColumns() {
 		let content;
 		let sideContent;
 
@@ -1252,6 +1313,12 @@ export class RenderDomainsStep extends Component {
 				</div>
 			);
 		}
+
+		return [ content, sideContent ];
+	}
+
+	renderContent() {
+		const [ content, sideContent ] = this.getContentColumns();
 
 		return (
 			<div className="domains__step-content domains__step-content-domain-step">
@@ -1325,6 +1392,7 @@ export class RenderDomainsStep extends Component {
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
+
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
@@ -1354,7 +1422,7 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( 'domain-for-gravatar' === flowName ) {
+		} else if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
@@ -1368,10 +1436,16 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingFlow( flowName ) && !! goBack ) {
 			backUrl = null;
 			backLabelText = translate( 'Back' );
-		} else {
+		} else if ( isAIBuilderFlow( flowName ) ) {
+			backUrl = `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&referrer=${ flowName }&p=%2F&ai-step=edit`;
+			backLabelText = translate( 'Keep Editing' );
+		} else if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( 'site' === source && siteUrl ) {
+			if ( this.state.playgroundId ) {
+				backUrl = `/setup/onboarding/playground?playground=${ this.state.playgroundId }`;
+				backLabelText = translate( 'Back' );
+			} else if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
 				backLabelText = translate( 'Back to My Site' );
 				isExternalBackUrl = true;
@@ -1398,10 +1472,45 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		if ( shouldUseStepContainerV2( flowName ) ) {
+			const [ content, sideContent ] = this.getContentColumns();
+
+			const backButton = ( backUrl || goBack ) && (
+				<Step.BackButton
+					href={ backUrl }
+					rel={ isExternalBackUrl ? 'external' : '' }
+					onClick={ goBack }
+				>
+					{ backLabelText }
+				</Step.BackButton>
+			);
+
+			const mainContent = (
+				<>
+					<QueryProductsList type="domains" />
+					{ content }
+				</>
+			);
+
+			return (
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 7 }
+					secondColumnWidth={ 3 }
+					topBar={ <Step.TopBar leftElement={ ! hideBack && backButton } /> }
+					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
+					className="domains__step-content domains__step-content-domain-step"
+				>
+					{ mainContent }
+					{ sideContent }
+				</Step.TwoColumnLayout>
+			);
+		}
+
 		if ( useStepperWrapper ) {
 			return (
-				<AsyncLoad
-					require="@automattic/onboarding/src/step-container"
+				// This is biased towards Stepper. It will always load Stepper's StepContainer but only load /start's StepWrapper if /start is used.
+				// This is because Stepper's domains page is much more likely (90%+ of the time) to be used than /start's plans page.
+				<StepContainer
 					hideBack={ hideBack }
 					flowName={ flowName }
 					stepName={ stepName }
@@ -1462,6 +1571,10 @@ export class RenderDomainsStep extends Component {
 		);
 	}
 }
+
+export const RenderDomainsStep = withViewportMatch( { isDesktop: '>= large' } )(
+	RenderDomainsStepComponent
+);
 
 export const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';

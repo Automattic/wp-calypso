@@ -143,7 +143,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 						hideOnMobile
 						items={ [
 							{
-								label: translate( 'WooPayments Commissions' ),
+								label: translate( 'WooPayments commissions' ),
 								href: A4A_WOOPAYMENTS_DASHBOARD_LINK,
 							},
 							{
@@ -176,10 +176,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								'Follow the steps below to complete the process so you can earn commissions.'
 							) }
 						</div>
-						<StepSection applyCoreStyles heading={ translate( 'Next steps' ) }>
+						<StepSection heading={ translate( 'Next steps' ) }>
 							<StepSectionItem
-								applyCoreStyles
-								isNewLayout
 								heading={ translate( 'Install and activate the plugin on WP-Admin' ) }
 								description={
 									<>
@@ -227,8 +225,6 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								}
 							/>
 							<StepSectionItem
-								applyCoreStyles
-								isNewLayout
 								heading={ translate( 'Earn commissions' ) }
 								description={
 									<>
@@ -248,7 +244,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 											} }
 											href={ A4A_WOOPAYMENTS_DASHBOARD_LINK }
 										>
-											{ translate( 'View WooPayments Commissions' ) }
+											{ translate( 'View WooPayments commissions' ) }
 										</Button>
 									</>
 								}

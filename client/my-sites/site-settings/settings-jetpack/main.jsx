@@ -46,7 +46,6 @@ const SiteSettingsJetpack = ( {
 				actionURL={ '/settings/general/' + site.slug }
 				title={ translate( 'No Jetpack configuration is required.' ) }
 				// line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}
@@ -58,7 +57,6 @@ const SiteSettingsJetpack = ( {
 			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Settings' ) } />
-
 			<SiteSettingsNavigation site={ site } section="jetpack" />
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
 				// @TODO: Maybe we should move HasRetentionCapabilitiesSwitch to BackupRetentionManagement

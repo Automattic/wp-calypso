@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
+@import "@automattic/typography/styles/variables";
 
 @font-face {
 	font-family: Inter;
@@ -11,8 +12,8 @@
 		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
 }
 
-$inter: Inter, $sans;
-$sfProText: "SF Pro Text", $sans;
+$inter: Inter, $sans; // for general
+$sfProText: "SF Pro Text", $sans; // for sub title
 $colorBlack: #1f1f1f;
 
 body.is-section-signup {
@@ -48,12 +49,17 @@ body.is-section-signup {
 	--color-white: #fff;
 	--color-black: $colorBlack;
 	--color-gray: #50575e;
-	--color-orange: #ff6433;
 
-	background: var(--color-white);
+	--color-link: var(--color-blaze-pro);
+	--color-link-dark: var(--color-blaze-pro);
+
 	min-height: 100%;
 
 	$login-form-max-width: 327px;
+
+	.components-button {
+		font-weight: 600;
+	}
 
 	.masterbar__blaze-pro-nav {
 		display: flex;
@@ -89,6 +95,7 @@ body.is-section-signup {
 
 		@media (max-width: $break-mobile) {
 			display: flex;
+			padding-inline: 24px;
 		}
 
 		.masterbar__login-back-link {
@@ -115,6 +122,7 @@ body.is-section-signup {
 			margin: 0;
 			list-style-type: none;
 			width: 100%;
+			gap: 12px;
 
 			.masterbar__login-back-link {
 				// margin-top: -10px;
@@ -212,9 +220,8 @@ body.is-section-signup {
 			justify-content: center;
 			align-items: center;
 			align-self: stretch;
-			border-radius: 4px;
 			border: 1px solid #ccc;
-			height: 221px;
+			width: 100%;
 			box-sizing: border-box;
 			padding: 32px 24px 16px 24px;
 			position: relative;
@@ -272,29 +279,14 @@ body.is-section-signup {
 		}
 
 		.continue-as-user__change-user-link {
-			color: var(--color-orange);
-			font-family: $inter;
 			font-size: 0.875rem;
-			font-style: normal;
 			font-weight: 500;
-			line-height: 20px;
-			text-decoration: none;
-
-			&:hover {
-				color: var(--color-orange);
-			}
 		}
 
 		.continue-as-user__continue-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
-			border-radius: 4px;
-			font-family: $inter;
 			font-size: rem(13px);
 			font-weight: 600;
-			line-height: 14px;
 			margin-top: 24px;
-			padding: 12px 16px;
 			width: 326px;
 		}
 	}
@@ -325,10 +317,11 @@ body.is-section-signup {
 		margin-bottom: 24px;
 
 		.social-buttons__button {
-			font-family: $inter;
-			font-size: rem(13px);
-			font-weight: 600;
-			line-height: 14px;
+			> span {
+				font-family: $inter;
+				font-size: rem(13px);
+			}
+
 		}
 	}
 
@@ -370,6 +363,7 @@ body.is-section-signup {
 				width: 360px;
 
 				.formatted-header__title {
+					font-family: $inter;
 					font-size: 2rem;
 					font-weight: 700;
 					line-height: 40px;
@@ -420,9 +414,8 @@ body.is-section-signup {
 
 		a.logged-out-form__link-item,
 		a {
-			color: var(--color-orange);
 			padding: 0;
-			text-decoration: none;
+			text-decoration: underline;
 		}
 
 		a.logged-out-form__link-item,
@@ -432,6 +425,14 @@ body.is-section-signup {
 			font-weight: 500;
 			line-height: 25px;
 		}
+	}
+
+	.signup-form__login-link {
+		color: var(--studio-gray-60);
+		font-size: rem(18px);
+		font-weight: 500;
+		line-height: 25px;
+		text-align: center;
 	}
 
 	.login__lost-password-footer {
@@ -447,16 +448,15 @@ body.is-section-signup {
 	.two-factor-authentication__verification-code-form-wrapper {
 		box-shadow: none;
 
-		.form-label {
+		.form-label:not(.form-label-core-styles) {
 			color: #1e1e1e;
 			font-size: rem(11px);
 			line-height: 16px;
 			text-transform: uppercase;
 		}
 
-		.form-text-input {
+		.form-text-input:not(.form-text-input-core-styles) {
 			border: 1px solid #dddddf;
-			border-radius: 4px;
 
 			&:focus,
 			&:focus-visible,
@@ -469,26 +469,15 @@ body.is-section-signup {
 		}
 	}
 
-	// "Continue with a backup code" button
-	&.layout.is-white-login .wp-login__links.two-factor-authentication__actions > .button:first-of-type {
-		color: var(--color-black);
-		font-size: rem(13px);
-		font-weight: 600;
-		line-height: 14px;
-		padding: 12px 16px;
-	}
-
 	&.layout.is-white-login,
 	.card.login__form,
 	.signup-form .logged-out-form,
-	.login__lostpassword-form,
-	.two-factor-authentication__verification-code-form-wrapper {
+	.login__lostpassword-form {
 		.login .button.is-primary,
 		.login .button.is-primary:hover,
 		.form-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
-			border-radius: 4px;
+			background: var(--color-blaze-pro);
+			border-color: var(--color-blaze-pro);
 			color: var(--color-white);
 			font-size: rem(13px);
 			font-weight: 600;
@@ -507,11 +496,6 @@ body.is-section-signup {
 		font-size: rem(18px);
 		font-weight: 500;
 		line-height: 25px;
-
-		a,
-		a:visited {
-			color: var(--color-orange);
-		}
 	}
 
 	.login__lostpassword-subtitle {
@@ -576,18 +560,16 @@ body.is-section-signup {
 		}
 	}
 
-	.wp-login__main.main {
+	.wp-login__main.main:has(.login form.is-blaze-pro) {
 		max-width: unset;
 	}
 
 	.wp-login__container {
 		.wp-login__main-footer {
-			margin-top: 48px;
 			text-align: center;
 		}
 
 		.login__lost-password-link {
-			color: var(--color-orange);
 			font-family: $sfProText;
 			font-size: rem(18px);
 			font-weight: 500;

@@ -105,23 +105,36 @@ export const getNumericDateString = ( timestamp: number, locale = 'en' ) => {
 };
 
 /**
- * Get localized full date and time format for timestamp including hours and minutes.
- * @param {number} timestamp Web timestamp (milliseconds since Epoch)
+ * Get localized first day of week 1–7, 1 being Monday, 6 being Saturday, and 7 being Sunday.
+ * Uses vanilla API for retrieving value from `Locale.prototype.getWeekInfo()`,
+ * or the currently more supported `Locale.prototype.weekInfo`.
+ * As of 05/2025, Firefox does not support either.
+ *
+ * Defaults to Monday (1) when API is not available.
+ *
+ * If you need full support across browsers, you could load a polyfill first:
+ * https://github.com/bart-krakowski/get-week-info-polyfill
  * @param {string} locale Locale slug
- * @returns {string} Formatted localized date and time, e.g. '12/20/2021, 3:30 PM' for US English
- *   Falls back to ISO date string if anything goes wrong.
+ * @returns {number} First day of week 1–7, 1 being Monday, 6 being Saturday, and 7 being Sunday.
  */
-export const getNumericDateTimeString = ( timestamp: number, locale = 'en' ) => {
+export const getNumericFirstDayOfWeek = ( locale: string ) => {
 	try {
-		const formatter = new Intl.DateTimeFormat( locale, {
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric',
-			hour: 'numeric',
-			minute: 'numeric',
-		} );
-		return formatter.format( new Date( timestamp ) );
+		let weekInfo;
+		// New API
+		if ( typeof Intl.Locale.prototype.getWeekInfo === 'function' ) {
+			// @ts-ignore Native browser API not available in all browsers
+			weekInfo = new Intl.Locale( locale ).getWeekInfo();
+		}
+		// "Old" API
+		else if ( 'weekInfo' in Intl.Locale.prototype ) {
+			// @ts-ignore Native browser API not available in all browsers
+			weekInfo = new Intl.Locale( locale ).weekInfo;
+		} else {
+			return 1;
+		}
+
+		return weekInfo.firstDay;
 	} catch ( error ) {
-		return getISODateString( timestamp );
+		return 1;
 	}
 };

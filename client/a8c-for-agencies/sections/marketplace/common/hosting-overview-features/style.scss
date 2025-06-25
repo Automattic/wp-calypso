@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .hosting-overview-features {
 	display: grid;
@@ -31,14 +32,10 @@
 }
 
 .hosting-overview-features__item-title {
-	font-size: rem(18px);
-	line-height: 1.4;
-	font-weight: 500;
+	@include heading-large;
 	margin-block-end: 8px;
 }
 
 .hosting-overview-features__item-description {
-	font-size: 1rem;
-	line-height: 1.6;
-	font-weight: 400;
+	@include body-large;
 }

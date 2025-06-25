@@ -32,6 +32,7 @@ export default function BundleDetails( { parentLicenseId }: Props ) {
 						item.ownerType === LicenseType.Standard ? LicenseType.Standard : LicenseType.Partner
 					}
 					productName={ item.product }
+					productId={ item.productId }
 				/>
 			) ) }
 

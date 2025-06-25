@@ -10,6 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { CONTACT_URL_HASH_FRAGMENT } from '../../a4a-contact-support-widget';
+import { PROVIDE_FEEDBACK_URL_HASH_FRAGMENT } from '../../a4a-feedback/provide-feedback';
 import {
 	EXTERNAL_A4A_KNOWLEDGE_BASE,
 	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
@@ -30,6 +31,12 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 		setMenuExpanded( false );
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_gethelp' ) );
 	}, [ dispatch, setMenuExpanded ] );
+
+	const onProvideFeedback = useCallback( () => {
+		setMenuExpanded( false );
+		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_provide_feedback' ) );
+	}, [ dispatch, setMenuExpanded ] );
+
 	const onSignOut = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_signout' ) );
 		dispatch( redirectToLogout() );
@@ -42,11 +49,22 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 			{
 				// Show the "Contact support" button if the user is not a client
 				! isClient && (
-					<li className="a4a-sidebar__profile-dropdown-menu-item">
-						<Button borderless onClick={ onGetHelp } href={ CONTACT_URL_HASH_FRAGMENT }>
-							{ translate( 'Contact support' ) }
-						</Button>
-					</li>
+					<>
+						<li className="a4a-sidebar__profile-dropdown-menu-item">
+							<Button
+								borderless
+								onClick={ onProvideFeedback }
+								href={ PROVIDE_FEEDBACK_URL_HASH_FRAGMENT }
+							>
+								{ translate( 'Provide feedback' ) }
+							</Button>
+						</li>
+						<li className="a4a-sidebar__profile-dropdown-menu-item">
+							<Button borderless onClick={ onGetHelp } href={ CONTACT_URL_HASH_FRAGMENT }>
+								{ translate( 'Contact support' ) }
+							</Button>
+						</li>
+					</>
 				)
 			}
 			<li className="a4a-sidebar__profile-dropdown-menu-item">

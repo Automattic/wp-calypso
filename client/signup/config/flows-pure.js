@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales } from '@automattic/i18n-utils';
 import {
 	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
+	DOMAIN_FOR_GRAVATAR_FLOW,
 	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
@@ -12,28 +14,6 @@ const noop = () => {};
 
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
-
-const getP2Flows = () => {
-	return isEnabled( 'p2-enabled' )
-		? [
-				{
-					// When adding steps, make sure that signup campaign ref's continue to work.
-					name: 'p2',
-					steps: [
-						'user',
-						'p2-confirm-email',
-						'p2-complete-profile',
-						'p2-join-workspace',
-						'p2-site',
-					],
-					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-					description: 'New P2 signup flow',
-					lastModified: '2021-12-27',
-					showRecaptcha: true,
-				},
-		  ]
-		: [];
-};
 
 export function generateFlows( {
 	getRedirectDestination = noop,
@@ -47,10 +27,8 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
-	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
-	const p2Flows = getP2Flows();
 
 	const flows = [
 		{
@@ -285,7 +263,6 @@ export function generateFlows( {
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},
-		...p2Flows,
 		{
 			name: 'domain',
 			steps: [
@@ -303,7 +280,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'domain-for-gravatar',
+			name: DOMAIN_FOR_GRAVATAR_FLOW,
 			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
 			destination: getDomainSignupFlowDestination,
 			description: 'Checkout flow for domains on Gravatar',
@@ -425,6 +402,7 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enabledHelpCenterGeos: [ 'US' ],
+			enabledHelpCenterLocales: englishLocales,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
@@ -578,17 +556,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
-			name: 'entrepreneur',
-			steps: [ userSocialStep ],
-			destination: getEntrepreneurFlowDestination,
-			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
-			lastModified: '2024-05-29',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
-			optionalDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-affiliate',
 			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
 			destination: getSignupDestination,
@@ -599,6 +566,14 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
+			props: {
+				[ 'plans-affiliate' ]: {
+					offeringFreePlan: false,
+				},
+				domains: {
+					allowSkipWithoutSearch: true,
+				},
+			},
 		},
 	];
 

@@ -34,7 +34,7 @@ export function getSelectedTabTitle( selectedTab ) {
 	if ( selectedTab === FIRST_POSTS_TAB ) {
 		return 'fresh';
 	}
-	return selectedTab;
+	return decodeURIComponent( selectedTab );
 }
 
 /**

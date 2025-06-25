@@ -91,7 +91,6 @@ export function SiteIconWithPicker( {
 					widthLimit={ 512 }
 				/>
 			</Dialog>
-
 			<FormFieldset
 				className={ clsx( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
 				disabled={ disabled }

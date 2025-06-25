@@ -8,14 +8,15 @@ export type HelpCenterRequiredInformation = {
 	currentUser: CurrentUser;
 	// some users have no sites at all.
 	site: HelpCenterSite | null;
-	hasPurchases: false;
+	hasPurchases: boolean;
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	canConnectToZendesk: boolean;
+	isLoadingCanConnectToZendesk: boolean;
 };
 
-const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( {
+const defaultContext: HelpCenterRequiredInformation = {
 	locale: '',
 	sectionName: '',
 	currentUser: {
@@ -35,17 +36,25 @@ const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	canConnectToZendesk: false,
-} );
+	isLoadingCanConnectToZendesk: false,
+};
+
+const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
 
 export const HelpCenterRequiredContextProvider: React.FC< {
 	children: JSX.Element;
-	value: HelpCenterRequiredInformation;
+	value: Partial< HelpCenterRequiredInformation > &
+		Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' >;
 } > = function ( { children, value } ) {
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
 
 	return (
 		<HelpCenterRequiredContext.Provider
-			value={ { ...value, canConnectToZendesk: isLoading ? false : canConnectToZendesk ?? false } }
+			value={ {
+				...Object.assign( defaultContext, value ),
+				isLoadingCanConnectToZendesk: isLoading,
+				canConnectToZendesk: canConnectToZendesk ?? false,
+			} }
 		>
 			{ children }
 		</HelpCenterRequiredContext.Provider>

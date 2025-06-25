@@ -4,10 +4,10 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Dialog } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { ToggleControl, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
@@ -124,6 +124,11 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		buttonText = translate( 'Included with your plan' );
 	}
 
+	const handleDismissEligibilityWarnings = useCallback( () => {
+		setShowEligibility( false );
+		setShowAddCustomDomain( false );
+	}, [ setShowEligibility, setShowAddCustomDomain ] );
+
 	return (
 		<>
 			<PluginCustomDomainDialog
@@ -149,31 +154,32 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				domains={ domains }
 				closeDialog={ () => setShowAddCustomDomain( false ) }
 			/>
-			<Dialog
-				additionalClassNames="plugin-details-cta__dialog-content"
-				additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-				isVisible={ showEligibility }
-				title={ translate( 'Eligibility' ) }
-				onClose={ () => setShowEligibility( false ) }
-				showCloseIcon
-			>
-				<EligibilityWarnings
-					currentContext="plugin-details"
-					isMarketplace={ isMarketplaceProduct }
-					standaloneProceed
-					onProceed={ () =>
-						onClickInstallPlugin( {
-							dispatch,
-							selectedSite,
-							plugin,
-							upgradeAndInstall: shouldUpgrade,
-							isMarketplaceProduct,
-							billingPeriod,
-							productsList,
-						} )
-					}
-				/>
-			</Dialog>
+			{ showEligibility && (
+				<Modal
+					className="plugin-details-cta__dialog-content"
+					title={ translate( 'Before you continue' ) }
+					onRequestClose={ () => setShowEligibility( false ) }
+					size="medium"
+				>
+					<EligibilityWarnings
+						currentContext="plugin-details"
+						isMarketplace={ isMarketplaceProduct }
+						standaloneProceed
+						onDismiss={ handleDismissEligibilityWarnings }
+						onProceed={ () =>
+							onClickInstallPlugin( {
+								dispatch,
+								selectedSite,
+								plugin,
+								upgradeAndInstall: shouldUpgrade,
+								isMarketplaceProduct,
+								billingPeriod,
+								productsList,
+							} )
+						}
+					/>
+				</Modal>
+			) }
 			<Button
 				className="plugin-details-cta__install-button"
 				primary
@@ -313,6 +319,6 @@ function onClickInstallPlugin( {
 		);
 	}
 
-	// No need to go through chekout, go to install page directly.
+	// No need to go through checkout, go to install page directly.
 	return page( installPluginURL );
 }

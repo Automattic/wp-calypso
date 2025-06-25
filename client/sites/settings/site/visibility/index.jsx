@@ -1,33 +1,32 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
-import { Card, CompactCard, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { formatCurrency, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch, useSelector } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { launchSite } from 'calypso/state/sites/launch/actions';
+import {
+	launchSite,
+	launchSiteOrRedirectToLaunchSignupFlow,
+} from 'calypso/state/sites/launch/actions';
 import { getIsSiteLaunchInProgress } from 'calypso/state/sites/launch/selectors';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 
@@ -87,7 +86,6 @@ const LaunchSite = () => {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
 	const hasSitePreviewLink = useSelector( ( state ) =>
@@ -126,10 +124,13 @@ const LaunchSite = () => {
 		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
 
 	const handleLaunchSiteClick = () => {
+		recordTracksEvent( 'calypso_site_settings_launch_site_click' );
 		if ( isDevelopmentSite && ! siteReferralActive ) {
 			openLaunchConfirmationModal();
 		} else {
-			dispatchSiteLaunch();
+			dispatch(
+				launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
+			);
 		}
 	};
 
@@ -138,21 +139,15 @@ const LaunchSite = () => {
 	if ( 0 === siteDomains.length ) {
 		querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 		btnComponent = <Button>{ btnText }</Button>;
-	} else if ( isPaidPlan && siteDomains.length > 1 ) {
+	} else {
 		btnComponent = (
 			<Button
 				onClick={ handleLaunchSiteClick }
 				busy={ isLaunchInProgress }
-				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
-			>
-				{ btnText }
-			</Button>
-		);
-		querySiteDomainsComponent = '';
-	} else {
-		btnComponent = (
-			<Button
-				href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&new=${ site.title }&search=yes` }
+				disabled={
+					( isPaidPlan && siteDomains.length > 1 && ! isLaunchable ) ||
+					( isDevelopmentSite && agencyLoading )
+				}
 			>
 				{ btnText }
 			</Button>
@@ -166,8 +161,6 @@ const LaunchSite = () => {
 	const isPrivateAndUnlaunched = -1 === blogPublic && isUnlaunchedSite;
 
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-	const LaunchCard = showPreviewLink ? CompactCard : Card;
 
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
@@ -224,31 +217,19 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
 	return (
 		<>
 			{ renderConfirmationModal() }
-			{ ! isUntangled ? (
-				<>
-					<SettingsSectionHeader title={ translate( 'Launch site' ) } />
-					<LaunchCard>{ renderContent() }</LaunchCard>
-				</>
-			) : (
+			<PanelCard>
+				<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
+				{ renderContent() }
+			</PanelCard>
+			{ showPreviewLink && (
 				<PanelCard>
-					<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
-					{ renderContent() }
+					<PanelCardHeading>{ translate( 'Coming soon' ) }</PanelCardHeading>
+					{ renderPreviewLinks() }
 				</PanelCard>
 			) }
-			{ showPreviewLink &&
-				( ! isUntangled ? (
-					<Card>{ renderPreviewLinks() }</Card>
-				) : (
-					<PanelCard>
-						<PanelCardHeading>{ translate( 'Coming soon' ) }</PanelCardHeading>
-						{ renderPreviewLinks() }
-					</PanelCard>
-				) ) }
 			{ querySiteDomainsComponent }
 		</>
 	);

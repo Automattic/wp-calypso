@@ -186,6 +186,7 @@ class StepWrapper extends Component {
 			customizedActionButtons,
 			isExtraWideLayout,
 			isSticky,
+			userLoggedIn,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -204,17 +205,14 @@ class StepWrapper extends Component {
 			'has-navigation': hasNavigation,
 		} );
 
-		const flow = flows.getFlow( flowName, this.props.userLoggedIn );
+		const flow = flows.getFlow( flowName, userLoggedIn );
 
 		let sticky = null;
 		if ( isSticky !== undefined ) {
 			sticky = isSticky;
 		}
 
-		const queryParams = new URLSearchParams( window?.location.search );
-		const flags = queryParams.get( 'flags' )?.split( ',' );
-		const isHelpCenterLinkEnabled =
-			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos;
+		const isHelpCenterLinkEnabled = flow?.enabledHelpCenterLocales && userLoggedIn;
 
 		return (
 			<>
@@ -227,7 +225,7 @@ class StepWrapper extends Component {
 						{ isHelpCenterLinkEnabled && (
 							<HelpCenterStepButton
 								flowName={ flowName }
-								enabledGeos={ flow?.enabledHelpCenterGeos }
+								enabledLocales={ flow?.enabledHelpCenterLocales }
 								helpCenterButtonCopy={ flow?.helpCenterButtonCopy }
 								helpCenterButtonLink={ flow?.helpCenterButtonLink }
 							/>
@@ -240,7 +238,6 @@ class StepWrapper extends Component {
 								headerText={ this.headerText() }
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
-								disablePreventWidows
 								brandFont
 							/>
 							{ headerImageUrl && (
@@ -276,7 +273,12 @@ export default connect( ( state, ownProps ) => {
 	const backToParam = getCurrentQueryArguments( state )?.back_to?.toString();
 	const backTo = backToParam?.startsWith( '/' ) ? backToParam : undefined;
 
-	const backUrl = ownProps.backUrl ?? backTo;
+	let backUrl = ownProps.backUrl;
+
+	// Fallback to back_to from the query string only if the current step is the first step.
+	if ( ! backUrl && ownProps.positionInFlow === 0 ) {
+		backUrl = backTo;
+	}
 
 	return {
 		backUrl,

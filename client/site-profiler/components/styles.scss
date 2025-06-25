@@ -23,7 +23,7 @@ html[dir="rtl"] {
 .is-section-site-profiler .main {
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		/* stylelint-disable-next-line */
+		/* stylelint-disable-next-line scales/font-sizes */
 		font-size: 4.375rem;
 		line-height: 1;
 		margin-bottom: 1rem;
@@ -36,13 +36,12 @@ html[dir="rtl"] {
 
 	h2 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		/* stylelint-disable-next-line */
+		/* stylelint-disable-next-line scales/font-sizes */
 		font-size: 2.5rem;
 		line-height: 1.15;
 		margin-bottom: 1rem;
 
 		@media ( max-width: $break-small ) {
-			/* stylelint-disable-next-line */
 			font-size: 1.875em;
 		}
 	}

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { WordPressLogo } from '@automattic/components';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -6,7 +7,6 @@ import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
 import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import './styles.scss';
 import PressableOffering from './pressable-offering';

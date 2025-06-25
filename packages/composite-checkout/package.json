@@ -6,13 +6,21 @@
 	"module": "dist/esm/public-api.js",
 	"types": "dist/types/public-api.d.ts",
 	"calypso:src": "src/public-api.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/public-api.ts",
+			"types": "./dist/types/public-api.d.ts",
+			"import": "./dist/esm/public-api.js",
+			"require": "./dist/cjs/public-api.js"
+		}
+	},
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "sb dev"
+		"storybook:start": "storybook dev"
 	},
 	"files": [
 		"dist",
@@ -38,24 +46,23 @@
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^5.20.0",
-		"@wordpress/react-i18n": "^4.20.0",
-		"debug": "^4.4.0",
-		"prop-types": "^15.7.2"
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
+		"debug": "^4.4.1",
+		"prop-types": "^15.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
-		"@storybook/cli": "^7.6.20",
-		"@storybook/react": "^7.6.20",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.5.4"
+		"storybook": "^8.6.14",
+		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1",

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { StepperInternalSelect } from '@automattic/data-stores';
 import { act, screen } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';

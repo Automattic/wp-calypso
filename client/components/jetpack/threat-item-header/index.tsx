@@ -65,6 +65,14 @@ const getThreatMessage = ( threat: Threat ) => {
 
 		case 'database':
 			if ( ! threat.rows ) {
+				if ( threat.table !== undefined ) {
+					return translate( 'The database table %(table)s contains malicious code', {
+						args: {
+							table: threat.table,
+						},
+					} );
+				}
+
 				return translate( 'Database threat' );
 			}
 			return translate(

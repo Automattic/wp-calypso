@@ -1,15 +1,17 @@
 import config from '@automattic/calypso-config';
-import { isEcommercePlan } from '@automattic/calypso-products/src';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Badge } from '@automattic/ui';
+import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -25,19 +27,23 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteSlug,
 	isJetpackSite,
 	getSitePlanSlug,
+	getSitePlanName,
 	getSiteTitle,
 	getSiteUrl,
 	getSiteAdminUrl,
@@ -45,29 +51,17 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
-import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import {
-	getMostRecentlySelectedSiteId,
-	getSectionGroup,
-	getSectionName,
-} from 'calypso/state/ui/selectors';
+import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './masterbar-notifications/notifications-button';
 
-const MOBILE_BREAKPOINT = '<480px';
-const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
-
 class MasterbarLoggedIn extends Component {
-	state = {
-		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
-		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
-	};
-
 	static propTypes = {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
@@ -79,21 +73,10 @@ class MasterbarLoggedIn extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
-		isInEditor: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
+		isGravatarDomain: PropTypes.bool,
 	};
-
-	subscribeToViewPortChanges() {
-		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
-			MOBILE_BREAKPOINT,
-			( isMobile ) => this.setState( { isMobile } )
-		);
-		this.unsubscribeResponsiveMenuViewPortChanges = subscribeIsWithinBreakpoint(
-			IS_RESPONSIVE_MENU_BREAKPOINT,
-			( isResponsiveMenu ) => this.setState( { isResponsiveMenu } )
-		);
-	}
 
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
@@ -113,12 +96,6 @@ class MasterbarLoggedIn extends Component {
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
-		this.subscribeToViewPortChanges();
-	}
-
-	componentWillUnmount() {
-		this.unsubscribeToViewPortChanges?.();
-		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
 
 	handleToggleMobileMenu = () => {
@@ -238,16 +215,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	getHomeUrl() {
-		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
-		// eslint-disable-next-line no-nested-ternary
-		return hasNoSites || isSiteTrialExpired
-			? '/sites'
-			: isCustomerHomeEnabled
-			? `/home/${ siteSlug }`
-			: getStatsPathForTab( 'day', siteSlug );
-	}
-
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
@@ -324,6 +291,7 @@ class MasterbarLoggedIn extends Component {
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
+			isGravatarDomain,
 		} = this.props;
 
 		return (
@@ -337,6 +305,7 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
 	}
@@ -400,6 +369,94 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderSiteBadges() {
+		const {
+			site,
+			translate,
+			isUnlaunchedSite,
+			isTrial,
+			isSiteP2,
+			isP2Hub,
+			isAtomicAndEditingToolkitDeactivated,
+		} = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		// Status badges
+		const badges = [];
+
+		// We show public coming soon badge only when the site is not private.
+		const shouldShowPublicComingSoonSiteBadge =
+			! site.is_private &&
+			site.is_coming_soon &&
+			! isAtomicAndEditingToolkitDeactivated &&
+			! isTrial;
+
+		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = site.is_private && isUnlaunchedSite;
+		const shouldShowPrivateByDefaultComingSoonBadge = site.is_coming_soon || isPrivateAndUnlaunched;
+
+		// P2 Badge
+		if ( isSiteP2 && ! isP2Hub ) {
+			badges.push( 'P2' );
+		}
+
+		// Staging Badge
+		if ( site?.is_wpcom_staging_site ) {
+			badges.push( translate( 'Staging' ) );
+		}
+
+		// Trial Badge
+		if ( isTrial ) {
+			badges.push( translate( 'Trial' ) );
+		}
+
+		// P2 Workspace Badge
+		if ( isP2Hub ) {
+			badges.push( 'P2 Workspace' );
+		}
+
+		// Private/Coming Soon Badge
+		if ( site.is_private ) {
+			badges.push(
+				shouldShowPrivateByDefaultComingSoonBadge
+					? translate( 'Coming Soon' )
+					: translate( 'Private' )
+			);
+		}
+
+		// Express Service Badge
+		if ( site.options && site.options.is_difm_lite_in_progress ) {
+			badges.push( translate( 'Express Service' ) );
+		}
+
+		// Public Coming Soon Badge
+		if ( shouldShowPublicComingSoonSiteBadge ) {
+			badges.push( translate( 'Coming Soon' ) );
+		}
+
+		// Redirect Badge
+		if ( site.options && site.options.is_redirect ) {
+			badges.push( translate( 'Redirect' ) );
+		}
+
+		// Domain Badge
+		if ( site.options && site.options.is_domain_only ) {
+			badges.push( translate( 'Domain' ) );
+		}
+
+		return badges.length > 0
+			? badges.map( ( badge ) => (
+					<Badge className="masterbar__info-badge" key={ badge }>
+						{ badge }
+					</Badge>
+			  ) )
+			: null;
+	}
+
 	renderSiteMenu() {
 		const {
 			siteSlug,
@@ -410,6 +467,8 @@ class MasterbarLoggedIn extends Component {
 			siteAdminUrl,
 			siteHomeUrl,
 			domainOnlySite,
+			sitePlanName,
+			site,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -427,13 +486,43 @@ class MasterbarLoggedIn extends Component {
 					url: siteHomeUrl,
 			  };
 
+		// Get site badges
+		const siteBadges = this.renderSiteBadges();
+
+		// Create a site status item for the dropdown if we have badges
+		const menuItems = [
+			[ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ],
+			[
+				{
+					label: (
+						<div className="masterbar__site-infos">
+							{ siteBadges && siteBadges.length > 0 && (
+								<div className="masterbar__site-info">
+									<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
+									<div className="masterbar__info-badges">{ siteBadges }</div>
+								</div>
+							) }
+							{ ! site?.is_wpcom_staging_site && (
+								<div className="masterbar__site-info">
+									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+									<div className="masterbar__info-badges">
+										<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
+									</div>
+								</div>
+							) }
+						</div>
+					),
+				},
+			],
+		];
+
 		return (
 			<Item
 				className="masterbar__item-my-site"
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ [ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] ] }
+				subItems={ menuItems }
 			>
 				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>
@@ -525,7 +614,10 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<Item
-				className="masterbar__item-launch-site"
+				as={ Button }
+				variant="primary"
+				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
+				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 				icon={
 					<svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path
@@ -610,7 +702,12 @@ class MasterbarLoggedIn extends Component {
 						args: { display_name: user.display_name },
 					} ) }
 				</span>
-				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 16 } />
+				<Gravatar
+					className="masterbar__item-howdy-gravatar"
+					role="presentation"
+					user={ user }
+					size={ 16 }
+				/>
 			</Item>
 		);
 	}
@@ -622,18 +719,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="reader"
 				className="masterbar__reader"
 				url="/reader"
-				icon={
-					<svg
-						width="24"
-						height="11"
-						viewBox="0 0 24 11"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-						className="masterbar__menu-icon masterbar_svg-reader"
-					>
-						<path d="M22.8746 4.60676L22.8197 4.3575C22.3347 2.17436 20.276 0.584279 17.9245 0.584279C16.6527 0.584279 15.4358 1.03122 14.5116 1.84775C14.1914 2.13139 13.9443 2.44081 13.743 2.74163C13.1849 2.63849 12.6085 2.56114 12.032 2.56114H12.0046C11.419 2.56114 10.8425 2.64709 10.2753 2.75023C10.0648 2.44081 9.82691 2.13139 9.49752 1.83915C8.57338 1.01403 7.35646 0.575684 6.08463 0.575684C3.72398 0.584279 1.66527 2.17436 1.18033 4.3575L1.12543 4.60676H0V6.00775H1.12543L1.18033 6.257C1.63782 8.44014 3.69653 10.0302 6.07548 10.0302C8.83873 10.0302 11.0804 7.91585 11.0804 5.31155C11.0804 5.31155 11.0896 4.72709 10.8517 3.97072C11.236 3.91915 11.6203 3.87618 12.0046 3.87618C12.3706 3.87618 12.7549 3.91056 13.1483 3.96213C12.9012 4.72709 12.9195 5.31155 12.9195 5.31155C12.9195 7.91585 15.1613 10.0302 17.9245 10.0302C20.3035 10.0302 22.3622 8.44874 22.8197 6.257L22.8746 6.00775H24V4.60676H22.8746ZM6.07548 8.62923C4.13572 8.62923 2.5528 7.14229 2.5528 5.30295C2.5528 3.46362 4.13572 1.97667 6.07548 1.97667C8.01524 1.97667 9.59816 3.46362 9.59816 5.30295C9.59816 7.14229 8.01524 8.62923 6.07548 8.62923ZM17.9245 8.62923C15.9847 8.62923 14.4018 7.14229 14.4018 5.30295C14.4018 3.46362 15.9847 1.97667 17.9245 1.97667C19.8643 1.97667 21.4472 3.46362 21.4472 5.30295C21.4472 7.14229 19.8643 8.62923 17.9245 8.62923Z" />
-					</svg>
-				}
+				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
@@ -704,44 +790,12 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderBackHomeButton() {
-		const { translate } = this.props;
-
-		return (
-			<Item
-				tipTarget="back-home"
-				className="masterbar__item-back"
-				icon="chevron-left"
-				tooltip={ translate( 'Back' ) }
-				url={ this.getHomeUrl() }
-			/>
-		);
-	}
-
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
-		const { isMobile, isResponsiveMenu } = this.state;
+		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
-		}
-
-		// Editor specific masterbar, only shows back to home button and help center as these are hidden on mobile views
-		// from the desktop version of the editor.
-		// The desktop version of the editor has no masterbar at all so we only do this for mobile.
-		if ( isInEditor && ( isMobile || isResponsiveMenu ) ) {
-			return (
-				<Masterbar>
-					<div className="masterbar__section masterbar__section--left">
-						{ this.renderBackHomeButton() }
-					</div>
-					<div className="masterbar__section masterbar__section--right">
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
-					</div>
-				</Masterbar>
-			);
 		}
 
 		return (
@@ -784,13 +838,14 @@ export default connect(
 		const isClassicView = site && siteUsesWpAdminInterface( site );
 
 		return {
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			isA4ADevSite: site?.is_a4a_dev_site,
 			siteId: siteId,
+			site: site,
 			siteSlug: getSiteSlug( state, siteId ),
+			sitePlanName: getSitePlanName( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
@@ -801,7 +856,6 @@ export default connect(
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
-			isInEditor: getSectionName( state ) === 'gutenberg-editor',
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, siteId ),
 			isClassicView,
@@ -811,10 +865,16 @@ export default connect(
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			currentRoute: getCurrentRoute( state ),
-			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
+			isTrial: isTrialSite( state, siteId ),
+			isSiteP2: isSiteWPForTeams( state, siteId ),
+			isP2Hub: isSiteP2Hub( state, siteId ),
+			isAtomicAndEditingToolkitDeactivated:
+				isAtomicSite( state, siteId ) &&
+				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 		};
 	},
 	{

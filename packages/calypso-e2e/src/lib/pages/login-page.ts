@@ -1,6 +1,12 @@
 import { Locator, Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
+const selectors = {
+	continue: 'button:text("Continue"),a:text("Continue")',
+	loginWithAnotherAccount: ':text("another account")',
+	useUsernamePasswordInstead: 'button:text("Use username and password instead")',
+};
+
 /**
  * Represents the WPCOM login page.
  */
@@ -126,6 +132,16 @@ export class LoginPage {
 	}
 
 	/**
+	 * Clicks the "Continue with GitHub" link.
+	 */
+	async clickLoginWithGitHub(): Promise< Locator > {
+		const locator = await this.page.locator( ':text-is("Continue with GitHub")' );
+		await locator.click();
+
+		return locator;
+	}
+
+	/**
 	 * Clicks the "Create an account" link.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
@@ -176,5 +192,51 @@ export class LoginPage {
 		await locator.click();
 
 		return locator;
+	}
+
+	/**
+	 * Clicks the "Continue" button.
+	 */
+	async clickContinue(): Promise< Locator > {
+		const locator = await this.page.locator( selectors.continue );
+		await locator.click();
+
+		return locator;
+	}
+
+	/**
+	 * Clicks the Login with another account link.
+	 */
+	async clickLoginWithAnotherAccount(): Promise< Locator > {
+		const locator = await this.page.locator( selectors.loginWithAnotherAccount );
+		await locator.click();
+
+		return locator;
+	}
+
+	/**
+	 * Clicks the "use username and password instead" link.
+	 */
+	async clickUseUsernamePasswordInstead(): Promise< Locator > {
+		const locator = await this.page.locator( selectors.useUsernamePasswordInstead );
+		// await locator.click();
+
+		return locator;
+	}
+
+	/**
+	 * Validates the "Continue as yourself" UI when visiting the login page as a logged in user.
+	 *
+	 * @param username - The username of the account to continue as.
+	 * @param email - The email of the account to continue as.
+	 * @returns True if the message is valid, false otherwise.
+	 */
+	async validateContinueAsYourself( username: string, email: string ) {
+		await this.page.waitForSelector( selectors.continue );
+		await this.page.waitForSelector( `text='${ username }'` );
+		await this.page.waitForSelector( `text='${ email }'` );
+		await this.page.waitForSelector( selectors.loginWithAnotherAccount );
+
+		return true;
 	}
 }

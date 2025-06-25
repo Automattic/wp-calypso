@@ -68,9 +68,22 @@ or limit it as before with:
 DEBUG=calypso:* yarn start
 ```
 
-### Debugging node
+### Debugging Node.js
 
-Since building and starting the express server is done via a npm command, the normal method of passing argument to the node process won't work. However, you can start the debugger via the `NODE_OPTIONS` environment variable. This means you can run the built-in inspector by running `NODE_OPTIONS="--inspect" yarn start`. If you would like to debug the build process as well, it might be convenient to have the debugger/inspector break on the first line and wait for you. In that case, you should also pass in the `--inspect-brk` option like so: `NODE_OPTIONS="--inspect-brk" yarn start`.
+To debug the running server, you can use [Node.js's built-in debugging client](https://nodejs.org/en/learn/getting-started/debugging)
+by passing the `--inspect` flag when starting the server directly. You will need to manually build
+the project before starting the process.
+
+1. `yarn build`
+2. `node --inspect build/server.js`
+
+If you would like to debug the startup process as well, it might be convenient to have the debugger
+break on the first line and wait for you. In that case, you should also use `--inspect-brk` instead
+of `--inspect`.
+
+Then, open Chrome and navigate to `chrome://inspect`. Click on "Open dedicated DevTools for Node"
+under the "Remote Target" section. A DevTools window will open where you can set breakpoints and
+debug as usual.
 
 #### Debugging in VS Code
 

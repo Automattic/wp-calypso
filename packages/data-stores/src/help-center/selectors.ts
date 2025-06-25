@@ -13,10 +13,11 @@ export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;
 export const getZendeskClientId = ( state: State ) => state.zendeskClientId;
-export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;
+export const getHelpCenterRouterHistory = ( state: State ) => state.helpCenterRouterHistory;
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
 export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
 export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 export const getCurrentSupportInteraction = ( state: State ) => state.currentSupportInteraction;
 export const getAllowPremiumSupport = ( state: State ) => state.allowPremiumSupport;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
+export const getContextTerm = ( state: State ) => state.contextTerm;

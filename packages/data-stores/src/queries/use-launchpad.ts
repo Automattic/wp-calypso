@@ -72,7 +72,6 @@ export const fetchLaunchpad = (
 	const launchpadContextEncoded = launchpadContext ? encodeURIComponent( launchpadContext ) : null;
 	const queryArgs = {
 		_locale: 'user',
-		updated_write_tasklist: 'true',
 		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
 		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
 	};
@@ -107,12 +106,12 @@ export function sortLaunchpadTasksByCompletionStatus( response: LaunchpadRespons
 	return response;
 }
 
-const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
+export function defaultSuccessCallback( response: LaunchpadResponse ) {
 	const tasks = response.checklist || [];
 	response.checklist = tasks.map( addOrderToTask );
 
 	return response;
-};
+}
 
 type SiteSlug = string | number | null;
 

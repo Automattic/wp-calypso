@@ -5,11 +5,9 @@ import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	isTestModeEnvironment,
-} from '@automattic/zendesk-client';
-import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
-} from '@automattic/zendesk-client/src/constants';
+} from '@automattic/zendesk-client';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
@@ -115,30 +113,44 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( isMessagingScriptLoaded && authData?.isLoggedIn ) {
-			if ( authData?.jwt && authData?.externalId ) {
-				initSmooch( authData )
-					.then( () => {
-						setIsChatLoaded( true );
-						recordTracksEvent( 'calypso_smooch_messenger_init', {
-							success: true,
-							error: '',
-						} );
-					} )
-					.catch( ( error ) => {
-						setIsChatLoaded( true );
-						recordTracksEvent( 'calypso_smooch_messenger_init', {
-							success: false,
-							error: error.message,
-						} );
+		if (
+			! isMessagingScriptLoaded ||
+			! authData?.isLoggedIn ||
+			! authData?.jwt ||
+			! authData?.externalId
+		) {
+			return;
+		}
+
+		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
+
+		const initializeSmooch = async () => {
+			initSmooch( authData )
+				.then( () => {
+					setIsChatLoaded( true );
+					recordTracksEvent( 'calypso_smooch_messenger_init', {
+						success: true,
+						error: '',
 					} );
-				if ( smoochRef.current ) {
-					Smooch.render( smoochRef.current );
-				}
-			}
+				} )
+				.catch( ( error ) => {
+					setIsChatLoaded( false );
+					retryTimeout = setTimeout( initializeSmooch, 30000 );
+					recordTracksEvent( 'calypso_smooch_messenger_init', {
+						success: false,
+						error: error.message,
+					} );
+				} );
+		};
+
+		initializeSmooch();
+
+		if ( smoochRef.current ) {
+			Smooch.render( smoochRef.current );
 		}
 
 		return () => {
+			clearTimeout( retryTimeout );
 			destroy();
 		};
 	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded ] );

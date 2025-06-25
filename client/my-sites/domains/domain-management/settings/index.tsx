@@ -779,8 +779,13 @@ const Settings = ( {
 				{ ! domain.isHundredYearDomain && (
 					<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }
-				{ ! domain.isHundredYearDomain && (
-					<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				{ ! domain.isHundredYearDomain && ! isLoadingPurchase && (
+					<DomainDeleteInfoCard
+						selectedSite={ selectedSite }
+						domain={ domain }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
 				) }
 				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>
@@ -796,11 +801,8 @@ const Settings = ( {
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
-
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-
 			{ renderHeader() }
-
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

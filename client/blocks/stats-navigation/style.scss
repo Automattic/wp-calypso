@@ -3,23 +3,12 @@
 .stats-navigation {
 	box-shadow: inset 0 -1px 0 #0000000d;
 
-	.page-modules-settings {
-		display: flex;
-		align-items: center;
+	// When the feature flag is enabled, adjust TabPanel padding
+	.stats-navigation__tabs {
+		margin: 0 -16px;  // This creates a negative margin to counteract the parent's padding
 
-		// Add gap for not open .section-nav on tablet and mobile.
-		@media (max-width: $break-small) {
-			padding-right: 16px;
-		}
-
-		button {
-			height: 24px;
-			cursor: pointer;
-		}
-
-		.page-modules-settings-action:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-			z-index: 0; //fix for left box-shadow being cut off
+		.components-tab-panel__tabs {
+			padding: 0 16px;  // This sets the actual padding to 16px
 		}
 	}
 
@@ -59,6 +48,27 @@
 		}
 	}
 
+	&.stats-navigation--improved {
+		.full-width {
+			width: 100%;
+		}
+
+		.stats-navigation__tabs {
+			margin-left: -16px;
+
+			.components-tab-panel__tabs {
+				padding-left: 0;
+			}
+
+			@media (max-width: $break-small) {
+				.components-tab-panel__tabs {
+					padding-left: 16px;
+					padding-right: 16px;
+				}
+			}
+		}
+	}
+
 	// Modernize styles except for GoogleMyBusinessStats and StatsOverview pages
 	&.stats-navigation--modernized {
 		// For aligning the `.page-modules-settings` action button.
@@ -66,9 +76,20 @@
 		display: flex;
 		align-items: center;
 
+		// Only apply these styles when using the new TabPanel navigation
+		.stats-navigation__tabs {
+			width: calc(100% + 32px);  // Extend width to counter the parent padding
+			margin-left: -16px;        // Pull left to counter parent padding
+			margin-right: -16px;       // Pull right to counter parent padding
+		}
+
 		.section-nav {
 			margin: 0;
 			box-shadow: inset 0 -1px 0 #0000000d;
+
+			.section-nav__mobile-header > svg {
+				margin-left: auto;
+			}
 
 			&.is-open {
 				@media (max-width: $break-mobile) {
@@ -96,6 +117,14 @@
 						top: 11px;
 						right: 0;
 					}
+
+
+					&:has(+ .page-modules-settings) {
+						.section-nav__mobile-header > svg {
+							margin-right: 40px;
+						}
+					}
+
 				}
 			}
 		}

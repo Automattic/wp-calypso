@@ -33,6 +33,20 @@ type StatsAdvancedModuleWrapperProps = {
 	summary?: boolean;
 	className?: string;
 	summaryUrl?: string;
+	context?: {
+		query?: {
+			utmParam?: string;
+			startDate?: string;
+			endDate?: string;
+			date?: string;
+			[ key: string ]: string | undefined;
+		};
+		params?: {
+			module?: string;
+			[ key: string ]: string | undefined;
+		};
+		[ key: string ]: unknown;
+	};
 };
 
 type StatsPeriodType = {
@@ -45,6 +59,7 @@ type StatsPeriodType = {
 type StatsQueryType = {
 	date: string;
 	period: StatsPeriodGrainType;
+	max?: number;
 };
 
 type StatsPeriodGrainType = 'day' | 'week' | 'month' | 'year';

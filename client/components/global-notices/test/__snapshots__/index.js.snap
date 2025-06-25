@@ -8,14 +8,14 @@ exports[`<GlobalNotices /> should render notices with the expected structure 1`]
   >
     <div
       aria-label="Notice"
-      class="notice is-success is-dismissable"
+      class="calypso-notice is-success is-dismissable"
       role="status"
     >
       <span
-        class="notice__icon-wrapper"
+        class="calypso-notice__icon-wrapper"
       >
         <svg
-          class="gridicon gridicons-checkmark notice__icon"
+          class="gridicon gridicons-checkmark calypso-notice__icon"
           height="24"
           viewBox="0 0 24 24"
           width="24"
@@ -27,17 +27,17 @@ exports[`<GlobalNotices /> should render notices with the expected structure 1`]
         </svg>
       </span>
       <span
-        class="notice__content"
+        class="calypso-notice__content"
       >
         <span
-          class="notice__text"
+          class="calypso-notice__text"
         >
           A test notice
         </span>
       </span>
       <button
         aria-label="Dismiss"
-        class="notice__dismiss"
+        class="calypso-notice__dismiss"
       >
         <svg
           class="gridicon gridicons-cross"

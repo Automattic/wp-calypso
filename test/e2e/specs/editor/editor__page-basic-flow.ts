@@ -22,8 +22,7 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 	100
 ) }`;
 
-// Test will be updated to test equivalent core functionality.
-describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
+describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
 		features,
@@ -41,6 +40,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
 	let pageTemplateToSelect: string;
+	let pageTemplateFirstTextContent: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -60,22 +60,42 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 
 	it( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
-		// Allow some time for CPU and/or network to catch up.
-		await editorPage.selectTemplateCategory( 'About', { timeout: 20 * 1000 } );
 
 		const editorParent = await editorPage.getEditorParent();
-		pageTemplateToSelect =
-			( await editorParent
-				.getByRole( 'listbox', { name: 'Block patterns' } )
-				.getByRole( 'option' )
+
+		const modalSelector = await editorParent.getByRole( 'listbox', {
+			name: /^(All|Block patterns)$/,
+		} );
+
+		// The PR, https://github.com/WordPress/gutenberg/pull/69081, restored the starter content modal for newly created pages.
+		// However, not all of themes have the page template. As a result, we have to check whether the modal is open.
+		// If not, we can simply open the inserter from the sidebar manually.
+		let selectedPatternLocator;
+		try {
+			await modalSelector.waitFor( { timeout: 3 * 1000 } );
+			selectedPatternLocator = await modalSelector.getByRole( 'option' ).first();
+		} catch ( e ) {
+			// Probably doesn't exist. Let's add the pattern from the sidebar.
+			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About (Page)' );
+		}
+
+		pageTemplateFirstTextContent =
+			( await selectedPatternLocator
+				.frameLocator( 'iframe' )
+				.locator( '.is-root-container' )
+				.locator( 'p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol' )
 				.first()
-				.getAttribute( 'aria-label' ) ) ?? '';
+				.textContent() ) || '';
+
+		pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
+		pageTemplateToSelect = ( await selectedPatternLocator.getAttribute( 'aria-label' ) ) ?? '';
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
 
 	it( 'Template content loads into editor', async function () {
+		//await wait( 30000 ); // Wait for the template to load
 		const editorCanvas = await editorPage.getEditorCanvas();
-		await editorCanvas.locator( `h1.wp-block:text-is('${ pageTemplateToSelect }')` ).waitFor();
+		expect( await editorCanvas.textContent() ).toContain( pageTemplateFirstTextContent );
 	} );
 
 	it( 'Open setting sidebar', async function () {
@@ -101,6 +121,6 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 	it( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
-		await publishedPagePage.validateTextInPost( pageTemplateToSelect );
+		await publishedPagePage.validateTextInPost( pageTemplateFirstTextContent );
 	} );
 } );

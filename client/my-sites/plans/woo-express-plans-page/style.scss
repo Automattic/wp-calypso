@@ -52,7 +52,7 @@ body.is-section-plans.is-woo-express-plan {
 		}
 
 		&.woo-express-plans-page__price-card-for-grid {
-			background-color: rgba(var(--color-neutral-0-rgb), 0.8);
+			background-color: color-mix(in srgb, var(--color-neutral-0) 80%, transparent);
 			box-shadow: none;
 
 			.woo-express-plans-page__price-card-text .woo-express-plans-page__price-card-label {
@@ -147,7 +147,7 @@ body.is-section-plans.is-woo-express-plan {
 		display: none;
 
 		padding: 40px;
-		background-color: rgba(var(--color-neutral-0-rgb), 0.8);
+		background-color: color-mix(in srgb, var(--color-neutral-0) 80%, transparent);
 		box-shadow: none;
 		margin: 60px 0;
 

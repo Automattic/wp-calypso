@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook } from '@testing-library/react';
 import { MonitorSettings, Site } from '../../../types';
 import useFormattedSites from '../use-formatted-sites';

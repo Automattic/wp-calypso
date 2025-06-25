@@ -490,7 +490,7 @@ export function useCommands() {
 			importSite: {
 				name: 'importSite',
 				label: __( 'Import site to WordPress.com', __i18n_text_domain__ ),
-				callback: commandNavigation( '/setup/hosted-site-migration?ref=command-palette' ),
+				callback: commandNavigation( '/setup/site-migration?ref=command-palette' ),
 				searchLabel: [
 					_x(
 						'Import site to WordPress.com',
@@ -904,12 +904,7 @@ export function useCommands() {
 						__i18n_text_domain__
 					),
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-general.php'
-							: '/settings/general/:site#admin-interface-style'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/options-general.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __(
 					'Select site to change admin interface style',
@@ -928,10 +923,7 @@ export function useCommands() {
 					'wp post create', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/post-new.php' : '/post/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/post-new.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to add new post', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_POSTS,
@@ -945,10 +937,7 @@ export function useCommands() {
 					_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 					'wp post*', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/edit.php' : '/posts/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/edit.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage posts', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_POSTS,
@@ -979,11 +968,7 @@ export function useCommands() {
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
 				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/edit-tags.php?taxonomy=category'
-							: '/settings/taxonomies/category/:site'
-					)( params ),
+					commandNavigation( '/wp-admin/edit-tags.php?taxonomy=category' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage categories', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_CATEGORIES,
@@ -1003,11 +988,7 @@ export function useCommands() {
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
 				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/edit-tags.php?taxonomy=post_tag'
-							: '/settings/taxonomies/post_tag/:site'
-					)( params ),
+					commandNavigation( '/wp-admin/edit-tags.php?taxonomy=post_tag' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage tags', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_CATEGORIES,
@@ -1030,10 +1011,7 @@ export function useCommands() {
 					),
 					'wp media*', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/upload.php' : '/media/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/upload.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to view media uploads', __i18n_text_domain__ ),
 				capability: SiteCapabilities.UPLOAD_FILES,
@@ -1042,10 +1020,7 @@ export function useCommands() {
 			uploadMedia: {
 				name: 'uploadMedia',
 				label: __( 'Upload media', __i18n_text_domain__ ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/media-new.php' : '/media/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/media-new.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to upload media', __i18n_text_domain__ ),
 				capability: SiteCapabilities.UPLOAD_FILES,
@@ -1059,12 +1034,7 @@ export function useCommands() {
 					_x( 'edit pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 					_x( 'delete pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/edit.php?post_type=page'
-							: '/pages/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/edit.php?post_type=page' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage pages', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_PAGES,
@@ -1080,11 +1050,7 @@ export function useCommands() {
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/pages', '/wp-admin/edit.php?post_type=page' ],
 				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/post-new.php?post_type=page'
-							: '/page/:site'
-					)( params ),
+					commandNavigation( '/wp-admin/post-new.php?post_type=page' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to add new page', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_PAGES,
@@ -1099,12 +1065,7 @@ export function useCommands() {
 					_x( 'delete comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 					'wp comment*', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/edit-comments.php'
-							: '/comments/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/edit-comments.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage comments', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MODERATE_COMMENTS,
@@ -1116,7 +1077,7 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'feedback', 'Keyword for the View form responses command', __i18n_text_domain__ ),
 				].join( KEYWORD_SEPARATOR ),
-				callback: commandNavigation( '/wp-admin/edit.php?post_type=feedback' ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=jetpack-forms-admin' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to view form responses', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_PAGES,
@@ -1478,10 +1439,7 @@ export function useCommands() {
 				name: 'export',
 				label: __( 'Export content from the site', __i18n_text_domain__ ),
 				searchLabel: 'wp export', // WP-CLI command
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/export.php' : '/export/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/export.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to export content from', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1544,12 +1502,7 @@ export function useCommands() {
 					),
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/settings', '/wp-admin/options-' ],
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-general.php'
-							: '/settings/general/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/options-general.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage general settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1586,12 +1539,7 @@ export function useCommands() {
 					),
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/settings', '/wp-admin/options-' ],
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-writing.php'
-							: '/settings/writing/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/options-writing.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage writing settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1628,12 +1576,7 @@ export function useCommands() {
 					),
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/settings', '/wp-admin/options-' ],
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-reading.php'
-							: '/settings/writing/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/options-reading.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage reading settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1665,12 +1608,7 @@ export function useCommands() {
 					),
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/settings', '/wp-admin/options-' ],
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-discussion.php'
-							: '/settings/discussion/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/options-discussion.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage discussion settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,

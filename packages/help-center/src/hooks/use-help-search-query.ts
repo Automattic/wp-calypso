@@ -39,7 +39,7 @@ const fetchArticlesAPI = async (
 		} as APIFetchOptions ) ) as SearchResult[];
 	}
 
-	return searchResultResponse.slice( 0, 5 );
+	return searchResultResponse;
 };
 
 export const useHelpSearchQuery = (

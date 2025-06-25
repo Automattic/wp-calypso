@@ -1,6 +1,7 @@
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-slider {
 	display: flex;
@@ -125,9 +126,7 @@
 .a4a-slider__label,
 .a4a-slider__sub,
 .a4a-slider__marker {
-	font-size: 0.875rem;
-	font-weight: 500;
-	line-height: 1.1;
+	@include heading-medium;
 }
 
 

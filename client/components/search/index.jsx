@@ -6,7 +6,6 @@ import i18n from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { v4 as uuid } from 'uuid';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -99,7 +98,7 @@ class Search extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.instanceId = uuid();
+		this.instanceId = crypto.randomUUID();
 
 		this.state = {
 			keyword: props.initialValue || '',

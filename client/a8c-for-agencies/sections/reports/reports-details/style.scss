@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.hosting-dashboard-item-view.reports-details-items {
+	.hosting-dashboard-item-view__content {
+		display: block;
+		@media (max-width: $break-mobile) {
+			height: 65vh;
+			padding: 18px;
+		}
+	}
+}

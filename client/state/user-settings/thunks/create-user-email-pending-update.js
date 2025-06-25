@@ -9,10 +9,9 @@ import 'calypso/state/user-settings/init';
  */
 export const createUserEmailPendingUpdate = ( newEmail ) => async ( dispatch ) => {
 	try {
-		const { user_email_change_pending, new_user_email } = await wp
-			.me()
-			.settings()
-			.update( { user_email: newEmail } );
+		const { user_email_change_pending, new_user_email } = await wp.req.put( '/me/settings', {
+			user_email: newEmail,
+		} );
 
 		if ( user_email_change_pending ) {
 			dispatch(

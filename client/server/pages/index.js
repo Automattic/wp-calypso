@@ -19,9 +19,14 @@ import { get, includes, snakeCase } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
+import {
+	DASHBOARD_SECTION_DEFINITION,
+	DASHBOARD_A4A_SECTION_DEFINITION,
+} from 'calypso/dashboard/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -88,13 +93,13 @@ function getCurrentCommitShortChecksum() {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
-	const disableHelpCenterAutoOpen = isSupportSession || !! req.cookies.ssp;
+	const isSSP = !! req.cookies.ssp;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
 		isSupportSession,
-		disableHelpCenterAutoOpen,
+		isSSP,
 		isLoggedIn,
 	};
 
@@ -110,12 +115,16 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		request.cookies.sensitive_pixel_option
 	);
 
+	const countryCodeCookie = request.cookies.country_code;
+	const validCountryCodeCookie =
+		countryCodeCookie && countryCodeCookie !== 'unknown' ? countryCodeCookie : undefined;
+
 	const showGdprBanner = shouldSeeCookieBanner(
-		request.cookies.country_code || geoIPCountryCode,
+		validCountryCodeCookie || geoIPCountryCode,
 		trackingPrefs
 	);
 
-	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+	if ( ! validCountryCodeCookie && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
@@ -196,8 +205,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
-		useLoadingEllipsis: !! request.query.loading_ellipsis,
 		showGdprBanner,
+		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
 	} );
 
 	context.app = {
@@ -982,6 +991,12 @@ export default function pages() {
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
+
+	// Set up v2 dashboard routing.
+	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
+
+	// Set up v2-a4a dashboard routing.
+	handleSectionPath( DASHBOARD_A4A_SECTION_DEFINITION, '/v2-a4a', 'entry-dashboard-a4a' );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );

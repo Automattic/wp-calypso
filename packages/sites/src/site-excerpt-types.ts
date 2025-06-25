@@ -23,5 +23,6 @@ export type SiteExcerptData = Pick<
 	options?: Pick< SiteDetailsOptions, ( typeof SITE_EXCERPT_REQUEST_OPTIONS )[ number ] >;
 	site_migration?: {
 		migration_status?: string;
+		in_progress?: boolean;
 	};
 };

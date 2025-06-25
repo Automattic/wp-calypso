@@ -4,17 +4,13 @@ import { DataHelper } from '../..';
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
-	backLink: '.navigation-link:text("Back")',
+	backLink: '.navigation-link:text("Back"), button:text-matches("Back")',
 	dontHaveASiteButton: 'button:text-matches("choose a content platform", "i")',
 	migrationModalCancel: 'button.action-buttons__cancel',
 	// Inputs
 	urlInput: 'input.capture__input',
 	goalsCaptureUrlInput: 'input.form-text-input[value]',
 
-	// The "content only" "continue" button of '/start/from/importing/wordpress'
-	wpContentOnlyContinueButton:
-		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
-	wpPreMigrationContentOnlyOptionButton: 'button:has-text("free content-only import option")',
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
@@ -23,7 +19,8 @@ const selectors = {
 
 	// Headers
 	setupHeader: 'h1:text("Themes")',
-	startBuildingHeader: ( text: string ) => `h1.onboarding-title:text("${ text }")`,
+	startBuildingHeader: ( text: string ) =>
+		`h1:text("${ text }"), h1.onboarding-title:text("${ text }")`,
 
 	importModal: 'div.import__confirm-modal',
 
@@ -80,6 +77,13 @@ export class StartImportFlow {
 	 */
 	async validateURLCapturePage(): Promise< void > {
 		await this.page.waitForURL( /.*setup\/site-setup\/import.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the URL capture page.
+	 */
+	async validateURLMigrationFlow(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/site-migration.*/ );
 	}
 
 	/**
@@ -152,31 +156,10 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Validates that we've landed on the WordPress migration page.
-	 */
-	async validateWordPressPage(): Promise< void > {
-		await this.page.locator( selectors.wpContentOnlyContinueButton ).waitFor();
-	}
-
-	/**
 	 * Validates that we've landed on the importer drag page.
 	 */
 	async validateImporterDragPage( importer: string ): Promise< void > {
 		await this.page.locator( selectors.importerDrag( importer ) ).waitFor();
-	}
-
-	/**
-	 * Continue 'content only' WordPress migration.
-	 */
-	async contentOnlyWordPressPage(): Promise< void > {
-		await this.page.click( selectors.wpContentOnlyContinueButton );
-	}
-
-	/**
-	 * Continue 'content only' WordPress migration on pre-migration page.
-	 */
-	async clickPremigrationOptionButton(): Promise< void > {
-		await this.page.locator( selectors.wpPreMigrationContentOnlyOptionButton ).click();
 	}
 
 	/**

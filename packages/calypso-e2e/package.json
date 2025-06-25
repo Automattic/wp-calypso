@@ -21,13 +21,12 @@
 		"@jest/types": "^29.6.3",
 		"@playwright/browser-chromium": "1.48.2",
 		"@playwright/browser-firefox": "1.48.2",
-		"@types/totp-generator": "^0.0.3",
+		"@types/totp-generator": "^0.0.8",
 		"form-data": "^4.0.2",
 		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
-		"nock": "^13.5.6",
 		"playwright": "1.48.2",
-		"totp-generator": "^0.0.12"
+		"totp-generator": "^0.0.14"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
@@ -36,11 +35,10 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@jest/globals": "^29.7.0",
 		"@types/node": "^22.7.5",
-		"@types/node-fetch": "^2.6.12",
-		"@wordpress/i18n": "^5.20.0",
+		"@wordpress/i18n": "^5.23.0",
 		"asana-phrase": "^0.0.8",
-		"node-fetch": "^2.7.0",
-		"typescript": "^5.5.4"
+		"nock": "^14.0.4",
+		"typescript": "^5.8.3"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",

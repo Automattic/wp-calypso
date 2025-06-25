@@ -119,7 +119,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = (): void => {
-		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
+		if ( isAllDomainManagementEnabled ) {
 			if ( canSelectAnyDomains && canBulkUpdate( domain ) ) {
 				return handleSelectDomain( domain );
 			}

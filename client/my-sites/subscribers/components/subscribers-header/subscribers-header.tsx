@@ -4,14 +4,13 @@ import { Button, Icon } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { plus } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
-import { useEffect, ReactElement } from 'react';
+import { translate, fixMe } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { useAddSubscribersCallback, useMigrateSubscribersCallback } from '../../hooks';
 import { AddSubscribersModal } from '../add-subscribers-modal';
 import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
@@ -24,7 +23,7 @@ enum SubscriberModalType {
 }
 
 type SubscribersHeaderProps = {
-	selectedSiteId: number | undefined;
+	siteId: number | null;
 	disableCta: boolean;
 	hideSubtitle?: boolean;
 	hideAddButtonLabel?: boolean;
@@ -33,29 +32,27 @@ type SubscribersHeaderProps = {
 const HELP_CENTER_STORE = HelpCenter.register();
 
 export const SubscribersHeader = ( {
-	selectedSiteId,
+	siteId,
 	disableCta,
 	hideSubtitle,
 	hideAddButtonLabel = false,
-}: SubscribersHeaderProps ): ReactElement => {
+}: SubscribersHeaderProps ) => {
 	const localizeUrl = useLocalizeUrl();
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const siteId = useSelector( getSelectedSiteId ) ?? null;
-	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+	const isWPCOMSite = useSelector( ( state ) => isSiteWPCOM( state, siteId ) );
+	const supportUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/customize-the-newsletter-experience/#manage-subscribers'
+		: 'https://wordpress.com/support/subscribers/ ';
 
 	const openHelpCenter = () => {
-		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
+		setShowSupportDoc( localizeUrl( supportUrl ) );
 	};
-
-	const paidNewsletterUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/newsletter/paid-newsletters/'
-		: 'https://wordpress.com/support/paid-newsletters/';
 
 	const subtitleOptions = {
 		components: {
 			link: (
 				<a
-					href={ localizeUrl( paidNewsletterUrl ) }
+					href={ localizeUrl( supportUrl ) }
 					target="blank"
 					onClick={ ( event ) => {
 						if ( ! isJetpackCloud() ) {
@@ -121,10 +118,17 @@ export const SubscribersHeader = ( {
 				subtitle={
 					hideSubtitle
 						? null
-						: translate(
-								'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-								subtitleOptions
-						  )
+						: fixMe( {
+								text: 'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+								newCopy: translate(
+									'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+									subtitleOptions
+								),
+								oldCopy: translate(
+									'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+									subtitleOptions
+								),
+						  } )
 				}
 				screenReader={ navItems.insights?.label }
 				navigationItems={ [] }
@@ -138,7 +142,7 @@ export const SubscribersHeader = ( {
 					{ ...{ [ hideAddButtonLabel ? 'label' : 'text' ]: translate( 'Add subscribers' ) } }
 				/>
 				<SubscribersHeaderPopover
-					siteId={ selectedSiteId }
+					siteId={ siteId }
 					openMigrateSubscribersModal={ () =>
 						setShowSubscriberModal( SubscriberModalType.MIGRATE )
 					}

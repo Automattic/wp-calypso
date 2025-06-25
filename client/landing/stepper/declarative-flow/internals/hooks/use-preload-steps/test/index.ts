@@ -6,7 +6,7 @@ import { renderHook } from '@testing-library/react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { usePreloadSteps } from '../../use-preload-steps';
-import type { Flow } from '../../../types';
+import type { Flow, StepperStep } from '../../../types';
 
 // Mock dependencies
 jest.mock( 'calypso/state', () => ( {
@@ -21,10 +21,10 @@ jest.mock( 'debug', () => () => jest.fn() );
 
 describe( 'usePreloadSteps', () => {
 	// Mock step components
-	const mockAsyncComponent1 = jest.fn().mockResolvedValue( null );
-	const mockAsyncComponent2 = jest.fn().mockResolvedValue( null );
-	const mockAsyncComponent3 = jest.fn().mockResolvedValue( null );
-	const mockUserAsyncComponent = jest.fn().mockResolvedValue( null );
+	const mockAsyncComponent1 = jest.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent2 = jest.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent3 = jest.fn().mockResolvedValue( { default: null } );
+	const mockUserAsyncComponent = jest.fn().mockResolvedValue( { default: null } );
 
 	// Mock flow steps
 	const mockFlowSteps = [
@@ -32,7 +32,7 @@ describe( 'usePreloadSteps', () => {
 		{ slug: 'step2', asyncComponent: mockAsyncComponent2, requiresLoggedInUser: true },
 		{ slug: 'step3', asyncComponent: mockAsyncComponent3 },
 		{ slug: 'user', asyncComponent: mockUserAsyncComponent },
-	];
+	] as StepperStep[];
 
 	// Mock flow
 	const mockFlow = { name: 'test-flow' } as Flow;

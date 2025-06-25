@@ -79,7 +79,11 @@ const StatsCard = ( props: StatsCardProps ) => {
 	// (main item, optional additional columns and value)
 	const splitHeaderNode = (
 		<div
-			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
+			className={ clsx(
+				`${ BASE_CLASS_NAME }-header`,
+				headerClassName,
+				`${ BASE_CLASS_NAME }-header--split`
+			) }
 		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
 				<div className={ `${ BASE_CLASS_NAME }-header--main__left` }>
@@ -130,7 +134,11 @@ const StatsCard = ( props: StatsCardProps ) => {
 			>
 				{ !! heroElement && (
 					<div className={ `${ BASE_CLASS_NAME }--hero` }>
-						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }
+						{ splitHeader && (
+							<div className={ clsx( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
+								{ titleNode }
+							</div>
+						) }
 						{ heroElement }
 					</div>
 				) }

@@ -35,6 +35,7 @@ import type {
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
 	StepChangedCallback,
+	MakeStepActive,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -65,6 +66,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		stepCompleteCallbackMap: {},
 	},
 	actions: {
+		makeStepActive: noop,
 		setStepComplete: noop,
 		setActiveStepNumber: noop,
 		setStepCompleteStatus: noop,
@@ -175,6 +177,39 @@ function createCheckoutStepGroupActions(
 		);
 	};
 
+	// A programmatic way to press the "Edit" button on a step.
+	const makeStepActive = async ( stepId: string ) => {
+		debug( `attempting to set step active: '${ stepId }'` );
+		const stepNumber = getStepNumberFromId( stepId );
+		if ( ! stepNumber ) {
+			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step active.` );
+		}
+
+		// If we are going backwards in steps, just do it. The user will end up on
+		// this step again later anyway.
+		if ( stepNumber < state.activeStepNumber ) {
+			setActiveStepNumber( stepNumber );
+			return true;
+		}
+
+		// If we are going forward in steps, we must try to complete each step
+		// starting at the active one and ending before the new one, stopping at
+		// any step that is not complete.
+		const activeStep = state.activeStepNumber > 0 ? state.activeStepNumber : 1;
+		for ( let step = activeStep; step < stepNumber; step++ ) {
+			const didStepComplete = await getStepCompleteCallback( step )();
+			debug(
+				`attempting to set step complete: '${ stepId }'; step ${ step } result was ${ didStepComplete }`
+			);
+			if ( ! didStepComplete ) {
+				return false;
+			}
+		}
+		setActiveStepNumber( stepNumber );
+		return true;
+	};
+
+	// A programmatic way to press the "Continue to next step" button on a step.
 	const setStepComplete = async ( stepId: string ) => {
 		debug( `attempting to set step complete: '${ stepId }'` );
 		const stepNumber = getStepNumberFromId( stepId );
@@ -205,6 +240,7 @@ function createCheckoutStepGroupActions(
 		getStepCompleteCallback,
 		setTotalSteps,
 		setStepComplete,
+		makeStepActive,
 	};
 }
 
@@ -446,9 +482,11 @@ export const CheckoutStep = ( {
 	);
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
+	const makeStepActive = useMakeStepActive();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { [ stepNumber ]: newStatus } );
-	const goToThisStep = () => setActiveStepNumber( stepNumber );
+
+	const goToThisStep = () => makeStepActive( stepId );
 
 	// This is the callback called when you press "Continue" on a step.
 	const goToNextStep = async () => {
@@ -661,7 +699,9 @@ export function CheckoutFormSubmit( {
 					onLoadError={ onSubmitButtonLoadError }
 				/>
 			) }
-			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
+			<SubmitFooterWrapper className="checkout-steps__submit-footer-wrapper">
+				{ submitButtonFooter || null }
+			</SubmitFooterWrapper>
 		</SubmitButtonWrapper>
 	);
 }
@@ -870,33 +910,39 @@ export function useSetStepComplete(): SetStepComplete {
 	return store.actions.setStepComplete;
 }
 
+export function useMakeStepActive(): MakeStepActive {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.makeStepActive;
+}
+
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
 	color: ${ ( props ) =>
 		props.isActive || props.isComplete
 			? props.theme.colors.textColorDark
 			: props.theme.colors.textColorDisabled };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
 	flex: 1;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
-	}
+	margin-right: 8px;
 `;
 
 interface StepTitleProps {
 	isComplete?: boolean;
 	isActive?: boolean;
-	fullWidth?: boolean;
 }
 
-const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
-	font-size: 20px;
+const StepHeaderWrapper = styled.div< StepHeaderProps & HTMLAttributes< HTMLDivElement > >`
 	display: flex;
 	width: 100%;
 	align-items: center;
 	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
+`;
+
+const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	margin: 0;
+	flex: 1;
 `;
 
 interface StepHeaderProps {
@@ -937,21 +983,19 @@ function CheckoutStepHeader( {
 	const shouldShowEditButton = canEditStep && !! onEdit;
 
 	return (
-		<StepHeader
+		<StepHeaderWrapper
 			isComplete={ isComplete }
 			isActive={ isActive }
 			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
 		>
-			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
-				{ stepNumber || null }
-			</Stepper>
-			<StepTitle
-				fullWidth={ ! shouldShowEditButton }
-				isComplete={ isComplete }
-				isActive={ isActive }
-			>
-				{ title }
-			</StepTitle>
+			<StepHeader isComplete={ isComplete } isActive={ isActive }>
+				<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
+					{ stepNumber || null }
+				</Stepper>
+				<StepTitle isComplete={ isComplete } isActive={ isActive }>
+					{ title }
+				</StepTitle>
+			</StepHeader>
 			{ shouldShowEditButton && (
 				<HeaderEditButton
 					className="checkout-step__edit-button"
@@ -962,7 +1006,7 @@ function CheckoutStepHeader( {
 					{ editButtonText || __( 'Edit' ) }
 				</HeaderEditButton>
 			) }
-		</StepHeader>
+		</StepHeaderWrapper>
 	);
 }
 

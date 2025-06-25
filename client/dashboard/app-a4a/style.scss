@@ -1,0 +1,36 @@
+@import '@wordpress/base-styles/colors';
+
+/**
+ * A4A theme variables for dashboard
+ */
+
+:root {
+	// Theme
+	--wp-admin-theme-color: #007cba;
+	--wp-admin-theme-color--rgb: 0, 124, 186;
+	--wp-admin-theme-color-darker-10: #006ba1;
+	--wp-admin-theme-color-darker-10--rgb: 0, 107, 161;
+	--wp-admin-theme-color-darker-20: #005a87;
+	--wp-admin-theme-color-darker-20--rgb: 0, 90, 135;
+	--wp-admin-border-width-focus: 2px;
+
+	// Layout
+	--dashboard__background-color: #fcfcfc;
+	--dashboard__text-color: #{$gray-900};
+
+	// Header bar
+	--dashboard-header__background-color: #021A23;
+	--dashboard-header__color: #FFF;
+	--dashboard-header__border-color: #05374A;
+	--dashboard-header__divider-color: #064057;
+
+	// Menu
+	--dashboard-menu-item__color: #949494;
+	--dashboard-menu-item-active__color: #FFF;
+
+	// Secondary menu
+	--dashboard-secondary-menu-item__color: #FFF;
+
+	// Headings
+	--dashboard-h1__font-weight: 600;
+}

@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,7 +6,7 @@ import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
-
+import { MenuItem, MenuItemLink } from '../menu';
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {
 		list: PropTypes.object.isRequired,
@@ -58,14 +57,10 @@ export class ReaderSidebarListsListItem extends Component {
 			this.props.path
 		);
 
-		const classes = clsx( 'sidebar__menu-item--reader-list', {
-			selected: isCurrentList || isCurrentListManage,
-		} );
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const selected = isCurrentList || isCurrentListManage;
 		return (
-			<li className={ classes } key={ list.ID }>
-				<a
+			<MenuItem className="sidebar__menu-item--reader-list" key={ list.ID } selected={ selected }>
+				<MenuItemLink
 					className="sidebar__menu-link"
 					href={ listRelativeUrl }
 					onClick={ this.handleListSidebarClick }
@@ -76,10 +71,9 @@ export class ReaderSidebarListsListItem extends Component {
 					} ) }
 				>
 					<div className="sidebar__menu-item-title">{ list.title }</div>
-				</a>
-			</li>
+				</MenuItemLink>
+			</MenuItem>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

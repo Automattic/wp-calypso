@@ -1,8 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
@@ -23,6 +24,7 @@ import ServerSettings from './server';
 import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
+import DashboardBackportSiteSettingsRenderer from './v2';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
@@ -42,15 +44,17 @@ export function SettingsSidebar() {
 	return (
 		<Sidebar>
 			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
-			{ areAdvancedHostingFeaturesSupported && (
-				<>
-					<SidebarItem href={ `/sites/settings/server/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/database/${ slug }` }>
-						{ __( 'Database' ) }
-					</SidebarItem>
-				</>
-			) }
+			{ areAdvancedHostingFeaturesSupported && [
+				<SidebarItem key="server" href={ `/sites/settings/server/${ slug }` }>
+					{ __( 'Server' ) }
+				</SidebarItem>,
+				<SidebarItem key="sftp-ssh" href={ `/sites/settings/sftp-ssh/${ slug }` }>
+					{ sftpSshTitle }
+				</SidebarItem>,
+				<SidebarItem key="database" href={ `/sites/settings/database/${ slug }` }>
+					{ __( 'Database' ) }
+				</SidebarItem>,
+			] }
 			{ areHostingFeaturesSupported && (
 				<SidebarItem href={ `/sites/settings/performance/${ slug }` }>
 					{ __( 'Performance' ) }
@@ -58,29 +62,6 @@ export function SettingsSidebar() {
 			) }
 		</Sidebar>
 	);
-}
-
-export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
-	context: PageJSContext,
-	next: () => void
-) {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-	const siteSlug = getSelectedSiteSlug( getState() );
-
-	if ( ! isUntangled ) {
-		// Redirect command palette routes to the new hosting config page when not in the treatment group
-		const routes = {
-			[ `/sites/settings/server/${ siteSlug }` ]: `/hosting-config/${ siteSlug }`,
-			[ `/sites/settings/performance/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#cache`,
-			[ `/sites/settings/database/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#database-access`,
-			[ `/sites/settings/sftp-ssh/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#sftp-credentials`,
-		};
-
-		return page.redirect( routes[ context.path ] ?? `/hosting-config/${ siteSlug }` );
-	}
-
-	next();
 }
 
 export function redirectToSiteSettingsIfHostingFeaturesNotSupported(
@@ -103,12 +84,21 @@ export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
 ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
+	const dispatch = context.store.dispatch;
 
-	if ( areAdvancedHostingFeaturesSupported( state ) === false ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+	if ( ! site?.ID ) {
+		return next();
 	}
 
-	next();
+	dispatch( fetchSiteFeatures( site?.ID ) ).then( () => {
+		const isSupported = areAdvancedHostingFeaturesSupported( context.store.getState() );
+
+		if ( isSupported === false ) {
+			return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		}
+
+		next();
+	} );
 }
 
 export function siteSettings( context: PageJSContext, next: () => void ) {
@@ -214,5 +204,28 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 			<PerformanceSettings />
 		</PanelWithSidebar>
 	);
+	next();
+}
+
+/**
+ * Backport Hosting Dashboard Site Settings page to the current one.
+ */
+export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
+	const { site: siteSlug, feature } = context.params;
+
+	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
+	}
+
+	// Route doesn't require a <PageViewTracker /> because the dashboard
+	// fires its own page view events.
+	context.primary = (
+		<DashboardBackportSiteSettingsRenderer
+			store={ context.store }
+			siteSlug={ siteSlug }
+			feature={ feature }
+		/>
+	);
+
 	next();
 }

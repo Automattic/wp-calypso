@@ -1,0 +1,30 @@
+@import "@wordpress/base-styles/variables";
+
+.storage-add-ons-modal {
+	.components-modal__content {
+		max-width: 512px;
+
+		> div:last-child {
+			display: flex;
+			flex-direction: column;
+			gap: $grid-unit-30;
+		}
+	}
+
+	&__description {
+		font-size: rem(13px);
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: flex-end;
+		gap: $grid-unit-10;
+	}
+
+	&__label {
+		font-size: rem(11px);
+		font-weight: 500;
+		text-transform: uppercase;
+		margin-bottom: $grid-unit-15;
+	}
+}

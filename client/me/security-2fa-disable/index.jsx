@@ -1,3 +1,4 @@
+import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -52,34 +53,36 @@ class Security2faDisable extends Component {
 		const { userSettings, translate } = this.props;
 		if ( userSettings.two_step_sms_enabled ) {
 			return (
-				<div>
-					<p>
-						{ translate(
-							"You've enabled two-step authentication. " +
-								'While enabled, logging in to WordPress.com ' +
-								'requires you to enter a unique passcode, sent via text message, ' +
-								'in addition to your username and password.'
-						) }
-					</p>
+				<Card>
+					<div>
+						<p>
+							{ translate(
+								"You've enabled two-step authentication. " +
+									'While enabled, logging in to WordPress.com ' +
+									'requires you to enter a unique passcode, sent via text message, ' +
+									'in addition to your username and password.'
+							) }
+						</p>
 
-					<p>
-						{ translate(
-							"You're all set to receive authentication codes at " +
-								'{{strong}}%(smsNumber)s{{/strong}}. ' +
-								'Want to switch to a different number? No problem! ' +
-								"You'll need to disable two-step authentication, " +
-								'then complete the setup process again on another device.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									smsNumber: userSettings.two_step_sms_phone_number,
-								},
-							}
-						) }
-					</p>
-				</div>
+						<p>
+							{ translate(
+								"You're all set to receive authentication codes at " +
+									'{{strong}}%(smsNumber)s{{/strong}}. ' +
+									'Want to switch to a different number? No problem! ' +
+									"You'll need to disable two-step authentication, " +
+									'then complete the setup process again on another device.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										smsNumber: userSettings.two_step_sms_phone_number,
+									},
+								}
+							) }
+						</p>
+					</div>
+				</Card>
 			);
 		}
 

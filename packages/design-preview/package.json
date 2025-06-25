@@ -8,6 +8,14 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -34,27 +42,27 @@
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^29.6.0",
-		"@wordpress/html-entities": "^4.20.0",
-		"@wordpress/icons": "^10.20.0",
-		"@wordpress/react-i18n": "^4.20.0",
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/html-entities": "^4.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
-		"tslib": "^2.3.0"
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.5.4"
+		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.20.0",
-		"@wordpress/element": "^6.20.0",
-		"@wordpress/i18n": "^5.20.0",
-		"debug": "^4.4.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"debug": "^4.4.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1"

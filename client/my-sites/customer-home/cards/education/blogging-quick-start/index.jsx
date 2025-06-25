@@ -15,9 +15,9 @@ const BloggingQuickStart = () => {
 
 	return (
 		<EducationalContent
-			title={ translate( 'Blog like an expert from day one' ) }
+			title={ translate( 'Course: Create your blog' ) }
 			description={ translate(
-				"Learn the fundamentals from our bite-sized video course — you'll be up and running in just nine minutes."
+				'Follow along as we show you how to start your blog, publish posts, and connect with your audience.'
 			) }
 			modalLinks={ [
 				{
@@ -31,7 +31,7 @@ const BloggingQuickStart = () => {
 						courseSlug: COURSE_SLUGS.BLOGGING_QUICK_START,
 					},
 					onClick: openModal,
-					text: translate( 'Start learning' ),
+					text: translate( 'Start course' ),
 				},
 			] }
 			illustration={ startLearningPrompt }

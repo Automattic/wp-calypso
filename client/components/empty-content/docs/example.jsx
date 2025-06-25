@@ -23,8 +23,6 @@ EmptyContentExample.defaultProps = {
 							Secondary action
 						</a>
 					}
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-					illustrationWidth={ 400 }
 				/>
 			</div>
 		</div>

@@ -10,6 +10,7 @@ export interface UseGridPlansParams {
 	eligibleForFreeHostingTrial?: boolean;
 	hasRedeemedDomainCredit?: boolean;
 	hiddenPlans?: HiddenPlans;
+	hideCurrentPlan?: boolean;
 	intent?: PlansIntent;
 	isDisplayingPlansNeededForFeature?: boolean;
 	isInSignup?: boolean;

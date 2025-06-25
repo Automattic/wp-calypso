@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.action-list {
+	.action-list__heading {
+		padding-top: $grid-unit-10;
+		padding-bottom: $grid-unit-15;
+	}
+
+	.action-list__heading ~ .action-list__actions {
+		margin: -$grid-unit-10 0;
+	}
+
+	.action-list__actions {
+		margin: -$grid-unit-20 0;
+	}
+}

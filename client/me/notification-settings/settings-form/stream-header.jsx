@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, bell } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { getLabelForStream } from './locales';
@@ -19,7 +19,7 @@ export default class extends PureComponent {
 		return (
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
-					{ this.props.stream === 'timeline' ? <Gridicon icon="bell" /> : this.renderTitle() }
+					{ this.props.stream === 'timeline' ? <Icon icon={ bell } /> : this.renderTitle() }
 				</div>
 			</div>
 		);

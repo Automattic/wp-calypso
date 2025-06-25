@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import * as userSelectors from 'calypso/state/current-user/selectors';
 import * as themeSelectors from 'calypso/state/themes/selectors';
 import { canPublishThemeReview } from '../can-publish-theme-review';

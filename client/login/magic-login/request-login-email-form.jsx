@@ -1,9 +1,9 @@
 import { FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
@@ -36,7 +36,7 @@ class RequestLoginEmailForm extends Component {
 		isFetching: PropTypes.bool,
 		isJetpackMagicLinkSignUpEnabled: PropTypes.bool,
 		redirectTo: PropTypes.string,
-		requestError: PropTypes.string,
+		requestError: PropTypes.object,
 		showCheckYourEmail: PropTypes.bool,
 		userEmail: PropTypes.string,
 		flow: PropTypes.string,
@@ -173,6 +173,7 @@ class RequestLoginEmailForm extends Component {
 			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
+			isFromJetpackOnboarding,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -182,7 +183,11 @@ class RequestLoginEmailForm extends Component {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
 			return isJetpackMagicLinkSignUpEnabled ? (
-				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+				<EmailedLoginLinkSuccessfullyJetpackConnect
+					emailAddress={ emailAddress }
+					shouldRedirect={ ! isFromJetpackOnboarding }
+					onResendEmail={ this.onSubmit }
+				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
 			);
@@ -196,8 +201,8 @@ class RequestLoginEmailForm extends Component {
 			! isSubmitButtonDisabled;
 
 		const errorText =
-			typeof requestError === 'string' && requestError.length
-				? requestError
+			typeof requestError?.message === 'string' && requestError?.message.length
+				? requestError?.message
 				: translate( 'Unable to complete request' );
 
 		const buttonLabel = translate( 'Send link' );
@@ -225,16 +230,20 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				{ currentUser && currentUser.username && (
-					<p>
-						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
-							args: {
-								user: currentUser.username,
-							},
-						} ) }
-					</p>
-				) }
-				<LoggedOutForm onSubmit={ onSubmit }>
+				<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
+					{ currentUser && currentUser.username && (
+						<Notice
+							showDismiss={ false }
+							className="magic-login__form-header-notice"
+							status="is-info"
+							theme="light"
+							text={ translate( 'You are already logged in as user: %(user)s', {
+								args: {
+									user: currentUser.username,
+								},
+							} ) }
+						></Notice>
+					) }
 					{ ! hideSubHeaderText && (
 						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
 					) }
@@ -273,9 +282,15 @@ class RequestLoginEmailForm extends Component {
 							/>
 						) }
 						<div className="magic-login__form-action">
-							<FormButton primary disabled={ ! submitEnabled } busy={ isSubmitButtonBusy }>
+							<Button
+								variant="primary"
+								disabled={ ! submitEnabled }
+								isBusy={ isSubmitButtonBusy }
+								type="submit"
+								__next40pxDefaultSize
+							>
 								{ submitButtonLabel || buttonLabel }
-							</FormButton>
+							</Button>
 						</div>
 					</FormFieldset>
 				</LoggedOutForm>

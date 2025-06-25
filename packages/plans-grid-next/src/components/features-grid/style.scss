@@ -211,6 +211,7 @@
 	color: var(--studio-gray-80);
 	font-weight: 400;
 	padding: 0 20px 24px 20px;
+	margin-bottom: 0;
 
 	@include plans-grid-medium-large {
 		font-size: $font-body-small;
@@ -222,6 +223,7 @@
 		line-height: 16px;
 		padding-bottom: 8px;
 		min-height: 50px;
+		text-wrap: balance;
 	}
 }
 
@@ -240,15 +242,17 @@
 	&.is-top-buttons {
 		padding: 0 20px;
 		@include plans-grid-medium-large {
-			padding-top: 16px;
-			padding-bottom: 16px;
+			button {
+				margin-top: 16px;
+				margin-bottom: 16px;
+			}
 		}
 	}
 
 	@include plans-grid-medium-large {
 		// The .plan-features-2023-grid__table-item is used to render the plan spotlight which doesn't
 		// use a table layout, but borders are only appropriate in table layout.
-		&:is(td) {
+		&:is(td, th) {
 			border-left: solid 1px #e0e0e0;
 		}
 	}
@@ -269,8 +273,8 @@
 	border: 1px solid #e0e0e0;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 
 	div.spotlight-plan__buttons  {
 		display: flex;
@@ -349,6 +353,8 @@
 		font-weight: 400;
 		line-height: 20px;
 		overflow-wrap: break-word;
+		text-wrap: balance; // Fallback until Safari supports `pretty`.
+		text-wrap: pretty;
 		margin: 0;
 		flex: 1 0 0;
 		width: 100%;
@@ -441,18 +447,6 @@
 		@include plans-grid-medium-large {
 			padding-bottom: 0;
 		}
-
-		.plans-grid-next__billing-timeframe-vip-price {
-			@include plans-grid-medium-large {
-				font-size: $font-body-small;
-				line-height: 20px;
-			}
-
-			@include plans-grid-large {
-				font-size: $font-body-extra-small;
-				line-height: 16px;
-			}
-		}
 	}
 
 	&.popular-plan-parent-class {
@@ -501,13 +495,6 @@
 			font-weight: 400;
 			font-size: $font-body-extra-small;
 			padding: 0 19px 24px 20px;
-
-			.plans-grid-next__billing-timeframe-vip-price {
-				font-size: $font-body;
-				line-height: 24px;
-				font-weight: 400;
-				color: var(--studio-gray-80);
-			}
 		}
 
 		&.popular-plan-parent-class {

@@ -14,6 +14,35 @@ type ApiResponseError = {
 	message: string;
 };
 
+/**
+ * Gets the email subscription ID from a subscriber object.
+ * @param {Subscriber} subscriber - The subscriber object
+ * @returns {number} The email subscription ID, or 0 if not found
+ * @deprecated The `subscription_id` property is deprecated and from the old API endpoint response. Use `email_subscription_id` instead.
+ */
+const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.email_subscription_id || subscriber.subscription_id || 0;
+};
+
+/**
+ * Gets the WordPress.com subscription ID from a subscriber object.
+ * @param {Subscriber} subscriber - The subscriber object
+ * @returns {number} The WordPress.com subscription ID, or 0 if not found
+ * @deprecated The `subscription_id` property is deprecated and from the old API endpoint response. Use `wpcom_subscription_id` instead.
+ */
+const getWpcomSubscriptionId = ( subscriber: Subscriber ): number => {
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.wpcom_subscription_id || subscriber.subscription_id || 0;
+};
+
+/**
+ * Hook to remove subscribers from a site.
+ * Handles removal of email subscribers, WordPress.com followers, and paid subscription members.
+ * @param {number | null} siteId - The ID of the site
+ * @param {SubscriberQueryParams} SubscriberQueryParams - Query parameters for subscriber list
+ * @param {boolean} invalidateDetailsCache - Whether to invalidate the subscriber details cache (default: false)
+ */
 const useSubscriberRemoveMutation = (
 	siteId: number | null,
 	SubscriberQueryParams: SubscriberQueryParams,
@@ -66,40 +95,58 @@ const useSubscriberRemoveMutation = (
 					await Promise.all( promises );
 				}
 
-				let wasRemoved = false;
+				let emailRemoved = false;
+				let wpcomRemoved = false;
 
-				// Remove the subscriber from the followers and email followers because they may be both of them.
-				if ( subscriber.user_id ) {
-					try {
-						await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
-						wasRemoved = true;
-					} catch ( e ) {
-						// Only throw if subscription_id is empty.
-						if (
-							( e as ApiResponseError )?.error === 'not_found' &&
-							! subscriber.subscription_id
-						) {
-							throw new Error( ( e as ApiResponseError )?.message );
-						}
-					}
-				}
+				const numericUserId = Number( subscriber.user_id );
+				const emailSubscriptionId = getEmailSubscriptionId( subscriber );
 
-				// Always try to remove as email follower if they have a subscription_id.
-				if ( subscriber.subscription_id ) {
+				// Remove the subscriber from the followers if they have a numeric user_id
+				if ( ! isNaN( numericUserId ) ) {
 					try {
-						await wpcom.req.post(
-							`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
+						const response = await wpcom.req.post(
+							`/sites/${ siteId }/followers/${ numericUserId }/delete`
 						);
-						wasRemoved = true;
+						wpcomRemoved = response?.deleted === true;
 					} catch ( e ) {
-						// Only throw if we haven't successfully removed them through any other method.
-						if ( ! wasRemoved ) {
+						// Only throw if they don't have an email subscription ID to try next
+						if ( ( e as ApiResponseError )?.error === 'not_found' && ! emailSubscriptionId ) {
 							throw new Error( ( e as ApiResponseError )?.message );
 						}
 					}
 				}
 
-				return wasRemoved;
+				// Try to remove as email follower if they have an email subscription ID
+				if ( emailSubscriptionId ) {
+					try {
+						const response = await wpcom.req.post(
+							`/sites/${ siteId }/email-followers/${ emailSubscriptionId }/delete`
+						);
+						// Verify the response indicates successful deletion
+						emailRemoved = response?.deleted === true;
+					} catch ( e ) {
+						// Consider "not_following" as a successful removal since they're already not following
+						if ( ( e as ApiResponseError )?.error === 'not_following' ) {
+							emailRemoved = true;
+						} else if ( ! wpcomRemoved ) {
+							// Only throw if we haven't successfully removed them through any other method
+							throw new Error( ( e as ApiResponseError )?.message );
+						}
+					}
+				}
+
+				// Consider removal successful if:
+				// 1. Email subscription was either:
+				//    - Successfully removed (if it existed)
+				//    - Did not exist (no removal needed)
+				// 2. WPCOM following was either:
+				//    - Successfully removed (if it existed)
+				//    - Did not exist (no removal needed)
+				const isFullyRemoved =
+					( emailSubscriptionId ? emailRemoved : true ) &&
+					( ! isNaN( numericUserId ) ? wpcomRemoved : true );
+
+				return isFullyRemoved;
 			} );
 			const promiseResults = await Promise.allSettled( subscriberPromises );
 			if (
@@ -120,22 +167,38 @@ const useSubscriberRemoveMutation = (
 		onMutate: async ( subscribers ) => {
 			// Cancel any outgoing refetches
 			await queryClient.cancelQueries( { queryKey: [ 'subscribers', siteId ] } );
+			await queryClient.cancelQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
 			// Get the current page data
 			const previousData =
 				queryClient.getQueryData< SubscriberEndpointResponse >( currentPageCacheKey );
+
+			// Get the current count data
+			const previousCountData = queryClient.getQueryData< { total_subscribers: number } >( [
+				'subscribers',
+				'counts',
+				siteId,
+			] );
 
 			if ( previousData ) {
 				// Update the current page data
 				const updatedData = {
 					...previousData,
 					subscribers: previousData.subscribers.filter( ( s ) => {
-						return ! subscribers.some(
-							( subscriber ) => s.subscription_id === subscriber.subscription_id
-						);
+						return ! subscribers.some( ( subscriber ) => {
+							// Match on either wpcom or email subscription ID
+							const sEmailId = getEmailSubscriptionId( s );
+							const subscriberEmailId = getEmailSubscriptionId( subscriber );
+							const sWpcomId = getWpcomSubscriptionId( s );
+							const subscriberWpcomId = getWpcomSubscriptionId( subscriber );
+							return (
+								( sEmailId && sEmailId === subscriberEmailId ) ||
+								( sWpcomId && sWpcomId === subscriberWpcomId )
+							);
+						} );
 					} ),
-					total: previousData.total - 1,
-					pages: Math.ceil( ( previousData.total - 1 ) / previousData.per_page ),
+					total: previousData.total - subscribers.length,
+					pages: Math.ceil( ( previousData.total - subscribers.length ) / previousData.per_page ),
 				};
 
 				// Update the current page cache
@@ -156,13 +219,22 @@ const useSubscriberRemoveMutation = (
 				}
 			}
 
+			// Update the count cache if it exists
+			if ( previousCountData ) {
+				const updatedCountData = {
+					...previousCountData,
+					total_subscribers: previousCountData.total_subscribers - subscribers.length,
+				};
+				queryClient.setQueryData( [ 'subscribers', 'counts', siteId ], updatedCountData );
+			}
+
 			// Handle subscriber details cache if needed
 			let previousDetailsData;
 			if ( invalidateDetailsCache ) {
 				for ( const subscriber of subscribers ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(
 						siteId,
-						subscriber.subscription_id,
+						getEmailSubscriptionId( subscriber ),
 						subscriber.user_id,
 						getSubscriberDetailsType( subscriber.user_id )
 					);
@@ -173,6 +245,7 @@ const useSubscriberRemoveMutation = (
 
 			return {
 				previousData,
+				previousCountData,
 				previousDetailsData,
 			};
 		},
@@ -182,34 +255,49 @@ const useSubscriberRemoveMutation = (
 				queryClient.setQueryData( currentPageCacheKey, context.previousData );
 			}
 
+			// Revert the count data if it exists
+			if ( context?.previousCountData ) {
+				queryClient.setQueryData( [ 'subscribers', 'counts', siteId ], context.previousCountData );
+			}
+
 			if ( context?.previousDetailsData ) {
 				const detailsCacheKey = getSubscriberDetailsCacheKey(
 					siteId,
-					context.previousDetailsData.subscription_id,
+					getEmailSubscriptionId( context.previousDetailsData ),
 					context.previousDetailsData.user_id,
 					getSubscriberDetailsType( context.previousDetailsData.user_id )
 				);
 				queryClient.setQueryData( detailsCacheKey, context.previousDetailsData );
 			}
+
+			// Force invalidate all subscriber queries to ensure UI is in sync
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 		},
 		onSuccess: ( data, subscribers ) => {
+			// Force invalidate all subscriber queries to ensure UI is in sync
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
+
 			for ( const subscriber of subscribers ) {
 				recordSubscriberRemoved( {
 					site_id: siteId,
-					subscription_id: subscriber.subscription_id,
+					subscription_id: getEmailSubscriptionId( subscriber ),
 					user_id: subscriber.user_id,
 				} );
 			}
 		},
 		onSettled: ( data, error, subscribers ) => {
-			for ( const subscriber of subscribers ) {
-				// Invalidate all subscriber queries to ensure consistency
-				queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			// Always invalidate and refetch everything to ensure consistency
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 
-				if ( invalidateDetailsCache ) {
+			// Always handle subscriber details cache if requested
+			if ( invalidateDetailsCache ) {
+				for ( const subscriber of subscribers ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(
 						siteId,
-						subscriber.subscription_id,
+						getEmailSubscriptionId( subscriber ),
 						subscriber.user_id,
 						getSubscriberDetailsType( subscriber.user_id )
 					);

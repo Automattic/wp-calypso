@@ -1,6 +1,11 @@
 .sidebar__menu-item--create-reader-list-link {
-	.gridicon,
-	.sidebar__menu-item-title-text {
-		align-self: center;
+	.sidebar__menu-item-title {
+		display: flex;
+		align-items: center;
+
+		.gridicon,
+		.sidebar__menu-item-title-text {
+			align-self: center;
+		}
 	}
 }

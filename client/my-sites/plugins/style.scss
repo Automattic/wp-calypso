@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 @import "./woocommerce-box";
 
 .is-section-plugins .main {
@@ -46,8 +47,6 @@
 
 body.is-section-plugins {
 	.is-section-plugins.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		.layout__content {
 			min-height: 100vh;
 		}
@@ -55,10 +54,15 @@ body.is-section-plugins {
 		.layout__primary > * {
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
+
+			&:not(:has(.hosting-dashboard-layout-column__container)) {
+				@include break-small {
+					border: 1px solid $gray-200;
+				}
+			}
 		}
 
 		.plugins-browser,
@@ -95,6 +99,7 @@ body.is-section-plugins {
 	}
 
 	.hosting-dashboard-layout-column {
+		height: 100%;
 		overflow: auto;
 	}
 
@@ -132,11 +137,6 @@ body.is-section-plugins {
 		@include breakpoint-deprecated( "<960px" ) {
 			display: none;
 		}
-
-		.empty-state {
-			max-width: 100%;
-			padding: 0 1rem;
-		}
 	}
 
 	.hosting-dashboard-layout-column.scheduled-updates-list {
@@ -158,22 +158,14 @@ body.is-section-plugins {
 				color: var(--color-neutral-60);
 			}
 		}
-
-		.empty-state {
-			padding: 0 4rem;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				padding: 0 1rem;
-			}
-		}
 	}
 
-	.hosting-dashboard-layout-column.scheduled-updates-edit,
-	.hosting-dashboard-layout-column.scheduled-updates-create {
+	.hosting-dashboard-layout-column.scheduled-updates-edit .hosting-dashboard-layout-column__container,
+	.hosting-dashboard-layout-column.scheduled-updates-create .hosting-dashboard-layout-column__container {
 		padding: 3rem;
 
 		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0.5rem;
+			padding: 1rem;
 		}
 	}
 }
@@ -204,7 +196,7 @@ body.is-section-plugins.theme-default.color-scheme {
 }
 
 .plugins__main-header .section-nav {
-	border: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
+	border: 1px solid color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	box-shadow: none;
 	flex: auto;
 	margin: 0;
@@ -265,7 +257,7 @@ $calypso-header-height: 31px;
 
 	.plugin-details__content {
 		grid-area: content;
-		padding-top: 50px;
+		padding-top: 40px;
 	}
 
 	.plugin-details__actions {
@@ -310,8 +302,8 @@ $calypso-header-height: 31px;
 	}
 
 	.plugin-details__plugin-download {
-		margin-top: 20px;
-		gap: 5px;
+		margin-top: 24px;
+		gap: 16px;
 		display: flex;
 		font-size: $font-body-extra-small;
 
@@ -349,7 +341,7 @@ $calypso-header-height: 31px;
 	}
 
 	.section-nav-tabs__list {
-		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+		box-shadow: inset 0 -1px 0 var(--studio-gray-5);
 	}
 
 	.section-nav-tab {
@@ -596,13 +588,13 @@ body.is-section-plugins #primary {
 }
 
 .plugin-management-wrapper {
-  .plugins__top-container-jc {
-      padding: 4px 0 0;
+	.plugins__top-container-jc {
+		padding: 4px 0 0;
 
-      @include break-large() {
-          padding: 6px 0 0;
-      }
-  }
+		@include break-large() {
+		  padding: 6px 0 0;
+		}
+	}
 }
 
 .plugins__content-wrapper {

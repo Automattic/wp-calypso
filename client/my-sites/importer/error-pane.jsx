@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -27,7 +29,7 @@ class ImporterError extends PureComponent {
 	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		window.location.href = '/help';
+		window.open( '/help', '_blank', 'noopener,noreferrer' );
 	};
 
 	installPlugin = ( event ) => {
@@ -67,29 +69,59 @@ class ImporterError extends PureComponent {
 		);
 		const { description = '' } = this.props;
 
-		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
-			return this.props.translate(
-				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
-				{
-					components: {
-						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
-					},
-				}
-			);
-		}
+		const helpButton = (
+			<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
+		);
 
-		return this.props.translate(
-			'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
+		const generalMessage = this.props.translate(
+			'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format.',
 			{
 				args: {
 					errorDescription: description.length ? description : defaultError,
 				},
 				components: {
 					br: <br />,
-					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					cs: helpButton,
 				},
 			}
 		);
+
+		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
+			return this.props.translate(
+				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
+				{
+					components: {
+						cs: helpButton,
+					},
+				}
+			);
+		}
+
+		if ( this.props.importerEngine === 'substack' ) {
+			return this.props.translate(
+				'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+				{
+					args: {
+						errorDescription: description.length ? description : defaultError,
+					},
+					components: {
+						br: <br />,
+						cs: helpButton,
+						doc: (
+							<InlineSupportLink
+								showIcon={ false }
+								supportLink={ localizeUrl(
+									'https://wordpress.com/support/import-from-substack/import-content/'
+								) }
+								supportPostId={ 400434 }
+							/>
+						),
+					},
+				}
+			);
+		}
+
+		return generalMessage;
 	};
 
 	getPreUploadError = () => {
@@ -103,6 +135,7 @@ class ImporterError extends PureComponent {
 				{
 					components: {
 						ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
+						// TODO: is this "everthing import" behaviour up to date?
 						ei: (
 							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
 						),

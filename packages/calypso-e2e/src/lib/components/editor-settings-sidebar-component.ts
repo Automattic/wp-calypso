@@ -29,8 +29,9 @@ const selectors = {
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ panel } div[aria-label=Categories] label:text("${ categoryName }")`,
 
-	// Tag
-	tagInput: `${ panel } .components-form-token-field:has-text("Add New Tag") input`,
+	// Add tag.
+	// String was changed for WP 6.8, so we need both for a bit: https://core.trac.wordpress.org/changeset/59784
+	tagInput: `${ panel } .components-form-token-field:is(:has-text("Add New Tag"),:has-text("Add Tag")) input`,
 	addedTag: ( tag: string ) =>
 		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };
@@ -93,14 +94,14 @@ export class EditorSettingsSidebarComponent {
 	 * text box.
 	 *
 	 * @param {string} text Text to enter.
-	 * @param param1 Keyed object parametr.
+	 * @param param1 Keyed object parameter.
 	 * @param {string} param1.label Locate text field by label.
 	 */
 	async enterText( text: string, { label }: { label: string } ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
 		if ( label ) {
-			return await editorParent.getByLabel( label ).fill( text );
+			return await editorParent.getByRole( 'textbox', { name: label } ).fill( text );
 		}
 
 		throw new Error( 'Must specify a method to locate the text field.' );

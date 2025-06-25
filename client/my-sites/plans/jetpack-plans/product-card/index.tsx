@@ -7,6 +7,7 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	isJetpackPlanSlug,
 	isSupersedingJetpackItem,
+	type JetpackPurchasableItemSlug,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -37,7 +38,6 @@ import type {
 	SelectorProduct,
 	SiteProduct,
 } from '../types';
-import type { JetpackPurchasableItemSlug } from 'calypso/../packages/calypso-products';
 
 interface ProductCardProps {
 	item: SelectorProduct;

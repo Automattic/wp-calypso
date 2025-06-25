@@ -4,10 +4,11 @@ import {
 	PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { isMobile } from '@automattic/viewport';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { AkismetProQuantityDropDownProps } from './types';
@@ -145,11 +146,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	const translate = useTranslate();
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
-			preventWidows( translate( '1 Site' ) ),
-			preventWidows( translate( '2 Sites' ) ),
-			preventWidows( translate( '3 Sites' ) ),
-			preventWidows( translate( '4 Sites' ) ),
-			preventWidows( translate( 'Unlimited sites (Akismet Business)' ) ),
+			preventWidows( translate( '500 spam calls/mo, up to 1 site' ) ),
+			preventWidows( translate( '1000 spam calls/mo, up to 2 sites' ) ),
+			preventWidows( translate( '1500 spam calls/mo, up to 3 sites' ) ),
+			preventWidows( translate( '2000 spam calls/mo, up to 4 sites' ) ),
+			preventWidows( translate( '5000 spam calls/mo, unlimited sites (Akismet Business)' ) ),
 		];
 		const AkBusinessDropdownPosition = dropdownOptions.length;
 		return {

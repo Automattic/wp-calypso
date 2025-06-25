@@ -131,7 +131,7 @@ export const MarketplaceFooter = () => {
 					</Button>
 				) }
 				<ThreeColumnContainer>
-					<FeatureItem header={ __( 'Fully Managed' ) }>
+					<FeatureItem header={ __( 'Fully managed' ) }>
 						{ __(
 							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
 						) }
@@ -182,7 +182,7 @@ const EducationFooter = () => {
 		<EducationFooterContainer>
 			<PluginsResultsHeader
 				title={ __( 'Get started with plugins' ) }
-				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
+				subtitle={ __( 'Our favorite how-to guides to get you started with plugins.' ) }
 			/>
 			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard

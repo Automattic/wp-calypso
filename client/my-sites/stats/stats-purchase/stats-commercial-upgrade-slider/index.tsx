@@ -1,4 +1,5 @@
-import { formatCurrency, useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EXTENSION_THRESHOLD_IN_MILLION } from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
@@ -41,7 +42,7 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 
 		// Return the new step with string values.
 		return {
-			lhValue: typeof tier.views === 'number' ? numberFormatCompact( tier.views ) : '-',
+			lhValue: typeof tier.views === 'number' ? formatNumberCompact( tier.views ) : '-',
 			rhValue: price,
 			originalPrice: tier.price,
 			upgradePrice: tierUpgradePricePerMonth

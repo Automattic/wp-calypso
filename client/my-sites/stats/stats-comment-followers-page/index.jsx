@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
@@ -23,7 +24,6 @@ class StatModuleFollowersPage extends Component {
 		const {
 			data,
 			hasError,
-			numberFormat,
 			page,
 			pageClick,
 			query,
@@ -62,9 +62,9 @@ class StatModuleFollowersPage extends Component {
 					comment:
 						'"Showing [start index] - [end index] of [total] [item]" Example: Showing 21 - 40 of 300 WordPress.com subscribers',
 					args: {
-						startIndex: numberFormat( startIndex ),
-						endIndex: numberFormat( endIndex ),
-						total: numberFormat( total ),
+						startIndex: formatNumber( startIndex ),
+						endIndex: formatNumber( endIndex ),
+						total: formatNumber( total ),
 						itemType: translate( 'Comments' ),
 					},
 				}

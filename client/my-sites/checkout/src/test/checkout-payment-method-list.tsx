@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

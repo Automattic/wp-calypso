@@ -1,6 +1,6 @@
 import { plugins, currencyDollar, category, home, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
+import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';

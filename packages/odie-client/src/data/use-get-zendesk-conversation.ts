@@ -7,12 +7,17 @@ import type { ZendeskMessage } from '../types';
 const parseResponse = ( conversation: Conversation ) => {
 	let clientId;
 
-	const messages = conversation?.messages.map( ( message: ZendeskMessage ) => {
-		if ( message.source?.id ) {
-			clientId = message.source?.id;
-		}
-		return zendeskMessageConverter( message );
-	} );
+	const messages = conversation?.messages
+		.filter( ( message: ZendeskMessage ) => {
+			// exclude form and formResponses messages from being rendered
+			return message.type !== 'form' && message.type !== 'formResponse';
+		} )
+		.map( ( message: ZendeskMessage ) => {
+			if ( message.source?.id ) {
+				clientId = message.source?.id;
+			}
+			return zendeskMessageConverter( message );
+		} );
 
 	return { ...conversation, clientId, messages };
 };

@@ -405,7 +405,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/sites/settings/site/${ getSiteSlug( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'site_settings', isLargeScreen ) ) );
 				},
 			},

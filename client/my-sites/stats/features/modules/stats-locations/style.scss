@@ -64,6 +64,10 @@ $locations-horizontal-bar-width: 380px;
 		display: flex;
 		justify-content: space-between;
 		padding: 12px 24px;
+
+		@media (max-width: $break-small) {
+			padding: 12px 16px;
+		}
 	}
 
 	.stats-card--column-header__left {
@@ -90,7 +94,9 @@ $locations-horizontal-bar-width: 380px;
 	.stats-card.list-locations,
 	.stats-card-skeleton.locations-skeleton {
 		.stats-card--hero .stats-card-header {
-			padding: 0 24px 12px 0;
+			&:not(.stats__summary--narrow-mobile) {
+				padding: 0 24px 12px 0;
+			}
 		}
 
 		.stats-card-header.stats-card-header--split .stats-card-header--main__left {
@@ -100,6 +106,12 @@ $locations-horizontal-bar-width: 380px;
 
 			.stats-download-csv {
 				display: inherit;
+			}
+		}
+
+		.stats__summary--narrow-mobile {
+			.stats-card--column-header {
+				padding: 0;
 			}
 		}
 	}
@@ -210,6 +222,11 @@ $locations-horizontal-bar-width: 380px;
 		.stats-card__content .stats-card--hero {
 			flex: 2;
 			margin: 0 24px;
+
+			// Corresponding to .stats-card--hero above.
+			.stats-card-header {
+				padding: 0 0 12px;
+			}
 
 			.stats-geochart {
 				margin: 0 auto;

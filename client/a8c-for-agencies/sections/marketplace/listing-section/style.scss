@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .listing-section {
 	margin-block-end: 20px;
@@ -12,9 +13,7 @@ h2.listing-section-title {
 	align-items: center;
 	gap: 10px;
 	margin-block-end: 10px;
-	font-size: rem(20px);
-	font-weight: 600;
-	line-height: 1.2;
+	@include heading-x-large;
 
 	hr {
 		color: var(--color-gray-5);
@@ -25,9 +24,7 @@ h2.listing-section-title {
 }
 
 p.listing-section-description {
-	font-size: rem(14px);
-	font-weight: 400;
-	line-height: 1.2;
+	@include body-medium;
 	margin-block-end: 32px;
 }
 

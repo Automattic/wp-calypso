@@ -61,16 +61,10 @@ function getContentMessage( message: ZendeskMessage ): string {
 
 export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = ( message ) => {
 	let type = message.type as MessageType;
-	let feedbackUrl;
 	let context: Context = { site_id: null };
 	let role = (
 		[ 'user', 'business' ].includes( message.role ) ? message.role : 'user'
 	) as MessageRole;
-
-	if ( message?.source?.type === 'zd:surveys' && message?.actions?.length ) {
-		type = 'conversation-feedback';
-		feedbackUrl = message?.actions[ 0 ].uri;
-	}
 
 	if ( message?.source?.type === 'zd:answerBot' ) {
 		type = 'message';
@@ -86,10 +80,12 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 	}
 
 	return {
-		...( feedbackUrl ? { meta: { feedbackUrl } } : undefined ),
 		content: getContentMessage( message ),
 		context,
 		role,
 		type,
+		quotedMessageId: message.id,
+		metadata: message.metadata,
+		feedbackOptions: message.actions,
 	};
 };

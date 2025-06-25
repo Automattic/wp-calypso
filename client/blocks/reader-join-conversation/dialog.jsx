@@ -1,10 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog } from '@automattic/components';
+import { Dialog, WordPressLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import SpinnerLine from 'calypso/components/spinner-line';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import useLoginWindow from 'calypso/data/reader/use-login-window';
 
 import './style.scss';
@@ -74,6 +73,7 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 	return (
 		<Dialog
 			additionalClassNames="reader-join-conversation-dialog"
+			additionalOverlayClassNames="reader-join-conversation-dialog__overlay"
 			isVisible={ isVisible }
 			onClose={ onCloseClick }
 			showCloseIcon

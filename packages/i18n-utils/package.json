@@ -7,6 +7,17 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"license": "GPL-2.0-or-later",
@@ -31,19 +42,19 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@wordpress/compose": "^7.20.0",
-		"@wordpress/i18n": "^5.20.0",
+		"@wordpress/compose": "^7.23.0",
+		"@wordpress/i18n": "^5.23.0",
 		"react": "^18.3.1",
-		"tslib": "^2.3.0"
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
-		"@types/react": "^18.3.18",
+		"@testing-library/react": "^16.3.0",
+		"@types/react": "^18.3.23",
 		"react-dom": "^18.3.1",
 		"react-test-renderer": "^18.3.1",
-		"typescript": "^5.5.4"
+		"typescript": "^5.8.3"
 	}
 }

@@ -13,7 +13,6 @@ const resolve = require( 'path' ).resolve;
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
 const _ = require( 'lodash' );
-const fetch = require( 'node-fetch' );
 const { hideBin } = require( 'yargs/helpers' );
 const yargs = require( 'yargs/yargs' );
 

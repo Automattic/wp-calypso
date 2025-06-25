@@ -2,9 +2,12 @@ const PlanDivOrTdContainer = (
 	props: (
 		| React.HTMLAttributes< HTMLDivElement >
 		| React.HTMLAttributes< HTMLTableCellElement >
-	) & { isTableCell?: boolean; scope?: string }
+	) & { isTableCell?: boolean; scope?: string; isHeader?: boolean }
 ): JSX.Element => {
-	const { children, isTableCell, ...otherProps } = props;
+	const { children, isTableCell, isHeader, ...otherProps } = props;
+	if ( isHeader ) {
+		return <th { ...otherProps }>{ children }</th>;
+	}
 	return isTableCell ? (
 		<td { ...otherProps }>{ children }</td>
 	) : (

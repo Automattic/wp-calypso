@@ -95,7 +95,6 @@ html.is-desktop.detail-page-open {
 html.desktop-auth body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	line-height: 1.5;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 15px;
 	height: 100%;
 	display: flex;
@@ -120,7 +119,6 @@ html.desktop-auth p {
 
 html.desktop-auth .welcome h2,
 html.desktop-auth .welcome h3 {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 28px;
 	font-weight: 700;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -133,7 +131,6 @@ html.desktop-auth .welcome ol {
 }
 
 html.desktop-auth .welcome code {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 15px;
 	color: #646970;
 }
@@ -150,7 +147,6 @@ html.desktop-auth .large-icon svg {
 }
 
 html.desktop-auth .large-emoji {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 56px;
 	padding: 4px;
 	margin: auto;
@@ -184,7 +180,6 @@ html.desktop-auth .button-emphasis {
 	cursor: pointer;
 	font-weight: 600;
 	text-decoration: none;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	line-height: 21px;
 	border-radius: 4px;

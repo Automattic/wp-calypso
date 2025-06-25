@@ -122,7 +122,9 @@ export default function ItemView( {
 					context={ navRef }
 				/>
 			) }
-			<ItemViewContent>{ selectedFeature.preview }</ItemViewContent>
+			<ItemViewContent siteId={ itemData.blogId } featureId={ selectedFeature.id }>
+				{ selectedFeature.preview }
+			</ItemViewContent>
 		</div>
 	);
 }

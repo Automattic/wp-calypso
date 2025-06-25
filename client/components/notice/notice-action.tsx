@@ -7,7 +7,7 @@ import './style.scss';
 interface NoticeActionProps {
 	'aria-label'?: string;
 	href?: string | null;
-	onClick?: () => void;
+	onClick?: ( ( event: React.MouseEvent< HTMLAnchorElement > ) => void ) | ( () => void );
 	external?: boolean;
 	icon?: string;
 	children?: React.ReactNode;
@@ -37,7 +37,7 @@ export default class NoticeAction extends Component< NoticeActionProps > {
 			href?: string;
 		} = {
 			'aria-label': this.props[ 'aria-label' ],
-			className: 'notice__action',
+			className: 'calypso-notice__action',
 			href: this.props.href ?? undefined,
 			onClick: this.props.onClick,
 			tabIndex: 0,

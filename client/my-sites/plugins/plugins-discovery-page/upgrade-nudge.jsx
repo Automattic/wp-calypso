@@ -127,16 +127,16 @@ const UpgradeNudge = ( {
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
 				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }
+				isOneClickCheckoutEnabled={ false }
 			/>
 		);
 	}
 
-	const title = translate(
-		'You need to upgrade to a %(businessPlanName)s Plan to install plugins',
-		{ args: { businessPlanName: getPlan( plan )?.getTitle() } }
-	);
+	const title = translate( 'Access thousands of plugins with the %(businessPlanName)s Plan', {
+		args: { businessPlanName: getPlan( plan )?.getTitle() },
+	} );
 
-	const description = translate( 'Get a free domain with an annual plan.' );
+	const description = translate( 'Free domain included.' );
 	// This banner upsells the ability to install free and paid plugins on a Business plan.
 	return (
 		<UpsellNudge
@@ -154,7 +154,7 @@ const UpgradeNudge = ( {
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
-			isOneClickCheckoutEnabled
+			isOneClickCheckoutEnabled={ false }
 		/>
 	);
 };

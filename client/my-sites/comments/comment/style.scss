@@ -9,7 +9,7 @@
 	// Nested comment at max depth
 	&.is-at-max-depth {
 		margin-bottom: 0;
-		box-shadow: 0 -1px rgba(var(--color-neutral-10-rgb), 0.5);
+		box-shadow: 0 -1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	}
 
 	.accessible-focus &:focus {
@@ -21,7 +21,7 @@
 		background: var(--color-surface);
 		box-shadow:
 			inset 4px 0 0 0 var(--color-warning),
-			0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+			0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 			0 1px 2px var(--color-neutral-0);
 	}
 
@@ -279,7 +279,7 @@
 	position: relative;
 
 	&::after {
-		background: linear-gradient(to right, rgba(var(--color-surface-rgb), 0), rgba(var(--color-surface-rgb), 1) 50%);
+		background: linear-gradient(to right, color-mix(in srgb, var(--color-surface) 0%, transparent), color-mix(in srgb, var(--color-surface) 100%, transparent) 50%);
 		content: "";
 		height: 20px;
 		position: absolute;
@@ -289,7 +289,7 @@
 	}
 }
 .comment.is-pending .comment__content-preview::after {
-	background: linear-gradient(to right, rgba(var(--color-warning-0-rgb), 0), rgba(var(--color-warning-0-rgb), 1) 50%);
+	background: linear-gradient(to right, color-mix(in srgb, var(--color-warning-0) 0%, transparent), color-mix(in srgb, var(--color-warning-0) 100%, transparent) 50%);
 }
 
 @supports ( -webkit-line-clamp: 2 ) {

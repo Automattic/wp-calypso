@@ -16,7 +16,7 @@ const PlanTagline = ( { options, renderedGridPlans }: PlanTaglineProps ) => {
 				className="plan-features-2023-grid__table-item"
 				isTableCell={ options?.isTableCell }
 			>
-				<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
+				<p className="plan-features-2023-grid__header-tagline">{ tagline }</p>
 			</PlanDivOrTdContainer>
 		);
 	} );

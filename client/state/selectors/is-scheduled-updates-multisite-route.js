@@ -1,8 +1,4 @@
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-
-export function isScheduledUpdatesMultisiteBaseRoute( state ) {
-	const route = getCurrentRoute( state );
-
+export function isScheduledUpdatesMultisiteBaseRoute( route ) {
 	if ( ! route ) {
 		return false;
 	}
@@ -12,9 +8,7 @@ export function isScheduledUpdatesMultisiteBaseRoute( state ) {
 	return RGX.test( route );
 }
 
-export function isScheduledUpdatesMultisiteCreateRoute( state ) {
-	const route = getCurrentRoute( state );
-
+export function isScheduledUpdatesMultisiteCreateRoute( route ) {
 	if ( ! route ) {
 		return false;
 	}
@@ -24,9 +18,7 @@ export function isScheduledUpdatesMultisiteCreateRoute( state ) {
 	return RGX.test( route );
 }
 
-export function isScheduledUpdatesMultisiteEditRoute( state ) {
-	const route = getCurrentRoute( state );
-
+export function isScheduledUpdatesMultisiteEditRoute( route ) {
 	if ( ! route ) {
 		return false;
 	}
@@ -38,19 +30,17 @@ export function isScheduledUpdatesMultisiteEditRoute( state ) {
 
 /**
  * Returns true if the current route is a scheduled updates multisite route.
- * @param {Object} state Global state tree
+ * @param {string} route Current route
  * @returns {boolean}
  */
-export default function isScheduledUpdatesMultisiteRoute( state ) {
-	const route = getCurrentRoute( state );
-
+export default function isScheduledUpdatesMultisiteRoute( route ) {
 	if ( ! route ) {
 		return false;
 	}
 
 	return (
-		isScheduledUpdatesMultisiteBaseRoute( state ) ||
-		isScheduledUpdatesMultisiteCreateRoute( state ) ||
-		isScheduledUpdatesMultisiteEditRoute( state )
+		isScheduledUpdatesMultisiteBaseRoute( route ) ||
+		isScheduledUpdatesMultisiteCreateRoute( route ) ||
+		isScheduledUpdatesMultisiteEditRoute( route )
 	);
 }

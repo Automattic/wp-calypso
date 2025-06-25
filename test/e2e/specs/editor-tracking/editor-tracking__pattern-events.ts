@@ -39,11 +39,6 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 			await editorPage.waitUntilLoaded();
 		} );
 
-		it( 'Select blank template from modal', async function () {
-			// @TODO Consider moving this to EditorPage.
-			await editorPage.selectBlankPageTemplate();
-		} );
-
 		describe( 'From the sidebar inserter', function () {
 			// Distinct pattern name that returns only one result.
 			const patternName = 'Simple Two Column Layout';

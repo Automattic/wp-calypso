@@ -50,7 +50,7 @@
 	.module-header-title,
 	ul.module-content-tabs li:hover .label,
 	ul.module-content-tabs li.module-tab.is-selected:hover .label {
-		color: rgba(var(--color-surface-rgb), 0);
+		color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 	}
 }
 

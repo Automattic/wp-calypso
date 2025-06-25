@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/components';
 import { Button, Icon } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { Task, Expandable } from '../types';
@@ -56,6 +56,29 @@ const ChecklistItem: FC< Props > = ( {
 	const buttonClassName = isClickable ? '' : 'components-button';
 	const ButtonElement = isClickable ? Button : 'div';
 
+	const getStatusText = () => {
+		const taskTitle = typeof title === 'string' ? title : String( title );
+
+		if ( completed ) {
+			/* translators: %s: Task title */
+			return sprintf( __( 'Completed: %s', 'launchpad' ), taskTitle );
+		}
+		if ( disabled ) {
+			/* translators: %s: Task title */
+			return sprintf( __( 'Not available yet: %s', 'launchpad' ), taskTitle );
+		}
+		if ( isClickable ) {
+			if ( isPrimaryAction ) {
+				/* translators: %s: Task title */
+				return sprintf( __( 'Start task: %s', 'launchpad' ), taskTitle );
+			}
+			/* translators: %s: Task title in lowercase */
+			return sprintf( __( 'Select to %s', 'launchpad' ), taskTitle.toLowerCase() );
+		}
+		/* translators: %s: Task title */
+		return sprintf( __( 'To do: %s', 'launchpad' ), taskTitle );
+	};
+
 	return (
 		<li
 			className={ clsx( 'checklist-item__task', {
@@ -66,6 +89,7 @@ const ChecklistItem: FC< Props > = ( {
 				expanded: expandable && expandable.isOpen,
 				highlighted: isHighlighted,
 			} ) }
+			aria-current={ isHighlighted ? 'step' : undefined }
 		>
 			{ isPrimaryAction ? (
 				<ButtonElement
@@ -75,7 +99,8 @@ const ChecklistItem: FC< Props > = ( {
 					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
-					{ title }
+					<span className="screen-reader-text">{ getStatusText() }</span>
+					<span aria-hidden="true">{ title }</span>
 				</ButtonElement>
 			) : (
 				<ButtonElement
@@ -85,17 +110,18 @@ const ChecklistItem: FC< Props > = ( {
 					{ ...buttonProps }
 				>
 					{ completed && (
-						// show checkmark for completed tasks regardless if they are disabled or kept active
-						<div className="checklist-item__checkmark-container">
-							<Icon
-								icon={ check }
-								aria-label={ __( 'Task complete', 'launchpad' ) }
-								className="checklist-item__checkmark"
-								size={ 25 }
-							/>
+						<div
+							className="checklist-item__checkmark-container"
+							aria-hidden="true"
+							data-testid="checklist-item-checkmark"
+						>
+							<Icon icon={ check } className="checklist-item__checkmark" size={ 25 } />
 						</div>
 					) }
-					<span className="checklist-item__text">{ title }</span>
+					<span className="checklist-item__text">
+						<span className="screen-reader-text">{ getStatusText() }</span>
+						<span aria-hidden="true">{ title }</span>
+					</span>
 					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
 					{ shouldDisplayTaskCounter && (
 						<span className="checklist-item__counter">
@@ -104,7 +130,7 @@ const ChecklistItem: FC< Props > = ( {
 					) }
 					{ shouldDisplayChevron && (
 						<Icon
-							aria-label={ __( 'Task enabled', 'launchpad' ) }
+							aria-hidden="true"
 							className="checklist-item__chevron"
 							icon={ isRTL() ? chevronLeft : chevronRight }
 							size={ 25 }

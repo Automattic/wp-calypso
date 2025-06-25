@@ -1,6 +1,7 @@
 import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
 import {
 	MEDIA_DELETE,
+	SITE_LEAVE_RECEIVE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	JETPACK_SITE_DISCONNECT_REQUEST,
@@ -23,6 +24,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
+	SITE_RESET,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -45,7 +47,8 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 		state === null &&
 		action.type !== SITE_RECEIVE &&
 		action.type !== SITES_RECEIVE &&
-		action.type !== ODYSSEY_SITE_RECEIVE
+		action.type !== ODYSSEY_SITE_RECEIVE &&
+		action.type !== SITE_RESET
 	) {
 		return null;
 	}
@@ -60,6 +63,9 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			return state;
 		}
 
+		case SITE_RESET: {
+			return omit( state, action.siteId );
+		}
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
 			// Normalize incoming site(s) to array
@@ -120,6 +126,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			);
 		}
 
+		case SITE_LEAVE_RECEIVE:
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
 			return omit( state, action.siteId );

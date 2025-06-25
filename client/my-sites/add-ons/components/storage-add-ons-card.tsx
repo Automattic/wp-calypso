@@ -1,5 +1,6 @@
 import { AddOns, Site, StorageAddOnSlug } from '@automattic/data-stores';
 import { useGetPurchasedStorageAddOn } from '@automattic/data-stores/src/add-ons';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import {
 	Card,
@@ -11,16 +12,13 @@ import {
 } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import filesize from 'filesize';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { SiteId } from 'calypso/types';
 
 export interface Props {
 	siteId: SiteId;
-	actionPrimary?: {
-		text: string;
-		handler: ( productSlug: string, quantity?: number ) => void;
-	};
+	actionPrimary?: ( productSlug: string, quantity?: number ) => void;
 }
 
 const Container = styled.div`
@@ -74,6 +72,10 @@ const Container = styled.div`
 		font-size: 0.875rem;
 		padding-top: 0;
 		padding-bottom: 0;
+
+		p {
+			margin-bottom: 0;
+		}
 
 		.storage-add-ons-card__storage-dropdown {
 			margin: 16px 0;
@@ -137,7 +139,7 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 		siteIdOrSlug: siteId,
 	} );
 
-	const used = filesize( mediaStorage?.storageUsedBytes || 0, { round: 0 } );
+	const used = filesize( mediaStorage?.storageUsedBytes || 0, { round: 1 } );
 	const max = filesize( mediaStorage?.maxStorageBytes || 0, { round: 0 } );
 
 	const purchasedStorageAddOn = useGetPurchasedStorageAddOn( { siteId } );
@@ -211,8 +213,8 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 	}
 
 	const onActionPrimary = () => {
-		actionPrimary?.handler(
-			availableStorageAddOns[ 0 ].productSlug,
+		actionPrimary?.(
+			availableStorageAddOns[ 0 ]?.productSlug,
 			selectedStorageAddOnStorageQuantity
 		);
 	};
@@ -241,7 +243,9 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 					</div>
 				</CardHeader>
 				<CardBody className="storage-add-ons-card__body">
-					{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					<p>
+						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					</p>
 					{ selectControlOptions.length ? (
 						<div className="storage-add-ons-card__storage-dropdown">
 							<CustomSelectControl
@@ -259,7 +263,7 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 				<CardFooter isBorderless className="storage-add-ons-card__footer">
 					{ Boolean( selectControlOptions.length ) && actionPrimary && (
 						<Button onClick={ onActionPrimary } variant="primary">
-							{ actionPrimary.text }
+							{ translate( 'Buy add-on' ) }
 						</Button>
 					) }
 				</CardFooter>

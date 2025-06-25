@@ -47,7 +47,7 @@ export function useActions(
 				recordIntentionEvent( plugins, 'manage-plugin' );
 				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
 			},
-			label: translate( 'Manage Plugin' ),
+			label: translate( 'Manage plugin' ),
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: false,

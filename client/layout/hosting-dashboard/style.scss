@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .main.hosting-dashboard-layout-column,
 .main.hosting-dashboard-layout {
@@ -17,6 +18,19 @@
 		button {
 			padding: 20px 0;
 		}
+	}
+}
+
+.main.hosting-dashboard-layout-column {
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	display: flex;
+	flex-direction: column;
+
+	@include break-small {
+		height: 100%;
+		padding-block-start: 1px;
+		border: 1px solid $gray-200;
+		box-sizing: border-box;
 	}
 }
 
@@ -79,7 +93,6 @@
 	}
 
 	.notice-banner {
-		padding: 24px;
 
 		&.is-info {
 			border-left-color: var(--color-primary);

@@ -1,7 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
+import { useCallback } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
@@ -9,6 +11,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
+import { PurchasesDataViews } from 'calypso/me/purchases/purchases-list-in-dataviews/purchases-data-view';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
@@ -18,8 +21,10 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -36,7 +41,7 @@ function SubscriptionsContent( {
 	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
 } ) {
-	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = ( siteSlug, purchaseId ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 
@@ -64,7 +69,6 @@ function SubscriptionsContent( {
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					key={ selectedSite.ID }
 					siteId={ selectedSite.ID }
-					name={ selectedSite.name }
 					slug={ selectedSite.slug }
 					purchases={ purchases }
 					cards={ cards }
@@ -92,6 +96,42 @@ export default function SubscriptionsContentWrapper() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const sites = useSelector( getSites ).filter( isValueTruthy );
+	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = useCallback(
+		( siteSlug, purchaseId ) => `/purchases/subscriptions/${ siteSlug }/${ purchaseId }`,
+		[]
+	);
+
+	if ( config.isEnabled( 'purchases/purchase-list-dataview' ) ) {
+		if ( ! selectedSiteId ) {
+			return <NoSitesMessage />;
+		}
+		if ( ! hasLoadedPurchases || isFetchingPurchases ) {
+			return (
+				<div className="subscriptions__list">
+					<PurchasesSite isPlaceholder />
+				</div>
+			);
+		}
+		// If there is a selected site but no site data, show the placeholder
+		if ( ! selectedSite?.ID ) {
+			return (
+				<div className="subscriptions__list">
+					<PurchasesSite isPlaceholder />
+				</div>
+			);
+		}
+		if ( purchases.length < 1 ) {
+			return <NoPurchasesMessage />;
+		}
+		return (
+			<PurchasesDataViews
+				purchases={ purchases }
+				sites={ sites }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+			/>
+		);
+	}
 
 	return (
 		<SubscriptionsContent
@@ -143,7 +183,6 @@ function NoPurchasesMessage() {
 					line={ translate( 'You have made no purchases for this site.' ) }
 					action={ translate( 'Upgrade now' ) }
 					actionURL={ url }
-					illustration={ noSitesIllustration }
 					actionCallback={ () => {
 						recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
 					} }

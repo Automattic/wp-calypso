@@ -13,7 +13,6 @@ import {
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
-import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
@@ -24,7 +23,6 @@ const log = debug( 'calypso:middleware-media' );
 
 export const updateMediaSuccess = ( { siteId }, mediaItem ) => [
 	receiveMedia( siteId, mediaItem ),
-	gutenframeUpdateImageBlocks( mediaItem, 'updated' ),
 ];
 
 export const updateMediaError = ( { siteId, originalMediaItem } ) => [

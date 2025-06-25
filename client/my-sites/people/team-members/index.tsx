@@ -1,5 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -75,10 +76,14 @@ function TeamMembers( props: Props ) {
 			);
 		}
 
-		return translate( 'You have %(number)d team member', 'You have %(number)d team members', {
-			args: { number: membersTotal as number, searchTerm: search as string },
-			count: membersTotal as number,
-		} );
+		return translate(
+			'You have %(membersTotalCount)s user',
+			'You have %(membersTotalCount)s users',
+			{
+				args: { membersTotalCount: formatNumber( membersTotal as number ) },
+				count: membersTotal as number,
+			}
+		);
 	}
 
 	function renderSSOMessageWrapper( key: number, children: ReactElement ) {
@@ -146,7 +151,7 @@ function TeamMembers( props: Props ) {
 						<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
 							{ showAddTeamMembersBtn && (
 								<Button compact primary href={ addTeamMemberLink }>
-									{ translate( 'Add a team member' ) }
+									{ translate( 'Add a user' ) }
 								</Button>
 							) }
 						</PeopleListSectionHeader>

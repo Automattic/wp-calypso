@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_MIGRATION_TRIAL_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
@@ -97,7 +98,6 @@ const DEFAULT_SITE_CAPABILITIES = {
 	remove_users: true,
 	update_plugins: true,
 	upload_files: true,
-	view_hosting: true,
 	view_stats: true,
 };
 

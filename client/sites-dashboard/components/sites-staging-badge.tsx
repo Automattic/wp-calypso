@@ -15,11 +15,10 @@ const SitesStagingBadge = styled( SitesLaunchStatusBadge )( ( props: SitesStagin
 		color: COLOR,
 		backgroundColor: BACKGROUND_COLOR,
 	},
-	'.current-site .site:hover &, .notouch .layout__secondary .site-selector.is-hover-enabled .site:hover  &':
-		{
-			color: '#1C1300',
-			backgroundColor: '#C08C00',
-		},
+	'.notouch .layout__secondary .site-selector.is-hover-enabled .site:hover  &': {
+		color: '#1C1300',
+		backgroundColor: '#C08C00',
+	},
 } ) );
 
 export default SitesStagingBadge;

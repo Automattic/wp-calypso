@@ -1,6 +1,8 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .referrals-footer {
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	margin-block-end: 48px;
 	color: var(--color-neutral-50);
 

@@ -9,7 +9,7 @@
 }
 
 .marked-lines__marked-line {
-	background-color: rgba(var(--color-error-rgb), 0.2);
+	background-color: color-mix(in srgb, var(--color-error) 20%, transparent);
 }
 
 .marked-lines__line-numbers {
@@ -24,7 +24,7 @@
 	color: var(--color-text-subtle);
 
 	&.marked-lines__marked-line {
-		background-color: rgba(var(--color-error-rgb), 0.15);
+		background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
 	}
 }
 

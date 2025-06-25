@@ -21,6 +21,10 @@ jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( 
 	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
 	invalidateDomainSuggestionCache: () => {},
 } ) );
+jest.mock( '../hooks/use-streamlined-price-experiment', () => ( {
+	useStreamlinedPriceExperiment: () => [ false, null ],
+	isStreamlinedPriceExperiment: () => Promise.resolve( false ),
+} ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
@@ -45,12 +49,6 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
-
-jest.mock( '../hooks/experiments/use-longer-plan-term-default-experiment', () => () => ( {
-	isLoadingExperiment: false,
-} ) );
-
-jest.mock( '../hooks/use-eligibility-for-term-savings-price-display', () => () => false );
 
 import {
 	PLAN_FREE,

@@ -9,8 +9,9 @@ import './style.scss';
 export interface Action {
 	id: string;
 	label: string;
-	icon: ReactNode;
+	icon?: ReactNode;
 	callback: ( items: any[] ) => void;
+	isEligible?: ( item: any ) => boolean;
 }
 
 export function ListItemCardContent( {
@@ -42,6 +43,12 @@ export function ListItemCardActions( { actions, item }: { actions: Action[]; ite
 		setIsOpen( false );
 	}, [] );
 
+	const hasEligibleActions = actions.some( ( action ) => action.isEligible?.( item ) );
+
+	if ( ! hasEligibleActions ) {
+		return null;
+	}
+
 	return (
 		<div className="list-item-card-actions">
 			<Button onClick={ showActions } ref={ buttonActionRef }>
@@ -53,16 +60,18 @@ export function ListItemCardActions( { actions, item }: { actions: Action[]; ite
 				onClose={ closeDropdown }
 				position="bottom left"
 			>
-				{ actions.map( ( action ) => (
-					<PopoverMenuItem
-						key={ action.id }
-						onClick={ () => {
-							action.callback( [ item ] );
-						} }
-					>
-						{ action.label }
-					</PopoverMenuItem>
-				) ) }
+				{ actions.map( ( action ) =>
+					action.isEligible?.( item ) ? (
+						<PopoverMenuItem
+							key={ action.id }
+							onClick={ () => {
+								action.callback( [ item ] );
+							} }
+						>
+							{ action.label }
+						</PopoverMenuItem>
+					) : null
+				) }
 			</PopoverMenu>
 		</div>
 	);

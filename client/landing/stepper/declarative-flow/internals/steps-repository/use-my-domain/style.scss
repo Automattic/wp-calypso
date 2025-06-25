@@ -1,30 +1,65 @@
-.use-my-domain {
-	padding: 36px 0;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-	#choose-a-domain-writer-header {
-		p {
-			text-align: center;
-		}
-
-		button {
-			margin-left: 5px;
-		}
-	}
-
+.step-route.use-my-domain {
 	.start-writing .register-domain-step {
 		box-shadow: none;
 		background: none;
 	}
 
+	.domain-transfer-or-connect__content {
+		box-shadow: none;
+	}
+}
+
+.step-route.use-my-domain:not(:has(.step-container-v2)) {
+	padding: 36px 0;
+
 	.start-writing .register-domain-step__next-page-button {
 		padding-bottom: 8px !important;
 	}
+}
 
-	#choose-a-domain-onboarding-header {
-		p {
-			text-align: center;
-			font-size: 1rem;
+.use-my-domain:has(.step-container-v2) {
+	padding: 0;
+
+	.domain-transfer-or-connect__content {
+		&.card {
+			padding: 0;
+			margin: 0;
+		}
+
+		.option-content {
+			padding: 48px 0;
+			margin: 0;
+			gap: 24px;
+
+			@include break-small {
+				gap: 48px;
+			}
+
+			&:first-child {
+				padding-top: 0;
+			}
+
+			.option-content__illustration {
+				display: none;
+
+				@include break-small {
+					display: block;
+				}
+			}
+
+			.option-content__main {
+				max-width: unset;
+				margin: 0;
+			}
+
+			.option-content__action:empty {
+				// Ensure the action container doesn't participate in the flex
+				// layout when there's no button.
+				display: none;
+			}
 		}
 	}
-
 }

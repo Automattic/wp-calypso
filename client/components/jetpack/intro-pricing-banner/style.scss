@@ -63,6 +63,12 @@
 	margin-inline-end: 0.5em;
 }
 
+.intro-pricing-banner__item-label {
+	font-size: 1rem;
+	line-height: 1.5;
+	margin-bottom: 0;
+}
+
 .intro-pricing-banner__item-label.is-link {
 	color: var(--color-primary-100);
 	text-decoration: underline;

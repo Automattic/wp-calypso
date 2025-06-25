@@ -5,6 +5,8 @@ import { getUrlParts } from '@automattic/calypso-url';
 import moment from 'moment';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
+import { getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 
 /**
  * Update query for current page or passed in URL
@@ -128,4 +130,49 @@ export const getChartRangeParams = ( startDate, fromPeriod ) => {
 		chartEnd,
 		chartPeriod,
 	};
+};
+
+/**
+ * Get the preview URL for a post.
+ * When a site has a mapped domain, ensures the preview URL uses the unmapped domain
+ * to avoid potential SSL/proxy issues during preview.
+ * @param {Object} state - The Redux state object
+ * @param {number} siteId - The site ID
+ * @param {number} postId - The post ID
+ * @returns {string|null} The preview URL with appropriate domain, or null if unavailable
+ */
+export const getMappedPreviewUrl = ( state, siteId, postId ) => {
+	const basePreviewUrl = getPostPreviewUrl( state, siteId, postId );
+	if ( ! basePreviewUrl ) {
+		return basePreviewUrl;
+	}
+
+	const site = getSite( state, siteId );
+	if ( ! site ) {
+		return basePreviewUrl;
+	}
+
+	try {
+		const previewUrl = new URL( basePreviewUrl );
+
+		// Ensure HTTPS if the site uses HTTPS
+		if ( site.URL ) {
+			const siteUrl = new URL( site.URL );
+			if ( siteUrl.protocol === 'https:' ) {
+				previewUrl.protocol = 'https:';
+			}
+		}
+
+		// Use unmapped domain if this is a mapped domain site
+		const shouldUseUnmappedDomain = site.options?.is_mapped_domain && site.options?.unmapped_url;
+		if ( shouldUseUnmappedDomain ) {
+			const unmappedUrl = new URL( site.options.unmapped_url );
+			previewUrl.protocol = unmappedUrl.protocol;
+			previewUrl.host = unmappedUrl.host;
+		}
+
+		return previewUrl.toString();
+	} catch ( error ) {
+		return basePreviewUrl;
+	}
 };

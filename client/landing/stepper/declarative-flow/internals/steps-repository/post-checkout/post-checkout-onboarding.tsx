@@ -1,4 +1,5 @@
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
+import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
@@ -7,7 +8,8 @@ import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-t
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
-import type { Step } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const usePluginByGoal = () => {
@@ -23,7 +25,7 @@ const usePluginByGoal = () => {
 	return null;
 };
 
-const PostCheckoutOnboarding: Step = ( { navigation } ) => {
+const PostCheckoutOnboarding: StepType = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
@@ -128,7 +130,10 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 			return providedDependencies;
 		} );
 
-		submit?.();
+		submit?.( {
+			siteId: site.ID,
+			siteSlug,
+		} );
 	}, [
 		site,
 		siteSlug,
@@ -141,6 +146,10 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		isExternallyManagedThemeAvailable,
 		hasPluginByGoal,
 	] );
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return <Step.Loading />;
+	}
 
 	return <Loading className="wpcom-loading__boot" />;
 };

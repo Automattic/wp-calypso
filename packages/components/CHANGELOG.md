@@ -1,4 +1,38 @@
-## Next
+## Unreleased
+
+### Breaking changes
+
+- Remove `CoreBadge` component. Use `Badge` from `@automattic/ui` instead ([#104188](https://github.com/Automattic/wp-calypso/pull/104188)).
+- Remove `DateCalendar` and `DateRangeCalendar` components. Use from `@automattic/ui` instead ([#104224](https://github.com/Automattic/wp-calypso/pull/104224)).
+
+## 3.0.0
+
+### Breaking changes
+
+- `CoreBadge`: Fork from `@wordpress/components` and convert styles to CSS module. Static class names are no longer available ([#103568](https://github.com/Automattic/wp-calypso/pull/103568)).
+- Remove `CountCard`, `CountComparisonCard`, `AnnualHighlightCards`, and `MobileHighlightCardListing` components from the package ([#103799](https://github.com/Automattic/wp-calypso/pull/103799)).
+
+### New components
+
+- Add new `DateCalendar` and `DateRangeCalendar` components ([#103921](https://github.com/Automattic/wp-calypso/pull/103921)).
+
+### Enhancements
+
+- Add `BigSkyLogo.Mark` component ([#103612](https://github.com/Automattic/wp-calypso/pull/103612)).
+- Add `ValidatedFormControls` components, still in beta ([#100771](https://github.com/Automattic/wp-calypso/pull/100771)).
+- `Tabs.Tablist`: added `density` prop with new `compact` variant ([#103843](https://github.com/Automattic/wp-calypso/pull/103843)).
+- Add `title` to the `WooLogo` component's SVG ([#103800](https://github.com/Automattic/wp-calypso/pull/103800)).
+- Add `role` prop to the `Gravatar` component ([#103888](https://github.com/Automattic/wp-calypso/pull/103888)).
+- `SummaryButton`: tweak horizontal spacing to match `CardBody` ([#103573](https://github.com/Automattic/wp-calypso/pull/103573)).
+- `SummaryButton`: use `border` instead of `box-shadow` ([#103555](https://github.com/Automattic/wp-calypso/pull/103555)).
+- `TimeSince`: support new `lll` value for the `dateFormat` prop ([#103586](https://github.com/Automattic/wp-calypso/pull/103586)).
+
+### Internal
+
+- `Tabs`: make local copy of private wp components version ([#103515](https://github.com/Automattic/wp-calypso/pull/103515)).
+- `Tabs`: convert to (S)CSS modules ([#103710](https://github.com/Automattic/wp-calypso/pull/103710)).
+
+## 2.3.0
 
 ### Breaking changes
 
@@ -8,10 +42,15 @@
 - Remove `ClientLogoList` ([#99463](https://github.com/Automattic/wp-calypso/pull/99463)).
 - Remove `number-formatters` component and utility functions ([#99405](https://github.com/Automattic/wp-calypso/pull/99405))
 - Remove `PostStatsCard` ([#99665](https://github.com/Automattic/wp-calypso/pull/99665)).
+- Remove `PricingSlider` ([#102362](https://github.com/Automattic/wp-calypso/pull/102362)).
 
 ### Enhancements
 
-- Add FlowQuestion component
+- Add `FlowQuestion` component
+- Add `Breadcrumbs` and `Menu` components ([#102998](https://github.com/Automattic/wp-calypso/pull/102998)).
+- Add `SummaryButton` component ([#102827](https://github.com/Automattic/wp-calypso/pull/102827)).
+- Add `CoreBadge` component ([#103069](https://github.com/Automattic/wp-calypso/pull/103069)).
+- Add `Tabs` component ([#103231](https://github.com/Automattic/wp-calypso/pull/103231)).
 
 ## 2.1.1
 

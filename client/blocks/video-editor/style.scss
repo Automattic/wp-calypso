@@ -4,7 +4,7 @@
 	height: 100%;
 }
 
-.editor-media-modal .video-editor .notice.video-editor__notice {
+.editor-media-modal .video-editor .calypso-notice.video-editor__notice {
 	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 0;
 	}

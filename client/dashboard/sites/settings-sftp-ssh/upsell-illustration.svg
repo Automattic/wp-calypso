@@ -1,0 +1,51 @@
+<svg width="286" height="244" viewBox="0 0 286 244" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g clip-path="url(#clip0_4468_75682)">
+<path d="M0 4C0 1.79086 1.79086 0 4 0H282C284.209 0 286 1.79086 286 4V240C286 242.209 284.209 244 282 244H3.99999C1.79085 244 0 242.209 0 240V4Z" fill="#101517"/>
+<rect opacity="0.1" width="286" height="244" fill="url(#pattern0_4468_75682)"/>
+<path d="M203.478 33.5703C214.673 33.0347 222.374 35.6437 229.996 38.9199C237.382 42.0949 244.747 45.9263 255.091 48.0537L256.102 48.2539C276.258 52.1079 328.926 57.669 350.484 58.6455L343.075 303.5H-46.5V95.0703C-26.4919 90.8431 17.3501 78.5383 39.625 72.7441L43.8047 71.6699C54.3601 68.9978 62.0277 65.7314 69.8232 62.9463C77.3776 60.2474 85.1008 57.9802 95.8164 57.0752L96.8623 56.9912C107.202 56.2179 115.285 58.1601 123.402 59.9756C131.265 61.7341 139.154 63.3708 149.051 62.2188L150.015 62.0986C163.796 60.2644 170.336 53.348 176.844 46.8311C180.098 43.5725 183.328 40.4298 187.459 38.0117C191.45 35.6752 196.3 34.0051 202.84 33.6045L203.478 33.5703Z" fill="url(#paint0_linear_4468_75682)" fill-opacity="0.3" stroke="url(#paint1_linear_4468_75682)"/>
+<path opacity="0.8" d="M88.5 179.5L87 81V69L103 60L131 57H155.5L183.5 61L201 69V177.5L190.5 183L163 188H127L105.5 185L88.5 179.5Z" fill="#101517"/>
+<line x1="86" y1="180" x2="86" y2="62" stroke="#3858E9"/>
+<ellipse cx="143.5" cy="122.5" rx="57" ry="12.5" stroke="url(#paint2_linear_4468_75682)"/>
+<ellipse cx="143.5" cy="175.5" rx="57" ry="12.5" stroke="url(#paint3_linear_4468_75682)"/>
+<line x1="200" y1="180" x2="200" y2="62" stroke="url(#paint4_linear_4468_75682)"/>
+<circle cx="200" cy="122" r="4.25" fill="white" stroke="#3858E9" stroke-width="1.5"/>
+<ellipse cx="143.5" cy="69.5" rx="57" ry="12.5" stroke="url(#paint5_linear_4468_75682)"/>
+<circle cx="200" cy="67" r="4.25" fill="white" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="200" cy="175" r="4.25" fill="white" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="86" cy="67" r="4.25" fill="white" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="86" cy="122" r="4.25" fill="white" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="86" cy="175" r="4.25" fill="white" stroke="#3858E9" stroke-width="1.5"/>
+</g>
+<defs>
+<pattern id="pattern0_4468_75682" patternContentUnits="objectBoundingBox" width="0.020979" height="0.0245902">
+<use xlink:href="#image0_4468_75682" transform="scale(0.00174825 0.00204918)"/>
+</pattern>
+<linearGradient id="paint0_linear_4468_75682" x1="149.972" y1="144.091" x2="149.972" y2="32.6793" gradientUnits="userSpaceOnUse">
+<stop offset="0.0740631" stop-color="#010101"/>
+<stop offset="1" stop-color="#069E08" stop-opacity="0.5"/>
+</linearGradient>
+<linearGradient id="paint1_linear_4468_75682" x1="-48.0409" y1="160.62" x2="216.517" y2="159.309" gradientUnits="userSpaceOnUse">
+<stop stop-color="#069E08"/>
+<stop offset="1" stop-color="#4458E4"/>
+</linearGradient>
+<linearGradient id="paint2_linear_4468_75682" x1="94.5" y1="120" x2="190.508" y2="121.463" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3858E9"/>
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<linearGradient id="paint3_linear_4468_75682" x1="94.5" y1="173" x2="190.508" y2="174.463" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3858E9"/>
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<linearGradient id="paint4_linear_4468_75682" x1="201" y1="76.9493" x2="214.026" y2="165.934" gradientUnits="userSpaceOnUse">
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<linearGradient id="paint5_linear_4468_75682" x1="94.5" y1="67" x2="190.508" y2="68.4631" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3858E9"/>
+<stop offset="1" stop-color="#069E08"/>
+</linearGradient>
+<clipPath id="clip0_4468_75682">
+<path d="M0 4C0 1.79086 1.79086 0 4 0H282C284.209 0 286 1.79086 286 4V240C286 242.209 284.209 244 282 244H3.99999C1.79085 244 0 242.209 0 240V4Z" fill="white"/>
+</clipPath>
+<image id="image0_4468_75682" width="12" height="12" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAHklEQVR4nGNgGAUI8P/////YxJnwKcaliSQbhgMAAKzQD/NUeFzJAAAAAElFTkSuQmCC"/>
+</defs>
+</svg>

@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
@@ -15,6 +16,8 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -33,7 +36,6 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRequest from 'calypso/state/selectors/get-request';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
@@ -48,6 +50,7 @@ import {
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
+import { FullScreenLaunchpad } from '../full-screen-launchpad';
 
 import './style.scss';
 
@@ -75,10 +78,13 @@ const HomeContent = ( {
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
+
+	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -96,6 +102,8 @@ const HomeContent = ( {
 	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
+
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
@@ -140,10 +148,21 @@ const HomeContent = ( {
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
+		return <EmptyContent title={ preventWidows( title ) } />;
+	}
+
+	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
 		return (
-			<EmptyContent
-				title={ preventWidows( title ) }
-				illustration="/calypso/images/illustrations/error.svg"
+			<FullScreenLaunchpad
+				onClose={ async () => {
+					setFocusedLaunchpadDismissed( true );
+					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
+					skipCurrentView( null, true );
+				} }
+				onSiteLaunch={ () => {
+					setCelebrateLaunchModalIsOpen( true );
+					setFocusedLaunchpadDismissed( true );
+				} }
 			/>
 		);
 	}
@@ -339,7 +358,6 @@ const HomeContent = ( {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const installedWooCommercePlugin = getPluginOnSite( state, siteId, 'woocommerce' );
 
 	return {
@@ -349,8 +367,7 @@ const mapStateToProps = ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		isStaticHomePage:
-			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
 		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),

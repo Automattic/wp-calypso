@@ -1,5 +1,12 @@
 export const WapuuAvatar = () => (
-	<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg
+		width="38"
+		height="38"
+		viewBox="0 0 38 38"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+	>
 		<circle cx="19" cy="19" r="19" fill="#FFD200" />
 		<g clipPath="url(#clip0_286_11962)">
 			<circle cx="30.0846" cy="15.8333" r="1.58333" fill="black" />

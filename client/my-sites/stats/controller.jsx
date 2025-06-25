@@ -301,11 +301,10 @@ export function summary( context, next ) {
 	const extraProps =
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 
-	let statsQueryOptions = {};
+	// The option is used for stats queries only.
+	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode', 'viewType' ] );
 
-	// All Time Summary Support
-	if ( queryOptions.summarize && queryOptions.num ) {
-		statsQueryOptions = pick( queryOptions, [ 'num', 'summarize' ] );
+	if ( queryOptions.summarize ) {
 		statsQueryOptions.period = 'day';
 	}
 
@@ -509,7 +508,9 @@ export function emailSummary( context, next ) {
 
 	const date = moment().locale( 'en' );
 
-	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
+	context.primary = (
+		<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } context={ context } />
+	);
 
 	next();
 }

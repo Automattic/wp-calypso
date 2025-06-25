@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { zendeskMessageConverter } from '../utils';
+import { getConversationIdFromInteraction, zendeskMessageConverter } from '../utils';
 import type { ZendeskMessage } from '../types';
 
 /**
@@ -21,9 +21,8 @@ export const useZendeskMessageListener = () => {
 		};
 	}, [] );
 
-	const currentZendeskConversationId = currentSupportInteraction?.events.find(
-		( event ) => event.event_source === 'zendesk'
-	)?.event_external_id;
+	const currentZendeskConversationId =
+		getConversationIdFromInteraction( currentSupportInteraction );
 
 	const messageListener = useCallback(
 		( message: unknown, data: { conversation: { id: string } } ) => {

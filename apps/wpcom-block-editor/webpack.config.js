@@ -36,8 +36,6 @@ function getWebpackConfig(
 			'default.editor': path.join( __dirname, 'src', 'default', 'editor' ),
 			'default.view': path.join( __dirname, 'src', 'default', 'view' ),
 			'wpcom.editor': path.join( __dirname, 'src', 'wpcom', 'editor' ),
-			'calypso.editor': path.join( __dirname, 'src', 'calypso', 'editor' ),
-			'calypso.tinymce': path.join( __dirname, 'src', 'calypso', 'tinymce' ),
 		},
 		outputPath = path.join( __dirname, 'dist' ),
 		outputFilename = isDevelopment ? '[name].js' : '[name].min.js',

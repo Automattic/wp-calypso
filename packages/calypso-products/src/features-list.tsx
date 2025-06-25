@@ -40,7 +40,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
@@ -192,6 +191,8 @@ import {
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
 	FEATURE_DEV_TOOLS,
+	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -542,11 +543,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-
-	[ FEATURE_CLOUDFLARE_ANALYTICS ]: {
-		getSlug: () => FEATURE_CLOUDFLARE_ANALYTICS,
-		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
@@ -1655,30 +1651,16 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
-				newCopy: i18n.translate(
-					'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
-				),
-				oldCopy: i18n.translate(
-					'Commission fee for standard payment features (plus standard processing\u00A0fee)'
-				),
-			} ),
+			i18n.translate(
+				'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+			),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)',
-				newCopy: i18n.translate(
-					'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
-				),
-				oldCopy: i18n.translate(
-					'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
-				),
-			} ),
+			i18n.translate(
+				'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
+			),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -1955,6 +1937,19 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+	},
+	[ FEATURE_DEV_TOOLS_SSH ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_SSH,
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI' ),
+		getDescription: () => i18n.translate( 'Access your site via SSH and manage it with WP-CLI.' ),
+	},
+	[ FEATURE_DEV_TOOLS_GIT ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_GIT,
+		getTitle: () => i18n.translate( 'Git commands and GitHub Deployments' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deploy from GitHub with a few clicks. Simple and advanced deployment modes supported.'
+			),
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
@@ -2266,13 +2261,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ES_SEARCH_JP ]: {
 		getSlug: () => FEATURE_ES_SEARCH_JP,
-		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Jetpack Search',
-				newCopy: i18n.translate( 'Jetpack Search' ),
-				oldCopy: i18n.translate( 'Built-in Elasticsearch' ),
-			} ),
+		getTitle: () => i18n.translate( 'Jetpack Search' ),
 		getDescription: () =>
 			i18n.translate( 'Make surfacing your content simple with built-in premium site search.' ),
 	},
@@ -2284,30 +2273,17 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
 		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
-		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Site activity log',
-				newCopy: i18n.translate( 'Site activity log' ),
-				oldCopy: i18n.translate( 'Unlimited site activity log' ),
-			} ),
+		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
 	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
-		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 		getDescription: () =>
-			i18n.fixMe( {
-				text: 'Allow your audience to support your work easily with charitable donations and tips.',
-				newCopy: i18n.translate(
-					'Allow your audience to support your work easily with charitable donations and tips.'
-				),
-				oldCopy: i18n.translate(
-					'Allow your audience to support your work easily with donations and tips.'
-				),
-			} ),
+			i18n.translate(
+				'Allow your audience to support your work easily with charitable donations and tips.'
+			),
 	},
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
@@ -2325,9 +2301,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOOCOMMERCE_HOSTING ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
-		getTitle: () => {
-			return i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' );
-		},
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'eCommerce tools and optimized WooCommerce experience' )
+				? i18n.translate( 'eCommerce tools and optimized WooCommerce experience' )
+				: i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'Enjoy a hosting solution tailored to enhance the performance and security of sites running WooCommerce.'
@@ -2453,20 +2431,8 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
-		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Support from our expert\u00A0team',
-				newCopy: i18n.translate( 'Support from our expert\u00A0team' ),
-				oldCopy: i18n.translate( 'Fast support from our expert\u00A0team' ),
-			} ),
-		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-		getDescription: () =>
-			i18n.fixMe( {
-				text: 'Get support from our expert, friendly Happiness team',
-				newCopy: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
-				oldCopy: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
-			} ),
+		getTitle: () => i18n.translate( 'Support from our expert\u00A0team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,

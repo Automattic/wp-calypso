@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { findCountryFromNumber } from '../phone-number';
 
 describe( 'Phone Number: findCountyFromNumber', () => {

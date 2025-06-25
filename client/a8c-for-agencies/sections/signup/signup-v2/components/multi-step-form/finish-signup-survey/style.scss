@@ -1,0 +1,29 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-neutral-10);
+}
+
+
+.signup-finish-survey__content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	p {
+		@include body-large;
+
+		@media (prefers-color-scheme: dark) {
+			color: var(--color-text-inverted);
+		}
+	}
+}
+
+.signup-finish-survey__content-placeholder {
+	@include loading-effect;
+	width: 100%;
+	height: 24px;
+	display: block;
+}

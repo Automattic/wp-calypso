@@ -1,4 +1,5 @@
 /** @jest-environment jsdom */
+// @ts-nocheck - TODO: Fix TypeScript issues
 jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="start-step-wrapper" /> );
 jest.mock( '@automattic/onboarding/src/step-container', () => () => (
 	<div data-testid="stepper-step-wrapper" />

@@ -31,6 +31,7 @@ import { DeviceTabControls } from './components/device-tab-control';
 import { ExpiredReportNotice } from './components/expired-report-notice/expired-report-notice';
 import { usePerformanceReport } from './hooks/usePerformanceReport';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
+import { getSupportLinkProps } from './utils';
 
 import './style.scss';
 
@@ -276,7 +277,7 @@ const SitePerformanceContent = () => {
 					'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
 					{
 						components: {
-							link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
+							link: <InlineSupportLink { ...getSupportLinkProps() } />,
 						},
 					}
 			  );

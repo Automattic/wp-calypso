@@ -1,13 +1,9 @@
 import config from '@automattic/calypso-config';
-import { HelpCenter } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
-import { useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component, useCallback, useEffect, useState } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies';
 import AsyncLoad from 'calypso/components/async-load';
@@ -23,41 +19,36 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import OfflineStatus from 'calypso/layout/offline-status';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { onboardingUrl } from 'calypso/lib/paths';
+import {
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useSelector } from 'calypso/state';
-import { isOffline } from 'calypso/state/application/selectors';
-import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	getShouldShowCollapsedGlobalSidebar,
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
+import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
-	getSelectedSite,
 	getSelectedSiteId,
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
@@ -65,6 +56,7 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
+import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
 
@@ -79,8 +71,6 @@ import '@automattic/components/src/button/style.scss';
 import '@automattic/components/src/card/style.scss';
 
 import './style.scss';
-
-const HELP_CENTER_STORE = HelpCenter.register();
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
@@ -105,74 +95,6 @@ function SidebarScrollSynchronizer() {
 	}, [ active ] );
 
 	return null;
-}
-
-function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
-	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
-		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
-
-	const handleClose = useCallback( () => {
-		setShowWhatsNew( false );
-	}, [ setShowWhatsNew ] );
-
-	if ( ! loadWhatsNew ) {
-		return null;
-	}
-
-	return (
-		showWhatsNew && (
-			<AsyncLoad
-				require="@automattic/whats-new"
-				placeholder={ null }
-				onClose={ handleClose }
-				siteId={ siteId }
-			/>
-		)
-	);
-}
-
-function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const isDesktop = useBreakpoint( '>782px' );
-	const handleClose = useCallback( () => {
-		setShowHelpCenter( false );
-	}, [ setShowHelpCenter ] );
-
-	const locale = useLocale();
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const user = useSelector( getCurrentUser );
-	const selectedSite = useSelector( getSelectedSite );
-	const primarySiteSlug = useSelector( getPrimarySiteSlug );
-	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-
-	if ( ! loadHelpCenter ) {
-		return null;
-	}
-
-	return (
-		<AsyncLoad
-			require="@automattic/help-center"
-			placeholder={ null }
-			handleClose={ handleClose }
-			currentRoute={ currentRoute }
-			locale={ locale }
-			sectionName={ sectionName }
-			site={ selectedSite || primarySite }
-			currentUser={ user }
-			hasPurchases={ hasPurchases }
-			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
-			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
-			onboardingUrl={ onboardingUrl() }
-			googleMailServiceFamily={ getGoogleMailServiceFamily() }
-		/>
-	);
 }
 
 function SidebarOverflowDelay( { layoutFocus } ) {
@@ -204,23 +126,6 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	return null;
 }
 
-function AppBannerLoader( { siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
-	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
-		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
-
-	return (
-		! isLoading &&
-		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
-	);
-}
-
 class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
@@ -229,10 +134,10 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
-		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -267,6 +172,10 @@ class Layout extends Component {
 			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
 		}
 
+		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
+			return null;
+		}
+
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -291,6 +200,8 @@ class Layout extends Component {
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
+			'a8c-for-agencies': isA4AOAuth2Client( this.props.oauth2Client ),
+			crowdsignal: isCrowdsignalOAuth2Client( this.props.oauth2Client ),
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
@@ -307,7 +218,9 @@ class Layout extends Component {
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
+			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+			'is-domain-for-gravatar': this.props.isGravatarDomain,
 		} );
 
 		const optionalBodyProps = () => {
@@ -337,10 +250,6 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<WhatsNewLoader
-					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden && ! this.props.isNewUser }
-					siteId={ this.props.siteId }
-				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -356,7 +265,6 @@ class Layout extends Component {
 					section={ this.props.sectionName }
 					{ ...optionalBodyProps() }
 				/>
-				<HtmlIsIframeClassname />
 				<DocumentHead />
 				{ this.props.shouldQueryAllSites ? (
 					<QuerySites allSites />
@@ -385,7 +293,6 @@ class Layout extends Component {
 						<QueryAgencies />
 					</>
 				) }
-				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
@@ -399,12 +306,16 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
-					<div id="secondary" className="layout__secondary" role="navigation">
-						{ this.props.secondary }
-					</div>
-					<div id="primary" className="layout__primary">
-						{ this.props.primary }
-					</div>
+					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
+						<>
+							<div id="secondary" className="layout__secondary" role="navigation">
+								{ this.props.secondary }
+							</div>
+							<div id="primary" className="layout__primary">
+								{ this.props.primary }
+							</div>
+						</>
+					) }
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
 				{ 'development' === process.env.NODE_ENV && (
@@ -415,9 +326,6 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AppBannerLoader siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
@@ -448,18 +356,19 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+
+		const sidebarType = getSidebarType( {
 			state,
 			siteId,
-			sectionGroup
-		);
-		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-			state,
-			siteId,
-			sectionGroup,
-			sectionName
-		);
+			section: currentSection,
+			route: currentRoute,
+		} );
+
+		const shouldShowGlobalSidebar =
+			sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed;
+		const shouldShowCollapsedGlobalSidebar = sidebarType === SidebarType.GlobalCollapsed;
+		const shouldShowUnifiedSiteSidebar = sidebarType === SidebarType.UnifiedSiteClassic;
+
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -478,7 +387,8 @@ export default withCurrentRoute(
 			isWpMobileApp() ||
 			isWcMobileApp() ||
 			isJetpackCloud() ||
-			isA8CForAgencies();
+			isA8CForAgencies() ||
+			isInStepContainerV2FlowContext( currentRoute, currentQuery );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooDnaFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -496,8 +406,20 @@ export default withCurrentRoute(
 			: getColorScheme( {
 					state,
 					isGlobalSidebarVisible,
+					sidebarIsHidden,
 					sectionName,
 			  } );
+		const needsColorScheme =
+			! sidebarIsHidden &&
+			( sidebarType === SidebarType.UnifiedSiteDefault ||
+				sidebarType === SidebarType.UnifiedSiteClassic );
+
+		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
+			sectionName
+		);
+		const isGravatarDomain =
+			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
+			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
 		return {
 			masterbarIsHidden,
@@ -517,9 +439,10 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
-			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
+			needsColorScheme,
+			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
@@ -534,6 +457,7 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+			isGravatarDomain,
 		};
 	} )( Layout )
 );

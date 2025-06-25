@@ -3,7 +3,6 @@ import { SVG, Path } from '@wordpress/components';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
-import { preventWidows } from 'calypso/lib/formatting';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
 import type {
@@ -198,9 +197,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					<p className="jetpack-product-card__above-button">{ aboveButtonText }</p>
 				) }
 				{ isDisabled && disabledMessage && (
-					<p className="jetpack-product-card__disabled-message">
-						{ preventWidows( disabledMessage ) }
-					</p>
+					<p className="jetpack-product-card__disabled-message">{ disabledMessage }</p>
 				) }
 				{ buttonURL ? (
 					<Button

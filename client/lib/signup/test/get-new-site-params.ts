@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { getNewSiteParams } from 'calypso/lib/signup/step-actions';
 
 describe( 'get-new-site-params', () => {

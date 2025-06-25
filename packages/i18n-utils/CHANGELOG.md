@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+
+Add `getNumericFirstDayOfWeek` method as a wrapper for native (but not yet fully supported) `new Intl.Locale( locale ).getWeekInfo()`
+
 ## 1.2.3
 
 Get rid of i18n-calypso dependency

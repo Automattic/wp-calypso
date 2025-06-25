@@ -106,6 +106,7 @@ export interface APIProductFamilyProduct {
 	name: string;
 	slug: string;
 	product_id: number;
+	alternative_product_id?: number;
 	currency: string;
 	amount: string;
 	price_interval: string;

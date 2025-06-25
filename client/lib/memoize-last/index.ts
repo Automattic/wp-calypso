@@ -1,4 +1,4 @@
-interface Clearable {
+export interface Clearable {
 	clear(): void;
 }
 

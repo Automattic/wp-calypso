@@ -50,7 +50,7 @@ export default function HeadingInformation( props: Props ) {
 
 	const onMigrateSite = () => {
 		recordCtaEvent( 'migrateSite' );
-		page( `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }` );
+		page( `/setup/site-migration?ref=site-profiler&from=${ domain }` );
 	};
 
 	const onLearnMoreHosting = () => {

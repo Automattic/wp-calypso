@@ -6,25 +6,17 @@ import { FC, ReactNode } from 'react';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
 import './style.scss';
 
-export type Status = 'idle' | 'pending' | 'success' | 'error';
-
 interface ProvisionStatusProps {
 	status: {
-		siteTransfer: Status;
-		migrationKey: string;
-		pluginInstallation?: Status;
+		siteTransferStatus: string;
+		migrationKeyStatus: string;
 	};
 }
 
 export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
-	const {
-		siteTransfer: siteTransferStatus,
-		migrationKey: migrationKeyStatus,
-		pluginInstallation: pluginInstallationStatus,
-	} = status;
+	const { siteTransferStatus, migrationKeyStatus } = status;
 
-	const preparationCompleted =
-		siteTransferStatus === 'success' && pluginInstallationStatus === 'success';
+	const preparationCompleted = siteTransferStatus === 'completed';
 
 	if ( preparationCompleted ) {
 		const text =
@@ -49,7 +41,6 @@ export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
 
 	const actions = [
 		{ status: siteTransferStatus, text: translate( 'Provisioning your new site' ) },
-		{ status: pluginInstallationStatus, text: translate( 'Installing the required plugins' ) },
 		{ status: migrationKeyStatus, text: translate( 'Getting the migration key' ) },
 	].filter( ( action ) => action.status );
 

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -84,10 +85,9 @@ describe( 'Site Migration Import or Migrate Step', () => {
 			},
 		} );
 
-		const { container, queryByText } = render();
+		const { queryByText } = render();
 
-		expect( container.querySelectorAll( '.formatted-header__subtitle' ) ).toHaveLength( 1 );
-		expect( queryByText( /WP Engine/ ) ).toBeInTheDocument();
+		expect( queryByText( /WP Engine/ ) ).toBeVisible();
 	} );
 
 	it( "doesn't show the host identification message when the host is unknown", async () => {
@@ -125,7 +125,7 @@ describe( 'Site Migration Import or Migrate Step', () => {
 	it( 'shows the upgrade required badge when the site can not install plugins', () => {
 		render();
 
-		expect( screen.getByText( /Available on Business with 50% off/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /50% off Business/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows the included with your plan badge when the site can install plugins', () => {

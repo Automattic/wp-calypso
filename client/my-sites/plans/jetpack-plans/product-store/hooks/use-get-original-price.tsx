@@ -1,6 +1,6 @@
 import { TERM_MONTHLY, JETPACK_CRM_PRODUCTS } from '@automattic/calypso-products';
 import { useCallback } from 'react';
-import { useSelector } from 'calypso/state';
+import { useStore } from 'calypso/state';
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSiteAvailableProductCost } from 'calypso/state/sites/products/selectors';
 import { SelectorProduct } from '../../types';
@@ -8,7 +8,7 @@ import { SelectorProduct } from '../../types';
 const getMonthlyPrice = ( yearlyPrice: number ): number => ( yearlyPrice * 100 ) / 12 / 100;
 
 export const useGetOriginalPrice = ( siteId: number | null ) => {
-	const state = useSelector( ( state ) => state );
+	const store = useStore();
 
 	return useCallback(
 		( product: SelectorProduct ) => {
@@ -21,8 +21,9 @@ export const useGetOriginalPrice = ( siteId: number | null ) => {
 				return product.displayPrice || -1;
 			}
 
-			const productSlug = product?.costProductSlug || product?.productSlug;
+			const productSlug = product.costProductSlug || product.productSlug;
 
+			const state = store.getState();
 			const sitePricesItemCost =
 				siteId && productSlug && getSiteAvailableProductCost( state, siteId, productSlug );
 			const listPricesItemCost = productSlug && getProductCost( state, productSlug );
@@ -36,6 +37,6 @@ export const useGetOriginalPrice = ( siteId: number | null ) => {
 
 			return originalPrice;
 		},
-		[ siteId, state ]
+		[ siteId, store ]
 	);
 };

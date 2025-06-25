@@ -1,5 +1,4 @@
 import { useLayoutEffect, useState } from '@wordpress/element';
-import ResizeObserver from 'resize-observer-polyfill';
 import { GridSize } from '../types';
 
 interface Props {

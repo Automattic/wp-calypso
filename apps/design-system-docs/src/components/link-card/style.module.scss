@@ -1,0 +1,33 @@
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/variables';
+
+.link-card {
+	position: relative;
+	transition: box-shadow 0.2s ease;
+	
+	&:hover {
+		box-shadow: 0 0 0 1px colors.$gray-900;
+	}
+}
+
+.link-card__click-target {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.link-card__image {
+	border-bottom: 1px solid colors.$gray-200;
+}
+
+.link-card__label {
+	display: block;
+	color: currentColor;
+	font-size: variables.$font-size-large;
+	font-weight: variables.$font-weight-medium;
+}
+
+.link-card__description {
+	color: colors.$gray-700;
+	font-size: variables.$font-size-small;
+}

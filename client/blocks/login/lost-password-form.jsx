@@ -1,19 +1,20 @@
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { Spinner } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import FormsButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+
 const LostPasswordForm = ( {
 	redirectToAfterLoginUrl,
 	oauth2ClientId,
 	locale,
 	from,
 	isWooJPC,
+	isWoo,
 } ) => {
 	const translate = useTranslate();
 	const [ email, setEmail ] = useState( '' );
@@ -142,9 +143,15 @@ const LostPasswordForm = ( {
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>
 			<div className="login__form-action">
-				<FormsButton primary type="submit" disabled={ email.length === 0 || showError || isBusy }>
-					{ isBusy ? <Spinner /> : translate( 'Reset my password' ) }
-				</FormsButton>
+				<Button
+					variant="primary"
+					type="submit"
+					disabled={ email.length === 0 || showError || isBusy }
+					isBusy={ isBusy }
+					__next40pxDefaultSize
+				>
+					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
+				</Button>
 			</div>
 		</form>
 	);

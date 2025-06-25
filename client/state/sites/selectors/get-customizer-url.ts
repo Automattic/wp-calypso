@@ -1,10 +1,7 @@
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
 import { AppState } from 'calypso/types';
 import getSiteAdminUrl from './get-site-admin-url';
-import getSiteSlug from './get-site-slug';
-import isJetpackSite from './is-jetpack-site';
 
 /**
  * Returns the customizer URL for a site, or null if it cannot be determined.
@@ -23,20 +20,6 @@ export default function getCustomizerUrl(
 	returnUrl?: string | undefined | null,
 	guide?: string | undefined | null
 ): string | null {
-	if ( ! isJetpackSite( state, siteId ) ) {
-		const siteSlug = getSiteSlug( state, siteId );
-		const url = [ '' ]
-			.concat( [ 'customize', panel, siteSlug ].filter( isValueTruthy ) )
-			.join( '/' );
-		return addQueryArgs(
-			{
-				return: returnUrl,
-				guide,
-			},
-			url
-		);
-	}
-
 	const adminUrl = getSiteAdminUrl( state, siteId, 'customize.php' );
 
 	if ( ! adminUrl ) {

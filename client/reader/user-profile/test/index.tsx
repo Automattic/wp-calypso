@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';

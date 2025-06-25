@@ -1,5 +1,5 @@
+import { WordPressLogo } from '@automattic/components';
 import styled from '@emotion/styled';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 
 const MasterbarStyledBlock = styled( Masterbar )`

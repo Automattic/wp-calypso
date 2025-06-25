@@ -32,11 +32,9 @@ export const uploadPlugin = ( action ) => {
 
 const showErrorNotice = ( error ) => {
 	const knownErrors = {
-		exists: translate( 'This plugin is already installed on your site.' ),
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
-		plugin_malicious: translate( 'The uploaded file is identified as malicious.' ),
 	};
 	const errorString = `${ error.error }${ error.message }`.toLowerCase();
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
@@ -79,14 +77,23 @@ export const uploadComplete =
 		} );
 	};
 
-export const receiveError = ( { siteId }, error ) => [
-	recordTracksEvent( 'calypso_plugin_upload_error', {
-		error_code: error.error,
-		error_message: error.message,
-	} ),
-	showErrorNotice( error ),
-	pluginUploadError( siteId, error ),
-];
+export const receiveError = ( { siteId }, error ) => {
+	const actions = [
+		recordTracksEvent( 'calypso_plugin_upload_error', {
+			error_code: error.error,
+			error_message: error.message,
+		} ),
+		pluginUploadError( siteId, error ),
+	];
+
+	// We don't need to display error notices. The front end components will alert the user.
+	const errorsToMute = [ 'folder_exists', 'plugin_malicious' ];
+	if ( ! errorsToMute.includes( error.error ) ) {
+		actions.push( showErrorNotice( error ) );
+	}
+
+	return actions;
+};
 
 export const updateUploadProgress = ( { siteId }, { loaded, total } ) => {
 	const progress = total ? ( loaded / total ) * 100 : total;

@@ -74,7 +74,7 @@ export default function MigrationsCommissions() {
 			title={ title }
 			wide
 		>
-			<LayoutTop>
+			<LayoutTop isFullWidth={ ! showEmptyState }>
 				<LayoutHeader>
 					<Breadcrumb
 						hideOnMobile

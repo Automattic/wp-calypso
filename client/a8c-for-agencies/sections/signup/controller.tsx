@@ -18,6 +18,7 @@ import { hideMasterbar } from 'calypso/state/ui/actions';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';
 import AgencySignupV2 from './signup-v2';
+import AgencySignupWCAsia from './signup-v2/wc-asia';
 
 // A simple wrapper to ensure the PageViewTracker is only rendered, and the event fired,
 // after the agency has been fetched and we know if the user is an agency user or not.
@@ -65,13 +66,7 @@ export const signUpContext: Callback = ( context, next ) => {
 	next();
 };
 
-export const finishSignUpContext: Callback = ( context, next ) => {
-	context.store.dispatch( hideMasterbar() );
-	context.primary = <AgencySignupFinish />;
-	next();
-};
-
-export const wcAsiaSignupContext: Callback = ( context, next ) => {
+export const signupV2Context: Callback = ( context, next ) => {
 	context.store.dispatch( hideMasterbar() );
 	context.primary = (
 		<>
@@ -79,6 +74,23 @@ export const wcAsiaSignupContext: Callback = ( context, next ) => {
 			<AgencySignupV2 />
 		</>
 	);
+	next();
+};
+
+export const signupWCAsiaContext: Callback = ( context, next ) => {
+	context.store.dispatch( hideMasterbar() );
+	context.primary = (
+		<>
+			<PageViewTrackerWrapper path={ context.path } />
+			<AgencySignupWCAsia />
+		</>
+	);
+	next();
+};
+
+export const finishSignUpContext: Callback = ( context, next ) => {
+	context.store.dispatch( hideMasterbar() );
+	context.primary = <AgencySignupFinish />;
 	next();
 };
 

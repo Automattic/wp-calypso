@@ -4,9 +4,9 @@ import { Icon, seen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { getFeedUrl } from 'calypso/reader/route';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
-import UnsubscribeIcon from '../icons/unsubscribe-icon';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
@@ -49,9 +49,10 @@ const SiteSettings = ( {
 		<div className="settings site-settings">
 			{ isLoggedIn && (
 				<EmailMeNewPostsToggle
+					className="setting-item"
 					value={ emailMeNewPosts }
 					onChange={ onEmailMeNewPostsChange }
-					isUpdating={ updatingEmailMeNewPosts }
+					isDisabled={ updatingEmailMeNewPosts }
 				/>
 			) }
 			{ emailMeNewPosts && (
@@ -63,16 +64,19 @@ const SiteSettings = ( {
 			) }
 			{ isLoggedIn && (
 				<EmailMeNewCommentsToggle
+					className="setting-item"
 					value={ emailMeNewComments }
 					onChange={ onEmailMeNewCommentsChange }
-					isUpdating={ updatingEmailMeNewComments }
+					isDisabled={ updatingEmailMeNewComments }
 				/>
 			) }
 			{ isLoggedIn && (
 				<NotifyMeOfNewPostsToggle
+					className="setting-item setting-item__last"
 					value={ notifyMeOfNewPosts }
 					onChange={ onNotifyMeOfNewPostsChange }
-					isUpdating={ updatingNotifyMeOfNewPosts }
+					isDisabled={ updatingNotifyMeOfNewPosts }
+					showJetpackAppHint
 				/>
 			) }
 		</div>
@@ -112,13 +116,16 @@ export const SiteSettingsPopover = ( {
 							'is-loading': unsubscribing,
 						} ) }
 						disabled={ unsubscribing }
-						icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+						icon={ ReaderFollowingConversationIcon( {
+							iconSize: 24,
+							className: 'subscriptions-ellipsis-menu__item-icon',
+						} ) }
 						onClick={ () => {
 							onUnsubscribe();
 							close();
 						} }
 					>
-						{ translate( 'Unsubscribe' ) }
+						{ translate( 'Subscribed' ) }
 					</Button>
 
 					<hr className="subscriptions__separator" />

@@ -172,7 +172,7 @@ function renderTeamMembers( context, next ) {
 	const TeamMembersTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Team Members', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'Users', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
@@ -223,7 +223,7 @@ function renderSingleTeamMember( context, next ) {
 	const SingleTeamMemberTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'View Team Member', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'View User', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
@@ -239,7 +239,7 @@ function renderViewerTeamMember( context, next ) {
 	const SingleTeamMemberTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'View Team Member', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'View User', { textOnly: true } ) } />;
 	};
 
 	context.primary = (

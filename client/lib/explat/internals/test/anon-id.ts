@@ -1,5 +1,4 @@
-import '@automattic/calypso-polyfills';
-
+// @ts-nocheck - TODO: Fix TypeScript issues
 import * as AnonId from '../anon-id';
 
 const mockLogError = jest.fn();

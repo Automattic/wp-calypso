@@ -1,4 +1,5 @@
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	TermsOfServiceRecord,
 	TermsOfServiceRecordArgsRenewal,
@@ -7,7 +8,7 @@ import {
 import { EDIT_PAYMENT_DETAILS } from '@automattic/urls';
 import { hasTranslation } from '@wordpress/i18n';
 import debugFactory from 'debug';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

@@ -135,7 +135,7 @@ export const ScheduleList = ( props: Props ) => {
 			<div className="plugins-update-manager-multisite__header">
 				<div className="plugins-update-manager-multisite__header-main">
 					<div className="plugins-update-manager-multisite__header-main-title">
-						<h1>{ translate( 'Scheduled Updates' ) }</h1>
+						<h1>{ translate( 'Scheduled updates' ) }</h1>
 						{ showSubtitle && (
 							<p>
 								{ translate(

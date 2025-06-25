@@ -29,8 +29,6 @@ import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-hist
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 import type { IAppState } from 'calypso/state/types';
 
-import './style.scss';
-
 function useLogBillingHistoryError( message: string ) {
 	return useCallback(
 		( error: Error ) => {
@@ -55,7 +53,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
-			<QueryBillingTransactions />
+			<QueryBillingTransactions transactionType="past" />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader
 					title={ titles.sectionTitle }

@@ -56,7 +56,7 @@ function TeamInvites( props: Props ) {
 					>
 						{ singleInviteView && (
 							<Button compact primary href={ addTeamMemberLink }>
-								{ translate( 'Add a team member' ) }
+								{ translate( 'Add a user' ) }
 							</Button>
 						) }
 					</PeopleListSectionHeader>

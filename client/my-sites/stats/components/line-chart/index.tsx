@@ -1,7 +1,8 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import { DataPointDate } from '@automattic/charts/src/types';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { numberFormat, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
@@ -25,6 +26,7 @@ function StatsLineChart( {
 	),
 	zeroBaseline = true,
 	fixedDomain = false,
+	curveType = 'monotone',
 }: {
 	chartData: Array< {
 		label: string;
@@ -39,6 +41,7 @@ function StatsLineChart( {
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
 	const moment = useLocalizedMoment();
@@ -56,7 +59,7 @@ function StatsLineChart( {
 	const formatValue = ( value: number ) => {
 		return value < 100_000
 			? value.toFixed( 0 )
-			: numberFormat( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
+			: formatNumber( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
 	};
 
 	const isEmpty = ( chartData?.[ 0 ]?.data || [] ).length === 0;
@@ -70,6 +73,25 @@ function StatsLineChart( {
 			),
 		[ chartData ]
 	);
+
+	const yNumTicks = useMemo( () => {
+		const uniqueValues = [
+			...new Set( chartData.flatMap( ( series ) => series.data.map( ( d ) => d.value ?? 0 ) ) ),
+		];
+
+		const maxTicks = uniqueValues.length > 5 ? 5 : uniqueValues.length;
+
+		if ( fixedDomain ) {
+			return maxTicks;
+		}
+
+		// The only one tick, e.g. [ 2 ] or two ticks not [ 1, 2 ], e.g. [ 1, 3 ].
+		if ( maxTicks === 1 || ( maxTicks === 2 && Math.max( ...uniqueValues ) > 2 ) ) {
+			return maxTicks;
+		}
+
+		return maxTicks - 1;
+	}, [ chartData, fixedDomain ] );
 
 	const yScaleType = useMemo( () => {
 		if ( chartData.length <= 1 ) {
@@ -140,7 +162,7 @@ function StatsLineChart( {
 							<ChartBarTooltip
 								key={ point.key }
 								label={ point.key }
-								value={ numberFormat( point.value ) }
+								value={ formatNumber( point.value ) }
 								icon={ seriesIcons[ point.key ] }
 							/>
 						) ) }
@@ -170,6 +192,7 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
+						curveType={ curveType }
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						onPointerUp={ onPointerUp as any }
@@ -192,7 +215,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatValue,
-									numTicks: maxValue > 4 ? 4 : 1,
+									numTicks: yNumTicks,
 								},
 							},
 						} }

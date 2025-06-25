@@ -1,6 +1,5 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const mkdirp = require( 'mkdirp' );
 const rcopy = require( 'recursive-copy' );
 const yargs = require( 'yargs' );
 
@@ -121,7 +120,7 @@ function shipDependencies( pkgList ) {
 
 	debug( 'copying ' + pkgList.length + ' packages to ' + destDir );
 
-	mkdirp.sync( destDir );
+	fs.mkdirSync( destDir, { recursive: true } );
 	for ( const pkgName of pkgList ) {
 		rcopy( path.join( 'node_modules', pkgName ), path.join( destDir, pkgName ), {
 			overwrite: true,

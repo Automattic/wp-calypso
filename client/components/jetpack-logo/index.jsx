@@ -1,6 +1,7 @@
 import colorStudio from '@automattic/color-studio';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import React from 'react';
 import useAriaProps from 'calypso/lib/a11y/use-aria-props';
 
 /**
@@ -48,7 +49,17 @@ const LogoPathSize32Monochrome = () => (
 	</>
 );
 
-const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, aria } ) => {
+/**
+ * JetpackLogo component renders the Jetpack logo with optional monochrome styling.
+ * @param {Object} props - Component properties.
+ * @param {boolean} [props.full] - Whether to show the full logo with text.
+ * @param {boolean|undefined} [props.monochrome] - If true, renders the logo in monochrome. If undefined, uses a default based on size.
+ * @param {number} [props.size] - The size of the logo.
+ * @param {string} [props.className] - Additional class names.
+ * @param {Object} [props.aria] - ARIA attributes.
+ * @returns The rendered Jetpack logo component
+ */
+const JetpackLogo = ( { full = false, monochrome, size = 32, className, aria } ) => {
 	const classes = clsx( 'jetpack-logo', className );
 	const ariaProps = useAriaProps( aria );
 
@@ -65,7 +76,9 @@ const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, 
 		);
 	}
 
-	if ( 24 === size ) {
+	// If size=24 and monochrome is true or undefined, return a monochrome logo - This is to ensure legacy behavior of the component.
+	// Return a non-monochrome logo if monochrome=false is explicitly passed with size 24.
+	if ( 24 === size && ( monochrome || monochrome === undefined ) ) {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...ariaProps }>

@@ -3,7 +3,7 @@ export const getSubscriptionStatus = (
 	translate: ( key: string ) => string
 ): {
 	children: string | undefined;
-	type: 'success' | 'warning' | 'info' | undefined;
+	type: 'success' | 'warning' | 'info' | 'error' | undefined;
 } => {
 	switch ( status ) {
 		case 'pending':
@@ -15,6 +15,11 @@ export const getSubscriptionStatus = (
 			return {
 				children: translate( 'Active' ),
 				type: 'success',
+			};
+		case 'error':
+			return {
+				children: translate( 'Error' ),
+				type: 'error',
 			};
 		case 'canceled':
 			return {

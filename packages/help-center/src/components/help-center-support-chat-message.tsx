@@ -1,18 +1,24 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince } from '@automattic/components';
-import { getNumericDateTimeString, useLocale } from '@automattic/i18n-utils';
-import { HumanAvatar } from '@automattic/odie-client/src/assets';
+import { HumanAvatar, WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useGetHistoryChats } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import type { SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
+import type {
+	OdieConversation,
+	OdieMessage,
+	ZendeskConversation,
+	ZendeskMessage,
+} from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
+
 const trackContactButtonClicked = ( sectionName: string ) => {
 	recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
 		force_site_id: true,
@@ -23,37 +29,40 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 
 export const HelpCenterSupportChatMessage = ( {
 	message,
-	badgeCount = 0,
-	isUnread = false,
-	navigateTo = '',
-	supportInteraction,
 	sectionName,
-	conversationStatus,
+	conversation,
+	numberOfUnreadMessages = 0,
 }: {
-	message: ZendeskMessage;
-	badgeCount?: number;
-	avatarSize?: number;
-	isUnread: boolean;
-	navigateTo: string;
-	altText?: string;
-	supportInteraction: SupportInteraction | undefined;
+	message: OdieMessage | ZendeskMessage;
 	sectionName?: string;
-	conversationStatus?: string;
+	conversation: OdieConversation | ZendeskConversation;
+	numberOfUnreadMessages?: number;
 } ) => {
 	const { __ } = useI18n();
-	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, text, altText } = message;
+	const { displayName, received, role, text, altText } = message;
+
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
+	const { supportInteractions } = useGetHistoryChats();
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const supportInteraction = supportInteractions.find(
+		( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
+	);
+
 	const messageDisplayName =
-		message.role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
+		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
 	const renderAvatar = () => {
-		if ( message.role === 'business' ) {
+		if ( role === 'bot' ) {
+			return <WapuuAvatar />;
+		}
+
+		if ( role === 'business' ) {
 			return <HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />;
 		}
+
 		return (
 			<Gravatar
 				user={ currentUser }
@@ -63,29 +72,33 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	};
 
+	const hasUnreadMessages = numberOfUnreadMessages > 0;
+
+	const receivedDateISO = new Date( received * 1000 ).toISOString();
+
 	return (
 		<Link
-			to={ navigateTo }
+			to="/odie"
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-				if ( supportInteraction ) {
-					setCurrentSupportInteraction( supportInteraction );
-				}
+				setCurrentSupportInteraction( supportInteraction );
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
-				'is-unread-message': isUnread,
-				[ `is-${ conversationStatus }` ]: conversationStatus,
+				'is-unread-message': hasUnreadMessages,
+				[ `is-${ supportInteraction?.status }` ]: supportInteraction?.status,
 			} ) }
 		>
 			<div
 				className={ clsx( 'help-center-support-chat__conversation-avatar', {
-					'has-badge': badgeCount > 0,
+					'has-unread-messages': hasUnreadMessages,
 				} ) }
 			>
 				{ renderAvatar() }
 
-				{ badgeCount > 0 && (
-					<div className="help-center-support-chat__conversation-badge">+{ badgeCount }</div>
+				{ hasUnreadMessages && (
+					<div className="help-center-support-chat__conversation-badge">
+						+{ numberOfUnreadMessages }
+					</div>
 				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
@@ -111,7 +124,7 @@ export const HelpCenterSupportChatMessage = ( {
 						}
 					/>
 					<span>
-						<TimeSince date={ getNumericDateTimeString( received * 1000, locale ) } />
+						<TimeSince date={ receivedDateISO } dateFormat="lll" />
 					</span>
 				</div>
 			</div>

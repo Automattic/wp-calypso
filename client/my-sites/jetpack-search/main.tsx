@@ -32,7 +32,7 @@ export default function SearchMain() {
 	const isSearchEnabled = useSelector( ( state ) => {
 		// On Jetpack sites, we need to check if the search module is active, rather than checking settings.
 		if ( isJetpack ) {
-			return Boolean( isJetpackModuleActive( state, siteId, 'search' ) );
+			return Boolean( isJetpackModuleActive( state, siteId, 'search', true ) );
 		}
 		return getSiteSetting( state, siteId, 'jetpack_search_enabled' );
 	} );

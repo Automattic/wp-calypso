@@ -20,7 +20,6 @@ import {
 	redirectLostPassword,
 	desktopLogin,
 	desktopLoginFinalize,
-	googleAuth,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -111,7 +110,7 @@ export default ( router ) => {
 	}
 
 	router(
-		[ `/log-in/qr/${ lang }` ],
+		[ `/log-in/qr/${ lang }`, `/log-in/jetpack/qr/${ lang }` ],
 		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
@@ -121,21 +120,12 @@ export default ( router ) => {
 	);
 
 	router(
-		[ `/log-in/jetpack/google/${ lang }` ],
-		redirectLoggedIn,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		googleAuth,
-		makeLoggedOutLayout
-	);
-
-	router(
 		[
 			`/log-in/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-			`/log-in/:flow(social-connect|private-site)/${ lang }`,
+			`/log-in/:flow(social-connect)/${ lang }`,
 			`/log-in/:socialService(google|apple|github)/callback/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/${ lang }`,
+			`/log-in/:isJetpack(jetpack)/:socialService(google|apple|github)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:action(lostpassword)/${ lang }`,
 			`/log-in/:isGutenboarding(new)/${ lang }`,

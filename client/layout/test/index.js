@@ -16,7 +16,12 @@ describe( 'index', () => {
 								ui: {},
 								notices: {
 									items: {},
-									lastTimeShown: {},
+								},
+								purchases: {
+									hasLoadedUserPurchasesFromServer: false,
+								},
+								sites: {
+									items: {},
 								},
 							} ),
 							subscribe: () => {},

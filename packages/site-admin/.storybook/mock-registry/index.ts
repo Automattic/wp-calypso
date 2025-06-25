@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { createReduxStore, createRegistry } from '@wordpress/data';
+import { action } from '@storybook/addon-actions';
 
 /**
  * Types
@@ -12,15 +13,52 @@ type WPDataRegistry = ReturnType< typeof createRegistry >;
 /**
  * Registers a mock store with the given initial state.
  */
+import { store as commandsStore } from '@wordpress/commands';
+
 const registerMockStore = ( registry, storeName, initialState ) => {
+	/*
+	 * `core/commands` store
+	 */
+	if ( storeName === commandsStore.name ) {
+		const mockCommandsStore = createReduxStore( storeName, {
+			reducer: ( state = { isOpen: false }, action ) => {
+				switch ( action.type ) {
+					case 'OPEN':
+						return { ...state, isOpen: true };
+					case 'CLOSE':
+						return { ...state, isOpen: false };
+					default:
+						return state;
+				}
+			},
+			actions: {
+				open: () => {
+					action( '[`core/commands`] Open Command Center' )();
+					return { type: 'OPEN' };
+				},
+				close: () => {
+					action( '[`core/commands`] Close Command Center' )();
+					return { type: 'CLOSE' };
+				},
+			},
+			selectors: {
+				isOpen: ( state ) => state.isOpen,
+			},
+		} );
+
+		registry.register( mockCommandsStore );
+		return;
+	}
+
+	/*
+	 * `core` store
+	 */
 	const store = createReduxStore( storeName, {
 		reducer: ( state = initialState ) => state,
 		selectors: {
 			getEntityRecord: ( state, kind, name ) => {
-				if ( kind === 'root' && name === '__unstableBase' ) {
-					return state[ 'root/__unstableBase' ] || null;
-				}
-				return null;
+				const mockStateKey = `${ kind }/${ name }`;
+				return state[ mockStateKey ] || null;
 			},
 		},
 		actions: {},

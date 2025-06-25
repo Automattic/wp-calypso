@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import ActivityCard from 'calypso/components/activity-card';
-import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import { useSelector } from 'calypso/state';
@@ -74,27 +73,23 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 			<div className="visible-days-limit-upsell__next-activity">{ card }</div>
 			<div className="visible-days-limit-upsell__call-to-action">
 				<h3 className="visible-days-limit-upsell__call-to-action-header">
-					{ preventWidows(
-						translate(
-							'Restore backups older than %(retentionDays)d day',
-							'Restore backups older than %(retentionDays)d days',
-							{
-								count: visibleDays,
-								args: { retentionDays: visibleDays },
-							}
-						)
+					{ translate(
+						'Restore backups older than %(retentionDays)d day',
+						'Restore backups older than %(retentionDays)d days',
+						{
+							count: visibleDays,
+							args: { retentionDays: visibleDays },
+						}
 					) }
 				</h3>
 				<p className="visible-days-limit-upsell__call-to-action-copy">
-					{ preventWidows(
-						translate(
-							'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
-							'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
-							{
-								count: visibleDays,
-								args: { retentionDays: visibleDays },
-							}
-						)
+					{ translate(
+						'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
+						'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
+						{
+							count: visibleDays,
+							args: { retentionDays: visibleDays },
+						}
 					) }
 				</p>
 				<Button

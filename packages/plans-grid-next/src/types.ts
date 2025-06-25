@@ -55,6 +55,7 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 
 export type PlansIntent =
 	| 'plans-affiliate'
+	| 'plans-ai-assembler-free-trial'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
@@ -74,6 +75,8 @@ export type PlansIntent =
 	| 'plans-guided-segment-nonprofit'
 	| 'plans-guided-segment-consumer-or-business'
 	| 'plans-site-selected-legacy'
+	| 'plans-playground'
+	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'default';
 
 export interface PlanActionOverrides {
@@ -104,8 +107,9 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
+	isInSiteDashboard: boolean;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
-	currentSitePlanSlug?: string | null;
+	currentSitePlanSlug?: PlanSlug | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
@@ -123,7 +127,6 @@ export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	hideSpotlightPlan?: boolean;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
@@ -134,7 +137,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 export interface ComparisonGridProps extends CommonGridProps {
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
-	intervalType: string;
+	intervalType: SupportedUrlFriendlyTermType;
 }
 
 export type UseActionCallback = ( {
@@ -152,6 +155,7 @@ export type UseActionCallback = ( {
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
+		ariaLabel?: TranslateResult;
 		callback: () => Promise< void > | void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
@@ -239,6 +243,11 @@ export type GridContextProps = {
 	 * calculating prices.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+
+	/**
+	 * Enable streamlined billing description
+	 */
+	showStreamlinedBillingDescription?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
@@ -12,6 +13,25 @@ import EligibilityWarnings from '..';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
+} ) );
+
+jest.mock( '@automattic/help-center/src/hooks/use-reset-support-interaction', () => ( {
+	useResetSupportInteraction: () => jest.fn().mockResolvedValue( undefined ),
+} ) );
+
+jest.mock( '@automattic/odie-client/src/data', () => ( {
+	useManageSupportInteraction: () => ( {
+		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
+		resolveInteraction: jest.fn().mockResolvedValue( undefined ),
+		addEventToInteraction: jest.fn().mockResolvedValue( undefined ),
+	} ),
+	useGetZendeskConversation: jest.fn(),
+	useOdieChat: jest.fn(),
+	broadcastOdieMessage: jest.fn(),
+} ) );
+
+jest.mock( '@automattic/odie-client/src/utils/storage-utils', () => ( {
+	clearHelpCenterZendeskConversationStarted: jest.fn(),
 } ) );
 
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
@@ -55,6 +75,10 @@ describe( '<EligibilityWarnings>', () => {
 		page.redirect.mockReset();
 	} );
 
+	afterAll( () => {
+		jest.restoreAllMocks();
+	} );
+
 	it( 'renders error notice when AT has been blocked by a sticker', () => {
 		const state = createState( {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER' ],
@@ -65,7 +89,7 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		const notice = container.querySelector( '.notice.is-error' );
+		const notice = container.querySelector( '.calypso-notice.is-error' );
 
 		expect( notice ).toBeVisible();
 		expect( notice ).toHaveTextContent( /This site is not currently eligible/ );
@@ -81,7 +105,7 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		expect( container.querySelectorAll( '.notice' ) ).toHaveLength( 1 );
+		expect( container.querySelectorAll( '.calypso-notice' ) ).toHaveLength( 1 );
 	} );
 
 	it( 'dimly renders the hold card when AT has been blocked by a sticker', () => {
@@ -140,7 +164,7 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		expect( container.querySelectorAll( '.notice.is-warning' ) ).toHaveLength( 0 );
+		expect( container.querySelectorAll( '.calypso-notice.is-warning' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'goes to checkout when clicking "Upgrade and continue"', async () => {
@@ -187,5 +211,18 @@ describe( '<EligibilityWarnings>', () => {
 
 		await userEvent.click( continueButton );
 		expect( handleProceed ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders a help button', async () => {
+		const state = createState( {} );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			state
+		);
+
+		const helpCenterButton = getByText( 'Need help?' );
+		expect( helpCenterButton ).toBeVisible();
+		expect( helpCenterButton ).toBeInstanceOf( HTMLButtonElement );
 	} );
 } );

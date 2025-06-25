@@ -1,21 +1,26 @@
 import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { formatCurrency } from 'i18n-calypso';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
-	getItemVariantDiscountPercentage,
+	getItemVariantDiscount,
 } from '../item-variation-picker/util';
+import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
 
@@ -36,48 +41,46 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 function getUpsellTextForVariant(
 	upsellVariant: WPCOMProductVariant,
 	percentSavings: number,
-	__: any
+	__: any,
+	isStreamlinedPrice: boolean
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		const cardTitle = __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
 		return {
-			cardTitle: createInterpolateElement(
-				sprintf(
-					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-					__( '<strong>Save %(percentSavings)d%%</strong> by paying annually' ),
-					{ percentSavings }
-				),
-				{ strong: createElement( 'strong' ) }
-			),
+			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
+				strong: createElement( 'strong' ),
+			} ),
 			cellLabel: __( 'One-year cost' ),
 			ctaText: __( 'Switch to an annual plan' ),
 		};
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 24 ) {
+		const cardTitle = isStreamlinedPrice
+			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying for two years' )
+			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' );
 		return {
-			cardTitle: createInterpolateElement(
-				sprintf(
-					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-					__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
-					{ percentSavings }
-				),
-				{ strong: createElement( 'strong' ) }
-			),
+			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
+				strong: createElement( 'strong' ),
+			} ),
 			cellLabel: __( 'Two-year cost' ),
 			ctaText: __( 'Switch to a two-year plan' ),
 		};
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 36 ) {
+		const cardTitle = isStreamlinedPrice
+			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying for three years' )
+			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%%</strong> by paying for three years' );
 		return {
-			cardTitle: createInterpolateElement(
-				sprintf(
-					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-					__( '<strong>Save %(percentSavings)d%%</strong> by paying for three years' ),
-					{ percentSavings }
-				),
-				{ strong: createElement( 'strong' ) }
-			),
+			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
+				strong: createElement( 'strong' ),
+			} ),
 			cellLabel: __( 'Three-year cost' ),
 			ctaText: __( 'Switch to a three-year plan' ),
 		};
@@ -107,6 +110,10 @@ export function CheckoutSidebarPlanUpsell() {
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
+	);
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
 	);
 
 	const variants = useGetProductVariants( plan );
@@ -182,7 +189,7 @@ export function CheckoutSidebarPlanUpsell() {
 		upsellVariant,
 		currentVariant
 	);
-	const percentSavings = getItemVariantDiscountPercentage( upsellVariant, currentVariant );
+	const percentSavings = getItemVariantDiscount( upsellVariant, currentVariant );
 	if ( percentSavings === 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
@@ -194,7 +201,12 @@ export function CheckoutSidebarPlanUpsell() {
 		currentVariant.introductoryInterval === 1 &&
 		currentVariant.introductoryTerm === 'year';
 
-	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
+	const upsellText = getUpsellTextForVariant(
+		upsellVariant,
+		percentSavings,
+		__,
+		isStreamlinedPrice
+	);
 
 	if ( ! upsellText ) {
 		return;
@@ -202,16 +214,24 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const { cardTitle, cellLabel, ctaText } = upsellText;
 
+	const checkoutSidebarPlanUpsellClassName =
+		'checkout-sidebar-plan-upsell' +
+		( isStreamlinedPrice ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
+
 	return (
 		<>
-			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
+			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						<strong>{ __( 'Plan' ) }</strong>
-					</div>
-					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
-					</div>
+					{ ! isStreamlinedPrice && (
+						<>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ __( 'Plan' ) }</strong>
+							</div>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
+							</div>
+						</>
+					) }
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ currentVariant.variantLabel.adjective }
 					</div>
@@ -244,6 +264,14 @@ export function CheckoutSidebarPlanUpsell() {
 						} ) }
 					</div>
 				</div>
+				{ isStreamlinedPrice && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ undefined }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						isStreamlinedPrice={ isStreamlinedPrice }
+					/>
+				) }
 				<PromoCardCTA
 					cta={ {
 						disabled: isFormLoading,

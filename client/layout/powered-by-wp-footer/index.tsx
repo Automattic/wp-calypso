@@ -1,6 +1,6 @@
+import { WordPressLogo } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
 interface Props {

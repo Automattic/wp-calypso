@@ -52,6 +52,7 @@ export class SiteSelector extends Component {
 		hideSelected: PropTypes.bool,
 		filter: PropTypes.func,
 		groups: PropTypes.bool,
+		keepCurrentSection: PropTypes.bool,
 		onSiteSelect: PropTypes.func,
 		searchPlaceholder: PropTypes.string,
 		selectedSite: PropTypes.object,
@@ -79,6 +80,7 @@ export class SiteSelector extends Component {
 		onClose: noop,
 		onSiteSelect: noop,
 		groups: false,
+		keepCurrentSection: false,
 		autoFocus: false,
 		showListBottomAdornment: true,
 	};
@@ -519,10 +521,19 @@ export class SiteSelector extends Component {
 }
 
 const navigateToSite =
-	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath, wpcomSiteBasePath } ) =>
+	(
+		siteId,
+		{ allSitesPath, allSitesSingleUser, keepCurrentSection, siteBasePath, wpcomSiteBasePath }
+	) =>
 	( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
+
+		const currentSection = state.route?.path?.current?.split( '/' )?.[ 1 ];
+		if ( keepCurrentSection && currentSection && siteId !== ALL_SITES ) {
+			page( `/${ currentSection }/${ site.slug }` );
+			return;
+		}
 
 		// We will need to open a new tab if we have wpcomSiteBasePath prop and current site is an Atomic site.
 		if ( site?.is_wpcom_atomic && wpcomSiteBasePath ) {

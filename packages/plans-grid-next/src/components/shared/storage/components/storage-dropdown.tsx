@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/tabindex-no-positive */
 import { type AddOnMeta, AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -137,17 +138,25 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	);
 	const selectedStorageAddOnStorage = selectedStorageAddOn?.quantity ?? 0;
 
+	const planStorageString = useStorageString( planStorage );
+	const selectedAddOnStorageString = useStorageString( selectedStorageAddOnStorage );
+	const accessibleOptionName = selectedStorageAddOnStorage
+		? translate( '%(planStorageString)s + %(addOnStorageString)s', {
+				args: {
+					planStorageString,
+					addOnStorageString: selectedAddOnStorageString,
+				},
+		  } )
+		: planStorageString;
+
 	const selectedOption = {
 		key: selectedStorageOptionForPlan,
-		name: (
-			<StorageDropdownOption
-				price={ selectedStorageAddOn?.prices?.formattedMonthlyPrice }
-				planStorage={ planStorage }
-				addOnStorage={ selectedStorageAddOnStorage }
-				priceOnSeparateLine
-			/>
-		 ) as unknown as string,
+		name: accessibleOptionName as string,
 	};
+
+	const accessibleDescription = translate( 'Currently selected storage option: %(storageOption)s', {
+		args: { storageOption: accessibleOptionName },
+	} );
 
 	const handleOnChange = useCallback(
 		( { selectedItem }: { selectedItem: { key: string } } ) => {
@@ -162,15 +171,18 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	);
 
 	return (
-		<>
+		// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+		<div tabIndex={ 1 }>
 			<CustomSelectControl
 				__next40pxDefaultSize
 				hideLabelFromVision
 				options={ selectControlOptions || [] }
 				value={ selectedOption }
 				onChange={ handleOnChange }
-				label=""
+				label={ translate( 'Storage options for this plan' ) }
+				describedBy={ accessibleDescription as string }
 			/>
+
 			{ selectedStorageAddOn?.prices?.formattedMonthlyPrice && (
 				<div className="plans-grid-next-storage-dropdown__addon-offset-price-container">
 					<span className="plans-grid-next-storage-dropdown__addon-offset-price">
@@ -180,7 +192,7 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 					</span>
 				</div>
 			) }
-		</>
+		</div>
 	);
 };
 

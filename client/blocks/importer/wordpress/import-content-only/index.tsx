@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -6,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useCallback } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
@@ -35,6 +33,7 @@ interface Props {
 	siteSlug: string;
 	siteAnalyzedData: UrlData | null;
 	stepNavigator?: StepNavigator;
+	renderHeading?: boolean;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -45,7 +44,8 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const [ renderState, setRenderState ] = useState< RenderState >( 'idle' );
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator, renderHeading } =
+		props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
@@ -109,21 +109,17 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}, [ job, isSiteCompatible ] );
 
 	const onCompleteSiteViewClick = useCallback( () => {
-		if (
-			job?.importerFileType !== 'playground' &&
-			isEnabled( 'onboarding/import-redirect-to-themes' )
-		) {
+		if ( job?.importerFileType !== 'playground' ) {
 			stepNavigator?.navigate?.(
 				addQueryArgs( 'design-setup', { comingFromSuccessfulImport: '1' } )
 			);
 		} else {
-			stepNavigator?.goToSiteViewPage?.();
+			stepNavigator?.goToAdmin?.();
 		}
 	}, [ job ] );
 
 	const onTryAgainClick = useCallback( () => {
 		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
-		stepNavigator?.goToImportCapturePage?.();
 	}, [ siteItem, job ] );
 
 	const onBackToGoalsClick = useCallback( () => {
@@ -150,7 +146,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				'import__error-message': renderState === 'error',
 			} ) }
 		>
-			{ renderState === 'progress' && <ProgressScreen job={ job } /> }
+			{ renderState === 'progress' && <ProgressScreen job={ job } showHeading={ renderHeading } /> }
 
 			{ renderState === 'error' && (
 				<ErrorMessage
@@ -182,7 +178,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					}
 					isBusy={ false }
 					onCtaClick={ () => {
-						stepNavigator?.goToCheckoutPage?.( WPImportOption.CONTENT_ONLY );
+						stepNavigator?.goToCheckoutPage?.();
 					} }
 					navigateToVerifyEmailStep={ () => {
 						stepNavigator?.goToVerifyEmailPage?.();
@@ -196,6 +192,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					urlData={ siteAnalyzedData }
 					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 					importerStatus={ job }
+					renderHeading={ renderHeading }
 				/>
 			) }
 
@@ -205,7 +202,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					siteSlug={ siteSlug }
 					job={ job as ImportJob }
 					buttonLabel={
-						job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
+						job?.importerFileType === 'playground' ? translate( 'Go to dashboard' ) : undefined
 					}
 					resetImport={ () => {
 						dispatch( resetImport( siteItem?.ID, job?.importerId ) );

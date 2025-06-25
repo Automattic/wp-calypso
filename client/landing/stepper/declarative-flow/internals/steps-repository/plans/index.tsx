@@ -1,14 +1,9 @@
-import {
-	isDomainUpsellFlow,
-	isNewHostedSiteCreationFlow,
-	isStartWritingFlow,
-	StepContainer,
-} from '@automattic/onboarding';
+import { isDomainUpsellFlow, isStartWritingFlow, StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useQuery } from '../../../../hooks/use-query';
 import PlansWrapper from './plans-wrapper';
 import type { Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-
 /**
  * @deprecated Use `unified-plans` instead. This step is deprecated and will be removed in the future.
  */
@@ -16,9 +11,15 @@ const plans: Step< {
 	submits: {
 		plan: MinimalRequestCartProduct | null;
 		goToCheckout: boolean;
+		// Fake type just to make the this step types isomorphic to unified-plans.
+		cartItems?: undefined;
 	};
 } > = function Plans( { navigation, flow } ) {
 	const { goBack, submit } = navigation;
+
+	const query = useQuery();
+	const queryParams = Object.fromEntries( query );
+	const plan = queryParams.plan;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies = {
@@ -29,7 +30,13 @@ const plans: Step< {
 		submit?.( providedDependencies );
 	};
 
-	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
+	// If we have a plan from URL params, submit it immediately and don't render anything
+	if ( plan ) {
+		handleSubmit( { product_slug: plan } );
+		return null;
+	}
+
+	const isAllowedToGoBack = isDomainUpsellFlow( flow );
 
 	return (
 		<StepContainer
@@ -41,13 +48,7 @@ const plans: Step< {
 			hideFormattedHeader
 			isLargeSkipLayout={ false }
 			hideBack={ ! isAllowedToGoBack }
-			stepContent={
-				<PlansWrapper
-					flowName={ flow }
-					onSubmit={ handleSubmit }
-					shouldIncludeFAQ={ isNewHostedSiteCreationFlow( flow ) }
-				/>
-			}
+			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

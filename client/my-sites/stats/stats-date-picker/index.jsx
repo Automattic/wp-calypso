@@ -5,6 +5,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import memoizeLast from 'calypso/lib/memoize-last';
+import { NAVIGATION_METHOD_ARROW } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	getSiteStatsQueryDate,
@@ -199,6 +201,37 @@ class StatsDatePicker extends Component {
 		this.statusIndicator = ref;
 	};
 
+	getDateHistory = memoizeLast( ( displayDate, isDrillingDown ) => {
+		if ( ! isDrillingDown ) {
+			sessionStorage.removeItem( 'jetpack_stats_date_range_is_drilling_down_date_history' );
+		}
+
+		if ( ! displayDate ) {
+			return null;
+		}
+
+		const dateHistory = JSON.parse(
+			sessionStorage.getItem( 'jetpack_stats_date_range_is_drilling_down_date_history' ) || '[]'
+		);
+		const isArrowNavigation = this.props?.queryParams?.navigation === NAVIGATION_METHOD_ARROW;
+
+		// For the arrow navigation, we want to replace the last element with the new date.
+		if ( isArrowNavigation ) {
+			dateHistory.pop();
+		}
+
+		// Only update history if the date is new
+		if ( ! dateHistory.includes( displayDate ) ) {
+			dateHistory.push( displayDate );
+			sessionStorage.setItem(
+				'jetpack_stats_date_range_is_drilling_down_date_history',
+				JSON.stringify( dateHistory )
+			);
+		}
+
+		return dateHistory.length > 1 ? dateHistory[ dateHistory.length - 2 ] : null;
+	} );
+
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		const {
@@ -215,6 +248,10 @@ class StatsDatePicker extends Component {
 		} = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
+		const shortDisplayDate = isShort ? this.dateForDisplay( selectedShortcut ) : null;
+		const summarizeDisplayDate = isSummarizeQuery ? this.dateForSummarize() : null;
+		const displayDate = isShort ? shortDisplayDate : summarizeDisplayDate;
+		const previousDisplayDate = this.getDateHistory( displayDate, isDrillingDown );
 
 		let sectionTitle = isActivity
 			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
@@ -265,7 +302,13 @@ class StatsDatePicker extends Component {
 				) : (
 					<div className="stats-section-title">
 						<h3>
-							{ isDrillingDown ? <DateLabelDrill>{ sectionTitle }</DateLabelDrill> : sectionTitle }
+							{ isDrillingDown ? (
+								<DateLabelDrill previousDisplayDate={ previousDisplayDate }>
+									{ sectionTitle }
+								</DateLabelDrill>
+							) : (
+								sectionTitle
+							) }
 						</h3>
 						{ showQueryDate && this.renderQueryDate() }
 					</div>

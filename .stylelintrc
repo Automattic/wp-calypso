@@ -14,7 +14,7 @@
 		"value-keyword-case": null,
 		"scss/operator-no-unspaced": null,
 		"scss/selector-no-redundant-nesting-selector": null,
-		"scss/at-import-partial-extension": null,
+		"scss/load-partial-extension": null,
 		"scss/no-global-function-names": null,
 		"scss/comment-no-empty": null,
 		"scss/at-extend-no-missing-placeholder": null,
@@ -25,7 +25,6 @@
 		"no-invalid-position-at-import-rule": null,
 		"declaration-property-unit-allowed-list": [
 			{
-				"/^font-size$|^font$/": [ "rem" ],
 				"line-height": [ "px" ],
 				"/radius$/": [ "px", "%" ]
 			},
@@ -51,6 +50,7 @@
 			"fr",
 			"ms",
 			"px",
+			"lh",
 			"rem",
 			"s",
 			"vh",

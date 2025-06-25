@@ -1,10 +1,13 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .dev-site-delete-confirmation-dialog {
 	&.dialog.card {
 		max-width: 800px;
 	}
 
 	p {
-		font-size: 1rem;
+		@include body-large;
 		margin-bottom: 1rem;
 	}
 
@@ -13,8 +16,7 @@
 		margin-bottom: 0;
 
 		label {
-			font-size: 1rem;
-			font-weight: 500;
+			@include heading-large;
 
 			strong {
 				color: var(--color-scary-50);

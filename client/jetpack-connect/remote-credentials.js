@@ -2,14 +2,7 @@
  * Component which handle remote credentials for installing Jetpack
  */
 import page from '@automattic/calypso-router';
-import {
-	Button,
-	Card,
-	FormInputValidation,
-	FormLabel,
-	Gridicon,
-	Spinner,
-} from '@automattic/components';
+import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -21,7 +14,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
@@ -129,13 +121,13 @@ export class OrgCredentialsForm extends Component {
 	getHeaderText() {
 		const { translate } = this.props;
 
-		return translate( 'Add your self-hosted WordPress credentials (wp-admin)' );
+		return translate( "Let's connect your site" );
 	}
 
 	getSubHeaderText() {
 		const { translate } = this.props;
 		const subheader = translate(
-			'Your login credentials are used for the purpose of securely auto-installing Jetpack and will not be stored.'
+			"Add your self-hosted site login details below and we'll get Jetpack installed for you. Your details are not stored."
 		);
 		return <span>{ subheader }</span>;
 	}
@@ -185,7 +177,9 @@ export class OrgCredentialsForm extends Component {
 
 	formFields() {
 		const { translate, isRemoteInstalling } = this.props;
-		const { password, username } = this.state;
+		const { password, username, isUnloading } = this.state;
+
+		const isDisabled = isRemoteInstalling || isUnloading;
 
 		const userClassName = clsx( 'jetpack-connect__credentials-form-input', {
 			'is-error': this.isInvalidUsername(),
@@ -202,9 +196,6 @@ export class OrgCredentialsForm extends Component {
 					</div>{ ' ' }
 					{ removedProtocolURL }
 				</div>
-				<div className="jetpack-connect__wordpress-logo">
-					<WordPressLogo size="72" />
-				</div>
 				<FormLabel htmlFor="username">{ translate( 'WordPress username or email' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
@@ -212,7 +203,7 @@ export class OrgCredentialsForm extends Component {
 						autoCapitalize="off"
 						autoCorrect="off"
 						className={ userClassName }
-						disabled={ isRemoteInstalling }
+						disabled={ isDisabled }
 						id="username"
 						name="username"
 						onChange={ this.getChangeHandler( 'username' ) }
@@ -231,7 +222,7 @@ export class OrgCredentialsForm extends Component {
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
 							className={ passwordClassName }
-							disabled={ isRemoteInstalling }
+							disabled={ isDisabled }
 							id="password"
 							name="password"
 							onChange={ this.getChangeHandler( 'password' ) }
@@ -245,12 +236,6 @@ export class OrgCredentialsForm extends Component {
 						) }
 					</div>
 				</div>
-				<div className="jetpack-connect__note">
-					{ translate(
-						'Note: WordPress credentials are not the same as WordPress.com credentials. ' +
-							'Be sure to enter the username and password for your self-hosted WordPress site.'
-					) }
-				</div>
 			</Fragment>
 		);
 	}
@@ -259,27 +244,28 @@ export class OrgCredentialsForm extends Component {
 		const { isResponseCompleted, translate, isRemoteInstalling } = this.props;
 
 		if ( isResponseCompleted ) {
-			return translate( 'Jetpack installed' );
+			return translate( 'Connecting account…' );
 		}
 
 		if ( ! isRemoteInstalling ) {
 			return translate( 'Install Jetpack' );
 		}
 
-		return translate( 'Installing…' );
+		return translate( 'Installing Jetpack…' );
 	}
 
 	formFooter() {
 		const { isRemoteInstalling } = this.props;
 		const { username, password, isUnloading } = this.state;
+
+		const isBusy = isRemoteInstalling || isUnloading;
+
 		return (
 			<div className="jetpack-connect__creds-form-footer">
-				{ ( isRemoteInstalling || isUnloading ) && (
-					<Spinner className="jetpack-connect__creds-form-spinner" />
-				) }
 				<FormButton
 					className="jetpack-connect__credentials-submit"
-					disabled={ ! username || ! password || isRemoteInstalling || isUnloading }
+					disabled={ ! username || ! password }
+					busy={ isBusy }
 				>
 					{ this.renderButtonLabel() }
 				</FormButton>

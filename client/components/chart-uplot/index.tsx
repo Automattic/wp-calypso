@@ -1,4 +1,5 @@
-import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -59,7 +60,7 @@ export default function UplotChart( {
 					return '-';
 				}
 
-				return numberFormat( rawValue, { decimals: 0 } );
+				return formatNumber( rawValue, { decimals: 0 } );
 			},
 		};
 

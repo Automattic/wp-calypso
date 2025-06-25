@@ -83,6 +83,7 @@ export function IsForBusinessCheckbox( {
 				checked={ isChecked }
 				disabled={ isDisabled }
 				onChange={ ( newValue ) => ! isDisabled && handleOnChange( newValue ) }
+				help={ isChecked && translate( 'Deselect to remove payment method filtering' ) }
 			/>
 		</CheckboxWrapper>
 	);

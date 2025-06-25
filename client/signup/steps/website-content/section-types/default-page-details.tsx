@@ -1,4 +1,5 @@
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { TextAreaField, CheckboxField } from 'calypso/signup/accordion-form/form-components';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
@@ -47,7 +48,7 @@ export function DefaultPageDetails( {
 					"Please shorten your text to under %(characterLimit)s characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
 					{
 						args: {
-							characterLimit: numberFormat( CHARACTER_LIMIT ),
+							characterLimit: formatNumber( CHARACTER_LIMIT ),
 						},
 						comment: '%(characterLimit)s is a formatted number, eg: 5,000.',
 					}

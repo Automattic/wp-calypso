@@ -39,13 +39,18 @@ export const getRedirectUri = (
 		return `https://${ host + login( { socialService } ) }`;
 	}
 
+	let flow = 'start';
+	// TODO: I am restricting this to certain flows for testing sake, but I think this should be the default behavior.
+	if ( flowName === 'ai-site-builder' && socialService === 'github' ) {
+		flow = `setup/${ flowName }`;
+	}
+
+	let protocol = 'https';
 	if ( typeof window !== 'undefined' && window.location.hostname === 'calypso.localhost' ) {
-		return isLogin
-			? `http://${ host + login( { socialService } ) }`
-			: `http://${ host }/start/user`;
+		protocol = 'http';
 	}
 
 	return isLogin
-		? `https://${ host + login( { socialService } ) }`
-		: `https://${ host }/start/user`;
+		? `${ protocol }://${ host + login( { socialService } ) }`
+		: `${ protocol }://${ host }/${ flow }/user`;
 };

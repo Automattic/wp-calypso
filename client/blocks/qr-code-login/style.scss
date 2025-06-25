@@ -1,10 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
 
 .qr-code-login {
 	display: flex;
 	flex-direction: column;
 	clear: left;
+	gap: 16px 48px;
+
+	&:not(.is-error) {
+		margin-bottom: 48px;
+	}
 
 	@include break-small {
 		flex-direction: row-reverse;
@@ -12,47 +18,10 @@
 
 	.qr-code-login__instructions {
 		text-align: left;
-		padding-right: 20px;
-		font-size: $font-body-small;
-
-		.qr-code-login__heading {
-			font-size: $font-title-small;
-			text-align: center;
-			margin-bottom: 12px;
-			font-weight: 500;
-
-			@include break-small {
-				text-align: left;
-			}
-		}
+		line-height: 1.6;
 
 		.qr-code-login__steps {
-			margin-left: 16px;
-		}
-
-		.qr-code-login__step {
-			margin-bottom: 0.75em;
-		}
-
-		.qr-code-login__info {
-			border-radius: 2px;
-			font-size: $font-body-small;
-			padding: 8px;
-			align-items: center;
-			background-color: var(--color-neutral-0);
-			display: flex;
-			color: var(--color-neutral-50);
-
-			.gridicon {
-				padding-right: 4px;
-				width: 60px;
-				text-align: left;
-				fill: var(--color-warning);
-			}
-
-			strong {
-				color: var(--color-neutral-70);
-			}
+			margin: 16px 0 0 16px;
 		}
 
 		a {
@@ -127,4 +96,74 @@
 	height: 16px;
 	top: 0;
 	left: 0;
+}
+
+.qr-code-login-jetpack {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	padding: 0 16px;
+
+	@include break-small {
+		padding: 0;
+	}
+
+	&:not(.is-error) {
+		margin-bottom: 48px;
+	}
+
+	.qr-code-login-jetpack__instructions {
+		.qr-code-login-jetpack__heading {
+			margin-bottom: 16px;
+
+			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: 32px;
+			font-weight: 500;
+
+			text-align: initial;
+		}
+
+		.qr-code-login-jetpack__steps {
+			margin: 0;
+			padding-inline-start: 20px;
+			font-size: 15px;
+			line-height: 24px;
+
+			.qr-code-login-jetpack__step {
+				text-align: start;
+			}
+		}
+
+		a {
+			color: var(--studio-jetpack-green-60, #007117);
+		}
+	}
+
+	.qr-code-login-jetpack__token {
+		width: 300px;
+		height: 300px;
+		max-width: 100%;
+		max-height: calc(100vw - 48px);
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 4px;
+		padding: 16px;
+
+		svg {
+			max-width: 100%;
+			max-height: calc(100vw - 48px);
+		}
+
+		canvas {
+			max-width: 100%;
+			max-height: calc(100vw - 48px);
+		}
+	}
+
+	.qr-code-login-jetpack__notice {
+		text-align: initial;
+
+		color: var(--studio-jetpack-grey-50, #646970 );
+		@include body-medium;
+	}
 }

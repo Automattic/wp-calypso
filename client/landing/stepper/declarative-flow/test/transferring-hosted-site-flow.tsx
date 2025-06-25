@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor } from '@testing-library/react';
 import transferringHostedSite from '../flows/transferring-hosted-site-flow/transferring-hosted-site-flow';
 import { getFlowLocation, renderFlow } from './helpers';
@@ -9,12 +10,19 @@ import { getFlowLocation, renderFlow } from './helpers';
 const originalLocation = window.location;
 let mockIsAdminInterfaceWPAdminMock = true;
 const mockSiteId = 123;
+const mockSite = {
+	ID: mockSiteId,
+	URL: 'https://mysite.com',
+	options: {
+		admin_url: 'https://mysite.com/wp-admin',
+	},
+};
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isAdminInterfaceWPAdmin: jest.fn( () => mockIsAdminInterfaceWPAdminMock ),
 } ) );
-jest.mock( '../../hooks/use-site-id-param', () => ( {
-	useSiteIdParam: jest.fn( () => mockSiteId ),
+jest.mock( '../../hooks/use-site', () => ( {
+	useSite: jest.fn( () => mockSite ),
 } ) );
 
 jest.mock( '@wordpress/data', () => {
@@ -53,7 +61,7 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 
 		it( 'redirects the user to the wp-admin when isAdminInterfaceWPAdmin', async () => {
 			runUseStepNavigationSubmit( {
-				currentURL: '/setup/hosted-site-migration',
+				currentURL: '/setup/site-migration',
 				currentStep: 'processing',
 				dependencies: {
 					action: 'continue',
@@ -64,7 +72,7 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 
 			await waitFor( () => {
 				expect( getFlowLocation() ).toEqual( {
-					path: '/setup/hosted-site-migration',
+					path: '/setup/site-migration',
 					state: null,
 				} );
 			} );

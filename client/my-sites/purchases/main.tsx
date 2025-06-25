@@ -64,7 +64,7 @@ export function Purchases() {
 					navigationItems={ [] }
 					title={ titles.sectionTitle }
 					subtitle={ translate(
-						'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Manage your site’s plan and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
@@ -192,7 +192,11 @@ export function PurchaseDowngrade( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				<Downgrade purchaseId={ purchaseId } siteSlug={ siteSlug } />
+				<Downgrade
+					purchaseId={ purchaseId }
+					siteSlug={ siteSlug }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				/>
 			</CheckoutErrorBoundary>
 		</Main>
 	);

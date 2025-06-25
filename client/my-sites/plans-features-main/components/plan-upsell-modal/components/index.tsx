@@ -36,8 +36,8 @@ export const ButtonContainer = styled.div`
 	@media ( min-width: 780px ) {
 		margin-top: 24px;
 		button {
-			max-width: 220px;
-			flex-basis: 196px;
+			max-width: 240px;
+			flex-basis: 240px;
 		}
 	}
 `;

@@ -1,6 +1,7 @@
-import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { formatNumber } from '@automattic/number-formatters';
+import { Step } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -8,9 +9,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
@@ -18,7 +19,7 @@ import './style.scss';
 interface HostingDetailsWithIconsProps {
 	items: {
 		icon: ReactElement;
-		description: string;
+		description: TranslateResult;
 	}[];
 }
 
@@ -54,9 +55,15 @@ interface Props {
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
+	onVisibilityChange: ( isVisible: boolean ) => void;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	onVisibilityChange,
+	hideImporterListLink = false,
+} ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -73,8 +80,11 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	}, [ onComplete, siteInfo ] );
 
 	if ( isFetching || ( isFetched && ! hasError ) ) {
+		onVisibilityChange?.( false );
 		return <ScanningStep />;
 	}
+
+	onVisibilityChange?.( true );
 
 	const hostingDetailItems = {
 		'blazing-fast-speed': {
@@ -85,7 +95,17 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		},
 		'unmatched-uptime': {
 			icon: published,
-			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+			description: translate(
+				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
+				{
+					args: {
+						uptimePercent: formatNumber( 0.99999, {
+							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+						} ),
+					},
+					comment: '99.999% uptime',
+				}
+			),
 		},
 		security: {
 			icon: shield,
@@ -94,13 +114,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	};
 
 	return (
-		<div className="import__capture-wrapper">
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Let’s find your site' ) }</Title>
-				<SubTitle>
-					{ translate( 'Enter your current site address below to get started.' ) }
-				</SubTitle>
-			</div>
+		<>
 			<div className="import__capture-container">
 				<CaptureInput
 					onInputEnter={ setSiteURL }
@@ -118,19 +132,21 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 				/>
 			</div>
 			<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
-		</div>
+		</>
 	);
 };
 
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
-const SiteMigrationIdentify: Step< {
-	submits: {
-		action: SiteMigrationIdentifyAction;
-		platform?: string;
-		from?: string;
-	};
-} > = function ( { navigation, variantSlug, flow } ) {
+const SiteMigrationIdentify: StepType< {
+	submits:
+		| {
+				action: SiteMigrationIdentifyAction;
+				platform?: string;
+				from?: string;
+		  }
+		| undefined;
+} > = function ( { navigation, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -150,43 +166,63 @@ const SiteMigrationIdentify: Step< {
 	);
 
 	const urlQueryParams = useQuery();
+	const { get } = useFlowState();
 
-	const shouldHideBackButton = () => {
-		const ref = urlQueryParams.get( 'ref' ) || '';
-		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
-		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
-		const shouldNotHideIfBackToIsSet = Boolean( urlQueryParams.get( 'back_to' ) );
-		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideIfBackToIsSet;
+	const shouldShowBackButton = () => {
+		const ref = get( 'flow' )?.entryPoint;
+
+		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
+		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
 	};
 
+	const getBackButton = () => {
+		if ( ! shouldShowBackButton() ) {
+			return null;
+		}
+
+		const backToUrl = urlQueryParams.get( 'back_to' );
+		return backToUrl ? (
+			<Step.BackButton href={ backToUrl ?? '' } />
+		) : (
+			<Step.BackButton onClick={ navigation?.goBack } />
+		);
+	};
+
+	const [ isVisible, setIsVisible ] = useState( false );
+
+	const stepContent = (
+		<Analyzer
+			onComplete={ ( { platform, url } ) => handleSubmit( 'continue', { platform, from: url } ) }
+			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
+			onSkip={ () => {
+				handleSubmit( 'skip_platform_identification' );
+			} }
+			flowName={ flow }
+			onVisibilityChange={ ( isVisible ) => {
+				setIsVisible( isVisible );
+			} }
+		/>
+	);
+
+	const backButton = getBackButton();
 	return (
 		<>
 			<DocumentHead title={ translate( 'Import your site content' ) } />
-			<StepContainer
-				stepName="site-migration-identify"
-				flowName="site-migration"
-				className="import__onboarding-page"
-				hideBack={ shouldHideBackButton() }
-				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
-				hideSkip
-				hideFormattedHeader
-				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
-				isFullLayout
-				stepContent={
-					<Analyzer
-						onComplete={ ( { platform, url } ) =>
-							handleSubmit( 'continue', { platform, from: url } )
-						}
-						hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
-						onSkip={ () => {
-							handleSubmit( 'skip_platform_identification' );
-						} }
-						flowName={ flow }
-					/>
+			<Step.CenteredColumnLayout
+				className="step-container-v2--site-migration-identify"
+				columnWidth={ 4 }
+				topBar={ <Step.TopBar leftElement={ backButton } /> }
+				heading={
+					isVisible ? (
+						<Step.Heading
+							text={ translate( "Let's find your site" ) }
+							subText={ translate( 'Enter your current site address below to get started.' ) }
+						/>
+					) : undefined
 				}
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

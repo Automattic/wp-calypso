@@ -33,17 +33,21 @@
 		"oauth": true,
 		"a4a-partner-directory": false,
 		"a4a-dev-sites": true,
-		"a4a-migrations-page-v2": true,
 		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
 		"a4a-updated-add-new-site": true,
-		"a4a-wc-asia-signup-enabled": true
+		"a4a-signup-v2": true,
+		"a4a-signup-v2-via-email": false,
+		"a4a-unified-onboarding-tour": true,
+		"a4a-client-checkout-v2": false,
+		"jetpack/crm-downloads": true
 	},
 	"enable_all_sections": false,
 	"sections": {
 		"a8c-for-agencies": true,
 		"a8c-for-agencies-auth": true,
 		"a8c-for-agencies-landing": true,
+		"a8c-for-agencies-feedback": true,
 		"a8c-for-agencies-overview": true,
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,
@@ -56,7 +60,8 @@
 		"a8c-for-agencies-migrations": true,
 		"a8c-for-agencies-client": true,
 		"a8c-for-agencies-team": true,
-		"a8c-for-agencies-agency-tier": true
+		"a8c-for-agencies-agency-tier": true,
+		"a8c-for-agencies-woopayments": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

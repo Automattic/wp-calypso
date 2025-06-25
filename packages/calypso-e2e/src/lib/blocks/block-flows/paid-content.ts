@@ -32,9 +32,9 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		// The Guest View will load by default. Wait for this view to fully render.
+		// The Guest View will load by default. Wait for this view to fully render and be visible.
 		await context.addedBlockLocator
-			.getByRole( 'document', { name: 'Block: Guest View' } )
+			.locator( '.wp-premium-content-logged-out-view:not([hidden])' )
 			.waitFor();
 
 		// Using the Block Toolbar, change to the Subscriber view.
@@ -50,7 +50,7 @@ export class PaidContentBlockFlow implements BlockFlow {
 
 		// Verify the Subscriber version of the block is now loaded.
 		await context.addedBlockLocator
-			.getByRole( 'document', { name: 'Block: Subscriber View' } )
+			.locator( '.wp-premium-content-subscriber-view:not([hidden])' )
 			.waitFor();
 
 		// Fill the title and text for Subscriber view.

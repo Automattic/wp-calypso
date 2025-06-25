@@ -60,10 +60,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 
 	const { data: geoData } = useGeoLocationQuery();
 
-	const queryParams = new URLSearchParams( window?.location.search );
-	const flags = queryParams.get( 'flags' )?.split( ',' );
-	const isHelpCenterLinkEnabled =
-		flags?.includes( 'signup/help-center-link' ) && geoData?.country_short === 'US';
+	const isHelpCenterLinkEnabled = geoData?.country_short === 'US';
 
 	const subHeaderText = translate(
 		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
@@ -104,6 +101,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 		);
 
 		goToNextStep();
+		return true;
 	};
 
 	const filterSites = ( site: SiteDetails ) => {

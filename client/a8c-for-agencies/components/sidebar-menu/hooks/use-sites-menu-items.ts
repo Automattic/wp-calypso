@@ -48,7 +48,7 @@ const useSitesMenuItems = ( path: string ) => {
 				link: A4A_SITES_LINK_NEEDS_ATTENTION,
 				title: translate( 'Needs attention' ),
 				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Sites / Needs Attention',
+					menu_item: 'Automattic for Agencies / Sites / Needs attention',
 				},
 			} );
 

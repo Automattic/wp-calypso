@@ -1,4 +1,4 @@
-import { EDITOR_IFRAME_LOADED, EDITOR_START, EDITOR_STOP } from 'calypso/state/action-types';
+import { EDITOR_STOP } from 'calypso/state/action-types';
 import { withAnalytics, bumpStat } from 'calypso/state/analytics/actions';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
@@ -16,21 +16,6 @@ export const MODAL_VIEW_STATS = {
 	[ ModalViews.IMAGE_EDITOR ]: 'view_edit',
 	[ ModalViews.VIDEO_EDITOR ]: 'view_edit',
 };
-
-/**
- * Returns an action object to be used in signalling that the editor should
- * begin to edit the post with the specified post ID, or `null` as a new post.
- * @param  {number}  siteId   Site ID
- * @param  {?number} postId   Post ID
- * @returns {any}           Action object
- */
-export function startEditingPost( siteId, postId ) {
-	return {
-		type: EDITOR_START,
-		siteId,
-		postId,
-	};
-}
 
 /**
  * Returns an action object to be used in signalling that the editor should
@@ -63,13 +48,3 @@ export function setEditorMediaModalView( view ) {
 
 	return action;
 }
-
-/**
- * @param {boolean} isIframeLoaded
- * @param {MessagePort | null} iframePort
- */
-export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null ) => ( {
-	type: EDITOR_IFRAME_LOADED,
-	isIframeLoaded,
-	iframePort,
-} );

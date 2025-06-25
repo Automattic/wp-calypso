@@ -2,7 +2,6 @@ import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
@@ -78,16 +77,7 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 		isComplete ? null : duration
 	);
 
-	return (
-		<>
-			<Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />
-			{ flowName === NEWSLETTER_FLOW && (
-				<div className="processing-step__jetpack-powered">
-					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
-				</div>
-			) }
-		</>
-	);
+	return <Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />;
 }
 
 TailoredFlowPreCheckoutScreen.propTypes = {

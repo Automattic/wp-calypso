@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .shopping-cart__menu {
 	padding: 24px 16px 16px;
@@ -26,8 +27,7 @@
 }
 
 .shopping-cart__menu-header-title {
-	font-size: 1.5rem;
-	line-height: 1.2;
+	@include heading-x-large;
 }
 
 .shopping-cart__menu-header-close-button {
@@ -59,9 +59,7 @@
 	flex-direction: column;
 	justify-content: space-between;
 	flex-grow: 1;
-	font-size: 0.875rem;
-	line-height: 1.7;
-	font-weight: 400;
+	@include body-medium;
 }
 
 .shopping-cart__menu-list-item-price-actual {
@@ -88,9 +86,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	font-weight: 500;
-	font-size: 1rem;
-	line-height: 1.5;
+	@include heading-large;
 }
 
 .shopping-cart__menu-checkout-button {
@@ -98,8 +94,7 @@
 	align-items: center;
 	justify-content: center;
 	min-height: 40px;
-	font-size: rem(14px);
-	font-weight: 600;
+	@include heading-medium;
 	border-radius: 4px;
 	margin-block-start: 20px;
 }

@@ -1,10 +1,10 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
 .referrals-details-table__container {
-
 	.referrals-details-table__heading {
 		padding-block-end: 16px;
-		font-size: rem(20px);
-		font-weight: 500;
+		@include heading-x-large;
 	}
 
 	.dataviews-view-table {

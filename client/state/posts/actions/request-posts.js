@@ -22,10 +22,10 @@ export function requestPosts( siteId, query = {} ) {
 			query,
 		} );
 
-		const source = siteId ? wpcom.site( siteId ) : wpcom.me();
+		const endpoint = siteId ? `/sites/${ siteId }/posts` : '/me/posts';
 
-		return source
-			.postsList( { ...query } )
+		return wpcom.req
+			.get( endpoint, { ...query } )
 			.then( ( { found, posts } ) => {
 				dispatch( receivePosts( posts ) );
 				dispatch( {

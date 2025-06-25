@@ -7,11 +7,14 @@ import { Store } from 'redux';
 const debug = debugFactory( 'calypso' );
 
 export const setupContextMiddleware = ( reduxStore: Store, reactQueryClient: QueryClient ) => {
+	let previousPath: string | null = null;
+
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.path );
-		const path = parsed.pathname + parsed.search || null;
 
-		context.prevPath = path === context.path ? false : path;
+		context.previousPath = previousPath;
+		previousPath = context.path;
+
 		context.query = Object.fromEntries( parsed.searchParams.entries() );
 		context.pathname = parsed.pathname;
 

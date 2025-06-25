@@ -1,5 +1,8 @@
-import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
-import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
+import {
+	BlockRendererProvider,
+	PatternsRendererProvider,
+	usePatternsRendererContext,
+} from '@automattic/block-renderer';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';

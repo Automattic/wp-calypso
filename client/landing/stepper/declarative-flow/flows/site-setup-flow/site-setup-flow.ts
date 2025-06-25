@@ -1,7 +1,7 @@
-import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -10,11 +10,10 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../../../constants';
-import { useActivateDesign } from '../../../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../../../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { useCanUserManageOptions } from '../../../hooks/use-user-can-manage-options';
@@ -28,7 +27,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	type AssertConditionResult,
 	AssertConditionState,
-	type FlowV1,
+	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -43,17 +42,12 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
-function useGoalsAtFrontExperimentQueryParam() {
-	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
-}
-
-const siteSetupFlow: FlowV1 = {
+const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
+	__experimentalUseSessions: true,
 
 	useSteps() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const steps = [
 			STEPS.GOALS,
 			STEPS.INTENT,
@@ -63,7 +57,6 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
-			STEPS.IMPORT_LIGHT,
 			STEPS.IMPORT_LIST,
 			STEPS.IMPORT_READY,
 			STEPS.IMPORT_READY_NOT,
@@ -72,6 +65,7 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.IMPORTER_WIX,
 			STEPS.IMPORTER_BLOGGER,
 			STEPS.IMPORTER_MEDIUM,
+			STEPS.IMPORTER_PLAYGROUND,
 			STEPS.IMPORTER_SQUARESPACE,
 			STEPS.IMPORTER_WORDPRESS,
 			STEPS.LAUNCH_BIG_SKY,
@@ -82,15 +76,9 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.DIFM_STARTING_POINT,
 		];
 
-		if ( isGoalsAtFrontExperiment ) {
-			return [ STEPS.PROCESSING, STEPS.ERROR ];
-		}
-
 		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -122,11 +110,8 @@ const siteSetupFlow: FlowV1 = {
 		const backToFlow = urlQueryParams.get( 'backToFlow' );
 		const skippedCheckout = urlQueryParams.get( 'skippedCheckout' );
 
-		const adminUrl = useSelect(
-			( select ) =>
-				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
-			[ site ]
-		);
+		const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 		const isAtomic = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 			[ site ]
@@ -222,7 +207,6 @@ const siteSetupFlow: FlowV1 = {
 						redirectionUrl = addQueryArgs(
 							{
 								showLaunchpad: true,
-								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
 							to
@@ -272,6 +256,8 @@ const siteSetupFlow: FlowV1 = {
 		} );
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
+		const { get } = useFlowState();
+		const entryPoint = get( 'flow' )?.entryPoint;
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -418,11 +404,12 @@ const siteSetupFlow: FlowV1 = {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
+					const entryPoint = get( 'flow' )?.entryPoint;
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
 						return window.location.assign(
 							addQueryArgs(
-								{ siteSlug, siteId, from },
+								{ siteSlug, siteId, from, ref: entryPoint },
 								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 							)
 						);
@@ -478,6 +465,10 @@ const siteSetupFlow: FlowV1 = {
 					}
 				}
 
+				case 'importerPlayground': {
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+				}
+
 				case 'trialAcknowledge': {
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
@@ -526,7 +517,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'goals' );
 				}
 
-				case 'importList':
+				case 'importList': {
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
 					}
@@ -535,7 +526,12 @@ const siteSetupFlow: FlowV1 = {
 						return goToFlow( backToFlow );
 					}
 
-					return navigate( `import?siteSlug=${ siteSlug }` );
+					if ( entryPoint === 'wp-admin-importers-list' ) {
+						return window.location.assign( `${ adminUrl }import.php` );
+					}
+
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
+				}
 
 				case 'importerBlogger':
 				case 'importerMedium':
@@ -554,9 +550,9 @@ const siteSetupFlow: FlowV1 = {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
 
-					// Ensure we override from and option, as we end up in a loop if we don't.
-					return navigate( `import?siteSlug=${ siteSlug }&option=&from` );
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importerWix':
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
@@ -671,77 +667,13 @@ const siteSetupFlow: FlowV1 = {
 	},
 
 	useSideEffect() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-		const { siteSlugOrId, siteId } = useSiteData();
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
-			( select ) => {
-				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
-					ONBOARD_STORE
-				) as OnboardSelect;
-				return {
-					selectedDesign: getSelectedDesign(),
-					selectedStyleVariation: getSelectedStyleVariation(),
-					selectedGlobalStyles: getSelectedGlobalStyles(),
-				};
-			},
-			[]
-		);
+		const { get, set } = useFlowState();
+		const urlQueryParams = useQuery();
+		const ref = urlQueryParams.get( 'ref' );
 
-		const dispatch = reduxDispatch();
-
-		const skippedCheckout = useQuery().get( 'skippedCheckout' );
-		const activateDesign = useActivateDesign();
-		const isPendingActionSet = useRef( false );
-
-		useEffect( () => {
-			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
-				return;
-			}
-
-			// Avoid the pending action to be triggered multiple times.
-			if ( isPendingActionSet.current ) {
-				return;
-			}
-
-			isPendingActionSet.current = true;
-			setPendingAction( async () => {
-				if ( ! selectedDesign ) {
-					return;
-				}
-				try {
-					await activateDesign( selectedDesign, {
-						styleVariation: selectedStyleVariation,
-						globalStyles: selectedGlobalStyles,
-					} );
-				} catch ( error: any ) {
-					// We attempt to set the design on the site anyway even when the checkout is skipped.
-					// That's because the user might have selected a free design, and there's no reason
-					// we shouldn't set that design on the site when the checkout is skipped.
-					// If the ThemeNotPurchasedError is thrown we know that they actually selected a
-					// paid theme and we're unable to apply it.
-					if ( error.name !== 'ThemeNotPurchasedError' || skippedCheckout !== '1' ) {
-						throw error;
-					}
-				}
-
-				const design_completed = selectedDesign?.default ? false : true;
-				await updateLaunchpadSettings( siteSlugOrId, {
-					checklist_statuses: { design_completed },
-				} );
-			} );
-		}, [
-			isGoalsAtFrontExperiment,
-			siteSlugOrId,
-			siteId,
-			activateDesign,
-			selectedDesign,
-			setPendingAction,
-			dispatch,
-			selectedStyleVariation,
-			selectedGlobalStyles,
-			skippedCheckout,
-		] );
+		if ( ref && ! get( 'flow' )?.entryPoint ) {
+			set( 'flow', { entryPoint: ref } );
+		}
 	},
 };
 

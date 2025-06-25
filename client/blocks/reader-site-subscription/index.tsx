@@ -1,13 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, WordPressLogo } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { login } from 'calypso/lib/paths';
 import { infoNotice } from 'calypso/state/notices/actions';

@@ -33,7 +33,7 @@ class AddDomainButton extends Component {
 	}
 
 	getAddNewDomainUrl = () => {
-		if ( ! this.props.selectedSiteSlug ) {
+		if ( this.props.sidebarMode || ! this.props.selectedSiteSlug ) {
 			return '/start/domain';
 		}
 

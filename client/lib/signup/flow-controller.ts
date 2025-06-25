@@ -16,13 +16,15 @@ import {
 	reject,
 	reduce,
 } from 'lodash';
-import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
+import { Store, Unsubscribe as ReduxUnsubscribe, AnyAction } from 'redux';
+import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
 import { getStepUrl } from 'calypso/signup/utils';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import {
@@ -356,6 +358,11 @@ export default class SignupFlowController {
 
 		if ( dependencies.bearer_token && ! wpcom.isTokenLoaded() ) {
 			wpcom.loadToken( dependencies.bearer_token );
+			// Reload proxy to refresh auth status for parts that incorrectly use wpcom-proxy-request in Calypso.
+			reloadProxy();
+			requestAllBlogsAccess();
+			// Fetch current user to refresh auth status and re-render all dependent components.
+			this._reduxStore.dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
 
 		for ( const pendingStep of pendingSteps ) {

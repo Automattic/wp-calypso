@@ -102,7 +102,6 @@ $z-layers: (
 
 		".main": 20,
 		".jpcom-masterbar": 21,
-		".main.calypsoify.is-iframe": 20,
 		".search": 22,
 		".reader-update-notice": 22,
 		".search-stream__sort-picker": 23,
@@ -124,9 +123,7 @@ $z-layers: (
 		".legal-updates-banner": 185,
 		".detail-page__backdrop": 190,
 		".layout__loader": 200,
-		".offline-status": 200,
 		".environment-badge": 999,
-		".customizer-loading-panel__placeholder-change-theme": 999,
 		".app-banner": 1000,
 		".module-overlay": 1000,
 		".drop-zone": 1000,
@@ -135,7 +132,6 @@ $z-layers: (
 		".sortable-list__item.is-draggable.is-active": 1000,
 		".chart__tooltip": 1000,
 		".drop-zone__content": 1010,
-		".main.customize.is-iframe": 9999,
 		".tooltip.popover": 100000,
 		".tooltip.popover.page-modules-settings-popover": 175,
 		".tooltip.popover.highlight-card__settings-tooltip": 170,
@@ -178,6 +174,7 @@ $z-layers: (
 		".is-section-woocommerce .global-notices": 999999,
 		".webpack-build-monitor": 99999999,
 		".people-list-item.card.is-compact:focus": 1,
+		".reader-join-conversation-dialog__overlay": 10000001,
 	),
 	".is-section-signup": (
 		".is-section-signup::before": -1,
@@ -229,7 +226,7 @@ $z-layers: (
 	),
 	".dialog__backdrop": (
 		".editor-media-modal .section-nav": 10,
-		".editor-media-modal .notice": 10,
+		".editor-media-modal .calypso-notice": 10,
 		".editor-media-modal-gallery__preview-toggle": 100,
 		".confirm-modal": 100300,
 		".memberships__dialog-section.is-visible": 2,
@@ -255,6 +252,10 @@ $z-layers: (
 	),
 	".reader-related-card__meta": (
 		".follow-button": 1,
+	),
+	".reader-notifications": (
+		".wpnc__single-view": 1,
+		".wpnc__note-list": 2,
 	),
 	".list-stream__header-follow": (
 		".follow-button": 1,

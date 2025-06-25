@@ -1,0 +1,148 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.site-admin-site-hub {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $grid-unit-10;
+	margin-right: $grid-unit-15;
+	height: $header-height;
+}
+
+.site-admin-site-hub__actions {
+	flex-shrink: 0;
+}
+
+.site-admin-site-hub__view-mode-toggle-container {
+	height: $header-height;
+	width: $header-height;
+	flex-shrink: 0;
+
+	.site-admin-layout__view-mode-toggle {
+		view-transition-name: toggle;
+		position: relative;
+		color: $white;
+		height: $header-height;
+		width: $header-height;
+		overflow: hidden;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: $gray-900;
+		border-radius: 4px;
+		transform: scale(0.5333) translateX(-4px); // Offset to position the icon 12px from viewport edge
+	
+		&:hover,
+		&:active {
+			color: $white;
+		}
+	
+		&:focus-visible,
+		&:focus {
+			box-shadow: 0 0 0 3px #1e1e1e, 0 0 0 6px var(--wp-admin-theme-color);
+			outline: 4px solid #0000;
+			outline-offset: 4px;
+		}
+	
+		&::before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 9px;
+			right: 9px;
+			bottom: 9px;
+			left: 9px;
+			border-radius: $radius-medium;
+			box-shadow: none;
+	
+			@media not (prefers-reduced-motion) {
+				transition: box-shadow 0.1s ease;
+			}
+		}
+	
+		.site-admin-layout__view-mode-toggle-icon {
+			display: flex;
+			height: $header-height;
+			width: $header-height;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
+	&.has-transparent-background .site-admin-layout__view-mode-toggle-icon {
+		background: transparent;
+	}
+}
+
+.site-admin-site-hub__title .site-admin-site-hub__title-button {
+	color: $gray-200;
+	display: block;
+	flex-grow: 1;
+	font-size: $font-size-large; // @unstable: different from core: 15px;
+	font-weight: 500;
+	overflow: hidden;
+	// Add space for the ↗ to render.
+	padding-right: $grid-unit-20;
+
+	// Create 12px gap between site icon and site title
+	margin-left: -$grid-unit-05;
+	position: relative;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $gray-200;
+	}
+
+	&:focus {
+		// Defer to :focus-visible below.
+		box-shadow: none;
+		outline: none;
+	}
+
+	&:focus-visible {
+		// Push the shadow away from the title.
+		box-shadow:
+			0 0 0 var( --wp-admin-border-width-focus ) $gray-900,
+			0 0 0 calc( 2 * var( --wp-admin-border-width-focus ) ) var( --wp-admin-theme-color );
+
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+
+	&::after {
+		content: '\2197';
+		font-weight: 400;
+		opacity: 0;
+		position: absolute;
+		right: 0;
+
+		@media not ( prefers-reduced-motion ) {
+			transition: opacity 0.1s linear;
+		}
+	}
+
+	&:hover::after,
+	&:focus::after,
+	&:active::after {
+		opacity: 1;
+	}
+}
+
+.site-admin-site-hub__toggle-command-center {
+	color: $gray-200;
+
+	&:hover,
+	&:active {
+		svg {
+			fill: $gray-100;
+		}
+	}
+}
+

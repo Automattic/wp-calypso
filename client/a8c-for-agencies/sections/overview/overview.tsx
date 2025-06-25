@@ -20,7 +20,7 @@ import './style.scss';
 
 export default function Overview() {
 	const translate = useTranslate();
-	const title = translate( 'Agency Overview' );
+	const title = translate( 'Agency overview' );
 
 	return (
 		<Layout title={ title } wide>

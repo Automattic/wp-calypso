@@ -5,10 +5,12 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
+import { setRoute } from 'calypso/state/route/actions';
+import routeReducer from 'calypso/state/route/reducer';
 
 export const renderWithProvider = (
 	ui,
-	{ initialState, store = null, reducers, ...renderOptions } = {}
+	{ initialPath, initialState, store = null, reducers, ...renderOptions } = {}
 ) => {
 	const queryClient = new QueryClient();
 
@@ -21,7 +23,18 @@ export const renderWithProvider = (
 			}
 		}
 
+		if ( initialPath ) {
+			reducer = reducer.addReducer( [ 'route' ], routeReducer );
+		}
+
 		store = createStore( reducer, initialState, applyMiddleware( thunkMiddleware ) );
+
+		if ( initialPath ) {
+			const { pathname, search } = new URL( window.location.href + initialPath );
+			const searchParams = new URLSearchParams( search );
+			const query = Object.fromEntries( searchParams.entries() );
+			store.dispatch( setRoute( pathname, query ) );
+		}
 	}
 
 	const Wrapper = ( { children } ) => (

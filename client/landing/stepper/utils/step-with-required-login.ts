@@ -2,5 +2,5 @@ import type { StepperStep } from 'calypso/landing/stepper/declarative-flow/inter
 
 export const stepWithRequiredLogin = ( step: StepperStep ): StepperStep => ( {
 	...step,
-	requiresLoggedInUser: true,
+	requiresLoggedInUser: true as const,
 } );

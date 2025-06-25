@@ -5,9 +5,10 @@ import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 type Props = {
 	email: string;
 	onClose?: () => void;
+	isFullWidth?: boolean;
 };
 
-export default function NewReferralOrderNotification( { email, onClose }: Props ) {
+export default function NewReferralOrderNotification( { email, onClose, isFullWidth }: Props ) {
 	const [ showBanner, setShowBanner ] = useState( true );
 
 	const translate = useTranslate();
@@ -19,7 +20,7 @@ export default function NewReferralOrderNotification( { email, onClose }: Props 
 
 	return (
 		showBanner && (
-			<LayoutBanner level="success" onClose={ onCloseClick }>
+			<LayoutBanner isFullWidth={ isFullWidth } level="success" onClose={ onCloseClick }>
 				{ translate(
 					'Your referral order was emailed to %(referralEmail)s for payment.{{br/}}Once they pay you can assign the items that were purchased.',
 					{

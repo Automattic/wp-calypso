@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_100_YEARS, isValidFeatureKey } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
@@ -24,7 +25,7 @@ function is100YearPlanUser( context ) {
 
 export function plans( context, next ) {
 	// Redirecting users for the 100-Year plan to the my-plan page.
-	if ( is100YearPlanUser( context ) ) {
+	if ( is100YearPlanUser( context ) && ! isEnabled( 'untangling/plans' ) ) {
 		return page.redirect( `/plans/my-plan/${ context.params.site }` );
 	}
 	if ( showJetpackPlans( context ) ) {

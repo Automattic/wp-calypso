@@ -137,7 +137,6 @@ export default function Summary( {
 			<Card>
 				{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
 				<h2>{ __( 'Success!' ) } 🎉</h2>
-
 				<p>
 					{ sprintf(
 						// translators: %s the site name
@@ -210,14 +209,14 @@ export default function Summary( {
 						<ImporterActionButton
 							href={ `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }` }
 						>
-							{ __( 'Check subscribers' ) }
+							{ __( 'Manage subscribers' ) }
 						</ImporterActionButton>
 					) : (
 						<ImporterActionButton
 							href={ `/subscribers/${ selectedSite.slug }` }
 							onClick={ resetImporter }
 						>
-							{ __( 'Check subscribers' ) }
+							{ __( 'Manage subscribers' ) }
 						</ImporterActionButton>
 					) }
 				</ImporterActionButtonContainer>

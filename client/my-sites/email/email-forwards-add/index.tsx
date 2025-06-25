@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,7 +11,10 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
-import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
+import {
+	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
+} from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
@@ -59,6 +63,8 @@ const EmailForwardsAdd = ( {
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
 	const isGravatarRestrictedDomain =
 		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
+	const isDomainStateRestricted =
+		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED;
 
 	const goToEmail = useCallback( (): void => {
 		if ( ! selectedSite ) {
@@ -81,31 +87,60 @@ const EmailForwardsAdd = ( {
 		page( getEmailManagementPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	}, [ currentRoute, selectedDomainName, selectedSite ] );
 
-	const content = isGravatarRestrictedDomain ? (
-		<Notice showDismiss={ false } className="email-forwards-add__notice">
-			{ translate(
-				'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
-			) }
-		</Notice>
-	) : (
-		<Card>
-			{ areDomainsLoading && (
-				<div className="email-forwards-add__placeholder">
-					<p />
-					<p />
-					<Button disabled />
-				</div>
-			) }
+	const renderRestrictedDomainStatus = () => {
+		if ( isGravatarRestrictedDomain ) {
+			return (
+				<Notice showDismiss={ false } className="email-forwards-add__notice">
+					{ translate(
+						'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
+					) }
+				</Notice>
+			);
+		}
+		if ( isDomainStateRestricted ) {
+			return (
+				<Notice showDismiss={ false } className="email-forwards-add__notice">
+					{ translate(
+						'You are not currently allowed to buy email services for {{strong}}%(domainName)s{{/strong}}. Please {{contactSupportLink}}contact support{{/contactSupportLink}} for more details.',
+						{
+							components: {
+								strong: <strong />,
+								contactSupportLink: (
+									<a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />
+								),
+							},
+							args: {
+								domainName: selectedDomainName,
+							},
+						}
+					) }
+				</Notice>
+			);
+		}
+	};
 
-			{ ! areDomainsLoading && (
-				<EmailForwardingAddNewCompactList
-					onAddedEmailForwards={ onAddedEmailForwards }
-					selectedDomainName={ selectedDomainName }
-					showFormHeader={ showFormHeader }
-				/>
-			) }
-		</Card>
-	);
+	const content =
+		isGravatarRestrictedDomain || isDomainStateRestricted ? (
+			renderRestrictedDomainStatus()
+		) : (
+			<Card>
+				{ areDomainsLoading && (
+					<div className="email-forwards-add__placeholder">
+						<p />
+						<p />
+						<Button disabled />
+					</div>
+				) }
+
+				{ ! areDomainsLoading && (
+					<EmailForwardingAddNewCompactList
+						onAddedEmailForwards={ onAddedEmailForwards }
+						selectedDomainName={ selectedDomainName }
+						showFormHeader={ showFormHeader }
+					/>
+				) }
+			</Card>
+		);
 
 	return (
 		<>

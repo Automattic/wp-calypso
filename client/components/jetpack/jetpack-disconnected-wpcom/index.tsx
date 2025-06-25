@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
-import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -20,27 +19,23 @@ const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 	const onSupportClick = useTrackCallback( undefined, 'calypso_jetpack_backup_support_click' );
 	return (
 		<PromoCard
-			title={ preventWidows( translate( 'Jetpack connection has failed' ) ) }
+			title={ translate( 'Jetpack connection has failed' ) }
 			image={ { path: JetpackDisconnected } }
 			isPrimary
 		>
 			<p>
-				{ preventWidows(
-					translate( 'Jetpack is unable to reach your site {{siteName/}} at this moment.', {
-						components: { siteName: <strong>{ siteName }</strong> },
-					} )
-				) }
+				{ translate( 'Jetpack is unable to reach your site {{siteName/}} at this moment.', {
+					components: { siteName: <strong>{ siteName }</strong> },
+				} ) }
 			</p>
 			<p>
-				{ preventWidows(
-					translate(
-						'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
-						{
-							components: {
-								siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
-							},
-						}
-					)
+				{ translate(
+					'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
+					{
+						components: {
+							siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
+						},
+					}
 				) }
 			</p>
 			<div className="jetpack-disconnected-wpcom__ctas">

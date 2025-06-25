@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { preventWidows } from 'calypso/lib/formatting';
 import type { ProductCardFeaturesItem } from './types';
 
 interface Props {
@@ -15,7 +14,7 @@ const JetpackProductCardFeaturesItem: React.FC< Props > = ( {
 			'is-differentiator': isDifferentiator,
 		} ) }
 	>
-		{ preventWidows( text ) }
+		{ text }
 	</li>
 );
 

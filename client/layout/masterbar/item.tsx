@@ -31,6 +31,9 @@ interface MasterbarItemProps {
 	disabled?: boolean;
 	subItems?: Array< Array< MasterbarSubItemProps > >;
 	hasGlobalBorderStyle?: boolean;
+	as?: React.ComponentType;
+	variant?: string;
+	ariaLabel?: string;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -47,6 +50,9 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
 		hasGlobalBorderStyle: PropTypes.bool,
+		as: PropTypes.elementType,
+		variant: PropTypes.string,
+		ariaLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -137,6 +143,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 								{ item.label }
 							</a>
 						) }
+						{ ! item.onClick && ! item.url && <div>{ item.label }</div> }
 					</li>
 				) )
 			)
@@ -223,6 +230,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
+			'aria-label': this.props.ariaLabel,
 		};
 
 		return (
@@ -231,6 +239,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				ref={ this.wrapperRef }
 			>
 				<MenuItem
+					as={ this.props.as }
+					variant={ this.props.variant }
 					url={ this.props.url }
 					innerRef={ this.props.innerRef }
 					{ ...attributes }
@@ -245,6 +255,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	}
 }
 
+// eslint-disable-next-line react/display-name
 export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemProps >(
 	( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } />
 );
@@ -252,9 +263,21 @@ export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemP
 type MenuItemProps< R > = {
 	url?: string;
 	innerRef?: R;
+	as?: React.ComponentType;
+	variant?: string;
 } & React.HTMLAttributes< HTMLElement >;
 
-function MenuItem< R >( { url, innerRef, ...props }: MenuItemProps< R > ) {
+function MenuItem< R >( { url, innerRef, as: Component, ...props }: MenuItemProps< R > ) {
+	if ( Component ) {
+		return (
+			<Component
+				{ ...props }
+				{ ...( innerRef ? { ref: innerRef } : {} ) }
+				{ ...( url ? { url } : {} ) }
+			/>
+		);
+	}
+
 	return url ? (
 		<a href={ url } ref={ innerRef as LegacyRef< HTMLAnchorElement > } { ...props } />
 	) : (

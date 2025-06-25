@@ -6,21 +6,17 @@ import './style.scss';
 export default function SimpleList( {
 	items,
 	className,
-	applyCoreStyles = false,
+	icon,
 }: {
 	items: ReactNode[];
 	className?: string;
-	applyCoreStyles?: boolean;
+	icon?: ReactNode;
 } ) {
 	return (
-		<ul
-			className={ clsx( 'simple-list', className, {
-				'is-core-styles': applyCoreStyles,
-			} ) }
-		>
+		<ul className={ clsx( 'simple-list', className ) }>
 			{ items.map( ( item, index ) => (
 				<li key={ `item-${ index }` }>
-					<Icon className="simple-list-icon" icon={ check } size={ 24 } />
+					{ icon ?? <Icon className="simple-list-icon" icon={ check } size={ 24 } /> }
 					<div className="simple-list-text">{ item }</div>
 				</li>
 			) ) }

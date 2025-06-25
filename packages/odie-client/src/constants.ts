@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { Message } from './types';
+import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
 
 export const ODIE_ERROR_MESSAGE = __(
@@ -7,15 +7,21 @@ export const ODIE_ERROR_MESSAGE = __(
 	__i18n_text_domain__
 );
 
-export const ODIE_RATE_LIMIT_MESSAGE = __(
+export const ODIE_ERROR_MESSAGE_NON_ELIGIBLE = __(
+	'Sorry, I am offline right now. Come back later or ask for help in our forums:',
+	__i18n_text_domain__
+);
+
+export const ODIE_RATE_LIMIT_MESSAGE_CONTENT = __(
 	"Hi there! You've hit your AI usage limit. Upgrade your plan for unlimited Wapuu support! You can still get user support using the buttons below.",
 	__i18n_text_domain__
 );
 
-export const ODIE_INITIAL_MESSAGE = __(
-	'👋 Howdy, I’m WordPress.com’s support assistant. I can help with questions about your site or account.',
-	__i18n_text_domain__
-);
+export const ODIE_RATE_LIMIT_MESSAGE: Message = {
+	content: ODIE_RATE_LIMIT_MESSAGE_CONTENT,
+	role: 'bot',
+	type: 'message',
+};
 
 export const ODIE_FORWARD_TO_FORUMS_MESSAGE = __(
 	'It sounds like you want to talk to a human. Human support is only available for our [paid plans](https://wordpress.com/pricing/). For community support, visit our forums:',
@@ -29,10 +35,7 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 
 export const ODIE_TRANSFER_MESSAGE: Message[] = [
 	{
-		content: __(
-			"No problem. Help is on the way! I'm connecting you with one of our Happiness Engineers.",
-			__i18n_text_domain__
-		),
+		content: __( 'No problem. Help is on the way!', __i18n_text_domain__ ),
 		role: 'bot',
 		type: 'message',
 		context: {
@@ -45,6 +48,30 @@ export const ODIE_TRANSFER_MESSAGE: Message[] = [
 		},
 	},
 ];
+
+export const ODIE_ON_ERROR_TRANSFER_MESSAGE: Message[] = [
+	{
+		content: ODIE_ERROR_MESSAGE,
+		role: 'bot',
+		type: 'message',
+		context: {
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: false,
+				show_ai_avatar: true,
+			},
+			site_id: null,
+		},
+	},
+];
+
+export const ODIE_THIRD_PARTY_MESSAGE_CONTENT = `${ __(
+	'I’m happy to connect you to a human! However, it looks like 3rd party cookies are disabled in your browser. Please turn them on for our live chat to work properly. [Use our guide](https://wordpress.com/support/third-party-cookies/)',
+	__i18n_text_domain__
+) } \n\n ${ __(
+	'Once you’re done, you can come back here to start talking with someone by clicking on the following button.',
+	__i18n_text_domain__
+) }`;
 
 export const ODIE_WRONG_FILE_TYPE_MESSAGE: Message = {
 	content: __(
@@ -60,6 +87,53 @@ export const ODIE_WRONG_FILE_TYPE_MESSAGE: Message = {
 		},
 		site_id: null,
 	},
+};
+
+export const ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT = __(
+	'We’re sorry, but live chat is temporarily unavailable for scheduled maintenance. Please feel free to reach out via email or check our Support Guides in the meantime.',
+	__i18n_text_domain__
+);
+
+export const ODIE_EMAIL_FALLBACK_MESSAGE: Message = {
+	content: ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT,
+	role: 'bot',
+	type: 'message',
+	context: {
+		flags: {
+			show_contact_support_msg: false,
+			forward_to_human_support: true,
+		},
+		question_tags: {
+			inquiry_type: 'request-for-human-support',
+		},
+		site_id: null,
+	},
+};
+
+const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | undefined => {
+	switch ( botNameSlug ) {
+		case 'wpcom-plan-support':
+			return {
+				flags: {
+					forward_to_human_support: true,
+				},
+				site_id: null,
+			};
+		default:
+			return undefined;
+	}
+};
+
+export const getOdieInitialMessage = ( botNameSlug: OdieAllowedBots ): Message => {
+	return {
+		content: __(
+			'👋 Howdy, I’m WordPress.com’s support assistant. I can help with questions about your site or account.',
+			__i18n_text_domain__
+		),
+		role: 'bot',
+		type: 'introduction',
+		context: getOdieInitialPromptContext( botNameSlug ),
+	};
 };
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;

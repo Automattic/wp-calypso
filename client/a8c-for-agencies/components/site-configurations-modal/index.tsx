@@ -12,8 +12,8 @@ import useCreateWPCOMDevSiteMutation, {
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
-import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { getDataCenterOptions } from 'calypso/data/data-center';
+import { getPHPVersions } from 'calypso/data/php-versions';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSiteName } from './use-site-name';
@@ -41,8 +41,8 @@ export default function SiteConfigurationsModal( {
 	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
-	const dataCenterOptions = useDataCenterOptions();
-	const { phpVersions } = usePhpVersions();
+	const dataCenterOptions = getDataCenterOptions();
+	const { phpVersions } = getPHPVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();
@@ -106,6 +106,14 @@ export default function SiteConfigurationsModal( {
 					errorNotice(
 						translate(
 							'Your account is blocked from creating new developer sites. Please get in touch with our support team for assistance.'
+						)
+					)
+				);
+			} else if ( error.code === 'email_unverified' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'Please verify your email address by clicking the link we sent to your inbox.'
 						)
 					)
 				);

@@ -1,0 +1,74 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
+.storage-indicator {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-15;
+
+	.storage-indicator__usage {
+		display: flex;
+		gap: 2px;
+
+		.storage-indicator__usage--capacity {
+			font-size: rem(15px);
+		}
+
+		.storage-indicator__usage--used {
+			align-self: center;
+			margin-left: auto;
+			color: $gray-700;
+			font-size: rem(12px);
+			line-height: rem(16px);
+		}
+	}
+
+	.storage-indicator__bar {
+		display: flex;
+
+		> div {
+			height: 1.5px;
+		}
+
+		.storage-indicator__bar--existing {
+			background-color: #3858E9;
+		}
+
+		.storage-indicator__bar--add-on {
+			background-color: var(--studio-green-50);
+		}
+	}
+
+	.storage-indicator__quota {
+		display: flex;
+		gap: $grid-unit-15;
+		color: $gray-700;
+		font-size: rem(12px);
+		line-height: rem(16px);
+
+		.storage-indicator__quota--plan,
+		.storage-indicator__quota--add-on {
+			position: relative;
+			padding-left: 10px;
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 6px;
+				height: 6px;
+				border-radius: 100%;
+			}
+		}
+
+		.storage-indicator__quota--plan::before {
+			background-color: #3858E9;
+		}
+
+		.storage-indicator__quota--add-on::before {
+			background-color: var(--studio-green-50);
+		}
+	}
+}

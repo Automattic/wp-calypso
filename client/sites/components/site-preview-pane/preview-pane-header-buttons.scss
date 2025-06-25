@@ -1,0 +1,16 @@
+.item-preview__sync-dropdown {
+	.components-button {
+		height: 40px;
+		border-radius: 4px;
+
+		&.has-icon.has-text {
+			padding-right: 8px;
+			padding-left: 8px;
+			gap: 0;
+		}
+	}
+}
+
+.item-preview__sync-dropdown + .item-preview__admin-button {
+	margin-left: 10px;
+}

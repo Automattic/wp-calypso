@@ -69,7 +69,11 @@ export default function CreditCardCvvField( {
 			<LabelText>{ translate( 'Security code' ) }</LabelText>
 			<GridRow gap="4%" columnWidths="67% 29%">
 				<LeftColumn>
-					<StripeFieldWrapper className="cvv" hasError={ !! cardCvcError }>
+					<StripeFieldWrapper
+						className="cvv"
+						hasError={ !! cardCvcError }
+						isDisabled={ isDisabled }
+					>
 						<CardCvcElement
 							options={ {
 								style: stripeElementStyle,

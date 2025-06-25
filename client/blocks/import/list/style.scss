@@ -23,14 +23,6 @@ html[dir="rtl"] {
 	}
 }
 
-.is-section-stepper > .wpcom-site > .import-list {
-	padding: 2rem 0;
-
-	@include break-small {
-		padding: 3.75rem 0 0 0;
-	}
-}
-
 .import__onboarding-page {
 	.import-layout {
 		flex-direction: column;
@@ -53,7 +45,7 @@ html[dir="rtl"] {
 		padding-bottom: 2rem;
 
 		h3 {
-			font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1.125em;
 			color: var(--studio-gray-90);
 			margin-bottom: 1em;
 		}

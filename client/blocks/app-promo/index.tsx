@@ -6,7 +6,6 @@ import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
 import QrCode from 'calypso/blocks/app-promo/qr-code';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
-import { preventWidows } from 'calypso/lib/formatting';
 import userAgent from 'calypso/lib/user-agent';
 import './style.scss';
 
@@ -50,17 +49,13 @@ export const AppPromo = ( {
 				alt="WordPress and Jetpack app"
 			/>
 			<div className="app-promo__title">
-				<CardHeading tagName="h2">
-					{ preventWidows( title || translate( 'Get our mobile app' ) ) }
-				</CardHeading>
-				{ ! showBadge && <h3 className="app-promo__subheader">{ preventWidows( subheader ) }</h3> }
+				<CardHeading tagName="h2">{ title || translate( 'Get our mobile app' ) }</CardHeading>
+				{ ! showBadge && <h3 className="app-promo__subheader">{ subheader }</h3> }
 			</div>
 
 			{ showBadge && (
 				<div className="app-promo__app-badges">
-					{ subheader && (
-						<p className="app-promo__app-badges-text">{ preventWidows( subheader ) }</p>
-					) }
+					{ subheader && <p className="app-promo__app-badges-text">{ subheader }</p> }
 					<AppsBadge
 						storeName={ showIosBadge ? 'ios' : 'android' }
 						utm_campaign={ campaign }

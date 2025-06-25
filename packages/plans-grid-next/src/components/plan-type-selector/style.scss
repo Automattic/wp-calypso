@@ -162,7 +162,9 @@
 				display: none;
 			}
 		}
-		.components-custom-select-control__label {
+
+		.components-custom-select-control__label,
+		.components-base-control__label {
 			display: none;
 		}
 	}

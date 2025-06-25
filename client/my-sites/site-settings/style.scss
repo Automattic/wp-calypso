@@ -541,7 +541,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	display: inline;
 }
 
-.site-settings__jetpack-dev-mode-notice .notice {
+.site-settings__jetpack-dev-mode-notice .calypso-notice {
 	animation: none;
 }
 
@@ -596,35 +596,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 			}
 		}
 	}
-}
-
-.site-settings__cloudflare {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-}
-
-.site-settings__cloudflare-text {
-	margin-left: 20px;
-
-	p {
-		margin: 0 0 0.5rem;
-	}
-}
-
-.site-settings__cloudflare-title {
-	font-weight: 600;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1rem;
-}
-
-.site-settings__cloudflare-illustration {
-	width: 5%;
-	padding-left: -10px;
-}
-
-.site-settings__cloudflare-spacer {
-	margin-bottom: 16px;
 }
 
 .site-settings__page-optimize {

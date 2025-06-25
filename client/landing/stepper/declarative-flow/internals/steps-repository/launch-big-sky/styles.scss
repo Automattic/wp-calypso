@@ -9,7 +9,7 @@ $color-big-sky-background: #000cb2;
 	}
 
 	.wordpress-logo {
-		fill: $color-white;
+		fill: $color-white !important;
 	}
 
 	.processing-step__container {
@@ -23,6 +23,14 @@ $color-big-sky-background: #000cb2;
 			margin-top: 0;
 			width: 100%;
 			max-width: 188px;
+
+			&:has(.processing-step__error) {
+				max-width: 260px;
+			}
+
+			.processing-step__error {
+				color: $color-white;
+			}
 		}
 
 		.big-sky-disclaimer {

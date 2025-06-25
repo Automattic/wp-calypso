@@ -447,14 +447,6 @@
 		cursor: pointer;
 	}
 
-	.components-button:focus::before {
-		box-shadow: none;
-	}
-
-	.components-button:focus-visible::before {
-		box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
-	}
-
 	.unified-design-picker__designs {
 		min-height: 100vh;
 	}

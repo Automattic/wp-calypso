@@ -1,6 +1,6 @@
+import { WordPressLogo } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { useSelect } from '@wordpress/data';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';

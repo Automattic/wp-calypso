@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .assign-license .hosting-dashboard-layout__body {
 	padding-block-start: 16px;
@@ -37,6 +38,5 @@
 
 .assign-license__sites-no-results {
 	text-align: center;
-	font-size: 1.25rem;
-	line-height: 24px;
+	@include body-x-large;
 }

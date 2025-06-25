@@ -208,42 +208,6 @@ $heading-font-family: "SF Pro Display", $sans;
 		z-index: 1;
 	}
 
-	.intro__content {
-		width: 100%;
-		text-align: center;
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
-	}
-
-	.intro__step-number,
-	.intro__title {
-		@include onboarding-font-recoleta;
-
-		font-size: 1.75rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 130%;
-
-		@include break-large {
-			font-size: 2.75rem;
-			line-height: 52px;
-		}
-
-		@include onboarding-break-mobile-landscape {
-			font-size: $font-title-medium;
-			line-height: inherit;
-		}
-
-		span {
-			display: block;
-		}
-	}
-
-	.intro__step {
-		display: flex;
-		align-items: center;
-	}
-
 	.domains-transfer-chat-button {
 		display: none;
 		position: absolute;

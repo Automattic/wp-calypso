@@ -1,16 +1,12 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { PanelCard, PanelCardHeading, PanelCardDescription } from 'calypso/components/panel';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 
 // Add settings for holiday snow: ability to enable snow on the site until January 4th.
 export default function HolidaySnow( { fields, handleToggle, isSaving, onSave, disabled } ) {
 	const translate = useTranslate();
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	const moment = useLocalizedMoment();
 
 	// Only display the card between December 1st and January 4th.
@@ -33,30 +29,9 @@ export default function HolidaySnow( { fields, handleToggle, isSaving, onSave, d
 					checked={ fields.jetpack_holiday_snow_enabled }
 					onChange={ handleToggle( 'jetpack_holiday_snow_enabled' ) }
 				/>
-				{ ! isUntangled && (
-					<FormSettingExplanation>
-						{ translate( 'Show falling snow on my site until January 4th.' ) }
-					</FormSettingExplanation>
-				) }
 			</>
 		);
 	};
-
-	if ( ! isUntangled ) {
-		return (
-			<div className="site-settings__holiday-snow-container">
-				<SettingsSectionHeader
-					title={ translate( 'Holiday snow' ) }
-					id="site-settings__holiday-snow-header"
-					disabled={ disabled }
-					isSaving={ isSaving }
-					onButtonClick={ onSave }
-					showButton
-				/>
-				<Card className="site-settings__holiday-snow-content">{ renderForm() }</Card>
-			</div>
-		);
-	}
 
 	return (
 		<PanelCard>

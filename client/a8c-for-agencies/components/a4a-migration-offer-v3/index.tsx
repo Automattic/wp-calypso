@@ -1,7 +1,8 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -69,7 +70,6 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 				{ isExpanded && (
 					<div className="a4a-migration-offer-v3__body">
 						<SimpleList
-							applyCoreStyles
 							items={ [
 								translate(
 									'{{b}}All migrations:{{/b}} Your first month of hosting will be free when you migrate twenty or more sites to us from any host.',
@@ -80,7 +80,7 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 									}
 								),
 								translate(
-									"{{b}}WP Engine customers:{{/b}} You will receive %(commission)s per successful site migration up to %(maxCommission)s. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine contract ends.",
+									"{{b}}WP Engine/Flywheel, Kinsta, Pantheon, Nexcess, or Pagely customers:{{/b}} You will receive %(commission)s per successful site migration up to %(maxCommission)s. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine/Flywheel, Kinsta, Pantheon, Nexcess, or Pagely contract ends.",
 									{
 										components: {
 											b: <b />,
@@ -151,7 +151,6 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 					</div>
 				) }
 			</div>
-
 			<Button className="a4a-migration-offer-v3__view-toggle">
 				<Icon icon={ chevronDown } size={ 24 } />
 			</Button>

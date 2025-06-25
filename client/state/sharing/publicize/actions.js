@@ -2,7 +2,6 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
@@ -155,7 +154,6 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( failCreateConnection( error ) );
 				dispatch(
 					errorNotice(
 						error.message ||
@@ -255,19 +253,6 @@ export function deleteSiteConnection( connection ) {
 					)
 				);
 			} );
-}
-
-/**
- * Returns an action object to be used in signalling that creating a Publicize
- * connection has failed.
- * @param  {Object} error Error object
- * @returns {Object}       Action object
- */
-export function failCreateConnection( error ) {
-	return {
-		type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
-		error,
-	};
 }
 
 /**

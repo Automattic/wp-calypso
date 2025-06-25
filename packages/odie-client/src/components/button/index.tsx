@@ -10,21 +10,33 @@ type ButtonProps = {
 	title?: string;
 	disabled?: boolean;
 	className?: string;
+	ariaLabel?: string;
 } & PropsWithChildren;
 
 const Button = forwardRef< HTMLButtonElement, ButtonProps >(
-	( { compact, borderless, onClick, className: externalClassName, children, disabled }, ref ) => {
+	(
+		{ compact, borderless, onClick, className: externalClassName, children, disabled, ariaLabel },
+		ref
+	) => {
 		const className = clsx( 'odie-button-default', externalClassName, {
 			'odie-button-compact': compact,
 			'odie-button-borderless': borderless,
 		} );
 
 		return (
-			<button ref={ ref } className={ className } onClick={ onClick } disabled={ disabled }>
+			<button
+				ref={ ref }
+				className={ className }
+				onClick={ onClick }
+				disabled={ disabled }
+				aria-label={ ariaLabel }
+			>
 				{ children }
 			</button>
 		);
 	}
 );
+
+Button.displayName = 'Button';
 
 export default Button;

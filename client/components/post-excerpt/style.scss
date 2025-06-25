@@ -31,7 +31,7 @@
 			right: 0;
 			width: 50%;
 			height: 24px;
-			background: linear-gradient(to right, rgba(var(--studio-white-rgb), 0), var(--studio-white) 50%);
+			background: linear-gradient(to right, color-mix(in srgb, var(--studio-white) 0%, transparent), var(--studio-white) 50%);
 
 			@include breakpoint-deprecated( "<480px" ) {
 				height: 22px;

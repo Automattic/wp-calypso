@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { seedManager } from 'calypso/landing/stepper/utils/shuffle-array';

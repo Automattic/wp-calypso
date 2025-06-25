@@ -1,0 +1,103 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
+
+.calypso-navigation-header {
+	background-color: var(--wp-components-color-background, #fff);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	&__head {
+		display: flex;
+		align-items: center;
+	}
+
+	&__body {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-bottom: 24px;
+	}
+
+	&__left-section {
+		display: flex;
+		align-items: center;
+	}
+
+	&__right-section {
+		display: flex;
+		align-items: center;
+		margin-left: 12px;
+
+		.components-button {
+			height: 32px;
+			padding: 4px 8px;
+		}
+	}
+
+	// Increased specificity to override the default link color for anchor elements on Atomic.
+	& &__back-link {
+		color: var(--wp-components-color-gray-600, #666);
+	}
+
+	&__back-link {
+		display: flex;
+		align-items: center;
+		text-decoration: none;
+		font-size: $default-font-size;
+		transition: color 0.2s ease;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--wp-components-color-gray-900, $gray-900);
+		}
+
+		svg {
+			margin-right: $grid-unit-10;
+		}
+	}
+
+	&__title {
+		font-size: 20px;
+		font-weight: 500;
+		font-family: "SF Pro Display", $sans;
+		color: var(--wp-components-color-gray-900, $gray-900);
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		line-height: 1.2;
+		min-height: 32px;
+
+		@media (max-width: $break-small) {
+			font-size: 20px;
+		}
+	}
+
+	&__title-logo {
+		padding: 4px;
+		display: flex;
+		align-items: center;
+		height: 24px;
+		width: 24px;
+
+		img, svg {
+			max-height: 100%;
+			width: auto;
+		}
+	}
+
+	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's
+	&.calypso-navigation-header__screen-options-tab {
+		padding-top: 38px; // 30 for screen options tab + 8 gap
+	}
+
+	@include break-small {
+		&.calypso-navigation-header__screen-options-tab {
+			// There are existing workarounds for desktop layouts, revert back to 16 here
+			padding-top: $grid-unit-20;
+		}
+	}
+}

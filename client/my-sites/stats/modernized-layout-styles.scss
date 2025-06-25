@@ -1,10 +1,9 @@
 // Must be included in root style.scss of /stats, /store, and /google-my-business/stats
 
 @use "sass:math";
-@import "@automattic/components/src/highlight-cards/variables";
+@import "calypso/my-sites/stats/components/highlight-cards/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$stats-background-color: #fdfdfd;
 $stats-sections-max-width: 1224px;
 $stats-layout-contnet-padding-top: 79px;
 $sidebar-appearance-break-point: $break-medium;
@@ -18,7 +17,7 @@ $sidebar-appearance-break-point: $break-medium;
 
 // Main layout content
 .stats {
-	background-color: $stats-background-color;
+	background-color: var( --color-main-background, #fcfcfc );
 
 	// Ensures vertical padding for certain sections.
 	> .highlight-cards,
@@ -36,7 +35,7 @@ $sidebar-appearance-break-point: $break-medium;
 	> * {
 		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 
-		&:not(.navigation-header) {
+		&:not(.calypso-navigation-header, .navigation-header) {
 			@media (max-width: $break-small) {
 				padding-left: 0;
 				padding-right: 0;
@@ -50,17 +49,26 @@ $sidebar-appearance-break-point: $break-medium;
 	}
 
 	.navigation-header {
-		margin-bottom: 0;
 		padding-bottom: 24px;
+
+		@media (max-width: $break-small) {
+			padding-bottom: 24px;
+		}
+	}
+
+	.calypso-navigation-header,
+	.navigation-header {
+		margin-bottom: 0;
 		padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		background-color: var(--studio-white);
 
 		@media (max-width: $break-small) {
-			// Restore padding to 16px on mobile as per the `.navigation-header` style.
-			padding: 16px;
-			// Reduce gap to the following section on mobile.
-			padding-bottom: 24px;
+			padding-top: 16px;
+			padding-inline: 16px;
+			.stats-download-csv {
+				padding-right: 0;
+			}
 		}
 
 		@media (max-width: $break-mobile) {

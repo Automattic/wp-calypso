@@ -20,6 +20,10 @@
 		align-items: center;
 		width: 100%;
 
+		.user:first-child {
+			width: 60%;
+		}
+
 		@include breakpoint-deprecated( "<480px" ) {
 			font-size: $font-body-extra-small;
 		}

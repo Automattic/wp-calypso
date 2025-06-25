@@ -1,7 +1,11 @@
-import { FoldableCard } from '@automattic/components';
+import { FoldableCard, WordPressLogo } from '@automattic/components';
+import {
+	formatCurrency,
+	formatNumberCompact,
+	getCurrencyObject,
+} from '@automattic/number-formatters';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import clsx from 'clsx';
-import { useTranslate, numberFormatCompact, formatCurrency, getCurrencyObject } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -10,7 +14,6 @@ import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -24,27 +27,19 @@ const formatCurrencyCompact = ( amount: number, currencyCode = 'USD' ) => {
 	const currencyObject = getCurrencyObject( amount, currencyCode );
 	const formattedAmount =
 		currencyObject.symbolPosition === 'before'
-			? `${ currencyObject.symbol }${ numberFormatCompact( amount ) }`
-			: `${ numberFormatCompact( amount ) }${ currencyObject.symbol }`;
+			? `${ currencyObject.symbol }${ formatNumberCompact( amount ) }`
+			: `${ formatNumberCompact( amount ) }${ currencyObject.symbol }`;
 
 	return formattedAmount;
 };
 
-export default function CommissionOverview( {
-	isAutomatedReferral,
-}: {
-	isAutomatedReferral?: boolean;
-} ) {
+export default function CommissionOverview() {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 
-	const automatedReferralTitle = isDesktop
+	const title = isDesktop
 		? translate( 'Your referrals and commissions - FAQ' )
 		: translate( 'FAQ' );
-
-	const title = isAutomatedReferral
-		? automatedReferralTitle
-		: translate( 'Referrals - Commission details and terms' );
 
 	// TODO: This is a workaround to keep the formatting of the max amount consistent until
 	// we can use the new formatCurrency function that gives the compact number in the correct format.
@@ -53,9 +48,7 @@ export default function CommissionOverview( {
 
 	return (
 		<Layout
-			className={ clsx( 'commission-overview', {
-				'commission-overview__layout-automated': isAutomatedReferral,
-			} ) }
+			className="commission-overview"
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
@@ -65,41 +58,33 @@ export default function CommissionOverview( {
 					<Breadcrumb
 						items={ [
 							{
-								label:
-									isAutomatedReferral && isDesktop
-										? translate( 'Your referrals and commissions' )
-										: translate( 'Referrals' ),
+								label: isDesktop
+									? translate( 'Your referrals and commissions' )
+									: translate( 'Referrals' ),
 								href: A4A_REFERRALS_LINK,
 							},
 							{
-								label: isAutomatedReferral
-									? translate( 'FAQ' )
-									: translate( 'Commission details and terms' ),
+								label: translate( 'FAQ' ),
 							},
 						] }
 					/>
 				</LayoutHeader>
 			</LayoutTop>
-
 			<LayoutBody>
-				{ isAutomatedReferral && (
-					<>
-						<div className="commission-overview__section-heading">
-							{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
-								components: {
-									nbsp: <>&nbsp;</>,
-								},
-							} ) }
-						</div>
-						<div className="commission-overview__section-subtitle">
-							{ translate(
-								'A list of frequently asked questions and answers related to referrals and commissions.'
-							) }
-						</div>
-					</>
-				) }
+				<div className="commission-overview__section-heading">
+					{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
+						components: {
+							nbsp: <>&nbsp;</>,
+						},
+					} ) }
+				</div>
+				<div className="commission-overview__section-subtitle">
+					{ translate(
+						'A list of frequently asked questions and answers related to referrals and commissions.'
+					) }
+				</div>
 				<div className="commission-overview__section-container">
-					<StepSection applyCoreStyles heading={ translate( 'How much can I earn?' ) }>
+					<StepSection heading={ translate( 'How much can I earn?' ) }>
 						<FoldableCard
 							header={
 								<>
@@ -181,10 +166,7 @@ export default function CommissionOverview( {
 						</FoldableCard>
 					</StepSection>
 
-					<StepSection
-						applyCoreStyles
-						heading={ translate( 'Eligibility requirements and terms of use?' ) }
-					>
+					<StepSection heading={ translate( 'Eligibility requirements and terms of use?' ) }>
 						<FoldableCard
 							header={ translate( 'Active referrals' ) }
 							expanded

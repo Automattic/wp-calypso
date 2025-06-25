@@ -1,3 +1,4 @@
+import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -149,6 +150,16 @@ export const userSettingsSaveSuccess =
 			)
 		) {
 			return;
+		}
+
+		// Don't show success notice if we're in reader onboarding
+		try {
+			const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+			if ( getQueryArg( currentUrl, 'ref' ) === 'reader-onboarding' ) {
+				return;
+			}
+		} catch ( error ) {
+			// If we can't check the URL, default to showing the notice
 		}
 
 		dispatch(

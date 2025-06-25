@@ -43,7 +43,7 @@ interface BulkAllDomainsProps {
 
 const domainsDataViewsGlobalStyles = css`
 	body.is-bulk-all-domains-page {
-		background: var( --studio-gray-0 );
+		background: var( --color-main-background );
 
 		header.navigation-header {
 			border-block-end: 1px solid var( --color-neutral-5 );
@@ -80,7 +80,7 @@ const domainsDashboardGlobalStyles = css`
 		overflow-y: auto;
 	}
 	body.is-bulk-all-domains-page {
-		background: var( --studio-gray-0 );
+		background: var( --color-main-background );
 
 		&.rtl .layout__content {
 			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;

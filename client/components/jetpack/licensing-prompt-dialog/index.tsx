@@ -2,7 +2,6 @@ import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -53,16 +52,16 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	if ( ! titleToRender ) {
 		if ( hasOneDetachedLicense ) {
 			titleToRender = detachedUserLicense?.product
-				? preventWidows(
+				? String(
 						translate( 'Activate %(productName)s', {
 							args: {
 								productName: detachedUserLicense.product,
 							},
 						} )
 				  )
-				: preventWidows( translate( 'Your product is pending activation' ) );
+				: translate( 'Your product is pending activation' );
 		} else {
-			titleToRender = preventWidows( translate( 'Activate your new Jetpack features' ) );
+			titleToRender = translate( 'Activate your new Jetpack features' );
 		}
 	}
 

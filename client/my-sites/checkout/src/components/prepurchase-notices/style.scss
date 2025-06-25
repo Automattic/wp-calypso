@@ -2,16 +2,16 @@
 	padding: 32px 0 0;
 	width: 100%;
 
-	.notice {
+	.calypso-notice {
 		margin: 0;
 	}
 
-	.notice.is-info .notice__icon-wrapper-drop {
+	.calypso-notice.is-info .calypso-notice__icon-wrapper-drop {
 		background-color: var(--color-accent-40);
 	}
 }
 
-.prepurchase-notices__container .notice .prepurchase-notice {
+.prepurchase-notices__container .calypso-notice .prepurchase-notice {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
-import {
+import type {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
 } from '../../sites-overview/types';
-import type { AppState } from 'calypso/types';
+import type { SmsCountry } from 'calypso/state/countries/types';
 
 export function useContactModalTitleAndSubtitle(
 	type: AllowedMonitorContactTypes,
@@ -86,21 +86,27 @@ export function useContactFormInputHelpText( type: AllowedMonitorContactTypes ) 
 	}, [ translate, type ] );
 }
 
-export function useGetSupportedSMSCountries() {
-	// Fetch only once
-	const { data: geoData } = useGeoLocationQuery( {
-		refetchOnWindowFocus: false,
-		staleTime: Infinity,
-	} );
+const EMPTY_ARRAY: SmsCountry[] = [];
 
-	return useSelector( ( state: AppState ) => {
-		const countries = getCountries( state, 'sms' ) ?? [];
-		// Move the user's country to the top of the list
-		const index = countries.findIndex( ( country ) => country.code === geoData?.country_short );
-		if ( index > 0 ) {
-			const country = countries.splice( index, 1 );
-			countries.unshift( country[ 0 ] );
+export function useGetSupportedSMSCountries() {
+	const countries = useSelector( ( state ) => getCountries( state, 'sms' ) );
+	const countryCode = useGeoLocationQuery().data?.country_short;
+
+	return useMemo( () => {
+		if ( ! countries ) {
+			return EMPTY_ARRAY;
 		}
-		return countries;
-	} );
+
+		if ( ! countryCode ) {
+			return countries;
+		}
+
+		// Move the user's country to the top of the list
+		const firstCountry = countries.find( ( country ) => country.code === countryCode );
+		if ( ! firstCountry ) {
+			return countries;
+		}
+
+		return [ firstCountry, ...countries.filter( ( country ) => country !== firstCountry ) ];
+	}, [ countries, countryCode ] );
 }

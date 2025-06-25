@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
@@ -6,12 +6,12 @@ import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/con
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { preventWidows } from 'calypso/lib/formatting';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import Missing from 'calypso/reader/list-stream/missing';
 import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
 import {
@@ -48,14 +48,10 @@ function Items( { list, listItems, owner } ) {
 	}
 	return (
 		<>
+			<ItemAdder key="item-adder" list={ list } listItems={ listItems } owner={ owner } />
 			{ listItems?.length > 0 && (
 				<>
-					<h1 className="list-manage__subscriptions-header">
-						{ translate( 'Added sites' ) }
-						<Button compact primary href="#reader-list-item-adder">
-							{ translate( 'Add Site' ) }
-						</Button>
-					</h1>
+					<h1 className="list-manage__subscriptions-header">{ translate( 'Added sites' ) }</h1>
 					{ listItems.map( ( item ) => (
 						<ListItem
 							key={ item.feed_ID || item.site_ID || item.tag_ID }
@@ -64,10 +60,8 @@ function Items( { list, listItems, owner } ) {
 							item={ item }
 						/>
 					) ) }
-					<hr className="list-manage__subscriptions-separator" />
 				</>
 			) }
-			<ItemAdder key="item-adder" list={ list } listItems={ listItems } owner={ owner } />
 		</>
 	);
 }
@@ -97,14 +91,14 @@ function ReaderListCreate() {
 	const isCreatingList = useSelector( isCreatingListSelector );
 
 	return (
-		<Main>
+		<ReaderMain>
 			<NavigationHeader title={ translate( 'Create List' ) } />
 			<ListForm
 				isCreateForm
 				isSubmissionDisabled={ isCreatingList }
 				onSubmit={ ( list ) => dispatch( createReaderList( list ) ) }
 			/>
-		</Main>
+		</ReaderMain>
 	);
 }
 
@@ -125,7 +119,6 @@ function ReaderListEdit( props ) {
 		return (
 			<EmptyContent
 				title={ preventWidows( translate( "You don't have permission to manage this list." ) ) }
-				illustration=""
 			/>
 		);
 	}
@@ -139,7 +132,7 @@ function ReaderListEdit( props ) {
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
-			<Main>
+			<ReaderMain>
 				<NavigationHeader
 					title={ translate( 'Manage %(listName)s', {
 						args: { listName: list?.title || decodeURIComponent( props.slug ) },
@@ -186,7 +179,7 @@ function ReaderListEdit( props ) {
 						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }
 					</>
 				) }
-			</Main>
+			</ReaderMain>
 		</>
 	);
 }

@@ -1,6 +1,6 @@
 import {
+	NOTICE_CREATE,
 	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
@@ -16,7 +16,6 @@ import {
 	createSiteConnection,
 	deleteSiteConnection,
 	deleteConnection,
-	failCreateConnection,
 	fetchConnection,
 	fetchConnections,
 	receiveConnections,
@@ -140,17 +139,20 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch notice action when request fails', () => {
 			return createSiteConnection(
 				77203074,
 				2,
 				1
 			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
-					type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
-					error: expect.objectContaining( {
-						message: 'An active access token must be used to access publicize connections.',
-					} ),
+					type: NOTICE_CREATE,
+					notice: {
+						text: 'An active access token must be used to access publicize connections.',
+						noticeId: 'publicize',
+						showDismiss: true,
+						status: 'is-error',
+					},
 				} );
 			} );
 		} );
@@ -252,19 +254,6 @@ describe( 'actions', () => {
 				connection: {
 					ID: 2,
 					site_ID: 2916284,
-				},
-			} );
-		} );
-	} );
-
-	describe( 'failCreateConnection()', () => {
-		test( 'should return an action object', () => {
-			const action = failCreateConnection( { message: 'An error occurred' } );
-
-			expect( action ).toEqual( {
-				type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
-				error: {
-					message: 'An error occurred',
 				},
 			} );
 		} );

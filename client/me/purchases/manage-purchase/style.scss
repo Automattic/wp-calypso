@@ -1,5 +1,7 @@
 .manage-purchase > button.card,
-.manage-purchase > a.card {
+.manage-purchase > a.card,
+.manage-purchase > div > a.card,
+.manage-purchase > div > button.card{
 	--icon-size: 16px;
 
 	padding-inline-start: calc(var(--icon-size) * 2.5);
@@ -46,7 +48,7 @@
 		}
 	}
 
-	&.is-expired + .notice {
+	&.is-expired + .calypso-notice {
 		margin-top: -10px;
 
 		@include breakpoint-deprecated( ">480px" ) {
@@ -388,8 +390,8 @@
 	margin-bottom: 6px;
 }
 
-.manage-purchase__expiring-credit-card-notice.notice,
-.manage-purchase__purchase-expiring-notice.notice {
+.manage-purchase__expiring-credit-card-notice.calypso-notice,
+.manage-purchase__purchase-expiring-notice.calypso-notice {
 	margin-bottom: 10px;
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -414,8 +416,8 @@
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-        align-self: flex-start;
-        margin-inline-start: auto;
+		align-self: flex-start;
+		margin-inline-start: auto;
 	}
 }
 
@@ -503,4 +505,14 @@
 	color: var(--color-link);
 	text-decoration: underline;
 	line-height: inherit;
+}
+
+.manage-purchase__downgrade-products {
+	margin-top: 16px;
+	margin-bottom: 16px;
+	& > a.card,
+	& > button.card {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }

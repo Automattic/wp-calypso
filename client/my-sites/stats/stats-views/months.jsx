@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Popover } from '@automattic/components';
-import { localize, numberFormat, numberFormatCompact } from 'i18n-calypso';
+import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, createElement, PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -34,6 +35,7 @@ class Month extends PureComponent {
 
 		if ( ! isHeader && href ) {
 			page( href );
+			window.scrollTo( 0, 0 );
 			return;
 		}
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -71,7 +73,7 @@ const StatsViewsMonths = ( props ) => {
 
 	const momentFromMonthYear = ( month, year ) => {
 		const monthValue = parseInt( month ) + 1;
-		return moment( `${ year }-${ monthValue }-1`, 'YYYY-M-D' );
+		return moment( `${ year }-${ monthValue }-1`, 'YYYY-MM-DD' );
 	};
 
 	const getMonthTotal = ( totals, month ) => {
@@ -131,17 +133,22 @@ const StatsViewsMonths = ( props ) => {
 				totals.months[ month ] += value;
 				totals.yearsCount[ year ] += 1;
 				totals.monthsCount[ month ] += 1;
-				displayValue = numberFormatCompact( value );
+				displayValue = formatNumberCompact( value );
 			}
 
 			totalValue += value;
 
+			const startDate = moment( `${ year }-${ month + 1 }-1` ).format( 'YYYY-MM-DD' );
+			const endDate = moment( `${ year }-${ month + 1 }-1` )
+				.endOf( 'month' )
+				.format( 'YYYY-MM-DD' );
+
 			return (
 				<Month
-					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1 }-1` }
+					href={ `/stats/day/${ siteSlug }?chartStart=${ startDate }&chartEnd=${ endDate }` }
 					className={ className }
 					key={ `month-${ month }` }
-					value={ numberFormat( value ) }
+					value={ formatNumber( value ) }
 				>
 					{ displayValue }
 				</Month>
@@ -156,7 +163,7 @@ const StatsViewsMonths = ( props ) => {
 				className="stats-views__month is-year"
 				position="left"
 				key={ `label-${ year }` }
-				value={ numberFormat( yearTotal ) }
+				value={ formatNumber( yearTotal ) }
 			>
 				{ year }
 			</Month>
@@ -164,7 +171,7 @@ const StatsViewsMonths = ( props ) => {
 		if ( showYearTotal ) {
 			cells.push(
 				<td key={ `label-${ year }-total` } className="stats-views__month is-total">
-					{ numberFormat( yearTotal ) }
+					{ formatNumber( yearTotal ) }
 				</td>
 			);
 		}
@@ -177,44 +184,44 @@ const StatsViewsMonths = ( props ) => {
 			<thead>
 				<tr>
 					<th />
-					<Month value={ numberFormat( getMonthTotal( totals, 0 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 0 ) ) } isHeader>
 						{ translate( 'Jan' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 1 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 1 ) ) } isHeader>
 						{ translate( 'Feb' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 2 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 2 ) ) } isHeader>
 						{ translate( 'Mar' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 3 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 3 ) ) } isHeader>
 						{ translate( 'Apr' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 4 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 4 ) ) } isHeader>
 						{ translate( 'May', { context: 'May abbreviation' } ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 5 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 5 ) ) } isHeader>
 						{ translate( 'Jun' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 6 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 6 ) ) } isHeader>
 						{ translate( 'Jul' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 7 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 7 ) ) } isHeader>
 						{ translate( 'Aug' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 8 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 8 ) ) } isHeader>
 						{ translate( 'Sep' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 9 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 9 ) ) } isHeader>
 						{ translate( 'Oct' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 10 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 10 ) ) } isHeader>
 						{ translate( 'Nov' ) }
 					</Month>
-					<Month value={ numberFormat( getMonthTotal( totals, 11 ) ) } isHeader>
+					<Month value={ formatNumber( getMonthTotal( totals, 11 ) ) } isHeader>
 						{ translate( 'Dec' ) }
 					</Month>
 					{ showYearTotal && (
-						<Month value={ numberFormat( totalValue ) } isHeader>
+						<Month value={ formatNumber( totalValue ) } isHeader>
 							{ translate( 'Totals' ) }
 						</Month>
 					) }

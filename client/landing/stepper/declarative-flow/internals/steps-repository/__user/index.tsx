@@ -1,7 +1,5 @@
-import { OnboardSelect } from '@automattic/data-stores';
-import { isOnboardingFlow, Step, StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,7 +9,6 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -22,7 +19,6 @@ import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useBigSkyBeforePlans } from '../../../helpers/use-bigsky-before-plans-experiment';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { useSocialService } from './use-social-service';
@@ -39,17 +35,18 @@ const UserStepComponent: StepType = function UserStep( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
-	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans(); // If the experiment hasn't loaded yet, then it must mean we're ineligible anyway
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
-	const creatingWithBigSky = ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky();
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			reloadProxy();
 			requestAllBlogsAccess();
-			dispatch( fetchCurrentUser() as unknown as AnyAction );
+			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+			// but follow-up API calls go to the closest DC, which may be different and might not
+			// have replicated the user data yet.
+			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
 		}
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
@@ -66,16 +63,6 @@ const UserStepComponent: StepType = function UserStep( {
 		locale,
 	} );
 
-	const getSubHeaderText = () => {
-		if ( isBigSkyBeforePlansExperiment && isOnboardingFlow( flow ) && creatingWithBigSky ) {
-			return translate(
-				'Great choice! Pick an option to start building your site with our AI Website Builder.'
-			);
-		}
-
-		return null;
-	};
-
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
@@ -85,7 +72,10 @@ const UserStepComponent: StepType = function UserStep( {
 	};
 
 	const localeSuggestions = shouldRenderLocaleSuggestions && (
-		<LocaleSuggestions path={ window.location.pathname } locale={ locale } />
+		<LocaleSuggestions
+			path={ window.location.pathname + window.location.search }
+			locale={ locale }
+		/>
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
@@ -124,16 +114,18 @@ const UserStepComponent: StepType = function UserStep( {
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ translate( 'Create your account' ) } subText={ getSubHeaderText() } />
+				<Step.Heading text={ translate( 'Create your account' ) } />
 			</>
 		);
 
 		const topBar = (
 			<Step.TopBar
-				backButton={
+				leftElement={
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
-				skipButton={ <Step.SkipButton href={ loginLink } label={ translate( 'Log in' ) } /> }
+				rightElement={
+					<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+				}
 			/>
 		);
 
@@ -166,7 +158,6 @@ const UserStepComponent: StepType = function UserStep( {
 						<FormattedHeader
 							align="center"
 							headerText={ translate( 'Create your account' ) }
-							subHeaderText={ getSubHeaderText() }
 							brandFont
 						/>
 						{ stepContent }

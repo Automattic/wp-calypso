@@ -10,7 +10,6 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import Notice from 'calypso/components/notice';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { protectForm } from 'calypso/lib/protect-form';
-import Security2faProgress from 'calypso/me/security-2fa-progress';
 import getCountries from 'calypso/state/selectors/get-countries';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
@@ -140,8 +139,6 @@ class Security2faSMSSettings extends Component {
 		return (
 			<div className="security-2fa-sms-settings__container">
 				<form className="security-2fa-sms-settings">
-					<Security2faProgress step={ 1 } isSmsFlow />
-
 					<p>
 						{ this.props.translate(
 							'We need your mobile phone number to send you two-step verification codes when you log in.'
@@ -173,6 +170,18 @@ class Security2faSMSSettings extends Component {
 
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
+							type="button"
+							className="security-2fa-sms-settings__cancel-button"
+							isPrimary={ false }
+							onClick={ ( event ) => {
+								gaRecordEvent( 'Me', 'Clicked On Step 1 2fa Cancel Button' );
+								this.props.onCancel( event );
+							} }
+						>
+							{ this.props.isUpdatingUserSettings ? savingLabel : this.props.translate( 'Cancel' ) }
+						</FormButton>
+
+						<FormButton
 							disabled={ this.getSubmitDisabled() }
 							isPrimary
 							onClick={ ( event ) => {
@@ -183,17 +192,6 @@ class Security2faSMSSettings extends Component {
 							{ this.props.isUpdatingUserSettings
 								? savingLabel
 								: this.props.translate( 'Continue' ) }
-						</FormButton>
-
-						<FormButton
-							className="security-2fa-sms-settings__cancel-button"
-							isPrimary={ false }
-							onClick={ ( event ) => {
-								gaRecordEvent( 'Me', 'Clicked On Step 1 2fa Cancel Button' );
-								this.props.onCancel( event );
-							} }
-						>
-							{ this.props.isUpdatingUserSettings ? savingLabel : this.props.translate( 'Cancel' ) }
 						</FormButton>
 					</FormButtonsBar>
 				</form>

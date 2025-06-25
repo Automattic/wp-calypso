@@ -1,8 +1,8 @@
+import { CheckboxControl } from '@wordpress/components';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { isFetchingNotificationsSettings } from 'calypso/state/notification-settings/selectors';
 import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 
@@ -35,7 +35,8 @@ class StreamOptions extends PureComponent {
 					return (
 						<li className="notification-settings-form-stream-options__item" key={ index }>
 							{ isException ? null : (
-								<FormCheckbox
+								<CheckboxControl
+									__nextHasNoMarginBottom
 									disabled={ this.props.isFetching }
 									checked={ get( this.props.settings, setting ) }
 									onChange={ () => {

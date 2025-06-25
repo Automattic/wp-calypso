@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
+import { isURL, getProtocol, getAuthority } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -8,7 +9,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import Gravatar from 'calypso/components/gravatar';
+import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
@@ -318,7 +319,15 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			commentAuthorUrl = commentAuthor?.URL;
+			const urlToCheck = commentAuthor?.URL;
+			if ( urlToCheck && isURL( urlToCheck ) ) {
+				const protocol = getProtocol( urlToCheck );
+				const domain = getAuthority( urlToCheck );
+				// isURL uses URL() which allows '%20' in Chromium but not Firefox, so we check ourselves.
+				if ( protocol === 'https:' && ! domain.includes( '%' ) ) {
+					commentAuthorUrl = urlToCheck;
+				}
+			}
 		}
 
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
@@ -439,10 +448,10 @@ class PostComment extends PureComponent {
 				<div className="comments__comment-author">
 					{ commentAuthorUrl ? (
 						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick } tabIndex={ -1 }>
-							<Gravatar user={ comment.author } />
+							<GravatarWithHovercards user={ comment.author } />
 						</a>
 					) : (
-						<Gravatar user={ comment.author } />
+						<GravatarWithHovercards user={ comment.author } />
 					) }
 
 					{ this.renderAuthorTag( {

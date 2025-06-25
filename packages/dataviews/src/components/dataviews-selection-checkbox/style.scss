@@ -1,0 +1,14 @@
+.dataviews-selection-checkbox {
+	// Experimental override for CheckboxControl size (fragile)
+	--checkbox-input-size: 24px;
+	@include break-small() {
+		--checkbox-input-size: 16px;
+	}
+
+	line-height: 0;
+	flex-shrink: 0;
+
+	.components-checkbox-control__input-container {
+		margin: 0;
+	}
+}

@@ -123,7 +123,7 @@
 @include breakpoint-deprecated( ">480px" ) {
 	.tile-grid__item-copy {
 		padding: 15px;
-		border-top: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
+		border-top: 1px solid color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	}
 }
 

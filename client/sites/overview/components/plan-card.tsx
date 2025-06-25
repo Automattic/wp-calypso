@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import SitePreviewModal from 'calypso/sites-dashboard/components/site-preview-modal';
@@ -14,6 +15,7 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import ManageAddOnsButton from '../../components/add-ons/manage-add-ons-button';
 import PlanPricing from '../../components/plan-pricing';
 import PlanStats from '../../components/plan-stats';
 import { LaunchIcon, ShareLinkIcon } from './icons';
@@ -81,11 +83,18 @@ const PlanCard = () => {
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || planPurchaseLoading;
 
+	const plansPageIsUntangled = useSelector( isPlansPageUntangled );
+
 	const renderManageButton = () => {
 		if ( isJetpack || ! site || isStaging || isAgencyPurchase || isDevelopmentSite ) {
 			return false;
 		}
 		if ( isFreePlan ) {
+			if ( plansPageIsUntangled ) {
+				return (
+					<ManageAddOnsButton tracksEventName="calypso_hosting_overview_manage_add_ons_button_click" />
+				);
+			}
 			return (
 				<HostingCardLinkButton to={ `/add-ons/${ site?.slug }` } hideOnMobile>
 					{ translate( 'Manage add-ons' ) }
@@ -154,7 +163,7 @@ const PlanCard = () => {
 					</>
 				) }
 				{ ! isAgencyPurchase && ! isStaging && <PlanPricing /> }
-				<PlanStats />
+				<PlanStats needMoreStorageTracksEventName="calypso_hosting_overview_need_more_storage_click" />
 			</HostingCard>
 		</>
 	);

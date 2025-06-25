@@ -21,10 +21,19 @@
 	background-color: var(--color-neutral-0);
 	align-items: center;
 	justify-content: space-between;
+	font-weight: normal;
+
+	&:last-child {
+		margin-top: 15px;
+	}
 
 	.site-settings__advanced-customization-notice-cta {
 		display: flex;
 		align-items: center;
+
+		svg {
+			flex-shrink: 0;
+		}
 	}
 
 	svg.gridicon.gridicons-info-outline {
@@ -34,12 +43,9 @@
 
 	.site-settings__advanced-customization-notice-buttons {
 		display: flex;
+		gap: 5px;
+		flex-shrink: 0;
 		padding-top: 10px;
-		min-width: 185px;
-
-		.button.is-primary {
-			margin-left: 5px;
-		}
 	}
 
 	@include break-xlarge {

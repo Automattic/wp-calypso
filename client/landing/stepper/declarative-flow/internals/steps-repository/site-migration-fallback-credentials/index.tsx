@@ -1,18 +1,18 @@
-import { StepContainer } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CredentialsForm } from './components/credentials-form';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const SiteMigrationFallbackCredentials: Step< {
-	submits: {
-		action: 'submit' | 'skip';
-		from?: string;
-	};
+const SiteMigrationFallbackCredentials: StepType< {
+	submits:
+		| {
+				action: 'submit' | 'skip';
+				from?: string;
+		  }
+		| undefined;
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteURL = useQuery().get( 'from' ) || '';
@@ -31,30 +31,24 @@ const SiteMigrationFallbackCredentials: Step< {
 		} );
 	};
 
+	const title = translate( 'Tell us about your WordPress site' );
+	const headerText = translate( 'Securely share your credentials' );
+	const subHeaderText = translate(
+		'Enter your login details for a WordPress Admin so we can temporarily access {{b}}%s{{/b}} and start migrating it to WordPress.com.',
+		{ components: { b: <strong /> }, args: cleanUrl }
+	);
+	const content = <CredentialsForm onSubmit={ handleSubmit } onSkip={ handleSkip } />;
+
 	return (
 		<>
-			<DocumentHead title={ translate( 'Tell us about your WordPress site' ) } />
-			<StepContainer
-				stepName="site-migration-fallback-credentials"
-				flowName="site-migration"
-				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
-				hideSkip
-				isFullLayout
-				formattedHeader={
-					<FormattedHeader
-						id="site-migration-credentials-header"
-						headerText={ translate( 'Securely share your credentials' ) }
-						subHeaderText={ translate(
-							'Enter your login details for a WordPress Admin so we can temporarily access {{b}}%s{{/b}} and start migrating it to WordPress.com.',
-							{ components: { b: <strong /> }, args: cleanUrl }
-						) }
-						align="center"
-					/>
-				}
-				stepContent={ <CredentialsForm onSubmit={ handleSubmit } onSkip={ handleSkip } /> }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			<DocumentHead title={ title } />
+			<Step.CenteredColumnLayout
+				columnWidth={ 5 }
+				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+			>
+				{ content }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

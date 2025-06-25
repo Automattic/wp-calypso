@@ -60,8 +60,14 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*', 'test/**/*' ],
+			files: [ '**/bin/**/*', '**/test/**/*', 'webpack.config.js' ],
 			...nodeConfig,
+		},
+		{
+			files: [ '**/test/**/*' ],
+			rules: {
+				'react/display-name': 'off',
+			},
 		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
@@ -117,6 +123,15 @@ module.exports = {
 					'return-await': 'off',
 					semi: 'off',
 					'space-before-function-paren': 'off',
+					'@typescript-eslint/ban-ts-comment': [
+						'error',
+						{
+							'ts-check': 'allow-with-description',
+							'ts-expect-error': 'allow-with-description',
+							'ts-ignore': 'allow-with-description',
+							'ts-nocheck': 'allow-with-description',
+						},
+					],
 					'@typescript-eslint/ban-types': [
 						'error',
 						{
@@ -233,7 +248,6 @@ module.exports = {
 						'./client/package.json',
 						'./desktop/package.json',
 						'./test/e2e/package.json',
-						'./packages/calypso-codemods/package.json',
 						'./packages/wpcom-proxy-request/package.json',
 						'./packages/wpcom-xhr-request/package.json',
 						'./packages/wpcom.js/package.json',
@@ -416,6 +430,7 @@ module.exports = {
 		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
+		'react/display-name': 'error',
 		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
 		'react/jsx-boolean-value': 'error',
 		// enforce our classname namespacing rules
@@ -488,10 +503,13 @@ module.exports = {
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [
+					'__experimentalConfirmDialog',
 					'__experimentalDivider',
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',
+					'__experimentalText',
+					'__experimentalHeading',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',

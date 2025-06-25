@@ -5,6 +5,7 @@ import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4APluginsJetpackBanner from 'calypso/a8c-for-agencies/sections/plugins/plugins-jetpack-banner';
+import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -320,7 +321,7 @@ const PluginsDashboard = ( {
 
 	const dashboardTitle = selectedPlugin
 		? `Manage ${ selectedPlugin.name } in all sites`
-		: 'Manage Plugins';
+		: 'Manage plugins';
 	return (
 		<Layout
 			className={ clsx(
@@ -332,7 +333,7 @@ const PluginsDashboard = ( {
 			title={ dashboardTitle }
 			sidebarNavigation={
 				isJetpackCloudOrA8CForAgencies && (
-					<SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+					<SidebarNavigation sectionTitle={ translate( 'Manage plugins' ) } />
 				)
 			}
 		>
@@ -340,6 +341,8 @@ const PluginsDashboard = ( {
 				path={ pluginSlug ? `/plugins/manage/sites/${ pluginSlug }` : '/plugins/manage/sites' }
 				title="Plugins Dashboard"
 			/>
+
+			{ pluginSlug && <QueryDotorgPlugins pluginSlugList={ [ pluginSlug ] } /> }
 			<QueryJetpackSitesFeatures />
 			<QueryPlugins />
 			<QueryProductsList />
@@ -347,7 +350,7 @@ const PluginsDashboard = ( {
 				<LayoutTop withNavigation={ false }>
 					{ isA8CForAgencies() && ! pluginSlug && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
-						<Title>{ translate( 'Manage Plugins' ) }</Title>
+						<Title>{ translate( 'Manage plugins' ) }</Title>
 						{ ! pluginSlug && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }

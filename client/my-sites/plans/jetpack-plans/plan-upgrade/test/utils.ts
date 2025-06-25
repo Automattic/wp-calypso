@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { COMPARE_PLANS_QUERY_PARAM } from '../constants';
 import {

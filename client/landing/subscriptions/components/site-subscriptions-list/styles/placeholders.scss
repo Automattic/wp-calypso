@@ -1,11 +1,4 @@
 @import "@automattic/color-studio/dist/color-variables";
-@import "./variables";
-
-%site-subscriptions-list-site-row {
-	border-block-end: 1px solid $site-subscriptions-list-row-divider-color;
-	padding-top: 20px;
-	padding-bottom: 20px;
-}
 
 %site-subscriptions-list-site-title {
 	font-weight: 600;

@@ -36,8 +36,7 @@
 	margin-block-start: 0.25rem;
 	color: var(--color-scary-40);
 	font-style: italic;
-	font-size: 0.875rem;
-	line-height: 14px;
+	@include body-small;
 
 	&.hidden {
 		display: none;

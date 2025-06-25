@@ -54,7 +54,7 @@ describe( '<NewMailBoxList /> suite', () => {
 		setup();
 
 		expect( screen.getAllByRole( 'textbox' ).length ).toBeGreaterThan( 2 );
-		expect( screen.getAllByRole( 'button' ).length ).toEqual( 1 );
+		expect( screen.getAllByRole( 'button' ).length ).toEqual( 2 );
 	} );
 
 	it( 'Form submission should trigger pre-validation of input fields', () => {
@@ -64,7 +64,7 @@ describe( '<NewMailBoxList /> suite', () => {
 			result: { current: displayText },
 		} = renderHook( () => useGetDefaultFieldLabelText( FIELD_MAILBOX ) );
 
-		fireEvent.blur( screen.getByRole( 'button' ) );
+		fireEvent.blur( screen.getByText( 'Submit' ) );
 
 		const elements = screen.getAllByText( displayText as string );
 		expect( elements ).toHaveLength( 1 );

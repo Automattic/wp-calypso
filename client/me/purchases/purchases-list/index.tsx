@@ -5,7 +5,6 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -41,6 +40,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
+import { PurchasesByOtherAdminsNotice } from './purchases-by-other-admins-notice';
 import PurchasesListHeader from './purchases-list-header';
 
 export interface PurchasesListProps {
@@ -113,7 +113,6 @@ class PurchasesList extends Component<
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
-							name={ site.name }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite
@@ -144,6 +143,7 @@ class PurchasesList extends Component<
 								eventName="calypso_no_purchases_upgrade_nudge_impression"
 								eventProperties={ commonEventProps }
 							/>
+							<PurchasesByOtherAdminsNotice sites={ sites } />
 							<EmptyContent
 								title={ translate( 'Looking to upgrade?' ) }
 								line={ translate(
@@ -152,7 +152,6 @@ class PurchasesList extends Component<
 								) }
 								action={ translate( 'Upgrade now' ) }
 								actionURL="/plans"
-								illustration={ noSitesIllustration }
 								actionCallback={ () => {
 									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
 								} }
@@ -173,7 +172,7 @@ class PurchasesList extends Component<
 					navigationItems={ [] }
 					title={ titles.sectionTitle }
 					subtitle={ translate(
-						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,

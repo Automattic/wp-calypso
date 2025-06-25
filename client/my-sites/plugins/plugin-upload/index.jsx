@@ -110,7 +110,6 @@ class PluginUpload extends Component {
 				title={ translate( 'Visit WP Admin to install your plugin.' ) }
 				action={ translate( 'Go to WP Admin' ) }
 				actionURL={ `${ siteAdminUrl }/plugin-install.php` }
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}

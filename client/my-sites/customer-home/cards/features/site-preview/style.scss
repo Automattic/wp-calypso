@@ -87,13 +87,11 @@
 			}
 
 			.home-site-preview__info-domain {
-				text-overflow: ellipsis;
-				overflow: hidden;
-				font-size: rem(14px);
-				color: var(--studio-gray-60);
+				font-size: $font-body-small;
+				color: var(--color-text-subtle);
 
-				&:hover {
-					text-decoration: underline;
+				span {
+					display: block;
 				}
 			}
 		}

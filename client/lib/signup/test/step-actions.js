@@ -119,17 +119,21 @@ describe( 'createSiteWithCart()', () => {
 
 describe( 'isDomainFulfilled', () => {
 	const submitSignupStep = jest.fn();
-	const oneDomain = [ { domain: 'example.wordpress.com' } ];
-	const twoDomains = [ { domain: 'example.wordpress.com' }, { domain: 'example.com' } ];
+	const wpcomDomain = [ { domain: 'example.wordpress.com', isWPCOMDomain: true } ];
+	const customDomain = { domain: 'example.com', isWPCOMDomain: false };
+	const wpcomAndCustomDomains = [
+		{ domain: 'example.wordpress.com', isWPCOMDomain: true },
+		customDomain,
+	];
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
 		submitSignupStep.mockClear();
 	} );
 
-	test( 'should call `submitSignupStep` with empty domainItem', () => {
+	test( 'should call `submitSignupStep` with empty domainItem when site has custom domains', () => {
 		const stepName = 'domains-launch';
-		const nextProps = { siteDomains: twoDomains, submitSignupStep };
+		const nextProps = { siteDomains: wpcomAndCustomDomains, submitSignupStep };
 
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 
@@ -141,9 +145,9 @@ describe( 'isDomainFulfilled', () => {
 		);
 	} );
 
-	test( 'should call `flows.excludeStep` with the stepName', () => {
+	test( 'should call `flows.excludeStep` with the stepName when site has custom domains', () => {
 		const stepName = 'domains-launch';
-		const nextProps = { siteDomains: twoDomains, submitSignupStep };
+		const nextProps = { siteDomains: wpcomAndCustomDomains, submitSignupStep };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 
@@ -152,9 +156,35 @@ describe( 'isDomainFulfilled', () => {
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
-	test( 'should not remove unfulfilled step', () => {
+	test( 'should not remove step when site only has WordPress.com domains', () => {
 		const stepName = 'domains-launch';
-		const nextProps = { siteDomains: oneDomain, submitSignupStep };
+		const nextProps = { siteDomains: wpcomDomain, submitSignupStep };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isDomainFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove step when domains are still loading (siteId exists but no siteDomains)', () => {
+		const stepName = 'domains-launch';
+		const nextProps = { siteId: 123, siteDomains: [], submitSignupStep };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isDomainFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove step when domains are still loading (siteId exists but siteDomains is undefined)', () => {
+		const stepName = 'domains-launch';
+		const nextProps = { siteId: 123, siteDomains: undefined, submitSignupStep };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();

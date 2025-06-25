@@ -10,7 +10,8 @@ import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import type { GridPlan } from '../../types';
 
@@ -34,7 +35,8 @@ export default function usePlanBillingDescription( {
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-	const { reflectStorageSelectionInPlanPrices } = usePlansGridContext();
+	const { reflectStorageSelectionInPlanPrices, showStreamlinedBillingDescription } =
+		usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -281,6 +283,25 @@ export default function usePlanBillingDescription( {
 					comment: 'Excl. Taxes is short for excluding taxes',
 				}
 			);
+		}
+	} else if ( showStreamlinedBillingDescription ) {
+		// When streamlined price experiment is active, use simplified billing description
+		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+			return translate( 'per month, billed every %(months)s months', {
+				args: { months: 12 },
+			} );
+		}
+
+		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
+			return translate( 'per month, billed every %(months)s months', {
+				args: { months: 24 },
+			} );
+		}
+
+		if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
+			return translate( 'per month, billed every %(months)s months', {
+				args: { months: 36 },
+			} );
 		}
 	} else if ( originalPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {

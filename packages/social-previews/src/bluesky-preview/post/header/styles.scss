@@ -12,7 +12,6 @@
 	line-height: 1.47;
 
 	&--displayname {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
 		letter-spacing: 0.25px;
 		font-weight: 700;
@@ -23,7 +22,6 @@
 	&--username,
 	&--separator,
 	&--date {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 15px;
 		letter-spacing: 0.25px;
 		font-weight: 400;

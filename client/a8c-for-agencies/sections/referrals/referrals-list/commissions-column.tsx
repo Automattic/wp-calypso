@@ -1,4 +1,4 @@
-import { formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';

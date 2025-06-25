@@ -301,6 +301,7 @@ class StatsPostSummary extends Component {
 									postId={ postId }
 									period={ this.state.period }
 									query={ this.getQuery() }
+									context={ this.props.context }
 								/>
 							</div>
 						)

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 // custom properties for a8c-for-agencies
 :root {
 	// border-radius
@@ -23,103 +26,62 @@
 	--color-scary-70: var(--studio-red-70);
 
 	--color-primary: var(--studio-automattic-blue-50);
-	--color-primary-rgb: var(--studio-automattic-blue-50-rgb);
 	--color-primary-dark: var(--studio-automattic-blue-70);
-	--color-primary-dark-rgb: var(--studio-automattic-blue-70-rgb);
 	--color-primary-light: var(--studio-automattic-blue-30);
-	--color-primary-light-rgb: var(--studio-automattic-blue-30-rgb);
 	--color-primary-0: var(--studio-automattic-blue-0);
-	--color-primary-0-rgb: var(--studio-automattic-blue-0-rgb);
 	--color-primary-5: var(--studio-automattic-blue-5);
-	--color-primary-5-rgb: var(--studio-automattic-blue-5-rgb);
 	--color-primary-10: var(--studio-automattic-blue-10);
-	--color-primary-10-rgb: var(--studio-automattic-blue-10-rgb);
 	--color-primary-20: var(--studio-automattic-blue-20);
-	--color-primary-20-rgb: var(--studio-automattic-blue-20-rgb);
 	--color-primary-30: var(--studio-automattic-blue-30);
-	--color-primary-30-rgb: var(--studio-automattic-blue-30-rgb);
 	--color-primary-40: var(--studio-automattic-blue-40);
-	--color-primary-40-rgb: var(--studio-automattic-blue-40-rgb);
 	--color-primary-50: var(--studio-automattic-blue-50);
-	--color-primary-50-rgb: var(--studio-automattic-blue-50-rgb);
 	--color-primary-60: var(--studio-automattic-blue-60);
-	--color-primary-60-rgb: var(--studio-automattic-blue-60-rgb);
 	--color-primary-70: var(--studio-automattic-blue-70);
-	--color-primary-70-rgb: var(--studio-automattic-blue-70-rgb);
 	--color-primary-80: var(--studio-automattic-blue-80);
-	--color-primary-80-rgb: var(--studio-automattic-blue-80-rgb);
 	--color-primary-90: var(--studio-automattic-blue-90);
-	--color-primary-90-rgb: var(--studio-automattic-blue-90-rgb);
 	--color-primary-100: var(--studio-automattic-blue-100);
-	--color-primary-100-rgb: var(--studio-automattic-blue-100-rgb);
-
 	--color-accent: var(--studio-gray-50);
-	--color-accent-rgb: var(--studio-gray-50-rgb);
 	--color-accent-dark: var(--studio-gray-70);
-	--color-accent-dark-rgb: var(--studio-gray-70-rgb);
 	--color-accent-light: var(--studio-gray-30);
-	--color-accent-light-rgb: var(--studio-gray-30-rgb);
 	--color-accent-0: var(--studio-gray-0);
-	--color-accent-0-rgb: var(--studio-gray-0-rgb);
 	--color-accent-5: var(--studio-gray-5);
-	--color-accent-5-rgb: var(--studio-gray-5-rgb);
 	--color-accent-10: var(--studio-gray-10);
-	--color-accent-10-rgb: var(--studio-gray-10-rgb);
 	--color-accent-20: var(--studio-gray-20);
-	--color-accent-20-rgb: var(--studio-gray-20-rgb);
 	--color-accent-30: var(--studio-gray-30);
-	--color-accent-30-rgb: var(--studio-gray-30-rgb);
 	--color-accent-40: var(--studio-gray-40);
-	--color-accent-40-rgb: var(--studio-gray-40-rgb);
 	--color-accent-50: var(--studio-gray-50);
-	--color-accent-50-rgb: var(--studio-gray-50-rgb);
 	--color-accent-60: var(--studio-gray-60);
-	--color-accent-60-rgb: var(--studio-gray-60-rgb);
 	--color-accent-70: var(--studio-gray-70);
-	--color-accent-70-rgb: var(--studio-gray-70-rgb);
 	--color-accent-80: var(--studio-gray-80);
-	--color-accent-80-rgb: var(--studio-gray-80-rgb);
 	--color-accent-90: var(--studio-gray-90);
-	--color-accent-90-rgb: var(--studio-gray-90-rgb);
 	--color-accent-100: var(--studio-gray-100);
-	--color-accent-100-rgb: var(--studio-gray-100-rgb);
-
 	--color-jetpack: var(--studio-jetpack-green);
-	--color-jetpack-rgb: var(--studio-jetpack-green-rgb);
 	--color-jetpack-dark: var(--studio-jetpack-green-70);
-	--color-jetpack-dark-rgb: var(--studio-jetpack-green-70-rgb);
 	--color-jetpack-light: var(--studio-jetpack-green-30);
-	--color-jetpack-light-rgb: var(--studio-jetpack-green-30-rgb);
 	--color-jetpack-0: var(--studio-jetpack-green-0);
-	--color-jetpack-0-rgb: var(--studio-jetpack-green-0-rgb);
 	--color-jetpack-5: var(--studio-jetpack-green-5);
-	--color-jetpack-5-rgb: var(--studio-jetpack-green-5-rgb);
 	--color-jetpack-10: var(--studio-jetpack-green-10);
-	--color-jetpack-10-rgb: var(--studio-jetpack-green-10-rgb);
 	--color-jetpack-20: var(--studio-jetpack-green-20);
-	--color-jetpack-20-rgb: var(--studio-jetpack-green-20-rgb);
 	--color-jetpack-30: var(--studio-jetpack-green-30);
-	--color-jetpack-30-rgb: var(--studio-jetpack-green-30-rgb);
 	--color-jetpack-40: var(--studio-jetpack-green-40);
-	--color-jetpack-40-rgb: var(--studio-jetpack-green-40-rgb);
 	--color-jetpack-50: var(--studio-jetpack-green-50);
-	--color-jetpack-50-rgb: var(--studio-jetpack-green-rgb);
 	--color-jetpack-60: var(--studio-jetpack-green-60);
-	--color-jetpack-60-rgb: var(--studio-jetpack-green-60-rgb);
 	--color-jetpack-70: var(--studio-jetpack-green-70);
-	--color-jetpack-70-rgb: var(--studio-jetpack-green-70-rgb);
 	--color-jetpack-80: var(--studio-jetpack-green-80);
-	--color-jetpack-80-rgb: var(--studio-jetpack-green-80-rgb);
 	--color-jetpack-90: var(--studio-jetpack-green-90);
-	--color-jetpack-90-rgb: var(--studio-jetpack-green-90-rgb);
 	--color-jetpack-100: var(--studio-jetpack-green-100);
-	--color-jetpack-100-rgb: var(--studio-jetpack-green-100-rgb);
-
 	--color-orange-40: var(--studio-orange-40);
 
 	--color-yellow-0: var(--studio-yellow-0);
 	--color-yellow-20: var(--studio-yellow-20);
 	--color-yellow-50: var(--studio-yellow-50);
+
+	// Brand colors
+	--color-klaviyo: #b84f0a;
+	--color-woo: var(--studio-woocommerce-purple-60);
+
+	// A4A Brand Colors
+	--a4a-brand-blue-80: #12304a;
 }
 
 .theme-a8c-for-agencies {
@@ -131,7 +93,7 @@
 		justify-content: center;
 		white-space: nowrap;
 
-		@include a4a-font-label-button;
+		@include heading-medium;
 
 		box-sizing: border-box;
 		border-radius: 4px;
@@ -242,7 +204,7 @@
 	}
 
 	.split-button .button {
-		@include a4a-font-label-button;
+		@include heading-medium;
 		height: 40px;
 	}
 
@@ -298,8 +260,7 @@
 		border-radius: 2px;
 		box-sizing: border-box;
 		color: var(--color-neutral-70);
-		font-size: rem(14px);
-		line-height: 1.5;
+		@include body-medium;
 		margin: 0;
 		padding: 8px 12px;
 		transition: all 0.15s ease-in-out;
@@ -462,34 +423,18 @@
 // Universal Text Styles
 html {
 	h2 {
-		font-size: $font-title-small;
-		font-weight: 600;
-		line-height: 32px;
-
-		@include breakpoint-deprecated(">660px") {
-			font-size: $font-headline-small;
-			line-height: 40px;
-		}
+		@include heading-2x-large;
 	}
 
 	h3 {
-		font-size: $font-body;
-		font-weight: 600;
-		line-height: 23px;
-
-		@include breakpoint-deprecated(">660px") {
-			font-size: $font-title-small;
-			line-height: 23px;
-		}
+		@include heading-x-large;
 	}
 
 	p {
-		font-size: $font-body;
-		line-height: 24px;
+		@include body-large;
 
 		@include breakpoint-deprecated(">660px") {
-			font-size: $font-title-small;
-			line-height: 24px;
+			@include body-x-large;
 		}
 	}
 }
@@ -505,17 +450,12 @@ html {
 	}
 }
 
-.masterbar {
-	font-size: $font-body;
-}
-
 .site-selector .site-selector__actions {
 	padding: 16px;
 }
 
 .popover {
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	border-radius: 4px;
 
 	.popover__arrow {
@@ -584,9 +524,7 @@ html {
 
 .redesigned-a8c-table {
 	thead .dataviews-view-table__row th {
-		font-size: 0.75rem;
-		font-weight: 500;
-		line-height: 20px;
+		@include heading-small;
 		color: var(--color-accent-80);
 	}
 
@@ -659,6 +597,14 @@ html {
 			}
 		}
 	}
+
+	&.bordered {
+		.dataviews-view-table {
+			border: 1px solid var(--color-neutral-5);
+			border-radius: 2px;
+		}
+	}
+
 }
 
 
@@ -667,6 +613,10 @@ html {
 	.hosting-dashboard-layout__body-wrapper {
 		max-width: 100%;
 		padding-inline: 0;
+	}
+
+	.hosting-dashboard-layout__top-wrapper > * {
+		max-width: none;
 	}
 
 	.redesigned-a8c-table .dataviews-view-table tr {

@@ -27,7 +27,7 @@ describe( 'site-blocks', () => {
 			expect( dispatchedAction ).toEqual(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
-						status: 'is-plain',
+						status: 'is-success',
 					} ),
 				} )
 			);

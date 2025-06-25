@@ -31,22 +31,18 @@
 
 	.hosting__content-label {
 		color: var(--color-accent-60, #50575e);
-		font-size: rem(13px);
-		font-weight: 500;
-		line-height: 20px;
+		@include heading-medium;
 	}
 
 	.hosting__content-value {
 		display: flex;
 		align-items: center;
-		font-size: rem(14px);
-		font-weight: 500;
+		@include heading-medium;
 		line-height: 20px;
 	}
 
 	.hosting__content-live-text {
-		font-size: rem(12px);
-		font-weight: 500;
+		@include heading-small;
 		line-height: 20px;
 		padding: 0 10px;
 		color: var(--Green-Green-80, #00450c);

@@ -1,30 +1,33 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { getUrlParts } from '@automattic/calypso-url';
-import { Gridicon } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
-import AutomatticLogo from 'calypso/components/automattic-logo';
+import { getHeaderText } from 'calypso/blocks/login/login-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
+import WPCloudLogo from 'calypso/components/wp-cloud-logo';
+import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
-	isCrowdsignalOAuth2Client,
-	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
+	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -33,7 +36,7 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -45,24 +48,22 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import HeadingLogo from './components/heading-logo';
+import HeadingSubText from './components/heading-subtext';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
-import PrivateSite from './private-site';
 
 import './style.scss';
 
 export class Login extends Component {
 	static propTypes = {
 		clientId: PropTypes.string,
-		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isFromMigrationPlugin: PropTypes.bool,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
-		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
@@ -128,29 +129,6 @@ export class Login extends Component {
 		this.setState( { usernameOrEmail } );
 	}
 
-	renderP2Logo() {
-		return (
-			<div className="wp-login__p2-logo">
-				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
-			</div>
-		);
-	}
-
-	renderP2PoweredBy() {
-		return (
-			<div className="wp-login__p2-powered-by">
-				<img
-					src="/calypso/images/p2/w-logo.png"
-					className="wp-login__p2-powered-by-logo"
-					alt="WP.com logo"
-				/>
-				<span className="wp-login__p2-powered-by-text">
-					{ this.props.translate( 'Powered by WordPress.com' ) }
-				</span>
-			</div>
-		);
-	}
-
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -162,10 +140,10 @@ export class Login extends Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isWhiteLogin, isP2Login, translate } = this.props;
+		const { isWhiteLogin, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isWhiteLogin || isP2Login ) {
+		if ( isWhiteLogin ) {
 			return null;
 		}
 
@@ -176,14 +154,6 @@ export class Login extends Component {
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
 			>
-				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
-					<LoggedOutFormBackLink
-						classes={ { 'logged-out-form__link-item': false } }
-						oauth2Client={ this.props.oauth2Client }
-						recordClick={ this.recordBackToWpcomLinkClick }
-					/>
-				) }
-
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a
@@ -217,21 +187,6 @@ export class Login extends Component {
 						alt="Powered by Jetpack"
 					/>
 				) }
-
-				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
-					<div className="wp-login__crowdsignal-footer">
-						<p className="wp-login__crowdsignal-footer-text">
-							Powered by
-							<Gridicon icon="my-sites" size={ 18 } />
-							WordPress.com
-						</p>
-						<p className="wp-login__crowdsignal-footer-text">
-							An
-							<AutomatticLogo size={ 18 } />
-							Company
-						</p>
-					</div>
-				) }
 			</div>
 		);
 	}
@@ -241,8 +196,11 @@ export class Login extends Component {
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
+		const isFromGravatarQuickEditor = isGravatar && currentQuery?.gravatar_from === 'quick-editor';
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 		const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQuery?.email_address );
+		const shouldShowSignupLink =
+			! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
@@ -285,7 +243,7 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
+					{ shouldShowSignupLink && (
 						<div>
 							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
 								components: {
@@ -311,7 +269,7 @@ export class Login extends Component {
 	};
 
 	getLostPasswordLink() {
-		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
@@ -377,7 +335,6 @@ export class Login extends Component {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
 			currentRoute,
-			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
@@ -390,27 +347,13 @@ export class Login extends Component {
 			return null;
 		}
 
-		if (
-			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
-			'/log-in/authenticator' !== currentRoute
-		) {
-			return null;
-		}
-
-		if ( isP2Login && currentQuery?.redirect_to ) {
-			const urlParts = getUrlParts( currentQuery.redirect_to );
-			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
-				return null;
-			}
-		}
-
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
-			<a
+			<Step.LinkButton
 				href={ addQueryArgs(
 					{
 						user_email: usernameOrEmail,
@@ -422,31 +365,22 @@ export class Login extends Component {
 				rel="external"
 			>
 				{ signupLinkText ?? translate( 'Create a new account' ) }
-			</a>
+			</Step.LinkButton>
 		);
 	}
 
 	renderLoginHeaderNavigation() {
-		return (
-			<div className="wp-login__header-navigation">
-				{ this.renderSignUpLink( this.props.translate( 'Create an account' ) ) }
-			</div>
-		);
+		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
 	}
 
 	renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) {
 		const {
-			isJetpack,
 			isWhiteLogin,
-			isP2Login,
 			isGravPoweredClient,
-			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 			locale,
-			isLoginView,
 			signupUrl,
-			isWoo,
 			isWCCOM,
 			isBlazePro,
 			currentQuery,
@@ -466,45 +400,25 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( ( isWoo || isBlazePro ) && isLoginView ) {
-			return (
-				<>
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
-				</>
-			);
-		}
-
 		if ( isSocialFirst ) {
-			return (
-				<>
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
-				</>
-			);
+			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />;
 		}
 
-		const isJetpackMagicLinkSignUpFlow =
-			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
-
-		const shouldRenderFooter =
-			! socialConnect && ! isJetpackMagicLinkSignUpFlow && ! isWCCOM && ! isBlazePro && ! isWooJPC;
+		const shouldRenderFooter = ! socialConnect && ! isWCCOM && ! isBlazePro && ! isWooJPC;
 
 		if ( shouldRenderFooter ) {
 			return (
-				<>
-					<LoginLinks
-						locale={ locale }
-						privateSite={ privateSite }
-						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
-						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2Client={ this.props.oauth2Client }
-						getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
-						renderSignUpLink={ this.renderSignUpLink.bind( this ) }
-					/>
-				</>
+				<LoginLinks
+					locale={ locale }
+					twoFactorAuthType={ twoFactorAuthType }
+					isWhiteLogin={ isWhiteLogin }
+					isGravPoweredClient={ isGravPoweredClient }
+					signupUrl={ signupUrl }
+					usernameOrEmail={ this.state.usernameOrEmail }
+					oauth2Client={ this.props.oauth2Client }
+					getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
+					renderSignUpLink={ this.renderSignUpLink.bind( this ) }
+				/>
 			);
 		}
 
@@ -515,13 +429,10 @@ export class Login extends Component {
 		const {
 			clientId,
 			domain,
-			isLoggedIn,
 			isJetpack,
 			isWhiteLogin,
-			isP2Login,
 			isGravPoweredClient,
 			oauth2Client,
-			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 			socialService,
@@ -532,10 +443,6 @@ export class Login extends Component {
 			action,
 			currentRoute,
 		} = this.props;
-
-		if ( privateSite && isLoggedIn ) {
-			return <PrivateSite />;
-		}
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
 		const isGravPoweredLoginPage =
@@ -551,11 +458,9 @@ export class Login extends Component {
 				action={ action }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
-				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
-				isP2Login={ isP2Login }
 				isGravPoweredClient={ isGravPoweredClient }
 				isGravPoweredLoginPage={ isGravPoweredLoginPage }
 				oauth2Client={ oauth2Client }
@@ -576,53 +481,144 @@ export class Login extends Component {
 		const {
 			locale,
 			translate,
-			isFromMigrationPlugin,
 			isGenericOauth,
 			isGravPoweredClient,
-			isWoo,
 			isBlazePro,
 			isWhiteLogin,
+			isJetpack,
+			isFromAkismet,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			oauth2Client,
+			isWooJPC,
+			isWCCOM,
+			isWoo,
+			isFromAutomatticForAgenciesPlugin,
+			currentQuery,
+			currentRoute,
+			twoFactorEnabled,
 		} = this.props;
+
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) &&
-			isWhiteLogin &&
-			! isGravPoweredClient &&
-			! isWoo &&
-			! isBlazePro;
+
+		// TODO: remove isGravPoweredClient when login pages are unified.
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
+
+		const mainContent = (
+			<Main
+				className={ clsx( 'wp-login__main', {
+					'is-social-first': isSocialFirst,
+					'is-generic-oauth': isGenericOauth,
+					'is-jetpack': isJetpack,
+				} ) }
+			>
+				{ ! isWhiteLogin && this.renderI18nSuggestions() }
+
+				<DocumentHead
+					title={ translate( 'Log In' ) }
+					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+					meta={ [
+						{
+							name: 'description',
+							content: translate(
+								'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
+							),
+						},
+					] }
+				/>
+
+				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+
+				{ isWhiteLogin && this.renderI18nSuggestions() }
+			</Main>
+		);
+
+		const headerText = getHeaderText(
+			isSocialFirst,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			oauth2Client,
+			isWooJPC,
+			isJetpack,
+			isWCCOM,
+			isFromAkismet,
+			isFromAutomatticForAgenciesPlugin,
+			isGravPoweredClient,
+			twoFactorEnabled,
+			currentQuery,
+			translate
+		);
+
+		let brandLogo;
+
+		if (
+			isPartnerPortalOAuth2Client( oauth2Client ) &&
+			document.location.search?.includes( 'wpcloud' )
+		) {
+			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
+		} else {
+			brandLogo = (
+				<WordPressLogo
+					size={ 21 }
+					className="step-container-v2__top-bar-wordpress-logo"
+					color="currentColor"
+				/>
+			);
+		}
+
+		const isLostPassword =
+			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
+
+		const shouldUseWideHeading =
+			isStudioAppOAuth2Client( oauth2Client ) ||
+			isFromAkismet ||
+			isCrowdsignalOAuth2Client( oauth2Client ) ||
+			isBlazePro ||
+			isJetpack ||
+			isJetpackCloudOAuth2Client( oauth2Client ) ||
+			isWoo ||
+			isVIPOAuth2Client( oauth2Client );
 
 		return (
-			<div>
-				{ this.props.isP2Login && this.renderP2Logo() }
-				<Main
-					className={ clsx( 'wp-login__main', {
-						'is-wpcom-migration': isFromMigrationPlugin,
-						'is-social-first': isSocialFirst,
-						'is-generic-oauth': isGenericOauth,
-					} ) }
-				>
-					{ this.renderI18nSuggestions() }
-
-					<DocumentHead
-						title={ translate( 'Log In' ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-						meta={ [
-							{
-								name: 'description',
-								content: translate(
-									'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
-								),
-							},
-						] }
-					/>
-
-					{ isSocialFirst && this.renderLoginHeaderNavigation() }
-					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
-				</Main>
-
+			<>
+				{ isWhiteLogin && (
+					<Step.CenteredColumnLayout
+						columnWidth={ 6 }
+						{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
+						topBar={
+							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
+						}
+						heading={
+							<Step.Heading
+								text={
+									<>
+										<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
+										<div className="wp-login__heading-text">{ headerText }</div>
+									</>
+								}
+								subText={
+									<HeadingSubText
+										isSocialFirst={ isSocialFirst }
+										twoFactorAuthType={ twoFactorAuthType }
+										isLostPassword={ isLostPassword }
+									/>
+								}
+							/>
+						}
+						verticalAlign="center"
+					>
+						{ mainContent }
+					</Step.CenteredColumnLayout>
+				) }
+				{ ! isWhiteLogin && mainContent }
 				{ this.renderFooter() }
-				{ this.props.isP2Login && this.renderP2PoweredBy() }
-			</div>
+			</>
 		);
 	}
 }
@@ -634,7 +630,6 @@ export default connect(
 		const currentRoute = getCurrentRoute( state );
 
 		return {
-			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			locale: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isLoginView:
@@ -647,7 +642,9 @@ export default connect(
 				! currentRoute.includes( '/start' ),
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
-			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
+			isFromAkismet: isAkismetRedirect(
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
+			),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
@@ -658,10 +655,18 @@ export default connect(
 				! isA4AOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				! isJetpackCloudOAuth2Client( oauth2Client ) &&
-				! isWooOAuth2Client( oauth2Client ),
+				! isWooOAuth2Client( oauth2Client ) &&
+				! isCrowdsignalOAuth2Client( oauth2Client ) &&
+				! isStudioAppOAuth2Client( oauth2Client ) &&
+				! isVIPOAuth2Client( oauth2Client ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
+			isFromAutomatticForAgenciesPlugin:
+				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				'automattic-for-agencies-client' ===
+					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		};
 	},
 	{

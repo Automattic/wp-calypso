@@ -38,6 +38,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		extra: {},
 		meta: '',
 		product_id: 1,
+		cart_item_id: 'replace-me',
 		volume: 1,
 		quantity: null,
 		current_quantity: null,

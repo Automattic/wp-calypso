@@ -37,7 +37,7 @@ export function useFields(
 					},
 					{
 						value: PLUGINS_STATUS.UPDATE,
-						label: translate( 'Needs update' ),
+						label: translate( 'Update available' ),
 					},
 				],
 				filterBy: {
@@ -58,7 +58,7 @@ export function useFields(
 			},
 			{
 				id: 'plugins',
-				label: translate( 'Installed Plugins' ),
+				label: translate( 'Installed plugins' ),
 				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: Plugin } ) => {
@@ -75,7 +75,7 @@ export function useFields(
 
 					return (
 						<>
-							{ item.name }
+							<div className="plugin-name-container">{ item.name }</div>
 							{ pluginActionStatus }
 						</>
 					);
@@ -121,7 +121,11 @@ export function useFields(
 				},
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
-					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) && item?.update?.new_version ) {
+					if (
+						item.status?.includes( PLUGINS_STATUS.UPDATE ) &&
+						item?.update?.new_version &&
+						! isListView
+					) {
 						return (
 							<Button
 								variant="secondary"

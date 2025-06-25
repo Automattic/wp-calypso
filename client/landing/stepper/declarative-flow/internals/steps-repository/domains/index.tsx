@@ -46,8 +46,11 @@ const DomainsStep: Step< {
 				domainName?: string;
 				productSlug?: string;
 				domainItem?: DomainSuggestion;
+				deferDomainSelection?: true;
+				// Fake type just to make the this step types isomorphic to unified-domains.
+				domainCart?: undefined;
 		  }
-		| { deferDomainSelection: true };
+		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
@@ -236,8 +239,7 @@ const DomainsStep: Step< {
 		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
-
-		submit?.();
+		submit( undefined );
 	};
 
 	const handleAddMapping = ( domain: string ) => {
@@ -247,7 +249,7 @@ const DomainsStep: Step< {
 
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit( undefined );
 	};
 
 	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {
@@ -315,22 +317,33 @@ const DomainsStep: Step< {
 		return ! isCopySiteFlow( flow );
 	};
 
-	const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-		? HundredYearPlanStepWrapper
-		: StepContainer;
-
+	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
+		return (
+			<HundredYearPlanStepWrapper
+				stepName="domains"
+				flowName={ flow as string }
+				stepContent={ <div className="domains__content">{ renderContent() }</div> }
+				formattedHeader={
+					<FormattedHeader
+						id="domains-header"
+						align="center"
+						headerText={ getHeaderText() }
+						subHeaderText={ getSubHeaderText() }
+					/>
+				}
+			/>
+		);
+	}
 	return (
-		<Container
+		<StepContainer
 			stepName="domains"
 			isWideLayout
 			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
-			hideSkip
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => handleGoBack( goBack ) }
-			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"

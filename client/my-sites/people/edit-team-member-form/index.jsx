@@ -58,7 +58,7 @@ export const EditTeamMemberForm = ( {
 
 	return (
 		<Main className="edit-team-member-form">
-			<PageViewTracker path="people/edit/:site/:user" title="People > View Team Member" />
+			<PageViewTracker path="people/edit/:site/:user" title="People > View User" />
 			<HeaderCake onClick={ goBack }>{ translate( 'User Details' ) }</HeaderCake>
 			<Card className="edit-team-member-form__user-profile">
 				<PeopleProfile siteId={ siteId } user={ user } />

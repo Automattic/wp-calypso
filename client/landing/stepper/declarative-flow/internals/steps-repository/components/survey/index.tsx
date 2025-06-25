@@ -5,16 +5,9 @@ import cookie from 'cookie';
 import React, { cloneElement, useCallback, useContext, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	type SurveyContextType,
-	type SurveyActionsContextType,
-	type TriggerProps,
-	type SurveyProps,
-} from './types';
+import { type SurveyActionsContextType, type TriggerProps, type SurveyProps } from './types';
 export * from './types';
 import './style.scss';
-
-const SurveyContext = React.createContext< SurveyContextType | undefined >( undefined );
 
 export const SurveyActionsContext = React.createContext< SurveyActionsContextType >( {
 	accept: () => {},
@@ -85,18 +78,10 @@ const ONE_DAY_IN_SECONDS = 1000 * 60 * 60 * 24;
  * </Survey>
  * ```
  */
-export const Survey = ( {
-	children,
-	name,
-	onAccept,
-	onSkip,
-	isOpen = true,
-	title,
-	className,
-}: SurveyProps ) => {
+export const Survey = ( { children, name, onAccept, onSkip, title, className }: SurveyProps ) => {
 	const cookieValue = cookie.parse( document.cookie );
 	const shouldShow = ! cookieValue[ name ];
-	const [ shouldShowSurvey, setShouldShowSurvey ] = useState( isOpen && shouldShow );
+	const [ shouldShowSurvey, setShouldShowSurvey ] = useState( shouldShow );
 	const element = bemElement( className );
 	const handleClose = useCallback(
 		( reason: 'skip' | 'accept' | 'skip_backdrop' ) => {
@@ -144,38 +129,33 @@ export const Survey = ( {
 	}
 
 	return (
-		<SurveyContext.Provider value={ { isOpen } }>
-			<SurveyActionsContext.Provider value={ actions }>
-				<div aria-label={ name } className={ clsx( 'survey-notice', className ) }>
-					<SurveyTriggerSkip asChild>
-						<button className={ clsx( 'survey-notice__backdrop', element( 'backdrop' ) ) } />
-					</SurveyTriggerSkip>
-					<div className={ clsx( 'survey-notice__popup', element( 'popup' ) ) }>
-						<div className={ clsx( 'survey-notice__popup-head', element( 'popup-head' ) ) }>
-							<div
+		<SurveyActionsContext.Provider value={ actions }>
+			<div aria-label={ name } className={ clsx( 'survey-notice', className ) }>
+				<SurveyTriggerSkip asChild>
+					<button className={ clsx( 'survey-notice__backdrop', element( 'backdrop' ) ) } />
+				</SurveyTriggerSkip>
+				<div className={ clsx( 'survey-notice__popup', element( 'popup' ) ) }>
+					<div className={ clsx( 'survey-notice__popup-head', element( 'popup-head' ) ) }>
+						<div
+							className={ clsx( 'survey-notice__popup-head-title', element( 'popup-head-title' ) ) }
+						>
+							{ title }
+						</div>
+						<SurveyTriggerSkip asChild>
+							<Button
 								className={ clsx(
-									'survey-notice__popup-head-title',
-									element( 'popup-head-title' )
+									'survey-notice__popup-head-close',
+									element( 'popup-head-close' )
 								) }
 							>
-								{ title }
-							</div>
-							<SurveyTriggerSkip asChild>
-								<Button
-									className={ clsx(
-										'survey-notice__popup-head-close',
-										element( 'popup-head-close' )
-									) }
-								>
-									<Gridicon icon="cross" size={ 16 } />
-								</Button>
-							</SurveyTriggerSkip>
-						</div>
-
-						<div>{ children }</div>
+								<Gridicon icon="cross" size={ 16 } />
+							</Button>
+						</SurveyTriggerSkip>
 					</div>
+
+					<div>{ children }</div>
 				</div>
-			</SurveyActionsContext.Provider>
-		</SurveyContext.Provider>
+			</div>
+		</SurveyActionsContext.Provider>
 	);
 };

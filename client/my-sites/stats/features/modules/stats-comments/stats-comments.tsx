@@ -1,23 +1,23 @@
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { comment } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { STAT_TYPE_COMMENTS } from 'calypso/my-sites/stats/constants';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { INSIGHTS_SUPPORT_URL } from '../../../const';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
@@ -61,6 +61,12 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 	const statType = STAT_TYPE_COMMENTS;
 	const moduleTitle = translate( 'Comments' );
 	const [ activeFilter, setActiveFilter ] = useState< string >( 'top-authors' );
+
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-comments-jetpack' : 'stats-comments';
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -126,11 +132,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) }
-											/>
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
 										),
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
@@ -143,7 +145,6 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 					splitHeader
 					useShortNumber
 					toggleControl={
-						// @ts-expect-error TODO: Refactor SimplifiedSegmentedControl with TypeScript - onSelect assumed type is incorrect.
 						<SimplifiedSegmentedControl options={ selectOptions } onSelect={ handleFilterChange } />
 					}
 					className={ clsx( 'stats__modernised-comments', className ) }
@@ -163,7 +164,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ moduleTitle }
 					isEmpty
 					emptyMessage={
@@ -175,11 +176,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) }
-											/>
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
 										),
 									},
 									context: 'Stats: Info box label when the Comments module is empty',

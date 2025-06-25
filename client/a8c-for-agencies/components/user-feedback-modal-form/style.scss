@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .user-feedback-modal-form {
 	max-width: 827px;
@@ -44,13 +45,13 @@
 }
 
 .user-feedback-modal-form__title {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin: 0;
 	padding: 0;
 }
 
 p.user-feedback-modal-form__instruction {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin: 0;
 }
 

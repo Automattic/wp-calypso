@@ -69,6 +69,6 @@
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( ">660px" ) {
-		font-size: 17px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 17px;
 	}
 }

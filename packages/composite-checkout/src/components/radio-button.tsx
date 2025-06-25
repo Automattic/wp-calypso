@@ -4,6 +4,14 @@ import { useState } from 'react';
 import * as React from 'react';
 import { Theme } from '../lib/theme';
 
+interface RadioButtonWrapperProps {
+	disabled?: boolean;
+	isFocused?: boolean;
+	checked?: boolean;
+	hideRadioButton?: boolean;
+	highlighted?: boolean;
+}
+
 const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
@@ -13,35 +21,43 @@ const RadioButtonWrapper = styled.div<
 	box-sizing: border-box;
 	width: 100%;
 	outline: ${ getOutline };
+	opacity: ${ ( props ) => ( props.disabled && props.highlighted ? '0.7' : '1' ) };
+	pointer-events: ${ ( props ) => ( props.disabled && props.highlighted ? 'none' : 'auto' ) };
 
-	::before {
-		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		content: '';
-		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
-		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
-		box-sizing: border-box;
-		border-radius: ${ ( props ) => ( props.checked ? '3px' : 0 ) };
-		.rtl & {
-			right: 0;
-			left: auto;
+	${ ( props ) =>
+		! props.hideRadioButton &&
+		`
+		::before {
+			display: ${ props.hidden ? 'none' : 'block' };
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			content: '';
+			border: ${ props.checked || props.highlighted ? '1px solid ' + getBorderColor( props ) : 'none' };
+			border-bottom: 1px solid ${ getBorderColor( props ) };
+			box-sizing: border-box;
+			border-radius: ${ props.checked || props.highlighted ? '3px' : 0 };
+			border-width: ${ props.checked && props.highlighted ? '2px' : '1px' };
+			.rtl & {
+				right: 0;
+				left: auto;
+			}
 		}
-	}
 
-	:hover::before {
-		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
-		border-radius: 3px;
-	}
+		:hover::before {
+			border: 3px solid ${ props.theme.colors.highlight };
+			border-width: ${ ! props.checked && props.highlighted ? '1px' : '2px' };
+			border-radius: 3px;
+		}
+	` }
 
 	.payment-logos {
 		display: none;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
-			display: block;
+			display: flex;
 			filter: grayscale( ${ getGrayscaleValue } );
 		}
 	}
@@ -72,12 +88,6 @@ const RadioButtonWrapper = styled.div<
 	${ handleWrapperDisabled };
 `;
 
-interface RadioButtonWrapperProps {
-	disabled?: boolean;
-	isFocused?: boolean;
-	checked?: boolean;
-}
-
 const Radio = styled.input`
 	position: absolute;
 	opacity: 0 !important;
@@ -101,6 +111,8 @@ const Radio = styled.input`
 interface LabelProps {
 	disabled?: boolean;
 	checked?: boolean;
+	hideRadioButton?: boolean;
+	compact?: boolean;
 }
 
 /**
@@ -109,7 +121,12 @@ interface LabelProps {
  */
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
-	padding: 16px 14px 16px 56px;
+	padding: ${ ( props ) => {
+		if ( props.compact ) {
+			return '12px 12px 12px 43px';
+		}
+		return props.hideRadioButton ? '16px 24px' : '16px 14px 16px 56px';
+	} };
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -124,7 +141,12 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	min-height: 72px;
 
 	.rtl & {
-		padding: 16px 56px 16px 14px;
+		padding: ${ ( props ) => {
+			if ( props.compact ) {
+				return '12px';
+			}
+			return props.hideRadioButton ? '16px 24px' : '16px 56px 16px 14px';
+		} };
 	}
 
 	:hover {
@@ -132,41 +154,41 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	::before {
-		display: block;
+		display: ${ ( props ) => ( props.hideRadioButton ? 'none' : 'block' ) };
 		width: 16px;
 		height: 16px;
 		content: '';
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
 		top: 40%;
-		left: 24px;
+		left: ${ ( props ) => ( props.compact ? '16px' : '24px' ) };
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
 		z-index: 2;
 
 		.rtl & {
-			right: 16px;
+			right: ${ ( props ) => ( props.compact ? '8px' : '16px' ) };
 			left: auto;
 		}
 	}
 
 	::after {
-		display: block;
+		display: ${ ( props ) => ( props.hideRadioButton ? 'none' : 'block' ) };
 		width: 8px;
 		height: 8px;
 		content: '';
 		border-radius: 100%;
 		margin-top: 4px;
 		top: 40%;
-		left: 28px;
+		left: ${ ( props ) => ( props.compact ? '20px' : '28px' ) };
 		position: absolute;
 		background: ${ getRadioColor };
 		box-sizing: border-box;
 		z-index: 3;
 
 		.rtl & {
-			right: 20px;
+			right: ${ ( props ) => ( props.compact ? '12px' : '20px' ) };
 			left: auto;
 		}
 	}
@@ -199,6 +221,9 @@ export default function RadioButton( {
 	hidden,
 	id,
 	ariaLabel,
+	hideRadioButton,
+	highlighted,
+	compact,
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
@@ -208,7 +233,9 @@ export default function RadioButton( {
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
-			className={ `${ checked ? 'is-checked' : '' }` }
+			hideRadioButton={ hideRadioButton }
+			className={ `${ checked ? 'is-checked' : '' }${ ! hideRadioButton ? ' has-highlight' : '' }` }
+			highlighted={ highlighted }
 		>
 			<Radio
 				type="radio"
@@ -228,7 +255,13 @@ export default function RadioButton( {
 				aria-label={ ariaLabel }
 				{ ...otherProps }
 			/>
-			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
+			<Label
+				checked={ checked }
+				htmlFor={ id }
+				disabled={ disabled }
+				hideRadioButton={ hideRadioButton }
+				compact={ compact }
+			>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -247,6 +280,9 @@ interface RadioButtonProps {
 	onChange?: () => void;
 	ariaLabel?: string;
 	children?: React.ReactNode;
+	hideRadioButton?: boolean;
+	highlighted?: boolean;
+	compact?: boolean;
 }
 
 RadioButton.propTypes = {
@@ -258,6 +294,8 @@ RadioButton.propTypes = {
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
 	ariaLabel: PropTypes.string,
+	highlighted: PropTypes.bool,
+	compact: PropTypes.bool,
 };
 
 function handleWrapperDisabled( { disabled, checked }: { disabled?: boolean; checked?: boolean } ) {
@@ -335,12 +373,14 @@ function getGrayscaleValue( { checked }: { checked?: boolean } ) {
 function getOutline( {
 	isFocused,
 	theme,
+	hideRadioButton,
 }: {
 	isFocused?: boolean;
 	checked?: boolean;
 	theme: Theme;
+	hideRadioButton?: boolean;
 } ) {
-	if ( isFocused ) {
+	if ( isFocused && ! hideRadioButton ) {
 		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';

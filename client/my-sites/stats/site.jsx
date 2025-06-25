@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -9,23 +9,22 @@ import moment from 'moment';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
-import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import StatsNavigation, { getAvailablePageModules } from 'calypso/blocks/stats-navigation';
-import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
+import PageModuleToggler, {
+	getAvailablePageModules,
+} from 'calypso/blocks/stats-navigation/page-module-toggler';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
-import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	DATE_FORMAT,
@@ -35,6 +34,9 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
@@ -49,11 +51,11 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
-import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageHeader from './components/headers/page-header';
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
@@ -83,21 +85,12 @@ import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
-import StatsUpsellModal from './stats-upsell-modal';
 import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
 	return module.key;
 } );
-
-const chartRangeToQuery = memoizeLast( ( chartRange ) => ( {
-	period: 'day',
-	start_date: chartRange.chartStart,
-	date: chartRange.chartEnd,
-	summarize: 1,
-	max: 10,
-} ) );
 
 const CHART_VIEWS = {
 	attr: 'views',
@@ -171,6 +164,15 @@ function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
+	const {
+		supportsPlanUsage,
+		supportsUTMStats: supportsUTMStatsFeature,
+		supportsDevicesStats: supportsDevicesStatsFeature,
+		isOldJetpack,
+		supportUserFeedback,
+		supportsArchiveStats,
+	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
+
 	const { period } = props.period;
 	const [ activeTabState, setActiveTabState ] = useState( () => getActiveTab( chartTab ) );
 	const [ activeLegend, setActiveLegend ] = useState( () =>
@@ -178,7 +180,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 	const queryDate = date.format( DATE_FORMAT );
 
-	const moduleStrings = statsStrings();
+	const moduleStrings = statsStrings( supportsArchiveStats );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -189,24 +191,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
+	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
+	);
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
 		() => moduleVisibilityWithUserConfiguration( moduleToggles, hasVideoPress ),
 		[ hasVideoPress, moduleToggles ]
 	);
-
-	const upsellModalView = useSelector(
-		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
-	);
-
-	const {
-		supportsPlanUsage,
-		supportsUTMStats: supportsUTMStatsFeature,
-		supportsDevicesStats: supportsDevicesStatsFeature,
-		isOldJetpack,
-		supportUserFeedback,
-	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
 	// Find the applied shortcut with shortcut ID from the URL.
 	const shortcuts = useShortcuts( {
@@ -500,7 +493,16 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
 	}, [ chartTab, period, activeTabState, context.query ] );
 
-	const query = chartRangeToQuery( customChartRange );
+	const query = useMemo(
+		() => ( {
+			period: 'day',
+			start_date: customChartRange.chartStart,
+			date: customChartRange.chartEnd,
+			summarize: 1,
+			max: 10,
+		} ),
+		[ customChartRange.chartStart, customChartRange.chartEnd ]
+	);
 
 	// For period option links
 	const traffic = {
@@ -527,6 +529,37 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
 	const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
 
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+		siteId,
+		'traffic_page_settings'
+	);
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'traffic_page_settings'
+	);
+
+	const onTooltipDismiss = () => {
+		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
+			return;
+		}
+
+		setIsPageSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
+		mutateNoticeVisbilityAsync().finally( refetchNotices );
+	};
+
+	// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
+	const isModuleSettingsSupported =
+		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
+		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+
+	const shouldRenderModuleToggler =
+		isModuleSettingsSupported && AVAILABLE_PAGE_MODULES.traffic && ! wpcomShowUpsell;
+
 	return (
 		<div className="stats">
 			{ ! isOdysseyStats && (
@@ -534,20 +567,20 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<NavigationHeader
-				className="stats__section-header modernized-header"
-				title={ STATS_PRODUCT_NAME }
-				subtitle={ translate(
-					"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-						},
-					}
-				) }
-				screenReader={ navItems.traffic?.label }
-				navigationItems={ [] }
-			></NavigationHeader>
+			<PageHeader
+				rightSection={
+					shouldRenderModuleToggler && (
+						<PageModuleToggler
+							selectedItem="traffic"
+							moduleToggles={ moduleToggles }
+							siteId={ siteId }
+							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							onTooltipDismiss={ onTooltipDismiss }
+							customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+						/>
+					)
+				}
+			/>
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }
@@ -634,6 +667,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 										query={ query }
 										summaryUrl={ getStatHref( 'locations', query ) }
 										className={ clsx( 'stats__flexible-grid-item--full' ) }
+										context={ context }
+										summary={ false }
 									/>
 								</>
 							) : (
@@ -655,6 +690,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									summaryUrl={ getStatHref( 'utm', query ) }
 									summary={ false }
 									className={ halfWidthModuleClasses }
+									context={ context }
 								/>
 							) }
 
@@ -763,7 +799,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 			<JetpackColophon />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			{ upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 		</div>
 	);
 }
@@ -786,7 +821,6 @@ const EnableStatsModule = ( props ) => {
 
 	return (
 		<EmptyContent
-			illustration={ illustration404 }
 			title={ translate( 'Looking for stats?' ) }
 			line={
 				<p>
@@ -805,7 +839,6 @@ const EnableStatsModule = ( props ) => {
 const InsufficientPermissionsPage = () => {
 	return (
 		<EmptyContent
-			illustration={ illustration404 }
 			title={ translate( 'Looking for stats?' ) }
 			line={
 				<p>
@@ -848,7 +881,11 @@ const StatsBodyAccessCheck = ( props ) => {
 };
 
 const StatsSite = ( props ) => {
-	const { period } = props.period;
+	const {
+		context,
+		period: { period },
+	} = props;
+
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -860,11 +897,19 @@ const StatsSite = ( props ) => {
 		[]
 	); // Track the last viewed tab.
 
+	useEffect( () => {
+		recordCurrentScreen(
+			'traffic',
+			{
+				queryParams: context.query,
+				period: period,
+			},
+			true
+		);
+	}, [ context.query, period ] );
+
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
-			{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
-			) }
 			{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 			{ ! isOdysseyStats && (
 				<>

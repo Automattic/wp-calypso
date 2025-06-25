@@ -5,29 +5,32 @@ import type { FC } from 'react';
 
 interface HelpCenterStepButtonProps {
 	flowName: string;
-	enabledGeos?: string[];
+	enabledLocales?: string[];
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink?: string;
 }
 
 const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	flowName,
-	enabledGeos,
+	enabledLocales,
 	helpCenterButtonCopy,
 	helpCenterButtonLink,
 } ) => {
 	const translate = useTranslate();
 
-	const shouldRenderHelpCenterButton = useShouldRenderHelpCenterButton( { flowName, enabledGeos } );
+	const shouldRenderHelpCenterButton = useShouldRenderHelpCenterButton( {
+		flowName,
+		enabledLocales,
+	} );
 
 	if ( ! shouldRenderHelpCenterButton ) {
 		return null;
 	}
 
 	return (
-		<div className="step-wrapper__help-center-button-container">
+		<div className="help-center-step-button">
 			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>{ ' ' }
-			<HelpCenterInlineButton flowName={ flowName } className="step-wrapper__help-center-button">
+			<HelpCenterInlineButton flowName={ flowName } className="help-center-step-button__button">
 				{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
 			</HelpCenterInlineButton>
 		</div>

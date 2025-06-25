@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/colors";
+
+/* @wordpress/components FormToggle overrides ----------------------------------------- */
 .components-form-toggle {
 	input[type="checkbox"] {
 		cursor: pointer;
@@ -5,25 +8,191 @@
 	}
 }
 
-/* @wordpress/components Button overrides */
-.components-button.is-primary {
+/* @wordpress/components Button overrides --------------------------------------------- */
+.components-button {
+	justify-content: center;
+}
+
+/* Default */
+.components-button.is-primary:not(.is-destructive) {
+	// Background color, focus ring color
 	--wp-components-color-accent: var(--color-accent);
+	// Text color
 	--wp-components-color-accent-inverted: var(--color-text-inverted);
+	// Hover background color
 	--wp-components-color-accent-darker-10: var(--color-accent-60);
+	// Active and busy states background color
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
-.components-button.is-secondary {
+.components-button.is-secondary:not(.is-destructive) {
+	// Text color, border color, focus ring color, hover background color tint
 	--wp-components-color-accent: var(--color-accent);
+	// Hover text color, border color
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
-.components-button.is-tertiary {
+.components-button.is-tertiary:not(.is-destructive) {
+	// Text color, focus ring color, active background color tint
 	--wp-components-color-accent: var(--color-accent);
+	// Hover text color
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
-/* @wordpress/components ButtonGroup overrides */
+.components-button.is-link:not(.is-destructive) {
+	// Text color, focus ring color
+	--wp-components-color-accent: var(--color-accent);
+}
+
+/*
+ * Jetpack
+ * --------------------------------------------------------------------------------
+ * Note: The increased specificity here overrides the is-link button styles
+ * added by Stepper and other components. It is not always the desired behavior.
+ * In login, we want to use the Jetpack green color for buttons, but not for links.
+ * We therefore apply :not(.is-link) to avoid overriding the is-link styles.
+ * --------------------------------------------------------------------------------
+ */
+.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+	.components-button:not(.is-link):not(.is-destructive) {
+		--wp-components-color-accent: var(--studio-jetpack-green-50);
+		--wp-components-color-accent-darker-10: var(--studio-jetpack-green-60);
+		--wp-components-color-accent-darker-20: var(--studio-jetpack-green-60);
+	}
+}
+
+.jetpack-cloud {
+	.components-button:not(.is-destructive) {
+		--wp-components-color-accent: var(--studio-jetpack-green-50);
+		--wp-components-color-accent-darker-10: var(--studio-jetpack-green-60);
+		--wp-components-color-accent-darker-20: var(--studio-jetpack-green-60);
+	}
+}
+
+/* Gravatar & WP Job Manager */
+.is-grav-powered-client {
+	.components-button:not(.is-destructive) {
+		--color-gravatar-darker: color-mix(in srgb, var(--color-gravatar), #000 13%);
+
+		--wp-components-color-accent: var(--color-gravatar);
+		--wp-components-color-accent-darker-10: var(--color-gravatar-darker);
+		--wp-components-color-accent-darker-20: var(--color-gravatar-darker);
+	}
+
+	&.is-wp-job-manager {
+		.components-button:not(.is-destructive) {
+			--color-wp-job-manager-darker: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
+
+			--wp-components-color-accent: var(--color-wp-job-manager);
+			--wp-components-color-accent-darker-10: var(--color-wp-job-manager-darker);
+			--wp-components-color-accent-darker-20: var(--color-wp-job-manager-darker);
+		}
+	}
+}
+
+/* Akismet */
+.is-white-login.is-akismet .login,
+.is-white-login.is-akismet .magic-login,
+.is-akismet .signup-form,
+.is-akismet .auth-form__social {
+	.components-button:not(.is-destructive) {
+		--wp-components-color-accent: var(--color-akismet);
+		--wp-components-color-accent-darker-10: var(--color-akismet);
+		--wp-components-color-accent-darker-20: var(--color-akismet);
+	}
+}
+
+/* Crowdsignal */
+.signup.is-crowdsignal {
+	.components-button:not(.is-destructive) {
+		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
+			--wp-components-color-accent: var(--color-primary);
+			--wp-components-color-accent-darker-10: var(--color-primary-dark);
+			--wp-components-color-accent-darker-20: var(--color-primary-dark);
+		}
+	}
+}
+
+/* Woo */
+.woo.is-woo-passwordless {
+	.components-button:not(.is-destructive) {
+		--wp-components-color-accent: var(--woo-purple-40);
+		--wp-components-color-accent-darker-10: var(--woo-purple-60);
+		--wp-components-color-accent-darker-20: var(--woo-purple-60);
+
+		&:focus:not(:disabled, [aria-disabled="true"]) {
+			--wp-components-color-accent: var(--woo-purple-60);
+		}
+
+		&.is-primary,
+		&.is-secondary,
+		// Used for social auth buttons
+		&.a8c-components-wp-button {
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+		}
+
+		&.is-primary {
+			&:focus:not(:disabled, [aria-disabled="true"]) {
+				box-shadow: 0 0 0 2px var(--wp-components-color-accent);
+			}
+
+			&:disabled,
+			&[aria-disabled="true"] {
+				--wp-components-color-accent: var(--studio-gray-5);
+
+				color: var(--studio-gray-50);
+
+				.components-spinner {
+					--wp-components-color-accent: var(--woo-purple-40);
+				}
+			}
+
+			&.is-busy:has(.components-spinner) {
+				background-image: unset;
+			}
+
+			.components-spinner {
+				margin-top: 0;
+			}
+		}
+
+		&.is-secondary:not(:focus) {
+			box-shadow: inset 0 0 0 2px var(--wp-components-color-accent), 0 0 0 currentColor;
+		}
+
+		// Used for social auth buttons
+		&.a8c-components-wp-button:not(:focus) {
+			box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
+		}
+
+		&.is-secondary,
+		&.a8c-components-wp-button {
+			&:focus:not(:disabled, [aria-disabled="true"]) {
+				box-shadow: inset 0 0 0 1px var(--wp-components-color-background, #fff), 0 0 0 2px var(--wp-components-color-accent);
+			}
+		}
+	}
+}
+
+/* Blaze Pro */
+.blaze-pro,
+.is-blaze-pro {
+	.components-button:not(.is-destructive) {
+		--color-blaze-pro-darker: color-mix(in srgb, var(--color-blaze-pro), #000 13%);
+
+		--wp-components-color-accent: var(--color-blaze-pro);
+		--wp-components-color-accent-inverted: var(--studio-black);
+		--wp-components-color-accent-darker-10: var(--color-blaze-pro-darker);
+		--wp-components-color-accent-darker-20: var(--color-blaze-pro-darker);
+	}
+
+	.components-button.is-tertiary {
+		--wp-components-color-accent: var(--studio-gray-60);
+		--wp-components-color-accent-darker-20: var(--studio-gray-80);
+	}
+}
+
+/* @wordpress/components ButtonGroup overrides ---------------------------------------- */
 .components-button-group {
 	.components-button {
 		&,
@@ -33,7 +202,7 @@
 	}
 }
 
-/* @wordpress/components RadioControl overrides */
+/* @wordpress/components RadioControl overrides --------------------------------------- */
 .components-radio-control {
 	&__input[type="radio"] {
 		padding: 6px;
@@ -43,13 +212,5 @@
 			border-color: var(--color-accent);
 			background-color: var(--color-accent);
 		}
-	}
-}
-
-.components-external-link__contents {
-	text-decoration: none;
-
-	&:hover {
-		text-decoration: underline;
 	}
 }

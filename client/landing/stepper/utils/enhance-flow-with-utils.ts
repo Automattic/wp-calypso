@@ -5,7 +5,7 @@ import type { FlowV2 } from '../declarative-flow/internals/types';
  * @param flow the flow.
  * @returns the enhanced flow.
  */
-export function enhanceFlowWithUtilityFunctions( flow: FlowV2 ): FlowV2 {
+export function enhanceFlowWithUtilityFunctions< T extends FlowV2< any > >( flow: T ): T {
 	flow.getSteps = () => {
 		return flow.__flowSteps ?? [];
 	};

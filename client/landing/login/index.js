@@ -1,7 +1,7 @@
 /**
  * Global polyfills
  */
-import 'calypso/boot/polyfills';
+import '@automattic/calypso-polyfills';
 
 import page from '@automattic/calypso-router';
 import { setupLocale } from 'calypso/boot/locale';

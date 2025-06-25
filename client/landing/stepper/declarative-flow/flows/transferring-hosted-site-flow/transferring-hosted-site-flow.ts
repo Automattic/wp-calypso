@@ -1,17 +1,22 @@
-import { SiteSelect } from '@automattic/data-stores';
-import { SITE_STORE } from '@automattic/launchpad/src/launchpad';
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
-import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { Flow, ProvidedDependencies } from '../../internals/types';
 
-const TRANSFERRING_HOSTED_SITE_STEPS = [ STEPS.WAIT_FOR_ATOMIC, STEPS.PROCESSING, STEPS.ERROR ];
+const TRANSFERRING_HOSTED_SITE_STEPS = [
+	STEPS.WAIT_FOR_ATOMIC,
+	STEPS.WAIT_FOR_PLUGIN_INSTALL,
+	STEPS.PROCESSING,
+	STEPS.ERROR,
+];
 
 const transferringHostedSite: Flow = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
@@ -21,13 +26,10 @@ const transferringHostedSite: Flow = {
 		return TRANSFERRING_HOSTED_SITE_STEPS;
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const siteId = useSiteIdParam();
-		const site = useSelect(
-			( select ) => ( siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ) ) || null,
-			[ siteId ]
-		);
+		const { site, siteId, siteSlug } = useSiteData();
+		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
 		const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
-			isAdminInterfaceWPAdmin( state, parseInt( siteId! ) )
+			isAdminInterfaceWPAdmin( state, siteId )
 		);
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -46,6 +48,11 @@ const transferringHostedSite: Flow = {
 			return `/home/${ siteId }`;
 		};
 
+		const includeWooCommerce = useIsValidWooPartner();
+		if ( includeWooCommerce ) {
+			setPluginsToVerify( [ 'woocommerce' ] );
+		}
+
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'processing': {
@@ -61,6 +68,12 @@ const transferringHostedSite: Flow = {
 				}
 
 				case 'waitForAtomic': {
+					if ( includeWooCommerce ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+					return navigate( 'processing' );
+				}
+				case 'waitForPluginInstall': {
 					return navigate( 'processing' );
 				}
 			}

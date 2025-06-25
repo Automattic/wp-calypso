@@ -15,6 +15,7 @@ const selectors = {
 
 	// Buttons
 	submitButton: 'button[type="submit"]',
+	createAccountButton: 'button:text("Create an account")',
 };
 
 /**
@@ -166,7 +167,7 @@ export class UserSignupPage {
 		} );
 
 		// Ensure response is captured correctly
-		const responsePromise = this.page.waitForResponse( /.*users\/new\?.*/ );
+		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
 		await this.page.click( selectors.submitButton );
 
 		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
@@ -177,6 +178,27 @@ export class UserSignupPage {
 
 		const responseBody: NewUserResponse = await response.json();
 		return responseBody;
+	}
+
+	/**
+	 * Signs up through an invite acceptance flow.
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
+	 */
+	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
+		await this.page.fill( selectors.emailInput, email );
+
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /\/users\/new\?[^?]*$/ ),
+			this.page.click( selectors.createAccountButton ),
+		] );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to create new user through invite.' );
+		}
+
+		return await response.json();
 	}
 
 	/**

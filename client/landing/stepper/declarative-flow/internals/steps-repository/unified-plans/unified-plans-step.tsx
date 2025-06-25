@@ -3,7 +3,13 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isTailoredSignupFlow, ONBOARDING_FLOW } from '@automattic/onboarding';
+import {
+	isNewHostedSiteCreationFlow,
+	isTailoredSignupFlow,
+	ONBOARDING_FLOW,
+	Step,
+	StepContainer,
+} from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -21,7 +27,11 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
+import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPricePlansTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -161,6 +171,8 @@ export interface UnifiedPlansStepProps {
 	 * Used only in "onboarding-pm" flow (old Signup/Start)
 	 */
 	isCustomDomainAllowedOnFreePlan?: boolean;
+
+	useStepContainerV2?: boolean;
 }
 
 /**
@@ -202,6 +214,7 @@ function UnifiedPlansStep( {
 	steps,
 	wrapperProps,
 	useStepperWrapper,
+	useStepContainerV2,
 	isCustomDomainAllowedOnFreePlan,
 	fallbackHeaderText: fallbackHeaderTextFromProps,
 	fallbackSubHeaderText: fallbackSubHeaderTextFromProps,
@@ -211,11 +224,12 @@ function UnifiedPlansStep( {
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 
 	useSiteGlobalStylesOnPersonal();
 
@@ -348,15 +362,25 @@ function UnifiedPlansStep( {
 		return hideEcommercePlan;
 	};
 
-	const HeaderText = () => {
+	const getHeaderText = () => {
 		if ( headerText ) {
 			return headerText;
 		}
 
-		return translate( 'Choose your flavor of WordPress' );
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate( 'The right plan for the right project' );
+		}
+
+		return translate( 'There’s a plan for you' );
 	};
 
 	const getSubheaderText = () => {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -388,13 +412,7 @@ function UnifiedPlansStep( {
 		}
 	};
 
-	const classes = clsx( 'plans plans-step', {
-		'has-no-sidebar': true,
-		'is-wide-layout': false,
-		'is-extra-wide-layout': true,
-	} );
-
-	const fallbackHeaderText = fallbackHeaderTextFromProps || <HeaderText />;
+	const fallbackHeaderText = fallbackHeaderTextFromProps || getHeaderText();
 	const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || getSubheaderText();
 
 	let backUrl;
@@ -433,14 +451,18 @@ function UnifiedPlansStep( {
 		}
 	}
 
-	const intervalTypeValue =
-		intervalType ||
-		getIntervalType(
-			path,
-			flowName === ONBOARDING_FLOW && longerPlanTermDefaultExperiment?.term
-				? longerPlanTermDefaultExperiment.term
-				: undefined
-		);
+	const { shouldRestrict3YearPlans } = useFCCARestrictions();
+	let defaultIntervalType = 'yearly';
+	const experimentValue = streamlinedPriceExperimentAssignment as string;
+	if (
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPricePlansTreatment( experimentValue ) &&
+		experimentValue.startsWith( 'plans_3y' )
+	) {
+		defaultIntervalType = shouldRestrict3YearPlans() ? '2yearly' : '3yearly';
+	}
+
+	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
 
 	let paidDomainName = domainItem?.meta;
 
@@ -457,59 +479,103 @@ function UnifiedPlansStep( {
 		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
+	const stepContent = (
+		<div>
+			{ 'invalid' === step?.status && (
+				<div>
+					<Notice status="is-error" showDismiss={ false }>
+						{ step?.errors?.message }
+					</Notice>
+				</div>
+			) }
+			<PlansFeaturesMain
+				paidDomainName={ paidDomainName }
+				freeSubdomain={ freeWPComSubdomain }
+				siteTitle={ siteTitle ?? undefined }
+				signupFlowUserName={ username ?? undefined }
+				siteId={ selectedSite?.ID }
+				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+				isInSignup
+				isLaunchPage={ isLaunchPage }
+				intervalType={
+					intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
+				}
+				displayedIntervals={ displayedIntervals }
+				onUpgradeClick={ handleUpgradeClick }
+				customerType={ customerType }
+				deemphasizeFreePlan={ deemphasizeFreePlan }
+				plansWithScroll={ isDesktop }
+				intent={ intent }
+				flowName={ flowName }
+				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
+				hidePersonalPlan={ hidePersonalPlan }
+				hidePremiumPlan={ hidePremiumPlan }
+				hideEcommercePlan={ shouldHideEcommercePlan() }
+				hideEnterprisePlan={ hideEnterprisePlan }
+				removePaidDomain={ handleRemovePaidDomain }
+				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
+				coupon={ coupon ?? undefined }
+				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+				onPlanIntervalUpdate={ onPlanIntervalUpdate }
+				selectedThemeType={ selectedThemeType }
+				renderSiblingWhenLoaded={ () => {
+					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
+						return null;
+					}
+
+					return (
+						<AsyncLoad
+							require="calypso/my-sites/plans-features-main/components/plan-faq"
+							placeholder={ null }
+						/>
+					);
+				} }
+			/>
+		</div>
+	);
+
+	if ( useStepContainerV2 && wrapperProps ) {
+		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+
+		return (
+			<>
+				<MarketingMessage path="signup/plans" />
+				<Step.WideLayout
+					className="step-container-v2--plans"
+					topBar={
+						<Step.TopBar
+							leftElement={
+								goBack ? (
+									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
+							}
+						/>
+					}
+					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+				>
+					{ stepContent }
+				</Step.WideLayout>
+			</>
+		);
+	}
+
+	const classes = clsx( 'plans plans-step', {
+		'has-no-sidebar': true,
+		'is-wide-layout': false,
+		'is-extra-wide-layout': true,
+	} );
+
 	return (
 		<>
 			<MarketingMessage path="signup/plans" />
 			<div className={ classes }>
 				{ useStepperWrapper && wrapperProps ? (
-					<AsyncLoad
-						require="@automattic/onboarding/src/step-container"
+					// This is biased towards Stepper. It will always load Stepper's StepContainer but only load /start's StepWrapper if /start is used.
+					// This is because Stepper's plans page is much more likely (90%+ of the time) to be used than /start's plans page.
+					<StepContainer
 						flowName={ flowName }
 						stepName={ stepName }
-						stepContent={
-							<div>
-								{ 'invalid' === step?.status && (
-									<div>
-										<Notice status="is-error" showDismiss={ false }>
-											{ step?.errors?.message }
-										</Notice>
-									</div>
-								) }
-								<PlansFeaturesMain
-									paidDomainName={ paidDomainName }
-									freeSubdomain={ freeWPComSubdomain }
-									siteTitle={ siteTitle ?? undefined }
-									signupFlowUserName={ username ?? undefined }
-									siteId={ selectedSite?.ID }
-									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-									isInSignup
-									isLaunchPage={ isLaunchPage }
-									intervalType={
-										intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
-									}
-									displayedIntervals={ displayedIntervals }
-									onUpgradeClick={ handleUpgradeClick }
-									customerType={ customerType }
-									deemphasizeFreePlan={ deemphasizeFreePlan }
-									plansWithScroll={ isDesktop }
-									intent={ intent }
-									flowName={ flowName }
-									hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
-									hidePersonalPlan={ hidePersonalPlan }
-									hidePremiumPlan={ hidePremiumPlan }
-									hideEcommercePlan={ shouldHideEcommercePlan() }
-									hideEnterprisePlan={ hideEnterprisePlan }
-									removePaidDomain={ handleRemovePaidDomain }
-									setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
-									coupon={ coupon ?? undefined }
-									showPlanTypeSelectorDropdown={ config.isEnabled(
-										'onboarding/interval-dropdown'
-									) }
-									onPlanIntervalUpdate={ onPlanIntervalUpdate }
-									selectedThemeType={ selectedThemeType }
-								/>
-							</div>
-						}
+						stepContent={ stepContent }
 						backLabelText={ backLabelText }
 						isWideLayout={ false }
 						isExtraWideLayout={ wrapperProps.isExtraWideLayout }
@@ -518,7 +584,7 @@ function UnifiedPlansStep( {
 							<FormattedHeader
 								id="plans-header"
 								align="center"
-								headerText={ <HeaderText /> }
+								headerText={ getHeaderText() }
 								subHeaderText={ fallbackSubHeaderText }
 							/>
 						}
@@ -534,49 +600,7 @@ function UnifiedPlansStep( {
 						require="calypso/signup/step-wrapper"
 						flowName={ flowName }
 						stepName={ stepName }
-						stepContent={
-							<div>
-								{ 'invalid' === step?.status && (
-									<div>
-										<Notice status="is-error" showDismiss={ false }>
-											{ step?.errors?.message }
-										</Notice>
-									</div>
-								) }
-								<PlansFeaturesMain
-									paidDomainName={ paidDomainName }
-									freeSubdomain={ freeWPComSubdomain }
-									siteTitle={ siteTitle ?? undefined }
-									signupFlowUserName={ username ?? undefined }
-									siteId={ selectedSite?.ID }
-									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-									isInSignup
-									isLaunchPage={ isLaunchPage }
-									intervalType={
-										intervalTypeValue as 'monthly' | 'yearly' | '2yearly' | '3yearly' | undefined
-									}
-									displayedIntervals={ displayedIntervals }
-									onUpgradeClick={ handleUpgradeClick }
-									customerType={ customerType }
-									deemphasizeFreePlan={ deemphasizeFreePlan }
-									plansWithScroll={ isDesktop }
-									intent={ intent }
-									flowName={ flowName }
-									hideFreePlan={ hideFreePlan }
-									hidePersonalPlan={ hidePersonalPlan }
-									hidePremiumPlan={ hidePremiumPlan }
-									hideEcommercePlan={ shouldHideEcommercePlan() }
-									hideEnterprisePlan={ hideEnterprisePlan }
-									removePaidDomain={ handleRemovePaidDomain }
-									setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
-									coupon={ coupon ?? undefined }
-									showPlanTypeSelectorDropdown={ config.isEnabled(
-										'onboarding/interval-dropdown'
-									) }
-									onPlanIntervalUpdate={ onPlanIntervalUpdate }
-								/>
-							</div>
-						}
+						stepContent={ stepContent }
 						isWideLayout={ false }
 						isExtraWideLayout
 						backLabelText={ backLabelText }
@@ -585,7 +609,7 @@ function UnifiedPlansStep( {
 						 */
 						backUrl={ backUrl }
 						positionInFlow={ positionInFlow }
-						headerText={ <HeaderText /> }
+						headerText={ getHeaderText() }
 						shouldHideNavButtons={ shouldHideNavButtons }
 						fallbackHeaderText={ fallbackHeaderText }
 						subHeaderText={ getSubheaderText() }

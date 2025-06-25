@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .hosting-dashboard-item-view {
 
@@ -77,7 +78,7 @@
 
 	.site-preview-pane__plugins-caption {
 		padding-top: 16px;
-		font-size: small;
+		@include body-small;
 	}
 
 	.site-preview-pane__plugins-icon {
@@ -132,7 +133,7 @@
 .site-preview-pane__stats-content {
 
 	.shortened-number {
-		font-size: 2rem;
+		@include body-x-large;
 	}
 
 	.site-expanded-content__card-content-column {

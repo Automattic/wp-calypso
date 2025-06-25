@@ -1,6 +1,6 @@
 import { Context } from '@automattic/calypso-router';
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
@@ -106,8 +106,11 @@ export const notFound = ( context: Context, next: () => void ) => {
 	context.primary = (
 		<EmptyContent
 			className="content-404"
-			illustration="/calypso/images/illustrations/illustration-404.svg"
-			title={ translate( 'Uh oh. Page not found.' ) }
+			title={ fixMe( {
+				text: 'Page not found.',
+				newCopy: translate( 'Page not found.' ),
+				oldCopy: translate( 'Uh oh. Page not Found.' ),
+			} ) }
 			line={ translate( 'Sorry, the page you were looking for doesn‘t exist or has been moved.' ) }
 			action={ translate( 'Return Home' ) }
 			actionURL="/"

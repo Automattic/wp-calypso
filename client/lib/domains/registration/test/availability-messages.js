@@ -54,13 +54,7 @@ describe( 'getAvailabilityNotice()', () => {
 		} );
 	} );
 
-	test( 'Should return default message if TLD is unsupported', () => {
-		expect(
-			getAvailabilityNotice( 'test-domain.se', domainAvailability.TLD_NOT_SUPPORTED, null )
-		).toEqual( { message: 'default', severity: 'error' } );
-	} );
-
-	test( 'Should return no message when domain unavailable, unmappable, unknown, tld not supported, or search results are empty', () => {
+	test( 'Should return no message when domain unavailable, unmappable, unknown or search results are empty', () => {
 		// These are special cases where the error notice should not be handled by client/components/domains/register-domain-step/index.jsx
 		// but in client/components/domains/domain-search-results/index.jsx
 		[
