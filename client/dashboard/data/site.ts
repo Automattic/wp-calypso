@@ -61,8 +61,6 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
-	is_domain_only?: boolean;
-	is_redirect?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;

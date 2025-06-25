@@ -14,8 +14,8 @@ export async function fetchSites( { site_visibility }: FetchSitesOptions ): Prom
 		},
 		{
 			site_visibility,
-			include_domain_only: 'false',
-			include_redirect: 'false',
+			include_domain_only: false,
+			include_redirect: false,
 			site_activity: 'active',
 			fields: JOINED_SITE_FIELDS,
 			options: JOINED_SITE_OPTIONS,
