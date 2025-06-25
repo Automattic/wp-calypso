@@ -10,6 +10,7 @@ import { canViewSiteActions, canTransferSite } from '../features';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
 import SiteResetModal from '../site-reset-modal';
+import StagingSiteDeleteModal from '../staging-site-delete-modal';
 import type { Site } from '../../data/types';
 
 const SiteTransferAction = ( { site }: { site: Site } ) => {
@@ -94,7 +95,12 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 					</Button>
 				}
 			/>
-			{ isOpen && <SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+			{ isOpen &&
+				( site.is_wpcom_staging_site ? (
+					<StagingSiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } />
+				) : (
+					<SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } />
+				) ) }
 		</>
 	);
 };
