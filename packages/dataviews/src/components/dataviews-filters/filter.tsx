@@ -48,6 +48,10 @@ import {
 	OPERATOR_BEFORE_INC,
 	OPERATOR_AFTER_INC,
 	OPERATOR_BETWEEN,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
+	OPERATOR_IN_THE_PAST,
+	OPERATOR_OVER,
 } from '../../constants';
 import type {
 	Filter,
@@ -317,6 +321,53 @@ const FilterText = ( {
 		);
 	}
 
+	if ( filterInView?.operator === OPERATOR_ON ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is on: 2024-01-01". */
+				__( '<Name>%1$s is on: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_NOT_ON ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is not on: 2024-01-01". */
+				__( '<Name>%1$s is not on: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_IN_THE_PAST ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is in the past: 1 days". */
+				__( '<Name>%1$s is in the past: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				`${ activeElements[ 0 ].value.value } ${ activeElements[ 0 ].value.unit }`
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_OVER ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is over: 1 days ago". */
+				__( '<Name>%1$s is over: </Name><Value>%2$s</Value> ago' ),
+				filter.name,
+				`${ activeElements[ 0 ].value.value } ${ activeElements[ 0 ].value.unit }`
+			),
+			filterTextWrappers
+		);
+	}
 	return sprintf(
 		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
 		__( 'Unknown status for %1$s' ),
@@ -363,16 +414,25 @@ function OperatorSelector( {
 											if (
 												_filter.field === filter.field
 											) {
-												// Reset the value only when switching between "between" and any other operator to avoid invalid values.
-												const isSwitchingBetween =
-													currentOperator ===
-														OPERATOR_BETWEEN ||
-													operator ===
-														OPERATOR_BETWEEN;
+												// Reset the value only when switching between operators that have different value types.
+												const OPERATORS_SHOULD_RESET_VALUE =
+													[
+														OPERATOR_BETWEEN,
+														OPERATOR_IN_THE_PAST,
+														OPERATOR_OVER,
+													];
+												const shouldResetValue =
+													currentOperator &&
+													( OPERATORS_SHOULD_RESET_VALUE.includes(
+														currentOperator
+													) ||
+														OPERATORS_SHOULD_RESET_VALUE.includes(
+															operator
+														) );
 
 												return {
 													..._filter,
-													value: isSwitchingBetween
+													value: shouldResetValue
 														? undefined
 														: _filter.value,
 													operator,

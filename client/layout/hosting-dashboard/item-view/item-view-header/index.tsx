@@ -116,14 +116,6 @@ export default function ItemViewHeader( {
 										) : (
 											itemData.subtitle
 										) }
-
-										<HeaderStagingSiteButton
-											siteId={ siteId }
-											isAtomic={ isAtomic }
-											isStagingSite={ isStagingSite }
-											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
-										/>
-
 										{ extraProps && extraProps.subtitleExtra ? (
 											<span>
 												<extraProps.subtitleExtra />
@@ -131,6 +123,12 @@ export default function ItemViewHeader( {
 										) : (
 											''
 										) }
+										<HeaderStagingSiteButton
+											siteId={ siteId }
+											isAtomic={ isAtomic }
+											isStagingSite={ isStagingSite }
+											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
+										/>
 									</div>
 
 									{ shouldDisplayVersionNumbers && (

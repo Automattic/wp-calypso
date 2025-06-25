@@ -31,6 +31,7 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
 	'p2_hub_blog_id',
@@ -60,7 +61,6 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
-	is_redirect?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;

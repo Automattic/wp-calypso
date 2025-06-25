@@ -1,27 +1,30 @@
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
-import { useAnalytics } from '../app/analytics';
-import { useAuth } from '../app/auth';
-import { siteBackupLastEntryQuery } from '../app/queries/site-backups';
-import { siteMediaStorageQuery } from '../app/queries/site-media-storage';
-import { sitePHPVersionQuery } from '../app/queries/site-php-version';
-import { siteEngagementStatsQuery } from '../app/queries/site-stats';
-import { siteUptimeQuery } from '../app/queries/site-uptime';
-import ComponentViewTracker from '../components/component-view-tracker';
-import { TextBlur } from '../components/text-blur';
-import TimeSince from '../components/time-since';
-import { JetpackModules } from '../data/constants';
-import { hasAtomicFeature, hasJetpackModule } from '../utils/site-features';
-import { getSiteStatusLabel } from '../utils/site-status';
-import { HostingFeatures } from './features';
-import { isSitePlanTrial } from './plans';
-import type { Site } from '../data/types';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
+import { siteBackupLastEntryQuery } from '../../app/queries/site-backups';
+import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
+import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
+import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
+import { siteUptimeQuery } from '../../app/queries/site-uptime';
+import ComponentViewTracker from '../../components/component-view-tracker';
+import { TextBlur } from '../../components/text-blur';
+import TimeSince from '../../components/time-since';
+import { JetpackModules } from '../../data/constants';
+import { hasAtomicFeature, hasJetpackModule } from '../../utils/site-features';
+import { getSiteStatusLabel } from '../../utils/site-status';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { HostingFeatures } from '../features';
+import { isSitePlanTrial } from '../plans';
+import type { Site } from '../../data/types';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -236,6 +239,23 @@ export function Status( { site }: { site: Site } ) {
 }
 
 export function Plan( { site }: { site: Site } ) {
+	if ( site.is_wpcom_staging_site ) {
+		// translator: this is the label of a staging site.
+		return __( 'Staging' );
+	}
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		if ( ! site.jetpack ) {
+			return <IneligibleIndicator />;
+		}
+		return (
+			<HStack spacing={ 1 } expanded={ false }>
+				<JetpackLogo size={ 16 } />
+				<span>{ site.plan?.product_name_short }</span>
+			</HStack>
+		);
+	}
+
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
