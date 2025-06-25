@@ -4,7 +4,7 @@ import { useNavigate, useRouter, Link } from '@tanstack/react-router';
 import { __experimentalText as Text, Button, Modal, Icon } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { drawerLeft, wordpress } from '@wordpress/icons';
+import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
@@ -238,24 +238,7 @@ const DEFAULT_VIEW = {
 };
 
 const getDefaultActions = ( router: AnyRouter ) => {
-	const isBackport = ! router.basepath.startsWith( '/v2' );
-
 	return [
-		...( isBackport
-			? [
-					{
-						id: 'overview',
-						label: __( 'Overview' ),
-						isPrimary: true,
-						icon: <Icon icon={ drawerLeft } />,
-						callback: ( sites: Site[] ) => {
-							const site = sites[ 0 ];
-							window.location.href = `/overview/${ site.slug }`;
-						},
-						isEligible: ( item: Site ) => canManageSite( item ),
-					},
-			  ]
-			: [] ),
 		{
 			id: 'admin',
 			isPrimary: true,
