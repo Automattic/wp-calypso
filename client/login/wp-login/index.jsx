@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { WordPressLogo } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -554,14 +553,6 @@ export class Login extends Component {
 			translate
 		);
 
-		const brandLogo = (
-			<WordPressLogo
-				size={ 21 }
-				className="step-container-v2__top-bar-wordpress-logo"
-				color="currentColor"
-			/>
-		);
-
 		const isLostPassword =
 			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
 
@@ -582,9 +573,7 @@ export class Login extends Component {
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
 						{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
-						topBar={
-							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
-						}
+						topBar={ <Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } compact /> }
 						heading={
 							<Step.Heading
 								text={

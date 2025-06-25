@@ -1,4 +1,5 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 
 import './style.scss';
@@ -7,18 +8,24 @@ interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
 	logo?: ReactNode;
+	compact?: boolean;
 }
 
-export const TopBar = ( { leftElement, rightElement, logo }: TopBarProps ) => {
+export const TopBar = ( { leftElement, rightElement, logo, compact }: TopBarProps ) => {
 	const defaultLogo = (
 		<>
-			<WordPressWordmark
-				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
-				color="currentColor"
-			/>
+			{ ! compact && (
+				<WordPressWordmark
+					className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
+					color="currentColor"
+				/>
+			) }
 			<WordPressLogo
 				size={ 21 }
-				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
+				className={ clsx(
+					'step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo',
+					{ 'is-compact': compact }
+				) }
 			/>
 		</>
 	);
