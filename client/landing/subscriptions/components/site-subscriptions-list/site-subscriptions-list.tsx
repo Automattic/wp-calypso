@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -28,7 +29,11 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 	const { subscriptions, totalCount } = data;
 
+<<<<<<< HEAD
 	const isCompactLayout = layout === 'compact';
+=======
+	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
+>>>>>>> 93f3a954b14 (Use reader/recommended-blogs-list feature flag.)
 
 	// Fetch recommended blogs data once for all subscription rows
 	useEffect( () => {
@@ -107,9 +112,11 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="email-frequency-cell" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
-				<span className="recommend-cell" role="columnheader">
-					{ translate( 'Recommend' ) }
-				</span>
+				{ isRecommendedBlogsEnabled && (
+					<span className="recommend-cell" role="columnheader">
+						{ translate( 'Recommend' ) }
+					</span>
+				) }
 				<span className="unsubscribe-action-cell" role="columnheader">
 					{ translate( 'Action' ) }
 				</span>

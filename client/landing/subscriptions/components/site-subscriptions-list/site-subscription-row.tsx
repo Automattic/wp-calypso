@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -104,7 +105,11 @@ const SiteSubscriptionRow = ( {
 	// Use custom hook for recommended site functionality
 	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( blog_id ) );
 
+<<<<<<< HEAD
 	const isCompactLayout = layout === 'compact';
+=======
+	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
+>>>>>>> 93f3a954b14 (Use reader/recommended-blogs-list feature flag.)
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -364,13 +369,15 @@ const SiteSubscriptionRow = ( {
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
-			<span className="recommend-cell" role="cell">
-				<FormToggle
-					checked={ isRecommended }
-					onChange={ handleRecommendToggle }
-					disabled={ ! currentUserName || typeof currentUserName !== 'string' }
-				/>
-			</span>
+			{ isRecommendedBlogsEnabled && (
+				<span className="recommend-cell" role="cell">
+					<FormToggle
+						checked={ isRecommended }
+						onChange={ handleRecommendToggle }
+						disabled={ ! currentUserName || typeof currentUserName !== 'string' }
+					/>
+				</span>
+			) }
 			<span className="unsubscribe-action-cell" role="cell">
 				<Button variant="secondary" onClick={ onUnsubscribe }>
 					{ translate( 'Unsubscribe' ) }
