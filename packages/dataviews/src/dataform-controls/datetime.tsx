@@ -7,12 +7,11 @@ import {
 	VisuallyHidden,
 	SelectControl,
 	Button,
-	__experimentalInputControl as InputControl,
 	__experimentalNumberControl as NumberControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -176,14 +175,6 @@ function CalendarDateControl( {
 		[ id, onChange ]
 	);
 
-	const handleManualDateChange = useCallback(
-		( nextValue: string | undefined ) => {
-			onChange( { [ id ]: nextValue } );
-			setSelectedPresetId( null );
-		},
-		[ id, onChange ]
-	);
-
 	return (
 		<BaseControl
 			__nextHasNoMarginBottom
@@ -220,14 +211,6 @@ function CalendarDateControl( {
 					</Button>
 				</HStack>
 
-				{ /* Date input field */ }
-				<InputControl
-					__next40pxDefaultSize
-					type="date"
-					value={ value ? format( value, 'yyyy-MM-dd' ) : '' }
-					onChange={ handleManualDateChange }
-				/>
-
 				{ /* Calendar widget */ }
 				<DateCalendar
 					style={ { width: '100%' } }
@@ -258,11 +241,19 @@ function CalendarDateRangeControl( {
 		null
 	);
 
-	const [ from, to ] = Array.isArray( value ) ? value : [];
-	const selectedRange = {
-		from: from && new Date( from ),
-		to: to && new Date( to ),
-	};
+	const selectedRange = useMemo( () => {
+		const [ from, to ] = Array.isArray( value )
+			? value
+			: [ undefined, undefined ];
+
+		return {
+			from:
+				from && isValid( new Date( from ) )
+					? new Date( from )
+					: undefined,
+			to: to && isValid( new Date( to ) ) ? new Date( to ) : undefined,
+		};
+	}, [ value ] );
 
 	const normalizeStartOfDay = useCallback( ( dateInput: Date | string ) => {
 		const dateStr =
@@ -285,18 +276,16 @@ function CalendarDateRangeControl( {
 			fromDate: Date | string | undefined,
 			toDate: Date | string | undefined
 		) => {
-			let normalizedFrom: string | undefined;
-			let normalizedTo: string | undefined;
-
-			if ( fromDate ) {
-				normalizedFrom = normalizeStartOfDay( fromDate );
+			if ( fromDate && toDate ) {
+				onChange( {
+					[ id ]: [
+						normalizeStartOfDay( fromDate ),
+						normalizeEndOfDay( toDate ),
+					],
+				} );
+			} else {
+				onChange( { [ id ]: undefined } );
 			}
-
-			if ( toDate ) {
-				normalizedTo = normalizeEndOfDay( toDate );
-			}
-
-			onChange( { [ id ]: [ normalizedFrom, normalizedTo ] } );
 		},
 		[ id, onChange, normalizeStartOfDay, normalizeEndOfDay ]
 	);
@@ -322,18 +311,6 @@ function CalendarDateRangeControl( {
 			setSelectedPresetId( preset.id );
 		},
 		[ updateDateRange ]
-	);
-
-	const handleManualDateChange = useCallback(
-		( field: 'from' | 'to', nextValue: string | undefined ) => {
-			if ( field === 'from' ) {
-				updateDateRange( nextValue, to );
-			} else {
-				updateDateRange( from, nextValue );
-			}
-			setSelectedPresetId( null );
-		},
-		[ updateDateRange, from, to ]
 	);
 
 	return (
@@ -372,27 +349,6 @@ function CalendarDateRangeControl( {
 					</Button>
 				</HStack>
 
-				{ /* Date input fields */ }
-				<VStack spacing={ 2.5 }>
-					<InputControl
-						__next40pxDefaultSize
-						type="date"
-						label={ __( 'From' ) }
-						value={ from ? format( from, 'yyyy-MM-dd' ) : '' }
-						onChange={ ( nextValue ) =>
-							handleManualDateChange( 'from', nextValue )
-						}
-					/>
-					<InputControl
-						__next40pxDefaultSize
-						type="date"
-						label={ __( 'To' ) }
-						value={ to ? format( to, 'yyyy-MM-dd' ) : '' }
-						onChange={ ( nextValue ) =>
-							handleManualDateChange( 'to', nextValue )
-						}
-					/>
-				</VStack>
 				<DateRangeCalendar
 					style={ { width: '100%' } }
 					selected={ selectedRange }
