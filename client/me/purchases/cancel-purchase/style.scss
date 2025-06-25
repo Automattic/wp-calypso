@@ -78,23 +78,8 @@
 
 	@include break-large {
 		display: grid;
-		grid-template-columns: 5fr 1fr 3fr;
+		grid-template-columns: 7fr 3fr;
 		gap: 32px;
-
-		.cancel-purchase__left {
-			grid-column: 1;
-		}
-
-		.cancel-purchase__right {
-			grid-column: 3;
-			position: relative
-		}
-
-		.cancel-purchase__sticky-sidebar {
-			position: sticky;
-			top: 24px;
-			left: 0;
-		}
 	}
 
 	.formatted-header__title--cancellation-flow {
