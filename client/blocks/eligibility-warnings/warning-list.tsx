@@ -14,9 +14,7 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-const WP_ADMIN_HELP_CENTER_LINK_SELECTOR = 'a';
-// TODO: Update wpcom to match this
-// const WP_ADMIN_HELP_CENTER_LINK_SELECTOR = 'a[data-help-center-link]';
+const WP_ADMIN_HELP_CENTER_LINK_SELECTOR = 'a[data-help-center-link]';
 
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
 	const descriptionRef = useRef< HTMLSpanElement >( null );
@@ -42,11 +40,12 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 
 		const onClick = ( event: Event ) => {
 			event.preventDefault();
-			// TODO: Investigate `findDOMNode` error that's preventing correct scrolling (might get solved once the data attribute is in place?)
+
 			openSupportDoc();
 		};
 
 		link.addEventListener( 'click', onClick );
+
 		return () => {
 			link.removeEventListener( 'click', onClick );
 		};
