@@ -62,7 +62,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 						{ field.getValue( { item } ) }
 					</Text>
 					<Text as="span" style={ { flexShrink: 0 } }>
-						{ SiteBadge( { site: item } ) }
+						<SiteBadge site={ item } />
 					</Text>
 				</HStack>
 			</Link>
