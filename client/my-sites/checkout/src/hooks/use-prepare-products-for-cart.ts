@@ -231,6 +231,10 @@ function chooseAddHandler( {
 		return 'addProductFromBillingIntent';
 	}
 
+	if ( sitelessCheckoutType === 'affiliate-pm' ) {
+		return 'addProductFromSlug';
+	}
+
 	if ( ! isLoading ) {
 		return 'doNotAdd';
 	}

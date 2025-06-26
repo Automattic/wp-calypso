@@ -13,13 +13,13 @@ export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
-
+export const DOMAIN_TRANSFER = 'domain-transfer';
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
-
+export const GOOGLE_TRANSFER = 'google-transfer';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
-export const DOMAIN_TRANSFER = 'domain-transfer';
-export const GOOGLE_TRANSFER = 'google-transfer';
+export const UPDATE_OPTIONS_FLOW = 'update-options';
+export const DOMAIN_USER_TRANSFER = 'domain-user-transfer';
 export const HUNDRED_YEAR_DOMAIN_TRANSFER = 'hundred-year-domain-transfer';
 export const HUNDRED_YEAR_DOMAIN_FLOW = 'hundred-year-domain';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
@@ -31,6 +31,7 @@ export const EXAMPLE_FLOW = 'example';
 export const DIFM_FLOW = 'do-it-for-me';
 export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
+export const ONBOARDING_AFF_PM_FLOW = 'onboarding-aff-pm';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 export const PLAYGROUND_FLOW = 'playground';
 
@@ -143,4 +144,8 @@ export const isAIBuilderFlow = ( flowName: string | null ) => {
 
 export const isPlaygroundFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ PLAYGROUND_FLOW ].includes( flowName ) );
+};
+
+export const isOnboardingAffPmFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ ONBOARDING_AFF_PM_FLOW ].includes( flowName ) );
 };

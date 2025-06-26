@@ -15,6 +15,7 @@ import {
 	checkoutPending,
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
+	checkoutAffiliatePmSiteless,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -164,6 +165,16 @@ export default function () {
 		redirectLoggedOut,
 		noSite,
 		akismetCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	// Affiliate-PM siteless checkout with product slug
+	page(
+		'/checkout/affiliate-pm/:productSlug',
+		setLocaleMiddleware(),
+		noSite,
+		checkoutAffiliatePmSiteless,
 		makeLayout,
 		clientRender
 	);
