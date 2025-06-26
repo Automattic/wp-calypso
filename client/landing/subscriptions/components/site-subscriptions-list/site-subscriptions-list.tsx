@@ -30,11 +30,8 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 	const { subscriptions, totalCount } = data;
 
-<<<<<<< HEAD
 	const isCompactLayout = layout === 'compact';
-=======
 	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
->>>>>>> 93f3a954b14 (Use reader/recommended-blogs-list feature flag.)
 
 	// Fetch recommended blogs data once for all subscription rows
 	useEffect( () => {
