@@ -3,6 +3,7 @@ import { sortBy, camelCase, get, filter, map, flatten, capitalize } from 'lodash
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
+/** @type ( key: string ) => string */
 function getArchiveKeyLabel( key ) {
 	const archiveKeyLabelMap = {
 		author: translate( 'Authors' ),
@@ -448,7 +449,7 @@ export const normalizers = {
 							totalTaxViews += item.views;
 
 							return {
-								label: item.value,
+								label: decodeURIComponent( item.value ),
 								value: item.views,
 								link: item.href,
 							};
@@ -484,7 +485,9 @@ export const normalizers = {
 							totalViews += item.views;
 
 							return {
-								label: [ 'home' ].includes( archiveKey ) ? item.href : item.value,
+								label: [ 'home' ].includes( archiveKey )
+									? item.href
+									: decodeURIComponent( item.value ),
 								value: item.views,
 								link: item.href,
 							};
