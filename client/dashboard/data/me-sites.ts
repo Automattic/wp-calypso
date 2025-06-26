@@ -11,6 +11,12 @@ export async function fetchSites( {
 	include_a8c_owned,
 	site_visibility,
 }: FetchSitesOptions ): Promise< Site[] > {
+	// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
+	// See: https://github.com/Automattic/wp-calypso/pull/104220.
+	if ( include_a8c_owned ) {
+		site_visibility = 'all';
+	}
+
 	const { sites } = await wpcom.req.get(
 		{
 			path: '/me/sites',
