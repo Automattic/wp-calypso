@@ -17,13 +17,13 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
+	useRestorableProducts,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { RemovedFromCartItem } from 'calypso/my-sites/checkout/src/components/removed-from-cart-item';
-import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
 	useStreamlinedPriceExperiment,

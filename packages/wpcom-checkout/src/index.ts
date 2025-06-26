@@ -32,3 +32,4 @@ export * from './can-item-be-removed-from-cart';
 export * from './loading-card';
 export * from './partner-coupon';
 export * from './checkout-version-checker';
+export * from './restorable-products-context';

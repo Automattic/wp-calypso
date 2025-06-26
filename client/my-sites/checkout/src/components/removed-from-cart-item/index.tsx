@@ -1,8 +1,7 @@
-import { LoadingCopy } from '@automattic/wpcom-checkout';
+import { LoadingCopy, useRestorableProducts } from '@automattic/wpcom-checkout';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import type { AddProductsToCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 import './style.scss';
