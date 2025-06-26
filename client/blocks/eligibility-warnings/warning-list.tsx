@@ -1,7 +1,7 @@
 import { Card, Badge } from '@automattic/components';
 import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
-import { Fragment, useRef } from 'react';
+import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
@@ -15,8 +15,6 @@ interface ExternalProps {
 type Props = ExternalProps & LocalizeProps;
 
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
-	const descriptionRef = useRef< HTMLSpanElement >( null );
-
 	return (
 		<div>
 			{ warnings.map( ( { name, description, supportPostId, supportUrl, domainNames }, index ) => (
@@ -27,7 +25,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 								<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
 							</Fragment>
 						) }
-						<span className="eligibility-warnings__message-description" ref={ descriptionRef }>
+						<span className="eligibility-warnings__message-description">
 							<span
 								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( description ) } } // eslint-disable-line react/no-danger
 							/>
