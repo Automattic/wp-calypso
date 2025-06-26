@@ -68,7 +68,12 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	}
 
 	return (
-		<ul className="site-subscriptions-list" role="table">
+		<ul
+			className={ `site-subscriptions-list${
+				isCompactLayout ? ' site-subscriptions-list--compact' : ''
+			}` }
+			role="table"
+		>
 			<HStack className="row header" role="row" as="li" alignment="center">
 				<span className="title-cell" role="columnheader">
 					{ translate( 'Subscribed site' ) }

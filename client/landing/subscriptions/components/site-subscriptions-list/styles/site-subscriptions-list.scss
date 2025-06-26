@@ -114,7 +114,7 @@
 	}
 
 	// Compact layout adjustments
-	.discover-add-new & {
+	&.site-subscriptions-list--compact {
 		.title-cell {
 			flex: 2; // Give more space to title in compact layout
 		}
