@@ -1085,6 +1085,7 @@ class RenderDomainsStepComponent extends Component {
 
 		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
 		const initialQuery =
+			this.props.suggestion ||
 			get( this.props, 'queryObject.new', '' ) ||
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
