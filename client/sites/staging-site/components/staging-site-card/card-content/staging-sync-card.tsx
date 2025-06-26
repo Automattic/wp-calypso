@@ -12,6 +12,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -162,7 +163,7 @@ const StagingToProductionSync = ( {
 	isSqlsOptionDisabled,
 	isSiteWooStore,
 	isSqlSyncOptionChecked,
-	stagingSiteId,
+	rewindId,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -175,7 +176,7 @@ const StagingToProductionSync = ( {
 	isSqlsOptionDisabled: boolean;
 	isSiteWooStore?: boolean;
 	isSqlSyncOptionChecked?: boolean;
-	stagingSiteId: number;
+	rewindId?: number;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -237,7 +238,6 @@ const StagingToProductionSync = ( {
 
 	return (
 		<>
-			<QueryRewindState siteId={ stagingSiteId } />
 			{ showSyncPanel && (
 				<div className="staging-site-card">
 					<OptionsTreeTitle>{ translate( 'Synchronize this data:' ) }</OptionsTreeTitle>
@@ -248,8 +248,7 @@ const StagingToProductionSync = ( {
 						onChange={ onSelectItems }
 						isSqlsOptionDisabled={ isSqlsOptionDisabled }
 					></SyncOptionsPanel>
-					{ /*  TODO: Query and get the proper rewindId from the state  */ }
-					<FileBrowser rewindId={ 1750870090.93 } />
+					{ rewindId ? <FileBrowser rewindId={ rewindId } /> : translate( 'No backup available' ) }
 				</div>
 			) }
 			<ConfirmationModalContainer>
@@ -509,6 +508,11 @@ export const SiteSyncCard = ( {
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
 	const stagingSiteId = useSelector( getSelectedSiteId ) || 0;
+	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( stagingSiteId, {
+		sortOrder: 'desc',
+		successOnly: true,
+	} );
+	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
@@ -597,6 +601,7 @@ export const SiteSyncCard = ( {
 				}
 			} }
 		>
+			<QueryRewindState siteId={ stagingSiteId } />
 			<FormRadioContainer>
 				<FormLabel>
 					<FormRadio
@@ -642,7 +647,7 @@ export const SiteSyncCard = ( {
 					isSqlsOptionDisabled={ false }
 					isSiteWooStore={ isSiteWooStore }
 					isSqlSyncOptionChecked={ isSqlSyncOptionChecked }
-					stagingSiteId={ stagingSiteId }
+					rewindId={ rewindId }
 				/>
 			) }
 			{ selectedOption !== actionForType && (
