@@ -44,6 +44,7 @@ import type {
 	ReplaceProductInCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren, RefObject } from 'react';
 
@@ -74,6 +75,7 @@ export function WPOrderReviewLineItems( {
 	isSummary,
 	removeProductFromCart,
 	replaceProductInCart,
+	addProductsToCart,
 	removeCoupon,
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
@@ -85,8 +87,9 @@ export function WPOrderReviewLineItems( {
 }: {
 	className?: string;
 	isSummary?: boolean;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	replaceProductInCart: ReplaceProductInCart;
+	addProductsToCart: AddProductsToCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -227,7 +230,11 @@ export function WPOrderReviewLineItems( {
 				/>
 			) ) }
 			{ restorableProducts.map( ( product ) => (
-				<RemovedFromCartItem key={ product.uuid } product={ product } />
+				<RemovedFromCartItem
+					key={ product.uuid }
+					product={ product }
+					addProductsToCart={ addProductsToCart }
+				/>
 			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>

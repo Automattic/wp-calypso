@@ -1,16 +1,20 @@
-import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { LoadingCopy } from '@automattic/wpcom-checkout';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import type { AddProductsToCart, ResponseCartProduct } from '@automattic/shopping-cart';
+
 import './style.scss';
 
-export const RemovedFromCartItem = ( { product }: { product: ResponseCartProduct } ) => {
-	const cartKey = useCartKey();
+export const RemovedFromCartItem = ( {
+	product,
+	addProductsToCart,
+}: {
+	product: ResponseCartProduct;
+	addProductsToCart: AddProductsToCart;
+} ) => {
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
-	const { addProductsToCart } = useShoppingCart( cartKey );
 	const [ isPlaceholder, setIsPlaceholder ] = useState( false );
 	const translate = useTranslate();
 

@@ -397,6 +397,7 @@ export default function CheckoutMainContent( {
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
+		addProductsToCart,
 		isPendingUpdate: isCartPendingUpdate,
 		removeCoupon,
 		couponStatus,
@@ -692,6 +693,7 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderReview
 								removeProductFromCart={ removeProductFromCart }
 								replaceProductInCart={ replaceProductInCart }
+								addProductsToCart={ addProductsToCart }
 								couponFieldStateProps={ couponFieldStateProps }
 								removeCouponAndClearField={ removeCouponAndClearField }
 								isCouponFieldVisible={ isCouponFieldVisible }
