@@ -138,24 +138,33 @@ function HovercardContent( props ) {
 										</a>
 									</div>
 									<ul className="gravatar-hovercard__recommended-blogs-list">
-										{ recommendedBlogs.slice( 0, 3 ).map( ( blog ) => (
-											<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
-												<ReaderAvatar
-													isCompact
-													siteIcon={ blog.meta?.data?.feed?.image }
-													className="gravatar-hovercard__recommended-blog-site-icon"
-												/>
-												<p className="gravatar-hovercard__recommended-blog-site-name">
-													{ blog.meta?.data?.feed?.name }
-												</p>
-												<ReaderFollowButton
-													className="gravatar-hovercard__recommended-blog-subscribe-button"
-													siteUrl={ blog.meta?.data?.feed?.feed_URL }
-													followSource="gravatar-hovercard__recommended-blog-item"
-													isButtonOnly
-												/>
-											</li>
-										) ) }
+										{ recommendedBlogs.slice( 0, 3 ).map( ( blog ) => {
+											const { image, name, feed_URL: feedUrl } = blog.meta?.data?.feed || {};
+
+											// The default feed image for sites with no icon is
+											// awful for this case, treat it as no image to fallback
+											// to the globe icon.
+											const siteIcon = image.includes( 's0.wp.com/i/buttonw-com.png' )
+												? null
+												: image;
+
+											return (
+												<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
+													<ReaderAvatar
+														isCompact
+														siteIcon={ siteIcon }
+														className="gravatar-hovercard__recommended-blog-site-icon"
+													/>
+													<p className="gravatar-hovercard__recommended-blog-site-name">{ name }</p>
+													<ReaderFollowButton
+														className="gravatar-hovercard__recommended-blog-subscribe-button"
+														siteUrl={ feedUrl }
+														followSource="gravatar-hovercard__recommended-blog-item"
+														isButtonOnly
+													/>
+												</li>
+											);
+										} ) }
 									</ul>
 								</div>
 							) }
