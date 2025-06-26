@@ -21,7 +21,7 @@ export const getFields = (): Field< FormData >[] => [
 		label: 'First Name',
 		type: 'text',
 		isValid: ( item ) => {
-			return item.name.length > 2;
+			return item.name?.length > 2;
 		},
 	},
 	{
@@ -37,7 +37,7 @@ export const getFields = (): Field< FormData >[] => [
 		label: 'Email Address',
 		type: 'email',
 		isValid: ( item ) => {
-			return item.email.includes( '@' );
+			return item.email?.includes( '@' );
 		},
 	},
 ];

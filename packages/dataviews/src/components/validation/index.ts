@@ -2,8 +2,9 @@ export {
 	normalizeIsValid,
 	createGetValidationErrors,
 	injectConstraintsProp,
-	getAllValidationErrors,
 } from './utils';
+
+export { getAllValidationErrors } from './get-all-validation-errors';
 
 export type {
 	DataFormControlPropsWithConstraints,
