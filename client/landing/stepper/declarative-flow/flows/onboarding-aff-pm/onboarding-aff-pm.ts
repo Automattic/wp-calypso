@@ -83,30 +83,6 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 
 		return { submit };
 	},
-
-	useStepsProps() {
-		// Get acquisition source from URL params to differentiate PM vs Affiliate
-		const urlParams = new URLSearchParams( window.location.search );
-		const isAffiliate =
-			urlParams.get( 'ref' )?.includes( 'affiliate' ) ||
-			urlParams.get( 'utm_source' )?.includes( 'affiliate' );
-
-		return {
-			plans: {
-				// Hide all plans except Business and Commerce
-				hideFreePlan: true,
-				hidePersonalPlan: true,
-				hidePremiumPlan: true,
-				hideBusinessPlan: false,
-				hideEcommercePlan: false,
-				// Hide coupon input for PM, show for affiliate
-				hideCouponInput: ! isAffiliate,
-				// Use affiliate intent to ensure proper plan filtering
-				intent: 'plans-affiliate',
-				intervalType: 'yearly', // Default to yearly for better value perception
-			},
-		};
-	},
 };
 
 export default onboardingAffPmFlow;
