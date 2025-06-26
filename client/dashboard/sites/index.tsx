@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { useAuth } from '../app/auth';
 import { isAutomatticianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
@@ -17,40 +18,10 @@ import AddNewSite from './add-new-site';
 import { canManageSite } from './features';
 import { getFields } from './fields';
 import { SitesNotices } from './notices';
+import { getView, DEFAULT_LAYOUTS } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
-import type {
-	Operator,
-	SortDirection,
-	ViewTable,
-	ViewGrid,
-	Filter,
-	RenderModalProps,
-} from '@automattic/dataviews';
+import type { View, ViewTable, ViewGrid, Filter, RenderModalProps } from '@automattic/dataviews';
 import type { AnyRouter } from '@tanstack/react-router';
-
-const DEFAULT_LAYOUTS = {
-	table: {
-		mediaField: 'icon.ico',
-		fields: [ 'status', 'visitors', 'subscribers_count', 'wp_version' ],
-		titleField: 'name',
-		descriptionField: 'URL',
-	},
-	grid: {
-		mediaField: 'preview',
-		fields: [ 'status' ],
-		titleField: 'name',
-		descriptionField: 'URL',
-	},
-};
-
-const DEFAULT_VIEW = {
-	...DEFAULT_LAYOUTS.grid,
-	type: 'grid' as const,
-	page: 1,
-	perPage: 10,
-	sort: { field: 'name', direction: 'asc' as SortDirection },
-	search: '',
-};
 
 const getDefaultActions = ( router: AnyRouter ) => {
 	return [
@@ -115,7 +86,7 @@ const getDefaultActions = ( router: AnyRouter ) => {
 };
 
 const getFetchSitesOptions = (
-	view: Partial< ViewTable | ViewGrid > | undefined = {},
+	view: View,
 	isRestoringAccount: boolean = false
 ): FetchSitesOptions => {
 	const filters = view.filters ?? [];
@@ -143,39 +114,13 @@ export default function Sites() {
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = currentSearchParams.view;
 	const isRestoringAccount = !! currentSearchParams.restored;
+
+	const { user } = useAuth();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
-	const defaultView = useMemo(
-		() => ( {
-			...DEFAULT_VIEW,
-			...( isAutomattician
-				? {
-						filters: [
-							{
-								field: 'is_a8c',
-								operator: 'is' as Operator,
-								value: false,
-							},
-						],
-				  }
-				: {} ),
-			...( isRestoringAccount ? { type: 'table' as const } : {} ),
-		} ),
-		[ isAutomattician, isRestoringAccount ]
-	);
-
-	const view = useMemo(
-		() => ( {
-			...defaultView,
-			...DEFAULT_LAYOUTS[ viewOptions?.type ?? defaultView.type ],
-			...( viewOptions
-				? Object.fromEntries(
-						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
-				  )
-				: {} ),
-		} ),
-		[ defaultView, viewOptions ]
-	);
+	const { defaultView, view } = useMemo( () => {
+		return getView( { user, isAutomattician, isRestoringAccount, viewOptions } );
+	}, [ user, isAutomattician, isRestoringAccount, viewOptions ] );
 
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
 		sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) )
