@@ -58,7 +58,6 @@ function HovercardContent( props ) {
 	}, [ userID, dispatch, site, primaryBlogId, readerUserData, userLogin, recommendedBlogs ] );
 
 	const clickProfileLink = ( e ) => {
-		e.stopPropagation();
 		e.preventDefault();
 		page( profileUrl );
 	};
@@ -67,8 +66,14 @@ function HovercardContent( props ) {
 
 	return (
 		<AutoDirection>
-			{ /* Note AutoDirection needs a single child to work recursively, hence the wrapping fragments. */ }
-			<>
+			{ /* Note AutoDirection needs a single child to work recursively */ }
+			{ /* Stop propagation to prevent clicks in the hovercard from triggering reader card clicks */ }
+			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+			<div
+				onClick={ ( e ) => {
+					e.stopPropagation();
+				} }
+			>
 				{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
 
 				<div className="gravatar-hovercard__header">
@@ -151,7 +156,6 @@ function HovercardContent( props ) {
 											className="gravatar-hovercard__recommended-blogs-view-all"
 											href={ recommendedBlogsLink }
 											onClick={ ( e ) => {
-												e.stopPropagation();
 												e.preventDefault();
 												page( recommendedBlogsLink );
 											} }
@@ -193,7 +197,7 @@ function HovercardContent( props ) {
 						</div>
 					</>
 				) }
-			</>
+			</div>
 		</AutoDirection>
 	);
 }
