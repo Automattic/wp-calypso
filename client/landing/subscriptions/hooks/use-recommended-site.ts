@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -7,7 +8,6 @@ import {
 } from 'calypso/state/reader/lists/actions';
 import { isSiteInRecommendedBlogsList } from 'calypso/state/reader/lists/selectors';
 import type { AppState } from 'calypso/types';
-import type { AnyAction } from 'redux';
 
 interface UseRecommendedSiteResult {
 	isRecommended: boolean;
@@ -73,9 +73,19 @@ export const useRecommendedSite = ( blogId: number ): UseRecommendedSiteResult =
 
 		try {
 			if ( newValue ) {
-				dispatch( addRecommendedBlogsSite( blogId, currentUserName as string ) as AnyAction );
+				dispatch(
+					addRecommendedBlogsSite( blogId, currentUserName as string, {
+						successMessage: translate( 'Site successfully added to your recommended blogs!' ),
+						errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
+					} )
+				);
 			} else {
-				dispatch( removeRecommendedBlogsSite( blogId, currentUserName as string ) as AnyAction );
+				dispatch(
+					removeRecommendedBlogsSite( blogId, currentUserName as string, {
+						successMessage: translate( 'Site removed from your recommended blogs.' ),
+						errorMessage: translate( 'Failed to remove site from recommended blogs.' ),
+					} )
+				);
 			}
 		} finally {
 			setIsUpdating( false );
