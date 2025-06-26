@@ -167,7 +167,6 @@ function InviteForm( props: Props ) {
 			</InlineSupportLink>
 		);
 	}
-	q;
 
 	return (
 		<form
