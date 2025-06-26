@@ -1,9 +1,9 @@
-import { Card, Badge, ExternalLink } from '@automattic/components';
+import { Card, Badge } from '@automattic/components';
 import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
@@ -14,46 +14,12 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-const WP_ADMIN_HELP_CENTER_LINK_SELECTOR = 'a[data-help-center-link]';
-
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
 	const descriptionRef = useRef< HTMLSpanElement >( null );
-	const { openSupportDoc, supportDocData, setSupportDocData } = useSupportDocData( {} );
-
-	useEffect( () => {
-		const link = descriptionRef.current?.querySelector( WP_ADMIN_HELP_CENTER_LINK_SELECTOR );
-
-		if ( link && ! supportDocData?.link ) {
-			setSupportDocData( {
-				link: link.getAttribute( 'href' ) || '',
-			} );
-		}
-	} );
-
-	// Keep the click handler up to date with the latest `openSupportDoc` function.
-	useEffect( () => {
-		const link = descriptionRef.current?.querySelector( WP_ADMIN_HELP_CENTER_LINK_SELECTOR );
-
-		if ( ! link ) {
-			return;
-		}
-
-		const onClick = ( event: Event ) => {
-			event.preventDefault();
-
-			openSupportDoc();
-		};
-
-		link.addEventListener( 'click', onClick );
-
-		return () => {
-			link.removeEventListener( 'click', onClick );
-		};
-	}, [ openSupportDoc ] );
 
 	return (
 		<div>
-			{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
+			{ warnings.map( ( { name, description, supportPostId, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
 						{ context !== 'plugin-details' && context !== 'hosting-features' && (
@@ -67,9 +33,9 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 							/>
 							{ domainNames && displayDomainNames( domainNames ) }
 							{ supportUrl && (
-								<ExternalLink href={ supportUrl } target="_blank">
+								<InlineSupportLink supportLink={ supportUrl } supportPostId={ supportPostId }>
 									{ translate( 'Learn more.' ) }
-								</ExternalLink>
+								</InlineSupportLink>
 							) }
 						</span>
 					</div>
