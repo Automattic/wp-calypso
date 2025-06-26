@@ -329,7 +329,12 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				<>
 					{ cancellationMessage && (
 						<div className="cancel-jetpack-form__notice-container">
-							<Notice status="is-success" className="cancel-jetpack-form__notice" theme="light">
+							<Notice
+								status="is-success"
+								className="cancel-jetpack-form__notice"
+								theme="light"
+								showDismiss={ false }
+							>
 								{ cancellationMessage }
 							</Notice>
 						</div>
