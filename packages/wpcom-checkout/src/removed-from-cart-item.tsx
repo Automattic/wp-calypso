@@ -9,6 +9,7 @@ const RemovedFromCartItemWrapper = styled.div`
 	color: var( --studio-gray-100 );
 	line-height: 20px;
 	padding: 16px 0;
+	font-size: 14px;
 `;
 
 const RestorableProductButton = styled( Button )`
