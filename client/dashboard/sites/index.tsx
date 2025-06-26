@@ -172,10 +172,10 @@ export default function Sites() {
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	const defaultView = useMemo(
-		() =>
-			isAutomattician
+		() => ( {
+			...DEFAULT_VIEW,
+			...( isAutomattician
 				? {
-						...DEFAULT_VIEW,
 						filters: [
 							{
 								field: 'is_a8c',
@@ -184,14 +184,16 @@ export default function Sites() {
 							},
 						],
 				  }
-				: DEFAULT_VIEW,
-		[ isAutomattician ]
+				: {} ),
+			...( isRestoringAccount ? { type: 'table' as const } : {} ),
+		} ),
+		[ isAutomattician, isRestoringAccount ]
 	);
 
 	const view = useMemo(
 		() => ( {
 			...defaultView,
-			...DEFAULT_LAYOUTS[ viewOptions?.type ?? DEFAULT_VIEW.type ],
+			...DEFAULT_LAYOUTS[ viewOptions?.type ?? defaultView.type ],
 			...( viewOptions
 				? Object.fromEntries(
 						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
