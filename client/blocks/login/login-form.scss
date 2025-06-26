@@ -43,12 +43,8 @@ form {
 				margin: 0;
 			}
 
-			.card.login__form:not(:lang(en)),
-			.card.auth-form__social:not(:lang(en)),
-			.card.login__form:not(:lang(ko)),
-			.card.auth-form__social:not(:lang(ko)),
-			.card.login__form:not(:lang(zh)),
-			.card.auth-form__social:not(:lang(zh)) {
+			.card.login__form:not(:lang(en)):not(:lang(ko)):not(:lang(zh)),
+			.card.auth-form__social:not(:lang(en)):not(:lang(ko)):not(:lang(zh)) {
 				flex-shrink: 0;
 			}
 
