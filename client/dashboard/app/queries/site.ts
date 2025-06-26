@@ -27,7 +27,11 @@ export const siteByIdQuery = ( siteId: number ) => ( {
 export const siteDeleteMutation = ( siteId: number ) => ( {
 	mutationFn: () => deleteSite( siteId ),
 	onSuccess: () => {
-		queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+		// Delay the invalidation for the redirection to complete first
+		window.setTimeout( () => {
+			queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+		}, 1000 );
 	},
 } );
 
