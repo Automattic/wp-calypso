@@ -102,6 +102,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	closeDialog = () => {
+		const wasCancellationCompleted = this.state.cancellationCompleted;
+
 		this.setState( {
 			showDialog: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
@@ -109,6 +111,12 @@ class CancelPurchaseButton extends Component {
 			cancellationMessage: '',
 			isLoading: false,
 		} );
+
+		if ( wasCancellationCompleted ) {
+			// Redirect to purchases page if cancellation was completed
+			page( this.props.purchaseListUrl );
+		}
+
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
 		}
