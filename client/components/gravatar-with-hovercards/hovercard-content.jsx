@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
@@ -56,6 +57,14 @@ function HovercardContent( props ) {
 		}
 	}, [ userID, dispatch, site, primaryBlogId, readerUserData, userLogin, recommendedBlogs ] );
 
+	const clickProfileLink = ( e ) => {
+		e.stopPropagation();
+		e.preventDefault();
+		page( profileUrl );
+	};
+
+	const recommendedBlogsLink = `/reader/list/${ userLogin }/recommended-blogs`;
+
 	return (
 		<AutoDirection>
 			{ /* Note AutoDirection needs a single child to work recursively, hence the wrapping fragments. */ }
@@ -63,7 +72,11 @@ function HovercardContent( props ) {
 				{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
 
 				<div className="gravatar-hovercard__header">
-					<a className="gravatar-hovercard__avatar-link" href={ profileUrl }>
+					<a
+						className="gravatar-hovercard__avatar-link"
+						href={ profileUrl }
+						onClick={ clickProfileLink }
+					>
 						<img
 							className="gravatar-hovercard__avatar"
 							src={ gravatarData.avatarUrl }
@@ -73,7 +86,11 @@ function HovercardContent( props ) {
 						/>
 					</a>
 
-					<a className="gravatar-hovercard__name-link" href={ profileUrl }>
+					<a
+						className="gravatar-hovercard__name-link"
+						href={ profileUrl }
+						onClick={ clickProfileLink }
+					>
 						<h4 className="gravatar-hovercard__name">{ gravatarData.displayName }</h4>
 					</a>
 
@@ -132,7 +149,12 @@ function HovercardContent( props ) {
 										</h5>
 										<a
 											className="gravatar-hovercard__recommended-blogs-view-all"
-											href={ `/reader/list/${ userLogin }/recommended-blogs` }
+											href={ recommendedBlogsLink }
+											onClick={ ( e ) => {
+												e.stopPropagation();
+												e.preventDefault();
+												page( recommendedBlogsLink );
+											} }
 										>
 											{ translate( 'View all' ) }
 										</a>
