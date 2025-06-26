@@ -60,6 +60,7 @@ class CancelPurchaseButton extends Component {
 		isShowingMarketplaceSubscriptionsDialog: false,
 		cancellationCompleted: false,
 		cancellationMessage: '',
+		isLoading: false,
 	};
 
 	setDisabled = ( disabled ) => {
@@ -72,8 +73,7 @@ class CancelPurchaseButton extends Component {
 		}
 
 		this.setState( {
-			showDialog: true,
-			cancellationCompleted: false,
+			isLoading: true,
 		} );
 
 		if ( this.props.onCancellationStart ) {
@@ -88,8 +88,10 @@ class CancelPurchaseButton extends Component {
 				await this.handleMarketplaceSubscriptions( refundable );
 
 				this.setState( {
+					showDialog: true,
 					cancellationCompleted: true,
 					cancellationMessage: result.message,
+					isLoading: false,
 				} );
 			} else {
 				this.cancellationFailed( result.error );
@@ -105,6 +107,7 @@ class CancelPurchaseButton extends Component {
 			isShowingMarketplaceSubscriptionsDialog: false,
 			cancellationCompleted: false,
 			cancellationMessage: '',
+			isLoading: false,
 		} );
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
@@ -297,6 +300,7 @@ class CancelPurchaseButton extends Component {
 			showDialog: false,
 			cancellationCompleted: false,
 			cancellationMessage: '',
+			isLoading: false,
 		} );
 
 		if ( this.props.onSurveyComplete ) {
@@ -345,6 +349,7 @@ class CancelPurchaseButton extends Component {
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
+					busy={ this.state.isLoading }
 					scary
 					onClick={
 						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
@@ -368,6 +373,7 @@ class CancelPurchaseButton extends Component {
 						includedDomainPurchase={ includedDomainPurchase }
 						cancellationCompleted={ this.state.cancellationCompleted }
 						cancellationMessage={ this.state.cancellationMessage }
+						cancellationInProgress={ this.state.isLoading }
 					/>
 				) }
 
@@ -383,6 +389,7 @@ class CancelPurchaseButton extends Component {
 						isAkismet={ isAkismet }
 						cancellationCompleted={ this.state.cancellationCompleted }
 						cancellationMessage={ this.state.cancellationMessage }
+						cancellationInProgress={ this.state.isLoading }
 					/>
 				) }
 

@@ -15,6 +15,7 @@ type AtomicRevertChangesProps = {
 	purchase: Purchase;
 	onConfirmationChange: ( isChecked: boolean ) => void;
 	needsAtomicRevertConfirmation: boolean;
+	isLoading?: boolean;
 };
 
 const AtomicRevertChanges = ( {
@@ -22,6 +23,7 @@ const AtomicRevertChanges = ( {
 	purchase,
 	onConfirmationChange,
 	needsAtomicRevertConfirmation,
+	isLoading = false,
 }: AtomicRevertChangesProps ) => {
 	const translate = useTranslate();
 	const [ isConfirmed, setIsConfirmed ] = useState( false );
@@ -84,7 +86,11 @@ const AtomicRevertChanges = ( {
 			</ul>
 			{ needsAtomicRevertConfirmation && (
 				<label className="cancel-purchase__atomic-revert-checkbox-label">
-					<FormCheckbox checked={ isConfirmed } onChange={ handleCheckboxChange } />
+					<FormCheckbox
+						checked={ isConfirmed }
+						onChange={ handleCheckboxChange }
+						disabled={ isLoading }
+					/>
 					<span>{ translate( 'I understand my site will change when my plan expires.' ) }</span>
 				</label>
 			) }

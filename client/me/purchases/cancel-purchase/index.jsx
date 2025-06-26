@@ -77,6 +77,7 @@ class CancelPurchase extends Component {
 		confirmCancelBundledDomain: false,
 		surveyShown: false,
 		atomicRevertConfirmed: false,
+		isLoading: false,
 	};
 
 	static defaultProps = {
@@ -144,11 +145,11 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		this.setState( { surveyShown: true } );
+		this.setState( { surveyShown: true, isLoading: true } );
 	};
 
 	onSurveyComplete = () => {
-		this.setState( { surveyShown: false } );
+		this.setState( { surveyShown: false, isLoading: false } );
 	};
 
 	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
@@ -380,6 +381,7 @@ class CancelPurchase extends Component {
 							cancelBundledDomain={ this.state.cancelBundledDomain }
 							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
 							purchase={ purchase }
+							isLoading={ this.state.isLoading }
 						/>
 
 						{ this.props.includedDomainPurchase &&
@@ -435,6 +437,7 @@ class CancelPurchase extends Component {
 									needsAtomicRevertConfirmation={
 										this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
 									}
+									isLoading={ this.state.isLoading }
 								/>
 
 								<p>{ this.renderFullText() }</p>
