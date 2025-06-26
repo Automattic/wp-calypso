@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	Outlet,
 	Router,
@@ -57,7 +58,7 @@ const siteRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! canManageSite( site ) ) {
-			window.location.href = '/sites';
+			page.redirect( '/sites' );
 		}
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
