@@ -864,7 +864,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Homepage',
+						label: 'Latest posts',
 						value: 59,
 						children: null,
 					},
@@ -1064,7 +1064,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Homepage',
+						label: 'Latest posts',
 						value: 89,
 						children: null,
 					},

@@ -8,7 +8,8 @@ function getArchiveKeyLabel( key ) {
 		author: translate( 'Authors' ),
 		cat: translate( 'Categories' ),
 		err: translate( 'Error' ),
-		home: translate( 'Homepage' ),
+		// This category is dedicated to the homepage set to Latest posts under the Archive tab.
+		home: translate( 'Latest posts' ),
 		search: translate( 'Searches' ),
 		tag: translate( 'Tags' ),
 		tax: translate( 'Taxonomies' ),
