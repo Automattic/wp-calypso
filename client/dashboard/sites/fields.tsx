@@ -1,11 +1,14 @@
+import { Badge } from '@automattic/ui';
 import { Link } from '@tanstack/react-router';
-import { __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import TimeSince from '../components/time-since';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
+import { isP2 } from '../utils/site-types';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import { canManageSite } from './features';
+import { isSitePlanTrial } from './plans';
 import {
 	EngagementStat,
 	LastBackup,
@@ -27,6 +30,22 @@ function getSiteManagementUrl( site: Site ) {
 	return site.options?.admin_url;
 }
 
+function SiteBadge( { site }: { site: Site } ) {
+	if ( site.is_wpcom_staging_site ) {
+		return <Badge>{ __( 'Staging' ) }</Badge>;
+	}
+
+	if ( isSitePlanTrial( site ) ) {
+		return <Badge>{ __( 'Trial' ) }</Badge>;
+	}
+
+	if ( isP2( site ) ) {
+		return <Badge>{ __( 'P2' ) }</Badge>;
+	}
+
+	return null;
+}
+
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
@@ -34,7 +53,19 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
 		render: ( { field, item } ) => (
-			<Link to={ getSiteManagementUrl( item ) }>{ field.getValue( { item } ) }</Link>
+			<Link to={ getSiteManagementUrl( item ) }>
+				<HStack alignment="center" spacing={ 1 }>
+					<Text
+						as="span"
+						style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+					>
+						{ field.getValue( { item } ) }
+					</Text>
+					<Text as="span" style={ { flexShrink: 0 } }>
+						<SiteBadge site={ item } />
+					</Text>
+				</HStack>
+			</Link>
 		),
 	},
 	{

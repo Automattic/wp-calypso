@@ -2,19 +2,7 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import type { BuildReportFormData, ReportFormData } from '../types';
-
-export interface APIError {
-	status: number;
-	code: string;
-	message: string;
-}
-
-export interface SendReportResponse {
-	id: string;
-	status: 'sent' | 'error' | 'pending';
-	message: string;
-}
+import type { APIError, BuildReportFormData, ReportFormData, SendReportResponse } from '../types';
 
 const parseEmailList = ( emailString: string ): string[] => {
 	return emailString

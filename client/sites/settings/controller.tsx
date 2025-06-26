@@ -15,6 +15,7 @@ import {
 	useAreAdvancedHostingFeaturesSupported,
 	useAreHostingFeaturesSupported,
 } from '../hosting/features';
+import DashboardBackportSiteSettingsRenderer from '../v2/site-settings';
 import DeleteSite from './administration/tools/delete-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
@@ -24,7 +25,6 @@ import ServerSettings from './server';
 import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
-import DashboardBackportSiteSettingsRenderer from './v2';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {

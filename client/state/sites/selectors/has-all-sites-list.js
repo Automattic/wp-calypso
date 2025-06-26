@@ -1,7 +1,5 @@
 /**
- * Returns whether all visible sites have been fetched.
- *
- * Visible means excluding deleted sites etc.
+ * Returns whether all sites have been fetched.
  * @param {Object}    state  Global state tree
  * @returns {boolean}        Request State
  */

@@ -1,0 +1,33 @@
+@import 'calypso/dashboard/app-dotcom/style.scss';
+
+.dashboard-backport-sites-list {
+	height: 100%;
+	overflow: hidden;
+
+	.dashboard-page-layout {
+		height: 100%;
+		justify-content: flex-start;
+		align-self: center;
+		margin: 0;
+		padding: 0;
+	}
+
+	.dashboard-page-header {
+		display: none;
+	}
+
+	.components-card {
+		box-shadow: none;
+	}
+
+	.components-card-body {
+		height: 100%;
+		padding: 0;
+	}
+
+	.dataviews-wrapper {
+		iframe {
+			max-width: unset;
+		}
+	}
+}

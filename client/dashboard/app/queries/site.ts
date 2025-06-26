@@ -1,3 +1,4 @@
+import { notFound } from '@tanstack/react-router';
 import { fetchSite, deleteSite, launchSite, SITE_FIELDS, SITE_OPTIONS } from '../../data/site';
 import { queryClient } from '../query-client';
 import type { Site } from '../../data/site';
@@ -5,7 +6,16 @@ import type { Query } from '@tanstack/react-query';
 
 export const siteBySlugQuery = ( siteSlug: string ) => ( {
 	queryKey: [ 'site-by-slug', siteSlug, SITE_FIELDS, SITE_OPTIONS ],
-	queryFn: () => fetchSite( siteSlug ),
+	queryFn: async () => {
+		try {
+			return await fetchSite( siteSlug );
+		} catch ( e: any ) /* eslint-disable-line @typescript-eslint/no-explicit-any */ {
+			if ( e.error === 'unknown_blog' ) {
+				throw notFound();
+			}
+			throw e;
+		}
+	},
 } );
 
 export const siteByIdQuery = ( siteId: number ) => ( {
