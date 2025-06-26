@@ -118,7 +118,6 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"purchases/purchase-list-dataview": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
