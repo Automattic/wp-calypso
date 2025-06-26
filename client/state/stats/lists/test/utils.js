@@ -1188,6 +1188,43 @@ describe( 'utils', () => {
 					},
 				] );
 			} );
+
+			test( 'should properly parse unicode archive types', () => {
+				const statsArchivesNormalized = normalizers.statsArchives(
+					{
+						date: '2025-06-02',
+						period: 'day',
+						summary: {
+							cat: [
+								{
+									href: 'http://jetpack.com/category/rrr/',
+									value: '%E5%A4%A9%E9%B8%BD',
+									views: 51,
+								},
+							],
+							tax: {
+								topics: [
+									{
+										href: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+										value: '%E9%B8%A6',
+										views: 6,
+									},
+								],
+							},
+						},
+					},
+					{
+						period: 'day',
+						start_date: '2025-06-01',
+						date: '2025-06-02',
+						summarize: 1,
+						max: 10,
+					}
+				);
+
+				expect( statsArchivesNormalized[ 0 ].children[ 0 ].label ).toEqual( '天鸽' );
+				expect( statsArchivesNormalized[ 1 ].children[ 0 ].children[ 0 ].label ).toEqual( '鸦' );
+			} );
 		} );
 
 		describe( 'statsCountryViews()', () => {
