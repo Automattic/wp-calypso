@@ -1,14 +1,6 @@
 import { DotcomPlans } from '../data/constants';
 import type { Site } from '../data/types';
 
-export const isSitePlanOneOf = ( site: Site, plans: DotcomPlans[] ) => {
-	if ( ! site.plan ) {
-		return false;
-	}
-
-	return plans.includes( site.plan.product_slug as DotcomPlans );
-};
-
 export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlans[] ) => {
 	if ( ! site.plan ) {
 		return false;
