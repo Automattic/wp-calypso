@@ -9,7 +9,7 @@ export const siteBySlugQuery = ( siteSlug: string ) => ( {
 	queryFn: async () => {
 		try {
 			return await fetchSite( siteSlug );
-		} catch ( e: { error?: string } ) {
+		} catch ( e: any ) /* eslint-disable-line @typescript-eslint/no-explicit-any */ {
 			if ( e.error === 'unknown_blog' ) {
 				throw notFound();
 			}
