@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
+import { shuffle } from 'lodash';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
@@ -164,33 +165,37 @@ function HovercardContent( props ) {
 										</a>
 									</div>
 									<ul className="gravatar-hovercard__recommended-blogs-list">
-										{ recommendedBlogs.slice( 0, 3 ).map( ( blog ) => {
-											const { image, name, feed_URL: feedUrl } = blog.meta?.data?.feed || {};
+										{ shuffle( recommendedBlogs )
+											.slice( 0, 3 )
+											.map( ( blog ) => {
+												const { image, name, feed_URL: feedUrl } = blog.meta?.data?.feed || {};
 
-											// The default feed image for sites with no icon is
-											// awful for this case, treat it as no image to fallback
-											// to the globe icon.
-											const siteIcon = image.includes( 's0.wp.com/i/buttonw-com.png' )
-												? null
-												: image;
+												// The default feed image for sites with no icon is
+												// awful for this case, treat it as no image to fallback
+												// to the globe icon.
+												const siteIcon = image.includes( 's0.wp.com/i/buttonw-com.png' )
+													? null
+													: image;
 
-											return (
-												<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
-													<ReaderAvatar
-														isCompact
-														siteIcon={ siteIcon }
-														className="gravatar-hovercard__recommended-blog-site-icon"
-													/>
-													<p className="gravatar-hovercard__recommended-blog-site-name">{ name }</p>
-													<ReaderFollowButton
-														className="gravatar-hovercard__recommended-blog-subscribe-button"
-														siteUrl={ feedUrl }
-														followSource="gravatar-hovercard__recommended-blog-item"
-														isButtonOnly
-													/>
-												</li>
-											);
-										} ) }
+												return (
+													<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
+														<ReaderAvatar
+															isCompact
+															siteIcon={ siteIcon }
+															className="gravatar-hovercard__recommended-blog-site-icon"
+														/>
+														<p className="gravatar-hovercard__recommended-blog-site-name">
+															{ name }
+														</p>
+														<ReaderFollowButton
+															className="gravatar-hovercard__recommended-blog-subscribe-button"
+															siteUrl={ feedUrl }
+															followSource="gravatar-hovercard__recommended-blog-item"
+															isButtonOnly
+														/>
+													</li>
+												);
+											} ) }
 									</ul>
 								</div>
 							) }
