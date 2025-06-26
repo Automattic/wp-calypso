@@ -5,7 +5,6 @@ import {
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
-	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
@@ -26,6 +25,7 @@ import {
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_USER_LISTS_REQUEST,
+	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
@@ -318,17 +318,17 @@ export const handleRecommendedBlogsRequestFailure = ( listOwner, error ) => ( {
 /**
  * Request user recommended blogs only if no request is already in progress.
  * This prevents duplicate requests for the same user.
- * @param {string} userLogin User login
+ * @param {string} listOwner User login of list owner
  * @returns {Function} Thunk that checks state before dispatching
  */
-export function requestUserRecommendedBlogs( userLogin ) {
+export function requestUserRecommendedBlogs( listOwner ) {
 	return ( dispatch, getState ) => {
-		const isRequesting = getState().reader.lists.isRequestingUserRecommendedBlogs[ userLogin ];
+		const isRequesting = getState().reader.lists.isRequestingUserRecommendedBlogs[ listOwner ];
 
 		if ( ! isRequesting ) {
 			dispatch( {
 				type: READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
-				userLogin,
+				listOwner,
 			} );
 		}
 	};

@@ -277,7 +277,7 @@ export const isRequestingUserRecommendedBlogs = ( state = {}, action ) => {
 		case READER_RECOMMENDED_BLOGS_ITEMS_REQUEST:
 			return {
 				...state,
-				[ action.userLogin ]: true,
+				[ action.listOwner ]: true,
 			};
 		case READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE:
 		case READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE:

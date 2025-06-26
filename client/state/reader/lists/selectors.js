@@ -150,16 +150,21 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
 	);
 }
 
-export function getUserRecommendedBlogs( state, userLogin ) {
-	return state.reader.lists.userRecommendedBlogs[ userLogin ];
+/**
+ * Check for the listOwners recommended blogs list
+ * @param  {Object}  state  Global state tree
+ * @param  {string}  listOwner User login of list owner
+ */
+export function getUserRecommendedBlogs( state, listOwner ) {
+	return state.reader.lists.userRecommendedBlogs[ listOwner ];
 }
 
 /**
  * Check if a recommended blogs request is in progress for a specific user.
  * @param  {Object}  state  Global state tree
- * @param  {string}  userLogin User login
+ * @param  {string}  listOwner User login of list owner
  * @returns {boolean} Is the request in progress?
  */
-export function isRequestingUserRecommendedBlogs( state, userLogin ) {
-	return !! state.reader.lists.isRequestingUserRecommendedBlogs[ userLogin ];
+export function isRequestingUserRecommendedBlogs( state, listOwner ) {
+	return !! state.reader.lists.isRequestingUserRecommendedBlogs[ listOwner ];
 }

@@ -37,15 +37,15 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 				http(
 					{
 						method: 'GET',
-						path: `/read/lists/${ action.userLogin }/recommended-blogs/items`,
+						path: `/read/lists/${ action.listOwner }/recommended-blogs/items`,
 						query: { meta: 'site,feed,tag', number: 2000 },
 						apiVersion: '1.2',
 					},
 					action
 				),
 			onSuccess: ( action, apiResponse ) =>
-				receiveReaderRecommendedBlogsItems( action.userLogin, apiResponse.items ),
-			onError: ( action, error ) => handleRecommendedBlogsRequestFailure( action.userLogin, error ),
+				receiveReaderRecommendedBlogsItems( action.listOwner, apiResponse.items ),
+			onError: ( action, error ) => handleRecommendedBlogsRequestFailure( action.listOwner, error ),
 		} ),
 	],
 } );
