@@ -1,11 +1,14 @@
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getStatsOptions } from '../../../lib/stat-options';
 import type { StepProps } from './types';
 
 export default function Step2Content( { formData, state, handlers }: StepProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { customIntroText, statsCheckedItems } = formData;
 
@@ -34,12 +37,19 @@ export default function Step2Content( { formData, state, handlers }: StepProps )
 
 	const handleStep2CheckboxChange = useCallback(
 		( itemName: string ) => {
+			const newValue = ! statsCheckedItems[ itemName ];
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_reports_stat_option_toggle', {
+					option: itemName,
+					enabled: newValue,
+				} )
+			);
 			setStatsCheckedItems( {
 				...statsCheckedItems,
-				[ itemName ]: ! statsCheckedItems[ itemName ],
+				[ itemName ]: newValue,
 			} );
 		},
-		[ statsCheckedItems, setStatsCheckedItems ]
+		[ statsCheckedItems, setStatsCheckedItems, dispatch ]
 	);
 
 	const isCreatingReport = sendReportMutation.isPending;
@@ -57,7 +67,13 @@ export default function Step2Content( { formData, state, handlers }: StepProps )
 				__nextHasNoMarginBottom
 				label={ translate( 'Intro message (optional)' ) }
 				value={ customIntroText }
-				onChange={ setCustomIntroText }
+				onChange={ ( value ) => {
+					// Only track when user actually adds content (not when clearing)
+					if ( value && ! customIntroText ) {
+						dispatch( recordTracksEvent( 'calypso_a4a_reports_custom_intro_add' ) );
+					}
+					setCustomIntroText( value );
+				} }
 				rows={ 3 }
 				help={ translate( 'Add a short note or update for your client.' ) }
 				disabled={ isLoadingState }

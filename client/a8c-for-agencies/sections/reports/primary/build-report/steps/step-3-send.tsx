@@ -1,10 +1,13 @@
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { StepProps } from './types';
 
 export default function Step3Send( { state }: StepProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ isSendPreview, setIsSendPreview ] = useState( false );
 
@@ -13,6 +16,7 @@ export default function Step3Send( { state }: StepProps ) {
 
 	const handleSendPreview = useCallback( () => {
 		if ( reportId ) {
+			dispatch( recordTracksEvent( 'calypso_a4a_reports_send_report_preview_click' ) );
 			setIsSendPreview( true );
 			sendReportEmailMutation.mutate(
 				{ reportId, preview: true },
@@ -21,7 +25,7 @@ export default function Step3Send( { state }: StepProps ) {
 				}
 			);
 		}
-	}, [ reportId, sendReportEmailMutation ] );
+	}, [ reportId, sendReportEmailMutation, dispatch ] );
 
 	const isSendingPreview = isSendPreview && sendReportEmailMutation.isPending;
 

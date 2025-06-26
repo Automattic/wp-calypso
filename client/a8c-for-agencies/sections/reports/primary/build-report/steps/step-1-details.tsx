@@ -8,6 +8,8 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formatDate } from '../../../lib/format-date';
 import { getAvailableTimeframes } from '../../../lib/timeframes';
 import type { StepProps } from './types';
@@ -15,6 +17,7 @@ import type { A4ASelectSiteItem } from 'calypso/a8c-for-agencies/components/a4a-
 
 export default function Step1Details( { formData, state, handlers }: StepProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
 	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
@@ -75,7 +78,10 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 				<A4ASelectSite
 					isDisabled={ isLoadingState }
 					selectedSiteId={ selectedSite?.blogId }
-					onSiteSelect={ ( site: A4ASelectSiteItem ) => setSelectedSite( site ) }
+					onSiteSelect={ ( site: A4ASelectSiteItem ) => {
+						dispatch( recordTracksEvent( 'calypso_a4a_reports_select_site_button_click' ) );
+						setSelectedSite( site );
+					} }
 					buttonLabel={ selectedSite?.domain || translate( 'Choose a site to report on' ) }
 					trackingEvent="calypso_a4a_reports_select_site_button_click"
 					data-field="selectedSite"
@@ -91,7 +97,12 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 				label={ translate( 'Report date range' ) }
 				value={ selectedTimeframe }
 				options={ availableTimeframes }
-				onChange={ setSelectedTimeframe }
+				onChange={ ( value ) => {
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_reports_timeframe_select', { timeframe: value } )
+					);
+					setSelectedTimeframe( value );
+				} }
 				disabled={ isLoadingState }
 			/>
 
@@ -119,6 +130,7 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 								<DatePicker
 									currentDate={ startDate }
 									onChange={ ( date ) => {
+										dispatch( recordTracksEvent( 'calypso_a4a_reports_custom_start_date_select' ) );
 										setStartDate( date );
 										// If end date is set and is before or equal to the new start date,
 										// set end date to the day after start date
@@ -161,6 +173,7 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 								<DatePicker
 									currentDate={ endDate }
 									onChange={ ( date ) => {
+										dispatch( recordTracksEvent( 'calypso_a4a_reports_custom_end_date_select' ) );
 										setEndDate( date );
 										setIsEndDatePickerOpen( false );
 									} }
@@ -208,7 +221,12 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 				__nextHasNoMarginBottom
 				label={ translate( 'Also send to your team' ) }
 				checked={ sendCopyToTeam }
-				onChange={ setSendCopyToTeam }
+				onChange={ ( checked ) => {
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_reports_send_to_team_toggle', { enabled: checked } )
+					);
+					setSendCopyToTeam( checked );
+				} }
 				disabled={ isLoadingState }
 			/>
 			{ sendCopyToTeam && (
