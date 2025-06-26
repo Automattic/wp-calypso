@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
@@ -34,6 +35,9 @@ function HovercardContent( props ) {
 	const primaryBlogUrl = site?.URL;
 
 	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
+
+	const shouldShowRecommendedBlogs =
+		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
 
 	useEffect( () => {
 		if ( ! userID ) {
@@ -120,27 +124,41 @@ function HovercardContent( props ) {
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							<ul className="gravatar-hovercard__recommended-blogs-list">
-								{ recommendedBlogs?.length &&
-									recommendedBlogs.slice( 0, 3 ).map( ( blog ) => (
-										<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
-											<ReaderAvatar
-												isCompact
-												siteIcon={ blog.meta?.data?.feed?.image }
-												className="gravatar-hovercard__recommended-blog-site-icon"
-											/>
-											<p className="gravatar-hovercard__recommended-blog-site-name">
-												{ blog.meta?.data?.feed?.name }
-											</p>
-											<ReaderFollowButton
-												className="gravatar-hovercard__recommended-blog-subscribe-button"
-												siteUrl={ blog.meta?.data?.feed?.feed_URL }
-												followSource="gravatar-hovercard__recommended-blog-item"
-												isButtonOnly
-											/>
-										</li>
-									) ) }
-							</ul>
+							{ shouldShowRecommendedBlogs && (
+								<div className="gravatar-hovercard__recommended-blogs">
+									<div className="gravatar-hovercard__recommended-blogs-header">
+										<h5 className="gravatar-hovercard__recommended-blogs-title">
+											{ translate( 'Recommended blogs' ) }
+										</h5>
+										<a
+											className="gravatar-hovercard__recommended-blogs-view-all"
+											href={ `/reader/list/${ userLogin }/recommended-blogs` }
+										>
+											{ translate( 'View all' ) }
+										</a>
+									</div>
+									<ul className="gravatar-hovercard__recommended-blogs-list">
+										{ recommendedBlogs.slice( 0, 3 ).map( ( blog ) => (
+											<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
+												<ReaderAvatar
+													isCompact
+													siteIcon={ blog.meta?.data?.feed?.image }
+													className="gravatar-hovercard__recommended-blog-site-icon"
+												/>
+												<p className="gravatar-hovercard__recommended-blog-site-name">
+													{ blog.meta?.data?.feed?.name }
+												</p>
+												<ReaderFollowButton
+													className="gravatar-hovercard__recommended-blog-subscribe-button"
+													siteUrl={ blog.meta?.data?.feed?.feed_URL }
+													followSource="gravatar-hovercard__recommended-blog-item"
+													isButtonOnly
+												/>
+											</li>
+										) ) }
+									</ul>
+								</div>
+							) }
 						</div>
 					</>
 				) }
