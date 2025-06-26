@@ -5,6 +5,7 @@ import {
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
+	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
@@ -25,6 +26,7 @@ import {
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_USER_LISTS_REQUEST,
+	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -296,6 +298,19 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 export function requestUserLists( userLogin ) {
 	return {
 		type: READER_USER_LISTS_REQUEST,
+		userLogin,
+	};
+}
+
+export const receiveReaderRecommendedBlogsItems = ( listOwner, listItems ) => ( {
+	type: READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
+	listOwner,
+	listItems,
+} );
+
+export function requestUserRecommendedBlogs( userLogin ) {
+	return {
+		type: READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 		userLogin,
 	};
 }

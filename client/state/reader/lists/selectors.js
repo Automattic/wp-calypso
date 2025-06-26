@@ -149,3 +149,7 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
 		! getListByOwnerAndSlug( state, owner, slug )
 	);
 }
+
+export function getUserRecommendedBlogs( state, userLogin ) {
+	return state.reader.lists.userRecommendedBlogs[ userLogin ];
+}

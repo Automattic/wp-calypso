@@ -5,6 +5,8 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector, useDispatch } from 'calypso/state';
+import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
+import { getUserRecommendedBlogs } from 'calypso/state/reader/lists/selectors';
 import { requestSite } from 'calypso/state/reader/sites/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestUser } from 'calypso/state/reader/users/actions';
@@ -31,6 +33,8 @@ function HovercardContent( props ) {
 	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) );
 	const primaryBlogUrl = site?.URL;
 
+	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
+
 	useEffect( () => {
 		if ( ! userID ) {
 			// This isnt a wpcom user, skip requesting data.
@@ -43,7 +47,10 @@ function HovercardContent( props ) {
 		if ( ! readerUserData ) {
 			dispatch( requestUser( userID, true ) );
 		}
-	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
+		if ( ! recommendedBlogs && userLogin ) {
+			dispatch( requestUserRecommendedBlogs( userLogin ) );
+		}
+	}, [ userID, dispatch, site, primaryBlogId, readerUserData, userLogin, recommendedBlogs ] );
 
 	return (
 		<AutoDirection>
@@ -113,7 +120,8 @@ function HovercardContent( props ) {
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							{ /* TODO: Add recommended blogs list */ }
+							{ recommendedBlogs?.length &&
+								recommendedBlogs.map( ( blog ) => <div key={ blog.ID }>{ blog.ID }</div> ) }
 						</div>
 					</>
 				) }
