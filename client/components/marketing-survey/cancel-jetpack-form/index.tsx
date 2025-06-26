@@ -327,11 +327,13 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// make sure the user has the ability to skip the question
 			return (
 				<>
-					<div className="cancel-jetpack-form__notice-container">
-						<Notice status="is-success" className="cancel-jetpack-form__notice" theme="light">
-							{ cancellationMessage }
-						</Notice>
-					</div>
+					{ cancellationMessage && (
+						<div className="cancel-jetpack-form__notice-container">
+							<Notice status="is-success" className="cancel-jetpack-form__notice" theme="light">
+								{ cancellationMessage }
+							</Notice>
+						</div>
+					) }
 
 					<JetpackCancellationSurvey
 						onAnswerChange={ onSurveyAnswerChange }
