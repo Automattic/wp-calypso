@@ -1,7 +1,8 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Button, Modal, Icon } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Modal, Icon } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
@@ -9,6 +10,8 @@ import { isAutomatticianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import InlineSupportLink from '../components/inline-support-link';
+import Notice from '../components/notice';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import AddNewSite from './add-new-site';
@@ -90,7 +93,8 @@ const getDefaultActions = ( router: AnyRouter ) => {
 };
 
 const getFetchSitesOptions = (
-	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
+	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {},
+	isRestoringAccount: boolean = false
 ): FetchSitesOptions => {
 	const filters = viewOptions.filters ?? [];
 
@@ -106,17 +110,64 @@ const getFetchSitesOptions = (
 	return {
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: viewOptions.search || shouldIncludeA8COwned ? 'all' : 'visible',
+		site_visibility: viewOptions.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 	};
+};
+
+// We still need to implement MigrationPendingNotice and A8CForAgencies.
+// See client/sites/components/sites-dashboard-banners-manager.tsx.
+const SitesNotices = () => {
+	const navigate = useNavigate( { from: sitesRoute.fullPath } );
+	const currentSearchParams = sitesRoute.useSearch();
+	const isRestoringAccount = !! currentSearchParams.restored;
+
+	const notices = [
+		isRestoringAccount && (
+			<Notice
+				title={ __( 'Choose which sites you’d like to restore' ) }
+				onClose={ () =>
+					navigate( {
+						search: {
+							...currentSearchParams,
+							restored: undefined,
+						},
+						replace: true,
+					} )
+				}
+			>
+				{ createInterpolateElement(
+					__(
+						'<restoreSiteLink>Restore sites</restoreSiteLink> from the action menu. You’ll also need to <invitePeopleLink>invite any users</invitePeopleLink> that previously had access to your sites.'
+					),
+					{
+						restoreSiteLink: <InlineSupportLink supportContext="restore-site" />,
+						invitePeopleLink: <InlineSupportLink supportContext="invite-people" />,
+					}
+				) }
+			</Notice>
+		),
+	].filter( ( value ) => !! value );
+
+	if ( ! notices.length ) {
+		return null;
+	}
+
+	return (
+		<VStack className="sites-notices" spacing={ 6 }>
+			{ notices }
+		</VStack>
+	);
 };
 
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const router = useRouter();
-	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const currentSearchParams = sitesRoute.useSearch();
+	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = currentSearchParams.view;
+	const isRestoringAccount = !! currentSearchParams.restored;
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( viewOptions ) )
+		sitesQuery( getFetchSitesOptions( viewOptions, isRestoringAccount ) )
 	);
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
@@ -185,6 +236,7 @@ export default function Sites() {
 					/>
 				}
 			>
+				<SitesNotices />
 				<DataViewsCard>
 					<DataViews< Site >
 						getItemId={ ( item ) => item.ID.toString() }
@@ -200,6 +252,7 @@ export default function Sites() {
 							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
 							navigate( {
 								search: {
+									...currentSearchParams,
 									view: Object.fromEntries(
 										Object.entries( view ).filter( ( [ key, value ] ) => {
 											return value !== _defaultView[ key as keyof typeof _defaultView ];
