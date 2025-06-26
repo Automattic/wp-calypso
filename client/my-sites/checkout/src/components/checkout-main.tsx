@@ -151,7 +151,8 @@ export default function CheckoutMain( {
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
 		sitelessCheckoutType === 'marketplace' ||
-		sitelessCheckoutType === 'a4a';
+		sitelessCheckoutType === 'a4a' ||
+		sitelessCheckoutType === 'affiliate-pm';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -172,6 +173,11 @@ export default function CheckoutMain( {
 
 		if ( sitelessCheckoutType === 'marketplace' ) {
 			return marketplaceSiteSlug;
+		}
+
+		// Affiliate PM siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
+		if ( sitelessCheckoutType === 'affiliate-pm' ) {
+			return undefined;
 		}
 
 		return siteSlug;
@@ -912,6 +918,10 @@ function getAnalyticsPath(
 	}
 
 	if ( sitelessCheckoutType === 'akismet' ) {
+		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
+	}
+
+	if ( sitelessCheckoutType === 'affiliate-pm' ) {
 		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
 	}
 

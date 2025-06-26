@@ -96,7 +96,10 @@ async function wpcomPayPalExpress(
 ) {
 	const isUserLessCheckout =
 		payload.cart.products.some(
-			( product ) => product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout
+			( product ) =>
+				product.extra.isJetpackCheckout ||
+				product.extra.isAkismetSitelessCheckout ||
+				product.extra.isAffiliatePmSitelessCheckout
 		) && payload.cart.cart_key === 'no-user';
 
 	if ( transactionOptions.createUserAndSiteBeforeTransaction || isUserLessCheckout ) {

@@ -637,6 +637,7 @@ function createRenewalItemToAddToCart( {
 		purchaseId: String( purchaseId ),
 		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
+		isAffiliatePmSitelessCheckout: sitelessCheckoutType === 'affiliate-pm',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};
@@ -692,6 +693,7 @@ function createItemToAddToCart( {
 		extra: {
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
+			isAffiliatePmSitelessCheckout: sitelessCheckoutType === 'affiliate-pm',
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
 			context: 'calypstore',
