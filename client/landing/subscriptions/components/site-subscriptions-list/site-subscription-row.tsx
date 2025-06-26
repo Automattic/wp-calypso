@@ -372,9 +372,11 @@ const SiteSubscriptionRow = ( {
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
-			{ isRecommendedBlogsEnabled && isLoggedIn && (
+			{ isRecommendedBlogsEnabled && isLoggedIn && ! isCompactLayout && (
 				<span className="recommend-cell" role="cell">
 					<FormToggle
+						aria-label={ translate( 'Recommend this site to other users.' ) }
+						id={ `recommend-toggle-${ blog_id }` }
 						checked={ isRecommended }
 						onChange={ handleRecommendToggle }
 						disabled={ ! currentUserName || typeof currentUserName !== 'string' }

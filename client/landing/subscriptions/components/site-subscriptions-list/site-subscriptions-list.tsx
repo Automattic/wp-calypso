@@ -110,7 +110,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="email-frequency-cell" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
-				{ isRecommendedBlogsEnabled && isLoggedIn && (
+				{ isRecommendedBlogsEnabled && isLoggedIn && ! isCompactLayout && (
 					<span className="recommend-cell" role="columnheader">
 						{ translate( 'Recommend' ) }
 						<Tooltip
