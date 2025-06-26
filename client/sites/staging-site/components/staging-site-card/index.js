@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -61,6 +60,7 @@ export const StagingSiteCard = ( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const [ syncError, setSyncError ] = useState( null );
+	const [ didInitiateAdd, setDidInitiateAdd ] = useState( false );
 
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
@@ -155,9 +155,7 @@ export const StagingSiteCard = ( {
 	const showAddStagingSiteCard = useMemo( () => {
 		// Don't show the "Add staging site" card if the hosting/staging-sites-redesign feature flag is enabled
 		// since the functionality has been moved to the hosting dashboard header
-		if ( isEnabled( 'hosting/staging-sites-redesign' ) ) {
-			return false;
-		}
+
 		return hasCompletedInitialLoading && ! stagingSite.id && isStagingSiteTransferComplete === true;
 	}, [ hasCompletedInitialLoading, isStagingSiteTransferComplete, stagingSite ] );
 
@@ -207,7 +205,9 @@ export const StagingSiteCard = ( {
 		//Something went wrong, and we want to set the status to none.
 		// Lock is not there (expired), neither is the staging site.
 		// but the status is still in progress.
+		// Only reset if THIS staging card initiated the add operation
 		if (
+			didInitiateAdd &&
 			! isLoadingAddStagingSite &&
 			! lock &&
 			! stagingSite.id &&
@@ -220,9 +220,11 @@ export const StagingSiteCard = ( {
 					id: stagingSiteAddFailureNoticeId,
 				} )
 			);
+			setDidInitiateAdd( false );
 		}
 	}, [
 		__,
+		didInitiateAdd,
 		dispatch,
 		isLoadingAddStagingSite,
 		lock,
@@ -359,10 +361,18 @@ export const StagingSiteCard = ( {
 	] );
 
 	const onAddClick = useCallback( () => {
+		setDidInitiateAdd( true );
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 		addStagingSite();
-	}, [ dispatch, siteId, addStagingSite ] );
+	}, [
+		dispatch,
+		siteId,
+		addStagingSite,
+		stagingSiteStatus,
+		stagingSites,
+		isLoadingAddStagingSite,
+	] );
 
 	const initiateDelete = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
