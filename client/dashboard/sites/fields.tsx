@@ -92,10 +92,10 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'is_a8c',
 		type: 'boolean',
-		label: __( 'A8C sites' ),
+		label: __( 'A8C owned' ),
 		elements: [
-			{ value: true, label: __( 'A8C only' ) },
-			{ value: false, label: __( 'Non-A8C only' ) },
+			{ value: true, label: __( 'Yes' ) },
+			{ value: false, label: __( 'No' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
