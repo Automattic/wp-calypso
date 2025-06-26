@@ -1,20 +1,25 @@
-import type { ViewState } from './data-views-types';
+import type { View } from '@wordpress/dataviews';
 
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PER_PAGE = 10;
 
-export const defaultDataViewsState: ViewState = {
+export const defaultSortField: string = 'date';
+
+export const wideFields = [ 'date', 'service', 'type', 'amount' ];
+export const desktopFields = [ 'date', 'service' ];
+export const mobileFields = [ 'service' ];
+
+export const defaultDataViewsState: View = {
 	type: 'table',
 	search: '',
 	filters: [],
 	page: DEFAULT_PAGE,
 	perPage: DEFAULT_PER_PAGE,
 	sort: {
-		field: 'date',
+		field: defaultSortField,
 		direction: 'desc',
 	},
-	fields: [ 'date', 'service', 'type', 'amount' ],
-	hiddenFields: [],
+	fields: wideFields,
 	layout: {
 		styles: {
 			date: {
