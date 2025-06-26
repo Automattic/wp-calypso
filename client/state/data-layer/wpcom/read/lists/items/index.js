@@ -8,6 +8,7 @@ import {
 import {
 	receiveReaderListItems,
 	receiveReaderRecommendedBlogsItems,
+	handleRecommendedBlogsRequestFailure,
 } from 'calypso/state/reader/lists/actions';
 
 const noop = () => {};
@@ -44,7 +45,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 				),
 			onSuccess: ( action, apiResponse ) =>
 				receiveReaderRecommendedBlogsItems( action.userLogin, apiResponse.items ),
-			onError: () => noop,
+			onError: ( action, error ) => handleRecommendedBlogsRequestFailure( action.userLogin, error ),
 		} ),
 	],
 } );

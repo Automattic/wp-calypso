@@ -153,3 +153,13 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
 export function getUserRecommendedBlogs( state, userLogin ) {
 	return state.reader.lists.userRecommendedBlogs[ userLogin ];
 }
+
+/**
+ * Check if a recommended blogs request is in progress for a specific user.
+ * @param  {Object}  state  Global state tree
+ * @param  {string}  userLogin User login
+ * @returns {boolean} Is the request in progress?
+ */
+export function isRequestingUserRecommendedBlogs( state, userLogin ) {
+	return !! state.reader.lists.isRequestingUserRecommendedBlogs[ userLogin ];
+}

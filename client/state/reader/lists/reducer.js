@@ -24,6 +24,8 @@ import {
 	READER_USER_LISTS_RECEIVE,
 	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
+	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
+	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema, subscriptionsSchema } from './schema';
@@ -270,6 +272,24 @@ export const userRecommendedBlogs = ( state = {}, action ) => {
 	}
 };
 
+export const isRequestingUserRecommendedBlogs = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_RECOMMENDED_BLOGS_ITEMS_REQUEST:
+			return {
+				...state,
+				[ action.userLogin ]: true,
+			};
+		case READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE:
+		case READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE:
+			return {
+				...state,
+				[ action.listOwner ]: false,
+			};
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	items,
 	listItems,
@@ -282,4 +302,5 @@ export default combineReducers( {
 	userLists,
 	isRequestingUserLists,
 	userRecommendedBlogs,
+	isRequestingUserRecommendedBlogs,
 } );

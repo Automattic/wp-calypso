@@ -27,6 +27,7 @@ import {
 	READER_LISTS_REQUEST,
 	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
+	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -308,9 +309,27 @@ export const receiveReaderRecommendedBlogsItems = ( listOwner, listItems ) => ( 
 	listItems,
 } );
 
+export const handleRecommendedBlogsRequestFailure = ( listOwner, error ) => ( {
+	type: READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
+	listOwner,
+	error,
+} );
+
+/**
+ * Request user recommended blogs only if no request is already in progress.
+ * This prevents duplicate requests for the same user.
+ * @param {string} userLogin User login
+ * @returns {Function} Thunk that checks state before dispatching
+ */
 export function requestUserRecommendedBlogs( userLogin ) {
-	return {
-		type: READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
-		userLogin,
+	return ( dispatch, getState ) => {
+		const isRequesting = getState().reader.lists.isRequestingUserRecommendedBlogs[ userLogin ];
+
+		if ( ! isRequesting ) {
+			dispatch( {
+				type: READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
+				userLogin,
+			} );
+		}
 	};
 }
