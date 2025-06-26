@@ -5,6 +5,7 @@ import { Button, Modal, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { isA8CTeamMemberQuery } from '../app/queries/reader-teams';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -91,15 +92,19 @@ const getDefaultActions = ( router: AnyRouter ) => {
 const getFetchSitesOptions = (
 	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
 ): FetchSitesOptions => {
-	if (
-		viewOptions.filters?.find(
-			( filter: Filter ) => filter.field === 'status' && filter.value === 'deleted'
-		)
-	) {
-		return { site_visibility: 'deleted' };
+	const filters = viewOptions.filters ?? [];
+	const shouldIncludeA8COwned = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
+
+	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
+		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
 
-	return { site_visibility: viewOptions.search ? 'all' : 'visible' };
+	return {
+		site_visibility: viewOptions.search ? 'all' : 'visible',
+		include_a8c_owned: shouldIncludeA8COwned,
+	};
 };
 
 export default function Sites() {
@@ -109,11 +114,11 @@ export default function Sites() {
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
 	);
-	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
+	const { data: isA8CTeamMember } = useQuery( isA8CTeamMemberQuery() );
 
 	const defaultView = useMemo(
 		() =>
-			hasA8CSites
+			isA8CTeamMember
 				? {
 						...DEFAULT_VIEW,
 						filters: [
@@ -125,7 +130,7 @@ export default function Sites() {
 						],
 				  }
 				: DEFAULT_VIEW,
-		[ hasA8CSites ]
+		[ isA8CTeamMember ]
 	);
 
 	const view = useMemo(
@@ -142,8 +147,8 @@ export default function Sites() {
 	);
 
 	const fields = useMemo( () => {
-		return getFields( { hasA8CSites, viewType: view.type } );
-	}, [ hasA8CSites, view.type ] );
+		return getFields( { isA8CTeamMember, viewType: view.type } );
+	}, [ isA8CTeamMember, view.type ] );
 
 	const actions = useMemo( () => {
 		return getDefaultActions( router );

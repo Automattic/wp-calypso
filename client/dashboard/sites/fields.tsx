@@ -92,7 +92,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'is_a8c',
 		type: 'boolean',
-		label: __( 'A8C owned' ),
+		label: __( 'Include A8C sites' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
@@ -203,14 +203,14 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 ];
 
 export function getFields( {
-	hasA8CSites,
+	isA8CTeamMember,
 	viewType,
 }: {
-	hasA8CSites?: boolean;
+	isA8CTeamMember?: boolean;
 	viewType?: string;
 } ) {
 	return DEFAULT_FIELDS.filter( ( field ) => {
-		if ( field.id === 'is_a8c' && ! hasA8CSites ) {
+		if ( field.id === 'is_a8c' && ! isA8CTeamMember ) {
 			return false;
 		}
 
