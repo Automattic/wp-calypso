@@ -318,6 +318,10 @@ const CancelPurchaseDomainOptions = ( {
 					</FormLabel>
 				</span>
 			) }
+
+			<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
+				{ translate( 'What happens when you cancel' ) }
+			</h2>
 		</div>
 	);
 };
