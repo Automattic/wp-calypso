@@ -8,13 +8,17 @@ interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
 	logo?: ReactNode;
-	compact?: boolean;
+	compactLogo?: 'always';
 }
 
-export const TopBar = ( { leftElement, rightElement, logo, compact }: TopBarProps ) => {
+export const TopBar = ( { leftElement, rightElement, logo, compactLogo }: TopBarProps ) => {
 	const defaultLogo = (
-		<>
-			{ ! compact && (
+		<div
+			className={ clsx( 'step-container-v2__top-bar-wordpress-logo-wrapper', {
+				'is-compact': compactLogo,
+			} ) }
+		>
+			{ ! compactLogo && (
 				<WordPressWordmark
 					className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
 					color="currentColor"
@@ -22,12 +26,9 @@ export const TopBar = ( { leftElement, rightElement, logo, compact }: TopBarProp
 			) }
 			<WordPressLogo
 				size={ 21 }
-				className={ clsx(
-					'step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo',
-					{ 'is-compact': compact }
-				) }
+				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
 			/>
-		</>
+		</div>
 	);
 	return (
 		<div className="step-container-v2__top-bar">

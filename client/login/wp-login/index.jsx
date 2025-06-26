@@ -573,7 +573,12 @@ export class Login extends Component {
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
 						{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
-						topBar={ <Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } compact /> }
+						topBar={
+							<Step.TopBar
+								rightElement={ this.renderLoginHeaderNavigation() }
+								compactLogo="always"
+							/>
+						}
 						heading={
 							<Step.Heading
 								text={

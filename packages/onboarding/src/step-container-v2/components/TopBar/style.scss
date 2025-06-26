@@ -50,7 +50,12 @@
 	display: block;
 
 	@include break-small {
-		&:not( .is-compact ) {
+		/**
+		 * Hide the logo only when the wrapper is not compact.
+		 * This is important for current Login views, where the logo is always visible.
+		 * -- Confirm with Design before changing this --
+		 */
+		.step-container-v2__top-bar-wordpress-logo-wrapper:not( .is-compact ) & {
 			display: none;
 		}
 	}
