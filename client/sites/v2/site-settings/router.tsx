@@ -36,6 +36,17 @@ import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../ut
 
 const rootRoute = createRootRoute( { component: Root } );
 
+const dashboardSitesCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites',
+	beforeLoad: ( { cause } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		page.show( '/sites' );
+	},
+} );
+
 const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings',
@@ -301,6 +312,7 @@ const createRouteTree = () =>
 			transferSiteRoute,
 			sftpSshRoute,
 		] ),
+		dashboardSitesCompatibilityRoute,
 		dashboardSiteSettingsCompatibilityRouteRoot,
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
