@@ -106,11 +106,8 @@ const SiteSubscriptionRow = ( {
 	// Use custom hook for recommended site functionality
 	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( blog_id ) );
 
-<<<<<<< HEAD
 	const isCompactLayout = layout === 'compact';
-=======
 	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
->>>>>>> 93f3a954b14 (Use reader/recommended-blogs-list feature flag.)
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
