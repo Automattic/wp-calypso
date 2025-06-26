@@ -92,7 +92,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'is_a8c',
 		type: 'boolean',
-		label: __( 'Include A8C sites' ),
+		label: __( 'A8C sites only' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
