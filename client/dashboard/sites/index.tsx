@@ -5,17 +5,26 @@ import { Button, Modal, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { isAutomatticianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { isP2 } from '../utils/site-types';
 import AddNewSite from './add-new-site';
 import { canManageSite } from './features';
 import { getFields } from './fields';
 import type { FetchSitesOptions, Site } from '../data/types';
-import type { Operator, SortDirection, ViewTable, ViewGrid, Filter } from '@automattic/dataviews';
+import type {
+	Operator,
+	SortDirection,
+	ViewTable,
+	ViewGrid,
+	Filter,
+	RenderModalProps,
+} from '@automattic/dataviews';
 import type { AnyRouter } from '@tanstack/react-router';
 
 const DEFAULT_LAYOUTS = {
@@ -85,6 +94,21 @@ const getDefaultActions = ( router: AnyRouter ) => {
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) => canManageSite( item ),
+		},
+		{
+			id: 'leave',
+			label: __( 'Leave site' ),
+			isEligible: ( item: Site ) => ! item.is_deleted && ! isP2( item ),
+			RenderModal: ( { items, closeModal }: RenderModalProps< Site > ) => {
+				return (
+					<AsyncLoad
+						require="./site-leave-modal/content-info"
+						placeholder={ null }
+						site={ items[ 0 ] }
+						onClose={ closeModal }
+					/>
+				);
+			},
 		},
 	];
 };
