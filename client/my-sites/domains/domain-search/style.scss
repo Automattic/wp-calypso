@@ -99,7 +99,7 @@
 			margin: 0;
 
 			@include break-large {
-				width: 290px;
+				max-width: 290px;
 				margin: 0 0 0 40px;
 				padding: 40px 0;
 			}

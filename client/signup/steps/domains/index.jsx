@@ -1132,6 +1132,7 @@ class RenderDomainsStepComponent extends Component {
 				products={ this.props.productsList }
 				basePath={ this.props.path }
 				promoTlds={ promoTlds }
+				hideMatchReasons={ this.props.hideMatchReasons }
 				mapDomainUrl={ this.getUseYourDomainUrl() }
 				otherManagedSubdomains={ this.props.otherManagedSubdomains }
 				otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }

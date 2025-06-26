@@ -370,6 +370,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 							<NewDomainsRedirectionNoticeUpsell />
 						) }
 						<RenderDomainsStep
+							hideMatchReasons={ false }
 							goToNextStep={ async () => {
 								const domains = this.props.cart.products.filter(
 									( p ) => p.is_domain_registration
