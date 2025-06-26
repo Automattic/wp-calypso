@@ -172,16 +172,20 @@ const BuildReport = () => {
 										'Get started by choosing the details to include for your client below.'
 								  ) }
 						</p>
-						{ duplicateError && ! isDuplicateLoading && (
-							<div className="build-report__content-note">
-								<Icon icon={ error } />
-								{ translate( 'Note: Some data could not be duplicated.' ) }
-							</div>
-						) }
-						{ isDuplicateLoading && (
-							<div className="build-report__content-note">
-								<Spinner /> { translate( 'Please wait while we prepare your report…' ) }
-							</div>
+						{ isDuplicating && (
+							<>
+								{ duplicateError && ! isDuplicateLoading && (
+									<div className="build-report__content-note">
+										<Icon icon={ error } />
+										{ translate( 'Note: Some data could not be duplicated.' ) }
+									</div>
+								) }
+								{ isDuplicateLoading && (
+									<div className="build-report__content-note">
+										<Spinner /> { translate( 'Please wait while we prepare your report…' ) }
+									</div>
+								) }
+							</>
 						) }
 					</div>
 					<div className="build-report__form">
