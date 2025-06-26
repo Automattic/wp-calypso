@@ -19,6 +19,7 @@ import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/sit
 import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
+	canManageSite,
 	canViewWordPressSettings,
 	canViewPHPSettings,
 	canViewDefensiveModeSettings,
@@ -55,6 +56,9 @@ const siteRoute = createRoute( {
 	path: '$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canManageSite( site ) ) {
+			window.location.href = '/sites';
+		}
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 	component: () => <Outlet />,
