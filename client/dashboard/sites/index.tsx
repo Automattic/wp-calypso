@@ -5,7 +5,7 @@ import { Button, Modal, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { isA8CTeamMemberQuery } from '../app/queries/reader-teams';
+import { isAutomattianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -102,7 +102,9 @@ const getFetchSitesOptions = (
 	}
 
 	return {
-		site_visibility: viewOptions.search ? 'all' : 'visible',
+		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
+		// See: https://github.com/Automattic/wp-calypso/pull/104220.
+		site_visibility: viewOptions.search || shouldIncludeA8COwned ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 	};
 };
@@ -114,11 +116,11 @@ export default function Sites() {
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
 	);
-	const { data: isA8CTeamMember } = useQuery( isA8CTeamMemberQuery() );
+	const { data: isAutomattian } = useQuery( isAutomattianQuery() );
 
 	const defaultView = useMemo(
 		() =>
-			isA8CTeamMember
+			isAutomattian
 				? {
 						...DEFAULT_VIEW,
 						filters: [
@@ -130,7 +132,7 @@ export default function Sites() {
 						],
 				  }
 				: DEFAULT_VIEW,
-		[ isA8CTeamMember ]
+		[ isAutomattian ]
 	);
 
 	const view = useMemo(
@@ -147,8 +149,8 @@ export default function Sites() {
 	);
 
 	const fields = useMemo( () => {
-		return getFields( { isA8CTeamMember, viewType: view.type } );
-	}, [ isA8CTeamMember, view.type ] );
+		return getFields( { isAutomattian, viewType: view.type } );
+	}, [ isAutomattian, view.type ] );
 
 	const actions = useMemo( () => {
 		return getDefaultActions( router );

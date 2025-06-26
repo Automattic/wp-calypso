@@ -203,14 +203,14 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 ];
 
 export function getFields( {
-	isA8CTeamMember,
+	isAutomattian,
 	viewType,
 }: {
-	isA8CTeamMember?: boolean;
+	isAutomattian?: boolean;
 	viewType?: string;
 } ) {
 	return DEFAULT_FIELDS.filter( ( field ) => {
-		if ( field.id === 'is_a8c' && ! isA8CTeamMember ) {
+		if ( field.id === 'is_a8c' && ! isAutomattian ) {
 			return false;
 		}
 
