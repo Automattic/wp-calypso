@@ -24,7 +24,7 @@ export interface ReportFormAPIResponse extends ReportFormData {
 	blog_id: number;
 }
 export interface Report {
-	id: string;
+	id: number;
 	status: 'sent' | 'error' | 'pending';
 	created_at: number;
 	data: ReportFormAPIResponse;

@@ -28,7 +28,7 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 	const dispatch = useDispatch();
 
 	const [ selectedReportTab, setSelectedReportTab ] = useState( REPORTS_ID );
-	const [ reportForDelete, setReportForDelete ] = useState< Report | null >( null );
+	const [ reportToDelete, setReportToDelete ] = useState< Report | null >( null );
 
 	const { handleDeleteReport, isPending: isDeletingReport } = useHandleReportDelete();
 
@@ -64,7 +64,7 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 				callback( items: Report[] ) {
 					const report = items[ 0 ];
 					dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_button_click' ) );
-					setReportForDelete( report );
+					setReportToDelete( report );
 				},
 			},
 		],
@@ -98,14 +98,14 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 				features={ features }
 				hideNavIfSingleTab
 			/>
-			{ reportForDelete && (
+			{ reportToDelete && (
 				<DeleteReportConfirmationDialog
-					report={ reportForDelete }
-					onClose={ () => setReportForDelete( null ) }
+					report={ reportToDelete }
+					onClose={ () => setReportToDelete( null ) }
 					onConfirm={ () => {
 						dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_confirm_click' ) );
-						handleDeleteReport( reportForDelete, () => {
-							setReportForDelete( null );
+						handleDeleteReport( reportToDelete, () => {
+							setReportToDelete( null );
 						} );
 					} }
 					isLoading={ isDeletingReport }

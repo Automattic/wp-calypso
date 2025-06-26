@@ -3,6 +3,8 @@ import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-c
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import type { Report } from '../types';
 
+import './style.scss';
+
 type Props = {
 	report: Report;
 	onClose: () => void;
@@ -28,17 +30,21 @@ export default function DeleteReportConfirmationDialog( {
 			isDestructive
 			isLoading={ isLoading }
 		>
-			{ translate(
-				"The report for {{strong}}%(siteName)s{{/strong}} will be deleted permanently. This can't be undone. {{br/}}{{br/}}If it's already scheduled to be sent, it may still go out.",
-				{
-					args: { siteName: urlToSlug( report.data.managed_site_url ) },
-					components: {
-						strong: <strong />,
-						br: <br />,
-					},
-					comment: '%(siteName)s is the site name for the report being deleted',
-				}
-			) }
+			<div className="delete-report-confirmation-dialog__content">
+				<div>
+					{ translate(
+						"The report for {{strong}}%(siteName)s{{/strong}} will be deleted permanently. This can't be undone.",
+						{
+							args: { siteName: urlToSlug( report.data.managed_site_url ) },
+							components: {
+								strong: <strong />,
+							},
+							comment: '%(siteName)s is the site name for the report being deleted',
+						}
+					) }
+				</div>
+				<div>{ translate( "If it's already scheduled to be sent, it may still go out." ) }</div>
+			</div>
 		</A4AConfirmationDialog>
 	);
 }

@@ -65,7 +65,7 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 			<ItemsDataViews
 				data={ {
 					items: data,
-					getItemId: ( item: Report ) => item.id,
+					getItemId: ( item: Report ) => `${ item.id }`,
 					pagination: paginationInfo,
 					enableSearch: false,
 					fields,
