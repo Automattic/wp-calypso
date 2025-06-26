@@ -1,10 +1,27 @@
-import { LoadingCopy, useRestorableProducts } from '@automattic/wpcom-checkout';
+import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { LoadingCopy, useRestorableProducts } from './index';
 import type { AddProductsToCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
-import './style.scss';
+const RemovedFromCartItemWrapper = styled.div`
+	color: var( --studio-gray-100 );
+	line-height: 20px;
+	padding: 16px 0;
+`;
+
+const RestorableProductButton = styled( Button )`
+	color: var( --studio-gray-100 ) !important;
+	font-size: inherit;
+	font-weight: 500;
+	line-height: 20px;
+	margin-left: 4px;
+	height: auto;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	padding: 0;
+`;
 
 export const RemovedFromCartItem = ( {
 	product,
@@ -18,7 +35,7 @@ export const RemovedFromCartItem = ( {
 	const translate = useTranslate();
 
 	return (
-		<div key={ product.uuid } className="removed-from-cart-item">
+		<RemovedFromCartItemWrapper key={ product.uuid }>
 			{ isPlaceholder ? (
 				<LoadingCopy width="350px" />
 			) : (
@@ -26,8 +43,7 @@ export const RemovedFromCartItem = ( {
 					{ translate( '%(product)s was removed from the shopping cart.', {
 						args: { product: product.product_name },
 					} ) }
-					<Button
-						className="restorable-product-button"
+					<RestorableProductButton
 						onClick={ async () => {
 							setIsPlaceholder( true );
 
@@ -39,9 +55,9 @@ export const RemovedFromCartItem = ( {
 						} }
 					>
 						{ translate( 'Restore' ) }
-					</Button>
+					</RestorableProductButton>
 				</>
 			) }
-		</div>
+		</RemovedFromCartItemWrapper>
 	);
 };

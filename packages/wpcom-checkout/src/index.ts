@@ -33,3 +33,4 @@ export * from './loading-card';
 export * from './partner-coupon';
 export * from './checkout-version-checker';
 export * from './restorable-products-context';
+export * from './removed-from-cart-item';
