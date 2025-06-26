@@ -51,6 +51,7 @@ type DataViewsContextType< Item > = {
 	filters: NormalizedFilter[];
 	isShowingFilter: boolean;
 	setIsShowingFilter: ( value: boolean ) => void;
+	onDrop?: ( event: DragEvent ) => void;
 };
 
 const DataViewsContext = createContext< DataViewsContextType< any > >( {

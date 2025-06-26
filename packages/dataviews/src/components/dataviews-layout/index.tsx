@@ -7,6 +7,7 @@ import type { ComponentType } from 'react';
  * WordPress dependencies
  */
 import { useContext } from '@wordpress/element';
+import { DropZone } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -35,28 +36,32 @@ export default function DataViewsLayout( { className }: DataViewsLayoutProps ) {
 		onClickItem,
 		isItemClickable,
 		renderItemLink,
+		onDrop,
 	} = useContext( DataViewsContext );
 
 	const ViewComponent = VIEW_LAYOUTS.find( ( v ) => v.type === view.type )
 		?.component as ComponentType< ViewBaseProps< any > >;
 
 	return (
-		<ViewComponent
-			className={ className }
-			actions={ actions }
-			data={ data }
-			fields={ fields }
-			getItemId={ getItemId }
-			getItemLevel={ getItemLevel }
-			isLoading={ isLoading }
-			onChangeView={ onChangeView }
-			onChangeSelection={ onChangeSelection }
-			selection={ selection }
-			setOpenedFilter={ setOpenedFilter }
-			onClickItem={ onClickItem }
-			renderItemLink={ renderItemLink }
-			isItemClickable={ isItemClickable }
-			view={ view }
-		/>
+		<div style={ { position: 'relative' } }>
+			<ViewComponent
+				className={ className }
+				actions={ actions }
+				data={ data }
+				fields={ fields }
+				getItemId={ getItemId }
+				getItemLevel={ getItemLevel }
+				isLoading={ isLoading }
+				onChangeView={ onChangeView }
+				onChangeSelection={ onChangeSelection }
+				selection={ selection }
+				setOpenedFilter={ setOpenedFilter }
+				onClickItem={ onClickItem }
+				renderItemLink={ renderItemLink }
+				isItemClickable={ isItemClickable }
+				view={ view }
+			/>
+			{ onDrop && <DropZone onDrop={ onDrop } /> }
+		</div>
 	);
 }
