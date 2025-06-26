@@ -47,34 +47,38 @@ export default function HeaderStagingSiteButton( {
 		dispatch( removeNotice( 'staging-site-remove-failure' ) );
 	}, [ dispatch, stagingSiteAddFailureNoticeId ] );
 
-	const { addStagingSite } = useAddStagingSiteMutation( siteId, {
-		onMutate: () => {
-			removeAllNotices();
-		},
-		onSuccess: ( response ) => {
-			queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
-			dispatch( fetchAutomatedTransferStatus( response.id ) );
-		},
-		onError: ( error ) => {
-			queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
-					code: error.code,
-				} )
-			);
-			dispatch(
-				errorNotice(
-					// translators: "reason" is why adding the staging site failed.
-					sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
-					{
-						id: stagingSiteAddFailureNoticeId,
-					}
-				)
-			);
-		},
-	} );
+	const { addStagingSite, isLoading: isLoadingAddStagingSite } = useAddStagingSiteMutation(
+		siteId,
+		{
+			onMutate: () => {
+				removeAllNotices();
+			},
+			onSuccess: ( response ) => {
+				queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
+				dispatch( fetchAutomatedTransferStatus( response.id ) );
+			},
+			onError: ( error ) => {
+				queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
+						code: error.code,
+					} )
+				);
+				dispatch(
+					errorNotice(
+						// translators: "reason" is why adding the staging site failed.
+						sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
+						{
+							id: stagingSiteAddFailureNoticeId,
+						}
+					)
+				);
+			},
+		}
+	);
 
-	const showAddStagingButton = stagingSites.length === 0 && isAtomic && ! isStagingSite;
+	const showAddStagingButton =
+		stagingSites.length === 0 && isAtomic && ! isStagingSite && ! isLoadingAddStagingSite;
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
