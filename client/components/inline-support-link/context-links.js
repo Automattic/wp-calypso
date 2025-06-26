@@ -129,6 +129,10 @@ const contextLinks = {
 		post_id: 99381,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'hosting-staging-site-sync': {
+		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
+		post_id: 239448,
+	},
 	'hosting-edge-cache': {
 		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/',
 		post_id: 99415,
