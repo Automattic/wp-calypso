@@ -6,7 +6,7 @@ import { sitesRoute } from '../app/router';
 import InlineSupportLink from '../components/inline-support-link';
 import Notice from '../components/notice';
 
-const RestoringAccountNotices = ( { onClose }: { onClose?: () => void } ) => {
+const RestoringSitesNotices = ( { onClose }: { onClose?: () => void } ) => {
 	return (
 		<Notice title={ __( 'Choose which sites you’d like to restore' ) } onClose={ onClose }>
 			{ createInterpolateElement(
@@ -22,36 +22,31 @@ const RestoringAccountNotices = ( { onClose }: { onClose?: () => void } ) => {
 	);
 };
 
-// We still need to implement MigrationPendingNotice and A8CForAgenciesNotice.
+// We still need to implement MigrationPendingNotice and A8CForAgenciesNotice,
+// and then display the first available notice.
 // See client/sites/components/sites-dashboard-banners-manager.tsx.
 export const SitesNotices = () => {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
-	const notices = [
-		isRestoringAccount && (
-			<RestoringAccountNotices
-				onClose={ () =>
-					navigate( {
-						search: {
-							...currentSearchParams,
-							restored: undefined,
-						},
-						replace: true,
-					} )
-				}
-			/>
-		),
-	].filter( ( value ) => !! value );
-
-	if ( ! notices.length ) {
-		return null;
+	if ( isRestoringAccount ) {
+		return (
+			<VStack className="sites-notices">
+				<RestoringSitesNotices
+					onClose={ () =>
+						navigate( {
+							search: {
+								...currentSearchParams,
+								restored: undefined,
+							},
+							replace: true,
+						} )
+					}
+				/>
+			</VStack>
+		);
 	}
 
-	return (
-		<VStack className="sites-notices" spacing={ 6 }>
-			{ notices }
-		</VStack>
-	);
+	return null;
 };
