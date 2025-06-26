@@ -5,7 +5,7 @@ import { Button, Modal, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { isAutomattianQuery } from '../app/queries/a8c';
+import { isAutomatticianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -116,11 +116,11 @@ export default function Sites() {
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
 		sitesQuery( getFetchSitesOptions( viewOptions ) )
 	);
-	const { data: isAutomattian } = useQuery( isAutomattianQuery() );
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	const defaultView = useMemo(
 		() =>
-			isAutomattian
+			isAutomattician
 				? {
 						...DEFAULT_VIEW,
 						filters: [
@@ -132,7 +132,7 @@ export default function Sites() {
 						],
 				  }
 				: DEFAULT_VIEW,
-		[ isAutomattian ]
+		[ isAutomattician ]
 	);
 
 	const view = useMemo(
@@ -149,8 +149,8 @@ export default function Sites() {
 	);
 
 	const fields = useMemo( () => {
-		return getFields( { isAutomattian, viewType: view.type } );
-	}, [ isAutomattian, view.type ] );
+		return getFields( { isAutomattician, viewType: view.type } );
+	}, [ isAutomattician, view.type ] );
 
 	const actions = useMemo( () => {
 		return getDefaultActions( router );
