@@ -113,15 +113,34 @@ function HovercardContent( props ) {
 										className="gravatar-hovercard__primary-blog-card-follow-button"
 										siteUrl={ primaryBlogUrl }
 										hasButtonStyle
-										followSource="gravatar-hovercard"
+										followSource="gravatar-hovercard__primary-blog-card"
 									/>
 								</div>
 							) }
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							{ recommendedBlogs?.length &&
-								recommendedBlogs.map( ( blog ) => <div key={ blog.ID }>{ blog.ID }</div> ) }
+							<ul className="gravatar-hovercard__recommended-blogs-list">
+								{ recommendedBlogs?.length &&
+									recommendedBlogs.slice( 0, 3 ).map( ( blog ) => (
+										<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
+											<ReaderAvatar
+												isCompact
+												siteIcon={ blog.meta?.data?.feed?.image }
+												className="gravatar-hovercard__recommended-blog-site-icon"
+											/>
+											<p className="gravatar-hovercard__recommended-blog-site-name">
+												{ blog.meta?.data?.feed?.name }
+											</p>
+											<ReaderFollowButton
+												className="gravatar-hovercard__recommended-blog-subscribe-button"
+												siteUrl={ blog.meta?.data?.feed?.feed_URL }
+												followSource="gravatar-hovercard__recommended-blog-item"
+												isButtonOnly
+											/>
+										</li>
+									) ) }
+							</ul>
 						</div>
 					</>
 				) }
