@@ -565,9 +565,10 @@ export const SiteSyncCard = ( {
 	const isSqlSyncOptionChecked = selectedItems.some( ( item ) => item.name === 'sqls' );
 
 	const isSyncButtonDisabled =
-		disabled ||
-		( selectedItems.length === 0 && selectedOption === actionForType ) ||
-		selectedOption === null;
+		( disabled ||
+			( selectedItems.length === 0 && selectedOption === actionForType ) ||
+			selectedOption === null ) &&
+		( selectedOption !== 'push' || browserCheckList.includeList.length === 0 );
 
 	const siteToSync: 'production' | 'staging' =
 		targetSite || ( selectedOption === actionForType ? 'production' : 'staging' );
