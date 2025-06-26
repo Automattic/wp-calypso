@@ -83,9 +83,7 @@ const siteStatus: SiteStatus = {
 	hasExpired: 30,
 	hasExpiringSoon: 40,
 	hasPaymentMethodExpired: 50,
-	sitelessPlan: 55, // i.e. - Akismet plans
 	noPaymentActionNeeded: 60,
-	hasOwnershipTransferred: 80,
 	hasCannotManage: 100,
 };
 
@@ -95,23 +93,18 @@ const purchaseStatus: PurchaseStatus = {
 	paymentMethodExpired: 20,
 	expiringSoon: 30,
 	noPaymentActionNeeded: 40,
-	ownershipTransferred: 80,
 	cannotManage: 100,
 };
 
 function getSitePurchasesStatus( site: SiteWithPurchases ) {
-	if ( ! site.isConnected && ! site.slug?.startsWith( 'siteless.akismet.com' ) ) {
+	if ( ! site.isConnected ) {
 		if ( site.slug === 'siteless.jetpack.com' ) {
 			return 'pendingActivation';
 		}
 		return 'disconnected';
 	}
 	const { purchases } = site;
-	if (
-		purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'ownershipTransferred' )
-	) {
-		return 'hasOwnershipTransferred';
-	}
+
 	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'cannotManage' ) ) {
 		return 'hasCannotManage';
 	}
@@ -126,19 +119,12 @@ function getSitePurchasesStatus( site: SiteWithPurchases ) {
 	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'expiringSoon' ) ) {
 		return 'hasExpiringSoon';
 	}
-	if ( ! site.isConnected && site.slug?.startsWith( 'siteless.akismet.com' ) ) {
-		return 'sitelessPlan'; // i.e. - Akismet plans
-	}
 
 	return 'noPaymentActionNeeded';
 }
 
-function getPurchaseStatus( purchase: PurchaseWithStatus, userId?: number ) {
+function getPurchaseStatus( purchase: PurchaseWithStatus ) {
 	const expiry = moment( purchase.expiryDate );
-
-	if ( userId && purchase.userId !== userId && purchase.purchaserId === userId ) {
-		return 'ownershipTransferred';
-	}
 
 	if ( purchase.isInAppPurchase || isPartnerPurchase( purchase ) ) {
 		return 'cannotManage';
@@ -169,8 +155,7 @@ function getPurchaseStatus( purchase: PurchaseWithStatus, userId?: number ) {
  */
 export function getPurchasesBySite(
 	purchases: Purchase[],
-	sites: SiteDetails[],
-	userId?: number
+	sites: SiteDetails[]
 ): SiteWithPurchases[] {
 	const purchasesBySite = purchases.reduce( ( result: SiteWithPurchases[], currentValue ) => {
 		const site = result.find( ( site ) => site.id === currentValue.siteId );
@@ -178,7 +163,7 @@ export function getPurchasesBySite(
 		if ( site ) {
 			site.purchases = site.purchases.concat( {
 				...currentValue,
-				currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus, userId ),
+				currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus ),
 			} ) as PurchaseWithStatus[];
 			site.isConnected = true;
 			return result;
@@ -198,7 +183,7 @@ export function getPurchasesBySite(
 			purchases: [
 				{
 					...currentValue,
-					currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus, userId ),
+					currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus ),
 				},
 			],
 			isConnected: siteObject ? true : false,

@@ -60,7 +60,6 @@ export interface Purchase {
 	productSlug: string;
 	productType: string;
 	purchaseRenewalQuantity: number | null;
-	purchaserId?: number;
 
 	/**
 	 * The refund amount for the purchase, not including bundled domains, as a
@@ -240,7 +239,6 @@ export interface RawPurchase {
 	product_type: string;
 	product_display_price: string;
 	price_integer: number;
-	purchaser_id?: number;
 	total_refund_amount: number | undefined;
 	total_refund_currency: string;
 	total_refund_integer: number;

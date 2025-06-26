@@ -15,7 +15,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setRoute } from 'calypso/state/route/actions';
-import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
@@ -209,12 +208,10 @@ function useHidePurchasesFieldsAtCertainWidths( {
 export function PurchasesDataViews( {
 	purchases,
 	sites,
-	transferredOwnershipPurchases = [],
 	getManagePurchaseUrlFor,
 }: {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
-	transferredOwnershipPurchases?: Purchases.Purchase[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 } ) {
 	const translate = useTranslate();
@@ -240,7 +237,6 @@ export function PurchasesDataViews( {
 
 	const purchasesDataFields = usePurchasesFieldDefinitions( {
 		sites: sitesWithPurchases,
-		transferredOwnershipPurchases,
 		getManagePurchaseUrlFor,
 	} );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
@@ -252,14 +248,7 @@ export function PurchasesDataViews( {
 			{
 				id: 'manage-purchase',
 				label: translate( 'Manage purchase', { textOnly: true } ),
-				isEligible: ( item: Purchases.Purchase ) => {
-					// Hide manage button for transferred ownership purchases
-					const hasTransferredOwnership = isTransferredOwnership(
-						item.id,
-						transferredOwnershipPurchases
-					);
-					return Boolean( item.domain && item.id ) && ! hasTransferredOwnership;
-				},
+				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
 				callback: ( items: Purchases.Purchase[] ) => {
 					const siteUrl = items[ 0 ].domain;
 					const subscriptionId = items[ 0 ].id;
@@ -277,7 +266,7 @@ export function PurchasesDataViews( {
 				},
 			},
 		],
-		[ translate, getManagePurchaseUrlFor, transferredOwnershipPurchases ]
+		[ translate, getManagePurchaseUrlFor ]
 	);
 
 	const getItemId = ( item: Purchases.Purchase ) => {

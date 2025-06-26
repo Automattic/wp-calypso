@@ -1,12 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { LocalizeProps, localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -26,7 +24,6 @@ import {
 	WithStoredPaymentMethodsProps,
 	withStoredPaymentMethods,
 } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -53,66 +50,28 @@ export interface PurchasesListProps {
 export interface PurchasesListConnectedProps {
 	hasLoadedUserPurchasesFromServer: boolean;
 	isFetchingUserPurchases: boolean;
-	purchases: Purchase[];
+	purchases: Purchase[] | null;
 	subscriptions: MembershipSubscription[];
 	sites: SiteDetails[];
 	nextAppointment: NextAppointment | null;
 	isUserBlocked: boolean;
 	availableSessions: number[];
 	siteId: number | null;
-	userId: number | undefined;
 }
 
-const PurchasesList: React.FC<
-	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps
-> = ( {
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
-	purchases,
-	subscriptions,
-	sites,
-	nextAppointment,
-	isUserBlocked,
-	availableSessions,
-	userId,
-	paymentMethodsState,
-} ) => {
-	const translate = useTranslate();
-	const {
-		data: transferredOwnershipPurchases = [],
-		isLoading,
-		isSuccess: hasLoadedTransferredOwnershipPurchases,
-	} = useGetJetpackTransferredLicensePurchases( { userId } );
-
-	const isDataLoading = useCallback( () => {
-		if (
-			( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) ||
-			( isLoading && ! hasLoadedTransferredOwnershipPurchases )
-		) {
+class PurchasesList extends Component<
+	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
+> {
+	isDataLoading() {
+		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
-		return ! sites.length && ! subscriptions.length;
-	}, [
-		hasLoadedUserPurchasesFromServer,
-		isFetchingUserPurchases,
-		isLoading,
-		hasLoadedTransferredOwnershipPurchases,
-		sites.length,
-		subscriptions.length,
-	] );
+		return ! this.props.sites.length && ! this.props.subscriptions.length;
+	}
 
-	const allPurchasesLoaded =
-		hasLoadedUserPurchasesFromServer && hasLoadedTransferredOwnershipPurchases;
-
-	const allPurchases = useMemo( () => {
-		if ( allPurchasesLoaded ) {
-			return [ ...purchases, ...transferredOwnershipPurchases ];
-		}
-		return [];
-	}, [ allPurchasesLoaded, purchases, transferredOwnershipPurchases ] );
-
-	const renderConciergeBanner = () => {
+	renderConciergeBanner() {
+		const { nextAppointment, availableSessions, isUserBlocked } = this.props;
 		return (
 			<PurchaseListConciergeBanner
 				nextAppointment={ nextAppointment ?? undefined }
@@ -120,130 +79,124 @@ const PurchasesList: React.FC<
 				isUserBlocked={ isUserBlocked }
 			/>
 		);
-	};
+	}
 
-	const renderMembershipSubscriptions = () => {
-		if ( ! subscriptions.length || ! allPurchasesLoaded ) {
+	renderMembershipSubscriptions() {
+		const { subscriptions } = this.props;
+
+		if ( ! subscriptions.length || this.isDataLoading() ) {
 			return null;
 		}
 
 		return getSubscriptionsBySite( subscriptions ).map( ( site ) => (
 			<MembershipSite site={ site } key={ site.id } />
 		) );
-	};
-
-	const commonEventProps = { context: 'me' };
-	let content;
-
-	if ( isDataLoading() ) {
-		content = <PurchasesSite isPlaceholder />;
 	}
 
-	if ( allPurchases && allPurchasesLoaded && allPurchases.length ) {
-		content = (
-			<>
-				{ renderConciergeBanner() }
+	render() {
+		const { purchases, sites, translate, subscriptions } = this.props;
+		const commonEventProps = { context: 'me' };
+		let content;
 
-				<PurchasesListHeader showSite />
+		if ( this.isDataLoading() ) {
+			content = <PurchasesSite isPlaceholder />;
+		}
 
-				{ getPurchasesBySite( allPurchases, sites, userId ).map( ( site ) => {
-					return (
+		if ( purchases && purchases.length ) {
+			content = (
+				<>
+					{ this.renderConciergeBanner() }
+
+					<PurchasesListHeader showSite />
+
+					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite
-							cards={ paymentMethodsState.paymentMethods }
-							transferredOwnershipPurchases={ transferredOwnershipPurchases }
+							cards={ this.props.paymentMethodsState.paymentMethods }
 						/>
-					);
-				} ) }
-			</>
-		);
-	}
-
-	if (
-		purchases &&
-		! purchases.length &&
-		! subscriptions.length &&
-		transferredOwnershipPurchases &&
-		! transferredOwnershipPurchases.length
-	) {
-		if ( ! sites.length ) {
-			return (
-				<Main wideLayout className="purchases-list">
-					<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-					<PurchasesNavigation section="activeUpgrades" />
-					<NoSitesMessage />
-				</Main>
+					) ) }
+				</>
 			);
 		}
-		content = (
-			<>
-				{ renderConciergeBanner() }
-				<CompactCard className="purchases-list__no-content">
-					<>
-						<TrackComponentView
-							eventName="calypso_no_purchases_upgrade_nudge_impression"
-							eventProperties={ commonEventProps }
-						/>
-						<PurchasesByOtherAdminsNotice sites={ sites } />
-						<EmptyContent
-							title={ translate( 'Looking to upgrade?' ) }
-							line={ translate(
-								'Our plans give your site the power to thrive. ' +
-									'Find the plan that works for you.'
-							) }
-							action={ translate( 'Upgrade now' ) }
-							actionURL="/plans"
-							illustration={ noSitesIllustration }
-							actionCallback={ () => {
-								recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
-							} }
-						/>
-					</>
-				</CompactCard>
-			</>
+
+		if ( purchases && ! purchases.length && ! subscriptions.length ) {
+			if ( ! sites.length ) {
+				return (
+					<Main wideLayout className="purchases-list">
+						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+						<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+						<PurchasesNavigation section="activeUpgrades" />
+						<NoSitesMessage />
+					</Main>
+				);
+			}
+			content = (
+				<>
+					{ this.renderConciergeBanner() }
+					<CompactCard className="purchases-list__no-content">
+						<>
+							<TrackComponentView
+								eventName="calypso_no_purchases_upgrade_nudge_impression"
+								eventProperties={ commonEventProps }
+							/>
+							<PurchasesByOtherAdminsNotice sites={ sites } />
+							<EmptyContent
+								title={ translate( 'Looking to upgrade?' ) }
+								line={ translate(
+									'Our plans give your site the power to thrive. ' +
+										'Find the plan that works for you.'
+								) }
+								action={ translate( 'Upgrade now' ) }
+								actionURL="/plans"
+								actionCallback={ () => {
+									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+								} }
+							/>
+						</>
+					</CompactCard>
+				</>
+			);
+		}
+
+		return (
+			<Main wideLayout className="purchases-list">
+				<QueryUserPurchases />
+				<QueryMembershipsSubscriptions />
+				<PageViewTracker path="/me/purchases" title="Purchases" />
+
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ titles.sectionTitle }
+					subtitle={ translate(
+						'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+							},
+						}
+					) }
+				/>
+				<PurchasesNavigation section="activeUpgrades" />
+				{ content }
+				{ this.renderMembershipSubscriptions() }
+				<QueryConciergeInitial />
+			</Main>
 		);
 	}
-
-	return (
-		<Main wideLayout className="purchases-list">
-			<QueryUserPurchases />
-			<QueryMembershipsSubscriptions />
-			<PageViewTracker path="/me/purchases" title="Purchases" />
-
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ titles.sectionTitle }
-				subtitle={ translate(
-					'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
-						},
-					}
-				) }
-			/>
-			<PurchasesNavigation section="activeUpgrades" />
-			{ content }
-			{ renderMembershipSubscriptions() }
-			<QueryConciergeInitial />
-		</Main>
-	);
-};
+}
 
 export default connect( ( state: AppState ) => ( {
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	isFetchingUserPurchases: isFetchingUserPurchases( state ),
-	purchases: getUserPurchases( state ) ?? [],
+	purchases: getUserPurchases( state ),
 	subscriptions: getAllSubscriptions( state ),
 	sites: getSites( state ).filter( isValueTruthy ),
 	nextAppointment: getConciergeNextAppointment( state ),
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-	userId: getCurrentUserId( state ) ?? undefined,
-} ) )( withStoredPaymentMethods( PurchasesList, { type: 'card', expired: true } ) );
+} ) )( withStoredPaymentMethods( localize( PurchasesList ), { type: 'card', expired: true } ) );

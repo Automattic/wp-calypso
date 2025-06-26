@@ -29,7 +29,6 @@ export default function PurchasesSite(
 				slug: string;
 				cards: StoredPaymentMethod[];
 				showSite?: boolean;
-				transferredOwnershipPurchases?: Purchase[];
 		  }
 ) {
 	const site = useSelector( ( state ) => getSite( state, props.siteId ?? 0 ) );
@@ -44,7 +43,6 @@ export default function PurchasesSite(
 		slug,
 		cards,
 		showSite = false,
-		transferredOwnershipPurchases = [],
 	} = props;
 
 	return (
@@ -75,7 +73,6 @@ export default function PurchasesSite(
 						site={ site }
 						showSite={ showSite }
 						isBackupMethodAvailable={ isBackupMethodAvailable }
-						transferredOwnershipPurchases={ transferredOwnershipPurchases }
 					/>
 				);
 			} ) }
