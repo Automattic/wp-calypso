@@ -73,11 +73,9 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="title-cell" role="columnheader">
 					{ translate( 'Subscribed site' ) }
 				</span>
-				{ ! isCompactLayout && (
-					<span className="date-cell" role="columnheader">
-						{ translate( 'Since' ) }
-					</span>
-				) }
+				<span className="date-cell" role="columnheader">
+					{ translate( 'Since' ) }
+				</span>
 				{ isLoggedIn && ! isCompactLayout && (
 					<span className="new-posts-cell" role="columnheader">
 						{ translate( 'New posts' ) }

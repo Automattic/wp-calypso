@@ -318,16 +318,14 @@ const SiteSubscriptionRow = ( {
 					</ExternalLink>
 				</span>
 			</span>
-			{ ! isCompactLayout && (
-				<span className="date-cell" role="cell">
-					<TimeSince
-						date={
-							( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
-							date_subscribed
-						}
-					/>
-				</span>
-			) }
+			<span className="date-cell" role="cell">
+				<TimeSince
+					date={
+						( date_subscribed.valueOf() ? date_subscribed : new Date( 0 ) ).toISOString?.() ??
+						date_subscribed
+					}
+				/>
+			</span>
 			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-posts-cell" role="cell">
 					<SelectedNewPostDeliveryMethods
