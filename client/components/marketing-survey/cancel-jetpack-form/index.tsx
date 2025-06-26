@@ -56,15 +56,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return steps.CANCEL_CONFIRM_STEP;
 		}
 
-		// In these cases, the subscription is getting removed.
-		// Show the benefits step first.
-		if (
-			flowType === CANCEL_FLOW_TYPE.REMOVE ||
-			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-		) {
-			return steps.FEATURES_LOST_STEP;
-		}
-
 		return steps.CANCELLATION_REASON_STEP;
 	}, [ flowType, purchase ] );
 	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
