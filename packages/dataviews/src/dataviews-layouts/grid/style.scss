@@ -117,7 +117,7 @@
 }
 
 .dataviews-view-grid.dataviews-view-grid {
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 	/**
 	 * Breakpoints were adjusted from media queries breakpoints to account for
 	 * the sidebar width. This was done to match the existing styles we had.
