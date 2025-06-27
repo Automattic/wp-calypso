@@ -13,6 +13,13 @@ interface HelpCenterInlineButtonProps {
 	className?: string;
 }
 
+/**
+ * Toggles the Help Center. If no flowName is supplied it opens the default
+ * route (/odie).
+ *
+ * If the flowName is supplied and the flow is a premium flow, it will directly open
+ * a chat with Happiness Engineers.
+ */
 const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	flowName,
 	children,
