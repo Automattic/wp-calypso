@@ -19,6 +19,7 @@ import PlansGridContextProvider, { usePlansGridContext } from '../../grid-contex
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import { useVisibleGridPlans } from '../../hooks/use-visible-grid-plans';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import PlanTypeSelector from '../plan-type-selector';
@@ -30,7 +31,6 @@ import HeaderPrice from '../shared/header-price';
 import HeaderPriceContextProvider from '../shared/header-price/header-price-context';
 import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
-import { useVisibleGridPlans } from './use-visible-grid-plans';
 import type {
 	GridPlan,
 	ComparisonGridExternalProps,
@@ -987,7 +987,7 @@ const ComparisonGrid = ( {
 	const { gridPlans, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
-	const { visibleGridPlans, onPlanChange } = useVisibleGridPlans( {
+	const { visibleGridPlans, setVisibleGridPlans } = useVisibleGridPlans( {
 		gridSize,
 		currentSitePlanSlug,
 		siteId,
@@ -1026,6 +1026,20 @@ const ComparisonGrid = ( {
 			footnotesByFeature,
 		};
 	}, [ featureGroupMap ] );
+
+	const onPlanChange = useCallback(
+		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
+			const newPlanSlug = event.currentTarget.value;
+			const newPlan = gridPlans.find( ( plan ) => plan.planSlug === newPlanSlug );
+
+			if ( newPlan ) {
+				setVisibleGridPlans( ( previousGridPlans ) =>
+					previousGridPlans.map( ( plan ) => ( plan.planSlug === currentPlan ? newPlan : plan ) )
+				);
+			}
+		},
+		[ gridPlans, setVisibleGridPlans ]
+	);
 
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
