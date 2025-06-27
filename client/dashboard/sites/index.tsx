@@ -115,10 +115,10 @@ const getDefaultActions = ( router: AnyRouter ) => {
 };
 
 const getFetchSitesOptions = (
-	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {},
+	view: Partial< ViewTable | ViewGrid > | undefined = {}
 	isRestoringAccount: boolean = false
 ): FetchSitesOptions => {
-	const filters = viewOptions.filters ?? [];
+	const filters = view.filters ?? [];
 
 	// Include A8C sites unless explicitly excluded from the filter.
 	const shouldIncludeA8COwned = ! filters.some(
@@ -133,7 +133,7 @@ const getFetchSitesOptions = (
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility:
-			viewOptions.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+			view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 	};
 };
@@ -144,9 +144,6 @@ export default function Sites() {
 	const currentSearchParams = sitesRoute.useSearch();
 	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = currentSearchParams.view;
 	const isRestoringAccount = !! currentSearchParams.restored;
-	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( viewOptions, isRestoringAccount ) )
-	);
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	const defaultView = useMemo(
@@ -181,6 +178,10 @@ export default function Sites() {
 		[ defaultView, viewOptions ]
 	);
 
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) )
+	);
+
 	const fields = useMemo( () => {
 		return getFields( { isAutomattician, viewType: view.type } );
 	}, [ isAutomattician, view.type ] );
@@ -189,9 +190,8 @@ export default function Sites() {
 		return getDefaultActions( router );
 	}, [ router ] );
 
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
-
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	return (
 		<>
