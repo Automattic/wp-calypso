@@ -55,12 +55,18 @@ const BuildReport = () => {
 	} );
 
 	const sendReportEmailMutation = useSendReportEmailMutation( {
-		onSuccess: () => {
+		onSuccess: ( _data, options ) => {
+			const isPreview = options?.preview;
 			dispatch(
-				successNotice( translate( 'Report sent successfully!' ), {
-					duration: 5000,
-					id: 'send-report-success',
-				} )
+				successNotice(
+					isPreview
+						? translate( 'Report preview sent successfully!' )
+						: translate( 'Report sent successfully!' ),
+					{
+						duration: 5000,
+						id: isPreview ? 'send-report-preview-success' : 'send-report-success',
+					}
+				)
 			);
 		},
 		onError: ( error ) => {
