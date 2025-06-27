@@ -114,7 +114,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const availableSteps = [];
 
 		// If the plan is already expired or is a temporary Jetpack purchase (license),
-		// we only need one "confirm" step for the user to click to confirm.
+		// we only need one "confirm" step for the survey is the removal confirmation
 		// A product that is not in use does not need to collect the survey or show benefits
 		if ( isExpired( purchase ) || isJetpackTemporarySitePurchase( purchase ) ) {
 			return [ steps.CANCEL_CONFIRM_STEP ];
@@ -128,9 +128,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			availableSteps.push( steps.FEATURES_LOST_STEP );
 		}
 
+		// Always include the survey step if cancellation is completed, or if it's a normal cancellation flow
 		if (
-			// A purchase that is currently set to auto-renew ( has not been cancelled yet ).
-			// If a purchase that meets these criteria is being removed, present the survey step.
+			props.cancellationCompleted ||
 			CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
 			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
 		) {
