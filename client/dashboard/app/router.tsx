@@ -38,7 +38,6 @@ import { siteSshAccessStatusQuery } from './queries/site-ssh';
 import { siteStaticFile404SettingQuery } from './queries/site-static-file-404';
 import { siteEngagementStatsQuery } from './queries/site-stats';
 import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
-import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
@@ -73,12 +72,7 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( sitesQuery() ),
-			queryClient.ensureQueryData( isAutomatticianQuery() ),
-		] );
-	},
+	loader: () => queryClient.ensureQueryData( isAutomatticianQuery() ),
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
