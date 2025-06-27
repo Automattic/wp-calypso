@@ -88,7 +88,7 @@ export default function BuildReportActions( {
 						isBusy={ isCreatingReport }
 						disabled={ isLoadingState }
 					>
-						{ isCreatingReport ? translate( 'Preparing report…' ) : translate( 'Prepare Report' ) }
+						{ isCreatingReport ? translate( 'Preparing report…' ) : translate( 'Prepare report' ) }
 					</Button>
 				</div>
 			) }
