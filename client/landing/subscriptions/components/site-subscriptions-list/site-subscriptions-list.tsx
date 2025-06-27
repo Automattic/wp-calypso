@@ -35,10 +35,10 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 
 	// Fetch recommended blogs data once for all subscription rows
 	useEffect( () => {
-		if ( currentUserName ) {
+		if ( currentUserName && isRecommendedBlogsEnabled ) {
 			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
 		}
-	}, [ currentUserName, dispatch ] );
+	}, [ currentUserName, dispatch, isRecommendedBlogsEnabled ] );
 
 	if ( error ) {
 		return (
