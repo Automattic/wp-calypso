@@ -1,7 +1,8 @@
-import { Onboard, OnboardActions, UserSelect } from '@automattic/data-stores';
+import { Onboard, OnboardActions, UserSelect, Visibility } from '@automattic/data-stores';
 import { ONBOARDING_AFF_PM_FLOW } from '@automattic/onboarding';
 import { dispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteFlowName,
@@ -38,6 +39,8 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 			[]
 		);
 
+		const { setSignupDomainOrigin } = dispatch( ONBOARD_STORE ) as OnboardActions;
+
 		/**
 		 * Handle step submissions for the AFF PM flow
 		 */
@@ -45,7 +48,30 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
-				case 'plans':
+				case 'plans': {
+					// Set domain origin as not set since this flow skips domain selection
+					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.NOT_SET );
+
+					// Create minimal siteParams for post-checkout site creation
+					const siteParams = {
+						blog_name: '', // Will be auto-generated from username if empty
+						blog_title: translate( 'My Site' ), // Default site title
+						public: Visibility.PublicNotIndexed, // Coming soon by default
+						options: {
+							site_creation_flow: flowName, // Track which flow created the site
+							wpcom_public_coming_soon: 1, // Launch as coming soon
+						},
+						find_available_url: true, // Auto-find available URL since no domain was selected
+						validate: false,
+					};
+
+					// Save siteParams to localStorage for checkout to use
+					try {
+						window.localStorage.setItem( 'siteParams', JSON.stringify( siteParams ) );
+					} catch ( error ) {
+						// Silently fail if localStorage is not available
+					}
+
 					// Redirect directly to siteless checkout with selected plan
 					if ( providedDependencies?.cartItems?.length ) {
 						// Set completion tracking for post-checkout site creation
@@ -74,6 +100,7 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 
 					// Fallback to error if no plan selected
 					return navigate( 'error' );
+				}
 
 				default:
 					// This shouldn't happen in this minimal flow

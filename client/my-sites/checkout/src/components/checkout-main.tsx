@@ -151,12 +151,12 @@ export default function CheckoutMain( {
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
 		sitelessCheckoutType === 'marketplace' ||
-		sitelessCheckoutType === 'a4a' ||
-		sitelessCheckoutType === 'affiliate-pm';
+		sitelessCheckoutType === 'a4a';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
+
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
