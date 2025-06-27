@@ -443,7 +443,7 @@ export function addRecommendedBlogsSite(
 ): ReaderListAction {
 	return {
 		type: READER_LIST_ITEM_ADD_SITE,
-		listId: 0, // Will be resolved by backend
+		listId: 0, // API uses owner/slug path, but Redux reducer expects this field
 		listOwner,
 		listSlug: 'recommended-blogs',
 		siteId: blogId,
@@ -472,7 +472,7 @@ export function removeRecommendedBlogsSite(
 ): ReaderListAction {
 	return {
 		type: READER_LIST_ITEM_DELETE_SITE,
-		listId: 0, // Will be resolved by backend
+		listId: 0, // API uses owner/slug path, but Redux reducer expects this field
 		listOwner,
 		listSlug: 'recommended-blogs',
 		siteId: blogId,
