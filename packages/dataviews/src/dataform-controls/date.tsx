@@ -282,10 +282,14 @@ function CalendarDateRangeControl( {
 	);
 
 	const selectedRange = useMemo( () => {
-		const [ from, to ] = value || [ undefined, undefined ];
+		if ( ! value ) {
+			return { from: undefined, to: undefined };
+		}
+
+		const [ from, to ] = value;
 		return {
-			from: from ? parseDate( from ) || undefined : undefined,
-			to: to ? parseDate( to ) || undefined : undefined,
+			from: parseDate( from ) || undefined,
+			to: parseDate( to ) || undefined,
 		};
 	}, [ value ] );
 
@@ -293,7 +297,10 @@ function CalendarDateRangeControl( {
 		return selectedRange.from || new Date();
 	} );
 
-	const normalizeDate = useCallback( ( date: Date | string ) => {
+	const normalizeDate = useCallback( ( date: Date | string | undefined ) => {
+		if ( ! date ) {
+			return '';
+		}
 		return typeof date === 'string' ? date : format( date, 'yyyy-MM-dd' );
 	}, [] );
 
@@ -302,7 +309,7 @@ function CalendarDateRangeControl( {
 			fromDate: Date | string | undefined,
 			toDate: Date | string | undefined
 		) => {
-			if ( fromDate && toDate ) {
+			if ( fromDate || toDate ) {
 				onChange( {
 					[ id ]: [
 						normalizeDate( fromDate ),
@@ -341,10 +348,10 @@ function CalendarDateRangeControl( {
 
 	const handleManualDateChange = useCallback(
 		( fromOrTo: 'from' | 'to', newValue: string | undefined ) => {
-			const currentRange = Array.isArray( value )
-				? value
-				: [ undefined, undefined ];
-			const [ currentFrom, currentTo ] = currentRange;
+			const [ currentFrom, currentTo ] = value || [
+				undefined,
+				undefined,
+			];
 
 			if ( ! newValue ) {
 				updateDateRange(
