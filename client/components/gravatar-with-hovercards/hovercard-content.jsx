@@ -1,19 +1,16 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { shuffle } from 'lodash';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector, useDispatch } from 'calypso/state';
-import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
-import { getUserRecommendedBlogs } from 'calypso/state/reader/lists/selectors';
 import { requestSite } from 'calypso/state/reader/sites/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
+import RecommendedBlogs from './recommended-blogs';
 
 import './styles.scss';
 
@@ -36,11 +33,6 @@ function HovercardContent( props ) {
 	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) );
 	const primaryBlogUrl = site?.URL;
 
-	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
-
-	const shouldShowRecommendedBlogs =
-		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
-
 	useEffect( () => {
 		if ( ! userID ) {
 			// This isnt a wpcom user, skip requesting data.
@@ -53,17 +45,12 @@ function HovercardContent( props ) {
 		if ( ! readerUserData ) {
 			dispatch( requestUser( userID, true ) );
 		}
-		if ( ! recommendedBlogs && userLogin ) {
-			dispatch( requestUserRecommendedBlogs( userLogin ) );
-		}
-	}, [ userID, dispatch, site, primaryBlogId, readerUserData, userLogin, recommendedBlogs ] );
+	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
 
 	const clickProfileLink = ( e ) => {
 		e.preventDefault();
 		page( profileUrl );
 	};
-
-	const recommendedBlogsLink = `/reader/list/${ userLogin }/recommended-blogs`;
 
 	return (
 		<AutoDirection>
@@ -147,56 +134,7 @@ function HovercardContent( props ) {
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							{ shouldShowRecommendedBlogs && (
-								<div className="gravatar-hovercard__recommended-blogs">
-									<div className="gravatar-hovercard__recommended-blogs-header">
-										<h5 className="gravatar-hovercard__recommended-blogs-title">
-											{ translate( 'Recommended blogs' ) }
-										</h5>
-										<a
-											className="gravatar-hovercard__recommended-blogs-view-all"
-											href={ recommendedBlogsLink }
-											onClick={ ( e ) => {
-												e.preventDefault();
-												page( recommendedBlogsLink );
-											} }
-										>
-											{ translate( 'View all' ) }
-										</a>
-									</div>
-									<ul className="gravatar-hovercard__recommended-blogs-list">
-										{ shuffle( recommendedBlogs )
-											.slice( 0, 3 )
-											.map( ( blog ) => {
-												const { image, name, feed_URL: feedUrl } = blog.meta?.data?.feed || {};
-
-												// The default feed image for sites with no icon is
-												// awful for this case, treat it as no image to fallback
-												// to the globe icon.
-												const siteIcon = image?.includes( '/i/buttonw-com.png' ) ? null : image;
-
-												return (
-													<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
-														<ReaderAvatar
-															isCompact
-															siteIcon={ siteIcon }
-															className="gravatar-hovercard__recommended-blog-site-icon"
-														/>
-														<p className="gravatar-hovercard__recommended-blog-site-name">
-															{ name || feedUrl }
-														</p>
-														<ReaderFollowButton
-															className="gravatar-hovercard__recommended-blog-subscribe-button"
-															siteUrl={ feedUrl }
-															followSource="gravatar-hovercard__recommended-blog-item"
-															isButtonOnly
-														/>
-													</li>
-												);
-											} ) }
-									</ul>
-								</div>
-							) }
+							<RecommendedBlogs userLogin={ userLogin } />
 						</div>
 					</>
 				) }
