@@ -30,7 +30,7 @@ const DEFAULT_VIEW = {
 	perPage: DEFAULT_PER_PAGE,
 	sort: { field: 'name', direction: 'asc' as SortDirection },
 	search: '',
-} as View;
+} as Partial< View >;
 
 function getDefaultView( {
 	user,
@@ -41,7 +41,13 @@ function getDefaultView( {
 	isAutomattician?: boolean;
 	isRestoringAccount?: boolean;
 } ): View {
-	const defaultView = { ...DEFAULT_VIEW };
+	const type = isRestoringAccount || user.site_count > DEFAULT_PER_PAGE ? 'table' : 'grid';
+
+	const defaultView = {
+		type,
+		...DEFAULT_VIEW,
+		...DEFAULT_LAYOUTS[ type ],
+	} as View;
 
 	if ( isAutomattician ) {
 		defaultView.filters = [
@@ -53,16 +59,7 @@ function getDefaultView( {
 		];
 	}
 
-	if ( isRestoringAccount || user.site_count > DEFAULT_PER_PAGE ) {
-		defaultView.type = 'table' as const;
-	} else {
-		defaultView.type = 'grid' as const;
-	}
-
-	return {
-		...defaultView,
-		...DEFAULT_LAYOUTS[ defaultView.type ],
-	} as View;
+	return defaultView;
 }
 
 export function getView( {
@@ -81,18 +78,13 @@ export function getView( {
 } {
 	const defaultView = getDefaultView( { user, isAutomattician, isRestoringAccount } );
 
-	let view = { ...defaultView };
-	if ( viewOptions ) {
-		if ( viewOptions.type ) {
-			view = { ...view, ...DEFAULT_LAYOUTS[ viewOptions.type ] } as View;
-		}
-		view = {
-			...view,
-			...Object.fromEntries(
-				Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
-			),
-		};
-	}
+	const view = {
+		...defaultView,
+		...DEFAULT_LAYOUTS[ viewOptions?.type ?? defaultView.type ],
+		...Object.fromEntries(
+			Object.entries( viewOptions ?? {} ).filter( ( [ , v ] ) => v !== undefined )
+		),
+	} as View;
 
 	return { defaultView, view };
 }
