@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -127,7 +128,9 @@ function HovercardContent( props ) {
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							<RecommendedBlogs userLogin={ userLogin } />
+							{ isEnabled( 'reader/recommended-blogs-list' ) && (
+								<RecommendedBlogs userLogin={ userLogin } />
+							) }
 						</div>
 					</>
 				) }
