@@ -56,8 +56,22 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return steps.CANCEL_CONFIRM_STEP;
 		}
 
+		// If cancellation is already completed, skip benefits step and go directly to survey
+		if ( props.cancellationCompleted ) {
+			return steps.CANCELLATION_REASON_STEP;
+		}
+
+		// In these cases, the subscription is getting removed.
+		// Show the benefits step first.
+		if (
+			flowType === CANCEL_FLOW_TYPE.REMOVE ||
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+		) {
+			return steps.FEATURES_LOST_STEP;
+		}
+
 		return steps.CANCELLATION_REASON_STEP;
-	}, [ flowType, purchase ] );
+	}, [ flowType, purchase, props.cancellationCompleted ] );
 	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
@@ -106,9 +120,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return [ steps.CANCEL_CONFIRM_STEP ];
 		}
 
+		// Don't show benefits step if cancellation is already completed
 		if (
-			CANCEL_FLOW_TYPE.REMOVE === flowType ||
-			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
+			! props.cancellationCompleted &&
+			( CANCEL_FLOW_TYPE.REMOVE === flowType || CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType )
 		) {
 			availableSteps.push( steps.FEATURES_LOST_STEP );
 		}
@@ -122,7 +137,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			availableSteps.push( steps.CANCELLATION_REASON_STEP );
 		}
 		return availableSteps;
-	}, [ flowType, purchase ] );
+	}, [ flowType, purchase, props.cancellationCompleted ] );
 
 	const { firstStep, lastStep } = useMemo( () => {
 		return {
