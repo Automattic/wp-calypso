@@ -51,13 +51,15 @@ export function useVisibleGridPlans( {
 				: null;
 
 			// Check if previous state is stale
-			const isPrevStale = previousGridPlans.some( ( plan ) => ! gridPlansIndex[ plan.planSlug ] );
+			const isPreviousGridPlansStale = previousGridPlans.some(
+				( plan ) => ! gridPlansIndex[ plan.planSlug ]
+			);
 
 			let nextGridPlans: GridPlan[] = previousGridPlans;
 
 			if ( previousGridPlans.length !== visibleLength ) {
 				nextGridPlans = gridPlans.slice( 0, visibleLength );
-			} else if ( isPrevStale ) {
+			} else if ( isPreviousGridPlansStale ) {
 				// Map existing plans to their new term equivalents, preserving order
 				nextGridPlans = previousGridPlans.map( ( plan ) => {
 					const gridPlan = gridPlans.find(
