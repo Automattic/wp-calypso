@@ -108,7 +108,8 @@ const getFetchSitesOptions = (
 	return {
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: viewOptions.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		site_visibility:
+			viewOptions.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 	};
 };
