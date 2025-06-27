@@ -102,7 +102,6 @@
 		"site-indicator": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
-		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"themes/premium": true,

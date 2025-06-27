@@ -1,19 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from './const';
 
-export default function ( supportsArchiveStats = false, isSiteJetpackNotAtomic = false ) {
-	const isArchiveBreakdownFlag = isEnabled( 'stats/archive-breakdown' );
-	const isArchiveBreakdownEnabled = isArchiveBreakdownFlag && supportsArchiveStats;
-
+export default function ( isSiteJetpackNotAtomic = false ) {
 	const statsStrings = {};
 
 	statsStrings.posts = {
-		title: isArchiveBreakdownEnabled
-			? translate( 'Most viewed', { context: 'Stats: title of module', textOnly: true } )
-			: translate( 'Posts & pages', { context: 'Stats: title of module', textOnly: true } ),
+		title: translate( 'Most viewed', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
 		empty: translate(

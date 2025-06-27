@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -9,7 +8,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -48,12 +46,6 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const { supportsArchiveStats } = useSelector( ( state: object ) =>
-		getEnvStatsFeatureSupportChecks( state, siteId )
-	);
-
-	const isArchiveBreakdownEnabled: boolean =
-		config.isEnabled( 'stats/archive-breakdown' ) && supportsArchiveStats;
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -62,10 +54,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
 		: 'stats-top-posts-and-pages-analyze-content-performance';
 
-	const query = {
-		...queryFromProps,
-		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
-	};
+	const query = { ...queryFromProps, skip_archives: '1' };
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
@@ -76,9 +65,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const isRequestingArchivesData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
 	);
-	const isRequestingData = isArchiveBreakdownEnabled
-		? isRequestingTopPostsData || isRequestingArchivesData
-		: isRequestingTopPostsData;
+	const isRequestingData = isRequestingTopPostsData || isRequestingArchivesData;
 
 	const [ localStatType, setLocalStatType ] = useState< StatType | null >( null );
 	const onStatTypeChange = ( option: StatTypeOptionType ) => {
@@ -89,8 +76,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		setLocalStatType( option.value );
 	};
 
-	const statType =
-		localStatType || getValidQueryViewType( query.viewType, supportsArchiveStats ) || mainStatType;
+	const statType = localStatType || getValidQueryViewType( query.viewType ) || mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
@@ -108,12 +94,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 			label: item.tabLabel,
 			mainItemLabel: item.mainItemLabel,
 			analyticsId: item.analyticsId,
-			// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
-			disabled:
-				isArchiveBreakdownEnabled &&
-				key === subStatType &&
-				! isRequestingArchivesData &&
-				! archivesData.length,
+			disabled: key === subStatType && ! isRequestingArchivesData && ! archivesData.length,
 		};
 	} );
 
@@ -144,12 +125,9 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
 
-			{ ! shouldGateStatsModule &&
-				siteId &&
-				isArchiveBreakdownEnabled &&
-				shouldQuerySubStatType && (
-					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
-				) }
+			{ ! shouldGateStatsModule && siteId && shouldQuerySubStatType && (
+				<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+			) }
 
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
@@ -165,33 +143,19 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					path="posts"
 					titleNodes={
 						<StatsInfoArea>
-							{ isArchiveBreakdownEnabled
-								? translate(
-										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
-										{
-											comment: '{{link}} links to support documentation.',
-											components: {
-												link: (
-													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
-												),
-											},
-											context:
-												'Stats: Link in a popover for the Posts & Pages when the module has data',
-										}
-								  )
-								: translate(
-										'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
-										{
-											comment: '{{link}} links to support documentation.',
-											components: {
-												link: (
-													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
-												),
-											},
-											context:
-												'Stats: Link in a popover for the Posts & Pages when the module has data',
-										}
-								  ) }
+							{ translate(
+								'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: (
+											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+										),
+									},
+									context:
+										'Stats: Link in a popover for the Posts & Pages when the module has data',
+								}
+							) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }
@@ -206,7 +170,6 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					skipQuery
 					isRealTime={ isRealTime }
 					toggleControl={
-						isArchiveBreakdownEnabled &&
 						! summary && (
 							<SimplifiedSegmentedControl
 								options={ options }
@@ -215,10 +178,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 							/>
 						)
 					}
-					mainItemLabel={
-						isArchiveBreakdownEnabled &&
-						options.find( ( option ) => option.value === statType )?.mainItemLabel
-					}
+					mainItemLabel={ options.find( ( option ) => option.value === statType )?.mainItemLabel }
 				/>
 			) }
 			{ presentEmptyUI && (

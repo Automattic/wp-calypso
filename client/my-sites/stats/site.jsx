@@ -170,7 +170,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		supportsDevicesStats: supportsDevicesStatsFeature,
 		isOldJetpack,
 		supportUserFeedback,
-		supportsArchiveStats,
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
 	const { period } = props.period;
@@ -180,7 +179,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 	const queryDate = date.format( DATE_FORMAT );
 
-	const moduleStrings = statsStrings( supportsArchiveStats );
+	const moduleStrings = statsStrings();
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
