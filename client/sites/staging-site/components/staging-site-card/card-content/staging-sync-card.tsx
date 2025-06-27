@@ -140,7 +140,7 @@ interface SyncCardProps {
 	type: 'production' | 'staging';
 	onPull: ( ( items?: string[] ) => void ) | ( () => void );
 	onPush:
-		| ( ( items?: string[] | { types: string; includePaths: string } ) => void )
+		| ( ( items?: string[] | { types: string; include_paths: string } ) => void )
 		| ( () => void );
 	disabled: boolean;
 	productionSiteId: number;
@@ -544,9 +544,9 @@ export const SiteSyncCard = ( {
 		}
 		if ( type === 'staging' ) {
 			// TODO: Get the browser node from the state and use it to get the rewindId
-			const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 			// onPush?.( transformSelectedItems( selectedItems ) );
-			onPush?.( { types: 'paths', includePaths } );
+			onPush?.( { types: 'paths', include_paths } );
 		}
 	}, [ browserCheckList.includeList, dispatch, onPush, resetSyncStatus, type ] );
 
