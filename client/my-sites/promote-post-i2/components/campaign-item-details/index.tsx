@@ -1428,7 +1428,7 @@ export default function CampaignItemDetails( props: Props ) {
 												<div className="campaign-item-details__weekly-label"></div>
 												<div className="campaign-item-details__weekly-duration">
 													<span className="campaign-item-details__label">
-														{ translate( 'Duration' ) }
+														{ translate( 'Payment Date' ) }
 													</span>
 												</div>
 												<div className="campaign-item-details__weekly-amount">
@@ -1457,17 +1457,7 @@ export default function CampaignItemDetails( props: Props ) {
 													// Format the date for display
 													const formatDuration = ( createdAt: string ) => {
 														const originalDate = moment( createdAt );
-
-														// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
-														let periodStart = originalDate.clone().subtract( 7, 'days' );
-
-														if ( periodStart.isBefore( moment( start_date ) ) ) {
-															periodStart = moment( start_date );
-														}
-
-														return `${ periodStart.format( 'MMM, D' ) } - ${ originalDate.format(
-															'MMM, D'
-														) }`;
+														return `Paid on ${ originalDate.format( 'LL' ) }`;
 													};
 
 													const durationFormatted = formatDuration( createdAt );
@@ -1480,7 +1470,7 @@ export default function CampaignItemDetails( props: Props ) {
 													return (
 														<div key={ index } className="campaign-item-details__weekly-orders-row">
 															<div className="campaign-item-details__weekly-label">
-																{ is_evergreen ? __( 'Weekly spent' ) : __( 'Weekly total' ) }
+																{ is_evergreen ? __( 'Weekly spent' ) : __( 'Weekly payment' ) }
 															</div>
 															<div className="campaign-item-details__weekly-duration">
 																{ durationFormatted }
