@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector, useDispatch } from 'calypso/state';
-import { requestSite } from 'calypso/state/reader/sites/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
@@ -34,18 +34,10 @@ function HovercardContent( props ) {
 	const primaryBlogUrl = site?.URL;
 
 	useEffect( () => {
-		if ( ! userID ) {
-			// This isnt a wpcom user, skip requesting data.
-			return;
-		}
-
-		if ( ! site ) {
-			dispatch( requestSite( primaryBlogId ) );
-		}
-		if ( ! readerUserData ) {
+		if ( ! readerUserData && userID ) {
 			dispatch( requestUser( userID, true ) );
 		}
-	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
+	}, [ userID, dispatch, readerUserData ] );
 
 	const clickProfileLink = ( e ) => {
 		e.preventDefault();
@@ -94,6 +86,7 @@ function HovercardContent( props ) {
 				{ userID && (
 					<>
 						<div className="gravatar-hovercard__body">
+							<QueryReaderSite siteId={ primaryBlogId } />
 							{ primaryBlogUrl && (
 								<div className="gravatar-hovercard__primary-blog-card">
 									<div className="gravatar-hovercard__primary-blog-card-header">
