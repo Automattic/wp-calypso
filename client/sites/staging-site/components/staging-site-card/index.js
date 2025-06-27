@@ -153,9 +153,6 @@ export const StagingSiteCard = ( {
 		( Boolean( stagingSite.user_has_permission ) && ! lock );
 
 	const showAddStagingSiteCard = useMemo( () => {
-		// Don't show the "Add staging site" card if the hosting/staging-sites-redesign feature flag is enabled
-		// since the functionality has been moved to the hosting dashboard header
-
 		return hasCompletedInitialLoading && ! stagingSite.id && isStagingSiteTransferComplete === true;
 	}, [ hasCompletedInitialLoading, isStagingSiteTransferComplete, stagingSite ] );
 
