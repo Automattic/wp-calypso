@@ -450,6 +450,7 @@ class Login extends Component {
 							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
 							from={ get( currentQuery, 'from' ) }
+							isJetpack={ isJetpack }
 						/>
 					</div>
 				</Fragment>

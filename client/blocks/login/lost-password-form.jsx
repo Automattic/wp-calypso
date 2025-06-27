@@ -15,6 +15,7 @@ const LostPasswordForm = ( {
 	from,
 	isWooJPC,
 	isWoo,
+	isJetpack,
 } ) => {
 	const translate = useTranslate();
 	const [ userLogin, setUserLogin ] = useState( '' );
@@ -115,8 +116,8 @@ const LostPasswordForm = ( {
 					redirectTo: redirectToAfterLoginUrl,
 					emailAddress: userLogin,
 					lostpasswordFlow: true,
-					action: isWooJPC ? 'jetpack' : null,
 					from,
+					isJetpack: isWooJPC || isJetpack,
 				} )
 			);
 		} catch ( _httpError ) {

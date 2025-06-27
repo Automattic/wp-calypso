@@ -282,7 +282,10 @@ export class Login extends Component {
 						login( {
 							redirectTo: this.props.redirectTo,
 							locale: this.props.locale,
-							action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
+							action:
+								this.props.isWooJPC || this.props.isJetpack
+									? 'jetpack/lostpassword'
+									: 'lostpassword',
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 							from: get( this.props.currentQuery, 'from' ),
 						} )
