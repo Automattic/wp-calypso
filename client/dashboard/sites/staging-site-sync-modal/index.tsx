@@ -1,9 +1,14 @@
-import { Button, ExternalLink, Modal, __experimentalText as Text } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink,
+	Modal,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
-
-import './style.scss';
 
 interface SyncModalProps {
 	isOpen: boolean;
@@ -76,19 +81,15 @@ export default function SyncModal( {
 
 	return (
 		<>
-			<Modal title={ modalTitle } onRequestClose={ onClose } className="staging-site-sync-modal">
-				<div className="staging-site-sync-modal__content">
-					<div className="staging-site-sync-modal__description">
+			<Modal title={ modalTitle } onRequestClose={ onClose } style={ { maxWidth: '668px' } }>
+				<VStack spacing={ 6 }>
+					<VStack spacing={ 7 }>
 						<Text>
 							{ createInterpolateElement( copy[ environment ].description, {
 								a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
 							} ) }
 						</Text>
-					</div>
-					<div className="staging-site-sync-modal__sync-selection">
-						<Text>{ copy.syncSelectionHeading }</Text>
-					</div>
-					<div className="staging-site-sync-modal__read-more">
+						<Text weight={ 500 }>{ copy.syncSelectionHeading }</Text>
 						<Text>
 							{ createInterpolateElement( copy.learnMore, {
 								a: (
@@ -99,14 +100,14 @@ export default function SyncModal( {
 								),
 							} ) }
 						</Text>
-					</div>
-				</div>
-				<div className="staging-site-sync-modal__footer">
-					<Button variant="tertiary" onClick={ onClose }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button variant="primary">{ copy.submit }</Button>
-				</div>
+					</VStack>
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						<Button variant="tertiary" onClick={ onClose }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button variant="primary">{ copy.submit }</Button>
+					</HStack>
+				</VStack>
 			</Modal>
 		</>
 	);
