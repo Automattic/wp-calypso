@@ -224,17 +224,18 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 * Render the dialog buttons for the current step
 	 */
 	const renderStepButtons = () => {
-		const { disableButtons } = props;
+		const { disableButtons, cancellationCompleted, cancellationInProgress } = props;
 		const disabled = disableButtons;
 		const close = {
 			action: 'close',
 			disabled: disabled,
-			isPrimary: lastStep !== cancellationStep,
+			isPrimary: cancellationCompleted ? false : lastStep !== cancellationStep,
 			label: translate( 'Close' ),
 		};
 		const next = {
 			action: 'next',
 			disabled: disabled || disableContinuation,
+			isPrimary: cancellationCompleted,
 			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
@@ -242,12 +243,12 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const cancel = (
 			<Button
 				disabled={ disabled || disableContinuation }
-				busy={ disabled }
+				busy={ cancellationInProgress }
 				onClick={ onSubmit }
 				primary
-				scary
+				scary={ ! cancellationCompleted }
 			>
-				{ translate( 'Cancel subscription' ) }
+				{ cancellationCompleted ? translate( 'Submit' ) : translate( 'Cancel subscription' ) }
 			</Button>
 		);
 

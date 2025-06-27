@@ -285,8 +285,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleSurveyComplete = () => {
-		this.closeDialog();
-
 		if ( this.state.cancellationCompleted ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
@@ -300,6 +298,9 @@ class CancelPurchaseButton extends Component {
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
 		}
+
+		// Close dialog and redirect after handling the completion
+		this.closeDialog();
 		page( this.props.purchaseListUrl );
 	};
 
