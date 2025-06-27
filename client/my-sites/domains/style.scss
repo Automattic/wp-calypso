@@ -27,6 +27,8 @@ body.is-section-domains.is-domain-plan-package-flow {
 			color: var(--color-text-subtle);
 			text-align: center;
 			padding: 0 10px;
+			max-width: $break-small;
+			margin-inline: auto;
 		}
 
 		.domains__header-decide-later {
@@ -46,9 +48,5 @@ body.is-section-domains.is-domain-plan-package-flow {
 				padding: 0 80px;
 			}
 		}
-	}
-
-	.main.is-wide-layout {
-		max-width: $break-medium;
 	}
 }

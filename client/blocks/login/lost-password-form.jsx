@@ -17,22 +17,32 @@ const LostPasswordForm = ( {
 	isWoo,
 } ) => {
 	const translate = useTranslate();
-	const [ email, setEmail ] = useState( '' );
+	const [ userLogin, setUserLogin ] = useState( '' );
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
 
-	const validateEmail = () => {
-		if ( email.length === 0 || email.includes( '@' ) ) {
+	const validateUserLogin = () => {
+		// Allow empty input or any non-empty value (username or email)
+		if ( userLogin.length === 0 ) {
 			setError( null );
+		} else if ( userLogin.includes( '@' ) ) {
+			// If it contains @, validate as email
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if ( emailRegex.test( userLogin ) ) {
+				setError( null );
+			} else {
+				setError( translate( 'Please enter a valid email address.' ) );
+			}
 		} else {
-			setError( translate( 'This email address is not valid. It must include a single @' ) );
+			// Username - accept any non-empty value
+			setError( null );
 		}
 	};
 
-	const getAuthAccountTypeRequest = async ( emailAddress ) => {
+	const getAuthAccountTypeRequest = async ( userNameOrEmail ) => {
 		const resp = await window.fetch(
-			`https://public-api.wordpress.com/rest/v1.1/users/${ emailAddress }/auth-options`,
+			`https://public-api.wordpress.com/rest/v1.1/users/${ userNameOrEmail }/auth-options`,
 			{
 				method: 'GET',
 			}
@@ -45,7 +55,7 @@ const LostPasswordForm = ( {
 
 	const lostPasswordRequest = async () => {
 		const formData = new FormData();
-		formData.set( 'user_login', email );
+		formData.set( 'user_login', userLogin );
 
 		const origin = typeof window !== 'undefined' ? window.location.origin : '';
 		const resp = await window.fetch( `${ origin }/wp-login.php?action=lostpassword`, {
@@ -64,10 +74,10 @@ const LostPasswordForm = ( {
 		event.preventDefault();
 
 		if ( isWooJPC ) {
-			const accountType = await getAuthAccountTypeRequest( email );
+			const accountType = await getAuthAccountTypeRequest( userLogin );
 			if ( accountType?.passwordless === true ) {
 				await dispatch(
-					sendEmailLogin( email, {
+					sendEmailLogin( userLogin, {
 						redirectTo: redirectToAfterLoginUrl,
 						loginFormFlow: true,
 						showGlobalNotices: true,
@@ -81,7 +91,7 @@ const LostPasswordForm = ( {
 						twoFactorAuthType: 'link',
 						locale: locale,
 						from: from,
-						emailAddress: email,
+						emailAddress: userLogin,
 					} )
 				);
 				return;
@@ -103,7 +113,7 @@ const LostPasswordForm = ( {
 					oauth2ClientId,
 					locale,
 					redirectTo: redirectToAfterLoginUrl,
-					emailAddress: email,
+					emailAddress: userLogin,
 					lostpasswordFlow: true,
 					action: isWooJPC ? 'jetpack' : null,
 					from,
@@ -126,19 +136,26 @@ const LostPasswordForm = ( {
 			onSubmit={ onSubmit }
 		>
 			<div className="login__form-userdata">
-				<FormLabel htmlFor="email">{ translate( 'Your email' ) }</FormLabel>
+				<FormLabel htmlFor="userLogin">{ translate( 'Username or email address' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
 					spellCheck="false"
-					autoComplete="email"
-					id="email"
-					name="email"
-					type="email"
-					value={ email }
+					autoComplete="username"
+					id="userLogin"
+					name="userLogin"
+					type="text"
+					value={ userLogin }
 					isError={ showError }
-					onBlur={ validateEmail }
-					onChange={ ( event ) => setEmail( event.target.value.trim() ) }
+					onBlur={ validateUserLogin }
+					onChange={ ( event ) => {
+						const newValue = event.target.value.trim();
+						setUserLogin( newValue );
+						// Clear error immediately when user starts typing to fix input
+						if ( error ) {
+							setError( null );
+						}
+					} }
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>
@@ -146,7 +163,7 @@ const LostPasswordForm = ( {
 				<Button
 					variant="primary"
 					type="submit"
-					disabled={ email.length === 0 || showError || isBusy }
+					disabled={ userLogin.length === 0 || showError || isBusy }
 					isBusy={ isBusy }
 					__next40pxDefaultSize
 				>

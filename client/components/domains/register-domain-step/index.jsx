@@ -1706,7 +1706,7 @@ class RegisterDomainStep extends Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
-				hideMatchReasons={ this.props.isOnboarding }
+				hideMatchReasons={ this.props.hideMatchReasons ?? this.props.isOnboarding }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
