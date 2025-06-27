@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { isValid as isValidDate } from 'date-fns';
+
+/**
  * Internal dependencies
  */
 import type {
@@ -17,6 +22,7 @@ import {
 	OPERATOR_AFTER_INC,
 	OPERATOR_IN_THE_PAST,
 	OPERATOR_OVER,
+	OPERATOR_BETWEEN,
 } from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
@@ -40,11 +46,24 @@ function isValid( value: any, context?: ValidationContext ) {
 export default {
 	sort,
 	isValid,
-	Edit: 'datetime',
+	Edit: 'date',
 	render: ( { item, field }: DataViewRenderFieldProps< any > ) => {
-		return field.elements
-			? renderFromElements( { item, field } )
-			: field.getValue( { item } );
+		if ( field.elements ) {
+			return renderFromElements( { item, field } );
+		}
+
+		const value = field.getValue( { item } );
+		if ( ! value ) {
+			return '';
+		}
+
+		// Format date for display
+		const date = new Date( value );
+		if ( ! isValidDate( date ) ) {
+			return value; // Return original value if invalid date
+		}
+
+		return date.toLocaleDateString();
 	},
 	enableSorting: true,
 	filterBy: {
@@ -57,6 +76,7 @@ export default {
 			OPERATOR_AFTER_INC,
 			OPERATOR_IN_THE_PAST,
 			OPERATOR_OVER,
+			OPERATOR_BETWEEN,
 		],
 		validOperators: [
 			OPERATOR_ON,
@@ -67,6 +87,7 @@ export default {
 			OPERATOR_AFTER_INC,
 			OPERATOR_IN_THE_PAST,
 			OPERATOR_OVER,
+			OPERATOR_BETWEEN,
 		],
 	},
 } satisfies FieldTypeDefinition< any >;

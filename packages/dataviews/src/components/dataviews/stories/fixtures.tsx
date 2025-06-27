@@ -677,7 +677,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		id: 'date',
 		label: 'Date',
-		type: 'datetime',
+		type: 'date',
 	},
 	{
 		label: 'Type',

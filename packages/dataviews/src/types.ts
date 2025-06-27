@@ -94,6 +94,7 @@ export type FieldType =
 	| 'text'
 	| 'integer'
 	| 'datetime'
+	| 'date'
 	| 'media'
 	| 'boolean'
 	| 'email'

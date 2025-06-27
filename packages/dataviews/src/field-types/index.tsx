@@ -12,6 +12,7 @@ import { default as email } from './email';
 import { default as integer } from './integer';
 import { default as text } from './text';
 import { default as datetime } from './datetime';
+import { default as date } from './date';
 import { default as boolean } from './boolean';
 import { default as media } from './media';
 import { default as array } from './array';
@@ -41,6 +42,10 @@ export default function getFieldTypeDefinition< Item >(
 
 	if ( 'datetime' === type ) {
 		return datetime;
+	}
+
+	if ( 'date' === type ) {
+		return date;
 	}
 
 	if ( 'boolean' === type ) {

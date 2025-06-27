@@ -252,13 +252,41 @@ export const DateTime = ( {
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
 	const dateTimeFields = useMemo(
-		() => fields.filter( ( field ) => field.type === 'datetime' ),
+		() =>
+			fields
+				.filter( ( field ) => field.type === 'date' )
+				.map( ( field ) => ( {
+					...field,
+					type: 'datetime' as const,
+					label: 'DateTime',
+				} ) ),
 		[]
 	);
 
 	return (
 		<FieldTypeStory
 			fields={ dateTimeFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
+export const Date = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const dateFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'date' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ dateFields }
 			type={ type }
 			labelPosition={ labelPosition }
 		/>

@@ -13,6 +13,7 @@ import type {
 } from '../types';
 import checkbox from './checkbox';
 import datetime from './datetime';
+import date from './date';
 import email from './email';
 import integer from './integer';
 import radio from './radio';
@@ -29,6 +30,7 @@ const FORM_CONTROLS: FormControls = {
 	boolean,
 	checkbox,
 	datetime,
+	date,
 	email,
 	integer,
 	radio,
