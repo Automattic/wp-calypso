@@ -134,6 +134,21 @@ function CalendarDateControl( {
 	const [ selectedPresetId, setSelectedPresetId ] = useState< string | null >(
 		null
 	);
+
+	const [ calendarMonth, setCalendarMonth ] = useState< Date >( () => {
+		if ( value && isValid( new Date( value ) ) ) {
+			return new Date( value );
+		}
+		return new Date(); // Default to current month
+	} );
+
+	// Update calendar month when value changes externally
+	useMemo( () => {
+		if ( value && isValid( new Date( value ) ) ) {
+			setCalendarMonth( new Date( value ) );
+		}
+	}, [ value ] );
+
 	const onSelectDate = useCallback(
 		( newDate: Date | undefined | null ) => {
 			const dateValue = newDate
@@ -149,6 +164,10 @@ function CalendarDateControl( {
 		( preset: ( typeof DATE_PRESETS )[ 0 ] ) => {
 			const presetDate = preset.getValue();
 			const dateValue = format( presetDate, 'yyyy-MM-dd' );
+
+			// Auto-navigate calendar to preset date
+			setCalendarMonth( presetDate );
+
 			onChange( { [ id ]: dateValue } );
 			setSelectedPresetId( preset.id );
 		},
@@ -196,8 +215,9 @@ function CalendarDateControl( {
 					style={ { width: '100%' } }
 					selected={ value }
 					onSelect={ onSelectDate }
+					month={ calendarMonth }
+					onMonthChange={ setCalendarMonth }
 					autoFocus
-					defaultMonth={ value ? new Date( value ) : new Date() }
 				/>
 			</VStack>
 		</BaseControl>
@@ -234,6 +254,20 @@ function CalendarDateRangeControl( {
 			to: to && isValid( new Date( to ) ) ? new Date( to ) : undefined,
 		};
 	}, [ value ] );
+
+	const [ calendarMonth, setCalendarMonth ] = useState< Date >( () => {
+		if ( selectedRange.from ) {
+			return selectedRange.from;
+		}
+		return new Date(); // Default to current month
+	} );
+
+	// Update calendar month when range changes externally
+	useMemo( () => {
+		if ( selectedRange.from ) {
+			setCalendarMonth( selectedRange.from );
+		}
+	}, [ selectedRange.from ] );
 
 	const normalizeDate = useCallback( ( dateInput: Date | string ) => {
 		const dateStr =
@@ -279,6 +313,10 @@ function CalendarDateRangeControl( {
 	const handlePresetClick = useCallback(
 		( preset: ( typeof DATE_RANGE_PRESETS )[ 0 ] ) => {
 			const [ startDate, endDate ] = preset.getValue();
+
+			// Auto-navigate calendar to start date of range
+			setCalendarMonth( startDate );
+
 			updateDateRange( startDate, endDate );
 			setSelectedPresetId( preset.id );
 		},
@@ -325,8 +363,9 @@ function CalendarDateRangeControl( {
 					style={ { width: '100%' } }
 					selected={ selectedRange }
 					onSelect={ onSelectRange }
+					month={ calendarMonth }
+					onMonthChange={ setCalendarMonth }
 					autoFocus
-					defaultMonth={ selectedRange?.from || new Date() }
 				/>
 			</VStack>
 		</BaseControl>
