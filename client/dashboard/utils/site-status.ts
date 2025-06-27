@@ -12,16 +12,16 @@ export const STATUS_LABELS = {
 };
 
 export function getSiteStatus( item: Site ) {
+	if ( item.is_deleted ) {
+		return 'deleted';
+	}
+
 	if ( item.site_migration.migration_status?.startsWith( 'migration-pending' ) ) {
 		return 'migration_pending';
 	}
 
 	if ( item.site_migration.migration_status?.startsWith( 'migration-started' ) ) {
 		return 'migration_started';
-	}
-
-	if ( item.is_deleted ) {
-		return 'deleted';
 	}
 
 	if ( item.options?.is_difm_lite_in_progress ) {

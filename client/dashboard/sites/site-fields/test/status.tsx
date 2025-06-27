@@ -6,9 +6,11 @@ import { AuthContext } from '../../../app/auth';
 import { Status } from '../index';
 import type { User, Site } from '../../../data/types';
 
+const userId = 1;
+
 function render( ui: React.ReactElement ) {
 	return testingLibraryRender(
-		<AuthContext.Provider value={ { user: { ID: 1 } as User } }>{ ui }</AuthContext.Provider>
+		<AuthContext.Provider value={ { user: { ID: userId } as User } }>{ ui }</AuthContext.Provider>
 	);
 }
 
@@ -70,7 +72,7 @@ describe( '<Status>', () => {
 	test( 'for sites with expired plan, it renders "Plan expired" and a renewal nag for the site owner', () => {
 		const site = {
 			slug: 'test.wordpress.com',
-			site_owner: 1,
+			site_owner: userId,
 			site_migration: {},
 			plan: {
 				product_slug: 'business-bundle',
