@@ -20,7 +20,6 @@ import {
 	READER_LIST_UPDATE_FAILURE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
-	READER_LIST_ITEM_ADD_SITE,
 	READER_LIST_ITEM_ADD_TAG,
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
@@ -35,7 +34,6 @@ import 'calypso/state/data-layer/wpcom/read/lists/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/items';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
-import 'calypso/state/data-layer/wpcom/read/lists/sites/new';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
@@ -325,7 +323,7 @@ export const addReaderListSite = (
 	listSlug: string,
 	siteId: number
 ): ReaderListAction => ( {
-	type: READER_LIST_ITEM_ADD_SITE,
+	type: READER_LIST_ITEM_ADD_FEED,
 	listId,
 	listOwner,
 	listSlug,
@@ -423,8 +421,8 @@ export function requestUserRecommendedBlogs( listOwner: string ) {
 }
 
 /**
- * Add a site to the recommended blogs list.
- * @param blogId - Blog ID to add
+ * Add a feed to the recommended blogs list.
+ * @param feedId - Feed ID to add (required for feeds/new endpoint)
  * @param listOwner - Owner of the recommended blogs list
  * @param options - Optional configuration for notices
  * @param options.successMessage - Custom success message
@@ -433,7 +431,7 @@ export function requestUserRecommendedBlogs( listOwner: string ) {
  * @returns Action object
  */
 export function addRecommendedBlogsSite(
-	blogId: number,
+	feedId: number,
 	listOwner: string,
 	options?: {
 		successMessage?: string;
@@ -442,18 +440,18 @@ export function addRecommendedBlogsSite(
 	}
 ): ReaderListAction {
 	return {
-		type: READER_LIST_ITEM_ADD_SITE,
+		type: READER_LIST_ITEM_ADD_FEED,
 		listId: 0, // API uses owner/slug path, but Redux reducer expects this field
 		listOwner,
 		listSlug: 'recommended-blogs',
-		siteId: blogId,
+		feedId,
 		...options,
 	};
 }
 
 /**
- * Remove a site from the recommended blogs list.
- * @param blogId - Blog ID to remove
+ * Remove a feed from the recommended blogs list.
+ * @param feedId - Feed ID to remove
  * @param listOwner - Owner of the recommended blogs list
  * @param options - Optional configuration for notices
  * @param options.successMessage - Custom success message
@@ -462,7 +460,7 @@ export function addRecommendedBlogsSite(
  * @returns Action object
  */
 export function removeRecommendedBlogsSite(
-	blogId: number,
+	feedId: number,
 	listOwner: string,
 	options?: {
 		successMessage?: string;
@@ -471,11 +469,11 @@ export function removeRecommendedBlogsSite(
 	}
 ): ReaderListAction {
 	return {
-		type: READER_LIST_ITEM_DELETE_SITE,
+		type: READER_LIST_ITEM_DELETE_FEED,
 		listId: 0, // API uses owner/slug path, but Redux reducer expects this field
 		listOwner,
 		listSlug: 'recommended-blogs',
-		siteId: blogId,
+		feedId,
 		...options,
 	};
 }

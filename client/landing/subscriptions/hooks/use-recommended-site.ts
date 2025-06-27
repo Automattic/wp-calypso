@@ -6,7 +6,8 @@ import {
 	addRecommendedBlogsSite,
 	removeRecommendedBlogsSite,
 } from 'calypso/state/reader/lists/actions';
-import { isSiteInRecommendedBlogsList } from 'calypso/state/reader/lists/selectors';
+import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
+import type { ReaderList } from 'calypso/reader/list-manage/types';
 import type { AppState } from 'calypso/types';
 
 interface UseRecommendedSiteResult {
@@ -16,20 +17,54 @@ interface UseRecommendedSiteResult {
 	toggleRecommended: () => void;
 }
 
+interface UseRecommendedSiteOptions {
+	feedId?: number;
+}
+
 /**
  * Custom hook for managing recommended site state with optimistic updates
  * @param blogId - The blog ID to check/manage recommendation status for
+ * @param options - Optional configuration including feedId
  * @returns Object with recommendation state and toggle function
  */
-export const useRecommendedSite = ( blogId: number ): UseRecommendedSiteResult => {
+export const useRecommendedSite = (
+	blogId: number,
+	options?: UseRecommendedSiteOptions
+): UseRecommendedSiteResult => {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
+	const { feedId } = options || {};
 
-	// Memoized selector to avoid recreation on every render
+	// Memoized selector to check if item is in recommended list
+	// Try matching by feedId first (since that's what we add to the list now), fall back to siteId
 	const selectIsInRecommendedList = useCallback(
-		( state: AppState ) =>
-			currentUserName ? isSiteInRecommendedBlogsList( state, currentUserName, blogId ) : false,
-		[ currentUserName, blogId ]
+		( state: AppState ) => {
+			if ( ! currentUserName ) {
+				return false;
+			}
+
+			const list = getListByOwnerAndSlug(
+				state,
+				currentUserName,
+				'recommended-blogs'
+			) as ReaderList;
+			if ( ! list || ! list.ID ) {
+				return false;
+			}
+
+			// Try to match by feedId first (preferred, since that's what we add to the list)
+			if ( feedId ) {
+				const matchByFeedId = getMatchingItem( state, { listId: list.ID, feedId } );
+				if ( matchByFeedId ) {
+					return true;
+				}
+			}
+
+			// Fall back to matching by siteId for backward compatibility
+			const matchBySiteId = getMatchingItem( state, { listId: list.ID, siteId: blogId } );
+			return !! matchBySiteId;
+		},
+		[ currentUserName, blogId, feedId ]
 	);
 
 	// Get actual state from Redux
@@ -61,7 +96,7 @@ export const useRecommendedSite = ( blogId: number ): UseRecommendedSiteResult =
 
 	// Toggle function with optimistic updates
 	const toggleRecommended = useCallback( () => {
-		if ( ! canToggle || isUpdating ) {
+		if ( ! canToggle || isUpdating || ! feedId ) {
 			return;
 		}
 
@@ -74,14 +109,14 @@ export const useRecommendedSite = ( blogId: number ): UseRecommendedSiteResult =
 		try {
 			if ( newValue ) {
 				dispatch(
-					addRecommendedBlogsSite( blogId, currentUserName as string, {
+					addRecommendedBlogsSite( feedId, currentUserName as string, {
 						successMessage: translate( 'Site added to your recommended blogs.' ),
 						errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
 					} )
 				);
 			} else {
 				dispatch(
-					removeRecommendedBlogsSite( blogId, currentUserName as string, {
+					removeRecommendedBlogsSite( feedId, currentUserName as string, {
 						successMessage: translate( 'Site removed from your recommended blogs.' ),
 						errorMessage: translate( 'Failed to remove site from recommended blogs.' ),
 					} )
@@ -90,7 +125,7 @@ export const useRecommendedSite = ( blogId: number ): UseRecommendedSiteResult =
 		} finally {
 			setIsUpdating( false );
 		}
-	}, [ canToggle, isUpdating, isRecommended, blogId, currentUserName, dispatch ] );
+	}, [ canToggle, isUpdating, isRecommended, feedId, currentUserName, dispatch ] );
 
 	return {
 		isRecommended,

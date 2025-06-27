@@ -104,7 +104,9 @@ const SiteSubscriptionRow = ( {
 	const currentUserName = useSelector( getCurrentUserName );
 
 	// Use custom hook for recommended site functionality
-	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( blog_id ) );
+	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( blog_id ), {
+		feedId: Number( feed_id ),
+	} );
 
 	const isCompactLayout = layout === 'compact';
 	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );

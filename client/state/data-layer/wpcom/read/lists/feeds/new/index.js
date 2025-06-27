@@ -17,15 +17,17 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/feeds/new`,
 						apiVersion: '1.2',
 						body: {
-							// Only one of these will be set
+							// Only feed_id or feed_url are supported by this endpoint
 							feed_url: action.feedUrl,
-							site_id: action.siteId,
 							feed_id: action.feedId,
 						},
 					},
 					action
 				),
 			onSuccess: ( action, apiResponse ) => {
+				// Support custom success messages
+				const successMessage =
+					action.successMessage || translate( 'Feed added to list successfully.' );
 				return [
 					receiveAddReaderListFeed(
 						action.listId,
@@ -33,13 +35,15 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 						action.listSlug,
 						apiResponse.feed_id
 					),
-					successNotice( translate( 'Feed added to list successfully.' ), {
-						duration: DEFAULT_NOTICE_DURATION,
+					successNotice( successMessage, {
+						duration: action.noticeDuration || DEFAULT_NOTICE_DURATION,
 					} ),
 				];
 			},
-			onError: () => {
-				return errorNotice( translate( 'Unable to add feed to list.' ) );
+			onError: ( action ) => {
+				// Support custom error messages
+				const errorMessage = action.errorMessage || translate( 'Unable to add feed to list.' );
+				return errorNotice( errorMessage );
 			},
 		} ),
 	],
