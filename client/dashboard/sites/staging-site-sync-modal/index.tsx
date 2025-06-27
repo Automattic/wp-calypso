@@ -80,35 +80,30 @@ export default function SyncModal( {
 	}
 
 	return (
-		<>
-			<Modal title={ modalTitle } onRequestClose={ onClose } style={ { maxWidth: '668px' } }>
-				<VStack spacing={ 6 }>
-					<VStack spacing={ 7 }>
-						<Text>
-							{ createInterpolateElement( copy[ environment ].description, {
-								a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
-							} ) }
-						</Text>
-						<Text weight={ 500 }>{ copy.syncSelectionHeading }</Text>
-						<Text>
-							{ createInterpolateElement( copy.learnMore, {
-								a: (
-									<InlineSupportLink
-										onClick={ onClose }
-										supportContext="hosting-staging-site-sync"
-									/>
-								),
-							} ) }
-						</Text>
-					</VStack>
-					<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-						<Button variant="tertiary" onClick={ onClose }>
-							{ __( 'Cancel' ) }
-						</Button>
-						<Button variant="primary">{ copy.submit }</Button>
-					</HStack>
+		<Modal title={ modalTitle } onRequestClose={ onClose } style={ { maxWidth: '668px' } }>
+			<VStack spacing={ 6 }>
+				<VStack spacing={ 7 }>
+					<Text>
+						{ createInterpolateElement( copy[ environment ].description, {
+							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
+						} ) }
+					</Text>
+					<Text weight={ 500 }>{ copy.syncSelectionHeading }</Text>
+					<Text>
+						{ createInterpolateElement( copy.learnMore, {
+							a: (
+								<InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site-sync" />
+							),
+						} ) }
+					</Text>
 				</VStack>
-			</Modal>
-		</>
+				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+					<Button variant="tertiary" onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button variant="primary">{ copy.submit }</Button>
+				</HStack>
+			</VStack>
+		</Modal>
 	);
 }
