@@ -22,7 +22,6 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": false,
-		"checkout/vat-form": true,
 		"cookie-banner": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
