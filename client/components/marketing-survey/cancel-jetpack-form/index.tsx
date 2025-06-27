@@ -247,7 +247,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				primary
 				scary
 			>
-				{ translate( 'Submit' ) }
+				{ translate( 'Cancel subscription' ) }
 			</Button>
 		);
 
