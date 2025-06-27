@@ -272,19 +272,22 @@ export const WithCard = () => {
 		return filterSortAndPaginate( data, view, fields );
 	}, [ view ] );
 	return (
-		<DataViews.Card>
-			<DataViews
-				getItemId={ ( item ) => item.id.toString() }
-				paginationInfo={ paginationInfo }
-				data={ shownData }
-				view={ view }
-				fields={ fields }
-				onChangeView={ setView }
-				actions={ actions.filter(
-					( action ) => ! action.supportsBulk
-				) }
-				defaultLayouts={ defaultLayouts }
-			/>
-		</DataViews.Card>
+		<Card>
+			<CardHeader>Header</CardHeader>
+			<CardBody>
+				<DataViews
+					getItemId={ ( item ) => item.id.toString() }
+					paginationInfo={ paginationInfo }
+					data={ shownData }
+					view={ view }
+					fields={ fields }
+					onChangeView={ setView }
+					actions={ actions.filter(
+						( action ) => ! action.supportsBulk
+					) }
+					defaultLayouts={ defaultLayouts }
+				/>
+			</CardBody>
+		</Card>
 	);
 };

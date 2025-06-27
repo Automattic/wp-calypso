@@ -14,7 +14,6 @@ import { useMergeRefs, useResizeObserver } from '@wordpress/compose';
  * Internal dependencies
  */
 import DataViewsContext from '../dataviews-context';
-import DataViewsCard from '../dataviews-card';
 import {
 	default as DataViewsFilters,
 	useFilters,
@@ -224,7 +223,6 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Pagination: typeof DataViewsPagination;
 	Search: typeof DataViewsSearch;
 	ViewConfig: typeof DataviewsViewConfigDropdown;
-	Card: typeof DataViewsCard;
 };
 
 DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
@@ -235,6 +233,5 @@ DataViewsSubComponents.LayoutSwitcher = ViewTypeMenu;
 DataViewsSubComponents.Pagination = DataViewsPagination;
 DataViewsSubComponents.Search = DataViewsSearch;
 DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
-DataViewsSubComponents.Card = DataViewsCard;
 
 export default DataViewsSubComponents;
