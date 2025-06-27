@@ -22,6 +22,15 @@ function getArchiveKeyLabel( key ) {
 	return archiveKeyLabelMap[ key ] ?? capitalize( key );
 }
 
+/** @type ( str: string ) => string */
+function decodeUriEncoding( str ) {
+	try {
+		return decodeURIComponent( str );
+	} catch ( _ ) {
+		return str;
+	}
+}
+
 /**
  * Returns a string of the moment format for the period. Supports store stats
  * isoWeek and shortened formats.
@@ -449,7 +458,7 @@ export const normalizers = {
 							totalTaxViews += item.views;
 
 							return {
-								label: decodeURIComponent( item.value ),
+								label: decodeUriEncoding( item.value ),
 								value: item.views,
 								link: item.href,
 							};
@@ -487,7 +496,7 @@ export const normalizers = {
 							return {
 								label: [ 'home' ].includes( archiveKey )
 									? item.href
-									: decodeURIComponent( item.value ),
+									: decodeUriEncoding( item.value ),
 								value: item.views,
 								link: item.href,
 							};
