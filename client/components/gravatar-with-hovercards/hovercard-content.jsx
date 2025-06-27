@@ -173,9 +173,7 @@ function HovercardContent( props ) {
 												// The default feed image for sites with no icon is
 												// awful for this case, treat it as no image to fallback
 												// to the globe icon.
-												const siteIcon = image.includes( 's0.wp.com/i/buttonw-com.png' )
-													? null
-													: image;
+												const siteIcon = image?.includes( '/i/buttonw-com.png' ) ? null : image;
 
 												return (
 													<li key={ blog.ID } className="gravatar-hovercard__recommended-blog-item">
