@@ -477,6 +477,7 @@ class CancelPurchase extends Component {
 									{ this.renderCancelButton() }
 									<FormButton
 										isPrimary={ false }
+										disabled={ this.state.isLoading }
 										href={ this.props.getManagePurchaseUrlFor(
 											this.props.siteSlug,
 											this.props.purchaseId
