@@ -4,17 +4,33 @@
 import {
 	BaseControl,
 	Button,
+	__experimentalInputControl as InputControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { getDate } from '@wordpress/date';
 
 /**
  * External dependencies
  */
 import { DateCalendar, DateRangeCalendar } from '@automattic/ui';
 import { format, isValid } from 'date-fns';
+
+/**
+ * Parse date strings safely
+ *
+ * @param dateString - The date string to parse
+ * @returns Parsed Date object or null if invalid
+ */
+function parseDate( dateString: string | undefined ): Date | null {
+	if ( ! dateString ) {
+		return null;
+	}
+	const parsedDate = getDate( dateString );
+	return parsedDate && isValid( parsedDate ) ? parsedDate : null;
+}
 
 /**
  * Internal dependencies
@@ -124,30 +140,23 @@ function CalendarDateControl( {
 	onChange,
 	label,
 	hideLabelFromVision,
+	className,
 }: {
 	id: string;
-	value: Date | undefined;
+	value: string | undefined;
 	onChange: ( value: any ) => void;
 	label: string;
 	hideLabelFromVision?: boolean;
+	className?: string;
 } ) {
 	const [ selectedPresetId, setSelectedPresetId ] = useState< string | null >(
 		null
 	);
 
 	const [ calendarMonth, setCalendarMonth ] = useState< Date >( () => {
-		if ( value && isValid( new Date( value ) ) ) {
-			return new Date( value );
-		}
-		return new Date(); // Default to current month
+		const parsedDate = parseDate( value );
+		return parsedDate || new Date(); // Default to current month
 	} );
-
-	// Update calendar month when value changes externally
-	useMemo( () => {
-		if ( value && isValid( new Date( value ) ) ) {
-			setCalendarMonth( new Date( value ) );
-		}
-	}, [ value ] );
 
 	const onSelectDate = useCallback(
 		( newDate: Date | undefined | null ) => {
@@ -167,9 +176,27 @@ function CalendarDateControl( {
 
 			// Auto-navigate calendar to preset date
 			setCalendarMonth( presetDate );
-
 			onChange( { [ id ]: dateValue } );
 			setSelectedPresetId( preset.id );
+		},
+		[ id, onChange ]
+	);
+
+	const handleManualDateChange = useCallback(
+		( newValue: string | undefined ) => {
+			if ( ! newValue ) {
+				onChange( { [ id ]: undefined } );
+				setSelectedPresetId( null );
+				return;
+			}
+
+			onChange( { [ id ]: newValue } );
+
+			const parsedDate = parseDate( newValue );
+			if ( parsedDate ) {
+				setCalendarMonth( parsedDate );
+			}
+			setSelectedPresetId( null );
 		},
 		[ id, onChange ]
 	);
@@ -177,7 +204,7 @@ function CalendarDateControl( {
 	return (
 		<BaseControl
 			__nextHasNoMarginBottom
-			className="dataviews-controls__date"
+			className={ className }
 			label={ label }
 			hideLabelFromVision={ hideLabelFromVision }
 		>
@@ -210,14 +237,25 @@ function CalendarDateControl( {
 					</Button>
 				</HStack>
 
+				{ /* Manual date input */ }
+				<InputControl
+					__next40pxDefaultSize
+					type="date"
+					label={ __( 'Date' ) }
+					hideLabelFromVision
+					value={ value }
+					onChange={ handleManualDateChange }
+				/>
+
 				{ /* Calendar widget */ }
 				<DateCalendar
 					style={ { width: '100%' } }
-					selected={ value }
+					selected={
+						value ? parseDate( value ) || undefined : undefined
+					}
 					onSelect={ onSelectDate }
 					month={ calendarMonth }
 					onMonthChange={ setCalendarMonth }
-					autoFocus
 				/>
 			</VStack>
 		</BaseControl>
@@ -230,51 +268,33 @@ function CalendarDateRangeControl( {
 	onChange,
 	label,
 	hideLabelFromVision,
+	className,
 }: {
 	id: string;
-	value: [ Date, Date ] | undefined;
+	value: [ string, string ] | undefined;
 	onChange: ( value: any ) => void;
 	label: string;
 	hideLabelFromVision?: boolean;
+	className?: string;
 } ) {
 	const [ selectedPresetId, setSelectedPresetId ] = useState< string | null >(
 		null
 	);
 
 	const selectedRange = useMemo( () => {
-		const [ from, to ] = Array.isArray( value )
-			? value
-			: [ undefined, undefined ];
-
+		const [ from, to ] = value || [ undefined, undefined ];
 		return {
-			from:
-				from && isValid( new Date( from ) )
-					? new Date( from )
-					: undefined,
-			to: to && isValid( new Date( to ) ) ? new Date( to ) : undefined,
+			from: from ? parseDate( from ) || undefined : undefined,
+			to: to ? parseDate( to ) || undefined : undefined,
 		};
 	}, [ value ] );
 
 	const [ calendarMonth, setCalendarMonth ] = useState< Date >( () => {
-		if ( selectedRange.from ) {
-			return selectedRange.from;
-		}
-		return new Date(); // Default to current month
+		return selectedRange.from || new Date();
 	} );
 
-	// Update calendar month when range changes externally
-	useMemo( () => {
-		if ( selectedRange.from ) {
-			setCalendarMonth( selectedRange.from );
-		}
-	}, [ selectedRange.from ] );
-
-	const normalizeDate = useCallback( ( dateInput: Date | string ) => {
-		const dateStr =
-			typeof dateInput === 'string'
-				? dateInput
-				: format( dateInput, 'yyyy-MM-dd' );
-		return dateStr;
+	const normalizeDate = useCallback( ( date: Date | string ) => {
+		return typeof date === 'string' ? date : format( date, 'yyyy-MM-dd' );
 	}, [] );
 
 	const updateDateRange = useCallback(
@@ -293,7 +313,7 @@ function CalendarDateRangeControl( {
 				onChange( { [ id ]: undefined } );
 			}
 		},
-		[ id, onChange, normalizeDate ]
+		[ id, onChange ]
 	);
 
 	const onSelectRange = useCallback(
@@ -302,9 +322,7 @@ function CalendarDateRangeControl( {
 				| { from: Date | undefined; to?: Date | undefined }
 				| undefined
 		) => {
-			if ( newRange?.from && newRange?.to ) {
-				updateDateRange( newRange.from, newRange.to );
-			}
+			updateDateRange( newRange?.from, newRange?.to );
 			setSelectedPresetId( null );
 		},
 		[ updateDateRange ]
@@ -313,20 +331,50 @@ function CalendarDateRangeControl( {
 	const handlePresetClick = useCallback(
 		( preset: ( typeof DATE_RANGE_PRESETS )[ 0 ] ) => {
 			const [ startDate, endDate ] = preset.getValue();
-
 			// Auto-navigate calendar to start date of range
 			setCalendarMonth( startDate );
-
 			updateDateRange( startDate, endDate );
 			setSelectedPresetId( preset.id );
 		},
 		[ updateDateRange ]
 	);
 
+	const handleManualDateChange = useCallback(
+		( fromOrTo: 'from' | 'to', newValue: string | undefined ) => {
+			const currentRange = Array.isArray( value )
+				? value
+				: [ undefined, undefined ];
+			const [ currentFrom, currentTo ] = currentRange;
+
+			if ( ! newValue ) {
+				updateDateRange(
+					fromOrTo === 'from' ? undefined : currentFrom,
+					fromOrTo === 'to' ? undefined : currentTo
+				);
+				setSelectedPresetId( null );
+				return;
+			}
+
+			updateDateRange(
+				fromOrTo === 'from' ? newValue : currentFrom,
+				fromOrTo === 'to' ? newValue : currentTo
+			);
+
+			// Update calendar to show this month
+			const parsedDate = parseDate( newValue );
+			if ( parsedDate ) {
+				setCalendarMonth( parsedDate );
+			}
+
+			setSelectedPresetId( null );
+		},
+		[ value, updateDateRange ]
+	);
+
 	return (
 		<BaseControl
 			__nextHasNoMarginBottom
-			className="dataviews-controls__date"
+			className={ className }
 			label={ label }
 			hideLabelFromVision={ hideLabelFromVision }
 		>
@@ -359,13 +407,36 @@ function CalendarDateRangeControl( {
 					</Button>
 				</HStack>
 
+				{ /* Manual date range inputs */ }
+				<HStack spacing={ 2 }>
+					<InputControl
+						__next40pxDefaultSize
+						type="date"
+						label={ __( 'From' ) }
+						hideLabelFromVision
+						value={ value?.[ 0 ] }
+						onChange={ ( newValue ) =>
+							handleManualDateChange( 'from', newValue )
+						}
+					/>
+					<InputControl
+						__next40pxDefaultSize
+						type="date"
+						label={ __( 'To' ) }
+						hideLabelFromVision
+						value={ value?.[ 1 ] }
+						onChange={ ( newValue ) =>
+							handleManualDateChange( 'to', newValue )
+						}
+					/>
+				</HStack>
+
 				<DateRangeCalendar
 					style={ { width: '100%' } }
 					selected={ selectedRange }
 					onSelect={ onSelectRange }
 					month={ calendarMonth }
 					onMonthChange={ setCalendarMonth }
-					autoFocus
 				/>
 			</VStack>
 		</BaseControl>
@@ -385,6 +456,7 @@ export default function DateControl< Item >( {
 	if ( operator === OPERATOR_IN_THE_PAST || operator === OPERATOR_OVER ) {
 		return (
 			<RelativeDateControl
+				className="dataviews-controls__date"
 				id={ id }
 				value={ value && typeof value === 'object' ? value : {} }
 				onChange={ onChange }
@@ -396,10 +468,20 @@ export default function DateControl< Item >( {
 	}
 
 	if ( operator === OPERATOR_BETWEEN ) {
+		let dateRangeValue: [ string, string ] | undefined;
+		if (
+			Array.isArray( value ) &&
+			value.length === 2 &&
+			value.every( ( date ) => typeof date === 'string' )
+		) {
+			dateRangeValue = value as unknown as [ string, string ];
+		}
+
 		return (
 			<CalendarDateRangeControl
+				className="dataviews-controls__date"
 				id={ id }
-				value={ value }
+				value={ dateRangeValue }
 				onChange={ onChange }
 				label={ label }
 				hideLabelFromVision={ hideLabelFromVision }
@@ -409,12 +491,9 @@ export default function DateControl< Item >( {
 
 	return (
 		<CalendarDateControl
+			className="dataviews-controls__date"
 			id={ id }
-			value={
-				typeof value === 'string' && isValid( new Date( value ) )
-					? new Date( value )
-					: undefined
-			}
+			value={ typeof value === 'string' ? value : undefined }
 			onChange={ onChange }
 			label={ label }
 			hideLabelFromVision={ hideLabelFromVision }

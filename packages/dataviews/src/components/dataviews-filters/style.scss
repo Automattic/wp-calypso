@@ -22,7 +22,8 @@
 	line-height: $default-line-height;
 
 	.components-popover__content {
-		width: 250px;
+		min-width: 230px;
+		max-width: 250px;
 		border-radius: $grid-unit-05;
 	}
 

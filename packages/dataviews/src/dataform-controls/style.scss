@@ -8,7 +8,16 @@
 	flex: 1 1 50%;
 }
 
-.dataviews-controls__datetime-preset {
+.dataviews-controls__date {
+	// Hide the native date picker icon
+	input[type="date"]::-webkit-inner-spin-button,
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		display: none;
+		-webkit-appearance: none;
+	}
+}
+
+.dataviews-controls__date-preset {
 	border: 1px solid #ddd;
 
 	&:active {
