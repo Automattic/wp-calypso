@@ -6,7 +6,7 @@ import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { canViewSiteActions, canTransferSite } from '../features';
+import { canTransferSite, canLeaveSite, canResetSite, canDeleteSite } from '../features';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
 import SiteResetModal from '../site-reset-modal';
@@ -109,33 +109,13 @@ export default function DangerZone( { site }: { site: Site } ) {
 	const { user } = useAuth();
 	const isStagingRedesignEnabled = config.isEnabled( 'hosting/staging-sites-redesign' );
 
-	// For staging sites, only show the danger zone if the redesign feature flag is enabled
-	if ( site.is_wpcom_staging_site ) {
-		if ( ! isStagingRedesignEnabled ) {
-			return null;
-		}
-
-		// For staging sites, only show the delete action
-		return (
-			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'Danger zone' ) } level={ 3 } />
-				<ActionList>
-					<SiteDeleteAction key="delete-site" site={ site } />
-				</ActionList>
-			</VStack>
-		);
-	}
-
-	// For non-staging sites, use the existing logic
-	if ( ! canViewSiteActions( site ) ) {
-		return null;
-	}
-
 	const actions = [
 		canTransferSite( site, user ) && <SiteTransferAction key="transfer-site" site={ site } />,
-		<SiteLeaveAction key="leave-site" site={ site } />,
-		<SiteResetAction key="reset-site" site={ site } />,
-		<SiteDeleteAction key="delete-site" site={ site } />,
+		canLeaveSite( site ) && <SiteLeaveAction key="leave-site" site={ site } />,
+		canResetSite( site ) && <SiteResetAction key="reset-site" site={ site } />,
+		canDeleteSite( site, isStagingRedesignEnabled ) && (
+			<SiteDeleteAction key="delete-site" site={ site } />
+		),
 	].filter( Boolean );
 
 	if ( ! actions.length ) {
