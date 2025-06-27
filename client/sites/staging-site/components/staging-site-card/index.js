@@ -362,14 +362,7 @@ export const StagingSiteCard = ( {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 		addStagingSite();
-	}, [
-		dispatch,
-		siteId,
-		addStagingSite,
-		stagingSiteStatus,
-		stagingSites,
-		isLoadingAddStagingSite,
-	] );
+	}, [ dispatch, siteId, addStagingSite ] );
 
 	const initiateDelete = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
