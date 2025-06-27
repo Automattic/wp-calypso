@@ -1,4 +1,4 @@
-import { Button, Modal, __experimentalText as Text } from '@wordpress/components';
+import { Button, ExternalLink, Modal, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -83,7 +83,7 @@ export default function SyncModal( {
 					<div className="staging-site-sync-modal__description">
 						<Text>
 							{ createInterpolateElement( copy[ environment ].description, {
-								a: <Button variant="link" href={ `/backup/${ siteSlug }` } />,
+								a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
 							} ) }
 						</Text>
 					</div>
