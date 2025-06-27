@@ -93,8 +93,10 @@ const getFetchSitesOptions = (
 	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
 ): FetchSitesOptions => {
 	const filters = viewOptions.filters ?? [];
-	const shouldIncludeA8COwned = filters.some(
-		( item: Filter ) => item.field === 'is_a8c' && item.value === true
+
+	// Include A8C sites unless explicitly excluded from the filter.
+	const shouldIncludeA8COwned = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
 	);
 
 	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
