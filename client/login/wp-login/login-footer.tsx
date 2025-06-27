@@ -6,6 +6,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 
 interface LoginFooterProps {
 	lostPasswordLink: JSX.Element;
+	loginLink: string;
 	isLoginView?: boolean;
 }
 
@@ -13,7 +14,7 @@ const recordBackToWpcomLinkClick = () => {
 	recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 };
 
-const LoginFooter = ( { lostPasswordLink, isLoginView }: LoginFooterProps ) => {
+const LoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: LoginFooterProps ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
@@ -29,6 +30,8 @@ const LoginFooter = ( { lostPasswordLink, isLoginView }: LoginFooterProps ) => {
 					<LoggedOutFormBackLink
 						classes={ {
 							'wp-login__main-footer-back-link': true,
+							'logged-out-form__link-item': false,
+							'logged-out-form__back-link': false,
 						} }
 						oauth2Client={ oauth2Client }
 						recordClick={ recordBackToWpcomLinkClick }
@@ -37,6 +40,8 @@ const LoginFooter = ( { lostPasswordLink, isLoginView }: LoginFooterProps ) => {
 			</div>
 		);
 	}
+
+	return <div className="wp-login__main-footer">{ loginLink }</div>;
 };
 
 export default LoginFooter;

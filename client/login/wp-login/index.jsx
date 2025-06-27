@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -297,6 +298,30 @@ export class Login extends Component {
 		);
 	}
 
+	getLoginLink() {
+		return (
+			<a
+				className="wp-login__main-footer-back-link"
+				href="/"
+				onClick={ ( event ) => {
+					event.preventDefault();
+					page(
+						login( {
+							redirectTo: this.props.redirectTo,
+							locale: this.props.locale,
+							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+							from: get( this.props.currentQuery, 'from' ),
+							isJetpack: this.props.isJetpack,
+						} )
+					);
+				} }
+			>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ this.props.translate( 'Back to Login' ) }
+			</a>
+		);
+	}
+
 	renderSignUpLink( signupLinkText ) {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
@@ -359,7 +384,11 @@ export class Login extends Component {
 
 		if ( isSocialFirst ) {
 			return (
-				<LoginFooter isLoginView={ isLoginView } lostPasswordLink={ this.getLostPasswordLink() } />
+				<LoginFooter
+					isLoginView={ isLoginView }
+					lostPasswordLink={ this.getLostPasswordLink() }
+					loginLink={ this.getLoginLink() }
+				/>
 			);
 		}
 
