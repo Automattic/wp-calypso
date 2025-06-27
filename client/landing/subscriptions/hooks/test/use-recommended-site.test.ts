@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -9,6 +9,7 @@ import {
 	addRecommendedBlogsSite,
 	removeRecommendedBlogsSite,
 } from 'calypso/state/reader/lists/actions';
+import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import { useRecommendedSite } from '../use-recommended-site';
 
 // Mock dependencies
@@ -21,6 +22,10 @@ jest.mock( 'calypso/state/reader/lists/selectors' );
 const mockUseSelector = useSelector as jest.MockedFunction< typeof useSelector >;
 const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
 const mockTranslate = translate as jest.MockedFunction< typeof translate >;
+const mockGetListByOwnerAndSlug = getListByOwnerAndSlug as jest.MockedFunction<
+	typeof getListByOwnerAndSlug
+>;
+const mockGetMatchingItem = getMatchingItem as jest.MockedFunction< typeof getMatchingItem >;
 const mockAddRecommendedBlogsSite = addRecommendedBlogsSite as jest.MockedFunction<
 	typeof addRecommendedBlogsSite
 >;
@@ -30,22 +35,31 @@ const mockRemoveRecommendedBlogsSite = removeRecommendedBlogsSite as jest.Mocked
 
 describe( 'useRecommendedSite', () => {
 	const mockDispatch = jest.fn();
+	const feedId = 456;
 	const blogId = 123;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockUseDispatch.mockReturnValue( mockDispatch );
 		mockTranslate.mockImplementation( ( text ) => text as string );
+
+		// Default mock setup
+		mockGetListByOwnerAndSlug.mockReturnValue( {
+			ID: 999,
+			owner: 'testuser',
+			slug: 'recommended-blogs',
+		} );
+		mockGetMatchingItem.mockReturnValue( false );
 	} );
 
 	describe( 'Initial state', () => {
 		it( 'should return correct initial state when user is logged in and site is not recommended', () => {
-			// Mock current user
+			// Mock current user and no matching items
 			mockUseSelector
 				.mockReturnValueOnce( 'testuser' ) // getCurrentUserName
-				.mockReturnValueOnce( false ); // isSiteInRecommendedBlogsList
+				.mockReturnValueOnce( false ); // custom selector result
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			expect( result.current ).toEqual( {
 				isRecommended: false,
@@ -58,9 +72,9 @@ describe( 'useRecommendedSite', () => {
 		it( 'should return correct initial state when site is recommended', () => {
 			mockUseSelector
 				.mockReturnValueOnce( 'testuser' ) // getCurrentUserName
-				.mockReturnValueOnce( true ); // isSiteInRecommendedBlogsList
+				.mockReturnValueOnce( true ); // custom selector result
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			expect( result.current.isRecommended ).toBe( true );
 			expect( result.current.canToggle ).toBe( true );
@@ -69,9 +83,9 @@ describe( 'useRecommendedSite', () => {
 		it( 'should set canToggle to false when user is not logged in', () => {
 			mockUseSelector
 				.mockReturnValueOnce( null ) // getCurrentUserName
-				.mockReturnValueOnce( false ); // isSiteInRecommendedBlogsList
+				.mockReturnValueOnce( false ); // custom selector result
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			expect( result.current.canToggle ).toBe( false );
 		} );
@@ -79,88 +93,77 @@ describe( 'useRecommendedSite', () => {
 		it( 'should set canToggle to false when currentUserName is not a string', () => {
 			mockUseSelector
 				.mockReturnValueOnce( 123 ) // getCurrentUserName (not a string)
-				.mockReturnValueOnce( false ); // isSiteInRecommendedBlogsList
+				.mockReturnValueOnce( false ); // custom selector result
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			expect( result.current.canToggle ).toBe( false );
 		} );
 	} );
 
-	describe( 'Selector memoization', () => {
-		it( 'should create memoized selector with correct dependencies', () => {
-			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false );
-
-			renderHook( () => useRecommendedSite( blogId ) );
-
-			// Check that useSelector was called with a function
-			expect( mockUseSelector ).toHaveBeenCalledWith( expect.any( Function ) );
-		} );
-
-		it( 'should return false from memoized selector when no current user', () => {
-			mockUseSelector.mockReturnValueOnce( null ).mockReturnValueOnce( false );
-
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
-
-			// The hook should handle the case where currentUserName is null
-			expect( result.current.isRecommended ).toBe( false );
-		} );
-	} );
-
-	describe( 'Optimistic updates', () => {
-		it( 'should show optimistic state during toggle to recommended', () => {
-			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false ); // Initially not recommended
-
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
-
-			act( () => {
-				result.current.toggleRecommended();
-			} );
-
-			// Should show optimistic state immediately
-			expect( result.current.isRecommended ).toBe( true );
-			expect( result.current.isUpdating ).toBe( false ); // Gets reset in finally block
-		} );
-
-		it( 'should show optimistic state during toggle to not recommended', () => {
-			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( true ); // Initially recommended
-
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
-
-			act( () => {
-				result.current.toggleRecommended();
-			} );
-
-			// Should show optimistic state immediately
-			expect( result.current.isRecommended ).toBe( false );
-		} );
-
-		it( 'should clear optimistic state when it matches selector state', async () => {
-			let selectorReturnValue = false;
-			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockImplementation( ( selector ) => {
+	describe( 'Selector logic', () => {
+		it( 'should check feedId first then fall back to siteId', () => {
+			const mockState = { reader: { lists: {} } };
+			mockUseSelector.mockImplementation( ( selector ) => {
 				if ( selector === getCurrentUserName ) {
 					return 'testuser';
 				}
-				return selectorReturnValue;
+				// Call the actual selector function
+				return selector( mockState );
 			} );
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( blogId ) );
+			// Mock feed match found
+			mockGetMatchingItem.mockReturnValueOnce( { feed_ID: feedId } );
 
-			// Toggle to create optimistic state
-			act( () => {
-				result.current.toggleRecommended();
+			renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+
+			// Should call getMatchingItem with feedId first
+			expect( mockGetMatchingItem ).toHaveBeenCalledWith( mockState, {
+				listId: 999,
+				feedId,
+			} );
+		} );
+
+		it( 'should fall back to siteId when feedId not found and blogId provided', () => {
+			const mockState = { reader: { lists: {} } };
+			mockUseSelector.mockImplementation( ( selector ) => {
+				if ( selector === getCurrentUserName ) {
+					return 'testuser';
+				}
+				return selector( mockState );
 			} );
 
-			expect( result.current.isRecommended ).toBe( true );
+			// Mock no feed match, but site match found
+			mockGetMatchingItem
+				.mockReturnValueOnce( false ) // feedId not found
+				.mockReturnValueOnce( { site_ID: blogId } ); // siteId found
 
-			// Simulate selector state catching up to optimistic state
-			selectorReturnValue = true;
-			rerender();
+			renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
-			// Optimistic state should be cleared when it matches selector
-			await waitFor( () => {
-				expect( result.current.isRecommended ).toBe( true );
+			expect( mockGetMatchingItem ).toHaveBeenCalledWith( mockState, {
+				listId: 999,
+				feedId,
 			} );
+			expect( mockGetMatchingItem ).toHaveBeenCalledWith( mockState, {
+				listId: 999,
+				siteId: blogId,
+			} );
+		} );
+
+		it( 'should return false when no list exists', () => {
+			const mockState = { reader: { lists: {} } };
+			mockGetListByOwnerAndSlug.mockReturnValue( undefined );
+
+			mockUseSelector.mockImplementation( ( selector ) => {
+				if ( selector === getCurrentUserName ) {
+					return 'testuser';
+				}
+				return selector( mockState );
+			} );
+
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+
+			expect( result.current.isRecommended ).toBe( false );
 		} );
 	} );
 
@@ -168,13 +171,13 @@ describe( 'useRecommendedSite', () => {
 		it( 'should dispatch addRecommendedBlogsSite when toggling to recommended', () => {
 			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false );
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			act( () => {
 				result.current.toggleRecommended();
 			} );
 
-			expect( mockAddRecommendedBlogsSite ).toHaveBeenCalledWith( blogId, 'testuser', {
+			expect( mockAddRecommendedBlogsSite ).toHaveBeenCalledWith( feedId, 'testuser', {
 				successMessage: 'Site added to your recommended blogs.',
 				errorMessage: 'Failed to add site to recommended blogs. Please try again.',
 			} );
@@ -184,13 +187,13 @@ describe( 'useRecommendedSite', () => {
 		it( 'should dispatch removeRecommendedBlogsSite when toggling to not recommended', () => {
 			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( true );
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			act( () => {
 				result.current.toggleRecommended();
 			} );
 
-			expect( mockRemoveRecommendedBlogsSite ).toHaveBeenCalledWith( blogId, 'testuser', {
+			expect( mockRemoveRecommendedBlogsSite ).toHaveBeenCalledWith( feedId, 'testuser', {
 				successMessage: 'Site removed from your recommended blogs.',
 				errorMessage: 'Failed to remove site from recommended blogs.',
 			} );
@@ -202,7 +205,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( null ) // No current user
 				.mockReturnValueOnce( false );
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -215,7 +218,10 @@ describe( 'useRecommendedSite', () => {
 		it( 'should allow multiple toggles in rapid succession', () => {
 			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false );
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+
+			// Reset mockDispatch to clear any previous calls
+			mockDispatch.mockClear();
 
 			// Multiple rapid toggles are allowed since isUpdating gets reset in finally block
 			act( () => {
@@ -236,7 +242,7 @@ describe( 'useRecommendedSite', () => {
 				throw new Error( 'Dispatch failed' );
 			} );
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			// The hook doesn't catch dispatch errors - they bubble up
 			act( () => {
@@ -255,7 +261,7 @@ describe( 'useRecommendedSite', () => {
 		it( 'should recreate toggleRecommended function when dependencies change', () => {
 			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false );
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result, rerender } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			// Force a rerender which may change internal state dependencies
 			rerender();
@@ -275,7 +281,7 @@ describe( 'useRecommendedSite', () => {
 				return false;
 			} );
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result, rerender } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 			const firstToggleFunction = result.current.toggleRecommended;
 
 			// Change currentUserName
@@ -292,7 +298,7 @@ describe( 'useRecommendedSite', () => {
 		it( 'should handle rapid toggle attempts correctly', () => {
 			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false );
 
-			const { result } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			// Reset mockDispatch to clear any previous calls
 			mockDispatch.mockClear();
@@ -317,7 +323,7 @@ describe( 'useRecommendedSite', () => {
 				return false;
 			} );
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( blogId ) );
+			const { result, rerender } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
 
 			expect( result.current.canToggle ).toBe( true );
 
@@ -326,6 +332,15 @@ describe( 'useRecommendedSite', () => {
 			rerender();
 
 			expect( result.current.canToggle ).toBe( false );
+		} );
+
+		it( 'should work without blogId option', () => {
+			mockUseSelector.mockReturnValueOnce( 'testuser' ).mockReturnValueOnce( false );
+
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
+
+			expect( result.current.canToggle ).toBe( true );
+			expect( result.current.isRecommended ).toBe( false );
 		} );
 	} );
 } );

@@ -104,8 +104,8 @@ const SiteSubscriptionRow = ( {
 	const currentUserName = useSelector( getCurrentUserName );
 
 	// Use custom hook for recommended site functionality
-	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( blog_id ), {
-		feedId: Number( feed_id ),
+	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feed_id ), {
+		blogId: Number( blog_id ),
 	} );
 
 	const isCompactLayout = layout === 'compact';

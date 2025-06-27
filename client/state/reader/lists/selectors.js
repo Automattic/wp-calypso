@@ -168,23 +168,3 @@ export function getUserRecommendedBlogs( state, listOwner ) {
 export function isRequestingUserRecommendedBlogs( state, listOwner ) {
 	return !! state.reader.lists.isRequestingUserRecommendedBlogs[ listOwner ];
 }
-
-/**
- * Check if a site is in the recommended blogs list.
- * @param  {Object}  state  Global state tree
- * @param  {string}  owner  List owner (user login)
- * @param  {number}  siteId Site ID to check
- * @returns {boolean} Is the site in the recommended blogs list?
- */
-export function isSiteInRecommendedBlogsList( state, owner, siteId ) {
-	if ( ! owner || ! siteId ) {
-		return false;
-	}
-
-	const list = getListByOwnerAndSlug( state, owner, 'recommended-blogs' );
-	if ( ! list ) {
-		return false;
-	}
-
-	return !! getMatchingItem( state, { listId: list.ID, siteId } );
-}

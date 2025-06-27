@@ -18,22 +18,22 @@ interface UseRecommendedSiteResult {
 }
 
 interface UseRecommendedSiteOptions {
-	feedId?: number;
+	blogId?: number;
 }
 
 /**
  * Custom hook for managing recommended site state with optimistic updates
- * @param blogId - The blog ID to check/manage recommendation status for
- * @param options - Optional configuration including feedId
+ * @param feedId - The feed ID to add/remove from recommended blogs list
+ * @param options - Optional configuration including blogId for fallback matching
  * @returns Object with recommendation state and toggle function
  */
 export const useRecommendedSite = (
-	blogId: number,
+	feedId: number,
 	options?: UseRecommendedSiteOptions
 ): UseRecommendedSiteResult => {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
-	const { feedId } = options || {};
+	const { blogId } = options || {};
 
 	// Memoized selector to check if item is in recommended list
 	// Try matching by feedId first (since that's what we add to the list now), fall back to siteId
@@ -53,18 +53,20 @@ export const useRecommendedSite = (
 			}
 
 			// Try to match by feedId first (preferred, since that's what we add to the list)
-			if ( feedId ) {
-				const matchByFeedId = getMatchingItem( state, { listId: list.ID, feedId } );
-				if ( matchByFeedId ) {
-					return true;
-				}
+			const matchByFeedId = getMatchingItem( state, { listId: list.ID, feedId } );
+			if ( matchByFeedId ) {
+				return true;
 			}
 
 			// Fall back to matching by siteId for backward compatibility
-			const matchBySiteId = getMatchingItem( state, { listId: list.ID, siteId: blogId } );
-			return !! matchBySiteId;
+			if ( blogId ) {
+				const matchBySiteId = getMatchingItem( state, { listId: list.ID, siteId: blogId } );
+				return !! matchBySiteId;
+			}
+
+			return false;
 		},
-		[ currentUserName, blogId, feedId ]
+		[ currentUserName, feedId, blogId ]
 	);
 
 	// Get actual state from Redux
@@ -96,7 +98,7 @@ export const useRecommendedSite = (
 
 	// Toggle function with optimistic updates
 	const toggleRecommended = useCallback( () => {
-		if ( ! canToggle || isUpdating || ! feedId ) {
+		if ( ! canToggle || isUpdating ) {
 			return;
 		}
 
