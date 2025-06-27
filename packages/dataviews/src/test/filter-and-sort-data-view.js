@@ -646,7 +646,7 @@ describe( 'filters', () => {
 
 	it( 'should filter using IN_THE_PAST operator for datetime (days)', () => {
 		const testData = [
-			{ title: 'Recent', date: subDays( new Date(), 7 ) },
+			{ title: 'Recent', date: subDays( new Date(), 5 ) },
 			{ title: 'Old', date: subDays( new Date(), 14 ) },
 		];
 		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];

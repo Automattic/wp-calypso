@@ -55,12 +55,18 @@ const BuildReport = () => {
 	} );
 
 	const sendReportEmailMutation = useSendReportEmailMutation( {
-		onSuccess: () => {
+		onSuccess: ( _data, options ) => {
+			const isPreview = options?.preview;
 			dispatch(
-				successNotice( translate( 'Report sent successfully!' ), {
-					duration: 5000,
-					id: 'send-report-success',
-				} )
+				successNotice(
+					isPreview
+						? translate( 'Report preview sent successfully!' )
+						: translate( 'Report sent successfully!' ),
+					{
+						duration: 5000,
+						id: isPreview ? 'send-report-preview-success' : 'send-report-success',
+					}
+				)
 			);
 		},
 		onError: ( error ) => {
@@ -172,16 +178,20 @@ const BuildReport = () => {
 										'Get started by choosing the details to include for your client below.'
 								  ) }
 						</p>
-						{ duplicateError && ! isDuplicateLoading && (
-							<div className="build-report__content-note">
-								<Icon icon={ error } />
-								{ translate( 'Note: Some data could not be duplicated.' ) }
-							</div>
-						) }
-						{ isDuplicateLoading && (
-							<div className="build-report__content-note">
-								<Spinner /> { translate( 'Please wait while we prepare your report…' ) }
-							</div>
+						{ isDuplicating && (
+							<>
+								{ duplicateError && ! isDuplicateLoading && (
+									<div className="build-report__content-note">
+										<Icon icon={ error } />
+										{ translate( 'Note: Some data could not be duplicated.' ) }
+									</div>
+								) }
+								{ isDuplicateLoading && (
+									<div className="build-report__content-note">
+										<Spinner /> { translate( 'Please wait while we prepare your report…' ) }
+									</div>
+								) }
+							</>
 						) }
 					</div>
 					<div className="build-report__form">
