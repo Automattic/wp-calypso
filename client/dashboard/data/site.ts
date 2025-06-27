@@ -31,6 +31,7 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'is_difm_lite_in_progress',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
@@ -61,6 +62,7 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
+	is_difm_lite_in_progress?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -79,8 +81,7 @@ export interface Site {
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;
 	subscribers_count: number;
-	// Can be undefined for deleted sites.
-	options?: SiteOptions;
+	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;

@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
@@ -20,7 +21,7 @@ import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
 import { JetpackModules } from '../../data/constants';
 import { hasAtomicFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteStatusLabel } from '../../utils/site-status';
+import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import { isSitePlanTrial } from '../plans';
@@ -218,8 +219,15 @@ function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 }
 
 export function Status( { site }: { site: Site } ) {
-	if ( site.is_deleted ) {
-		return <Text isDestructive>{ __( 'Deleted' ) }</Text>;
+	const status = getSiteStatus( site );
+	const label = getSiteStatusLabel( site );
+
+	if ( status === 'deleted' ) {
+		return <Text isDestructive>{ label }</Text>;
+	}
+
+	if ( status === 'difm_lite_in_progress' ) {
+		return <Badge>{ label }</Badge>;
 	}
 
 	if ( site.plan?.expired ) {
@@ -235,7 +243,7 @@ export function Status( { site }: { site: Site } ) {
 		return <SiteLaunchNag site={ site } />;
 	}
 
-	return getSiteStatusLabel( site );
+	return label;
 }
 
 export function Plan( { site }: { site: Site } ) {
