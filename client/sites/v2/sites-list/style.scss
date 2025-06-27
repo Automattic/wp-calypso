@@ -6,6 +6,7 @@
 
 	.dashboard-page-layout {
 		height: 100%;
+		max-width: 100% !important; // Override the max-width on backport.
 		justify-content: flex-start;
 		align-self: center;
 		margin: 0;
