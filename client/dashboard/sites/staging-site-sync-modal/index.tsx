@@ -1,5 +1,5 @@
 import { Button, ExternalLink, Modal, __experimentalText as Text } from '@wordpress/components';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 
@@ -13,50 +13,48 @@ interface SyncModalProps {
 	siteSlug: string;
 }
 
-const useCopy = ( type: 'pull' | 'push' ) => {
-	return useMemo( () => {
-		if ( type === 'pull' ) {
-			return {
-				staging: {
-					title: __( 'Pull from Production' ),
-					description: __(
-						'Pulling will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
-					),
-				},
-				production: {
-					title: __( 'Pull from Staging' ),
-					description: __(
-						'Pulling will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
-					),
-				},
-				fromLabel: __( 'Pull' ),
-				toLabel: __( 'To' ),
-				syncSelectionHeading: __( 'What would you like to pull?' ),
-				learnMore: __( 'Read more about <a>environment pull</a>.' ),
-				submit: __( 'Pull' ),
-			};
-		}
-
+const getCopy = ( type: 'pull' | 'push' ) => {
+	if ( type === 'pull' ) {
 		return {
 			staging: {
-				title: __( 'Push to Production' ),
+				title: __( 'Pull from Production' ),
 				description: __(
-					'Pushing will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
+					'Pulling will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 			},
 			production: {
-				title: __( 'Push to Staging' ),
+				title: __( 'Pull from Staging' ),
 				description: __(
-					'Pushing will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
+					'Pulling will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 			},
-			fromLabel: __( 'Push' ),
+			fromLabel: __( 'Pull' ),
 			toLabel: __( 'To' ),
-			syncSelectionHeading: __( 'What would you like to push?' ),
-			learnMore: __( 'Read more about <a>environment push</a>.' ),
-			submit: __( 'Push' ),
+			syncSelectionHeading: __( 'What would you like to pull?' ),
+			learnMore: __( 'Read more about <a>environment pull</a>.' ),
+			submit: __( 'Pull' ),
 		};
-	}, [ type ] );
+	}
+
+	return {
+		staging: {
+			title: __( 'Push to Production' ),
+			description: __(
+				'Pushing will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
+			),
+		},
+		production: {
+			title: __( 'Push to Staging' ),
+			description: __(
+				'Pushing will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
+			),
+		},
+		fromLabel: __( 'Push' ),
+		toLabel: __( 'To' ),
+		syncSelectionHeading: __( 'What would you like to push?' ),
+		learnMore: __( 'Read more about <a>environment push</a>.' ),
+		submit: __( 'Push' ),
+	};
 };
 
 export default function SyncModal( {
@@ -66,7 +64,7 @@ export default function SyncModal( {
 	environment,
 	siteSlug,
 }: SyncModalProps ) {
-	const copy = useCopy( syncType );
+	const copy = getCopy( syncType );
 	const modalTitle = copy[ environment ].title;
 
 	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
