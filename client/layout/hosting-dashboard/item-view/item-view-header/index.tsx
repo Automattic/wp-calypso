@@ -17,6 +17,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ItemData, ItemViewHeaderExtraProps } from '../types';
+import HeaderStagingSiteButton from './header-staging-site-button';
 
 import './style.scss';
 
@@ -115,7 +116,6 @@ export default function ItemViewHeader( {
 										) : (
 											itemData.subtitle
 										) }
-
 										{ extraProps && extraProps.subtitleExtra ? (
 											<span>
 												<extraProps.subtitleExtra />
@@ -123,6 +123,12 @@ export default function ItemViewHeader( {
 										) : (
 											''
 										) }
+										<HeaderStagingSiteButton
+											siteId={ siteId }
+											isAtomic={ isAtomic }
+											isStagingSite={ isStagingSite }
+											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
+										/>
 									</div>
 
 									{ shouldDisplayVersionNumbers && (

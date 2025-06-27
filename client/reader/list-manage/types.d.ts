@@ -6,6 +6,19 @@ export type List = {
 	owner: string;
 	slug: string;
 	title: string;
+	is_immutable?: boolean;
+};
+
+// Flexible version for actions and API calls where some fields might be optional
+export type ReaderList = {
+	ID?: number;
+	title: string;
+	slug: string;
+	description?: string;
+	owner: string;
+	is_owner?: boolean;
+	is_public?: boolean;
+	is_immutable?: boolean;
 };
 
 export type Item = {

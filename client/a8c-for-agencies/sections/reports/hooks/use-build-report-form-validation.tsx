@@ -11,7 +11,7 @@ type ValidationError = {
 // Email validation utility
 const isValidEmailList = ( emailString: string ): boolean => {
 	const emails = emailString.split( ',' ).map( ( email ) => email.trim() );
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 	return emails.every( ( email ) => emailRegex.test( email ) );
 };
 
@@ -20,7 +20,7 @@ const VALIDATION_RULES = {
 	step1: ( data: BuildReportFormData, translate: ( key: string ) => string ): ValidationError[] => {
 		const errors: ValidationError[] = [];
 
-		if ( ! data.selectedSite.trim() ) {
+		if ( ! data.selectedSite?.domain.trim() ) {
 			errors.push( {
 				field: 'selectedSite',
 				message: translate( 'Please select a site to report on.' ),
@@ -40,7 +40,7 @@ const VALIDATION_RULES = {
 		}
 
 		// Teammate emails validation when checkbox is checked
-		if ( data.sendMeACopy ) {
+		if ( data.sendCopyToTeam ) {
 			if ( ! data.teammateEmails.trim() ) {
 				errors.push( {
 					field: 'teammateEmails',

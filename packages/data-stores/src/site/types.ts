@@ -122,7 +122,7 @@ export interface DifmLiteSiteOptions {
 export interface SiteDetails {
 	ID: number;
 	URL: string;
-	capabilities: SiteDetailsCapabilities;
+	capabilities?: SiteDetailsCapabilities;
 	description: string;
 	domain: string;
 	icon?: { ico: string; img: string; media_id: number };

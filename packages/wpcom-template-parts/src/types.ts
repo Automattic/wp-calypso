@@ -37,6 +37,7 @@ export interface ClickableItemProps extends MenuItemProps {
 	type: string;
 	typeClassName?: string;
 	target?: string;
+	tabIndex?: number;
 }
 
 export type LanguageOptions = Record< string, string >;

@@ -70,7 +70,10 @@
 
 .mastodon-preview__card-description {
 	font-size: 0.875rem;
-	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	display: -webkit-box;
 }

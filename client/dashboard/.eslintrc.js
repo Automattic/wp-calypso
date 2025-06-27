@@ -8,9 +8,11 @@ module.exports = {
 						group: [
 							'calypso/*',
 							// Allowed: calypso/components/async-load
+							// Allowed: calypso/components/jetpack-logo
 							'!calypso/components',
 							'calypso/components/*',
 							'!calypso/components/async-load',
+							'!calypso/components/jetpack-logo',
 							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',
@@ -41,12 +43,12 @@ module.exports = {
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
 							'!@automattic/components/src/summary-button',
-							'!@automattic/components/src/core-badge',
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/calypso-analytics',
 							'!@automattic/dataviews',
 							'!@automattic/number-formatters',
+							'!@automattic/ui',
 							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.

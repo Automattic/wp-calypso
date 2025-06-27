@@ -1,26 +1,25 @@
 {
 	"name": "@automattic/ui",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"description": "Automattic Design System UI components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
+	"type": "module",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
 			"calypso:src": "./src/index.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
+			"types": {
+				"import": "./dist/index.d.ts",
+				"require": "./dist/index.d.cts"
+			},
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
 		},
-		"./style.css": {
-			"import": "./dist/index.css",
-			"require": "./dist/index.css"
-		},
-		"./src/*": {
-			"calypso:src": "./src/*"
-		}
+		"./style.css": "./dist/index.css"
 	},
 	"sideEffects": [
 		"*.css",
@@ -47,7 +46,6 @@
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/primitives": "^4.23.0",
-		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"react-day-picker": "^9.7.0"
@@ -78,8 +76,7 @@
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "yarn clean && yarn bundle",
-		"bundle": "tsup",
+		"build": "yarn clean && tsup",
 		"prepack": "yarn build",
 		"storybook:start": "storybook dev -p 56851"
 	}

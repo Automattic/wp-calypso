@@ -2,6 +2,7 @@
 
 ### Breaking changes
 
+- Remove `CoreBadge` component. Use `Badge` from `@automattic/ui` instead ([#104188](https://github.com/Automattic/wp-calypso/pull/104188)).
 - Remove `DateCalendar` and `DateRangeCalendar` components. Use from `@automattic/ui` instead ([#104224](https://github.com/Automattic/wp-calypso/pull/104224)).
 
 ## 3.0.0

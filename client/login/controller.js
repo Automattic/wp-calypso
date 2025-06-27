@@ -8,6 +8,8 @@ import {
 	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isA4AOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -16,6 +18,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -59,28 +62,31 @@ const enhanceContextWithLogin = ( context ) => {
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
-	const isJetpackLogin = isJetpack === 'jetpack';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
 	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
-	const isWooJPC = isWooJPCFlow( currentState );
+	const isWoo = getIsWoo( currentState );
 	const isBlazePro = getIsBlazePro( currentState );
 	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
 	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
 	const isA4AClient = isA4AOAuth2Client( oauth2Client );
+	const isJetpackLogin = isJetpack === 'jetpack';
+	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
+	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin &&
-			Boolean( clientId ) === false &&
-			Boolean( oauth2ClientId ) === false &&
-			! isWooJPC ) ||
+		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
 		isPartnerPortalClient ||
 		isStudioLogin ||
 		isCrowdsignalLogin ||
 		isBlazePro ||
-		isA4AClient;
+		isA4AClient ||
+		isJetpackCloudClient ||
+		isJetpackLogin ||
+		isWoo ||
+		isVIPClient;
 
 	context.primary = (
 		<WPLogin

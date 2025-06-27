@@ -21,6 +21,7 @@ const clientLogo = ( oauth2Client ) => {
 	} else if ( isA4AOAuth2Client( oauth2Client ) ) {
 		return <A4ALogo full className="a4a-logo" size={ 28 } />;
 	}
+
 	return oauth2Client.icon && <img src={ oauth2Client.icon } alt={ oauth2Client.title } />;
 };
 
@@ -31,14 +32,6 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 				<li className="masterbar__oauth-client-current">
 					<div className="masterbar__oauth-client-logo">{ clientLogo( oauth2Client ) }</div>
 				</li>
-
-				{ isWooOAuth2Client( oauth2Client ) && (
-					<li className="masterbar__oauth-client-close">
-						<a href="https://woocommerce.com">
-							Cancel <span>X</span>
-						</a>
-					</li>
-				) }
 
 				{ ! isWooOAuth2Client( oauth2Client ) &&
 					! isJetpackCloudOAuth2Client( oauth2Client ) &&

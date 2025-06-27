@@ -1,15 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from './const';
 
-export default function () {
+export default function ( supportsArchiveStats = false, isSiteJetpackNotAtomic = false ) {
 	const isArchiveBreakdownFlag = isEnabled( 'stats/archive-breakdown' );
+	const isArchiveBreakdownEnabled = isArchiveBreakdownFlag && supportsArchiveStats;
 
 	const statsStrings = {};
 
 	statsStrings.posts = {
-		title: isArchiveBreakdownFlag
+		title: isArchiveBreakdownEnabled
 			? translate( 'Most viewed', { context: 'Stats: title of module', textOnly: true } )
 			: translate( 'Posts & pages', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
@@ -85,10 +87,11 @@ export default function () {
 				comment: '{{link}} links to support documentation.',
 				components: {
 					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ SUPPORT_URL }#countries` ) }
+						<InlineSupportLink
+							supportContext={
+								isSiteJetpackNotAtomic ? 'stats-countries-jetpack' : 'stats-countries'
+							}
+							showIcon={ false }
 						/>
 					),
 				},
@@ -295,10 +298,9 @@ export default function () {
 				comment: '{{link}} links to support documentation.',
 				components: {
 					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) }
+						<InlineSupportLink
+							supportContext={ isSiteJetpackNotAtomic ? 'stats-devices-jetpack' : 'stats-devices' }
+							showIcon={ false }
 						/>
 					),
 				},

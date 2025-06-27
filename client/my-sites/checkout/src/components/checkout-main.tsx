@@ -380,8 +380,11 @@ export default function CheckoutMain( {
 		} );
 	} );
 
+	const currentTaxCountryCode = responseCart.tax.location.country_code;
+
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		contactDetailsType,
+		currentTaxCountryCode,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,

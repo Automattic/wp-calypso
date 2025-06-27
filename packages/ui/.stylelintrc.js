@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	extends: [ '../../.stylelintrc' ],
 	plugins: [ 'stylelint-plugin-logical-css' ],
 	rules: {

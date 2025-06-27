@@ -47,7 +47,6 @@ export const useGetCombinedChat = (
 
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
-		previousUuidRef.current = currentSupportInteraction?.uuid;
 		if (
 			! currentSupportInteraction?.uuid ||
 			isOdieChatLoading ||
@@ -56,6 +55,8 @@ export const useGetCombinedChat = (
 		) {
 			return;
 		}
+
+		previousUuidRef.current = currentSupportInteraction?.uuid;
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {

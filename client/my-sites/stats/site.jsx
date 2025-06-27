@@ -164,6 +164,15 @@ function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
+	const {
+		supportsPlanUsage,
+		supportsUTMStats: supportsUTMStatsFeature,
+		supportsDevicesStats: supportsDevicesStatsFeature,
+		isOldJetpack,
+		supportUserFeedback,
+		supportsArchiveStats,
+	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
+
 	const { period } = props.period;
 	const [ activeTabState, setActiveTabState ] = useState( () => getActiveTab( chartTab ) );
 	const [ activeLegend, setActiveLegend ] = useState( () =>
@@ -171,7 +180,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 	const queryDate = date.format( DATE_FORMAT );
 
-	const moduleStrings = statsStrings();
+	const moduleStrings = statsStrings( supportsArchiveStats );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -191,14 +200,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		() => moduleVisibilityWithUserConfiguration( moduleToggles, hasVideoPress ),
 		[ hasVideoPress, moduleToggles ]
 	);
-
-	const {
-		supportsPlanUsage,
-		supportsUTMStats: supportsUTMStatsFeature,
-		supportsDevicesStats: supportsDevicesStatsFeature,
-		isOldJetpack,
-		supportUserFeedback,
-	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
 	// Find the applied shortcut with shortcut ID from the URL.
 	const shortcuts = useShortcuts( {

@@ -113,6 +113,13 @@
 		}
 	}
 
+	// Compact layout adjustments
+	&.site-subscriptions-list--compact {
+		.title-cell {
+			flex: 2; // Give more space to title in compact layout
+		}
+	}
+
 	@media (max-width: $break-xlarge) {
 		.new-comments-cell {
 			display: none;

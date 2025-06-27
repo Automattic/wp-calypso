@@ -3,7 +3,6 @@ import { capitalize } from 'lodash';
 import VisitSite from 'calypso/blocks/visit-site';
 import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
-import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { getPluginTitle } from 'calypso/lib/login';
 import {
@@ -13,6 +12,7 @@ import {
 	isGravatarFlowOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isGravatarOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import './login-header.scss';
 
@@ -62,11 +62,9 @@ export function getHeaderText(
 	isFromAkismet: boolean,
 	isFromAutomatticForAgenciesPlugin: boolean,
 	isGravPoweredClient: boolean,
-	wccomFrom: string,
 	twoFactorEnabled: boolean,
 	currentQuery: Record< string, string >,
 	translate: ( arg0: string, arg1?: object ) => TranslateResult,
-	showContinueAsUser: boolean = false,
 	twoStepNonce: string | null = null
 ): TranslateResult {
 	let headerText = translate( 'Log in to your account' );
@@ -79,6 +77,14 @@ export function getHeaderText(
 			clientName = 'Blaze Pro';
 		} else if ( isA4AOAuth2Client( oauth2Client ) ) {
 			clientName = 'Automattic for Agencies';
+		} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			clientName = 'Jetpack Cloud';
+		} else if ( isJetpack ) {
+			clientName = 'Jetpack';
+		} else if ( isWCCOM ) {
+			headerText = translate( 'Log in to Woo with WordPress.com' );
+		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
+			clientName = 'VIP';
 		}
 
 		headerText = clientName
@@ -121,26 +127,9 @@ export function getHeaderText(
 
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
+	} else if ( currentQuery.lostpassword_flow === 'true' ) {
+		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {
-		if ( isWCCOM ) {
-			if ( wccomFrom === 'cart' ) {
-				headerText = translate( 'Log in with a WordPress.com account' );
-			} else if ( twoFactorEnabled ) {
-				headerText = translate( 'Authenticate your login' );
-			} else if ( currentQuery.lostpassword_flow ) {
-				headerText = translate( 'Log in to your account' );
-			} else if ( showContinueAsUser ) {
-				headerText = (
-					<>
-						{ wccomFrom === 'nux'
-							? translate( 'Get started in minutes' )
-							: translate( 'Log in to your account' ) }
-					</>
-				);
-			}
-			headerText = translate( 'Log in to your account' );
-		}
-
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 		}
@@ -148,10 +137,6 @@ export function getHeaderText(
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				headerText = translate( 'Log in to WP Cloud with WordPress.com' );
-			} else if ( document.location.search?.includes( 'jetpack' ) ) {
-				headerText = translate(
-					'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
-				);
 			} else {
 				headerText = translate(
 					'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
@@ -165,18 +150,11 @@ export function getHeaderText(
 			} );
 		}
 	} else if ( isWooJPC ) {
-		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
-		if ( isLostPasswordFlow ) {
-			headerText = translate( "You've got mail" );
-		} else if ( twoFactorEnabled ) {
+		if ( twoFactorEnabled ) {
 			headerText = translate( 'Authenticate your login' );
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
-	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
-		headerText = translate(
-			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
-		);
 	}
 
 	if ( isFromAutomatticForAgenciesPlugin ) {
@@ -204,7 +182,6 @@ export function LoginHeader( {
 	oauth2Client,
 	socialConnect,
 	twoStepNonce,
-	wccomFrom,
 	isWooJPC,
 	twoFactorAuthType,
 	twoFactorEnabled,
@@ -228,11 +205,9 @@ export function LoginHeader( {
 		isFromAkismet,
 		isFromAutomatticForAgenciesPlugin,
 		isGravPoweredClient,
-		wccomFrom,
 		twoFactorEnabled,
 		currentQuery,
 		translate,
-		showContinueAsUser,
 		twoStepNonce
 	);
 
@@ -270,67 +245,6 @@ export function LoginHeader( {
 			);
 		}
 	} else if ( oauth2Client ) {
-		if ( isWCCOM ) {
-			if ( wccomFrom === 'cart' ) {
-				preHeader = <WooCommerceConnectCartHeader />;
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate(
-							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
-						) }
-					</p>
-				);
-			} else if ( twoFactorEnabled ) {
-				header = <h3>{ headerText }</h3>;
-			} else if ( currentQuery.lostpassword_flow ) {
-				header = <h3>{ headerText }</h3>;
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate(
-							"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
-						) }
-					</p>
-				);
-			} else if ( showContinueAsUser ) {
-				header = <h3>{ headerText }</h3>;
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ wccomFrom === 'nux'
-							? translate( "First, select the account you'd like to use." )
-							: translate( "Select the account you'd like to use." ) }
-					</p>
-				);
-			} else {
-				header = <h3>{ headerText }</h3>;
-				const poweredByWpCom = (
-					<>
-						{ translate( 'Log in with your WordPress.com account.' ) }{ ' ' }
-						<br className="hide-on-desktop" />
-					</>
-				);
-
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ poweredByWpCom }
-						{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
-							components: {
-								signupLink,
-								br: <br />,
-							},
-						} ) }
-					</p>
-				);
-			}
-		}
-
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			preHeader = (
-				<div>
-					<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
-				</div>
-			);
-		}
-
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				preHeader = (
@@ -434,13 +348,11 @@ export function LoginHeader( {
 			);
 		}
 		postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
-	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
-		preHeader = <p className="login__jetpack-pre-header">{ translate( 'Log in or sign up' ) }</p>;
-		header = <p className="login__jetpack-header">{ headerText }</p>;
 	} else if ( fromSite ) {
 		// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 		postHeader = <VisitSite siteSlug={ fromSite } />;
 	}
+
 	if ( isFromAutomatticForAgenciesPlugin ) {
 		preHeader = (
 			<svg

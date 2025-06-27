@@ -307,6 +307,27 @@ export const Media = ( {
 	);
 };
 
+export const Array = ( {
+	type,
+	labelPosition,
+}: {
+	type: 'default' | 'regular' | 'panel';
+	labelPosition: 'default' | 'top' | 'side' | 'none';
+} ) => {
+	const arrayTextFields = useMemo(
+		() => fields.filter( ( field ) => field.type === 'array' ),
+		[]
+	);
+
+	return (
+		<FieldTypeStory
+			fields={ arrayTextFields }
+			type={ type }
+			labelPosition={ labelPosition }
+		/>
+	);
+};
+
 export const NoType = ( {
 	type,
 	labelPosition,
