@@ -81,16 +81,18 @@ export function getView( {
 } {
 	const defaultView = getDefaultView( { user, isAutomattician, isRestoringAccount } );
 
-	return {
-		defaultView,
-		view: {
-			...defaultView,
-			...DEFAULT_LAYOUTS[ viewOptions?.type ?? defaultView.type ],
-			...( viewOptions
-				? Object.fromEntries(
-						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
-				  )
-				: {} ),
-		} as View,
-	};
+	let view = { ...defaultView };
+	if ( viewOptions ) {
+		if ( viewOptions.type ) {
+			view = { ...view, ...DEFAULT_LAYOUTS[ viewOptions.type ] } as View;
+		}
+		view = {
+			...view,
+			...Object.fromEntries(
+				Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
+			),
+		};
+	}
+
+	return { defaultView, view };
 }
