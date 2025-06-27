@@ -162,6 +162,16 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
+			Smooch.on( 'disconnected', ( data ) => {
+				recordTracksEvent( 'calypso_smooch_messenger_disconnected', {
+					data,
+				} );
+			} );
+			Smooch.on( 'reconnecting', ( data ) => {
+				recordTracksEvent( 'calypso_smooch_messenger_reconnecting', {
+					data,
+				} );
+			} );
 		}
 
 		return () => {
