@@ -13,7 +13,6 @@ import { getHeaderText } from 'calypso/blocks/login/login-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
@@ -555,22 +554,13 @@ export class Login extends Component {
 			translate
 		);
 
-		let brandLogo;
-
-		if (
-			isPartnerPortalOAuth2Client( oauth2Client ) &&
-			document.location.search?.includes( 'wpcloud' )
-		) {
-			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
-		} else {
-			brandLogo = (
-				<WordPressLogo
-					size={ 21 }
-					className="step-container-v2__top-bar-wordpress-logo"
-					color="currentColor"
-				/>
-			);
-		}
+		const brandLogo = (
+			<WordPressLogo
+				size={ 21 }
+				className="step-container-v2__top-bar-wordpress-logo"
+				color="currentColor"
+			/>
+		);
 
 		const isLostPassword =
 			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
@@ -583,7 +573,8 @@ export class Login extends Component {
 			isJetpack ||
 			isJetpackCloudOAuth2Client( oauth2Client ) ||
 			isWoo ||
-			isVIPOAuth2Client( oauth2Client );
+			isVIPOAuth2Client( oauth2Client ) ||
+			isPartnerPortalOAuth2Client( oauth2Client );
 
 		return (
 			<>

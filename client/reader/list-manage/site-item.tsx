@@ -78,10 +78,13 @@ export default function SiteItem( props: {
 	);
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
-	const addItem = () => dispatch( addReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
+	const addItem = () =>
+		item.site_ID && dispatch( addReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
-		shouldDelete && dispatch( deleteReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
+		shouldDelete &&
+			item.site_ID &&
+			dispatch( deleteReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
 	};
 
 	if ( isInList && props.hideIfInList ) {

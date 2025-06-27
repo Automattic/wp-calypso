@@ -20,6 +20,7 @@ import {
 } from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
+import { isAutomatticianQuery } from './queries/a8c';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { profileQuery } from './queries/profile';
@@ -72,7 +73,12 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( sitesQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {

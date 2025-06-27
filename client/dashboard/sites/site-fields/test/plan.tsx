@@ -6,14 +6,16 @@ import { AuthContext } from '../../../app/auth';
 import { Plan } from '../index';
 import type { User, Site } from '../../../data/types';
 
+const userId = 1;
+
 function render( ui: React.ReactElement ) {
 	return testingLibraryRender(
-		<AuthContext.Provider value={ { user: { ID: 1 } as User } }>{ ui }</AuthContext.Provider>
+		<AuthContext.Provider value={ { user: { ID: userId } as User } }>{ ui }</AuthContext.Provider>
 	);
 }
 
 describe( '<Plan>', () => {
-	test( 'for staging sites, it renders "Staging"', async () => {
+	test( 'for staging sites, it renders "Staging"', () => {
 		const site = {
 			is_wpcom_staging_site: true,
 		} as Site;
@@ -21,7 +23,7 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( 'Staging' );
 	} );
 
-	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', async () => {
+	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {
 		const site = {
 			is_wpcom_atomic: false,
 			jetpack_connection: true,
@@ -35,7 +37,7 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( 'Free' );
 	} );
 
-	test( 'for self-hosted, Jetpack-connected sites, inactive Jetpack plugin, it renders dash', async () => {
+	test( 'for self-hosted, Jetpack-connected sites, inactive Jetpack plugin, it renders dash', () => {
 		const site = {
 			is_wpcom_atomic: false,
 			jetpack_connection: true,
@@ -48,7 +50,7 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( '-' );
 	} );
 
-	test( 'for WordPress.com Simple sites, it renders the plan name', async () => {
+	test( 'for WordPress.com Simple sites, it renders the plan name', () => {
 		const site = {
 			is_wpcom_atomic: false,
 			jetpack_connection: false,
@@ -61,7 +63,7 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( 'Premium' );
 	} );
 
-	test( 'for WordPress.com Atomic sites, it renders the plan name', async () => {
+	test( 'for WordPress.com Atomic sites, it renders the plan name', () => {
 		const site = {
 			is_wpcom_atomic: true,
 			jetpack_connection: true,
@@ -74,7 +76,7 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( 'Business' );
 	} );
 
-	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix', async () => {
+	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix', () => {
 		const site = {
 			plan: {
 				product_name_short: 'Business',
@@ -85,10 +87,10 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( 'Business-expired' );
 	} );
 
-	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix and a renewal nag for the site owner', async () => {
+	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix and a renewal nag for the site owner', () => {
 		const site = {
 			slug: 'test.wordpress.com',
-			site_owner: 1,
+			site_owner: userId,
 			plan: {
 				product_slug: 'business-bundle',
 				product_name_short: 'Business',
@@ -103,10 +105,10 @@ describe( '<Plan>', () => {
 		);
 	} );
 
-	test( 'for Trial sites with expired plan, it renders the plan name with "-expired" suffix and an upgrade nag for the site owner', async () => {
+	test( 'for Trial sites with expired plan, it renders the plan name with "-expired" suffix and an upgrade nag for the site owner', () => {
 		const site = {
 			slug: 'test.wordpress.com',
-			site_owner: 1,
+			site_owner: userId,
 			plan: {
 				product_slug: 'ecommerce-trial-bundle-monthly',
 				product_name_short: 'Trial',

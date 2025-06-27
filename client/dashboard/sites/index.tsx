@@ -5,16 +5,27 @@ import { Button, Modal, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
+import { isAutomatticianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { isP2 } from '../utils/site-types';
 import AddNewSite from './add-new-site';
 import { canManageSite } from './features';
 import { getFields } from './fields';
+import { SitesNotices } from './notices';
 import type { FetchSitesOptions, Site } from '../data/types';
-import type { Operator, SortDirection, ViewTable, ViewGrid, Filter } from '@automattic/dataviews';
+import type {
+	Operator,
+	SortDirection,
+	ViewTable,
+	ViewGrid,
+	Filter,
+	RenderModalProps,
+} from '@automattic/dataviews';
 import type { AnyRouter } from '@tanstack/react-router';
 
 const DEFAULT_LAYOUTS = {
@@ -85,37 +96,64 @@ const getDefaultActions = ( router: AnyRouter ) => {
 			},
 			isEligible: ( item: Site ) => canManageSite( item ),
 		},
+		{
+			id: 'leave',
+			label: __( 'Leave site' ),
+			isEligible: ( item: Site ) => ! item.is_deleted && ! isP2( item ),
+			RenderModal: ( { items, closeModal }: RenderModalProps< Site > ) => {
+				return (
+					<AsyncLoad
+						require="./site-leave-modal/content-info"
+						placeholder={ null }
+						site={ items[ 0 ] }
+						onClose={ closeModal }
+					/>
+				);
+			},
+		},
 	];
 };
 
 const getFetchSitesOptions = (
-	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
+	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {},
+	isRestoringAccount: boolean = false
 ): FetchSitesOptions => {
-	if (
-		viewOptions.filters?.find(
-			( filter: Filter ) => filter.field === 'status' && filter.value === 'deleted'
-		)
-	) {
-		return { site_visibility: 'deleted' };
+	const filters = viewOptions.filters ?? [];
+
+	// Include A8C sites unless explicitly excluded from the filter.
+	const shouldIncludeA8COwned = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
+
+	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
+		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
 
-	return { site_visibility: viewOptions.search ? 'all' : 'visible' };
+	return {
+		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
+		// See: https://github.com/Automattic/wp-calypso/pull/104220.
+		site_visibility:
+			viewOptions.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		include_a8c_owned: shouldIncludeA8COwned,
+	};
 };
 
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const router = useRouter();
-	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const currentSearchParams = sitesRoute.useSearch();
+	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = currentSearchParams.view;
+	const isRestoringAccount = !! currentSearchParams.restored;
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( viewOptions ) )
+		sitesQuery( getFetchSitesOptions( viewOptions, isRestoringAccount ) )
 	);
-	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	const defaultView = useMemo(
-		() =>
-			hasA8CSites
+		() => ( {
+			...DEFAULT_VIEW,
+			...( isAutomattician
 				? {
-						...DEFAULT_VIEW,
 						filters: [
 							{
 								field: 'is_a8c',
@@ -124,14 +162,16 @@ export default function Sites() {
 							},
 						],
 				  }
-				: DEFAULT_VIEW,
-		[ hasA8CSites ]
+				: {} ),
+			...( isRestoringAccount ? { type: 'table' as const } : {} ),
+		} ),
+		[ isAutomattician, isRestoringAccount ]
 	);
 
 	const view = useMemo(
 		() => ( {
 			...defaultView,
-			...DEFAULT_LAYOUTS[ viewOptions?.type ?? DEFAULT_VIEW.type ],
+			...DEFAULT_LAYOUTS[ viewOptions?.type ?? defaultView.type ],
 			...( viewOptions
 				? Object.fromEntries(
 						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
@@ -142,8 +182,8 @@ export default function Sites() {
 	);
 
 	const fields = useMemo( () => {
-		return getFields( { hasA8CSites, viewType: view.type } );
-	}, [ hasA8CSites, view.type ] );
+		return getFields( { isAutomattician, viewType: view.type } );
+	}, [ isAutomattician, view.type ] );
 
 	const actions = useMemo( () => {
 		return getDefaultActions( router );
@@ -176,6 +216,7 @@ export default function Sites() {
 					/>
 				}
 			>
+				<SitesNotices />
 				<DataViewsCard>
 					<DataViews< Site >
 						getItemId={ ( item ) => item.ID.toString() }
@@ -191,6 +232,7 @@ export default function Sites() {
 							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
 							navigate( {
 								search: {
+									...currentSearchParams,
 									view: Object.fromEntries(
 										Object.entries( view ).filter( ( [ key, value ] ) => {
 											return value !== _defaultView[ key as keyof typeof _defaultView ];

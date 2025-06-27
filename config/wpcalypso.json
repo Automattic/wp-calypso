@@ -123,7 +123,6 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"purchases/purchase-list-dataview": true,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/quick-post": true,

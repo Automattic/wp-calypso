@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	Outlet,
 	Router,
@@ -19,6 +20,7 @@ import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/sit
 import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
+	canManageSite,
 	canViewWordPressSettings,
 	canViewPHPSettings,
 	canViewDefensiveModeSettings,
@@ -33,6 +35,17 @@ import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
 const rootRoute = createRootRoute( { component: Root } );
+
+const dashboardSitesCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites',
+	beforeLoad: ( { cause } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		page.show( '/sites' );
+	},
+} );
 
 const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -55,6 +68,9 @@ const siteRoute = createRoute( {
 	path: '$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canManageSite( site ) ) {
+			page.redirect( '/sites' );
+		}
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 	component: () => <Outlet />,
@@ -296,6 +312,7 @@ const createRouteTree = () =>
 			transferSiteRoute,
 			sftpSshRoute,
 		] ),
+		dashboardSitesCompatibilityRoute,
 		dashboardSiteSettingsCompatibilityRouteRoot,
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );

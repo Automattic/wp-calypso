@@ -112,7 +112,13 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isJetpack: this.props.isJetpack, locale: this.props.locale } ) );
+			page(
+				login( {
+					isJetpack: this.props.isJetpack,
+					locale: this.props.locale,
+					currentQuery: this.props.currentQuery,
+				} )
+			);
 		}
 
 		window.scrollTo( 0, 0 );
@@ -145,9 +151,11 @@ class Login extends Component {
 			this.handleTwoFactorRequested( 'link' );
 		}
 
+		const usernameOnlyRequired = this.props.currentQuery?.username_only === 'true';
 		if (
 			this.props.requestError?.field === 'usernameOrEmail' &&
-			this.props.requestError?.code === 'email_login_not_allowed'
+			this.props.requestError?.code === 'email_login_not_allowed' &&
+			! usernameOnlyRequired
 		) {
 			let urlConfig = {
 				locale: this.props.locale,
@@ -567,7 +575,6 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isSendingEmail={ this.props.isSendingEmail }
