@@ -5,6 +5,7 @@ import {
 	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
+	isSiteInRecommendedBlogsList,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -319,6 +320,134 @@ describe( 'selectors', () => {
 			);
 
 			expect( isMissing ).toEqual( true );
+		} );
+	} );
+
+	describe( '#isSiteInRecommendedBlogsList()', () => {
+		test( 'should return false if owner is not provided', () => {
+			const isInList = isSiteInRecommendedBlogsList(
+				{
+					reader: {
+						lists: {
+							items: {},
+							listItems: {},
+						},
+					},
+				},
+				null,
+				123
+			);
+
+			expect( isInList ).toBe( false );
+		} );
+
+		test( 'should return false if siteId is not provided', () => {
+			const isInList = isSiteInRecommendedBlogsList(
+				{
+					reader: {
+						lists: {
+							items: {},
+							listItems: {},
+						},
+					},
+				},
+				'testuser',
+				null
+			);
+
+			expect( isInList ).toBe( false );
+		} );
+
+		test( 'should return false if recommended-blogs list does not exist', () => {
+			const isInList = isSiteInRecommendedBlogsList(
+				{
+					reader: {
+						lists: {
+							items: {},
+							listItems: {},
+						},
+					},
+				},
+				'testuser',
+				123
+			);
+
+			expect( isInList ).toBe( false );
+		} );
+
+		test( 'should return false if site is not in the recommended-blogs list', () => {
+			const isInList = isSiteInRecommendedBlogsList(
+				{
+					reader: {
+						lists: {
+							items: {
+								456: {
+									ID: 456,
+									owner: 'testuser',
+									slug: 'recommended-blogs',
+								},
+							},
+							listItems: {
+								456: [ { site_ID: 789 }, { site_ID: 234 } ],
+							},
+						},
+					},
+				},
+				'testuser',
+				123
+			);
+
+			expect( isInList ).toBe( false );
+		} );
+
+		test( 'should return true if site is in the recommended-blogs list', () => {
+			const isInList = isSiteInRecommendedBlogsList(
+				{
+					reader: {
+						lists: {
+							items: {
+								456: {
+									ID: 456,
+									owner: 'testuser',
+									slug: 'recommended-blogs',
+								},
+							},
+							listItems: {
+								456: [ { site_ID: 123 }, { site_ID: 234 } ],
+							},
+						},
+					},
+				},
+				'testuser',
+				123
+			);
+
+			expect( isInList ).toBe( true );
+		} );
+
+		test( 'should handle case-insensitive owner matching', () => {
+			const isInList = isSiteInRecommendedBlogsList(
+				{
+					reader: {
+						lists: {
+							items: {
+								456: {
+									ID: 456,
+									owner: 'testuser',
+									slug: 'recommended-blogs',
+								},
+							},
+							listItems: {
+								456: [ { site_ID: 123 } ],
+							},
+						},
+					},
+				},
+				'TestUser',
+				123
+			);
+
+			expect( isInList ).toBe( true );
 		} );
 	} );
 } );
