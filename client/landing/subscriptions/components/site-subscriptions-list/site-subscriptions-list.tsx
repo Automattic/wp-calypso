@@ -116,7 +116,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 						<Tooltip
 							className="site-subscriptions-list__recommend-tooltip"
 							text={ translate(
-								'Recommending a blog adds it to your public profile and helps others discover it in Reader.'
+								'Recommending a blog adds it to your profile and helps it to be discovered in the Reader.'
 							) }
 						>
 							<span>

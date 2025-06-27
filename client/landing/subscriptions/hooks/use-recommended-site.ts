@@ -75,7 +75,7 @@ export const useRecommendedSite = ( blogId: number ): UseRecommendedSiteResult =
 			if ( newValue ) {
 				dispatch(
 					addRecommendedBlogsSite( blogId, currentUserName as string, {
-						successMessage: translate( 'Site successfully added to your recommended blogs!' ),
+						successMessage: translate( 'Site added to your recommended blogs.' ),
 						errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
 					} )
 				);

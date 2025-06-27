@@ -175,7 +175,7 @@ describe( 'useRecommendedSite', () => {
 			} );
 
 			expect( mockAddRecommendedBlogsSite ).toHaveBeenCalledWith( blogId, 'testuser', {
-				successMessage: 'Site successfully added to your recommended blogs!',
+				successMessage: 'Site added to your recommended blogs.',
 				errorMessage: 'Failed to add site to recommended blogs. Please try again.',
 			} );
 			expect( mockDispatch ).toHaveBeenCalled();
