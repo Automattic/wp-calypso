@@ -23,11 +23,8 @@ export default function StagingSiteDeleteModal( {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	// Get the parent site ID from the staging site options
 	const parentSiteId = site.options?.wpcom_production_blog_id;
 
-	// Always call the hook, even if parentSiteId is undefined
-	// We'll handle the validation in the handleDelete function
 	const mutation = useMutation(
 		parentSiteId
 			? stagingSiteDeleteMutation( site.ID, parentSiteId )
