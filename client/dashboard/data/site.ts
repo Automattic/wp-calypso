@@ -119,6 +119,5 @@ export async function deleteSite( siteId: number ) {
 export async function launchSite( siteId: number ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/launch`,
-		apiNamespace: 'wpcom/v2',
 	} );
 }
