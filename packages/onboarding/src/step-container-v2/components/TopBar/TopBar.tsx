@@ -8,6 +8,12 @@ interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
 	logo?: ReactNode;
+	/**
+	 * Hide the WordPress wordmark when `compactLogo` is set.
+	 * Always show the WordPress logo instead.
+	 * - This is critical for current Login views, where the logo (WordPressLogo) is always visible
+	 * - Confirm with Design before changing functionality around this
+	 */
 	compactLogo?: 'always';
 }
 
