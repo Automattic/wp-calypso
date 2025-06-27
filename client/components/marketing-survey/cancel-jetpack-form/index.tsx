@@ -281,7 +281,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				<div className="cancel-jetpack-form__confirm-step">
 					<FormattedHeader
 						brandFont
-						headerText={ translate( 'Sorry to see you go' ) }
+						headerText={ translate( 'Confirm removal' ) }
 						subHeaderText={
 							/* Translators: productName is the name of a Jetpack product. */
 							translate(
