@@ -185,7 +185,7 @@ function HovercardContent( props ) {
 															className="gravatar-hovercard__recommended-blog-site-icon"
 														/>
 														<p className="gravatar-hovercard__recommended-blog-site-name">
-															{ name }
+															{ name || feedUrl }
 														</p>
 														<ReaderFollowButton
 															className="gravatar-hovercard__recommended-blog-subscribe-button"
