@@ -18,19 +18,17 @@ import { getDate } from '@wordpress/date';
 import { DateCalendar, DateRangeCalendar } from '@automattic/ui';
 import { format, isValid } from 'date-fns';
 
-/**
- * Parse date strings safely
- *
- * @param dateString - The date string to parse
- * @returns Parsed Date object or null if invalid
- */
-function parseDate( dateString: string | undefined ): Date | null {
-	if ( ! dateString ) {
-		return null;
-	}
-	const parsedDate = getDate( dateString );
-	return parsedDate && isValid( parsedDate ) ? parsedDate : null;
-}
+// Utility functions
+const parseDate = ( dateString?: string ): Date | null => {
+	if ( ! dateString ) return null;
+	const parsed = getDate( dateString );
+	return parsed && isValid( parsed ) ? parsed : null;
+};
+
+const formatDate = ( date?: Date | string ): string => {
+	if ( ! date ) return '';
+	return typeof date === 'string' ? date : format( date, 'yyyy-MM-dd' );
+};
 
 /**
  * Internal dependencies
@@ -183,18 +181,11 @@ function CalendarDateControl( {
 	);
 
 	const handleManualDateChange = useCallback(
-		( newValue: string | undefined ) => {
-			if ( ! newValue ) {
-				onChange( { [ id ]: undefined } );
-				setSelectedPresetId( null );
-				return;
-			}
-
+		( newValue?: string ) => {
 			onChange( { [ id ]: newValue } );
-
-			const parsedDate = parseDate( newValue );
-			if ( parsedDate ) {
-				setCalendarMonth( parsedDate );
+			if ( newValue ) {
+				const parsedDate = parseDate( newValue );
+				if ( parsedDate ) setCalendarMonth( parsedDate );
 			}
 			setSelectedPresetId( null );
 		},
@@ -297,28 +288,16 @@ function CalendarDateRangeControl( {
 		return selectedRange.from || new Date();
 	} );
 
-	const normalizeDate = useCallback( ( date: Date | string | undefined ) => {
-		if ( ! date ) {
-			return '';
-		}
-		return typeof date === 'string' ? date : format( date, 'yyyy-MM-dd' );
-	}, [] );
-
 	const updateDateRange = useCallback(
-		(
-			fromDate: Date | string | undefined,
-			toDate: Date | string | undefined
-		) => {
-			if ( fromDate || toDate ) {
+		( fromDate?: Date | string, toDate?: Date | string ) => {
+			if ( fromDate && toDate ) {
 				onChange( {
-					[ id ]: [
-						normalizeDate( fromDate ),
-						normalizeDate( toDate ),
-					],
+					[ id ]: [ formatDate( fromDate ), formatDate( toDate ) ],
 				} );
-			} else {
+			} else if ( ! fromDate && ! toDate ) {
 				onChange( { [ id ]: undefined } );
 			}
+			// Do nothing if only one date is set - wait for both
 		},
 		[ id, onChange ]
 	);
@@ -347,30 +326,19 @@ function CalendarDateRangeControl( {
 	);
 
 	const handleManualDateChange = useCallback(
-		( fromOrTo: 'from' | 'to', newValue: string | undefined ) => {
+		( fromOrTo: 'from' | 'to', newValue?: string ) => {
 			const [ currentFrom, currentTo ] = value || [
 				undefined,
 				undefined,
 			];
+			const updatedFrom = fromOrTo === 'from' ? newValue : currentFrom;
+			const updatedTo = fromOrTo === 'to' ? newValue : currentTo;
 
-			if ( ! newValue ) {
-				updateDateRange(
-					fromOrTo === 'from' ? undefined : currentFrom,
-					fromOrTo === 'to' ? undefined : currentTo
-				);
-				setSelectedPresetId( null );
-				return;
-			}
+			updateDateRange( updatedFrom, updatedTo );
 
-			updateDateRange(
-				fromOrTo === 'from' ? newValue : currentFrom,
-				fromOrTo === 'to' ? newValue : currentTo
-			);
-
-			// Update calendar to show this month
-			const parsedDate = parseDate( newValue );
-			if ( parsedDate ) {
-				setCalendarMonth( parsedDate );
+			if ( newValue ) {
+				const parsedDate = parseDate( newValue );
+				if ( parsedDate ) setCalendarMonth( parsedDate );
 			}
 
 			setSelectedPresetId( null );
