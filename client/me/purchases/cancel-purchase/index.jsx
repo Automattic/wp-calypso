@@ -19,6 +19,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -78,6 +79,7 @@ class CancelPurchase extends Component {
 		surveyShown: false,
 		atomicRevertConfirmed: false,
 		isLoading: false,
+		domainConfirmationConfirmed: false,
 	};
 
 	static defaultProps = {
@@ -154,6 +156,10 @@ class CancelPurchase extends Component {
 
 	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
 		this.setState( { atomicRevertConfirmed: isConfirmed } );
+	};
+
+	onDomainConfirmationChange = () => {
+		this.setState( { domainConfirmationConfirmed: ! this.state.domainConfirmationConfirmed } );
 	};
 
 	getActiveMarketplaceSubscriptions() {
@@ -288,7 +294,10 @@ class CancelPurchase extends Component {
 
 		const isDisabled =
 			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
-			( needsAtomicRevertConfirmation && ! this.state.atomicRevertConfirmed && isPlan( purchase ) );
+			( needsAtomicRevertConfirmation &&
+				! this.state.atomicRevertConfirmed &&
+				isPlan( purchase ) ) ||
+			( isDomainRegistration( purchase ) && ! this.state.domainConfirmationConfirmed );
 
 		return (
 			<CancelPurchaseButton
@@ -416,16 +425,38 @@ class CancelPurchase extends Component {
 								</CompactCard>
 
 								<CompactCard className="cancel-purchase__footer">
-									<div className="cancel-purchase__footer-text">
-										{ hasAmountAvailableToRefund( purchase ) ? (
-											<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
-										) : (
-											<p className="cancel-purchase__expiration-text">
-												{ this.renderExpirationText() }
-											</p>
-										) }
+									{ isDomainRegistration( purchase ) && (
+										<div className="cancel-purchase__domain-confirmation">
+											<FormCheckbox
+												checked={ this.state.domainConfirmationConfirmed }
+												onChange={ this.onDomainConfirmationChange }
+											/>
+											<span>
+												{ this.props.translate(
+													'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
+													{
+														components: {
+															strong: <strong />,
+														},
+													}
+												) }
+											</span>
+										</div>
+									) }
+									<div className="cancel-purchase__footer-text-wrapper">
+										<div className="cancel-purchase__footer-text">
+											{ hasAmountAvailableToRefund( purchase ) ? (
+												<p className="cancel-purchase__refund-amount">
+													{ this.renderFooterText() }
+												</p>
+											) : (
+												<p className="cancel-purchase__expiration-text">
+													{ this.renderExpirationText() }
+												</p>
+											) }
+										</div>
+										{ this.renderCancelButton() }
 									</div>
-									{ this.renderCancelButton() }
 								</CompactCard>
 							</>
 						) : (

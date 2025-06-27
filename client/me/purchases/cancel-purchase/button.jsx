@@ -14,6 +14,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -27,7 +28,7 @@ import {
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
-import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
@@ -38,7 +39,6 @@ class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
-		getConfirmCancelDomainUrlFor: PropTypes.func,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -51,7 +51,6 @@ class CancelPurchaseButton extends Component {
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
-		getConfirmCancelDomainUrlFor: confirmCancelDomain,
 	};
 
 	state = {
@@ -68,8 +67,32 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = async () => {
+		// Handle domain cancellations immediately instead of redirecting to confirmation page
 		if ( isDomainRegistration( this.props.purchase ) ) {
-			return this.goToCancelConfirmation();
+			this.setState( {
+				isLoading: true,
+			} );
+
+			if ( this.props.onCancellationStart ) {
+				this.props.onCancellationStart();
+			}
+
+			try {
+				const result = await this.submitCancelAndRefundPurchase();
+				if ( result.success ) {
+					this.setState( {
+						showDialog: true,
+						cancellationCompleted: true,
+						cancellationMessage: result.message,
+						isLoading: false,
+					} );
+				} else {
+					this.cancellationFailed( result.error );
+				}
+			} catch ( error ) {
+				this.cancellationFailed( error.message );
+			}
+			return;
 		}
 
 		this.setState( {
@@ -120,13 +143,6 @@ class CancelPurchaseButton extends Component {
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
 		}
-	};
-
-	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase;
-		const slug = this.props.siteSlug;
-
-		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
 
 	cancelPurchase = async ( purchase ) => {
@@ -285,6 +301,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleSurveyComplete = () => {
+		// For other purchases, only show if cancellation was just completed
 		if ( this.state.cancellationCompleted ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
@@ -396,6 +413,20 @@ class CancelPurchaseButton extends Component {
 						onSurveyComplete={ this.handleSurveyComplete }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						isAkismet={ isAkismet }
+						cancellationCompleted={ this.state.cancellationCompleted }
+						cancellationMessage={ this.state.cancellationMessage }
+						cancellationInProgress={ this.state.isLoading }
+					/>
+				) }
+
+				{ isDomainRegistration( purchase ) && (
+					<DomainCancellationSurvey
+						disableButtons={ disableButtons }
+						purchase={ purchase }
+						purchaseListUrl={ purchaseListUrl }
+						isVisible={ this.state.showDialog }
+						onClose={ this.closeDialog }
+						onSurveyComplete={ this.handleSurveyComplete }
 						cancellationCompleted={ this.state.cancellationCompleted }
 						cancellationMessage={ this.state.cancellationMessage }
 						cancellationInProgress={ this.state.isLoading }
