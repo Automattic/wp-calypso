@@ -35,12 +35,12 @@ import {
 } from '../features/modules/stats-top-posts/use-option-labels';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import useStatsStrings from '../hooks/use-stats-strings';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
 import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
-import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
@@ -48,12 +48,6 @@ import VideoPressStatsModule from '../videopress-stats-module';
 import './style.scss';
 
 class StatsSummary extends Component {
-	constructor( props ) {
-		super( props );
-		this.cachedStatsStrings = null;
-		this.cachedSupportsArchiveStats = null;
-	}
-
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 
@@ -140,13 +134,7 @@ class StatsSummary extends Component {
 			lastScreen,
 		} = this.props;
 
-		// Simple memoization for StatsStrings
-		// TODO: Refactor to use useMemo
-		if ( this.cachedSupportsArchiveStats !== supportsArchiveStats ) {
-			this.cachedStatsStrings = statsStringsFactory( supportsArchiveStats );
-			this.cachedSupportsArchiveStats = supportsArchiveStats;
-		}
-		const StatsStrings = this.cachedStatsStrings;
+		const StatsStrings = this.props.statsStrings;
 
 		const summaryViews = [];
 		let title;
@@ -520,7 +508,9 @@ class StatsSummary extends Component {
 
 const StatsSummaryWrapper = ( props ) => {
 	const lastScreen = useStatsNavigationHistory();
-	return <StatsSummary { ...props } lastScreen={ lastScreen } />;
+	const statsStrings = useStatsStrings( { supportsArchiveStats: props.supportsArchiveStats } );
+
+	return <StatsSummary { ...props } lastScreen={ lastScreen } statsStrings={ statsStrings } />;
 };
 
 export default connect( ( state, { context, postId } ) => {

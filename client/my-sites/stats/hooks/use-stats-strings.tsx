@@ -1,14 +1,30 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { translate } from 'i18n-calypso';
+import { Substitution, useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from './const';
+import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../const';
 
-export default function ( supportsArchiveStats = false, isSiteJetpackNotAtomic = false ) {
+type StatsStringsConfig = {
+	supportsArchiveStats: boolean;
+	isSiteJetpackNotAtomic: boolean;
+};
+
+export default function useStatsStrings( {
+	supportsArchiveStats = false,
+	isSiteJetpackNotAtomic = false,
+}: Partial< StatsStringsConfig > = {} ) {
+	const translate = useTranslate();
+
 	const isArchiveBreakdownFlag = isEnabled( 'stats/archive-breakdown' );
 	const isArchiveBreakdownEnabled = isArchiveBreakdownFlag && supportsArchiveStats;
 
-	const statsStrings = {};
+	const statsStrings: Record<
+		string,
+		{
+			title: string;
+			[ key: string ]: Substitution;
+		}
+	> = {};
 
 	statsStrings.posts = {
 		title: isArchiveBreakdownEnabled

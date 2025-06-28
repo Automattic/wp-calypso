@@ -1,7 +1,7 @@
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import statsStrings from 'calypso/my-sites/stats/stats-strings';
+import useStatsStrings from 'calypso/my-sites/stats/hooks/use-stats-strings';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getEmailStatsNormalizedData,
@@ -18,7 +18,12 @@ import '../stats-module/style.scss';
 const StatsEmailModule = ( props ) => {
 	const { path, data, postId, statType, query = {}, isLoading, isJetpack } = props;
 
-	const moduleStrings = statsStrings( false, isJetpack )[ path ];
+	// Only show loading indicators when nothing is in state tree, and request in-flight
+
+	const { [ path ]: moduleStrings } = useStatsStrings( {
+		supportsArchiveStats: false,
+		isSiteJetpackNotAtomic: isJetpack,
+	} );
 
 	const hasError = false; // TODO: Support error state in redux store
 	const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );

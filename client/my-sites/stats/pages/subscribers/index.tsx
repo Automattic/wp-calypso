@@ -11,7 +11,7 @@ import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
-import statsStrings from 'calypso/my-sites/stats/stats-strings';
+import useStatsStrings from 'calypso/my-sites/stats/hooks/use-stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
@@ -77,7 +77,7 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
-	const moduleStrings = statsStrings().emails as TranslationStringType;
+	const { emails: moduleStrings } = useStatsStrings() as { emails: TranslationStringType };
 
 	const className = clsx( 'subscribers-page', {
 		'is-email-stats-unavailable': ! supportsEmailStats,
