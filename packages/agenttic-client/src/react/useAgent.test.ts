@@ -20,6 +20,8 @@ import { createClient } from '../client/index';
 // Test data
 const mockUserMessage: Message = {
 	role: 'user',
+	kind: 'message',
+	messageId: 'test-message-1',
 	parts: [
 		{
 			type: 'text',
@@ -30,6 +32,8 @@ const mockUserMessage: Message = {
 
 const mockAgentMessage: Message = {
 	role: 'agent',
+	kind: 'message',
+	messageId: 'test-message-2',
 	parts: [
 		{
 			type: 'text',
@@ -40,6 +44,8 @@ const mockAgentMessage: Message = {
 
 const mockToolCallMessage: Message = {
 	role: 'agent',
+	kind: 'message',
+	messageId: 'test-message-3',
 	parts: [
 		{
 			type: 'data',
@@ -54,6 +60,8 @@ const mockToolCallMessage: Message = {
 
 const mockToolResultMessage: Message = {
 	role: 'agent',
+	kind: 'message',
+	messageId: 'test-message-4',
 	parts: [
 		{
 			type: 'data',
@@ -172,6 +180,8 @@ describe('useAgent utility functions', () => {
 		it('should filter out history data parts', () => {
 			const messageWithHistory: Message = {
 				role: 'user',
+				kind: 'message',
+				messageId: 'test-message-user',
 				parts: [
 					{
 						type: 'data',
@@ -348,6 +358,8 @@ describe('message processing scenarios', () => {
 	it('should handle complex message with multiple parts', () => {
 		const complexMessage: Message = {
 			role: 'agent',
+			kind: 'message',
+			messageId: 'test-message-agent',
 			parts: [
 				{
 					type: 'text',

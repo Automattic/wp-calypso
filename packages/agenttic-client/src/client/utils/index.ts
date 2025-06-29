@@ -13,6 +13,7 @@ export {
 	createAgentTextMessage,
 	createToolResultMessage,
 	processToolExecutionResult,
+	generateMessageId,
 } from './core';
 
 // Re-export internal utilities

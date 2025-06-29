@@ -56,8 +56,9 @@ describe( 'Client', () => {
 								status: {
 									state: 'input-required',
 									message: {
-										id: 'message-123', // This is the message ID that should be passed to the tool
+										messageId: 'message-123', // This is the message ID that should be passed to the tool
 										role: 'agent',
+										kind: 'message',
 										parts: [
 											{
 												type: 'text',
@@ -111,6 +112,7 @@ describe( 'Client', () => {
 							state: 'completed',
 							message: {
 								role: 'agent',
+								kind: 'message',
 								parts: [
 									{
 										type: 'text',
@@ -182,6 +184,7 @@ describe( 'Client', () => {
 									message: {
 										// No id field
 										role: 'agent',
+										kind: 'message',
 										parts: [
 											{
 												type: 'text',
@@ -235,6 +238,7 @@ describe( 'Client', () => {
 							state: 'completed',
 							message: {
 								role: 'agent',
+								kind: 'message',
 								parts: [
 									{
 										type: 'text',
@@ -303,8 +307,9 @@ describe( 'Client', () => {
 								status: {
 									state: 'input-required',
 									message: {
-										id: 'message-first', // First message ID
+										messageId: 'message-first', // First message ID
 										role: 'agent',
+										kind: 'message',
 										parts: [
 											{
 												type: 'text',
@@ -352,8 +357,9 @@ describe( 'Client', () => {
 						status: {
 							state: 'input-required',
 							message: {
-								id: 'message-second', // Second message ID - this should be passed to nested tool calls
+								messageId: 'message-second', // Second message ID - this should be passed to nested tool calls
 								role: 'agent',
+								kind: 'message',
 								parts: [
 									{
 										type: 'text',
@@ -387,6 +393,7 @@ describe( 'Client', () => {
 							state: 'completed',
 							message: {
 								role: 'agent',
+								kind: 'message',
 								parts: [
 									{
 										type: 'text',

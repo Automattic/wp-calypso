@@ -1,5 +1,6 @@
 import type { DataPart, Message, TextPart } from '../client/types/index';
 import { logger } from '../client/utils/logger';
+import { generateMessageId } from '../client/utils/core';
 
 const STORAGE_KEY = 'a8c_agenttic_conversation_history';
 
@@ -129,7 +130,9 @@ function restoreMessage( stored: StoredMessage ): Message {
 
 	return {
 		role: stored.role,
+		kind: 'message',
 		parts,
+		messageId: generateMessageId(),
 	};
 }
 

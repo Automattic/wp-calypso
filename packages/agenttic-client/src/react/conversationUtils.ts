@@ -3,6 +3,7 @@ import type {
 	DataPart,
 	TextPart,
 } from '../client/types/index';
+import { generateMessageId } from '../client/utils/core';
 
 /**
  * Extract only the new content (non-history) parts from a message
@@ -118,6 +119,8 @@ export function createTextMessageWithHistory(
 				text,
 			} as TextPart,
 		],
+		kind: 'message',
+		messageId: generateMessageId(),
 	};
 }
 

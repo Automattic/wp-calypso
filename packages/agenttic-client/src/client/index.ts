@@ -24,6 +24,7 @@ import {
 	extractToolCallsFromMessage,
 	processToolExecutionResult,
 	createAgentTextMessage,
+	generateMessageId,
 } from './utils/index';
 import { defaultDispatcher } from './utils/dispatcher';
 
@@ -447,7 +448,7 @@ export function createClient( config: ClientConfig ): Client {
 			return {
 				...currentTask,
 				text: extractTextFromMessage(
-					currentTask.status?.message || { role: 'agent', parts: [] }
+					currentTask.status?.message || { role: 'agent', kind: 'message', parts: [], messageId: generateMessageId() }
 				),
 			};
 		},
@@ -518,7 +519,7 @@ export function createClient( config: ClientConfig ): Client {
 								const executionResult = await toolProvider.executeTool(
 									toolId as string,
 									args,
-									update.status?.message?.id, // TODO: this should be messageId according to the spec but we need to update API before we can change this.
+									update.status?.message?.messageId,
 									toolCallId as string 
 								);
 								const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
@@ -609,7 +610,9 @@ export function createClient( config: ClientConfig ): Client {
 							if ( withHistory && toolResults.length > 0 ) {
 								newConversationParts.push( {
 									role: 'agent' as const,
+									kind: 'message',
 									parts: toolResults,
+									messageId: generateMessageId(),
 								} );
 							}
 
@@ -623,7 +626,9 @@ export function createClient( config: ClientConfig ): Client {
 									text: extractTextFromMessage(
 										continuedTaskUpdate.status?.message || {
 											role: 'agent',
+											kind: 'message',
 											parts: [],
+											messageId: generateMessageId(),
 										}
 									),
 								};
@@ -647,7 +652,7 @@ export function createClient( config: ClientConfig ): Client {
 									} = await executeToolCallBatch(
 										continuedToolCalls,
 										toolProvider,
-										finalTask.status?.message?.id // TODO: this should be messageId according to the spec but we need to update API before we can change this.
+										finalTask.status?.message?.messageId
 									);
 
 									// Yield an update with the tool results for the UI to capture
@@ -656,7 +661,7 @@ export function createClient( config: ClientConfig ): Client {
 											id: finalTask.id,
 											status: {
 												state: 'working',
-												message: { role: 'agent', parts: moreResults }, // Simple message with just the results
+												message: { role: 'agent', kind: 'message', parts: moreResults, messageId: generateMessageId() }, // Simple message with just the results
 											},
 											final: false,
 											text: '',
@@ -702,7 +707,9 @@ export function createClient( config: ClientConfig ): Client {
 													finalTask.status
 														?.message || {
 														role: 'agent',
+														kind: 'message',
 														parts: [],
+														messageId: generateMessageId(),
 													}
 												),
 											};
@@ -720,7 +727,9 @@ export function createClient( config: ClientConfig ): Client {
 								text: extractTextFromMessage(
 									finalTask.status?.message || {
 										role: 'agent',
+										kind: 'message',
 										parts: [],
+										messageId: generateMessageId(),
 									}
 								),
 							};
@@ -829,7 +838,7 @@ export function createClient( config: ClientConfig ): Client {
 			return {
 				...currentTask,
 				text: extractTextFromMessage(
-					currentTask.status?.message || { role: 'agent', parts: [] }
+					currentTask.status?.message || { role: 'agent', kind: 'message', parts: [], messageId: generateMessageId() }
 				),
 			};
 		},

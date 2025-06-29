@@ -12,6 +12,7 @@ import { createClient } from '../client/index';
 import {
 	createTextMessage,
 	extractToolCallsFromMessage,
+	generateMessageId,
 } from '../client/utils/index';
 import {
 	clearConversation,
@@ -194,7 +195,9 @@ function createAgentManager(): AgentManager {
 					// Create complete message with tool parts + text parts in proper order
 					completeAgentMessage = {
 						role: 'agent',
+						kind: 'message',
 						parts: [ ...toolParts, ...textParts ],
+						messageId: generateMessageId(),
 					};
 				}
 
@@ -344,7 +347,9 @@ function createAgentManager(): AgentManager {
 						// Create a message containing just the matching tool results
 						const toolResultMessage: Message = {
 							role: 'agent',
+							kind: 'message',
 							parts: currentToolResults,
+							messageId: generateMessageId(),
 						};
 
 						currentConversationHistory = [

@@ -4,6 +4,7 @@ import {
 	createTextMessage,
 	createTextPart,
 	extractToolCallsFromMessage,
+	generateMessageId,
 } from '../client/utils/index';
 import type {
 	Client,
@@ -212,7 +213,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					// Create complete message with tool parts + text parts in proper order
 					completeAgentMessage = {
 						role: 'agent',
+						kind: 'message',
 						parts: [ ...toolParts, ...textParts ],
+						messageId: generateMessageId(),
 					};
 				}
 
@@ -391,7 +394,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							// Create a message containing just the matching tool results
 							const toolResultMessage: Message = {
 								role: 'agent',
+								kind: 'message',
 								parts: currentToolResults,
+								messageId: generateMessageId(),
 							};
 
 							currentConversationHistory = [

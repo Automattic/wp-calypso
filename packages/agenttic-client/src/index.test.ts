@@ -33,6 +33,8 @@ describe( '@automattic/agenttic-client', () => {
 
 			expect( message ).toEqual( {
 				role: 'user',
+				kind: 'message',
+				messageId: expect.any( String ),
 				parts: [
 					{
 						type: 'text',

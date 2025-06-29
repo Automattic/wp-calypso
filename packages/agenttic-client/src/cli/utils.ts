@@ -12,6 +12,7 @@ import type {
 	TaskUpdate,
 	TextPart,
 } from '../client/types/index';
+import { generateMessageId } from '../client/utils/core';
 import chalk from 'chalk';
 
 /**
@@ -75,6 +76,8 @@ export function createTextMessageWithHistory(
 
 	return {
 		role: 'user',
+		kind: 'message',
+		messageId: generateMessageId(),
 		parts: [
 			...historyParts,
 			{

@@ -20,6 +20,7 @@ vi.mock('../client/index', () => ({
 vi.mock('../client/utils/index', () => ({
 	createTextMessage: vi.fn(),
 	extractToolCallsFromMessage: vi.fn(),
+	generateMessageId: vi.fn(() => 'test-message-id'),
 }));
 
 vi.mock('./conversationStorage', () => ({

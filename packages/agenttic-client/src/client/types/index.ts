@@ -108,8 +108,8 @@ export interface Message {
 	role: 'user' | 'agent';
 	parts: Part[];
 	metadata?: Record< string, unknown >;
-	id?: string; // TODO: this should be messageId according to the spec but we need to update API before we can change this.
-	kind?: 'message'; // Optional for backwards compatibility
+	messageId: string;
+	kind: 'message';
 }
 
 export interface TaskStatus {

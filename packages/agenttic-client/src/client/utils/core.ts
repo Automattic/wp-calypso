@@ -25,6 +25,13 @@ export function generateRandomId(): string {
 }
 
 /**
+ * Generate a unique message ID
+ */
+export function generateMessageId(): string {
+	return generateRandomId();
+}
+
+/**
  * Creates a unique request ID for A2A requests
  */
 export function createRequestId(): JsonRpcId {
@@ -169,6 +176,8 @@ export function createTextMessage( text: string ): Message {
 	return {
 		role: 'user',
 		parts: [ createTextPart( text ) ],
+		kind: 'message',
+		messageId: generateMessageId(),
 	};
 }
 
@@ -180,6 +189,8 @@ export function createAgentTextMessage( text: string ): Message {
 	return {
 		role: 'agent',
 		parts: [ createTextPart( text ) ],
+		kind: 'message',
+		messageId: generateMessageId(),
 	};
 }
 
@@ -223,6 +234,8 @@ export function createToolResultMessage(
 ): Message {
 	return {
 		role: 'user',
+		kind: 'message',
 		parts: [ ...historyDataParts, ...toolResults ],
+		messageId: generateMessageId(),
 	};
 }
