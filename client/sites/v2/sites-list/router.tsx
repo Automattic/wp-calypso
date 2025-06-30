@@ -17,7 +17,9 @@ const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		// Preload the default sites list response without blocking.
 		queryClient.ensureQueryData( sitesQuery() );
+
 		await queryClient.ensureQueryData( isAutomatticianQuery() );
 	},
 } ).lazy( () =>
