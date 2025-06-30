@@ -8,13 +8,24 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useDispatch, useSelector } from 'react-redux';
+import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
+import { usePullFromStagingMutation } from '../../../sites/staging-site/hooks/use-staging-sync';
+import { recordTracksEvent } from '../../../state/analytics/actions';
+import getBackupBrowserCheckList from '../../../state/rewind/selectors/get-backup-browser-check-list';
 import InlineSupportLink from '../../components/inline-support-link';
+
+// TODO: Temporary style for the PoC
+import './style.scss';
 
 interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
 	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
+	rewindId: number;
 }
 
 const getCopy = ( type: 'pull' | 'push' ) => {
@@ -61,12 +72,47 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 	};
 };
 
-export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
+export default function SyncModal( {
+	onClose,
+	syncType,
+	environment,
+	siteSlug,
+	productionSiteId,
+	stagingSiteId,
+	rewindId,
+}: SyncModalProps ) {
 	const copy = getCopy( syncType );
 	const modalTitle = copy[ environment ].title;
+	const dispatch = useDispatch();
+	// const [ syncError, setSyncError ] = useState< string | null >( null );
 
 	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
 	//const { siteSlug } = siteRoute.useParams();
+	const browserCheckList = useSelector( ( state ) =>
+		getBackupBrowserCheckList( state, stagingSiteId )
+	);
+
+	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
+			// setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+					code: error.code,
+				} )
+			);
+			// setSyncError( error.code );
+		},
+	} );
+
+	const handleConfirm = () => {
+		if ( syncType === 'pull' ) {
+			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+			pullFromStaging( { types: 'paths', include_paths } );
+		}
+	};
 
 	return (
 		<Modal title={ modalTitle } onRequestClose={ onClose } style={ { maxWidth: '668px' } }>
@@ -83,12 +129,17 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
 						} ) }
 					</Text>
+					<div className="staging-site-card">
+						<FileBrowser rewindId={ rewindId } />
+					</div>
 				</VStack>
 				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary">{ copy.submit }</Button>
+					<Button variant="primary" onClick={ handleConfirm }>
+						{ copy.submit }
+					</Button>
 				</HStack>
 			</VStack>
 		</Modal>

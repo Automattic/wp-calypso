@@ -2,15 +2,26 @@ import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
+// import { QueryRewindState } from '../../../components/data/query-rewind-state';
 import SyncModal from '../staging-site-sync-modal';
 
 interface SyncDropdownProps {
 	className?: string;
 	environment: 'production' | 'staging';
 	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId?: number;
+	rewindId: number;
 }
 
-export default function SyncDropdown( { className, environment, siteSlug }: SyncDropdownProps ) {
+export default function SyncDropdown( {
+	className,
+	environment,
+	siteSlug,
+	productionSiteId,
+	stagingSiteId,
+	rewindId,
+}: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
 
@@ -71,13 +82,19 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 					</div>
 				) }
 			/>
-			{ isModalOpen && (
-				<SyncModal
-					onClose={ handleCloseModal }
-					syncType={ syncType }
-					environment={ environment }
-					siteSlug={ siteSlug }
-				/>
+			{ isModalOpen && stagingSiteId && (
+				<>
+					{ /* <QueryRewindState siteId={ stagingSiteId } /> */ }
+					<SyncModal
+						onClose={ handleCloseModal }
+						syncType={ syncType }
+						environment={ environment }
+						siteSlug={ siteSlug }
+						productionSiteId={ productionSiteId }
+						stagingSiteId={ stagingSiteId }
+						rewindId={ rewindId }
+					/>
+				</>
 			) }
 		</>
 	);
