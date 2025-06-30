@@ -41,7 +41,7 @@ const LoginBlockFooter = ( { lostPasswordLink, isLoginView, loginLink }: LoginFo
 		);
 	}
 
-	return <div className="wp-login__main-footer">{ loginLink }</div>;
+	return <div className="wp-login__login-block-footer">{ loginLink }</div>;
 };
 
 export default LoginBlockFooter;

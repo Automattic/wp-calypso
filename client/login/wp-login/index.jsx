@@ -175,7 +175,7 @@ export class Login extends Component {
 	getLoginLink() {
 		return (
 			<a
-				className="wp-login__main-footer-back-link"
+				className="wp-login__login-block-footer-back-link"
 				href="/"
 				onClick={ ( event ) => {
 					event.preventDefault();
@@ -287,9 +287,7 @@ export class Login extends Component {
 						<GravPoweredLoginBlockFooter />
 					) : (
 						<LoginBlockFooter
-							action={ action }
 							isLoginView={ isLoginView }
-							signupUrl={ signupUrl }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
 						/>
