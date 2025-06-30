@@ -30,6 +30,10 @@ jest.mock( '@automattic/odie-client/src/data', () => ( {
 	broadcastOdieMessage: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/odie-client/src/utils/storage-utils', () => ( {
+	clearHelpCenterZendeskConversationStarted: jest.fn(),
+} ) );
+
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );
 	return {

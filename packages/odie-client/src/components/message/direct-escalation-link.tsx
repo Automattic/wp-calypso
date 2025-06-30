@@ -1,14 +1,15 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { useCallback, createInterpolateElement } from '@wordpress/element';
+import { useCallback, useState, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
-import { interactionHasZendeskEvent } from '../../utils';
+import { getHelpCenterZendeskConversationStarted, interactionHasZendeskEvent } from '../../utils';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
+	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
 	const createZendeskConversation = useCreateZendeskConversation();
 	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
@@ -21,7 +22,12 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		};
 	}, [] );
 
+	const [ hideNewConversationButton, setHideNewConversationButton ] =
+		useState( conversationStarted );
+
 	const handleClick = useCallback( () => {
+		setHideNewConversationButton( true );
+
 		const hasZendeskConversationAlreadyStarted =
 			interactionHasZendeskEvent( currentSupportInteraction );
 
@@ -38,6 +44,9 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		}
 
 		if ( isUserEligibleForPaidSupport ) {
+			if ( conversationStarted ) {
+				return;
+			}
 			if ( forceEmailSupport ) {
 				navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' );
 				return;
@@ -50,6 +59,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		trackEvent,
 		messageId,
 		isUserEligibleForPaidSupport,
+		conversationStarted,
 		createZendeskConversation,
 		navigate,
 		chat?.provider,
@@ -57,6 +67,10 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		chat?.conversationId,
 		forceEmailSupport,
 	] );
+
+	if ( hideNewConversationButton ) {
+		return null;
+	}
 
 	const getButtonText = () => {
 		if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
