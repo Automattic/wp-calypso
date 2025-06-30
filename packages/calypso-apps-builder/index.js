@@ -72,18 +72,16 @@ async function runBuilder( args ) {
 
 	console.log( 'Starting webpack...' );
 	await Promise.all( [
-		runAll( [ `build:${ process.env.NODE_ENV }${ watch ? ' --watch' : '' }` ], runOpts ).then(
-			() => {
-				console.log( 'Build completed!' );
-				const translate = runAll( 'translate', runOpts ).catch( () => {} );
-				translate.then( () => {
-					if ( ! watch && sync ) {
-						// In non-watch + sync mode, we sync only once after the build has finished.
-						setupRemoteSync( localPath, remotePath );
-					}
-				} );
-			}
-		),
+		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
+			console.log( 'Build completed!' );
+			const translate = runAll( 'translate', runOpts ).catch( () => {} );
+			translate.then( () => {
+				if ( ! watch && sync ) {
+					// In non-watch + sync mode, we sync only once after the build has finished.
+					setupRemoteSync( localPath, remotePath );
+				}
+			} );
+		} ),
 		// In watch + sync mode, we start watching to sync while the webpack build is happening.
 		watch && sync && setupRemoteSync( localPath, remotePath, true ),
 	] );

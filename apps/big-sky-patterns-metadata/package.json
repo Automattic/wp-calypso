@@ -5,18 +5,17 @@
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
-		"build:production": "wp-scripts build --webpack-copy-php",
-		"build:development": "wp-scripts start --no-watch --webpack-copy-php",
+		"dev": "yarn run calypso-apps-builder --localPath ./build --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/pattern-metadata-sidebar/build",
+		"clean": "rm -rf build/",
+		"build": "NODE_ENV=production yarn dev --sync=true",
+		"build:big-sky-patterns-metadata": "wp-scripts build --webpack-copy-php",
 		"start": "wp-scripts start",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"lint:js:fix": "wp-scripts lint-js --fix",
 		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip",
-		"dev": "yarn run calypso-apps-builder --localPath ./build --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/pattern-metadata-sidebar/build",
-		"build-sync": "NODE_ENV=production yarn run calypso-apps-builder --sync=true --verbose --localPath ./build --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/pattern-metadata-sidebar/build",
-		"clean": "rm -rf build/"
+		"plugin-zip": "wp-scripts plugin-zip"
 	},
 	"dependencies": {
 		"@wordpress/components": "^29.9.0",
