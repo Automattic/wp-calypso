@@ -21,7 +21,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
-import passportIcon from 'calypso/assets/images/icons/passport-logo.svg';
+import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
