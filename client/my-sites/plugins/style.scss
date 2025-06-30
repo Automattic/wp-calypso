@@ -74,7 +74,7 @@ body.is-section-plugins {
 	.is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column) {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
-			padding-inline: 48px;
+			padding-inline: 24px;
 
 			@media (max-width: $break-medium) {
 				padding-inline: 2rem;
