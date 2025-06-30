@@ -73,6 +73,7 @@ const mockPurchases = [
 		payment: { storedDetailsId: '1234' },
 		isAutoRenewEnabled: true,
 		renewDate: '2080-12-31',
+		id: '1234',
 	},
 ];
 
@@ -156,7 +157,7 @@ describe( 'PaymentMethod', () => {
 			await screen.findByLabelText( `Remove the "${ card.card_last_4 }" payment method` )
 		);
 
-		expect( await screen.findByText( 'Associated subscriptions' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Subscription' ) ).toBeInTheDocument();
 		expect( await screen.findByText( 'associatedsubscription.wordpress.com' ) ).toBeInTheDocument();
 	} );
 
@@ -178,7 +179,7 @@ describe( 'PaymentMethod', () => {
 			await screen.findByLabelText( `Remove the "${ card.card_last_4 }" payment method` )
 		);
 
-		expect( await screen.queryByText( 'Associated subscriptions' ) ).not.toBeInTheDocument();
+		expect( await screen.queryByText( 'Subscription' ) ).not.toBeInTheDocument();
 		expect(
 			await screen.queryByText( 'associatedsubscription.wordpress.com' )
 		).not.toBeInTheDocument();

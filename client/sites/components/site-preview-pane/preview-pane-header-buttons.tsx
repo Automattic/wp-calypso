@@ -10,6 +10,7 @@ import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './preview-pane-header-buttons.scss';
@@ -36,12 +37,15 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		stagingSitesRedesign && ( isStagingSite || hasStagingSite )
 	);
 
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, itemData.blogId ) ) ?? '';
+
 	return (
 		<>
 			{ shouldShowSyncDropdown && (
 				<SyncDropdown
 					className="item-preview__sync-dropdown"
 					environment={ isStagingSite ? 'staging' : 'production' }
+					siteSlug={ siteSlug }
 				/>
 			) }
 			<Button

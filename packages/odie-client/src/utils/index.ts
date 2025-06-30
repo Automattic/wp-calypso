@@ -5,7 +5,6 @@ export { generateUUID } from './generate-uuid';
 export {
 	setHelpCenterZendeskConversationStarted,
 	getHelpCenterZendeskConversationStarted,
-	getHelpCenterZendeskConversationStartedElapsedTime,
 } from './storage-utils';
 export {
 	interactionHasZendeskEvent,
