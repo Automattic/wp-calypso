@@ -20,6 +20,8 @@ import {
 	READER_LIST_UPDATE_FAILURE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	READER_LIST_ITEM_ADD_SITE,
+	READER_LIST_ITEM_ADD_SITE_RECEIVE,
 	READER_LIST_ITEM_ADD_TAG,
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
@@ -37,6 +39,7 @@ import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
+import 'calypso/state/data-layer/wpcom/read/lists/sites/new';
 import 'calypso/state/reader/init';
 import type { ReaderList, Item as ListItem } from 'calypso/reader/list-manage/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
@@ -323,7 +326,7 @@ export const addReaderListSite = (
 	listSlug: string,
 	siteId: number
 ): ReaderListAction => ( {
-	type: READER_LIST_ITEM_ADD_FEED,
+	type: READER_LIST_ITEM_ADD_SITE,
 	listId,
 	listOwner,
 	listSlug,
@@ -354,6 +357,19 @@ export const receiveAddReaderListFeed = (
 	listOwner,
 	listSlug,
 	feedId,
+} );
+
+export const receiveAddReaderListSite = (
+	listId: number,
+	listOwner: string,
+	listSlug: string,
+	siteId: number
+): ReaderListAction => ( {
+	type: READER_LIST_ITEM_ADD_SITE_RECEIVE,
+	listId,
+	listOwner,
+	listSlug,
+	siteId,
 } );
 
 export const receiveAddReaderListTag = (
@@ -431,7 +447,7 @@ export function requestUserRecommendedBlogs( listOwner: string ) {
  * @param options.noticeDuration - Duration for notice display
  * @returns Action object
  */
-export function addRecommendedBlogsSite(
+export function addRecommendedBlogsFeed(
 	listId: number,
 	feedId: number,
 	listOwner: string,
@@ -462,7 +478,7 @@ export function addRecommendedBlogsSite(
  * @param options.noticeDuration - Duration for notice display
  * @returns Action object
  */
-export function removeRecommendedBlogsSite(
+export function removeRecommendedBlogsFeed(
 	listId: number,
 	feedId: number,
 	listOwner: string,
@@ -478,6 +494,68 @@ export function removeRecommendedBlogsSite(
 		listOwner,
 		listSlug: 'recommended-blogs',
 		feedId,
+		...options,
+	};
+}
+
+/**
+ * Add a site to the recommended blogs list.
+ * @param listId - List ID of the recommended blogs list
+ * @param siteId - Site ID to add
+ * @param listOwner - Owner of the recommended blogs list
+ * @param options - Optional configuration for notices
+ * @param options.successMessage - Custom success message
+ * @param options.errorMessage - Custom error message
+ * @param options.noticeDuration - Duration for notice display
+ * @returns Action object
+ */
+export function addRecommendedBlogsSite(
+	listId: number,
+	siteId: number,
+	listOwner: string,
+	options?: {
+		successMessage?: string;
+		errorMessage?: string;
+		noticeDuration?: number;
+	}
+): ReaderListAction {
+	return {
+		type: READER_LIST_ITEM_ADD_SITE,
+		listId,
+		listOwner,
+		listSlug: 'recommended-blogs',
+		siteId,
+		...options,
+	};
+}
+
+/**
+ * Remove a site from the recommended blogs list.
+ * @param listId - List ID of the recommended blogs list
+ * @param siteId - Site ID to remove
+ * @param listOwner - Owner of the recommended blogs list
+ * @param options - Optional configuration for notices
+ * @param options.successMessage - Custom success message
+ * @param options.errorMessage - Custom error message
+ * @param options.noticeDuration - Duration for notice display
+ * @returns Action object
+ */
+export function removeRecommendedBlogsSite(
+	listId: number,
+	siteId: number,
+	listOwner: string,
+	options?: {
+		successMessage?: string;
+		errorMessage?: string;
+		noticeDuration?: number;
+	}
+): ReaderListAction {
+	return {
+		type: READER_LIST_ITEM_DELETE_SITE,
+		listId,
+		listOwner,
+		listSlug: 'recommended-blogs',
+		siteId,
 		...options,
 	};
 }

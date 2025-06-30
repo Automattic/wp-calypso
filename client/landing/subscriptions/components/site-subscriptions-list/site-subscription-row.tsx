@@ -8,7 +8,7 @@ import { useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
-import { useRecommendedSite } from 'calypso/landing/subscriptions/hooks/use-recommended-site';
+import { useRecommendedContent } from 'calypso/landing/subscriptions/hooks/use-recommended-content';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -103,10 +103,36 @@ const SiteSubscriptionRow = ( {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
 
+	// Validate IDs before using the hook
+	const validFeedId = Reader.isValidId( feed_id ) ? Number( feed_id ) : null;
+	const validBlogId = Reader.isValidId( blog_id ) ? Number( blog_id ) : null;
+
+	// Determine the recommended content configuration
+	const recommendedContentConfig = useMemo( () => {
+		if ( validFeedId ) {
+			return {
+				contentType: 'feed' as const,
+				contentId: validFeedId,
+				fallbackSiteId: validBlogId || undefined,
+			};
+		}
+
+		if ( validBlogId ) {
+			return {
+				contentType: 'site' as const,
+				contentId: validBlogId,
+			};
+		}
+
+		// Safe fallback that won't match anything
+		return {
+			contentType: 'feed' as const,
+			contentId: 0,
+		};
+	}, [ validFeedId, validBlogId ] );
+
 	// Use custom hook for recommended site functionality
-	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feed_id ), {
-		blogId: Number( blog_id ),
-	} );
+	const { isRecommended, toggleRecommended } = useRecommendedContent( recommendedContentConfig );
 
 	const isCompactLayout = layout === 'compact';
 	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );

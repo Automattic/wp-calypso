@@ -6,9 +6,11 @@ import {
 	READER_LIST_FOLLOW,
 	READER_LIST_UNFOLLOW,
 	READER_LIST_ITEM_ADD_FEED,
+	READER_LIST_ITEM_ADD_SITE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEM_DELETE_FEED,
+	READER_LIST_ITEM_DELETE_SITE,
 } from 'calypso/state/reader/action-types';
 import {
 	deleteReaderList,
@@ -21,6 +23,8 @@ import {
 	requestRecommendedBlogsListItems,
 	addRecommendedBlogsSite,
 	removeRecommendedBlogsSite,
+	addRecommendedBlogsFeed,
+	removeRecommendedBlogsFeed,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -187,9 +191,9 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#addRecommendedBlogsSite()', () => {
+	describe( '#addRecommendedBlogsFeed()', () => {
 		test( 'should return an action object for adding a feed to recommended blogs', () => {
-			const action = addRecommendedBlogsSite( 123, 456, 'testuser' );
+			const action = addRecommendedBlogsFeed( 123, 456, 'testuser' );
 
 			expect( action ).toEqual( {
 				type: READER_LIST_ITEM_ADD_FEED,
@@ -206,7 +210,7 @@ describe( 'actions', () => {
 				errorMessage: 'Custom error message',
 				noticeDuration: 10000,
 			};
-			const action = addRecommendedBlogsSite( 123, 456, 'testuser', options );
+			const action = addRecommendedBlogsFeed( 123, 456, 'testuser', options );
 
 			expect( action ).toEqual( {
 				type: READER_LIST_ITEM_ADD_FEED,
@@ -221,9 +225,9 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#removeRecommendedBlogsSite()', () => {
+	describe( '#removeRecommendedBlogsFeed()', () => {
 		test( 'should return an action object for removing a feed from recommended blogs', () => {
-			const action = removeRecommendedBlogsSite( 123, 456, 'testuser' );
+			const action = removeRecommendedBlogsFeed( 123, 456, 'testuser' );
 
 			expect( action ).toEqual( {
 				type: READER_LIST_ITEM_DELETE_FEED,
@@ -240,7 +244,7 @@ describe( 'actions', () => {
 				errorMessage: 'Custom error message',
 				noticeDuration: 5000,
 			};
-			const action = removeRecommendedBlogsSite( 123, 456, 'testuser', options );
+			const action = removeRecommendedBlogsFeed( 123, 456, 'testuser', options );
 
 			expect( action ).toEqual( {
 				type: READER_LIST_ITEM_DELETE_FEED,
@@ -248,6 +252,74 @@ describe( 'actions', () => {
 				listOwner: 'testuser',
 				listSlug: 'recommended-blogs',
 				feedId: 456,
+				successMessage: 'Custom success message',
+				errorMessage: 'Custom error message',
+				noticeDuration: 5000,
+			} );
+		} );
+	} );
+
+	describe( '#addRecommendedBlogsSite()', () => {
+		test( 'should return an action object for adding a site to recommended blogs', () => {
+			const action = addRecommendedBlogsSite( 123, 456, 'testuser' );
+
+			expect( action ).toEqual( {
+				type: READER_LIST_ITEM_ADD_SITE,
+				listId: 123,
+				listOwner: 'testuser',
+				listSlug: 'recommended-blogs',
+				siteId: 456,
+			} );
+		} );
+
+		test( 'should include custom options when provided', () => {
+			const options = {
+				successMessage: 'Custom success message',
+				errorMessage: 'Custom error message',
+				noticeDuration: 10000,
+			};
+			const action = addRecommendedBlogsSite( 123, 456, 'testuser', options );
+
+			expect( action ).toEqual( {
+				type: READER_LIST_ITEM_ADD_SITE,
+				listId: 123,
+				listOwner: 'testuser',
+				listSlug: 'recommended-blogs',
+				siteId: 456,
+				successMessage: 'Custom success message',
+				errorMessage: 'Custom error message',
+				noticeDuration: 10000,
+			} );
+		} );
+	} );
+
+	describe( '#removeRecommendedBlogsSite()', () => {
+		test( 'should return an action object for removing a site from recommended blogs', () => {
+			const action = removeRecommendedBlogsSite( 123, 456, 'testuser' );
+
+			expect( action ).toEqual( {
+				type: READER_LIST_ITEM_DELETE_SITE,
+				listId: 123,
+				listOwner: 'testuser',
+				listSlug: 'recommended-blogs',
+				siteId: 456,
+			} );
+		} );
+
+		test( 'should include custom options when provided', () => {
+			const options = {
+				successMessage: 'Custom success message',
+				errorMessage: 'Custom error message',
+				noticeDuration: 5000,
+			};
+			const action = removeRecommendedBlogsSite( 123, 456, 'testuser', options );
+
+			expect( action ).toEqual( {
+				type: READER_LIST_ITEM_DELETE_SITE,
+				listId: 123,
+				listOwner: 'testuser',
+				listSlug: 'recommended-blogs',
+				siteId: 456,
 				successMessage: 'Custom success message',
 				errorMessage: 'Custom error message',
 				noticeDuration: 5000,

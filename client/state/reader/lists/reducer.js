@@ -21,6 +21,7 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	READER_LIST_ITEM_ADD_SITE_RECEIVE,
 	READER_USER_LISTS_RECEIVE,
 	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
@@ -81,6 +82,16 @@ export const listItems = ( state = {}, action ) => {
 			return {
 				...state,
 				[ action.listId ]: [ ...currentItems, { feed_ID: action.feedId } ],
+			};
+		}
+		case READER_LIST_ITEM_ADD_SITE_RECEIVE: {
+			const currentItems = state[ action.listId ] || [];
+			if ( some( currentItems, { site_ID: action.siteId } ) ) {
+				return state;
+			}
+			return {
+				...state,
+				[ action.listId ]: [ ...currentItems, { site_ID: action.siteId } ],
 			};
 		}
 		case READER_LIST_ITEM_DELETE_FEED:
