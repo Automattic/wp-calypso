@@ -18,19 +18,19 @@
 		"clean": "rm -rf build/"
 	},
 	"dependencies": {
-		"@wordpress/components": "^28.2.0",
-		"@wordpress/core-data": "^7.2.0",
-		"@wordpress/data": "^10.2.0",
-		"@wordpress/edit-post": "^14.2.0",
-		"@wordpress/editor": "^14.2.0",
-		"@wordpress/element": "^6.2.0",
-		"@wordpress/i18n": "^5.2.0",
-		"@wordpress/icons": "^10.2.0",
-		"@wordpress/plugins": "^7.2.0"
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/core-data": "7.23.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/edit-post": "8.23.0",
+		"@wordpress/editor": "14.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/plugins": "7.23.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
-		"@wordpress/prettier-config": "^4.2.0",
+		"@wordpress/prettier-config": "^4.23.0",
 		"@wordpress/scripts": "^27.9.0"
 	}
 }
