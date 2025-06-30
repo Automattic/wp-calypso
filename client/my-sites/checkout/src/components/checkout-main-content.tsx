@@ -31,6 +31,7 @@ import {
 	joinClasses,
 	getContactDetailsType,
 	ContactDetailsType,
+	RestorableProductsProvider,
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
@@ -58,7 +59,6 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
-import { RestorableProductsProvider } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
@@ -397,6 +397,7 @@ export default function CheckoutMainContent( {
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
+		addProductsToCart,
 		isPendingUpdate: isCartPendingUpdate,
 		removeCoupon,
 		couponStatus,
@@ -692,6 +693,7 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderReview
 								removeProductFromCart={ removeProductFromCart }
 								replaceProductInCart={ replaceProductInCart }
+								addProductsToCart={ addProductsToCart }
 								couponFieldStateProps={ couponFieldStateProps }
 								removeCouponAndClearField={ removeCouponAndClearField }
 								isCouponFieldVisible={ isCouponFieldVisible }

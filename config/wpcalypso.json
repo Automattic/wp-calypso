@@ -30,7 +30,6 @@
 		"catch-js-errors": false,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
-		"checkout/vat-form": true,
 		"checkout/checkout-version": true,
 		"checkout/razorpay": false,
 		"current-site/domain-warning": true,

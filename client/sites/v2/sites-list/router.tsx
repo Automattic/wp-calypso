@@ -5,6 +5,7 @@ import {
 	createRouter,
 	redirect,
 } from '@tanstack/react-router';
+import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/a8c';
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import Root from '../components/root';
@@ -15,7 +16,12 @@ const rootRoute = createRootRoute( { component: Root } );
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+	loader: async () => {
+		// Preload the default sites list response without blocking.
+		queryClient.ensureQueryData( sitesQuery() );
+
+		await queryClient.ensureQueryData( isAutomatticianQuery() );
+	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {

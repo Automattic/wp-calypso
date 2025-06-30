@@ -38,8 +38,8 @@ function getDefaultView( {
 	isRestoringAccount,
 }: {
 	user: User;
-	isAutomattician?: boolean;
-	isRestoringAccount?: boolean;
+	isAutomattician: boolean;
+	isRestoringAccount: boolean;
 } ): View {
 	const type = isRestoringAccount || user.site_count > DEFAULT_PER_PAGE ? 'table' : 'grid';
 
@@ -69,9 +69,9 @@ export function getView( {
 	viewOptions,
 }: {
 	user: User;
-	isAutomattician?: boolean;
-	isRestoringAccount?: boolean;
-	viewOptions?: Partial< ViewTable | ViewGrid >;
+	isAutomattician: boolean;
+	isRestoringAccount: boolean;
+	viewOptions: Partial< ViewTable | ViewGrid >;
 } ): {
 	defaultView: View;
 	view: View;
@@ -80,10 +80,8 @@ export function getView( {
 
 	const view = {
 		...defaultView,
-		...DEFAULT_LAYOUTS[ viewOptions?.type ?? defaultView.type ],
-		...Object.fromEntries(
-			Object.entries( viewOptions ?? {} ).filter( ( [ , v ] ) => v !== undefined )
-		),
+		...DEFAULT_LAYOUTS[ viewOptions.type ?? defaultView.type ],
+		...Object.fromEntries( Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined ) ),
 	} as View;
 
 	return { defaultView, view };
