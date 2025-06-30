@@ -1,3 +1,6 @@
+/** External dependencies */
+import { subDays, subYears } from 'date-fns';
+
 /**
  * Internal dependencies
  */
@@ -469,6 +472,104 @@ describe( 'filters', () => {
 		).toBe( true );
 	} );
 
+	it( 'should filter using ON operator for datetime with exact date match', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'on',
+						value: '2020-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect( result.length ).toBe( 2 );
+		expect( result[ 0 ].title ).toBe( 'Neptune' );
+	} );
+
+	it( 'should filter using ON operator for datetime with different date formats', () => {
+		// Test that '2019-03-01T00:00:00Z' matches '2019-03-01'
+		const testData = [
+			{ title: 'Test Item 1', date: '2019-03-01T00:00:00Z' },
+			{ title: 'Test Item 2', date: '2019-03-02' },
+		];
+		const testFields = [
+			{
+				id: 'date',
+				type: 'datetime',
+				getValue: ( { item } ) => item.date,
+			},
+		];
+
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'on',
+						value: '2019-03-01',
+					},
+				],
+			},
+			testFields
+		);
+		expect( result.length ).toBe( 1 );
+		expect( result[ 0 ].title ).toBe( 'Test Item 1' );
+	} );
+
+	it( 'should filter using NOT_ON operator for datetime', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'notOn',
+						value: '2020-01-01',
+					},
+				],
+			},
+			fields
+		);
+		expect( result.length ).toBe( 9 );
+		expect( result.map( ( r ) => r.title ) ).not.toContain( 'Neptune' );
+	} );
+
+	it( 'should filter using NOT_ON operator for datetime with different date formats', () => {
+		// Test that '2019-03-01T00:00:00Z' does not match '2019-03-02'
+		const testData = [
+			{ title: 'Test Item 1', date: '2019-03-01T00:00:00Z' },
+			{ title: 'Test Item 2', date: '2019-03-02T00:00:00Z' },
+		];
+		const testFields = [
+			{
+				id: 'date',
+				type: 'datetime',
+				getValue: ( { item } ) => item.date,
+			},
+		];
+
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'notOn',
+						value: '2019-03-01',
+					},
+				],
+			},
+			testFields
+		);
+		expect( result.length ).toBe( 1 );
+		expect( result[ 0 ].title ).toBe( 'Test Item 2' );
+	} );
+
 	it( 'should filter numbers inclusively between min and max using BETWEEN operator', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,
@@ -541,6 +642,98 @@ describe( 'filters', () => {
 			fields
 		);
 		expect( result ).toHaveLength( 0 );
+	} );
+
+	it( 'should filter using IN_THE_PAST operator for datetime (days)', () => {
+		const testData = [
+			{ title: 'Recent', date: subDays( new Date(), 5 ) },
+			{ title: 'Old', date: subDays( new Date(), 14 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'inThePast',
+						value: { value: 7, unit: 'days' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 0 ] ] );
+	} );
+
+	it( 'should filter using OVER operator for datetime (days)', () => {
+		const testData = [
+			{ title: 'Recent', date: subDays( new Date(), 7 ) },
+			{ title: 'Old', date: subDays( new Date(), 14 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'over',
+						value: { value: 7, unit: 'days' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 1 ] ] );
+	} );
+
+	it( 'should filter using IN_THE_PAST operator for datetime (years)', () => {
+		const testData = [
+			{ title: 'Recent', date: subYears( new Date(), 1 ) },
+			{ title: 'Old', date: subYears( new Date(), 2 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'inThePast',
+						value: { value: 1, unit: 'years' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 0 ] ] );
+	} );
+
+	it( 'should filter using OVER operator for datetime (years)', () => {
+		const testData = [
+			{ title: 'Recent', date: subYears( new Date(), 1 ) },
+			{ title: 'Old', date: subYears( new Date(), 2 ) },
+		];
+		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
+		const { data: result } = filterSortAndPaginate(
+			testData,
+			{
+				filters: [
+					{
+						field: 'date',
+						operator: 'over',
+						value: { value: 1, unit: 'years' },
+					},
+				],
+			},
+			testFields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result ).toStrictEqual( [ testData[ 1 ] ] );
 	} );
 } );
 

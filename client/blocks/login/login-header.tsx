@@ -127,6 +127,8 @@ export function getHeaderText(
 
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
+	} else if ( currentQuery.lostpassword_flow === 'true' ) {
+		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
@@ -148,10 +150,7 @@ export function getHeaderText(
 			} );
 		}
 	} else if ( isWooJPC ) {
-		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
-		if ( isLostPasswordFlow ) {
-			headerText = translate( "You've got mail" );
-		} else if ( twoFactorEnabled ) {
+		if ( twoFactorEnabled ) {
 			headerText = translate( 'Authenticate your login' );
 		} else {
 			headerText = translate( 'Log in to your account' );

@@ -29,11 +29,11 @@ export const PatternsHeader = () => {
 
 	const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 		default: {
-			title: translate( 'WordPress Patterns', {
+			title: translate( 'WordPress Block Patterns: Build Your Web Pages 10X Faster', {
 				comment: 'HTML title of the Pattern Library home page',
 			} ),
 			metaDescription: translate(
-				'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.',
+				'WordPress block patterns: pre-designed sections for headers, testimonials, galleries, and more. Copy, paste, customize. Build pages 10x faster.',
 				{ comment: 'Intro text on the Pattern Library home page' }
 			),
 			patternsHeading: translate( 'Build Faster with Patterns', {
@@ -377,6 +377,7 @@ export const PatternsHeader = () => {
 
 	const categoryConfig = CONTENT[ category ];
 	const { title } = categoryConfig || CONTENT.default;
+	const skipTitleFormatting = categoryConfig ? false : true;
 
 	let heading: Substitution = CONTENT.default.patternsHeading;
 	let description: Substitution = CONTENT.default.patternsDescription;
@@ -404,7 +405,7 @@ export const PatternsHeader = () => {
 
 	return (
 		<>
-			<DocumentHead title={ title } meta={ metas } />
+			<DocumentHead title={ title } meta={ metas } skipTitleFormatting={ skipTitleFormatting } />
 
 			<header className="patterns-header">
 				<div className="patterns-header__inner">

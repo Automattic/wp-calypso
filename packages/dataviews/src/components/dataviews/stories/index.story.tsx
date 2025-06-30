@@ -259,3 +259,35 @@ export const FreeComposition = () => {
 		</div>
 	);
 };
+
+export const WithCard = () => {
+	const [ view, setView ] = useState< View >( {
+		...DEFAULT_VIEW,
+		fields: [ 'categories' ],
+		titleField: 'title',
+		descriptionField: 'description',
+		mediaField: 'image',
+	} );
+	const { data: shownData, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data, view, fields );
+	}, [ view ] );
+	return (
+		<Card>
+			<CardHeader>Header</CardHeader>
+			<CardBody>
+				<DataViews
+					getItemId={ ( item ) => item.id.toString() }
+					paginationInfo={ paginationInfo }
+					data={ shownData }
+					view={ view }
+					fields={ fields }
+					onChangeView={ setView }
+					actions={ actions.filter(
+						( action ) => ! action.supportsBulk
+					) }
+					defaultLayouts={ defaultLayouts }
+				/>
+			</CardBody>
+		</Card>
+	);
+};

@@ -124,7 +124,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			align-items: flex-start;
 			gap: 16px;
 			list-style: none;
-			padding: 0;
 
 			overflow-x: auto;
 			white-space: nowrap;
@@ -133,6 +132,11 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			&::-webkit-scrollbar {
 				display: none;
 			}
+
+			width: calc(100% + 32px);
+			margin-left: -16px !important;
+			padding-left: 16px;
+			padding-right: 16px;
 
 			@media ( max-width: $breakpoint-mobile ) {
 				gap: 8px;

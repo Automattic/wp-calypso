@@ -1,8 +1,8 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useCallback, useState, createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
@@ -75,18 +75,23 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 	const getButtonText = () => {
 		if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 			return forceEmailSupport
-				? __( 'Contact our support team by email.', __i18n_text_domain__ )
-				: __( 'Contact our support team.', __i18n_text_domain__ );
+				? __( 'Contact our support team by email', __i18n_text_domain__ )
+				: __( 'Contact our support team', __i18n_text_domain__ );
 		}
-		return __( 'Ask in our forums.', __i18n_text_domain__ );
+		return __( 'Ask in our forums', __i18n_text_domain__ );
 	};
 
 	return (
 		<div className="disclaimer">
 			{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
-			<button onClick={ handleClick } className="odie-button-link">
-				{ getButtonText() }
-			</button>
+			{ createInterpolateElement(
+				sprintf( '<button>%(button_text)s</button>.', {
+					button_text: getButtonText(),
+				} ),
+				{
+					button: <button onClick={ handleClick } className="odie-button-link" />,
+				}
+			) }
 		</div>
 	);
 };

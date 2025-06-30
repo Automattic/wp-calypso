@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
@@ -8,6 +7,7 @@ import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
+import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -58,7 +58,6 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
-	const hasEnTranslation = useHasEnTranslation();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
@@ -159,7 +158,6 @@ const DotcomPreviewPane = ( {
 		isAtomicSite,
 		isPlanExpired,
 		__,
-		hasEnTranslation,
 		isSimpleSite,
 		site,
 		selectedSiteFeature,
@@ -202,6 +200,12 @@ const DotcomPreviewPane = ( {
 		selectedFeatureId: selectedSiteFeature,
 	} );
 
+	const isProduction = site.is_wpcom_atomic && ! site.is_wpcom_staging_site;
+	const hasNoStagingSites = ! site.options?.wpcom_staging_blog_ids?.length;
+
+	const shouldShowProductionBadge =
+		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished );
+
 	return (
 		<ItemView
 			itemData={ itemData }
@@ -216,6 +220,10 @@ const DotcomPreviewPane = ( {
 				subtitleExtra: () => {
 					if ( isInProgress ) {
 						return <SiteStatus site={ site } />;
+					}
+
+					if ( stagingSitesRedesign && shouldShowProductionBadge ) {
+						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 
 					if ( hasEnvironmentPermission && isStagingStatusFinished ) {

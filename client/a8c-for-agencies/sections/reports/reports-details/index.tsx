@@ -6,7 +6,11 @@ import { useMemo, useState } from 'react';
 import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard/item-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { A4A_REPORTS_BUILD_LINK } from '../constants';
+import DeleteReportConfirmationDialog from '../delete-report-confirmation-dialog';
+import useHandleReportDelete from '../hooks/use-handle-report-delete';
+import useSendReportEmailMutation from '../hooks/use-send-report-email-mutation';
 import ReportsMobileView from './mobile-view';
 import Reports from './reports';
 import type { SiteReports, Report } from '../types';
@@ -26,6 +30,48 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 	const dispatch = useDispatch();
 
 	const [ selectedReportTab, setSelectedReportTab ] = useState( REPORTS_ID );
+	const [ reportToDelete, setReportToDelete ] = useState< Report | null >( null );
+
+	const { handleDeleteReport, isPending: isDeletingReport } = useHandleReportDelete();
+
+	const sendReportEmailMutation = useSendReportEmailMutation( {
+		onMutate: () => {
+			dispatch(
+				infoNotice( translate( 'Sending report…' ), {
+					id: 'send-report-email-progress',
+				} )
+			);
+		},
+		onSuccess: ( _data, options ) => {
+			const isPreview = options?.preview;
+			dispatch(
+				successNotice(
+					isPreview
+						? translate( 'Report preview sent successfully!' )
+						: translate( 'Report sent successfully!' ),
+					{
+						duration: 5000,
+						id: isPreview ? 'send-report-preview-success' : 'send-report-success',
+					}
+				)
+			);
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice( error?.message || translate( 'Failed to send report. Please try again.' ), {
+					duration: 8000,
+					id: 'send-report-email-error',
+				} )
+			);
+		},
+		onSettled: () => {
+			// Remove the progress notice when the request completes (success or error)
+			dispatch( {
+				type: 'NOTICE_REMOVE',
+				noticeId: 'send-report-email-progress',
+			} );
+		},
+	} );
 
 	const itemData: ItemData = {
 		title: siteReports.site,
@@ -53,8 +99,41 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 					return report.status !== 'error';
 				},
 			},
+			{
+				id: 'send-me-copy',
+				label: translate( 'Send me a copy' ),
+				callback( items: Report[] ) {
+					const report = items[ 0 ];
+					dispatch( recordTracksEvent( 'calypso_a4a_reports_send_me_copy_button_click' ) );
+					sendReportEmailMutation.mutate( { reportId: report.id, preview: true } );
+				},
+				isEligible( report: Report ) {
+					return [ 'processed', 'sent' ].includes( report.status );
+				},
+			},
+			{
+				id: 'send-to-client',
+				label: translate( 'Send to client' ),
+				callback( items: Report[] ) {
+					const report = items[ 0 ];
+					dispatch( recordTracksEvent( 'calypso_a4a_reports_send_to_client_button_click' ) );
+					sendReportEmailMutation.mutate( { reportId: report.id } );
+				},
+				isEligible( report: Report ) {
+					return [ 'processed', 'sent' ].includes( report.status );
+				},
+			},
+			{
+				id: 'delete-report',
+				label: translate( 'Delete report' ),
+				callback( items: Report[] ) {
+					const report = items[ 0 ];
+					dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_button_click' ) );
+					setReportToDelete( report );
+				},
+			},
 		],
-		[ dispatch, translate ]
+		[ dispatch, translate, sendReportEmailMutation ]
 	);
 
 	const features = useMemo(
@@ -76,12 +155,27 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 	);
 
 	return (
-		<ItemView
-			className="reports-details-items"
-			itemData={ itemData }
-			closeItemView={ closeSitePreviewPane }
-			features={ features }
-			hideNavIfSingleTab
-		/>
+		<>
+			<ItemView
+				className="reports-details-items"
+				itemData={ itemData }
+				closeItemView={ closeSitePreviewPane }
+				features={ features }
+				hideNavIfSingleTab
+			/>
+			{ reportToDelete && (
+				<DeleteReportConfirmationDialog
+					report={ reportToDelete }
+					onClose={ () => setReportToDelete( null ) }
+					onConfirm={ () => {
+						dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_confirm_click' ) );
+						handleDeleteReport( reportToDelete, () => {
+							setReportToDelete( null );
+						} );
+					} }
+					isLoading={ isDeletingReport }
+				/>
+			) }
+		</>
 	);
 }

@@ -254,28 +254,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__form-terms,
-.login__form-signup-link {
+.login__form-terms {
 	font-size: $font-body-extra-small;
 	text-align: center;
 
 	a {
 		white-space: pre;
-	}
-}
-
-.login__form-signup-link {
-	clear: both;
-	font-size: $font-body-small;
-	padding-top: 20px;
-	margin-bottom: unset;
-
-	&.disabled {
-		a,
-		a:hover {
-			pointer-events: none;
-			color: var(--color-text-subtle);
-		}
 	}
 }
 

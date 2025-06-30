@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from './const';
 
-export default function ( supportsArchiveStats = false ) {
+export default function ( supportsArchiveStats = false, isSiteJetpackNotAtomic = false ) {
 	const isArchiveBreakdownFlag = isEnabled( 'stats/archive-breakdown' );
 	const isArchiveBreakdownEnabled = isArchiveBreakdownFlag && supportsArchiveStats;
 
@@ -86,10 +87,11 @@ export default function ( supportsArchiveStats = false ) {
 				comment: '{{link}} links to support documentation.',
 				components: {
 					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ SUPPORT_URL }#countries` ) }
+						<InlineSupportLink
+							supportContext={
+								isSiteJetpackNotAtomic ? 'stats-countries-jetpack' : 'stats-countries'
+							}
+							showIcon={ false }
 						/>
 					),
 				},
@@ -296,10 +298,9 @@ export default function ( supportsArchiveStats = false ) {
 				comment: '{{link}} links to support documentation.',
 				components: {
 					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) }
+						<InlineSupportLink
+							supportContext={ isSiteJetpackNotAtomic ? 'stats-devices-jetpack' : 'stats-devices' }
+							showIcon={ false }
 						/>
 					),
 				},

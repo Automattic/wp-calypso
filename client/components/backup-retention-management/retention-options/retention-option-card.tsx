@@ -1,3 +1,4 @@
+import { Icon, starFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -7,7 +8,6 @@ import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 interface RetentionOptionCardProps {
 	spaceNeededInBytes: number;
 	upgradeRequired: boolean;
-	isCurrentPlan: boolean;
 	value: RetentionPeriod;
 	checked?: boolean;
 	onChange: ( value: number ) => void;
@@ -16,7 +16,6 @@ interface RetentionOptionCardProps {
 const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 	spaceNeededInBytes,
 	upgradeRequired,
-	isCurrentPlan,
 	value,
 	checked = false,
 	onChange,
@@ -63,18 +62,12 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 				<div className="space-needed__value">{ spaceNeededText }</div>
 			</div>
 			<div
-				className={ clsx( 'retention-option__upgrade-required', {
+				className={ clsx( 'retention-option__highlight-badge', {
 					'is-visible': upgradeRequired,
 				} ) }
 			>
+				<Icon icon={ starFilled } size={ 14 } className="icon" />
 				{ translate( 'Upgrade required' ) }
-			</div>
-			<div
-				className={ clsx( 'retention-option__current-plan', {
-					'is-visible': isCurrentPlan,
-				} ) }
-			>
-				{ translate( 'Current plan' ) }
 			</div>
 		</div>
 	);

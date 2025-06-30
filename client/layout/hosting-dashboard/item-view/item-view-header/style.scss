@@ -46,6 +46,10 @@ $blueberry-color: #3858e9;
 				&:hover {
 					text-decoration: none;
 				}
+
+				&.components-button.has-icon {
+					padding: 0 0 0 2px;
+				}
 			}
 		}
 
@@ -110,6 +114,12 @@ $blueberry-color: #3858e9;
 							box-shadow: none;
 							outline: thin dotted;
 						}
+					}
+
+					> span {
+						display: inline-flex;
+						align-items: center;
+						height: 24px;
 					}
 				}
 			}

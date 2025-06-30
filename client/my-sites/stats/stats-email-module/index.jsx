@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getEmailStatsNormalizedData,
 	shouldShowLoadingIndicator,
@@ -26,6 +26,7 @@ class StatsEmailModule extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		isLoading: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,7 +37,7 @@ class StatsEmailModule extends Component {
 	render() {
 		const { path, data, postId, statType, query, isLoading } = this.props;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const moduleStrings = statsStrings()[ path ];
+		const moduleStrings = statsStrings( false, this.props.isJetpack )[ path ];
 		// TODO: Support error state in redux store
 		const hasError = false;
 		const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );
@@ -74,6 +75,8 @@ export default connect( ( state, ownProps ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const { postId, period, date, statType, path } = ownProps;
 
+	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+
 	return {
 		isLoading: shouldShowLoadingIndicator( state, siteId, postId, period, statType, date, path ),
 		data: getEmailStatsNormalizedData( state, siteId, postId, period, statType, date, path ),
@@ -84,5 +87,6 @@ export default connect( ( state, ownProps ) => {
 			period,
 			date,
 		},
+		isJetpack,
 	};
 } )( localize( StatsEmailModule ) );

@@ -102,14 +102,14 @@ const GoogleAnalyticsSimpleForm = ( {
 								) }{ ' ' }
 							</p>
 							<p>
-								<a
+								<InlineSupportLink
 									onClick={ recordSupportLinkClick }
-									href={ analyticsSupportUrl }
-									target="_blank"
-									rel="noreferrer"
+									showIcon={ false }
+									supportPostId={ 98905 }
+									supportLink={ analyticsSupportUrl }
 								>
 									{ translate( 'Learn more' ) }
-								</a>
+								</InlineSupportLink>
 							</p>
 						</div>
 					</div>
@@ -159,7 +159,11 @@ const GoogleAnalyticsSimpleForm = ( {
 									{
 										components: {
 											a: (
-												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
+												<InlineSupportLink
+													showIcon={ false }
+													supportPostId={ 98905 }
+													supportLink={ analyticsSupportUrl }
+												/>
 											),
 										},
 									}
