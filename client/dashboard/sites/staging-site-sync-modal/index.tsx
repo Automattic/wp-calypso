@@ -11,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 
 interface SyncModalProps {
-	isOpen: boolean;
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
@@ -62,22 +61,12 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 	};
 };
 
-export default function SyncModal( {
-	isOpen,
-	onClose,
-	syncType,
-	environment,
-	siteSlug,
-}: SyncModalProps ) {
+export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
 	const copy = getCopy( syncType );
 	const modalTitle = copy[ environment ].title;
 
 	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
 	//const { siteSlug } = siteRoute.useParams();
-
-	if ( ! isOpen ) {
-		return null;
-	}
 
 	return (
 		<Modal title={ modalTitle } onRequestClose={ onClose } style={ { maxWidth: '668px' } }>

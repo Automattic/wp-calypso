@@ -71,13 +71,14 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 					</div>
 				) }
 			/>
-			<SyncModal
-				isOpen={ isModalOpen }
-				onClose={ handleCloseModal }
-				syncType={ syncType }
-				environment={ environment }
-				siteSlug={ siteSlug }
-			/>
+			{ isModalOpen && (
+				<SyncModal
+					onClose={ handleCloseModal }
+					syncType={ syncType }
+					environment={ environment }
+					siteSlug={ siteSlug }
+				/>
+			) }
 		</>
 	);
 }
