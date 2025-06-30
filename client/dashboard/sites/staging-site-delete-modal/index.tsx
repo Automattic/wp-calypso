@@ -23,11 +23,11 @@ export default function StagingSiteDeleteModal( {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const parentSiteId = site.options?.wpcom_production_blog_id;
+	const productionSiteId = site.options?.wpcom_production_blog_id;
 
 	const mutation = useMutation(
-		parentSiteId
-			? stagingSiteDeleteMutation( site.ID, parentSiteId )
+		productionSiteId
+			? stagingSiteDeleteMutation( site.ID, productionSiteId )
 			: {
 					mutationFn: async () => {
 						throw new Error( 'Parent site not found' );
@@ -36,7 +36,7 @@ export default function StagingSiteDeleteModal( {
 	);
 
 	const handleDelete = () => {
-		if ( ! parentSiteId ) {
+		if ( ! productionSiteId ) {
 			createErrorNotice( __( 'Cannot delete staging site: parent site not found' ), {
 				type: 'snackbar',
 			} );
