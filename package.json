@@ -46,20 +46,26 @@
 	"dependencies": {
 		"@ariakit/react": "^0.4.15",
 		"@babel/runtime": "7.25.7",
+		"@wordpress/base-styles": "file:../base-styles",
 		"@wordpress/components": "file:../components",
 		"@wordpress/compose": "file:../compose",
 		"@wordpress/data": "file:../data",
+		"@wordpress/date": "file:../date",
 		"@wordpress/element": "file:../element",
 		"@wordpress/i18n": "file:../i18n",
 		"@wordpress/icons": "file:../icons",
 		"@wordpress/primitives": "file:../primitives",
 		"@wordpress/private-apis": "file:../private-apis",
+		"@wordpress/url": "file:../url",
 		"@wordpress/warning": "file:../warning",
 		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
+		"fast-deep-equal": "^3.1.3",
 		"remove-accents": "^0.5.0"
 	},
 	"peerDependencies": {
-		"react": "^18.0.0"
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
 	},
 	"publishConfig": {
 		"access": "public"

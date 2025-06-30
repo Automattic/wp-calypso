@@ -199,13 +199,13 @@ function ListItem< Item >( {
 	const renderedMediaField =
 		showMedia && mediaField?.render ? (
 			<div className="dataviews-view-list__media-wrapper">
-				<mediaField.render item={ item } />
+				<mediaField.render item={ item } field={ mediaField } />
 			</div>
 		) : null;
 
 	const renderedTitleField =
 		showTitle && titleField?.render ? (
-			<titleField.render item={ item } />
+			<titleField.render item={ item } field={ titleField } />
 		) : null;
 
 	const usedActions = eligibleActions?.length > 0 && (
@@ -302,7 +302,10 @@ function ListItem< Item >( {
 						</HStack>
 						{ showDescription && descriptionField?.render && (
 							<div className="dataviews-view-list__field">
-								<descriptionField.render item={ item } />
+								<descriptionField.render
+									item={ item }
+									field={ descriptionField }
+								/>
 							</div>
 						) }
 						<div
@@ -321,7 +324,10 @@ function ListItem< Item >( {
 										{ field.label }
 									</VisuallyHidden>
 									<span className="dataviews-view-list__field-value">
-										<field.render item={ item } />
+										<field.render
+											item={ item }
+											field={ field }
+										/>
 									</span>
 								</div>
 							) ) }
@@ -347,6 +353,7 @@ export default function ViewList< Item >( props: ViewListProps< Item > ) {
 		onChangeSelection,
 		selection,
 		view,
+		className,
 	} = props;
 	const baseId = useInstanceId( ViewList, 'view-list' );
 
@@ -491,7 +498,7 @@ export default function ViewList< Item >( props: ViewListProps< Item > ) {
 		<Composite
 			id={ baseId }
 			render={ <div /> }
-			className="dataviews-view-list"
+			className={ clsx( 'dataviews-view-list', className ) }
 			role="grid"
 			activeId={ activeCompositeId }
 			setActiveId={ setActiveCompositeId }

@@ -42,6 +42,7 @@ export default function Select< Item >( {
 		<SelectControl
 			label={ label }
 			value={ value }
+			help={ field.description }
 			options={ elements }
 			onChange={ onChangeControl }
 			__next40pxDefaultSize

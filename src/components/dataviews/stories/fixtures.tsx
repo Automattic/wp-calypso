@@ -29,9 +29,11 @@ export type SpaceObject = {
 	description: string;
 	image: string;
 	type: string;
+	isPlanet: boolean;
 	categories: string[];
 	satellites: number;
 	date: string;
+	email: string;
 };
 
 export const data: SpaceObject[] = [
@@ -41,9 +43,11 @@ export const data: SpaceObject[] = [
 		description: 'Apollo description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Not a planet',
+		isPlanet: false,
 		categories: [ 'Space', 'NASA' ],
 		satellites: 0,
 		date: '2021-01-01T00:00:00Z',
+		email: 'apollo@example.com',
 	},
 	{
 		id: 2,
@@ -51,9 +55,11 @@ export const data: SpaceObject[] = [
 		description: 'Space description',
 		image: 'https://live.staticflickr.com/5678/21911065441_92e2d44708_b.jpg',
 		type: 'Not a planet',
+		isPlanet: false,
 		categories: [ 'Space' ],
 		satellites: 0,
 		date: '2019-01-02T00:00:00Z',
+		email: 'space@example.com',
 	},
 	{
 		id: 3,
@@ -61,9 +67,11 @@ export const data: SpaceObject[] = [
 		description: 'NASA photo',
 		image: 'https://live.staticflickr.com/742/21712365770_8f70a2c91e_b.jpg',
 		type: 'Not a planet',
+		isPlanet: false,
 		categories: [ 'NASA' ],
 		satellites: 0,
 		date: '2025-01-03T00:00:00Z',
+		email: 'nasa@example.com',
 	},
 	{
 		id: 4,
@@ -71,9 +79,11 @@ export const data: SpaceObject[] = [
 		description: 'Neptune description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Ice giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 14,
 		date: '2020-01-01T00:00:00Z',
+		email: 'neptune@example.com',
 	},
 	{
 		id: 5,
@@ -81,9 +91,11 @@ export const data: SpaceObject[] = [
 		description: 'Mercury description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 0,
 		date: '2020-01-02T01:00:00Z',
+		email: 'mercury@example.com',
 	},
 	{
 		id: 6,
@@ -91,9 +103,11 @@ export const data: SpaceObject[] = [
 		description: 'La planète Vénus',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 0,
 		date: '2020-01-02T00:00:00Z',
+		email: 'venus@example.com',
 	},
 	{
 		id: 7,
@@ -101,9 +115,11 @@ export const data: SpaceObject[] = [
 		description: 'Earth description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 1,
 		date: '2023-01-03T00:00:00Z',
+		email: 'earth@example.com',
 	},
 	{
 		id: 8,
@@ -111,9 +127,11 @@ export const data: SpaceObject[] = [
 		description: 'Mars description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 2,
 		date: '2020-01-01T00:00:00Z',
+		email: 'mars@example.com',
 	},
 	{
 		id: 9,
@@ -121,9 +139,11 @@ export const data: SpaceObject[] = [
 		description: 'Jupiter description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Gas giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 95,
 		date: '2017-01-01T00:01:00Z',
+		email: 'jupiter@example.com',
 	},
 	{
 		id: 10,
@@ -131,9 +151,11 @@ export const data: SpaceObject[] = [
 		description: 'Saturn description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Gas giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 146,
 		date: '2020-02-01T00:02:00Z',
+		email: 'saturn@example.com',
 	},
 	{
 		id: 11,
@@ -141,9 +163,11 @@ export const data: SpaceObject[] = [
 		description: 'Uranus description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Ice giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Ice giant', 'Solar system' ],
 		satellites: 28,
 		date: '2020-03-01T00:00:00Z',
+		email: 'uranus@example.com',
 	},
 ];
 
@@ -562,7 +586,7 @@ export const themeFields: Field< Theme >[] = [
 	{
 		id: 'tags',
 		label: 'Tags',
-		render: ( { item } ) => item.tags.join( ', ' ),
+		type: 'array',
 	},
 ];
 
@@ -571,7 +595,13 @@ export const DEFAULT_VIEW = {
 	search: '',
 	page: 1,
 	perPage: 10,
-	layout: {},
+	layout: {
+		styles: {
+			satellites: {
+				align: 'end' as const,
+			},
+		},
+	},
 	filters: [],
 };
 
@@ -583,6 +613,7 @@ export const actions: Action< SpaceObject >[] = [
 		icon: trash,
 		hideModalHeader: true,
 		modalFocusOnMount: 'firstContentElement',
+		supportsBulk: true,
 		RenderModal: ( { items, closeModal } ) => {
 			return (
 				<VStack spacing="5">
@@ -620,6 +651,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Image',
 		id: 'image',
+		type: 'media',
 		header: (
 			<HStack spacing={ 1 } justify="start">
 				<Icon icon={ image } />
@@ -631,13 +663,16 @@ export const fields: Field< SpaceObject >[] = [
 				<img src={ item.image } alt="" style={ { width: '100%' } } />
 			);
 		},
-		enableSorting: false,
 	},
 	{
 		label: 'Title',
 		id: 'title',
+		type: 'text',
 		enableHiding: false,
 		enableGlobalSearch: true,
+		filterBy: {
+			operators: [ 'contains', 'notContains', 'startsWith' ],
+		},
 	},
 	{
 		id: 'date',
@@ -654,6 +689,18 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'Terrestrial', label: 'Terrestrial' },
 			{ value: 'Gas giant', label: 'Gas giant' },
 		],
+		filterBy: {
+			operators: [ 'is', 'isNot' ],
+		},
+	},
+	{
+		id: 'isPlanet',
+		label: 'Is Planet',
+		type: 'boolean',
+		elements: [
+			{ value: true, label: 'True' },
+			{ value: false, label: 'False' },
+		],
 	},
 	{
 		label: 'Satellites',
@@ -664,8 +711,15 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Description',
 		id: 'description',
+		type: 'text',
 		enableSorting: false,
 		enableGlobalSearch: true,
+		filterBy: false,
+	},
+	{
+		label: 'Email',
+		id: 'email',
+		type: 'email',
 	},
 	{
 		label: 'Categories',
@@ -683,15 +737,6 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'Solar system', label: 'Solar system' },
 			{ value: 'Ice giant', label: 'Ice giant' },
 		],
-		filterBy: {
-			operators: [ 'isAny', 'isNone', 'isAll', 'isNotAll' ],
-		},
-		getValue: ( { item } ) => {
-			return item.categories;
-		},
-		render: ( { item } ) => {
-			return item.categories.join( ',' );
-		},
-		enableSorting: false,
+		type: 'array',
 	},
 ];

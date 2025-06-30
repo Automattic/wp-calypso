@@ -22,6 +22,25 @@
 			text-align: right;
 		}
 
+		&.dataviews-view-table__actions-column--sticky {
+			position: sticky;
+			right: 0;
+			background-color: $white;
+		}
+
+		&.dataviews-view-table__actions-column--stuck {
+			&::after {
+				display: block;
+				content: "";
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				width: 1px;
+				background-color: $gray-100;
+			}
+		}
+
 		&.dataviews-view-table__checkbox-column {
 			padding-right: 0;
 			width: 1%;
@@ -52,7 +71,8 @@
 			border-bottom: 0;
 		}
 
-		&.is-hovered {
+		&.is-hovered,
+		&.is-hovered .dataviews-view-table__actions-column--sticky {
 			background-color: #f8f8f8;
 		}
 
@@ -99,6 +119,14 @@
 			&:hover {
 				background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08);
 			}
+
+			.dataviews-view-table__actions-column--sticky {
+				background-color: color-mix(in srgb, rgb(var(--wp-admin-theme-color--rgb)) 4%, $white);
+			}
+
+			&:hover .dataviews-view-table__actions-column--sticky {
+				background-color: color-mix(in srgb, rgb(var(--wp-admin-theme-color--rgb)) 8%, $white);
+			}
 		}
 	}
 	thead {
@@ -131,6 +159,14 @@
 			min-height: $grid-unit-40;
 			display: flex;
 			align-items: center;
+
+			&.dataviews-view-table__cell-align-end {
+				justify-content: flex-end;
+			}
+
+			&.dataviews-view-table__cell-align-center {
+				justify-content: center;
+			}
 		}
 
 		.components-v-stack > .dataviews-view-table__cell-content-wrapper:not(:first-child) {

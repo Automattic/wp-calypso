@@ -1,4 +1,25 @@
 .theme-field-description {
-    text-wrap: balance;
-    text-wrap: pretty;
+	text-wrap: balance;
+	text-wrap: pretty;
+}
+
+.free-composition {
+	height: 600px;
+	overflow: auto;
+}
+
+.free-composition-heading,
+.free-composition-header {
+	padding: 16px 48px;
+}
+
+.free-composition-heading {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	background-color: #fff;
+}
+
+.free-composition-dataviews-layout thead {
+	inset-block-start: 67px;
 }

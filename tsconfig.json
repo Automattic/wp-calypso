@@ -13,11 +13,13 @@
 		{ "path": "../components" },
 		{ "path": "../compose" },
 		{ "path": "../data" },
+		{ "path": "../date" },
 		{ "path": "../element" },
 		{ "path": "../i18n" },
 		{ "path": "../icons" },
 		{ "path": "../primitives" },
 		{ "path": "../private-apis" },
+		{ "path": "../url" },
 		{ "path": "../warning" }
 	],
 	"exclude": [

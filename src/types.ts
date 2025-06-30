@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ReactElement, ComponentType } from 'react';
+import type { ReactElement, ComponentType, ComponentProps } from 'react';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ export interface Option< Value extends any = any > {
 	description?: string;
 }
 
-interface FilterByConfig {
+export interface FilterByConfig {
 	/**
 	 * The list of operators supported by the field.
 	 */
@@ -39,15 +39,65 @@ interface FilterByConfig {
 	isPrimary?: boolean;
 }
 
+export interface NormalizedFilterByConfig {
+	/**
+	 * The list of operators supported by the field.
+	 */
+	operators: Operator[];
+
+	/**
+	 * Whether it is a primary filter.
+	 *
+	 * A primary filter is always visible and is not listed in the "Add filter" component,
+	 * except for the list layout where it behaves like a secondary filter.
+	 */
+	isPrimary?: boolean;
+}
+
+interface FilterConfigForType {
+	/**
+	 * What operators are used by default.
+	 */
+	defaultOperators: Operator[];
+
+	/**
+	 * What operators are supported by the field.
+	 */
+	validOperators: Operator[];
+}
+
 export type Operator =
 	| 'is'
 	| 'isNot'
 	| 'isAny'
 	| 'isNone'
 	| 'isAll'
-	| 'isNotAll';
+	| 'isNotAll'
+	| 'lessThan'
+	| 'greaterThan'
+	| 'lessThanOrEqual'
+	| 'greaterThanOrEqual'
+	| 'before'
+	| 'after'
+	| 'beforeInc'
+	| 'afterInc'
+	| 'contains'
+	| 'notContains'
+	| 'startsWith'
+	| 'between'
+	| 'on'
+	| 'notOn'
+	| 'inThePast'
+	| 'over';
 
-export type FieldType = 'text' | 'integer' | 'datetime' | 'media';
+export type FieldType =
+	| 'text'
+	| 'integer'
+	| 'datetime'
+	| 'media'
+	| 'boolean'
+	| 'email'
+	| 'array';
 
 export type ValidationContext = {
 	elements?: Option[];
@@ -70,7 +120,28 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to render an edit control for the field or control name.
 	 */
-	Edit: ComponentType< DataFormControlProps< Item > > | string;
+	Edit: ComponentType< DataFormControlProps< Item > > | string | null;
+
+	/**
+	 * Callback used to render the field.
+	 */
+	render: ComponentType< DataViewRenderFieldProps< Item > >;
+
+	/**
+	 * The filter config for the field.
+	 */
+	filterBy: FilterConfigForType | false;
+
+	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
+
+	/**
+	 * Whether the field is sortable.
+	 */
+	enableSorting: boolean;
 };
 
 /**
@@ -156,7 +227,13 @@ export type Field< Item > = {
 	/**
 	 * Filter config for the field.
 	 */
-	filterBy?: FilterByConfig | undefined;
+	filterBy?: FilterByConfig | false;
+
+	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
 
 	/**
 	 * Callback used to retrieve the value of the field from the item.
@@ -165,16 +242,18 @@ export type Field< Item > = {
 	getValue?: ( args: { item: Item } ) => any;
 };
 
-export type NormalizedField< Item > = Field< Item > & {
+export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	label: string;
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
-	Edit: ComponentType< DataFormControlProps< Item > >;
+	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
+	filterBy: NormalizedFilterByConfig | false;
+	readOnly: boolean;
 };
 
 /**
@@ -189,10 +268,17 @@ export type DataFormControlProps< Item > = {
 	field: NormalizedField< Item >;
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
+	/**
+	 * The currently selected filter operator for this field.
+	 *
+	 * Used by DataViews filters to determine which control to render based on the operator type.
+	 */
+	operator?: Operator;
 };
 
 export type DataViewRenderFieldProps< Item > = {
 	item: Item;
+	field: NormalizedField< Item >;
 };
 
 /**
@@ -349,6 +435,11 @@ export interface ColumnStyle {
 	 * The maximum width of the field column.
 	 */
 	minWidth?: string | number;
+
+	/**
+	 * The alignment of the field column, defaults to left.
+	 */
+	align?: 'start' | 'center' | 'end';
 }
 
 export type Density = 'compact' | 'balanced' | 'comfortable';
@@ -500,6 +591,7 @@ export interface ActionButton< Item > extends ActionBase< Item > {
 export type Action< Item > = ActionModal< Item > | ActionButton< Item >;
 
 export interface ViewBaseProps< Item > {
+	className?: string;
 	actions: Action< Item >[];
 	data: Item[];
 	fields: NormalizedField< Item >[];
@@ -511,6 +603,11 @@ export interface ViewBaseProps< Item > {
 	selection: string[];
 	setOpenedFilter: ( fieldId: string ) => void;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 	view: View;
 }

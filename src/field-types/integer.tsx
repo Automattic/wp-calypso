@@ -1,7 +1,26 @@
 /**
  * Internal dependencies
  */
-import type { SortDirection, ValidationContext } from '../types';
+import type {
+	DataViewRenderFieldProps,
+	SortDirection,
+	ValidationContext,
+	FieldTypeDefinition,
+} from '../types';
+import { renderFromElements } from '../utils';
+import {
+	OPERATOR_IS,
+	OPERATOR_IS_NOT,
+	OPERATOR_LESS_THAN,
+	OPERATOR_GREATER_THAN,
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_IS_ANY,
+	OPERATOR_IS_NONE,
+	OPERATOR_IS_ALL,
+	OPERATOR_IS_NOT_ALL,
+	OPERATOR_BETWEEN,
+} from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	return direction === 'asc' ? a - b : b - a;
@@ -31,4 +50,36 @@ export default {
 	sort,
 	isValid,
 	Edit: 'integer',
-};
+	render: ( { item, field }: DataViewRenderFieldProps< any > ) => {
+		return field.elements
+			? renderFromElements( { item, field } )
+			: field.getValue( { item } );
+	},
+	enableSorting: true,
+	filterBy: {
+		defaultOperators: [
+			OPERATOR_IS,
+			OPERATOR_IS_NOT,
+			OPERATOR_LESS_THAN,
+			OPERATOR_GREATER_THAN,
+			OPERATOR_LESS_THAN_OR_EQUAL,
+			OPERATOR_GREATER_THAN_OR_EQUAL,
+			OPERATOR_BETWEEN,
+		],
+		validOperators: [
+			// Single-selection
+			OPERATOR_IS,
+			OPERATOR_IS_NOT,
+			OPERATOR_LESS_THAN,
+			OPERATOR_GREATER_THAN,
+			OPERATOR_LESS_THAN_OR_EQUAL,
+			OPERATOR_GREATER_THAN_OR_EQUAL,
+			OPERATOR_BETWEEN,
+			// Multiple-selection
+			OPERATOR_IS_ANY,
+			OPERATOR_IS_NONE,
+			OPERATOR_IS_ALL,
+			OPERATOR_IS_NOT_ALL,
+		],
+	},
+} satisfies FieldTypeDefinition< any >;
