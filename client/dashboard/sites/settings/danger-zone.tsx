@@ -72,34 +72,35 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 const SiteDeleteAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
+	const deleteButton = (
+		<Button variant="secondary" size="compact" isDestructive onClick={ () => setIsOpen( true ) }>
+			{ __( 'Delete' ) }
+		</Button>
+	);
+
+	if ( site.is_wpcom_staging_site ) {
+		return (
+			<>
+				<ActionList.ActionItem
+					title={ __( 'Delete staging site' ) }
+					description={ __( 'Delete staging site and all of its posts, media, and data.' ) }
+					actions={ deleteButton }
+				/>
+				{ isOpen && <StagingSiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+			</>
+		);
+	}
+
 	return (
 		<>
 			<ActionList.ActionItem
-				title={ site.is_wpcom_staging_site ? __( 'Delete staging site' ) : __( 'Delete site' ) }
-				description={
-					site.is_wpcom_staging_site
-						? __( 'Delete staging site and all of its posts, media, and data.' )
-						: __(
-								'Delete all your posts, pages, media, and data, and give up your site’s address.'
-						  )
-				}
-				actions={
-					<Button
-						variant="secondary"
-						size="compact"
-						isDestructive
-						onClick={ () => setIsOpen( true ) }
-					>
-						{ __( 'Delete' ) }
-					</Button>
-				}
+				title={ __( 'Delete site' ) }
+				description={ __(
+					"Delete all your posts, pages, media, and data, and give up your site's address."
+				) }
+				actions={ deleteButton }
 			/>
-			{ isOpen &&
-				( site.is_wpcom_staging_site ? (
-					<StagingSiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } />
-				) : (
-					<SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } />
-				) ) }
+			{ isOpen && <SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
 		</>
 	);
 };
