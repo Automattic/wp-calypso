@@ -324,8 +324,8 @@ const FilterText = ( {
 	if ( filterInView?.operator === OPERATOR_ON ) {
 		return createInterpolateElement(
 			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is on: 2024-01-01". */
-				__( '<Name>%1$s is on: </Name><Value>%2$s</Value>' ),
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is: 2024-01-01". */
+				__( '<Name>%1$s is: </Name><Value>%2$s</Value>' ),
 				filter.name,
 				activeElements[ 0 ].label
 			),
@@ -336,8 +336,8 @@ const FilterText = ( {
 	if ( filterInView?.operator === OPERATOR_NOT_ON ) {
 		return createInterpolateElement(
 			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is not on: 2024-01-01". */
-				__( '<Name>%1$s is not on: </Name><Value>%2$s</Value>' ),
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is not: 2024-01-01". */
+				__( '<Name>%1$s is not: </Name><Value>%2$s</Value>' ),
 				filter.name,
 				activeElements[ 0 ].label
 			),

@@ -64,7 +64,9 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscriptionsResponseItem;
+type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
+	layout?: 'full' | 'compact';
+};
 
 const scrollToFirstRow = () => {
 	const firstRow = document.querySelector( '.site-subscriptions-list li.site-subscription-row' );
@@ -91,9 +93,12 @@ const SiteSubscriptionRow = ( {
 	isDeleted,
 	is_rss,
 	resubscribed,
+	layout = 'full',
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isCompactLayout = layout === 'compact';
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -321,7 +326,7 @@ const SiteSubscriptionRow = ( {
 					}
 				/>
 			</span>
-			{ isLoggedIn && (
+			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-posts-cell" role="cell">
 					<SelectedNewPostDeliveryMethods
 						isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
@@ -329,7 +334,7 @@ const SiteSubscriptionRow = ( {
 					/>
 				</span>
 			) }
-			{ isLoggedIn && (
+			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-comments-cell" role="cell">
 					<InfoPopover
 						position="top"

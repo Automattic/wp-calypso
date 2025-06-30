@@ -1,380 +1,70 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useRouter, Link } from '@tanstack/react-router';
-import { __experimentalText as Text, Button, Modal, Icon } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate, useRouter } from '@tanstack/react-router';
+import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { drawerLeft, wordpress } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { useAuth } from '../app/auth';
+import { isAutomatticianQuery } from '../app/queries/a8c';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import TimeSince from '../components/time-since';
-import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
-import { getFormattedWordPressVersion } from '../utils/wp-version';
+import { getActions } from './actions';
 import AddNewSite from './add-new-site';
-import { canManageSite } from './features';
-import {
-	EngagementStat,
-	LastBackup,
-	MediaStorage,
-	PHPVersion,
-	Plan,
-	Status,
-	Uptime,
-} from './site-fields';
-import SiteIcon from './site-icon';
-import SitePreview from './site-preview';
+import { getFields } from './fields';
+import { SitesNotices } from './notices';
+import { getView, DEFAULT_LAYOUTS } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
-import type {
-	Field,
-	Operator,
-	SortDirection,
-	ViewTable,
-	ViewGrid,
-	Filter,
-} from '@automattic/dataviews';
-import type { AnyRouter } from '@tanstack/react-router';
+import type { View, ViewTable, ViewGrid, Filter } from '@automattic/dataviews';
 
-const DEFAULT_FIELDS: Field< Site >[] = [
-	{
-		id: 'name',
-		label: __( 'Site' ),
-		enableGlobalSearch: true,
-		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
-		render: ( { field, item } ) => (
-			<Link to={ `/sites/${ item.slug }` }>{ field.getValue( { item } ) }</Link>
-		),
-	},
-	{
-		id: 'URL',
-		label: __( 'URL' ),
-		enableGlobalSearch: true,
-		getValue: ( { item } ) => new URL( item.URL ).hostname,
-		render: ( { field, item } ) => (
-			<Text
-				as="span"
-				variant="muted"
-				style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
-			>
-				{ field.getValue( { item } ) }
-			</Text>
-		),
-	},
-	{
-		id: 'icon.ico',
-		label: __( 'Site icon' ),
-		render: ( { item } ) => <SiteIcon site={ item } />,
-		enableSorting: false,
-	},
-	{
-		id: 'subscribers_count',
-		label: __( 'Subscribers' ),
-	},
-	{
-		id: 'backup',
-		label: __( 'Backup' ),
-		render: ( { item } ) => <LastBackup site={ item } />,
-		enableSorting: false,
-	},
-	{
-		id: 'plan',
-		label: __( 'Plan' ),
-		getValue: ( { item } ) => item.plan?.product_name_short ?? '',
-		render: ( { item } ) => <Plan site={ item } />,
-	},
-	{
-		id: 'status',
-		label: __( 'Status' ),
-		getValue: ( { item } ) => getSiteStatus( item ),
-		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
-		filterBy: {
-			operators: [ 'is' ],
-		},
-		render: ( { item } ) => <Status site={ item } />,
-	},
-	{
-		id: 'wp_version',
-		label: __( 'WP version' ),
-		getValue: ( { item } ) => getFormattedWordPressVersion( item ),
-	},
-	{
-		id: 'is_a8c',
-		type: 'boolean',
-		label: __( 'A8C owned' ),
-		elements: [
-			{ value: true, label: __( 'Yes' ) },
-			{ value: false, label: __( 'No' ) },
-		],
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-	},
-	{
-		id: 'preview',
-		label: __( 'Preview' ),
-		render: function PreviewRender( { item } ) {
-			const [ resizeListener, { width } ] = useResizeObserver();
-			const { is_deleted, is_private, URL: url } = item;
-			// If the site is a private A8C site, X-Frame-Options is set to same
-			// origin.
-			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
-			return (
-				<Link
-					to={ `/sites/${ item.slug }` }
-					style={ { display: 'block', height: '100%', width: '100%' } }
-				>
-					{ resizeListener }
-					{ iframeDisabled && (
-						<div
-							style={ {
-								fontSize: '24px',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								height: '100%',
-							} }
-						>
-							<SiteIcon site={ item } />
-						</div>
-					) }
-					{ width && ! iframeDisabled && (
-						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
-					) }
-				</Link>
-			);
-		},
-		enableSorting: false,
-	},
-	{
-		id: 'last_published',
-		label: __( 'Last published' ),
-		getValue: ( { item } ) => item.options?.updated_at ?? '',
-		render: ( { item } ) =>
-			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
-	},
-	{
-		id: 'uptime',
-		label: __( 'Uptime' ),
-		render: ( { item } ) => <Uptime site={ item } />,
-		enableSorting: false,
-	},
-	{
-		id: 'visitors',
-		label: __( 'Visitors' ),
-		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
-		enableSorting: false,
-	},
-	{
-		id: 'views',
-		label: __( 'Views' ),
-		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
-		enableSorting: false,
-	},
-	{
-		id: 'likes',
-		label: __( 'Likes' ),
-		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
-		enableSorting: false,
-	},
-	{
-		id: 'php_version',
-		label: __( 'PHP version' ),
-		render: ( { item }: { item: Site } ) => <PHPVersion site={ item } />,
-	},
-	{
-		id: 'storage',
-		label: __( 'Storage' ),
-		render: ( { item } ) => <MediaStorage site={ item } />,
-		enableSorting: false,
-	},
-	{
-		id: 'host',
-		label: __( 'Host' ),
-		getValue: ( { item } ) => {
-			const provider = item.hosting_provider_guess;
-			if ( ! provider || provider === 'automattic' ) {
-				return 'WordPress.com';
-			}
+const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
+	const filters = view.filters ?? [];
 
-			switch ( provider ) {
-				case 'jurassic_ninja':
-					return 'Jurassic Ninja';
-				case 'pressable':
-					return 'Pressable';
-			}
+	// Include A8C sites unless explicitly excluded from the filter.
+	const shouldIncludeA8COwned = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
 
-			return provider;
-		},
-		render: ( { field, item } ) => field.getValue( { item } ),
-	},
-];
-
-const DEFAULT_LAYOUTS = {
-	table: {
-		mediaField: 'icon.ico',
-		fields: [ 'status', 'visitors', 'subscribers_count', 'wp_version' ],
-		titleField: 'name',
-		descriptionField: 'URL',
-	},
-	grid: {
-		mediaField: 'preview',
-		fields: [ 'status' ],
-		titleField: 'name',
-		descriptionField: 'URL',
-	},
-};
-
-const DEFAULT_VIEW = {
-	...DEFAULT_LAYOUTS.grid,
-	type: 'grid' as const,
-	page: 1,
-	perPage: 10,
-	sort: { field: 'name', direction: 'asc' as SortDirection },
-	search: '',
-};
-
-const getDefaultActions = ( router: AnyRouter ) => {
-	const isBackport = ! router.basepath.startsWith( '/v2' );
-
-	return [
-		...( isBackport
-			? [
-					{
-						id: 'overview',
-						label: __( 'Overview' ),
-						isPrimary: true,
-						icon: <Icon icon={ drawerLeft } />,
-						callback: ( sites: Site[] ) => {
-							const site = sites[ 0 ];
-							window.location.href = `/overview/${ site.slug }`;
-						},
-						isEligible: ( item: Site ) => canManageSite( item ),
-					},
-			  ]
-			: [] ),
-		{
-			id: 'admin',
-			isPrimary: true,
-			icon: <Icon icon={ wordpress } />,
-			label: __( 'WP admin ↗' ),
-			callback: ( sites: Site[] ) => {
-				const site = sites[ 0 ];
-				if ( site.options?.admin_url ) {
-					window.open( site.options.admin_url, '_blank' );
-				}
-			},
-			isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
-		},
-		{
-			id: 'site',
-			label: __( 'Visit site ↗' ),
-			callback: ( sites: Site[] ) => {
-				const site = sites[ 0 ];
-				if ( site.URL ) {
-					window.open( site.URL, '_blank' );
-				}
-			},
-			isEligible: ( item: Site ) => ( item.is_deleted || ! item.URL ? false : true ),
-		},
-		{
-			id: 'domains',
-			label: __( 'Domains ↗' ),
-			callback: ( sites: Site[] ) => {
-				const site = sites[ 0 ];
-				window.open( `/domains/manage/${ site.slug }` );
-			},
-			isEligible: ( item: Site ) => canManageSite( item ),
-		},
-		{
-			id: 'settings',
-			label: __( 'Settings' ),
-			callback: ( sites: Site[] ) => {
-				const site = sites[ 0 ];
-				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
-			},
-			isEligible: ( item: Site ) => canManageSite( item ),
-		},
-	];
-};
-
-const getFetchSitesOptions = (
-	viewOptions: Partial< ViewTable | ViewGrid > | undefined = {}
-): FetchSitesOptions => {
-	if (
-		viewOptions.filters?.find(
-			( filter: Filter ) => filter.field === 'status' && filter.value === 'deleted'
-		)
-	) {
-		return { site_visibility: 'deleted' };
+	if ( filters.find( ( item: Filter ) => item.field === 'status' && item.value === 'deleted' ) ) {
+		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
 	}
 
-	return { site_visibility: viewOptions.search ? 'all' : 'visible' };
+	return {
+		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
+		// See: https://github.com/Automattic/wp-calypso/pull/104220.
+		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		include_a8c_owned: shouldIncludeA8COwned,
+	};
 };
 
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const router = useRouter();
-	const viewOptions: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const currentSearchParams = sitesRoute.useSearch();
+	const viewOptions: Partial< ViewTable | ViewGrid > = currentSearchParams.view ?? {};
+	const isRestoringAccount = !! currentSearchParams.restored;
+
+	const { user } = useAuth();
+	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+
+	const { defaultView, view } = getView( {
+		user,
+		isAutomattician,
+		isRestoringAccount,
+		viewOptions,
+	} );
+
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( viewOptions ) )
-	);
-	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
-
-	const defaultView = useMemo(
-		() =>
-			hasA8CSites
-				? {
-						...DEFAULT_VIEW,
-						filters: [
-							{
-								field: 'is_a8c',
-								operator: 'is' as Operator,
-								value: false,
-							},
-						],
-				  }
-				: DEFAULT_VIEW,
-		[ hasA8CSites ]
+		sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) )
 	);
 
-	const view = useMemo(
-		() => ( {
-			...defaultView,
-			...DEFAULT_LAYOUTS[ viewOptions?.type ?? DEFAULT_VIEW.type ],
-			...( viewOptions
-				? Object.fromEntries(
-						Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined )
-				  )
-				: {} ),
-		} ),
-		[ defaultView, viewOptions ]
-	);
-
-	const fields = useMemo( () => {
-		return DEFAULT_FIELDS.filter( ( field ) => {
-			if ( field.id === 'is_a8c' && ! hasA8CSites ) {
-				return false;
-			}
-
-			if ( field.id === 'icon.ico' && view.type === 'grid' ) {
-				return false;
-			}
-
-			return true;
-		} );
-	}, [ hasA8CSites, view.type ] );
-
-	const actions = useMemo( () => {
-		return getDefaultActions( router );
-	}, [ router ] );
-
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const fields = getFields( { isAutomattician, viewType: view.type } );
+	const actions = getActions( router );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	return (
 		<>
@@ -399,6 +89,7 @@ export default function Sites() {
 					/>
 				}
 			>
+				<SitesNotices />
 				<DataViewsCard>
 					<DataViews< Site >
 						getItemId={ ( item ) => item.ID.toString() }
@@ -414,6 +105,7 @@ export default function Sites() {
 							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
 							navigate( {
 								search: {
+									...currentSearchParams,
 									view: Object.fromEntries(
 										Object.entries( view ).filter( ( [ key, value ] ) => {
 											return value !== _defaultView[ key as keyof typeof _defaultView ];

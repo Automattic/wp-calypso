@@ -83,5 +83,44 @@
 				}
 			}
 		}
+
+		.gravatar-hovercard__recommended-blogs {
+			width: 100%;
+			max-width: 100%;
+
+			.gravatar-hovercard__recommended-blogs-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 10px;
+			}
+
+			.gravatar-hovercard__recommended-blogs-view-all {
+				color: var(--color-accent);
+			}
+
+			.gravatar-hovercard__recommended-blog-item {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				padding: 8px 0;
+			}
+
+			.gravatar-hovercard__recommended-blog-site-icon.reader-avatar {
+				max-height: unset;
+				.site-icon {
+					border-radius: 50%;
+					border: 1px solid var(--color-border-subtle);
+				}
+			}
+
+			.gravatar-hovercard__recommended-blog-site-name {
+				flex: 1 1 0%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
 	}
 }

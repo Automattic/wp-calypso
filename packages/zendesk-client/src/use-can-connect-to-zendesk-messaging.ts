@@ -1,29 +1,26 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from '@wordpress/element';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from '@wordpress/element';
 
-async function fetchZendeskConfig(): Promise< boolean > {
-	const config = await fetch( 'https://wpcom.zendesk.com/embeddable/config' );
-	const validResponse = config.ok && config.status === 200;
-	return validResponse;
+function fetchZendeskConfig() {
+	// Parse the JSON to throw errors for all non-success responses
+	return fetch( 'https://wpcom.zendesk.com/embeddable/config' ).then( ( res ) => res.json() );
 }
 
 /**
  * This hook verifies connectivity to Zendesk's messaging service by making a config request and manages automatic retries with error tracking.
  */
 export function useCanConnectToZendeskMessaging( enabled = true ) {
-	const queryClient = useQueryClient();
-	const [ shouldRefetch, setShouldRefetch ] = useState( false );
-
 	const query = useQuery< boolean, Error >( {
 		queryKey: [ 'canConnectToZendesk' ],
 		queryFn: fetchZendeskConfig,
 		staleTime: Infinity,
-		retry: false,
+		// Retry 3 times with a 1 second delay between each retry
+		retry: 3,
+		retryDelay: 1000,
 		refetchOnMount: false,
 		retryOnMount: false,
 		refetchOnWindowFocus: false,
-		refetchInterval: shouldRefetch ? 60000 : false,
 		meta: {
 			persist: false,
 		},
@@ -31,22 +28,20 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 	} );
 
 	useEffect( () => {
-		if ( query.isSuccess ) {
-			setShouldRefetch( false );
-		} else {
-			setShouldRefetch( true );
-			queryClient.invalidateQueries( { queryKey: [ 'canConnectToZendesk' ] } );
-		}
-	}, [ query.isSuccess, queryClient ] );
-
-	useEffect( () => {
+		// Leaving for backwards compatibility. This event is no longer needed. The one below is more general.
 		if ( ! query.data && query.status !== 'pending' ) {
 			recordTracksEvent( 'calypso_helpcenter_zendesk_config_error', {
 				status: query.status,
 				status_text: query.error?.message,
 			} );
 		}
-	}, [ query.data, query.error?.message, query.status ] );
+
+		recordTracksEvent( 'calypso_helpcenter_zendesk_config_request', {
+			status: query.status,
+			status_text: query.error?.message,
+			failure_count: query.failureCount,
+		} );
+	}, [ query.data, query.error, query.status, query.failureReason, query.failureCount ] );
 
 	return query;
 }

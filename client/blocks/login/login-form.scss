@@ -43,6 +43,11 @@ form {
 				margin: 0;
 			}
 
+			.card.login__form:not(:lang(en)):not(:lang(ko)):not(:lang(zh)),
+			.card.auth-form__social:not(:lang(en)):not(:lang(ko)):not(:lang(zh)) {
+				flex-shrink: 0;
+			}
+
 			.card.login__form {
 				display: flex;
 				flex-direction: column;

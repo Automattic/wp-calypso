@@ -6,7 +6,11 @@ import {
 	ListItemCardActions,
 	type Action,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
-import { ReportStatusColumn, ReportDateColumn } from '../primary/dashboard/report-columns';
+import {
+	ReportStatusColumn,
+	ReportDateColumn,
+	ReportTimeframeColumn,
+} from '../primary/dashboard/report-columns';
 import type { Report } from '../types';
 
 export default function ReportsMobileView( {
@@ -27,6 +31,15 @@ export default function ReportsMobileView( {
 						<ListItemCardContent title={ translate( 'Status' ) }>
 							<div className="reports-details-mobile-view__column">
 								<ReportStatusColumn status={ report.status } />
+							</div>
+						</ListItemCardContent>
+						<ListItemCardContent title={ translate( 'Timeframe' ) }>
+							<div className="reports-details-mobile-view__column">
+								<ReportTimeframeColumn
+									timeframe={ report.data.timeframe }
+									startDate={ report.data.start_date }
+									endDate={ report.data.end_date }
+								/>
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Created' ) }>

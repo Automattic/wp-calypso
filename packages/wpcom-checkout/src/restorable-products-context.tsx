@@ -1,5 +1,5 @@
-import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 type RestorableProductsContextType = [
 	restorableProducts: ResponseCartProduct[],

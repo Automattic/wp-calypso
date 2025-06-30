@@ -1,14 +1,17 @@
+import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector, useDispatch } from 'calypso/state';
-import { requestSite } from 'calypso/state/reader/sites/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
+import RecommendedBlogs from './recommended-blogs';
 
 import './styles.scss';
 
@@ -32,27 +35,34 @@ function HovercardContent( props ) {
 	const primaryBlogUrl = site?.URL;
 
 	useEffect( () => {
-		if ( ! userID ) {
-			// This isnt a wpcom user, skip requesting data.
-			return;
-		}
-
-		if ( ! site ) {
-			dispatch( requestSite( primaryBlogId ) );
-		}
-		if ( ! readerUserData ) {
+		if ( ! readerUserData && userID ) {
 			dispatch( requestUser( userID, true ) );
 		}
-	}, [ userID, dispatch, site, primaryBlogId, readerUserData ] );
+	}, [ userID, dispatch, readerUserData ] );
+
+	const clickProfileLink = ( e ) => {
+		e.preventDefault();
+		page( profileUrl );
+	};
 
 	return (
 		<AutoDirection>
-			{ /* Note AutoDirection needs a single child to work recursively, hence the wrapping fragments. */ }
-			<>
+			{ /* Note AutoDirection needs a single child to work recursively */ }
+			{ /* Stop propagation to prevent clicks in the hovercard from triggering reader card clicks */ }
+			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+			<div
+				onClick={ ( e ) => {
+					e.stopPropagation();
+				} }
+			>
 				{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
 
 				<div className="gravatar-hovercard__header">
-					<a className="gravatar-hovercard__avatar-link" href={ profileUrl }>
+					<a
+						className="gravatar-hovercard__avatar-link"
+						href={ profileUrl }
+						onClick={ clickProfileLink }
+					>
 						<img
 							className="gravatar-hovercard__avatar"
 							src={ gravatarData.avatarUrl }
@@ -62,7 +72,11 @@ function HovercardContent( props ) {
 						/>
 					</a>
 
-					<a className="gravatar-hovercard__name-link" href={ profileUrl }>
+					<a
+						className="gravatar-hovercard__name-link"
+						href={ profileUrl }
+						onClick={ clickProfileLink }
+					>
 						<h4 className="gravatar-hovercard__name">{ gravatarData.displayName }</h4>
 					</a>
 
@@ -73,6 +87,7 @@ function HovercardContent( props ) {
 				{ userID && (
 					<>
 						<div className="gravatar-hovercard__body">
+							<QueryReaderSite siteId={ primaryBlogId } />
 							{ primaryBlogUrl && (
 								<div className="gravatar-hovercard__primary-blog-card">
 									<div className="gravatar-hovercard__primary-blog-card-header">
@@ -106,18 +121,20 @@ function HovercardContent( props ) {
 										className="gravatar-hovercard__primary-blog-card-follow-button"
 										siteUrl={ primaryBlogUrl }
 										hasButtonStyle
-										followSource="gravatar-hovercard"
+										followSource="gravatar-hovercard__primary-blog-card"
 									/>
 								</div>
 							) }
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							{ /* TODO: Add recommended blogs list */ }
+							{ isEnabled( 'reader/recommended-blogs-list' ) && (
+								<RecommendedBlogs userLogin={ userLogin } />
+							) }
 						</div>
 					</>
 				) }
-			</>
+			</div>
 		</AutoDirection>
 	);
 }

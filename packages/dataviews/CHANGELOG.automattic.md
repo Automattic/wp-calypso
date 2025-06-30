@@ -14,8 +14,9 @@
 - Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
 - Fix the background color of the action column if the row is selected
 - Allow readonly fields in DataForm when `readOnly` is set to `true`.
-- Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality.
+- Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality. Filter labels use "Date is:" and "Date is not:" for consistency.
 - Add new filter operator: `inThePast`, `over` for date fields.
+- Adjust the padding when the component is placed inside a `Card`.
 - Add a new date field type and use the new calendar components for filtering.
 
 ## 0.2.1

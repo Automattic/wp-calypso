@@ -1,13 +1,11 @@
-import pagejs from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import {
 	Outlet,
 	Router,
 	createLazyRoute,
-	createMemoryHistory,
 	createRootRoute,
 	createRoute,
 	redirect,
-	type AnyRouter,
 } from '@tanstack/react-router';
 import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { siteAgencyBlogQuery } from 'calypso/dashboard/app/queries/site-agency';
@@ -22,6 +20,7 @@ import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/sit
 import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
+	canManageSite,
 	canViewWordPressSettings,
 	canViewPHPSettings,
 	canViewDefensiveModeSettings,
@@ -32,9 +31,21 @@ import {
 	canViewSshSettings,
 	canViewSftpSettings,
 } from 'calypso/dashboard/sites/features';
-import Root from './root';
+import Root from '../components/root';
+import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
 const rootRoute = createRootRoute( { component: Root } );
+
+const dashboardSitesCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites',
+	beforeLoad: ( { cause } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		page.show( '/sites' );
+	},
+} );
 
 const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -57,6 +68,9 @@ const siteRoute = createRoute( {
 	path: '$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canManageSite( site ) ) {
+			page.redirect( '/sites' );
+		}
 		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 	component: () => <Outlet />,
@@ -298,71 +312,25 @@ const createRouteTree = () =>
 			transferSiteRoute,
 			sftpSshRoute,
 		] ),
+		dashboardSitesCompatibilityRoute,
 		dashboardSiteSettingsCompatibilityRouteRoot,
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
-const isCompatibilityRoute = ( router: AnyRouter, url: string ) => {
-	const matches = router.matchRoutes( url );
-	if ( ! matches ) {
-		return false;
-	}
+const compatibilityRoutes = [
+	dashboardSiteSettingsCompatibilityRouteRoot,
+	dashboardSiteSettingsCompatibilityRouteWithFeature,
+];
 
-	return matches.some(
-		( match: { routeId: string } ) =>
-			match.routeId === dashboardSiteSettingsCompatibilityRouteRoot.id ||
-			match.routeId === dashboardSiteSettingsCompatibilityRouteWithFeature.id
-	);
-};
-
-let lastPath = '';
-
-export const syncBrowserHistoryToRouter = ( router: AnyRouter ) => {
-	const currentPath = `${ window.location.pathname }${ window.location.search }`;
-	const basepath = router.options.basepath;
-
-	// Avoid handling routes outside of the basepath.
-	if ( basepath && ! currentPath.startsWith( basepath ) ) {
-		return;
-	}
-
-	if ( currentPath !== lastPath ) {
-		router.navigate( { to: currentPath, replace: true } );
-		lastPath = currentPath;
-	}
-};
-
-export const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
-	// Sync TanStack Router's history to the browser history (pagejs).
-	return router.history.subscribe( () => {
-		const { pathname, search } = router.history.location;
-		const newUrl = `${ pathname }${ search }`;
-
-		// Avoid pushing redirect routes to the browser history.
-		if ( isCompatibilityRoute( router, newUrl ) ) {
-			return;
-		}
-
-		if ( window.location.pathname + window.location.search !== newUrl ) {
-			pagejs.show( newUrl );
-			lastPath = newUrl;
-		}
-	} );
-};
+export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
+	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
 
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
 	const router = new Router( {
+		...getRouterOptions(),
 		routeTree,
 		basepath: basePath,
-		defaultPreload: 'intent',
-		defaultPreloadStaleTime: 0,
-		defaultNotFoundComponent: () => null,
-		defaultViewTransition: true,
-
-		// Use memory history to compartmentalize TanStack Router's history management.
-		// This way, we separate TanStack Router's history implementation from the browser history used by page.js.
-		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
 	} );
 
 	return router;

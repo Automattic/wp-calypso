@@ -1,3 +1,5 @@
+import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
 import { type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -110,7 +112,8 @@ function getUniqueTransactionTypes(
 
 export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	getReceiptUrlFor: ( receiptId: string ) => string
 ) {
 	return {
 		date: {
@@ -145,7 +148,20 @@ export function getFieldDefinitions(
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item }: { item: BillingTransaction } ) => {
-				return <div>{ renderServiceName( item, translate ) }</div>;
+				return (
+					<div className="billing-history__item-service">
+						<Button
+							variant="link"
+							title={ translate( 'View receipt', { textOnly: true } ) }
+							label={ translate( 'View receipt', { textOnly: true } ) }
+							onClick={ () => {
+								page( getReceiptUrlFor( item.id ) );
+							} }
+						>
+							{ renderServiceName( item, translate ) }
+						</Button>
+					</div>
+				);
 			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );

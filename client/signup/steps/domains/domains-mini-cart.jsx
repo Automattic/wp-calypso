@@ -230,6 +230,10 @@ export class DomainsMiniCart extends Component {
 			return this.mobile();
 		}
 
+		const shouldRenderChooseDomainLater = ! [ 'domain', 'domains/add' ].includes(
+			this.props.flowName
+		);
+
 		return (
 			<div className="domains__domain-side-content domains__domain-cart">
 				<div className="domains__domain-cart-title">{ translate( 'Your domains' ) }</div>
@@ -260,7 +264,7 @@ export class DomainsMiniCart extends Component {
 				>
 					{ translate( 'Continue' ) }
 				</Button>
-				{ this.props.flowName !== 'domain' && (
+				{ shouldRenderChooseDomainLater && (
 					<Button
 						borderless
 						className="domains__domain-cart-choose-later"

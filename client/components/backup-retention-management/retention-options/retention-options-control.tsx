@@ -5,14 +5,12 @@ import type { RetentionOptionInput } from '../types';
 
 interface RetentionOptionsControlProps {
 	retentionOptions: RetentionOptionInput[];
-	currentRetentionPlan?: number;
 	retentionSelected?: number;
 	onChange: ( value: number ) => void;
 }
 
 const RetentionOptionsControl: React.FC< RetentionOptionsControlProps > = ( {
 	retentionOptions,
-	currentRetentionPlan,
 	retentionSelected,
 	onChange,
 } ) => {
@@ -36,7 +34,6 @@ const RetentionOptionsControl: React.FC< RetentionOptionsControlProps > = ( {
 					spaceNeededInBytes={ option.spaceNeededInBytes }
 					upgradeRequired={ option.upgradeRequired }
 					checked={ retentionSelected === option.id }
-					isCurrentPlan={ currentRetentionPlan === option.id }
 					// Given that we are working with a small set of options,
 					// we could use the option id as a key
 					key={ `retention-option-${ option.id }` }
