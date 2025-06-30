@@ -11,6 +11,9 @@ import { queryClient } from 'calypso/dashboard/app/query-client';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
+// Keep the loading state active to prevent displaying a white screen during the redirection.
+const infiniteLoader = () => new Promise( () => {} );
+
 const rootRoute = createRootRoute( { component: Root } );
 
 const sitesRoute = createRoute( {
@@ -33,6 +36,7 @@ const sitesRoute = createRoute( {
 const dummySitesOverviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'overview/$siteSlug',
+	loader: infiniteLoader,
 	component: () => null,
 } );
 
@@ -50,6 +54,7 @@ const sitesOverviewCompatibilityRoute = createRoute( {
 const dummySitesSettingsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/settings/v2/$siteSlug',
+	loader: infiniteLoader,
 	component: () => null,
 } );
 
