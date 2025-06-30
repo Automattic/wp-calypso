@@ -54,7 +54,7 @@ class Profile extends Component {
 		}
 
 		const trimmedUrl = url.trim();
-		const domainRegex = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+		const domainRegex = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(\/.*)?$/;
 		if ( domainRegex.test( trimmedUrl ) ) {
 			return `https://${ trimmedUrl }`;
 		}
