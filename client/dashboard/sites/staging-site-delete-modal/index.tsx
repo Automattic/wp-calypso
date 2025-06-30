@@ -47,7 +47,7 @@ export default function StagingSiteDeleteModal( {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				router.navigate( { to: '/sites' } );
-				createSuccessNotice( __( 'Staging site has been deleted.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 			},
 			onError: ( error: Error ) => {
 				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
