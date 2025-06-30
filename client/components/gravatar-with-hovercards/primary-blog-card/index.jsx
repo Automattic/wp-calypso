@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -15,31 +16,41 @@ function PrimaryBlog( { primaryBlogId, displayName } ) {
 		return null;
 	}
 
+	const linkUrl = site?.feed_ID ? `/reader/feeds/${ site?.feed_ID }` : primaryBlogUrl;
+
 	return (
 		<>
 			<QueryReaderSite siteId={ primaryBlogId } />
 			<AutoDirection>
 				<div className="gravatar-hovercard__primary-blog-card">
-					<div className="gravatar-hovercard__primary-blog-card-header">
-						<ReaderAvatar
-							isCompact
-							siteIcon={ site?.icon?.img || site?.icon?.ico }
-							className="gravatar-hovercard__primary-blog-card-site-icon"
-						/>
-						<div className="gravatar-hovercard__primary-blog-card-site-info">
-							<h5 className="gravatar-hovercard__primary-blog-card-site-title">{ site.title }</h5>
+					<a
+						href={ linkUrl }
+						onClick={ ( e ) => {
+							e.preventDefault();
+							page( linkUrl );
+						} }
+					>
+						<div className="gravatar-hovercard__primary-blog-card-header">
+							<ReaderAvatar
+								isCompact
+								siteIcon={ site?.icon?.img || site?.icon?.ico }
+								className="gravatar-hovercard__primary-blog-card-site-icon"
+							/>
+							<div className="gravatar-hovercard__primary-blog-card-site-info">
+								<h5 className="gravatar-hovercard__primary-blog-card-site-title">{ site.title }</h5>
 
-							{ displayName && (
-								<p className="gravatar-hovercard__primary-blog-card-username">
-									{ translate( 'By %(displayName)s', {
-										args: {
-											displayName: displayName || '',
-										},
-									} ) }
-								</p>
-							) }
+								{ displayName && (
+									<p className="gravatar-hovercard__primary-blog-card-username">
+										{ translate( 'By %(displayName)s', {
+											args: {
+												displayName: displayName || '',
+											},
+										} ) }
+									</p>
+								) }
+							</div>
 						</div>
-					</div>
+					</a>
 
 					<p className="gravatar-hovercard__primary-blog-card-description">{ site?.description }</p>
 
