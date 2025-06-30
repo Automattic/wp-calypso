@@ -60,6 +60,7 @@ export default function StagingSiteDeleteModal( {
 						variant="primary"
 						isDestructive
 						isBusy={ mutation.isPending }
+						disabled={ mutation.isPending }
 						onClick={ handleDelete }
 					>
 						{ __( 'Delete staging site' ) }
