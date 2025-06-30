@@ -65,7 +65,6 @@ export const useCreateZendeskConversation = (): ( ( {
 		userFieldMessage,
 		userFieldFlowName,
 		setChat,
-		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
 		trackEvent,
 	} = useOdieAssistantContext();
@@ -148,7 +147,6 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_url: selectedSiteURL || null,
 		} );
 
-		setWaitAnswerToFirstMessageFromHumanSupport( true );
 		const updatedInteraction = await addEventToInteraction.mutateAsync( {
 			interactionId: currentInteractionID,
 			eventData: { event_source: 'zendesk', event_external_id: conversation.id },

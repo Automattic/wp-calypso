@@ -25,15 +25,3 @@ export const clearHelpCenterZendeskConversationStarted = () =>
 	ignoreFatalsForSessionStorage(
 		() => sessionStorage?.removeItem( 'help_center_zendesk_conversation_started' )
 	);
-
-export const getHelpCenterZendeskConversationStartedElapsedTime = () => {
-	const startTime = getHelpCenterZendeskConversationStarted();
-
-	if ( startTime == null ) {
-		return null;
-	}
-
-	clearHelpCenterZendeskConversationStarted();
-
-	return Math.floor( performance.now() - ( startTime as number ) );
-};
