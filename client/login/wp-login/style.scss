@@ -139,7 +139,7 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow):not(.is-jetpack-woo-dna-flow) {
 	@include jetpack-connect-colors();
 }
 
@@ -148,7 +148,7 @@ $image-height: 47px;
 	@include woocommerce-colors();
 }
 
-.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
+.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow):not(.is-jetpack-woo-dna-flow) {
 
 	.login__form input,
 	.logged-out-form input {

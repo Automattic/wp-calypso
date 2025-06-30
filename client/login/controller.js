@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	isGravPoweredOAuth2Client,
 	isPartnerPortalOAuth2Client,
@@ -15,6 +16,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import LoginContextProvider from './login-context';
@@ -73,6 +75,9 @@ const enhanceContextWithLogin = ( context ) => {
 	const isJetpackLogin = isJetpack === 'jetpack';
 	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
 	const isVIPClient = isVIPOAuth2Client( oauth2Client );
+	const isJetpackWooDnaFlow = wooDnaConfig(
+		getInitialQueryArguments( currentState )
+	).isWooDnaFlow();
 
 	const isWhiteLogin =
 		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
@@ -84,7 +89,8 @@ const enhanceContextWithLogin = ( context ) => {
 		isJetpackCloudClient ||
 		isJetpackLogin ||
 		isWoo ||
-		isVIPClient;
+		isVIPClient ||
+		isJetpackWooDnaFlow;
 
 	context.primary = (
 		<LoginContextProvider>
@@ -101,6 +107,7 @@ const enhanceContextWithLogin = ( context ) => {
 				domain={ ( query && query.domain ) || null }
 				fromSite={ ( query && query.site ) || null }
 				signupUrl={ ( query && query.signup_url ) || null }
+				isJetpackWooDnaFlow={ isJetpackWooDnaFlow }
 			/>
 		</LoginContextProvider>
 	);

@@ -65,6 +65,7 @@ export class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
+		isJetpackWooDnaFlow: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
@@ -338,6 +339,7 @@ export class Login extends Component {
 			isWhiteLogin,
 			isJetpack,
 			isFromAkismet,
+			isJetpackWooDnaFlow,
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
@@ -381,6 +383,7 @@ export class Login extends Component {
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
 						signupUrl={ this.props.signupUrl }
+						isJetpackWooDnaFlow={ isJetpackWooDnaFlow }
 					>
 						{ mainContent }
 					</OneLoginLayout>

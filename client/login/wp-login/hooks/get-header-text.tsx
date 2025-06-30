@@ -28,6 +28,7 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
 	isGravPoweredClient?: boolean;
+	isJetpackWooDnaFlow?: boolean;
 }
 
 /**
@@ -52,12 +53,15 @@ export function getHeaderText( {
 	currentQuery,
 	translate,
 	twoStepNonce,
+	isJetpackWooDnaFlow,
 }: Props ): TranslateResult {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
 		let clientName = oauth2Client?.name;
-		if ( isFromAkismet ) {
+		if ( isJetpackWooDnaFlow ) {
+			clientName = 'Woo';
+		} else if ( isFromAkismet ) {
 			clientName = 'Akismet';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
@@ -68,7 +72,7 @@ export function getHeaderText( {
 		} else if ( isJetpack ) {
 			clientName = 'Jetpack';
 		} else if ( isWCCOM ) {
-			headerText = translate( 'Log in to Woo with WordPress.com' );
+			clientName = 'Woo';
 		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
 			clientName = 'VIP';
 		}

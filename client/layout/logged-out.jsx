@@ -372,6 +372,7 @@ export default withCurrentRoute(
 						isJetpackCloudClient ||
 						isJetpackLogin ||
 						isVIPClient ||
+						isJetpackWooDnaFlow ||
 						isMobile ) ) ||
 				isPartnerPortal;
 

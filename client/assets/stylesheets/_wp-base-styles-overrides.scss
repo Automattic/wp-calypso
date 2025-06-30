@@ -11,7 +11,8 @@
 	}
 
 	/* Woo */
-	.woo.is-woo-passwordless & {
+	.woo.is-woo-passwordless &,
+	.is-white-login.is-jetpack-woo-dna-flow & {
 		&[type='text'],
 		&[type='password'] {
 			/* stylelint-disable-next-line scales/radii */
@@ -45,7 +46,7 @@
 	}
 
 	/* Jetpack login */
-	.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) &:not(.is-error, .is-valid) {
+	.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow):not(.is-jetpack-woo-dna-flow)  &:not(.is-error, .is-valid) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-50);
 	}
 
