@@ -4,8 +4,10 @@ import { __experimentalHStack as HStack, __experimentalText as Text } from '@wor
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import TimeSince from '../components/time-since';
+import { getSiteName } from '../utils/site-name';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { isP2 } from '../utils/site-types';
+import { getSiteUrlWithoutProtocol } from '../utils/site-url';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import { canManageSite } from './features';
 import { isSitePlanTrial } from './plans';
@@ -51,7 +53,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'name',
 		label: __( 'Site' ),
 		enableGlobalSearch: true,
-		getValue: ( { item } ) => item.name || new URL( item.URL ).hostname,
+		getValue: ( { item } ) => getSiteName( item ),
 		render: ( { field, item } ) => (
 			<Link to={ getSiteManagementUrl( item ) } disabled={ item.is_deleted }>
 				<HStack alignment="center" spacing={ 1 }>
@@ -73,7 +75,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		getValue: ( { item } ) => new URL( item.URL ).hostname,
+		getValue: ( { item } ) => getSiteUrlWithoutProtocol( item ),
 		render: ( { field, item } ) => (
 			<Text
 				as="span"

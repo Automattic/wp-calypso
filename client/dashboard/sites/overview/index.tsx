@@ -13,6 +13,7 @@ import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getSiteName } from '../../utils/site-name';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
 import OverviewSection from './overview-section';
@@ -38,7 +39,7 @@ function SiteOverview() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ site.name || new URL( site.URL ).hostname }
+					title={ getSiteName( site ) }
 					actions={
 						site.options?.admin_url && (
 							<Button

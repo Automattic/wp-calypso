@@ -7,6 +7,7 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
+import { getSiteName } from '../../utils/site-name';
 import { canManageSite } from '../features';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
@@ -35,8 +36,7 @@ function Site() {
 									onClick={ () => onToggle() }
 								>
 									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<SiteIcon site={ site } size={ 16 } />{ ' ' }
-										{ site.name || new URL( site.URL ).hostname }
+										<SiteIcon site={ site } size={ 16 } /> { getSiteName( site ) }
 									</div>
 								</Button>
 							) }
