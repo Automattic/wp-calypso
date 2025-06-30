@@ -44,6 +44,22 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			isEligible: ( item: Site ) => canManageSite( item ),
 		},
 		{
+			id: 'prepare-for-launch',
+			label: __( 'Prepare for launch' ),
+			callback: ( sites ) => {
+				const site = sites[ 0 ];
+				router.navigate( {
+					to: '/sites/$siteSlug/settings/site-visibility',
+					params: { siteSlug: site.slug },
+				} );
+			},
+			isEligible: ( item: Site ) =>
+				canManageSite( item ) &&
+				item.is_a4a_dev_site &&
+				! item.is_wpcom_staging_site &&
+				item.launch_status === 'unlaunched',
+		},
+		{
 			id: 'settings',
 			label: __( 'Settings' ),
 			callback: ( sites: Site[] ) => {
