@@ -5,14 +5,17 @@
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
-		"build": "wp-scripts build",
+		"build": "wp-scripts build --webpack-copy-php",
+		"build:dev": "wp-scripts start --no-watch --webpack-copy-php",
 		"start": "wp-scripts start",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"lint:js:fix": "wp-scripts lint-js --fix",
 		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip"
+		"plugin-zip": "wp-scripts plugin-zip",
+		"dev": "yarn run calypso-apps-builder --localPath ./build --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/pattern-metadata-sidebar",
+		"clean": "rm -rf build/"
 	},
 	"dependencies": {
 		"@wordpress/components": "^28.2.0",
@@ -26,6 +29,7 @@
 		"@wordpress/plugins": "^7.2.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
 		"@wordpress/prettier-config": "^4.2.0",
 		"@wordpress/scripts": "^27.9.0"
 	}

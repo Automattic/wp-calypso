@@ -13696,6 +13696,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "a8c-big-sky-patterns-metadata-sidebar@workspace:apps/big-sky-patterns-metadata"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@wordpress/components": "npm:^28.2.0"
     "@wordpress/core-data": "npm:^7.2.0"
     "@wordpress/data": "npm:^10.2.0"
