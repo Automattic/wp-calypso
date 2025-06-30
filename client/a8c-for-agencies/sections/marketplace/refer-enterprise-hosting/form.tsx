@@ -260,11 +260,7 @@ export default function ReferEnterpriseHostingForm() {
 					/>
 				</FormField>
 
-				<FormField
-					label={ translate( 'Phone (optional)' ) }
-					labelFor="phone"
-					error={ validationError.phone }
-				>
+				<FormField label={ translate( 'Phone' ) } labelFor="phone" error={ validationError.phone }>
 					<FormTextInput
 						id="phone"
 						name="phone"

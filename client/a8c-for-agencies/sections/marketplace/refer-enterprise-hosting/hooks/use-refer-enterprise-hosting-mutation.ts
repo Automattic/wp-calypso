@@ -1,18 +1,23 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIError, Agency } from 'calypso/state/a8c-for-agencies/types';
 import { ReferEnterpriseHostingFormData } from '../types';
 
 function referEnterpriseHostingMutation(
+	agencyId: number | undefined,
 	details: ReferEnterpriseHostingFormData
 ): Promise< Agency > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: '/agency/vip-program',
+		path: '/agency/vip/partner-opportunity',
 		body: {
+			agency_id: agencyId,
 			company_name: details.companyName,
 			address: details.address,
 			country_code: details.countryCode,
+			state: details.state,
 			city: details.city,
 			zip: details.zip,
 			first_name: details.firstName,
@@ -23,6 +28,8 @@ function referEnterpriseHostingMutation(
 			website: details.website,
 			opportunity_description: details.opportunityDescription,
 			lead_type: details.leadType,
+
+			// Skip submitting RFP file for now as we don't have a way to submit it to the HS form.
 		},
 	} );
 }
@@ -30,8 +37,10 @@ function referEnterpriseHostingMutation(
 export default function useReferEnterpriseHostingMutation< TContext = unknown >(
 	options?: UseMutationOptions< Agency, APIError, ReferEnterpriseHostingFormData, TContext >
 ): UseMutationResult< Agency, APIError, ReferEnterpriseHostingFormData, TContext > {
+	const agencyId = useSelector( getActiveAgencyId );
+
 	return useMutation< Agency, APIError, ReferEnterpriseHostingFormData, TContext >( {
 		...options,
-		mutationFn: referEnterpriseHostingMutation,
+		mutationFn: ( details ) => referEnterpriseHostingMutation( agencyId, details ),
 	} );
 }

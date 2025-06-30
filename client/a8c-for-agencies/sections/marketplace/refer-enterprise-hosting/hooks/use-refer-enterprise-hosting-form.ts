@@ -82,6 +82,10 @@ export default function useReferEnterpriseHostingForm() {
 				newValidationError.title = translate( 'Please enter your title' );
 			}
 
+			if ( payload.phone?.trim() === '' ) {
+				newValidationError.phone = translate( 'Please enter your phone number' );
+			}
+
 			if ( payload.email?.trim() === '' ) {
 				newValidationError.email = translate( 'Please enter your email' );
 			}
