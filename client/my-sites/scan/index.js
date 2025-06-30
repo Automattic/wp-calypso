@@ -14,6 +14,7 @@ import {
 	scan,
 	scanHistory,
 } from 'calypso/my-sites/scan/controller';
+import { wpcomJetpackScanAtomicTransfer } from 'calypso/my-sites/scan/wpcom-atomic-transfer';
 import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -46,12 +47,11 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomAtomicTransfer( WPCOMScanUpsellPage ),
+		wpcomJetpackScanAtomicTransfer(),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
-		notFoundIfNotEnabled( { allowOnAtomic: true } ),
 		makeLayout,
 		clientRender
 	);
@@ -63,7 +63,7 @@ export default function () {
 		scanHistory,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
-		wpcomAtomicTransfer( WPCOMScanUpsellPage ),
+		wpcomJetpackScanAtomicTransfer(),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,

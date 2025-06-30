@@ -84,7 +84,7 @@ export default function WPCOMScanUpsellPage() {
 							},
 						} ),
 						action: {
-							url: `/checkout/${ siteSlug }/pro`,
+							url: `/checkout/${ siteSlug }/${ PLAN_BUSINESS }`,
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},
