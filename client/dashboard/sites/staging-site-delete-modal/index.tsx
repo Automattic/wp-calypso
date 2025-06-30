@@ -26,7 +26,6 @@ export default function StagingSiteDeleteModal( {
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
 
-	// Don't render the modal if we don't have a valid production site ID
 	if ( ! productionSiteId ) {
 		return null;
 	}
