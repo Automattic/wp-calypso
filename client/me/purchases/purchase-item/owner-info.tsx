@@ -23,7 +23,7 @@ const OwnerInfo: React.FC< OwnProps > = ( { purchase, isTransferredOwnership = f
 				"This license was activated on {{strong}}%(domain)s{{/strong}} by another user. If you haven't given the license to them on purpose, {{link}}contact our support team{{/link}} for more assistance.",
 				{
 					args: {
-						domain: purchase.domain || purchase.siteName || 'a site',
+						domain: purchase.domain || purchase.siteName || translate( 'a site' ),
 					},
 					components: {
 						strong: <strong />,
