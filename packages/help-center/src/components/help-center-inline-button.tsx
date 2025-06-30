@@ -1,9 +1,9 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useFlowCustomOptions, useFlowZendeskUserFields } from '../hooks';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '../stores';
 import type { FC, ReactNode } from 'react';
 
@@ -25,7 +25,9 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	children,
 	className,
 } ) => {
-	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const resetSupportInteraction = useResetSupportInteraction();
+	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
+		useDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
@@ -40,12 +42,12 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 			flowCustomOptions
 		);
 		if ( flowCustomOptions?.hasPremiumSupport ) {
-			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
-				userFieldMessage,
-				userFieldFlowName,
+			setNewMessagingChat( {
+				initialMessage: userFieldMessage || '',
+				userFieldFlowName: userFieldFlowName || '',
 			} );
-			setNavigateToRoute( urlWithQueryArgs );
 		} else {
+			resetSupportInteraction();
 			setNavigateToRoute( '/odie' );
 		}
 	}
