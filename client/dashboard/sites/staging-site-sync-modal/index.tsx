@@ -80,9 +80,7 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 					<Text weight={ 500 }>{ copy.syncSelectionHeading }</Text>
 					<Text>
 						{ createInterpolateElement( copy.learnMore, {
-							a: (
-								<InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site-sync" />
-							),
+							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
 						} ) }
 					</Text>
 				</VStack>
