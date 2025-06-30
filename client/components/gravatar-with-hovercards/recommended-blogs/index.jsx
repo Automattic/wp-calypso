@@ -11,11 +11,11 @@ import RecommendedBlogItem from './item';
 function RecommendedBlogs( { userLogin } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
 	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
+	const recommendedBlogsLink = `/reader/list/${ userLogin }/recommended-blogs`;
 
 	const shouldShowRecommendedBlogs =
-		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
+		isEnabled( 'reader/recommended-blogs-list' ) && userLogin && recommendedBlogs?.length;
 
 	useEffect( () => {
 		if ( ! recommendedBlogs && userLogin ) {
@@ -23,16 +23,14 @@ function RecommendedBlogs( { userLogin } ) {
 		}
 	}, [ userLogin, recommendedBlogs, dispatch ] );
 
-	const recommendedBlogsLink = `/reader/list/${ userLogin }/recommended-blogs`;
+	if ( ! shouldShowRecommendedBlogs ) {
+		return null;
+	}
 
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
 		page( recommendedBlogsLink );
 	};
-
-	if ( ! shouldShowRecommendedBlogs ) {
-		return null;
-	}
 
 	return (
 		<div className="gravatar-hovercard__recommended-blogs">

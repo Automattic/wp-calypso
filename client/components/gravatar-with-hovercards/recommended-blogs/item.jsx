@@ -1,4 +1,5 @@
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector } from 'calypso/state';
@@ -40,7 +41,9 @@ function RecommendedBlogItem( { blog } ) {
 				siteIcon={ siteIcon }
 				className="gravatar-hovercard__recommended-blog-site-icon"
 			/>
-			<p className="gravatar-hovercard__recommended-blog-site-name">{ name || feedUrl }</p>
+			<AutoDirection>
+				<p className="gravatar-hovercard__recommended-blog-site-name">{ name || feedUrl }</p>
+			</AutoDirection>
 			<ReaderFollowButton
 				className="gravatar-hovercard__recommended-blog-subscribe-button"
 				siteUrl={ feedUrl }

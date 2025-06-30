@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import AutoDirection from 'calypso/components/auto-direction';
 import { useSelector, useDispatch } from 'calypso/state';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
@@ -33,8 +32,7 @@ function HovercardContent( props ) {
 	}, [ userID, dispatch, readerUserData ] );
 
 	return (
-		<AutoDirection>
-			{ /* Note AutoDirection needs a single child to work recursively */ }
+		<>
 			{ /* Stop propagation to prevent clicks in the hovercard from triggering reader card clicks */ }
 			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
 			<div
@@ -43,8 +41,9 @@ function HovercardContent( props ) {
 				} }
 			>
 				{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
-
-				<GravatarHeader gravatarData={ gravatarData } userLogin={ userLogin } />
+				<div className="gravatar-hovercard__header">
+					<GravatarHeader gravatarData={ gravatarData } userLogin={ userLogin } />
+				</div>
 
 				{ /* Below is custom for wpcom users, and can use wpcom data more freely */ }
 				{ userID && (
@@ -61,7 +60,7 @@ function HovercardContent( props ) {
 					</>
 				) }
 			</div>
-		</AutoDirection>
+		</>
 	);
 }
 
