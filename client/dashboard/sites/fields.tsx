@@ -58,6 +58,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 					<Text
 						as="span"
 						style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+						{ ...( item.is_deleted ? { variant: 'muted' } : {} ) }
 					>
 						{ field.getValue( { item } ) }
 					</Text>
