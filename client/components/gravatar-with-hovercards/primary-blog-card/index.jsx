@@ -13,7 +13,7 @@ function PrimaryBlog( { primaryBlogId, displayName } ) {
 	const primaryBlogUrl = site?.URL;
 
 	if ( ! primaryBlogUrl ) {
-		return null;
+		return <QueryReaderSite siteId={ primaryBlogId } />;
 	}
 
 	const linkUrl = site?.feed_ID ? `/reader/feeds/${ site?.feed_ID }` : primaryBlogUrl;

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -15,17 +16,20 @@ const getBlogData = ( blog ) => {
 			name,
 			feedUrl,
 			siteId,
+			feedId: blog.feed_ID,
 		};
 	}
 	const { image, name, feed_URL: feedUrl, blog_ID: siteId } = blog.meta?.data?.feed || {};
-	return { image, name, feedUrl, siteId };
+	return { image, name, feedUrl, siteId, feedId: blog.feed_ID };
 };
 
 function RecommendedBlogItem( { blog } ) {
-	const { image, name, feedUrl, siteId } = getBlogData( blog );
+	const { image, name, feedUrl, siteId, feedId } = getBlogData( blog );
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
+
+	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
 
 	return (
 		<li className="gravatar-hovercard__recommended-blog-item">
@@ -36,14 +40,22 @@ function RecommendedBlogItem( { blog } ) {
 				followed.
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
-			<ReaderAvatar
-				isCompact
-				siteIcon={ siteIcon }
-				className="gravatar-hovercard__recommended-blog-site-icon"
-			/>
-			<AutoDirection>
-				<p className="gravatar-hovercard__recommended-blog-site-name">{ name || feedUrl }</p>
-			</AutoDirection>
+			<a
+				href={ linkUrl }
+				onClick={ ( e ) => {
+					e.preventDefault();
+					page( linkUrl );
+				} }
+			>
+				<ReaderAvatar
+					isCompact
+					siteIcon={ siteIcon }
+					className="gravatar-hovercard__recommended-blog-site-icon"
+				/>
+				<AutoDirection>
+					<p className="gravatar-hovercard__recommended-blog-site-name">{ name || feedUrl }</p>
+				</AutoDirection>
+			</a>
 			<ReaderFollowButton
 				className="gravatar-hovercard__recommended-blog-subscribe-button"
 				siteUrl={ feedUrl }
