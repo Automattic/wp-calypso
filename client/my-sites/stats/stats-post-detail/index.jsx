@@ -13,6 +13,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
+import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -25,10 +26,16 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
+import { useSelector } from 'calypso/state';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSiteSlug, isSitePreviewable, isSimpleSite } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteSlug,
+	isSitePreviewable,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
@@ -57,6 +64,7 @@ class StatsPostDetail extends Component {
 			url: PropTypes.string,
 		} ),
 		editUrl: PropTypes.string,
+		openSupportDoc: PropTypes.func,
 	};
 
 	state = {
@@ -298,10 +306,9 @@ class StatsPostDetail extends Component {
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
-							actionURL={ localizeUrl(
-								'https://wordpress.com/support/getting-more-views-and-traffic/'
-							) }
-							actionTarget="blank"
+							actionCallback={ () => {
+								this.props.openSupportDoc();
+							} }
 						/>
 					) }
 
@@ -336,7 +343,30 @@ class StatsPostDetail extends Component {
 
 const StatsPostDetailWrapper = ( props ) => {
 	const lastScreen = useStatsNavigationHistory();
-	return <StatsPostDetail { ...props } lastScreen={ lastScreen } />;
+
+	const supportLink = localizeUrl(
+		'https://wordpress.com/support/getting-more-views-and-traffic/'
+	);
+
+	const { openSupportDoc } = useSupportDocData( {
+		supportLink,
+	} );
+
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+
+	const openDoc = () => {
+		if ( isJetpack ) {
+			setTimeout( () => window.open( supportLink, '_blank' ), 250 );
+		} else {
+			openSupportDoc();
+		}
+	};
+
+	return <StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openDoc } />;
 };
 
 const connectComponent = connect( ( state, { postId } ) => {

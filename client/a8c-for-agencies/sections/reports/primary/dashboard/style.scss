@@ -51,6 +51,12 @@
 			}
 		}
 	}
+
+	.hosting-dashboard-item-view {
+		display: flex;
+		flex-direction: column;
+		height: calc(100vh - 32px);
+	}
 }
 
 .reports-dashboard__actions {

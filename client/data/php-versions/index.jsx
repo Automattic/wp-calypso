@@ -1,10 +1,11 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-export const getPHPVersions = () => {
+export const getPHPVersions = ( siteId ) => {
 	// PHP 8.3 is now the default recommended version
 	const recommendedValue = '8.3';
 	// translators: PHP Version for a version switcher
 	const recommendedLabel = sprintf( __( '%s (Recommended)' ), recommendedValue );
+	const PHP81BrokenSites = [ 64254301, 181414687 ];
 
 	const phpVersions = [
 		{
@@ -27,7 +28,7 @@ export const getPHPVersions = () => {
 			// translators: PHP Version for a version switcher
 			label: sprintf( __( '%s (Deprecated)' ), '8.1' ),
 			value: '8.1',
-			disabled: false, // EOL 31st December, 2025
+			disabled: ! PHP81BrokenSites.includes( siteId ?? 0 ), // EOL 31st December, 2025
 		},
 		{
 			label: '8.2',

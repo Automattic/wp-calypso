@@ -10,6 +10,13 @@
 - Update SYNC.md docs to include information on rebasing existing sync branches on top of Calypso trunk and other frequently asked questions.
 - Hide the label in input widgets to prevent duplicate labels in the filter UI.
 - Add new filter operator: `between`.
+- Implement the `array` field type definition.
+- Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
+- Fix the background color of the action column if the row is selected
+- Allow readonly fields in DataForm when `readOnly` is set to `true`.
+- Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality. Filter labels use "Date is:" and "Date is not:" for consistency.
+- Add new filter operator: `inThePast`, `over` for date fields.
+- Adjust the padding when the component is placed inside a `Card`.
 
 ## 0.2.1
 

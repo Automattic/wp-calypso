@@ -24,7 +24,6 @@
 			p {
 				margin: 0;
 			}
-
 		}
 
 		.dataviews-view-table {
@@ -33,7 +32,7 @@
 			border-spacing: 0;
 
 			&__actions-column {
-				.components-button.is-compact.has-icon:not(.dataviews-all-actions-button) {
+				.components-button.is-compact.has-icon:not( .dataviews-all-actions-button ) {
 					.gridicon {
 						opacity: 0;
 						transition: opacity 0.15s ease-in-out;
@@ -43,11 +42,11 @@
 		}
 
 		.dataviews-view-table__row {
-			background: var(--studio-white);
+			background: var( --studio-white );
 			opacity: 1;
 
 			&:hover {
-				background-color: var(--color-neutral-0);
+				background-color: var( --color-neutral-0 );
 				.dataviews-view-table__actions-column {
 					.components-button.is-compact.has-icon {
 						.gridicon {
@@ -58,7 +57,7 @@
 			}
 
 			th {
-				border-bottom: 1px solid var(--color-border-subtle);
+				border-bottom: 1px solid var( --color-border-subtle );
 				font-size: 0.875rem;
 				font-weight: 600;
 				vertical-align: middle;
@@ -74,7 +73,7 @@
 			}
 
 			td {
-				border-bottom: 1px solid var(--color-border-subtle);
+				border-bottom: 1px solid var( --color-border-subtle );
 				vertical-align: middle;
 				padding: 12px;
 				text-align: left;
@@ -85,11 +84,11 @@
 					font-weight: 600;
 					margin-bottom: 0.25rem;
 				}
-	
+
 				small {
 					display: block;
 					font-size: 0.875rem;
-					color: var(--color-text-subtle);
+					color: var( --color-text-subtle );
 					margin-top: 0.25rem;
 				}
 			}
@@ -103,9 +102,32 @@
 			td:last-child {
 				padding-right: 24px;
 			}
-			
+
 			.dataviews-view-table__actions-column {
 				text-align: right;
+				position: sticky;
+				right: 0;
+				background-color: var( --studio-white );
+
+				::after {
+					background-color: var( --color-border-subtle );
+					bottom: 0;
+					content: "";
+					display: block;
+					left: 0;
+					position: absolute;
+					top: 0;
+					width: 1px;
+				}
+
+				@include breakpoint-deprecated( ">480px" ) {
+					position: relative;
+					background-color: transparent;
+
+					::after {
+						display: none;
+					}
+				}
 			}
 		}
 
@@ -143,7 +165,7 @@
 			small {
 				display: block;
 				font-size: 0.875rem;
-				color: var(--color-text-subtle);
+				color: var( --color-text-subtle );
 			}
 
 			&-wrapper {
@@ -160,23 +182,23 @@
 			border-radius: 2px;
 			font-size: 0.875rem;
 			padding: 0.25rem 0.5rem;
-			color: var(--color-text-inverted);
-			background-color: var(--color-primary);
+			color: var( --color-text-inverted );
+			background-color: var( --color-primary );
 			border: none;
 			cursor: pointer;
 
 			&:hover {
-				background-color: var(--color-primary-60);
+				background-color: var( --color-primary-60 );
 			}
 
 			&--secondary {
 				font-size: 0.875rem;
-				background-color: var(--color-surface);
-				color: var(--color-text);
-				border: 1px solid var(--color-border);
+				background-color: var( --color-surface );
+				color: var( --color-text );
+				border: 1px solid var( --color-border );
 
 				&:hover {
-					background-color: var(--color-neutral-0);
+					background-color: var( --color-neutral-0 );
 				}
 			}
 		}
@@ -199,7 +221,7 @@
 	}
 
 	.section-nav-group {
-		border-bottom: 1px solid var(--color-neutral-5);
+		border-bottom: 1px solid var( --color-neutral-5 );
 	}
 
 	.dataviews-footer {
@@ -209,7 +231,7 @@
 	&__email-button {
 		background: none;
 		border: none;
-		color: var(--color-link);
+		color: var( --color-link );
 		cursor: pointer;
 		font-weight: normal;
 		padding: 0;
@@ -225,7 +247,7 @@
 		}
 
 		&:hover {
-			color: var(--color-link-dark);
+			color: var( --color-link-dark );
 		}
 	}
 
@@ -233,4 +255,10 @@
 		display: flex;
 		gap: 1em;
 	}
+}
+
+.billing-history__item-service button.components-button.is-link {
+	font-size: inherit;
+	color: inherit;
+	text-decoration: none;
 }

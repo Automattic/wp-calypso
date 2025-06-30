@@ -3,9 +3,10 @@ export { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 export { useCanConnectToZendeskMessaging } from './use-can-connect-to-zendesk-messaging';
 export { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
+export { useRateChat } from './use-rate-chat';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
-export { isTestModeEnvironment } from './util';
+export { isTestModeEnvironment, getBadRatingReasons } from './util';
 export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,

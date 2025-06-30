@@ -13,7 +13,6 @@ import { getHeaderText } from 'calypso/blocks/login/login-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
@@ -27,6 +26,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -379,9 +379,7 @@ export class Login extends Component {
 			socialConnect,
 			twoFactorAuthType,
 			locale,
-			isLoginView,
 			signupUrl,
-			isWoo,
 			isWCCOM,
 			isBlazePro,
 			currentQuery,
@@ -399,10 +397,6 @@ export class Login extends Component {
 			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {
 			return null;
-		}
-
-		if ( isWoo && isLoginView ) {
-			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
 		}
 
 		if ( isSocialFirst ) {
@@ -488,7 +482,6 @@ export class Login extends Component {
 			translate,
 			isGenericOauth,
 			isGravPoweredClient,
-			isWoo,
 			isBlazePro,
 			isWhiteLogin,
 			isJetpack,
@@ -501,14 +494,17 @@ export class Login extends Component {
 			oauth2Client,
 			isWooJPC,
 			isWCCOM,
+			isWoo,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
-			wccomFrom,
+			currentRoute,
 			twoFactorEnabled,
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+
+		// TODO: remove isGravPoweredClient when login pages are unified.
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
 
 		const mainContent = (
 			<Main
@@ -518,7 +514,7 @@ export class Login extends Component {
 					'is-jetpack': isJetpack,
 				} ) }
 			>
-				{ this.renderI18nSuggestions() }
+				{ ! isWhiteLogin && this.renderI18nSuggestions() }
 
 				<DocumentHead
 					title={ translate( 'Log In' ) }
@@ -534,6 +530,8 @@ export class Login extends Component {
 				/>
 
 				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+
+				{ isWhiteLogin && this.renderI18nSuggestions() }
 			</Main>
 		);
 
@@ -551,28 +549,21 @@ export class Login extends Component {
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
-			wccomFrom,
 			twoFactorEnabled,
 			currentQuery,
 			translate
 		);
 
-		let brandLogo;
+		const brandLogo = (
+			<WordPressLogo
+				size={ 21 }
+				className="step-container-v2__top-bar-wordpress-logo"
+				color="currentColor"
+			/>
+		);
 
-		if (
-			isPartnerPortalOAuth2Client( oauth2Client ) &&
-			document.location.search?.includes( 'wpcloud' )
-		) {
-			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
-		} else {
-			brandLogo = (
-				<WordPressLogo
-					size={ 21 }
-					className="step-container-v2__top-bar-wordpress-logo"
-					color="currentColor"
-				/>
-			);
-		}
+		const isLostPassword =
+			currentRoute === '/log-in/lostpassword' || currentRoute === '/log-in/jetpack/lostpassword';
 
 		const shouldUseWideHeading =
 			isStudioAppOAuth2Client( oauth2Client ) ||
@@ -580,7 +571,10 @@ export class Login extends Component {
 			isCrowdsignalOAuth2Client( oauth2Client ) ||
 			isBlazePro ||
 			isJetpack ||
-			isJetpackCloudOAuth2Client( oauth2Client );
+			isJetpackCloudOAuth2Client( oauth2Client ) ||
+			isWoo ||
+			isVIPOAuth2Client( oauth2Client ) ||
+			isPartnerPortalOAuth2Client( oauth2Client );
 
 		return (
 			<>
@@ -603,6 +597,7 @@ export class Login extends Component {
 									<HeadingSubText
 										isSocialFirst={ isSocialFirst }
 										twoFactorAuthType={ twoFactorAuthType }
+										isLostPassword={ isLostPassword }
 									/>
 								}
 							/>
@@ -653,7 +648,8 @@ export default connect(
 				! isJetpackCloudOAuth2Client( oauth2Client ) &&
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isCrowdsignalOAuth2Client( oauth2Client ) &&
-				! isStudioAppOAuth2Client( oauth2Client ),
+				! isStudioAppOAuth2Client( oauth2Client ) &&
+				! isVIPOAuth2Client( oauth2Client ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),

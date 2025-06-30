@@ -6,7 +6,9 @@ import { shouldSiteBeFetched } from 'calypso/state/reader/sites/selectors';
 
 function QueryReaderSite( { siteId } ) {
 	const dispatch = useDispatch();
-	const shouldFetch = useSelector( ( state ) => shouldSiteBeFetched( state, siteId ) );
+	const shouldFetch = useSelector( ( state ) =>
+		siteId ? shouldSiteBeFetched( state, siteId ) : false
+	);
 
 	useEffect( () => {
 		if ( siteId && shouldFetch ) {
@@ -18,7 +20,7 @@ function QueryReaderSite( { siteId } ) {
 }
 
 QueryReaderSite.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 };
 
 export default QueryReaderSite;

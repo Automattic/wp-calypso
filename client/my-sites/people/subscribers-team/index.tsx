@@ -68,6 +68,7 @@ function SubscribersTeam( props: Props ) {
 							learnMore: (
 								<InlineSupportLink
 									showIcon={ false }
+									supportPostId={ 1221 }
 									supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
 								/>
 							),

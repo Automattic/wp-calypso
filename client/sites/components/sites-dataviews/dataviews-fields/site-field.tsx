@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import { getMigrationStatus } from 'calypso/data/site-migration';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
 import { navigate } from 'calypso/lib/navigate';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
@@ -133,8 +133,8 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 		}
 	};
 
-	const isMigrationPending = getMigrationStatus( site ) === 'pending';
-	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
+	const isInProgress = isMigrationInProgress( site );
+	const siteTitle = isInProgress ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
 		// TODO: Consolidate behavior with `SiteIcon` link

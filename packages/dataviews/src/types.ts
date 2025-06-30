@@ -84,7 +84,11 @@ export type Operator =
 	| 'contains'
 	| 'notContains'
 	| 'startsWith'
-	| 'between';
+	| 'between'
+	| 'on'
+	| 'notOn'
+	| 'inThePast'
+	| 'over';
 
 export type FieldType =
 	| 'text'
@@ -92,7 +96,8 @@ export type FieldType =
 	| 'datetime'
 	| 'media'
 	| 'boolean'
-	| 'email';
+	| 'email'
+	| 'array';
 
 export type ValidationContext = {
 	elements?: Option[];
@@ -126,6 +131,12 @@ export type FieldTypeDefinition< Item > = {
 	 * The filter config for the field.
 	 */
 	filterBy: FilterConfigForType | false;
+
+	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
 
 	/**
 	 * Whether the field is sortable.
@@ -219,6 +230,12 @@ export type Field< Item > = {
 	filterBy?: FilterByConfig | false;
 
 	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
+
+	/**
 	 * Callback used to retrieve the value of the field from the item.
 	 * Defaults to `item[ field.id ]`.
 	 */
@@ -236,6 +253,7 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: NormalizedFilterByConfig | false;
+	readOnly: boolean;
 };
 
 /**

@@ -41,15 +41,6 @@ const FIELDS: Field< ComponentData >[] = [
 		},
 	},
 	{
-		id: 'figma',
-		label: 'Figma',
-		enableHiding: true,
-		enableSorting: false,
-		render: ( { item } ) => {
-			return item.figma && <IconLink href={ item.figma } type="figma" />;
-		},
-	},
-	{
 		id: 'notes',
 		label: 'Notes',
 		enableHiding: true,
@@ -71,7 +62,7 @@ export function WPComponentsTable() {
 			direction: 'asc',
 		},
 		titleField: 'name',
-		fields: [ 'status', 'whereUsed', 'docs', 'figma', 'notes' ],
+		fields: [ 'status', 'whereUsed', 'docs', 'notes' ],
 	} );
 
 	// DataViews includes Emotion components, and thus cannot be rendered on the server.

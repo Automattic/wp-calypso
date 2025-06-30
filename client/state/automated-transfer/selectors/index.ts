@@ -22,6 +22,7 @@ export interface EligibilityWarning {
 	description: string;
 	name: string;
 	id: string;
+	supportPostId?: number;
 	supportUrl?: string;
 	domainNames?: DomainNames;
 }

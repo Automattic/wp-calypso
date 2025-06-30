@@ -46,3 +46,11 @@ export const isSitePlanLaunchable = ( site: Site ) => {
 		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
 	] );
 };
+
+export function isSitePlanTrial( site: Site ) {
+	return [
+		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+		DotcomPlans.HOSTING_TRIAL_MONTHLY,
+		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
+	].includes( site.plan?.product_slug as DotcomPlans );
+}

@@ -10,7 +10,6 @@ import { useReceiptActions } from './hooks/use-receipt-actions';
 import { useTransactionsFiltering } from './hooks/use-transactions-filtering';
 import { useTransactionsSorting } from './hooks/use-transactions-sorting';
 import { useViewStateUpdate } from './hooks/use-view-state-update';
-import type { ViewStateUpdate } from './data-views-types';
 
 import 'calypso/components/dataviews/style.scss';
 import './style-data-view.scss';
@@ -41,13 +40,13 @@ export default function BillingHistoryListDataView( {
 	const sortedTransactions = useTransactionsSorting( filteredTransactions, viewState.view );
 	const { paginatedItems, totalPages, totalItems } = usePagination(
 		sortedTransactions,
-		viewState.view.page,
-		viewState.view.perPage
+		viewState.view.page ?? 1,
+		viewState.view.perPage ?? 100
 	);
 	const translate = useTranslate();
-	const fields = useFieldDefinitions( transactions );
+	const fields = useFieldDefinitions( transactions, getReceiptUrlFor );
 
-	const handleViewChange = ( view: View ) => viewState.updateView( view as ViewStateUpdate );
+	const handleViewChange = ( view: View ) => viewState.updateView( view );
 
 	return (
 		<DataViews

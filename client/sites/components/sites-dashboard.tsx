@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -13,6 +14,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
@@ -437,16 +439,22 @@ const SitesDashboard = ( {
 						sitesCount={ paginatedSites.length }
 					/>
 
-					<DotcomSitesDataViews
-						sites={ paginatedSites }
-						siteType={ siteType }
-						isLoading={ isLoading || ! initialSortApplied }
-						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-						selectedItem={ selectedSite }
-						sitePreviewPane={ sitePreviewPane }
-					/>
+					{ ! selectedSite &&
+					siteType === DEFAULT_SITE_TYPE &&
+					isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
+						<AsyncLoad require="../v2/sites-list" placeholder={ null } />
+					) : (
+						<DotcomSitesDataViews
+							sites={ paginatedSites }
+							siteType={ siteType }
+							isLoading={ isLoading || ! initialSortApplied }
+							paginationInfo={ getSitesPagination( filteredSites, perPage ) }
+							dataViewsState={ dataViewsState }
+							setDataViewsState={ setDataViewsState }
+							selectedItem={ selectedSite }
+							sitePreviewPane={ sitePreviewPane }
+						/>
+					) }
 				</LayoutColumn>
 			) }
 

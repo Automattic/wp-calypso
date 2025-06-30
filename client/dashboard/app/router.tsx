@@ -20,6 +20,7 @@ import {
 } from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
+import { isAutomatticianQuery } from './queries/a8c';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { profileQuery } from './queries/profile';
@@ -72,7 +73,12 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+	loader: async () => {
+		// Preload the default sites list response without blocking.
+		queryClient.ensureQueryData( sitesQuery() );
+
+		await queryClient.ensureQueryData( isAutomatticianQuery() );
+	},
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -398,7 +404,7 @@ const meRoute = createRoute( {
 		const twoStep = await fetchTwoStep();
 		if ( twoStep.two_step_reauthorization_required ) {
 			const currentPath = window.location.pathname;
-			const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+			const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 			window.location.href = loginUrl;
 		}
 	},

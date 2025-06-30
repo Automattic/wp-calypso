@@ -94,7 +94,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const isPhpVersionChanged = selectedPhpVersion && selectedPhpVersion !== phpVersion;
 	const isStaticFile404Changed = selectedStaticFile404 && selectedStaticFile404 !== staticFile404;
 
-	const { recommendedValue, phpVersions } = getPHPVersions();
+	const { recommendedValue, phpVersions } = getPHPVersions( siteId );
 	const dataCenterOptions = getDataCenterOptions();
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
