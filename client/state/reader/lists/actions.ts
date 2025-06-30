@@ -422,6 +422,7 @@ export function requestUserRecommendedBlogs( listOwner: string ) {
 
 /**
  * Add a feed to the recommended blogs list.
+ * @param listId - List ID of the recommended blogs list
  * @param feedId - Feed ID to add (required for feeds/new endpoint)
  * @param listOwner - Owner of the recommended blogs list
  * @param options - Optional configuration for notices
@@ -431,6 +432,7 @@ export function requestUserRecommendedBlogs( listOwner: string ) {
  * @returns Action object
  */
 export function addRecommendedBlogsSite(
+	listId: number,
 	feedId: number,
 	listOwner: string,
 	options?: {
@@ -441,7 +443,7 @@ export function addRecommendedBlogsSite(
 ): ReaderListAction {
 	return {
 		type: READER_LIST_ITEM_ADD_FEED,
-		listId: 0, // API uses owner/slug path, but Redux reducer expects this field
+		listId,
 		listOwner,
 		listSlug: 'recommended-blogs',
 		feedId,
@@ -451,6 +453,7 @@ export function addRecommendedBlogsSite(
 
 /**
  * Remove a feed from the recommended blogs list.
+ * @param listId - List ID of the recommended blogs list
  * @param feedId - Feed ID to remove
  * @param listOwner - Owner of the recommended blogs list
  * @param options - Optional configuration for notices
@@ -460,6 +463,7 @@ export function addRecommendedBlogsSite(
  * @returns Action object
  */
 export function removeRecommendedBlogsSite(
+	listId: number,
 	feedId: number,
 	listOwner: string,
 	options?: {
@@ -470,7 +474,7 @@ export function removeRecommendedBlogsSite(
 ): ReaderListAction {
 	return {
 		type: READER_LIST_ITEM_DELETE_FEED,
-		listId: 0, // API uses owner/slug path, but Redux reducer expects this field
+		listId,
 		listOwner,
 		listSlug: 'recommended-blogs',
 		feedId,
