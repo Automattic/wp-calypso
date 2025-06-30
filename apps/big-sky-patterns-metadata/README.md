@@ -1,12 +1,12 @@
 # Pattern Metadata Sidebar
 
-A WordPress plugin that adds a pattern metadata sidebar to the WordPress post editor, allowing designers to annotate patterns on the internal patterns blog with various terms to help AI produce better designs for the [Big Sky Plugin](https://github.com/Automattic/big-sky-plugin).
+A WordPress plugin that adds a pattern metadata sidebar to the WordPress post editor, allowing designers to annotate patterns on the internal patterns blog. See the README on the Dotcom Patterns repo for details.
 
 ## Overview
 
 This plugin is designed to be deployed to the Dotcom Simple codebase and do run _only_ on the internal patterns website.
 
-It is a utility plugin that allows designers working on Big Sky to annotate patterns on the internal patterns blog with various terms which helps the AI produce better designs.
+It is a utility plugin that allows designers to annotate patterns on the internal patterns blog with various terms which helps the AI produce better designs.
 
 **Important**: This plugin does not require the Big Sky Plugin and is completely standalone.
 

@@ -14,7 +14,7 @@
 		"lint:js:fix": "wp-scripts lint-js --fix",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"dev": "yarn run calypso-apps-builder --localPath ./build --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/pattern-metadata-sidebar",
+		"dev": "yarn run calypso-apps-builder --localPath ./build --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/pattern-metadata-sidebar/build",
 		"clean": "rm -rf build/"
 	},
 	"dependencies": {
