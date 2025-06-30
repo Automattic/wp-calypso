@@ -241,6 +241,18 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const renderStepButtons = () => {
 		const { disableButtons, cancellationCompleted, cancellationInProgress } = props;
 		const disabled = disableButtons;
+
+		// Determine button text based on cancellation state and flow type
+		const getButtonText = () => {
+			if ( cancellationCompleted ) {
+				return translate( 'Submit' );
+			}
+			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+				return translate( 'Remove subscription' );
+			}
+			return translate( 'Cancel subscription' );
+		};
+
 		const close = {
 			action: 'close',
 			disabled: disabled,
@@ -263,7 +275,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				primary
 				scary={ ! cancellationCompleted }
 			>
-				{ cancellationCompleted ? translate( 'Submit' ) : translate( 'Cancel subscription' ) }
+				{ getButtonText() }
 			</Button>
 		);
 
