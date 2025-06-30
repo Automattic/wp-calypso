@@ -1,6 +1,5 @@
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -16,59 +15,52 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import '../stats-module/style.scss';
 
-class StatsEmailModule extends Component {
-	static propTypes = {
-		period: PropTypes.string,
-		path: PropTypes.string,
-		siteSlug: PropTypes.string,
-		siteId: PropTypes.number,
-		data: PropTypes.array,
-		query: PropTypes.object,
-		statType: PropTypes.string,
-		isLoading: PropTypes.bool,
-		isJetpack: PropTypes.bool,
-	};
+const StatsEmailModule = ( props ) => {
+	const { path, data, postId, statType, query = {}, isLoading, isJetpack } = props;
 
-	static defaultProps = {
-		showSummaryLink: false,
-		query: {},
-	};
+	const moduleStrings = statsStrings( false, isJetpack )[ path ];
 
-	render() {
-		const { path, data, postId, statType, query, isLoading } = this.props;
-		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const moduleStrings = statsStrings( false, this.props.isJetpack )[ path ];
-		// TODO: Support error state in redux store
-		const hasError = false;
-		const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );
+	const hasError = false; // TODO: Support error state in redux store
+	const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );
 
-		return (
-			<>
-				<StatsListCard
-					title={ moduleStrings.title }
-					moduleType={ path }
-					data={ data }
-					emptyMessage={ moduleStrings.empty }
-					error={ hasError && <ErrorPanel /> }
-					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					metricLabel={ metricLabel }
-					heroElement={
-						path === 'countries' && (
-							<Geochart
-								kind="email"
-								statType={ statType }
-								postId={ postId }
-								query={ query }
-								isLoading={ isLoading }
-								numberLabel={ metricLabel }
-							/>
-						)
-					}
-				/>
-			</>
-		);
-	}
-}
+	return (
+		<>
+			<StatsListCard
+				title={ moduleStrings.title }
+				moduleType={ path }
+				data={ data }
+				emptyMessage={ moduleStrings.empty }
+				error={ hasError && <ErrorPanel /> }
+				loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+				metricLabel={ metricLabel }
+				heroElement={
+					path === 'countries' && (
+						<Geochart
+							kind="email"
+							statType={ statType }
+							postId={ postId }
+							query={ query }
+							isLoading={ isLoading }
+							numberLabel={ metricLabel }
+						/>
+					)
+				}
+			/>
+		</>
+	);
+};
+
+StatsEmailModule.propTypes = {
+	period: PropTypes.string,
+	path: PropTypes.string,
+	siteSlug: PropTypes.string,
+	siteId: PropTypes.number,
+	data: PropTypes.array,
+	query: PropTypes.object,
+	statType: PropTypes.string,
+	isLoading: PropTypes.bool,
+	isJetpack: PropTypes.bool,
+};
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
