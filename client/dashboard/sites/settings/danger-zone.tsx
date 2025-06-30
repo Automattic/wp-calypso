@@ -96,7 +96,7 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 			<ActionList.ActionItem
 				title={ __( 'Delete site' ) }
 				description={ __(
-					"Delete all your posts, pages, media, and data, and give up your site's address."
+					'Delete all your posts, pages, media, and data, and give up your site’s address.'
 				) }
 				actions={ deleteButton }
 			/>
