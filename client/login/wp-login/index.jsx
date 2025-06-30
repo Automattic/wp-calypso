@@ -48,7 +48,6 @@ import { withEnhancers } from 'calypso/state/utils';
 import HeadingLogo from './components/heading-logo';
 import HeadingSubText from './components/heading-subtext';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
-import GravPoweredLoginPageFooter from './gravatar/grav-powered-login-page-footer';
 import LoginBlockFooter from './login-block-footer';
 
 import './style.scss';
@@ -425,7 +424,6 @@ export class Login extends Component {
 					</Step.CenteredColumnLayout>
 				) }
 				{ ! isWhiteLogin && mainContent }
-				{ ! isWhiteLogin && <GravPoweredLoginPageFooter /> }
 			</>
 		);
 	}
