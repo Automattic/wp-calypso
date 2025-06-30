@@ -11,7 +11,7 @@ function GravatarWithHovercards( props ) {
 	const [ mountNode, setMountNode ] = useState( null );
 	const [ gravatarData, setGravatarData ] = useState( {} );
 
-	const hovercards = useHovercards( {
+	const { attach, detach } = useHovercards( {
 		onHovercardShown: ( hash, hovercardElement ) => {
 			// Customize the hovercard.
 			if ( hovercardElement ) {
@@ -32,15 +32,14 @@ function GravatarWithHovercards( props ) {
 	useEffect( () => {
 		// Attach hovercards to the container when it's available
 		if ( containerRef.current ) {
-			hovercards.attach( containerRef.current );
+			attach( containerRef.current );
 		}
 
 		return () => {
 			// Use the detach method to properly clean up hovercards on unmount
-			hovercards.detach();
+			detach();
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] ); // Empty array is correct here. We only want this to run on mount and unmount.
+	}, [ attach, detach ] );
 
 	return (
 		<div ref={ containerRef }>
