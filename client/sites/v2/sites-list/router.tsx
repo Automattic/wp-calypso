@@ -64,6 +64,17 @@ const sitesSettingsCompatibilityRoute = createRoute( {
 	},
 } );
 
+const dashboardSiteSettingsWithFeatureCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings/$feature',
+	beforeLoad: ( { cause, params: { siteSlug, feature } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		throw redirect( { to: `/sites/settings/v2/${ siteSlug }/${ feature }` } );
+	},
+} );
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		sitesRoute,
@@ -71,9 +82,14 @@ const createRouteTree = () =>
 		sitesOverviewCompatibilityRoute,
 		dummySitesSettingsRoute,
 		sitesSettingsCompatibilityRoute,
+		dashboardSiteSettingsWithFeatureCompatibilityRoute,
 	] );
 
-const compatibilityRoutes = [ sitesOverviewCompatibilityRoute, sitesSettingsCompatibilityRoute ];
+const compatibilityRoutes = [
+	sitesOverviewCompatibilityRoute,
+	sitesSettingsCompatibilityRoute,
+	dashboardSiteSettingsWithFeatureCompatibilityRoute,
+];
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
