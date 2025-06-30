@@ -126,3 +126,8 @@
 		}
 	}
 }
+
+.reports-dashboard-empty-state__footnote {
+	@include body-medium;
+	color: var(--color-neutral-50);
+}
