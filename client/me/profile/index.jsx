@@ -23,6 +23,7 @@ import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { getValidUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
@@ -52,7 +53,10 @@ class Profile extends Component {
 		const { value } = event.target;
 		const normalizedUrl = addSchemeIfMissing( value, 'https' );
 		if ( normalizedUrl !== value ) {
-			this.props.setUserSetting( 'user_URL', normalizedUrl );
+			const validUrl = getValidUrl( normalizedUrl );
+			if ( validUrl ) {
+				this.props.setUserSetting( 'user_URL', validUrl );
+			}
 		}
 	};
 
