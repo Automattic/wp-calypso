@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -107,15 +106,12 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 
 export default function DangerZone( { site }: { site: Site } ) {
 	const { user } = useAuth();
-	const isStagingRedesignEnabled = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const actions = [
 		canTransferSite( site, user ) && <SiteTransferAction key="transfer-site" site={ site } />,
 		canLeaveSite( site ) && <SiteLeaveAction key="leave-site" site={ site } />,
 		canResetSite( site ) && <SiteResetAction key="reset-site" site={ site } />,
-		canDeleteSite( site, isStagingRedesignEnabled ) && (
-			<SiteDeleteAction key="delete-site" site={ site } />
-		),
+		canDeleteSite( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {
