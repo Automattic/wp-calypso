@@ -230,6 +230,14 @@ export function Status( { site }: { site: Site } ) {
 		return <Badge>{ label }</Badge>;
 	}
 
+	if ( status === 'migration_pending' ) {
+		return <Badge intent="warning">{ label }</Badge>;
+	}
+
+	if ( status === 'migration_started' ) {
+		return <Badge intent="info">{ label }</Badge>;
+	}
+
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
