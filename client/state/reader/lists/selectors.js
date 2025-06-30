@@ -168,3 +168,34 @@ export function getUserRecommendedBlogs( state, listOwner ) {
 export function isRequestingUserRecommendedBlogs( state, listOwner ) {
 	return !! state.reader.lists.isRequestingUserRecommendedBlogs[ listOwner ];
 }
+
+/**
+ * Get the latest error for a specific list item operation.
+ * Used by hooks to detect when operations fail and reset optimistic state.
+ * @param  {Object}  state  Global state tree
+ * @param  {number}  listId List ID
+ * @param  {number}  contentId Content ID (feedId or siteId)
+ * @param  {string}  contentType Content type ('feed' or 'site')
+ * @returns {Object|null} Latest error object or null if no recent errors
+ */
+export function getLatestListItemError( state, listId, contentId, contentType ) {
+	const errors = state.reader.lists.listItemErrors;
+	if ( ! errors || Object.keys( errors ).length === 0 ) {
+		return null;
+	}
+
+	// Find the most recent error for this specific list item
+	const matchingErrors = Object.values( errors ).filter(
+		( error ) =>
+			error.listId === listId && error.contentId === contentId && error.contentType === contentType
+	);
+
+	if ( matchingErrors.length === 0 ) {
+		return null;
+	}
+
+	// Return the most recent error
+	return matchingErrors.reduce( ( latest, current ) =>
+		current.timestamp > latest.timestamp ? current : latest
+	);
+}

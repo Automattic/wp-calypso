@@ -43,7 +43,16 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 			onError: ( action ) => {
 				// Support custom error messages
 				const errorMessage = action.errorMessage || translate( 'Unable to add feed to list.' );
-				return errorNotice( errorMessage );
+				return [
+					errorNotice( errorMessage ),
+					{
+						type: 'READER_LIST_ITEM_ADD_FEED_ERROR',
+						listId: action.listId,
+						feedId: action.feedId,
+						listOwner: action.listOwner,
+						listSlug: action.listSlug,
+					},
+				];
 			},
 		} ),
 	],
