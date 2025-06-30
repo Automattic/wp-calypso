@@ -1,0 +1,32 @@
+{
+	"name": "a8c-big-sky-patterns-metadata-sidebar",
+	"description": "A8c Big Sky Patterns Metadata Sidebar - WordPress plugin for pattern metadata configuration",
+	"version": "1.0.0",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"lint:js:fix": "wp-scripts lint-js --fix",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip"
+	},
+	"dependencies": {
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/core-data": "^7.2.0",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/edit-post": "^14.2.0",
+		"@wordpress/editor": "^14.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/i18n": "^5.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/plugins": "^7.2.0"
+	},
+	"devDependencies": {
+		"@wordpress/prettier-config": "^4.2.0",
+		"@wordpress/scripts": "^27.9.0"
+	}
+}

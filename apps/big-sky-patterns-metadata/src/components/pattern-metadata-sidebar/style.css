@@ -1,0 +1,10 @@
+/*THIS FILE IS COMPILED FROM AN .SCSS FILE - DO NOT EDIT DIRECTLY*/
+.pattern-metadata-sidebar__description {
+  padding: 16px;
+}
+.pattern-metadata-sidebar__description :last-child {
+  margin-bottom: 0;
+}
+.pattern-metadata-sidebar .components-base-control__field {
+  margin-bottom: 16px;
+}

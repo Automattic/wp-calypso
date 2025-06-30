@@ -1,0 +1,14 @@
+.pattern-metadata-sidebar {
+
+	&__description {
+		padding: 16px;
+
+		:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.components-base-control__field {
+		margin-bottom: 16px;
+	}
+}
