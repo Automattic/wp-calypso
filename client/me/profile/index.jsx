@@ -43,6 +43,37 @@ class Profile extends Component {
 		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
+	/**
+	 * Normalizes a URL by adding https:// if no protocol is present
+	 * @param {string} url - The URL to normalize
+	 * @returns {string} - The normalized URL
+	 */
+	normalizeUrl = ( url ) => {
+		if ( ! url || typeof url !== 'string' ) {
+			return url;
+		}
+
+		const trimmedUrl = url.trim();
+		const domainRegex = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+		if ( domainRegex.test( trimmedUrl ) ) {
+			return `https://${ trimmedUrl }`;
+		}
+
+		return url;
+	};
+
+	/**
+	 * Handles URL normalization on blur
+	 * @param {Event} event - The blur event
+	 */
+	handleUrlBlur = ( event ) => {
+		const { value } = event.target;
+		const normalizedUrl = this.normalizeUrl( value );
+		if ( normalizedUrl !== value ) {
+			this.props.setUserSetting( 'user_URL', normalizedUrl );
+		}
+	};
+
 	render() {
 		// We want to use a relative URL so we can test effectively in each
 		// environment, but show the absolute URL in the UI for end users.
@@ -130,6 +161,7 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Web Address Field' ) }
 								placeholder="https://example.com"
 								value={ this.props.getSetting( 'user_URL' ) }
+								onBlur={ this.handleUrlBlur }
 							/>
 						</FormFieldset>
 
