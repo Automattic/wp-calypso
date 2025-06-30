@@ -10,7 +10,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -20,16 +20,36 @@ import { OPERATOR_IN_THE_PAST, OPERATOR_OVER } from '../constants';
 
 const TIME_UNITS_OPTIONS = {
 	[ OPERATOR_IN_THE_PAST ]: [
-		{ value: 'days', label: __( 'Days' ) },
-		{ value: 'weeks', label: __( 'Weeks' ) },
-		{ value: 'months', label: __( 'Months' ) },
-		{ value: 'years', label: __( 'Years' ) },
+		/* translators: Time unit for date filtering - e.g. "in the past 5 Days" */
+		{ value: 'days', label: _x( 'Days', 'date filter time unit' ) },
+		/* translators: Time unit for date filtering - e.g. "in the past 3 Weeks" */
+		{ value: 'weeks', label: _x( 'Weeks', 'date filter time unit' ) },
+		/* translators: Time unit for date filtering - e.g. "in the past 2 Months" */
+		{ value: 'months', label: _x( 'Months', 'date filter time unit' ) },
+		/* translators: Time unit for date filtering - e.g. "in the past 1 Years" */
+		{ value: 'years', label: _x( 'Years', 'date filter time unit' ) },
 	],
 	[ OPERATOR_OVER ]: [
-		{ value: 'days', label: __( 'Days ago' ) },
-		{ value: 'weeks', label: __( 'Weeks ago' ) },
-		{ value: 'months', label: __( 'Months ago' ) },
-		{ value: 'years', label: __( 'Years ago' ) },
+		/* translators: Time unit for date filtering - e.g. "over 5 Days ago" */
+		{
+			value: 'days',
+			label: _x( 'Days ago', 'used with date filter operator' ),
+		},
+		/* translators: Time unit for date filtering - e.g. "over 3 Weeks ago" */
+		{
+			value: 'weeks',
+			label: _x( 'Weeks ago', 'used with date filter operator' ),
+		},
+		/* translators: Time unit for date filtering - e.g. "over 2 Months ago" */
+		{
+			value: 'months',
+			label: _x( 'Months ago', 'used with date filter operator' ),
+		},
+		/* translators: Time unit for date filtering - e.g. "over 1 Years ago" */
+		{
+			value: 'years',
+			label: _x( 'Years ago', 'used with date filter operator' ),
+		},
 	],
 };
 

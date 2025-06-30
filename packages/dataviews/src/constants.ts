@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { arrowDown, arrowUp } from '@wordpress/icons';
 
 /**
@@ -159,11 +159,11 @@ export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	},
 	[ OPERATOR_IN_THE_PAST ]: {
 		key: 'in-the-past-filter',
-		label: __( 'In the past' ),
+		label: _x( 'In the past', 'date filter operator' ),
 	},
 	[ OPERATOR_OVER ]: {
 		key: 'over-filter',
-		label: __( 'Over' ),
+		label: _x( 'Over', 'date filter operator' ),
 	},
 };
 
