@@ -2,7 +2,7 @@ import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
-// import { QueryRewindState } from '../../../components/data/query-rewind-state';
+import QueryRewindState from '../../../components/data/query-rewind-state';
 import SyncModal from '../staging-site-sync-modal';
 
 interface SyncDropdownProps {
@@ -84,7 +84,7 @@ export default function SyncDropdown( {
 			/>
 			{ isModalOpen && stagingSiteId && (
 				<>
-					{ /* <QueryRewindState siteId={ stagingSiteId } /> */ }
+					<QueryRewindState siteId={ stagingSiteId } />
 					<SyncModal
 						onClose={ handleCloseModal }
 						syncType={ syncType }

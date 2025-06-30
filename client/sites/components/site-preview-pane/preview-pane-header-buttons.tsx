@@ -49,7 +49,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		}
 	);
 	const rewindId = lastKnownBackupAttempt?.rewindId;
-	const adminButtonRef = useMergeRefs( [ adminButtonRef, focusRef ] );
+	const adminButtonRefMerged = useMergeRefs( [ adminButtonRef, focusRef ] );
 
 	// We should never reach this point, but just in case
 	if ( ! site ) {
@@ -85,7 +85,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 				primary
 				className="item-preview__admin-button"
 				href={ `${ adminUrl }` }
-				ref={ adminButtonRef }
+				ref={ adminButtonRefMerged }
 			>
 				{ adminLabel }
 			</Button>
