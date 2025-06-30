@@ -31,6 +31,7 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@wordpress/prettier-config": "^4.23.0",
-		"@wordpress/scripts": "^27.9.0"
+		"@wordpress/scripts": "^27.9.0",
+		"copy-webpack-plugin": "^10.2.4"
 	}
 }
