@@ -1,14 +1,53 @@
+import { Badge } from '@automattic/ui';
 import {
 	Button,
 	ExternalLink,
 	Modal,
+	Icon,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
 import InlineSupportLink from '../../components/inline-support-link';
+
+const DirectionArrow = () => {
+	return (
+		<div style={ { marginTop: '38px' } }>
+			<Icon
+				icon={ isRTL() ? chevronLeft : chevronRight }
+				style={ {
+					fill: '#949494',
+				} }
+			/>
+		</div>
+	);
+};
+
+interface EnvironmentLabelProps {
+	label: string;
+	value: string;
+}
+
+const EnvironmentLabel = ( { label, value }: EnvironmentLabelProps ) => {
+	return (
+		<VStack spacing={ 3 } style={ { flex: 1 } }>
+			<Text weight={ 500 }>{ label }</Text>
+			<div
+				style={ {
+					border: '1px solid #949494',
+					padding: '8px 12px',
+					borderRadius: '2px',
+					width: '100%',
+				} }
+			>
+				<Badge>{ value }</Badge>
+			</div>
+		</VStack>
+	);
+};
 
 interface SyncModalProps {
 	onClose: () => void;
@@ -25,12 +64,16 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 				description: __(
 					'Pulling will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 				),
+				syncFrom: __( 'Production' ),
+				syncTo: __( 'Staging' ),
 			},
 			production: {
 				title: __( 'Pull from Staging' ),
 				description: __(
 					'Pulling will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 				),
+				syncFrom: __( 'Staging' ),
+				syncTo: __( 'Production' ),
 			},
 			fromLabel: __( 'Pull' ),
 			toLabel: __( 'To' ),
@@ -46,12 +89,16 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 			description: __(
 				'Pushing will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 			),
+			syncFrom: __( 'Staging' ),
+			syncTo: __( 'Production' ),
 		},
 		production: {
 			title: __( 'Push to Staging' ),
 			description: __(
 				'Pushing will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 			),
+			syncFrom: __( 'Production' ),
+			syncTo: __( 'Staging' ),
 		},
 		fromLabel: __( 'Push' ),
 		toLabel: __( 'To' ),
@@ -77,6 +124,11 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
 						} ) }
 					</Text>
+					<HStack spacing={ 2 } alignment="center">
+						<EnvironmentLabel label={ copy.fromLabel } value={ copy[ environment ].syncFrom } />
+						<DirectionArrow />
+						<EnvironmentLabel label={ copy.toLabel } value={ copy[ environment ].syncTo } />
+					</HStack>
 					<Text weight={ 500 }>{ copy.syncSelectionHeading }</Text>
 					<Text>
 						{ createInterpolateElement( copy.learnMore, {
