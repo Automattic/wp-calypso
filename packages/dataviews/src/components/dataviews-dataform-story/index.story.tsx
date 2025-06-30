@@ -252,14 +252,7 @@ export const DateTime = ( {
 	labelPosition: 'default' | 'top' | 'side' | 'none';
 } ) => {
 	const dateTimeFields = useMemo(
-		() =>
-			fields
-				.filter( ( field ) => field.type === 'date' )
-				.map( ( field ) => ( {
-					...field,
-					type: 'datetime' as const,
-					label: 'DateTime',
-				} ) ),
+		() => fields.filter( ( field ) => field.type === 'datetime' ),
 		[]
 	);
 
