@@ -5,7 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build outputs
-dist/
+build/
 
 # Environment files
 .env
@@ -30,19 +30,6 @@ dist/
 ehthumbs.db
 Thumbs.db
 
-# WordPress specific
-wp-config.php
-wp-content/uploads/
-wp-content/cache/
-wp-content/backup-db/
-wp-content/backups/
-wp-content/blogs.dir/
-wp-content/upgrade/
-wp-content/uploads/
-wp-content/mu-plugins/
-wp-content/wp-cache-config.php
-wp-content/plugins/hello.php
-
 # Logs
 *.log
 logs/
@@ -52,9 +39,6 @@ pids
 *.pid
 *.seed
 *.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
 
 # Temporary folders
 tmp/
