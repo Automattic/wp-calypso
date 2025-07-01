@@ -82,7 +82,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			const domainSearch = new DomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com` );
+			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {

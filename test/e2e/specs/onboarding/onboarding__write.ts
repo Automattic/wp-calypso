@@ -7,6 +7,7 @@ import {
 	StartSiteFlow,
 	RestAPIClient,
 	DomainSearchComponent,
+	envVariables,
 	SignupPickPlanPage,
 	NewUserResponse,
 	LoginPage,
@@ -52,7 +53,10 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		it( 'Select a .wordpress.com domain name', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
-			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
+			selectedFreeDomain = await domainSearchComponent.selectDomain(
+				'.wordpress.com',
+				envVariables.VIEWPORT_NAME === 'mobile'
+			);
 		} );
 
 		it( 'Select WordPress.com Free plan', async function () {

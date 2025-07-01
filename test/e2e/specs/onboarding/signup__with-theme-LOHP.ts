@@ -89,7 +89,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			const domainSearch = new DomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com` );
+			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
