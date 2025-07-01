@@ -33,6 +33,10 @@ jest.mock( 'calypso/components/section-nav/item', () => ( { children, path, sele
 	</a>
 ) );
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn(),
+} ) );
+
 describe( 'UserProfileHeader', () => {
 	const defaultUser: UserData = {
 		ID: 123,
@@ -42,6 +46,13 @@ describe( 'UserProfileHeader', () => {
 		profile_URL: 'https://wordpress.com/testuser',
 		bio: undefined,
 	};
+
+	const mockIsEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockIsEnabled.mockReturnValue( false );
+	} );
 
 	test( 'should render the avatar with correct user information', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
@@ -82,6 +93,20 @@ describe( 'UserProfileHeader', () => {
 		const navTexts = navItems.map( ( item ) => item.textContent );
 		expect( navTexts ).toContain( 'Posts' );
 		expect( navTexts ).toContain( 'Lists' );
+		// Should NOT have Recommended Blogs
+		expect( navTexts ).not.toContain( 'Recommended Blogs' );
+	} );
+
+	test( 'should render navigation tabs with Recommended Blogs when enabled', () => {
+		mockIsEnabled.mockReturnValue( true );
+		render( <UserProfileHeader user={ defaultUser } view="recommended-blogs" /> );
+
+		const navItems = screen.getAllByTestId( 'nav-item' );
+		expect( navItems.length ).toBe( 3 ); // Posts, Lists, Recommended Blogs
+		const navTexts = navItems.map( ( item ) => item.textContent );
+		expect( navTexts ).toContain( 'Posts' );
+		expect( navTexts ).toContain( 'Lists' );
+		expect( navTexts ).toContain( 'Recommended Blogs' );
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {
