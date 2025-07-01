@@ -528,15 +528,20 @@ export const StagingSiteCard = ( {
 	}, [ dispatch, isJetpack, siteId ] );
 
 	// Determine if we should show the new creation card without wrapper/banner
-	const isRevertingStaging =
-		StagingSiteStatus.REVERTING === stagingSiteStatus ||
-		StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
-		isReverting;
+	// TEMPORARY: Commented out for testing
+	// const isRevertingStaging =
+	//	StagingSiteStatus.REVERTING === stagingSiteStatus ||
+	//	StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
+	//	isReverting;
 
-	const isShowingNewCreationCard =
-		( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) &&
-		config.isEnabled( 'hosting/staging-sites-redesign' ) &&
-		! isRevertingStaging;
+	// TEMPORARY: Force showing the new creation card for testing styling
+	const isShowingNewCreationCard = true;
+
+	// Original logic (commented out for testing):
+	// const isShowingNewCreationCard =
+	//	( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) &&
+	//	config.isEnabled( 'hosting/staging-sites-redesign' ) &&
+	//	! isRevertingStaging;
 
 	if ( isShowingNewCreationCard ) {
 		return stagingSiteCardContent;
