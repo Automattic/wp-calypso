@@ -47,15 +47,20 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 	return (
 		<motion.div
 			ref={ fullCartRef }
-			initial={ { x: '100%' } }
-			animate={ { x: isFullCartOpen ? 0 : '100%' } }
+			initial={ { x: '100%', display: 'none' } }
+			animate={ { x: isFullCartOpen ? 0 : '100%', display: isFullCartOpen ? 'block' : 'none' } }
 			transition={ { type: 'tween', duration: 0.25 } }
 			className="domains-full-cart"
 		>
-			<Card isRounded={ false } isElevated style={ { height: '100%' } }>
+			<Card isRounded={ false } elevation={ 2 } style={ { height: '100%' } }>
 				<CardHeader isBorderless>
 					<Heading level={ 2 }>{ __( 'Cart' ) }</Heading>
-					<Button variant="tertiary" icon={ close } onClick={ closeFullCart } />
+					<Button
+						label={ __( 'Close' ) }
+						variant="tertiary"
+						icon={ close }
+						onClick={ closeFullCart }
+					/>
 				</CardHeader>
 				<CardBody>{ children ?? <DomainsFullCartItems /> }</CardBody>
 				<CardFooter>
