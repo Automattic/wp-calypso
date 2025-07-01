@@ -5,6 +5,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { useState } from 'react';
+import { DomainSearch } from '.';
 import type { Meta } from '@storybook/react';
 
 export const Default = () => {
@@ -13,7 +14,7 @@ export const Default = () => {
 	return initialQuery ? (
 		<DomainSearchResults initialQuery={ initialQuery } />
 	) : (
-		<DomainSearch onSearch={ ( query ) => setInitialQuery( query ) } />
+		<DomainSearchEmptyState onSearch={ ( query ) => setInitialQuery( query ) } />
 	);
 };
 
@@ -24,7 +25,7 @@ const meta: Meta< typeof Default > = {
 
 export default meta;
 
-function DomainSearch( { onSearch }: { onSearch( query: string ): void } ) {
+function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void } ) {
 	const [ query, setQuery ] = useState( '' );
 
 	return (
@@ -57,7 +58,11 @@ function DomainSearch( { onSearch }: { onSearch( query: string ): void } ) {
 
 function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 	return (
-		<>
+		<DomainSearch
+			onContinue={ () => {
+				alert( 'go to checkout' );
+			} }
+		>
 			<Step.CenteredColumnLayout
 				columnWidth={ 8 }
 				heading={
@@ -84,6 +89,6 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 			>
 				{ initialQuery }
 			</Step.CenteredColumnLayout>
-		</>
+		</DomainSearch>
 	);
 }
