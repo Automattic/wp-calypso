@@ -20,7 +20,7 @@ const getBlogData = ( blog ) => {
 	return { image, name, feedUrl, siteId };
 };
 
-function RecommendedBlogItem( { blog, classPrefix } ) {
+function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
 	const { image, name, feedUrl, siteId } = getBlogData( blog );
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
@@ -36,16 +36,21 @@ function RecommendedBlogItem( { blog, classPrefix } ) {
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
 			<ReaderAvatar
-				isCompact
+				isCompact={ compact }
 				siteIcon={ siteIcon }
 				className={ `${ classPrefix }__recommended-blog-site-icon` }
 			/>
-			<p className={ `${ classPrefix }__recommended-blog-site-name` }>{ name || feedUrl }</p>
+			<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>{ name || feedUrl }</h6>
+			{ ! compact && site.description && (
+				<p className={ `${ classPrefix }__recommended-blog-site-description` }>
+					{ site.description }
+				</p>
+			) }
 			<ReaderFollowButton
 				className={ `${ classPrefix }__recommended-blog-subscribe-button` }
 				siteUrl={ feedUrl }
 				followSource={ `${ classPrefix }__recommended-blog-item` }
-				isButtonOnly
+				isButtonOnly={ compact }
 			/>
 		</li>
 	);
