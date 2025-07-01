@@ -11,6 +11,7 @@ import {
 } from 'calypso/state/reader/lists/actions';
 import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import { useRecommendedSite } from '../use-recommended-site';
+import type { AppState } from 'calypso/types';
 
 // Mock dependencies
 jest.mock( 'react-redux' );
@@ -49,7 +50,7 @@ describe( 'useRecommendedSite', () => {
 		// Mock useSelector to call the actual selector functions
 		mockUseSelector.mockImplementation( ( selector ) => {
 			// Call the selector with a mock state - the selector will use our mocked functions
-			return selector( {} as any );
+			return selector( {} as AppState );
 		} );
 	} );
 
@@ -83,7 +84,7 @@ describe( 'useRecommendedSite', () => {
 		} );
 
 		it( 'should return false for canToggle when no list', () => {
-			mockGetListByOwnerAndSlug.mockReturnValue( null );
+			mockGetListByOwnerAndSlug.mockReturnValue( undefined );
 
 			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
@@ -162,7 +163,7 @@ describe( 'useRecommendedSite', () => {
 		} );
 
 		it( 'should handle missing list gracefully', () => {
-			mockGetListByOwnerAndSlug.mockReturnValue( null );
+			mockGetListByOwnerAndSlug.mockReturnValue( undefined );
 
 			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
