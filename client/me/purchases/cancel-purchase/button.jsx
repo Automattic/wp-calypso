@@ -308,7 +308,10 @@ class CancelPurchaseButton extends Component {
 
 			// Show success notice after survey completion using the API response message
 			if ( this.state.cancellationMessage ) {
-				this.props.successNotice( this.state.cancellationMessage, { displayOnNextPage: true } );
+				this.props.successNotice( this.state.cancellationMessage, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
 			}
 		}
 
