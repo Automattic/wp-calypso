@@ -25,6 +25,7 @@ interface SyncModalProps {
 	siteSlug: string;
 	productionSiteId: number;
 	stagingSiteId: number;
+	querySiteId: number;
 	rewindId: number;
 }
 
@@ -79,6 +80,7 @@ export default function SyncModal( {
 	siteSlug,
 	productionSiteId,
 	stagingSiteId,
+	querySiteId,
 	rewindId,
 }: SyncModalProps ) {
 	const copy = getCopy( syncType );
@@ -89,7 +91,7 @@ export default function SyncModal( {
 	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
 	//const { siteSlug } = siteRoute.useParams();
 	const browserCheckList = useSelector( ( state ) =>
-		getBackupBrowserCheckList( state, stagingSiteId )
+		getBackupBrowserCheckList( state, querySiteId )
 	);
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
@@ -108,7 +110,10 @@ export default function SyncModal( {
 	} );
 
 	const handleConfirm = () => {
-		if ( syncType === 'pull' ) {
+		if (
+			( syncType === 'pull' && environment === 'production' ) ||
+			( syncType === 'push' && environment === 'staging' )
+		) {
 			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 			pullFromStaging( { types: 'paths', include_paths } );
 		}
@@ -129,9 +134,13 @@ export default function SyncModal( {
 							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
 						} ) }
 					</Text>
-					<div className="staging-site-card">
-						<FileBrowser rewindId={ rewindId } />
-					</div>
+					{ querySiteId === stagingSiteId ? (
+						<div className="staging-site-card">
+							<FileBrowser rewindId={ rewindId } />
+						</div>
+					) : (
+						'Only implemented for staging sites'
+					) }
 				</VStack>
 				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 					<Button variant="tertiary" onClick={ onClose }>

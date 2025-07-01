@@ -133,7 +133,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 	// A simple toggle.  Mixed will go to unchecked.
 	const onCheckboxChange = () => {
-		// console.log( 'onCheckboxChange', browserNodeItem );
 		updateNodeCheckState(
 			siteId,
 			path,

@@ -3,6 +3,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import QueryRewindState from '../../../components/data/query-rewind-state';
+import { useFirstMatchingBackupAttempt } from '../../../my-sites/backup/hooks';
 import SyncModal from '../staging-site-sync-modal';
 
 interface SyncDropdownProps {
@@ -10,8 +11,7 @@ interface SyncDropdownProps {
 	environment: 'production' | 'staging';
 	siteSlug: string;
 	productionSiteId: number;
-	stagingSiteId?: number;
-	rewindId: number;
+	stagingSiteId: number;
 }
 
 export default function SyncDropdown( {
@@ -20,7 +20,6 @@ export default function SyncDropdown( {
 	siteSlug,
 	productionSiteId,
 	stagingSiteId,
-	rewindId,
 }: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
@@ -29,6 +28,18 @@ export default function SyncDropdown( {
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
 	const pushLabel =
 		environment === 'staging' ? __( 'Push to Production' ) : __( 'Push to Staging' );
+
+	const querySiteId =
+		( environment === 'staging' && syncType === 'push' ) ||
+		( environment === 'production' && syncType === 'pull' )
+			? stagingSiteId
+			: productionSiteId;
+
+	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
+		sortOrder: 'desc',
+		successOnly: true,
+	} );
+	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const handleOpenModal = ( type: 'pull' | 'push' ) => {
 		setSyncType( type );
@@ -82,9 +93,9 @@ export default function SyncDropdown( {
 					</div>
 				) }
 			/>
-			{ isModalOpen && stagingSiteId && (
+			{ isModalOpen && querySiteId > 0 && (
 				<>
-					<QueryRewindState siteId={ stagingSiteId } />
+					<QueryRewindState siteId={ querySiteId } />
 					<SyncModal
 						onClose={ handleCloseModal }
 						syncType={ syncType }
@@ -92,6 +103,7 @@ export default function SyncDropdown( {
 						siteSlug={ siteSlug }
 						productionSiteId={ productionSiteId }
 						stagingSiteId={ stagingSiteId }
+						querySiteId={ querySiteId }
 						rewindId={ rewindId }
 					/>
 				</>
