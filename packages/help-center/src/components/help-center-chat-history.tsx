@@ -8,9 +8,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useChatStatus, useGetHistoryChats } from '../hooks';
+import { useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { EmailFallbackNotice } from './notices';
 import { getLastMessage } from './utils';
 import type {
 	Conversations,
@@ -141,16 +140,11 @@ const Conversations = ( {
 
 export const HelpCenterChatHistory = () => {
 	const { supportInteractions, isLoadingInteractions, recentConversations } = useGetHistoryChats();
-	const { forceEmailSupport } = useChatStatus();
-
 	return (
-		<>
-			{ forceEmailSupport && <EmailFallbackNotice /> }
-			<Conversations
-				conversations={ recentConversations }
-				supportInteractions={ supportInteractions }
-				isLoadingInteractions={ isLoadingInteractions }
-			/>
-		</>
+		<Conversations
+			conversations={ recentConversations }
+			supportInteractions={ supportInteractions }
+			isLoadingInteractions={ isLoadingInteractions }
+		/>
 	);
 };
