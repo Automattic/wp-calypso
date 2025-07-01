@@ -23,7 +23,7 @@ function RecommendedBlogs( { userLogin } ) {
 		}
 	}, [ userLogin, recommendedBlogs, dispatch ] );
 
-	const recommendedBlogsLink = `/reader/list/${ userLogin }/recommended-blogs`;
+	const recommendedBlogsLink = `/reader/users/${ userLogin }/recommended-blogs`;
 
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
