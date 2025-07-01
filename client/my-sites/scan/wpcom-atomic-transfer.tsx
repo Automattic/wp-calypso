@@ -5,7 +5,7 @@ import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
 
 export function wpcomJetpackScanAtomicTransfer() {
 	const content = {
-		documentHeadTitle: 'Activate Jetpack Scan now',
+		documentHeadTitle: String( translate( 'Activate Jetpack Scan now' ) ),
 		header: String( translate( 'Jetpack Scan' ) ),
 		primaryPromo: {
 			title: translate( 'We guard your site. You run your business.' ),

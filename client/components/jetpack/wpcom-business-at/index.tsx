@@ -67,7 +67,7 @@ export interface AtomicContentSwitch {
 }
 
 const vaultpressContent: AtomicContentSwitch = {
-	documentHeadTitle: 'Activate Jetpack VaultPress Backup now',
+	documentHeadTitle: String( translate( 'Activate Jetpack VaultPress Backup now' ) ),
 	header: String( translate( 'Jetpack VaultPress Backup' ) ),
 	primaryPromo: {
 		title: translate( 'Get time travel for your site with Jetpack VaultPress Backup' ),
