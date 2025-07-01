@@ -119,7 +119,6 @@ const CancelPurchaseDomainOptions = ( {
 	cancelBundledDomain,
 	purchase,
 	onCancelConfirmationStateChange,
-	isLoading = false,
 } ) => {
 	const translate = useTranslate();
 	const [ confirmCancel, setConfirmCancel ] = useState( false );
@@ -220,7 +219,6 @@ const CancelPurchaseDomainOptions = ( {
 						value="keep"
 						checked={ ! cancelBundledDomain }
 						onChange={ onCancelBundledDomainChange }
-						disabled={ isLoading }
 						label={
 							<>
 								{ translate( 'Cancel the plan, but keep "%(domain)s"', {
@@ -255,7 +253,6 @@ const CancelPurchaseDomainOptions = ( {
 						value="cancel"
 						checked={ cancelBundledDomain }
 						onChange={ onCancelBundledDomainChange }
-						disabled={ isLoading }
 						label={
 							<>
 								{ translate( 'Cancel the plan {{strong}}and{{/strong}} the domain "%(domain)s"', {
@@ -306,7 +303,6 @@ const CancelPurchaseDomainOptions = ( {
 						<FormCheckbox
 							checked={ confirmCancel }
 							onChange={ onConfirmCancelBundledDomainChange }
-							disabled={ isLoading }
 						/>
 						<span className="cancel-purchase__domain-confirm">
 							{ translate(
@@ -322,10 +318,6 @@ const CancelPurchaseDomainOptions = ( {
 					</FormLabel>
 				</span>
 			) }
-
-			<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
-				{ translate( 'What happens when you cancel' ) }
-			</h2>
 		</div>
 	);
 };

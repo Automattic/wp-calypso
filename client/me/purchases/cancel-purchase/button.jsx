@@ -14,11 +14,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
 import {
 	getName,
+	getSubscriptionEndDate,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
+	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
 import {
@@ -28,7 +29,7 @@ import {
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
@@ -39,175 +40,143 @@ class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
+		getConfirmCancelDomainUrlFor: PropTypes.func,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
 		activeSubscriptions: PropTypes.array,
-		onCancellationStart: PropTypes.func,
-		onSurveyComplete: PropTypes.func,
-		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
+		getConfirmCancelDomainUrlFor: confirmCancelDomain,
 	};
 
 	state = {
 		disabled: false,
 		showDialog: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
-		cancellationCompleted: false,
-		cancellationMessage: '',
-		isLoading: false,
+	};
+
+	handleCancelPurchaseClick = () => {
+		if ( isDomainRegistration( this.props.purchase ) ) {
+			return this.goToCancelConfirmation();
+		}
+
+		this.setState( {
+			showDialog: true,
+		} );
+	};
+
+	closeDialog = () => {
+		this.setState( {
+			showDialog: false,
+			isShowingMarketplaceSubscriptionsDialog: false,
+		} );
+	};
+
+	goToCancelConfirmation = () => {
+		const { id } = this.props.purchase;
+		const slug = this.props.siteSlug;
+
+		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
+	};
+
+	cancelPurchase = async ( purchase ) => {
+		const { translate } = this.props;
+
+		this.setDisabled( true );
+		let success;
+		try {
+			success = await cancelPurchaseAsync( purchase.id );
+		} catch {
+			success = false;
+		}
+		const purchaseName = getName( purchase );
+		const subscriptionEndDate = getSubscriptionEndDate( purchase );
+
+		this.props.refreshSitePlans( purchase.siteId );
+
+		this.props.clearPurchases();
+
+		if ( success ) {
+			this.props.successNotice(
+				translate(
+					'%(purchaseName)s was successfully cancelled. It will be available ' +
+						'for use until it expires on %(subscriptionEndDate)s.',
+					{
+						args: {
+							purchaseName,
+							subscriptionEndDate,
+						},
+					}
+				),
+				{ displayOnNextPage: true }
+			);
+
+			page( this.props.purchaseListUrl );
+		} else {
+			this.props.errorNotice(
+				translate(
+					'There was a problem canceling %(purchaseName)s. ' +
+						'Please try again later or contact support.',
+					{
+						args: { purchaseName },
+					}
+				)
+			);
+			this.cancellationFailed();
+		}
+	};
+
+	cancellationFailed = () => {
+		this.closeDialog();
+		this.setDisabled( false );
 	};
 
 	setDisabled = ( disabled ) => {
 		this.setState( { disabled } );
 	};
 
-	handleCancelPurchaseClick = async () => {
-		// Handle domain cancellations immediately instead of redirecting to confirmation page
-		if ( isDomainRegistration( this.props.purchase ) ) {
-			this.setState( {
-				isLoading: true,
-			} );
+	handleSubmit = ( error, response ) => {
+		if ( error ) {
+			this.props.errorNotice( error.message );
 
-			if ( this.props.onCancellationStart ) {
-				this.props.onCancellationStart();
-			}
+			this.cancellationFailed();
 
-			try {
-				const result = await this.submitCancelAndRefundPurchase();
-				if ( result.success ) {
-					this.setState( {
-						showDialog: true,
-						cancellationCompleted: true,
-						cancellationMessage: result.message,
-						isLoading: false,
-					} );
-				} else {
-					this.cancellationFailed( result.error );
-				}
-			} catch ( error ) {
-				this.cancellationFailed( error.message );
-			}
 			return;
 		}
 
-		this.setState( {
-			isLoading: true,
-		} );
+		this.props.successNotice( response.message, { displayOnNextPage: true } );
 
-		if ( this.props.onCancellationStart ) {
-			this.props.onCancellationStart();
-		}
+		this.props.refreshSitePlans( this.props.purchase.siteId );
 
-		try {
-			const result = await this.submitCancelAndRefundPurchase();
-			if ( result.success ) {
-				// Handle marketplace subscriptions if any
-				const refundable = hasAmountAvailableToRefund( this.props.purchase );
-				await this.handleMarketplaceSubscriptions( refundable );
+		this.props.clearPurchases();
 
-				this.setState( {
-					showDialog: true,
-					cancellationCompleted: true,
-					cancellationMessage: result.message,
-					isLoading: false,
-				} );
-			} else {
-				this.cancellationFailed( result.error );
-			}
-		} catch ( error ) {
-			this.cancellationFailed( error.message );
-		}
-	};
-
-	closeDialog = () => {
-		const wasCancellationCompleted = this.state.cancellationCompleted;
-
-		this.setState( {
-			showDialog: false,
-			isShowingMarketplaceSubscriptionsDialog: false,
-			cancellationCompleted: false,
-			cancellationMessage: '',
-			isLoading: false,
-		} );
-
-		if ( wasCancellationCompleted ) {
-			// Redirect to purchases page if cancellation was completed
-			page( this.props.purchaseListUrl );
-		}
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
-	};
-
-	cancelPurchase = async ( purchase ) => {
-		const { translate } = this.props;
-
-		try {
-			const success = await cancelPurchaseAsync( purchase.id );
-
-			if ( success ) {
-				const purchaseName = getName( purchase );
-				const subscriptionEndDate = this.props.moment( purchase.expiryDate ).format( 'LL' );
-
-				return {
-					success: true,
-					message: translate(
-						'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.',
-						{
-							args: {
-								purchaseName,
-								subscriptionEndDate,
-							},
-						}
-					),
-				};
-			}
-
-			return {
-				success: false,
-				error: translate(
-					'There was a problem canceling %(purchaseName)s. ' +
-						'Please try again later or contact support.',
-					{
-						args: { purchaseName: getName( purchase ) },
-					}
-				),
-			};
-		} catch ( error ) {
-			return {
-				success: false,
-				error: translate(
-					'There was a problem canceling %(purchaseName)s. ' +
-						'Please try again later or contact support.',
-					{
-						args: { purchaseName: getName( purchase ) },
-					}
-				),
-			};
-		}
+		page.redirect( this.props.purchaseListUrl );
 	};
 
 	cancelAndRefund = async ( purchase ) => {
-		const { cancelBundledDomain, translate } = this.props;
+		const { cancelBundledDomain } = this.props;
+
+		this.setDisabled( true );
 
 		try {
-			await cancelAndRefundPurchaseAsync( purchase.id, {
+			const response = await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: purchase.productId,
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
 			} );
 
-			return {
-				success: true,
-				message: translate( 'Your refund has been processed and your purchase removed.' ),
-			};
+			this.props.refreshSitePlans( purchase.siteId );
+			this.props.clearPurchases();
+			this.props.successNotice( response.message, { displayOnNextPage: true } );
+			page.redirect( this.props.purchaseListUrl );
 		} catch ( error ) {
-			return { success: false, error: error.message };
+			this.props.errorNotice( error.message );
+			this.cancellationFailed();
+		} finally {
+			this.setDisabled( false );
 		}
 	};
 
@@ -232,7 +201,8 @@ class CancelPurchaseButton extends Component {
 				this.setDisabled( false );
 
 				if ( error ) {
-					this.cancellationFailed( error.message );
+					this.props.errorNotice( error.message );
+					this.cancellationFailed();
 					return;
 				}
 
@@ -253,12 +223,12 @@ class CancelPurchaseButton extends Component {
 			const res = await extendPurchaseWithFreeMonth( purchase.id );
 			if ( res.status === 'completed' ) {
 				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
 				this.props.successNotice( res.message, { displayOnNextPage: true } );
 				page.redirect( this.props.purchaseListUrl );
 			}
 		} catch ( err ) {
-			this.cancellationFailed( err.message );
+			this.props.errorNotice( err.message );
+			this.cancellationFailed();
 		} finally {
 			this.setDisabled( false );
 		}
@@ -281,12 +251,15 @@ class CancelPurchaseButton extends Component {
 		const refundable = hasAmountAvailableToRefund( purchase );
 
 		if ( refundable ) {
-			return await this.cancelAndRefund( purchase );
+			this.cancelAndRefund( purchase );
+		} else {
+			this.cancelPurchase( purchase );
 		}
-		return await this.cancelPurchase( purchase );
+		await this.handleMarketplaceSubscriptions( refundable );
 	};
 
 	handleMarketplaceSubscriptions = async ( isPlanRefundable ) => {
+		// If the site has active Marketplace subscriptions, remove these as well
 		if ( this.shouldHandleMarketplaceSubscriptions() ) {
 			return Promise.all(
 				this.props.activeSubscriptions.map( async ( s ) => {
@@ -300,47 +273,30 @@ class CancelPurchaseButton extends Component {
 		}
 	};
 
-	handleSurveyComplete = () => {
-		// For other purchases, only show if cancellation was just completed
-		if ( this.state.cancellationCompleted ) {
-			this.props.refreshSitePlans( this.props.purchase.siteId );
-			this.props.clearPurchases();
-
-			// Show success notice after survey completion using the API response message
-			if ( this.state.cancellationMessage ) {
-				this.props.successNotice( this.state.cancellationMessage, { displayOnNextPage: true } );
-			}
-		}
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
-
-		// Close dialog and redirect after handling the completion
-		this.closeDialog();
-		page( this.props.purchaseListUrl );
-	};
-
-	cancellationFailed = ( errorMessage ) => {
-		this.setState( {
-			showDialog: false,
-			cancellationCompleted: false,
-			cancellationMessage: '',
-			isLoading: false,
-		} );
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
-
-		this.props.errorNotice( errorMessage );
-	};
-
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 
+		const isValidForRefund =
+			isDomainRegistration( purchase ) ||
+			isSubscription( purchase ) ||
+			isOneTimePurchase( purchase );
+
+		const isValidForCancel = isDomainRegistration( purchase ) && isRefundable( purchase );
+
 		const onClick = ( () => {
-			return this.handleCancelPurchaseClick;
+			if ( hasAmountAvailableToRefund( purchase ) && isValidForRefund ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			if ( ! hasAmountAvailableToRefund( purchase ) && isValidForCancel ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			if ( ! hasAmountAvailableToRefund( purchase ) && isSubscription( purchase ) ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			return () => this.cancelPurchase( purchase );
 		} )();
 
 		const text = ( () => {
@@ -367,6 +323,10 @@ class CancelPurchaseButton extends Component {
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
+		const closeDialogAndProceed = () => {
+			this.closeDialog();
+			return onClick();
+		};
 
 		const planName = getName( purchase );
 
@@ -375,8 +335,6 @@ class CancelPurchaseButton extends Component {
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
-					busy={ this.state.isLoading }
-					scary
 					onClick={
 						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
 					}
@@ -391,15 +349,12 @@ class CancelPurchaseButton extends Component {
 						purchase={ purchase }
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
-						onSurveyComplete={ this.handleSurveyComplete }
+						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
 					/>
 				) }
 
@@ -410,26 +365,9 @@ class CancelPurchaseButton extends Component {
 						purchaseListUrl={ purchaseListUrl }
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
-						onSurveyComplete={ this.handleSurveyComplete }
+						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						isAkismet={ isAkismet }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
-					/>
-				) }
-
-				{ isDomainRegistration( purchase ) && (
-					<DomainCancellationSurvey
-						disableButtons={ disableButtons }
-						purchase={ purchase }
-						purchaseListUrl={ purchaseListUrl }
-						isVisible={ this.state.showDialog }
-						onClose={ this.closeDialog }
-						onSurveyComplete={ this.handleSurveyComplete }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
 					/>
 				) }
 
@@ -437,7 +375,7 @@ class CancelPurchaseButton extends Component {
 					<MarketPlaceSubscriptionsDialog
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ this.handleSurveyComplete }
+						removePlan={ closeDialogAndProceed }
 						planName={ planName }
 						activeSubscriptions={ activeSubscriptions }
 						sectionHeadingText={ translate( 'Cancel %(plan)s', {

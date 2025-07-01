@@ -45,6 +45,15 @@ const CancelPurchaseFeatureList = ( { purchase, cancellationFeatures } ) => {
 					);
 				} ) }
 			</ul>
+			<p className="cancel-purchase__features-link">
+				<a href={ '/plans/my-plan/' + purchase.domain }>
+					{ translate( 'View all features', {
+						args: {
+							productName: getName( purchase ),
+						},
+					} ) }
+				</a>
+			</p>
 		</div>
 	);
 };

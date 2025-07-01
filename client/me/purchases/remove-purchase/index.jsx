@@ -279,7 +279,7 @@ class RemovePurchase extends Component {
 				purchase={ purchase }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
-				onSurveyComplete={ this.removePurchase }
+				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 			/>
 		);
@@ -295,7 +295,7 @@ class RemovePurchase extends Component {
 				linkedPurchases={ activeSubscriptions }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
-				onSurveyComplete={ this.removePurchase }
+				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 				skipRemovePlanSurvey={ skipRemovePlanSurvey }
 			/>
@@ -312,7 +312,7 @@ class RemovePurchase extends Component {
 				purchaseListUrl={ purchaseListUrl }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
-				onSurveyComplete={ this.removePurchase }
+				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 			/>
 		);

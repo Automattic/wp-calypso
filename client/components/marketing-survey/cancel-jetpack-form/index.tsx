@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -7,15 +8,21 @@ import * as React from 'react';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
+import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer';
+import JetpackCancellationOfferAccepted from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer-accepted';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import Notice from 'calypso/components/notice';
 import { getName, isExpired } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { isOutsideCalypso } from 'calypso/lib/url';
 import { isJetpackTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
+import getCancellationOffers from 'calypso/state/cancellation-offers/selectors/get-cancellation-offers';
+import isApplyingCancellationOffer from 'calypso/state/cancellation-offers/selectors/is-applying-cancellation-offer';
+import isFetchingCancellationOffers from 'calypso/state/cancellation-offers/selectors/is-fetching-cancellation-offers';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import nextStep from '../cancel-purchase-form/next-step';
 import * as steps from './steps';
@@ -32,13 +39,10 @@ interface Props {
 	purchaseListUrl: string; // The URL of the purchase page to redirect to.
 	isVisible: boolean;
 	onClose: () => void;
-	onSurveyComplete: () => void;
+	onClickFinalConfirm: () => void;
 	flowType: string;
 	translate?: () => void;
 	isAkismet?: boolean;
-	cancellationInProgress?: boolean;
-	cancellationCompleted?: boolean;
-	cancellationMessage?: string;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -56,11 +60,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return steps.CANCEL_CONFIRM_STEP;
 		}
 
-		// If cancellation is already completed, skip benefits step and go directly to survey
-		if ( props.cancellationCompleted ) {
-			return steps.CANCELLATION_REASON_STEP;
-		}
-
 		// In these cases, the subscription is getting removed.
 		// Show the benefits step first.
 		if (
@@ -71,7 +70,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 
 		return steps.CANCELLATION_REASON_STEP;
-	}, [ flowType, purchase, props.cancellationCompleted ] );
+	}, [ flowType ] );
 	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
@@ -80,6 +79,41 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const isAtomicSite = useSelector( ( state ) =>
 		isSiteAutomatedTransfer( state, purchase.siteId )
 	);
+
+	const cancellationOffer = useSelector( ( state ) => {
+		const offers = getCancellationOffers( state, purchase.id );
+		if ( 1 === offers.length ) {
+			return offers[ 0 ];
+		}
+
+		return null;
+	} );
+
+	const fetchingCancellationOffers = useSelector( ( state ) =>
+		isFetchingCancellationOffers( state, purchase.id )
+	);
+
+	const applyingCancellationOffer = useSelector( ( state ) =>
+		isApplyingCancellationOffer( state, purchase.id )
+	);
+
+	const cancellationOfferApplySuccess = useSelector( ( state ) =>
+		getCancellationOfferApplySuccess( state, purchase.id )
+	);
+
+	const isOfferPriceSameOrLowerThanPurchasePrice = useMemo( () => {
+		return cancellationOffer ? purchase.amount >= cancellationOffer.originalPrice : false;
+	}, [ cancellationOffer, purchase.amount ] );
+
+	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
+		if ( cancellationOffer ) {
+			const offerDiscountPercentage = ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100;
+
+			// Round the cancellation offer discount percentage to the nearest whole number
+			return Math.round( offerDiscountPercentage );
+		}
+		return 0;
+	}, [ cancellationOffer, purchase ] );
 
 	/**
 	 * Set the cancellation flow back to the beginning
@@ -114,30 +148,47 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const availableSteps = [];
 
 		// If the plan is already expired or is a temporary Jetpack purchase (license),
-		// we only need one "confirm" step for the survey is the removal confirmation
+		// we only need one "confirm" step for the user to click to confirm.
 		// A product that is not in use does not need to collect the survey or show benefits
 		if ( isExpired( purchase ) || isJetpackTemporarySitePurchase( purchase ) ) {
 			return [ steps.CANCEL_CONFIRM_STEP ];
 		}
 
-		// Don't show benefits step if cancellation is already completed
 		if (
-			! props.cancellationCompleted &&
-			( CANCEL_FLOW_TYPE.REMOVE === flowType || CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType )
+			CANCEL_FLOW_TYPE.REMOVE === flowType ||
+			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
 		) {
 			availableSteps.push( steps.FEATURES_LOST_STEP );
 		}
 
-		// Always include the survey step if cancellation is completed, or if it's a normal cancellation flow
 		if (
-			props.cancellationCompleted ||
+			// A purchase that is currently set to auto-renew ( has not been cancelled yet ).
+			// If a purchase that meets these criteria is being removed, present the survey step.
 			CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
 			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
 		) {
 			availableSteps.push( steps.CANCELLATION_REASON_STEP );
+
+			// During the cancellation decision, potentially show an offer
+			if (
+				shouldProvideCancellationOffer &&
+				cancellationOffer &&
+				isOfferPriceSameOrLowerThanPurchasePrice &&
+				offerDiscountBasedFromPurchasePrice >= 10
+			) {
+				availableSteps.push( steps.CANCELLATION_OFFER_STEP );
+				availableSteps.push( steps.OFFER_ACCEPTED_STEP );
+			}
 		}
 		return availableSteps;
-	}, [ flowType, purchase, props.cancellationCompleted ] );
+	}, [
+		flowType,
+		purchase,
+		cancellationOffer,
+		shouldProvideCancellationOffer,
+		isOfferPriceSameOrLowerThanPurchasePrice,
+		offerDiscountBasedFromPurchasePrice,
+	] );
 
 	const { firstStep, lastStep } = useMemo( () => {
 		return {
@@ -163,7 +214,16 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		// record tracks event
 		// sends the same event name as the main product cancellation form
 		recordEvent( 'calypso_purchases_cancel_form_close' );
-		resetSurveyState();
+
+		// When an offer has been accepted, redirect back to the purchases page.
+		if (
+			( cancellationOfferApplySuccess || steps.OFFER_ACCEPTED_STEP === cancellationStep ) &&
+			! isOutsideCalypso( props.purchaseListUrl )
+		) {
+			page.redirect( props.purchaseListUrl );
+		} else {
+			resetSurveyState();
+		}
 	};
 
 	const setSurveyStep = useCallback(
@@ -192,7 +252,21 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		setSurveyStep( nextStep );
 	};
 
+	// When an offer is successfully applied, move to the offer accepted step.
+	useEffect( () => {
+		if ( true === cancellationOfferApplySuccess ) {
+			setSurveyStep( () => {
+				return steps.OFFER_ACCEPTED_STEP;
+			} );
+		}
+	}, [ cancellationOfferApplySuccess, setSurveyStep ] );
+
 	const onSubmit = () => {
+		// If applying an offer, don't attempt cancellation.
+		if ( applyingCancellationOffer ) {
+			return;
+		}
+
 		if ( surveyAnswerId ) {
 			const surveyData = {
 				'why-cancel': {
@@ -211,9 +285,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			);
 		}
 
-		if ( props.onSurveyComplete ) {
-			props.onSurveyComplete();
-		}
+		// call back to the parent component to actually cancel the subscription
+		props.onClickFinalConfirm();
 
 		// record tracks event
 		// this uses the same event name as the main product cancellation form
@@ -235,60 +308,80 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		setSurveyAnswerText( answerText );
 	};
 
+	const onGetCancellationOffer = () => {
+		recordEvent( 'calypso_purchases_cancel_get_discount' );
+	};
+
 	/**
 	 * Render the dialog buttons for the current step
 	 */
 	const renderStepButtons = () => {
-		const { disableButtons, cancellationCompleted, cancellationInProgress } = props;
+		const { disableButtons } = props;
 		const disabled = disableButtons;
-
-		// Determine button text based on cancellation state and flow type
-		const getButtonText = () => {
-			if ( cancellationCompleted ) {
-				return translate( 'Submit' );
-			}
-			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
-				return translate( 'Remove subscription' );
-			}
-			return translate( 'Cancel subscription' );
-		};
-
+		const loadingOffers = shouldProvideCancellationOffer && fetchingCancellationOffers;
+		const applyingOffer = shouldProvideCancellationOffer && applyingCancellationOffer;
 		const close = {
 			action: 'close',
-			disabled: disabled,
-			isPrimary: cancellationCompleted ? false : lastStep !== cancellationStep,
-			label: translate( 'Close' ),
+			disabled: disabled || applyingOffer,
+			isPrimary:
+				lastStep !== cancellationStep && steps.CANCELLATION_OFFER_STEP !== cancellationStep,
+			label: translate( "I'll keep it" ),
 		};
 		const next = {
 			action: 'next',
 			disabled: disabled || disableContinuation,
-			isPrimary: cancellationCompleted,
 			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
-
+		const cancelText =
+			flowType === CANCEL_FLOW_TYPE.REMOVE
+				? translate( 'Remove subscription' )
+				: translate( 'Cancel subscription' );
+		const cancellingText =
+			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
 		const cancel = (
 			<Button
-				disabled={ disabled || disableContinuation }
-				busy={ cancellationInProgress }
+				disabled={ disabled || applyingOffer || disableContinuation }
+				busy={ disabled }
 				onClick={ onSubmit }
 				primary
-				scary={ ! cancellationCompleted }
+				scary
 			>
-				{ getButtonText() }
+				{ disabled ? cancellingText : cancelText }
 			</Button>
 		);
+		const loading = (
+			<Button disabled busy primary>
+				{ translate( 'Loading' ) }
+			</Button>
+		);
+		const backToPurchases = {
+			action: 'close',
+			isPrimary: true,
+			disabled: disabled,
+			label: translate( 'Back to my purchases' ),
+		};
 
 		const firstButtons: ( BaseButton | React.ReactElement )[] = [ close ];
+
+		// Offer accepted screen only provides back to site button.
+		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
+			return [ backToPurchases ];
+		}
 
 		// Cancel confirm step only shows the remove button
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return firstButtons.concat( [ cancel ] );
 		}
 
-		// on the last step
+		// on the last step or the offer step
 		// show the cancel button here
-		if ( lastStep === cancellationStep ) {
+		if ( lastStep === cancellationStep || steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
+			// If loading offers, show a "loading" button in place of the remove button.
+			// The steps may change if an offer is available and this may no longer be the last step.
+			if ( loadingOffers ) {
+				return firstButtons.concat( [ loading ] );
+			}
 			return firstButtons.concat( [ cancel ] );
 		}
 
@@ -302,13 +395,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 */
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
-		const { cancellationMessage } = props;
 
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return (
-				<div className="cancel-jetpack-form__confirm-step">
+				<>
 					<FormattedHeader
-						brandFont
 						headerText={ translate( 'Confirm removal' ) }
 						subHeaderText={
 							/* Translators: productName is the name of a Jetpack product. */
@@ -321,8 +412,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 								}
 							)
 						}
+						align="center"
+						isSecondary
 					/>
-				</div>
+				</>
 			);
 		}
 
@@ -345,26 +438,40 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// follow similar pattern used in the Jetpack disconnection flow
 			// make sure the user has the ability to skip the question
 			return (
-				<>
-					{ cancellationMessage && (
-						<div className="cancel-jetpack-form__notice-container">
-							<Notice
-								status="is-success"
-								className="cancel-jetpack-form__notice"
-								theme="light"
-								showDismiss={ false }
-							>
-								{ cancellationMessage }
-							</Notice>
-						</div>
-					) }
+				<JetpackCancellationSurvey
+					onAnswerChange={ onSurveyAnswerChange }
+					selectedAnswerId={ surveyAnswerId }
+					isAkismet={ !! props?.isAkismet }
+				/>
+			);
+		}
 
-					<JetpackCancellationSurvey
-						onAnswerChange={ onSurveyAnswerChange }
-						selectedAnswerId={ surveyAnswerId }
-						isAkismet={ !! props?.isAkismet }
-					/>
-				</>
+		// Step 3: Offer
+		// This step is only made available after offers are checked for/ loaded.
+		if ( steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
+			// Show an offer, the user can accept it or go ahead with the cancellation.
+			return (
+				<JetpackCancellationOfferStep
+					siteId={ purchase.siteId }
+					purchase={ purchase }
+					offer={ cancellationOffer }
+					percentDiscount={ offerDiscountBasedFromPurchasePrice }
+					onGetDiscount={ onGetCancellationOffer }
+					isAkismet={ !! props?.isAkismet }
+				/>
+			);
+		}
+
+		// Step 4: Offer Accepted
+		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
+			// Show after an offer discount has been accepted
+			return (
+				<JetpackCancellationOfferAccepted
+					siteId={ purchase.siteId }
+					percentDiscount={ offerDiscountBasedFromPurchasePrice }
+					productName={ productName }
+					isAkismet={ !! props?.isAkismet }
+				/>
 			);
 		}
 
