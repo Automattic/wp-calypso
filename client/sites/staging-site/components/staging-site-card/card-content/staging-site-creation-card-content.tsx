@@ -37,11 +37,6 @@ export const StagingSiteCreationCardContent = ( { isOwner }: CardContentProps ) 
 					) ) }
 				</div>
 			</div>
-			<div className="staging-site-creation-card__visual">
-				<div className="staging-site-creation-card__spinner">
-					<Gridicon icon="sync" size={ 24 } />
-				</div>
-			</div>
 		</div>
 	);
 };
