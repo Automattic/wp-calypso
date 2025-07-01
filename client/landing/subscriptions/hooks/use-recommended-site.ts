@@ -117,7 +117,7 @@ export const useRecommendedSite = ( feedId: number ): UseRecommendedSiteResult =
 				setOptimisticRecommendedState( null );
 			}
 		}
-	}, [ isInRecommendedList, optimisticRecommendedState, latestError, lastOperationTimestamp ] );
+	}, [ isInRecommendedList, optimisticRecommendedState, latestError ] );
 
 	// Error recovery: Reset optimistic state if error detected for recent operation
 	useEffect( () => {
