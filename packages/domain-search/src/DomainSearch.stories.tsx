@@ -2,10 +2,16 @@ import { Step } from '@automattic/onboarding';
 import {
 	Button,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useState } from 'react';
-import { DomainSearch } from '.';
+import {
+	DomainSearch,
+	DomainSearchControls,
+	DomainsFullCart,
+	DomainsMiniCart,
+	DomainSuggestions,
+} from '.';
 import type { Meta } from '@storybook/react';
 
 export const Default = () => {
@@ -46,7 +52,7 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 				} }
 			>
 				<HStack alignment="flex-start" spacing={ 4 }>
-					<input onChange={ ( e ) => setQuery( e.target.value ) } value={ query } />
+					<DomainSearchControls.Input onChange={ ( value ) => setQuery( value ) } value={ query } />
 					<Button __next40pxDefaultSize type="submit" variant="primary">
 						Search domains
 					</Button>
@@ -59,6 +65,8 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 	return (
 		<DomainSearch
+			selectedDomains={ [] }
+			initialQuery={ initialQuery }
 			onContinue={ () => {
 				alert( 'go to checkout' );
 			} }
@@ -74,21 +82,21 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 				stickyBottomBar={ () => {
 					return (
 						<Step.StickyBottomBar
-							leftElement={ <Text>3 domains</Text> }
-							rightElement={
-								<HStack spacing={ 2 }>
-									<Button variant="tertiary">View cart</Button>
-									<Button onClick={ () => {} } variant="primary">
-										Continue
-									</Button>
-								</HStack>
-							}
+							leftElement={ <DomainsMiniCart.Summary /> }
+							rightElement={ <DomainsMiniCart.Actions /> }
 						/>
 					);
 				} }
 			>
-				{ initialQuery }
+				<VStack spacing={ 8 }>
+					<DomainSearchControls />
+					<HStack spacing={ 4 }>
+						<DomainSuggestions.Recommendations />
+					</HStack>
+					<DomainSuggestions.List />
+				</VStack>
 			</Step.CenteredColumnLayout>
+			<DomainsFullCart />
 		</DomainSearch>
 	);
 }
