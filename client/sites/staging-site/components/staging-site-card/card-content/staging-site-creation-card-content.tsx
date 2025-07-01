@@ -1,8 +1,6 @@
 import { Gridicon } from '@automattic/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import './staging-site-creation-card-content.scss';
 
 type CardContentProps = {
@@ -32,9 +30,6 @@ export const StagingSiteCreationCardContent = ( { isOwner }: CardContentProps ) 
 					{ [
 						__( 'Test changes safely before going live.' ),
 						__( 'Synchronized with your production site.' ),
-						createInterpolateElement( __( 'Need help? <a>Contact our support team</a>.' ), {
-							a: <InlineSupportLink supportContext="staging-site" showIcon={ false } />,
-						} ),
 					].map( ( text, index ) => (
 						<div key={ index } className="staging-site-creation-card__feature">
 							<Gridicon icon="checkmark" size={ 18 } />
