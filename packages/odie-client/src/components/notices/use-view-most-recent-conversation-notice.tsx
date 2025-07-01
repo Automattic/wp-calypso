@@ -7,6 +7,8 @@ import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 
+const OPEN_CONVERSATION_NOTICE_ID = 'view-most-recent-conversation-notice';
+
 export default function useViewMostRecentOpenConversationNotice( isEnabled: boolean ) {
 	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
 		useGetMostRecentOpenConversation();
@@ -35,6 +37,8 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 			destination: supportInteraction ? 'support-interaction' : 'chat-history',
 			total_number_of_conversations: totalNumberOfConversations,
 		} );
+
+		setNotice( OPEN_CONVERSATION_NOTICE_ID, null );
 	}, [
 		supportInteraction,
 		setCurrentSupportInteraction,
@@ -42,12 +46,13 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 		navigate,
 		trackEvent,
 		totalNumberOfConversations,
+		setNotice,
 	] );
 
 	useEffect( () => {
 		if ( isEnabled && shouldDisplayNotice ) {
 			setNotice(
-				'view-most-recent-conversation-notice',
+				OPEN_CONVERSATION_NOTICE_ID,
 				<div className="odie-notice__view-conversation">
 					<span>
 						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
