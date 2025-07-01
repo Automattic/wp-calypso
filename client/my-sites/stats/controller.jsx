@@ -527,8 +527,8 @@ export const statsMoved = ( context, next ) => {
 	const userId = getCurrentUserId( state );
 
 	// Enforce the new location to 10% of users.
-	//if ( userId % 10 === 0 ) {
-	context.primary = <StatsMoved />;
-	//}
+	if ( userId % 10 === 0 ) {
+		context.primary = <StatsMoved />;
+	}
 	next();
 };
