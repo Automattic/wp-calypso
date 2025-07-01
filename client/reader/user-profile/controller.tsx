@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
 
-interface UserPostsContext extends Context {
+interface UserProfileContext extends Context {
 	params: {
 		user_login?: string;
 		user_id?: string;
@@ -15,7 +15,7 @@ interface UserPostsContext extends Context {
 const analyticsPageTitle = 'Reader';
 
 export function userProfile( ctx: Context, next: () => void ): void {
-	const context = ctx as UserPostsContext;
+	const context = ctx as UserProfileContext;
 	const view = context.params.view || 'posts';
 	const userLogin = context.params.user_login;
 	const userId = context.params.user_id;

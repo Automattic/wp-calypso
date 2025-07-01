@@ -52,7 +52,7 @@ function RecommendedBlogs( { userLogin } ) {
 				{ shuffle( recommendedBlogs )
 					.slice( 0, 3 )
 					.map( ( blog ) => (
-						<RecommendedBlogItem key={ blog.ID } blog={ blog } />
+						<RecommendedBlogItem key={ blog.ID } blog={ blog } classPrefix="gravatar-hovercard" />
 					) ) }
 			</ul>
 		</div>

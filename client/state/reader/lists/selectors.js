@@ -154,6 +154,7 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
  * Check for the listOwners recommended blogs list
  * @param  {Object}  state  Global state tree
  * @param  {string}  listOwner User login of list owner
+ * @returns {Array} Recommended blogs
  */
 export function getUserRecommendedBlogs( state, listOwner ) {
 	return state.reader.lists.userRecommendedBlogs[ listOwner ];

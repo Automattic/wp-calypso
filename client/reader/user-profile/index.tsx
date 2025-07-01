@@ -8,6 +8,7 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
+import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import './style.scss';
@@ -79,6 +80,8 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 				return <UserPosts user={ user } />;
 			case 'lists':
 				return <UserLists user={ user } />;
+			case 'recommended-blogs':
+				return <UserRecommendedBlogs user={ user } />;
 			default:
 				return null;
 		}
