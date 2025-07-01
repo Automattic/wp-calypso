@@ -77,13 +77,17 @@
 		position: relative;
 
 		.user-profile__recommended-blog-site-icon .site-icon {
-			width: 56px;
-			height: 56px;
 			border-radius: 50%;
-			object-fit: cover;
 			margin-right: 20px;
 			flex-shrink: 0;
 			border: 1px solid var(--color-border-subtle);
+
+			img {
+				object-fit: cover;
+				/* !rtl:ignore */
+				object-position: left center;
+				height: 100%;
+			}
 		}
 
 		.user-profile__recommended-blog-site-info {
