@@ -4,7 +4,10 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
-import { READER_LIST_ITEM_DELETE_FEED } from 'calypso/state/reader/action-types';
+import {
+	READER_LIST_ITEM_DELETE_FEED,
+	READER_LIST_ITEM_DELETE_FEED_ERROR,
+} from 'calypso/state/reader/action-types';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 	[ READER_LIST_ITEM_DELETE_FEED ]: [
@@ -30,7 +33,16 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 			onError: ( action ) => {
 				// Support custom error messages
 				const errorMessage = action.errorMessage || translate( 'Unable to remove feed from list.' );
-				return errorNotice( errorMessage );
+				return [
+					errorNotice( errorMessage ),
+					{
+						type: READER_LIST_ITEM_DELETE_FEED_ERROR,
+						listId: action.listId,
+						feedId: action.feedId,
+						listOwner: action.listOwner,
+						listSlug: action.listSlug,
+					},
+				];
 			},
 		} ),
 	],

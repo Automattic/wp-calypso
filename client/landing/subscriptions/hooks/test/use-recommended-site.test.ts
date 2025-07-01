@@ -9,7 +9,11 @@ import {
 	addRecommendedBlogsSite,
 	removeRecommendedBlogsSite,
 } from 'calypso/state/reader/lists/actions';
-import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
+import {
+	getListByOwnerAndSlug,
+	getMatchingItem,
+	getLatestListItemError,
+} from 'calypso/state/reader/lists/selectors';
 import { useRecommendedSite } from '../use-recommended-site';
 
 // Mock dependencies
@@ -26,6 +30,9 @@ const mockGetListByOwnerAndSlug = getListByOwnerAndSlug as jest.MockedFunction<
 	typeof getListByOwnerAndSlug
 >;
 const mockGetMatchingItem = getMatchingItem as jest.MockedFunction< typeof getMatchingItem >;
+const mockGetLatestListItemError = getLatestListItemError as jest.MockedFunction<
+	typeof getLatestListItemError
+>;
 const mockAddRecommendedBlogsSite = addRecommendedBlogsSite as jest.MockedFunction<
 	typeof addRecommendedBlogsSite
 >;
@@ -50,6 +57,7 @@ describe( 'useRecommendedSite', () => {
 			slug: 'recommended-blogs',
 		} );
 		mockGetMatchingItem.mockReturnValue( false );
+		mockGetLatestListItemError.mockReturnValue( null );
 	} );
 
 	describe( 'Initial state', () => {
@@ -291,6 +299,75 @@ describe( 'useRecommendedSite', () => {
 
 			// Reset mockDispatch back to normal behavior for subsequent tests
 			mockDispatch.mockReset();
+		} );
+	} );
+
+	describe( 'Error recovery', () => {
+		beforeEach( () => {
+			// Mock the current time for consistent timestamp testing
+			jest.spyOn( Date, 'now' ).mockReturnValue( 1000 );
+		} );
+
+		afterEach( () => {
+			// Restore Date.now
+			jest.restoreAllMocks();
+		} );
+
+		it( 'should handle error recovery when latest error is available', () => {
+			// Setup mocks for normal operation
+			mockUseSelector
+				.mockReturnValueOnce( 'testuser' ) // getCurrentUserName
+				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
+				.mockReturnValueOnce( false ) // isInRecommendedList - initially not recommended
+				.mockReturnValueOnce( null ); // latestError - no error initially
+
+			// Mock an error for error recovery
+			const mockError = {
+				type: 'READER_LIST_ITEM_ADD_FEED_ERROR',
+				listId: 999,
+				contentId: feedId,
+				contentType: 'feed',
+				timestamp: 1000,
+				listOwner: 'testuser',
+				listSlug: 'recommended-blogs',
+			};
+
+			mockGetLatestListItemError.mockReturnValue( mockError );
+
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+
+			// Verify hook doesn't crash with error present and handles it gracefully
+			expect( result.current.isRecommended ).toBe( false );
+			expect( result.current.canToggle ).toBe( true );
+			expect( typeof result.current.toggleRecommended ).toBe( 'function' );
+		} );
+
+		it( 'should not crash when error recovery runs without recent operation', () => {
+			// Setup mocks for normal operation
+			mockUseSelector
+				.mockReturnValueOnce( 'testuser' ) // getCurrentUserName
+				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
+				.mockReturnValueOnce( false ) // isInRecommendedList
+				.mockReturnValueOnce( null ); // latestError
+
+			// Mock an old error that shouldn't trigger recovery
+			const oldError = {
+				type: 'READER_LIST_ITEM_ADD_FEED_ERROR',
+				listId: 999,
+				contentId: feedId,
+				contentType: 'feed',
+				timestamp: 500, // Old timestamp
+				listOwner: 'testuser',
+				listSlug: 'recommended-blogs',
+			};
+
+			mockGetLatestListItemError.mockReturnValue( oldError );
+
+			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+
+			// Should work normally without crashing
+			expect( result.current.isRecommended ).toBe( false );
+			expect( result.current.canToggle ).toBe( true );
 		} );
 	} );
 
