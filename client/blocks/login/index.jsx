@@ -581,25 +581,17 @@ class Login extends Component {
 			isWCCOM,
 			isFromAutomatticForAgenciesPlugin,
 			action,
-			currentQuery,
 			fromSite,
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
 			isSignupExistingAccount,
-			isSocialFirst,
 			isWhiteLogin,
-			isBlazePro,
 			linkingSocialService,
 			socialConnect,
-			translate,
 			twoStepNonce,
-			wccomFrom,
-			isWooJPC,
 			twoFactorAuthType,
 			twoFactorEnabled,
-			initialQuery,
-			partnerSlug,
 		} = this.props;
 
 		return (
@@ -617,31 +609,14 @@ class Login extends Component {
 				{ isGravPoweredClient && (
 					<GravPoweredLoginBlockHeader
 						action={ action }
-						currentQuery={ currentQuery }
 						fromSite={ fromSite }
-						isFromAkismet={ isFromAkismet }
-						isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-						isGravPoweredClient={ isGravPoweredClient }
 						isGravPoweredLoginPage={ isGravPoweredLoginPage }
-						isJetpack={ isJetpack }
 						isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
-						isSocialFirst={ isSocialFirst }
-						isWhiteLogin={ isWhiteLogin }
-						isWCCOM={ isWCCOM }
-						isBlazePro={ isBlazePro }
 						linkingSocialService={ linkingSocialService }
-						oauth2Client={ oauth2Client }
 						socialConnect={ socialConnect }
-						translate={ translate }
 						twoStepNonce={ twoStepNonce }
-						wccomFrom={ wccomFrom }
-						isWooJPC={ isWooJPC }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorEnabled={ twoFactorEnabled }
-						initialQuery={ initialQuery }
-						partnerSlug={ partnerSlug }
-						getSignupLinkComponent={ this.getSignupLinkComponent }
-						showContinueAsUser={ this.showContinueAsUser() }
 					/>
 				) }
 

@@ -358,7 +358,7 @@ export class Login extends Component {
 			</Main>
 		);
 
-		const headerText = getHeaderText(
+		const headerText = getHeaderText( {
 			isSocialFirst,
 			twoFactorAuthType,
 			isManualRenewalImmediateLoginAttempt,
@@ -374,8 +374,8 @@ export class Login extends Component {
 			isGravPoweredClient,
 			twoFactorEnabled,
 			currentQuery,
-			translate
-		);
+			translate,
+		} );
 
 		const shouldUseWideHeading =
 			'lostpassword' !== action &&

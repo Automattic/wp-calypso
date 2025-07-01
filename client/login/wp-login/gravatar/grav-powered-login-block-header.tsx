@@ -1,23 +1,19 @@
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import VisitSite from 'calypso/blocks/visit-site';
 import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 interface Props {
 	action: string;
 	currentQuery: Record< string, string >;
 	fromSite: string | null;
 	isGravPoweredLoginPage: boolean;
-	isJetpack: boolean;
 	isManualRenewalImmediateLoginAttempt: boolean;
-	isWCCOM: boolean;
 	linkingSocialService: string;
-	oauth2Client: {
-		title: string;
-		icon: string;
-		name: string;
-	} | null;
 	socialConnect: boolean;
 	twoStepNonce: string | null;
 	twoFactorAuthType: string;
@@ -26,40 +22,32 @@ interface Props {
 
 const GravPoweredLoginBlockHeader = ( {
 	action,
-	currentQuery,
 	fromSite,
 	isGravPoweredLoginPage,
-	isJetpack,
 	isManualRenewalImmediateLoginAttempt,
-	isWCCOM,
 	linkingSocialService,
-	oauth2Client,
 	socialConnect,
 	twoStepNonce,
 	twoFactorAuthType,
 	twoFactorEnabled,
 }: Props ) => {
 	const translate = useTranslate();
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const currentQuery = useSelector( getCurrentQueryArguments );
 
-	const headerText = getHeaderText(
-		false, // isSocialFirst
+	const headerText = getHeaderText( {
 		twoFactorAuthType,
 		isManualRenewalImmediateLoginAttempt,
 		socialConnect,
 		linkingSocialService,
 		action,
 		oauth2Client,
-		false, // isWooJPC
-		isJetpack,
-		isWCCOM,
-		false, // isFromAkismet
-		false, // isFromAutomatticForAgenciesPlugin
-		true, // isGravPoweredClient is always true
 		twoFactorEnabled,
 		currentQuery,
 		translate,
-		twoStepNonce
-	);
+		twoStepNonce,
+		isGravPoweredClient: true,
+	} );
 
 	let postHeader = null;
 

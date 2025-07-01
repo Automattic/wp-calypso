@@ -7,26 +7,52 @@ import {
 	isPartnerPortalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
-export function getHeaderText(
-	isSocialFirst: boolean,
-	twoFactorAuthType: string | null,
-	isManualRenewalImmediateLoginAttempt: boolean,
-	socialConnect: boolean,
-	linkingSocialService: string,
-	action: string,
-	oauth2Client: { title: string; icon: string; name: string } | null,
-	isWooJPC: boolean,
-	isJetpack: boolean,
-	isWCCOM: boolean,
-	isFromAkismet: boolean,
-	isFromAutomatticForAgenciesPlugin: boolean,
-	isGravPoweredClient: boolean,
-	twoFactorEnabled: boolean,
-	currentQuery: Record< string, string >,
-	translate: ( arg0: string, arg1?: object ) => TranslateResult,
-	twoStepNonce: string | null = null
-): TranslateResult {
+interface Props {
+	twoFactorAuthType: string | null;
+	isManualRenewalImmediateLoginAttempt: boolean;
+	socialConnect: boolean;
+	linkingSocialService: string;
+	action: string;
+	oauth2Client: ReturnType< typeof getOAuth2Client >;
+	twoFactorEnabled: boolean;
+	currentQuery: ReturnType< typeof getCurrentQueryArguments >;
+	translate: ( arg0: string, arg1?: object ) => TranslateResult;
+	isJetpack?: boolean;
+	twoStepNonce?: string | null;
+	isSocialFirst?: boolean;
+	isWooJPC?: boolean;
+	isWCCOM?: boolean;
+	isFromAkismet?: boolean;
+	isFromAutomatticForAgenciesPlugin?: boolean;
+	isGravPoweredClient?: boolean;
+}
+
+/**
+ * This function is used to get the header text for the login page.
+ * TODO: We'll convert this to hook form in the future.
+ */
+export function getHeaderText( {
+	isSocialFirst,
+	twoFactorAuthType,
+	isManualRenewalImmediateLoginAttempt,
+	socialConnect,
+	linkingSocialService,
+	action,
+	oauth2Client,
+	isWooJPC,
+	isJetpack,
+	isWCCOM,
+	isFromAkismet,
+	isFromAutomatticForAgenciesPlugin,
+	isGravPoweredClient,
+	twoFactorEnabled,
+	currentQuery,
+	translate,
+	twoStepNonce,
+}: Props ): TranslateResult {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
@@ -87,7 +113,7 @@ export function getHeaderText(
 
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
-	} else if ( currentQuery.lostpassword_flow === 'true' ) {
+	} else if ( currentQuery?.lostpassword_flow === 'true' ) {
 		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
