@@ -15,6 +15,18 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useReferEnterpriseHostingForm from './hooks/use-refer-enterprise-hosting-form';
 
+type FieldProps = {
+	label: string;
+	name: string;
+	error?: string;
+	value?: string;
+	onChange: ( value: string ) => void;
+};
+
+type FieldWithOptionsProps = FieldProps & {
+	options: { label: string; value: string }[];
+};
+
 const CustomFormRadio = ( {
 	id,
 	label,
@@ -46,6 +58,67 @@ const CustomFormRadio = ( {
 				onChange={ onChange }
 			/>
 		</div>
+	);
+};
+
+const TextField = ( { label, name, error, value, onChange }: FieldProps ) => {
+	return (
+		<FormField label={ label } labelFor={ name } error={ error }>
+			<FormTextInput
+				id={ name }
+				name={ name }
+				value={ value }
+				onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onChange( e.target.value ) }
+			/>
+		</FormField>
+	);
+};
+
+const TextAreaField = ( { label, name, error, value, onChange }: FieldProps ) => {
+	return (
+		<FormField label={ label } labelFor={ name } error={ error }>
+			<FormTextarea
+				id={ name }
+				name={ name }
+				value={ value }
+				onChange={ ( e: ChangeEvent< HTMLTextAreaElement > ) => onChange( e.target.value ) }
+			/>
+		</FormField>
+	);
+};
+
+const SelectField = ( { label, name, error, value, onChange, options }: FieldWithOptionsProps ) => {
+	return (
+		<FormField label={ label } labelFor={ name } error={ error }>
+			<FormSelect
+				id={ name }
+				name={ name }
+				value={ value }
+				onChange={ ( e: ChangeEvent< HTMLSelectElement > ) => onChange( e.target.value ) }
+			>
+				{ options.map( ( option ) => (
+					<option key={ option.value } value={ option.value }>
+						{ option.label }
+					</option>
+				) ) }
+			</FormSelect>
+		</FormField>
+	);
+};
+
+const RadioField = ( { label, name, error, value, onChange, options }: FieldWithOptionsProps ) => {
+	return (
+		<FormField label={ label } labelFor={ name } error={ error }>
+			{ options.map( ( option ) => (
+				<CustomFormRadio
+					key={ option.value }
+					id={ option.value }
+					label={ option.label }
+					checked={ value === option.value }
+					onChange={ () => onChange( option.value ) }
+				/>
+			) ) }
+		</FormField>
 	);
 };
 
@@ -136,222 +209,139 @@ export default function ReferEnterpriseHostingForm() {
 			) }
 		>
 			<FormSection title={ translate( 'End user company information' ) }>
-				<FormField
+				<TextField
 					label={ translate( 'Company name' ) }
-					labelFor="companyName"
+					name="companyName"
 					error={ validationError.companyName }
-				>
-					<FormTextInput
-						id="companyName"
-						name="companyName"
-						value={ formData.companyName }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'companyName', e.target.value )
-						}
-					/>
-				</FormField>
+					value={ formData.companyName }
+					onChange={ ( value: string ) => handleInputChange( 'companyName', value ) }
+				/>
 
-				<FormField
+				<TextField
 					label={ translate( 'Company address' ) }
-					labelFor="address"
+					name="address"
 					error={ validationError.address }
-				>
-					<FormTextInput
-						id="address"
-						name="address"
-						value={ formData.address }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'address', e.target.value )
-						}
-					/>
-				</FormField>
+					value={ formData.address }
+					onChange={ ( value: string ) => handleInputChange( 'address', value ) }
+				/>
 
-				<FormField
+				<TextField
 					label={ translate( 'Country code' ) }
-					labelFor="countryCode"
+					name="countryCode"
 					error={ validationError.countryCode }
-				>
-					<FormTextInput
-						id="countryCode"
-						name="countryCode"
-						value={ formData.countryCode }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'countryCode', e.target.value )
-						}
-					/>
-				</FormField>
+					value={ formData.countryCode }
+					onChange={ ( value: string ) => handleInputChange( 'countryCode', value ) }
+				/>
 
-				<FormField label={ translate( 'State/Province Code (optional)' ) } labelFor="state">
-					<FormTextInput
-						id="state"
-						name="state"
-						value={ formData.state }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'state', e.target.value )
-						}
-					/>
-				</FormField>
+				<TextField
+					label={ translate( 'State/Province Code (optional)' ) }
+					name="state"
+					error={ validationError.state }
+					value={ formData.state }
+					onChange={ ( value: string ) => handleInputChange( 'state', value ) }
+				/>
 
-				<FormField label={ translate( 'City' ) } labelFor="city" error={ validationError.city }>
-					<FormTextInput
-						id="city"
-						name="city"
-						value={ formData.city }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'city', e.target.value )
-						}
-					/>
-				</FormField>
+				<TextField
+					label={ translate( 'City' ) }
+					name="city"
+					error={ validationError.city }
+					value={ formData.city }
+					onChange={ ( value: string ) => handleInputChange( 'city', value ) }
+				/>
 
-				<FormField
+				<TextField
 					label={ translate( 'ZIP/Postal code' ) }
-					labelFor="zip"
+					name="zip"
 					error={ validationError.zip }
-				>
-					<FormTextInput
-						id="zip"
-						name="zip"
-						value={ formData.zip }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'zip', e.target.value )
-						}
-					/>
-				</FormField>
+					value={ formData.zip }
+					onChange={ ( value: string ) => handleInputChange( 'zip', value ) }
+				/>
 			</FormSection>
+
 			<FormSection title={ translate( 'End user contact information' ) }>
 				<div className="refer-enterprise-hosting-form__contact-name">
-					<FormField
+					<TextField
 						label={ translate( 'First name' ) }
-						labelFor="firstName"
+						name="firstName"
 						error={ validationError.firstName }
-					>
-						<FormTextInput
-							id="firstName"
-							name="firstName"
-							value={ formData.firstName }
-							onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-								handleInputChange( 'firstName', e.target.value )
-							}
-						/>
-					</FormField>
+						value={ formData.firstName }
+						onChange={ ( value: string ) => handleInputChange( 'firstName', value ) }
+					/>
 
-					<FormField
+					<TextField
 						label={ translate( 'Last name' ) }
-						labelFor="lastName"
+						name="lastName"
 						error={ validationError.lastName }
-					>
-						<FormTextInput
-							id="lastName"
-							name="lastName"
-							value={ formData.lastName }
-							onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-								handleInputChange( 'lastName', e.target.value )
-							}
-						/>
-					</FormField>
+						value={ formData.lastName }
+						onChange={ ( value: string ) => handleInputChange( 'lastName', value ) }
+					/>
 				</div>
 
-				<FormField label={ translate( 'Title' ) } labelFor="title" error={ validationError.title }>
-					<FormTextInput
-						id="title"
-						name="title"
-						value={ formData.title }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'title', e.target.value )
-						}
-					/>
-				</FormField>
+				<TextField
+					label={ translate( 'Title' ) }
+					name="title"
+					error={ validationError.title }
+					value={ formData.title }
+					onChange={ ( value: string ) => handleInputChange( 'title', value ) }
+				/>
 
-				<FormField label={ translate( 'Phone (optional)' ) } labelFor="phone">
-					<FormTextInput
-						id="phone"
-						name="phone"
-						value={ formData.phone }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'phone', e.target.value )
-						}
-					/>
-				</FormField>
+				<TextField
+					label={ translate( 'Phone (optional)' ) }
+					name="phone"
+					value={ formData.phone }
+					onChange={ ( value: string ) => handleInputChange( 'phone', value ) }
+				/>
 
-				<FormField label={ translate( 'Email' ) } labelFor="email" error={ validationError.email }>
-					<FormTextInput
-						id="email"
-						name="email"
-						value={ formData.email }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'email', e.target.value )
-						}
-					/>
-				</FormField>
+				<TextField
+					label={ translate( 'Email' ) }
+					name="email"
+					error={ validationError.email }
+					value={ formData.email }
+					onChange={ ( value: string ) => handleInputChange( 'email', value ) }
+				/>
 
-				<FormField
+				<TextField
 					label={ translate( 'Website' ) }
-					labelFor="website"
+					name="website"
 					error={ validationError.website }
-				>
-					<FormTextInput
-						id="website"
-						name="website"
-						value={ formData.website }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							handleInputChange( 'website', e.target.value )
-						}
-					/>
-				</FormField>
+					value={ formData.website }
+					onChange={ ( value: string ) => handleInputChange( 'website', value ) }
+				/>
 			</FormSection>
+
 			<FormSection title={ translate( 'Opportunity information' ) }>
-				<FormField
+				<TextAreaField
 					label={ translate( 'Tell us more about this opportunity' ) }
-					labelFor="opportunityDescription"
+					name="opportunityDescription"
 					error={ validationError.opportunityDescription }
-				>
-					<FormTextarea
-						id="opportunityDescription"
-						name="opportunityDescription"
-						value={ formData.opportunityDescription }
-						onChange={ ( e: ChangeEvent< HTMLTextAreaElement > ) =>
-							handleInputChange( 'opportunityDescription', e.target.value )
-						}
-					/>
-				</FormField>
+					value={ formData.opportunityDescription }
+					onChange={ ( value: string ) => handleInputChange( 'opportunityDescription', value ) }
+				/>
 
-				<FormField
+				<SelectField
 					label={ translate( 'Type of lead' ) }
-					labelFor="leadType"
+					name="leadType"
 					error={ validationError.leadType }
-				>
-					<FormSelect
-						id="leadType"
-						name="leadType"
-						value={ formData.leadType }
-						onChange={ ( e: ChangeEvent< HTMLSelectElement > ) =>
-							handleInputChange( 'leadType', e.target.value )
-						}
-					>
-						<option value="media">{ translate( 'Media' ) }</option>
-						<option value="public">{ translate( 'Public sector' ) }</option>
-						<option value="other">{ translate( 'Other' ) }</option>
-					</FormSelect>
-				</FormField>
+					value={ formData.leadType }
+					onChange={ ( value: string ) => handleInputChange( 'leadType', value ) }
+					options={ [
+						{ label: translate( 'Media' ), value: 'media' },
+						{ label: translate( 'Public sector' ), value: 'public' },
+						{ label: translate( 'Other' ), value: 'other' },
+					] }
+				/>
 
-				<FormField label={ translate( 'Is this a request for proposal (RFP)?' ) }>
-					<CustomFormRadio
-						id="plans_to_offer_products_yes"
-						label={ translate( 'Yes' ) }
-						checked={ formData.includeRfp === 'yes' }
-						onChange={ () => handleInputChange( 'includeRfp', 'yes' ) }
-					/>
-
-					<CustomFormRadio
-						id="plans_to_offer_products_no"
-						label={ translate( 'No' ) }
-						checked={ formData.includeRfp === 'no' }
-						onChange={ () => {
-							handleInputChange( 'includeRfp', 'no' );
-							handleInputChange( 'rfpFile', undefined );
-						} }
-					/>
-				</FormField>
+				<RadioField
+					label={ translate( 'Is this a request for proposal (RFP)?' ) }
+					name="includeRfp"
+					error={ validationError.includeRfp }
+					value={ formData.includeRfp }
+					onChange={ ( value: string ) => handleInputChange( 'includeRfp', value ) }
+					options={ [
+						{ label: translate( 'Yes' ), value: 'yes' },
+						{ label: translate( 'No' ), value: 'no' },
+					] }
+				/>
 
 				{ formData.includeRfp === 'yes' && (
 					<FilePicker
