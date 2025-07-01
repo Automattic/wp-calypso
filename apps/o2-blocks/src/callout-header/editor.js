@@ -26,17 +26,28 @@ const CalloutHeaderBlock = {
 			content: {
 				type: 'string',
 				source: 'html',
-				selector: 'p',
+				selector: 'h2',
+				default: '',
+			},
+			headingId: {
+				type: 'string',
 				default: '',
 			},
 		},
-		edit: ( { attributes, setAttributes } ) => {
-			const { content } = attributes;
+		edit: ( { attributes, setAttributes, clientId } ) => {
+			const { content, headingId } = attributes;
+
+			// Generate a unique ID for the heading if it doesn't exist
+			if ( ! headingId ) {
+				const uniqueId = `callout-header-${ clientId }`;
+				setAttributes( { headingId: uniqueId } );
+			}
 
 			return (
 				<RichText
-					tagName="p"
+					tagName="h2"
 					className="o2-blocks-callout__header"
+					id={ headingId }
 					value={ content }
 					onChange={ ( newContent ) => setAttributes( { content: newContent } ) }
 					placeholder={ __( 'Header' ) }
@@ -45,10 +56,15 @@ const CalloutHeaderBlock = {
 			);
 		},
 		save: ( { attributes } ) => {
-			const { content } = attributes;
+			const { content, headingId } = attributes;
 
 			return (
-				<RichText.Content tagName="p" className="o2-blocks-callout__header" value={ content } />
+				<RichText.Content
+					tagName="h2"
+					className="o2-blocks-callout__header"
+					id={ headingId }
+					value={ content }
+				/>
 			);
 		},
 	},
