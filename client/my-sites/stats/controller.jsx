@@ -524,10 +524,11 @@ export { default as purchase } from './pages/purchase/controller';
 
 export const statsMoved = ( context, next ) => {
 	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
 
 	// Enforce the new location to 10% of users.
-	if ( userId % 10 === 0 ) {
+	if ( siteId && userId % 10 === 0 ) {
 		context.primary = <StatsMoved />;
 	}
 	next();
