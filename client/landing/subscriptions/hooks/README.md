@@ -69,20 +69,20 @@ function SiteRecommendationToggle( { feedId, siteName } ) {
 
 ### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `feedId` | `number` | Yes | The feed ID to add/remove from recommended blogs list |
+| Parameter | Type     | Required | Description                                           |
+| --------- | -------- | -------- | ----------------------------------------------------- |
+| `feedId`  | `number` | Yes      | The feed ID to add/remove from recommended blogs list |
 
 ### Return Value
 
 The hook returns an object with the following properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `isRecommended` | `boolean` | Whether the feed is currently in the recommended list |
-| `isUpdating` | `boolean` | Whether an add/remove operation is in progress |
-| `canToggle` | `boolean` | Whether the toggle operation is available (user logged in, etc.) |
-| `toggleRecommended` | `() => void` | Function to toggle the recommendation state |
+| Property            | Type         | Description                                                      |
+| ------------------- | ------------ | ---------------------------------------------------------------- |
+| `isRecommended`     | `boolean`    | Whether the feed is currently in the recommended list            |
+| `isUpdating`        | `boolean`    | Whether an add/remove operation is in progress                   |
+| `canToggle`         | `boolean`    | Whether the toggle operation is available (user logged in, etc.) |
+| `toggleRecommended` | `() => void` | Function to toggle the recommendation state                      |
 
 ### TypeScript Interface
 
@@ -102,7 +102,7 @@ interface UseRecommendedSiteResult {
 The hook provides immediate UI feedback by updating the local state before the API call completes:
 
 1. User clicks toggle → UI updates immediately
-2. API call is dispatched in background  
+2. API call is dispatched in background
 3. On success → optimistic state is cleared, Redux state takes over
 4. On error → optimistic state reverts to original value
 
@@ -133,6 +133,7 @@ The hook includes a 1-second delay before clearing optimistic state to prevent r
 ### Redux State
 
 The hook requires the following Redux state:
+
 - `state.currentUser` - For user authentication
 - `state.reader.lists` - For recommended blogs list data
 - `state.reader.lists.listItemErrors` - For error tracking
@@ -140,6 +141,7 @@ The hook requires the following Redux state:
 ### Actions
 
 The hook dispatches these actions:
+
 - `addRecommendedBlogsSite` - Add feed to recommended list
 - `removeRecommendedBlogsSite` - Remove feed from recommended list
 
@@ -150,13 +152,14 @@ The hook dispatches these actions:
 The hook automatically handles these error scenarios:
 
 1. **Network failures** - UI reverts to original state
-2. **API errors** - UI reverts to original state  
+2. **API errors** - UI reverts to original state
 3. **Permission errors** - UI reverts to original state
 4. **Timeout errors** - UI reverts to original state
 
 ### Error Detection
 
 Errors are detected using:
+
 - Error actions dispatched by data layer handlers
 - Timestamp matching to ensure errors correspond to current operations
 - Feed ID matching to ensure errors are for the correct feed
