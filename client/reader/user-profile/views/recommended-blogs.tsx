@@ -33,11 +33,11 @@ const UserRecommendedBlogs = ( { user }: UserPostsProps ): JSX.Element | null =>
 	}
 
 	return (
-		<>
+		<ul className="user-profile__recommended-blogs-list">
 			{ recommendedBlogs.map( ( blog ) => (
 				<RecommendedBlogItem key={ blog.ID } blog={ blog } classPrefix="user-profile" />
 			) ) }
-		</>
+		</ul>
 	);
 };
 

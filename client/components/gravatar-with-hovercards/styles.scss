@@ -115,11 +115,15 @@
 				}
 			}
 
-			.gravatar-hovercard__recommended-blog-site-name {
+			.gravatar-hovercard__recommended-blog-site-info {
 				flex: 1 1 0%;
-				white-space: nowrap;
 				overflow: hidden;
-				text-overflow: ellipsis;
+
+				.gravatar-hovercard__recommended-blog-site-name {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 		}
 	}

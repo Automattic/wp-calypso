@@ -40,12 +40,14 @@ function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
 				siteIcon={ siteIcon }
 				className={ `${ classPrefix }__recommended-blog-site-icon` }
 			/>
-			<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>{ name || feedUrl }</h6>
-			{ ! compact && site.description && (
-				<p className={ `${ classPrefix }__recommended-blog-site-description` }>
-					{ site.description }
-				</p>
-			) }
+			<div className={ `${ classPrefix }__recommended-blog-site-info` }>
+				<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>{ name || feedUrl }</h6>
+				{ ! compact && site?.description && (
+					<p className={ `${ classPrefix }__recommended-blog-site-description` }>
+						{ site.description }
+					</p>
+				) }
+			</div>
 			<ReaderFollowButton
 				className={ `${ classPrefix }__recommended-blog-subscribe-button` }
 				siteUrl={ feedUrl }
