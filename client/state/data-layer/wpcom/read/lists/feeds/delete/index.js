@@ -1,12 +1,13 @@
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import {
 	READER_LIST_ITEM_DELETE_FEED,
-	READER_LIST_ITEM_DELETE_FEED_ERROR,
+	READER_LIST_ITEM_ADD_FEED,
 } from 'calypso/state/reader/action-types';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
@@ -35,13 +36,14 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 				const errorMessage = action.errorMessage || translate( 'Unable to remove feed from list.' );
 				return [
 					errorNotice( errorMessage ),
-					{
-						type: READER_LIST_ITEM_DELETE_FEED_ERROR,
+					// Revert the optimistic remove by dispatching an add action that bypasses the data layer
+					bypassDataLayer( {
+						type: READER_LIST_ITEM_ADD_FEED,
 						listId: action.listId,
 						feedId: action.feedId,
 						listOwner: action.listOwner,
 						listSlug: action.listSlug,
-					},
+					} ),
 				];
 			},
 		} ),
