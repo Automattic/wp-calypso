@@ -8,6 +8,7 @@
 
 	.odie-notice {
 		display: flex;
+		justify-content: space-between;
 		background-color: var( --studio-yellow-0 );
 		border-left: 4px solid var( --studio-yellow-20 );
 		padding: 8px 16px;
