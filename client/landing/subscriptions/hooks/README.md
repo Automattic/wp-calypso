@@ -22,14 +22,14 @@ The `useRecommendedSite` hook provides functionality to add or remove feeds from
 import { useRecommendedSite } from 'calypso/landing/subscriptions/hooks/use-recommended-site';
 
 function MyComponent() {
-  const { isRecommended, isUpdating, canToggle, toggleRecommended } = useRecommendedSite(feedId);
+  const { isRecommended, isUpdating, canToggle, toggleRecommended } = useRecommendedSite( feedId );
 
   return (
     <button
-      onClick={toggleRecommended}
-      disabled={!canToggle || isUpdating}
+      onClick={ toggleRecommended }
+      disabled={ ! canToggle || isUpdating }
     >
-      {isRecommended ? 'Remove from recommendations' : 'Add to recommendations'}
+      { isRecommended ? 'Remove from recommendations' : 'Add to recommendations' }
     </button>
   );
 }
@@ -41,25 +41,25 @@ function MyComponent() {
 import { FormToggle } from '@wordpress/components';
 import { useRecommendedSite } from 'calypso/landing/subscriptions/hooks/use-recommended-site';
 
-function SiteRecommendationToggle({ feedId, siteName }) {
-  const { isRecommended, isUpdating, canToggle, toggleRecommended } = useRecommendedSite(feedId);
+function SiteRecommendationToggle( { feedId, siteName } ) {
+  const { isRecommended, isUpdating, canToggle, toggleRecommended } = useRecommendedSite( feedId );
 
   const handleToggle = () => {
     toggleRecommended();
     
     // Optional: Record analytics event
-    recordEvent('recommended_site_toggled', {
+    recordEvent( 'recommended_site_toggled', {
       feed_id: feedId,
-      recommended: !isRecommended
-    });
+      recommended: ! isRecommended
+    } );
   };
 
   return (
     <FormToggle
-      aria-label={`Recommend ${siteName} to other users`}
-      checked={isRecommended}
-      onChange={handleToggle}
-      disabled={!canToggle || isUpdating}
+      aria-label={ `Recommend ${ siteName } to other users` }
+      checked={ isRecommended }
+      onChange={ handleToggle }
+      disabled={ ! canToggle || isUpdating }
     />
   );
 }
@@ -166,15 +166,15 @@ Errors are detected using:
 You can also handle errors manually by monitoring the `isUpdating` state:
 
 ```typescript
-const { isRecommended, isUpdating, toggleRecommended } = useRecommendedSite(feedId);
+const { isRecommended, isUpdating, toggleRecommended } = useRecommendedSite( feedId );
 
 // Watch for state changes to detect when operations complete
-useEffect(() => {
-  if (!isUpdating) {
+useEffect( () => {
+  if ( ! isUpdating ) {
     // Operation completed (success or failure)
     // Check if state matches expectation to detect errors
   }
-}, [isUpdating]);
+}, [ isUpdating ] );
 ```
 
 ## Testing
