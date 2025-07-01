@@ -11,7 +11,6 @@ import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversatio
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -46,7 +45,6 @@ import {
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
@@ -64,7 +62,6 @@ const LayoutLoggedOut = ( {
 	isJetpackLogin,
 	isWhiteLogin,
 	isPopup,
-	isJetpackWooDnaFlow,
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
@@ -140,7 +137,6 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-site': isJetpackCheckout,
 		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
-		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-gravatar': isGravatar,
 		'is-mobile': isMobile,
 		'is-wp-job-manager': isWPJobManager,
@@ -343,7 +339,6 @@ export default withCurrentRoute(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			);
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
-			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
@@ -403,7 +398,6 @@ export default withCurrentRoute(
 				isJetpackLogin,
 				isWhiteLogin,
 				isPopup,
-				isJetpackWooDnaFlow,
 				isGravatar,
 				isMobile,
 				isWPJobManager,

@@ -139,16 +139,16 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow):not(.is-jetpack-woo-dna-flow) {
+.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
 }
 
 .layout.is-wccom-oauth-flow,
-.layout.is-jetpack-woo-dna-flow {
+.layout.is-woocommerce-core-profiler-flow {
 	@include woocommerce-colors();
 }
 
-.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow):not(.is-jetpack-woo-dna-flow) {
+.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
 
 	.login__form input,
 	.logged-out-form input {
