@@ -77,7 +77,7 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			icon: backup,
 			label: __( 'Restore site' ),
 			isEligible: ( item: Site ) =>
-				!! item.is_deleted && ! isP2( item ) && ! isSelfHostedJetpackConnected( item ),
+				item.is_deleted && ! isP2( item ) && ! isSelfHostedJetpackConnected( item ),
 			RenderModal: ( { items, closeModal }: RenderModalProps< Site > ) => {
 				return (
 					<AsyncLoad
