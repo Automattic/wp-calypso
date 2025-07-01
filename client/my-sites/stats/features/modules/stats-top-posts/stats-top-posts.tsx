@@ -100,23 +100,36 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		: isRequestingTopPostsData;
 
 	const optionLabels = useOptionLabels();
-	const options: StatTypeOptionType[] = Object.entries( optionLabels ).map( ( [ key, item ] ) => {
-		return {
-			value: key as StatType,
-			label: item.tabLabel,
-			mainItemLabel: item.mainItemLabel,
-			analyticsId: item.analyticsId,
-			// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
-			disabled:
-				isArchiveBreakdownEnabled &&
-				( ( key === subStatType && ! isRequestingArchivesData && ! archivesData.length ) ||
-					( key === mainStatType && ! isRequestingTopPostsData && ! postsAndPagesData.length ) ),
-		};
-	} );
+	const options: StatTypeOptionType[] = useMemo(
+		() =>
+			Object.entries( optionLabels ).map( ( [ key, item ] ) => {
+				return {
+					value: key as StatType,
+					label: item.tabLabel,
+					mainItemLabel: item.mainItemLabel,
+					analyticsId: item.analyticsId,
+					// TODO: This is a temporary solution to disable the archives option when the archives data is not available.
+					disabled:
+						isArchiveBreakdownEnabled &&
+						( ( key === subStatType && ! isRequestingArchivesData && ! archivesData.length ) ||
+							( key === mainStatType &&
+								! isRequestingTopPostsData &&
+								! postsAndPagesData.length ) ),
+				};
+			} ),
+		[
+			optionLabels,
+			isArchiveBreakdownEnabled,
+			subStatType,
+			isRequestingArchivesData,
+			archivesData.length,
+			mainStatType,
+			isRequestingTopPostsData,
+			postsAndPagesData.length,
+		]
+	);
 
-	const availableStatTypes = useMemo( () => {
-		return options.filter( ( option ) => ! option.disabled );
-	}, [ options ] );
+	const availableStatTypes = options.filter( ( option ) => ! option.disabled );
 	const defaultStatType =
 		availableStatTypes.length === 1 ? availableStatTypes[ 0 ].value : mainStatType;
 	const statType =
