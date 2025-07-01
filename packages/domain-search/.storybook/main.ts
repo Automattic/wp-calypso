@@ -7,9 +7,5 @@ export default {
 		...config.typescript,
 		reactDocgen: 'react-docgen-typescript',
 	},
-	core: {
-		...config.core,
-		disableTelemetry: true,
-	},
 	addons: [ ...( config.addons ?? [] ), '@storybook/addon-a11y' ],
 };
