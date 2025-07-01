@@ -419,27 +419,17 @@ export const StagingSiteCard = ( {
 		// Always use progress bar for deletion/reverting
 		if ( isRevertingStaging ) {
 			return (
-				<>
-					<StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } isReverting />
-				</>
+				<StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } isReverting />
 			);
 		}
 
 		// Use new card for creation only if feature flag is enabled
 		if ( config.isEnabled( 'hosting/staging-sites-redesign' ) ) {
-			return (
-				<>
-					<StagingSiteCreationCardContent isOwner={ siteOwnerId === currentUserId } />
-				</>
-			);
+			return <StagingSiteCreationCardContent isOwner={ siteOwnerId === currentUserId } />;
 		}
 
 		// Default to progress bar for creation when feature flag is disabled
-		return (
-			<>
-				<StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } />
-			</>
-		);
+		return <StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } />;
 	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting ] );
 
 	let stagingSiteCardContent;
@@ -538,14 +528,15 @@ export const StagingSiteCard = ( {
 	}, [ dispatch, isJetpack, siteId ] );
 
 	// Determine if we should show the new creation card without wrapper/banner
+	const isRevertingStaging =
+		StagingSiteStatus.REVERTING === stagingSiteStatus ||
+		StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
+		isReverting;
+
 	const isShowingNewCreationCard =
 		( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) &&
 		config.isEnabled( 'hosting/staging-sites-redesign' ) &&
-		! (
-			StagingSiteStatus.REVERTING === stagingSiteStatus ||
-			StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
-			isReverting
-		);
+		! isRevertingStaging;
 
 	if ( isShowingNewCreationCard ) {
 		return stagingSiteCardContent;
