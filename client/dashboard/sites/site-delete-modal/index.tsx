@@ -174,7 +174,9 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 			<Notice variant="warning" density="medium">
 				<Text>
 					{ createInterpolateElement(
-						'Before deleting your site, consider <link>exporting your content as a backup</link>.',
+						__(
+							'Before deleting your site, consider <link>exporting your content as a backup</link>.'
+						),
 						{
 							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
 						}

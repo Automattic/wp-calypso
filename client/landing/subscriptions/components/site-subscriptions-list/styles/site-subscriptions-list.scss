@@ -13,6 +13,7 @@
 		border-block-end: 1px solid $studio-gray-5;
 		padding-top: 20px;
 		padding-bottom: 20px;
+		@extend %site-subscriptions-list-default-text;
 
 		* {
 			flex: 1;
@@ -34,7 +35,7 @@
 		.title-cell {
 			display: flex;
 			align-items: center;
-			flex: 1.83;
+			flex: 2.3;
 			min-width: 0;
 		}
 
@@ -75,16 +76,6 @@
 			@extend %site-subscriptions-list-site-url;
 		}
 
-		.title-cell,
-		.email-frequency-cell,
-		.date-cell,
-		.new-posts-cell,
-		.new-comments-cell,
-		.unsubscribe-action-cell {
-			@extend %site-subscriptions-list-default-text;
-		}
-
-
 		.new-posts-cell,
 		.new-comments-cell {
 			.green,
@@ -99,6 +90,28 @@
 
 			.red {
 				fill: var(--color-error);
+			}
+		}
+
+		.recommend-cell {
+			display: flex;
+			align-items: center;
+
+			&[role="columnheader"] span {
+				display: flex;
+
+				.site-subscriptions-list__recommend-tooltip-icon {
+					cursor: pointer;
+					flex: 0.5;
+
+					@media (max-width: $break-huge) {
+						display: none;
+					}
+				}
+			}
+
+			@media (max-width: $break-xlarge) {
+				display: none;
 			}
 		}
 
@@ -142,4 +155,10 @@
 
 .new-comments-tooltip__content {
 	width: 200px;
+}
+
+div[id^="portal/tooltip"] .components-tooltip.site-subscriptions-list__recommend-tooltip {
+	font-size: $font-body-small;
+	max-width: 250px;
+	text-align: left;
 }

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
@@ -42,6 +43,24 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 				window.open( `/domains/manage/${ site.slug }` );
 			},
 			isEligible: ( item: Site ) => canManageSite( item ),
+		},
+		{
+			id: 'prepare-for-launch',
+			label: __( 'Prepare for launch' ),
+			callback: ( sites ) => {
+				const site = sites[ 0 ];
+				router.navigate( {
+					to: '/sites/$siteSlug/settings/site-visibility',
+					params: { siteSlug: site.slug },
+				} );
+
+				recordTracksEvent( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' );
+			},
+			isEligible: ( item: Site ) =>
+				canManageSite( item ) &&
+				item.is_a4a_dev_site &&
+				! item.is_wpcom_staging_site &&
+				item.launch_status === 'unlaunched',
 		},
 		{
 			id: 'settings',
