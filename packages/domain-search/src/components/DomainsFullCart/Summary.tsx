@@ -17,8 +17,10 @@ export const DomainsFullCartSummary = () => {
 
 	return (
 		<HStack alignment="edge" spacing={ 2 }>
-			<Text>{ domainCount }</Text>
-			<Text>{ cart.total }</Text>
+			<Text size="small">{ domainCount }</Text>
+			<Text size="medium" weight={ 500 }>
+				{ cart.total }
+			</Text>
 		</HStack>
 	);
 };
