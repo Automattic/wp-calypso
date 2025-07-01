@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .staging-site-creation-card {
 	padding: 2rem;
 	display: flex;
@@ -30,8 +32,7 @@
 .staging-site-creation-card__description {
 	max-width: 32rem;
 	color: var(--color-text-subtle);
-	font-size: 0.875rem;
-	line-height: 1.5;
+	@include body-medium;
 	margin-bottom: 1rem;
 
 	@media screen and (max-width: 768px) {
