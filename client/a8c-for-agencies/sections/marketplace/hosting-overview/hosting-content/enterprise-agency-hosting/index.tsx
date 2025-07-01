@@ -54,7 +54,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 						<div>
 							{ isReferMode
 								? translate(
-										"Successfully refer you client to WordPress VIP and you'll earn a one-time 5% commission"
+										"Successfully refer your client to WordPress VIP and you'll earn a one-time 5% commission"
 								  )
 								: translate(
 										'Combine the ease of WordPress with enterprise-grade security and scalability.'

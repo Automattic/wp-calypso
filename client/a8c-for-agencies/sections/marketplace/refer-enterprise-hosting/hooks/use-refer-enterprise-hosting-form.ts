@@ -47,7 +47,7 @@ export default function useReferEnterpriseHostingForm() {
 	}, [] );
 
 	const validate = useCallback(
-		async ( payload: Partial< ReferEnterpriseHostingFormData > ) => {
+		( payload: Partial< ReferEnterpriseHostingFormData > ) => {
 			const newValidationError: Record< string, string > = {};
 
 			if ( payload.companyName?.trim() === '' ) {
@@ -80,10 +80,6 @@ export default function useReferEnterpriseHostingForm() {
 
 			if ( payload.title?.trim() === '' ) {
 				newValidationError.title = translate( 'Please enter your title' );
-			}
-
-			if ( payload.phone?.trim() === '' ) {
-				newValidationError.phone = translate( 'Please enter your phone number' );
 			}
 
 			if ( payload.email?.trim() === '' ) {

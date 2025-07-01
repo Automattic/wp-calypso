@@ -72,14 +72,16 @@ export default function ReferEnterpriseHostingForm() {
 		updateValidationError( { [ name ]: '' } );
 	};
 
-	const handleSubmit = useCallback( async () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_refer_form_submit' ) );
-
-		const error = await validate( formData );
+	const handleSubmit = useCallback( () => {
+		const error = validate( formData );
 
 		if ( error ) {
 			updateValidationError( error );
 		} else {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_refer_form_submit' )
+			);
+
 			submit( formData, {
 				onSuccess: () => {
 					dispatch( successNotice( translate( 'Your request has been submitted successfully.' ) ) );
@@ -260,7 +262,7 @@ export default function ReferEnterpriseHostingForm() {
 					/>
 				</FormField>
 
-				<FormField label={ translate( 'Phone' ) } labelFor="phone" error={ validationError.phone }>
+				<FormField label={ translate( 'Phone (optional)' ) } labelFor="phone">
 					<FormTextInput
 						id="phone"
 						name="phone"
