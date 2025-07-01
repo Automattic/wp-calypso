@@ -5,9 +5,6 @@ import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import FilePicker from 'calypso/components/file-picker';
-import FormRadio from 'calypso/components/forms/form-radio';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
@@ -21,44 +18,6 @@ type FieldProps = {
 	error?: string;
 	value?: string;
 	onChange: ( value: string ) => void;
-};
-
-type FieldWithOptionsProps = FieldProps & {
-	options: { label: string; value: string }[];
-};
-
-const CustomFormRadio = ( {
-	id,
-	label,
-	checked,
-	onChange,
-}: {
-	id?: string;
-	label: string;
-	checked?: boolean;
-	onChange: () => void;
-} ) => {
-	return (
-		<div
-			className="refer-enterprise-hosting-form__radio"
-			onClick={ onChange }
-			role="button"
-			tabIndex={ 0 }
-			onKeyDown={ ( e ) => {
-				if ( e.key === 'Enter' ) {
-					onChange();
-				}
-			} }
-		>
-			<FormRadio
-				id={ id }
-				htmlFor={ id }
-				label={ label }
-				checked={ checked }
-				onChange={ onChange }
-			/>
-		</div>
-	);
 };
 
 const TextField = ( { label, name, error, value, onChange }: FieldProps ) => {
@@ -83,41 +42,6 @@ const TextAreaField = ( { label, name, error, value, onChange }: FieldProps ) =>
 				value={ value }
 				onChange={ ( e: ChangeEvent< HTMLTextAreaElement > ) => onChange( e.target.value ) }
 			/>
-		</FormField>
-	);
-};
-
-const SelectField = ( { label, name, error, value, onChange, options }: FieldWithOptionsProps ) => {
-	return (
-		<FormField label={ label } labelFor={ name } error={ error }>
-			<FormSelect
-				id={ name }
-				name={ name }
-				value={ value }
-				onChange={ ( e: ChangeEvent< HTMLSelectElement > ) => onChange( e.target.value ) }
-			>
-				{ options.map( ( option ) => (
-					<option key={ option.value } value={ option.value }>
-						{ option.label }
-					</option>
-				) ) }
-			</FormSelect>
-		</FormField>
-	);
-};
-
-const RadioField = ( { label, name, error, value, onChange, options }: FieldWithOptionsProps ) => {
-	return (
-		<FormField label={ label } labelFor={ name } error={ error }>
-			{ options.map( ( option ) => (
-				<CustomFormRadio
-					key={ option.value }
-					id={ option.value }
-					label={ option.label }
-					checked={ value === option.value }
-					onChange={ () => onChange( option.value ) }
-				/>
-			) ) }
 		</FormField>
 	);
 };
@@ -317,52 +241,6 @@ export default function ReferEnterpriseHostingForm() {
 					value={ formData.opportunityDescription }
 					onChange={ ( value: string ) => handleInputChange( 'opportunityDescription', value ) }
 				/>
-
-				<SelectField
-					label={ translate( 'Type of lead' ) }
-					name="leadType"
-					error={ validationError.leadType }
-					value={ formData.leadType }
-					onChange={ ( value: string ) => handleInputChange( 'leadType', value ) }
-					options={ [
-						{ label: translate( 'Media' ), value: 'media' },
-						{ label: translate( 'Public sector' ), value: 'public' },
-						{ label: translate( 'Other' ), value: 'other' },
-					] }
-				/>
-
-				<RadioField
-					label={ translate( 'Is this a request for proposal (RFP)?' ) }
-					name="includeRfp"
-					error={ validationError.includeRfp }
-					value={ formData.includeRfp }
-					onChange={ ( value: string ) => handleInputChange( 'includeRfp', value ) }
-					options={ [
-						{ label: translate( 'Yes' ), value: 'yes' },
-						{ label: translate( 'No' ), value: 'no' },
-					] }
-				/>
-
-				{ formData.includeRfp === 'yes' && (
-					<FilePicker
-						accept="*"
-						onPick={ ( files: FileList ) => {
-							if ( files.length ) {
-								handleInputChange( 'rfpFile', files[ 0 ] );
-							}
-						} }
-					>
-						<Button variant="secondary" onClick={ () => {} }>
-							{ formData.rfpFile ? translate( 'Upload new file' ) : translate( 'Upload RFP file' ) }
-						</Button>
-
-						{ formData.rfpFile && (
-							<div className="refer-enterprise-hosting-form__rfp-file">
-								{ translate( 'Attached file:' ) } { formData.rfpFile.name }
-							</div>
-						) }
-					</FilePicker>
-				) }
 			</FormSection>
 
 			<div className="refer-enterprise-hosting-form__footer">

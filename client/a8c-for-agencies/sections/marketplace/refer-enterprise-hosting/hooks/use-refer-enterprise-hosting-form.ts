@@ -18,8 +18,6 @@ const DEFAULT_FORM_DATA: ReferEnterpriseHostingFormData = {
 	email: '',
 	website: '',
 	opportunityDescription: '',
-	leadType: 'other',
-	includeRfp: undefined,
 };
 
 export default function useReferEnterpriseHostingForm() {
@@ -106,10 +104,6 @@ export default function useReferEnterpriseHostingForm() {
 				newValidationError.opportunityDescription = translate(
 					'Please tell us about the opportunity'
 				);
-			}
-
-			if ( payload.leadType?.trim() === '' ) {
-				newValidationError.leadType = translate( 'Please select the lead type' );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

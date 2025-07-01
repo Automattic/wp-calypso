@@ -27,9 +27,6 @@ function referEnterpriseHostingMutation(
 			email: details.email,
 			website: details.website,
 			opportunity_description: details.opportunityDescription,
-			lead_type: details.leadType,
-
-			// Skip submitting RFP file for now as we don't have a way to submit it to the HS form.
 		},
 	} );
 }
