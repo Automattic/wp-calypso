@@ -8,10 +8,18 @@
 	max-width: 100%;
 	box-sizing: border-box;
 	gap: 1rem;
+	position: relative;
+	overflow: hidden;
+	background-image: url(./site-creation-graphic.svg);
+	background-repeat: no-repeat;
+	background-position: center right;
+	background-size: auto 100%;
 
 	@media screen and (max-width: 768px) {
 		flex-direction: column;
 		gap: 1.5rem;
+		background-size: auto 80%;
+		background-position: top right;
 	}
 }
 

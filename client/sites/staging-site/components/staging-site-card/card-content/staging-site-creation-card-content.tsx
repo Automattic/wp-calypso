@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+
 import './staging-site-creation-card-content.scss';
 
 type CardContentProps = {
