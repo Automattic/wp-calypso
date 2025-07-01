@@ -19,14 +19,19 @@ export const DomainsFullCartItems = () => {
 			{ cart.items.map( ( domain ) => (
 				<Card key={ `${ domain.domain }.${ domain.tld }` }>
 					<CardBody size="small">
-						<VStack spacing={ 2 }>
-							<HStack spacing={ 4 }>
+						<HStack alignment="top" justify="space-between" spacing={ 6 }>
+							<VStack spacing={ 2 }>
 								<Text size="medium">
 									{ domain.domain }
 									<Text size="inherit" weight={ 500 }>
 										.{ domain.tld }
 									</Text>
 								</Text>
+								<Button variant="link" onClick={ () => cart.onRemoveItem( domain ) }>
+									{ __( 'Remove' ) }
+								</Button>
+							</VStack>
+							<VStack>
 								<HStack alignment="right" spacing={ 2 }>
 									{ domain.originalPrice && (
 										<Text size="small" style={ { textDecoration: 'line-through' } }>
@@ -41,11 +46,8 @@ export const DomainsFullCartItems = () => {
 										) }
 									</Text>
 								</HStack>
-							</HStack>
-							<Button variant="link" onClick={ () => cart.onRemoveItem( domain ) }>
-								{ __( 'Remove' ) }
-							</Button>
-						</VStack>
+							</VStack>
+						</HStack>
 					</CardBody>
 				</Card>
 			) ) }
