@@ -128,8 +128,7 @@
 	}
 
 	.pressable-usage-details__titan-domain {
-		@include body-medium;
-		font-weight: 500;
+		@include heading-medium;
 	}
 
 	.pressable-usage-details__titan-plan-label {
