@@ -1,0 +1,16 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.domains-full-cart {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+
+	@include break-small {
+		left: initial;
+		max-width: 22.25rem;
+	}
+}

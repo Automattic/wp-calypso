@@ -13,15 +13,20 @@ export const Default = () => {
 				isFullCartOpen,
 				query: '',
 				setQuery: () => {},
-				onContinue: () => {},
-				selectedDomains: [],
+				onContinue: () => {
+					alert( 'Continue' );
+				},
+				selectedDomains: [
+					{ domain: 'the-lasso', tld: 'net', price: '$74' },
+					{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
+				],
 				closeFullCart: () => setIsFullCartOpen( false ),
 				openFullCart: () => setIsFullCartOpen( true ),
 			} }
 		>
 			<DomainsFullCart />
-			<Button variant="primary" onClick={ () => setIsFullCartOpen( true ) }>
-				Open
+			<Button variant="primary" onClick={ () => setIsFullCartOpen( ! isFullCartOpen ) }>
+				{ isFullCartOpen ? 'Close' : 'Open' }
 			</Button>
 		</DomainSearchContext.Provider>
 	);

@@ -1,10 +1,17 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 
+interface SelectedDomain {
+	domain: string;
+	tld: string;
+	originalPrice?: string;
+	price: string;
+}
+
 type DomainSearchContextType = {
 	query: string;
 	setQuery: ( query: string ) => void;
 	onContinue: () => void;
-	selectedDomains: string[];
+	selectedDomains: SelectedDomain[];
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
@@ -29,7 +36,7 @@ export const DomainSearch = ( {
 	children: React.ReactNode;
 	initialQuery?: string;
 	onContinue: () => void;
-	selectedDomains: string[];
+	selectedDomains: SelectedDomain[];
 } ) => {
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
