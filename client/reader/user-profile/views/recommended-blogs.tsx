@@ -1,10 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { siteLogo, Icon } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import EmptyContent from 'calypso/components/empty-content';
 import RecommendedBlogItem from 'calypso/components/gravatar-with-hovercards/recommended-blogs/item';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector, useDispatch } from 'calypso/state';
 import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
-import { getUserRecommendedBlogs } from 'calypso/state/reader/lists/selectors';
+import {
+	isRequestingUserRecommendedBlogs,
+	hasRequestedUserRecommendedBlogs,
+	getUserRecommendedBlogs,
+} from 'calypso/state/reader/lists/selectors';
 
 interface UserPostsProps {
 	user: UserData;
@@ -13,7 +20,14 @@ interface UserPostsProps {
 const UserRecommendedBlogs = ( { user }: UserPostsProps ): JSX.Element | null => {
 	const { user_login: userLogin } = user;
 	const dispatch = useDispatch();
-
+	const translate = useTranslate();
+	const isRequesting = useSelector( ( state ) =>
+		isRequestingUserRecommendedBlogs( state, userLogin || '' )
+	);
+	const hasRequested = useSelector( ( state ) =>
+		hasRequestedUserRecommendedBlogs( state, userLogin || '' )
+	);
+	const isExpectingRequest = isRequesting || ! hasRequested;
 	const recommendedBlogs = useSelector( ( state ) =>
 		getUserRecommendedBlogs( state, userLogin || '' )
 	);
@@ -26,10 +40,20 @@ const UserRecommendedBlogs = ( { user }: UserPostsProps ): JSX.Element | null =>
 
 	if (
 		! isEnabled( 'reader/recommended-blogs-list' ) ||
-		! recommendedBlogs ||
-		! recommendedBlogs.length
+		( ! recommendedBlogs?.length && isExpectingRequest )
 	) {
 		return null;
+	}
+
+	if ( ! recommendedBlogs?.length ) {
+		return (
+			<EmptyContent
+				illustration={ null }
+				icon={ <Icon icon={ siteLogo } size={ 48 } /> }
+				title={ null }
+				line={ translate( 'No blogs have been recommended yet.' ) }
+			/>
+		);
 	}
 
 	return (
