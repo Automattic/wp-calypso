@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatNumber, formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -143,9 +143,9 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					<div className="pressable-usage-details__info-item">
 						<div className="pressable-usage-details__info-header">
 							<div className="pressable-usage-details__info-label">
-								{ translate( 'Titan Email' ) }{ ' ' }
+								{ translate( 'Titan Email' ) }
 								<span className="pressable-usage-details__addon-tag">
-									{ translate( 'ADD-ON' ) }
+									{ translate( 'add-on' ) }
 								</span>
 							</div>
 							<div className="pressable-titan-usage-details__info-top-right">
@@ -156,7 +156,12 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 									comment: '%(total_inboxes)s is the total number of active email inboxes.',
 								} ) }
 								<div className="pressable-titan-usage-details__info-inbox-price">
-									$3.5 per inbox monthly
+									{ translate( '%(inbox_price)s per inbox monthly', {
+										args: {
+											inbox_price: formatCurrency( 3.5, 'USD' ),
+										},
+										comment: '%(inbox_price)s is the price per inbox.',
+									} ) }
 								</div>
 							</div>
 						</div>
@@ -175,7 +180,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 											{ order.order_plan === 'trial' && order.trial_end_at && (
 												<>
 													<span className="pressable-usage-details__titan-trial-badge">
-														{ translate( 'TRIAL' ) }
+														{ translate( 'trial' ) }
 													</span>
 													<span className="pressable-usage-details__titan-trial-text">
 														{ translate( 'Trial ends on %(date)s', {

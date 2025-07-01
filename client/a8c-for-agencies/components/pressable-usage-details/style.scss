@@ -95,7 +95,7 @@
         font-size: 11px;
 		padding: 2px 6px;
 		border-radius: 4px;
-		margin-left: 6px;
+		margin-inline-start: 6px;
 		text-transform: uppercase;
 	}
 
@@ -138,7 +138,7 @@
 		color: var(--color-primary-40);
         font-weight: 500;
 		padding: 2px 6px;
-        margin-left: 6px;
+        margin-inline-start: 6px;
 		border-radius: 4px;
 	}
 
@@ -148,7 +148,8 @@
 		color: var(--color-warning-40);
 		padding: 2px 6px;
 		border-radius: 4px;
-		margin-right: 6px;
+		margin-inline-start: 6px;
+        text-transform: uppercase;
 	}
 
 	.pressable-usage-details__titan-trial-text {
@@ -162,15 +163,13 @@
 	}
 
     .pressable-titan-usage-details__info-top-right {
-        @include body-small;
+        @include body-medium;
         font-weight: 500;
-        font-size: 13px;
         text-align: right;
     }
 
     .pressable-titan-usage-details__info-inbox-price {
         @include body-small;
         font-style: italic;
-        font-size: 12px;
     }
 }
