@@ -20,6 +20,9 @@ export const Default = () => {
 					items: [
 						{ domain: 'the-lasso', tld: 'net', price: '$74' },
 						{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
+						{ domain: 'the-different-domain', tld: 'com', originalPrice: '$18', price: '$8' },
+						{ domain: 'the-different-domain1', tld: 'com', originalPrice: '$18', price: '$8' },
+						{ domain: 'the-different-domain2', tld: 'com', originalPrice: '$18', price: '$8' },
 					],
 					total: '$74',
 					onAddItem: () => {},
@@ -37,9 +40,25 @@ export const Default = () => {
 	);
 };
 
+Default.parameters = {
+	viewport: {
+		defaultViewport: 'desktop',
+	},
+};
+
 const meta: Meta< typeof Default > = {
 	title: 'DomainsFullCart',
 	component: Default,
 };
 
 export default meta;
+
+export const Mobile = () => {
+	return <Default />;
+};
+
+Mobile.parameters = {
+	viewport: {
+		defaultViewport: 'mobile1',
+	},
+};

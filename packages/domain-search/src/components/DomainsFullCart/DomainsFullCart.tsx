@@ -9,9 +9,9 @@ import {
 	CardFooter,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-// import { useViewportMatch } from '@wordpress/compose';
 import { useCallback, useRef, useEffect } from 'react';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
 import { DomainsFullCartItems } from './Items';
@@ -22,7 +22,7 @@ import './style.scss';
 const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 	const { isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
 	const { __ } = useI18n();
-	// const isMobile = ! useViewportMatch( 'small' );
+	const isMobile = ! useViewportMatch( 'small' );
 
 	const fullCartRef = useRef< HTMLDivElement >( null );
 
@@ -47,8 +47,24 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 	return (
 		<motion.div
 			ref={ fullCartRef }
-			initial={ { x: '100%', display: 'none' } }
-			animate={ { x: isFullCartOpen ? 0 : '100%', display: isFullCartOpen ? 'block' : 'none' } }
+			initial={
+				isMobile
+					? { y: '100%', display: 'none', opacity: 0 }
+					: { x: '100%', display: 'none', opacity: 0 }
+			}
+			animate={
+				isMobile
+					? {
+							y: isFullCartOpen ? 0 : '100%',
+							display: isFullCartOpen ? 'block' : 'none',
+							opacity: isFullCartOpen ? 1 : 0,
+					  }
+					: {
+							x: isFullCartOpen ? 0 : '100%',
+							display: isFullCartOpen ? 'block' : 'none',
+							opacity: isFullCartOpen ? 1 : 0,
+					  }
+			}
 			transition={ { type: 'tween', duration: 0.25 } }
 			className="domains-full-cart"
 		>
