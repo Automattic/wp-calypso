@@ -26,6 +26,11 @@ jest.mock(
 		)
 );
 
+jest.mock( 'calypso/components/empty-content', () => ( {
+	__esModule: true,
+	default: ( { line } ) => <div data-testid="empty-content">{ line }</div>,
+} ) );
+
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 	useDispatch: jest.fn(),
@@ -36,7 +41,13 @@ jest.mock( 'calypso/state/reader/lists/actions', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/reader/lists/selectors', () => ( {
+	isRequestingUserRecommendedBlogs: jest.fn(),
+	hasRequestedUserRecommendedBlogs: jest.fn(),
 	getUserRecommendedBlogs: jest.fn(),
+} ) );
+
+jest.mock( 'i18n-calypso', () => ( {
+	useTranslate: () => ( text ) => text,
 } ) );
 
 describe( 'UserRecommendedBlogs', () => {
@@ -51,39 +62,87 @@ describe( 'UserRecommendedBlogs', () => {
 	const mockGetUserRecommendedBlogs = jest.requireMock(
 		'calypso/state/reader/lists/selectors'
 	).getUserRecommendedBlogs;
+	const mockIsRequestingUserRecommendedBlogs = jest.requireMock(
+		'calypso/state/reader/lists/selectors'
+	).isRequestingUserRecommendedBlogs;
+	const mockHasRequestedUserRecommendedBlogs = jest.requireMock(
+		'calypso/state/reader/lists/selectors'
+	).hasRequestedUserRecommendedBlogs;
 	const mockIsEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
 	const { useSelector, useDispatch } = jest.requireMock( 'calypso/state' );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		useDispatch.mockReturnValue( mockDispatch );
-		useSelector.mockImplementation( ( selector ) => selector( {} ) );
+		useSelector.mockImplementation( ( selector ) => {
+			// Mock the selector calls based on the selector function
+			if ( selector.toString().includes( 'isRequestingUserRecommendedBlogs' ) ) {
+				return mockIsRequestingUserRecommendedBlogs();
+			}
+			if ( selector.toString().includes( 'hasRequestedUserRecommendedBlogs' ) ) {
+				return mockHasRequestedUserRecommendedBlogs();
+			}
+			if ( selector.toString().includes( 'getUserRecommendedBlogs' ) ) {
+				return mockGetUserRecommendedBlogs();
+			}
+			return undefined;
+		} );
 		mockIsEnabled.mockReturnValue( true );
+		mockIsRequestingUserRecommendedBlogs.mockReturnValue( false );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( true );
+		mockGetUserRecommendedBlogs.mockReturnValue( [] );
 	} );
 
 	test( 'should render nothing when feature flag is disabled', () => {
 		mockIsEnabled.mockReturnValue( false );
-		mockGetUserRecommendedBlogs.mockReturnValue( [] );
 
 		const { container } = render( <UserRecommendedBlogs user={ defaultUser } /> );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'should render nothing when no recommended blogs are available', () => {
+	test( 'should render nothing when no recommended blogs and still expecting request', () => {
 		mockGetUserRecommendedBlogs.mockReturnValue( null );
+		mockIsRequestingUserRecommendedBlogs.mockReturnValue( true );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( false );
 
 		const { container } = render( <UserRecommendedBlogs user={ defaultUser } /> );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'should render nothing when recommended blogs array is empty', () => {
+	test( 'should render nothing when recommended blogs array is empty and still expecting request', () => {
 		mockGetUserRecommendedBlogs.mockReturnValue( [] );
+		mockIsRequestingUserRecommendedBlogs.mockReturnValue( true );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( false );
 
 		const { container } = render( <UserRecommendedBlogs user={ defaultUser } /> );
 
 		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'should render EmptyContent when no recommended blogs and request has completed', () => {
+		mockGetUserRecommendedBlogs.mockReturnValue( null );
+		mockIsRequestingUserRecommendedBlogs.mockReturnValue( false );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( true );
+
+		render( <UserRecommendedBlogs user={ defaultUser } /> );
+
+		const emptyContent = screen.getByTestId( 'empty-content' );
+		expect( emptyContent ).toBeInTheDocument();
+		expect( emptyContent ).toHaveTextContent( 'No blogs have been recommended yet.' );
+	} );
+
+	test( 'should render EmptyContent when recommended blogs array is empty and request has completed', () => {
+		mockGetUserRecommendedBlogs.mockReturnValue( [] );
+		mockIsRequestingUserRecommendedBlogs.mockReturnValue( false );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( true );
+
+		render( <UserRecommendedBlogs user={ defaultUser } /> );
+
+		const emptyContent = screen.getByTestId( 'empty-content' );
+		expect( emptyContent ).toBeInTheDocument();
+		expect( emptyContent ).toHaveTextContent( 'No blogs have been recommended yet.' );
 	} );
 
 	test( 'should render recommended blogs when available', () => {
