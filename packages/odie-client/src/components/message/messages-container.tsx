@@ -54,7 +54,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
-	useViewMostRecentOpenConversationNotice( chat?.provider === 'odie' );
+	useViewMostRecentOpenConversationNotice( chat?.provider === 'odie' && ! forceEmailSupport );
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
