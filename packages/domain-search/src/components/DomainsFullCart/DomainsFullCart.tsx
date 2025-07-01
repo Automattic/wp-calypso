@@ -12,6 +12,7 @@ import {
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 // import { useViewportMatch } from '@wordpress/compose';
+import { useCallback, useRef, useEffect } from 'react';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
 import { DomainsMiniCartSummary } from '../DomainsMiniCart/Summary';
 import { DomainsFullCartItems } from './Items';
@@ -23,8 +24,29 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 	const { __ } = useI18n();
 	// const isMobile = ! useViewportMatch( 'small' );
 
+	const fullCartRef = useRef< HTMLDivElement >( null );
+
+	const handleClickOutside = useCallback(
+		( event: MouseEvent ) => {
+			if ( fullCartRef.current && ! fullCartRef.current.contains( event.target as Node ) ) {
+				closeFullCart();
+			}
+		},
+		[ closeFullCart ]
+	);
+
+	useEffect( () => {
+		if ( isFullCartOpen ) {
+			document.addEventListener( 'mousedown', handleClickOutside );
+			return () => {
+				document.removeEventListener( 'mousedown', handleClickOutside );
+			};
+		}
+	}, [ isFullCartOpen, handleClickOutside ] );
+
 	return (
 		<motion.div
+			ref={ fullCartRef }
 			initial={ { x: '100%' } }
 			animate={ { x: isFullCartOpen ? 0 : '100%' } }
 			transition={ { type: 'tween', duration: 0.25 } }
