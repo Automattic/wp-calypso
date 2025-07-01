@@ -1,0 +1,115 @@
+.staging-site-creation-card {
+	padding: 2rem;
+	display: flex;
+	justify-content: space-between;
+	max-width: 48rem;
+	gap: 1rem;
+
+	@media screen and (max-width: 768px) {
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+}
+
+.staging-site-creation-card__content {
+	display: flex;
+	flex-direction: column;
+}
+
+.staging-site-creation-card__title {
+	font-weight: 600;
+	font-size: 1.25rem;
+	margin-bottom: 0.25rem;
+	color: var(--color-text);
+}
+
+.staging-site-creation-card__description {
+	max-width: 32rem;
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+	line-height: 1.5;
+	margin-bottom: 1rem;
+
+	@media screen and (max-width: 768px) {
+		max-width: none;
+	}
+}
+
+.staging-site-creation-card__email-message {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+	line-height: 1.5;
+	margin-bottom: 1.5rem;
+}
+
+.staging-site-creation-card__features {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.staging-site-creation-card__feature {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+
+	.gridicon {
+		color: var(--color-success);
+		flex-shrink: 0;
+	}
+}
+
+.staging-site-creation-card__visual {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.staging-site-creation-card__loading-container {
+	background-color: var(--color-surface-backdrop);
+	border-radius: 4px;
+	padding: 1.5rem;
+	width: 12rem;
+	height: 8rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.staging-site-creation-card__loading-content {
+	text-align: center;
+}
+
+.staging-site-creation-card__spinner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 4rem;
+	height: 4rem;
+	border-radius: 50%;
+	background-color: var(--color-surface);
+	border: 2px solid var(--color-border-subtle);
+
+	.gridicon {
+		color: var(--color-primary);
+		animation: staging-site-creation-spin 2s linear infinite;
+	}
+}
+
+.staging-site-creation-card__loading-text {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+}
+
+@keyframes staging-site-creation-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+} 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -37,6 +38,7 @@ import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hook
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from './card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
+import { StagingSiteCreationCardContent } from './card-content/staging-site-creation-card-content';
 import { StagingSiteLoadingBarCardContent } from './card-content/staging-site-loading-bar-card-content';
 import { StagingSiteLoadingErrorCardContent } from './card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from './loading-placeholder';
@@ -409,16 +411,33 @@ export const StagingSiteCard = ( {
 	} );
 
 	const getTransferringStagingSiteContent = useCallback( () => {
+		const isRevertingStaging =
+			StagingSiteStatus.REVERTING === stagingSiteStatus ||
+			StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
+			isReverting;
+
+		// Always use progress bar for deletion/reverting
+		if ( isRevertingStaging ) {
+			return (
+				<>
+					<StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } isReverting />
+				</>
+			);
+		}
+
+		// Use new card for creation only if feature flag is enabled
+		if ( config.isEnabled( 'hosting/staging-sites-redesign' ) ) {
+			return (
+				<>
+					<StagingSiteCreationCardContent isOwner={ siteOwnerId === currentUserId } />
+				</>
+			);
+		}
+
+		// Default to progress bar for creation when feature flag is disabled
 		return (
 			<>
-				<StagingSiteLoadingBarCardContent
-					isOwner={ siteOwnerId === currentUserId }
-					isReverting={
-						StagingSiteStatus.REVERTING === stagingSiteStatus ||
-						StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
-						isReverting
-					}
-				/>
+				<StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } />
 			</>
 		);
 	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting ] );
