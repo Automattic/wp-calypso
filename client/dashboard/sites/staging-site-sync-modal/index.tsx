@@ -7,6 +7,10 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalInputControl as InputControl,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
@@ -35,16 +39,17 @@ const EnvironmentLabel = ( { label, value }: EnvironmentLabelProps ) => {
 	return (
 		<VStack spacing={ 3 } style={ { flex: 1 } }>
 			<Text weight={ 500 }>{ label }</Text>
-			<div
-				style={ {
-					border: '1px solid #949494',
-					padding: '8px 12px',
-					borderRadius: '2px',
-					width: '100%',
-				} }
-			>
-				<Badge>{ value }</Badge>
-			</div>
+			<InputControl
+				readOnly
+				prefix={
+					<InputControlPrefixWrapper>
+						<Badge>{ value }</Badge>
+					</InputControlPrefixWrapper>
+				}
+				__next40pxDefaultSize
+				tabIndex={ -1 }
+				aria-hidden="true"
+			/>
 		</VStack>
 	);
 };
