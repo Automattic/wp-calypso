@@ -85,7 +85,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	);
 	const postsAndPagesData = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, mainStatType, query )
-	) as [ id: number, label: string ];
+	) as Array< { id: number; label: string } >;
 
 	const isRequestingArchivesData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
@@ -93,7 +93,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	// Get the archives data to check if we should disable the archives option.
 	const archivesData = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, subStatType, query )
-	) as [ id: number, label: string ];
+	) as Array< { id: number; label: string } >;
 
 	const isRequestingData = isArchiveBreakdownEnabled
 		? isRequestingTopPostsData || isRequestingArchivesData
