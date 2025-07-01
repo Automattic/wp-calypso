@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	ExternalLink,
@@ -16,6 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import InlineSupportLink from '../../components/inline-support-link';
+import SiteBadge, { EnvironmentType } from '../site-badge';
 
 const DirectionArrow = () => {
 	return (
@@ -32,10 +32,10 @@ const DirectionArrow = () => {
 
 interface EnvironmentLabelProps {
 	label: string;
-	value: string;
+	environmentType: EnvironmentType;
 }
 
-const EnvironmentLabel = ( { label, value }: EnvironmentLabelProps ) => {
+const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) => {
 	return (
 		<VStack spacing={ 3 } style={ { flex: 1 } }>
 			<Text weight={ 500 }>{ label }</Text>
@@ -43,7 +43,7 @@ const EnvironmentLabel = ( { label, value }: EnvironmentLabelProps ) => {
 				readOnly
 				prefix={
 					<InputControlPrefixWrapper>
-						<Badge>{ value }</Badge>
+						<SiteBadge environmentType={ environmentType } />
 					</InputControlPrefixWrapper>
 				}
 				__next40pxDefaultSize
@@ -61,7 +61,24 @@ interface SyncModalProps {
 	siteSlug: string;
 }
 
-const getCopy = ( type: 'pull' | 'push' ) => {
+interface EnvironmentConfig {
+	title: string;
+	description: string;
+	syncFrom: EnvironmentType;
+	syncTo: EnvironmentType;
+}
+
+interface SyncConfig {
+	staging: EnvironmentConfig;
+	production: EnvironmentConfig;
+	fromLabel: string;
+	toLabel: string;
+	syncSelectionHeading: string;
+	learnMore: string;
+	submit: string;
+}
+
+const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	if ( type === 'pull' ) {
 		return {
 			staging: {
@@ -69,16 +86,16 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 				description: __(
 					'Pulling will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 				),
-				syncFrom: __( 'Production' ),
-				syncTo: __( 'Staging' ),
+				syncFrom: 'production',
+				syncTo: 'staging',
 			},
 			production: {
 				title: __( 'Pull from Staging' ),
 				description: __(
 					'Pulling will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 				),
-				syncFrom: __( 'Staging' ),
-				syncTo: __( 'Production' ),
+				syncFrom: 'staging',
+				syncTo: 'production',
 			},
 			fromLabel: __( 'Pull' ),
 			toLabel: __( 'To' ),
@@ -94,16 +111,16 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 			description: __(
 				'Pushing will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 			),
-			syncFrom: __( 'Staging' ),
-			syncTo: __( 'Production' ),
+			syncFrom: 'staging',
+			syncTo: 'production',
 		},
 		production: {
 			title: __( 'Push to Staging' ),
 			description: __(
 				'Pushing will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 			),
-			syncFrom: __( 'Production' ),
-			syncTo: __( 'Staging' ),
+			syncFrom: 'production',
+			syncTo: 'staging',
 		},
 		fromLabel: __( 'Push' ),
 		toLabel: __( 'To' ),
@@ -114,8 +131,8 @@ const getCopy = ( type: 'pull' | 'push' ) => {
 };
 
 export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
-	const copy = getCopy( syncType );
-	const modalTitle = copy[ environment ].title;
+	const config = getSyncConfig( syncType );
+	const modalTitle = config[ environment ].title;
 
 	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
 	//const { siteSlug } = siteRoute.useParams();
@@ -125,18 +142,24 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 			<VStack spacing={ 6 }>
 				<VStack spacing={ 7 }>
 					<Text>
-						{ createInterpolateElement( copy[ environment ].description, {
+						{ createInterpolateElement( config[ environment ].description, {
 							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
 						} ) }
 					</Text>
 					<HStack spacing={ 2 } alignment="center">
-						<EnvironmentLabel label={ copy.fromLabel } value={ copy[ environment ].syncFrom } />
+						<EnvironmentLabel
+							label={ config.fromLabel }
+							environmentType={ config[ environment ].syncFrom }
+						/>
 						<DirectionArrow />
-						<EnvironmentLabel label={ copy.toLabel } value={ copy[ environment ].syncTo } />
+						<EnvironmentLabel
+							label={ config.toLabel }
+							environmentType={ config[ environment ].syncTo }
+						/>
 					</HStack>
-					<Text weight={ 500 }>{ copy.syncSelectionHeading }</Text>
+					<Text weight={ 500 }>{ config.syncSelectionHeading }</Text>
 					<Text>
-						{ createInterpolateElement( copy.learnMore, {
+						{ createInterpolateElement( config.learnMore, {
 							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
 						} ) }
 					</Text>
@@ -145,7 +168,7 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary">{ copy.submit }</Button>
+					<Button variant="primary">{ config.submit }</Button>
 				</HStack>
 			</VStack>
 		</Modal>
