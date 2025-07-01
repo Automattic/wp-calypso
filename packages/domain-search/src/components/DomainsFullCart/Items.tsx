@@ -21,7 +21,7 @@ export const DomainsFullCartItems = () => {
 					<CardBody size="small">
 						<HStack alignment="top" justify="space-between" spacing={ 6 }>
 							<VStack spacing={ 2 }>
-								<Text size="medium">
+								<Text size="medium" aria-label={ `${ domain.domain }.${ domain.tld }` }>
 									{ domain.domain }
 									<Text size="inherit" weight={ 500 }>
 										.{ domain.tld }

@@ -102,7 +102,7 @@ describe( 'DomainsFullCart', () => {
 		);
 
 		await waitFor( () => {
-			expect( screen.getByText( 'the-lasso.com' ) ).toBeVisible();
+			expect( screen.getByLabelText( 'the-lasso.com' ) ).toBeVisible();
 		} );
 	} );
 
@@ -130,7 +130,7 @@ describe( 'DomainsFullCart', () => {
 
 		await waitFor( () => {
 			expect( screen.getByText( 'Hello, World!' ) ).toBeVisible();
-			expect( screen.getByText( 'the-lasso.com' ) ).toBeVisible();
+			expect( screen.getByLabelText( 'the-lasso.com' ) ).toBeVisible();
 			expect( screen.getByText( 'Goodbye, World!' ) ).toBeVisible();
 		} );
 	} );
