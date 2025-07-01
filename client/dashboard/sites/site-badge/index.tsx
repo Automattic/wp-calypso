@@ -7,11 +7,6 @@ interface SiteBadgeProps {
 	environmentType: EnvironmentType;
 }
 
-/**
- * Site environment badge component that displays either "Staging" or "Production"
- * with appropriate styling based on the environment type.
- * @param {SiteBadgeProps} props - Component props
- */
 const SiteBadge = ( { environmentType }: SiteBadgeProps ) => {
 	const getBadgeColor = (): string => {
 		return environmentType === 'staging' ? '#f0c930' : '#dcdcde';
