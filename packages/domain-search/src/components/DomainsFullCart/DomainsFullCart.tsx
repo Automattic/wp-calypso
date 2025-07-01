@@ -53,24 +53,33 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 			className="domains-full-cart"
 		>
 			<Card isRounded={ false } elevation={ 2 } style={ { height: '100%' } }>
-				<CardHeader isBorderless>
-					<Heading level={ 2 }>{ __( 'Cart' ) }</Heading>
-					<Button
-						label={ __( 'Close' ) }
-						variant="tertiary"
-						icon={ close }
-						onClick={ closeFullCart }
-					/>
-				</CardHeader>
-				<CardBody>{ children ?? <DomainsFullCartItems /> }</CardBody>
-				<CardFooter>
-					<VStack spacing={ 4 }>
-						<DomainsMiniCartSummary orientation="horizontal" />
-						<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
-							{ __( 'Continue' ) }
-						</Button>
-					</VStack>
-				</CardFooter>
+				<div style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
+					<CardHeader isBorderless style={ { flexShrink: 0 } }>
+						<Heading level={ 2 }>{ __( 'Cart' ) }</Heading>
+						<Button
+							label={ __( 'Close' ) }
+							variant="tertiary"
+							icon={ close }
+							onClick={ closeFullCart }
+						/>
+					</CardHeader>
+					<CardBody style={ { flex: 1 } } isScrollable>
+						{ children ?? <DomainsFullCartItems /> }
+					</CardBody>
+					<CardFooter style={ { flexShrink: 0 } }>
+						<VStack style={ { flex: 1 } } spacing={ 4 }>
+							<DomainsMiniCartSummary orientation="horizontal" />
+							<Button
+								style={ { justifyContent: 'center' } }
+								__next40pxDefaultSize
+								variant="primary"
+								onClick={ onContinue }
+							>
+								{ __( 'Continue' ) }
+							</Button>
+						</VStack>
+					</CardFooter>
+				</div>
 			</Card>
 		</motion.div>
 	);

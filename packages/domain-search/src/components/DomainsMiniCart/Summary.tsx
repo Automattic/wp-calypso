@@ -13,13 +13,13 @@ export const DomainsMiniCartSummary = ( {
 	orientation?: 'horizontal' | 'vertical';
 } ) => {
 	const { _n } = useI18n();
-	const { selectedDomains } = useDomainSearch();
+	const { cart } = useDomainSearch();
 
 	const domainCount = sprintf(
 		// translators: %(domains)s is the number of domains selected.
-		_n( '%(domains)s domain', '%(domains)s domains', selectedDomains.length ),
+		_n( '%(domains)s domain', '%(domains)s domains', cart.items.length ),
 		{
-			domains: selectedDomains.length,
+			domains: cart.items.length,
 		}
 	);
 
@@ -27,15 +27,15 @@ export const DomainsMiniCartSummary = ( {
 		return (
 			<VStack spacing={ 2 }>
 				<Text>{ domainCount }</Text>
-				<Text>$74</Text>
+				<Text>{ cart.total }</Text>
 			</VStack>
 		);
 	}
 
 	return (
-		<HStack spacing={ 2 }>
+		<HStack alignment="edge" spacing={ 2 }>
 			<Text>{ domainCount }</Text>
-			<Text>$74</Text>
+			<Text>{ cart.total }</Text>
 		</HStack>
 	);
 };

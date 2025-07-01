@@ -11,11 +11,11 @@ import { useDomainSearch } from '../DomainSearch/DomainSearch';
 
 export const DomainsFullCartItems = () => {
 	const { __ } = useI18n();
-	const { selectedDomains } = useDomainSearch();
+	const { cart } = useDomainSearch();
 
 	return (
 		<VStack spacing={ 3 }>
-			{ selectedDomains.map( ( domain ) => (
+			{ cart.items.map( ( domain ) => (
 				<Card key={ `${ domain.domain }.${ domain.tld }` }>
 					<CardBody>
 						<VStack spacing={ 2 }>

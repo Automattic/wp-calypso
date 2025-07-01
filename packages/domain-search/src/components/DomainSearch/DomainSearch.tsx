@@ -7,11 +7,18 @@ interface SelectedDomain {
 	price: string;
 }
 
+interface Cart {
+	items: SelectedDomain[];
+	total: string;
+	onAddItem: ( item: SelectedDomain ) => void;
+	onRemoveItem: ( item: SelectedDomain ) => void;
+}
+
 type DomainSearchContextType = {
 	query: string;
 	setQuery: ( query: string ) => void;
 	onContinue: () => void;
-	selectedDomains: SelectedDomain[];
+	cart: Cart;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
@@ -21,7 +28,12 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 	query: '',
 	setQuery: () => {},
 	onContinue: () => {},
-	selectedDomains: [],
+	cart: {
+		items: [],
+		total: '',
+		onAddItem: () => {},
+		onRemoveItem: () => {},
+	},
 	isFullCartOpen: false,
 	closeFullCart: () => {},
 	openFullCart: () => {},
@@ -31,12 +43,12 @@ export const DomainSearch = ( {
 	children,
 	initialQuery,
 	onContinue,
-	selectedDomains,
+	cart,
 }: {
 	children: React.ReactNode;
 	initialQuery?: string;
 	onContinue: () => void;
-	selectedDomains: SelectedDomain[];
+	cart: Cart;
 } ) => {
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
@@ -58,12 +70,12 @@ export const DomainSearch = ( {
 			query,
 			setQuery,
 			onContinue,
-			selectedDomains,
+			cart,
 			closeFullCart,
 			openFullCart,
 			isFullCartOpen,
 		} ),
-		[ query, setQuery, onContinue, selectedDomains, closeFullCart, openFullCart, isFullCartOpen ]
+		[ query, setQuery, onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
 	);
 
 	return (

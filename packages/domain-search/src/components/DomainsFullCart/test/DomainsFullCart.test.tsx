@@ -12,7 +12,12 @@ const defaultContextValue = {
 	onContinue: () => {},
 	query: '',
 	setQuery: () => {},
-	selectedDomains: [],
+	cart: {
+		items: [],
+		total: '',
+		onAddItem: () => {},
+		onRemoveItem: () => {},
+	},
 	openFullCart: () => {},
 };
 
@@ -84,7 +89,12 @@ describe( 'DomainsFullCart', () => {
 				value={ {
 					...defaultContextValue,
 					isFullCartOpen: true,
-					selectedDomains: [ { domain: 'the-lasso', tld: 'com', price: '$10' } ],
+					cart: {
+						items: [ { domain: 'the-lasso', tld: 'com', price: '$10' } ],
+						total: '$10',
+						onAddItem: () => {},
+						onRemoveItem: () => {},
+					},
 				} }
 			>
 				<DomainsFullCart />
@@ -102,7 +112,12 @@ describe( 'DomainsFullCart', () => {
 				value={ {
 					...defaultContextValue,
 					isFullCartOpen: true,
-					selectedDomains: [ { domain: 'the-lasso', tld: 'com', price: '$10' } ],
+					cart: {
+						items: [ { domain: 'the-lasso', tld: 'com', price: '$10' } ],
+						total: '$10',
+						onAddItem: () => {},
+						onRemoveItem: () => {},
+					},
 				} }
 			>
 				<DomainsFullCart>

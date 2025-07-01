@@ -16,10 +16,15 @@ export const Default = () => {
 				onContinue: () => {
 					alert( 'Continue' );
 				},
-				selectedDomains: [
-					{ domain: 'the-lasso', tld: 'net', price: '$74' },
-					{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
-				],
+				cart: {
+					items: [
+						{ domain: 'the-lasso', tld: 'net', price: '$74' },
+						{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
+					],
+					total: '$74',
+					onAddItem: () => {},
+					onRemoveItem: () => {},
+				},
 				closeFullCart: () => setIsFullCartOpen( false ),
 				openFullCart: () => setIsFullCartOpen( true ),
 			} }
