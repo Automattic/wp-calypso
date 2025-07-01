@@ -25,7 +25,9 @@ export const DomainsFullCartItems = () => {
 								</Text>
 								<Text>{ domain.price }</Text>
 							</HStack>
-							<Button variant="link">{ __( 'Remove' ) }</Button>
+							<Button variant="link" onClick={ () => cart.onRemoveItem( domain ) }>
+								{ __( 'Remove' ) }
+							</Button>
 						</VStack>
 					</CardBody>
 				</Card>

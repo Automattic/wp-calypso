@@ -14,8 +14,8 @@ import { useI18n } from '@wordpress/react-i18n';
 // import { useViewportMatch } from '@wordpress/compose';
 import { useCallback, useRef, useEffect } from 'react';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
-import { DomainsMiniCartSummary } from '../DomainsMiniCart/Summary';
 import { DomainsFullCartItems } from './Items';
+import { DomainsFullCartSummary } from './Summary';
 
 import './style.scss';
 
@@ -68,7 +68,7 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 					</CardBody>
 					<CardFooter style={ { flexShrink: 0 } }>
 						<VStack style={ { flex: 1 } } spacing={ 4 }>
-							<DomainsMiniCartSummary orientation="horizontal" />
+							<DomainsFullCartSummary />
 							<Button
 								style={ { justifyContent: 'center' } }
 								__next40pxDefaultSize

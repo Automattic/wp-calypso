@@ -1,9 +1,9 @@
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
 
-export const DomainsMiniCartSummary = () => {
+export const DomainsFullCartSummary = () => {
 	const { _n } = useI18n();
 	const { cart } = useDomainSearch();
 
@@ -16,9 +16,9 @@ export const DomainsMiniCartSummary = () => {
 	);
 
 	return (
-		<VStack spacing={ 2 }>
+		<HStack alignment="edge" spacing={ 2 }>
 			<Text>{ domainCount }</Text>
 			<Text>{ cart.total }</Text>
-		</VStack>
+		</HStack>
 	);
 };
