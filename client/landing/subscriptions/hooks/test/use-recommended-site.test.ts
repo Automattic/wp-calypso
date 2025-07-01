@@ -41,22 +41,16 @@ describe( 'useRecommendedSite', () => {
 		mockUseDispatch.mockReturnValue( mockDispatch );
 		mockTranslate.mockImplementation( ( text ) => text );
 
-		// Default mocks
-		mockUseSelector.mockImplementation( ( selector ) => {
-			if ( selector === getCurrentUserName ) {
-				return mockCurrentUser;
-			}
-			// Mock for recommendedBlogsList selector
-			if ( selector.toString().includes( 'getListByOwnerAndSlug' ) ) {
-				return mockList;
-			}
-			// Mock for isInRecommendedList selector
-			return false;
-		} );
-
+		// Mock selector functions directly
 		mockGetCurrentUserName.mockReturnValue( mockCurrentUser );
 		mockGetListByOwnerAndSlug.mockReturnValue( mockList );
-		mockGetMatchingItem.mockReturnValue( false );
+		mockGetMatchingItem.mockReturnValue( false ); // Default: not recommended
+
+		// Mock useSelector to call the actual selector functions
+		mockUseSelector.mockImplementation( ( selector ) => {
+			// Call the selector with a mock state - the selector will use our mocked functions
+			return selector( {} as any );
+		} );
 	} );
 
 	describe( 'Basic functionality', () => {
@@ -72,31 +66,24 @@ describe( 'useRecommendedSite', () => {
 		} );
 
 		it( 'should return true for isRecommended when feed is in list', () => {
+			// Mock that the feed is found in the list
 			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
-			// Update the selector mock to return true for isInRecommendedList
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return mockCurrentUser;
-				}
-				if ( selector.toString().includes( 'getListByOwnerAndSlug' ) ) {
-					return mockList;
-				}
-				return true; // isInRecommendedList returns true
-			} );
 
 			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
 			expect( result.current.isRecommended ).toBe( true );
 		} );
 
-		it( 'should return false for canToggle when no user or list', () => {
+		it( 'should return false for canToggle when no user', () => {
 			mockGetCurrentUserName.mockReturnValue( null );
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return null;
-				}
-				return null;
-			} );
+
+			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
+
+			expect( result.current.canToggle ).toBe( false );
+		} );
+
+		it( 'should return false for canToggle when no list', () => {
+			mockGetListByOwnerAndSlug.mockReturnValue( null );
 
 			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
@@ -123,15 +110,6 @@ describe( 'useRecommendedSite', () => {
 		it( 'should dispatch removeRecommendedBlogsSite when toggling off', () => {
 			// Mock that the site is already recommended
 			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return mockCurrentUser;
-				}
-				if ( selector.toString().includes( 'getListByOwnerAndSlug' ) ) {
-					return mockList;
-				}
-				return true; // isInRecommendedList returns true
-			} );
 
 			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
@@ -149,12 +127,6 @@ describe( 'useRecommendedSite', () => {
 
 		it( 'should not dispatch when canToggle is false', () => {
 			mockGetCurrentUserName.mockReturnValue( null );
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return null;
-				}
-				return null;
-			} );
 
 			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
@@ -167,46 +139,35 @@ describe( 'useRecommendedSite', () => {
 	} );
 
 	describe( 'Redux integration', () => {
-		it( 'should show recommended state from Redux selector', () => {
-			// Mock that the site is already recommended in Redux
-			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return mockCurrentUser;
-				}
-				if ( selector.toString().includes( 'getListByOwnerAndSlug' ) ) {
-					return mockList;
-				}
-				return true; // isInRecommendedList returns true
-			} );
-
-			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
-
-			expect( result.current.isRecommended ).toBe( true );
-		} );
-
-		it( 'should react to Redux state changes', () => {
-			let isRecommendedState = false;
-
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return mockCurrentUser;
-				}
-				if ( selector.toString().includes( 'getListByOwnerAndSlug' ) ) {
-					return mockList;
-				}
-				return isRecommendedState; // Return current state
-			} );
-
+		it( 'should react to selector function changes', () => {
 			const { result, rerender } = renderHook( () => useRecommendedSite( mockFeedId ) );
 
 			expect( result.current.isRecommended ).toBe( false );
 
-			// Simulate Redux state change
-			isRecommendedState = true;
+			// Change the mock return value to simulate Redux state change
+			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
+
 			rerender();
 
 			expect( result.current.isRecommended ).toBe( true );
+		} );
+
+		it( 'should handle missing user gracefully', () => {
+			mockGetCurrentUserName.mockReturnValue( null );
+
+			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
+
+			expect( result.current.isRecommended ).toBe( false );
+			expect( result.current.canToggle ).toBe( false );
+		} );
+
+		it( 'should handle missing list gracefully', () => {
+			mockGetListByOwnerAndSlug.mockReturnValue( null );
+
+			const { result } = renderHook( () => useRecommendedSite( mockFeedId ) );
+
+			expect( result.current.isRecommended ).toBe( false );
+			expect( result.current.canToggle ).toBe( false );
 		} );
 	} );
 } );
