@@ -40,8 +40,6 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	const siteSlug = site?.slug ?? '';
 
-	const adminButtonRefMerged = useMergeRefs( [ adminButtonRef, focusRef ] );
-
 	const productionSiteId = site?.is_wpcom_staging_site
 		? site.options?.wpcom_production_blog_id
 		: site?.ID;
@@ -65,7 +63,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 				primary
 				className="item-preview__admin-button"
 				href={ `${ adminUrl }` }
-				ref={ adminButtonRefMerged }
+				ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }
 			>
 				{ adminLabel }
 			</Button>
