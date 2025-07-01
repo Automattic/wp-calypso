@@ -9,7 +9,7 @@ import { DomainSearch } from '.';
 import type { Meta } from '@storybook/react';
 
 export const Default = () => {
-	const [ initialQuery, setInitialQuery ] = useState( '' );
+	const [ initialQuery, setInitialQuery ] = useState( 'mycoolsite.com' );
 
 	return initialQuery ? (
 		<DomainSearchResults initialQuery={ initialQuery } />
