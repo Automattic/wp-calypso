@@ -12,6 +12,10 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/components', () => ( {
+	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
+} ) );
+
 jest.mock(
 	'calypso/components/gravatar-with-hovercards/recommended-blogs/item',
 	() =>
@@ -101,24 +105,40 @@ describe( 'UserRecommendedBlogs', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'should render nothing when no recommended blogs and still expecting request', () => {
+	test( 'should render LoadingPlaceholder when no recommended blogs and still expecting request', () => {
 		mockGetUserRecommendedBlogs.mockReturnValue( null );
 		mockIsRequestingUserRecommendedBlogs.mockReturnValue( true );
 		mockHasRequestedUserRecommendedBlogs.mockReturnValue( false );
 
-		const { container } = render( <UserRecommendedBlogs user={ defaultUser } /> );
+		render( <UserRecommendedBlogs user={ defaultUser } /> );
 
-		expect( container ).toBeEmptyDOMElement();
+		const loadingPlaceholder = screen.getByTestId( 'loading-placeholder' );
+		expect( loadingPlaceholder ).toBeInTheDocument();
+		expect( loadingPlaceholder ).toHaveTextContent( 'Loading...' );
 	} );
 
-	test( 'should render nothing when recommended blogs array is empty and still expecting request', () => {
+	test( 'should render LoadingPlaceholder when recommended blogs array is empty and still expecting request', () => {
 		mockGetUserRecommendedBlogs.mockReturnValue( [] );
 		mockIsRequestingUserRecommendedBlogs.mockReturnValue( true );
 		mockHasRequestedUserRecommendedBlogs.mockReturnValue( false );
 
-		const { container } = render( <UserRecommendedBlogs user={ defaultUser } /> );
+		render( <UserRecommendedBlogs user={ defaultUser } /> );
 
-		expect( container ).toBeEmptyDOMElement();
+		const loadingPlaceholder = screen.getByTestId( 'loading-placeholder' );
+		expect( loadingPlaceholder ).toBeInTheDocument();
+		expect( loadingPlaceholder ).toHaveTextContent( 'Loading...' );
+	} );
+
+	test( 'should render LoadingPlaceholder when no recommended blogs and not yet requested', () => {
+		mockGetUserRecommendedBlogs.mockReturnValue( null );
+		mockIsRequestingUserRecommendedBlogs.mockReturnValue( false );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( false );
+
+		render( <UserRecommendedBlogs user={ defaultUser } /> );
+
+		const loadingPlaceholder = screen.getByTestId( 'loading-placeholder' );
+		expect( loadingPlaceholder ).toBeInTheDocument();
+		expect( loadingPlaceholder ).toHaveTextContent( 'Loading...' );
 	} );
 
 	test( 'should render EmptyContent when no recommended blogs and request has completed', () => {
@@ -182,8 +202,9 @@ describe( 'UserRecommendedBlogs', () => {
 		expect( blogItems[ 1 ] ).toHaveAttribute( 'data-class-prefix', 'user-profile' );
 	} );
 
-	test( 'should request recommended blogs when not available', () => {
+	test( 'should request recommended blogs when not available and not yet requested', () => {
 		mockGetUserRecommendedBlogs.mockReturnValue( null );
+		mockHasRequestedUserRecommendedBlogs.mockReturnValue( false );
 
 		render( <UserRecommendedBlogs user={ defaultUser } /> );
 

@@ -39,10 +39,11 @@ const UserRecommendedBlogs = ( { user }: UserPostsProps ): JSX.Element | null =>
 		}
 	}, [ userLogin, recommendedBlogs, dispatch, hasRequested ] );
 
-	if (
-		! isEnabled( 'reader/recommended-blogs-list' ) ||
-		( ! recommendedBlogs?.length && isExpectingRequest )
-	) {
+	if ( ! isEnabled( 'reader/recommended-blogs-list' ) ) {
+		return null;
+	}
+
+	if ( ! recommendedBlogs?.length && isExpectingRequest ) {
 		return <LoadingPlaceholder />;
 	}
 
