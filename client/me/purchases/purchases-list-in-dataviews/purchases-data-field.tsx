@@ -1,6 +1,4 @@
-import page from '@automattic/calypso-router';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
 import { Fields } from '@wordpress/dataviews';
 import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -79,7 +77,7 @@ export function getPurchasesFieldDefinitions( {
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	const goToPurchase = ( item: Purchases.Purchase ) => {
+	const getPurchaseUrl = ( item: Purchases.Purchase ) => {
 		const siteUrl = item.siteSlug || item.domain;
 		const subscriptionId = item.id;
 		if ( ! siteUrl ) {
@@ -92,7 +90,7 @@ export function getPurchasesFieldDefinitions( {
 			console.error( 'Cannot display manage purchase page for subscription without ID' );
 			return;
 		}
-		page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
+		return getManagePurchaseUrlFor( siteUrl, subscriptionId );
 	};
 
 	const fields: Fields< Purchases.Purchase > = [
@@ -121,15 +119,13 @@ export function getPurchasesFieldDefinitions( {
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				const site = { ID: item.siteId };
 				return (
-					<Button
+					<a
 						className="purchase-item__icon"
-						variant="link"
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
-						label={ translate( 'Manage purchase', { textOnly: true } ) }
-						onClick={ () => goToPurchase( item ) }
+						href={ getPurchaseUrl( item ) }
 					>
 						<PurchaseItemSiteIcon site={ site } purchase={ item } />
-					</Button>
+					</a>
 				);
 			},
 		},
@@ -159,14 +155,13 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
-							<Button
-								variant="link"
+							<a
+								className="purchase-item__icon"
 								title={ translate( 'Manage purchase', { textOnly: true } ) }
-								label={ translate( 'Manage purchase', { textOnly: true } ) }
-								onClick={ () => goToPurchase( item ) }
+								href={ getPurchaseUrl( item ) }
 							>
 								{ getDisplayName( item ) }
-							</Button>
+							</a>
 							<OwnerInfo purchase={ item } />
 						</div>
 					</div>
@@ -338,14 +333,14 @@ export function getMembershipsFieldDefinitions( {
 }: {
 	translate: LocalizeProps[ 'translate' ];
 } ): Fields< MembershipSubscription > {
-	const goToPurchase = ( item: MembershipSubscription ) => {
+	const getPurchaseUrl = ( item: MembershipSubscription ) => {
 		const subscriptionId = item.ID;
 		if ( ! subscriptionId ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Cannot display manage purchase page for subscription without ID' );
 			return;
 		}
-		page( `/me/purchases/other/${ subscriptionId }` );
+		return `/me/purchases/other/${ subscriptionId }`;
 	};
 
 	return [
@@ -362,15 +357,13 @@ export function getMembershipsFieldDefinitions( {
 			// Render the site icon
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<Button
+					<a
 						className="purchase-item__icon"
-						variant="link"
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
-						label={ translate( 'Manage purchase', { textOnly: true } ) }
-						onClick={ () => goToPurchase( item ) }
+						href={ getPurchaseUrl( item ) }
 					>
 						<Icon subscription={ item } />
-					</Button>
+					</a>
 				);
 			},
 		},
@@ -388,14 +381,13 @@ export function getMembershipsFieldDefinitions( {
 				return (
 					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__title purchase-item__title">
-							<Button
-								variant="link"
+							<a
+								className="purchase-item__icon"
 								title={ translate( 'Manage purchase', { textOnly: true } ) }
-								label={ translate( 'Manage purchase', { textOnly: true } ) }
-								onClick={ () => goToPurchase( item ) }
+								href={ getPurchaseUrl( item ) }
 							>
 								{ item.title }
-							</Button>
+							</a>
 						</div>
 					</div>
 				);
