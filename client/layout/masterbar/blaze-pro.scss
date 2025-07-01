@@ -171,25 +171,6 @@ body.is-section-signup {
 		display: none;
 	}
 
-	.login__form-header-wrapper {
-		align-items: center;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.login__form-header {
-		margin-top: 0;
-		width: 360px;
-
-		h3 {
-			font-family: $inter !important;
-			font-size: 2rem;
-			font-weight: 700;
-			line-height: 40px;
-			margin-bottom: 16px; // For 2FA screen
-		}
-	}
-
 	.login__body--continue-as-user {
 		align-items: center;
 		display: flex;
@@ -480,22 +461,8 @@ body.is-section-signup {
 		margin-bottom: 12px;
 	}
 
-	.login__header-subtitle {
-		color: var(--color-neutral-50);
-		font-family: $sfProText !important;
-		font-size: rem(18px);
-		font-weight: 500;
-		line-height: 25px;
-	}
-
 	.login__lostpassword-subtitle {
 		width: 360px;
-	}
-
-	&.two-factor-auth-enabled {
-		.login__header-subtitle {
-			display: none;
-		}
 	}
 
 	.login__form-terms {

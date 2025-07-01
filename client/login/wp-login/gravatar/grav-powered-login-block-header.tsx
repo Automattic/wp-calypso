@@ -79,13 +79,13 @@ const GravPoweredLoginBlockHeader = ( {
 	}
 
 	return (
-		<div className="login__form-header-wrapper">
+		<div className="grav-powered-login__form-header-wrapper">
 			<GravatarLoginLogo
 				iconUrl={ oauth2Client?.icon }
 				alt={ oauth2Client?.title || '' }
 				isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
 			/>
-			<div className="login__form-header">{ headerText }</div>
+			<div className="grav-powered-login__form-header">{ headerText }</div>
 			{ postHeader }
 		</div>
 	);

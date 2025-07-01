@@ -214,20 +214,6 @@
 			font-weight: 400;
 		}
 
-		.login__form-header {
-			@extend .wp-brand-font;
-			font-size: $font-title-medium;
-			color: var(--color-text);
-			font-weight: 600;
-			margin-bottom: 80px;
-			margin-top: 0;
-
-			@include breakpoint-deprecated(">480px") {
-				font-size: $font-title-large;
-				margin-bottom: 65px;
-			}
-		}
-
 		.auth-form__separator {
 			padding: 10px 0;
 			&::before,

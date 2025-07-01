@@ -229,10 +229,6 @@ $image-height: 47px;
 		font-weight: normal;
 	}
 
-	.login__form-header {
-		color: var(--color-neutral-80);
-	}
-
 	.wp-login__main.main {
 		max-width: 476px;
 	}
@@ -309,17 +305,6 @@ $image-height: 47px;
 	// Specificity bump.
 	.layout__content.layout__content {
 		padding: 0;
-	}
-
-	.login__form-header {
-		@include onboarding-heading-text-mobile;
-		margin-bottom: 0;
-		text-align: left;
-
-		@include break-mobile {
-			@include onboarding-heading-text;
-			text-align: center;
-		}
 	}
 
 	.wp-login__container .card {
@@ -488,11 +473,6 @@ $image-height: 47px;
 				text-underline-offset: 5px;
 			}
 		}
-
-		.login__form-header {
-			text-align: center;
-			font-size: $font-title-large;
-		}
 	}
 
 	.wp-login__login-block-footer {
@@ -646,11 +626,11 @@ $image-height: 47px;
 		}
 	}
 
-	.login__form-header-wrapper {
+	.grav-powered-login__form-header-wrapper {
 		text-align: left;
 	}
 
-	.login__form-header {
+	.grav-powered-login__form-header {
 		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 		font-size: 32px;
 		font-weight: 900;
@@ -659,7 +639,7 @@ $image-height: 47px;
 		margin: 24px 0;
 	}
 
-	.login__header-subtitle,
+	.grav-powered-login__header-subtitle,
 	.verification-code-form__help-text,
 	.two-factor-authentication__info {
 		margin-bottom: 24px;
@@ -916,7 +896,7 @@ $image-height: 47px;
 			padding: 40px 56px;
 		}
 
-		.login__form-header {
+		.grav-powered-login__form-header {
 			font-size: 40px;
 		}
 
