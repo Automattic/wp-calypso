@@ -2,7 +2,9 @@
 	padding: 2rem;
 	display: flex;
 	justify-content: space-between;
-	max-width: 48rem;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 	gap: 1rem;
 
 	@media screen and (max-width: 768px) {
@@ -14,6 +16,7 @@
 .staging-site-creation-card__content {
 	display: flex;
 	flex-direction: column;
+	flex: 1;
 }
 
 .staging-site-creation-card__title {
@@ -50,7 +53,7 @@
 	font-size: 0.875rem;
 
 	.gridicon {
-		color: var(--color-success);
+		color: #3858e9; /* Blueberry */
 		flex-shrink: 0;
 	}
 }
