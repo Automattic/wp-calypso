@@ -537,6 +537,20 @@ export const StagingSiteCard = ( {
 		}
 	}, [ dispatch, isJetpack, siteId ] );
 
+	// Determine if we should show the new creation card without wrapper/banner
+	const isShowingNewCreationCard =
+		( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) &&
+		config.isEnabled( 'hosting/staging-sites-redesign' ) &&
+		! (
+			StagingSiteStatus.REVERTING === stagingSiteStatus ||
+			StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
+			isReverting
+		);
+
+	if ( isShowingNewCreationCard ) {
+		return stagingSiteCardContent;
+	}
+
 	return (
 		<CardContentWrapper>
 			{ isJetpack && isPossibleJetpackConnectionProblem && (
