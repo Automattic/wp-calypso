@@ -6,6 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -15,6 +16,7 @@ import PageLoading from './pages/shared/page-loading';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
+import StatsMoved from './stats-moved';
 import StatsPageLoader from './stats-page-loader';
 import { appendQueryStringForRedirection } from './utils';
 
@@ -519,3 +521,14 @@ export { default as insights } from './pages/insights/controller';
 export { default as realtime } from './pages/realtime/controller';
 export { default as subscribers } from './pages/subscribers/controller';
 export { default as purchase } from './pages/purchase/controller';
+
+export const statsMoved = ( context, next ) => {
+	const state = context.store.getState();
+	const userId = getCurrentUserId( state );
+
+	// Enforce the new location to 10% of users.
+	//if ( userId % 10 === 0 ) {
+	context.primary = <StatsMoved />;
+	//}
+	next();
+};

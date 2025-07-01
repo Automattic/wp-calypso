@@ -1,0 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-moved {
+	padding: 24px;
+	max-width: 784px;
+
+	@include break-large {
+		padding: 32px;
+	}
+
+	.dashboard-callout {
+		max-width: none;
+	}
+
+	.dashboard-callout__image img {
+		object-fit: contain;
+	}
+}
