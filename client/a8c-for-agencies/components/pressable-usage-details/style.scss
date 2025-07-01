@@ -132,10 +132,9 @@
 	}
 
 	.pressable-usage-details__titan-plan-label {
-		@include body-small;
+		@include heading-small;
 		background-color: var(--color-primary-5);
 		color: var(--color-primary-40);
-        font-weight: 500;
 		padding: 2px 6px;
         margin-inline-start: 6px;
 		border-radius: 4px;
@@ -162,8 +161,7 @@
 	}
 
     .pressable-titan-usage-details__info-top-right {
-        @include body-medium;
-        font-weight: 500;
+        @include heading-medium;
         text-align: right;
     }
 

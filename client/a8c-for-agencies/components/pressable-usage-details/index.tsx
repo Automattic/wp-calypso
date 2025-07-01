@@ -37,7 +37,11 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 		}
 
 		const date = new Date( dateString );
-		return new Intl.DateTimeFormat( 'en-US', { month: 'short', day: 'numeric' } ).format( date );
+		return new Intl.DateTimeFormat( 'en-US', {
+			month: 'long',
+			day: 'numeric',
+			timeZone: 'UTC',
+		} ).format( date );
 	};
 
 	if ( ! planInfo ) {
@@ -177,13 +181,13 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 											<span className="pressable-usage-details__titan-plan-label">
 												{ translate( 'standard' ) }
 											</span>
-											{ order.order_plan === 'trial' && order.trial_end_at && (
+											{ order.trial_end_at && (
 												<>
 													<span className="pressable-usage-details__titan-trial-badge">
 														{ translate( 'trial' ) }
 													</span>
 													<span className="pressable-usage-details__titan-trial-text">
-														{ translate( 'Trial ends on %(date)s', {
+														{ translate( 'The trial ends by %(date)s', {
 															args: {
 																date: formatTrialEndDate( order.trial_end_at ),
 															},
