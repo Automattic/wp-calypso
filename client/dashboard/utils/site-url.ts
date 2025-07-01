@@ -1,6 +1,6 @@
 import type { Site } from '../data/types';
 
-export function getSiteUrlWithoutProtocol( site: Site ) {
+export function getSiteHostname( site: Site ) {
 	if ( site.URL === '' ) {
 		return site.URL;
 	}

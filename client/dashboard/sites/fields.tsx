@@ -7,7 +7,7 @@ import TimeSince from '../components/time-since';
 import { getSiteName } from '../utils/site-name';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { isP2 } from '../utils/site-types';
-import { getSiteUrlWithoutProtocol } from '../utils/site-url';
+import { getSiteHostname } from '../utils/site-url';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
 import { canManageSite } from './features';
 import { isSitePlanTrial } from './plans';
@@ -75,7 +75,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		getValue: ( { item } ) => getSiteUrlWithoutProtocol( item ),
+		getValue: ( { item } ) => getSiteHostname( item ),
 		render: ( { field, item } ) => (
 			<Text
 				as="span"

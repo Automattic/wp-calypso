@@ -10,7 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteRestoreMutation } from '../../app/queries/site';
-import { getSiteUrlWithoutProtocol } from '../../utils/site-url';
+import { getSiteHostname } from '../../utils/site-url';
 import type { Site } from '../../data/types';
 
 interface ContentInfoProps {
@@ -21,7 +21,7 @@ interface ContentInfoProps {
 export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( siteRestoreMutation( site.ID ) );
-	const siteSlug = getSiteUrlWithoutProtocol( site );
+	const siteSlug = getSiteHostname( site );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
