@@ -5,6 +5,8 @@
 
 
 .staging-site-card {
+	overflow-y: auto;
+	max-height: 500px;
 	.card {
 		padding: 24px 22px;
 	}
@@ -68,6 +70,7 @@
 
 	&__body {
 		overflow-x: auto;
+		overflow-y: autodd;
 		padding-bottom: 14px;
 	}
 

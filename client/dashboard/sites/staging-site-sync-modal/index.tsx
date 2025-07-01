@@ -116,6 +116,7 @@ export default function SyncModal( {
 		) {
 			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 			pullFromStaging( { types: 'paths', include_paths } );
+			onClose();
 		}
 	};
 
