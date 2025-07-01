@@ -89,7 +89,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 			<div className="user-profile__wrapper">
 				<ReaderBackButton />
 				<div className="user-profile__wrapper-content">
-					<UserProfileHeader user={ user } />
+					<UserProfileHeader user={ user } view={ view } />
 					{ renderContent() }
 				</div>
 			</div>
