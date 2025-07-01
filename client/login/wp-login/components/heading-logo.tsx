@@ -27,10 +27,9 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 interface Props {
 	isFromAkismet?: boolean;
 	isJetpack?: boolean;
-	isJetpackWooDnaFlow?: boolean;
 }
 
-const HeadingLogo = ( { isFromAkismet, isJetpack, isJetpackWooDnaFlow }: Props ) => {
+const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 
@@ -47,7 +46,7 @@ const HeadingLogo = ( { isFromAkismet, isJetpack, isJetpackWooDnaFlow }: Props )
 		logo = <img src={ blazeProLogo } alt="Blaze Pro Logo" />;
 	} else if ( isA4AOAuth2Client( oauth2Client ) ) {
 		logo = <A4APlusWpComLogo size={ 32 } />;
-	} else if ( isWoo || isJetpackWooDnaFlow ) {
+	} else if ( isWoo ) {
 		logo = (
 			<SVGIcon
 				name="woocommerce-logo"

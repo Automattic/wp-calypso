@@ -65,7 +65,6 @@ export class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
-		isJetpackWooDnaFlow: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
@@ -291,6 +290,7 @@ export class Login extends Component {
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
 			twoFactorEnabled,
+<<<<<<< HEAD
 			currentQuery,
 			translate,
 		} = this.props;
@@ -340,6 +340,8 @@ export class Login extends Component {
 			isJetpack,
 			isFromAkismet,
 			isJetpackWooDnaFlow,
+=======
+>>>>>>> dcfd2f2bccd (merge isWooDnaFlow in isWooJPCFlow)
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );

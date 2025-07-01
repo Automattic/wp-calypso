@@ -376,8 +376,7 @@ export default withCurrentRoute(
 						isMobile ) ) ||
 				isPartnerPortal;
 
-			const noMasterbarForRoute =
-				( isWhiteLogin && ! isBlazePro ) || isJetpackWooDnaFlow || isInvitationURL;
+			const noMasterbarForRoute = ( isWhiteLogin && ! isBlazePro ) || isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&

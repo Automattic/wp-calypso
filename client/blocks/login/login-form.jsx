@@ -22,7 +22,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -1009,7 +1008,6 @@ export default connect(
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),
