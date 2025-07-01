@@ -10,20 +10,16 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-function getFirstString( value: string | string[] | undefined ): string | undefined {
-	if ( typeof value === 'string' ) {
-		return value;
-	}
-	if ( Array.isArray( value ) ) {
-		return value[ 0 ];
-	}
-	return undefined;
-}
-
 const GravPoweredLoginBlockFooter = () => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const locale = useSelector( getCurrentLocaleSlug );
-	const currentQuery = useSelector( getCurrentQueryArguments );
+	/**
+	 * TODO: This is a temporary type assertion to fix the type error.
+	 * Create a selector that returns the current query arguments as a record, or pass the type to the selector.
+	 */
+	const currentQuery = useSelector( getCurrentQueryArguments ) as
+		| Record< string, string >
+		| undefined;
 	const currentRoute = useSelector( getCurrentRoute );
 	const translate = useTranslate();
 
@@ -37,18 +33,18 @@ const GravPoweredLoginBlockFooter = () => {
 	const magicLoginUrl = login( {
 		locale,
 		twoFactorAuthType: 'link',
-		oauth2ClientId: getFirstString( currentQuery?.client_id ),
-		redirectTo: getFirstString( currentQuery?.redirect_to ),
-		gravatarFrom: getFirstString( currentQuery?.gravatar_from ),
+		oauth2ClientId: currentQuery?.client_id,
+		redirectTo: currentQuery?.redirect_to,
+		gravatarFrom: currentQuery?.gravatar_from,
 		gravatarFlow: isGravatarFlow,
-		emailAddress: getFirstString( currentQuery?.email_address ),
+		emailAddress: currentQuery?.email_address,
 	} );
 	const currentUrl = new URL( window.location.href );
 	currentUrl.searchParams.append( 'lostpassword_flow', 'true' );
 	const lostPasswordUrl = addQueryArgs(
 		{
 			redirect_to: currentUrl.toString(),
-			client_id: getFirstString( currentQuery?.client_id ),
+			client_id: currentQuery?.client_id,
 		},
 		lostPassword( { locale } )
 	);
