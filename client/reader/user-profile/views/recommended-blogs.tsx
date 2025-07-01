@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { LoadingPlaceholder } from '@automattic/components';
 import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -33,16 +34,16 @@ const UserRecommendedBlogs = ( { user }: UserPostsProps ): JSX.Element | null =>
 	);
 
 	useEffect( () => {
-		if ( ! recommendedBlogs && userLogin ) {
+		if ( ! recommendedBlogs && userLogin && ! hasRequested ) {
 			dispatch( requestUserRecommendedBlogs( userLogin ) );
 		}
-	}, [ userLogin, recommendedBlogs, dispatch ] );
+	}, [ userLogin, recommendedBlogs, dispatch, hasRequested ] );
 
 	if (
 		! isEnabled( 'reader/recommended-blogs-list' ) ||
 		( ! recommendedBlogs?.length && isExpectingRequest )
 	) {
-		return null;
+		return <LoadingPlaceholder />;
 	}
 
 	if ( ! recommendedBlogs?.length ) {
