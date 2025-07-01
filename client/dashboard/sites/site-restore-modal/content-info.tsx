@@ -20,6 +20,7 @@ interface ContentInfoProps {
 export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( siteRestoreMutation( site.ID ) );
+	const siteSlug = new URL( site.URL ).hostname;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -28,7 +29,7 @@ export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoPr
 			onSuccess: () => {
 				createSuccessNotice(
 					/* translators: %s: site domain */
-					sprintf( __( '%s has been restored.' ), site.slug ),
+					sprintf( __( '%s has been restored.' ), siteSlug ),
 					{ type: 'snackbar' }
 				);
 
@@ -56,7 +57,7 @@ export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoPr
 						/* translators: %s: site domain */
 						__( 'Are you sure to restore the site <siteDomain />?' ),
 						{
-							siteDomain: <strong>{ new URL( site.URL ).hostname }</strong>,
+							siteDomain: <strong>{ siteSlug }</strong>,
 						}
 					) }
 				</Text>
