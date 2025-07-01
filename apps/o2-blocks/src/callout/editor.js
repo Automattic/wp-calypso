@@ -1,16 +1,14 @@
 /**
- * Callout Block - Main Editor Component
+ * Callout Block - Simplified Single Block Implementation
  *
- * A styled callout box with icon, header, and content sections.
- * Includes template system and customization controls.
+ * A styled callout box with integrated icon, header, and content sections.
  */
 
-import { InnerBlocks, InspectorControls, ColorPalette } from '@wordpress/block-editor';
+import { RichText, InnerBlocks, InspectorControls, ColorPalette } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { CustomSelectControl, PanelBody, Button } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
 	CALLOUT_TEMPLATE_DEFAULT_COLOR,
 	CALLOUT_TEMPLATES,
@@ -54,90 +52,30 @@ const getCurrentColor = ( templateName, customColor ) => {
 		: CALLOUT_TEMPLATES[ templateName ]?.color || CALLOUT_TEMPLATES.custom.color;
 };
 
-// === CUSTOM HOOKS ===
-
-const useCalloutAttributes = ( attributes ) => {
-	const {
-		calloutTemplate: templateName = 'custom',
-		customColor = CALLOUT_TEMPLATE_DEFAULT_COLOR,
-		customIcon = '',
-	} = attributes;
-
-	return { templateName, customColor, customIcon };
-};
-
-const useCalloutStyles = ( templateName, customColor ) => {
-	const currentColor = getCurrentColor( templateName, customColor );
-	const customStyle =
-		templateName === 'custom'
-			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
-			: {};
-
-	return { currentColor, customStyle };
-};
-
-const useBlockEditor = ( clientId ) => {
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
-	const innerBlocks = useSelect(
-		( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
-		[ clientId ]
-	);
-
-	return { innerBlocks, updateBlockAttributes };
-};
-
-const useTemplateHandler = ( templateName, customIcon, setAttributes, updateIconBlock ) => {
-	return useCallback(
-		( { selectedItem } ) => {
-			if ( selectedItem?.key && selectedItem.key !== templateName ) {
-				const newAttributes = { calloutTemplate: selectedItem.key };
-				const newCustomIcon = selectedItem.key !== 'custom' && customIcon ? '' : customIcon;
-
-				// Clear custom icon when switching to a template type (non-custom)
-				if ( selectedItem.key !== 'custom' && customIcon ) {
-					newAttributes.customIcon = '';
-				}
-
-				// Update both the attributes and the icon block synchronously
-				setAttributes( newAttributes );
-				updateIconBlock( selectedItem.key, newCustomIcon );
-			}
-		},
-		[ templateName, customIcon, setAttributes, updateIconBlock ]
-	);
-};
-
-const useColorHandler = ( customColor, setAttributes, updateIconBlockColor ) => {
-	return useCallback(
-		( color ) => {
-			const normalizedColor = normalizeColor( color );
-			if ( normalizedColor !== customColor ) {
-				setAttributes( { customColor: normalizedColor } );
-				// Also update the icon block's color
-				updateIconBlockColor( normalizedColor );
-			}
-		},
-		[ customColor, setAttributes, updateIconBlockColor ]
-	);
-};
-
-const useIconHandler = ( customIcon, templateName, setAttributes, updateIconBlock ) => {
-	return useCallback(
-		( iconName ) => {
-			if ( iconName !== customIcon ) {
-				// Update both the attributes and the icon block synchronously
-				setAttributes( { customIcon: iconName } );
-				updateIconBlock( templateName, iconName );
-			}
-		},
-		[ customIcon, setAttributes, templateName, updateIconBlock ]
-	);
-};
-
 // === COMPONENTS ===
 
+const CalloutIcon = ( { iconName, color } ) => (
+	<div className="o2-blocks-callout__icon" style={ { borderColor: color } }>
+		<span className={ `dashicons ${ iconName }` } style={ { color } } aria-hidden="true" />
+	</div>
+);
+
+const CalloutHeader = ( { content, onChange, placeholder, color, iconName } ) => (
+	<h2 className="o2-blocks-callout__header" style={ { color } }>
+		<CalloutIcon iconName={ iconName } color={ color } />
+		<span className="o2-blocks-callout__header-text">
+			<RichText
+				value={ content }
+				onChange={ onChange }
+				placeholder={ placeholder }
+				allowedFormats={ [ 'core/bold', 'core/italic' ] }
+				style={ { color } }
+			/>
+		</span>
+	</h2>
+);
+
 const IconPicker = ( { customIcon, currentColor, onIconChange, templateName } ) => {
-	// Get the current icon being displayed by a template, if a template is being used
 	const currentIconName = getIcon( templateName, customIcon );
 
 	return (
@@ -176,185 +114,163 @@ const IconPicker = ( { customIcon, currentColor, onIconChange, templateName } ) 
 };
 
 const TemplateControls = ( { templateName, onChange } ) => {
-	const selectedTemplateName = Object.entries( CALLOUT_TEMPLATES )
-		.map( ( [ key, value ] ) => ( { key, name: value.name } ) )
-		.find( ( option ) => option.key === templateName ) || {
-		key: 'custom',
-		name: CALLOUT_TEMPLATES.custom.name,
-	};
+	const templateOptions = useMemo(
+		() =>
+			Object.entries( CALLOUT_TEMPLATES ).map( ( [ key, value ] ) => ( {
+				key,
+				name: value.name,
+			} ) ),
+		[]
+	);
+
+	const selectedTemplate = useMemo(
+		() =>
+			templateOptions.find( ( option ) => option.key === templateName ) || {
+				key: 'custom',
+				name: CALLOUT_TEMPLATES.custom.name,
+			},
+		[ templateOptions, templateName ]
+	);
 
 	return (
 		<PanelBody title={ __( 'Templates' ) }>
 			<CustomSelectControl
-				options={ Object.entries( CALLOUT_TEMPLATES ).map( ( [ key, value ] ) => ( {
-					key,
-					name: value.name,
-				} ) ) }
-				value={ selectedTemplateName }
+				options={ templateOptions }
+				value={ selectedTemplate }
 				onChange={ onChange }
 			/>
 		</PanelBody>
 	);
 };
 
+const ColorControls = ( { customColor, onColorChange } ) => (
+	<PanelBody title={ __( 'Color' ) }>
+		<ColorPalette
+			colors={ CALLOUT_PANEL_COLORS }
+			value={ customColor }
+			onChange={ onColorChange }
+		/>
+	</PanelBody>
+);
+
 const IconControls = ( { customIcon, currentColor, templateName, onIconChange } ) => (
 	<PanelBody title={ __( 'Icon' ) }>
 		<IconPicker
 			customIcon={ customIcon }
 			currentColor={ currentColor }
-			onIconChange={ onIconChange }
 			templateName={ templateName }
+			onIconChange={ onIconChange }
 		/>
 	</PanelBody>
 );
 
-const ColorControls = ( { customColor, onColorChange } ) => (
-	<PanelBody title={ __( 'Color' ) }>
-		<ColorPalette
-			label={ __( 'Color' ) }
-			value={ customColor }
-			onChange={ onColorChange }
-			colors={ CALLOUT_PANEL_COLORS }
-			disableCustomColors={ false }
-			clearable={ false }
-		/>
-	</PanelBody>
-);
+// === MAIN COMPONENT ===
 
-const CalloutBlock = ( { templateName, customStyle, customIcon, customColor, headingId } ) => {
-	const getCalloutBlockStructure = ( template, icon = '' ) => {
-		return [
-			[
-				'a8c/callout-icon',
-				{
-					iconName: getIcon( template, icon ),
-					iconColor: getCurrentColor( template, customColor ),
-					lock: {
-						move: true,
-						remove: true,
-					},
-				},
-			],
-			[
-				'a8c/callout-header',
-				{
-					content: '',
-					headingId: headingId,
-					lock: {
-						move: true,
-						remove: true,
-					},
-				},
-			],
-			[
-				'core/paragraph',
-				{
-					placeholder: __( 'Enter details here…' ),
-				},
-			],
-		];
-	};
+const Edit = ( { attributes, setAttributes } ) => {
+	const {
+		calloutTemplate: templateName = 'custom',
+		customColor = CALLOUT_TEMPLATE_DEFAULT_COLOR,
+		customIcon = '',
+		headerContent = '',
+	} = attributes;
 
-	return (
-		<aside
-			className={ `o2-blocks-callout o2-blocks-callout--${ templateName }` }
-			style={ customStyle }
-			aria-labelledby={ headingId }
-		>
-			<InnerBlocks
-				allowedBlocks={ null } // Allow all blocks
-				template={ getCalloutBlockStructure( templateName, customIcon ) }
-			/>
-		</aside>
-	);
-};
+	const currentColor = getCurrentColor( templateName, customColor );
+	const currentIcon = getIcon( templateName, customIcon );
 
-// === MAIN EDIT AND SAVE FUNCTIONS ===
+	const customStyle =
+		templateName === 'custom'
+			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
+			: {};
 
-const Edit = ( { attributes, setAttributes, clientId } ) => {
-	const { templateName, customColor, customIcon } = useCalloutAttributes( attributes );
-	const { headingId } = attributes;
+	const handleTemplateChange = useCallback(
+		( { selectedItem } ) => {
+			if ( selectedItem?.key && selectedItem.key !== templateName ) {
+				const newAttributes = { calloutTemplate: selectedItem.key };
 
-	// Generate a unique heading ID if it doesn't exist
-	if ( ! headingId ) {
-		const uniqueHeadingId = `callout-header-${ clientId }`;
-		setAttributes( { headingId: uniqueHeadingId } );
-	}
+				// Clear custom icon when switching to a template type (non-custom)
+				if ( selectedItem.key !== 'custom' && customIcon ) {
+					newAttributes.customIcon = '';
+				}
 
-	const { currentColor, customStyle } = useCalloutStyles( templateName, customColor );
-	const { innerBlocks, updateBlockAttributes } = useBlockEditor( clientId );
-
-	const updateIconBlock = useCallback(
-		( newTemplate, newCustomIcon = '' ) => {
-			const iconBlock = innerBlocks?.find( ( block ) => block.name === 'a8c/callout-icon' );
-
-			if ( iconBlock ) {
-				const newIcon = getIcon( newTemplate, newCustomIcon );
-				const newColor = getCurrentColor( newTemplate, customColor );
-
-				// Update the icon block attributes
-				updateBlockAttributes( iconBlock.clientId, {
-					iconName: newIcon,
-					iconColor: newColor,
-				} );
+				setAttributes( newAttributes );
 			}
 		},
-		[ innerBlocks, updateBlockAttributes, customColor ]
+		[ templateName, customIcon, setAttributes ]
 	);
 
-	const updateIconBlockColor = useCallback(
-		( newColor ) => {
-			const iconBlock = innerBlocks?.find( ( block ) => block.name === 'a8c/callout-icon' );
-
-			if ( iconBlock ) {
-				// Update only the icon color
-				updateBlockAttributes( iconBlock.clientId, {
-					iconColor: newColor,
-				} );
+	const handleColorChange = useCallback(
+		( color ) => {
+			const normalizedColor = normalizeColor( color );
+			if ( normalizedColor !== customColor ) {
+				setAttributes( { customColor: normalizedColor } );
 			}
 		},
-		[ innerBlocks, updateBlockAttributes ]
+		[ customColor, setAttributes ]
 	);
 
-	const handlers = {
-		template: useTemplateHandler( templateName, customIcon, setAttributes, updateIconBlock ),
-		color: useColorHandler( customColor, setAttributes, updateIconBlockColor ),
-		icon: useIconHandler( customIcon, templateName, setAttributes, updateIconBlock ),
-	};
+	const handleIconChange = useCallback(
+		( iconName ) => {
+			if ( iconName !== customIcon ) {
+				setAttributes( { customIcon: iconName } );
+			}
+		},
+		[ customIcon, setAttributes ]
+	);
+
+	const handleHeaderChange = useCallback(
+		( newHeaderContent ) => {
+			setAttributes( { headerContent: newHeaderContent } );
+		},
+		[ setAttributes ]
+	);
 
 	return (
 		<>
 			<InspectorControls>
-				{ /* Template Controls */ }
-				<TemplateControls templateName={ templateName } onChange={ handlers.template } />
-
-				{ /* Custom Controls */ }
+				<TemplateControls templateName={ templateName } onChange={ handleTemplateChange } />
 				{ templateName === 'custom' && (
-					<>
-						<ColorControls customColor={ customColor } onColorChange={ handlers.color } />
-						<IconControls
-							customIcon={ customIcon }
-							currentColor={ currentColor }
-							templateName={ templateName }
-							onIconChange={ handlers.icon }
-						/>
-					</>
+					<ColorControls customColor={ customColor } onColorChange={ handleColorChange } />
 				) }
+				<IconControls
+					customIcon={ customIcon }
+					currentColor={ currentColor }
+					templateName={ templateName }
+					onIconChange={ handleIconChange }
+				/>
 			</InspectorControls>
 
-			<CalloutBlock
-				templateName={ templateName }
-				customStyle={ customStyle }
-				customIcon={ customIcon }
-				customColor={ customColor }
-				headingId={ headingId }
-			/>
+			<aside
+				className={ `o2-blocks-callout o2-blocks-callout--${ templateName }` }
+				style={ customStyle }
+			>
+				<CalloutHeader
+					content={ headerContent }
+					onChange={ handleHeaderChange }
+					placeholder={ __( 'Header' ) }
+					color={ currentColor }
+					iconName={ currentIcon }
+				/>
+
+				<InnerBlocks
+					template={ [ [ 'core/paragraph', {} ] ] }
+					templateInsertUpdatesSelection={ false }
+				/>
+			</aside>
 		</>
 	);
 };
 
 const Save = ( { attributes } ) => {
-	const { calloutTemplate: templateName = 'custom', customColor, headingId } = attributes;
+	const {
+		calloutTemplate: templateName = 'custom',
+		customColor = CALLOUT_TEMPLATE_DEFAULT_COLOR,
+		customIcon = '',
+		headerContent = '',
+	} = attributes;
+
+	const currentColor = getCurrentColor( templateName, customColor );
+	const currentIcon = getIcon( templateName, customIcon );
+
 	const customStyle =
 		templateName === 'custom'
 			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
@@ -364,29 +280,30 @@ const Save = ( { attributes } ) => {
 		<aside
 			className={ `o2-blocks-callout o2-blocks-callout--${ templateName }` }
 			style={ customStyle }
-			aria-labelledby={ headingId }
 		>
+			<h2 className="o2-blocks-callout__header" style={ { color: currentColor } }>
+				<CalloutIcon iconName={ currentIcon } color={ currentColor } />
+				<span className="o2-blocks-callout__header-text">
+					<RichText.Content value={ headerContent } style={ { color: currentColor } } />
+				</span>
+			</h2>
+
 			<InnerBlocks.Content />
 		</aside>
 	);
 };
 
+// === BLOCK REGISTRATION ===
+
 registerBlockType( 'a8c/callout', {
 	title: __( 'Callout' ),
+	description: __( 'Draw attention with a styled callout box.' ),
 	icon: 'megaphone',
 	category: 'a8c',
-	description: __( 'Create a styled callout box with icon, header, and content sections.' ),
-	keywords: [
-		__( 'callout' ),
-		__( 'example' ),
-		__( 'warning' ),
-		__( 'tip' ),
-		__( 'info' ),
-		__( 'notice' ),
-	],
+	keywords: [ __( 'callout' ), __( 'info' ), __( 'warning' ), __( 'tip' ) ],
 	supports: {
+		align: [ 'wide', 'full' ],
 		html: false,
-		className: false,
 	},
 	attributes: {
 		calloutTemplate: {
@@ -401,12 +318,14 @@ registerBlockType( 'a8c/callout', {
 			type: 'string',
 			default: '',
 		},
-		headingId: {
+		headerContent: {
 			type: 'string',
+			source: 'html',
+			selector: '.o2-blocks-callout__header-text',
 			default: '',
 		},
 	},
+	transforms,
 	edit: Edit,
 	save: Save,
-	transforms,
 } );

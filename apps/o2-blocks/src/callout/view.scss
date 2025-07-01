@@ -1,7 +1,7 @@
 /**
  * 1.0 Callout Block Styles
  *
- * Base styles for the callout block component with icon, header, and content sections.
+ * Base styles for the simplified callout block component with integrated icon, header, and content.
  * Includes responsive design and editor-specific styles.
  */
 
@@ -44,27 +44,36 @@ $callout-template-colors: (
 
 
 /**
- * 1.3 Callout Icon Styles
+ * 1.3 Callout Header Styles
  *
- * Icon styling for inline-block layout alongside header text.
- * Includes styles for the WordPress block wrapper.
+ * Header text styling with integrated icon layout.
  */
-.o2-blocks-callout [data-type="a8c/callout-icon"] {
-	display: inline-block;
-	vertical-align: middle;
-	width: 2em;
-	height: 2em;
+.o2-blocks-callout__header {
+	display: flex;
+	align-items: center;
+	margin: 0 0 15px 0;
+	padding: 0;
+	font-weight: 600;
+	font-family: unset;
+	font-size: unset;
+	line-height: unset;
+	transition: color 0s ease-in-out, border-color 0s ease-in-out;
 }
 
-.o2-blocks-callout .o2-blocks-callout__icon {
+
+/**
+ * 1.4 Callout Icon Styles
+ *
+ * Icon styling for inline layout within the header.
+ */
+.o2-blocks-callout__icon {
 	display: inline-block;
-	vertical-align: middle;
+	flex-shrink: 0;
 	text-align: center;
-	min-height: unset;
 	box-sizing: border-box;
 	width: 2em;
 	height: 2em;
-	margin: 0;
+	margin: 0 12px 0 0;
 	padding: 0;
 	border: 0.2em solid;
 	border-radius: 50%;
@@ -74,11 +83,11 @@ $callout-template-colors: (
 
 
 /**
- * 1.4 Dashicon Styles
+ * 1.5 Dashicon Styles
  *
  * Styles for the dashicon element inside the callout icon.
  */
-.o2-blocks-callout .o2-blocks-callout__icon .dashicons {
+.o2-blocks-callout__icon .dashicons {
 	vertical-align: middle;
 	width: auto;
 	height: auto;
@@ -89,33 +98,18 @@ $callout-template-colors: (
 
 
 /**
- * 1.5 Callout Header Styles
+ * 1.6 Header Text Styles
  *
- * Header text styling positioned next to the icon.
- * Includes styles for the WordPress block wrapper.
+ * Styles for the header text content wrapper.
  */
-.o2-blocks-callout [data-type="a8c/callout-header"] {
-	display: inline-block;
-	vertical-align: middle;
-	width: calc(100% - 2em - 0.4em - 12px );
-}
-
-.o2-blocks-callout .o2-blocks-callout__header {
-	display: inline-block;
-	vertical-align: middle;
-	line-height: unset;
-	width: calc(100% - 2em - 0.4em - 18px );
-	margin: 0 0 0 12px;
+.o2-blocks-callout__header-text {
+	flex: 1;
+	margin: 0;
 	padding: 0;
-	font-weight: 600;
-	font-size: unset;
-	font-family: unset;
-	transition: color 0s ease-in-out, border-color 0s ease-in-out;
 }
-
 
 /**
- * 1.6 Callout Template Specific Styles
+ * 1.7 Callout Template Specific Styles
  *
  * Generated styles for each callout template using the color map.
  */
@@ -134,7 +128,7 @@ $callout-template-colors: (
 
 
 /**
- * 1.7 Custom Callout Styles
+ * 1.8 Custom Callout Styles
  *
  * Special handling for custom callouts using CSS custom properties.
  */
