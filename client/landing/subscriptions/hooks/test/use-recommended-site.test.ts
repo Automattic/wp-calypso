@@ -43,7 +43,6 @@ const mockRemoveRecommendedBlogsSite = removeRecommendedBlogsSite as jest.Mocked
 describe( 'useRecommendedSite', () => {
 	const mockDispatch = jest.fn();
 	const feedId = 456;
-	const blogId = 123;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -68,7 +67,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			expect( result.current ).toEqual( {
 				isRecommended: false,
@@ -84,7 +83,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( true ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			expect( result.current.isRecommended ).toBe( true );
 			expect( result.current.canToggle ).toBe( true );
@@ -96,7 +95,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( null ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			expect( result.current.canToggle ).toBe( false );
 		} );
@@ -107,14 +106,14 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( null ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			expect( result.current.canToggle ).toBe( false );
 		} );
 	} );
 
 	describe( 'Selector logic', () => {
-		it( 'should check feedId first then fall back to siteId', () => {
+		it( 'should match by feedId', () => {
 			const mockState = { reader: { lists: {} } };
 			let selectorCallCount = 0;
 			mockUseSelector.mockImplementation( ( selector ) => {
@@ -133,45 +132,12 @@ describe( 'useRecommendedSite', () => {
 			// Mock feed match found
 			mockGetMatchingItem.mockReturnValueOnce( { feed_ID: feedId } );
 
-			renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			renderHook( () => useRecommendedSite( feedId ) );
 
-			// Should call getMatchingItem with feedId first
+			// Should call getMatchingItem with feedId
 			expect( mockGetMatchingItem ).toHaveBeenCalledWith( mockState, {
 				listId: 999,
 				feedId,
-			} );
-		} );
-
-		it( 'should fall back to siteId when feedId not found and blogId provided', () => {
-			const mockState = { reader: { lists: {} } };
-			let selectorCallCount = 0;
-			mockUseSelector.mockImplementation( ( selector ) => {
-				if ( selector === getCurrentUserName ) {
-					return 'testuser';
-				}
-				// Handle the recommendedBlogsList selector
-				if ( selectorCallCount === 0 ) {
-					selectorCallCount++;
-					return { ID: 999, owner: 'testuser', slug: 'recommended-blogs' };
-				}
-				// Handle the isInRecommendedList selector
-				return selector( mockState );
-			} );
-
-			// Mock no feed match, but site match found
-			mockGetMatchingItem
-				.mockReturnValueOnce( false ) // feedId not found
-				.mockReturnValueOnce( { site_ID: blogId } ); // siteId found
-
-			renderHook( () => useRecommendedSite( feedId, { blogId } ) );
-
-			expect( mockGetMatchingItem ).toHaveBeenCalledWith( mockState, {
-				listId: 999,
-				feedId,
-			} );
-			expect( mockGetMatchingItem ).toHaveBeenCalledWith( mockState, {
-				listId: 999,
-				siteId: blogId,
 			} );
 		} );
 
@@ -193,7 +159,7 @@ describe( 'useRecommendedSite', () => {
 				return selector( mockState );
 			} );
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			expect( result.current.isRecommended ).toBe( false );
 		} );
@@ -206,7 +172,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -225,7 +191,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( true ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -244,7 +210,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( null ) // No recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -260,7 +226,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			// Reset mockDispatch to clear any previous calls
 			mockDispatch.mockClear();
@@ -287,7 +253,7 @@ describe( 'useRecommendedSite', () => {
 				throw new Error( 'Dispatch failed' );
 			} );
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			// The hook doesn't catch dispatch errors - they bubble up
 			act( () => {
@@ -334,7 +300,7 @@ describe( 'useRecommendedSite', () => {
 
 			mockGetLatestListItemError.mockReturnValue( mockError );
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			// Verify hook doesn't crash with error present and handles it gracefully
 			expect( result.current.isRecommended ).toBe( false );
@@ -363,7 +329,7 @@ describe( 'useRecommendedSite', () => {
 
 			mockGetLatestListItemError.mockReturnValue( oldError );
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			// Should work normally without crashing
 			expect( result.current.isRecommended ).toBe( false );
@@ -378,7 +344,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result, rerender } = renderHook( () => useRecommendedSite( feedId ) );
 
 			// Force a rerender which may change internal state dependencies
 			rerender();
@@ -403,7 +369,7 @@ describe( 'useRecommendedSite', () => {
 				return false;
 			} );
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result, rerender } = renderHook( () => useRecommendedSite( feedId ) );
 			const firstToggleFunction = result.current.toggleRecommended;
 
 			// Change currentUserName
@@ -424,7 +390,7 @@ describe( 'useRecommendedSite', () => {
 				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
 				.mockReturnValueOnce( false ); // isInRecommendedList
 
-			const { result } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result } = renderHook( () => useRecommendedSite( feedId ) );
 
 			// Reset mockDispatch to clear any previous calls
 			mockDispatch.mockClear();
@@ -454,7 +420,7 @@ describe( 'useRecommendedSite', () => {
 				return false;
 			} );
 
-			const { result, rerender } = renderHook( () => useRecommendedSite( feedId, { blogId } ) );
+			const { result, rerender } = renderHook( () => useRecommendedSite( feedId ) );
 
 			expect( result.current.canToggle ).toBe( true );
 
@@ -463,18 +429,6 @@ describe( 'useRecommendedSite', () => {
 			rerender();
 
 			expect( result.current.canToggle ).toBe( false );
-		} );
-
-		it( 'should work without blogId option', () => {
-			mockUseSelector
-				.mockReturnValueOnce( 'testuser' ) // getCurrentUserName
-				.mockReturnValueOnce( { ID: 999, owner: 'testuser', slug: 'recommended-blogs' } ) // recommendedBlogsList
-				.mockReturnValueOnce( false ); // isInRecommendedList
-
-			const { result } = renderHook( () => useRecommendedSite( feedId ) );
-
-			expect( result.current.canToggle ).toBe( true );
-			expect( result.current.isRecommended ).toBe( false );
 		} );
 	} );
 } );

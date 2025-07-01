@@ -31,23 +31,14 @@ interface UseRecommendedSiteResult {
 	toggleRecommended: () => void;
 }
 
-interface UseRecommendedSiteOptions {
-	blogId?: number;
-}
-
 /**
  * Custom hook for managing recommended site state with optimistic updates
  * @param feedId - The feed ID to add/remove from recommended blogs list
- * @param options - Optional configuration including blogId for fallback matching
  * @returns Object with recommendation state and toggle function
  */
-export const useRecommendedSite = (
-	feedId: number,
-	options?: UseRecommendedSiteOptions
-): UseRecommendedSiteResult => {
+export const useRecommendedSite = ( feedId: number ): UseRecommendedSiteResult => {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
-	const { blogId } = options || {};
 
 	// Get the recommended blogs list for the current user
 	const recommendedBlogsList = useSelector( ( state: AppState ) => {
@@ -58,31 +49,17 @@ export const useRecommendedSite = (
 	} );
 
 	// Memoized selector to check if item is in recommended list
-	// Try matching by feedId first (since that's what we add to the list now), fall back to siteId
 	const selectIsInRecommendedList = useCallback(
 		( state: AppState ) => {
 			if ( ! currentUserName || ! recommendedBlogsList?.ID ) {
 				return false;
 			}
 
-			// Try to match by feedId first (preferred, since that's what we add to the list)
+			// Match by feedId only
 			const matchByFeedId = getMatchingItem( state, { listId: recommendedBlogsList.ID, feedId } );
-			if ( matchByFeedId ) {
-				return true;
-			}
-
-			// Fall back to matching by siteId for backward compatibility
-			if ( blogId ) {
-				const matchBySiteId = getMatchingItem( state, {
-					listId: recommendedBlogsList.ID,
-					siteId: blogId,
-				} );
-				return !! matchBySiteId;
-			}
-
-			return false;
+			return !! matchByFeedId;
 		},
-		[ currentUserName, recommendedBlogsList?.ID, feedId, blogId ]
+		[ currentUserName, recommendedBlogsList?.ID, feedId ]
 	);
 
 	// Get actual state from Redux
