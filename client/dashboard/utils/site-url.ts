@@ -4,5 +4,5 @@ export function getSiteUrlWithoutProtocol( site: Site ) {
 	if ( site.URL === '' ) {
 		return site.URL;
 	}
-	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
+	return new URL( site.URL ).hostname;
 }
