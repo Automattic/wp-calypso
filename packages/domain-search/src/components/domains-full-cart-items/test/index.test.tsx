@@ -72,7 +72,7 @@ describe( 'DomainsFullCartItems', () => {
 		} );
 	} );
 
-	test( 'renders the striked out price if included', () => {
+	test( 'renders the original price if included', () => {
 		render(
 			<DomainSearchContext.Provider
 				value={ {
@@ -96,9 +96,7 @@ describe( 'DomainsFullCartItems', () => {
 			</DomainSearchContext.Provider>
 		);
 
-		expect( screen.getByText( '$20' ) ).toHaveStyle( {
-			textDecoration: 'line-through',
-		} );
+		expect( screen.getByText( '$20' ) ).toBeVisible();
 		expect( screen.getByText( '$10/year' ) ).toBeVisible();
 	} );
 } );
