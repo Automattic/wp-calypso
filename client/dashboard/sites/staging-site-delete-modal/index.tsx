@@ -29,11 +29,9 @@ export default function StagingSiteDeleteModal( {
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 
-	// Main deletion mutation
 	const deleteMutation = useMutation( {
 		...stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ),
 		onSuccess: () => {
-			// Start polling for automated transfer status after 3 seconds
 			setTimeout( () => {
 				queryClient.invalidateQueries( {
 					queryKey: [ 'automated-transfer-status', site.ID ],
@@ -47,15 +45,12 @@ export default function StagingSiteDeleteModal( {
 		},
 	} );
 
-	// Automated transfer status query with polling
 	const transferQuery = useQuery( {
 		...automatedTransferStatusQuery( site.ID ),
 		enabled: deleteMutation.isSuccess,
 		refetchInterval: ( query ) => {
 			const status = query.state.data?.status;
-			// Stop polling when deletion is complete
 			if ( status === 'reverted' || status === 'complete' || status === 'error' ) {
-				// Call success handler when deletion is actually complete
 				if ( status === 'reverted' ) {
 					router.navigate( { to: '/sites' } );
 					createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
@@ -63,7 +58,7 @@ export default function StagingSiteDeleteModal( {
 				}
 				return false;
 			}
-			return 3000; // Poll every 3 seconds
+			return 3000;
 		},
 	} );
 
