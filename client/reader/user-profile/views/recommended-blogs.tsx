@@ -14,11 +14,11 @@ import {
 	getUserRecommendedBlogs,
 } from 'calypso/state/reader/lists/selectors';
 
-interface UserPostsProps {
+interface UserRecommendedBlogsProps {
 	user: UserData;
 }
 
-const UserRecommendedBlogs = ( { user }: UserPostsProps ): JSX.Element | null => {
+const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Element | null => {
 	const { user_login: userLogin } = user;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
