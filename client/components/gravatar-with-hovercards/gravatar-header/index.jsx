@@ -1,11 +1,12 @@
 import page from '@automattic/calypso-router';
 import AutoDirection from 'calypso/components/auto-direction';
 
-function GravatarHeader( { gravatarData, userLogin } ) {
+function GravatarHeader( { gravatarData, userLogin, closeCard } ) {
 	const profileUrl = userLogin ? `/reader/users/${ userLogin }` : gravatarData.profileUrl;
 
 	const clickProfileLink = ( e ) => {
 		e.preventDefault();
+		closeCard();
 		page( profileUrl );
 	};
 

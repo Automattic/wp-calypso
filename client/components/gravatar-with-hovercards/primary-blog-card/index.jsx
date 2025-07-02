@@ -7,7 +7,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
-function PrimaryBlog( { primaryBlogId, displayName } ) {
+function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) );
 	const primaryBlogUrl = site?.URL;
@@ -27,6 +27,7 @@ function PrimaryBlog( { primaryBlogId, displayName } ) {
 						href={ linkUrl }
 						onClick={ ( e ) => {
 							e.preventDefault();
+							closeCard();
 							page( linkUrl );
 						} }
 					>
