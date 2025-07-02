@@ -155,6 +155,7 @@ export function getPurchasesFieldDefinitions( {
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
 							<a
+								className="purchase-item__title-link"
 								title={ translate( 'Manage purchase', { textOnly: true } ) }
 								href={ getPurchaseUrl( item ) }
 							>
