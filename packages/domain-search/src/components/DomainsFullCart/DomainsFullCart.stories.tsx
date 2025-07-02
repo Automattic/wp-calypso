@@ -33,7 +33,9 @@ export const Default = () => {
 				],
 				total: '$74',
 				onAddItem: () => {},
-				onRemoveItem: () => {},
+				onRemoveItem: ( domain ) => {
+					alert( `Remove ${ domain.domain }.${ domain.tld }` );
+				},
 			} }
 		>
 			<DomainsFullCart />
