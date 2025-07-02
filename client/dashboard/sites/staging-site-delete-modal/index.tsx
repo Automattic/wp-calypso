@@ -50,14 +50,17 @@ export default function StagingSiteDeleteModal( {
 		enabled: deleteMutation.isSuccess,
 		refetchInterval: ( query ) => {
 			const status = query.state.data?.status;
-			if ( status === 'reverted' || status === 'complete' || status === 'error' ) {
-				if ( status === 'reverted' ) {
-					router.navigate( { to: '/sites' } );
-					createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
-					onClose();
-				}
+
+			if ( status === 'reverted' ) {
+				router.navigate( { to: '/sites' } );
+				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
+				onClose();
 				return false;
 			}
+			if ( status === 'complete' || status === 'error' ) {
+				return false;
+			}
+
 			return 3000;
 		},
 	} );
