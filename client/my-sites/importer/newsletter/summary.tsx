@@ -206,34 +206,30 @@ export default function Summary( {
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
-					{ isJetpack ? (
-						<ImporterActionButton
-							href={ `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter` }
-							primary
-						>
-							{ __( 'Customize your newsletter' ) }
-						</ImporterActionButton>
-					) : (
-						<ImporterActionButton href={ `/settings/newsletter/${ selectedSite.slug }` } primary>
-							{ __( 'Customize your newsletter' ) }
-						</ImporterActionButton>
-					) }
+					<ImporterActionButton
+						href={
+							isJetpack
+								? `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter`
+								: `/settings/newsletter/${ selectedSite.slug }`
+						}
+						primary
+					>
+						{ __( 'Customize your newsletter' ) }
+					</ImporterActionButton>
 					{ steps?.content && (
 						<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }
-					{ isJetpack ? (
-						<ImporterActionButton
-							href={ `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }` }
-						>
-							{ __( 'Manage subscribers' ) }
-						</ImporterActionButton>
-					) : (
-						<ImporterActionButton href={ `/subscribers/${ selectedSite.slug }` }>
-							{ __( 'Manage subscribers' ) }
-						</ImporterActionButton>
-					) }
+					<ImporterActionButton
+						href={
+							isJetpack
+								? `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`
+								: `/subscribers/${ selectedSite.slug }`
+						}
+					>
+						{ __( 'Manage subscribers' ) }
+					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</Card>
 		);
