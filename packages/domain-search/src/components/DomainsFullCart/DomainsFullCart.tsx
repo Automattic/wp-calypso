@@ -12,7 +12,8 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useRef, useEffect } from 'react';
+import { useRef } from 'react';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
 import { DomainsFullCartItems } from './Items';
 import { DomainsFullCartSummary } from './Summary';
@@ -26,23 +27,11 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 
 	const fullCartRef = useRef< HTMLDivElement >( null );
 
-	const handleClickOutside = useCallback(
-		( event: MouseEvent ) => {
-			if ( fullCartRef.current && ! fullCartRef.current.contains( event.target as Node ) ) {
-				closeFullCart();
-			}
-		},
-		[ closeFullCart ]
-	);
-
-	useEffect( () => {
-		if ( isFullCartOpen ) {
-			document.addEventListener( 'mousedown', handleClickOutside );
-			return () => {
-				document.removeEventListener( 'mousedown', handleClickOutside );
-			};
-		}
-	}, [ isFullCartOpen, handleClickOutside ] );
+	useClickOutside( {
+		ref: fullCartRef,
+		callback: closeFullCart,
+		isEnabled: isFullCartOpen,
+	} );
 
 	return (
 		<motion.div
