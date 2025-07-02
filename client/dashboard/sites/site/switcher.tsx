@@ -6,7 +6,7 @@ import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { sitesQuery } from '../../app/queries/sites';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
-import { getSiteName } from '../../utils/site-name';
+import { getSiteDisplayName } from '../../utils/site-name';
 import AddNewSite from '../add-new-site';
 import SiteIcon from '../site-icon';
 import type { Site } from '../../data/types';
@@ -17,7 +17,7 @@ import './switcher.scss';
 const fields = [
 	{
 		id: 'name',
-		getValue: ( { item }: { item: Site } ) => getSiteName( item ),
+		getValue: ( { item }: { item: Site } ) => getSiteDisplayName( item ),
 		enableGlobalSearch: true,
 	},
 ];
