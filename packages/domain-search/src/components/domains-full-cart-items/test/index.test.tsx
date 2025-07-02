@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { DomainsFullCartItems } from '..';
 import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
-import { DomainsFullCartItems } from '../DomainsFullCartItems';
 
 const defaultContextValue = {
 	isFullCartOpen: false,

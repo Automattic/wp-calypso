@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { DomainSearch, useDomainSearch } from '../DomainSearch/DomainSearch';
-import { DomainsFullCart } from './DomainsFullCart';
+import { DomainsFullCart } from '.';
 import type { Meta } from '@storybook/react';
 
 const FullCartManager = () => {

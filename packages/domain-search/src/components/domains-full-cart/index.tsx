@@ -13,10 +13,10 @@ import { useViewportMatch } from '@wordpress/compose';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
-import { useClickOutside } from '../../hooks/useClickOutside';
+import { useClickOutside } from '../../hooks/use-click-outside';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
-import { DomainsFullCartItems } from '../DomainsFullCartItems/DomainsFullCartItems';
-import { DomainsFullCartSummary } from '../DomainsFullCartSummary/DomainsFullCartSummary';
+import { DomainsFullCartItems } from '../domains-full-cart-items';
+import { DomainsFullCartSummary } from '../domains-full-cart-summary';
 
 import './style.scss';
 

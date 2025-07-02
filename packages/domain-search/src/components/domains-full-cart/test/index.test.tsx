@@ -3,8 +3,8 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { DomainsFullCart } from '../';
 import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
-import { DomainsFullCart } from '../DomainsFullCart';
 
 const defaultContextValue = {
 	isFullCartOpen: false,

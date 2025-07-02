@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { DomainsFullCartSummary } from '..';
 import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
-import { DomainsFullCartSummary } from '../DomainsFullCartSummary';
 
 const defaultContextValue = {
 	isFullCartOpen: false,
