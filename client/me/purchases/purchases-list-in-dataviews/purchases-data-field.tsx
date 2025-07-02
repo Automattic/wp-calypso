@@ -120,7 +120,6 @@ export function getPurchasesFieldDefinitions( {
 				const site = { ID: item.siteId };
 				return (
 					<a
-						className="purchase-item__icon"
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
 						href={ getPurchaseUrl( item ) }
 					>
@@ -156,7 +155,6 @@ export function getPurchasesFieldDefinitions( {
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
 							<a
-								className="purchase-item__icon"
 								title={ translate( 'Manage purchase', { textOnly: true } ) }
 								href={ getPurchaseUrl( item ) }
 							>
@@ -358,7 +356,6 @@ export function getMembershipsFieldDefinitions( {
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
 					<a
-						className="purchase-item__icon"
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
 						href={ getPurchaseUrl( item ) }
 					>
@@ -382,7 +379,6 @@ export function getMembershipsFieldDefinitions( {
 					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__title purchase-item__title">
 							<a
-								className="purchase-item__icon"
 								title={ translate( 'Manage purchase', { textOnly: true } ) }
 								href={ getPurchaseUrl( item ) }
 							>
