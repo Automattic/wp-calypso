@@ -30,6 +30,7 @@ export const DomainsFullCartItems = () => {
 								<Button
 									variant="link"
 									style={ {
+										// @ts-expect-error --wp-components-color-accent is not typed.
 										'--wp-components-color-accent': 'var( --domain-search-secondary-action-color )',
 									} }
 									onClick={ () => cart.onRemoveItem( domain ) }
@@ -37,7 +38,7 @@ export const DomainsFullCartItems = () => {
 									{ __( 'Remove' ) }
 								</Button>
 							</VStack>
-							<VStack>
+							<VStack style={ { flexShrink: 0 } }>
 								<HStack alignment="right" spacing={ 2 }>
 									{ domain.originalPrice && (
 										<Text size="small" style={ { textDecoration: 'line-through' } }>

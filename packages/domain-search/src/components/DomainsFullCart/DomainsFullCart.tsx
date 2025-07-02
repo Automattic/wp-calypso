@@ -77,6 +77,7 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 							icon={ close }
 							onClick={ closeFullCart }
 							style={ {
+								// @ts-expect-error --wp-components-color-accent is not typed.
 								'--wp-components-color-accent': 'var( --domain-search-secondary-action-color )',
 							} }
 						/>
