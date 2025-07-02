@@ -31,6 +31,15 @@ function RecommendedBlogItem( { blog, classPrefix, compact = false, onLinkClick 
 
 	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
 
+	const anchorProps = {
+		href: linkUrl,
+		onClick: ( e ) => {
+			e.preventDefault();
+			onLinkClick();
+			page( linkUrl );
+		},
+	};
+
 	return (
 		<li className={ `${ classPrefix }__recommended-blog-item` }>
 			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
@@ -40,32 +49,28 @@ function RecommendedBlogItem( { blog, classPrefix, compact = false, onLinkClick 
 				followed.
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
-			<a
-				href={ linkUrl }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					onLinkClick();
-					page( linkUrl );
-				} }
-			>
+
+			<a { ...anchorProps }>
 				<ReaderAvatar
 					isCompact={ compact }
 					siteIcon={ siteIcon }
 					className={ `${ classPrefix }__recommended-blog-site-icon` }
 				/>
-				<AutoDirection>
-					<div className={ `${ classPrefix }__recommended-blog-site-info` }>
+			</a>
+			<AutoDirection>
+				<div className={ `${ classPrefix }__recommended-blog-site-info` }>
+					<a { ...anchorProps }>
 						<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>
 							{ name || feedUrl }
 						</h6>
-						{ ! compact && site?.description && (
-							<p className={ `${ classPrefix }__recommended-blog-site-description` }>
-								{ site.description }
-							</p>
-						) }
-					</div>
-				</AutoDirection>
-			</a>
+					</a>
+					{ ! compact && site?.description && (
+						<p className={ `${ classPrefix }__recommended-blog-site-description` }>
+							{ site.description }
+						</p>
+					) }
+				</div>
+			</AutoDirection>
 
 			<ReaderFollowButton
 				className={ `${ classPrefix }__recommended-blog-subscribe-button` }

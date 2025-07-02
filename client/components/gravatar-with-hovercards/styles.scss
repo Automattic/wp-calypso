@@ -102,26 +102,12 @@
 			.gravatar-hovercard__recommended-blog-item {
 				display: flex;
 				align-items: center;
+				justify-content: center;
 				gap: 10px;
 				padding: 8px 0;
-
-				a {
-					display: flex;
-					align-items: center;
-					gap: 10px;
-					flex: 1 1 0%;
-					min-width: 0; // Enable text truncation
-					text-decoration: none;
-					color: inherit;
-
-					&:hover {
-						text-decoration: none;
-					}
-				}
 			}
 
 			.gravatar-hovercard__recommended-blog-site-icon.reader-avatar {
-				flex-shrink: 0; // Prevent icon from shrinking
 				max-height: unset;
 				.site-icon {
 					border-radius: 50%;

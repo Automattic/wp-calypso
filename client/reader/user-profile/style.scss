@@ -104,11 +104,14 @@
 			flex-direction: column;
 			justify-content: center;
 			min-width: 0;
-			.user-profile__recommended-blog-site-name {
-				padding-right: 120px;
+			a {
+				text-decoration: none;
+				color: inherit;
+				// Margin to not obscure the relative-absolute positioned follow button
+				margin-right: 120px;
 				@include breakpoint-deprecated( '<660px' ) {
-					// reduce padding when follow button has no label
-					padding-right: 60px;
+					// reduce margin when follow button has no label
+					margin-right: 60px;
 				}
 			}
 		}
