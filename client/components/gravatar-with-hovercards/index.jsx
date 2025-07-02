@@ -41,9 +41,21 @@ function GravatarWithHovercards( props ) {
 		};
 	}, [ attach, detach ] );
 
+	const closeCard = () => {
+		detach();
+		if ( containerRef.current ) {
+			attach( containerRef.current );
+		}
+	};
+
 	return (
 		<div ref={ containerRef }>
-			<HovercardContentPortal mountNode={ mountNode } gravatarData={ gravatarData } { ...props } />
+			<HovercardContentPortal
+				mountNode={ mountNode }
+				gravatarData={ gravatarData }
+				closeCard={ closeCard }
+				{ ...props }
+			/>
 			<Gravatar { ...props } />
 		</div>
 	);

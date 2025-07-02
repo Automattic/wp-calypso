@@ -8,7 +8,7 @@ import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions'
 import { getUserRecommendedBlogs } from 'calypso/state/reader/lists/selectors';
 import RecommendedBlogItem from './item';
 
-function RecommendedBlogs( { userLogin } ) {
+function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -23,11 +23,12 @@ function RecommendedBlogs( { userLogin } ) {
 		}
 	}, [ userLogin, recommendedBlogs, dispatch ] );
 
-	const recommendedBlogsLink = `/reader/users/${ userLogin }/recommended-blogs`;
+	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
-		page( recommendedBlogsLink );
+		closeCard();
+		page( recommendedBlogsPath );
 	};
 
 	if ( ! shouldShowRecommendedBlogs ) {
@@ -42,7 +43,7 @@ function RecommendedBlogs( { userLogin } ) {
 				</h5>
 				<a
 					className="gravatar-hovercard__recommended-blogs-view-all"
-					href={ recommendedBlogsLink }
+					href={ recommendedBlogsPath }
 					onClick={ handleViewAllClick }
 				>
 					{ translate( 'View all' ) }
