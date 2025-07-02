@@ -150,7 +150,7 @@ export function getPurchasesFieldDefinitions( {
 					' ' +
 					item.siteName +
 					' ' +
-					item.domain +
+					( item.meta || item.domain ) +
 					' ' +
 					site?.URL
 				);
@@ -183,7 +183,7 @@ export function getPurchasesFieldDefinitions( {
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
-				return item.siteName + ' ' + item.domain + ' ' + site?.URL;
+				return item.siteName + ' ' + ( item.meta || item.domain ) + ' ' + site?.URL;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
