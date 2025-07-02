@@ -22,6 +22,7 @@ interface FileBrowserNodeProps {
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
+	restrictedTypes?: string[];
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -32,6 +33,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	setActiveNodePath,
 	activeNodePath,
 	parentItem,
+	restrictedTypes,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
@@ -72,6 +74,16 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			return true;
 		},
 		[ item.extensionVersion ]
+	);
+
+	const shouldRestrictChildren = useCallback(
+		( childItem: FileBrowserItem ) => {
+			if ( restrictedTypes && restrictedTypes.includes( childItem.type ) ) {
+				return true;
+			}
+			return false;
+		},
+		[ restrictedTypes ]
 	);
 
 	// When we load the children from the API we'll add their check status info to the state
@@ -201,6 +213,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
+						restrictedTypes={ restrictedTypes }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
@@ -228,7 +241,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderExpandIcon = () => {
-		if ( ! item.hasChildren ) {
+		if ( ! item.hasChildren || shouldRestrictChildren( item ) ) {
 			return null;
 		}
 
@@ -274,7 +287,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			) }
 			{ isOpen && (
 				<>
-					{ item.hasChildren && (
+					{ item.hasChildren && ! shouldRestrictChildren( item ) && (
 						<div className="file-browser-node__contents">{ renderChildren() }</div>
 					) }
 				</>

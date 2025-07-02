@@ -18,6 +18,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 // TODO: Temporary style for the PoC
 import './style.scss';
 
+const restrictedTypes = [ 'plugin', 'theme', 'uploads' ];
+
 interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
@@ -137,7 +139,7 @@ export default function SyncModal( {
 					</Text>
 					{ querySiteId === stagingSiteId ? (
 						<div className="staging-site-card">
-							<FileBrowser rewindId={ rewindId } />
+							<FileBrowser rewindId={ rewindId } restrictedTypes={ restrictedTypes } />
 						</div>
 					) : (
 						'Only implemented for staging sites'
