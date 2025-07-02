@@ -172,7 +172,7 @@ const VerifyLoginCode = ( {
 	return (
 		<div className="magic-login__successfully-jetpack">
 			<h1 className="magic-login__form-header">{ translate( 'Check your email for a code' ) }</h1>
-			<p>
+			<p className="magic-login__form-sub-header">
 				{ translate( 'Enter the code sent to your email {{strong}}%(email)s{{/strong}}', {
 					args: {
 						email: usernameOrEmail,

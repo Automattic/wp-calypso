@@ -93,6 +93,8 @@
 	line-height: 20px;
 	word-wrap: break-word;
 
+	text-align: center;
+
 	margin-top: 45px;
 	margin-bottom: 45px;
 
@@ -134,12 +136,11 @@
 		}
 	}
 
-	.logged-out-form {
-		padding: 0 24px 0 24px;
-		.magic-login__form-sub-header {
-			text-align: center;
-		}
+	.magic-login__form-sub-header {
+		text-align: center;
+	}
 
+	.logged-out-form {
 		.form-label {
 			font-weight: 400;
 		}
@@ -218,7 +219,6 @@
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 auto;
 		max-width: 400px;
-		padding: 0 24px;
 
 		p {
 			margin-bottom: 20px;
@@ -263,7 +263,6 @@
 		display: block;
 		font-size: $font-body-small;
 		font-weight: 600;
-		padding: 0 24px;
 		text-align: center;
 		text-decoration: underline;
 
