@@ -139,10 +139,6 @@ class CancelPurchaseButton extends Component {
 			// Redirect to purchases page if cancellation was completed
 			page( this.props.purchaseListUrl );
 		}
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
 	};
 
 	cancelPurchase = async ( purchase ) => {
@@ -315,13 +311,8 @@ class CancelPurchaseButton extends Component {
 			}
 		}
 
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
-
 		// Close dialog and redirect after handling the completion
 		this.closeDialog();
-		page( this.props.purchaseListUrl );
 	};
 
 	cancellationFailed = ( errorMessage ) => {
