@@ -67,13 +67,17 @@ const StatsMoved = () => {
 				icon={ chartBar }
 				title={ __( 'Stats have moved' ) }
 				description={
-					<Text variant="muted">{ __( 'They can now be found at Jetpack → Stats.' ) }</Text>
+					<Text variant="muted">
+						{ __(
+							'Stats are now part of Jetpack for enhanced features. Access them via Jetpack → Stats in your dashboard.'
+						) }
+					</Text>
 				}
 				image={ image }
 				actions={
 					wpAdminUrl && (
 						<Button variant="primary" size="compact" href={ wpAdminUrl }>
-							{ __( 'Check new Stats' ) }
+							{ __( 'Go to Jetpack Stats' ) }
 						</Button>
 					)
 				}
