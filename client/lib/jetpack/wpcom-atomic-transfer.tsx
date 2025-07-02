@@ -8,7 +8,7 @@ import type { ComponentType } from 'react';
 
 export default function wpcomAtomicTransfer(
 	UpsellComponent: ComponentType,
-	content: AtomicContentSwitch
+	content?: AtomicContentSwitch
 ): ( context: Context, next: () => void ) => void {
 	return ( context, next ) => {
 		const getState = context.store.getState;
