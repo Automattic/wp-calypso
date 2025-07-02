@@ -80,7 +80,7 @@ export function getPurchasesFieldDefinitions( {
 	);
 
 	const goToPurchase = ( item: Purchases.Purchase ) => {
-		const siteUrl = item.domain;
+		const siteUrl = item.meta || item.domain;
 		const subscriptionId = item.id;
 		if ( ! siteUrl ) {
 			// eslint-disable-next-line no-console
