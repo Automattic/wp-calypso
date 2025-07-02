@@ -114,6 +114,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		saleAmountInteger: purchase.sale_amount_integer,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
+		siteSlug: purchase.site_slug,
 		subscribedDate: purchase.subscribed_date,
 		subscriptionStatus: purchase.subscription_status,
 		tagLine: purchase.tag_line,
