@@ -1,15 +1,20 @@
 import { Onboard, OnboardActions, UserSelect, Visibility } from '@automattic/data-stores';
 import { ONBOARDING_AFF_PM_FLOW } from '@automattic/onboarding';
 import { dispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteFlowName,
+	persistSignupDestination,
+	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE, USER_STORE } from '../../../stores';
+import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import type { FlowV2, SubmitHandler } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, SubmitHandler, ProvidedDependencies } from '../../internals/types';
 
 function initialize() {
 	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -19,17 +24,15 @@ function initialize() {
 	clearSignupDestinationCookie();
 	setIntent( Onboard.SiteIntent.Build ); // Default to build intent
 
-	// Minimal flow: plans -> siteless checkout
+	// Minimal flow: plans -> siteless checkout -> post-checkout processing
 	// No login required - authentication will happen during checkout
-	// No processing step needed since we go directly to checkout
-	return [ STEPS.UNIFIED_PLANS, STEPS.ERROR ];
+	// Need processing and post-checkout steps for Commerce plan atomic conversion
+	return [ STEPS.UNIFIED_PLANS, STEPS.POST_CHECKOUT_ONBOARDING, STEPS.PROCESSING, STEPS.ERROR ];
 }
 
 const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 	name: ONBOARDING_AFF_PM_FLOW,
-	get title() {
-		return translate( 'Get Started with WordPress.com' );
-	},
+
 	isSignupFlow: true,
 	initialize,
 	useStepNavigation( _currentStep, navigate ) {
@@ -40,6 +43,21 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 		);
 
 		const { setSignupDomainOrigin } = dispatch( ONBOARD_STORE ) as OnboardActions;
+		const { setShouldShowNotification } = usePurchasePlanNotification();
+
+		/**
+		 * Get post-checkout destination for affiliate-pm flow (simplified version)
+		 */
+		const getPostCheckoutDestination = async (
+			providedDependencies: ProvidedDependencies
+		): Promise< string > => {
+			// For affiliate-pm, we want to go to the site home page after setup
+			if ( providedDependencies.siteSlug ) {
+				return addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } );
+			}
+			// Fallback to generic home if no siteSlug
+			return '/';
+		};
 
 		/**
 		 * Handle step submissions for the AFF PM flow
@@ -77,6 +95,10 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 						// Set completion tracking for post-checkout site creation
 						setSignupCompleteFlowName( flowName );
 
+						// Set the post-checkout destination to go through affiliate-pm flow steps
+						// Use our own flow's post-checkout step instead of borrowing from regular onboarding
+						persistSignupDestination( `/setup/${ flowName }/post-checkout-onboarding` );
+
 						// Get the selected plan from cartItems
 						const planItem = providedDependencies.cartItems.find( ( item ) => item.product_slug );
 
@@ -102,8 +124,28 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 					return navigate( 'error' );
 				}
 
+				case 'post-checkout-onboarding':
+					setShouldShowNotification( providedDependencies?.siteId as number );
+					return navigate( 'processing' );
+
+				case 'processing': {
+					// Handle final redirect after site setup is complete
+					const destination = await getPostCheckoutDestination( providedDependencies );
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies.siteSlug );
+
+						// Replace the location to delete processing step from history
+						window.location.replace( destination );
+					} else {
+						// Handle errors by navigating to error step
+						return navigate( 'error' );
+					}
+					return;
+				}
+
 				default:
-					// This shouldn't happen in this minimal flow
+					// This shouldn't happen in this flow
 					return navigate( 'error' );
 			}
 		};
