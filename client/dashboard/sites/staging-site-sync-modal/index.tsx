@@ -15,7 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import InlineSupportLink from '../../components/inline-support-link';
-import SiteBadge, { EnvironmentType } from '../site-badge';
+import SiteBadge, { EnvironmentType } from '../site-environment-badge';
 
 const DirectionArrow = () => {
 	return (
