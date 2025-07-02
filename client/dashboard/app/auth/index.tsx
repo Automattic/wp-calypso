@@ -8,7 +8,7 @@ export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 interface AuthContextType {
 	user: User;
 }
-const AuthContext = createContext< AuthContextType | undefined >( undefined );
+export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
 /**
  * This component:

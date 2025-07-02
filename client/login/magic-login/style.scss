@@ -21,7 +21,7 @@
 	}
 }
 
-.layout.is-jetpack-login {
+.layout.is-jetpack-login:not(.woo) {
 	background-color: #fff;
 
 	&, .empty-content__title {
@@ -34,13 +34,6 @@
 		font-weight: 500;
 		line-height: 40px;
 		margin-bottom: 1rem;
-	}
-
-	.login__form-header-wrapper{
-		padding: 0 16px 0 16px;
-		@include break-small {
-			padding: 0;
-		}
 	}
 
 	.magic-login {
@@ -112,12 +105,6 @@
 			margin-top: 40px;
 			transform: translateX(-50%);
 			width: 48px;
-		}
-	}
-
-	#content.layout__content {
-		@include break-mobile {
-			padding-top: 10rem;
 		}
 	}
 

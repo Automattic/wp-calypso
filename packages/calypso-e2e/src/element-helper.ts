@@ -40,7 +40,7 @@ export async function waitForElementEnabled(
 	page: Page,
 	selector: string,
 	options?: { timeout?: number }
-): Promise< void > {
+) {
 	const elementHandle = await page.waitForSelector( selector, options );
 	await Promise.all( [
 		elementHandle.waitForElementState( 'enabled', options ),
@@ -49,6 +49,8 @@ export async function waitForElementEnabled(
 			elementHandle
 		),
 	] );
+
+	return elementHandle;
 }
 
 /**

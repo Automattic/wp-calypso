@@ -16,9 +16,13 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
+import {
+	interactionHasZendeskEvent,
+	interactionHasEnded,
+	hasCSATMessage,
+	hasSubmittedCSATRating,
+} from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
-import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
@@ -155,8 +159,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
-
+	const chatHasCSATMessage = hasCSATMessage( chat );
+	const displayCSAT = chatHasCSATMessage && ! hasSubmittedCSATRating( chat );
 	return (
 		<>
 			<div
@@ -165,6 +169,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				} ) }
 				ref={ messagesContainerRef }
 			>
+				<div
+					className="screen-reader-text"
+					aria-live="polite"
+					aria-atomic="false"
+					aria-relevant="additions"
+				>
+					{ chat.messages.map( ( message ) => (
+						<div key={ `${ message.internal_message_id }` }>
+							{ [ 'bot', 'business' ].includes( message.role ) && message.content }
+						</div>
+					) ) }
+				</div>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
@@ -184,9 +200,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							const displayChatWithSupportLabel =
 								! nextMessage?.context?.flags?.show_contact_support_msg &&
 								message.context?.flags?.show_contact_support_msg &&
-								! chatHasEnded;
+								! chatHasEnded &&
+								! message.context?.flags?.is_error_message;
 
-							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
+							const displayChatWithSupportEndedLabel =
+								! chatHasCSATMessage && ! nextMessage && chatHasEnded;
 
 							return (
 								<ChatMessage
@@ -199,6 +217,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 									) }
 									displayChatWithSupportLabel={ displayChatWithSupportLabel }
 									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
+									displayCSAT={ displayCSAT }
 								/>
 							);
 						} ) }
@@ -206,10 +225,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						{ chat.provider === 'odie' && (
 							<>
 								{ ! forceEmailSupport && <ViewMostRecentOpenConversationNotice /> }
-								{ availableStatusWithFeedback.includes( chat.status ) && (
+								{ chat.status === 'sending' && (
 									<div className="odie-chatbox__action-message">
-										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
-										{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+										<ThinkingPlaceholder />
 									</div>
 								) }
 							</>

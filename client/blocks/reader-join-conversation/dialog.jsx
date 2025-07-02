@@ -73,6 +73,7 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 	return (
 		<Dialog
 			additionalClassNames="reader-join-conversation-dialog"
+			additionalOverlayClassNames="reader-join-conversation-dialog__overlay"
 			isVisible={ isVisible }
 			onClose={ onCloseClick }
 			showCloseIcon

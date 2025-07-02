@@ -53,6 +53,7 @@
 		{ "path": "./state-utils" },
 		{ "path": "./subscriber" },
 		{ "path": "./tree-select" },
+		{ "path": "./ui" },
 		{ "path": "./viewport" },
 		{ "path": "./viewport-react" },
 		{ "path": "./wpcom-checkout" },

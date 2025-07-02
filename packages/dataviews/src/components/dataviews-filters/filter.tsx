@@ -47,6 +47,11 @@ import {
 	OPERATOR_AFTER,
 	OPERATOR_BEFORE_INC,
 	OPERATOR_AFTER_INC,
+	OPERATOR_BETWEEN,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
+	OPERATOR_IN_THE_PAST,
+	OPERATOR_OVER,
 } from '../../constants';
 import type {
 	Filter,
@@ -299,6 +304,70 @@ const FilterText = ( {
 		);
 	}
 
+	if ( filterInView?.operator === OPERATOR_BETWEEN ) {
+		const { label } = activeElements[ 0 ];
+
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Min value. 3: Max value. e.g.: "Item count between (inc): 10-180". */
+				__(
+					'<Name>%1$s between (inc): </Name><Value>%2$s-%3$s</Value>'
+				),
+				filter.name,
+				label[ 0 ],
+				label[ 1 ]
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_ON ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is: 2024-01-01". */
+				__( '<Name>%1$s is: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_NOT_ON ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is not: 2024-01-01". */
+				__( '<Name>%1$s is not: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_IN_THE_PAST ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is in the past: 1 days". */
+				__( '<Name>%1$s is in the past: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				`${ activeElements[ 0 ].value.value } ${ activeElements[ 0 ].value.unit }`
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_OVER ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Date is over: 1 days ago". */
+				__( '<Name>%1$s is over: </Name><Value>%2$s</Value> ago' ),
+				filter.name,
+				`${ activeElements[ 0 ].value.value } ${ activeElements[ 0 ].value.unit }`
+			),
+			filterTextWrappers
+		);
+	}
 	return sprintf(
 		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
 		__( 'Unknown status for %1$s' ),
@@ -337,6 +406,7 @@ function OperatorSelector( {
 					options={ operatorOptions }
 					onChange={ ( newValue ) => {
 						const operator = newValue as Operator;
+						const currentOperator = currentFilter?.operator;
 						const newFilters = currentFilter
 							? [
 									...( view.filters ?? [] ).map(
@@ -344,8 +414,27 @@ function OperatorSelector( {
 											if (
 												_filter.field === filter.field
 											) {
+												// Reset the value only when switching between operators that have different value types.
+												const OPERATORS_SHOULD_RESET_VALUE =
+													[
+														OPERATOR_BETWEEN,
+														OPERATOR_IN_THE_PAST,
+														OPERATOR_OVER,
+													];
+												const shouldResetValue =
+													currentOperator &&
+													( OPERATORS_SHOULD_RESET_VALUE.includes(
+														currentOperator
+													) ||
+														OPERATORS_SHOULD_RESET_VALUE.includes(
+															operator
+														) );
+
 												return {
 													..._filter,
+													value: shouldResetValue
+														? undefined
+														: _filter.value,
 													operator,
 												};
 											}

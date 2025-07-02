@@ -106,12 +106,12 @@ export function sortLaunchpadTasksByCompletionStatus( response: LaunchpadRespons
 	return response;
 }
 
-const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
+export function defaultSuccessCallback( response: LaunchpadResponse ) {
 	const tasks = response.checklist || [];
 	response.checklist = tasks.map( addOrderToTask );
 
 	return response;
-};
+}
 
 type SiteSlug = string | number | null;
 

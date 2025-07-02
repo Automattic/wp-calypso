@@ -19,12 +19,13 @@ import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
-const purchasesWideFields = [ 'site', 'product', 'status', 'payment-method' ];
-const purchasesDesktopFields = [ 'site', 'product', 'status' ];
-const purchasesMobileFields = [ 'product' ];
+const purchasesWideFields = [ 'status', 'payment-method' ];
+const purchasesDesktopFields = [ 'status' ];
+const purchasesMobileFields: string[] = [];
 const defaultPerPage = 10;
 const defaultSort = {
 	field: 'site',
@@ -34,8 +35,12 @@ export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: defaultPerPage,
-	titleField: 'purchase-id',
-	showTitle: false,
+	titleField: 'product',
+	showTitle: true,
+	mediaField: 'site',
+	showMedia: true,
+	descriptionField: 'description',
+	showDescription: true,
 	fields: purchasesDesktopFields,
 	sort: defaultSort,
 	layout: {},
@@ -203,9 +208,11 @@ function useHidePurchasesFieldsAtCertainWidths( {
 export function PurchasesDataViews( {
 	purchases,
 	sites,
+	getManagePurchaseUrlFor,
 }: {
 	purchases: Purchases.Purchase[];
 	sites: SiteDetails[];
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 } ) {
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
@@ -230,6 +237,7 @@ export function PurchasesDataViews( {
 
 	const purchasesDataFields = usePurchasesFieldDefinitions( {
 		sites: sitesWithPurchases,
+		getManagePurchaseUrlFor,
 	} );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
@@ -254,11 +262,11 @@ export function PurchasesDataViews( {
 						console.error( 'Cannot display manage purchase page for subscription without ID' );
 						return;
 					}
-					page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+					page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
 				},
 			},
 		],
-		[ translate ]
+		[ translate, getManagePurchaseUrlFor ]
 	);
 
 	const getItemId = ( item: Purchases.Purchase ) => {
@@ -280,14 +288,18 @@ export function PurchasesDataViews( {
 	);
 }
 
-const membershipsDesktopFields = [ 'site', 'product', 'status' ];
-const membershipsMobileFields = [ 'product' ];
+const membershipsDesktopFields = [ 'status' ];
+const membershipsMobileFields: string[] = [];
 export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: defaultPerPage,
-	titleField: 'purchase-id',
-	showTitle: false,
+	titleField: 'product',
+	showTitle: true,
+	mediaField: 'site',
+	showMedia: true,
+	descriptionField: 'description',
+	showDescription: true,
 	fields: membershipsDesktopFields,
 	sort: {
 		field: 'product',

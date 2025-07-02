@@ -11,9 +11,12 @@
 	min-height: $grid-unit-40;
 	display: flex;
 	align-items: center;
-	padding: 6px 0; // Matches button to ensure alignment
 	line-height: $grid-unit-05 * 5;
 	hyphens: auto;
+
+	&--label-position-side {
+		align-self: center;
+	}
 }
 
 .dataforms-layouts-panel__field-control {
@@ -29,6 +32,10 @@
 		text-wrap: balance; // Fallback for Safari.
 		text-wrap: pretty;
 		min-height: $button-size-compact;
+	}
+
+	&.components-button.is-link[aria-disabled="true"] {
+		text-decoration: none;
 	}
 
 	.components-dropdown {

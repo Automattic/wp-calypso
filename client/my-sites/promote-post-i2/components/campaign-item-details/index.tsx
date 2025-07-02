@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -47,8 +47,8 @@ import {
 	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
 import {
 	formatCents,
 	formatNumber,
@@ -132,7 +132,6 @@ const setHideTspMetricsBannerCookie = ( value: boolean ) => {
 };
 
 export default function CampaignItemDetails( props: Props ) {
-	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -142,6 +141,9 @@ export default function CampaignItemDetails( props: Props ) {
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const { campaign, isLoading, siteId } = props;
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	const campaignId = campaign?.campaign_id || 0;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
@@ -1594,7 +1596,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
-									showSupportModal={ ! isRunningInWpAdmin }
+									showSupportModal={ ! isSelfHosted }
 								>
 									{ translate( 'View documentation' ) }
 									<Gridicon icon="external" size={ 16 } />

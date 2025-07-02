@@ -1,0 +1,69 @@
+{
+	"name": "@automattic/domain-search",
+	"version": "1.0.0",
+	"description": "Domain search components for WordPress.com.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		},
+		"./styles/*": {
+			"calypso:src": "./styles/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/domain-search"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"storybook:start": "storybook dev"
+	},
+	"dependencies": {
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
+		"clsx": "^2.1.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-a11y": "^8.6.14",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/react": "^16.3.0",
+		"@wordpress/base-styles": "^5.23.0",
+		"copyfiles": "^2.4.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"storybook": "^8.6.14",
+		"typescript": "^5.8.3"
+	},
+	"peerDependencies": {
+		"@wordpress/i18n": "^5.23.0",
+		"react": "^18.3.1"
+	}
+}

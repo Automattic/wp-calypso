@@ -3,21 +3,60 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-import { ODIE_TRANSFER_MESSAGE } from '../constants';
+import { logToLogstash } from 'calypso/lib/logstash'; // eslint-disable-line no-restricted-imports -- this import is safe, not introudcing any circular deps; also, it should be removed shortly after investigating the chats with missing zd ids issue
+import { ODIE_ON_ERROR_TRANSFER_MESSAGE, ODIE_TRANSFER_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
-import { setHelpCenterZendeskConversationStarted } from '../utils';
+
+declare const process: {
+	env: {
+		NODE_ENV: unknown;
+	};
+};
+
+const logMessageData = ( {
+	createdFrom,
+	selectedSiteId,
+	selectedSiteURL,
+	userFieldFlowName,
+	section,
+}: {
+	createdFrom: string;
+	selectedSiteId?: number | null;
+	selectedSiteURL?: string | null;
+	userFieldFlowName?: string | null;
+	section: string | null;
+} ) => {
+	const stackTrace = Error().stack;
+
+	process.env.NODE_ENV === 'production' &&
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'No chat ID on Zendesk chat',
+			extra: {
+				createdFrom,
+				selectedSiteId,
+				selectedSiteURL,
+				userFieldFlowName,
+				section,
+				stackTrace,
+			},
+			tags: [ 'no-chat-id-on-zd-chat' ],
+		} );
+};
 
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
 	section,
 	createdFrom,
+	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
 	section?: string | null;
 	createdFrom?: string;
+	isFromError?: boolean;
 } ) => Promise< void > ) => {
 	const {
 		selectedSiteId,
@@ -25,7 +64,6 @@ export const useCreateZendeskConversation = (): ( ( {
 		userFieldMessage,
 		userFieldFlowName,
 		setChat,
-		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
 		trackEvent,
 	} = useOdieAssistantContext();
@@ -45,11 +83,13 @@ export const useCreateZendeskConversation = (): ( ( {
 		interactionId = '',
 		section = '',
 		createdFrom = '',
+		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
 		section?: string | null;
 		createdFrom?: string;
+		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
 		if (
@@ -65,9 +105,22 @@ export const useCreateZendeskConversation = (): ( ( {
 			...prevChat,
 			messages: avoidTransfer
 				? prevChat.messages
-				: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
+				: [
+						...prevChat.messages,
+						...( isFromError ? ODIE_ON_ERROR_TRANSFER_MESSAGE : ODIE_TRANSFER_MESSAGE ),
+				  ],
 			status: 'transfer',
 		} ) );
+
+		if ( ! chatId ) {
+			logMessageData( {
+				createdFrom,
+				selectedSiteId,
+				selectedSiteURL,
+				userFieldFlowName,
+				section,
+			} );
+		}
 
 		await submitUserFields( {
 			messaging_initial_message: userFieldMessage || undefined,
@@ -77,7 +130,6 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_flow: userFieldFlowName || null,
 			messaging_source: section,
 		} );
-		setHelpCenterZendeskConversationStarted();
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
@@ -93,7 +145,6 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_url: selectedSiteURL || null,
 		} );
 
-		setWaitAnswerToFirstMessageFromHumanSupport( true );
 		const updatedInteraction = await addEventToInteraction.mutateAsync( {
 			interactionId: currentInteractionID,
 			eventData: { event_source: 'zendesk', event_external_id: conversation.id },

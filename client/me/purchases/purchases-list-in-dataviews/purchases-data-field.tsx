@@ -2,11 +2,11 @@ import page from '@automattic/calypso-router';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { Fields } from '@wordpress/dataviews';
-import { LocalizeProps } from 'i18n-calypso';
+import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
-import { MembershipSubscription } from 'calypso/lib/purchases/types';
+import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { Icon, MembershipType, MembershipTerms } from '../membership-item';
@@ -65,12 +65,14 @@ export function getPurchasesFieldDefinitions( {
 	moment,
 	paymentMethods,
 	sites,
+	getManagePurchaseUrlFor,
 	fieldIds,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
 	sites: SiteDetails[];
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
@@ -90,22 +92,10 @@ export function getPurchasesFieldDefinitions( {
 			console.error( 'Cannot display manage purchase page for subscription without ID' );
 			return;
 		}
-		page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+		page( getManagePurchaseUrlFor( siteUrl, subscriptionId ) );
 	};
 
 	const fields: Fields< Purchases.Purchase > = [
-		{
-			id: 'purchase-id',
-			label: 'Purchase ID',
-			type: 'text',
-			enableGlobalSearch: false,
-			enableSorting: false,
-			enableHiding: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				// getValue must return a string because the DataViews search feature calls `trim()` on it.
-				return String( item.id );
-			},
-		},
 		{
 			id: 'site',
 			label: translate( 'Site' ),
@@ -132,6 +122,7 @@ export function getPurchasesFieldDefinitions( {
 				const site = { ID: item.siteId };
 				return (
 					<Button
+						className="purchase-item__icon"
 						variant="link"
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
 						label={ translate( 'Manage purchase', { textOnly: true } ) }
@@ -166,7 +157,7 @@ export function getPurchasesFieldDefinitions( {
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
-					<div className="purchase-item__information purchases-layout__information">
+					<div className="purchase-item__information">
 						<div className="purchase-item__title">
 							<Button
 								variant="link"
@@ -176,9 +167,27 @@ export function getPurchasesFieldDefinitions( {
 							>
 								{ getDisplayName( item ) }
 							</Button>
-							&nbsp;
 							<OwnerInfo purchase={ item } />
 						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'description',
+			label: translate( 'Description' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				// Render a bunch of things to make this easily searchable.
+				const site = sites.find( ( site ) => site.ID === item.siteId );
+				return item.siteName + ' ' + item.domain + ' ' + site?.URL;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return (
+					<div className="purchase-item__information">
 						<div className="purchase-item__purchase-type">
 							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
 						</div>
@@ -353,16 +362,15 @@ export function getMembershipsFieldDefinitions( {
 			// Render the site icon
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__site purchases-layout__site">
-						<Button
-							variant="link"
-							title={ translate( 'Manage purchase', { textOnly: true } ) }
-							label={ translate( 'Manage purchase', { textOnly: true } ) }
-							onClick={ () => goToPurchase( item ) }
-						>
-							<Icon subscription={ item } />
-						</Button>
-					</div>
+					<Button
+						className="purchase-item__icon"
+						variant="link"
+						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						label={ translate( 'Manage purchase', { textOnly: true } ) }
+						onClick={ () => goToPurchase( item ) }
+					>
+						<Icon subscription={ item } />
+					</Button>
 				);
 			},
 		},
@@ -378,7 +386,7 @@ export function getMembershipsFieldDefinitions( {
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__information purchase-item__information purchases-layout__information">
+					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__title purchase-item__title">
 							<Button
 								variant="link"
@@ -389,6 +397,29 @@ export function getMembershipsFieldDefinitions( {
 								{ item.title }
 							</Button>
 						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'description',
+			label: String(
+				fixMe( {
+					text: 'Product Description',
+					newCopy: translate( 'Product Description', { textOnly: true } ),
+					oldCopy: translate( 'Description', { textOnly: true } ),
+				} )
+			),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			getValue: ( { item }: { item: MembershipSubscription } ) => {
+				return item.title + ' ' + item.site_title + ' ' + item.site_url;
+			},
+			render: ( { item }: { item: MembershipSubscription } ) => {
+				return (
+					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__purchase-type purchase-item__purchase-type">
 							<MembershipType subscription={ item } />
 						</div>
@@ -408,7 +439,7 @@ export function getMembershipsFieldDefinitions( {
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__status purchase-item__status purchases-layout__status">
+					<div className="membership-item__status purchase-item__status">
 						<MembershipTerms subscription={ item } />
 					</div>
 				);

@@ -10,13 +10,6 @@ import type { PageHeaderProps } from './types';
  * It's a thin wrapper around the SectionHeader component, primarily used for
  * semantic clarity.
  */
-export const PageHeader = ( { breadcrumbs, ...rest }: PageHeaderProps ) => {
-	return (
-		<SectionHeader
-			prefix={ breadcrumbs }
-			{ ...rest }
-			level={ 1 }
-			className="dashboard-page-header"
-		/>
-	);
+export const PageHeader = ( props: PageHeaderProps ) => {
+	return <SectionHeader { ...props } level={ 1 } className="dashboard-page-header" />;
 };

@@ -88,7 +88,7 @@ export default function SiteActions( { site }: { site: Site } ) {
 
 	return (
 		<VStack spacing={ 3 }>
-			<SectionHeader title={ __( 'Actions' ) } />
+			<SectionHeader title={ __( 'Actions' ) } level={ 3 } />
 			<ActionList>{ actions }</ActionList>
 		</VStack>
 	);

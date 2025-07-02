@@ -1,13 +1,25 @@
 import page from '@automattic/calypso-router';
 import { TabPanel } from '@wordpress/components';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	getPathWithUpdatedQueryString,
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
-import useOptionLabels, { MAIN_STAT_TYPE, StatsModulePostsProps } from './use-option-labels';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useOptionLabels, {
+	MAIN_STAT_TYPE,
+	StatsModulePostsProps,
+	getValidQueryViewType,
+} from './use-option-labels';
 
 function NavTabs( { query }: StatsModulePostsProps ) {
+	const siteId = useSelector( getSelectedSiteId );
+	const { supportsArchiveStats } = useSelector( ( state: object ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
+
 	const optionLabels = useOptionLabels();
 	const tabPanelTabs = useMemo( () => {
 		return Object.entries( optionLabels ).map( ( [ key, item ] ) => {
@@ -16,14 +28,15 @@ function NavTabs( { query }: StatsModulePostsProps ) {
 				title: item.tabLabel,
 				className: `stats-navigation__${ key }`,
 				path: getPathWithUpdatedQueryString( {
-					viewdType: key,
+					viewType: key,
 				} ),
 				analyticsId: item.analyticsId,
 			};
 		} );
 	}, [ optionLabels ] );
 
-	const selectedTab = query.viewdType || MAIN_STAT_TYPE;
+	const selectedTab =
+		getValidQueryViewType( query.viewType, supportsArchiveStats ) || MAIN_STAT_TYPE;
 
 	return (
 		<TabPanel

@@ -16,11 +16,14 @@ export const SITE_FIELDS = [
 	'is_private',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
+	'hosting_provider_guess',
+	'lang',
 	'launch_status',
 	'site_migration',
 	'site_owner',
 	'options',
 	'jetpack',
+	'jetpack_connection',
 	'jetpack_modules',
 ];
 
@@ -28,31 +31,21 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'is_difm_lite_in_progress',
+	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
+	'updated_at',
+	'wpcom_production_blog_id',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export interface SiteDomain {
-	id: number;
-	domain: string;
-	blog_id: number;
-	owner: string;
-	expiry: string;
-	domain_status: {
-		status: string;
-	};
-	wpcom_domain: boolean;
-	sslStatus: string;
-	domain_type: string;
-	primary_domain: boolean;
-}
-
 export interface SitePlan {
+	product_id: number;
 	product_slug: string;
 	product_name: string;
 	product_name_short: string;
@@ -70,11 +63,13 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
-	is_redirect?: boolean;
+	is_difm_lite_in_progress?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	software_version: string;
+	updated_at?: string;
+	wpcom_production_blog_id?: number;
 }
 
 export interface Site {
@@ -88,8 +83,7 @@ export interface Site {
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;
 	subscribers_count: number;
-	// Can be undefined for deleted sites.
-	options?: SiteOptions;
+	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
@@ -98,6 +92,7 @@ export interface Site {
 	is_wpcom_atomic: boolean;
 	is_wpcom_staging_site: boolean;
 	is_vip: boolean;
+	lang: string;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;
@@ -106,7 +101,9 @@ export interface Site {
 	};
 	site_owner: number;
 	jetpack: boolean;
+	jetpack_connection: boolean;
 	jetpack_modules: string[] | null;
+	hosting_provider_guess?: string;
 }
 
 export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
@@ -125,6 +122,18 @@ export async function deleteSite( siteId: number ) {
 export async function launchSite( siteId: number ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/launch`,
-		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export async function restoreSite( siteId: number ) {
+	return wpcom.req.post(
+		{
+			path: '/restore-site',
+			apiNamespace: 'wpcom/v2',
+			method: 'put',
+		},
+		{
+			site_id: siteId,
+		}
+	);
 }

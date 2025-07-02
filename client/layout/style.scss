@@ -494,9 +494,20 @@ body.is-mobile-app-view {
 		}
 	}
 
+	&.is-section-checkout,
+	&.is-section-checkout-pending {
+		.gravatar-text-logo {
+			margin-bottom: 3px;
+		}
+	}
+
 	&.is-section-checkout {
 		.cost-overrides-list-item__reason--is-discount {
 			color: #1d4fc4;;
+		}
+
+		.checkout-payment-methods .is-checked:not( .has-highlight ) {
+			border: #c3c4c7 1px solid;
 		}
 	}
 

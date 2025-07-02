@@ -20,6 +20,7 @@ import {
 } from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
+import { isAutomatticianQuery } from './queries/a8c';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { profileQuery } from './queries/profile';
@@ -27,6 +28,7 @@ import { siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
+import { siteDomainsQuery } from './queries/site-domains';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
@@ -71,7 +73,12 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+	loader: async () => {
+		// Preload the default sites list response without blocking.
+		queryClient.ensureQueryData( sitesQuery() );
+
+		await queryClient.ensureQueryData( isAutomatticianQuery() );
+	},
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -155,7 +162,10 @@ const siteSettingsSiteVisibilityRoute = createRoute( {
 	path: 'settings/site-visibility',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/settings-site-visibility' ).then( ( d ) =>
@@ -352,7 +362,9 @@ const siteSettingsTransferSiteRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default siteSlug={ siteRoute.useParams().siteSlug } context="dashboard_v2" />
+			),
 		} )
 	)
 );
@@ -392,7 +404,7 @@ const meRoute = createRoute( {
 		const twoStep = await fetchTwoStep();
 		if ( twoStep.two_step_reauthorization_required ) {
 			const currentPath = window.location.pathname;
-			const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+			const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 			window.location.href = loginUrl;
 		}
 	},

@@ -4,9 +4,10 @@ import { fixMe, useTranslate } from 'i18n-calypso';
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
+	action?: string;
 }
 
-const HeadingSubText = ( { isSocialFirst, twoFactorAuthType }: Props ) => {
+const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, action }: Props ) => {
 	const translate = useTranslate();
 
 	if ( ! isSocialFirst || twoFactorAuthType ) {
@@ -62,7 +63,15 @@ const HeadingSubText = ( { isSocialFirst, twoFactorAuthType }: Props ) => {
 	/**
 	 * Return a span here because the Step.Heading renders subtext as a p tag.
 	 */
-	return <span className="wp-login__heading-subtext">{ tos }</span>;
+	return (
+		<span className="wp-login__heading-subtext">
+			{ 'lostpassword' === action
+				? translate(
+						"Please enter your username or email address. You'll receive a link to create a new password via email."
+				  )
+				: tos }
+		</span>
+	);
 };
 
 export default HeadingSubText;

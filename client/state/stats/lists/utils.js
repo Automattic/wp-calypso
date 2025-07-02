@@ -3,12 +3,14 @@ import { sortBy, camelCase, get, filter, map, flatten, capitalize } from 'lodash
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
+/** @type ( key: string ) => string */
 function getArchiveKeyLabel( key ) {
 	const archiveKeyLabelMap = {
 		author: translate( 'Authors' ),
 		cat: translate( 'Categories' ),
 		err: translate( 'Error' ),
-		home: translate( 'Homepage' ),
+		// This category is dedicated to the homepage set to Latest posts under the Archive tab.
+		home: translate( 'Homepage (Latest posts)' ),
 		search: translate( 'Searches' ),
 		tag: translate( 'Tags' ),
 		tax: translate( 'Taxonomies' ),
@@ -18,6 +20,15 @@ function getArchiveKeyLabel( key ) {
 	};
 
 	return archiveKeyLabelMap[ key ] ?? capitalize( key );
+}
+
+/** @type ( str: string ) => string */
+function decodeUriEncoding( str ) {
+	try {
+		return decodeURIComponent( str );
+	} catch ( _ ) {
+		return str;
+	}
 }
 
 /**
@@ -447,7 +458,7 @@ export const normalizers = {
 							totalTaxViews += item.views;
 
 							return {
-								label: item.value,
+								label: decodeUriEncoding( item.value ),
 								value: item.views,
 								link: item.href,
 							};
@@ -477,20 +488,25 @@ export const normalizers = {
 				if ( hasItems ) {
 					let totalViews = 0;
 
-					const children = archiveItems.map( ( item ) => {
-						totalViews += item.views;
+					const children = archiveItems
+						.filter( ( i ) => !! i.value )
+						.map( ( item ) => {
+							totalViews += item.views;
 
-						return {
-							label: [ 'home', 'search' ].includes( archiveKey ) ? item.href : item.value,
-							value: item.views,
-							link: item.href,
-						};
-					} );
+							return {
+								label: [ 'home' ].includes( archiveKey )
+									? item.href
+									: decodeUriEncoding( item.value ),
+								value: item.views,
+								link: item.href,
+							};
+						} );
 
 					accumulatedArchives.push( {
 						label: getArchiveKeyLabel( archiveKey ),
 						value: totalViews,
-						children,
+						// Show the Homepage without children if there are no other pages under it.
+						children: 'home' === archiveKey && children.length < 2 ? null : children,
 					} );
 				}
 			}

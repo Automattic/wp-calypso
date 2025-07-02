@@ -17,13 +17,13 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
+	useRestorableProducts,
+	RemovedFromCartItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { RemovedFromCartItem } from 'calypso/my-sites/checkout/src/components/removed-from-cart-item';
-import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
 	useStreamlinedPriceExperiment,
@@ -44,6 +44,7 @@ import type {
 	ReplaceProductInCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren, RefObject } from 'react';
 
@@ -74,6 +75,7 @@ export function WPOrderReviewLineItems( {
 	isSummary,
 	removeProductFromCart,
 	replaceProductInCart,
+	addProductsToCart,
 	removeCoupon,
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
@@ -85,8 +87,9 @@ export function WPOrderReviewLineItems( {
 }: {
 	className?: string;
 	isSummary?: boolean;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	replaceProductInCart: ReplaceProductInCart;
+	addProductsToCart: AddProductsToCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -227,7 +230,11 @@ export function WPOrderReviewLineItems( {
 				/>
 			) ) }
 			{ restorableProducts.map( ( product ) => (
-				<RemovedFromCartItem key={ product.uuid } product={ product } />
+				<RemovedFromCartItem
+					key={ product.uuid }
+					product={ product }
+					addProductsToCart={ addProductsToCart }
+				/>
 			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
@@ -243,12 +250,14 @@ export function WPOrderReviewLineItems( {
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
+				<WPOrderReviewListItem>
+					<NonProductLineItem
+						subtotal
+						lineItem={ creditsLineItem }
+						isSummary={ isSummary }
+						isPwpoUser={ isPwpoUser }
+					/>
+				</WPOrderReviewListItem>
 			) }
 		</WPOrderReviewList>
 	);
@@ -404,8 +413,9 @@ function LineItemWrapper( {
 		}
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
 		const isMarketplace = product.extra?.is_marketplace_product;
+		const isA4A = product.extra?.isA4ASitelessCheckout;
 
-		if ( isJetpack || isAkismet || isMarketplace ) {
+		if ( isJetpack || isAkismet || isMarketplace || isA4A ) {
 			return true;
 		}
 

@@ -1,4 +1,4 @@
-import { CoreBadge } from '@automattic/components/src/core-badge';
+import { Badge } from '@automattic/ui';
 import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
 import { usePerformanceData } from '../hooks/use-performance-data';
@@ -20,9 +20,9 @@ function PerformanceBadge( { value }: { value: number | undefined } ) {
 		badgeProps.label = __( 'Needs Improvement' );
 	}
 	return (
-		<CoreBadge intent={ badgeProps.intent } style={ { width: 'fit-content' } }>
+		<Badge intent={ badgeProps.intent } style={ { width: 'fit-content' } }>
 			{ badgeProps.label }
-		</CoreBadge>
+		</Badge>
 	);
 }
 

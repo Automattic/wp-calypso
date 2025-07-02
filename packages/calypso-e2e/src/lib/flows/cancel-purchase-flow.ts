@@ -6,7 +6,7 @@ type CancelReason = 'Another reason…';
  * Cancels a purchased subscription.
  */
 export async function cancelSubscriptionFlow( page: Page ) {
-	await page.getByRole( 'button', { name: 'Submit and cancel product' } ).click();
+	await page.getByRole( 'button', { name: 'Submit' } ).click();
 }
 
 /**
@@ -31,7 +31,7 @@ export async function cancelPurchaseFlow(
 
 	await Promise.all( [
 		page.waitForNavigation( { timeout: 30 * 1000 } ),
-		page.getByRole( 'button', { name: /Submit and (remove|cancel) plan/ } ).click(),
+		page.getByRole( 'button', { name: 'Submit' } ).click(),
 	] );
 }
 
@@ -73,6 +73,6 @@ export async function cancelAtomicPurchaseFlow(
 
 	await Promise.all( [
 		page.waitForNavigation( { timeout: 30 * 1000 } ),
-		page.getByRole( 'button', { name: /Submit and cancel plan/ } ).click(),
+		page.getByRole( 'button', { name: 'Submit' } ).click(),
 	] );
 }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -17,6 +18,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ItemData, ItemViewHeaderExtraProps } from '../types';
+import HeaderStagingSiteButton from './header-staging-site-button';
 
 import './style.scss';
 
@@ -115,7 +117,6 @@ export default function ItemViewHeader( {
 										) : (
 											itemData.subtitle
 										) }
-
 										{ extraProps && extraProps.subtitleExtra ? (
 											<span>
 												<extraProps.subtitleExtra />
@@ -123,6 +124,12 @@ export default function ItemViewHeader( {
 										) : (
 											''
 										) }
+										<HeaderStagingSiteButton
+											siteId={ siteId }
+											isAtomic={ isAtomic }
+											isStagingSite={ isStagingSite }
+											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
+										/>
 									</div>
 
 									{ shouldDisplayVersionNumbers && (
@@ -132,7 +139,11 @@ export default function ItemViewHeader( {
 													WordPress{ ' ' }
 													<a
 														className="hosting-dashboard-item-view__header-env-data-item-link"
-														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
+														href={
+															isEnabled( 'dashboard/v2/backport/site-settings' )
+																? `/sites/settings/v2/${ selectedSite?.domain }/wordpress`
+																: `/hosting-config/${ selectedSite?.domain }#wp`
+														}
 														onClick={ handleWpVersionClick }
 													>
 														{ wpVersion }
@@ -147,7 +158,11 @@ export default function ItemViewHeader( {
 													<a
 														className="hosting-dashboard-item-view__header-env-data-item-link"
 														onClick={ handlePhpVersionClick }
-														href={ `/hosting-config/${ selectedSite?.domain }#php` }
+														href={
+															isEnabled( 'dashboard/v2/backport/site-settings' )
+																? `/sites/settings/v2/${ selectedSite?.domain }/php`
+																: `/hosting-config/${ selectedSite?.domain }#php`
+														}
 													>
 														{ phpVersion }
 													</a>

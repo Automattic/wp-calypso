@@ -14,11 +14,7 @@ import {
 	PurchasesPage,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelSubscriptionFlow,
-	cancelAtomicPurchaseFlow,
 	WPAdminSidebarComponent,
-	SiteSettingsPage,
-	DashboardSitePage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -106,16 +102,6 @@ describe(
 				const wpAdminSidebarComponent = new WPAdminSidebarComponent( page );
 				await wpAdminSidebarComponent.navigate( 'Hosting', 'Site Settings' );
 			} );
-
-			it( 'Navigate to Server > Server Settings', async function () {
-				const dashboardSitePage = new DashboardSitePage( page );
-				await dashboardSitePage.maybeCloseGuidedTour();
-
-				const siteSettings = new SiteSettingsPage( page );
-				await siteSettings.navigateToSubmenu( 'Server' );
-
-				await page.getByRole( 'heading', { name: 'Server Settings' } ).waitFor();
-			} );
 		} );
 
 		describe( 'Cancel and remove storage add-on', function () {
@@ -131,20 +117,19 @@ describe(
 				await meSidebarComponent.navigate( 'Purchases' );
 			} );
 
-			it( 'View details of purchased add-on', async function () {
+			it( 'View details of purchased add-on and cancel add-on renewal', async function () {
 				purchasesPage = new PurchasesPage( page );
 
 				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug );
 				await purchasesPage.cancelPurchase( 'Cancel subscription' );
-			} );
-
-			it( 'Cancel add-on renewal', async function () {
-				await cancelSubscriptionFlow( page );
 
 				noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-					timeout: 30 * 1000,
-				} );
+				await noticeComponent.noticeShown(
+					'Your refund has been processed and your purchase removed.',
+					{
+						timeout: 30 * 1000,
+					}
+				);
 			} );
 		} );
 
@@ -161,23 +146,19 @@ describe(
 				await meSidebarComponent.navigate( 'Purchases' );
 			} );
 
-			it( 'View details of purchased plan', async function () {
+			it( 'View details of purchased plan and cancel plan renewal', async function () {
 				purchasesPage = new PurchasesPage( page );
 
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug );
 				await purchasesPage.cancelPurchase( 'Cancel plan' );
-			} );
-
-			it( 'Cancel plan renewal', async function () {
-				await cancelAtomicPurchaseFlow( page, {
-					reason: 'Another reason…',
-					customReasonText: 'E2E TEST CANCELLATION',
-				} );
 
 				noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-					timeout: 30 * 1000,
-				} );
+				await noticeComponent.noticeShown(
+					'Your refund has been processed and your purchase removed.',
+					{
+						timeout: 30 * 1000,
+					}
+				);
 			} );
 		} );
 

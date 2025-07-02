@@ -89,7 +89,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			const domainSearch = new DomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com` );
+			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -161,9 +161,12 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			} );
 
 			noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-				timeout: 30 * 1000,
-			} );
+			await noticeComponent.noticeShown(
+				'Your refund has been processed and your purchase removed.',
+				{
+					timeout: 30 * 1000,
+				}
+			);
 		} );
 	} );
 

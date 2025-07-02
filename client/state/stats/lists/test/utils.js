@@ -864,15 +864,9 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Homepage',
+						label: 'Homepage (Latest posts)',
 						value: 59,
-						children: [
-							{
-								label: 'http://jetpack.com/',
-								value: 59,
-								link: 'http://jetpack.com/',
-							},
-						],
+						children: null,
 					},
 					{
 						label: 'Taxonomies',
@@ -936,20 +930,15 @@ describe( 'utils', () => {
 					},
 					{
 						label: 'Searches',
-						value: 4,
+						value: 3,
 						children: [
 							{
-								label: 'http://jetpack.com/?s=I+can',
+								label: 'I can',
 								value: 2,
 								link: 'http://jetpack.com/?s=I+can',
 							},
 							{
-								label: 'http://jetpack.com/?s=',
-								value: 1,
-								link: 'http://jetpack.com/?s=',
-							},
-							{
-								label: 'http://jetpack.com/?s=plugin',
+								label: 'plugin',
 								value: 1,
 								link: 'http://jetpack.com/?s=plugin',
 							},
@@ -1075,15 +1064,9 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
-						label: 'Homepage',
+						label: 'Homepage (Latest posts)',
 						value: 89,
-						children: [
-							{
-								label: 'http://jetpack.com/',
-								value: 89,
-								link: 'http://jetpack.com/',
-							},
-						],
+						children: null,
 					},
 					{
 						label: 'Categories',
@@ -1151,37 +1134,6 @@ describe( 'utils', () => {
 						],
 					},
 					{
-						label: 'Searches',
-						value: 9,
-						children: [
-							{
-								label: 'http://jetpack.com/?s=',
-								value: 4,
-								link: 'http://jetpack.com/?s=',
-							},
-							{
-								label: 'http://jetpack.com/?s=I+can',
-								value: 2,
-								link: 'http://jetpack.com/?s=I+can',
-							},
-							{
-								label: 'http://jetpack.com/?s=my+website+is+not+active',
-								value: 1,
-								link: 'http://jetpack.com/?s=my+website+is+not+active',
-							},
-							{
-								label: 'http://jetpack.com/?s=Ani',
-								value: 1,
-								link: 'http://jetpack.com/?s=Ani',
-							},
-							{
-								label: 'http://jetpack.com/?s=plugin',
-								value: 1,
-								link: 'http://jetpack.com/?s=plugin',
-							},
-						],
-					},
-					{
 						label: 'Dates',
 						value: 7,
 						children: [
@@ -1198,6 +1150,32 @@ describe( 'utils', () => {
 						],
 					},
 					{
+						label: 'Searches',
+						value: 5,
+						children: [
+							{
+								label: 'I can',
+								value: 2,
+								link: 'http://jetpack.com/?s=I+can',
+							},
+							{
+								label: 'my website is not active',
+								value: 1,
+								link: 'http://jetpack.com/?s=my+website+is+not+active',
+							},
+							{
+								label: 'Ani',
+								value: 1,
+								link: 'http://jetpack.com/?s=Ani',
+							},
+							{
+								label: 'plugin',
+								value: 1,
+								link: 'http://jetpack.com/?s=plugin',
+							},
+						],
+					},
+					{
 						label: 'Authors',
 						value: 1,
 						children: [
@@ -1209,6 +1187,43 @@ describe( 'utils', () => {
 						],
 					},
 				] );
+			} );
+
+			test( 'should properly parse unicode archive types', () => {
+				const statsArchivesNormalized = normalizers.statsArchives(
+					{
+						date: '2025-06-02',
+						period: 'day',
+						summary: {
+							cat: [
+								{
+									href: 'http://jetpack.com/category/rrr/',
+									value: '%E5%A4%A9%E9%B8%BD',
+									views: 51,
+								},
+							],
+							tax: {
+								topics: [
+									{
+										href: 'http://jetpack.com/?taxonomy=topics&term=aaa',
+										value: '%E9%B8%A6',
+										views: 6,
+									},
+								],
+							},
+						},
+					},
+					{
+						period: 'day',
+						start_date: '2025-06-01',
+						date: '2025-06-02',
+						summarize: 1,
+						max: 10,
+					}
+				);
+
+				expect( statsArchivesNormalized[ 0 ].children[ 0 ].label ).toEqual( '天鸽' );
+				expect( statsArchivesNormalized[ 1 ].children[ 0 ].children[ 0 ].label ).toEqual( '鸦' );
 			} );
 		} );
 

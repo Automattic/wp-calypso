@@ -22,6 +22,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
+import GravPoweredLoginBlockHeader from 'calypso/login/wp-login/gravatar/grav-powered-login-block-header';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -56,7 +57,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { LoginHeader } from './login-header';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -112,7 +112,13 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isJetpack: this.props.isJetpack, locale: this.props.locale } ) );
+			page(
+				login( {
+					isJetpack: this.props.isJetpack,
+					locale: this.props.locale,
+					currentQuery: this.props.currentQuery,
+				} )
+			);
 		}
 
 		window.scrollTo( 0, 0 );
@@ -145,9 +151,11 @@ class Login extends Component {
 			this.handleTwoFactorRequested( 'link' );
 		}
 
+		const usernameOnlyRequired = this.props.currentQuery?.username_only === 'true';
 		if (
 			this.props.requestError?.field === 'usernameOrEmail' &&
-			this.props.requestError?.code === 'email_login_not_allowed'
+			this.props.requestError?.code === 'email_login_not_allowed' &&
+			! usernameOnlyRequired
 		) {
 			let urlConfig = {
 				locale: this.props.locale,
@@ -442,31 +450,9 @@ class Login extends Component {
 							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
 							from={ get( currentQuery, 'from' ) }
+							isJetpack={ isJetpack }
 						/>
 					</div>
-					{ ! isWooJPC && ! isBlazePro && (
-						<div className="login__lost-password-footer">
-							<p className="login__lost-password-no-account">
-								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
-									components: {
-										signupLink,
-									},
-								} ) }
-							</p>
-						</div>
-					) }
-					{ isBlazePro && (
-						<div className="login__lost-password-footer">
-							<p className="login__lost-password-no-account">
-								<span>{ translate( 'Don’t have an account?' ) }&nbsp;</span>
-								{ translate( '{{signupLink}}Sign up{{/signupLink}}', {
-									components: {
-										signupLink,
-									},
-								} ) }
-							</p>
-						</div>
-					) }
 				</Fragment>
 			);
 		}
@@ -567,7 +553,6 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isSendingEmail={ this.props.isSendingEmail }
@@ -596,25 +581,17 @@ class Login extends Component {
 			isWCCOM,
 			isFromAutomatticForAgenciesPlugin,
 			action,
-			currentQuery,
 			fromSite,
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
 			isSignupExistingAccount,
-			isSocialFirst,
 			isWhiteLogin,
-			isBlazePro,
 			linkingSocialService,
 			socialConnect,
-			translate,
 			twoStepNonce,
-			wccomFrom,
-			isWooJPC,
 			twoFactorAuthType,
 			twoFactorEnabled,
-			initialQuery,
-			partnerSlug,
 		} = this.props;
 
 		return (
@@ -622,39 +599,24 @@ class Login extends Component {
 				className={ clsx( 'login', {
 					'is-akismet': isFromAkismet,
 					'is-jetpack': isJetpack,
+					// TODO: Confirm if `is-jetpack-cloud` is needed
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
+					// TODO: Confirm if `is-a4a` is needed
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
 				} ) }
 			>
-				{ ! isWhiteLogin && (
-					<LoginHeader
+				{ isGravPoweredClient && (
+					<GravPoweredLoginBlockHeader
 						action={ action }
-						currentQuery={ currentQuery }
 						fromSite={ fromSite }
-						isFromAkismet={ isFromAkismet }
-						isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-						isGravPoweredClient={ isGravPoweredClient }
 						isGravPoweredLoginPage={ isGravPoweredLoginPage }
-						isJetpack={ isJetpack }
 						isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
-						isSocialFirst={ isSocialFirst }
-						isWhiteLogin={ isWhiteLogin }
-						isWCCOM={ isWCCOM }
-						isBlazePro={ isBlazePro }
 						linkingSocialService={ linkingSocialService }
-						oauth2Client={ oauth2Client }
 						socialConnect={ socialConnect }
-						translate={ translate }
 						twoStepNonce={ twoStepNonce }
-						wccomFrom={ wccomFrom }
-						isWooJPC={ isWooJPC }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorEnabled={ twoFactorEnabled }
-						initialQuery={ initialQuery }
-						partnerSlug={ partnerSlug }
-						getSignupLinkComponent={ this.getSignupLinkComponent }
-						showContinueAsUser={ this.showContinueAsUser() }
 					/>
 				) }
 

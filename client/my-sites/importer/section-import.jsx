@@ -38,6 +38,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+
 import './section-import.scss';
 
 /**
@@ -93,6 +94,10 @@ class SectionImport extends Component {
 		fromSite: PropTypes.string,
 	};
 
+	state = {
+		latestSuccessImport: null,
+	};
+
 	onceAutoStartImport = once( () => {
 		const { engine, siteId, siteImports, afterStartImport } = this.props;
 
@@ -130,6 +135,10 @@ class SectionImport extends Component {
 				};
 			}
 
+			if ( importerState === appStates.IMPORT_SUCCESS && ! this.state.latestSuccessImport ) {
+				this.setState( { latestSuccessImport: importItem } );
+			}
+
 			this.trackImporterStateChange( importerState, importerId, eventProps );
 		} );
 	};
@@ -165,6 +174,10 @@ class SectionImport extends Component {
 			this.onceAutoStartImport();
 		}
 	}
+
+	resetSuccessState = () => {
+		this.setState( { latestSuccessImport: null } );
+	};
 
 	componentDidUpdate() {
 		if ( this.props.isImporterStatusHydrated ) {
@@ -227,6 +240,22 @@ class SectionImport extends Component {
 		);
 	}
 
+	renderLatestSuccessImport() {
+		const { site, siteSlug, siteTitle } = this.props;
+		const ImporterComponent =
+			importerComponents[ getImporterByKey( this.state.latestSuccessImport.type ).engine ];
+		return (
+			<ImporterComponent
+				site={ site }
+				siteSlug={ siteSlug }
+				siteTitle={ siteTitle }
+				importerStatus={ this.state.latestSuccessImport }
+				onImportSuccessClose={ () => {
+					this.resetSuccessState();
+				} }
+			/>
+		);
+	}
 	/**
 	 * Renders list of importer elements for active import jobs
 	 * @returns {Array} Importer react elements for the active import jobs
@@ -251,6 +280,9 @@ class SectionImport extends Component {
 						siteSlug={ siteSlug }
 						siteTitle={ siteTitle }
 						importerStatus={ importItem }
+						onImportSuccessClose={ () => {
+							this.resetSuccessState();
+						} }
 					/>
 				)
 			);
@@ -263,6 +295,10 @@ class SectionImport extends Component {
 	 */
 	renderImporters() {
 		const { engine } = this.props;
+
+		if ( this.state.latestSuccessImport ) {
+			return this.renderLatestSuccessImport();
+		}
 
 		// If starting a new import was requested by the `engine` query param, never show the list
 		// of available "idle" importers. Always render the list of active importers, even if it's
@@ -283,7 +319,7 @@ class SectionImport extends Component {
 	}
 
 	updateFromAPI = () => {
-		this.props.siteId && this.props.fetchImporterState( this.props.siteId );
+		this.props.fetchImporterState( this.props.siteId );
 	};
 
 	renderImportersList() {
@@ -298,13 +334,14 @@ class SectionImport extends Component {
 					comment:
 						'This text appears above a list of service icons (e.g. Wix, Squarespace) asking the user to choose one.',
 			  } );
-		const isImportSuccess = this.props.siteImports.some(
-			( importItem ) => importItem.importerState === appStates.IMPORT_SUCCESS
-		);
-		const skipHeader = isSpecificImporter && isImportSuccess;
+		const isImportSuccess = Boolean( this.state.latestSuccessImport );
+		const skipHeader = isSpecificImporter || isImportSuccess;
+
 		return (
 			<>
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				{ ! this.state.latestSuccessImport && (
+					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				) }
 				{ ! skipHeader && (
 					<SectionHeader label={ sectionHeaderLabel } className="importer__section-header" />
 				) }

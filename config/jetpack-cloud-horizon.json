@@ -30,7 +30,6 @@
 		"always_use_logout_url": false,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
-		"checkout/vat-form": true,
 		"checkout/checkout-version": false,
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,

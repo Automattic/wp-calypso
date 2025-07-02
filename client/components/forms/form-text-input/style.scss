@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "../../../assets/stylesheets/shared/extends-forms";
 
-.form-text-input:not(.form-text-input-core-styles) {
+.form-text-input {
 	@at-root {
 		input[type='text']#{&},
 		input[type='url']#{&},

@@ -79,18 +79,23 @@ const WasThisHelpfulButtons = ( {
 	return (
 		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
-				<span className={ questionClasses }>
-					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
-				</span>
-				<span className={ thanksClasses }>
-					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
-				</span>
+				{ ! rated && (
+					<span className={ questionClasses }>
+						{ __( 'Was this helpful?', __i18n_text_domain__ ) }
+					</span>
+				) }
+				{ rated && (
+					<span className={ thanksClasses }>
+						{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
+					</span>
+				) }
 			</div>
-			<span className="odie-feedback-component-button-container">
+			<div className="odie-feedback-component-button-container">
 				<button
 					className={ buttonLikedClasses }
 					onClick={ () => handleIsHelpful( true ) }
 					disabled={ notLiked }
+					tabIndex={ rated ? -1 : undefined }
 					aria-label={ __( 'Yes, this was helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsUpIcon className={ thumbsUpClasses } />
@@ -99,11 +104,12 @@ const WasThisHelpfulButtons = ( {
 					className={ buttonDislikedClasses }
 					onClick={ () => handleIsHelpful( false ) }
 					disabled={ liked }
+					tabIndex={ rated ? -1 : undefined }
 					aria-label={ __( 'No, this was not helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
 				</button>
-			</span>
+			</div>
 		</div>
 	);
 };

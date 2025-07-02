@@ -1,3 +1,4 @@
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import type { SiteReports, Report } from '../types';
 
 export const getSiteReports = ( reports: Report[] ): SiteReports[] => {
@@ -7,10 +8,16 @@ export const getSiteReports = ( reports: Report[] ): SiteReports[] => {
 
 	const grouped = reports.reduce(
 		( acc, report ) => {
-			if ( ! acc[ report.site ] ) {
-				acc[ report.site ] = [];
+			// Only include reports with "sent" status
+			if ( report.status !== 'sent' ) {
+				return acc;
 			}
-			acc[ report.site ].push( report );
+
+			const url = urlToSlug( report.data.managed_site_url );
+			if ( ! acc[ url ] ) {
+				acc[ url ] = [];
+			}
+			acc[ url ].push( report );
 			return acc;
 		},
 		{} as Record< string, Report[] >

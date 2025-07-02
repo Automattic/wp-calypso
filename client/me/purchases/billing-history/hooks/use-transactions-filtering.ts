@@ -2,7 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { BillingTransaction } from 'calypso/state/billing-transactions/types';
 import { groupDomainProducts, formatDisplayDate, formatMonthYear } from '../utils';
-import type { ViewState, Filter } from '../data-views-types';
+import type { Filter } from '../data-views-types';
+import type { View } from '@wordpress/dataviews';
 
 function matchesSearch(
 	transaction: BillingTransaction,
@@ -53,7 +54,7 @@ function matchesSiteId( transaction: BillingTransaction, siteId: number | null |
 
 export function useTransactionsFiltering(
 	transactions: BillingTransaction[] | null,
-	view: ViewState,
+	view: View,
 	siteId: number | null
 ) {
 	const translate = useTranslate();
@@ -68,11 +69,11 @@ export function useTransactionsFiltering(
 				return false;
 			}
 
-			if ( view.filters.length === 0 ) {
+			if ( view.filters?.length === 0 ) {
 				return true;
 			}
 
-			return view.filters.every( ( filter ) => matchesFilter( transaction, filter, translate ) );
+			return view.filters?.every( ( filter ) => matchesFilter( transaction, filter, translate ) );
 		} );
 	}, [ transactions, view.search, view.filters, translate, siteId ] );
 }

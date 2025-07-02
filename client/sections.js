@@ -10,7 +10,7 @@ const sections = [
 	},
 	{
 		name: 'reauth-required',
-		paths: [ '/reauth-required' ],
+		paths: [ '/me/reauth-required' ],
 		module: 'calypso/reauth-required',
 	},
 	{

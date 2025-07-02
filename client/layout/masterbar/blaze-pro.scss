@@ -12,8 +12,8 @@
 		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
 }
 
-$inter: Inter, $sans;
-$sfProText: "SF Pro Text", $sans;
+$inter: Inter, $sans; // for general
+$sfProText: "SF Pro Text", $sans; // for sub title
 $colorBlack: #1f1f1f;
 
 body.is-section-signup {
@@ -171,25 +171,6 @@ body.is-section-signup {
 		display: none;
 	}
 
-	.login__form-header-wrapper {
-		align-items: center;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.login__form-header {
-		margin-top: 0;
-		width: 360px;
-
-		h3 {
-			font-family: $inter !important;
-			font-size: 2rem;
-			font-weight: 700;
-			line-height: 40px;
-			margin-bottom: 16px; // For 2FA screen
-		}
-	}
-
 	.login__body--continue-as-user {
 		align-items: center;
 		display: flex;
@@ -345,10 +326,6 @@ body.is-section-signup {
 		border: none;
 	}
 
-	.wp-login__footer--oauth {
-		display: none;
-	}
-
 	.signup__step {
 		.step-wrapper__header {
 			display: flex;
@@ -363,6 +340,7 @@ body.is-section-signup {
 				width: 360px;
 
 				.formatted-header__title {
+					font-family: $inter;
 					font-size: 2rem;
 					font-weight: 700;
 					line-height: 40px;
@@ -394,8 +372,7 @@ body.is-section-signup {
 		}
 	}
 
-	.logged-out-form__links,
-	.login__lost-password-footer {
+	.logged-out-form__links {
 		align-items: center;
 		display: flex;
 		flex-direction: row;
@@ -432,11 +409,6 @@ body.is-section-signup {
 		font-weight: 500;
 		line-height: 25px;
 		text-align: center;
-	}
-
-	.login__lost-password-footer {
-		max-width: $login-form-max-width;
-		margin: 0 auto;
 	}
 
 	// Log in Styles
@@ -489,22 +461,8 @@ body.is-section-signup {
 		margin-bottom: 12px;
 	}
 
-	.login__header-subtitle {
-		color: var(--color-neutral-50);
-		font-family: $sfProText !important;
-		font-size: rem(18px);
-		font-weight: 500;
-		line-height: 25px;
-	}
-
 	.login__lostpassword-subtitle {
 		width: 360px;
-	}
-
-	&.two-factor-auth-enabled {
-		.login__header-subtitle {
-			display: none;
-		}
 	}
 
 	.login__form-terms {
@@ -564,8 +522,7 @@ body.is-section-signup {
 	}
 
 	.wp-login__container {
-		.wp-login__main-footer {
-			margin-top: 48px;
+		.wp-login__login-block-footer {
 			text-align: center;
 		}
 

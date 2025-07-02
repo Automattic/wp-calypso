@@ -30,10 +30,6 @@ jest.mock( '@automattic/odie-client/src/data', () => ( {
 	broadcastOdieMessage: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/odie-client/src/utils/storage-utils', () => ( {
-	clearHelpCenterZendeskConversationStarted: jest.fn(),
-} ) );
-
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );
 	return {
@@ -130,12 +126,13 @@ describe( '<EligibilityWarnings>', () => {
 				{
 					name: 'Warning 2',
 					description: 'Describes warning 2',
+					supportPostId: 123,
 					supportUrl: 'https://helpme.com',
 				},
 			],
 		} );
 
-		const { getByText } = renderWithStore(
+		const { getByRole, getByText } = renderWithStore(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
@@ -145,7 +142,7 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Warning 2' ) ).toBeVisible();
 		expect( getByText( 'Describes warning 2' ) ).toBeVisible();
 
-		expect( getByText( 'Learn more.' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
+		expect( getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {

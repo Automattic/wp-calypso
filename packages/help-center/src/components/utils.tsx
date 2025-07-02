@@ -35,9 +35,14 @@ export const getLastMessage = ( {
 }: {
 	conversation: OdieConversation | ZendeskConversation;
 } ): OdieMessage | ZendeskMessage | null => {
-	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
-		? conversation.messages[ conversation.messages.length - 1 ]
-		: null;
+	if ( ! Array.isArray( conversation?.messages ) ) {
+		return null;
+	}
+
+	const filteredMessages = conversation.messages.filter( ( message ) =>
+		'type' in message ? message.type !== 'form' : true
+	);
+	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
 };
 
 export const getZendeskConversations = () => {
