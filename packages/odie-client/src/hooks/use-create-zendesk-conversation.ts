@@ -156,39 +156,17 @@ export const useCreateZendeskConversation = (): ( ( {
 			if ( eventAddedToNewInteraction ) {
 				await Smooch.updateConversation( conversation.id, {
 					metadata: {
-						createdAt: Date.now(),
-						supportInteractionId: currentInteractionID,
-						...( chatId ? { odieChatId: chatId } : {} ),
+						supportInteractionId: updatedInteraction.uuid,
 					},
 				} );
-
-				trackEvent( 'new_zendesk_conversation', {
-					support_interaction: currentInteractionID,
-					created_from: createdFrom,
-					messaging_site_id: selectedSiteId || null,
-					messaging_url: selectedSiteURL || null,
-				} );
-
-				const updatedInteraction = await addEventToInteraction.mutateAsync( {
-					interactionId: currentInteractionID,
-					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
-				} );
-				const eventAddedToNewInteraction = updatedInteraction.uuid !== currentInteractionID;
-				if ( eventAddedToNewInteraction ) {
-					await Smooch.updateConversation( conversation.id, {
-						metadata: {
-							supportInteractionId: updatedInteraction.uuid,
-						},
-					} );
-				}
-
-				setChat( ( prevChat ) => ( {
-					...prevChat,
-					conversationId: conversation.id,
-					provider: 'zendesk',
-					status: 'loaded',
-				} ) );
 			}
+
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				conversationId: conversation.id,
+				provider: 'zendesk',
+				status: 'loaded',
+			} ) );
 		},
 		[
 			addEventToInteraction,
