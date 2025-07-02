@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { siteBackupLastEntryQuery } from '../../app/queries/site-backups';
@@ -25,6 +24,7 @@ import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import { isSitePlanTrial } from '../plans';
+import { JetpackLogo } from './jetpack-logo';
 import type { Site } from '../../data/types';
 
 function IneligibleIndicator() {
