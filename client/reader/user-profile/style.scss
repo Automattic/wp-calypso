@@ -76,6 +76,13 @@
 		margin-bottom: 20px;
 		position: relative;
 
+		@include breakpoint-deprecated( '<660px' ) {
+			border: none;
+			border-bottom: 5px solid var(--color-neutral-5);
+			border-radius: 0;
+			margin-bottom: 0;
+		}
+
 		.user-profile__recommended-blog-site-icon .site-icon {
 			border-radius: 50%;
 			margin-right: 20px;
