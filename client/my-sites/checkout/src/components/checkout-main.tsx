@@ -921,10 +921,6 @@ function getAnalyticsPath(
 		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
 	}
 
-	if ( sitelessCheckoutType === 'affiliate-pm' ) {
-		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
-	}
-
 	return { analyticsPath, analyticsProps };
 }
 
