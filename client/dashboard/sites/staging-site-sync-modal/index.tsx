@@ -15,7 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import InlineSupportLink from '../../components/inline-support-link';
-import SiteBadge, { EnvironmentType } from '../site-environment-badge';
+import SiteEnvironmentBadge, { EnvironmentType } from '../site-environment-badge';
 
 const DirectionArrow = () => {
 	return (
@@ -43,7 +43,7 @@ const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) =
 				readOnly
 				prefix={
 					<InputControlPrefixWrapper>
-						<SiteBadge environmentType={ environmentType } />
+						<SiteEnvironmentBadge environmentType={ environmentType } />
 					</InputControlPrefixWrapper>
 				}
 				__next40pxDefaultSize
