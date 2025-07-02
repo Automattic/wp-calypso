@@ -131,35 +131,38 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 };
 
 export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
-	const config = getSyncConfig( syncType );
-	const modalTitle = config[ environment ].title;
+	const syncConfig = getSyncConfig( syncType );
 
 	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
 	//const { siteSlug } = siteRoute.useParams();
 
 	return (
-		<Modal title={ modalTitle } onRequestClose={ onClose } style={ { maxWidth: '668px' } }>
+		<Modal
+			title={ syncConfig[ environment ].title }
+			onRequestClose={ onClose }
+			style={ { maxWidth: '668px' } }
+		>
 			<VStack spacing={ 6 }>
 				<VStack spacing={ 7 }>
 					<Text>
-						{ createInterpolateElement( config[ environment ].description, {
+						{ createInterpolateElement( syncConfig[ environment ].description, {
 							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
 						} ) }
 					</Text>
 					<HStack spacing={ 2 } alignment="center">
 						<EnvironmentLabel
-							label={ config.fromLabel }
-							environmentType={ config[ environment ].syncFrom }
+							label={ syncConfig.fromLabel }
+							environmentType={ syncConfig[ environment ].syncFrom }
 						/>
 						<DirectionArrow />
 						<EnvironmentLabel
-							label={ config.toLabel }
-							environmentType={ config[ environment ].syncTo }
+							label={ syncConfig.toLabel }
+							environmentType={ syncConfig[ environment ].syncTo }
 						/>
 					</HStack>
-					<Text weight={ 500 }>{ config.syncSelectionHeading }</Text>
+					<Text weight={ 500 }>{ syncConfig.syncSelectionHeading }</Text>
 					<Text>
-						{ createInterpolateElement( config.learnMore, {
+						{ createInterpolateElement( syncConfig.learnMore, {
 							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
 						} ) }
 					</Text>
@@ -168,7 +171,7 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary">{ config.submit }</Button>
+					<Button variant="primary">{ syncConfig.submit }</Button>
 				</HStack>
 			</VStack>
 		</Modal>
