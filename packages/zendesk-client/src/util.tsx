@@ -3,7 +3,7 @@ import { isInSupportSession } from '@automattic/data-stores';
 
 const IS_TEST_MODE_ENVIRONMENT = true;
 const IS_PRODUCTION_ENVIRONMENT = false;
-const PRODUCTION_ENVIRONMENTS = [ 'production', 'wpcalypso' ];
+const PRODUCTION_ENVIRONMENTS = [ 'desktop', 'production', 'wpcalypso' ];
 
 export const isTestModeEnvironment = () => {
 	const currentEnvironment = config( 'env_id' ) as string;
