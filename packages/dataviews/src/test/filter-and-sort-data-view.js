@@ -8,6 +8,24 @@ import { filterSortAndPaginate } from '../filter-and-sort-data-view';
 import { data, fields } from '../components/dataviews/stories/fixtures';
 
 describe( 'filters', () => {
+	const RealDate = Date;
+
+	beforeAll( () => {
+		const now = new Date();
+		global.Date = class extends RealDate {
+			constructor( date ) {
+				if ( date ) {
+					return new RealDate( date );
+				}
+				return now;
+			}
+		};
+	} );
+
+	afterAll( () => {
+		global.Date = RealDate;
+	} );
+
 	it( 'should return empty if the data is empty', () => {
 		expect( filterSortAndPaginate( null, {}, [] ) ).toStrictEqual( {
 			data: [],
