@@ -38,7 +38,7 @@ import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hook
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from './card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
-import { StagingSiteCreationCardContent } from './card-content/staging-site-creation-card-content';
+import { StagingSiteCreationCardContent } from './card-content/staging-site-creation-card/staging-site-creation-card-content';
 import { StagingSiteLoadingBarCardContent } from './card-content/staging-site-loading-bar-card-content';
 import { StagingSiteLoadingErrorCardContent } from './card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from './loading-placeholder';
