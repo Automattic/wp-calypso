@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -63,10 +63,12 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		? 'stats-top-posts-and-pages-analyze-content-performance-jetpack'
 		: 'stats-top-posts-and-pages-analyze-content-performance';
 
-	const query = {
-		...queryFromProps,
-		skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
-	};
+	const query = useMemo( () => {
+		return {
+			...queryFromProps,
+			skip_archives: isArchiveBreakdownEnabled ? '1' : '0',
+		};
+	}, [ queryFromProps, isArchiveBreakdownEnabled ] );
 
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
@@ -79,6 +81,10 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 
 		setLocalStatType( option.value );
 	};
+	// Reset the localStatType when the query changes from page navigation.
+	useEffect( () => {
+		setLocalStatType( null );
+	}, [ query ] );
 
 	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
