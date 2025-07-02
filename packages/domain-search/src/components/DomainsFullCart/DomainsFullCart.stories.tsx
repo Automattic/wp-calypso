@@ -1,42 +1,44 @@
 import { Button } from '@wordpress/components';
-import { useState } from 'react';
-import { DomainSearchContext } from '../DomainSearch/DomainSearch';
+import { DomainSearch, useDomainSearch } from '../DomainSearch/DomainSearch';
 import { DomainsFullCart } from './DomainsFullCart';
 import type { Meta } from '@storybook/react';
 
-export const Default = () => {
-	const [ isFullCartOpen, setIsFullCartOpen ] = useState( true );
+const FullCartManager = () => {
+	const { isFullCartOpen, openFullCart, closeFullCart } = useDomainSearch();
 
 	return (
-		<DomainSearchContext.Provider
-			value={ {
-				isFullCartOpen,
-				query: '',
-				setQuery: () => {},
-				onContinue: () => {
-					alert( 'Continue' );
-				},
-				cart: {
-					items: [
-						{ domain: 'the-lasso', tld: 'net', price: '$74' },
-						{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
-						{ domain: 'the-different-domain', tld: 'com', originalPrice: '$18', price: '$8' },
-						{ domain: 'the-different-domain1', tld: 'com', originalPrice: '$18', price: '$8' },
-						{ domain: 'the-different-domain2', tld: 'com', originalPrice: '$18', price: '$8' },
-					],
-					total: '$74',
-					onAddItem: () => {},
-					onRemoveItem: () => {},
-				},
-				closeFullCart: () => setIsFullCartOpen( false ),
-				openFullCart: () => setIsFullCartOpen( true ),
+		<Button
+			variant="primary"
+			onClick={ () => ( isFullCartOpen ? closeFullCart() : openFullCart() ) }
+		>
+			{ isFullCartOpen ? 'Close' : 'Open' }
+		</Button>
+	);
+};
+
+export const Default = () => {
+	return (
+		<DomainSearch
+			initialQuery=""
+			onContinue={ () => {
+				alert( 'Continue' );
+			} }
+			cart={ {
+				items: [
+					{ domain: 'the-lasso', tld: 'net', price: '$74' },
+					{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
+					{ domain: 'the-different-domain', tld: 'com', originalPrice: '$18', price: '$8' },
+					{ domain: 'the-different-domain1', tld: 'com', originalPrice: '$18', price: '$8' },
+					{ domain: 'the-different-domain2', tld: 'com', originalPrice: '$18', price: '$8' },
+				],
+				total: '$74',
+				onAddItem: () => {},
+				onRemoveItem: () => {},
 			} }
 		>
 			<DomainsFullCart />
-			<Button variant="primary" onClick={ () => setIsFullCartOpen( ! isFullCartOpen ) }>
-				{ isFullCartOpen ? 'Close' : 'Open' }
-			</Button>
-		</DomainSearchContext.Provider>
+			<FullCartManager />
+		</DomainSearch>
 	);
 };
 

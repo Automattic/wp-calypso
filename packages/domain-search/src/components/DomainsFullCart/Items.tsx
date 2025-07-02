@@ -27,7 +27,13 @@ export const DomainsFullCartItems = () => {
 										.{ domain.tld }
 									</Text>
 								</Text>
-								<Button variant="link" onClick={ () => cart.onRemoveItem( domain ) }>
+								<Button
+									variant="link"
+									style={ {
+										'--wp-components-color-accent': 'var( --domain-search-secondary-action-color )',
+									} }
+									onClick={ () => cart.onRemoveItem( domain ) }
+								>
 									{ __( 'Remove' ) }
 								</Button>
 							</VStack>

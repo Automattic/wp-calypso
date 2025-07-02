@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
+import './style.scss';
 
 interface SelectedDomain {
 	domain: string;
@@ -79,7 +80,9 @@ export const DomainSearch = ( {
 	);
 
 	return (
-		<DomainSearchContext.Provider value={ contextValue }>{ children }</DomainSearchContext.Provider>
+		<DomainSearchContext.Provider value={ contextValue }>
+			<div className="domain-search">{ children }</div>
+		</DomainSearchContext.Provider>
 	);
 };
 

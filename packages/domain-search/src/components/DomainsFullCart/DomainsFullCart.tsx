@@ -74,9 +74,11 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 						<Heading level={ 2 }>{ __( 'Cart' ) }</Heading>
 						<Button
 							label={ __( 'Close' ) }
-							variant="tertiary"
 							icon={ close }
 							onClick={ closeFullCart }
+							style={ {
+								'--wp-components-color-accent': 'var( --domain-search-secondary-action-color )',
+							} }
 						/>
 					</CardHeader>
 					<CardBody style={ { flex: 1 } } isScrollable>
