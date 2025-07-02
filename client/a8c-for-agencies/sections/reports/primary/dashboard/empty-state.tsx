@@ -23,45 +23,51 @@ const ReportsDashboardEmptyState = () => {
 	}, [ dispatch ] );
 
 	return (
-		<div className="reports-dashboard-empty-state__content">
-			<div>
-				<div className="reports-dashboard-empty-state__heading">
-					{ translate( 'Create detailed reports for your clients' ) }
-				</div>
-				<div className="reports-dashboard-empty-state__description">
-					{ translate(
-						'Build professional reports in three simple steps. Include website stats, showcase your value, and keep clients informed.'
-					) }
-				</div>
-			</div>
-			<StepSection heading={ translate( 'How to get started' ) }>
-				<StepSectionItem
-					heading={ translate( 'Create your first report' ) }
-					description={ translate(
-						'Choose a site, select the content to include, add a personal message, then preview and send it to your client.'
-					) }
-				>
-					<div className="reports-dashboard-empty-state__buttons">
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							onClick={ handleBuildNewReport }
-							href={ A4A_REPORTS_BUILD_LINK }
-						>
-							{ translate( 'Build a new report' ) }
-						</Button>
-						<Button __next40pxDefaultSize variant="secondary" onClick={ handleViewExampleReport }>
-							{ translate( 'View example report' ) }
-						</Button>
+		<>
+			<div className="reports-dashboard-empty-state__content">
+				<div>
+					<div className="reports-dashboard-empty-state__heading">
+						{ translate( 'Create detailed reports for your clients' ) }
 					</div>
-				</StepSectionItem>
-			</StepSection>
-
+					<div className="reports-dashboard-empty-state__description">
+						{ translate(
+							'Build professional reports in three simple steps. Include website stats, showcase your value, and keep clients informed.'
+						) }
+					</div>
+				</div>
+				<StepSection heading={ translate( 'How to get started' ) }>
+					<StepSectionItem
+						heading={ translate( 'Create your first report' ) }
+						description={ translate(
+							'Choose a site, select the content to include, add a personal message, then preview and send it to your client.'
+						) }
+					>
+						<div className="reports-dashboard-empty-state__buttons">
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								onClick={ handleBuildNewReport }
+								href={ A4A_REPORTS_BUILD_LINK }
+							>
+								{ translate( 'Build a new report' ) }
+							</Button>
+							<Button __next40pxDefaultSize variant="secondary" onClick={ handleViewExampleReport }>
+								{ translate( 'View example report' ) }
+							</Button>
+						</div>
+					</StepSectionItem>
+				</StepSection>
+			</div>
+			<div className="reports-dashboard-empty-state__footnote">
+				{ translate(
+					'*Only live WordPress.com or Pressable sites using Jetpack or the Automattic for Agencies plugin are supported.'
+				) }
+			</div>
 			<ExampleReportModal
 				isVisible={ showExampleModal }
 				onClose={ () => setShowExampleModal( false ) }
 			/>
-		</div>
+		</>
 	);
 };
 

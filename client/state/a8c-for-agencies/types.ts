@@ -10,6 +10,19 @@ export interface APIError {
 	data?: any;
 }
 
+// Define interfaces for Titan Email data
+export interface TitanOrder {
+	domain: string;
+	status: string;
+	order_plan: string;
+	billable_inboxes: number;
+	trial_end_at: string | null;
+}
+
+export interface TitanUsage {
+	orders: TitanOrder[];
+}
+
 export interface Agency {
 	id: number;
 	name: string;
@@ -33,6 +46,7 @@ export interface Agency {
 				end_date: string;
 				created_at: number;
 			};
+			titan_usage?: null | TitanUsage;
 		};
 	};
 	profile: {

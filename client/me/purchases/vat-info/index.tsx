@@ -2,7 +2,6 @@ import { CompactCard, Card } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -45,7 +44,6 @@ export default function VatInfoPage() {
 	const handleOpenCenterChat = useCallback(
 		async ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			e.preventDefault();
-			clearHelpCenterZendeskConversationStarted();
 			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 			await resetSupportInteraction();

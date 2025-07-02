@@ -125,8 +125,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	closeDialog = () => {
-		const wasCancellationCompleted = this.state.cancellationCompleted;
-
 		this.setState( {
 			showDialog: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
@@ -135,14 +133,8 @@ class CancelPurchaseButton extends Component {
 			isLoading: false,
 		} );
 
-		if ( wasCancellationCompleted ) {
-			// Redirect to purchases page if cancellation was completed
-			page( this.props.purchaseListUrl );
-		}
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
+		// Always redirect to purchases page when dialog is closed
+		page( this.props.purchaseListUrl );
 	};
 
 	cancelPurchase = async ( purchase ) => {
@@ -308,17 +300,15 @@ class CancelPurchaseButton extends Component {
 
 			// Show success notice after survey completion using the API response message
 			if ( this.state.cancellationMessage ) {
-				this.props.successNotice( this.state.cancellationMessage, { displayOnNextPage: true } );
+				this.props.successNotice( this.state.cancellationMessage, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
 			}
-		}
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
 		}
 
 		// Close dialog and redirect after handling the completion
 		this.closeDialog();
-		page( this.props.purchaseListUrl );
 	};
 
 	cancellationFailed = ( errorMessage ) => {

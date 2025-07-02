@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Hovercards } from '@gravatar-com/hovercards/react';
+import { useHovercards } from '@gravatar-com/hovercards/react';
 import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
 import HovercardContentPortal from './hovercard-content';
@@ -11,46 +11,40 @@ function GravatarWithHovercards( props ) {
 	const [ mountNode, setMountNode ] = useState( null );
 	const [ gravatarData, setGravatarData ] = useState( {} );
 
-	useEffect( () => {
-		return () => {
-			// Remove any lingering hovercards on unmount
-			const hovercards = document.querySelectorAll( '.gravatar-hovercard' );
-			hovercards.forEach( ( card ) => card.remove() );
-		};
-	}, [] );
+	const { attach, detach } = useHovercards( {
+		onHovercardShown: ( hash, hovercardElement ) => {
+			// Customize the hovercard.
+			if ( hovercardElement ) {
+				const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
+				if ( inner ) {
+					inner.innerHTML = '';
 
-	const handleHovercardShown = ( hash, hovercardElement ) => {
-		// Customize the hovercard.
-		if ( hovercardElement ) {
-			const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
-			if ( inner ) {
-				inner.innerHTML = '';
-
-				// Our custom components for the card will render through this portal.
-				setMountNode( inner );
+					// Our custom components for the card will render through this portal.
+					setMountNode( inner );
+				}
 			}
+		},
+		onFetchProfileSuccess: ( hash, data ) => {
+			setGravatarData( data );
+		},
+	} );
+
+	useEffect( () => {
+		// Attach hovercards to the container when it's available
+		if ( containerRef.current ) {
+			attach( containerRef.current );
 		}
-	};
 
-	const shouldShowHovercard = () => {
-		// Only show the hovercard if the container is in the dom.
-		return containerRef.current && document.body.contains( containerRef.current );
-	};
-
-	const onFetchProfileSuccess = ( hash, data ) => {
-		setGravatarData( data );
-	};
+		return () => {
+			// Use the detach method to properly clean up hovercards on unmount
+			detach();
+		};
+	}, [ attach, detach ] );
 
 	return (
 		<div ref={ containerRef }>
 			<HovercardContentPortal mountNode={ mountNode } gravatarData={ gravatarData } { ...props } />
-			<Hovercards
-				onHovercardShown={ handleHovercardShown }
-				onCanShowHovercard={ shouldShowHovercard }
-				onFetchProfileSuccess={ onFetchProfileSuccess }
-			>
-				<Gravatar { ...props } />
-			</Hovercards>
+			<Gravatar { ...props } />
 		</div>
 	);
 }

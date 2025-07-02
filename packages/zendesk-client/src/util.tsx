@@ -1,10 +1,25 @@
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
 
+const IS_TEST_MODE_ENVIRONMENT = true;
+const IS_PRODUCTION_ENVIRONMENT = false;
+const PRODUCTION_ENVIRONMENTS = [ 'desktop', 'production', 'wpcalypso' ];
+
 export const isTestModeEnvironment = () => {
 	const currentEnvironment = config( 'env_id' ) as string;
+
 	// During SU sessions, we want to always target prod. See HAL-154.
-	return ! isInSupportSession() && ! [ 'production', 'desktop' ].includes( currentEnvironment );
+	if ( isInSupportSession() ) {
+		return IS_PRODUCTION_ENVIRONMENT;
+	}
+
+	// If the environment is set to production, we return the production environment.
+	if ( PRODUCTION_ENVIRONMENTS.includes( currentEnvironment ) ) {
+		return IS_PRODUCTION_ENVIRONMENT;
+	}
+
+	// If the environment is not set to production, we return the test mode environment.
+	return IS_TEST_MODE_ENVIRONMENT;
 };
 
 export const getBadRatingReasons = () => {

@@ -8,6 +8,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
+import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formatDate } from '../../../lib/format-date';
@@ -76,6 +77,36 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 
 			<div className="build-report__field">
 				<A4ASelectSite
+					subtitle={
+						<div className="build-report__select-site-subtitle">
+							<span>
+								{ translate(
+									"If you don't see the site in the list, connect it first via the {{a}}Sites Dashboard{{/a}}.",
+									{
+										components: {
+											a: (
+												<a
+													href={ A4A_SITES_LINK }
+													onClick={ () =>
+														dispatch(
+															recordTracksEvent(
+																'calypso_a4a_select_site_modal_sites_dashboard_click'
+															)
+														)
+													}
+												/>
+											),
+										},
+									}
+								) }
+							</span>
+							<span>
+								{ translate(
+									'Only live WordPress.com or Pressable sites using Jetpack or the Automattic for Agencies plugin are supported.'
+								) }
+							</span>
+						</div>
+					}
 					isDisabled={ isLoadingState }
 					selectedSiteId={ selectedSite?.blogId }
 					onSiteSelect={ ( site: A4ASelectSiteItem ) => {
