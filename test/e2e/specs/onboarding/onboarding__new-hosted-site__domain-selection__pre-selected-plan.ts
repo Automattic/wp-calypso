@@ -58,8 +58,7 @@ describe(
 			await domainSearchComponent.search( blogName + '.blog' );
 
 			const promises = await Promise.all( [
-				domainSearchComponent.selectDomain( '.blog', false ),
-				page.click( '.domains__domain-cart-continue' ),
+				domainSearchComponent.selectDomain( '.blog' ),
 				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
 			] );
 

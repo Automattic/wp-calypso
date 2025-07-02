@@ -4,13 +4,13 @@ import { fixMe, useTranslate } from 'i18n-calypso';
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
-	isLostPassword: boolean;
+	action?: string;
 }
 
-const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, isLostPassword }: Props ) => {
+const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, action }: Props ) => {
 	const translate = useTranslate();
 
-	if ( ! isSocialFirst || twoFactorAuthType || isLostPassword ) {
+	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
 	}
 
@@ -63,7 +63,15 @@ const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, isLostPassword }: P
 	/**
 	 * Return a span here because the Step.Heading renders subtext as a p tag.
 	 */
-	return <span className="wp-login__heading-subtext">{ tos }</span>;
+	return (
+		<span className="wp-login__heading-subtext">
+			{ 'lostpassword' === action
+				? translate(
+						"Please enter your username or email address. You'll receive a link to create a new password via email."
+				  )
+				: tos }
+		</span>
+	);
 };
 
 export default HeadingSubText;

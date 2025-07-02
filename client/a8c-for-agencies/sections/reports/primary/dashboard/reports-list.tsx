@@ -60,7 +60,10 @@ export default function ReportsList( {
 							label: translate( 'Reports' ),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteReports } ) => (
-								<ReportCountColumn count={ item.totalReports } />
+								<ReportCountColumn
+									count={ item.totalReports }
+									onClick={ () => openReportPreviewPane( item ) }
+								/>
 							),
 							enableHiding: false,
 							enableSorting: false,
@@ -88,7 +91,7 @@ export default function ReportsList( {
 				  ]
 				: [] ),
 		],
-		[ translate, isDesktop, dataViewsState.selectedItem ]
+		[ translate, isDesktop, dataViewsState.selectedItem, openReportPreviewPane ]
 	);
 
 	const { data, paginationInfo } = useMemo( () => {

@@ -1,4 +1,5 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "@automattic/components/src/styles/typography";
 
 .is-section-reader {
 
@@ -58,6 +59,77 @@
 					font-weight: 600;
 				}
 			}
+		}
+	}
+}
+
+// Recommended Blogs Section Styles
+.user-profile__recommended-blogs-list {
+	margin: 0;
+
+	.user-profile__recommended-blog-item {
+		display: flex;
+		align-items: flex-start;
+		border-radius: 8px; // stylelint-disable-line scales/radii
+		border: 1px solid var(--color-border-subtle);
+		padding: 20px;
+		margin-bottom: 20px;
+		position: relative;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			border: none;
+			border-bottom: 5px solid var(--color-neutral-5);
+			border-radius: 0;
+			margin-bottom: 0;
+		}
+
+		.user-profile__recommended-blog-site-icon .site-icon {
+			border-radius: 50%;
+			margin-right: 20px;
+			flex-shrink: 0;
+			border: 1px solid var(--color-border-subtle);
+
+			img {
+				object-fit: cover;
+				/* !rtl:ignore */
+				object-position: left center;
+				height: 100%;
+			}
+		}
+
+		.user-profile__recommended-blog-site-info {
+			flex: 1 1 auto;
+			display: flex;
+			align-self: center;
+			flex-direction: column;
+			justify-content: center;
+			min-width: 0;
+			.user-profile__recommended-blog-site-name {
+				padding-right: 120px;
+				@include breakpoint-deprecated( '<660px' ) {
+					// reduce padding when follow button has no label
+					padding-right: 60px;
+				}
+			}
+		}
+
+		.user-profile__recommended-blog-site-name {
+			font-size: $font-size-header-small;
+			font-weight: 600;
+			margin: 0 0 6px 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.user-profile__recommended-blog-site-description {
+			margin: 0;
+		}
+
+		.user-profile__recommended-blog-subscribe-button {
+			position: absolute;
+			top: 20px;
+			right: 20px;
 		}
 	}
 }

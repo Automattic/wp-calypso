@@ -21,6 +21,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
+import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -119,7 +120,15 @@ export function PurchaseItemSiteIcon( {
 		);
 	}
 	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		content = <SiteIcon size={ 36 } />;
+		if ( purchase.productSlug.startsWith( 'passport' ) ) {
+			content = (
+				<div className="purchase-item__static-icon">
+					<img src={ passportIcon } alt="Passport icon" />
+				</div>
+			);
+		} else {
+			content = <SiteIcon size={ 36 } />;
+		}
 	}
 
 	if ( isDisconnectedSite ) {

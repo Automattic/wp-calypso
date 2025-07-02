@@ -1,6 +1,5 @@
 import { Page } from 'playwright';
-import { reloadAndRetry } from '../../element-helper';
-import { plansPageUrl } from '../pages';
+import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
 
 const selectors = {
 	searchInput: '.search-component__input',
@@ -91,16 +90,15 @@ export class DomainSearchComponent {
 
 		await target.click();
 
-		// If multiple domain selections are enabled, the Continue button appears
-		// on the right hand sidebar.
-		// See: 21483-explat-experiment
-		// Note: this page object does not currently support multiple domain selection.
 		if ( waitForContinueButton ) {
-			await Promise.race( [
-				this.page
-					.getByRole( 'button', { name: 'Continue', exact: true } )
-					.click( { timeout: 30 * 1000 } ),
-				this.page.waitForURL( plansPageUrl ),
+			const continueButton = await waitForElementEnabled( this.page, 'button:text("Continue")', {
+				timeout: 30 * 1000,
+			} );
+
+			// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
+			await Promise.all( [
+				continueButton.dispatchEvent( 'click' ),
+				this.page.waitForNavigation(),
 			] );
 		}
 

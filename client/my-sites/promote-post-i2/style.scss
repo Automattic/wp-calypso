@@ -189,6 +189,7 @@ body.is-section-promote-post-i2 {
 				.campaigns-list__table,
 				.posts-list__loading-container,
 				.campaigns-total-stats__container,
+				.blaze-credits-container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
 					margin: 0 64px;
@@ -530,6 +531,7 @@ body.is-section-promote-post-i2 {
 				.posts-list__table,
 				.posts-list__loading-container,
 				.campaigns-total-stats__container,
+				.blaze-credits-container,
 				.promote-post-i2__table,
 				.campaigns-list__loading-container {
 					margin: 0 16px !important;
@@ -642,6 +644,7 @@ $break-medium-expanded-menu: $break-medium + 272px;
 	.promote-post-i2__aux-wrapper,
 	.promote-post-i2__debt-notifier,
 	.campaigns-total-stats__container,
+	.blaze-credits-container,
 	.posts-list-banner__container .posts-list-banner__content,
 	.posts-list-woo-banner__container .posts-list-banner__content,
 	.tsp-banner__container {
@@ -684,4 +687,34 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border: 0;
+}
+
+.blaze-credits-container {
+
+	display: flex;
+	gap: 50px;
+
+	&__label {
+		font-size: 0.875rem;
+		color: $studio-gray-100;
+		font-family: $font-sf-pro-text;
+		font-weight: 500;
+		margin-top: 34px;
+	}
+
+	&__item {
+		font-size: 1.75rem;
+		color: $studio-gray-100;
+		font-family: $font-recoleta;
+		font-weight: 400;
+		margin-top: 8px;
+		margin-bottom: 42px;
+	}
+
+	.credits-inline-support-link {
+		all: unset;
+		box-sizing: content-box;
+		cursor: pointer;
+		color: var(--color-neutral-30);
+	}
 }

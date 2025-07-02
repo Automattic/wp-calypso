@@ -12,7 +12,7 @@ import './styles.scss';
 
 function HovercardContent( props ) {
 	const dispatch = useDispatch();
-	const { user, gravatarData } = props;
+	const { user, gravatarData, closeCard } = props;
 
 	// Prefer wpcom_id when it is given. Sometimes ID is specific to another site and wpcom_id is
 	// accurate. Use ID as a fallback as sometimes wpcom_id isn't provided (like self user data).
@@ -42,19 +42,27 @@ function HovercardContent( props ) {
 			>
 				{ /* Use gravatar data in the header section since this is shown for all users, even those who do not have wpcom accounts */ }
 				<div className="gravatar-hovercard__header">
-					<GravatarHeader gravatarData={ gravatarData } userLogin={ userLogin } />
+					<GravatarHeader
+						gravatarData={ gravatarData }
+						userLogin={ userLogin }
+						closeCard={ closeCard }
+					/>
 				</div>
 
 				{ /* Below is custom for wpcom users, and can use wpcom data more freely */ }
 				{ userID && (
 					<>
 						<div className="gravatar-hovercard__body">
-							<PrimaryBlog primaryBlogId={ primaryBlogId } displayName={ displayName } />
+							<PrimaryBlog
+								primaryBlogId={ primaryBlogId }
+								displayName={ displayName }
+								closeCard={ closeCard }
+							/>
 						</div>
 
 						<div className="gravatar-hovercard__footer">
 							{ isEnabled( 'reader/recommended-blogs-list' ) && (
-								<RecommendedBlogs userLogin={ userLogin } />
+								<RecommendedBlogs userLogin={ userLogin } closeCard={ closeCard } />
 							) }
 						</div>
 					</>

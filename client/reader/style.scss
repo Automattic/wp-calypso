@@ -76,6 +76,11 @@ body.is-section-reader {
 				height: 1px;
 				background: var(--color-border-secondary);
 
+				@media (max-width: $break-medium) {
+					left: 0;
+					width: 100%;
+				}
+
 				@media screen and (min-width: $break-medium) {
 					margin: 24px 0;
 				}

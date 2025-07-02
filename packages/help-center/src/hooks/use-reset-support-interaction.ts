@@ -21,11 +21,11 @@ export const useResetSupportInteraction = () => {
 			await queryClient.invalidateQueries( {
 				queryKey: [ 'support-interactions', 'get-interactions' ],
 			} );
-
-			return await startNewInteraction( {
-				event_source: 'help-center',
-				event_external_id: crypto.randomUUID(),
-			} );
 		}
+
+		return await startNewInteraction( {
+			event_source: 'help-center',
+			event_external_id: crypto.randomUUID(),
+		} );
 	};
 };

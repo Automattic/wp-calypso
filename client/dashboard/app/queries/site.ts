@@ -1,5 +1,12 @@
 import { notFound } from '@tanstack/react-router';
-import { fetchSite, deleteSite, launchSite, SITE_FIELDS, SITE_OPTIONS } from '../../data/site';
+import {
+	fetchSite,
+	deleteSite,
+	launchSite,
+	restoreSite,
+	SITE_FIELDS,
+	SITE_OPTIONS,
+} from '../../data/site';
 import { queryClient } from '../query-client';
 import type { Site } from '../../data/site';
 import type { Query } from '@tanstack/react-query';
@@ -30,6 +37,7 @@ export const siteDeleteMutation = ( siteId: number ) => ( {
 		// Delay the invalidation for the redirection to complete first
 		window.setTimeout( () => {
 			queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 		}, 1000 );
 	},
@@ -39,5 +47,14 @@ export const siteLaunchMutation = ( siteId: number ) => ( {
 	mutationFn: () => launchSite( siteId ),
 	onSuccess: () => {
 		queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+	},
+} );
+
+export const siteRestoreMutation = ( siteId: number ) => ( {
+	mutationFn: () => restoreSite( siteId ),
+	onSuccess: () => {
+		queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+		queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
+		queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 	},
 } );

@@ -1,6 +1,8 @@
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getStatsOptions } from '../../../lib/stat-options';
@@ -59,7 +61,7 @@ export default function Step2Content( { formData, state, handlers }: StepProps )
 
 	return (
 		<>
-			<h2 className="build-report__step-title">
+			<h2 className="build-report__step-title" aria-current="step">
 				{ translate( 'Step 2 of 3: Choose report content' ) }
 			</h2>
 
@@ -79,20 +81,33 @@ export default function Step2Content( { formData, state, handlers }: StepProps )
 				disabled={ isLoadingState }
 			/>
 
-			<h3 className="build-report__group-label">{ translate( 'Stats' ) }</h3>
-			{ statsOptions.map( ( item ) => (
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					key={ item.value }
-					label={ item.label }
-					checked={ statsCheckedItems[ item.value ] }
-					onChange={ () => handleStep2CheckboxChange( item.value ) }
-					disabled={ isLoadingState }
-				/>
-			) ) }
-			{ hasFieldError( 'statsCheckedItems' ) && (
-				<div className="build-report__error-message">{ getFieldError( 'statsCheckedItems' ) }</div>
-			) }
+			<FormFieldset className="build-report__stats-fieldset">
+				<FormLegend className="build-report__group-label">{ translate( 'Stats' ) }</FormLegend>
+				{ statsOptions.map( ( item ) => (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						key={ item.value }
+						label={ item.label }
+						checked={ statsCheckedItems[ item.value ] }
+						onChange={ () => handleStep2CheckboxChange( item.value ) }
+						disabled={ isLoadingState }
+						aria-describedby={
+							hasFieldError( 'statsCheckedItems' ) ? 'stats-checked-items-error' : undefined
+						}
+					/>
+				) ) }
+				{ hasFieldError( 'statsCheckedItems' ) && (
+					<div
+						role="alert"
+						id="stats-checked-items-error"
+						aria-live="polite"
+						className="build-report__error-message"
+					>
+						{ getFieldError( 'statsCheckedItems' ) }
+					</div>
+				) }
+			</FormFieldset>
+
 			<p className="build-report__step-note">
 				{ translate( 'Preview, confirm, and send to your client in the next step.' ) }
 			</p>

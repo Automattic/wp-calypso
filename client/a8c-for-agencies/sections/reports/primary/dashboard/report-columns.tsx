@@ -1,4 +1,5 @@
 import { type BadgeType, Gridicon, Tooltip } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
@@ -9,15 +10,15 @@ import type { ReportStatus } from '../../types';
 
 export const ReportSiteColumn = ( { site }: { site: string } ) => urlToSlug( site );
 
-export const ReportCountColumn = ( { count }: { count: number } ) => {
+export const ReportCountColumn = ( { count, onClick }: { count: number; onClick: () => void } ) => {
 	const translate = useTranslate();
 	return (
-		<span className="reports-list__count">
+		<Button variant="tertiary" onClick={ onClick }>
 			{ translate( '%(count)d report', '%(count)d reports', {
 				count,
 				args: { count },
 			} ) }
-		</span>
+		</Button>
 	);
 };
 

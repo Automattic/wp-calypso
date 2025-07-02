@@ -23,7 +23,7 @@ const getBlogData = ( blog ) => {
 	return { image, name, feedUrl, siteId, feedId: blog.feed_ID };
 };
 
-function RecommendedBlogItem( { blog } ) {
+function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
 	const { image, name, feedUrl, siteId, feedId } = getBlogData( blog );
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
@@ -32,7 +32,7 @@ function RecommendedBlogItem( { blog } ) {
 	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
 
 	return (
-		<li className="gravatar-hovercard__recommended-blog-item">
+		<li className={ `${ classPrefix }__recommended-blog-item` }>
 			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
 				One example being mapped domains: initial follows state may list by wpcom subdomain, and
 				the url here might be of a mapped domain. The site request success also updates follows
@@ -48,19 +48,29 @@ function RecommendedBlogItem( { blog } ) {
 				} }
 			>
 				<ReaderAvatar
-					isCompact
+					isCompact={ compact }
 					siteIcon={ siteIcon }
-					className="gravatar-hovercard__recommended-blog-site-icon"
+					className={ `${ classPrefix }__recommended-blog-site-icon` }
 				/>
 				<AutoDirection>
-					<p className="gravatar-hovercard__recommended-blog-site-name">{ name || feedUrl }</p>
+					<div className={ `${ classPrefix }__recommended-blog-site-info` }>
+						<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>
+							{ name || feedUrl }
+						</h6>
+						{ ! compact && site?.description && (
+							<p className={ `${ classPrefix }__recommended-blog-site-description` }>
+								{ site.description }
+							</p>
+						) }
+					</div>
 				</AutoDirection>
 			</a>
+
 			<ReaderFollowButton
-				className="gravatar-hovercard__recommended-blog-subscribe-button"
+				className={ `${ classPrefix }__recommended-blog-subscribe-button` }
 				siteUrl={ feedUrl }
-				followSource="gravatar-hovercard__recommended-blog-item"
-				isButtonOnly
+				followSource={ `${ classPrefix }__recommended-blog-item` }
+				isButtonOnly={ compact }
 			/>
 		</li>
 	);
