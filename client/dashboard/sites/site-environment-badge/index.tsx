@@ -8,10 +8,10 @@ interface SiteEnvironmentBadgeProps {
 }
 
 const SiteEnvironmentBadge = ( { environmentType }: SiteEnvironmentBadgeProps ) => {
-	const badgeColor = environmentType === 'staging' ? '#f0c930' : '#dcdcde';
-	const badgeText = environmentType === 'staging' ? __( 'Staging' ) : __( 'Production' );
+	const color = environmentType === 'staging' ? '#f0c930' : '#dcdcde';
+	const text = environmentType === 'staging' ? __( 'Staging' ) : __( 'Production' );
 
-	return <Badge style={ { backgroundColor: badgeColor } }>{ badgeText }</Badge>;
+	return <Badge style={ { backgroundColor: color } }>{ text }</Badge>;
 };
 
 export default SiteEnvironmentBadge;
