@@ -541,8 +541,8 @@
 		}
 
 		@include break-medium {
-			padding-top: 24px;
-			margin-top: -24px;
+			padding-top: 16px;
+			margin-top: -16px;
 			box-sizing: content-box;
 
 			.is-global-sidebar-visible & {
