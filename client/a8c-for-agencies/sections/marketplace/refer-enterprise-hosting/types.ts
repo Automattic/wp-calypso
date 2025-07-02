@@ -1,7 +1,7 @@
 export type ReferEnterpriseHostingFormData = {
 	companyName: string;
 	address: string;
-	countryCode: string;
+	country: string;
 	state?: string;
 	city: string;
 	zip: string;

@@ -8,7 +8,7 @@ import useReferEnterpriseHostingMutation from './use-refer-enterprise-hosting-mu
 const DEFAULT_FORM_DATA: ReferEnterpriseHostingFormData = {
 	companyName: '',
 	address: '',
-	countryCode: '',
+	country: '',
 	city: '',
 	zip: '',
 	firstName: '',
@@ -56,8 +56,8 @@ export default function useReferEnterpriseHostingForm() {
 				newValidationError.address = translate( 'Please enter your company address' );
 			}
 
-			if ( payload.countryCode?.trim() === '' ) {
-				newValidationError.countryCode = translate( 'Please enter your country code' );
+			if ( payload.country?.trim() === '' ) {
+				newValidationError.country = translate( 'Please enter your country code' );
 			}
 
 			if ( payload.city?.trim() === '' ) {

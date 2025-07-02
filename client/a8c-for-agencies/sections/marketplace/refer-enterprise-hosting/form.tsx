@@ -1,10 +1,12 @@
+import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
@@ -17,6 +19,7 @@ type FieldProps = {
 	name: string;
 	error?: string;
 	value?: string;
+	placeholder?: string;
 	onChange: ( value: string ) => void;
 };
 
@@ -46,9 +49,41 @@ const TextAreaField = ( { label, name, error, value, onChange }: FieldProps ) =>
 	);
 };
 
+const SearchableDropdownField = ( {
+	label,
+	name,
+	error,
+	value,
+	onChange,
+	placeholder,
+	options,
+}: FieldProps & {
+	options: {
+		value: string;
+		label: string;
+	}[];
+} ) => {
+	return (
+		<FormField label={ label } labelFor={ name } error={ error }>
+			<SearchableDropdown
+				options={ options }
+				value={ value }
+				onChange={ ( value: string | null | undefined ) => onChange( value ?? '' ) }
+				placeholder={ placeholder }
+			/>
+		</FormField>
+	);
+};
+
 export default function ReferEnterpriseHostingForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { countryOptions } = useCountriesAndStates();
+
+	const countries = useMemo( () => {
+		return countryOptions.map( ( country ) => country.label );
+	}, [ countryOptions ] );
 
 	const {
 		formData,
@@ -149,16 +184,18 @@ export default function ReferEnterpriseHostingForm() {
 					onChange={ ( value: string ) => handleInputChange( 'address', value ) }
 				/>
 
-				<TextField
-					label={ translate( 'Country code' ) }
-					name="countryCode"
-					error={ validationError.countryCode }
-					value={ formData.countryCode }
-					onChange={ ( value: string ) => handleInputChange( 'countryCode', value ) }
+				<SearchableDropdownField
+					label={ translate( 'Country' ) }
+					name="country"
+					error={ validationError.country }
+					value={ formData.country }
+					onChange={ ( value: string ) => handleInputChange( 'country', value ) }
+					placeholder={ translate( 'Select country' ) }
+					options={ countries.map( ( country ) => ( { value: country, label: country } ) ) }
 				/>
 
 				<TextField
-					label={ translate( 'State/Province Code (optional)' ) }
+					label={ translate( 'State/Province (optional)' ) }
 					name="state"
 					error={ validationError.state }
 					value={ formData.state }
@@ -179,6 +216,14 @@ export default function ReferEnterpriseHostingForm() {
 					error={ validationError.zip }
 					value={ formData.zip }
 					onChange={ ( value: string ) => handleInputChange( 'zip', value ) }
+				/>
+
+				<TextField
+					label={ translate( 'Website' ) }
+					name="website"
+					error={ validationError.website }
+					value={ formData.website }
+					onChange={ ( value: string ) => handleInputChange( 'website', value ) }
 				/>
 			</FormSection>
 
@@ -222,14 +267,6 @@ export default function ReferEnterpriseHostingForm() {
 					error={ validationError.email }
 					value={ formData.email }
 					onChange={ ( value: string ) => handleInputChange( 'email', value ) }
-				/>
-
-				<TextField
-					label={ translate( 'Website' ) }
-					name="website"
-					error={ validationError.website }
-					value={ formData.website }
-					onChange={ ( value: string ) => handleInputChange( 'website', value ) }
 				/>
 			</FormSection>
 
