@@ -1,18 +1,13 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import './style.scss';
-
-interface SelectedDomain {
-	domain: string;
-	tld: string;
-	originalPrice?: string;
-	price: string;
-}
+import { Domain } from './types';
 
 interface Cart {
-	items: SelectedDomain[];
+	items: Domain[];
 	total: string;
-	onAddItem: ( item: SelectedDomain ) => void;
-	onRemoveItem: ( item: SelectedDomain ) => void;
+	hasItem: ( domain: Domain ) => boolean;
+	onAddItem: ( item: Domain ) => void;
+	onRemoveItem: ( item: Domain ) => void;
 }
 
 type DomainSearchContextType = {
@@ -32,6 +27,7 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 	cart: {
 		items: [],
 		total: '',
+		hasItem: () => false,
 		onAddItem: () => {},
 		onRemoveItem: () => {},
 	},
