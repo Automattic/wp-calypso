@@ -410,12 +410,20 @@ export const StagingSiteCard = ( {
 		},
 	} );
 
-	const getTransferringStagingSiteContent = useCallback( () => {
-		const isRevertingStaging =
+	// Memoized conditions to avoid repetition
+	const isRevertingStaging = useMemo( () => {
+		return (
 			StagingSiteStatus.REVERTING === stagingSiteStatus ||
 			StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
-			isReverting;
+			isReverting
+		);
+	}, [ stagingSiteStatus, isReverting ] );
 
+	const isInTransfer = useMemo( () => {
+		return isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false;
+	}, [ isLoadingAddStagingSite, isReverting, isStagingSiteTransferComplete ] );
+
+	const getTransferringStagingSiteContent = useCallback( () => {
 		// Always use progress bar for deletion/reverting
 		if ( isRevertingStaging ) {
 			return (
@@ -430,7 +438,7 @@ export const StagingSiteCard = ( {
 
 		// Default to progress bar for creation when feature flag is disabled
 		return <StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } />;
-	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting ] );
+	}, [ siteOwnerId, currentUserId, isRevertingStaging ] );
 
 	let stagingSiteCardContent;
 
@@ -467,7 +475,7 @@ export const StagingSiteCard = ( {
 				testId="staging-sites-access-message"
 			/>
 		);
-	} else if ( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) {
+	} else if ( isInTransfer ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSiteCard ) {
 		stagingSiteCardContent = (
@@ -528,15 +536,8 @@ export const StagingSiteCard = ( {
 	}, [ dispatch, isJetpack, siteId ] );
 
 	// Determine if we should show the new creation card without wrapper/banner
-	const isRevertingStaging =
-		StagingSiteStatus.REVERTING === stagingSiteStatus ||
-		StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
-		isReverting;
-
 	const isShowingNewCreationCard =
-		( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) &&
-		config.isEnabled( 'hosting/staging-sites-redesign' ) &&
-		! isRevertingStaging;
+		isInTransfer && config.isEnabled( 'hosting/staging-sites-redesign' ) && ! isRevertingStaging;
 
 	if ( isShowingNewCreationCard ) {
 		return stagingSiteCardContent;
