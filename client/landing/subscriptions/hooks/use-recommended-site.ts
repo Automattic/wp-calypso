@@ -69,24 +69,23 @@ export const useRecommendedSite = ( feedId: number ): UseRecommendedSiteResult =
 
 		setIsUpdating( true );
 
-		try {
-			if ( newValue ) {
-				dispatch(
-					addRecommendedBlogsSite( recommendedBlogsList.ID, feedId, currentUserName as string, {
-						successMessage: translate( 'Site added to your recommended blogs.' ),
-						errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
-					} )
-				);
-			} else {
-				dispatch(
-					removeRecommendedBlogsSite( recommendedBlogsList.ID, feedId, currentUserName as string, {
-						successMessage: translate( 'Site removed from your recommended blogs.' ),
-						errorMessage: translate( 'Failed to remove site from recommended blogs.' ),
-					} )
-				);
-			}
-		} finally {
-			setIsUpdating( false );
+		// Add a small delay before allowing the next toggle to prevent rapid toggling
+		setTimeout( () => setIsUpdating( false ), 300 );
+
+		if ( newValue ) {
+			dispatch(
+				addRecommendedBlogsSite( recommendedBlogsList.ID, feedId, currentUserName as string, {
+					successMessage: translate( 'Site added to your recommended blogs.' ),
+					errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
+				} )
+			);
+		} else {
+			dispatch(
+				removeRecommendedBlogsSite( recommendedBlogsList.ID, feedId, currentUserName as string, {
+					successMessage: translate( 'Site removed from your recommended blogs.' ),
+					errorMessage: translate( 'Failed to remove site from recommended blogs.' ),
+				} )
+			);
 		}
 	}, [
 		canToggle,
