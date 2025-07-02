@@ -11,6 +11,7 @@ export const DomainSuggestionBadge = ( { badge }: { badge: DomainBadge } ) => {
 		return {
 			recommended: __( 'Recommended' ),
 			best_alternative: __( 'Best Alternative' ),
+			available: __( 'It’s available!' ),
 		};
 	}, [ __ ] );
 
