@@ -14,9 +14,11 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
-import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
-import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
+import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
+import { SectionHeader } from 'calypso/dashboard/components/section-header';
+import SiteEnvironmentBadge, {
+	EnvironmentType,
+} from 'calypso/dashboard/components/site-environment-badge';
 
 const DirectionArrow = () => {
 	return (
@@ -57,6 +59,7 @@ const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) =
 
 interface SyncModalProps {
 	onClose: () => void;
+	onProceed?: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
 	siteSlug: string;
