@@ -16,6 +16,7 @@ import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
+import useMessageSizeErrorNotice from '../notices/use-message-size-error-notice';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
@@ -82,6 +83,8 @@ export const OdieSendMessageButton = () => {
 			inputRef.current?.focus();
 		}
 	}, [ isInitialLoading ] );
+
+	const isMessageLengthValid = useMessageSizeErrorNotice();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -152,17 +155,7 @@ export const OdieSendMessageButton = () => {
 
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
-		const messageLength = message?.length || 0;
-		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
-
-		if ( ! isMessageLengthValid ) {
-			setNotice(
-				'message-size-error',
-				__( 'Message exceeds 4096 characters limit.', __i18n_text_domain__ )
-			);
-		}
-
-		if ( message === '' || isChatBusy || ! isMessageLengthValid ) {
+		if ( message === '' || isChatBusy || ! isMessageLengthValid( message ) ) {
 			return;
 		}
 		const messageString = inputRef.current?.value;
