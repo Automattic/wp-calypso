@@ -2301,6 +2301,8 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    lodash: "npm:^4.17.21"
+    react: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
