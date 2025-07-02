@@ -2,9 +2,9 @@ import { __experimentalText as Text, Button, Modal } from '@wordpress/components
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
-import AsyncLoad from 'calypso/components/async-load';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
+import { lazyModal } from '../../components/lazy-modal';
 import { HostingFeatures } from '../features';
 import illustrationUrl from './activation-illustration.svg';
 import type { Site } from '../../data/types';
@@ -14,6 +14,8 @@ interface HostingFeatureActivationProps {
 	feature: HostingFeatures;
 	tracksFeatureId: string;
 }
+
+const EligibilityWarnings = lazyModal( () => import( 'calypso/blocks/eligibility-warnings' ) );
 
 export default function HostingFeatureActivation( {
 	site,
@@ -109,9 +111,7 @@ export default function HostingFeatureActivation( {
 					onRequestClose={ () => setIsModalOpen( false ) }
 					size="medium"
 				>
-					<AsyncLoad
-						require="calypso/blocks/eligibility-warnings"
-						placeholder={ null }
+					<EligibilityWarnings
 						onDismiss={ () => setIsModalOpen( false ) }
 						onProceed={ handleConfirm }
 						showDataCenterPicker
