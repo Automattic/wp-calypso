@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -19,7 +18,7 @@ jest.mock( '@automattic/components', () => ( {
 jest.mock(
 	'calypso/components/gravatar-with-hovercards/recommended-blogs/item',
 	() =>
-		( { blog, classPrefix } ) => (
+		( { blog, classPrefix }: { blog: { ID: number; name: string }; classPrefix: string } ) => (
 			<li
 				data-testid="recommended-blog-item"
 				data-blog-id={ blog.ID }
@@ -32,7 +31,7 @@ jest.mock(
 
 jest.mock( 'calypso/components/empty-content', () => ( {
 	__esModule: true,
-	default: ( { line } ) => <div data-testid="empty-content">{ line }</div>,
+	default: ( { line }: { line: string } ) => <div data-testid="empty-content">{ line }</div>,
 } ) );
 
 jest.mock( 'calypso/state', () => ( {
@@ -51,7 +50,7 @@ jest.mock( 'calypso/state/reader/lists/selectors', () => ( {
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text ) => text,
+	useTranslate: () => ( text: string ) => text,
 } ) );
 
 describe( 'UserRecommendedBlogs', () => {
@@ -78,7 +77,7 @@ describe( 'UserRecommendedBlogs', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		useDispatch.mockReturnValue( mockDispatch );
-		useSelector.mockImplementation( ( selector ) => {
+		useSelector.mockImplementation( ( selector: ( state: unknown ) => unknown ) => {
 			// Mock the selector calls based on the selector function
 			if ( selector.toString().includes( 'isRequestingUserRecommendedBlogs' ) ) {
 				return mockIsRequestingUserRecommendedBlogs();
