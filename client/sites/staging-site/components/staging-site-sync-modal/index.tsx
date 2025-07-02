@@ -59,7 +59,6 @@ const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) =
 
 interface SyncModalProps {
 	onClose: () => void;
-	onProceed?: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
 	siteSlug: string;
