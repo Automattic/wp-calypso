@@ -56,6 +56,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 							blog={ blog }
 							classPrefix="gravatar-hovercard"
 							compact
+							onLinkClick={ closeCard }
 						/>
 					) ) }
 			</ul>

@@ -23,7 +23,7 @@ const getBlogData = ( blog ) => {
 	return { image, name, feedUrl, siteId, feedId: blog.feed_ID };
 };
 
-function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
+function RecommendedBlogItem( { blog, classPrefix, compact = false, onLinkClick = () => {} } ) {
 	const { image, name, feedUrl, siteId, feedId } = getBlogData( blog );
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
@@ -44,6 +44,7 @@ function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
 				href={ linkUrl }
 				onClick={ ( e ) => {
 					e.preventDefault();
+					onLinkClick();
 					page( linkUrl );
 				} }
 			>
