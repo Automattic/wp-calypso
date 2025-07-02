@@ -15,7 +15,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 
 	const shouldShowRecommendedBlogs =
-		isEnabled( 'reader/recommended-blogs-list' ) && userLogin && recommendedBlogs?.length;
+		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
 
 	useEffect( () => {
 		if ( ! recommendedBlogs && userLogin ) {
@@ -23,15 +23,15 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 		}
 	}, [ userLogin, recommendedBlogs, dispatch ] );
 
-	if ( ! shouldShowRecommendedBlogs ) {
-		return null;
-	}
-
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
 		closeCard();
 		page( recommendedBlogsPath );
 	};
+
+	if ( ! shouldShowRecommendedBlogs ) {
+		return null;
+	}
 
 	return (
 		<div className="gravatar-hovercard__recommended-blogs">
