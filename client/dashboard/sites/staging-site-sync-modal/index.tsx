@@ -20,7 +20,7 @@ import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-env
 
 const DirectionArrow = () => {
 	return (
-		<div style={ { marginTop: '50px' } }>
+		<div style={ { marginTop: '44px' } }>
 			<Icon
 				icon={ isRTL() ? chevronLeft : chevronRight }
 				style={ {
@@ -38,7 +38,7 @@ interface EnvironmentLabelProps {
 
 const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) => {
 	return (
-		<VStack spacing={ 3 } style={ { flex: 1 } }>
+		<VStack spacing={ 1 } style={ { flex: 1 } }>
 			<SectionHeader level={ 3 } title={ label } />
 			<InputControl
 				readOnly
