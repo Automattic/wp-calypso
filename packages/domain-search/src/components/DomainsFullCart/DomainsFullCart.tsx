@@ -15,10 +15,30 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
-import { DomainsFullCartItems } from './Items';
-import { DomainsFullCartSummary } from './Summary';
+import { DomainsFullCartItems } from '../DomainsFullCartItems/DomainsFullCartItems';
+import { DomainsFullCartSummary } from '../DomainsFullCartSummary/DomainsFullCartSummary';
 
 import './style.scss';
+
+const AnimatedCard = motion( Card );
+
+const createSlideAnimation = ( axis: 'x' | 'y' ) => ( {
+	initial: {
+		[ axis ]: '100%',
+		display: 'none',
+		opacity: 0,
+	},
+	animateIn: {
+		[ axis ]: 0,
+		display: 'block',
+		opacity: 1,
+	},
+	animateOut: {
+		[ axis ]: '100%',
+		display: 'none',
+		opacity: 0,
+	},
+} );
 
 const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 	const { isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
@@ -33,63 +53,46 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 		isEnabled: isFullCartOpen,
 	} );
 
+	const animation = isMobile ? createSlideAnimation( 'y' ) : createSlideAnimation( 'x' );
+
 	return (
-		<motion.div
+		<AnimatedCard
 			ref={ fullCartRef }
-			initial={
-				isMobile
-					? { y: '100%', display: 'none', opacity: 0 }
-					: { x: '100%', display: 'none', opacity: 0 }
-			}
-			animate={
-				isMobile
-					? {
-							y: isFullCartOpen ? 0 : '100%',
-							display: isFullCartOpen ? 'block' : 'none',
-							opacity: isFullCartOpen ? 1 : 0,
-					  }
-					: {
-							x: isFullCartOpen ? 0 : '100%',
-							display: isFullCartOpen ? 'block' : 'none',
-							opacity: isFullCartOpen ? 1 : 0,
-					  }
-			}
+			initial={ animation.initial }
+			animate={ isFullCartOpen ? animation.animateIn : animation.animateOut }
 			transition={ { type: 'tween', duration: 0.25 } }
 			className="domains-full-cart"
+			isRounded={ false }
+			elevation={ 2 }
 		>
-			<Card isRounded={ false } elevation={ 2 } style={ { height: '100%' } }>
-				<div style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-					<CardHeader isBorderless style={ { flexShrink: 0 } }>
-						<Heading level={ 2 }>{ __( 'Cart' ) }</Heading>
+			<div className="domains-full-cart__container">
+				<CardHeader isBorderless className="domains-full-cart__header">
+					<Heading level={ 2 }>{ __( 'Cart' ) }</Heading>
+					<Button
+						label={ __( 'Close' ) }
+						icon={ close }
+						onClick={ closeFullCart }
+						className="domains-full-cart__close"
+					/>
+				</CardHeader>
+				<CardBody className="domains-full-cart__body" isScrollable>
+					{ children ?? <DomainsFullCartItems /> }
+				</CardBody>
+				<CardFooter className="domains-full-cart__footer">
+					<VStack className="domains-full-cart__footer-content" spacing={ 4 }>
+						<DomainsFullCartSummary />
 						<Button
-							label={ __( 'Close' ) }
-							icon={ close }
-							onClick={ closeFullCart }
-							style={ {
-								// @ts-expect-error --wp-components-color-accent is not typed.
-								'--wp-components-color-accent': 'var( --domain-search-secondary-action-color )',
-							} }
-						/>
-					</CardHeader>
-					<CardBody style={ { flex: 1 } } isScrollable>
-						{ children ?? <DomainsFullCartItems /> }
-					</CardBody>
-					<CardFooter style={ { flexShrink: 0 } }>
-						<VStack style={ { flex: 1 } } spacing={ 4 }>
-							<DomainsFullCartSummary />
-							<Button
-								style={ { justifyContent: 'center' } }
-								__next40pxDefaultSize
-								variant="primary"
-								onClick={ onContinue }
-							>
-								{ __( 'Continue' ) }
-							</Button>
-						</VStack>
-					</CardFooter>
-				</div>
-			</Card>
-		</motion.div>
+							className="domains-full-cart__continue"
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ onContinue }
+						>
+							{ __( 'Continue' ) }
+						</Button>
+					</VStack>
+				</CardFooter>
+			</div>
+		</AnimatedCard>
 	);
 };
 

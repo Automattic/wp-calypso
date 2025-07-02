@@ -9,6 +9,7 @@ import {
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import './style.scss';
 
 export const DomainsFullCartItems = () => {
 	const { __ } = useI18n();
@@ -29,19 +30,16 @@ export const DomainsFullCartItems = () => {
 								</Text>
 								<Button
 									variant="link"
-									style={ {
-										// @ts-expect-error --wp-components-color-accent is not typed.
-										'--wp-components-color-accent': 'var( --domain-search-secondary-action-color )',
-									} }
+									className="domains-full-cart-items__remove"
 									onClick={ () => cart.onRemoveItem( domain ) }
 								>
 									{ __( 'Remove' ) }
 								</Button>
 							</VStack>
-							<VStack style={ { flexShrink: 0 } }>
+							<VStack className="domains-full-cart-items__price">
 								<HStack alignment="right" spacing={ 2 }>
 									{ domain.originalPrice && (
-										<Text size="small" style={ { textDecoration: 'line-through' } }>
+										<Text size="small" className="domains-full-cart-items__original-price">
 											{ domain.originalPrice }
 										</Text>
 									) }
