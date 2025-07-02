@@ -1,11 +1,10 @@
 import type { Site } from '../data/types';
 
 /**
- * Returns the site's URL without the protocol.
+ * Returns a user-friendly version of the site's URL.
  *
- * This is useful for displaying the site's URL in a user-friendly way.
- * Note that we cannot just return the URL's hostname, because the URL
- * could contain the path to the site's subdirectory in case of multi-site
+ * This not only produces a clean version of the site's domain, but
+ * also deals with the case of Jetpack multi-sites using subdirectory
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
