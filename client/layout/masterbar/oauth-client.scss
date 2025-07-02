@@ -214,20 +214,6 @@
 			font-weight: 400;
 		}
 
-		.login__form-header {
-			@extend .wp-brand-font;
-			font-size: $font-title-medium;
-			color: var(--color-text);
-			font-weight: 600;
-			margin-bottom: 80px;
-			margin-top: 0;
-
-			@include breakpoint-deprecated(">480px") {
-				font-size: $font-title-large;
-				margin-bottom: 65px;
-			}
-		}
-
 		.auth-form__separator {
 			padding: 10px 0;
 			&::before,
@@ -363,23 +349,6 @@
 			}
 		}
 
-		.wp-login__footer--oauth {
-			align-items: center;
-			box-sizing: border-box;
-			flex-direction: column;
-			height: auto;
-			padding: 20px 20px 78px;
-
-			@include breakpoint-deprecated(">660px") {
-				flex-direction: row;
-				justify-content: space-between;
-			}
-		}
-
-		.wp-login__footer-links a {
-			color: var(--color-text);
-		}
-
 		.wp-login__links {
 			padding: 20px 0 15px;
 
@@ -422,25 +391,6 @@
 
 	.step-wrapper .formatted-header {
 		margin-top: 0;
-	}
-
-	.login {
-		&.is-jetpack-cloud,
-		&.is-a4a {
-			width: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			form {
-				width: 100%;
-			}
-
-			> :last-child:not(.wp-login__links) {
-				margin-bottom: 64px;
-			}
-		}
-
 	}
 
 	.login__form-post-header {

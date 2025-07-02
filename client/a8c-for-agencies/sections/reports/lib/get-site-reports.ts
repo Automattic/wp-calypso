@@ -8,6 +8,11 @@ export const getSiteReports = ( reports: Report[] ): SiteReports[] => {
 
 	const grouped = reports.reduce(
 		( acc, report ) => {
+			// Only include reports with "sent" status
+			if ( report.status !== 'sent' ) {
+				return acc;
+			}
+
 			const url = urlToSlug( report.data.managed_site_url );
 			if ( ! acc[ url ] ) {
 				acc[ url ] = [];

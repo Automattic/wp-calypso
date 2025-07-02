@@ -39,6 +39,7 @@ export const SITE_OPTIONS = [
 	'site_creation_flow',
 	'software_version',
 	'updated_at',
+	'wpcom_production_blog_id',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
@@ -68,6 +69,7 @@ export interface SiteOptions {
 	site_creation_flow?: string;
 	software_version: string;
 	updated_at?: string;
+	wpcom_production_blog_id?: number;
 }
 
 export interface Site {

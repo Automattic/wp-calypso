@@ -8,7 +8,6 @@ import { logToLogstash } from 'calypso/lib/logstash'; // eslint-disable-line no-
 import { ODIE_ON_ERROR_TRANSFER_MESSAGE, ODIE_TRANSFER_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
-import { setHelpCenterZendeskConversationStarted } from '../utils';
 
 declare const process: {
 	env: {
@@ -134,7 +133,6 @@ export const useCreateZendeskConversation = (): ( ( {
 				messaging_flow: userFieldFlowName || null,
 				messaging_source: section,
 			} );
-			setHelpCenterZendeskConversationStarted();
 			const conversation = await Smooch.createConversation( {
 				metadata: {
 					createdAt: Date.now(),
@@ -158,17 +156,39 @@ export const useCreateZendeskConversation = (): ( ( {
 			if ( eventAddedToNewInteraction ) {
 				await Smooch.updateConversation( conversation.id, {
 					metadata: {
-						supportInteractionId: updatedInteraction.uuid,
+						createdAt: Date.now(),
+						supportInteractionId: currentInteractionID,
+						...( chatId ? { odieChatId: chatId } : {} ),
 					},
 				} );
-			}
 
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				conversationId: conversation.id,
-				provider: 'zendesk',
-				status: 'loaded',
-			} ) );
+				trackEvent( 'new_zendesk_conversation', {
+					support_interaction: currentInteractionID,
+					created_from: createdFrom,
+					messaging_site_id: selectedSiteId || null,
+					messaging_url: selectedSiteURL || null,
+				} );
+
+				const updatedInteraction = await addEventToInteraction.mutateAsync( {
+					interactionId: currentInteractionID,
+					eventData: { event_source: 'zendesk', event_external_id: conversation.id },
+				} );
+				const eventAddedToNewInteraction = updatedInteraction.uuid !== currentInteractionID;
+				if ( eventAddedToNewInteraction ) {
+					await Smooch.updateConversation( conversation.id, {
+						metadata: {
+							supportInteractionId: updatedInteraction.uuid,
+						},
+					} );
+				}
+
+				setChat( ( prevChat ) => ( {
+					...prevChat,
+					conversationId: conversation.id,
+					provider: 'zendesk',
+					status: 'loaded',
+				} ) );
+			}
 		},
 		[
 			addEventToInteraction,

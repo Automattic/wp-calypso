@@ -15,6 +15,38 @@ function render( ui: React.ReactElement ) {
 }
 
 describe( '<Status>', () => {
+	test( 'for migrated sites with a "migration-pending" status, it renders "Migration pending"', () => {
+		const site = {
+			site_migration: {
+				migration_status: 'migration-pending-difm',
+			},
+		} as Site;
+		const { container } = render( <Status site={ site } /> );
+		expect( container.textContent ).toBe( 'Migration pending' );
+	} );
+
+	test( 'for migrated sites with a "migration-started" status, it renders "Migration started"', () => {
+		const site = {
+			slug: 'test.wordpress.com',
+			site_migration: {
+				migration_status: 'migration-started-difm',
+			},
+		} as Site;
+		const { container } = render( <Status site={ site } /> );
+		expect( container.textContent ).toBe( 'Migration started' );
+	} );
+
+	test( 'for migrated sites with a "migration-in-progress" status, it renders "Migration started"', () => {
+		const site = {
+			slug: 'test.wordpress.com',
+			site_migration: {
+				migration_status: 'migration-in-progress',
+			},
+		} as Site;
+		const { container } = render( <Status site={ site } /> );
+		expect( container.textContent ).toBe( 'Migration started' );
+	} );
+
 	test( 'for unlaunched sites, it renders a "Coming soon" link', () => {
 		const site = {
 			slug: 'test.wordpress.com',

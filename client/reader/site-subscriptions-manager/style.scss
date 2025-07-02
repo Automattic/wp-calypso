@@ -32,16 +32,15 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		min-height: 100vh;
 		margin: 0 auto;
 
-		@media (max-width: $break-small) {
-			padding: 16px;
-		}
-
 		@extend %search-component-subscriptions-style;
 	}
 
+	.site-subscriptions-list-actions-bar,
+	.site-subscriptions-list,
+	.recommended-sites,
 	.navigation-header {
 		@media (max-width: $break-small) {
-			padding: 0;
+			padding: 0 16px;
 		}
 	}
 
