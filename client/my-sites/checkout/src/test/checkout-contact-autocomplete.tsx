@@ -75,6 +75,10 @@ describe( 'Checkout contact step', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		mockCachedContactDetailsEndpoint( {} );
 		const cartChanges = { products: [ planWithoutDomain ] };
