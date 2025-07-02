@@ -15,6 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import InlineSupportLink from '../../components/inline-support-link';
+import { SectionHeader } from '../../components/section-header';
 import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
 
 const DirectionArrow = () => {
@@ -38,7 +39,7 @@ interface EnvironmentLabelProps {
 const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) => {
 	return (
 		<VStack spacing={ 3 } style={ { flex: 1 } }>
-			<Text weight={ 500 }>{ label }</Text>
+			<SectionHeader level={ 3 } title={ label } />
 			<InputControl
 				readOnly
 				prefix={
@@ -160,7 +161,7 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 							environmentType={ syncConfig[ environment ].syncTo }
 						/>
 					</HStack>
-					<Text weight={ 500 }>{ syncConfig.syncSelectionHeading }</Text>
+					<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 					<Text>
 						{ createInterpolateElement( syncConfig.learnMore, {
 							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
