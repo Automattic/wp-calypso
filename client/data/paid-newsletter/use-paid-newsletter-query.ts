@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export type StepId = 'reset' | 'content' | 'subscribers' | 'summary';
-export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
+export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done' | 'pending' | 'expired';
 
 interface ContentStepContentProgress {
 	completed: number;
@@ -11,6 +11,7 @@ interface ContentStepContentProgress {
 
 // FIXME We're actually not using this data in the importing content step...
 export interface ContentStepContent {
+	importStatus: string;
 	progress: {
 		attachment: ContentStepContentProgress;
 		comment: ContentStepContentProgress;
