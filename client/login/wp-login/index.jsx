@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -13,11 +12,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
-	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
 	isStudioAppOAuth2Client,
@@ -25,7 +22,6 @@ import {
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/url';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -192,48 +188,6 @@ export class Login extends Component {
 				{ this.props.translate( 'Back to Login' ) }
 			</a>
 		);
-	}
-
-	renderSignUpLink( signupLinkText ) {
-		// Taken from client/layout/masterbar/logged-out.jsx
-		const {
-			currentRoute,
-			locale,
-			oauth2Client,
-			pathname,
-			currentQuery,
-			translate,
-			usernameOrEmail,
-		} = this.props;
-
-		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-			return null;
-		}
-
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
-
-		return (
-			<Step.LinkButton
-				href={ addQueryArgs(
-					{
-						user_email: usernameOrEmail,
-					},
-					signupUrl
-				) }
-				key="sign-up-link"
-				onClick={ this.recordSignUpLinkClick }
-				rel="external"
-			>
-				{ signupLinkText ?? translate( 'Create a new account' ) }
-			</Step.LinkButton>
-		);
-	}
-
-	renderLoginHeaderNavigation() {
-		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
 	}
 
 	renderContent( isSocialFirst ) {
