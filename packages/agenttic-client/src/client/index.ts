@@ -200,7 +200,8 @@ async function continueTask(
 	message: Message,
 	requestConfig: RequestConfig,
 	toolProvider?: any,
-	contextProvider?: any
+	contextProvider?: any,
+	sessionId?: string
 ): Promise< Task > {
 	const continueParams = {
 		message,
@@ -214,7 +215,7 @@ async function continueTask(
 		{ isStreaming: false },
 		toolProvider,
 		contextProvider,
-		undefined
+		sessionId
 	);
 
 	return await executeRequest( preparedRequest, requestConfig );
@@ -281,6 +282,7 @@ export function createClient( config: ClientConfig ): Client {
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< TaskUpdate > {
 			const { withHistory = true } = params;
+			const sessionId = params.sessionId || defaultSessionId || undefined;
 
 			// Extract conversation history from the incoming message only if withHistory is true
 			const initialConversationHistory = withHistory
@@ -302,7 +304,7 @@ export function createClient( config: ClientConfig ): Client {
 				{ isStreaming: false },
 				toolProvider,
 				contextProvider,
-				defaultSessionId
+				sessionId
 			);
 
 			// Execute the initial request
@@ -397,7 +399,8 @@ export function createClient( config: ClientConfig ): Client {
 						toolResultMessage,
 						requestConfig,
 						toolProvider,
-						contextProvider
+						contextProvider,
+						sessionId
 					);
 				} else {
 					// Tools executed but don't want to return to agent
@@ -457,6 +460,7 @@ export function createClient( config: ClientConfig ): Client {
 			params: SendMessageParams
 		): AsyncIterable< TaskUpdate > {
 			const { withHistory = true } = params;
+			const sessionId = params.sessionId || defaultSessionId || undefined;
 
 			// Extract conversation history from the incoming message only if withHistory is true
 			const initialConversationHistory = withHistory
@@ -478,7 +482,7 @@ export function createClient( config: ClientConfig ): Client {
 				{ isStreaming: true, streamingTimeout: timeout },
 				toolProvider,
 				contextProvider,
-				defaultSessionId
+				sessionId
 			);
 
 			// Execute the streaming request
@@ -595,7 +599,8 @@ export function createClient( config: ClientConfig ): Client {
 								toolResultMessage,
 								requestConfig,
 								toolProvider,
-								contextProvider
+								contextProvider,
+								sessionId
 							);
 
 							// Check if the continued task has more tool calls to process
@@ -686,7 +691,8 @@ export function createClient( config: ClientConfig ): Client {
 											moreResultMessage,
 											requestConfig,
 											toolProvider,
-											contextProvider
+											contextProvider,
+											sessionId
 										);
 
 										// Check for more tool calls in the response
@@ -794,7 +800,8 @@ export function createClient( config: ClientConfig ): Client {
 				userMessage,
 				requestConfig,
 				toolProvider,
-				contextProvider
+				contextProvider,
+				sessionId
 			);
 
 			// Process any tool calls in the continued response
@@ -826,7 +833,8 @@ export function createClient( config: ClientConfig ): Client {
 						toolResultMessage,
 						requestConfig,
 						toolProvider,
-						contextProvider
+						contextProvider,
+						sessionId
 					);
 				} else {
 					// Tools executed but don't want to return to agent
