@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
 import * as controller from './controller';
@@ -24,12 +23,4 @@ export default function () {
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
 	page( '/me/get-apps', controller.sidebar, controller.apps, makeLayout, clientRender );
-
-	// /help page has been dismissed
-	if ( config.isEnabled( 'help' ) ) {
-		page( '/help', controller.helpRedirect, makeLayout, clientRender );
-		page( '/help/contact', controller.helpRedirect, makeLayout, clientRender );
-	}
-
-	page( '/me/chat', controller.helpRedirect, makeLayout, clientRender );
 }
