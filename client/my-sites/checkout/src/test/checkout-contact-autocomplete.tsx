@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { prettyDOM } from '@testing-library/dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -76,27 +75,15 @@ describe( 'Checkout contact step', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		mockCachedContactDetailsEndpoint( {} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const { container } = render(
-			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />,
-			{
-				legacyRoot: true,
-			}
-		);
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
+			legacyRoot: true,
+		} );
 		// Wait for the cart to load
-		try {
-			await screen.findByText( 'Country' );
-			expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
-		} catch ( e ) {
-			console.error( prettyDOM( container, Infinity ) );
-			throw e;
-		}
+		await screen.findByText( 'Country' );
+		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'autocompletes the contact step when there are valid cached details', async () => {
@@ -106,29 +93,20 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const { container } = render(
-			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />,
-			{
-				legacyRoot: true,
-			}
-		);
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
+			legacyRoot: true,
+		} );
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+		const countryField = await screen.findByLabelText( 'Country' );
 
-		try {
-			// Wait for the cart to load
-			await screen.findByLabelText( 'Continue with the entered contact details' );
-			const countryField = await screen.findByLabelText( 'Country' );
+		// Validate that fields are pre-filled
+		await waitFor( () => {
+			expect( countryField.selectedOptions[ 0 ].value ).toBe( 'US' );
+		} );
+		expect( await screen.findByLabelText( 'Postal code' ) ).toHaveValue( '10001' );
 
-			// Validate that fields are pre-filled
-			await waitFor( () => {
-				expect( countryField.selectedOptions[ 0 ].value ).toBe( 'US' );
-			} );
-			expect( await screen.findByLabelText( 'Postal code' ) ).toHaveValue( '10001' );
-
-			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-		} catch ( e ) {
-			console.error( prettyDOM( container, Infinity ) );
-			throw e;
-		}
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
@@ -138,20 +116,12 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const { container } = render(
-			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />,
-			{
-				legacyRoot: true,
-			}
-		);
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
+			legacyRoot: true,
+		} );
 		// Wait for the cart to load
-		try {
-			await screen.findByText( 'Country' );
-			await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
-		} catch ( e ) {
-			console.error( prettyDOM( container, Infinity ) );
-			throw e;
-		}
+		await screen.findByText( 'Country' );
+		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
 	it( 'does not show errors when autocompleting the contact step when there are invalid cached details', async () => {
@@ -164,20 +134,12 @@ describe( 'Checkout contact step', () => {
 			messages: { postal_code: [ 'Postal code error message' ] },
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const { container } = render(
-			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />,
-			{
-				legacyRoot: true,
-			}
-		);
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
+			legacyRoot: true,
+		} );
 		// Wait for the cart to load
-		try {
-			await screen.findByText( 'Country' );
-			await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
-		} catch ( e ) {
-			console.error( prettyDOM( container, Infinity ) );
-			throw e;
-		}
+		await screen.findByText( 'Country' );
+		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
 	} );
 
 	it.each( [

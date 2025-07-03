@@ -91,10 +91,6 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetVatInfoEndpoint( {} );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
