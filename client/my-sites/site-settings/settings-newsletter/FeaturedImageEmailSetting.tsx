@@ -1,5 +1,5 @@
 import { ToggleControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
@@ -30,9 +30,20 @@ export const FeaturedImageEmailSetting = ( {
 			/>
 			<FormSettingExplanation>
 				{ isPrivate
-					? translate(
-							'Featured images cannot be shown in emails when your site is private, because access to your images is restricted to your site only.'
-					  )
+					? fixMe( {
+							text: 'Featured images cannot be shown in emails when your site is private, because access to your images is restricted to your site only.',
+							oldCopy: translate(
+								"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
+								{
+									components: {
+										link: <InlineSupportLink showIcon={ false } supportContext="featured-images" />,
+									},
+								}
+							),
+							newCopy: translate(
+								'Featured images cannot be shown in emails when your site is private, because access to your images is restricted to your site only.'
+							),
+					  } )
 					: translate(
 							"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
 							{
