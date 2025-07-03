@@ -5,22 +5,21 @@ import {
 	CardBody,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
-import { useState } from 'react';
+import { useContainerQuery } from '../../hooks/use-container-query';
 import { Domain } from '../DomainSearch/types';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionMatchReasons } from '../domain-suggestion-match-reasons';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
+
 interface DomainSuggestionProps {
 	domain: Domain;
 }
 
 export const DomainSuggestionsExactMatch = ( { domain }: DomainSuggestionProps ) => {
-	const [ isSmallLayout, setIsSmallLayout ] = useState( false );
-
-	const containerRef = useResizeObserver( ( entries ) => {
-		setIsSmallLayout( entries[ 0 ].contentRect.width <= 480 );
+	const { ref: containerRef, activeQuery } = useContainerQuery( {
+		small: 480,
+		large: 1024,
 	} );
 
 	const badges = domain.badges?.map( ( badge ) => (
@@ -44,7 +43,7 @@ export const DomainSuggestionsExactMatch = ( { domain }: DomainSuggestionProps )
 	const cta = <DomainSuggestionCTA domain={ domain } />;
 
 	const getContent = () => {
-		if ( isSmallLayout ) {
+		if ( activeQuery === 'small' ) {
 			return (
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 3 } alignment="start">
