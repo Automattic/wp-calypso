@@ -42,10 +42,10 @@ function writeUrlAfterUpdates( url: URL ): void {
 	reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
 }
 
-const urlSortField = 'sortField';
-const urlSortDirection = 'sortDir';
-const urlPaginationPage = 'pageNumber';
-const urlPaginationPerPage = 'perPage';
+const urlSortField = 'billingSortField';
+const urlSortDirection = 'billingSortDir';
+const urlPaginationPage = 'billingPageNumber';
+const urlPaginationPerPage = 'billingPerPage';
 
 export function updateUrlForView< F >( view: View, fields: Field< F >[] ) {
 	const url = new URL( window.location.href );
