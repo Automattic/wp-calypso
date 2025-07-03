@@ -57,6 +57,11 @@ import type { FormEvent } from 'react';
 import './style.scss';
 
 function getBillingHistoryUrl( previousRoute: string ): string {
+	/**
+	 * Preserve the previous route if it's the billing history page because it
+	 * may contain a query string with pagination and other view properties
+	 * that we want to return to.
+	 */
 	if ( previousRoute.includes( '/purchases/billing' ) ) {
 		return previousRoute;
 	}
