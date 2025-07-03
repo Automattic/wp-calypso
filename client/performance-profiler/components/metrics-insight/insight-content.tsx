@@ -60,6 +60,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 
 	/**
 	 * Updates the current message index and schedules the next message in the sequence.
+	 * It is used for rotating display message, while insights are fetched from the API.
 	 * Only schedules the next timer if loading is still active and there are more messages.
 	 * @param currentIndex - The index of the message to display
 	 */
