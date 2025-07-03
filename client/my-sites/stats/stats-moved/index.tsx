@@ -4,9 +4,8 @@ import { chartBar } from '@wordpress/icons';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { Callout } from 'calypso/dashboard/components/callout';
-import { STATS_PRODUCT_NAME, STATS_PRODUCT_NAME_IMPR } from 'calypso/my-sites/stats/constants';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -62,7 +61,6 @@ const StatsMoved = () => {
 	return (
 		<Main className="stats-moved" ariaLabel={ STATS_PRODUCT_NAME }>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
-			<NavigationHeader title={ STATS_PRODUCT_NAME_IMPR } />
 			<Callout
 				icon={ chartBar }
 				title={ __( 'Stats have moved' ) }
