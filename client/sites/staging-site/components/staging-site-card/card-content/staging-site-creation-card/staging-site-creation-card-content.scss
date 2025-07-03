@@ -15,11 +15,11 @@
 	background-position: center right;
 	background-size: auto 100%;
 
-	@media screen and ( max-width: 768px ) {
+	@media screen and ( max-width: 1024px ) {
 		flex-direction: column;
 		gap: 1.5rem;
-		background-size: auto 80%;
-		background-position: top right;
+		background-image: none;
+
 	}
 }
 
