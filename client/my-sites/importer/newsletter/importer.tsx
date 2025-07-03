@@ -182,10 +182,7 @@ export default function NewsletterImporter( {
 	// Helps only show the confetti once even if you navigate between the different steps.
 	const shouldShowConfettiRef = useRef( false );
 	const [ showConfetti, setShowConfetti ] = useState( false );
-	const importerStatus = getImporterStatus(
-		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps?.subscribers.status
-	);
+	const importerStatus = getImporterStatus( paidNewsletterData?.steps );
 
 	useEffect( () => {
 		if ( importerStatus === 'done' && ! shouldShowConfettiRef.current ) {
