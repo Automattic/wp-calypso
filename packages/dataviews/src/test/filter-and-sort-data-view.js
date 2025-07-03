@@ -1,6 +1,3 @@
-/** External dependencies */
-import { subDays, subYears } from 'date-fns';
-
 /**
  * External dependencies
  */
