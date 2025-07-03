@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { DomainSearchFilters } from './Filters';
-import { DomainSearchControlsInput } from './Input';
+import { DomainSearchFilters } from './filters';
+import { DomainSearchControlsInput } from './input';
 
 const DomainSearchControls = () => {
 	return (
