@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
@@ -31,13 +32,15 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
-		requireAccessContext,
-		marketplaceReferEnterpriseHostingContext,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'a4a-vip-partner-opportunity-referrals' ) ) {
+		page(
+			A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
+			requireAccessContext,
+			marketplaceReferEnterpriseHostingContext,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		`${ A4A_MARKETPLACE_HOSTING_LINK }/:section?`,

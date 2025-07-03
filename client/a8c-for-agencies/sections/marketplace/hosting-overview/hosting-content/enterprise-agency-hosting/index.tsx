@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { external } from '@wordpress/icons';
@@ -38,6 +39,10 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 		);
 	};
 
+	const isVipPartnerOpportunityReferralsEnabled = isEnabled(
+		'a4a-vip-partner-opportunity-referrals'
+	);
+
 	return (
 		<div className="enterprise-agency-hosting">
 			<HostingPlanSection
@@ -65,15 +70,17 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					<div className="enterprise-agency-hosting__cta-buttons">
 						{ isReferMode ? (
 							<>
-								<Button
-									className="enterprise-agency-hosting__cta-button"
-									href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
-									onClick={ onReferClientClick }
-									variant="primary"
-									__next40pxDefaultSize
-								>
-									{ translate( 'Refer your client to VIP hosting' ) }
-								</Button>
+								{ isVipPartnerOpportunityReferralsEnabled && (
+									<Button
+										className="enterprise-agency-hosting__cta-button"
+										href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+										onClick={ onReferClientClick }
+										variant="primary"
+										__next40pxDefaultSize
+									>
+										{ translate( 'Refer your client to VIP hosting' ) }
+									</Button>
+								) }
 
 								<Button
 									className="enterprise-agency-hosting__cta-button"
@@ -105,15 +112,17 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 									{ translate( 'Request a Demo' ) }
 								</Button>
 
-								<Button
-									className="enterprise-agency-hosting__cta-button"
-									href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
-									onClick={ onReferClientClick }
-									variant="secondary"
-									__next40pxDefaultSize
-								>
-									{ translate( 'Refer your client to VIP hosting' ) }
-								</Button>
+								{ isVipPartnerOpportunityReferralsEnabled && (
+									<Button
+										className="enterprise-agency-hosting__cta-button"
+										href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+										onClick={ onReferClientClick }
+										variant="secondary"
+										__next40pxDefaultSize
+									>
+										{ translate( 'Refer your client to VIP hosting' ) }
+									</Button>
+								) }
 							</>
 						) }
 					</div>
