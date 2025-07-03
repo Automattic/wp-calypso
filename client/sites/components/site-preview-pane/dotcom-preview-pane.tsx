@@ -93,9 +93,10 @@ const DotcomPreviewPane = ( {
 
 	// Check automated transfer status for the staging site (like StagingSiteCard does)
 	const hasCompletedInitialLoading = ! isLoadingStagingSites;
+
 	const transferStatus = useCheckStagingSiteStatus(
-		stagingSite?.id,
-		hasCompletedInitialLoading && !! stagingSite?.id
+		stagingSite?.id ?? 0,
+		hasCompletedInitialLoading
 	);
 
 	// Update staging site status based on automated transfer status (like StagingSiteCard does)
