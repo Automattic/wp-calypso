@@ -1,6 +1,6 @@
 import { TimeSince } from '@automattic/components';
-import { DataViews, Field } from '@automattic/dataviews';
 import { SiteExcerptData } from '@automattic/sites';
+import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
@@ -17,7 +17,7 @@ import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import type { View } from '@automattic/dataviews';
+import type { View } from '@wordpress/dataviews';
 import './style.scss';
 import './dataview-style.scss';
 

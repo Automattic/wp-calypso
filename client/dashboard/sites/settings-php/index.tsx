@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -8,6 +7,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -20,7 +20,7 @@ import { hasPlanFeature } from '../../utils/site-features';
 import { HostingFeatures, canViewPHPSettings } from '../features';
 import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );

@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -11,6 +10,7 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -33,7 +33,7 @@ import { HostingFeatures, canViewCachingSettings } from '../features';
 import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 type CachingFormData = {
 	active: boolean;

@@ -40,7 +40,6 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/calypso-analytics',
-							'!@automattic/dataviews',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
 							'!@automattic/viewport',
