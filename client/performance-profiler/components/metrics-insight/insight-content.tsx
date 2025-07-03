@@ -58,6 +58,11 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 		[ translate ]
 	);
 
+	/**
+	 * Updates the current message index and schedules the next message in the sequence.
+	 * Only schedules the next timer if loading is still active and there are more messages.
+	 * @param currentIndex - The index of the message to display
+	 */
 	const updateMessageIndex = useCallback(
 		( currentIndex: number ) => {
 			setMessageIndex( currentIndex );
