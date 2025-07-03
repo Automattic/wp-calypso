@@ -12,6 +12,8 @@ import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionMatchReasons } from '../domain-suggestion-match-reasons';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
 
+import './style.scss';
+
 interface DomainSuggestionProps {
 	domain: Domain;
 }
@@ -75,7 +77,10 @@ export const DomainSuggestionsExactMatch = ( { domain }: DomainSuggestionProps )
 	};
 
 	return (
-		<Card ref={ containerRef } style={ { width: '100%' } }>
+		<Card
+			ref={ containerRef }
+			className="domain-suggestions-recommendation domain-suggestions-recommendation--exact-match"
+		>
 			<CardBody>{ getContent() }</CardBody>
 		</Card>
 	);
