@@ -250,7 +250,7 @@ export function PurchasesDataViews( {
 				label: translate( 'Manage purchase', { textOnly: true } ),
 				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
 				callback: ( items: Purchases.Purchase[] ) => {
-					const siteUrl = items[ 0 ].domain;
+					const siteUrl = items[ 0 ].siteSlug || items[ 0 ].domain;
 					const subscriptionId = items[ 0 ].id;
 					if ( ! siteUrl ) {
 						// eslint-disable-next-line no-console

@@ -2,7 +2,7 @@ import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
-import SyncModal from '../staging-site-sync-modal';
+import AsyncLoad from 'calypso/components/async-load';
 
 interface SyncDropdownProps {
 	className?: string;
@@ -19,12 +19,12 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 	const pushLabel =
 		environment === 'staging' ? __( 'Push to Production' ) : __( 'Push to Staging' );
 
-	const handleOpenModal = ( type: 'pull' | 'push' ) => {
+	const handleOpenModal = ( type: 'pull' | 'push' ): void => {
 		setSyncType( type );
 		setIsModalOpen( true );
 	};
 
-	const handleCloseModal = () => {
+	const handleCloseModal = (): void => {
 		setIsModalOpen( false );
 	};
 
@@ -72,7 +72,8 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 				) }
 			/>
 			{ isModalOpen && (
-				<SyncModal
+				<AsyncLoad
+					require="calypso/sites/staging-site/components/staging-site-sync-modal"
 					onClose={ handleCloseModal }
 					syncType={ syncType }
 					environment={ environment }

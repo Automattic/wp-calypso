@@ -1,7 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
 import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 
@@ -75,33 +75,30 @@ const ThreatDialog: React.FC< Props > = ( {
 	}, [ action ] );
 
 	return (
-		<ServerCredentialsWizardDialog
-			showDialog={ showDialog }
-			onCloseDialog={ onCloseDialog }
-			skipServerCredentials={ action === 'ignore' || action === 'unignore' }
+		<Dialog
+			additionalClassNames={ clsx( 'threat-dialog' ) }
+			isVisible={ showDialog }
 			buttons={ buttons }
-			{ ...titleProps }
-			baseDialogClassName="threat-dialog"
+			onClose={ onCloseDialog }
 		>
-			<>
-				<p>
-					{ action === 'fix' && translate( 'Jetpack will fix the threat:' ) }
-					{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
-					{ action === 'unignore' && translate( 'Jetpack will unignore the threat:' ) }
-				</p>
-				<h3 className="threat-dialog__threat-title">
-					<ThreatFixHeader threat={ threat } action={ action } />
-				</h3>
-				{ action === 'ignore' &&
-					translate(
-						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
-					) }
-				{ action === 'unignore' &&
-					translate(
-						'By unignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
-					) }
-			</>
-		</ServerCredentialsWizardDialog>
+			<h1 className={ clsx( titleProps.titleClassName ) }>{ titleProps.title }</h1>
+			<p>
+				{ action === 'fix' && translate( 'Jetpack will fix the threat:' ) }
+				{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
+				{ action === 'unignore' && translate( 'Jetpack will unignore the threat:' ) }
+			</p>
+			<h3 className="threat-dialog__threat-title">
+				<ThreatFixHeader threat={ threat } action={ action } />
+			</h3>
+			{ action === 'ignore' &&
+				translate(
+					'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
+				) }
+			{ action === 'unignore' &&
+				translate(
+					'By unignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
+				) }
+		</Dialog>
 	);
 };
 

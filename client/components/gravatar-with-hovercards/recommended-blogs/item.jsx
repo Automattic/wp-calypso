@@ -20,14 +20,14 @@ const getBlogData = ( blog ) => {
 	return { image, name, feedUrl, siteId };
 };
 
-function RecommendedBlogItem( { blog } ) {
+function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
 	const { image, name, feedUrl, siteId } = getBlogData( blog );
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
 
 	return (
-		<li className="gravatar-hovercard__recommended-blog-item">
+		<li className={ `${ classPrefix }__recommended-blog-item` }>
 			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
 				One example being mapped domains: initial follows state may list by wpcom subdomain, and
 				the url here might be of a mapped domain. The site request success also updates follows
@@ -36,16 +36,23 @@ function RecommendedBlogItem( { blog } ) {
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
 			<ReaderAvatar
-				isCompact
+				isCompact={ compact }
 				siteIcon={ siteIcon }
-				className="gravatar-hovercard__recommended-blog-site-icon"
+				className={ `${ classPrefix }__recommended-blog-site-icon` }
 			/>
-			<p className="gravatar-hovercard__recommended-blog-site-name">{ name || feedUrl }</p>
+			<div className={ `${ classPrefix }__recommended-blog-site-info` }>
+				<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>{ name || feedUrl }</h6>
+				{ ! compact && site?.description && (
+					<p className={ `${ classPrefix }__recommended-blog-site-description` }>
+						{ site.description }
+					</p>
+				) }
+			</div>
 			<ReaderFollowButton
-				className="gravatar-hovercard__recommended-blog-subscribe-button"
+				className={ `${ classPrefix }__recommended-blog-subscribe-button` }
 				siteUrl={ feedUrl }
-				followSource="gravatar-hovercard__recommended-blog-item"
-				isButtonOnly
+				followSource={ `${ classPrefix }__recommended-blog-item` }
+				isButtonOnly={ compact }
 			/>
 		</li>
 	);

@@ -18,7 +18,7 @@ import './styles.scss';
 function HovercardContent( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { user, gravatarData } = props;
+	const { user, gravatarData, closeCard } = props;
 
 	// Prefer wpcom_id when it is given. Sometimes ID is specific to another site and wpcom_id is
 	// accurate. Use ID as a fallback as sometimes wpcom_id isn't provided (like self user data).
@@ -42,6 +42,7 @@ function HovercardContent( props ) {
 
 	const clickProfileLink = ( e ) => {
 		e.preventDefault();
+		closeCard();
 		page( profileUrl );
 	};
 
@@ -129,7 +130,7 @@ function HovercardContent( props ) {
 
 						<div className="gravatar-hovercard__footer">
 							{ isEnabled( 'reader/recommended-blogs-list' ) && (
-								<RecommendedBlogs userLogin={ userLogin } />
+								<RecommendedBlogs userLogin={ userLogin } closeCard={ closeCard } />
 							) }
 						</div>
 					</>
