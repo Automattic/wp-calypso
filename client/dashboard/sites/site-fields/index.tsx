@@ -220,12 +220,13 @@ function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 	);
 }
 
-interface WithHostingFeaturesProps {
+function WithHostingFeaturesQuery( {
+	site,
+	children,
+}: {
 	site: Site;
-	children: () => React.ReactNode;
-}
-
-function WithHostingFeaturesQuery( { site, children }: WithHostingFeaturesProps ) {
+	children: ( transferStatus?: string ) => React.ReactNode;
+} ) {
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
@@ -236,27 +237,7 @@ function WithHostingFeaturesQuery( { site, children }: WithHostingFeaturesProps 
 		enabled: inView,
 	} );
 
-	const renderContent = () => {
-		if ( ! data ) {
-			return children();
-		}
-		if ( data.status === 'error' ) {
-			return __( 'Error activating hosting features' );
-		}
-		if ( isAtomicTransferInProgress( data.status ) ) {
-			return __( 'Activating hosting features…' );
-		}
-		return children();
-	};
-
-	return <span ref={ ref }>{ renderContent() }</span>;
-}
-
-function WithHostingFeaturesStatus( { site, children }: WithHostingFeaturesProps ) {
-	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) && ! site.is_wpcom_atomic ) {
-		return <WithHostingFeaturesQuery site={ site }>{ children }</WithHostingFeaturesQuery>;
-	}
-	return children();
+	return <span ref={ ref }>{ children( data?.status ) }</span>;
 }
 
 export function Status( { site }: { site: Site } ) {
@@ -288,16 +269,32 @@ export function Status( { site }: { site: Site } ) {
 		);
 	}
 
-	return (
-		<WithHostingFeaturesStatus site={ site }>
-			{ () => {
-				if ( site.launch_status === 'unlaunched' ) {
-					return <SiteLaunchNag site={ site } />;
-				}
-				return label;
-			} }
-		</WithHostingFeaturesStatus>
-	);
+	const renderBasicStatus = () => {
+		if ( site.launch_status === 'unlaunched' ) {
+			return <SiteLaunchNag site={ site } />;
+		}
+		return label;
+	};
+
+	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) && ! site.is_wpcom_atomic ) {
+		return (
+			<WithHostingFeaturesQuery site={ site }>
+				{ ( transferStatus ) => {
+					if ( transferStatus ) {
+						if ( transferStatus === 'error' ) {
+							return __( 'Error activating hosting features' );
+						}
+						if ( isAtomicTransferInProgress( transferStatus ) ) {
+							return __( 'Activating hosting features…' );
+						}
+					}
+					return renderBasicStatus();
+				} }
+			</WithHostingFeaturesQuery>
+		);
+	}
+
+	return renderBasicStatus();
 }
 
 export function Plan( { site }: { site: Site } ) {
