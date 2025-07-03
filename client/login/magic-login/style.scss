@@ -117,10 +117,6 @@
 }
 
 .layout.is-wpcom-magic-login {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
 	.magic-login__form-header-icon {
 		text-align: center;
 		img {
@@ -371,22 +367,6 @@
 		.get-apps__card-text {
 			padding: 0 20px 0 0;
 		}
-	}
-}
-
-.magic-login__gutenboarding-wordpress-logo {
-	height: 64px;
-	position: absolute;
-	left: 0;
-	top: 0;
-	padding: 0 24px;
-	box-sizing: border-box;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-
-	@include break-mobile {
-		padding: 8px 24px;
 	}
 }
 

@@ -17,6 +17,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import { useLoginContext } from '../login-context';
 import VerifyLoginCode from './verify-login-code';
 
 const RequestLoginCode = ( {
@@ -38,12 +39,17 @@ const RequestLoginCode = ( {
 } ) => {
 	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
 	const usernameOrEmailRef = useRef( null );
-
+	const { setHeadingText, setHeadingSubText } = useLoginContext();
 	useEffect( () => {
 		if ( onReady ) {
 			onReady();
 		}
-	}, [ onReady ] );
+
+		setHeadingText( translate( 'Email me a login code' ) );
+		setHeadingSubText(
+			translate( "We'll send you an email with a code that will log you in right away." )
+		);
+	}, [ onReady, setHeadingText, setHeadingSubText, translate ] );
 
 	const onUsernameOrEmailFieldChange = ( event ) => {
 		setUsernameOrEmail( event.target.value );
@@ -108,7 +114,6 @@ const RequestLoginCode = ( {
 
 	return (
 		<div className="magic-login__form">
-			<h1 className="magic-login__form-header">{ translate( 'Email me a login code' ) }</h1>
 			<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 				{ currentUser && currentUser.username && (
 					<Notice
@@ -123,10 +128,6 @@ const RequestLoginCode = ( {
 						} ) }
 					></Notice>
 				) }
-
-				<p className="magic-login__form-sub-header">
-					{ translate( "We'll send you an email with a code that will log you in right away." ) }
-				</p>
 
 				<FormLabel htmlFor="usernameOrEmail">
 					{ translate( 'Email Address or Username' ) }

@@ -17,6 +17,7 @@ import getMagicLoginAuthSuccessData from 'calypso/state/selectors/get-magic-logi
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import { useLoginContext } from '../login-context';
 
 const CODE_LENGTH = 6;
 
@@ -37,6 +38,7 @@ const VerifyLoginCode = ( {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ showError, setShowError ] = useState( false );
 	const dispatch = useDispatch();
+	const { setHeadingText, setHeadingSubText } = useLoginContext();
 
 	// Create refs for each input field to manage focus
 	const inputRefs = useRef( Array.from( { length: CODE_LENGTH }, () => createRef() ) );
@@ -55,6 +57,20 @@ const VerifyLoginCode = ( {
 			}
 		}
 	}, [ isAuthenticated, authSuccessData ] );
+
+	useEffect( () => {
+		setHeadingText( translate( 'Check your email for a code' ) );
+		setHeadingSubText(
+			translate( 'Enter the code sent to your email {{strong}}%(email)s{{/strong}}', {
+				args: {
+					email: usernameOrEmail,
+				},
+				components: {
+					strong: <strong />,
+				},
+			} )
+		);
+	}, [ setHeadingText, setHeadingSubText, translate, usernameOrEmail ] );
 
 	// Focus first input on page load for an easy input
 	useEffect( () => {
@@ -171,17 +187,6 @@ const VerifyLoginCode = ( {
 
 	return (
 		<div className="magic-login__successfully-jetpack">
-			<h1 className="magic-login__form-header">{ translate( 'Check your email for a code' ) }</h1>
-			<p className="magic-login__form-sub-header">
-				{ translate( 'Enter the code sent to your email {{strong}}%(email)s{{/strong}}', {
-					args: {
-						email: usernameOrEmail,
-					},
-					components: {
-						strong: <strong />,
-					},
-				} ) }
-			</p>
 			<LoggedOutForm
 				className={ clsx( 'magic-login__verify-code-form', {
 					'magic-login__verify-code-form--error': showError,
