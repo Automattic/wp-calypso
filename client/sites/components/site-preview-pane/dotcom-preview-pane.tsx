@@ -1,17 +1,29 @@
 import config from '@automattic/calypso-config';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
-import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
+import { StagingSiteCreationCardContent } from 'calypso/sites/staging-site/components/staging-site-card/card-content/staging-site-creation-card/staging-site-creation-card-content';
+import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
+import {
+	useStagingSite,
+	type StagingSite,
+} from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
+import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
-import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import {
+	getStagingSiteStatus,
+	getIsStagingSiteStatusComplete,
+} from 'calypso/state/staging-site/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
@@ -58,6 +70,7 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
@@ -65,8 +78,101 @@ const DotcomPreviewPane = ( {
 	const isInProgress = isMigrationInProgress( site );
 	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
+	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( site.ID, {
+		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
+	} );
+
+	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
+	const currentUserId = useSelector( getCurrentUserId );
+	const siteOwnerId = useSelector( ( state ) => getSelectedSite( state )?.site_owner );
+
+	// Get the first staging site (like StagingSiteCard does)
+	const stagingSite: StagingSite | undefined = useMemo( () => {
+		return stagingSites?.length ? stagingSites[ 0 ] : undefined;
+	}, [ stagingSites ] );
+
+	// Check automated transfer status for the staging site (like StagingSiteCard does)
+	const hasCompletedInitialLoading = ! isLoadingStagingSites;
+	const transferStatus = useCheckStagingSiteStatus(
+		stagingSite?.id,
+		hasCompletedInitialLoading && !! stagingSite?.id
+	);
+
+	// Update staging site status based on automated transfer status (like StagingSiteCard does)
+	useEffect( () => {
+		// If anything is still loading, don't do anything
+		if ( ! hasCompletedInitialLoading || transferStatus === '' ) {
+			return;
+		}
+
+		switch ( transferStatus ) {
+			case transferStates.COMPLETE:
+				// If the cache is deleted or we have already setup this before, do nothing
+				if (
+					stagingStatus === StagingSiteStatus.UNSET ||
+					stagingStatus === StagingSiteStatus.NONE ||
+					stagingStatus === StagingSiteStatus.COMPLETE
+				) {
+					return;
+				}
+				dispatch( setStagingSiteStatus( site.ID, StagingSiteStatus.COMPLETE ) );
+				break;
+
+			case transferStates.ERROR:
+			case transferStates.REQUEST_FAILURE:
+				dispatch( setStagingSiteStatus( site.ID, StagingSiteStatus.NONE ) );
+				break;
+
+			default:
+				// If the automated-transfer is in progress, update status to transferring
+				if ( stagingStatus === StagingSiteStatus.INITIATE_TRANSFERRING && transferStatus ) {
+					dispatch( setStagingSiteStatus( site.ID, StagingSiteStatus.TRANSFERRING ) );
+				}
+				break;
+		}
+	}, [ dispatch, hasCompletedInitialLoading, site.ID, stagingStatus, transferStatus ] );
+
+	// Handle completed staging site creation
+	useEffect( () => {
+		if ( stagingStatus === StagingSiteStatus.COMPLETE ) {
+			dispatch( setStagingSiteStatus( site.ID, StagingSiteStatus.NONE ) );
+		}
+	}, [ dispatch, site.ID, stagingStatus ] );
+
+	const isCreatingStagingSite =
+		stagingStatus === StagingSiteStatus.INITIATE_TRANSFERRING ||
+		stagingStatus === StagingSiteStatus.TRANSFERRING;
+
+	// Check if staging site transfer is complete (like StagingSiteCard does)
+	const isStagingSiteTransferComplete = useSelector( ( state ) =>
+		getIsStagingSiteStatusComplete( state, site.ID )
+	);
+
+	// Show creation card when creating AND feature flag enabled AND transfer not complete
+	const shouldShowCreationCardOnly =
+		isCreatingStagingSite && stagingSitesRedesign && isStagingSiteTransferComplete === false;
+
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
+
+		// If showing creation card only, return a single hidden tab with the creation content
+		if ( shouldShowCreationCardOnly ) {
+			return [
+				{
+					id: 'staging-creation',
+					tab: {
+						label: __( 'Creating Staging Site' ),
+						href: '',
+						visible: false,
+						selected: true,
+						onTabClick: () => {},
+					},
+					enabled: true,
+					preview: <StagingSiteCreationCardContent isOwner={ siteOwnerId === currentUserId } />,
+				},
+			];
+		}
+
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
@@ -162,6 +268,9 @@ const DotcomPreviewPane = ( {
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
+		shouldShowCreationCardOnly,
+		currentUserId,
+		siteOwnerId,
 	] );
 
 	const itemData: ItemData = {
@@ -174,16 +283,11 @@ const DotcomPreviewPane = ( {
 		withIcon: true,
 	};
 
-	const { data: stagingSites } = useStagingSite( site.ID, {
-		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
-	} );
-
 	if ( site.options && site.is_wpcom_atomic ) {
 		site.options.wpcom_staging_blog_ids =
 			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
 	}
 
-	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
 	const isStagingStatusFinished =
 		stagingStatus === StagingSiteStatus.COMPLETE ||
 		stagingStatus === StagingSiteStatus.NONE ||
@@ -213,6 +317,7 @@ const DotcomPreviewPane = ( {
 			features={ features }
 			className={ site.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : '' }
 			enforceTabsView
+			hideNavIfSingleTab={ shouldShowCreationCardOnly }
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: isInProgress ? 'migration' : 'first-grapheme',
