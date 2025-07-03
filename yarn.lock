@@ -1174,6 +1174,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/domain-search@workspace:^, @automattic/domain-search@workspace:packages/domain-search":
+  version: 0.0.0-use.local
+  resolution: "@automattic/domain-search@workspace:packages/domain-search"
+  dependencies:
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-a11y": "npm:^8.6.14"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:^16.3.0"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:^29.9.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/react-i18n": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
+    copyfiles: "npm:^2.4.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    storybook: "npm:^8.6.14"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/i18n": ^5.23.0
+    react: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/domains-table@workspace:^, @automattic/domains-table@workspace:packages/domains-table":
   version: 0.0.0-use.local
   resolution: "@automattic/domains-table@workspace:packages/domains-table"
@@ -5937,10 +5962,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gravatar-com/hovercards@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "@gravatar-com/hovercards@npm:0.13.0"
-  checksum: 4e11057a0bec726aa282941ac82b7d25f5c29543a973de0f0dbb4adc9c2b1dc3ed8b7ad6ae93caca424f6f7e47cf3e6dad2651f67e4463de5c5f5805c82ea5f2
+"@gravatar-com/hovercards@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@gravatar-com/hovercards@npm:0.14.0"
+  checksum: 07fdc6ec383b7658445abebf7b2254650644cba9c192efd3fba9ddd8b2e448230b5d3047f3ec359c4519d736fa9b20467e8cabb0504a1ad291a2abb4b51576bc
   languageName: node
   linkType: hard
 
@@ -14907,6 +14932,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
+    "@automattic/domain-search": "workspace:^"
     "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
@@ -14952,7 +14978,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@fingerprintjs/fingerprintjs": "npm:3.4.2"
     "@github/webauthn-json": "npm:^2.1.1"
-    "@gravatar-com/hovercards": "npm:^0.13.0"
+    "@gravatar-com/hovercards": "npm:^0.14.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
     "@sentry/webpack-plugin": "npm:^1.21.0"
     "@stripe/react-stripe-js": "npm:^2.1.0"

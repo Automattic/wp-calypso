@@ -33,11 +33,19 @@ export default function Step3Send( { state }: StepProps ) {
 		if ( isReportPending ) {
 			return (
 				<>
-					<h2 className="build-report__step-title">
+					<h2 className="build-report__step-title" aria-current="step">
 						{ translate( 'Step 3 of 3: Preparing your report' ) }
 					</h2>
-					<p className="build-report__loading-state build-report__content-description">
-						<Spinner /> { translate( 'Please wait while we prepare your report…' ) }
+					<p
+						className="build-report__loading-state build-report__content-description"
+						role="status"
+						aria-live="polite"
+						aria-label={ translate( 'Please wait while we prepare your report…' ) }
+					>
+						<Spinner aria-hidden="true" />
+						<span aria-hidden="true">
+							{ translate( 'Please wait while we prepare your report…' ) }
+						</span>
 					</p>
 				</>
 			);
@@ -46,10 +54,10 @@ export default function Step3Send( { state }: StepProps ) {
 		if ( isReportErrorStatus ) {
 			return (
 				<>
-					<h2 className="build-report__step-title">
+					<h2 className="build-report__step-title" aria-current="step">
 						{ translate( 'Step 3 of 3: Report preparation failed' ) }
 					</h2>
-					<p className="build-report__step-description">
+					<p className="build-report__step-description" role="alert" aria-live="assertive">
 						{ translate( 'There was an error preparing your report.' ) }
 					</p>
 				</>
@@ -59,16 +67,17 @@ export default function Step3Send( { state }: StepProps ) {
 		if ( isProcessed ) {
 			return (
 				<>
-					<h2 className="build-report__step-title">
+					<h2 className="build-report__step-title" aria-current="step">
 						{ translate( 'Step 3 of 3: Send your report' ) }
 					</h2>
 
-					<p className="build-report__step-description">
-						{ translate(
-							'Your report is ready for sending. Checkout the preview, then click "Send to client now".'
-						) }
-						<br />
-						{ translate( "We'll take it from there!" ) }
+					<p className="build-report__step-description" role="status" aria-live="polite">
+						<span>
+							{ translate(
+								'Your report is ready for sending. Checkout the preview, then click "Send to client now".'
+							) }
+						</span>
+						<span>{ translate( "We'll take it from there!" ) }</span>
 					</p>
 					<Button
 						variant="secondary"
@@ -87,11 +96,11 @@ export default function Step3Send( { state }: StepProps ) {
 	}
 	return (
 		<>
-			<h2 className="build-report__step-title">
+			<h2 className="build-report__step-title" aria-current="step">
 				{ translate( 'Step 3 of 3: Unknown report status' ) }
 			</h2>
 
-			<p className="build-report__step-description">
+			<p className="build-report__step-description" role="alert" aria-live="assertive">
 				{ translate( 'There was an error preparing your report.' ) }
 			</p>
 		</>

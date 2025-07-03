@@ -171,3 +171,15 @@ input[type="text"].form-text-input.jetpack-cancellation-survey__choice-item-text
 	width: 100%;
 	margin-bottom: 1.5rem;
 }
+
+.cancel-jetpack-form__notice {
+	margin-bottom: 24px;
+	align-self: center;
+	width: fit-content;
+	padding-right: 24px;
+}
+
+.cancel-jetpack-form__notice-container {
+	display: flex;
+	justify-content: center;
+}

@@ -24,6 +24,7 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
@@ -413,6 +414,7 @@ function UseMyDomain( props ) {
 
 		return (
 			<>
+				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				{ goBack && (
 					<BackButton className={ baseClassName + '__go-back' } onClick={ onGoBack }>
 						<Gridicon icon="arrow-left" size={ 18 } />

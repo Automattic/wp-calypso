@@ -16,6 +16,7 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
 import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
@@ -63,13 +64,16 @@ class CancelPurchaseForm extends Component {
 		purchase: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
-		onClickFinalConfirm: PropTypes.func.isRequired,
+		onSurveyComplete: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 		cancelBundledDomain: PropTypes.bool,
 		includedDomainPurchase: PropTypes.object,
 		linkedPurchases: PropTypes.array,
 		skipRemovePlanSurvey: PropTypes.bool,
+		cancellationInProgress: PropTypes.bool,
+		cancellationCompleted: PropTypes.bool,
+		cancellationMessage: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -77,7 +81,7 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert } = this.props;
+		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert, flowType } = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
 		if (
@@ -93,7 +97,7 @@ class CancelPurchaseForm extends Component {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
 
-		if ( willAtomicSiteRevert ) {
+		if ( willAtomicSiteRevert && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 
@@ -175,18 +179,20 @@ class CancelPurchaseForm extends Component {
 	};
 
 	onTextOneChange = ( eventOrValue, detailsValue ) => {
+		const { downgradeClick, freeMonthOfferClick, purchase } = this.props;
 		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
-		const { purchaseIsAlreadyExtended } = this.state;
+		const { purchaseIsAlreadyExtended, questionOneDetails } = this.state;
 		const newState = {
 			...this.state,
 			questionOneText: value,
-			questionOneDetails: detailsValue || this.state.questionOneDetails,
+			questionOneDetails: detailsValue || questionOneDetails,
 			upsell:
 				getUpsellType( value, {
-					productSlug: this.props.purchase?.productSlug || '',
+					productSlug: purchase?.productSlug || '',
 					canRefund: !! parseFloat( this.getRefundAmount() ),
-					canDowngrade: !! this.props.downgradeClick,
-					canOfferFreeMonth: !! this.props.freeMonthOfferClick && ! purchaseIsAlreadyExtended,
+					canDowngrade: !! downgradeClick,
+					canOfferFreeMonth:
+						!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
 				} ) || '',
 		};
 		this.setState( newState );
@@ -298,7 +304,9 @@ class CancelPurchaseForm extends Component {
 			}
 		}
 
-		this.props.onClickFinalConfirm();
+		if ( this.props.onSurveyComplete ) {
+			this.props.onSurveyComplete();
+		}
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
@@ -539,33 +547,6 @@ class CancelPurchaseForm extends Component {
 		return ! disableButtons && ! isSubmitting;
 	}
 
-	getFinalActionText() {
-		const { flowType, translate, disableButtons, purchase } = this.props;
-		const { isSubmitting, solution } = this.state;
-		const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
-		const isCancelling = disableButtons || isSubmitting;
-
-		if ( isCancelling && ! solution ) {
-			return isRemoveFlow ? translate( 'Removing…' ) : translate( 'Cancelling…' );
-		}
-
-		if ( isPlan( purchase ) ) {
-			if ( this.state.surveyStep === UPSELL_STEP ) {
-				return isRemoveFlow
-					? translate( 'Remove my current plan' )
-					: translate( 'Cancel my current plan' );
-			}
-
-			return isRemoveFlow
-				? translate( 'Submit and remove plan' )
-				: translate( 'Submit and cancel plan' );
-		}
-
-		return isRemoveFlow
-			? translate( 'Submit and remove product' )
-			: translate( 'Submit and cancel product' );
-	}
-
 	renderStepButtons = () => {
 		const { translate, disableButtons } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
@@ -601,7 +582,7 @@ class CancelPurchaseForm extends Component {
 						disabled={ ! this.canGoNext() }
 						onClick={ this.onSubmit }
 					>
-						{ this.getFinalActionText() }
+						{ translate( 'Submit' ) }
 					</GutenbergButton>
 					<GutenbergButton
 						isSecondary
@@ -624,7 +605,7 @@ class CancelPurchaseForm extends Component {
 				disabled={ ! this.canGoNext() }
 				onClick={ this.onSubmit }
 			>
-				{ this.getFinalActionText() }
+				{ translate( 'Submit' ) }
 			</GutenbergButton>
 		);
 	};
@@ -724,7 +705,7 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 	render() {
-		const { purchase, site } = this.props;
+		const { purchase, site, cancellationCompleted, cancellationMessage } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( ! surveyStep ) {
@@ -751,7 +732,21 @@ class CancelPurchaseForm extends Component {
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
-						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
+						<BlankCanvas.Content>
+							{ cancellationCompleted && cancellationMessage && (
+								<div className="cancel-purchase-form__notice-container">
+									<Notice
+										status="is-success"
+										className="cancel-purchase-form__notice"
+										theme="light"
+										showDismiss={ false }
+									>
+										{ cancellationMessage }
+									</Notice>
+								</div>
+							) }
+							{ this.surveyContent() }
+						</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div

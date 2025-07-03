@@ -11,6 +11,7 @@ export { default as useRecordCommentNotificationsToggle } from './use-record-com
 export { default as useRecordNotificationsToggle } from './use-record-notifications-toggle';
 export { default as useRecordPostEmailsSetFrequency } from './use-record-post-emails-set-frequency';
 export { default as useRecordPostEmailsToggle } from './use-record-post-emails-toggle';
+export { default as useRecordRecommendToggle } from './use-record-recommend-toggle';
 export { default as useRecordRecommendedSiteSubscribed } from './use-record-recommended-site-subscribed';
 export { default as useRecordRecommendedSiteDismissed } from './use-record-recommended-site-dismissed';
 export { default as useRecordSearchPerformed } from './use-record-search-performed';

@@ -261,7 +261,7 @@ export function PurchasesDataViews( {
 					return Boolean( item.domain && item.id ) && ! hasTransferredOwnership;
 				},
 				callback: ( items: Purchases.Purchase[] ) => {
-					const siteUrl = items[ 0 ].domain;
+					const siteUrl = items[ 0 ].siteSlug || items[ 0 ].domain;
 					const subscriptionId = items[ 0 ].id;
 					if ( ! siteUrl ) {
 						// eslint-disable-next-line no-console

@@ -13,35 +13,11 @@ export default function useHandleReportDelete() {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	// Reports query key so we optimistically update the reports list
+	// Reports query key so we can invalidate the reports list
 	const agencyId = useSelector( getActiveAgencyId );
 	const reportsQueryKey = getReportsQueryKey( agencyId );
 
 	const { mutate: deleteReport, isPending } = useDeleteReportMutation( {
-		// Optimistically update the reports list
-		onMutate: async ( { id }: { id: number } ) => {
-			// Cancel any current refetches, so they don't overwrite our optimistic update
-			await queryClient.cancelQueries( {
-				queryKey: reportsQueryKey,
-			} );
-			// Snapshot the previous value
-			const previousReports = queryClient.getQueryData( reportsQueryKey );
-			// Optimistically remove the report from the list
-			queryClient.setQueryData( reportsQueryKey, ( oldReports: Report[] | undefined ) => {
-				if ( ! oldReports ) {
-					return [];
-				}
-				return oldReports.filter( ( report: Report ) => report.id !== id );
-			} );
-			// Store previous reports in case of failure
-			return { previousReports };
-		},
-		onError: ( error, variables, context ) => {
-			// Rollback on error
-			if ( context?.previousReports ) {
-				queryClient.setQueryData( reportsQueryKey, context.previousReports );
-			}
-		},
 		onSettled: () => {
 			queryClient.invalidateQueries( {
 				queryKey: reportsQueryKey,
@@ -59,6 +35,7 @@ export default function useHandleReportDelete() {
 							successNotice( translate( 'The report has been deleted.' ), {
 								id: 'delete-report-success',
 								duration: 5000,
+								displayOnNextPage: true,
 							} )
 						);
 						callback?.( true );

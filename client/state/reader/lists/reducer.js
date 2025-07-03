@@ -17,6 +17,7 @@ import {
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
+	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
@@ -73,7 +74,19 @@ export const listItems = ( state = {}, action ) => {
 				...state,
 				[ action.listId ]: action.listItems,
 			};
+		case READER_LIST_ITEM_ADD_FEED: {
+			// Optimistic update: immediately add feed to list
+			const currentItems = state[ action.listId ] || [];
+			if ( some( currentItems, { feed_ID: action.feedId } ) ) {
+				return state;
+			}
+			return {
+				...state,
+				[ action.listId ]: [ ...currentItems, { feed_ID: action.feedId } ],
+			};
+		}
 		case READER_LIST_ITEM_ADD_FEED_RECEIVE: {
+			// API success: ensure feed is in list (might already be there from optimistic update)
 			const currentItems = state[ action.listId ] || [];
 			if ( some( currentItems, { feed_ID: action.feedId } ) ) {
 				return state;

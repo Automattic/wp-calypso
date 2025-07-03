@@ -5,11 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
-import {
-	isOdieAllowedBot,
-	getHelpCenterZendeskConversationStarted,
-	getIsRequestingHumanSupport,
-} from '../utils';
+import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
 	Chat,
 	Message,
@@ -52,9 +48,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
 	setMessageLikedStatus: noop,
-	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	trackEvent: noop,
-	waitAnswerToFirstMessageFromHumanSupport: false,
 	forceEmailSupport: false,
 } );
 
@@ -140,9 +134,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		resetSupportInteraction();
 	}, [ trackEvent, resetSupportInteraction, setMainChatState ] );
 
-	const [ waitAnswerToFirstMessageFromHumanSupport, setWaitAnswerToFirstMessageFromHumanSupport ] =
-		useState( getHelpCenterZendeskConversationStarted() !== null );
-
 	/**
 	 * Add a new message to the chat.
 	 */
@@ -213,10 +204,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChatStatus,
 				setExperimentVariationName,
 				setMessageLikedStatus,
-				setWaitAnswerToFirstMessageFromHumanSupport,
 				trackEvent,
 				version: overriddenVersion,
-				waitAnswerToFirstMessageFromHumanSupport,
 				forceEmailSupport,
 			} }
 		>

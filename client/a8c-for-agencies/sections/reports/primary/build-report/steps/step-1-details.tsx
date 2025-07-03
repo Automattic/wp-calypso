@@ -8,6 +8,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import A4ASelectSite from 'calypso/a8c-for-agencies/components/a4a-select-site';
+import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formatDate } from '../../../lib/format-date';
@@ -70,12 +71,42 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 
 	return (
 		<>
-			<h2 className="build-report__step-title">
+			<h2 className="build-report__step-title" aria-current="step">
 				{ translate( 'Step 1 of 3: Enter report details' ) }
 			</h2>
 
 			<div className="build-report__field">
 				<A4ASelectSite
+					subtitle={
+						<div className="build-report__select-site-subtitle">
+							<span>
+								{ translate(
+									"If you don't see the site in the list, connect it first via the {{a}}Sites Dashboard{{/a}}.",
+									{
+										components: {
+											a: (
+												<a
+													href={ A4A_SITES_LINK }
+													onClick={ () =>
+														dispatch(
+															recordTracksEvent(
+																'calypso_a4a_select_site_modal_sites_dashboard_click'
+															)
+														)
+													}
+												/>
+											),
+										},
+									}
+								) }
+							</span>
+							<span>
+								{ translate(
+									'Only live WordPress.com or Pressable sites using Jetpack or the Automattic for Agencies plugin are supported.'
+								) }
+							</span>
+						</div>
+					}
 					isDisabled={ isLoadingState }
 					selectedSiteId={ selectedSite?.blogId }
 					onSiteSelect={ ( site: A4ASelectSiteItem ) => {
@@ -85,9 +116,18 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 					buttonLabel={ selectedSite?.domain || translate( 'Choose a site to report on' ) }
 					trackingEvent="calypso_a4a_reports_select_site_button_click"
 					data-field="selectedSite"
+					aria-required="true"
+					aria-describedby="selected-site-error"
 				/>
 				{ hasFieldError( 'selectedSite' ) && (
-					<div className="build-report__error-message">{ getFieldError( 'selectedSite' ) }</div>
+					<div
+						role="alert"
+						id="selected-site-error"
+						aria-live="polite"
+						className="build-report__error-message"
+					>
+						{ getFieldError( 'selectedSite' ) }
+					</div>
 				) }
 			</div>
 
@@ -114,18 +154,31 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 							__nextHasNoMarginBottom
 							id="start-date"
 							label={ translate( 'Start date' ) }
+							aria-label={ translate( 'Start date' ) }
 							value={ formatDate( startDate ) }
 							placeholder={ translate( 'Select start date' ) }
 							onChange={ () => {} }
 							onClick={ () => setIsStartDatePickerOpen( true ) }
+							onKeyDown={ ( event ) => {
+								if ( event.key === 'Enter' || event.key === ' ' ) {
+									event.preventDefault();
+									setIsStartDatePickerOpen( true );
+								}
+							} }
 							readOnly
 							className="build-report__date-input"
+							role="button"
+							aria-expanded={ isStartDatePickerOpen }
+							aria-haspopup="dialog"
 						/>
 						{ isStartDatePickerOpen && (
 							<Popover
 								onClose={ () => setIsStartDatePickerOpen( false ) }
 								placement="bottom-start"
 								className="build-report__date-popover"
+								onFocusOutside={ () => setIsStartDatePickerOpen( false ) }
+								role="dialog"
+								aria-label={ translate( 'Start date picker' ) }
 							>
 								<DatePicker
 									currentDate={ startDate }
@@ -161,14 +214,26 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 							placeholder={ translate( 'Select end date' ) }
 							onChange={ () => {} }
 							onClick={ () => setIsEndDatePickerOpen( true ) }
+							onKeyDown={ ( event ) => {
+								if ( event.key === 'Enter' || event.key === ' ' ) {
+									event.preventDefault();
+									setIsEndDatePickerOpen( true );
+								}
+							} }
 							readOnly
 							className="build-report__date-input"
+							role="button"
+							aria-expanded={ isEndDatePickerOpen }
+							aria-haspopup="dialog"
 						/>
 						{ isEndDatePickerOpen && (
 							<Popover
 								onClose={ () => setIsEndDatePickerOpen( false ) }
 								placement="bottom-start"
 								className="build-report__date-popover"
+								onFocusOutside={ () => setIsEndDatePickerOpen( false ) }
+								role="dialog"
+								aria-label={ translate( 'End date picker' ) }
 							>
 								<DatePicker
 									currentDate={ endDate }
@@ -212,9 +277,19 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 					}
 					data-field="clientEmail"
 					disabled={ isLoadingState }
+					aria-required="true"
+					aria-describedby="client-email-error"
+					aria-invalid={ hasFieldError( 'clientEmail' ) }
 				/>
 				{ hasFieldError( 'clientEmail' ) && (
-					<div className="build-report__error-message">{ getFieldError( 'clientEmail' ) }</div>
+					<div
+						role="alert"
+						id="client-email-error"
+						aria-live="polite"
+						className="build-report__error-message"
+					>
+						{ getFieldError( 'clientEmail' ) }
+					</div>
 				) }
 			</div>
 			<CheckboxControl
@@ -246,9 +321,19 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 						placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
 						data-field="teammateEmails"
 						disabled={ isLoadingState }
+						aria-required="true"
+						aria-describedby="teammate-emails-error"
+						aria-invalid={ hasFieldError( 'teammateEmails' ) }
 					/>
 					{ hasFieldError( 'teammateEmails' ) && (
-						<div className="build-report__error-message">{ getFieldError( 'teammateEmails' ) }</div>
+						<div
+							role="alert"
+							id="teammate-emails-error"
+							aria-live="polite"
+							className="build-report__error-message"
+						>
+							{ getFieldError( 'teammateEmails' ) }
+						</div>
 					) }
 				</div>
 			) }
