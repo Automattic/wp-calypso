@@ -13,9 +13,6 @@ export async function createWpcomAccountBeforeTransaction(
 	const isAkismetUserLessCheckout = transactionCart.products.some(
 		( product ) => product.extra.isAkismetSitelessCheckout
 	);
-	const isAffiliatePmUserLessCheckout = transactionCart.products.some(
-		( product ) => product.extra.isAffiliatePmSitelessCheckout
-	);
 	const isGiftingCheckout = transactionCart.products.some(
 		( product ) => product.extra.isGiftPurchase
 	);
@@ -26,9 +23,6 @@ export async function createWpcomAccountBeforeTransaction(
 		}
 		if ( isAkismetUserLessCheckout ) {
 			return 'akismet-userless-checkout';
-		}
-		if ( isAffiliatePmUserLessCheckout ) {
-			return 'affiliate-pm-userless-checkout';
 		}
 		if ( isGiftingCheckout ) {
 			return 'gifting-userless-checkout';

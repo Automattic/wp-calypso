@@ -42,10 +42,6 @@ export default function useCheckoutFlowTrackKey( {
 			return 'a4a_siteless_checkout';
 		}
 
-		if ( sitelessCheckoutType === 'affiliate-pm' ) {
-			return 'affiliate_pm_siteless_checkout';
-		}
-
 		if ( isLoggedOutCart ) {
 			return 'wpcom_registrationless';
 		}

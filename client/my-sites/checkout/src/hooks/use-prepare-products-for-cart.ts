@@ -224,16 +224,16 @@ function chooseAddHandler( {
 		return 'addRenewalItems';
 	}
 
-	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
+	if (
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'affiliate-pm'
+	) {
 		return 'addProductFromSlug';
 	}
 
 	if ( sitelessCheckoutType === 'marketplace' ) {
 		return 'addProductFromBillingIntent';
-	}
-
-	if ( sitelessCheckoutType === 'affiliate-pm' ) {
-		return 'addProductFromSlug';
 	}
 
 	if ( ! isLoading ) {
@@ -638,7 +638,6 @@ function createRenewalItemToAddToCart( {
 		purchaseId: String( purchaseId ),
 		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
-		isAffiliatePmSitelessCheckout: sitelessCheckoutType === 'affiliate-pm',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};
@@ -694,7 +693,6 @@ function createItemToAddToCart( {
 		extra: {
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
-			isAffiliatePmSitelessCheckout: sitelessCheckoutType === 'affiliate-pm',
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
 			context: 'calypstore',

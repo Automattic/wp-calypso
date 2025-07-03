@@ -885,7 +885,6 @@ export interface ResponseCartProductExtra {
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
 	isA4ASitelessCheckout?: boolean;
-	isAffiliatePmSitelessCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
 
@@ -936,7 +935,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
 	isA4ASitelessCheckout?: boolean;
-	isAffiliatePmSitelessCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
 	intentId?: number;
