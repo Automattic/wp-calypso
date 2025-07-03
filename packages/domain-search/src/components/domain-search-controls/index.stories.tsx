@@ -12,6 +12,7 @@ const meta: Meta< typeof DomainSearchControls > = {
 
 export default meta;
 type Story = StoryObj< typeof DomainSearchControls >;
+type FiltersStory = StoryObj< typeof DomainSearchControls.Filters >;
 
 export const Default: Story = {
 	args: {},
@@ -21,8 +22,11 @@ export const InputOnly: Story = {
 	render: () => <DomainSearchControls.Input />,
 };
 
-export const FiltersOnly: Story = {
-	render: () => <DomainSearchControls.Filters />,
+export const FiltersOnly: FiltersStory = {
+	args: {
+		count: 2,
+	},
+	render: ( args: { count?: number } ) => <DomainSearchControls.Filters count={ args.count } />,
 };
 
 export const SubmitOnly: Story = {

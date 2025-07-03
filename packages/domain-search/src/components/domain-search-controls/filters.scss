@@ -1,6 +1,21 @@
 @import './variables';
 
 .domain-search-controls__filters {
-    height: $input-height;
-    padding: 1rem !important;
+    position: relative;
+    
+    .components-button {
+        height: $input-height;
+        padding: 1rem !important;
+    }
+
+    .domain-search-controls__filters-count {
+        position: absolute;
+        top: -0.5rem;
+        right: -0.5rem;
+        background: var(--studio-blue-50);
+        color: var(--studio-white);
+        padding: 0.25rem 0.5rem;
+        border-radius: 100%;
+        font-size: 0.75rem;
+    }
 }
