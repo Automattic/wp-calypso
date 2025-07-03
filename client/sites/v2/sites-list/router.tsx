@@ -5,7 +5,7 @@ import {
 	createRouter,
 	redirect,
 } from '@tanstack/react-router';
-import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/a8c';
+import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import Root from '../components/root';

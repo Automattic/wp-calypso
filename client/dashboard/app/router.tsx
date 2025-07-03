@@ -20,10 +20,10 @@ import {
 } from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
-import { isAutomatticianQuery } from './queries/a8c';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
-import { profileQuery } from './queries/profile';
+import { isAutomatticianQuery } from './queries/me-a8c';
+import { profileQuery } from './queries/me-profile';
 import { siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';

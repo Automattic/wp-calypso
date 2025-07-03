@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
-import { isAutomatticianQuery } from '../app/queries/a8c';
+import { isAutomatticianQuery } from '../app/queries/me-a8c';
 import { mePreferencesQuery, mePreferencesMutation } from '../app/queries/me-preferences';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
