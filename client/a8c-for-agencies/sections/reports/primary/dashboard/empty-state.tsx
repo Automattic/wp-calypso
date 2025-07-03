@@ -59,9 +59,7 @@ const ReportsDashboardEmptyState = () => {
 				</StepSection>
 			</div>
 			<div className="reports-dashboard-empty-state__footnote">
-				{ translate(
-					'*Only live WordPress.com or Pressable sites using Jetpack or the Automattic for Agencies plugin are supported.'
-				) }
+				{ translate( '*Only live WordPress.com or Pressable sites using Jetpack are supported.' ) }
 			</div>
 			<ExampleReportModal
 				isVisible={ showExampleModal }

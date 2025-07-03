@@ -36,6 +36,7 @@ const A4ASelectSite = ( {
 				variant="secondary"
 				onClick={ handleOpenModal }
 				className={ className }
+				data-field="selectedSite"
 			>
 				{ buttonLabel || translate( 'Select a site' ) }
 			</Button>
