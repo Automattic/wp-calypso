@@ -47,8 +47,8 @@ const domainsDataViewsGlobalStyles = css`
 
 		header.navigation-header {
 			border-block-end: 1px solid var( --color-neutral-5 );
-			padding-block-start: 24px;
-			padding-block-end: 24px;
+			padding-block-start: 16px;
+			padding-block-end: 16px;
 		}
 
 		div.layout.is-global-sidebar-visible {

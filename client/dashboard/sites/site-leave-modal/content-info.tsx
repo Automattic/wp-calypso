@@ -139,7 +139,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 			<VStack spacing={ 6 }>
 				<Text as="p">
 					{ createInterpolateElement(
-						/* translators: %s: site domain */
+						/* translators: <siteDomain />: site domain */
 						__( 'Are you sure to leave the site <siteDomain />?' ),
 						{
 							siteDomain: <strong>{ site.slug }</strong>,

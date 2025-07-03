@@ -16,11 +16,14 @@ export function getSiteStatus( item: Site ) {
 		return 'deleted';
 	}
 
-	if ( item.site_migration.migration_status?.startsWith( 'migration-pending' ) ) {
+	const { migration_status } = item.site_migration;
+	if ( migration_status?.startsWith( 'migration-pending' ) ) {
 		return 'migration_pending';
 	}
-
-	if ( item.site_migration.migration_status?.startsWith( 'migration-started' ) ) {
+	if (
+		migration_status?.startsWith( 'migration-started' ) ||
+		migration_status?.startsWith( 'migration-in-progress' )
+	) {
 		return 'migration_started';
 	}
 

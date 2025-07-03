@@ -2,9 +2,7 @@ import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
-import QueryRewindState from '../../../components/data/query-rewind-state';
-import { useFirstMatchingBackupAttempt } from '../../../my-sites/backup/hooks';
-import SyncModal from '../staging-site-sync-modal';
+import AsyncLoad from 'calypso/components/async-load';
 
 interface SyncDropdownProps {
 	className?: string;
@@ -29,24 +27,12 @@ export default function SyncDropdown( {
 	const pushLabel =
 		environment === 'staging' ? __( 'Push to Production' ) : __( 'Push to Staging' );
 
-	const querySiteId =
-		( environment === 'staging' && syncType === 'push' ) ||
-		( environment === 'production' && syncType === 'pull' )
-			? stagingSiteId
-			: productionSiteId;
-
-	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
-		sortOrder: 'desc',
-		successOnly: true,
-	} );
-	const rewindId = lastKnownBackupAttempt?.rewindId;
-
-	const handleOpenModal = ( type: 'pull' | 'push' ) => {
+	const handleOpenModal = ( type: 'pull' | 'push' ): void => {
 		setSyncType( type );
 		setIsModalOpen( true );
 	};
 
-	const handleCloseModal = () => {
+	const handleCloseModal = (): void => {
 		setIsModalOpen( false );
 	};
 
@@ -93,20 +79,16 @@ export default function SyncDropdown( {
 					</div>
 				) }
 			/>
-			{ isModalOpen && querySiteId > 0 && (
-				<>
-					<QueryRewindState siteId={ querySiteId } />
-					<SyncModal
-						onClose={ handleCloseModal }
-						syncType={ syncType }
-						environment={ environment }
-						siteSlug={ siteSlug }
-						productionSiteId={ productionSiteId }
-						stagingSiteId={ stagingSiteId }
-						querySiteId={ querySiteId }
-						rewindId={ rewindId }
-					/>
-				</>
+			{ isModalOpen && (
+				<AsyncLoad
+					require="calypso/sites/staging-site/components/staging-site-sync-modal"
+					onClose={ handleCloseModal }
+					syncType={ syncType }
+					environment={ environment }
+					siteSlug={ siteSlug }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
+				/>
 			) }
 		</>
 	);

@@ -230,6 +230,17 @@ export const requestReaderListItems = (
 	listSlug,
 } );
 
+/**
+ * Request items for the recommended blogs list.
+ * @param listOwner - Owner of the recommended blogs list (usually current user)
+ * @returns Action object
+ */
+export const requestRecommendedBlogsListItems = ( listOwner: string ): ReaderListAction => ( {
+	type: READER_LIST_ITEMS_REQUEST,
+	listOwner,
+	listSlug: 'recommended-blogs',
+} );
+
 export const receiveReaderListItems = (
 	listId: number,
 	listItems: ListItem[]
@@ -406,5 +417,67 @@ export function requestUserRecommendedBlogs( listOwner: string ) {
 				listOwner,
 			} );
 		}
+	};
+}
+
+/**
+ * Add a feed to the recommended blogs list.
+ * @param listId - List ID of the recommended blogs list
+ * @param feedId - Feed ID to add (required for feeds/new endpoint)
+ * @param listOwner - Owner of the recommended blogs list
+ * @param options - Optional configuration for notices
+ * @param options.successMessage - Custom success message
+ * @param options.errorMessage - Custom error message
+ * @param options.noticeDuration - Duration for notice display
+ * @returns Action object
+ */
+export function addRecommendedBlogsSite(
+	listId: number,
+	feedId: number,
+	listOwner: string,
+	options?: {
+		successMessage?: string;
+		errorMessage?: string;
+		noticeDuration?: number;
+	}
+): ReaderListAction {
+	return {
+		type: READER_LIST_ITEM_ADD_FEED,
+		listId,
+		listOwner,
+		listSlug: 'recommended-blogs',
+		feedId,
+		...options,
+	};
+}
+
+/**
+ * Remove a feed from the recommended blogs list.
+ * @param listId - List ID of the recommended blogs list
+ * @param feedId - Feed ID to remove
+ * @param listOwner - Owner of the recommended blogs list
+ * @param options - Optional configuration for notices
+ * @param options.successMessage - Custom success message
+ * @param options.errorMessage - Custom error message
+ * @param options.noticeDuration - Duration for notice display
+ * @returns Action object
+ */
+export function removeRecommendedBlogsSite(
+	listId: number,
+	feedId: number,
+	listOwner: string,
+	options?: {
+		successMessage?: string;
+		errorMessage?: string;
+		noticeDuration?: number;
+	}
+): ReaderListAction {
+	return {
+		type: READER_LIST_ITEM_DELETE_FEED,
+		listId,
+		listOwner,
+		listSlug: 'recommended-blogs',
+		feedId,
+		...options,
 	};
 }

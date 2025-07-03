@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
+import { formatNumber } from '@automattic/number-formatters';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
@@ -42,7 +43,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import BlazePluginBanner from './components/blaze-plugin-banner';
 import CampaignsTotalStats from './components/campaigns-total-stats';
-import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import TspBanner from './components/tsp-banner';
@@ -200,14 +200,6 @@ export default function PromotedPosts( { tab }: Props ) {
 			itemCount: totalCampaignsUnfiltered,
 			label: translate( 'Campaigns' ),
 		},
-		{
-			id: 'credits',
-			name: translate( 'Credits' ),
-			className: 'pull-right',
-			itemCount: parseFloat( creditBalance ),
-			isCountAmount: true,
-			enabled: parseFloat( creditBalance ) > 0,
-		},
 	];
 
 	const cookies = cookie.parse( document.cookie );
@@ -347,6 +339,29 @@ export default function PromotedPosts( { tab }: Props ) {
 				<TspBanner onToggle={ toggleTspBanner } isCollapsed={ isTspBannerCollapsed } />
 			) }
 
+			{ parseFloat( creditBalance ) > 0 && (
+				<div className="blaze-credits-container">
+					<div className="blaze-credits-container__item">
+						<div className="blaze-credits-container__label">
+							{ translate( 'Credits' ) }
+							<InlineSupportLink
+								showIcon
+								className="credits-inline-support-link"
+								iconSize={ 18 }
+								showText={ false }
+								supportPostId={ 240330 }
+								supportLink={ localizeUrl(
+									'https://wordpress.com/support/promote-a-post/blaze-credits/'
+								) }
+							/>
+						</div>
+						<div className="blaze-credits-container__result">
+							{ '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } ) }
+						</div>
+					</div>
+				</div>
+			) }
+
 			{
 				// TODO: Uncomment when DebtNotifier is implemented
 				/* <DebtNotifier /> */
@@ -425,17 +440,6 @@ export default function PromotedPosts( { tab }: Props ) {
 						hasMorePages={ campaignsHasMorePages }
 						campaigns={ pagedCampaigns as Campaign[] }
 					/>
-				</>
-			) }
-
-			{ /* Render credits tab */ }
-			{ selectedTab === 'credits' && (
-				<>
-					<BlazePageViewTracker
-						path={ getAdvertisingDashboardPath( '/credits/:site' ) }
-						title="Advertising > Credits"
-					/>
-					<CreditBalance balance={ creditBalance } />
 				</>
 			) }
 

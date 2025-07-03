@@ -14,7 +14,11 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { A4A_REPORTS_LINK, A4A_REPORTS_BUILD_LINK } from '../../constants';
+import {
+	A4A_REPORTS_LINK,
+	A4A_REPORTS_BUILD_LINK,
+	A4A_REPORTS_DASHBOARD_LINK,
+} from '../../constants';
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
 import usePollReportStatus from '../../hooks/use-poll-report-status';
@@ -65,9 +69,13 @@ const BuildReport = () => {
 					{
 						duration: 5000,
 						id: isPreview ? 'send-report-preview-success' : 'send-report-success',
+						displayOnNextPage: ! isPreview,
 					}
 				)
 			);
+			if ( ! isPreview ) {
+				page.redirect( A4A_REPORTS_DASHBOARD_LINK );
+			}
 		},
 		onError: ( error ) => {
 			dispatch(

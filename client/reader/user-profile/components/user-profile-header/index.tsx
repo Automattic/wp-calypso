@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import { isEnabled } from '@automattic/calypso-config';
 import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
@@ -14,26 +14,32 @@ import './style.scss';
 
 interface UserProfileHeaderProps {
 	user: UserData;
+	view: string;
 }
 
-const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
+const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const currentPath = page.current;
 	const userProfileUrlWithUsername = getUserProfileUrl( user.user_login ?? '' );
-	const userProfileUrlWithId = getUserProfileUrl( user.ID.toString() );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
 			path: userProfileUrlWithUsername,
-			selected: currentPath === userProfileUrlWithUsername || currentPath === userProfileUrlWithId,
+			selected: view === 'posts',
 		},
 		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrlWithUsername }/lists`,
-			selected:
-				currentPath === `${ userProfileUrlWithUsername }/lists` ||
-				currentPath === `${ userProfileUrlWithId }/lists`,
+			selected: view === 'lists',
 		},
+		...( isEnabled( 'reader/recommended-blogs-list' )
+			? [
+					{
+						label: translate( 'Recommended Blogs' ),
+						path: `${ userProfileUrlWithUsername }/recommended-blogs`,
+						selected: view === 'recommended-blogs',
+					},
+			  ]
+			: [] ),
 	];
 
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';

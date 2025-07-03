@@ -1,16 +1,18 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { fixMe, useTranslate } from 'i18n-calypso';
+import { type LocalizeProps, fixMe } from 'i18n-calypso';
 
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
-	isLostPassword: boolean;
+	action?: string;
+	translate: LocalizeProps[ 'translate' ];
 }
 
-const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, isLostPassword }: Props ) => {
-	const translate = useTranslate();
-
-	if ( ! isSocialFirst || twoFactorAuthType || isLostPassword ) {
+/**
+ * TODO This will be replaced by a hook in the future.
+ */
+const getHeadingSubText = ( { isSocialFirst, twoFactorAuthType, action, translate }: Props ) => {
+	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
 	}
 
@@ -60,10 +62,15 @@ const HeadingSubText = ( { isSocialFirst, twoFactorAuthType, isLostPassword }: P
 		),
 	} );
 
-	/**
-	 * Return a span here because the Step.Heading renders subtext as a p tag.
-	 */
-	return <span className="wp-login__heading-subtext">{ tos }</span>;
+	return (
+		<>
+			{ 'lostpassword' === action
+				? translate(
+						"Please enter your username or email address. You'll receive a link to create a new password via email."
+				  )
+				: tos }
+		</>
+	);
 };
 
-export default HeadingSubText;
+export default getHeadingSubText;
