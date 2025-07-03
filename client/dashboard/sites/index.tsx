@@ -83,7 +83,7 @@ export default function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	const handleOnViewChange = ( nextView: View ) => {
+	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.type === 'list' ) {
 			return;
 		}
@@ -149,7 +149,7 @@ export default function Sites() {
 						actions={ actions }
 						view={ view }
 						isLoading={ isLoadingSites }
-						onChangeView={ handleOnViewChange }
+						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>
