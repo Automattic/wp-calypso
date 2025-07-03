@@ -76,7 +76,7 @@ const getInitialLastActionState = () => {
 /*
  * Holds the last action that requires the user to be logged in
  */
-export const lastActionRequiresLogin = ( state, action ) => {
+export const lastActionRequiresLogin = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
 			window.localStorage.setItem(
