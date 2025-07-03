@@ -10,12 +10,12 @@
 	gap: 1rem;
 	position: relative;
 	overflow: hidden;
-	background-image: url(./site-creation-graphic.svg);
+	background-image: url( ./site-creation-graphic.svg );
 	background-repeat: no-repeat;
 	background-position: center right;
 	background-size: auto 100%;
 
-	@media screen and (max-width: 768px) {
+	@media screen and ( max-width: 768px ) {
 		flex-direction: column;
 		gap: 1.5rem;
 		background-size: auto 80%;
@@ -34,16 +34,16 @@
     font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	font-size: 2rem;
 	margin-bottom: 0.25rem;
-	color: var(--color-text);
+	color: var( --color-text );
 }
 
 .staging-site-creation-card__description {
 	max-width: 32rem;
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
 	@include body-medium;
 	margin-bottom: 1rem;
 
-	@media screen and (max-width: 768px) {
+	@media screen and ( max-width: 768px ) {
 		max-width: none;
 	}
 }
@@ -58,7 +58,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
 	font-size: 0.875rem;
 
 	.gridicon {
