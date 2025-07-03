@@ -8,6 +8,15 @@ export const queryClient = new QueryClient( {
 			staleTime: 0,
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
+			retry: ( failureCount: number, error: Error ) => {
+				if ( 'status' in error ) {
+					const status = error.status;
+					if ( typeof status === 'number' && status >= 400 && status < 500 ) {
+						return false;
+					}
+				}
+				return failureCount < 3;
+			},
 		},
 	},
 } );
