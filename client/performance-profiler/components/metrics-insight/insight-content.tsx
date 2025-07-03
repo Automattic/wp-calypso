@@ -43,7 +43,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const [ feedbackOpen, setFeedbackOpen ] = useState( false );
 	const [ userFeedback, setUserFeedback ] = useState( '' );
 	const [ messageIndex, setMessageIndex ] = useState( 0 );
-	const messageTimer = useRef< number | null >( null );
+	const messageTimer = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	const messages = useMemo(
 		() => [
