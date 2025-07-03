@@ -27,7 +27,7 @@ import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import { isSitePlanTrial } from '../plans';
 import { JetpackLogo } from './jetpack-logo';
-import type { Site } from '../../data/types';
+import type { AtomicTransferStatus, Site } from '../../data/types';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -225,7 +225,7 @@ function WithHostingFeaturesQuery( {
 	children,
 }: {
 	site: Site;
-	children: ( transferStatus?: string ) => React.ReactNode;
+	children: ( transferStatus?: AtomicTransferStatus ) => React.ReactNode;
 } ) {
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
