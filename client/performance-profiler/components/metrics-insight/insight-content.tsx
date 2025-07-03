@@ -78,7 +78,6 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 
 	useEffect( () => {
 		if ( isLoading && ! messageTimer.current ) {
-			setMessageIndex( 0 );
 			updateMessageIndex( 0 );
 		}
 		return () => {
