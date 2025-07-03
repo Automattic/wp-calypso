@@ -17,8 +17,9 @@ export const DomainSuggestionCTA = ( { domain }: { domain: Domain } ) => {
 		return (
 			<Button
 				variant="primary"
+				__next40pxDefaultSize
 				icon={ arrowRight }
-				className="domain-suggestion-cta--continue"
+				className="domain-suggestion-cta domain-suggestion-cta--continue"
 				onClick={ onContinue }
 			>
 				{ __( 'Continue' ) }
@@ -27,7 +28,13 @@ export const DomainSuggestionCTA = ( { domain }: { domain: Domain } ) => {
 	}
 
 	return (
-		<Button variant="primary" icon={ shoppingCartIcon } onClick={ () => cart.onAddItem( domain ) }>
+		<Button
+			className="domain-suggestion-cta"
+			variant="primary"
+			__next40pxDefaultSize
+			icon={ shoppingCartIcon }
+			onClick={ () => cart.onAddItem( domain ) }
+		>
 			{ __( 'Add to Cart' ) }
 		</Button>
 	);
