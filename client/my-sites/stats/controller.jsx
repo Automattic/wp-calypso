@@ -529,7 +529,7 @@ export const statsMoved = ( context, next ) => {
 	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
 
 	// Enforce the new location to 10% of users.
-	if ( siteId && ! isJetpack && userId % 10 === 0 ) {
+	if ( siteId && ! isJetpack && userId % 100 < 10 ) {
 		context.primary = <StatsMoved />;
 	}
 	next();
