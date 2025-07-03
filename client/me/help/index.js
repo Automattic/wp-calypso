@@ -1,7 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { sidebar } from 'calypso/me/controller';
 import * as helpController from './controller';
 
 export default function () {
@@ -11,5 +9,5 @@ export default function () {
 		page( '/help/contact', helpController.helpRedirect );
 	}
 
-	page( '/me/chat', sidebar, helpController.contactRedirect, makeLayout, clientRender );
+	page( '/me/chat', helpController.helpRedirect );
 }
