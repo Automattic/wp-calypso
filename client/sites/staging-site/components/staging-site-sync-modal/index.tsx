@@ -61,7 +61,8 @@ interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
-	siteSlug: string;
+	productionSiteSlug: string;
+	stagingSiteSlug: string;
 }
 
 interface EnvironmentConfig {
@@ -133,11 +134,19 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
-export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
+export default function SyncModal( {
+	onClose,
+	syncType,
+	environment,
+	productionSiteSlug,
+	stagingSiteSlug,
+}: SyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
 
-	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
-	//const { siteSlug } = siteRoute.useParams();
+	const targetEnvironment = syncConfig[ environment ].syncTo;
+	const sourceEnvironment = syncConfig[ environment ].syncFrom;
+
+	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
 
 	return (
 		<Modal
@@ -149,19 +158,16 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 				<VStack spacing={ 7 }>
 					<Text>
 						{ createInterpolateElement( syncConfig[ environment ].description, {
-							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
+							a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
 						} ) }
 					</Text>
 					<HStack spacing={ 2 } alignment="center">
 						<EnvironmentLabel
 							label={ syncConfig.fromLabel }
-							environmentType={ syncConfig[ environment ].syncFrom }
+							environmentType={ sourceEnvironment }
 						/>
 						<DirectionArrow />
-						<EnvironmentLabel
-							label={ syncConfig.toLabel }
-							environmentType={ syncConfig[ environment ].syncTo }
-						/>
+						<EnvironmentLabel label={ syncConfig.toLabel } environmentType={ targetEnvironment } />
 					</HStack>
 					<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 					<Text>
