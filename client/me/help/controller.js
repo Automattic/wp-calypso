@@ -56,3 +56,11 @@ export function contactRedirect( context ) {
 	const previousRoute = getPreviousRoute( state );
 	page.redirect( addQueryArgs( '/help', { from: previousRoute } ) );
 }
+
+export function helpRedirect( context ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		page.redirect( '/sites?help-center=home' );
+	} else {
+		window.location.href = localizeUrl( SUPPORT_ROOT );
+	}
+}
