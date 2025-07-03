@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
+import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
 import { siteBackupLastEntryQuery } from '../../app/queries/site-backups';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
@@ -18,14 +19,15 @@ import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
-import { JetpackModules } from '../../data/constants';
-import { hasAtomicFeature, hasJetpackModule } from '../../utils/site-features';
+import { DotcomFeatures, JetpackModules } from '../../data/constants';
+import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
+import { hasAtomicFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import { isSitePlanTrial } from '../plans';
 import { JetpackLogo } from './jetpack-logo';
-import type { Site } from '../../data/types';
+import type { AtomicTransferStatus, Site } from '../../data/types';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -218,6 +220,26 @@ function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 	);
 }
 
+function WithHostingFeaturesQuery( {
+	site,
+	children,
+}: {
+	site: Site;
+	children: ( transferStatus?: AtomicTransferStatus ) => React.ReactNode;
+} ) {
+	const { ref, inView } = useInView( {
+		triggerOnce: true,
+		fallbackInView: true,
+	} );
+
+	const { data } = useQuery( {
+		...siteLatestAtomicTransferQuery( site.ID ),
+		enabled: inView,
+	} );
+
+	return <span ref={ ref }>{ children( data?.status ) }</span>;
+}
+
 export function Status( { site }: { site: Site } ) {
 	const status = getSiteStatus( site );
 	const label = getSiteStatusLabel( site );
@@ -247,11 +269,32 @@ export function Status( { site }: { site: Site } ) {
 		);
 	}
 
-	if ( site.launch_status === 'unlaunched' ) {
-		return <SiteLaunchNag site={ site } />;
+	const renderBasicStatus = () => {
+		if ( site.launch_status === 'unlaunched' ) {
+			return <SiteLaunchNag site={ site } />;
+		}
+		return label;
+	};
+
+	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) && ! site.is_wpcom_atomic ) {
+		return (
+			<WithHostingFeaturesQuery site={ site }>
+				{ ( transferStatus ) => {
+					if ( transferStatus ) {
+						if ( transferStatus === 'error' ) {
+							return __( 'Error activating hosting features' );
+						}
+						if ( isAtomicTransferInProgress( transferStatus ) ) {
+							return __( 'Activating hosting features…' );
+						}
+					}
+					return renderBasicStatus();
+				} }
+			</WithHostingFeaturesQuery>
+		);
 	}
 
-	return label;
+	return renderBasicStatus();
 }
 
 export function Plan( { site }: { site: Site } ) {

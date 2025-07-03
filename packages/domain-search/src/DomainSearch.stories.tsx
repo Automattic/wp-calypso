@@ -65,7 +65,12 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 	return (
 		<DomainSearch
-			selectedDomains={ [] }
+			cart={ {
+				items: [],
+				total: '',
+				onAddItem: () => {},
+				onRemoveItem: () => {},
+			} }
 			initialQuery={ initialQuery }
 			onContinue={ () => {
 				alert( 'go to checkout' );

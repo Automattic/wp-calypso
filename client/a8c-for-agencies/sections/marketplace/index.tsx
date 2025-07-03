@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
@@ -6,6 +7,7 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
+	A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -16,6 +18,7 @@ import {
 	marketplaceHostingContext,
 	marketplaceProductsContext,
 	downloadProductsContext,
+	marketplaceReferEnterpriseHostingContext,
 } from './controller';
 
 export default function () {
@@ -28,6 +31,16 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	if ( isEnabled( 'a4a-vip-partner-opportunity-referrals' ) ) {
+		page(
+			A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
+			requireAccessContext,
+			marketplaceReferEnterpriseHostingContext,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		`${ A4A_MARKETPLACE_HOSTING_LINK }/:section?`,

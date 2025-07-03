@@ -1,14 +1,15 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-$search-categories-padding-top: 16px;
+$search-categories-padding-block: 16px;
+$search-categories-height: 40px;
 
 .search-categories {
+
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	padding-inline: 0;
-	padding-top: $search-categories-padding-top;
+	padding: $search-categories-padding-block 0 0;
 
 	.components-search-control {
 		width: 100%;
@@ -97,48 +98,54 @@ $search-categories-padding-top: 16px;
 		padding: 0;
 	}
 
-	&.fixed-top {
-		@include break-medium {
-			position: fixed;
-			z-index: 20;
-			top: calc(var(--masterbar-height) + 16px);
-			padding: 10px 32px;
+	@include break-medium {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+
+		&.fixed-top {
+			padding: $search-categories-padding-block 32px;
+			margin: 0 -32px;
 			box-sizing: border-box;
-			border-top-left-radius: 4px;
 			border-bottom: 1px solid var(--studio-gray-5);
 			background-color: var(--studio-white);
+		}
+
+		// The parent `layout__content` has the `overflow: hidden;` so we need to use fixed position.
+		.plugins-browser--site-view &.fixed-top {
+			position: fixed;
+			top: var(--masterbar-height);
+			padding: $search-categories-padding-block 24px;
+			margin: 0 auto;
+			box-sizing: border-box;
+			border-bottom: 0;
 
 			.layout__secondary ~ .layout__primary & {
 				left: var(--sidebar-width-max);
-				width: calc(100% - var(--sidebar-width-max) - 31px);
+				right: 0;
+				max-width: 1040px;
 			}
-		}
-	}
 
-	.plugins-browser--site-view &.fixed-top {
-		top: var(--masterbar-height);
-		box-sizing: content-box;
-
-		@include break-medium {
-			padding: 10px max(2rem, calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2));
-
-			.layout__secondary ~ .layout__primary & {
-				width: calc(100vw - var(--sidebar-width-max) - 2 * 2rem);
-			}
-		}
-
-		@include break-wide {
-			padding: 10px calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2);
-
-			.layout__secondary ~ .layout__primary & {
-				width: calc(1040px - 2 * 2rem);
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				transform: translateX(-50%);
+				width: calc(100vw - var(--sidebar-width-max));
+				height: 0;
+				border-bottom: 1px solid var(--studio-gray-5);
 			}
 		}
 	}
 }
 
 .search-categories__sticky-placeholder {
-	// This is the height + padding of the .search-categories box when it's not fixed to the top
-	// We add this whitespace so the content doesn't jump when the search box becomes fixed
-	height: calc(#{$search-categories-padding-top} + 16px);
+	height: 0;
+
+	@include break-medium {
+		// This is the height + padding of the .search-categories box when it's not fixed to the top
+		// We add this whitespace so the content doesn't jump when the search box becomes fixed
+		height: calc(#{$search-categories-height} + #{$search-categories-padding-block});
+	}
 }
