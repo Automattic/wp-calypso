@@ -93,9 +93,11 @@ export default function Summary( {
 		}
 	}, [ importerStatus, importStepsResults, isImportCompleted, steps ] );
 
-	if ( importerStatus === 'expired' && ! isImportCompleted ) {
-		page.redirect( `/import/${ selectedSite.slug }` );
-	}
+	useEffect( () => {
+		if ( importerStatus === 'expired' && ! isImportCompleted ) {
+			page.redirect( `/import/${ selectedSite.slug }` );
+		}
+	}, [] );
 
 	// Either content- or subscriber-import is still in progress
 	if ( importerStatus === 'importing' ) {

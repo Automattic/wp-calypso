@@ -2,6 +2,14 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export type StepId = 'reset' | 'content' | 'subscribers' | 'summary';
+
+/**
+ * @param {'initial'|'skipped'|'importing'|'done'|'expired'|'pending'} status
+ * initial: Default state of the import
+ * expired: Import has been completed and reset
+ * done: Import has been completed but not reset
+ * pending: Subscribers are uploaded and are waiting to be imported
+ */
 export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done' | 'expired' | 'pending';
 
 interface ContentStepContentProgress {
