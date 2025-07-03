@@ -1,0 +1,64 @@
+{
+	"name": "@automattic/agenttic-ui",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "UI components for the Agenttic framework",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "pnpm run clean && tsup src/index.ts --format esm --target node18 && tsc --emitDeclarationOnly",
+		"dev": "tsup src/index.ts --format esm --watch",
+		"clean": "rm -rf dist",
+		"type-check": "tsc --noEmit",
+		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
+		"lint:fix": "wp-scripts lint-js src --ext .ts,.tsx --fix",
+		"test": "vitest run",
+		"prepublishOnly": "pnpm run build"
+	},
+	"keywords": [
+		"agenttic",
+		"ui",
+		"components",
+		"react",
+		"typescript",
+		"ai",
+		"agent"
+	],
+	"author": "Automattic",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"@types/react": "^18.0.0",
+		"@types/react-dom": "^18.0.0",
+		"jsdom": "^24.0.0",
+		"tsup": "^8.0.0",
+		"typescript": "^5.0.0",
+		"vitest": "^1.0.0"
+	},
+	"dependencies": {
+		"@automattic/agenttic-client": "workspace:*",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
+	},
+	"peerDependencies": {
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
