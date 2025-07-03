@@ -9,12 +9,14 @@ type FeaturedImageEmailSettingProps = {
 	value?: boolean;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	disabled?: boolean;
+	isPrivate?: boolean;
 };
 
 export const FeaturedImageEmailSetting = ( {
 	value = false,
 	handleToggle,
 	disabled,
+	isPrivate,
 }: FeaturedImageEmailSettingProps ) => {
 	const translate = useTranslate();
 
@@ -27,14 +29,18 @@ export const FeaturedImageEmailSetting = ( {
 				label={ translate( 'Enable featured image on your new post emails' ) }
 			/>
 			<FormSettingExplanation>
-				{ translate(
-					"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
-					{
-						components: {
-							link: <InlineSupportLink showIcon={ false } supportContext="featured-images" />,
-						},
-					}
-				) }
+				{ isPrivate
+					? translate(
+							'Featured images cannot be shown in emails when your site is private, because access to your images is restricted to your site only.'
+					  )
+					: translate(
+							"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
+							{
+								components: {
+									link: <InlineSupportLink showIcon={ false } supportContext="featured-images" />,
+								},
+							}
+					  ) }
 			</FormSettingExplanation>
 		</>
 	);
