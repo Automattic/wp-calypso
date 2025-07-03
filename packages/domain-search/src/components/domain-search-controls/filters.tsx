@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { funnel } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 
-export const DomainSearchFilters = () => {
+export const DomainSearchControlsFilters = () => {
 	const { __ } = useI18n();
 
 	return (
