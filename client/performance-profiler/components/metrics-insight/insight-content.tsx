@@ -48,12 +48,12 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const messages = useMemo(
 		() => [
 			{
-				message: translate( 'Generating a personalized solution for your site using AI' ),
+				message: translate( 'Generating a personalized solution for your site using AI…' ),
 				nextTimer: 3000,
 			},
-			{ message: translate( 'Writing instructions' ), nextTimer: 3000 },
-			{ message: translate( 'This is taking a little longer than I thought' ), nextTimer: 4000 },
-			{ message: translate( 'Stick with me' ), nextTimer: null },
+			{ message: translate( 'Writing instructions…' ), nextTimer: 3000 },
+			{ message: translate( 'This is taking a little longer than I thought…' ), nextTimer: 4000 },
+			{ message: translate( 'Stick with me…' ), nextTimer: null },
 		],
 		[ translate ]
 	);
