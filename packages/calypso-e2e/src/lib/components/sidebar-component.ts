@@ -78,7 +78,7 @@ export class SidebarComponent {
 
 		// Sub-level menu item selector.
 		if ( subitem ) {
-			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
+			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible, .wp-menu-open .wp-submenu :text-is("${ subitem }"):visible`;
 			await Promise.all( [
 				this.page.waitForNavigation( { timeout: 30 * 1000 } ),
 				this.page.dispatchEvent( subitemSelector, 'click' ),
