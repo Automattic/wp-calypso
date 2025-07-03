@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 import './staging-site-creation-card-content.scss';
@@ -21,10 +20,8 @@ export const StagingSiteCreationCardContent = ( { isOwner }: CardContentProps ) 
 	);
 	const message = isOwner ? ownerMessage : nonOwnerMessage;
 
-	const classes = [ 'hosting-card', 'staging-site-creation-card' ];
-
 	return (
-		<div className={ clsx( classes ) }>
+		<div className="hosting-card staging-site-creation-card">
 			<div className="staging-site-creation-card__content">
 				<div className="staging-site-creation-card__title">{ __( 'Creating staging site' ) }</div>
 				<div className="staging-site-creation-card__description">{ message }</div>
