@@ -19,9 +19,7 @@ export interface AtomicTransfer {
 	status: AtomicTransferStatus;
 }
 
-export async function fetchLatestAtomicTransfer(
-	siteId: number
-): Promise< AtomicTransfer | undefined > {
+export async function fetchLatestAtomicTransfer( siteId: number ): Promise< AtomicTransfer > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/atomic/transfers/latest`,
 		apiNamespace: 'wpcom/v2',
