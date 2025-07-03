@@ -7,7 +7,7 @@ import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSite, getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -526,9 +526,10 @@ export const statsMoved = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
+	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
 
 	// Enforce the new location to 10% of users.
-	if ( siteId && userId % 10 === 0 ) {
+	if ( siteId && ! isJetpack && userId % 10 === 0 ) {
 		context.primary = <StatsMoved />;
 	}
 	next();
