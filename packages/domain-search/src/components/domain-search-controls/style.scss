@@ -33,4 +33,9 @@ $border-radius: 4px;
         padding-left: 1.5rem;
         padding-right: 1.5rem;
     }
+
+    .domain-search-controls__filters {
+        height: $input-height;
+        padding: 1rem;
+    }
 }
