@@ -57,7 +57,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 						</div>
 
 						<div>
-							{ isReferMode
+							{ isReferMode && isVipPartnerOpportunityReferralsEnabled
 								? translate(
 										"Successfully refer your client to WordPress VIP and you'll earn a one-time 5% commission"
 								  )
@@ -68,19 +68,17 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					</div>
 
 					<div className="enterprise-agency-hosting__cta-buttons">
-						{ isReferMode ? (
+						{ isReferMode && isVipPartnerOpportunityReferralsEnabled ? (
 							<>
-								{ isVipPartnerOpportunityReferralsEnabled && (
-									<Button
-										className="enterprise-agency-hosting__cta-button"
-										href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
-										onClick={ onReferClientClick }
-										variant="primary"
-										__next40pxDefaultSize
-									>
-										{ translate( 'Refer your client to VIP hosting' ) }
-									</Button>
-								) }
+								<Button
+									className="enterprise-agency-hosting__cta-button"
+									href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+									onClick={ onReferClientClick }
+									variant="primary"
+									__next40pxDefaultSize
+								>
+									{ translate( 'Refer your client to VIP hosting' ) }
+								</Button>
 
 								<Button
 									className="enterprise-agency-hosting__cta-button"
@@ -131,7 +129,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 				<HostingPlanSection.Details
 					heading={ translate( 'The platform the biggest brands trust.' ) }
 				>
-					{ isReferMode && (
+					{ isVipPartnerOpportunityReferralsEnabled && (
 						<div className="enterprise-agency-hosting__top-details-subheading">
 							{ translate(
 								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
