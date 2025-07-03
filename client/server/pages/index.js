@@ -11,6 +11,7 @@ import {
 	getLanguageSlugs,
 	localizeUrl,
 } from '@automattic/i18n-utils';
+import { SUPPORT_ROOT } from '@automattic/urls';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
@@ -1023,7 +1024,7 @@ export default function pages() {
 		if ( req.context.isLoggedIn ) {
 			return res.redirect( 301, '/sites?help-center=home' );
 		}
-		const redirectUrl = localizeUrl( '/support', req.context.locale );
+		const redirectUrl = localizeUrl( SUPPORT_ROOT, req.context.locale );
 		return res.redirect( 301, redirectUrl );
 	} );
 
