@@ -22,7 +22,6 @@ import {
 	hasCSATMessage,
 	hasSubmittedCSATRating,
 } from '../../utils';
-import { Notices } from '../notices';
 import useViewMostRecentOpenConversationNotice from '../notices/use-view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -229,7 +228,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							<ThinkingPlaceholder />
 						</div>
 					) }
-					<Notices />
 				</>
 			) }
 		</div>
