@@ -106,7 +106,7 @@ export default function Sites() {
 	return (
 		<>
 			{ isModalOpen && (
-				<Modal title={ __( 'Add New Site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="sites-dashboard" />
 				</Modal>
 			) }
@@ -120,7 +120,7 @@ export default function Sites() {
 								onClick={ () => setIsModalOpen( true ) }
 								__next40pxDefaultSize
 							>
-								{ __( 'Add New Site' ) }
+								{ __( 'Add new site' ) }
 							</Button>
 						}
 					/>
