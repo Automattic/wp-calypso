@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -38,7 +37,6 @@ import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hook
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from './card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
-import { StagingSiteCreationCardContent } from './card-content/staging-site-creation-card/staging-site-creation-card-content';
 import { StagingSiteLoadingBarCardContent } from './card-content/staging-site-loading-bar-card-content';
 import { StagingSiteLoadingErrorCardContent } from './card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from './loading-placeholder';
@@ -431,12 +429,7 @@ export const StagingSiteCard = ( {
 			);
 		}
 
-		// Use new card for creation only if feature flag is enabled
-		if ( config.isEnabled( 'hosting/staging-sites-redesign' ) ) {
-			return <StagingSiteCreationCardContent isOwner={ siteOwnerId === currentUserId } />;
-		}
-
-		// Default to progress bar for creation when feature flag is disabled
+		// Always use progress bar for creation (creation card now handled by DotcomPreviewPane)
 		return <StagingSiteLoadingBarCardContent isOwner={ siteOwnerId === currentUserId } />;
 	}, [ siteOwnerId, currentUserId, isRevertingStaging ] );
 
@@ -534,14 +527,6 @@ export const StagingSiteCard = ( {
 			dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 		}
 	}, [ dispatch, isJetpack, siteId ] );
-
-	// Determine if we should show the new creation card without wrapper/banner
-	const isShowingNewCreationCard =
-		isInTransfer && config.isEnabled( 'hosting/staging-sites-redesign' ) && ! isRevertingStaging;
-
-	if ( isShowingNewCreationCard ) {
-		return stagingSiteCardContent;
-	}
 
 	return (
 		<CardContentWrapper>
