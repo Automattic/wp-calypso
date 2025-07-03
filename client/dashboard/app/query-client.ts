@@ -9,9 +9,8 @@ export const queryClient = new QueryClient( {
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
 			retry: ( failureCount: number, error: Error ) => {
-				if ( 'status' in error ) {
-					const status = error.status;
-					if ( typeof status === 'number' && status >= 400 && status < 500 ) {
+				if ( 'status' in error && typeof error.status === 'number' ) {
+					if ( error.status >= 400 && error.status < 500 ) {
 						return false;
 					}
 				}
