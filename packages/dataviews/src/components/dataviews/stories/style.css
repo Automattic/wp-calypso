@@ -1,6 +1,6 @@
 .theme-field-description {
-    text-wrap: balance;
-    text-wrap: pretty;
+	text-wrap: balance;
+	text-wrap: pretty;
 }
 
 .free-composition {
@@ -10,7 +10,7 @@
 
 .free-composition-heading,
 .free-composition-header {
-    padding: 16px 48px;
+	padding: 16px 48px;
 }
 
 .free-composition-heading {

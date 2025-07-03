@@ -10,7 +10,6 @@ import type {
 	DataViewRenderFieldProps,
 	SortDirection,
 	ValidationContext,
-	Operator,
 	FieldTypeDefinition,
 } from '../types';
 import { renderFromElements } from '../utils';

@@ -18,8 +18,6 @@ import { getControl } from './dataform-controls';
 import {
 	ALL_OPERATORS,
 	OPERATOR_BETWEEN,
-	OPERATOR_IS_ANY,
-	OPERATOR_IS_NONE,
 	SINGLE_SELECTION_OPERATORS,
 } from './constants';
 
@@ -156,13 +154,13 @@ export function normalizeFields< Item >(
 			field.render ??
 			function render( {
 				item,
-				field,
+				field: renderedField,
 			}: DataViewRenderFieldProps< Item > ) {
 				return (
 					fieldTypeDefinition.render as FunctionComponent<
 						DataViewRenderFieldProps< Item >
 					>
-				 )( { item, field } );
+				 )( { item, field: renderedField } );
 			};
 
 		const filterBy = getFilterBy( field, fieldTypeDefinition );

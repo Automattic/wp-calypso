@@ -269,7 +269,6 @@ export type DataFormControlProps< Item > = {
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
 	/**
-	/**
 	 * The currently selected filter operator for this field.
 	 *
 	 * Used by DataViews filters to determine which control to render based on the operator type.

@@ -68,6 +68,7 @@ function RelativeDateControls( {
 
 	return (
 		<BaseControl
+			id={ id }
 			__nextHasNoMarginBottom
 			className="dataviews-controls__datetime"
 			label={ label }
@@ -91,7 +92,7 @@ function RelativeDateControls( {
 					value={ unit }
 					options={ options }
 					onChange={ onChangeUnit }
-					hideLabelFromVision={ true }
+					hideLabelFromVision
 				/>
 			</HStack>
 		</BaseControl>

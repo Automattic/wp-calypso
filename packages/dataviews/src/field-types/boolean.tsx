@@ -9,8 +9,6 @@ import { __ } from '@wordpress/i18n';
 import type {
 	DataViewRenderFieldProps,
 	SortDirection,
-	Operator,
-	ValidationContext,
 	FieldTypeDefinition,
 } from '../types';
 import { renderFromElements } from '../utils';
@@ -33,7 +31,7 @@ function sort( a: any, b: any, direction: SortDirection ) {
 	return boolA ? -1 : 1;
 }
 
-function isValid( value: any, context?: ValidationContext ) {
+function isValid( value: any ) {
 	if ( ! [ true, false, undefined ].includes( value ) ) {
 		return false;
 	}

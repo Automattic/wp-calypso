@@ -1,10 +1,14 @@
 /**
+ * External dependencies
+ */
+import fastDeepEqual from 'fast-deep-equal/es6';
+
+/**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useEvent } from '@wordpress/compose';
+import { useMemo } from '@wordpress/element';
 import { Flex } from '@wordpress/components';
-import fastDeepEqual from 'fast-deep-equal/es6';
 
 /**
  * Internal dependencies
@@ -28,17 +32,9 @@ export default function InputWidget( {
 	const currentFilter = view.filters?.find(
 		( f ) => f.field === filter.field
 	);
-	if ( ! currentFilter ) {
-		return null;
-	}
 
 	const field = fields.find( ( f ) => f.id === filter.field );
-	if ( ! field || ! field.Edit ) {
-		return null;
-	}
-
 	const currentValue = getCurrentValue( filter, currentFilter );
-
 	const data = useMemo( () => {
 		return ( view.filters ?? [] ).reduce(
 			( acc, f ) => {
@@ -49,30 +45,33 @@ export default function InputWidget( {
 		);
 	}, [ view.filters ] );
 
-	const handleChange = useCallback(
-		( data: Record< string, any > ) => {
-			const nextValue = data[ field.id ];
-			if ( fastDeepEqual( nextValue, currentValue ) ) {
-				return;
-			}
+	const handleChange = useEvent( ( updatedData: Record< string, any > ) => {
+		if ( ! field || ! currentFilter ) {
+			return;
+		}
+		const nextValue = updatedData[ field.id ];
+		if ( fastDeepEqual( nextValue, currentValue ) ) {
+			return;
+		}
 
-			onChangeView( {
-				...view,
-				filters: ( view.filters ?? [] ).map( ( _filter ) =>
-					_filter.field === filter.field
-						? {
-								..._filter,
-								operator:
-									currentFilter.operator ||
-									filter.operators[ 0 ],
-								value: nextValue,
-						  }
-						: _filter
-				),
-			} );
-		},
-		[ field, onChangeView, view, filter, currentFilter ]
-	);
+		onChangeView( {
+			...view,
+			filters: ( view.filters ?? [] ).map( ( _filter ) =>
+				_filter.field === filter.field
+					? {
+							..._filter,
+							operator:
+								currentFilter.operator || filter.operators[ 0 ],
+							value: nextValue,
+					  }
+					: _filter
+			),
+		} );
+	} );
+
+	if ( ! field || ! field.Edit || ! currentFilter ) {
+		return null;
+	}
 
 	return (
 		<Flex
@@ -81,7 +80,7 @@ export default function InputWidget( {
 			direction="column"
 		>
 			<field.Edit
-				hideLabelFromVision={ true }
+				hideLabelFromVision
 				data={ data }
 				field={ field }
 				operator={ currentFilter.operator }

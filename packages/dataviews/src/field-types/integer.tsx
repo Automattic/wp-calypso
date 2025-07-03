@@ -3,7 +3,6 @@
  */
 import type {
 	DataViewRenderFieldProps,
-	Operator,
 	SortDirection,
 	ValidationContext,
 	FieldTypeDefinition,

@@ -45,15 +45,11 @@ import { useInstanceId } from '@wordpress/compose';
  */
 import { SORTING_DIRECTIONS, sortIcons, sortLabels } from '../../constants';
 import { VIEW_LAYOUTS } from '../../dataviews-layouts';
-import type { NormalizedField, SupportedLayouts, View } from '../../types';
+import type { NormalizedField, View } from '../../types';
 import DataViewsContext from '../dataviews-context';
 import { unlock } from '../../lock-unlock';
 
 const { Menu } = unlock( componentsPrivateApis );
-
-interface ViewTypeMenuProps {
-	defaultLayouts?: SupportedLayouts;
-}
 
 const DATAVIEWS_CONFIG_POPOVER_PROPS = {
 	className: 'dataviews-config__popover',

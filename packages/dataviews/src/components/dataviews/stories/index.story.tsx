@@ -1,9 +1,16 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import type { Meta } from '@storybook/react';
-import { useState, useMemo } from '@wordpress/element';
-import { createInterpolateElement } from '@wordpress/element';
+
+/**
+ * WordPress dependencies
+ */
+import {
+	useState,
+	useMemo,
+	createInterpolateElement,
+} from '@wordpress/element';
 import {
 	Card,
 	CardHeader,
@@ -66,8 +73,8 @@ export const Default = () => {
 			onChangeView={ setView }
 			actions={ actions }
 			renderItemLink={ ( { item, ...props }: { item: SpaceObject } ) => (
-				<a
-					href="#"
+				<button
+					style={ { background: 'none', border: 'none', padding: 0 } }
 					onClick={ ( e ) => {
 						e.stopPropagation();
 						// eslint-disable-next-line no-alert

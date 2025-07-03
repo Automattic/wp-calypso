@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import type { NormalizedFilter, Filter } from '../../types';
 
 const EMPTY_ARRAY: [] = [];

@@ -2,8 +2,13 @@
  * External dependencies
  */
 import removeAccents from 'remove-accents';
-import { getDate } from '@wordpress/date';
 import { subDays, subWeeks, subMonths, subYears } from 'date-fns';
+
+/**
+ * WordPress dependencies
+ */
+import { getDate } from '@wordpress/date';
+
 /**
  * Internal dependencies
  */
@@ -45,7 +50,7 @@ const EMPTY_ARRAY: [] = [];
  *
  * @param value Number of units to offset.
  * @param unit  Unit of time to offset.
- * @returns     Date offset from now.
+ * @return      Date offset from now.
  */
 function getRelativeDate( value: number, unit: string ): Date {
 	switch ( unit ) {

@@ -269,8 +269,8 @@ describe( 'DataViews component', () => {
 					actions={ actions }
 					isItemClickable={ () => true }
 					renderItemLink={ ( { item, ...props } ) => (
-						<a
-							href={ '#' }
+						<button
+							// @ts-expect-error
 							onClick={ ( event ) => {
 								event.preventDefault();
 								onClickItemCallback( item );
@@ -345,8 +345,8 @@ describe( 'DataViews component', () => {
 					actions={ actions }
 					isItemClickable={ () => true }
 					renderItemLink={ ( { item, ...props } ) => (
-						<a
-							href={ '#' }
+						<button
+							// @ts-expect-error
 							onClick={ ( event ) => {
 								event.preventDefault();
 								mediaClickItemCallback( item );

@@ -2,6 +2,11 @@
 import { subDays, subYears } from 'date-fns';
 
 /**
+ * External dependencies
+ */
+import { subDays, subYears } from 'date-fns';
+
+/**
  * Internal dependencies
  */
 import { filterSortAndPaginate } from '../filter-and-sort-data-view';
@@ -669,7 +674,7 @@ describe( 'filters', () => {
 
 	it( 'should filter using OVER operator for datetime (days)', () => {
 		const testData = [
-			{ title: 'Recent', date: subDays( new Date(), 7 ) },
+			{ title: 'Recent', date: subDays( new Date(), 5 ) },
 			{ title: 'Old', date: subDays( new Date(), 14 ) },
 		];
 		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
@@ -680,7 +685,7 @@ describe( 'filters', () => {
 					{
 						field: 'date',
 						operator: 'over',
-						value: { value: 7, unit: 'days' },
+						value: { value: 10, unit: 'days' },
 					},
 				],
 			},
@@ -693,7 +698,7 @@ describe( 'filters', () => {
 	it( 'should filter using IN_THE_PAST operator for datetime (years)', () => {
 		const testData = [
 			{ title: 'Recent', date: subYears( new Date(), 1 ) },
-			{ title: 'Old', date: subYears( new Date(), 2 ) },
+			{ title: 'Old', date: subYears( new Date(), 5 ) },
 		];
 		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
 		const { data: result } = filterSortAndPaginate(
@@ -703,7 +708,7 @@ describe( 'filters', () => {
 					{
 						field: 'date',
 						operator: 'inThePast',
-						value: { value: 1, unit: 'years' },
+						value: { value: 3, unit: 'years' },
 					},
 				],
 			},
@@ -716,7 +721,7 @@ describe( 'filters', () => {
 	it( 'should filter using OVER operator for datetime (years)', () => {
 		const testData = [
 			{ title: 'Recent', date: subYears( new Date(), 1 ) },
-			{ title: 'Old', date: subYears( new Date(), 2 ) },
+			{ title: 'Old', date: subYears( new Date(), 5 ) },
 		];
 		const testFields = [ { id: 'date', type: 'datetime', label: 'Date' } ];
 		const { data: result } = filterSortAndPaginate(
@@ -726,7 +731,7 @@ describe( 'filters', () => {
 					{
 						field: 'date',
 						operator: 'over',
-						value: { value: 1, unit: 'years' },
+						value: { value: 3, unit: 'years' },
 					},
 				],
 			},

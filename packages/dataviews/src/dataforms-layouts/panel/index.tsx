@@ -198,11 +198,6 @@ export default function FormPanelField< Item >( {
 		}
 		return fieldDef.id === field.id;
 	} );
-	const labelPosition = field.labelPosition ?? 'side';
-	const labelClassName = clsx(
-		'dataforms-layouts-panel__field-label',
-		`dataforms-layouts-panel__field-label--label-position-${ labelPosition }`
-	);
 
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the popover's anchor updates.
@@ -214,6 +209,11 @@ export default function FormPanelField< Item >( {
 		return null;
 	}
 
+	const labelPosition = field.labelPosition ?? 'side';
+	const labelClassName = clsx(
+		'dataforms-layouts-panel__field-label',
+		`dataforms-layouts-panel__field-label--label-position-${ labelPosition }`
+	);
 	const fieldLabel = isCombinedField( field )
 		? field.label
 		: fieldDefinition?.label;

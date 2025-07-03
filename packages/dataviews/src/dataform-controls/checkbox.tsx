@@ -19,7 +19,8 @@ export default function Checkbox< Item >( {
 	return (
 		<CheckboxControl
 			__nextHasNoMarginBottom
-			label={ ! hideLabelFromVision ? label : '' }
+			hidden={ hideLabelFromVision }
+			label={ label }
 			help={ description }
 			checked={ getValue( { item: data } ) }
 			onChange={ () =>

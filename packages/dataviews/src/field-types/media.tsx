@@ -1,13 +1,9 @@
 /**
  * Internal dependencies
  */
-import type {
-	SortDirection,
-	ValidationContext,
-	FieldTypeDefinition,
-} from '../types';
+import type { ValidationContext, FieldTypeDefinition } from '../types';
 
-function sort( a: any, b: any, direction: SortDirection ) {
+function sort() {
 	return 0;
 }
 

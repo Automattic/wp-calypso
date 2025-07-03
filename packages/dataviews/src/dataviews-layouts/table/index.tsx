@@ -275,6 +275,11 @@ function ViewTable< Item >( {
 
 	const tableNoticeId = useId();
 
+	const isHorizontalScrollEnd = useIsHorizontalScrollEnd( {
+		scrollContainerRef: containerRef,
+		enabled: !! actions?.length,
+	} );
+
 	if ( nextHeaderMenuToFocus ) {
 		// If we need to force focus, we short-circuit rendering here
 		// to prevent any additional work while we handle that.
@@ -317,11 +322,6 @@ function ViewTable< Item >( {
 				headerMenuRefs.current.delete( column );
 			}
 		};
-
-	const isHorizontalScrollEnd = useIsHorizontalScrollEnd( {
-		scrollContainerRef: containerRef,
-		enabled: !! actions?.length,
-	} );
 
 	return (
 		<>
