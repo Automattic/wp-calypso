@@ -1,6 +1,6 @@
 import { Button, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Markdown from 'react-markdown';
 import {
 	FullPageScreenshot,
@@ -17,6 +17,7 @@ interface InsightContentProps {
 	data: PerformanceMetricsItemQueryResponse;
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
+	isFetched?: boolean;
 	isWpscanLoading?: boolean;
 	AIGenerated: boolean;
 	hash: string;
@@ -26,12 +27,63 @@ interface InsightContentProps {
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const translate = useTranslate();
-	const { data, fullPageScreenshot, isLoading, isWpscanLoading, AIGenerated, hash, url, chatId } =
-		props;
+	const {
+		data,
+		fullPageScreenshot,
+		isLoading,
+		isFetched,
+		isWpscanLoading,
+		AIGenerated,
+		hash,
+		url,
+		chatId,
+	} = props;
 	const { description = '' } = data ?? {};
 	const [ feedbackSent, setFeedbackSent ] = useState( false );
 	const [ feedbackOpen, setFeedbackOpen ] = useState( false );
 	const [ userFeedback, setUserFeedback ] = useState( '' );
+	const [ messageIndex, setMessageIndex ] = useState( 0 );
+	const messageTimer = useRef< NodeJS.Timeout | null >( null );
+
+	const messages = useMemo(
+		() => [
+			{
+				message: translate( 'Generating a personalized solution for your site using AI' ),
+				nextTimer: 3000,
+			},
+			{ message: translate( 'Writing instructions' ), nextTimer: 3000 },
+			{ message: translate( 'This is taking a little longer than I thought' ), nextTimer: 4000 },
+			{ message: translate( 'Stick with me' ), nextTimer: null },
+		],
+		[ translate ]
+	);
+
+	const updateMessageIndex = useCallback(
+		( currentIndex: number ) => {
+			setMessageIndex( currentIndex );
+			const currentMessage = messages[ currentIndex ];
+			if ( currentMessage.nextTimer && currentIndex < messages.length - 1 && isLoading ) {
+				messageTimer.current = setTimeout( () => {
+					updateMessageIndex( currentIndex + 1 );
+				}, currentMessage.nextTimer );
+			}
+		},
+		[ isLoading, messages ]
+	);
+
+	useEffect( () => {
+		if ( isLoading && ! messageTimer.current ) {
+			setMessageIndex( 0 );
+			updateMessageIndex( 0 );
+		}
+		return () => {
+			if ( messageTimer.current ) {
+				clearTimeout( messageTimer.current );
+				messageTimer.current = null;
+			}
+		};
+	}, [ isLoading, updateMessageIndex ] );
+
 	const onSurveyClick = ( rating: string ) => {
 		recordTracksEvent( 'calypso_performance_profiler_llm_survey_click', {
 			hash,
@@ -111,12 +163,12 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 				/>
 			);
 		}
-		return <LLMMessage message={ translate( 'Finding the best solution for your page' ) } rotate />;
+		return <LLMMessage message={ messages[ messageIndex ].message } rotate />;
 	};
 
 	return (
 		<div className="metrics-insight-content">
-			{ isLoading || isWpscanLoading ? (
+			{ isLoading || isWpscanLoading || ! isFetched ? (
 				renderLoadingMessage()
 			) : (
 				<>
