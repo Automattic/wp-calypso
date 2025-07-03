@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -13,20 +12,16 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
-	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
-	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/url';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -45,9 +40,9 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
-import HeadingLogo from './components/heading-logo';
-import HeadingSubText from './components/heading-subtext';
+import OneLoginLayout from './components/one-login-layout';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
+import getHeadingSubText from './hooks/get-heading-subtext';
 import LoginBlockFooter from './login-block-footer';
 
 import './style.scss';
@@ -195,48 +190,6 @@ export class Login extends Component {
 		);
 	}
 
-	renderSignUpLink( signupLinkText ) {
-		// Taken from client/layout/masterbar/logged-out.jsx
-		const {
-			currentRoute,
-			locale,
-			oauth2Client,
-			pathname,
-			currentQuery,
-			translate,
-			usernameOrEmail,
-		} = this.props;
-
-		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-			return null;
-		}
-
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
-
-		return (
-			<Step.LinkButton
-				href={ addQueryArgs(
-					{
-						user_email: usernameOrEmail,
-					},
-					signupUrl
-				) }
-				key="sign-up-link"
-				onClick={ this.recordSignUpLinkClick }
-				rel="external"
-			>
-				{ signupLinkText ?? translate( 'Create a new account' ) }
-			</Step.LinkButton>
-		);
-	}
-
-	renderLoginHeaderNavigation() {
-		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
-	}
-
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -306,7 +259,6 @@ export class Login extends Component {
 			translate,
 			isGenericOauth,
 			isGravPoweredClient,
-			isBlazePro,
 			isWhiteLogin,
 			isJetpack,
 			isFromAkismet,
@@ -318,7 +270,6 @@ export class Login extends Component {
 			oauth2Client,
 			isWooJPC,
 			isWCCOM,
-			isWoo,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
 			twoFactorEnabled,
@@ -358,7 +309,7 @@ export class Login extends Component {
 			</Main>
 		);
 
-		const headerText = getHeaderText( {
+		const headingText = getHeaderText( {
 			isSocialFirst,
 			twoFactorAuthType,
 			isManualRenewalImmediateLoginAttempt,
@@ -377,51 +328,26 @@ export class Login extends Component {
 			translate,
 		} );
 
-		const shouldUseWideHeading =
-			'lostpassword' !== action &&
-			( isStudioAppOAuth2Client( oauth2Client ) ||
-				isFromAkismet ||
-				isCrowdsignalOAuth2Client( oauth2Client ) ||
-				isBlazePro ||
-				isJetpack ||
-				isJetpackCloudOAuth2Client( oauth2Client ) ||
-				isWoo ||
-				isVIPOAuth2Client( oauth2Client ) ||
-				isPartnerPortalOAuth2Client( oauth2Client ) );
+		const headingSubText = getHeadingSubText( {
+			isSocialFirst,
+			twoFactorAuthType,
+			action,
+			translate,
+		} );
 
 		return (
 			<>
 				{ isWhiteLogin && (
-					<Step.CenteredColumnLayout
-						columnWidth={ 6 }
-						{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
-						topBar={
-							<Step.TopBar
-								rightElement={ this.renderLoginHeaderNavigation() }
-								compactLogo="always"
-							/>
-						}
-						heading={
-							<Step.Heading
-								text={
-									<>
-										<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
-										<div className="wp-login__heading-text">{ headerText }</div>
-									</>
-								}
-								subText={
-									<HeadingSubText
-										isSocialFirst={ isSocialFirst }
-										twoFactorAuthType={ twoFactorAuthType }
-										action={ action }
-									/>
-								}
-							/>
-						}
-						verticalAlign="center"
+					<OneLoginLayout
+						isJetpack={ isJetpack }
+						isFromAkismet={ isFromAkismet }
+						headingText={ headingText }
+						headingSubText={ headingSubText }
+						shouldUseWideHeading={ 'lostpassword' !== action }
+						signupUrl={ this.props.signupUrl }
 					>
 						{ mainContent }
-					</Step.CenteredColumnLayout>
+					</OneLoginLayout>
 				) }
 				{ ! isWhiteLogin && mainContent }
 			</>

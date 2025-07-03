@@ -112,7 +112,8 @@ export const useCreateZendeskConversation = (): ( ( {
 			status: 'transfer',
 		} ) );
 
-		if ( ! chatId ) {
+		// `direct_url` sends users directly to ZD, so there'll be no AI chat
+		if ( ! chatId && createdFrom !== 'direct_url' ) {
 			logMessageData( {
 				createdFrom,
 				selectedSiteId,
