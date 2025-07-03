@@ -56,9 +56,11 @@ Investigation into a 40-50% drop in web referrals to Jetpack mobile applications
 
 **SMOKING GUN FOUND**: The primary cause of the referral drop has been identified:
 
-**April 4, 2025**: Complete removal of the "What's New" modal and related functionality (commit: `c0a10a96671`)
+**April 4, 2025**: Complete removal of the "What's New" modal and related functionality
+- **Commit**: [`c0a10a96671`](https://github.com/Automattic/wp-calypso/commit/c0a10a96671daa6a1e4c15279dea0079e56157f2)
+- **Pull Request**: [#101692](https://github.com/Automattic/wp-calypso/pull/101692)
 - **Impact**: This commit removed the entire What's New modal system that was previously hiding app banners
-- **Historical Context**: In March 2024, commit `a56c854e163` introduced logic to hide Jetpack app promos when the What's New modal was shown
+- **Historical Context**: In March 2024, commit [`a56c854e163`](https://github.com/Automattic/wp-calypso/commit/a56c854e163faf115893d07330ecd01e00fd86d0) ([PR #88744](https://github.com/Automattic/wp-calypso/pull/88744)) introduced logic to hide Jetpack app promos when the What's New modal was shown
 - **The Problem**: When the What's New modal was removed in April 2025, the app banner hiding logic may have been inadvertently affected or left in a broken state
 
 **Detailed Analysis**:
@@ -68,7 +70,10 @@ Investigation into a 40-50% drop in web referrals to Jetpack mobile applications
 - The removal happened on April 4, 2025 - directly within the April 3-5 timeframe of the referral drop
 
 **Other Changes During April 1-5, 2025**:
-1. **Multiple removal commits** that might have had cascading effects on app banner visibility
+1. **Multiple removal commits** that might have had cascading effects on app banner visibility:
+   - [`a81081552a5`](https://github.com/Automattic/wp-calypso/commit/a81081552a5) - DIFM HC - Remove flag ([PR #102335](https://github.com/Automattic/wp-calypso/pull/102335))
+   - [`8a1ef59bc01`](https://github.com/Automattic/wp-calypso/commit/8a1ef59bc01) - Sites: Remove legacy site picker ([PR #102364](https://github.com/Automattic/wp-calypso/pull/102364))
+   - [`cba33d05e8d`](https://github.com/Automattic/wp-calypso/commit/cba33d05e8d) - Remove global-styles dependency ([PR #102349](https://github.com/Automattic/wp-calypso/pull/102349))
 2. **Layout and styling changes** that could have affected banner positioning or visibility
 3. **No direct modifications** to app-banner components, but related systems were heavily modified
 
@@ -145,11 +150,11 @@ Based on the investigation, the referral drop is **very likely** due to:
 
 **SMOKING GUN IDENTIFIED**: The investigation has successfully identified the likely root cause of the 40-50% referral drop to Jetpack mobile applications.
 
-**Key Finding**: The complete removal of the What's New modal system on April 4, 2025 (commit: `c0a10a96671`) appears to have broken or disabled the app banner display functionality. This massive change removed 1,385 lines of code across 38 files, including modifications to the core layout system that controls app banner visibility.
+**Key Finding**: The complete removal of the What's New modal system on April 4, 2025 ([commit `c0a10a96671`](https://github.com/Automattic/wp-calypso/commit/c0a10a96671daa6a1e4c15279dea0079e56157f2), [PR #101692](https://github.com/Automattic/wp-calypso/pull/101692)) appears to have broken or disabled the app banner display functionality. This massive change removed 1,385 lines of code across 38 files, including modifications to the core layout system that controls app banner visibility.
 
 **Evidence**:
 - The timing perfectly matches the April 3-5 referral drop timeframe
-- Previous commits had established dependencies between What's New modal state and app banner visibility
+- Previous commits had established dependencies between What's New modal state and app banner visibility ([commit `a56c854e163`](https://github.com/Automattic/wp-calypso/commit/a56c854e163faf115893d07330ecd01e00fd86d0), [PR #88744](https://github.com/Automattic/wp-calypso/pull/88744))
 - The removal affected critical files like `client/layout/index.jsx` that control app banner rendering
 - No other significant changes to app promotional systems were found during this period
 
