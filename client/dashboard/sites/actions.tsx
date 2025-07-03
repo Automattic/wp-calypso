@@ -2,15 +2,15 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, wordpress } from '@wordpress/icons';
-import { lazyModal } from '../components/lazy-modal';
+import { lazy, Suspense } from 'react';
 import { isP2, isSelfHostedJetpackConnected } from '../utils/site-types';
 import { canManageSite } from './features';
 import type { Site } from '../data/types';
 import type { Action } from '@automattic/dataviews';
 import type { AnyRouter } from '@tanstack/react-router';
 
-const SiteLeaveContentInfo = lazyModal( () => import( './site-leave-modal/content-info' ) );
-const SiteRestoreContentInfo = lazyModal( () => import( './site-restore-modal/content-info' ) );
+const SiteLeaveContentInfo = lazy( () => import( './site-leave-modal/content-info' ) );
+const SiteRestoreContentInfo = lazy( () => import( './site-restore-modal/content-info' ) );
 
 const noop = () => undefined;
 
@@ -84,7 +84,9 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			isEligible: ( item: Site ) =>
 				item.is_deleted && ! isP2( item ) && ! isSelfHostedJetpackConnected( item ),
 			RenderModal: ( { items, closeModal } ) => (
-				<SiteRestoreContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
+				<Suspense fallback={ null }>
+					<SiteRestoreContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
+				</Suspense>
 			),
 		},
 		{
@@ -92,7 +94,9 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			label: __( 'Leave site' ),
 			isEligible: ( item: Site ) => ! item.is_deleted && ! isP2( item ),
 			RenderModal: ( { items, closeModal } ) => (
-				<SiteLeaveContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
+				<Suspense fallback={ null }>
+					<SiteLeaveContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
+				</Suspense>
 			),
 		},
 	];
