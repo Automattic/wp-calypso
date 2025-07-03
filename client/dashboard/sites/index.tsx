@@ -7,7 +7,7 @@ import fastDeepEqual from 'fast-deep-equal/es6';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
 import { isAutomatticianQuery } from '../app/queries/me-a8c';
-import { mePreferencesQuery, mePreferencesMutation } from '../app/queries/me-preferences';
+import { userPreferencesQuery, userPreferencesMutation } from '../app/queries/me-preferences';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -41,16 +41,6 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 	};
 };
 
-const useViewPreferences = () => {
-	const { data: viewPreferences } = useSuspenseQuery( mePreferencesQuery( 'sites-view' ) );
-	const updateViewPreferencesMutation = useMutation( mePreferencesMutation( 'sites-view' ) );
-
-	return {
-		viewPreferences: viewPreferences as Partial< View >,
-		updateViewPreferences: updateViewPreferencesMutation.mutate,
-	};
-};
-
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const router = useRouter();
@@ -60,13 +50,14 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { viewPreferences, updateViewPreferences } = useViewPreferences();
+	const { data: viewPreferences } = useSuspenseQuery( userPreferencesQuery( 'sites-view' ) );
+	const { mutate: updateViewPreferences } = useMutation( userPreferencesMutation( 'sites-view' ) );
 
 	const { defaultView, view } = getView( {
 		user,
 		isAutomattician,
 		isRestoringAccount,
-		viewPreferences,
+		viewPreferences: viewPreferences as Partial< View >,
 		viewOptions,
 	} );
 

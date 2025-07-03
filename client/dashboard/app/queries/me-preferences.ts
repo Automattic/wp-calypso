@@ -2,7 +2,7 @@ import { fetchPreferences, updatePreferences } from '../../data/me-preferences';
 import { queryClient } from '../query-client';
 import type { UserPreferences } from '../../data/me-preferences';
 
-export const mePreferencesQuery = ( preferenceName?: keyof UserPreferences ) => ( {
+export const userPreferencesQuery = ( preferenceName?: keyof UserPreferences ) => ( {
 	queryKey: [ 'me', 'preferences' ],
 	queryFn: fetchPreferences,
 	select: ( data: UserPreferences ) => {
@@ -14,7 +14,7 @@ export const mePreferencesQuery = ( preferenceName?: keyof UserPreferences ) => 
 	},
 } );
 
-export const mePreferencesMutation = ( preferenceName?: keyof UserPreferences ) => ( {
+export const userPreferencesMutation = ( preferenceName?: keyof UserPreferences ) => ( {
 	mutationFn: ( data ) => {
 		if ( preferenceName ) {
 			return updatePreferences( { [ preferenceName ]: data } );
@@ -24,7 +24,7 @@ export const mePreferencesMutation = ( preferenceName?: keyof UserPreferences ) 
 	},
 	onSuccess: ( newData: Partial< UserPreferences > ) => {
 		queryClient.setQueryData(
-			mePreferencesQuery().queryKey,
+			userPreferencesQuery().queryKey,
 			( oldData: UserPreferences | undefined ) => ( oldData ? { ...oldData, ...newData } : newData )
 		);
 	},
