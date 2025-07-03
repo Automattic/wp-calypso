@@ -1,4 +1,4 @@
-import { TextControl } from '@wordpress/components';
+import { SearchControl } from '@wordpress/components';
 import { useDomainSearch } from '../DomainSearch/DomainSearch';
 
 export const DomainSearchControlsInput = ( {
@@ -10,5 +10,13 @@ export const DomainSearchControlsInput = ( {
 } ) => {
 	const { query, setQuery } = useDomainSearch();
 
-	return <TextControl onChange={ onChange ?? setQuery } value={ value ?? query } />;
+	return (
+		<SearchControl
+			className="domain-search-controls__input"
+			__nextHasNoMarginBottom
+			value={ value ?? query }
+			placeholder="discardedobject.art"
+			onChange={ onChange ?? setQuery }
+		/>
+	);
 };
