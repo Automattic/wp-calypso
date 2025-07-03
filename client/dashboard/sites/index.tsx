@@ -42,15 +42,12 @@ const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchS
 };
 
 const useViewPreferences = () => {
-	const { data: preferences } = useSuspenseQuery( mePreferencesQuery() );
-	const updatePreferencesMutation = useMutation( mePreferencesMutation() );
+	const { data: viewPreferences } = useSuspenseQuery( mePreferencesQuery( 'sites-view' ) );
+	const updateViewPreferencesMutation = useMutation( mePreferencesMutation( 'sites-view' ) );
 
 	return {
-		viewPreferences: preferences[ 'sites-view' ],
-		updateViewPreferences: ( data: Partial< View > ) =>
-			updatePreferencesMutation.mutate( {
-				'sites-view': data,
-			} ),
+		viewPreferences: viewPreferences as Partial< View >,
+		updateViewPreferences: updateViewPreferencesMutation.mutate,
 	};
 };
 
