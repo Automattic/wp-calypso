@@ -2,7 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DomainSearchControlsFilters } from './filters';
 import { DomainSearchControlsInput } from './input';
 import { DomainSearchControlsSubmit } from './submit';
-import './style.scss';
+import './index.scss';
 
 const DomainSearchControls = () => {
 	return (

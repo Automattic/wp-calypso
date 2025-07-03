@@ -1,0 +1,9 @@
+@import './variables';
+
+.domain-search-controls__submit {
+    height: $input-height;
+    font-size: 1rem;
+    border-radius: $border-radius;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
