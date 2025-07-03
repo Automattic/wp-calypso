@@ -381,6 +381,11 @@ interface ViewBase {
 	perPage?: number;
 
 	/**
+	 * Control the available sizes of the items per page
+	 */
+	perPageSizes?: [ number, number, number, number ];
+
+	/**
 	 * The fields to render
 	 */
 	fields?: string[];
