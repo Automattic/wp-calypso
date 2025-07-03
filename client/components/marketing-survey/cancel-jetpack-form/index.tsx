@@ -391,9 +391,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return firstButtons.concat( [ cancel ] );
 		}
 
-		// on the last step
+		// on the last step or the offer step
 		// show the cancel button here
-		if ( lastStep === cancellationStep ) {
+		if ( lastStep === cancellationStep || steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
 			// If loading offers, show a "loading" button in place of the remove button.
 			// The steps may change if an offer is available and this may no longer be the last step.
 			if ( loadingOffers ) {
