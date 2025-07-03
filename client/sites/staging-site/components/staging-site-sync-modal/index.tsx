@@ -209,37 +209,33 @@ export default function SyncModal( {
 		>
 			<QueryRewindState siteId={ querySiteId } />
 			<VStack spacing={ 6 }>
-				<VStack spacing={ 7 }>
-					<Text>
-						{ createInterpolateElement( syncConfig[ environment ].description, {
-							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
-						} ) }
-					</Text>
-					<HStack spacing={ 2 } alignment="center">
-						<EnvironmentLabel
-							label={ syncConfig.fromLabel }
-							environmentType={ syncConfig[ environment ].syncFrom }
-						/>
-						<DirectionArrow />
-						<EnvironmentLabel
-							label={ syncConfig.toLabel }
-							environmentType={ syncConfig[ environment ].syncTo }
-						/>
-					</HStack>
-					<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
-					<Text>
-						{ createInterpolateElement( syncConfig.learnMore, {
-							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
-						} ) }
-					</Text>
-					{ querySiteId === stagingSiteId ? (
-						<div className="staging-site-card">
-							<FileBrowser rewindId={ rewindId } />
-						</div>
-					) : (
-						'Only implemented for staging sites'
-					) }
-				</VStack>
+				<Text>
+					{ createInterpolateElement( syncConfig[ environment ].description, {
+						a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
+					} ) }
+				</Text>
+				<HStack spacing={ 2 } alignment="center">
+					<EnvironmentLabel
+						label={ syncConfig.fromLabel }
+						environmentType={ syncConfig[ environment ].syncFrom }
+					/>
+					<DirectionArrow />
+					<EnvironmentLabel
+						label={ syncConfig.toLabel }
+						environmentType={ syncConfig[ environment ].syncTo }
+					/>
+				</HStack>
+				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
+				{ querySiteId === stagingSiteId && (
+					<div className="staging-site-card">
+						<FileBrowser rewindId={ rewindId } showHeaderButtons={ false } />
+					</div>
+				) }
+				<Text>
+					{ createInterpolateElement( syncConfig.learnMore, {
+						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
+					} ) }
+				</Text>
 				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
