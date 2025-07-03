@@ -12,9 +12,9 @@
         background: var(--studio-white);
 
         input {
-            height: $input-height;
-            font-size: 1.25rem;
-            padding-left: 1rem;
+            height: $input-height !important;
+            font-size: 1.25rem !important;
+            padding-left: 1rem !important;
         }
 
         .components-input-control__suffix > div {

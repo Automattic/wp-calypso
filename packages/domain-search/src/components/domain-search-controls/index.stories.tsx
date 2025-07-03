@@ -17,7 +17,7 @@ export const Default: Story = {
 	args: {},
 };
 
-export const WithoutFilters: Story = {
+export const InputOnly: Story = {
 	render: () => <DomainSearchControls.Input />,
 };
 
