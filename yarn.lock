@@ -14996,6 +14996,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@fingerprintjs/fingerprintjs": "npm:3.4.2"
+    "@fnando/cpf": "npm:1.0.2"
     "@github/webauthn-json": "npm:^2.1.1"
     "@gravatar-com/hovercards": "npm:^0.14.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
