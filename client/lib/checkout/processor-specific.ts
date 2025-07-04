@@ -1,12 +1,12 @@
 import {
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+	isPaymentMethodEnabled,
 	WPCOMPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import { CPF, CNPJ } from 'cpf_cnpj';
 import i18n from 'i18n-calypso';
 import { pick } from 'lodash';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
-import isPaymentMethodEnabled from 'calypso/my-sites/checkout/src/lib/is-payment-method-enabled';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
