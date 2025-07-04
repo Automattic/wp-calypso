@@ -1018,6 +1018,16 @@ export default function pages() {
 		res.redirect( 301, redirectUrl );
 	} );
 
+	// Redirect legacy `/help` routes to `sites?help-center=home` if logged in, otherwise `/support`
+	// Note: isLoggedIn will only work under *.wordpress.com domains (wpcalypso, horizon, and prod)
+	app.get( [ '/help', '/help/*' ], ( req, res ) => {
+		if ( req.context.isLoggedIn ) {
+			return res.redirect( 301, '/sites?help-center=home' );
+		}
+		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
+		return res.redirect( 301, redirectUrl );
+	} );
+
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
 		'/cspreport',

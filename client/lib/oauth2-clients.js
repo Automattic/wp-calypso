@@ -2,6 +2,10 @@ export const isAkismetOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 973;
 };
 
+export const isAndroidOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 2697;
+};
+
 export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 978;
 };
@@ -12,6 +16,10 @@ export const isGravatarFlowOAuth2Client = ( oauth2Client ) => {
 
 export const isGravatarOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 1854 || isGravatarFlowOAuth2Client( oauth2Client );
+};
+
+export const isIosOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 11;
 };
 
 export const isWPJobManagerOAuth2Client = ( oauth2Client ) => {

@@ -38,6 +38,7 @@ import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
@@ -159,7 +160,25 @@ class CancelPurchase extends Component {
 	};
 
 	onDomainConfirmationChange = () => {
-		this.setState( { domainConfirmationConfirmed: ! this.state.domainConfirmationConfirmed } );
+		const { purchase } = this.props;
+		const newValue = ! this.state.domainConfirmationConfirmed;
+
+		this.setState( { domainConfirmationConfirmed: newValue } );
+
+		// Record tracks event for domain confirmation checkbox
+		this.props.recordTracksEvent( 'calypso_purchases_domain_confirmation_checkbox', {
+			product_slug: purchase.productSlug,
+			purchase_id: purchase.id,
+			checked: newValue,
+		} );
+	};
+
+	onKeepSubscriptionClick = () => {
+		const { purchase } = this.props;
+		this.props.recordTracksEvent( 'calypso_purchases_keep_subscription', {
+			product_slug: purchase.productSlug,
+			purchase_id: purchase.id,
+		} );
 	};
 
 	getActiveMarketplaceSubscriptions() {
@@ -482,6 +501,7 @@ class CancelPurchase extends Component {
 											this.props.siteSlug,
 											this.props.purchaseId
 										) }
+										onClick={ this.onKeepSubscriptionClick }
 									>
 										{ this.props.translate( 'Keep subscription' ) }
 									</FormButton>
@@ -502,28 +522,31 @@ class CancelPurchase extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
-	const isJetpackPurchase =
-		purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
-	const purchases = purchase && getSitePurchases( state, purchase.siteId );
-	const productsList = getProductsList( state );
+export default connect(
+	( state, props ) => {
+		const purchase = getByPurchaseId( state, props.purchaseId );
+		const isJetpackPurchase =
+			purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+		const purchases = purchase && getSitePurchases( state, purchase.siteId );
+		const productsList = getProductsList( state );
 
-	const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
-	const selectedDomainName = purchase && getName( purchase );
-	const selectedDomain =
-		domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
+		const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
+		const selectedDomainName = purchase && getName( purchase );
+		const selectedDomain =
+			domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
 
-	return {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		isJetpackPurchase,
-		purchase,
-		purchases,
-		productsList,
-		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
-		site: getSite( state, purchase ? purchase.siteId : null ),
-		isHundredYearDomain: selectedDomain?.isHundredYearDomain,
-		atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
-	};
-} )( localize( withLocalizedMoment( CancelPurchase ) ) );
+		return {
+			hasLoadedSites: ! isRequestingSites( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			isJetpackPurchase,
+			purchase,
+			purchases,
+			productsList,
+			includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
+			site: getSite( state, purchase ? purchase.siteId : null ),
+			isHundredYearDomain: selectedDomain?.isHundredYearDomain,
+			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( withLocalizedMoment( CancelPurchase ) ) );
