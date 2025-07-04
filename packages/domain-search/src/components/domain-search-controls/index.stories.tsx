@@ -18,17 +18,17 @@ export const Default: Story = {
 	args: {},
 };
 
-export const InputOnly: Story = {
+export const Input: Story = {
 	render: () => <DomainSearchControls.Input />,
 };
 
-export const FiltersOnly: FiltersStory = {
+export const Filters: FiltersStory = {
 	args: {
 		count: 2,
 	},
 	render: ( args: { count?: number } ) => <DomainSearchControls.Filters count={ args.count } />,
 };
 
-export const SubmitOnly: Story = {
+export const Submit: Story = {
 	render: () => <DomainSearchControls.Submit />,
 };

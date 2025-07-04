@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 import { funnel } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import './filters.scss';
@@ -13,7 +14,17 @@ export const DomainSearchControlsFilters = ( { count }: Props ) => {
 	return (
 		<div className="domain-search-controls__filters">
 			<Button icon={ funnel } variant="secondary" label={ __( 'Filters' ) } showTooltip />
-			{ !! count && <div className="domain-search-controls__filters-count">{ count }</div> }
+			{ !! count && (
+				<div
+					className="domain-search-controls__filters-count"
+					/* translators: %d: number of active filters */
+					aria-label={ sprintf( __( 'Number of active filters: %d' ), count ) }
+					aria-live="polite"
+					role="status"
+				>
+					{ count }
+				</div>
+			) }
 		</div>
 	);
 };
