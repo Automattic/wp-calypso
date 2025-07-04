@@ -46,7 +46,7 @@ function getSiteManagementUrl( site: Site ) {
 	return site.options?.admin_url;
 }
 
-const titleFieldStyle = {
+const titleFieldTextOverflowStyles = {
 	overflowX: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
@@ -75,7 +75,7 @@ export function Name( { site, value }: { site: Site; value: string } ) {
 				{ site.is_deleted ? (
 					<Text variant="muted">{ value }</Text>
 				) : (
-					<span style={ titleFieldStyle }>{ value }</span>
+					<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 				) }
 				<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
 			</HStack>
@@ -87,7 +87,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
-		<span style={ titleFieldStyle }>{ value }</span>
+		<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 	);
 }
 
