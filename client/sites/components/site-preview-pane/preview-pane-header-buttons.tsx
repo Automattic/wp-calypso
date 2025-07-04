@@ -35,8 +35,18 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const hasStagingSite = useSelector( ( state ) =>
 		hasWpcomStagingSite( state, itemData.blogId ?? null )
 	);
+	const stagingStatus = useSelector( ( state ) =>
+		getStagingSiteStatus( state, itemData.blogId ?? 0 )
+	);
+
+	const isStagingSiteProgressing =
+		stagingStatus === StagingSiteStatus.INITIATE_TRANSFERRING ||
+		stagingStatus === StagingSiteStatus.TRANSFERRING ||
+		stagingStatus === StagingSiteStatus.INITIATE_REVERTING ||
+		stagingStatus === StagingSiteStatus.REVERTING;
+
 	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign && ( isStagingSite || hasStagingSite )
+		stagingSitesRedesign && ( isStagingSite || hasStagingSite ) && ! isStagingSiteProgressing
 	);
 
 	const productionSiteId = isStagingSite
