@@ -185,7 +185,7 @@ class CancelPurchaseForm extends Component {
 
 		// Only fire the tracking event if this is a dropdown selection (detailsValue is undefined)
 		if ( detailsValue === undefined && value && value !== '' ) {
-			this.recordClickRadioEvent( 'radio_1_details', value );
+			this.recordClickRadioEvent( 'radio_1_2', value );
 		}
 
 		const newState = {
