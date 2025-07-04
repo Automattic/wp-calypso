@@ -38,6 +38,7 @@ import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
@@ -160,6 +161,14 @@ class CancelPurchase extends Component {
 
 	onDomainConfirmationChange = () => {
 		this.setState( { domainConfirmationConfirmed: ! this.state.domainConfirmationConfirmed } );
+	};
+
+	onKeepSubscriptionClick = () => {
+		const { purchase } = this.props;
+		recordTracksEvent( 'calypso_purchases_keep_subscription', {
+			product_slug: purchase.productSlug,
+			purchase_id: purchase.id,
+		} );
 	};
 
 	getActiveMarketplaceSubscriptions() {
@@ -482,6 +491,7 @@ class CancelPurchase extends Component {
 											this.props.siteSlug,
 											this.props.purchaseId
 										) }
+										onClick={ this.onKeepSubscriptionClick }
 									>
 										{ this.props.translate( 'Keep subscription' ) }
 									</FormButton>
