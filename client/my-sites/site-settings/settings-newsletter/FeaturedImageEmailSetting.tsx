@@ -23,9 +23,9 @@ export const FeaturedImageEmailSetting = ( {
 	return (
 		<>
 			<ToggleControl
-				checked={ !! value }
+				checked={ isPrivate ? false : !! value }
 				onChange={ handleToggle( FEATURED_IMAGE_IN_EMAIL_OPTION ) }
-				disabled={ disabled }
+				disabled={ disabled || isPrivate }
 				label={ translate( 'Enable featured image on your new post emails' ) }
 			/>
 			<FormSettingExplanation>

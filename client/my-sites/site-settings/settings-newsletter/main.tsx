@@ -282,7 +282,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 			/>
 			<Card className="site-settings__card">
 				<FeaturedImageEmailSetting
-					disabled={ disabled || isPrivate }
+					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ wpcom_featured_image_in_email }
 					isPrivate={ isPrivate }
