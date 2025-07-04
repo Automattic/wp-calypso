@@ -35,3 +35,5 @@ export * from './checkout-version-checker';
 export * from './restorable-products-context';
 export * from './removed-from-cart-item';
 export * from './translate-payment-method-names';
+export * from './is-payment-method-enabled';
+export * from './filter-appropriate-payment-methods';

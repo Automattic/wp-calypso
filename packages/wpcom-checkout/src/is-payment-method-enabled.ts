@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
-import { isRedirectPaymentMethod } from '@automattic/wpcom-checkout';
-import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
+import { isRedirectPaymentMethod } from './index';
+import type { CheckoutPaymentMethodSlug } from './types';
 
-export default function isPaymentMethodEnabled(
+export function isPaymentMethodEnabled(
 	slug: CheckoutPaymentMethodSlug,
 	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
 ): boolean {
