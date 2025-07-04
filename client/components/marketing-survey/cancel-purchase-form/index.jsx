@@ -510,7 +510,13 @@ class CancelPurchaseForm extends Component {
 
 		this.setState( { surveyStep: newStep } );
 
-		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+		// Include upsell information when tracking the upsell step
+		const eventProperties = { new_step: newStep };
+		if ( newStep === UPSELL_STEP && this.state.upsell ) {
+			eventProperties.upsell_type = this.state.upsell;
+		}
+
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', eventProperties );
 	};
 
 	clickNext = () => {
