@@ -8,11 +8,20 @@
 		padding: 0 32px;
 	}
 
+	svg {
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
 	.dashboard-callout {
 		max-width: none;
 	}
 
 	.dashboard-callout__image img {
-		object-position: top left;
+		object-fit: contain;
+		object-position: top;
 	}
 }
