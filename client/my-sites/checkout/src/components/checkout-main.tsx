@@ -7,6 +7,8 @@ import {
 	isValueTruthy,
 	getContactDetailsType,
 	filterAppropriatePaymentMethods,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -17,10 +19,6 @@ import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
-import {
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	translateCheckoutPaymentMethodToTracksPaymentMethod,
-} from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
