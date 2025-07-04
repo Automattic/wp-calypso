@@ -1,7 +1,7 @@
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
+import { isValidCPF } from '@automattic/wpcom-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { isValidCPF } from 'calypso/lib/checkout/processor-specific';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';

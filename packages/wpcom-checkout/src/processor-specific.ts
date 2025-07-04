@@ -1,12 +1,12 @@
-import {
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-	isPaymentMethodEnabled,
-	WPCOMPaymentMethod,
-} from '@automattic/wpcom-checkout';
 import { isValid as isValidCnpj } from '@fnando/cnpj';
 import { isValid as isValidCpf } from '@fnando/cpf';
 import i18n from 'i18n-calypso';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from './payment-processor-countries-fields';
+import {
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+	isPaymentMethodEnabled,
+} from './index';
+import type { WPCOMPaymentMethod } from './types';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
