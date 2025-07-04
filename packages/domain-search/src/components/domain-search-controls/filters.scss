@@ -8,7 +8,7 @@
         padding: 1rem !important;
     }
 
-    .domain-search-controls__filters-count {
+    &-count {
         display: flex;
         height: 1.5rem;
         min-width: 1.5rem;
@@ -22,5 +22,11 @@
         font-size: 0.75rem;
         align-items: center;
         justify-content: center;
+    }
+}
+
+.domain-search-controls__filters-popover {
+    .components-popover__content {
+        padding: 1rem;
     }
 }

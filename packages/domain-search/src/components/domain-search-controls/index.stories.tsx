@@ -1,3 +1,4 @@
+import { availableTlds } from './_mock';
 import { DomainSearchControls } from '.';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -13,6 +14,7 @@ const meta: Meta< typeof DomainSearchControls > = {
 export default meta;
 type Story = StoryObj< typeof DomainSearchControls >;
 type FiltersStory = StoryObj< typeof DomainSearchControls.Filters >;
+type FiltersListStory = StoryObj< typeof DomainSearchControls.FiltersList >;
 
 export const Default: Story = {
 	args: {},
@@ -25,12 +27,20 @@ export const Input: Story = {
 export const Filters: FiltersStory = {
 	args: {
 		count: 2,
+		availableTlds,
 	},
-	render: ( args: { count?: number } ) => <DomainSearchControls.Filters count={ args.count } />,
+	render: ( args: { availableTlds: string[] | undefined; count?: number } ) => (
+		<DomainSearchControls.Filters count={ args.count } availableTlds={ args.availableTlds } />
+	),
 };
 
-export const FiltersList: Story = {
-	render: () => <DomainSearchControls.FiltersList />,
+export const FiltersList: FiltersListStory = {
+	args: {
+		availableTlds,
+	},
+	render: ( args: { availableTlds?: string[] } ) => (
+		<DomainSearchControls.FiltersList availableTlds={ args.availableTlds } />
+	),
 };
 
 export const Submit: Story = {

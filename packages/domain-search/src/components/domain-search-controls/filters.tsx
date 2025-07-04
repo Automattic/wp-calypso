@@ -1,4 +1,4 @@
-import { Button, Popover } from '@wordpress/components';
+import { Button, Popover, __experimentalHStack as HStack } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { funnel } from '@wordpress/icons';
@@ -8,9 +8,10 @@ import './filters.scss';
 
 type Props = {
 	count?: number;
+	availableTlds?: string[];
 };
 
-export const DomainSearchControlsFilters = ( { count }: Props ) => {
+export const DomainSearchControlsFilters = ( { count, availableTlds }: Props ) => {
 	const { __ } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -34,8 +35,17 @@ export const DomainSearchControlsFilters = ( { count }: Props ) => {
 				</div>
 			) }
 			{ isOpen && (
-				<Popover focusOnMount placement="bottom-end" onFocusOutside={ () => setIsOpen( false ) }>
-					<DomainSearchControlsFiltersList />
+				<Popover
+					className="domain-search-controls__filters-popover"
+					focusOnMount
+					placement="bottom-end"
+					onFocusOutside={ () => setIsOpen( false ) }
+				>
+					<DomainSearchControlsFiltersList availableTlds={ availableTlds } />
+					<HStack justify="space-between" alignment="center">
+						<Button variant="tertiary">Clear</Button>
+						<Button variant="primary">Apply</Button>
+					</HStack>
 				</Popover>
 			) }
 		</div>

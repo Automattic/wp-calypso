@@ -1,3 +1,18 @@
 .domain-search-controls__filters-list {
-    padding: 1rem;
+	width: 300px;
+
+	&-suggestions {
+		max-height: 275px;
+		overflow-y: auto;
+		padding: 0.5rem;
+        border: solid 1px var(--studio-gray-30);
+        border-radius: 2px;
+        margin-bottom: 0.5rem;
+	}
+
+    &-heading {
+        font-size: 0.875rem;
+        font-weight: normal;
+        margin: 0.5rem 0;
+    }
 }
