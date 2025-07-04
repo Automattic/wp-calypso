@@ -9,13 +9,18 @@
     }
 
     .domain-search-controls__filters-count {
+        display: flex;
+        height: 1.5rem;
+        min-width: 1.5rem;
         position: absolute;
-        top: -0.5rem;
-        right: -0.5rem;
+        top: -0.75rem;
+        right: -0.75rem;
         background: var(--studio-blue-50);
+        border: solid 2px var(--studio-white);
+        border-radius: 50%;
         color: var(--studio-white);
-        padding: 0.25rem 0.5rem;
-        border-radius: 100%;
         font-size: 0.75rem;
+        align-items: center;
+        justify-content: center;
     }
 }
