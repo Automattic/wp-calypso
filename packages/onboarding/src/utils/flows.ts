@@ -13,13 +13,13 @@ export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
-export const DOMAIN_TRANSFER = 'domain-transfer';
+
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
-export const GOOGLE_TRANSFER = 'google-transfer';
+
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
-export const UPDATE_OPTIONS_FLOW = 'update-options';
-export const DOMAIN_USER_TRANSFER = 'domain-user-transfer';
+export const DOMAIN_TRANSFER = 'domain-transfer';
+export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_DOMAIN_TRANSFER = 'hundred-year-domain-transfer';
 export const HUNDRED_YEAR_DOMAIN_FLOW = 'hundred-year-domain';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
