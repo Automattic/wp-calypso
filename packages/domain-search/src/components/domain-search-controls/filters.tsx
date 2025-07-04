@@ -3,6 +3,7 @@ import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { funnel } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { DomainSearchControlsFiltersList } from './filters-list';
 import './filters.scss';
 
 type Props = {
@@ -34,7 +35,7 @@ export const DomainSearchControlsFilters = ( { count }: Props ) => {
 			) }
 			{ isOpen && (
 				<Popover focusOnMount placement="bottom-end" onFocusOutside={ () => setIsOpen( false ) }>
-					<div className="domain-search-controls__filters-list">Filters</div>
+					<DomainSearchControlsFiltersList />
 				</Popover>
 			) }
 		</div>

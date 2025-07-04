@@ -1,5 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DomainSearchControlsFilters } from './filters';
+import { DomainSearchControlsFiltersList } from './filters-list';
 import { DomainSearchControlsInput } from './input';
 import { DomainSearchControlsSubmit } from './submit';
 import './index.scss';
@@ -18,5 +19,6 @@ const DomainSearchControls = () => {
 DomainSearchControls.Input = DomainSearchControlsInput;
 DomainSearchControls.Submit = DomainSearchControlsSubmit;
 DomainSearchControls.Filters = DomainSearchControlsFilters;
+DomainSearchControls.FiltersList = DomainSearchControlsFiltersList;
 
 export { DomainSearchControls };

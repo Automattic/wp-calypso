@@ -29,6 +29,10 @@ export const Filters: FiltersStory = {
 	render: ( args: { count?: number } ) => <DomainSearchControls.Filters count={ args.count } />,
 };
 
+export const FiltersList: Story = {
+	render: () => <DomainSearchControls.FiltersList />,
+};
+
 export const Submit: Story = {
 	render: () => <DomainSearchControls.Submit />,
 };
