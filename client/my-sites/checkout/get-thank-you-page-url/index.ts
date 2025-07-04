@@ -309,7 +309,7 @@ export default function getThankYouPageUrl( {
 		return redirectTo || '/client/subscriptions';
 	}
 
-	// Affiliate PM siteless checkout - handles post-checkout site creation flow
+	// Unified affiliate + paid media siteless checkout - handles post-checkout site creation flow
 	if ( sitelessCheckoutType === 'unified' ) {
 		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
 		const urlFromCookie = getUrlFromCookie();
