@@ -68,6 +68,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		default:
 			return null;
 	}
+	return null;
 }
 
 type ProvidedDependencies = {
