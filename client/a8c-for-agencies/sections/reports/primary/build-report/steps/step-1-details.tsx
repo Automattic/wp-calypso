@@ -197,7 +197,16 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 										// Disable dates from today onwards (only yesterday and earlier allowed)
 										const today = new Date();
 										today.setHours( 0, 0, 0, 0 ); // Start of today
-										return new Date( date ) >= today;
+
+										// Calculate 6 months ago
+										const sixMonthsAgo = new Date();
+										sixMonthsAgo.setMonth( sixMonthsAgo.getMonth() - 6 );
+										sixMonthsAgo.setHours( 0, 0, 0, 0 );
+
+										const selectedDate = new Date( date );
+
+										// Disable if date is today or later, OR if date is older than 6 months
+										return selectedDate >= today || selectedDate < sixMonthsAgo;
 									} }
 								/>
 							</Popover>
