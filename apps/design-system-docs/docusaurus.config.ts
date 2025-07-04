@@ -69,6 +69,12 @@ const config: Config = {
 				},
 				{
 					type: 'docSidebar',
+					sidebarId: 'tokensSidebar',
+					position: 'left',
+					label: 'Tokens',
+				},
+				{
+					type: 'docSidebar',
 					sidebarId: 'componentsSidebar',
 					position: 'left',
 					label: 'Components',
@@ -93,6 +99,10 @@ const config: Config = {
 						{
 							label: 'Patterns',
 							to: '/patterns/',
+						},
+						{
+							label: 'Tokens',
+							to: '/tokens/',
 						},
 						{
 							label: 'Components',
