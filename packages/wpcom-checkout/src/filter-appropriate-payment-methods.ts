@@ -2,7 +2,7 @@ import { isPaymentMethodEnabled, readCheckoutPaymentMethodSlug } from './index';
 import type { CheckoutPaymentMethodSlug } from './types';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 
-export default function filterAppropriatePaymentMethods( {
+export function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
 	allowedPaymentMethods,
 }: {
