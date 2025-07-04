@@ -3,10 +3,10 @@ import {
 	isPaymentMethodEnabled,
 	WPCOMPaymentMethod,
 } from '@automattic/wpcom-checkout';
-import { CPF, CNPJ } from 'cpf_cnpj';
+import { isValid as isValidCnpj } from '@fnando/cnpj';
+import { isValid as isValidCpf } from '@fnando/cpf';
 import i18n from 'i18n-calypso';
-import { pick } from 'lodash';
-import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from './payment-processor-countries-fields';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -37,7 +37,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry(
  * @returns {boolean} Whether the cpf is valid or not
  */
 export function isValidCPF( cpf: string ): boolean {
-	return CPF.isValid( cpf );
+	return isValidCpf( cpf );
 }
 
 /**
@@ -47,7 +47,7 @@ export function isValidCPF( cpf: string ): boolean {
  * @returns {boolean} Whether the cnpj is valid or not
  */
 export function isValidCNPJ( cnpj: string ): boolean {
-	return CNPJ.isValid( cnpj );
+	return isValidCnpj( cnpj );
 }
 
 export function fullAddressFieldsRules() {
@@ -79,56 +79,67 @@ export function fullAddressFieldsRules() {
 	};
 }
 
+export interface FieldRule {
+	description: string;
+	rules: string[];
+}
+export type FieldRuleCollection = Record< string, FieldRule >;
+
 /**
  * Returns country/processor specific validation rule sets for defined fields.
  * @param {string} country two-letter country code to determine the required fields
  */
-export function countrySpecificFieldRules( country: string ) {
+export function countrySpecificFieldRules( country: string ): FieldRuleCollection {
 	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ]?.fields ?? [];
 
-	return pick(
-		Object.assign(
-			{
-				document: {
-					description: i18n.translate( 'Taxpayer Identification Number' ),
-					rules: [ 'validBrazilTaxId' ],
-				},
-
-				'phone-number': {
-					description: i18n.translate( 'Phone Number' ),
-					rules: [ 'required' ],
-				},
-				name: {
-					description: i18n.translate( 'Your Name' ),
-					rules: [ 'required' ],
-				},
-				nik: {
-					description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
-						comment:
-							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
-					} ),
-					rules: [ 'validIndonesiaNik' ],
-				},
-
-				pan: {
-					description: i18n.translate( 'PAN - Permanent account number' ),
-					rules: [ 'validIndiaPan' ],
-				},
-				gstin: {
-					description: i18n.translate( 'GSTIN - GST identification number', {
-						comment: 'GSTIN: India specific tax id number',
-					} ),
-					rules: [ 'validIndiaGstin' ],
-				},
-				'postal-code': {
-					description: i18n.translate( 'Postal Code' ),
-					rules: [ 'required' ],
-				},
+	const allFields: FieldRuleCollection = Object.assign(
+		{
+			document: {
+				description: i18n.translate( 'Taxpayer Identification Number', { textOnly: true } ),
+				rules: [ 'validBrazilTaxId' ],
 			},
-			fullAddressFieldsRules()
-		),
-		countryFields
+
+			'phone-number': {
+				description: i18n.translate( 'Phone Number', { textOnly: true } ),
+				rules: [ 'required' ],
+			},
+			name: {
+				description: i18n.translate( 'Your Name', { textOnly: true } ),
+				rules: [ 'required' ],
+			},
+			nik: {
+				description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
+					comment: 'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
+					textOnly: true,
+				} ),
+				rules: [ 'validIndonesiaNik' ],
+			},
+
+			pan: {
+				description: i18n.translate( 'PAN - Permanent account number', { textOnly: true } ),
+				rules: [ 'validIndiaPan' ],
+			},
+			gstin: {
+				description: i18n.translate( 'GSTIN - GST identification number', {
+					comment: 'GSTIN: India specific tax id number',
+					textOnly: true,
+				} ),
+				rules: [ 'validIndiaGstin' ],
+			},
+			'postal-code': {
+				description: i18n.translate( 'Postal Code', { textOnly: true } ),
+				rules: [ 'required' ],
+			},
+		},
+		fullAddressFieldsRules()
 	);
+
+	return Object.keys( allFields ).reduce( ( filteredFields, fieldName ) => {
+		if ( countryFields.includes( fieldName ) ) {
+			filteredFields[ fieldName ] = allFields[ fieldName ];
+		}
+		return filteredFields;
+	}, {} as FieldRuleCollection );
 }
 
 export function translatedEbanxError( error: { status_code: string; message?: string } ) {
