@@ -1,11 +1,29 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useChatStatus } from '../hooks';
 import './notices.scss';
 
 export const NewThirdPartyCookiesNotice: React.FC = () => {
+	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
+	const { isEligibleForChat } = useChatStatus();
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_helpcenter_third_party_cookies_notice_open', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+	}, [ sectionName ] );
+
+	if ( canConnectToZendesk || ! isEligibleForChat ) {
+		return null;
+	}
+
 	return (
 		<div className="help-center__notice cookie-warning">
 			<p>

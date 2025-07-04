@@ -26,7 +26,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
 	const query = params.get( 'query' );
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -92,7 +92,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			{ ! canConnectToZendesk && <NewThirdPartyCookiesNotice /> }
+			<NewThirdPartyCookiesNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }
