@@ -1,11 +1,13 @@
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
@@ -23,9 +25,11 @@ import { DotcomFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasAtomicFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { HostingFeatures } from '../features';
+import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
+import { HostingFeatures, canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
+import SiteIcon from '../site-icon';
+import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { AtomicTransferStatus, Site } from '../../data/types';
 
@@ -35,6 +39,91 @@ function IneligibleIndicator() {
 
 function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
+}
+
+function getSiteManagementUrl( site: Site ) {
+	if ( canManageSite( site ) ) {
+		return `/sites/${ site.slug }`;
+	}
+	return site.options?.admin_url;
+}
+
+const titleFieldTextOverflowStyles = {
+	overflowX: 'hidden',
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+} as const;
+
+export function Name( { site, value }: { site: Site; value: string } ) {
+	const renderBadge = () => {
+		if ( site.is_wpcom_staging_site ) {
+			return <Badge>{ __( 'Staging' ) }</Badge>;
+		}
+
+		if ( isSitePlanTrial( site ) ) {
+			return <Badge>{ __( 'Trial' ) }</Badge>;
+		}
+
+		if ( isP2( site ) ) {
+			return <Badge>{ __( 'P2' ) }</Badge>;
+		}
+
+		return null;
+	};
+
+	return (
+		<Link to={ getSiteManagementUrl( site ) } disabled={ site.is_deleted }>
+			<HStack alignment="center" spacing={ 1 }>
+				{ site.is_deleted ? (
+					<Text variant="muted">{ value }</Text>
+				) : (
+					<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+				) }
+				<span style={ { flexShrink: 0 } }>{ renderBadge() }</span>
+			</HStack>
+		</Link>
+	);
+}
+
+export function URL( { site, value }: { site: Site; value: string } ) {
+	return site.is_deleted ? (
+		<Text variant="muted">{ value }</Text>
+	) : (
+		<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+	);
+}
+
+export function Preview( { site }: { site: Site } ) {
+	const [ resizeListener, { width } ] = useResizeObserver();
+	const { is_deleted, is_private, URL: url } = site;
+	// If the site is a private A8C site, X-Frame-Options is set to same
+	// origin.
+	const iframeDisabled = is_deleted || ( site.is_a8c && is_private );
+	return (
+		<Link
+			to={ getSiteManagementUrl( site ) }
+			disabled={ site.is_deleted }
+			style={ { display: 'block', height: '100%', width: '100%' } }
+		>
+			{ resizeListener }
+			{ iframeDisabled && (
+				<div
+					style={ {
+						fontSize: '24px',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						height: '100%',
+					} }
+				>
+					<SiteIcon site={ site } />
+				</div>
+			) }
+			{ width && ! iframeDisabled && (
+				<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
+			) }
+		</Link>
+	);
 }
 
 export function EngagementStat( {

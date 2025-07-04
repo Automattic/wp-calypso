@@ -27,7 +27,7 @@
 		"current-site/notice": true,
 		"dashboard/v2": false,
 		"dashboard/v2/backport/site-settings": true,
-		"dashboard/v2/backport/sites-list": false,
+		"dashboard/v2/backport/sites-list": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"global-styles/on-personal-plan": false,
