@@ -15,9 +15,11 @@ export const userPreferencesQuery = ( preferenceName?: keyof UserPreferences ) =
 } );
 
 export const userPreferencesMutation = ( preferenceName?: keyof UserPreferences ) => ( {
-	mutationFn: ( data ) => {
+	mutationFn: ( data: UserPreferences | UserPreferences[ keyof UserPreferences ] ) => {
 		if ( preferenceName ) {
-			return updatePreferences( { [ preferenceName ]: data } );
+			return updatePreferences( {
+				[ preferenceName ]: data as Pick< UserPreferences, typeof preferenceName >,
+			} );
 		}
 
 		return updatePreferences( data );
