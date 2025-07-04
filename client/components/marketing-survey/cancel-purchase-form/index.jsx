@@ -182,6 +182,12 @@ class CancelPurchaseForm extends Component {
 		const { downgradeClick, freeMonthOfferClick, purchase } = this.props;
 		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
 		const { purchaseIsAlreadyExtended, questionOneDetails } = this.state;
+
+		// Only fire the tracking event if this is a dropdown selection (detailsValue is undefined)
+		if ( detailsValue === undefined && value && value !== '' ) {
+			this.recordClickRadioEvent( 'radio_1_details', value );
+		}
+
 		const newState = {
 			...this.state,
 			questionOneText: value,
