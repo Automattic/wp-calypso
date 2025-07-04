@@ -38,7 +38,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
-		this.context?.setHeadingText( this.props.translate( 'Check your inbox' ) );
+		this.context?.setHeadingText( this.props.translate( 'Check your email' ) );
 		this.context?.setHeadingSubText( this.getSubHeaderText() );
 	}
 

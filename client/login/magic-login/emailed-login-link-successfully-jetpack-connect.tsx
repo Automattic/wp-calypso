@@ -32,7 +32,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 	}, [] );
 
 	useEffect( () => {
-		setHeadingText( translate( 'Check your inbox' ) );
+		setHeadingText( translate( 'Check your email' ) );
 		setHeadingSubText(
 			emailAddress
 				? translate(
