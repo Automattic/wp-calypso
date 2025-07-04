@@ -2,7 +2,7 @@ import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
@@ -11,6 +11,7 @@ import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-p
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getActions } from './actions';
@@ -103,6 +104,23 @@ export default function Sites() {
 		updateViewPreferences( updatedViewPreferences );
 	};
 
+	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+
+	const emptyHeading = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+
+	let emptySubHeading = __( 'Get started by creating a new site.' );
+	if ( view.search ) {
+		emptySubHeading = sprintf(
+			// Translators: %s is the search term used when looking for sites by title or domain name.
+			__(
+				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
+			),
+			view.search
+		);
+	} else if ( hasFilterOrSearch ) {
+		emptySubHeading = __( 'Your search did not match any sites.' );
+	}
+
 	return (
 		<>
 			{ isModalOpen && (
@@ -139,6 +157,42 @@ export default function Sites() {
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
+						empty={
+							<DataViewsEmptyState
+								heading={ emptyHeading }
+								subHeading={ emptySubHeading }
+								viewType={ view.type }
+								buttons={
+									<>
+										{ view.search && (
+											<Button
+												__next40pxDefaultSize
+												variant="secondary"
+												onClick={ () => {
+													navigate( {
+														search: {
+															...currentSearchParams,
+															view: Object.fromEntries(
+																Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+															),
+														},
+													} );
+												} }
+											>
+												{ __( 'Clear search' ) }
+											</Button>
+										) }
+										<Button
+											__next40pxDefaultSize
+											variant="primary"
+											onClick={ () => setIsModalOpen( true ) }
+										>
+											{ __( 'Add new site' ) }
+										</Button>
+									</>
+								}
+							/>
+						}
 					/>
 				</DataViewsCard>
 			</PageLayout>
