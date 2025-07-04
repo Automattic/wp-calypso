@@ -183,24 +183,28 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'uptime',
 		label: __( 'Uptime' ),
+		description: __( 'Past 7 days' ),
 		render: ( { item } ) => <Uptime site={ item } />,
 		enableSorting: false,
 	},
 	{
 		id: 'visitors',
 		label: __( 'Visitors' ),
+		description: __( 'Past 7 days' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
 		enableSorting: false,
 	},
 	{
 		id: 'views',
 		label: __( 'Views' ),
+		description: __( 'Past 7 days' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
 		enableSorting: false,
 	},
 	{
 		id: 'likes',
 		label: __( 'Likes' ),
+		description: __( 'Past 7 days' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
 		enableSorting: false,
 	},
