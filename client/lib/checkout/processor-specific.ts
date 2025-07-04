@@ -1,9 +1,13 @@
+import {
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+	WPCOMPaymentMethod,
+} from '@automattic/wpcom-checkout';
 import { CPF, CNPJ } from 'cpf_cnpj';
 import i18n from 'i18n-calypso';
 import { pick } from 'lodash';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
 import isPaymentMethodEnabled from 'calypso/my-sites/checkout/src/lib/is-payment-method-enabled';
-import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Returns whether we should Ebanx credit card processing for a particular country
@@ -11,12 +15,17 @@ import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-s
  * @param {import('@automattic/shopping-cart').ResponseCart} cart - The shopping cart
  * @returns {boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart ) {
+export function isEbanxCreditCardProcessingEnabledForCountry(
+	countryCode: string,
+	cart: ResponseCart
+): boolean {
 	return (
 		typeof PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] !== 'undefined' &&
 		isPaymentMethodEnabled(
 			'ebanx',
-			cart.allowed_payment_methods?.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
+			cart.allowed_payment_methods?.map( ( method ) =>
+				translateWpcomPaymentMethodToCheckoutPaymentMethod( method as WPCOMPaymentMethod )
+			)
 		)
 	);
 }
@@ -27,7 +36,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart 
  * @param {string} cpf - a Brazilian tax identification number
  * @returns {boolean} Whether the cpf is valid or not
  */
-export function isValidCPF( cpf = '' ) {
+export function isValidCPF( cpf: string ): boolean {
 	return CPF.isValid( cpf );
 }
 
@@ -37,7 +46,7 @@ export function isValidCPF( cpf = '' ) {
  * @param {string} cnpj - a Brazilian company tax identification number
  * @returns {boolean} Whether the cnpj is valid or not
  */
-export function isValidCNPJ( cnpj = '' ) {
+export function isValidCNPJ( cnpj: string ): boolean {
 	return CNPJ.isValid( cnpj );
 }
 
@@ -73,10 +82,9 @@ export function fullAddressFieldsRules() {
 /**
  * Returns country/processor specific validation rule sets for defined fields.
  * @param {string} country two-letter country code to determine the required fields
- * @returns {Object} the ruleset
  */
-export function countrySpecificFieldRules( country ) {
-	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
+export function countrySpecificFieldRules( country: string ) {
+	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ]?.fields ?? [];
 
 	return pick(
 		Object.assign(
@@ -123,7 +131,7 @@ export function countrySpecificFieldRules( country ) {
 	);
 }
 
-export function translatedEbanxError( error ) {
+export function translatedEbanxError( error: { status_code: string; message?: string } ) {
 	// It's unclear if this property still exists
 	switch ( error.status_code ) {
 		case 'BP-DR-55':

@@ -2,7 +2,10 @@
  * Object contains countries for which alternate processors may require additional fields
  * PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ {countryCode} ].fields - defines form field names we MUST display for extra payment information
  */
-export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
+export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS: Record<
+	string,
+	undefined | { fields: string[] }
+> = {
 	BR: {
 		fields: [
 			'document',
