@@ -1,8 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
+import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { LocalizeProps, localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
@@ -27,6 +29,7 @@ import {
 	WithStoredPaymentMethodsProps,
 	withStoredPaymentMethods,
 } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -44,6 +47,7 @@ import { AppState } from 'calypso/types';
 import { PurchasesByOtherAdminsNotice } from '../purchases-list/purchases-by-other-admins-notice';
 import PurchasesSite from '../purchases-site';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
+import './style.scss';
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;
@@ -53,13 +57,14 @@ export interface PurchasesListProps {
 export interface PurchasesListConnectedProps {
 	hasLoadedUserPurchasesFromServer: boolean;
 	isFetchingUserPurchases: boolean;
-	purchases: Purchase[] | null;
+	purchases: Purchase[];
 	subscriptions: MembershipSubscription[];
 	sites: SiteDetails[];
 	nextAppointment: NextAppointment | null;
 	isUserBlocked: boolean;
 	availableSessions: number[];
 	siteId: number | null;
+	userId?: number | null;
 }
 
 function MembershipSubscriptions( {
@@ -74,65 +79,87 @@ function MembershipSubscriptions( {
 	return <MembershipsDataViews memberships={ memberships } />;
 }
 
-function isDataLoading( {
-	isFetchingUserPurchases,
+const PurchasesListDataView: React.FC<
+	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps
+> = ( {
 	hasLoadedUserPurchasesFromServer,
-}: {
-	hasLoadedUserPurchasesFromServer: boolean;
-	isFetchingUserPurchases: boolean;
-} ) {
-	if ( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) {
-		return true;
-	}
-}
-
-function ConciergeBanner( {
+	isFetchingUserPurchases,
+	getManagePurchaseUrlFor,
+	purchases,
+	subscriptions,
+	sites,
 	nextAppointment,
-	availableSessions,
 	isUserBlocked,
-}: Pick<
-	PurchasesListConnectedProps,
-	'nextAppointment' | 'availableSessions' | 'isUserBlocked'
-> ) {
-	return (
-		<PurchaseListConciergeBanner
-			nextAppointment={ nextAppointment ?? undefined }
-			availableSessions={ availableSessions }
-			isUserBlocked={ isUserBlocked }
-		/>
-	);
-}
+	availableSessions,
+	userId,
+} ) => {
+	const translate = useTranslate();
+	const {
+		data: transferredOwnershipPurchases = [],
+		isLoading,
+		isSuccess: hasLoadedTransferredOwnershipPurchases,
+	} = useGetJetpackTransferredLicensePurchases( { userId: userId || undefined } );
 
-function PurchasesListDataView(
-	props: PurchasesListProps &
-		PurchasesListConnectedProps &
-		WithStoredPaymentMethodsProps &
-		LocalizeProps
-) {
-	const { purchases, sites, translate, subscriptions } = props;
+	const isDataLoading = useCallback( () => {
+		if (
+			( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) ||
+			( isLoading && ! hasLoadedTransferredOwnershipPurchases )
+		) {
+			return true;
+		}
+
+		return false;
+	}, [
+		hasLoadedUserPurchasesFromServer,
+		isFetchingUserPurchases,
+		isLoading,
+		hasLoadedTransferredOwnershipPurchases,
+	] );
+
+	const allPurchasesLoaded =
+		hasLoadedUserPurchasesFromServer && hasLoadedTransferredOwnershipPurchases;
+
+	const allPurchases = useMemo( () => {
+		if ( allPurchasesLoaded ) {
+			return [ ...( purchases || [] ), ...transferredOwnershipPurchases ];
+		}
+		return [];
+	}, [ allPurchasesLoaded, purchases, transferredOwnershipPurchases ] );
+
+	const renderConciergeBanner = () => {
+		return (
+			<PurchaseListConciergeBanner
+				nextAppointment={ nextAppointment ?? undefined }
+				availableSessions={ availableSessions }
+				isUserBlocked={ isUserBlocked }
+			/>
+		);
+	};
+
 	const commonEventProps = { context: 'me' };
 	let content;
 
-	if (
-		isDataLoading( {
-			isFetchingUserPurchases: props.isFetchingUserPurchases,
-			hasLoadedUserPurchasesFromServer: props.hasLoadedUserPurchasesFromServer,
-		} )
-	) {
+	if ( isDataLoading() ) {
 		content = <PurchasesSite isPlaceholder />;
 	}
 
-	if ( purchases && purchases.length ) {
+	if ( allPurchases.length ) {
 		content = (
 			<PurchasesDataViews
-				purchases={ purchases }
+				purchases={ allPurchases }
 				sites={ sites }
-				getManagePurchaseUrlFor={ props.getManagePurchaseUrlFor }
+				transferredOwnershipPurchases={ transferredOwnershipPurchases }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 			/>
 		);
 	}
 
-	if ( purchases && ! purchases.length && ! subscriptions.length ) {
+	if (
+		purchases &&
+		! purchases.length &&
+		! subscriptions.length &&
+		! transferredOwnershipPurchases.length
+	) {
 		if ( ! sites.length ) {
 			return (
 				<Main wideLayout className="purchases-list">
@@ -145,11 +172,7 @@ function PurchasesListDataView(
 		}
 		content = (
 			<>
-				<ConciergeBanner
-					nextAppointment={ props.nextAppointment }
-					availableSessions={ props.availableSessions }
-					isUserBlocked={ props.isUserBlocked }
-				/>
+				{ renderConciergeBanner() }
 				<CompactCard className="purchases-list__no-content">
 					<>
 						<TrackComponentView
@@ -186,7 +209,7 @@ function PurchasesListDataView(
 				navigationItems={ [] }
 				title={ titles.sectionTitle }
 				subtitle={ translate(
-					'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
@@ -200,18 +223,17 @@ function PurchasesListDataView(
 			<QueryConciergeInitial />
 		</Main>
 	);
-}
+};
 
 export default connect( ( state: AppState ) => ( {
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	isFetchingUserPurchases: isFetchingUserPurchases( state ),
-	purchases: getUserPurchases( state ),
+	purchases: getUserPurchases( state ) ?? [],
 	subscriptions: getAllSubscriptions( state ),
 	sites: getSites( state ).filter( isValueTruthy ),
 	nextAppointment: getConciergeNextAppointment( state ),
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-} ) )(
-	withStoredPaymentMethods( localize( PurchasesListDataView ), { type: 'card', expired: true } )
-);
+	userId: getCurrentUserId( state ),
+} ) )( withStoredPaymentMethods( PurchasesListDataView, { type: 'card', expired: true } ) );

@@ -15,7 +15,7 @@
 	.hosting-dashboard-layout__top-wrapper {
 		> * {
 			// FIXME: Maybe this should be moved to layout/hosting-dashboard/style.scss once we have integrated DataViews without overrides across pages.
-			padding-inline: 48px;
+			padding-inline: 24px;
 			// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
 			// Consider removing this max-width as the default across all layouts.
 			max-width: revert;
@@ -35,7 +35,7 @@
 		display: flex;
 		justify-content: center;
 		margin: 24px auto 8px;
-		padding-inline: 48px;
+		padding-inline: 24px;
 		width: 100%;
 	}
 

@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useMemo, useState, useEffect } from 'react';
-import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
 import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
 import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 
@@ -51,13 +50,8 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 	);
 
 	return (
-		<ServerCredentialsWizardDialog
-			showDialog={ showDialog }
-			isSingular={ false }
-			onCloseDialog={ onCloseDialog }
-			title={ translate( 'Fix all threats' ) }
-			buttons={ buttons }
-		>
+		<Dialog isVisible={ showDialog } buttons={ buttons } onClose={ onCloseDialog }>
+			<h1>{ translate( 'Fix all threats' ) }</h1>
 			<div className="fix-all-threats-dialog">
 				<p className="fix-all-threats-dialog__warning-message">
 					{ translate( 'Jetpack will be fixing the selected threats and low risk items.' ) }
@@ -76,7 +70,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 					) ) }
 				</div>
 			</div>
-		</ServerCredentialsWizardDialog>
+		</Dialog>
 	);
 };
 

@@ -257,8 +257,10 @@
 	}
 }
 
-.billing-history__item-service button.components-button.is-link {
-	font-size: inherit;
-	color: inherit;
-	text-decoration: none;
+.billing-history__item-service a,
+.billing-history__item-service a:visited {
+	/* This is the default style for `.dataviews-title-field a` but since the
+	 * billing-history DataViews is not using the title field yet, we have to
+	 * hack it. */
+	color: #2f2f2f;
 }

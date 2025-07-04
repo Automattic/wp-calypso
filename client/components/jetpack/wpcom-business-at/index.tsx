@@ -43,6 +43,7 @@ import 'calypso/blocks/eligibility-warnings/style.scss';
 
 interface BlockingHoldNoticeProps {
 	siteId: number;
+	productName: string;
 }
 
 // This gets the values of the object transferStates.
@@ -50,11 +51,24 @@ export type TransferStatus = ( typeof transferStates )[ keyof typeof transferSta
 
 interface TransferFailureNoticeProps {
 	transferStatus: TransferStatus | null;
+	productName: string;
 }
 
-const content = {
-	documentHeadTitle: 'Activate Jetpack VaultPress Backup now',
-	header: String( translate( 'Jetpack VaultPress Backup' ) ),
+export interface AtomicContentSwitch {
+	documentHeadTitle: string;
+	header: string;
+	primaryPromo: {
+		image: { path: string };
+		promoCTA: { loadingText: string; text: string };
+		title: string;
+		content: string;
+	};
+	getProductUrl: ( siteSlug: string ) => string;
+}
+
+const vaultpressContent: AtomicContentSwitch = {
+	documentHeadTitle: translate( 'Activate Jetpack VaultPress Backup now' ) as string,
+	header: translate( 'Jetpack VaultPress Backup' ) as string,
 	primaryPromo: {
 		title: translate( 'Get time travel for your site with Jetpack VaultPress Backup' ),
 		image: { path: JetpackBackupSVG },
@@ -66,9 +80,11 @@ const content = {
 			loadingText: translate( 'Activating Jetpack VaultPress Backup' ),
 		},
 	},
+
+	getProductUrl: ( siteSlug: string ) => `/backup/${ siteSlug }`,
 };
 
-function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
+function BlockingHoldNotice( { siteId, productName }: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	if ( ! holds ) {
 		return null;
@@ -79,7 +95,7 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
 	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = String(
 		translate(
 			'This site is currently not eligible for %s. Please contact our support team for help.',
-			{ args: [ content.header ] }
+			{ args: [ productName ] }
 		)
 	);
 
@@ -92,7 +108,7 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
 	);
 }
 
-function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps ) {
+function TransferFailureNotice( { transferStatus, productName }: TransferFailureNoticeProps ) {
 	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
 		return null;
 	}
@@ -100,7 +116,7 @@ function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps )
 	const errorMessage = translate(
 		'There is an issue activating %s. Please contact our support team for help.',
 		{
-			args: [ content.header ],
+			args: [ productName ],
 			comment: '%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
 		}
 	);
@@ -114,7 +130,9 @@ function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps )
 	);
 }
 
-export default function WPCOMBusinessAT() {
+export default function WPCOMBusinessAT( {
+	content = vaultpressContent,
+}: { content?: AtomicContentSwitch } = {} ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
@@ -184,7 +202,7 @@ export default function WPCOMBusinessAT() {
 			)
 		);
 		// Reload the page, whatever siteSlug is
-		page( `/backup/${ siteSlug }` );
+		page( content.getProductUrl( siteSlug ) );
 	}, [ automatedTransferStatus, isJetpack ] );
 
 	// If there are any issues, show a dialog.
@@ -210,8 +228,11 @@ export default function WPCOMBusinessAT() {
 				align="left"
 				brandFont
 			/>
-			<BlockingHoldNotice siteId={ siteId } />
-			<TransferFailureNotice transferStatus={ automatedTransferStatus as TransferStatus } />
+			<BlockingHoldNotice siteId={ siteId } productName={ content.header } />
+			<TransferFailureNotice
+				transferStatus={ automatedTransferStatus as TransferStatus }
+				productName={ content.header }
+			/>
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }

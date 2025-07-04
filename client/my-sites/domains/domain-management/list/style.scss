@@ -150,11 +150,7 @@
 			padding-inline: 0;
 
 			.navigation-header__main {
-				padding-inline: 21px;
-
-				@include break-mobile {
-					padding-inline: 48px;
-				}
+				padding-inline: 24px;
 			}
 
 			@include break-huge {
@@ -162,7 +158,7 @@
 
 				.navigation-header__main {
 					margin: 0 auto;
-					padding-inline: 48px;
+					padding-inline: 24px;
 				}
 			}
 		}

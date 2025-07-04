@@ -4,9 +4,9 @@ import { DomainsMiniCartActions } from './Actions';
 import { DomainsMiniCartSummary } from './Summary';
 
 const DomainsMiniCart = () => {
-	const { selectedDomains, isFullCartOpen } = useDomainSearch();
+	const { cart, isFullCartOpen } = useDomainSearch();
 
-	if ( selectedDomains.length === 0 || isFullCartOpen ) {
+	if ( cart.items.length === 0 || isFullCartOpen ) {
 		return null;
 	}
 

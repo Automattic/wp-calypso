@@ -17,7 +17,7 @@ import {
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { profileQuery, profileMutation } from '../../app/queries/profile';
+import { profileQuery, profileMutation } from '../../app/queries/me-profile';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

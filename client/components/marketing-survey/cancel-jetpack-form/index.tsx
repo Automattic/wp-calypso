@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isJetpackSearchFree } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -94,6 +95,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	// Record an event for Tracks
 	const recordEvent = useCallback(
 		( name: string, properties = {} ) => {
+			// Skip tracks events for Jetpack Search Free
+			if ( isJetpackSearchFree( purchase ) ) {
+				return;
+			}
+
 			dispatch(
 				recordTracksEvent( name, {
 					cancellation_flow: flowType,
@@ -104,7 +110,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				} )
 			);
 		},
-		[ dispatch, flowType, isAtomicSite, purchase.productSlug ]
+		[ dispatch, flowType, isAtomicSite, purchase ]
 	);
 
 	/**

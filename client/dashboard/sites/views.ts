@@ -23,6 +23,20 @@ export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	},
 };
 
+export const PERSISTABLE_VIEW_KEYS = [
+	'density',
+	'fields',
+	'layout',
+	'perPage',
+	'previewSize',
+	'showDescription',
+	'showMedia',
+	'sort',
+	'type',
+];
+
+export const CONFIGURABLE_VIEW_KEYS = [ ...PERSISTABLE_VIEW_KEYS, 'filters', 'page', 'search' ];
+
 const DEFAULT_PER_PAGE = 10;
 
 const DEFAULT_VIEW = {
@@ -67,20 +81,28 @@ export function getView( {
 	isAutomattician,
 	isRestoringAccount,
 	viewOptions,
+	viewPreferences,
 }: {
 	user: User;
 	isAutomattician: boolean;
 	isRestoringAccount: boolean;
 	viewOptions: Partial< ViewTable | ViewGrid >;
+	viewPreferences?: Partial< View >;
 } ): {
 	defaultView: View;
 	view: View;
 } {
-	const defaultView = getDefaultView( { user, isAutomattician, isRestoringAccount } );
+	const defaultView = getDefaultView( {
+		user,
+		isAutomattician,
+		isRestoringAccount,
+	} );
 
+	const type = viewOptions.type || viewPreferences?.type || defaultView.type;
 	const view = {
 		...defaultView,
-		...DEFAULT_LAYOUTS[ viewOptions.type ?? defaultView.type ],
+		...DEFAULT_LAYOUTS[ type ],
+		...viewPreferences,
 		...Object.fromEntries( Object.entries( viewOptions ).filter( ( [ , v ] ) => v !== undefined ) ),
 	} as View;
 

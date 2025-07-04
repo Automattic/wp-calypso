@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { ComponentType } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
-import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
+import WPCOMBusinessAT, { AtomicContentSwitch } from 'calypso/components/jetpack/wpcom-business-at';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
@@ -15,6 +15,7 @@ import './style.scss';
 
 type Props = {
 	UpsellComponent: ComponentType;
+	content?: AtomicContentSwitch;
 };
 
 const Placeholder = () => (
@@ -35,7 +36,7 @@ const Placeholder = () => (
  * If the plan is an Atomic plan, we show a component to activate the
  * automated transfer process. If it's not, we show the upsell component.
  */
-const BusinessATSwitch = ( { UpsellComponent }: Props ) => {
+const BusinessATSwitch = ( { UpsellComponent, content }: Props ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const featuresNotLoaded: boolean = useSelector(
@@ -59,7 +60,7 @@ const BusinessATSwitch = ( { UpsellComponent }: Props ) => {
 	// We know the site is not AT as it's not Jetpack,
 	// so show the activation for Atomic plans.
 	if ( canTransfer ) {
-		return <WPCOMBusinessAT />;
+		return <WPCOMBusinessAT { ...( content && { content } ) } />;
 	}
 
 	// Show the upsell if it's not an Atomic plan.

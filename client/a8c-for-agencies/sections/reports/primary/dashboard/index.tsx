@@ -101,7 +101,7 @@ export default function ReportsDashboard() {
 			title={ title }
 			wide
 		>
-			<LayoutColumn wide className="reports-dashboard__column">
+			<LayoutColumn wide className="reports-dashboard__column" scrollable>
 				<LayoutTop isFullWidth={ isFullWidth }>
 					<LayoutHeader>
 						<Title>{ title }</Title>

@@ -15,6 +15,7 @@ import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	hasPlan,
 	domainTransfer,
@@ -475,6 +476,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 		return (
 			<Main className={ classes } wideLayout>
 				<QueryProductsList />
+				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<QuerySiteDomains siteId={ selectedSiteId } />
 				{ content }
 			</Main>

@@ -51,6 +51,7 @@ import {
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
+import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
 	isTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
@@ -81,6 +82,7 @@ interface PurchaseItemProps {
 	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 	isBackupMethodAvailable?: boolean;
+	transferredOwnershipPurchases?: Purchases.Purchase[];
 }
 
 interface PurchaseItemPropsConnected {
@@ -755,7 +757,13 @@ class PurchaseItem extends Component<
 			moment,
 			isJetpack,
 			isDisconnectedSite,
+			transferredOwnershipPurchases = [],
 		} = this.props;
+
+		const isOwnershipTransferred = isTransferredOwnership(
+			purchase.id,
+			transferredOwnershipPurchases
+		);
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -773,7 +781,7 @@ class PurchaseItem extends Component<
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchase={ purchase } />
+						<OwnerInfo purchase={ purchase } isTransferredOwnership={ isOwnershipTransferred } />
 					</div>
 
 					<div className="purchase-item__purchase-type">
@@ -822,16 +830,28 @@ class PurchaseItem extends Component<
 			);
 		}
 
-		const { isDisconnectedSite, getManagePurchaseUrlFor, purchase, slug, isJetpack } = this.props;
+		const {
+			isDisconnectedSite,
+			getManagePurchaseUrlFor,
+			purchase,
+			slug,
+			isJetpack,
+			transferredOwnershipPurchases = [],
+		} = this.props;
 
 		const classes = clsx( 'purchase-item', {
 			'purchase-item--disconnected': isDisconnectedSite,
 		} );
 
+		const isOwnershipTransferred = isTransferredOwnership(
+			purchase.id,
+			transferredOwnershipPurchases
+		);
+
 		let onClick;
 		let href;
 
-		if ( getManagePurchaseUrlFor && slug ) {
+		if ( getManagePurchaseUrlFor && slug && ! isOwnershipTransferred ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).

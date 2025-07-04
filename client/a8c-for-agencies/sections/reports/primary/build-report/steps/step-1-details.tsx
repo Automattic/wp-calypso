@@ -102,7 +102,7 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 							</span>
 							<span>
 								{ translate(
-									'Only live WordPress.com or Pressable sites using Jetpack or the Automattic for Agencies plugin are supported.'
+									'Only live WordPress.com or Pressable sites using Jetpack are supported.'
 								) }
 							</span>
 						</div>
@@ -115,7 +115,6 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 					} }
 					buttonLabel={ selectedSite?.domain || translate( 'Choose a site to report on' ) }
 					trackingEvent="calypso_a4a_reports_select_site_button_click"
-					data-field="selectedSite"
 					aria-required="true"
 					aria-describedby="selected-site-error"
 				/>

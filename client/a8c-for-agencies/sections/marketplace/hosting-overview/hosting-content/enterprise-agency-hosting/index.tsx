@@ -1,8 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType11 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import { A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.png';
@@ -37,6 +39,10 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 		);
 	};
 
+	const isVipPartnerOpportunityReferralsEnabled = isEnabled(
+		'a4a-vip-partner-opportunity-referrals'
+	);
+
 	return (
 		<div className="enterprise-agency-hosting">
 			<HostingPlanSection
@@ -50,34 +56,80 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 							<VIPLogo width={ 57 } height={ 25 } /> | { translate( 'Enterprise WordPress' ) }
 						</div>
 
-						<div className="enterprise-agency-hosting__top-subheading">
-							{ translate( 'Custom pricing' ) }
+						<div>
+							{ isReferMode && isVipPartnerOpportunityReferralsEnabled
+								? translate(
+										"Successfully refer your client to WordPress VIP and you'll earn a one-time 5% commission"
+								  )
+								: translate(
+										'Combine the ease of WordPress with enterprise-grade security and scalability.'
+								  ) }
 						</div>
 					</div>
 
-					<Button
-						className="enterprise-agency-hosting__cta-button"
-						href={
-							isReferMode
-								? 'https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a'
-								: 'https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a'
-						}
-						onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
-						target="_blank"
-						variant="primary"
-						icon={ external }
-						iconPosition="right"
-						iconSize={ 16 }
-						__next40pxDefaultSize
-					>
-						{ isReferMode ? translate( 'Refer client' ) : translate( 'Request a Demo' ) }
-					</Button>
+					<div className="enterprise-agency-hosting__cta-buttons">
+						{ isReferMode && isVipPartnerOpportunityReferralsEnabled ? (
+							<>
+								<Button
+									className="enterprise-agency-hosting__cta-button"
+									href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+									onClick={ onReferClientClick }
+									variant="primary"
+									__next40pxDefaultSize
+								>
+									{ translate( 'Refer your client to VIP hosting' ) }
+								</Button>
+
+								<Button
+									className="enterprise-agency-hosting__cta-button"
+									href="https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
+									onClick={ onRequestDemoClick }
+									target="_blank"
+									variant="secondary"
+									icon={ external }
+									iconPosition="right"
+									iconSize={ 16 }
+									__next40pxDefaultSize
+								>
+									{ translate( 'Request a Demo' ) }
+								</Button>
+							</>
+						) : (
+							<>
+								<Button
+									className="enterprise-agency-hosting__cta-button"
+									href="https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
+									onClick={ onRequestDemoClick }
+									target="_blank"
+									variant="primary"
+									icon={ external }
+									iconPosition="right"
+									iconSize={ 16 }
+									__next40pxDefaultSize
+								>
+									{ translate( 'Request a Demo' ) }
+								</Button>
+
+								{ isVipPartnerOpportunityReferralsEnabled && (
+									<Button
+										className="enterprise-agency-hosting__cta-button"
+										href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+										onClick={ onReferClientClick }
+										variant="secondary"
+										__next40pxDefaultSize
+									>
+										{ translate( 'Refer your client to VIP hosting' ) }
+									</Button>
+								) }
+							</>
+						) }
+					</div>
 				</HostingPlanSection.Card>
 
 				<HostingPlanSection.Details
 					heading={ translate( 'The platform the biggest brands trust.' ) }
 				>
-					{ isReferMode && (
+					{ isVipPartnerOpportunityReferralsEnabled && (
 						<div className="enterprise-agency-hosting__top-details-subheading">
 							{ translate(
 								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
