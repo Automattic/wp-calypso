@@ -110,7 +110,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				} )
 			);
 		},
-		[ dispatch, flowType, isAtomicSite, purchase.productSlug, purchase ]
+		[ dispatch, flowType, isAtomicSite, purchase ]
 	);
 
 	/**
@@ -232,12 +232,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		answerText: TranslateResult | string
 	) => {
 		if ( answerId !== surveyAnswerId ) {
-			// Skip tracks events for Jetpack Search Free
-			if ( ! isJetpackSearchFree( purchase ) ) {
-				recordTracksEvent( 'calypso_purchases_cancel_jetpack_survey_answer_change', {
-					answer_id: answerId,
-				} );
-			}
+			recordTracksEvent( 'calypso_purchases_cancel_jetpack_survey_answer_change', {
+				answer_id: answerId,
+			} );
 		}
 
 		setSurveyAnswerId( answerId );
