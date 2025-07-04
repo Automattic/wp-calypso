@@ -3,7 +3,11 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
+import {
+	isValueTruthy,
+	getContactDetailsType,
+	filterAppropriatePaymentMethods,
+} from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
@@ -41,7 +45,6 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
-import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
