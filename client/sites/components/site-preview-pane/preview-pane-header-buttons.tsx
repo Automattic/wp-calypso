@@ -10,7 +10,6 @@ import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
@@ -41,15 +40,12 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	);
 
 	const productionSiteId = isStagingSite
-		? site?.options?.wpcom_production_blog_id
-		: itemData.blogId;
-	const productionSiteSlug =
-		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) ?? '';
+		? site?.options?.wpcom_production_blog_id ?? 0
+		: itemData.blogId ?? 0;
 
 	const stagingSiteId = hasStagingSite
-		? site?.options?.wpcom_staging_blog_ids?.[ 0 ]
-		: itemData.blogId;
-	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) ?? '';
+		? site?.options?.wpcom_staging_blog_ids?.[ 0 ] ?? 0
+		: itemData.blogId ?? 0;
 
 	const environment = isStagingSite ? 'staging' : 'production';
 
@@ -59,8 +55,8 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 				<SyncDropdown
 					className="item-preview__sync-dropdown"
 					environment={ environment }
-					productionSiteSlug={ productionSiteSlug }
-					stagingSiteSlug={ stagingSiteSlug }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
 				/>
 			) }
 			<Button

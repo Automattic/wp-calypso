@@ -14,11 +14,13 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { useSelector } from 'react-redux';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 const DirectionArrow = () => {
 	return (
@@ -61,8 +63,8 @@ interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
-	productionSiteSlug: string;
-	stagingSiteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
 }
 
 interface EnvironmentConfig {
@@ -138,13 +140,17 @@ export default function SyncModal( {
 	onClose,
 	syncType,
 	environment,
-	productionSiteSlug,
-	stagingSiteSlug,
+	productionSiteId,
+	stagingSiteId,
 }: SyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
+
+	const productionSiteSlug =
+		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) ?? '';
+	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) ?? '';
 
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
 
