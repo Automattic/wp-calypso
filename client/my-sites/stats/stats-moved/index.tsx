@@ -1,6 +1,6 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -50,6 +50,7 @@ const images: Record< string, string > = {
 };
 
 const StatsMoved = () => {
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const wpAdminUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
@@ -63,10 +64,10 @@ const StatsMoved = () => {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<Callout
 				icon={ chartBar }
-				title={ __( 'Stats have moved' ) }
+				title={ translate( 'Stats have moved' ) }
 				description={
 					<Text variant="muted">
-						{ __(
+						{ translate(
 							'Stats are now part of Jetpack for enhanced features. Access them via Jetpack → Stats in your dashboard.'
 						) }
 					</Text>
@@ -75,7 +76,7 @@ const StatsMoved = () => {
 				actions={
 					wpAdminUrl && (
 						<Button variant="primary" size="compact" href={ wpAdminUrl }>
-							{ __( 'Go to Jetpack Stats' ) }
+							{ translate( 'Go to Jetpack Stats' ) }
 						</Button>
 					)
 				}
