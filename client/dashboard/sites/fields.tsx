@@ -1,52 +1,24 @@
-import { Badge } from '@automattic/ui';
-import { Link } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import TimeSince from '../components/time-since';
 import { getSiteDisplayName } from '../utils/site-name';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
-import { isP2 } from '../utils/site-types';
 import { getSiteDisplayUrl } from '../utils/site-url';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
-import { canManageSite } from './features';
-import { isSitePlanTrial } from './plans';
 import {
 	EngagementStat,
 	LastBackup,
 	MediaStorage,
+	Name,
 	PHPVersion,
 	Plan,
+	Preview,
 	Status,
+	URL,
 	Uptime,
 } from './site-fields';
 import SiteIcon from './site-icon';
-import SitePreview from './site-preview';
 import type { Site } from '../data/types';
 import type { Field, Operator } from '@automattic/dataviews';
-
-function getSiteManagementUrl( site: Site ) {
-	if ( canManageSite( site ) ) {
-		return `/sites/${ site.slug }`;
-	}
-	return site.options?.admin_url;
-}
-
-function SiteBadge( { site }: { site: Site } ) {
-	if ( site.is_wpcom_staging_site ) {
-		return <Badge>{ __( 'Staging' ) }</Badge>;
-	}
-
-	if ( isSitePlanTrial( site ) ) {
-		return <Badge>{ __( 'Trial' ) }</Badge>;
-	}
-
-	if ( isP2( site ) ) {
-		return <Badge>{ __( 'P2' ) }</Badge>;
-	}
-
-	return null;
-}
 
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{
@@ -54,37 +26,14 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Site' ),
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteDisplayName( item ),
-		render: ( { field, item } ) => (
-			<Link to={ getSiteManagementUrl( item ) } disabled={ item.is_deleted }>
-				<HStack alignment="center" spacing={ 1 }>
-					<Text
-						as="span"
-						style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
-						{ ...( item.is_deleted ? { variant: 'muted' } : {} ) }
-					>
-						{ field.getValue( { item } ) }
-					</Text>
-					<Text as="span" style={ { flexShrink: 0 } }>
-						<SiteBadge site={ item } />
-					</Text>
-				</HStack>
-			</Link>
-		),
+		render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
 	},
 	{
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteDisplayUrl( item ),
-		render: ( { field, item } ) => (
-			<Text
-				as="span"
-				variant="muted"
-				style={ { overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
-			>
-				{ field.getValue( { item } ) }
-			</Text>
-		),
+		render: ( { field, item } ) => <URL site={ item } value={ field.getValue( { item } ) } />,
 	},
 	{
 		id: 'icon.ico',
@@ -139,38 +88,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'preview',
 		label: __( 'Preview' ),
-		render: function PreviewRender( { item } ) {
-			const [ resizeListener, { width } ] = useResizeObserver();
-			const { is_deleted, is_private, URL: url } = item;
-			// If the site is a private A8C site, X-Frame-Options is set to same
-			// origin.
-			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
-			return (
-				<Link
-					to={ getSiteManagementUrl( item ) }
-					disabled={ item.is_deleted }
-					style={ { display: 'block', height: '100%', width: '100%' } }
-				>
-					{ resizeListener }
-					{ iframeDisabled && (
-						<div
-							style={ {
-								fontSize: '24px',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								height: '100%',
-							} }
-						>
-							<SiteIcon site={ item } />
-						</div>
-					) }
-					{ width && ! iframeDisabled && (
-						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
-					) }
-				</Link>
-			);
-		},
+		render: ( { item } ) => <Preview site={ item } />,
 		enableSorting: false,
 	},
 	{

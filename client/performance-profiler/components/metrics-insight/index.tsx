@@ -113,8 +113,6 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		activeTab
 	);
 
-	const isLoadingLlmAnswer = isLoading || ! isFetched;
-
 	const { data } = useUrlPerformanceInsightsQuery( url, hash );
 	const wpscanErrors = data?.wpscan?.errors;
 	const hasWpscanErrors = wpscanErrors && Object.keys( wpscanErrors ).length > 0;
@@ -156,7 +154,8 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 						description: llmAnswer?.messages,
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
-					isLoading={ isLoadingLlmAnswer }
+					isLoading={ isLoading }
+					isFetched={ isFetched }
 					isWpscanLoading={ isWpscanLoading }
 					AIGenerated
 					hash={ hash }
