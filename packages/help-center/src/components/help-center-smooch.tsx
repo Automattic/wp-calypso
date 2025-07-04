@@ -32,6 +32,12 @@ const initSmooch = ( {
 
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		delegate: {
+			onInvalidAuth() {
+				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+				return Promise.resolve( '' );
+			},
+		},
 		embedded: true,
 		soundNotificationEnabled: false,
 		externalId,
