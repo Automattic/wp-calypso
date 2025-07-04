@@ -10,13 +10,10 @@ import {
 	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
-jest.mock( '@fnando/cnpj', () => ( {
-	isValid: jest.fn(),
+jest.mock( '@automattic/wpcom-checkout', () => ( {
+	isValidCPF: jest.fn(),
 } ) );
-jest.mock( '@fnando/cpf', () => ( {
-	isValid: jest.fn(),
-} ) );
-const { isValid: isValidCPF } = require( '@fnando/cpf' );
+const { isValidCPF } = require( '@automattic/wpcom-checkout' );
 
 describe( 'validation', () => {
 	const validCard = {
