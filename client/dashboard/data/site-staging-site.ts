@@ -7,10 +7,3 @@ export async function deleteStagingSite( stagingSiteId: number, productionSiteId
 		apiNamespace: 'wpcom/v2',
 	} );
 }
-
-export async function getAutomatedTransferStatus( siteId: number ) {
-	return wpcom.req.get( {
-		path: `/sites/${ siteId }/automated-transfers/status`,
-		apiVersion: '1',
-	} );
-}
