@@ -33,9 +33,7 @@ export default function StagingSiteDeleteModal( {
 		...stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ),
 		onSuccess: () => {
 			setTimeout( () => {
-				queryClient.invalidateQueries( {
-					queryKey: [ 'automated-transfer-status', site.ID ],
-				} );
+				queryClient.invalidateQueries( automatedTransferStatusQuery( site.ID ) );
 			}, 3000 );
 		},
 		onError: ( error: Error ) => {
@@ -57,7 +55,7 @@ export default function StagingSiteDeleteModal( {
 				onClose();
 				return false;
 			}
-			if ( status === 'complete' || status === 'error' ) {
+			if ( status === 'completed' || status === 'error' ) {
 				return false;
 			}
 
