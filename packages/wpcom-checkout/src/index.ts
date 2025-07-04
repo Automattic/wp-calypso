@@ -34,3 +34,4 @@ export * from './partner-coupon';
 export * from './checkout-version-checker';
 export * from './restorable-products-context';
 export * from './removed-from-cart-item';
+export * from './translate-payment-method-names';

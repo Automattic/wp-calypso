@@ -1,5 +1,5 @@
 import { camelToSnakeCase } from '@automattic/js-utils';
-import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
+import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from './types';
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
