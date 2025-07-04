@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-sites';
 import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import WPCOMSitesTable from './wpcom-sites-table';
 
 import './style.scss';
@@ -48,6 +48,12 @@ export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 							)
 						);
 					}, 1000 );
+				},
+				onError: ( error ) => {
+					setIsPendingImport( false );
+					dispatch(
+						errorNotice( error?.message || translate( 'Something went wrong. Please try again.' ) )
+					);
 				},
 			} );
 		}
