@@ -174,8 +174,8 @@ export default function CheckoutMain( {
 			return marketplaceSiteSlug;
 		}
 
-		// Affiliate PM siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
-		if ( sitelessCheckoutType === 'affiliate-pm' ) {
+		// Onboarding unified siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
+		if ( sitelessCheckoutType === 'unified' ) {
 			return undefined;
 		}
 

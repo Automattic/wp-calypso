@@ -310,13 +310,13 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Affiliate PM siteless checkout - handles post-checkout site creation flow
-	if ( sitelessCheckoutType === 'affiliate-pm' ) {
-		// Get the post-checkout destination URL from cookie (set during affiliate-pm plans step)
+	if ( sitelessCheckoutType === 'unified' ) {
+		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
 		const urlFromCookie = getUrlFromCookie();
 
 		if (
 			urlFromCookie &&
-			urlFromCookie.includes( '/setup/onboarding-aff-pm/post-checkout-onboarding' )
+			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
 		) {
 			return addQueryArgs( { siteId }, urlFromCookie );
 		}

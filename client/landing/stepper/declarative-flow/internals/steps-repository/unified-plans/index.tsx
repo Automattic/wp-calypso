@@ -5,7 +5,7 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
 	ONBOARDING_FLOW,
-	ONBOARDING_AFF_PM_FLOW,
+	ONBOARDING_UNIFIED_FLOW,
 	START_WRITING_FLOW,
 	Step,
 	useStepPersistedState,
@@ -63,7 +63,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
 			break;
-		case ONBOARDING_AFF_PM_FLOW:
+		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		default:
 			return null;

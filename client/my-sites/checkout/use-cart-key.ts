@@ -19,13 +19,13 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		currentUrlPath.includes( '/checkout/akismet' ) && isLoggedOutCart;
 	const isMarketplaceSitelessCheckout =
 		currentUrlPath.includes( '/checkout/marketplace' ) && isLoggedOutCart;
-	const isAffiliatePmSitelessCheckout =
-		currentUrlPath.includes( '/checkout/affiliate-pm' ) && isLoggedOutCart;
+	const isUnifiedSitelessCheckout =
+		currentUrlPath.includes( '/checkout/unified' ) && isLoggedOutCart;
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		isAkismetSitelessCheckout ||
 		isMarketplaceSitelessCheckout ||
-		isAffiliatePmSitelessCheckout ||
+		isUnifiedSitelessCheckout ||
 		( ! isLoggedOutCart &&
 			currentUrlPath.includes( '/checkout/no-site' ) &&
 			'no-user' === searchParams.get( 'cart' ) );

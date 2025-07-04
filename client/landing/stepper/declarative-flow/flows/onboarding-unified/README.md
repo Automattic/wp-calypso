@@ -1,6 +1,6 @@
-# Onboarding AFF PM Flow
+# Onboarding Unified Flow
 
-A unified, optimized onboarding flow designed for Paid Media (PM) and Affiliate acquisition channels.
+A unified, optimized onboarding flow designed for multiple acquisition channels including Paid Media (PM) and Affiliate scenarios.
 
 ## Purpose
 
@@ -25,26 +25,14 @@ This flow unifies and optimizes the onboarding experience across acquisition cha
 
 ### Basic Flow Test
 
-1. Navigate to `/setup/onboarding-aff-pm`
+1. Navigate to `/setup/onboarding-unified`
 2. Verify only business and commerce plans are shown
 3. Select a plan and proceed to checkout
-4. **Verify redirect to `/checkout/affiliate-pm?signup=1&flow=onboarding-aff-pm`**
+4. **Verify redirect to `/checkout/unified?signup=1&flow=onboarding-unified`**
 5. **Verify no site selection step appears in checkout**
 6. Complete checkout (use test payment methods in staging)
 7. Verify site is created after successful payment
 8. Verify user gets auto-generated wordpress.com subdomain
-
-### Channel Testing
-
-**PM Traffic Test:**
-
-1. Navigate to `/setup/onboarding-aff-pm?utm_source=google`
-2. Verify coupon input is hidden on plans page
-
-**Affiliate Traffic Test:**
-
-1. Navigate to `/setup/onboarding-aff-pm?ref=affiliate-partner`
-2. Verify coupon input is visible on plans page
 
 ### Edge Cases
 
@@ -70,7 +58,6 @@ This flow unifies and optimizes the onboarding experience across acquisition cha
 
 ## Technical Implementation
 
-- **Dedicated siteless checkout**: Uses `/checkout/affiliate-pm` endpoint (similar to Jetpack/Akismet)
 - **Bypass site selection**: Registered in controller.js to skip site selection logic
 - **Post-checkout site creation**: Site built after successful payment
 - **Auto-generated subdomain**: Sites get `*.wordpress.com` subdomain initially

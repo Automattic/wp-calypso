@@ -15,7 +15,7 @@ import {
 	checkoutPending,
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
-	checkoutAffiliatePmSiteless,
+	checkoutUnifiedSiteless,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -169,12 +169,12 @@ export default function () {
 		clientRender
 	);
 
-	// Affiliate-PM siteless checkout with product slug
+	// Onboarding unified siteless checkout with product slug
 	page(
-		'/checkout/affiliate-pm/:productSlug',
+		'/checkout/unified/:productSlug',
 		setLocaleMiddleware(),
 		noSite,
-		checkoutAffiliatePmSiteless,
+		checkoutUnifiedSiteless,
 		makeLayout,
 		clientRender
 	);

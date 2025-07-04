@@ -1,5 +1,5 @@
 import { Onboard, OnboardActions, UserSelect, Visibility } from '@automattic/data-stores';
-import { ONBOARDING_AFF_PM_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_UNIFIED_FLOW } from '@automattic/onboarding';
 import { dispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
@@ -30,8 +30,8 @@ function initialize() {
 	return [ STEPS.UNIFIED_PLANS, STEPS.POST_CHECKOUT_ONBOARDING, STEPS.PROCESSING, STEPS.ERROR ];
 }
 
-const onboardingAffPmFlow: FlowV2< typeof initialize > = {
-	name: ONBOARDING_AFF_PM_FLOW,
+const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
+	name: ONBOARDING_UNIFIED_FLOW,
 
 	isSignupFlow: true,
 	initialize,
@@ -46,12 +46,12 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
-		 * Get post-checkout destination for affiliate-pm flow (simplified version)
+		 * Get post-checkout destination for onboarding-unified flow (simplified version)
 		 */
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies
 		): Promise< string > => {
-			// For affiliate-pm, we want to go to the site home page after setup
+			// For onboarding-unified, we want to go to the site home page after setup
 			if ( providedDependencies.siteSlug ) {
 				return addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } );
 			}
@@ -60,7 +60,7 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 		};
 
 		/**
-		 * Handle step submissions for the AFF PM flow
+		 * Handle step submissions for the onboarding unified flow
 		 */
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -95,7 +95,7 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 						// Set completion tracking for post-checkout site creation
 						setSignupCompleteFlowName( flowName );
 
-						// Set the post-checkout destination to go through affiliate-pm flow steps
+						// Set the post-checkout destination to go through onboarding-unified flow steps
 						// Use our own flow's post-checkout step instead of borrowing from regular onboarding
 						persistSignupDestination( `/setup/${ flowName }/post-checkout-onboarding` );
 
@@ -103,7 +103,7 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 						const planItem = providedDependencies.cartItems.find( ( item ) => item.product_slug );
 
 						if ( planItem ) {
-							// Use dedicated affiliate-pm siteless checkout with plan in URL (similar to Jetpack/Akismet)
+							// Use dedicated onboarding-unified siteless checkout with plan in URL (similar to Jetpack/Akismet)
 							// Don't add signup=1 for logged-in users to avoid account creation conflicts
 							const urlParams = new URLSearchParams();
 							urlParams.set( 'flow', flowName );
@@ -113,7 +113,7 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 								urlParams.set( 'signup', '1' );
 							}
 
-							const checkoutUrl = `/checkout/affiliate-pm/${
+							const checkoutUrl = `/checkout/unified/${
 								planItem.product_slug
 							}?${ urlParams.toString() }`;
 							return window.location.replace( checkoutUrl );
@@ -154,4 +154,4 @@ const onboardingAffPmFlow: FlowV2< typeof initialize > = {
 	},
 };
 
-export default onboardingAffPmFlow;
+export default onboardingUnifiedFlow;

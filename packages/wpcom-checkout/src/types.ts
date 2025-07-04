@@ -662,5 +662,5 @@ export type SitelessCheckoutType =
 	| 'akismet'
 	| 'marketplace'
 	| 'a4a'
-	| 'affiliate-pm'
+	| 'unified'
 	| undefined;

@@ -83,8 +83,8 @@ export function checkoutMarketplaceSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
 }
 
-export function checkoutAffiliatePmSiteless( context, next ) {
-	sitelessCheckout( context, next, { sitelessCheckoutType: 'affiliate-pm' } );
+export function checkoutUnifiedSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'unified' } );
 }
 
 function sitelessCheckout( context, next, extraProps ) {

@@ -492,7 +492,7 @@ export function noSite( context, next ) {
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
-	const isAffiliatePmCheckoutFlow = context.pathname.includes( '/checkout/affiliate-pm' );
+	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -502,7 +502,7 @@ export function noSite( context, next ) {
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
-		! isAffiliatePmCheckoutFlow &&
+		! isUnifiedCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these

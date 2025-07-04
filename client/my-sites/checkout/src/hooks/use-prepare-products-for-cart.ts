@@ -145,7 +145,7 @@ export default function usePrepareProductsForCart( {
 			sitelessCheckoutType === 'akismet' ||
 			sitelessCheckoutType === 'marketplace' ||
 			sitelessCheckoutType === 'a4a' ||
-			sitelessCheckoutType === 'affiliate-pm' ||
+			sitelessCheckoutType === 'unified' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -227,7 +227,7 @@ function chooseAddHandler( {
 	if (
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'affiliate-pm'
+		sitelessCheckoutType === 'unified'
 	) {
 		return 'addProductFromSlug';
 	}
