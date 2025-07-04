@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
@@ -77,6 +78,12 @@ export default function Summary( {
 
 	// Either content- or subscriber-import is still in progress
 	if ( importerStatus === 'importing' || importerStatus === 'initial' ) {
+		// `initial` is the default status when the import is reset.
+		// Check if the content import is expired, and if so, redirect to the beginning.
+		if ( steps?.content?.content?.importStatus === 'importExpired' ) {
+			page.redirect( `/import/newsletter/substack/${ selectedSite.slug }` );
+		}
+
 		return (
 			<Card>
 				<h2>{ __( 'Almost there…' ) }</h2>

@@ -11,6 +11,7 @@ interface ContentStepContentProgress {
 
 // FIXME We're actually not using this data in the importing content step...
 export interface ContentStepContent {
+	importStatus: string;
 	progress: {
 		attachment: ContentStepContentProgress;
 		comment: ContentStepContentProgress;

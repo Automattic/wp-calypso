@@ -439,19 +439,6 @@ body.is-section-reader {
 	opacity: 0;
 }
 
-.is-group-reader .main .empty-content:not(.conversations__empty-content),
-.is-reader-page .main .empty-content:not(.conversations__empty-content) {
-	padding-top: 0;
-
-	.empty-content__title {
-		margin-top: -10px;
-	}
-
-	&.stream__empty {
-		margin-top: 40px;
-	}
-}
-
 .is-group-reader .empty-content__action,
 .is-reader-page .empty-content__action {
 	@include breakpoint-deprecated( "<480px" ) {
