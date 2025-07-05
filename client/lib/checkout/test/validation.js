@@ -10,10 +10,6 @@ import {
 	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
-jest.mock( '@automattic/wpcom-checkout', () => ( {
-	isValidCPF: jest.fn(),
-} ) );
-const { isValidCPF } = require( '@automattic/wpcom-checkout' );
 
 describe( 'validation', () => {
 	const validCard = {
@@ -157,10 +153,6 @@ describe( 'validation', () => {
 		} );
 
 		describe( 'validate ebanx non-credit card details', () => {
-			beforeAll( () => {
-				isValidCPF.mockImplementation( () => true );
-			} );
-
 			test( 'should return no errors when details are valid', () => {
 				const result = validatePaymentDetails( validBrazilianEbanxCard, 'ebanx' );
 
@@ -234,7 +226,6 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				isValidCPF.mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
 				const result = validatePaymentDetails( invalidCPF, 'ebanx' );
 				expect( result ).toEqual( {
