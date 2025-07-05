@@ -4,6 +4,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
+	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -14,37 +15,34 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	extraContactOptions?: ReactNode;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
-	waitAnswerToFirstMessageFromHumanSupport: boolean;
+	forceEmailSupport: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
-	setWaitAnswerToFirstMessageFromHumanSupport: (
-		waitAnswerToFirstMessageFromHumanSupport: boolean
-	) => void;
 };
 
 export type OdieAssistantProviderProps = {
 	canConnectToZendesk?: boolean;
+	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
-	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	version?: string | null;
+	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;
@@ -129,6 +127,7 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
+		is_error_message?: boolean;
 	};
 };
 
@@ -145,7 +144,15 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
-	| 'introduction';
+	| 'introduction'
+	| 'form'
+	| 'formResponse';
+
+export type ChatFeedbackActions = {
+	score: string;
+	account_id: number;
+	ticket_id: number;
+};
 
 export type Message = {
 	content: string;
@@ -160,6 +167,9 @@ export type Message = {
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
+	feedbackOptions?: MessageAction[];
+	metadata?: Record< string, any >;
+	payload?: string;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
@@ -196,11 +206,12 @@ interface ConversationParticipant {
 	lastRead: number;
 }
 
-type MessageAction = {
+export type MessageAction = {
 	id: string;
-	default: boolean;
-	fallback: string;
-	uri: string;
+	payload: boolean;
+	text: string;
+	type: string;
+	metadata: ChatFeedbackActions;
 };
 
 export type OdieMessage = {
@@ -222,6 +233,7 @@ export type ZendeskMessage = OdieMessage & {
 	};
 	type: ZendeskContentType;
 	mediaUrl?: string;
+	metadata?: Record< string, any >;
 };
 
 export type ZendeskContentType =
@@ -247,7 +259,7 @@ export type OdieConversation = {
 	id: string;
 	createdAt: number;
 	messages: OdieMessage[];
-	metadata: Metadata;
+	metadata?: Metadata;
 };
 
 export type ZendeskConversation = {

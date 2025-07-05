@@ -93,13 +93,13 @@ function getCurrentCommitShortChecksum() {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
-	const disableHelpCenterAutoOpen = isSupportSession || !! req.cookies.ssp;
+	const isSSP = !! req.cookies.ssp;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
 		isSupportSession,
-		disableHelpCenterAutoOpen,
+		isSSP,
 		isLoggedIn,
 	};
 
@@ -1016,6 +1016,16 @@ export default function pages() {
 		}
 
 		res.redirect( 301, redirectUrl );
+	} );
+
+	// Redirect legacy `/help` routes to `sites?help-center=home` if logged in, otherwise `/support`
+	// Note: isLoggedIn will only work under *.wordpress.com domains (wpcalypso, horizon, and prod)
+	app.get( [ '/me/chat', '/help', '/help/*' ], ( req, res ) => {
+		if ( req.context.isLoggedIn ) {
+			return res.redirect( 301, '/sites?help-center=home' );
+		}
+		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
+		return res.redirect( 301, redirectUrl );
 	} );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers

@@ -41,11 +41,7 @@ export {
 	StatsCardAvatar,
 	StatsCardTitleExtras,
 } from './horizontal-bar-list';
-export { default as CountCard } from './highlight-cards/count-card';
-export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
 export { default as NoticeBanner } from './notice-banner';
-export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
-export { default as TooltipContent } from './highlight-cards/tooltip-content';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
@@ -61,7 +57,6 @@ export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
 export { default as SummaryButton } from './summary-button';
-export { CoreBadge } from './core-badge';
 export { default as Menu } from './menu';
 export { Tabs } from './tabs';
 
@@ -73,3 +68,4 @@ export { VIPLogo } from './logos/vip-logo';
 export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
 export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
+export { GravatarTextLogo } from './logos/gravatar-text-logo';

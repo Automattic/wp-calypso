@@ -81,7 +81,7 @@ const theme: Theme = {
 		textColor: colorStudio.colors[ 'Gray 60' ],
 		textColorLight: colorStudio.colors[ 'Gray 50' ],
 		textColorDark: colorStudio.colors[ 'Gray 100' ],
-		textColorDisabled: colorStudio.colors[ 'Gray 10' ],
+		textColorDisabled: colorStudio.colors[ 'Gray 50' ],
 		error: swatches.red50,
 		warningBackground: swatches.red0,
 		outline: colorStudio.colors[ 'WordPress Blue 30' ],

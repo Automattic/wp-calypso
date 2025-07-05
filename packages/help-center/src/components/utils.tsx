@@ -1,7 +1,5 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
-import type { ContactOption } from '../types';
 import type {
 	OdieConversation,
 	OdieMessage,
@@ -28,20 +26,6 @@ const filterConversationsBySupportInteractions = (
 	);
 };
 
-export const generateContactOnClickEvent = (
-	contactOption: ContactOption,
-	contactOptionEventName?: string,
-	isUserEligible?: boolean
-) => {
-	if ( contactOptionEventName ) {
-		recordTracksEvent( contactOptionEventName, {
-			location: 'help-center',
-			contact_option: contactOption,
-			is_user_eligible: isUserEligible,
-		} );
-	}
-};
-
 /**
  * Returns the last message from a conversation.
  * @returns The last message or null if there are no messages.
@@ -51,9 +35,14 @@ export const getLastMessage = ( {
 }: {
 	conversation: OdieConversation | ZendeskConversation;
 } ): OdieMessage | ZendeskMessage | null => {
-	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
-		? conversation.messages[ conversation.messages.length - 1 ]
-		: null;
+	if ( ! Array.isArray( conversation?.messages ) ) {
+		return null;
+	}
+
+	const filteredMessages = conversation.messages.filter( ( message ) =>
+		'type' in message ? message.type !== 'form' : true
+	);
+	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
 };
 
 export const getZendeskConversations = () => {

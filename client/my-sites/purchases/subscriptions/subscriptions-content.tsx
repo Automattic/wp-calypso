@@ -1,15 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { Purchase } from 'calypso/lib/purchases/types';
-import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
+import { PurchasesDataViews } from 'calypso/me/purchases/purchases-list-in-dataviews/purchases-data-view';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import {
@@ -17,34 +17,34 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
-function SubscriptionsContent( {
-	isFetchingPurchases,
-	hasLoadedPurchases,
-	selectedSiteId,
-	selectedSite,
-	purchases,
-}: {
-	isFetchingPurchases: boolean;
-	hasLoadedPurchases: boolean;
-	selectedSiteId: number | null;
-	selectedSite: undefined | null | SiteDetails;
-	purchases: Purchase[];
-} ) {
-	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = ( siteSlug, purchaseId ) =>
-		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
-	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
+export default function SubscriptionsContentWrapper() {
+	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
+	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSite = useSelector( getSelectedSite );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const sites = useSelector( getSites ).filter( isValueTruthy );
+	const getManagePurchaseUrlFor: GetManagePurchaseUrlFor = useCallback(
+		( siteSlug, purchaseId ) => `/purchases/subscriptions/${ siteSlug }/${ purchaseId }`,
+		[]
+	);
 
-	// If there is no selected site, show the "no sites" page
 	if ( ! selectedSiteId ) {
 		return <NoSitesMessage />;
 	}
-
+	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
+		return (
+			<div className="subscriptions__list">
+				<PurchasesSite isPlaceholder />
+			</div>
+		);
+	}
 	// If there is a selected site but no site data, show the placeholder
 	if ( ! selectedSite?.ID ) {
 		return (
@@ -53,52 +53,14 @@ function SubscriptionsContent( {
 			</div>
 		);
 	}
-
-	// If there are purchases, show them
-	if ( purchases.length ) {
-		return (
-			<div className="subscriptions__list">
-				<PurchasesListHeader />
-
-				<PurchasesSite
-					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					key={ selectedSite.ID }
-					siteId={ selectedSite.ID }
-					slug={ selectedSite.slug }
-					purchases={ purchases }
-					cards={ cards }
-				/>
-			</div>
-		);
+	if ( purchases.length < 1 ) {
+		return <NoPurchasesMessage />;
 	}
-
-	// If we are loading purchases, show the placeholder
-	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
-		return (
-			<div className="subscriptions__list">
-				<PurchasesSite isPlaceholder />
-			</div>
-		);
-	}
-
-	// If there is selected site data but no purchases, show the "no purchases" page
-	return <NoPurchasesMessage />;
-}
-
-export default function SubscriptionsContentWrapper() {
-	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
-	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selectedSite = useSelector( getSelectedSite );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-
 	return (
-		<SubscriptionsContent
-			isFetchingPurchases={ isFetchingPurchases }
-			hasLoadedPurchases={ hasLoadedPurchases }
-			selectedSiteId={ selectedSiteId }
-			selectedSite={ selectedSite }
+		<PurchasesDataViews
 			purchases={ purchases }
+			sites={ sites }
+			getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 		/>
 	);
 }

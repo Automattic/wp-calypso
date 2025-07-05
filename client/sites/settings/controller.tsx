@@ -15,6 +15,7 @@ import {
 	useAreAdvancedHostingFeaturesSupported,
 	useAreHostingFeaturesSupported,
 } from '../hosting/features';
+import DashboardBackportSiteSettingsRenderer from '../v2/site-settings';
 import DeleteSite from './administration/tools/delete-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
@@ -24,7 +25,6 @@ import ServerSettings from './server';
 import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
-import DashboardBackportSiteSettingsRenderer from './v2';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
@@ -44,15 +44,17 @@ export function SettingsSidebar() {
 	return (
 		<Sidebar>
 			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
-			{ areAdvancedHostingFeaturesSupported && (
-				<>
-					<SidebarItem href={ `/sites/settings/server/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
-					<SidebarItem href={ `/sites/settings/database/${ slug }` }>
-						{ __( 'Database' ) }
-					</SidebarItem>
-				</>
-			) }
+			{ areAdvancedHostingFeaturesSupported && [
+				<SidebarItem key="server" href={ `/sites/settings/server/${ slug }` }>
+					{ __( 'Server' ) }
+				</SidebarItem>,
+				<SidebarItem key="sftp-ssh" href={ `/sites/settings/sftp-ssh/${ slug }` }>
+					{ sftpSshTitle }
+				</SidebarItem>,
+				<SidebarItem key="database" href={ `/sites/settings/database/${ slug }` }>
+					{ __( 'Database' ) }
+				</SidebarItem>,
+			] }
 			{ areHostingFeaturesSupported && (
 				<SidebarItem href={ `/sites/settings/performance/${ slug }` }>
 					{ __( 'Performance' ) }
@@ -208,19 +210,21 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 /**
  * Backport Hosting Dashboard Site Settings page to the current one.
  */
-export function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
-	const state = context.store.getState();
-	const site = getSelectedSite( state );
+export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
+	const { site: siteSlug, feature } = context.params;
 
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
+	// Route doesn't require a <PageViewTracker /> because the dashboard
+	// fires its own page view events.
 	context.primary = (
-		<>
-			<PageViewTracker title="Sites > Settings > General" path={ getRouteFromContext( context ) } />
-			<DashboardBackportSiteSettingsRenderer />
-		</>
+		<DashboardBackportSiteSettingsRenderer
+			store={ context.store }
+			siteSlug={ siteSlug }
+			feature={ feature }
+		/>
 	);
 
 	next();

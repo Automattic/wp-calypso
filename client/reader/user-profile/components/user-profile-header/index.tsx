@@ -1,8 +1,9 @@
-import page from '@automattic/calypso-router';
+import { isEnabled } from '@automattic/calypso-config';
 import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -13,26 +14,32 @@ import './style.scss';
 
 interface UserProfileHeaderProps {
 	user: UserData;
+	view: string;
 }
 
-const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
+const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const currentPath = page.current;
 	const userProfileUrlWithUsername = getUserProfileUrl( user.user_login ?? '' );
-	const userProfileUrlWithId = getUserProfileUrl( user.ID.toString() );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
 			path: userProfileUrlWithUsername,
-			selected: currentPath === userProfileUrlWithUsername || currentPath === userProfileUrlWithId,
+			selected: view === 'posts',
 		},
 		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrlWithUsername }/lists`,
-			selected:
-				currentPath === `${ userProfileUrlWithUsername }/lists` ||
-				currentPath === `${ userProfileUrlWithId }/lists`,
+			selected: view === 'lists',
 		},
+		...( isEnabled( 'reader/recommended-blogs-list' )
+			? [
+					{
+						label: translate( 'Recommended Blogs' ),
+						path: `${ userProfileUrlWithUsername }/recommended-blogs`,
+						selected: view === 'recommended-blogs',
+					},
+			  ]
+			: [] ),
 	];
 
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
@@ -70,35 +77,39 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 				>
 					{ avatarElement }
 				</div>
-				<div className="user-profile-header__details">
-					<div className="user-profile-header__display-name">
-						<div
-							className="user-profile-header__avatar user-profile-header__avatar-mobile"
-							data-testid="mobile-avatar"
-						>
-							{ avatarElement }
+				<AutoDirection>
+					<div className="user-profile-header__details">
+						<div className="user-profile-header__display-name">
+							<div
+								className="user-profile-header__avatar user-profile-header__avatar-mobile"
+								data-testid="mobile-avatar"
+							>
+								{ avatarElement }
+							</div>
+
+							<h1>{ user.display_name }</h1>
 						</div>
-						{ user.display_name }
+						{ user.bio && (
+							<div className="user-profile-header__bio">
+								<p className="user-profile-header__bio-desc">
+									<span ref={ bioRef } className="user-profile-header__bio-desc-text">
+										{ user.bio }
+									</span>
+
+									{ isClamped && user.profile_URL && (
+										<>
+											<span className="user-profile-header__bio-desc-fader"></span>
+											<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
+												{ translate( 'Read More' ) }{ ' ' }
+												<Icon width={ 18 } height={ 18 } icon={ external } />
+											</a>
+										</>
+									) }
+								</p>
+							</div>
+						) }
 					</div>
-					{ user.bio && (
-						<div className="user-profile-header__bio">
-							<p className="user-profile-header__bio-desc">
-								<span ref={ bioRef } className="user-profile-header__bio-desc-text">
-									{ user.bio }
-								</span>
-								{ isClamped && user.profile_URL && (
-									<>
-										<span className="user-profile-header__bio-desc-fader"></span>
-										<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
-											{ translate( 'Read More' ) }{ ' ' }
-											<Icon width={ 18 } height={ 18 } icon={ external } />
-										</a>
-									</>
-								) }
-							</p>
-						</div>
-					) }
-				</div>
+				</AutoDirection>
 			</header>
 			<SectionNav enforceTabsView selectedText={ selectedTab }>
 				<NavTabs>

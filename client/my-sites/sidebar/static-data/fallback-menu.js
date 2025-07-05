@@ -307,7 +307,7 @@ export default function buildFallbackResponse( {
 					slug: 'edit-phppost_typefeedback',
 					title: translate( 'Feedback' ),
 					type: 'submenu-item',
-					url: `https://${ siteDomain }/wp-admin/edit.php?post_type=feedback`,
+					url: `https://${ siteDomain }/wp-admin/admin.php?page=jetpack-forms`,
 				},
 				{
 					parent: 'feedback',

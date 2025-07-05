@@ -4,7 +4,8 @@ module.exports = {
 	...storybookDefaultConfig( {
 		stories: [
 			'../{src,styles}/**/*.stories.{js,jsx,ts,tsx}',
-			'../{src,styles,.storybook}/**/*.mdx',
+			'../{src,styles}/**/*.mdx',
+			'./**/*.mdx',
 		],
 	} ),
 	docs: { autodocs: true },

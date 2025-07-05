@@ -14,7 +14,7 @@ const ModernizedLayout: React.FunctionComponent = () => {
 	const breakMedium = '782px';
 	const breakMobile = '480px';
 	// ----------------------------------------------
-	// from @automattic/components/src/highlight-cards/variables.scss:
+	// from calypso/my-sites/stats/components/highlight-cards/variables.scss:
 	// ----------------------------------------------
 	// If changed, also change @plans-section-custom-mobile-breakpoint in client/my-sites/plans-features-main/_media-queries.scss
 	const customBreakpointSmall = '780px';

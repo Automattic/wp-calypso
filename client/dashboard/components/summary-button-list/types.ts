@@ -22,6 +22,14 @@ export interface SummaryButtonListProps {
 	 * The child components should be either SummaryButton instances or components that
 	 * wrap SummaryButton internally and pass the `density` prop to them. This is because
 	 * the component will override the 'density' prop of these children to match the parent's density.
+	 *
+	 * Note: avoid having children components that don't render any markup to the DOM.
+	 * Instead, prefer rendering each child element conditionally.
+	 *
+	 * Example:
+	 * <SummaryButtonList>
+	 *   { showSummaryItem ? <SummaryItem { ...summaryItemProps } /> : null }
+	 * </SummaryButtonList>
 	 */
 	children: ChildType | ChildType[];
 }

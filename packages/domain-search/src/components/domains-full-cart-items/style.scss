@@ -1,0 +1,11 @@
+.domains-full-cart-items__remove {
+	--wp-components-color-accent: var( --domain-search-secondary-action-color );
+}
+
+.domains-full-cart-items__price {
+	flex-shrink: 0;
+}
+
+.domains-full-cart-items__original-price {
+	text-decoration: line-through;
+}

@@ -1,11 +1,8 @@
-import {
-	ComponentSwapper,
-	CountCard,
-	MobileHighlightCardListing,
-	Spinner,
-} from '@automattic/components';
+import { ComponentSwapper, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
+import MobileHighlightCardListing from 'calypso/my-sites/stats/components/highlight-cards/mobile-highlight-cards';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
 import { useSelector } from 'calypso/state';
 import './style.scss';

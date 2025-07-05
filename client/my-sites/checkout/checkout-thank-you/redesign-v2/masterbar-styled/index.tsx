@@ -1,4 +1,4 @@
-import { WordPressLogo } from '@automattic/components';
+import { WordPressLogo, GravatarTextLogo } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
@@ -12,12 +12,14 @@ const MasterbarStyled = ( {
 	canGoBack = true,
 	contact = <DefaultMasterbarContact />,
 	showContact = true,
+	isGravatarDomain = false,
 }: {
 	onClick?: () => void;
 	backText?: string;
 	canGoBack?: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
+	isGravatarDomain?: boolean;
 } ) => (
 	<Masterbar className="checkout-thank-you__masterbar">
 		<Global
@@ -27,7 +29,11 @@ const MasterbarStyled = ( {
 				}
 			` }
 		/>
-		<WordPressLogo className="checkout-thank-you__logo" size={ 24 } />
+		{ isGravatarDomain ? (
+			<GravatarTextLogo />
+		) : (
+			<WordPressLogo className="checkout-thank-you__logo" size={ 24 } />
+		) }
 		{ canGoBack && backText && onClick && (
 			<Item
 				icon="chevron-left"

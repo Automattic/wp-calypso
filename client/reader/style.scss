@@ -76,6 +76,11 @@ body.is-section-reader {
 				height: 1px;
 				background: var(--color-border-secondary);
 
+				@media (max-width: $break-medium) {
+					left: 0;
+					width: 100%;
+				}
+
 				@media screen and (min-width: $break-medium) {
 					margin: 24px 0;
 				}
@@ -432,19 +437,6 @@ body.is-section-reader {
 .tiled-gallery.type-circle .tiled-gallery-caption {
 	display: none;
 	opacity: 0;
-}
-
-.is-group-reader .main .empty-content:not(.conversations__empty-content),
-.is-reader-page .main .empty-content:not(.conversations__empty-content) {
-	padding-top: 0;
-
-	.empty-content__title {
-		margin-top: -10px;
-	}
-
-	&.stream__empty {
-		margin-top: 40px;
-	}
 }
 
 .is-group-reader .empty-content__action,

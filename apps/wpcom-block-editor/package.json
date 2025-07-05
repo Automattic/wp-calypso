@@ -57,10 +57,10 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"npm-run-all": "^4.1.5",
 		"postcss": "^8.5.3",
-		"webpack": "^5.97.1",
+		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
 }

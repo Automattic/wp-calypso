@@ -15,6 +15,7 @@ import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import { AsyncHelpCenterApp } from 'calypso/components/help-center';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -29,7 +30,6 @@ import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
-import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
@@ -172,7 +172,7 @@ async function main() {
 							id="notices"
 						/>
 					</BrowserRouter>
-					<AsyncHelpCenter user={ user as UserStore.CurrentUser } />
+					<AsyncHelpCenterApp currentUser={ user as UserStore.CurrentUser } sectionName="stepper" />
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

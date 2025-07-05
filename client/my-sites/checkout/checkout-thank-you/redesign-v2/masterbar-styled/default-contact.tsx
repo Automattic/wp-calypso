@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 
 const ContactContainer = styled.div`
@@ -48,15 +47,14 @@ const ContactContainer = styled.div`
 `;
 
 export function DefaultMasterbarContact() {
-	const translate = useTranslate();
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
 	return (
 		<ContactContainer>
-			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>
+			{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 			<Button className="thank-you-help-center" variant="link" onClick={ toggleHelpCenter }>
 				<Gridicon icon="help-outline" />
-				<span>{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }</span>
+				<span>{ helpCenterButtonLink }</span>
 			</Button>
 		</ContactContainer>
 	);

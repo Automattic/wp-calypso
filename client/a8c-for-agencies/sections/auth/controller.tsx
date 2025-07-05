@@ -67,3 +67,8 @@ export const tokenRedirect: Callback = ( ctx, next ) => {
 		document.location.replace( DEFAULT_NEXT_LOCATION );
 	}
 };
+
+export const logIn: Callback = () => {
+	debug( 'log in' );
+	document.location.replace( DEFAULT_NEXT_LOCATION );
+};

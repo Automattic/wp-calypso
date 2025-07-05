@@ -1,17 +1,13 @@
 import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
-import { NextButton, Step, StepContainer } from '@automattic/onboarding';
+import { NextButton, Step } from '@automattic/onboarding';
 import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
-import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
-import { DIYOption } from './diy-option';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -25,11 +21,10 @@ const SiteMigrationHowToMigrate: StepType< {
 		destination: string;
 	};
 } > = ( props ) => {
-	const { navigation, headerText, stepName, subHeaderText, flow } = props;
+	const { navigation, headerText, subHeaderText } = props;
 	const translate = useTranslate();
 	const site = useSite();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
-	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	usePresalesChat( 'wpcom' );
 
@@ -93,7 +88,7 @@ const SiteMigrationHowToMigrate: StepType< {
 		return isBusinessPlan
 			? // translators: %(planName)s is the name of the Business plan.
 			  translate(
-					'Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it’s included in your %(planName)s plan.',
+					"Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it's included in your %(planName)s plan.",
 					{
 						args: {
 							planName,
@@ -138,59 +133,31 @@ const SiteMigrationHowToMigrate: StepType< {
 		);
 	};
 
-	if ( isUsingStepContainerV2 ) {
-		return (
-			<>
-				<DocumentHead title={ translate( 'Let us migrate your site' ) } />
-				<Step.CenteredColumnLayout
-					className="how-to-migrate-v2"
-					columnWidth={ 6 }
-					topBar={
-						<Step.TopBar
-							leftElement={ <Step.BackButton onClick={ goBack } /> }
-							rightElement={
-								<Step.SkipButton
-									onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }
-								>
-									{ translate( "I'll do it myself" ) }
-								</Step.SkipButton>
-							}
-						/>
-					}
-					heading={
-						<Step.Heading
-							text={ headerText ?? translate( 'Let us migrate your site' ) }
-							subText={ subHeaderText || renderSubHeaderText() }
-						/>
-					}
-				>
-					{ renderStepContent() }
-				</Step.CenteredColumnLayout>
-			</>
-		);
-	}
-
 	return (
 		<>
 			<DocumentHead title={ translate( 'Let us migrate your site' ) } />
-			<StepContainer
-				stepName={ stepName ?? 'site-migration-how-to-migrate' }
-				className="how-to-migrate"
-				shouldHideNavButtons={ false }
-				hideSkip
-				formattedHeader={
-					<FormattedHeader
-						id="how-to-migrate-header"
-						headerText={ headerText ?? translate( 'Let us migrate your site' ) }
-						subHeaderText={ subHeaderText || renderSubHeaderText() }
-						align="center"
+			<Step.CenteredColumnLayout
+				className="how-to-migrate-v2"
+				columnWidth={ 6 }
+				topBar={
+					<Step.TopBar
+						leftElement={ <Step.BackButton onClick={ goBack } /> }
+						rightElement={
+							<Step.SkipButton onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }>
+								{ translate( "I'll do it myself" ) }
+							</Step.SkipButton>
+						}
 					/>
 				}
-				stepContent={ renderStepContent() }
-				recordTracksEvent={ recordTracksEvent }
-				goBack={ goBack }
-				customizedActionButtons={ <DIYOption onClick={ handleClick } /> }
-			/>
+				heading={
+					<Step.Heading
+						text={ headerText ?? translate( 'Let us migrate your site' ) }
+						subText={ subHeaderText || renderSubHeaderText() }
+					/>
+				}
+			>
+				{ renderStepContent() }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

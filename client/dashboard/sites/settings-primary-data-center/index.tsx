@@ -1,25 +1,23 @@
 import SummaryButton from '@automattic/components/src/summary-button';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Card, Icon, Notice } from '@wordpress/components';
+import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
-import { siteQuery, sitePrimaryDataCenterQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { canViewPrimaryDataCenterSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site } from '../../data/types';
-
-export function canGetPrimaryDataCenter( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: primaryDataCenter } = useQuery( {
-		...sitePrimaryDataCenterQuery( siteSlug ),
-		enabled: site && canGetPrimaryDataCenter( site ),
+		...sitePrimaryDataCenterQuery( site.ID ),
+		enabled: canViewPrimaryDataCenterSettings( site ),
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();
@@ -43,7 +41,7 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 			}
 		>
 			<VStack spacing={ 8 }>
-				<Notice isDismissible={ false }>
+				<Notice>
 					{ __(
 						'Your site has already been placed in the optimal data center. It’s not currently possible to change your primary data center.'
 					) }

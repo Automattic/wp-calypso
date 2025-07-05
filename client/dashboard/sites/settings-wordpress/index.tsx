@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -7,48 +7,45 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { siteBySlugQuery } from '../../app/queries/site';
 import {
-	siteQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
-} from '../../app/queries';
+} from '../../app/queries/site-wordpress-version';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import RequiredSelect from '../../components/required-select';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { canViewWordPressSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
-import { canUpdateWordPressVersion } from './utils';
 import type { Field } from '@automattic/dataviews';
 
-export default function WordPressVersionSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateWordPressVersion( site );
+export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewWordPressSettings( site );
 
 	const { data: currentVersion } = useQuery( {
-		...siteWordPressVersionQuery( siteSlug ),
-		enabled: canUpdate,
+		...siteWordPressVersionQuery( site.ID ),
+		enabled: canView,
 	} );
-	const mutation = useMutation( siteWordPressVersionMutation( siteSlug ) );
+	const mutation = useMutation( siteWordPressVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
 
-	if ( ! site ) {
-		return null;
-	}
-
 	const fields: Field< { version: string } >[] = [
 		{
 			id: 'version',
 			label: __( 'WordPress version' ),
-			Edit: 'select',
+			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: [
 				{ value: 'latest', label: getFormattedWordPressVersion( site, 'latest' ) },
 				{ value: 'beta', label: getFormattedWordPressVersion( site, 'beta' ) },
@@ -68,10 +65,10 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 		e.preventDefault();
 		mutation.mutate( formData.version, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'WordPress version saved.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), {
+				createErrorNotice( __( 'Failed to save WordPress version.' ), {
 					type: 'snackbar',
 				} );
 			},
@@ -111,36 +108,36 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 
 	const renderNotice = () => {
 		return (
-			<Notice isDismissible={ false }>
-				<Text>
-					{ site.is_wpcom_atomic
-						? createInterpolateElement(
-								sprintf(
-									// translators: %s: WordPress version, e.g. 6.8
-									__(
-										'Every WordPress.com site runs the latest WordPress version (%s). For testing purposes, you can switch to the beta version of the next WordPress release on <a>your staging site</a>.'
-									),
-									getFormattedWordPressVersion( site )
+			<Notice>
+				<VStack>
+					<Text as="p">
+						{ sprintf(
+							// translators: %s: WordPress version, e.g. 6.8
+							__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
+							getFormattedWordPressVersion( site )
+						) }
+					</Text>
+					{ site.is_wpcom_atomic && (
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'Switch to a <a>staging site</a> to test a beta version of the next WordPress release.'
 								),
 								{
-									// TODO: use correct staging site URL when it's available.
-									// eslint-disable-next-line jsx-a11y/anchor-is-valid
-									a: <a href="#" />,
+									// TODO: use correct v2 staging site URL when it's available.
+									a: <a href={ `/staging-site/${ site.slug }` } />,
 								}
-						  )
-						: sprintf(
-								// translators: %s: WordPress version, e.g. 6.8
-								__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
-								getFormattedWordPressVersion( site )
-						  ) }
-				</Text>
+							) }
+						</Text>
+					) }
+				</VStack>
 			</Notice>
 		);
 	};
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
-			{ canUpdate ? renderForm() : renderNotice() }
+			{ canView ? renderForm() : renderNotice() }
 		</PageLayout>
 	);
 }

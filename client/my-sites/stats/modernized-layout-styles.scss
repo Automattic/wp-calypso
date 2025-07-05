@@ -1,7 +1,7 @@
 // Must be included in root style.scss of /stats, /store, and /google-my-business/stats
 
 @use "sass:math";
-@import "@automattic/components/src/highlight-cards/variables";
+@import "calypso/my-sites/stats/components/highlight-cards/variables";
 @import "@wordpress/base-styles/breakpoints";
 
 $stats-sections-max-width: 1224px;

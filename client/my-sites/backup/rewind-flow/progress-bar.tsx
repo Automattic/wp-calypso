@@ -31,7 +31,7 @@ const RewindFlowProgressBar: FunctionComponent< Props > = ( {
 					{ translate( '%(filteredPercent)d%% complete', { args: { filteredPercent } } ) }
 				</p>
 			</div>
-			<ProgressBar value={ filteredPercent } total={ 100 } />
+			<ProgressBar value={ filteredPercent } total={ 100 } canGoBackwards />
 			<p className="rewind-flow__progress-bar-entry">
 				{ isReady &&
 					entry &&

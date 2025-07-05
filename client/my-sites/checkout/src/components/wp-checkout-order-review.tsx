@@ -28,6 +28,7 @@ import type {
 	CouponStatus,
 	SetCouponFieldVisible,
 	RemoveCouponAndClearField,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
@@ -81,14 +82,16 @@ export default function WPCheckoutOrderReview( {
 	removeProductFromCart,
 	removeCouponAndClearField,
 	replaceProductInCart,
+	addProductsToCart,
 	onChangeSelection,
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	replaceProductInCart: ReplaceProductInCart;
+	addProductsToCart: AddProductsToCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	removeCouponAndClearField: RemoveCouponAndClearField;
@@ -164,6 +167,7 @@ export default function WPCheckoutOrderReview( {
 					<WPOrderReviewLineItems
 						removeProductFromCart={ removeProductFromCart }
 						replaceProductInCart={ replaceProductInCart }
+						addProductsToCart={ addProductsToCart }
 						removeCoupon={ removeCouponAndClearField }
 						onChangeSelection={ onChangeSelection }
 						isSummary={ isSummary }

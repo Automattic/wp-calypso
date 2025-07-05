@@ -49,8 +49,8 @@ describe(
 
 		it( 'Select a domain name', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName + '.live' );
-			selectedDomain = await domainSearchComponent.selectDomain( '.live', false );
+			await domainSearchComponent.search( blogName + '.blog' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.blog' );
 		} );
 
 		it( `Pick the ${ planName } plan`, async function () {
@@ -58,7 +58,6 @@ describe(
 
 			await Promise.all( [
 				plansPage.selectPlan( planName ),
-				page.click( '.domains__domain-cart-continue' ),
 				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
 			] );
 		} );

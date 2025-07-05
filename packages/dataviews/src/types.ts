@@ -24,7 +24,7 @@ export interface Option< Value extends any = any > {
 	description?: string;
 }
 
-interface FilterByConfig {
+export interface FilterByConfig {
 	/**
 	 * The list of operators supported by the field.
 	 */
@@ -39,6 +39,33 @@ interface FilterByConfig {
 	isPrimary?: boolean;
 }
 
+export interface NormalizedFilterByConfig {
+	/**
+	 * The list of operators supported by the field.
+	 */
+	operators: Operator[];
+
+	/**
+	 * Whether it is a primary filter.
+	 *
+	 * A primary filter is always visible and is not listed in the "Add filter" component,
+	 * except for the list layout where it behaves like a secondary filter.
+	 */
+	isPrimary?: boolean;
+}
+
+interface FilterConfigForType {
+	/**
+	 * What operators are used by default.
+	 */
+	defaultOperators: Operator[];
+
+	/**
+	 * What operators are supported by the field.
+	 */
+	validOperators: Operator[];
+}
+
 export type Operator =
 	| 'is'
 	| 'isNot'
@@ -50,9 +77,18 @@ export type Operator =
 	| 'greaterThan'
 	| 'lessThanOrEqual'
 	| 'greaterThanOrEqual'
+	| 'before'
+	| 'after'
+	| 'beforeInc'
+	| 'afterInc'
 	| 'contains'
 	| 'notContains'
-	| 'startsWith';
+	| 'startsWith'
+	| 'between'
+	| 'on'
+	| 'notOn'
+	| 'inThePast'
+	| 'over';
 
 export type FieldType =
 	| 'text'
@@ -60,7 +96,8 @@ export type FieldType =
 	| 'datetime'
 	| 'media'
 	| 'boolean'
-	| 'email';
+	| 'email'
+	| 'array';
 
 export type ValidationContext = {
 	elements?: Option[];
@@ -93,7 +130,13 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * The filter config for the field.
 	 */
-	filterBy: FilterByConfig;
+	filterBy: FilterConfigForType | false;
+
+	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
 
 	/**
 	 * Whether the field is sortable.
@@ -184,7 +227,13 @@ export type Field< Item > = {
 	/**
 	 * Filter config for the field.
 	 */
-	filterBy?: FilterByConfig | undefined;
+	filterBy?: FilterByConfig | false;
+
+	/**
+	 * Whether the field is readOnly.
+	 * If `true`, the value will be rendered using the `render` callback.
+	 */
+	readOnly?: boolean;
 
 	/**
 	 * Callback used to retrieve the value of the field from the item.
@@ -203,6 +252,8 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
+	filterBy: NormalizedFilterByConfig | false;
+	readOnly: boolean;
 };
 
 /**
@@ -217,6 +268,13 @@ export type DataFormControlProps< Item > = {
 	field: NormalizedField< Item >;
 	onChange: ( value: Record< string, any > ) => void;
 	hideLabelFromVision?: boolean;
+	/**
+	/**
+	 * The currently selected filter operator for this field.
+	 *
+	 * Used by DataViews filters to determine which control to render based on the operator type.
+	 */
+	operator?: Operator;
 };
 
 export type DataViewRenderFieldProps< Item > = {

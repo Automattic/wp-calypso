@@ -26,7 +26,7 @@ import '../styles.scss';
 const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
-	currentRoute = window.location.pathname + window.location.search,
+	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
@@ -87,12 +87,17 @@ const HelpCenter: React.FC< Container > = ( {
 	);
 };
 
-export default function ContextualizedHelpCenter(
-	props: Container & HelpCenterRequiredInformation
-) {
+export default function ContextualizedHelpCenter( {
+	hidden,
+	currentRoute,
+	handleClose,
+	...props
+}: Container &
+	Partial< HelpCenterRequiredInformation > &
+	Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' > ) {
 	return (
 		<HelpCenterRequiredContextProvider value={ props }>
-			<HelpCenter { ...props } />
+			<HelpCenter hidden={ hidden } currentRoute={ currentRoute } handleClose={ handleClose } />
 		</HelpCenterRequiredContextProvider>
 	);
 }

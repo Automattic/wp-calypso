@@ -3,18 +3,20 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import {
 	isGravPoweredOAuth2Client,
-	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isA4AOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -57,24 +59,31 @@ const enhanceContextWithLogin = ( context ) => {
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
-	const isJetpackLogin = isJetpack === 'jetpack';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
 	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
-	const isWooJPC = isWooJPCFlow( currentState );
+	const isWoo = getIsWoo( currentState );
 	const isBlazePro = getIsBlazePro( currentState );
 	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
+	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
+	const isA4AClient = isA4AOAuth2Client( oauth2Client );
+	const isJetpackLogin = isJetpack === 'jetpack';
+	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
+	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin &&
-			Boolean( clientId ) === false &&
-			Boolean( oauth2ClientId ) === false &&
-			! isBlazePro &&
-			! isWooJPC ) ||
+		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
 		isPartnerPortalClient ||
-		isStudioLogin; // Force two-column layout for Studio
+		isStudioLogin ||
+		isCrowdsignalLogin ||
+		isBlazePro ||
+		isA4AClient ||
+		isJetpackCloudClient ||
+		isJetpackLogin ||
+		isWoo ||
+		isVIPClient;
 
 	context.primary = (
 		<WPLogin
@@ -235,7 +244,7 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
+	const { client_id, email, redirect_to, path, token, transition: isTransition } = previousQuery;
 
 	let activate = '';
 	try {
@@ -246,7 +255,10 @@ export function magicLoginUse( context, next ) {
 	}
 	const transition = isTransition === 'true';
 
-	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
+	const flow =
+		redirect_to?.includes( 'jetpack/connect' ) || path?.includes( 'jetpack/link/use' )
+			? 'jetpack'
+			: null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
@@ -337,32 +349,5 @@ export function redirectJetpack( context, next ) {
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
-	next();
-}
-
-/**
- * Redirect clients to use PHP lost password. Excludes WooCommerce and Tumblr Blaze Pro.
- * @param {Object} context - The context object containing request parameters and query strings.
- * @param {Function} next - The next middleware function to call if conditions are met.
- * @returns {void} Either redirects the user or invokes the `next()` middleware function.
- */
-export function redirectLostPassword( context, next ) {
-	const { action } = context.params;
-
-	if ( action !== 'lostpassword' ) {
-		next();
-		return;
-	}
-
-	const state = context.store.getState();
-	const oauth2Client = getCurrentOAuth2Client( state );
-
-	const shouldRedirectToLostPassword = () =>
-		! getIsBlazePro( state ) && ! isWooOAuth2Client( oauth2Client ) && ! isWooJPCFlow( state );
-
-	if ( shouldRedirectToLostPassword() ) {
-		return context.redirect( 301, '/wp-login.php?action=lostpassword' );
-	}
-
 	next();
 }

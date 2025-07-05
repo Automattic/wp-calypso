@@ -23,4 +23,5 @@ export interface AgencyDetailsPayload {
 	state: string;
 	referer?: string | null;
 	tos?: 'consented';
+	initialSource?: string;
 }

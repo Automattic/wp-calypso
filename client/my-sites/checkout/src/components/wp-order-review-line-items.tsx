@@ -17,6 +17,8 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
+	useRestorableProducts,
+	RemovedFromCartItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
@@ -42,6 +44,7 @@ import type {
 	ReplaceProductInCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
+	AddProductsToCart,
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren, RefObject } from 'react';
 
@@ -72,6 +75,7 @@ export function WPOrderReviewLineItems( {
 	isSummary,
 	removeProductFromCart,
 	replaceProductInCart,
+	addProductsToCart,
 	removeCoupon,
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
@@ -83,8 +87,9 @@ export function WPOrderReviewLineItems( {
 }: {
 	className?: string;
 	isSummary?: boolean;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	replaceProductInCart: ReplaceProductInCart;
+	addProductsToCart: AddProductsToCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -98,6 +103,7 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -223,6 +229,13 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
+			{ restorableProducts.map( ( product ) => (
+				<RemovedFromCartItem
+					key={ product.uuid }
+					product={ product }
+					addProductsToCart={ addProductsToCart }
+				/>
+			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
@@ -237,12 +250,14 @@ export function WPOrderReviewLineItems( {
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
+				<WPOrderReviewListItem>
+					<NonProductLineItem
+						subtotal
+						lineItem={ creditsLineItem }
+						isSummary={ isSummary }
+						isPwpoUser={ isPwpoUser }
+					/>
+				</WPOrderReviewListItem>
 			) }
 		</WPOrderReviewList>
 	);
@@ -295,6 +310,7 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown: ( key: string | null ) => void;
 	akQuantityOpenId: string | null;
 } ) {
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
@@ -397,8 +413,9 @@ function LineItemWrapper( {
 		}
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
 		const isMarketplace = product.extra?.is_marketplace_product;
+		const isA4A = product.extra?.isA4ASitelessCheckout;
 
-		if ( isJetpack || isAkismet || isMarketplace ) {
+		if ( isJetpack || isAkismet || isMarketplace || isA4A ) {
 			return true;
 		}
 
@@ -423,9 +440,12 @@ function LineItemWrapper( {
 				product={ product }
 				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
+				isRestorable
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }
+				restorableProducts={ restorableProducts }
+				setRestorableProducts={ setRestorableProducts }
 				isPwpoUser={ isPwpoUser }
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }

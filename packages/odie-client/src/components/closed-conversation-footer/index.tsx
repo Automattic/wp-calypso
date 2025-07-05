@@ -1,12 +1,8 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Button } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useOdieAssistantContext } from '../../context';
 import { useManageSupportInteraction } from '../../data';
-import { interactionHasEnded } from '../../utils';
 import './style.scss';
 
 export const ClosedConversationFooter = () => {
@@ -15,13 +11,6 @@ export const ClosedConversationFooter = () => {
 
 	const { startNewInteraction } = useManageSupportInteraction();
 
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
-
 	const handleOnClick = async () => {
 		trackEvent( 'chat_new_from_closed_conversation' );
 		await startNewInteraction( {
@@ -29,10 +18,6 @@ export const ClosedConversationFooter = () => {
 			event_external_id: crypto.randomUUID(),
 		} );
 	};
-
-	if ( ! interactionHasEnded( currentSupportInteraction ) ) {
-		return null;
-	}
 
 	return (
 		<div className="odie-closed-conversation-footer">

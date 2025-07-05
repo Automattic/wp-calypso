@@ -44,18 +44,17 @@
 	--wp-components-color-accent: var(--color-accent);
 }
 
-/* A8C for Agencies */
-.a8c-for-agencies {
-	.components-button:not(.is-destructive) {
-		--wp-components-color-accent: var(--color-primary-40);
-		--wp-components-color-accent-darker-10: var(--color-primary-60);
-		--wp-components-color-accent-darker-20: var(--color-primary-60);
-	}
-}
-
-/* Jetpack */
-.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
-	.components-button:not(.is-destructive) {
+/*
+ * Jetpack
+ * --------------------------------------------------------------------------------
+ * Note: The increased specificity here overrides the is-link button styles
+ * added by Stepper and other components. It is not always the desired behavior.
+ * In login, we want to use the Jetpack green color for buttons, but not for links.
+ * We therefore apply :not(.is-link) to avoid overriding the is-link styles.
+ * --------------------------------------------------------------------------------
+ */
+.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+	.components-button:not(.is-link):not(.is-destructive) {
 		--wp-components-color-accent: var(--studio-jetpack-green-50);
 		--wp-components-color-accent-darker-10: var(--studio-jetpack-green-60);
 		--wp-components-color-accent-darker-20: var(--studio-jetpack-green-60);
@@ -64,14 +63,14 @@
 
 .jetpack-cloud {
 	.components-button:not(.is-destructive) {
-		--wp-components-color-accent: var(--studio-jetpack-green-40);
-		--wp-components-color-accent-darker-10: var(--studio-jetpack-green-30);
-		--wp-components-color-accent-darker-20: var(--studio-jetpack-green-30);
+		--wp-components-color-accent: var(--studio-jetpack-green-50);
+		--wp-components-color-accent-darker-10: var(--studio-jetpack-green-60);
+		--wp-components-color-accent-darker-20: var(--studio-jetpack-green-60);
 	}
 }
 
 /* Gravatar & WP Job Manager */
-.layout.is-section-login.is-grav-powered-client {
+.is-grav-powered-client {
 	.components-button:not(.is-destructive) {
 		--color-gravatar-darker: color-mix(in srgb, var(--color-gravatar), #000 13%);
 
@@ -121,25 +120,24 @@
 		--wp-components-color-accent-darker-10: var(--woo-purple-60);
 		--wp-components-color-accent-darker-20: var(--woo-purple-60);
 
-		&:focus:not(:disabled) {
+		&:focus:not(:disabled, [aria-disabled="true"]) {
 			--wp-components-color-accent: var(--woo-purple-60);
 		}
 
 		&.is-primary,
+		&.is-secondary,
 		// Used for social auth buttons
 		&.a8c-components-wp-button {
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			font-size: 1rem;
-			font-weight: 500;
-			height: 48px;
 		}
 
 		&.is-primary {
-			&:focus:not(:disabled) {
+			&:focus:not(:disabled, [aria-disabled="true"]) {
 				box-shadow: 0 0 0 2px var(--wp-components-color-accent);
 			}
 
-			&:disabled {
+			&:disabled,
+			&[aria-disabled="true"] {
 				--wp-components-color-accent: var(--studio-gray-5);
 
 				color: var(--studio-gray-50);
@@ -158,13 +156,18 @@
 			}
 		}
 
-		// Used for social auth buttons
-		&.a8c-components-wp-button {
-			&:not(:focus) {
-				box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
-			}
+		&.is-secondary:not(:focus) {
+			box-shadow: inset 0 0 0 2px var(--wp-components-color-accent), 0 0 0 currentColor;
+		}
 
-			&:focus:not(:disabled) {
+		// Used for social auth buttons
+		&.a8c-components-wp-button:not(:focus) {
+			box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
+		}
+
+		&.is-secondary,
+		&.a8c-components-wp-button {
+			&:focus:not(:disabled, [aria-disabled="true"]) {
 				box-shadow: inset 0 0 0 1px var(--wp-components-color-background, #fff), 0 0 0 2px var(--wp-components-color-accent);
 			}
 		}
@@ -178,8 +181,14 @@
 		--color-blaze-pro-darker: color-mix(in srgb, var(--color-blaze-pro), #000 13%);
 
 		--wp-components-color-accent: var(--color-blaze-pro);
+		--wp-components-color-accent-inverted: var(--studio-black);
 		--wp-components-color-accent-darker-10: var(--color-blaze-pro-darker);
 		--wp-components-color-accent-darker-20: var(--color-blaze-pro-darker);
+	}
+
+	.components-button.is-tertiary {
+		--wp-components-color-accent: var(--studio-gray-60);
+		--wp-components-color-accent-darker-20: var(--studio-gray-80);
 	}
 }
 

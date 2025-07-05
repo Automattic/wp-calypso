@@ -4,7 +4,7 @@ import { Icon } from '.';
 import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof Icon > = {
-	title: 'Still Internal/Icon',
+	title: 'Unpublished/Icon',
 	component: Icon,
 	parameters: {
 		docs: { canvas: { sourceState: 'shown' } },

@@ -15,11 +15,9 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import {
-	deleteSiteMutation,
-	p2HubP2sQuery,
-	siteHasPurchasesCancelableQuery,
-} from '../../app/queries';
+import { p2HubP2sQuery } from '../../app/queries/p2';
+import { siteDeleteMutation } from '../../app/queries/site';
+import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
 import Notice from '../../components/notice';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -52,7 +50,7 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	const renderWarningContent = () => {
 		if ( isAtomicRemovalInProgress ) {
 			return __(
-				"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
+				'We are still in the process of removing your previous plan. Please check back in a few minutes and you’ll be able to delete your site.'
 			);
 		}
 
@@ -128,7 +126,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
-	const mutation = useMutation( deleteSiteMutation( site.slug ) );
+	const mutation = useMutation( siteDeleteMutation( site.ID ) );
 
 	const fields: Field< SiteDeleteFormData >[] = [
 		{
@@ -176,10 +174,11 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 			<Notice variant="warning" density="medium">
 				<Text>
 					{ createInterpolateElement(
-						'Before deleting your site, consider <link>exporting your content as a backup</link>.',
+						__(
+							'Before deleting your site, consider <link>exporting your content as a backup</link>.'
+						),
 						{
-							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href="#" />,
+							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
 						}
 					) }
 				</Text>
@@ -197,7 +196,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				) }
 			</Text>
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+				<VStack spacing={ 4 }>
 					<DataForm< SiteDeleteFormData >
 						data={ formData }
 						fields={ fields }
@@ -229,7 +228,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { user } = useAuth();
 	const { isLoading, data: hasPurchasesCancelable } = useQuery(
-		siteHasPurchasesCancelableQuery( site.slug, user.ID )
+		siteHasCancelablePurchasesQuery( site.ID, user.ID )
 	);
 
 	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesCancelable;

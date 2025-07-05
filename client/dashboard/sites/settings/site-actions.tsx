@@ -1,20 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { restoreSitePlanSoftwareMutation } from '../../app/queries';
+import { sitePlanSoftwareRestoreMutation } from '../../app/queries/site-plans';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
-import { DotcomFeatures } from '../../data/constants';
+import { canViewSiteActions, canRestorePlanSoftware, canDuplicateSite } from '../features';
 import type { Site } from '../../data/types';
-
-const canRestorePlanSoftware = ( { is_wpcom_atomic }: Site ) => is_wpcom_atomic;
 
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( restoreSitePlanSoftwareMutation( site.slug ) );
+	const mutation = useMutation( sitePlanSoftwareRestoreMutation( site.ID ) );
 
 	const handleClick = () => {
 		mutation.mutate( undefined, {
@@ -52,9 +50,6 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	);
 };
 
-const canDuplicateSite = ( { capabilities, plan }: Site ) =>
-	capabilities.manage_options && plan?.features.active.includes( DotcomFeatures.COPY_SITE );
-
 const DuplicateSite = ( { site }: { site: Site } ) => {
 	return (
 		<ActionList.ActionItem
@@ -76,6 +71,10 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 };
 
 export default function SiteActions( { site }: { site: Site } ) {
+	if ( ! canViewSiteActions( site ) ) {
+		return null;
+	}
+
 	const actions = [
 		canRestorePlanSoftware( site ) && (
 			<RestorePlanSoftware key="restore-plan-software" site={ site } />
@@ -88,9 +87,9 @@ export default function SiteActions( { site }: { site: Site } ) {
 	}
 
 	return (
-		<>
-			<SectionHeader title={ __( 'Actions' ) } />
+		<VStack spacing={ 3 }>
+			<SectionHeader title={ __( 'Actions' ) } level={ 3 } />
 			<ActionList>{ actions }</ActionList>
-		</>
+		</VStack>
 	);
 }

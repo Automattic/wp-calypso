@@ -1,9 +1,10 @@
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import SiteFavicon from 'calypso/blocks/site-favicon';
+import { isMigrationInProgress } from 'calypso/data/site-migration';
 import { navigate } from 'calypso/lib/navigate';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
-import { getMigrationStatus, isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
+import { isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -41,8 +42,8 @@ export default function SiteIcon( {
 		}
 	};
 
-	const isMigrationPending = getMigrationStatus( site ) === 'pending';
-	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
+	const isInProgress = isMigrationInProgress( site );
+	const siteTitle = isInProgress ? translate( 'Incoming Migration' ) : site.title;
 
 	const size = React.useMemo( () => {
 		switch ( viewType ) {
@@ -64,8 +65,9 @@ export default function SiteIcon( {
 			<SiteFavicon
 				className="sites-site-favicon"
 				blogId={ site.ID }
-				fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
+				fallback={ isInProgress ? 'migration' : 'first-grapheme' }
 				size={ size }
+				lazy
 			/>
 		</ThumbnailLink>
 	);

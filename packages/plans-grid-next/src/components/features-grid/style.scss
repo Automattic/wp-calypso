@@ -252,7 +252,7 @@
 	@include plans-grid-medium-large {
 		// The .plan-features-2023-grid__table-item is used to render the plan spotlight which doesn't
 		// use a table layout, but borders are only appropriate in table layout.
-		&:is(td) {
+		&:is(td, th) {
 			border-left: solid 1px #e0e0e0;
 		}
 	}

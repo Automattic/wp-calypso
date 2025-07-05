@@ -103,12 +103,14 @@ const selectSubscribers = ( payload: {
 // email_subscribers includes both email and wpcom subscribers so it can't be used for calculations
 const selectPaidSubscribers = ( payload: {
 	counts: {
+		total_subscribers: number;
 		email_subscribers: number;
 		paid_subscribers: number;
 		social_followers: number;
 	};
 } ) => {
 	return {
+		total_subscribers: payload?.counts?.total_subscribers,
 		email_subscribers: payload?.counts?.email_subscribers,
 		paid_subscribers: payload?.counts?.paid_subscribers,
 		social_followers: payload?.counts?.social_followers,
@@ -159,12 +161,12 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 			data: {
 				total_email: results[ 0 ]?.data?.total_email,
 				total_wpcom: results[ 0 ]?.data?.total_wpcom,
-				total: results[ 0 ]?.data?.total,
+				total: results[ 1 ]?.data?.total_subscribers,
 				paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 				free_subscribers:
-					results[ 1 ]?.data?.email_subscribers !== undefined &&
+					results[ 1 ]?.data?.total_subscribers !== undefined &&
 					results[ 1 ]?.data?.paid_subscribers !== undefined
-						? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
+						? results[ 1 ].data.total_subscribers - results[ 1 ].data.paid_subscribers
 						: null,
 				social_followers: results[ 1 ]?.data?.social_followers,
 				is_owner_subscribed: results[ 0 ]?.data?.is_owner_subscribed,
@@ -180,12 +182,12 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 		data: {
 			total_email: results[ 3 ]?.data?.total,
 			total_wpcom: results[ 2 ]?.data?.total,
-			total: results[ 1 ].data?.email_subscribers,
+			total: results[ 1 ]?.data?.total_subscribers,
 			paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
-				results[ 1 ]?.data?.email_subscribers !== undefined &&
+				results[ 1 ]?.data?.total_subscribers !== undefined &&
 				results[ 1 ]?.data?.paid_subscribers !== undefined
-					? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
+					? results[ 1 ].data.total_subscribers - results[ 1 ].data.paid_subscribers
 					: null,
 			social_followers: results[ 1 ]?.data?.social_followers,
 			is_owner_subscribed: results[ 2 ]?.data?.is_owner_subscribed,

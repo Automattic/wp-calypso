@@ -5,6 +5,7 @@ export const ThumbsUpIcon = ( { className }: { className?: string } ) => (
 		height="24"
 		viewBox="0 0 24 24"
 		className={ className }
+		aria-hidden="true"
 	>
 		<path
 			fillRule="evenodd"
@@ -21,6 +22,7 @@ export const ThumbsDownIcon = ( { className }: { className?: string } ) => (
 		height="24"
 		viewBox="0 0 24 24"
 		className={ className }
+		aria-hidden="true"
 	>
 		<path
 			fillRule="evenodd"

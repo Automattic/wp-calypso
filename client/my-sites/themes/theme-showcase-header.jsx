@@ -11,6 +11,10 @@ import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
+const shouldSkipTitleFormatting = ( { filter, tier } ) => {
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
+};
+
 export default function ThemeShowcaseHeader( {
 	canonicalUrl,
 	filter,
@@ -27,6 +31,7 @@ export default function ThemeShowcaseHeader( {
 
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
+	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
 	const {
 		title: documentHeadTitle,
@@ -72,12 +77,22 @@ export default function ThemeShowcaseHeader( {
 	}
 
 	if ( isCollectionView ) {
-		return <DocumentHead title={ documentHeadTitle } meta={ metas } />;
+		return (
+			<DocumentHead
+				title={ documentHeadTitle }
+				meta={ metas }
+				skipTitleFormatting={ skipTitleFormatting }
+			/>
+		);
 	}
 
 	return (
 		<>
-			<DocumentHead title={ documentHeadTitle } meta={ metas } />
+			<DocumentHead
+				title={ documentHeadTitle }
+				meta={ metas }
+				skipTitleFormatting={ skipTitleFormatting }
+			/>
 			{ isLoggedIn ? (
 				<div className="themes__header-navigation-container">
 					<NavigationHeader

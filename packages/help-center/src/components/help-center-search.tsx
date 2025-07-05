@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { NewThirdPartyCookiesNotice } from '@automattic/odie-client';
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -14,6 +13,7 @@ import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
+import { NewThirdPartyCookiesNotice } from './notices';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 

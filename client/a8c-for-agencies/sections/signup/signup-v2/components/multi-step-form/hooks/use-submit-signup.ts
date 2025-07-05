@@ -44,7 +44,11 @@ export default function useSubmitSignup() {
 	return useCallback(
 		async ( payload: AgencyDetailsSignupPayload ) => {
 			dispatch( removeNotice( notificationId ) );
-			const data = { ...payload, referer };
+			const data = {
+				...payload,
+				referer,
+				phone: { phoneNumberFull: payload.phoneNumber, phoneNumber: payload.phoneNumber },
+			};
 
 			if ( shouldRedirectToWPCOM ) {
 				saveSignupDataToLocalStorage( data );
@@ -63,9 +67,11 @@ export default function useSubmitSignup() {
 					agency_size: payload.agencySize,
 					managed_sites: payload.managedSites,
 					user_type: payload.userType,
+					initial_source: payload.initialSource,
 					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
 					products_offered: ( payload.productsOffered || [] ).join( ',' ),
 					products_to_offer: ( payload.productsToOffer || [] ).join( ',' ),
+					expansion_planned: payload.plansToOfferProducts,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';

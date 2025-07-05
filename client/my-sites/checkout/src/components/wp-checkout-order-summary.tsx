@@ -87,7 +87,7 @@ export function WPCheckoutOrderSummary( {
 	showFeaturesList,
 }: {
 	siteId: number | undefined;
-	onChangeSelection: (
+	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
 		productId: number,
@@ -100,14 +100,14 @@ export function WPCheckoutOrderSummary( {
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
+	);
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
+			isStreamlinedPrice={ isStreamlinedPrice }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -126,16 +126,18 @@ export function CheckoutSummaryFeaturedList( {
 	siteId,
 	isCartUpdating,
 	onChangeSelection,
+	isStreamlinedPrice,
 }: {
 	responseCart: ResponseCart;
 	siteId: number | undefined;
 	isCartUpdating: boolean;
-	onChangeSelection: (
+	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
 		productId: number,
 		volume?: number
 	) => void;
+	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -155,19 +157,25 @@ export function CheckoutSummaryFeaturedList( {
 
 	return (
 		<>
-			<CheckoutSummaryFeatures className="checkout__summary-features">
-				<CheckoutSummaryFeaturesTitle>
-					{ responseCart.is_gift_purchase
-						? translate( 'WordPress.com Gift Subscription' )
-						: translate( 'Included with your purchase' ) }
-				</CheckoutSummaryFeaturesTitle>
-				<CheckoutSummaryFeaturesWrapper
-					siteId={ siteId }
-					nextDomainIsFree={ responseCart.next_domain_is_free }
-				/>
-			</CheckoutSummaryFeatures>
+			{ ! isStreamlinedPrice && (
+				<CheckoutSummaryFeatures className="checkout__summary-features">
+					<CheckoutSummaryFeaturesTitle>
+						{ responseCart.is_gift_purchase
+							? translate( 'WordPress.com Gift Subscription' )
+							: translate( 'Included with your purchase' ) }
+					</CheckoutSummaryFeaturesTitle>
+					<CheckoutSummaryFeaturesWrapper
+						siteId={ siteId }
+						nextDomainIsFree={ responseCart.next_domain_is_free }
+					/>
+				</CheckoutSummaryFeatures>
+			) }
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
+				<CheckoutSummaryAnnualUpsell
+					plan={ plan }
+					onChangeSelection={ onChangeSelection }
+					isStreamlinedPrice={ isStreamlinedPrice }
+				/>
 			) }
 		</>
 	);
@@ -386,6 +394,11 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
+const CheckoutSummaryRefundWindowsContainer = styled.p`
+	margin: 0;
+	padding: 0;
+`;
+
 export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
@@ -487,10 +500,10 @@ export function CheckoutSummaryRefundWindows( {
 	return (
 		<>
 			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
-			<CheckoutSummaryFeaturesListItem>
+			<CheckoutSummaryRefundWindowsContainer>
 				{ ! includeRefundIcon && <WPCheckoutCheckIcon /> }
 				{ highlight ? <strong>{ text }</strong> : text }
-			</CheckoutSummaryFeaturesListItem>
+			</CheckoutSummaryRefundWindowsContainer>
 		</>
 	);
 }
@@ -600,7 +613,9 @@ export function CheckoutSummaryFeaturesList( props: {
 				/>
 			) }
 
-			<CheckoutSummaryRefundWindows cart={ responseCart } />
+			<CheckoutSummaryFeaturesListItem>
+				<CheckoutSummaryRefundWindows cart={ responseCart } />
+			</CheckoutSummaryFeaturesListItem>
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
@@ -851,12 +866,13 @@ function CheckoutSummarySupportIfAvailable( props: {
 
 function CheckoutSummaryAnnualUpsell( props: {
 	plan: ResponseCartProduct;
-	onChangeSelection: (
+	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
 		productId: number,
 		volume?: number
 	) => void;
+	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -869,15 +885,24 @@ function CheckoutSummaryAnnualUpsell( props: {
 	const shouldShowFreeDomainUpsell = ! (
 		isWooExpressPlan( productSlug ) && Boolean( props.plan.introductory_offer_terms?.enabled )
 	);
+	let title = translate( 'Included with an annual plan' );
+
+	if ( props.isStreamlinedPrice && hasEnTranslation( 'Extra features with annual plans' ) ) {
+		title = translate( 'Extra features with annual plans' );
+	}
 
 	return (
 		<CheckoutSummaryFeaturesUpsell>
 			<CheckoutSummaryFeaturesTitle>
-				<SwitchToAnnualPlan
-					plan={ props.plan }
-					onChangeSelection={ props.onChangeSelection }
-					linkText={ translate( 'Included with an annual plan' ) }
-				/>
+				{ props.onChangeSelection ? (
+					<SwitchToAnnualPlan
+						plan={ props.plan }
+						onChangeSelection={ props.onChangeSelection }
+						linkText={ title }
+					/>
+				) : (
+					<>{ title }</>
+				) }
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
 				{ shouldShowFreeDomainUpsell && (
@@ -902,7 +927,9 @@ function CheckoutSummaryAnnualUpsell( props: {
 							</CheckoutSummaryFeaturesListItem>
 					  ) }
 			</CheckoutSummaryFeaturesListWrapper>
-			<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
+			{ props.onChangeSelection && (
+				<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
+			) }
 		</CheckoutSummaryFeaturesUpsell>
 	);
 }
@@ -953,6 +980,17 @@ const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 0 0 24px;
 	}
+
+	.checkout-sidebar-plan-upsell-streamlined & {
+		padding-top: 12px;
+		padding-bottom: 0;
+		color: ${ ( props ) => props.theme.colors.textColorDark };
+		line-height: 1.6;
+
+		svg {
+			opacity: 100%;
+		}
+	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
@@ -965,6 +1003,10 @@ const CheckoutSummaryFeaturesTitle = styled.h3`
 		font-size: 16px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
+	}
+	.checkout-sidebar-plan-upsell-streamlined & {
+		font-weight: 500;
+		margin-bottom: 6px;
 	}
 `;
 
@@ -1015,6 +1057,10 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 	.rtl & {
 		padding-right: 24px;
 		padding-left: 0;
+	}
+
+	.checkout-sidebar-plan-upsell-streamlined & {
+		color: inherit;
 	}
 `;
 CheckoutSummaryFeaturesListItem.defaultProps = {
@@ -1074,10 +1120,10 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 		display: flex;
 		flex: 0 0 auto;
 		gap: 4px;
-		margin-left: 12px;
+		margin-left: auto;
 
 		.rtl & {
-			margin-right: 12px;
+			margin-right: auto;
 			margin-left: 0;
 		}
 

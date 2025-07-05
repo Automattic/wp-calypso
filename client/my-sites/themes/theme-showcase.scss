@@ -44,8 +44,8 @@
 			}
 		}
 		.navigation-header {
-			padding-top: 24px;
-			padding-inline: 48px;
+			padding-block: 16px;
+			padding-inline: 24px;
 			@media (max-width: 402px) {
 				padding-inline: 24px;
 			}
@@ -90,13 +90,14 @@
 			.theme-showcase__all-themes {
 				@media (min-width: $break-mobile) and (min-height: $break-mobile) {
 					overflow-y: auto;
+					overflow-x: hidden;
 				}
 				height: 100%;
 			}
 
 			.themes__controls .theme__search-container, .themes__controls .themes__filters, .themes__showcase .theme-showcase__all-themes {
 				margin: 0 auto;
-				padding-inline: 48px;
+				padding-inline: 24px;
 				@media (max-width: 402px) {
 					padding-inline: 24px;
 				}
@@ -540,8 +541,8 @@
 		}
 
 		@include break-medium {
-			padding-top: 24px;
-			margin-top: -24px;
+			padding-top: 16px;
+			margin-top: -16px;
 			box-sizing: content-box;
 
 			.is-global-sidebar-visible & {

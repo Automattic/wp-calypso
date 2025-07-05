@@ -69,21 +69,10 @@
 		}
 	}
 
-	// Black segmented controls.
-	.is-section-stats ul.segmented-control li.segmented-control__item {
-		.segmented-control__link:hover {
-			background-color: var(--color-neutral-0);
-		}
-
-		&.is-selected .segmented-control__link,
-		&.is-selected .segmented-control__link:hover {
-			background-color: var(--studio-black);
-			border-color: var(--studio-black);
-		}
-
-		&.is-selected + .segmented-control__item .segmented-control__link {
-			border-left-color: var(--studio-black);
-		}
+	// Disable focus box-shadow from links.
+	// The box shadow is set to admin color which does not match the jetpack green.
+	a:focus {
+		box-shadow: none;
 	}
 
 	// Use base component styling of `@automattic/components/Button`
@@ -125,12 +114,6 @@
 		font-size: 12px;
 		line-height: 1;
 		padding: 7px;
-	}
-
-	.stats-navigation.stats-navigation--improved .stats-navigation__tabs {
-		.components-tab-panel__tabs-item::after {
-			background-color: var(--color-primary-50);
-		}
 	}
 }
 

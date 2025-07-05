@@ -15,6 +15,7 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 			agency_size: details.agencySize,
 			number_sites: details.managedSites,
 			user_type: details.userType,
+			initial_source: details.initialSource,
 			services_offered: details.servicesOffered,
 			products_offered: details.productsOffered,
 			products_to_offer: details.productsToOffer,

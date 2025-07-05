@@ -29,6 +29,7 @@ const RequestLoginCode = ( {
 	flow,
 	onReady,
 	onPublicTokenReceived,
+	createAccountForNewUser,
 	sendEmailLogin: sendEmail,
 	hideMagicLoginRequestNotice: hideRequestNotice,
 	translate,
@@ -64,7 +65,7 @@ const RequestLoginCode = ( {
 		sendEmail( email, {
 			redirectTo,
 			requestLoginEmailFormFlow: true,
-			createAccount: false,
+			createAccount: createAccountForNewUser,
 			tokenType: 'code', // Request code instead of link
 			...( flow ? { flow } : {} ),
 			onSuccess: ( response ) => {

@@ -14,7 +14,7 @@ export function getCurrentOAuth2ClientId( state ) {
 /**
  * Gets the OAuth2 client data.
  * @param  {Object}   state  Global state tree
- * @returns {Object}          OAuth2 client data
+ * @returns {{ title: string; icon: string; name: string; } | null} OAuth2 client data
  */
 export const getCurrentOAuth2Client = ( state ) => {
 	const currentClientId = getCurrentOAuth2ClientId( state );

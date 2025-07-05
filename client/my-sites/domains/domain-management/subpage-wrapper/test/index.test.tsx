@@ -9,7 +9,7 @@ import configureStore from 'redux-mock-store';
 import SubpageWrapper from '../index';
 import { ADD_FORWARDING_EMAIL, ADD_DNS_RECORD, EDIT_DNS_RECORD } from '../subpages';
 
-jest.mock( 'component-file-picker', () => {
+jest.mock( 'calypso/components/file-picker/component-file-picker', () => {
 	const MockFilePicker = () => <div>File Picker</div>;
 	MockFilePicker.displayName = 'MockFilePicker';
 	return MockFilePicker;

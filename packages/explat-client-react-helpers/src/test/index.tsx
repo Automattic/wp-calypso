@@ -3,6 +3,7 @@
  */
 
 import { act, render, renderHook, waitFor } from '@testing-library/react';
+import React from 'react';
 import createExPlatClientReactHelpers from '../index';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
@@ -47,22 +48,18 @@ describe( 'useExperiment', () => {
 		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		(
-			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			>
-		 ).mockImplementationOnce( () => controllablePromise1.promise );
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
 
 		const { result, rerender } = renderHook( () => useExperiment( 'experiment_a' ) );
 
 		expect( result.current ).toEqual( [ true, null ] );
 		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
 		act( () => controllablePromise1.resolve( validExperimentAssignment ) );
-		(
-			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment
-			>
-		 ).mockImplementation( () => validExperimentAssignment );
+		jest
+			.mocked( exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment )
+			.mockReturnValue( validExperimentAssignment );
 		await waitFor( () => expect( result.current ).toEqual( [ true, null ] ) );
 		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
@@ -75,11 +72,9 @@ describe( 'useExperiment', () => {
 		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		(
-			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			>
-		 ).mockImplementationOnce( () => controllablePromise1.promise );
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
 
 		let isEligible = false;
 		const { result, rerender } = renderHook( () =>
@@ -93,11 +88,9 @@ describe( 'useExperiment', () => {
 		rerender();
 		expect( result.current ).toEqual( [ true, null ] );
 		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
-		(
-			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment
-			>
-		 ).mockImplementation( () => validExperimentAssignment );
+		jest
+			.mocked( exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment )
+			.mockReturnValue( validExperimentAssignment );
 		act( () => controllablePromise1.resolve( validExperimentAssignment ) );
 		await waitFor( () => expect( result.current ).toEqual( [ true, null ] ) );
 		rerender();
@@ -118,11 +111,9 @@ describe( 'Experiment', () => {
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		(
-			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			>
-		 ).mockImplementationOnce( () => controllablePromise1.promise );
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
 
 		const { container, rerender } = render(
 			<Experiment
@@ -142,11 +133,9 @@ describe( 'Experiment', () => {
 			/>
 		);
 		expect( container.textContent ).toBe( 'loading-2' );
-		(
-			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment
-			>
-		 ).mockImplementation( () => validExperimentAssignment );
+		jest
+			.mocked( exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment )
+			.mockReturnValue( validExperimentAssignment );
 		await act( async () => controllablePromise1.resolve( validExperimentAssignment ) );
 		await waitFor( () => expect( container.textContent ).toBe( 'treatment-1' ) );
 		rerender(
@@ -165,11 +154,9 @@ describe( 'Experiment', () => {
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		(
-			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			>
-		 ).mockImplementationOnce( () => controllablePromise1.promise );
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
 
 		const { container, rerender } = render(
 			<Experiment
@@ -181,11 +168,9 @@ describe( 'Experiment', () => {
 		);
 		expect( container.textContent ).toBe( 'loading' );
 		const resolvedExperimentAssignment = { ...validExperimentAssignment, variationName: null };
-		(
-			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment
-			>
-		 ).mockImplementation( () => resolvedExperimentAssignment );
+		jest
+			.mocked( exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment )
+			.mockReturnValue( resolvedExperimentAssignment );
 		await act( async () => controllablePromise1.resolve( resolvedExperimentAssignment ) );
 		await waitFor( () => expect( container.textContent ).toBe( 'default-1' ) );
 		rerender(
@@ -206,11 +191,9 @@ describe( 'ProvideExperimentData', () => {
 		const { ProvideExperimentData } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
-		(
-			exPlatClient.loadExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.loadExperimentAssignment
-			>
-		 ).mockImplementationOnce( () => controllablePromise1.promise );
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
 
 		const capture = jest.fn();
 		render(
@@ -224,11 +207,9 @@ describe( 'ProvideExperimentData', () => {
 		expect( capture.mock.calls[ 0 ] ).toEqual( [ true, null ] );
 		capture.mockReset();
 		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
-		(
-			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment as jest.MockedFunction<
-				typeof exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment
-			>
-		 ).mockImplementation( () => experimentAssignment );
+		jest
+			.mocked( exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment )
+			.mockReturnValue( experimentAssignment );
 		await act( async () => controllablePromise1.resolve( experimentAssignment ) );
 		await waitFor( () => {
 			expect( capture ).toHaveBeenCalledTimes( 1 );

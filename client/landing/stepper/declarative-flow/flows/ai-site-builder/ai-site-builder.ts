@@ -106,6 +106,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							const prompt = queryParams.get( 'prompt' );
 							let promptParam = '';
 
+							const source = queryParams.get( 'source' );
+							let sourceParam = '';
+
 							addBlogSticker( siteId, 'big-sky-free-trial' );
 
 							const pendingActions = [
@@ -146,13 +149,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 									window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
 								) }`;
 								window.sessionStorage.removeItem( 'stored_ai_prompt' );
-							} else if ( queryParams.get( 'source' ) ) {
-								promptParam = `&source=${ encodeURIComponent(
-									queryParams.get( 'source' )?.toString() || ''
-								) }`;
+							}
+
+							if ( source ) {
+								sourceParam = `&source=${ encodeURIComponent( source ) }`;
 							}
 							window.location.replace(
-								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }`
 							);
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(

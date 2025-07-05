@@ -48,6 +48,14 @@ $highlight-color: #3858E9;
 	.form-fieldset {
 		margin-block-end: 0;
 	}
+
+	.a8c-experience-control .components-base-control__label {
+		@include heading-medium;
+		margin-block-end: 12px;
+		text-transform: uppercase;
+		color: var(--color-text);
+	}
+
 }
 
 .a4a-feedback__question-details {

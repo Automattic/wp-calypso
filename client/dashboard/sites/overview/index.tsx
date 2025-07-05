@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,10 +8,12 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteQuery, siteEngagementStatsQuery } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getSiteDisplayName } from '../../utils/site-name';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
 import OverviewSection from './overview-section';
@@ -27,17 +29,17 @@ import './style.scss';
 
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( site.ID ) );
 
-	if ( ! site || ! engagementStats ) {
+	if ( ! engagementStats ) {
 		return;
 	}
 	return (
 		<PageLayout
 			header={
 				<PageHeader
-					title={ site.name }
+					title={ getSiteDisplayName( site ) }
 					actions={
 						site.options?.admin_url && (
 							<Button
@@ -76,7 +78,7 @@ function SiteOverview() {
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
 						<UptimeCard site={ site } />
-						<StorageCard siteSlug={ siteSlug } />
+						<StorageCard site={ site } />
 					</OverviewSection>
 				</VStack>
 			</HStack>

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/dataviews",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "DataViews is a component that provides an API to render datasets using different types of layouts (table, grid, list, etc.).",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
@@ -51,6 +51,8 @@
 		"@wordpress/private-apis": "^1.23.0",
 		"@wordpress/warning": "^3.23.0",
 		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
+		"fast-deep-equal": "^3.1.3",
 		"remove-accents": "^0.5.0"
 	},
 	"peerDependencies": {
@@ -68,7 +70,7 @@
 		"postcss": "^8.5.3",
 		"postcss-local-keyframes": "^0.0.2",
 		"sass": "1.54.0",
-		"storybook": "^8.6.12",
+		"storybook": "^8.6.14",
 		"typescript": "5.8.3"
 	},
 	"scripts": {

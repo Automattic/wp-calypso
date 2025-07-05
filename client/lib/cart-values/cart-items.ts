@@ -62,6 +62,19 @@ import type {
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
+export const DOMAIN_PRICE_RULE = {
+	ONE_TIME_PRICE: 'ONE_TIME_PRICE',
+	FREE_DOMAIN: 'FREE_DOMAIN',
+	FREE_FOR_FIRST_YEAR: 'FREE_FOR_FIRST_YEAR',
+	FREE_WITH_PLAN: 'FREE_WITH_PLAN',
+	PRICE: 'PRICE',
+	DOMAIN_MOVE_PRICE: 'DOMAIN_MOVE_PRICE',
+	INCLUDED_IN_HIGHER_PLAN: 'INCLUDED_IN_HIGHER_PLAN',
+	UPGRADE_TO_HIGHER_PLAN_TO_BUY: 'UPGRADE_TO_HIGHER_PLAN_TO_BUY',
+} as const;
+
+type DomainPriceRule = ( typeof DOMAIN_PRICE_RULE )[ keyof typeof DOMAIN_PRICE_RULE ];
+
 export type ObjectWithProducts = Pick< ResponseCart, 'products' >;
 
 export function getAllCartItems( cart?: ObjectWithProducts ): ResponseCartProduct[] {
@@ -831,7 +844,7 @@ export function isDomainMappingFree( selectedSite: SiteDetails | null | undefine
 }
 
 export function isPaidDomain( domainPriceRule: string ): boolean {
-	return 'PRICE' === domainPriceRule;
+	return DOMAIN_PRICE_RULE.PRICE === domainPriceRule;
 }
 
 const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
@@ -862,65 +875,67 @@ export function getDomainPriceRule(
 	isDomainOnly: boolean,
 	flowName: string,
 	domainAndPlanUpsellFlow: boolean
-): string {
+): DomainPriceRule {
 	// We'll show a fixed, one time price in the 100-year domain flow
 	if ( isHundredYearDomainFlow( flowName ) ) {
-		return 'ONE_TIME_PRICE';
+		return DOMAIN_PRICE_RULE.ONE_TIME_PRICE;
 	}
 
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
-		return 'FREE_DOMAIN';
+		return DOMAIN_PRICE_RULE.FREE_DOMAIN;
 	}
 
 	if ( suggestion?.is_premium ) {
-		return 'PRICE';
+		return DOMAIN_PRICE_RULE.PRICE;
 	}
 
 	if ( hasSomeSlug( suggestion ) && isDomainMoveInternal( suggestion ) ) {
-		return 'DOMAIN_MOVE_PRICE';
+		return DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE;
 	}
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
-		return 'PRICE';
+		return DOMAIN_PRICE_RULE.PRICE;
 	}
 
 	if ( isDomainForGravatarFlow( flowName ) ) {
-		return suggestion.sale_cost === 0 ? 'FREE_FOR_FIRST_YEAR' : 'PRICE';
+		return suggestion.sale_cost === 0
+			? DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR
+			: DOMAIN_PRICE_RULE.PRICE;
 	}
 
 	if ( domainAndPlanUpsellFlow ) {
-		return 'FREE_WITH_PLAN';
+		return DOMAIN_PRICE_RULE.FREE_WITH_PLAN;
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
-		return 'FREE_WITH_PLAN';
+		return DOMAIN_PRICE_RULE.FREE_WITH_PLAN;
 	}
 
 	if ( hasSomeSlug( suggestion ) && isDomainMapping( suggestion ) ) {
 		if ( isDomainMappingFree( selectedSite ) ) {
-			return 'FREE_WITH_PLAN';
+			return DOMAIN_PRICE_RULE.FREE_WITH_PLAN;
 		}
 
 		if ( withPlansOnly ) {
-			return 'INCLUDED_IN_HIGHER_PLAN';
+			return DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN;
 		}
 
-		return 'PRICE';
+		return DOMAIN_PRICE_RULE.PRICE;
 	}
 
 	if ( isNextDomainFree( cart, suggestion.domain_name ) ) {
-		return 'FREE_WITH_PLAN';
+		return DOMAIN_PRICE_RULE.FREE_WITH_PLAN;
 	}
 
 	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
-		return 'INCLUDED_IN_HIGHER_PLAN';
+		return DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN;
 	}
 
 	if ( hasToUpgradeToPayForADomain( selectedSite, cart, suggestion.domain_name ) ) {
-		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
+		return DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY;
 	}
 
-	return 'PRICE';
+	return DOMAIN_PRICE_RULE.PRICE;
 }
 
 export function getPlanCartItem( cartItems?: MinimalRequestCartProduct[] | null ) {

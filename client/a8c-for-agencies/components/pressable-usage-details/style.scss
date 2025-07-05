@@ -86,4 +86,87 @@
 		@include heading-large;
 		margin-top: 5px;
 	}
+
+	/* Titan Email Addon styles */
+	.pressable-usage-details__addon-tag {
+		@include body-small;
+		background-color: var(--color-neutral-5);
+		color: var(--color-neutral-70);
+        font-size: 11px;
+		padding: 2px 6px;
+		border-radius: 4px;
+		margin-inline-start: 6px;
+		text-transform: uppercase;
+	}
+
+	.pressable-usage-details__titan-domains {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-top: 16px;
+        font-size: 14px;
+        font-weight: 600;
+	}
+
+	.pressable-usage-details__titan-domain-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 8px 0;
+		border-bottom: 1px solid var(--color-neutral-5);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.pressable-usage-details__titan-domain-info {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.pressable-usage-details__titan-domain {
+		@include heading-medium;
+	}
+
+	.pressable-usage-details__titan-plan-label {
+		@include heading-small;
+		background-color: var(--color-primary-5);
+		color: var(--color-primary-40);
+		padding: 2px 6px;
+        margin-inline-start: 6px;
+		border-radius: 4px;
+	}
+
+	.pressable-usage-details__titan-trial-badge {
+		@include body-small;
+		background-color: var(--color-warning-5);
+		color: var(--color-warning-40);
+		padding: 2px 6px;
+		border-radius: 4px;
+		margin-inline-start: 6px;
+        text-transform: uppercase;
+	}
+
+	.pressable-usage-details__titan-trial-text {
+		@include body-small;
+		color: var(--color-neutral-60);
+	}
+
+	.pressable-usage-details__titan-inboxes {
+		@include body-small;
+		color: var(--color-neutral-60);
+	}
+
+    .pressable-titan-usage-details__info-top-right {
+        @include heading-medium;
+        text-align: right;
+    }
+
+    .pressable-titan-usage-details__info-inbox-price {
+        @include body-small;
+        font-style: italic;
+    }
 }

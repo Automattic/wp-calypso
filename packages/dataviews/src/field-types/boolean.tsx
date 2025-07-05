@@ -11,6 +11,7 @@ import type {
 	SortDirection,
 	Operator,
 	ValidationContext,
+	FieldTypeDefinition,
 } from '../types';
 import { renderFromElements } from '../utils';
 import { OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
@@ -40,8 +41,6 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const operators: Operator[] = [ OPERATOR_IS, OPERATOR_IS_NOT ];
-
 export default {
 	sort,
 	isValid,
@@ -63,6 +62,7 @@ export default {
 	},
 	enableSorting: true,
 	filterBy: {
-		operators,
+		defaultOperators: [ OPERATOR_IS, OPERATOR_IS_NOT ],
+		validOperators: [ OPERATOR_IS, OPERATOR_IS_NOT ],
 	},
-};
+} satisfies FieldTypeDefinition< any >;

@@ -44,6 +44,10 @@
 			margin-bottom: 0;
 		}
 
+		&:any-link {
+			text-decoration: none;
+		}
+
 		.empty-list-view__card-body {
 			display: flex;
 			flex-direction: row;

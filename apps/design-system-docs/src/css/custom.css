@@ -5,6 +5,7 @@
  */
 
 @import '@wordpress/components/build-style/style.css';
+@import '@wordpress/dataviews/build-style/style.css';
 
 /* You can override the default Infima variables here. */
 :root {
@@ -32,4 +33,8 @@
   --ifm-color-primary-lightest: #4fddbf;
 
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.navbar__logo {
+  height: 20px;
 }

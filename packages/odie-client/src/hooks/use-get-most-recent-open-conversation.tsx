@@ -1,36 +1,28 @@
-import { HelpCenterSelect, HelpCenter } from '@automattic/data-stores';
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-
-const HELP_CENTER_STORE = HelpCenter.register();
 
 export const useGetMostRecentOpenConversation = () => {
 	let mostRecentSupportInteractionId = null;
 	let totalNumberOfConversations = 0;
 
-	const { isChatLoaded, lastMessageReceivedAt } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			isChatLoaded: store.getIsChatLoaded(),
-			lastMessageReceivedAt: store.getLastMessageReceivedAt(),
-		};
-	}, [] );
+	const { isChatLoaded } = useSelect(
+		( select ) => ( {
+			isChatLoaded: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsChatLoaded(),
+		} ),
+		[]
+	);
 
-	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
+	const { data: supportInteractions, isLoading } = useGetSupportInteractions(
+		'zendesk',
+		100,
+		'resolved'
+	);
 
-	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open', 10, true, lastMessageReceivedAt );
-
-	const isLoadingInteractions = isLoadingResolvedInteractions || isLoadingOpenInteractions;
-
-	if ( isChatLoaded && ! isLoadingInteractions ) {
+	if ( supportInteractions?.length && isChatLoaded && ! isLoading ) {
 		const allConversations = Smooch?.getConversations?.() ?? [];
-		const supportInteractions = [
-			...( supportInteractionsResolved || [] ),
-			...( supportInteractionsOpen || [] ),
-		];
 
 		const filteredConversations = allConversations.filter( ( conversation ) =>
 			supportInteractions.some(

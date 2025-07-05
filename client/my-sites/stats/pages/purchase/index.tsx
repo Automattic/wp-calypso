@@ -6,16 +6,14 @@ import {
 import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
@@ -39,8 +37,6 @@ const StatsPurchasePage = ( {
 }: {
 	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
 } ) => {
-	const translate = useTranslate();
-
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -177,19 +173,7 @@ const StatsPurchasePage = ( {
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
 				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
-						<NavigationHeader
-							className="stats__section-header modernized-header"
-							title={ STATS_PRODUCT_NAME }
-							subtitle={ translate(
-								"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
-								{
-									components: {
-										learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-									},
-								}
-							) }
-							navigationItems={ [] }
-						></NavigationHeader>
+						<PageHeader />
 						<StatsNavigation
 							selectedItem="traffic"
 							interval="day"

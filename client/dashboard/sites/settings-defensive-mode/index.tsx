@@ -1,6 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -9,22 +8,26 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
+import { siteBySlugQuery } from '../../app/queries/site';
+import {
+	siteDefensiveModeSettingsQuery,
+	siteDefensiveModeSettingsMutation,
+} from '../../app/queries/site-defensive-mode';
+import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
+import { HostingFeatures, canViewDefensiveModeSettings } from '../features';
+import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import type { DefensiveModeSettingsUpdate, Site } from '../../data/types';
+import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
-
-export function canUpdateDefensiveMode( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 const availableTtls = [
 	{
@@ -64,46 +67,43 @@ const form = {
 };
 
 export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const canUpdate = site && canUpdateDefensiveMode( site );
-
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useQuery( {
-		...siteDefensiveModeQuery( siteSlug ),
-		enabled: canUpdate,
+		...siteDefensiveModeSettingsQuery( site.ID ),
+		enabled: canViewDefensiveModeSettings( site ),
 	} );
-	const mutation = useMutation( siteDefensiveModeMutation( siteSlug ) );
+	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { ttl: string } >( {
 		ttl: availableTtls[ 0 ].value,
 	} );
 
-	if ( ! canUpdate ) {
-		throw notFound();
-	}
-
-	if ( ! data ) {
-		return null;
-	}
-
 	const { isPending } = mutation;
 
 	const handleSubmit = ( data: DefensiveModeSettingsUpdate ) => {
 		mutation.mutate( data, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					data.active ? __( 'Defensive mode enabled.' ) : __( 'Defensive mode disabled.' ),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save settings.' ), {
+				createErrorNotice( __( 'Failed to save defensive mode settings.' ), {
 					type: 'snackbar',
 				} );
 			},
 		} );
 	};
 
-	const { enabled, enabled_by_a11n, enabled_until } = data;
-
 	const renderEnabled = () => {
+		if ( ! data ) {
+			return null;
+		}
+
+		const { enabled_by_a11n, enabled_until } = data;
+
 		const date = new Date( enabled_until * 1000 );
 		const enabledUntil = date.toLocaleString( undefined, {
 			year: 'numeric',
@@ -120,42 +120,47 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		};
 
 		return (
-			<Notice status="success" isDismissible={ false }>
-				<Text as="p">{ __( 'Defensive mode is enabled' ) }</Text>
+			<Notice
+				variant="success"
+				title={ __( 'Defensive mode is enabled' ) }
+				actions={
+					! enabled_by_a11n && (
+						<Button
+							variant="primary"
+							size="compact"
+							type="submit"
+							isBusy={ isPending }
+							disabled={ isPending }
+							onClick={ handleDisable }
+						>
+							{ __( 'Disable' ) }
+						</Button>
+					)
+				}
+			>
+				<VStack>
+					{ enabled_by_a11n && (
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'We’ve enabled defensive mode to protect your site. <link>Contact a Happiness Engineer</link> if you need assistance.'
+								),
+								{
+									// @ts-expect-error children prop is injected by createInterpolateElement
+									link: <ExternalLink href="/help/contact" />,
+								}
+							) }
+						</Text>
+					) }
 
-				{ enabled_by_a11n && (
 					<Text as="p">
-						{ createInterpolateElement(
-							__(
-								'We’ve enabled defensive mode to protect your site. <link>Contact a Happiness Engineer</link> if you need assistance.'
-							),
-							{
-								// @ts-expect-error children prop is injected by createInterpolateElement
-								link: <ExternalLink href="/help/contact" />,
-							}
+						{ sprintf(
+							// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
+							__( 'This will be automatically disabled on %s.' ),
+							enabledUntil
 						) }
 					</Text>
-				) }
-
-				<Text as="p">
-					{ sprintf(
-						// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
-						__( 'This will be automatically disabled on %s.' ),
-						enabledUntil
-					) }
-				</Text>
-
-				{ ! enabled_by_a11n && (
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ isPending }
-						disabled={ isPending }
-						onClick={ handleDisable }
-					>
-						{ __( 'Disable' ) }
-					</Button>
-				) }
+				</VStack>
 			</Notice>
 		);
 	};
@@ -171,39 +176,33 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 
 		return (
 			<VStack spacing={ 8 }>
-				<Notice status="info" isDismissible={ false }>
-					<Text>{ __( 'Defensive mode is disabled' ) }</Text>
-				</Notice>
+				<Notice>{ __( 'Defensive mode is disabled.' ) }</Notice>
 				<Card>
 					<CardBody>
-						<VStack spacing={ 8 } style={ { padding: '8px 0' } }>
-							<Text size="15px" weight={ 500 } lineHeight="20px">
-								{ __( 'Enable defensive mode' ) }
-							</Text>
-
-							<form onSubmit={ handleEnable }>
-								<VStack spacing={ 4 }>
-									<DataForm< { ttl: string } >
-										data={ formData }
-										fields={ fields }
-										form={ form }
-										onChange={ ( edits: { ttl?: string } ) => {
-											setFormData( ( data ) => ( { ...data, ...edits } ) );
-										} }
-									/>
-									<HStack justify="flex-start">
-										<Button
-											variant="primary"
-											type="submit"
-											isBusy={ isPending }
-											disabled={ isPending }
-										>
-											{ __( 'Enable' ) }
-										</Button>
-									</HStack>
-								</VStack>
-							</form>
-						</VStack>
+						<form onSubmit={ handleEnable }>
+							<VStack spacing={ 4 }>
+								<SectionHeader title={ __( 'Enable defensive mode' ) } level={ 3 } />
+								<DataForm< { ttl: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { ttl?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<HStack justify="flex-start">
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending }
+									>
+										{ __( 'Enable' ) }
+									</Button>
+								</HStack>
+							</VStack>
+						</form>
 					</CardBody>
 				</Card>
 			</VStack>
@@ -211,8 +210,29 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	};
 
 	return (
-		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'Defensive mode' ) } /> }>
-			{ enabled ? renderEnabled() : renderDisabled() }
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Defensive mode' ) }
+					description={ createInterpolateElement(
+						__(
+							'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. <link>Learn more</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="hosting-defensive-mode" />,
+						}
+					) }
+				/>
+			}
+		>
+			<HostingFeature
+				site={ site }
+				feature={ HostingFeatures.DEFENSIVE_MODE }
+				tracksFeatureId="settings-defensive-mode"
+			>
+				{ data?.enabled ? renderEnabled() : renderDisabled() }
+			</HostingFeature>
 		</PageLayout>
 	);
 }

@@ -19,13 +19,13 @@ const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined =
 
 	if ( courseSlug === COURSE_SLUGS.BLOGGING_QUICK_START ) {
 		return {
-			headerTitle: translate( 'Watch five videos.' ),
-			headerSubtitle: translate( 'Save yourself hours.' ),
+			headerTitle: translate( 'Start your blog.' ),
+			headerSubtitle: translate( 'Share your voice.' ),
 			headerSummary: [
-				translate( 'Learn the basics of blogging' ),
-				translate( 'Familiarize yourself with WordPress' ),
-				translate( 'Upskill and save hours' ),
-				translate( 'Set yourself up for blogging success' ),
+				translate( 'Find the perfect look for your blog' ),
+				translate( 'Craft posts that express your ideas' ),
+				translate( 'Keep your content clear and organized' ),
+				translate( 'Grow your audience and engage readers' ),
 			],
 		};
 	} else if ( courseSlug === COURSE_SLUGS.PAYMENTS_FEATURES ) {

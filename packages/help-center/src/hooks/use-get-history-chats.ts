@@ -42,18 +42,22 @@ const getAndUpdateOdieConversationsWithSupportInteractions = (
 	odieConversations: OdieConversation[] = [],
 	odieSupportInteractions: SupportInteraction[]
 ): OdieConversation[] => {
+	const odieSupportInteractionsWithoutZendesk = odieSupportInteractions.filter(
+		( interaction ) => ! interaction.events?.some( ( event ) => event.event_source === 'zendesk' )
+	);
+
 	const eventExternalIds = new Set(
-		odieSupportInteractions
+		odieSupportInteractionsWithoutZendesk
 			.flatMap( ( interaction ) => interaction.events || [] )
 			.filter( ( event ) => event.event_source === 'odie' )
 			.map( ( event ) => event.event_external_id )
 	);
 
-	const filteredOdieConversations = odieConversations.filter( ( conversation ) =>
+	const odieConversationsWithoutZendesk = odieConversations.filter( ( conversation ) =>
 		eventExternalIds.has( conversation.id )
 	);
 
-	return filteredOdieConversations.map( ( conversation ) => {
+	return odieConversationsWithoutZendesk.map( ( conversation ) => {
 		const supportInteraction = odieSupportInteractions.find( ( interaction ) =>
 			interaction.events.some(
 				( event ) => event.event_source === 'odie' && event.event_external_id === conversation.id
@@ -125,7 +129,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
-		useGetSupportInteractions( 'odie', 100, [ 'open' ] );
+		useGetSupportInteractions( 'odie', 100, [ 'open', 'resolved' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
 

@@ -2,8 +2,27 @@
 
 ## Next
 
+- Update the field type definitions to declare the default and valid operators they support. Fields with no `type` property can use all operators; if none is provided in the field's config, they'll use `is` and `isNot` by default.
+- Add a story for each FieldTypeDefinition.
+- Add new filter operators: `before`, `after`, `beforeInc`, and `afterInc` for date fields.
+- Adjust the spacing of the `DataForm` based on the type.
+- Sync with Gutenberg packages/dataviews. It bundles `@wordpress/dataviews` 4.21.0 plus https://github.com/WordPress/gutenberg/pull/70435 (fix alignment between label and control in DataForms layout).
+- Update SYNC.md docs to include information on rebasing existing sync branches on top of Calypso trunk and other frequently asked questions.
+- Hide the label in input widgets to prevent duplicate labels in the filter UI.
+- Add new filter operator: `between`.
+- Implement the `array` field type definition.
+- Add `label-position-side` classes to labels in the form field layouts. Ensure that labels in the panel view do not align center, and that all side labels are center aligned.
+- Fix the background color of the action column if the row is selected
+- Allow readonly fields in DataForm when `readOnly` is set to `true`.
+- Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality. Filter labels use "Date is:" and "Date is not:" for consistency.
+- Add new filter operator: `inThePast`, `over` for date fields.
+- Adjust the padding when the component is placed inside a `Card`.
+
+## 0.2.1
+
 - `text`, `email` Edit control: add `help` support from the field `description` prop.
 - Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
+- Allow fields to opt-out of filtering via `field.filterBy: false`.
 
 ## 0.2.0
 

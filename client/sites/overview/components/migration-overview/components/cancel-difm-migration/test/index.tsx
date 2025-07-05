@@ -27,12 +27,19 @@ jest.mock( '../use-site-migration-status', () => ( {
 	useSiteMigrationStatus: jest.fn(),
 } ) );
 
+jest.mock( '../use-find-zendesk-migration-ticket', () => ( {
+	useFindZendeskMigrationTicket: jest.fn(),
+} ) );
+
 describe( 'CancelDifmMigrationForm', () => {
 	const siteId = 123;
 	const isEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
 	const useSiteMigrationStatus = jest.requireMock(
 		'../use-site-migration-status'
 	).useSiteMigrationStatus;
+	const useFindZendeskMigrationTicket = jest.requireMock(
+		'../use-find-zendesk-migration-ticket'
+	).useFindZendeskMigrationTicket;
 
 	beforeEach( () => {
 		nock.cleanAll();
@@ -43,12 +50,9 @@ describe( 'CancelDifmMigrationForm', () => {
 			isMigrationCompleted: false,
 			isMigrationInProgress: false,
 		} );
-	} );
-
-	it( 'renders nothing if feature flag is disabled', () => {
-		isEnabled.mockReturnValue( false );
-		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
-		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
+		useFindZendeskMigrationTicket.mockReturnValue( {
+			data: { ticket_id: '123' },
+		} );
 	} );
 
 	describe( 'when migration is not in progress', () => {
@@ -110,5 +114,25 @@ describe( 'CancelDifmMigrationForm', () => {
 		await waitFor( () => {
 			expect( screen.queryByRole( 'dialog' ) ).toBeNull();
 		} );
+	} );
+
+	it( 'should not show the cancel migration button if there is no zendesk ticket', () => {
+		useFindZendeskMigrationTicket.mockReturnValue( {
+			data: {
+				ticket_id: null,
+			},
+		} );
+		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
+		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
+	} );
+
+	it( 'useFindZendeskMigrationTicket should not make a request if the migration is completed', () => {
+		useSiteMigrationStatus.mockReturnValue( {
+			site: { ID: siteId },
+			isMigrationCompleted: true,
+			isMigrationInProgress: false,
+		} );
+		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
+		expect( useFindZendeskMigrationTicket ).toHaveBeenCalledWith( siteId, false );
 	} );
 } );

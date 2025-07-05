@@ -85,7 +85,7 @@
 					}
 
 					ol {
-						margin-left: 2em;
+						margin-left: 1em;
 					}
 				}
 			}
@@ -140,6 +140,15 @@
 			:where(.wp-block-group.has-background) {
 				padding: 0;
 			}
+
+			.has-background {
+				padding: 16px;
+
+				&.has-gray-theme-background-color {
+					background-color: var(--studio-gray-0);
+				}
+			}
+
 
 			.wp-block-button {
 				width: 100%;
@@ -447,6 +456,10 @@
 				ol.toc-parent-list {
 					padding-left: 0;
 				}
+
+				.after-toc {
+					display: none;
+				}
 			}
 
 			.wp-block-embed__wrapper {
@@ -557,6 +570,23 @@
 						}
 					}
 				}
+			}
+
+			// External link icon styles
+			.help-center-external-link-icon {
+				color: currentColor;
+				fill: currentColor;
+				position: relative;
+				vertical-align: sub;
+			}
+
+			// Screen reader text for accessibility
+			.screen-reader-text {
+				clip: rect(1px, 1px, 1px, 1px);
+				position: absolute !important;
+				height: 1px;
+				width: 1px;
+				overflow: hidden;
 			}
 		}
 	}

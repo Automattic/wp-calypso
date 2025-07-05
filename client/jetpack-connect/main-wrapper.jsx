@@ -15,7 +15,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
-		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -36,7 +35,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const {
 			isWide,
 			isWooJPC,
-			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
 			className,
 			children,
@@ -55,7 +53,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-woocommerce': isWooDna || isWooJPC,
 			'is-woocommerce-core-profiler-flow': isWooJPC,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
-			'is-wpcom-migration': isWpcomMigration,
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
@@ -100,16 +97,14 @@ export class JetpackConnectMainWrapper extends PureComponent {
 				/>
 				{ ! useCompactLogo && (
 					<div className="jetpack-connect__main-logo">
-						{ ! isWpcomMigration && (
-							<JetpackHeader
-								partnerSlug={ partnerSlug }
-								isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-								isWooJPC={ isWooJPC }
-								isWooDna={ isWooDna }
-								width={ width }
-								darkColorScheme={ darkColorScheme }
-							/>
-						) }
+						<JetpackHeader
+							partnerSlug={ partnerSlug }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+							isWooJPC={ isWooJPC }
+							isWooDna={ isWooDna }
+							width={ width }
+							darkColorScheme={ darkColorScheme }
+						/>
 					</div>
 				) }
 				{ children }

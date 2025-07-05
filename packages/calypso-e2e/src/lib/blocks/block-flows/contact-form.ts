@@ -36,14 +36,14 @@ export class ContactFormFlow implements BlockFlow {
 		// Name and Email are common fields shared amongst all Form patterns.
 		// So let's make them unique here!
 		await labelFormFieldBlock( context.addedBlockLocator, {
-			blockName: 'Name Field',
+			blockName: 'Name field',
 			accessibleLabelName: 'Add label…',
-			labelText: this.addLabelPrefix( 'Name Field' ),
+			labelText: this.addLabelPrefix( 'Name field' ),
 		} );
 		await labelFormFieldBlock( context.addedBlockLocator, {
-			blockName: 'Email Field',
+			blockName: 'Email field',
 			accessibleLabelName: 'Add label…',
-			labelText: this.addLabelPrefix( 'Email Field' ),
+			labelText: this.addLabelPrefix( 'Email field' ),
 		} );
 	}
 
@@ -64,8 +64,8 @@ export class ContactFormFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		await validatePublishedFormFields( context.page, [
-			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name Field' ) },
-			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email Field' ) },
+			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name field' ) },
+			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email field' ) },
 			// This is the default label pulled in by the Contact Form pattern.
 			// It's unique-ish and a good validation of that pattern, so we've left it alone.
 			{ type: 'textbox', accessibleName: 'Message' },

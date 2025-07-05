@@ -13,6 +13,7 @@ import type {
 	HelpCenterShowOptions,
 } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
 
 export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
 	return {
@@ -21,11 +22,14 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
-export const setLastMessageReceivedAt = ( lastMessageReceivedAt: number ) =>
-	( {
-		type: 'HELP_CENTER_SET_LAST_MESSAGE_RECEIVED_AT',
-		lastMessageReceivedAt,
-	} ) as const;
+export function setHelpCenterRouterHistory(
+	history: { entries: Location[]; index: number } | undefined
+) {
+	return {
+		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
+		history,
+	} as const;
+}
 
 export const setNavigateToRoute = ( route?: string ) =>
 	( {
@@ -134,7 +138,11 @@ export const setShowHelpCenter = function* (
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
 				body: {
-					calypso_preferences: { help_center_open: show },
+					calypso_preferences: {
+						help_center_open: show,
+						// Delete the remote version of the navigation history when closing the help center
+						...( ! show ? { help_center_router_history: null } : {} ),
+					},
 				},
 			} ).catch( () => {} );
 		} else {
@@ -143,13 +151,18 @@ export const setShowHelpCenter = function* (
 				global: true,
 				path: '/help-center/open-state',
 				method: 'PUT',
-				data: { help_center_open: show },
+				data: {
+					help_center_open: show, // Delete the remote version of the navigation history when closing the help center
+					...( ! show ? { help_center_router_history: null } : {} ),
+				},
 			} as APIFetchOptions ).catch( () => {} );
 		}
 	}
 
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
+		// Reset the local navigation history when closing the help center
+		yield setHelpCenterRouterHistory( undefined );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
@@ -199,11 +212,13 @@ export const setNewMessagingChat = function* ( {
 	section,
 	siteUrl,
 	siteId,
+	userFieldFlowName,
 }: {
 	initialMessage: string;
 	section?: string;
 	siteUrl?: string;
 	siteId?: string;
+	userFieldFlowName?: string;
 } ) {
 	const url = addQueryArgs( '/odie', {
 		provider: 'zendesk',
@@ -211,8 +226,14 @@ export const setNewMessagingChat = function* ( {
 		section,
 		siteUrl,
 		siteId,
+		userFieldFlowName,
 	} );
 	yield setNavigateToRoute( url );
+	yield setShowHelpCenter( true );
+};
+
+export const setNavigateToOdie = function* () {
+	yield setNavigateToRoute( '/odie' );
 	yield setShowHelpCenter( true );
 };
 
@@ -240,6 +261,7 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
 			| typeof setIsMinimized
+			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
@@ -249,6 +271,5 @@ export type HelpCenterAction =
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
-			| typeof setLastMessageReceivedAt
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >;

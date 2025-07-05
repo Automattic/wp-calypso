@@ -1,9 +1,9 @@
 .form-password-input {
 	position: relative;
 
-	.form-text-input {
+	.form-text-input[type] {
 		/*!rtl:ignore*/
-		padding-right: 32px;
+		padding-right: 36px;
 
 		&::-ms-reveal {
 			display: none;
@@ -11,23 +11,14 @@
 	}
 
 	.form-password-input__toggle {
-		display: none;
-	}
-
-	.form-password-input__toggle-visibility {
-		display: block;
-		cursor: pointer;
 		position: absolute;
 		right: 8px;
 		top: 8px;
 		user-select: none;
+		color: var(--color-neutral-20);
 
-		svg {
-			fill: var(--color-neutral-20);
-
-			&:hover {
-				fill: var(--color-neutral-40);
-			}
+		&:not(.form-password-input__toggle-visibility) {
+			display: none;
 		}
 	}
 }

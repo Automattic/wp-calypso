@@ -1,8 +1,9 @@
-import { Card, Badge, ExternalLink } from '@automattic/components';
+import { Card, Badge } from '@automattic/components';
 import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
@@ -16,7 +17,7 @@ type Props = ExternalProps & LocalizeProps;
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
 	return (
 		<div>
-			{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
+			{ warnings.map( ( { name, description, supportPostId, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
 						{ context !== 'plugin-details' && context !== 'hosting-features' && (
@@ -30,9 +31,9 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 							/>
 							{ domainNames && displayDomainNames( domainNames ) }
 							{ supportUrl && (
-								<ExternalLink href={ supportUrl } target="_blank">
+								<InlineSupportLink supportLink={ supportUrl } supportPostId={ supportPostId }>
 									{ translate( 'Learn more.' ) }
-								</ExternalLink>
+								</InlineSupportLink>
 							) }
 						</span>
 					</div>

@@ -8,6 +8,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_coming_soon',
 	'is_vip',
 	'jetpack',
+	'jetpack_connection',
 	'jetpack_modules',
 	'name',
 	'options',

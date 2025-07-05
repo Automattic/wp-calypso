@@ -32,6 +32,12 @@ const initSmooch = ( {
 
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		delegate: {
+			onInvalidAuth() {
+				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+				return Promise.resolve( '' );
+			},
+		},
 		embedded: true,
 		soundNotificationEnabled: false,
 		externalId,
@@ -81,8 +87,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId, setLastMessageReceivedAt } =
-		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -91,17 +96,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				playNotificationSound();
 			}
 
-			if ( setLastMessageReceivedAt ) {
-				setLastMessageReceivedAt( Date.now() );
-			}
-
 			if ( isHelpCenterShown ) {
 				return;
 			}
 
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown, areSoundNotificationsEnabled, setLastMessageReceivedAt ]
+		[ isHelpCenterShown, areSoundNotificationsEnabled ]
 	);
 
 	const clientIdListener = useCallback(
@@ -167,6 +168,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
+			Smooch.on( 'disconnected', () => {
+				recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
+			} );
+			Smooch.on( 'reconnecting', () => {
+				recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
+			} );
 		}
 
 		return () => {

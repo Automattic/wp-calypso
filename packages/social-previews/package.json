@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "2.1.0-beta.10",
+	"version": "2.1.0-beta.12",
 	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -67,7 +67,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^5.8.3",
-		"webpack": "^5.97.1"
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@babel/runtime": "^7.27.1",

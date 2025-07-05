@@ -120,9 +120,16 @@ class EmailedLoginLinkExpired extends Component {
 		const { translate } = this.props;
 		this.setState( {
 			title: translate( 'Link expired or invalid' ),
-			actionUrl: login( { twoFactorAuthType: 'link', emailAddress: this.props.emailAddress } ),
+			actionUrl: login( {
+				twoFactorAuthType: 'link',
+				emailAddress: this.props.emailAddress,
+				isJetpack: this.props.isJetpack,
+			} ),
 			secondaryAction: translate( 'Enter a password instead' ),
-			secondaryActionURL: login( { emailAddress: this.props.emailAddress } ),
+			secondaryActionURL: login( {
+				emailAddress: this.props.emailAddress,
+				isJetpack: this.props.isJetpack,
+			} ),
 			line: translate(
 				'The login link you used has either expired or is no longer valid. No worries - it happens! You can request a new link to log in.'
 			),

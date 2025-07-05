@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -17,9 +16,6 @@ const PlanCreditNotice = () => {
 	const showNotice = domainToPlanCreditsApplicable !== null && domainToPlanCreditsApplicable > 0;
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const upgradeCreditDocsUrl = localizeUrl(
-		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
-	);
 
 	if ( ! siteId ) {
 		return null;
@@ -48,7 +44,7 @@ const PlanCreditNotice = () => {
 							},
 							components: {
 								b: <strong />,
-								a: <InlineSupportLink supportLink={ upgradeCreditDocsUrl } />,
+								a: <InlineSupportLink supportContext="plans-upgrade-credit" showIcon={ false } />,
 							},
 						}
 					) }

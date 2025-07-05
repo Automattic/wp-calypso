@@ -10,6 +10,7 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -44,6 +45,7 @@ type Fields = {
 	wpcom_newsletter_categories?: number[];
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	newsletter_has_active_plan?: boolean;
 	jetpack_subscriptions_reply_to?: string;
 	jetpack_subscriptions_from_name?: string;
 	sm_enabled?: boolean;
@@ -70,6 +72,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories,
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
+		newsletter_has_active_plan,
 		jetpack_subscriptions_reply_to,
 		jetpack_subscriptions_from_name,
 		sm_enabled,
@@ -91,6 +94,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
+		newsletter_has_active_plan,
 		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
 		jetpack_subscriptions_from_name: jetpack_subscriptions_from_name || '',
 		sm_enabled: !! sm_enabled,
@@ -174,6 +178,8 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 
 		return ! isJetpackSite;
 	} );
+
+	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 	const savedSubscriptionOptions = settings?.subscription_options;
@@ -265,7 +271,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				id="paid-newsletter"
 				title={ translate( 'Paid Newsletter' ) }
 			/>
-			<PaidNewsletterSection />
+			<PaidNewsletterSection newsletterHasActivePlan={ fields.newsletter_has_active_plan } />
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="email-settings"
@@ -279,6 +285,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ wpcom_featured_image_in_email }
+					isPrivate={ isPrivate }
 				/>
 			</Card>
 			<Card className="site-settings__card">

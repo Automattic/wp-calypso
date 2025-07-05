@@ -29,5 +29,8 @@ export * from './checkout-line-items';
 export * from './get-country-postal-code-support';
 export * from './get-country-tax-requirements';
 export * from './can-item-be-removed-from-cart';
+export * from './loading-card';
 export * from './partner-coupon';
 export * from './checkout-version-checker';
+export * from './restorable-products-context';
+export * from './removed-from-cart-item';

@@ -12,6 +12,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import useSubscriberCountQuery from '../../queries/use-subscriber-count-query';
 import { useRecordExport } from '../../tracks';
+
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
@@ -32,7 +33,7 @@ const SubscribersHeaderPopover = ( {
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
-	const hasSubscribers = subscribersTotals?.email_subscribers ?? 0 > 0;
+	const hasSubscribers = !! subscribersTotals?.total_subscribers;
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 
@@ -71,7 +72,6 @@ const SubscribersHeaderPopover = ( {
 				isVisible={ isVisible }
 				context={ buttonRef.current }
 				className="subscriber-popover"
-				focusOnShow={ false }
 			>
 				{ hasSubscribers ? (
 					<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>

@@ -6,9 +6,20 @@ import type {
 	SortDirection,
 	ValidationContext,
 	Operator,
+	FieldTypeDefinition,
 } from '../types';
 import { renderFromElements } from '../utils';
-import { OPERATOR_IS_ANY, OPERATOR_IS_NONE } from '../constants';
+import {
+	OPERATOR_CONTAINS,
+	OPERATOR_IS,
+	OPERATOR_IS_ALL,
+	OPERATOR_IS_ANY,
+	OPERATOR_IS_NONE,
+	OPERATOR_IS_NOT,
+	OPERATOR_IS_NOT_ALL,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
+} from '../constants';
 
 function sort( valueA: any, valueB: any, direction: SortDirection ) {
 	return direction === 'asc'
@@ -27,8 +38,6 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const operators: Operator[] = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
-
 export default {
 	sort,
 	isValid,
@@ -40,6 +49,19 @@ export default {
 	},
 	enableSorting: true,
 	filterBy: {
-		operators,
+		defaultOperators: [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ],
+		validOperators: [
+			// Single selection
+			OPERATOR_IS,
+			OPERATOR_IS_NOT,
+			OPERATOR_CONTAINS,
+			OPERATOR_NOT_CONTAINS,
+			OPERATOR_STARTS_WITH,
+			// Multiple selection
+			OPERATOR_IS_ANY,
+			OPERATOR_IS_NONE,
+			OPERATOR_IS_ALL,
+			OPERATOR_IS_NOT_ALL,
+		],
 	},
-};
+} satisfies FieldTypeDefinition< any >;

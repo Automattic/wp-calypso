@@ -605,6 +605,7 @@ function getRememberedCoupon() {
 		'SBDC',
 		'TXAM',
 		'WC',
+		'grad25',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

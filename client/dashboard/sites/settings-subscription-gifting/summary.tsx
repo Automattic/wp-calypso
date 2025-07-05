@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { heading } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { hasSubscriptionGiftingFeature } from './utils';
+import { canViewSubscriptionGiftingSettings } from '../features';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -12,11 +12,18 @@ export default function SubscriptionGiftingSettingsSummary( {
 	density,
 }: {
 	site: Site;
-	settings: SiteSettings;
+	settings?: SiteSettings;
 	density?: Density;
 } ) {
-	if ( ! hasSubscriptionGiftingFeature( site ) ) {
+	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
 		return null;
+	}
+
+	let badges;
+	if ( settings ) {
+		badges = settings.wpcom_gifting_subscription
+			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
+			: [ { text: __( 'Disabled' ) } ];
 	}
 	return (
 		<RouterLinkSummaryButton
@@ -24,11 +31,7 @@ export default function SubscriptionGiftingSettingsSummary( {
 			title={ __( 'Accept a gift subscription' ) }
 			density={ density }
 			decoration={ <Icon icon={ heading } /> }
-			badges={
-				settings.wpcom_gifting_subscription
-					? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-					: [ { text: __( 'Disabled' ) } ]
-			}
+			badges={ badges }
 		/>
 	);
 }

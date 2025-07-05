@@ -56,7 +56,7 @@ export default function SiteEnvironmentSwitcher( {
 				),
 			} }
 			popoverProps={ {
-				position: 'bottom',
+				placement: 'bottom-start',
 				className: 'site-preview-pane__site-switcher-dropdown-menu',
 			} }
 			controls={ [

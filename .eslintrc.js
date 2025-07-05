@@ -503,6 +503,7 @@ module.exports = {
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [
+					'__experimentalConfirmDialog',
 					'__experimentalDivider',
 					'__experimentalHStack',
 					'__experimentalVStack',

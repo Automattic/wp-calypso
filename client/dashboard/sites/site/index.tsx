@@ -1,11 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import { Outlet } from '@tanstack/react-router';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Outlet, notFound } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Dropdown, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { siteQuery } from '../../app/queries';
+import { chevronDownSmall } from '@wordpress/icons';
+import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
+import { getSiteDisplayName } from '../../utils/site-name';
+import { canManageSite } from '../features';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
 import Switcher from './switcher';
@@ -13,22 +16,27 @@ import Switcher from './switcher';
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	if ( ! site ) {
-		return;
+	if ( ! canManageSite( site ) ) {
+		throw notFound();
 	}
 
 	return (
 		<>
 			<HeaderBar>
-				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
+				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
 					<HeaderBar.Title>
 						<Dropdown
 							renderToggle={ ( { onToggle } ) => (
-								<Button className="dashboard-menu__item active" onClick={ () => onToggle() }>
+								<Button
+									className="dashboard-menu__item active"
+									icon={ chevronDownSmall }
+									iconPosition="right"
+									onClick={ () => onToggle() }
+								>
 									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<SiteIcon site={ site } size={ 24 } /> { site.name }
+										<SiteIcon site={ site } size={ 16 } /> { getSiteDisplayName( site ) }
 									</div>
 								</Button>
 							) }
@@ -36,7 +44,7 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteSlug={ siteSlug } />
+					<SiteMenu site={ site } />
 				</HStack>
 			</HeaderBar>
 			<Outlet />

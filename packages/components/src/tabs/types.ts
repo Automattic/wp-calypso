@@ -97,6 +97,11 @@ export type TabListProps = {
 	 * `Tabs.Tab` component.
 	 */
 	children: Ariakit.TabListProps[ 'children' ];
+	/**
+	 * The visual density of the tab list.
+	 * @default "default"
+	 */
+	density?: 'compact' | 'default';
 };
 
 // TODO: consider prop name changes (tabId, selectedTabId)

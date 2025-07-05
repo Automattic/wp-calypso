@@ -11,6 +11,8 @@ import {
 	Step,
 	isNewHostedSiteCreationFlow,
 	NEW_HOSTED_SITE_FLOW,
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { getQueryArg } from '@wordpress/url';
@@ -216,7 +218,8 @@ class RenderDomainsStepComponent extends Component {
 		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 		if (
 			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
-			hasDomainRegistration( this.props.cart )
+			hasDomainRegistration( this.props.cart ) &&
+			this.props.multiDomainDefaultPlan
 		) {
 			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
@@ -228,7 +231,8 @@ class RenderDomainsStepComponent extends Component {
 			if (
 				shouldUseMultipleDomainsInCart( this.props.flowName ) &&
 				hasDomainRegistration( this.props.cart ) &&
-				! hasPersonalPlan( this.props.cart )
+				! hasPersonalPlan( this.props.cart ) &&
+				this.props.multiDomainDefaultPlan
 			) {
 				// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
@@ -241,6 +245,11 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getUseYourDomainUrl = () => {
+		if ( this.props.getUseYourDomainUrl ) {
+			const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
+			return this.props.getUseYourDomainUrl( lastQuery );
+		}
+
 		return getStepUrl(
 			this.props.flowName,
 			this.props.stepName,
@@ -496,9 +505,9 @@ class RenderDomainsStepComponent extends Component {
 
 		this.props.setDesignType( this.getDesignType() );
 
-		// For the `domain-for-gravatar` flow, add an extra `is_gravatar_domain` property to the domain registration product,
+		// For the domain for Gravatar flow, add an extra `is_gravatar_domain` property to the domain registration product,
 		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
-		if ( this.props.flowName === 'domain-for-gravatar' ) {
+		if ( isDomainForGravatarFlow( this.props.flowName ) ) {
 			const domainForGravatarItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
@@ -532,6 +541,10 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	handleAddMapping = ( { sectionName, domain, state } ) => {
+		if ( this.props.handleAddMapping ) {
+			this.props.handleAddMapping( domain );
+			return;
+		}
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -573,6 +586,11 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	handleAddTransfer = ( { domain, authCode } ) => {
+		if ( this.props.handleAddTransfer ) {
+			this.props.handleAddTransfer( domain );
+			return;
+		}
+
 		const domainItem = domainTransfer( {
 			domain,
 			extra: {
@@ -657,9 +675,10 @@ class RenderDomainsStepComponent extends Component {
 		const { flowName } = this.props;
 		return [
 			'domain',
-			'domain-for-gravatar',
+			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
+			'domains/add',
 		].includes( flowName );
 	};
 
@@ -667,7 +686,7 @@ class RenderDomainsStepComponent extends Component {
 		const { flowName } = this.props;
 		return [
 			'domain',
-			'domain-for-gravatar',
+			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
 		].includes( flowName );
@@ -724,9 +743,10 @@ class RenderDomainsStepComponent extends Component {
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			// TODO: remove productsToAdd
-			const productsToAdd = ! hasPlan( this.props.cart )
-				? [ registration, this.props.multiDomainDefaultPlan ]
-				: [ registration ];
+			const productsToAdd =
+				! hasPlan( this.props.cart ) && this.props.multiDomainDefaultPlan
+					? [ registration, this.props.multiDomainDefaultPlan ]
+					: [ registration ];
 
 			// Replace the products in the cart with the freshly sorted products.
 			clearTimeout( this.state.addDomainTimeout );
@@ -796,6 +816,8 @@ class RenderDomainsStepComponent extends Component {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
 		} );
+
+		this.props.recordRemoveDomainButtonClick( domain.meta );
 	};
 
 	async removeDomain( { domain_name, product_slug } ) {
@@ -930,9 +952,11 @@ class RenderDomainsStepComponent extends Component {
 		);
 		this.props.submitSignupStep( stepDependencies, providedDependencies );
 
-		const productToRemove = cart.products.find(
-			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
-		);
+		const productToRemove = multiDomainDefaultPlan
+			? cart.products.find(
+					( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
+			  )
+			: null;
 
 		if ( productToRemove && productToRemove.uuid ) {
 			shoppingCartManager.removeProductFromCart( productToRemove.uuid ).then( () => {
@@ -1061,6 +1085,7 @@ class RenderDomainsStepComponent extends Component {
 
 		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
 		const initialQuery =
+			this.props.suggestion ||
 			get( this.props, 'queryObject.new', '' ) ||
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
@@ -1096,6 +1121,8 @@ class RenderDomainsStepComponent extends Component {
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
+				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+				onDomainsAvailabilityChange={ this.props.onDomainsAvailabilityChange }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				onMappingError={ this.handleDomainMappingError }
@@ -1105,6 +1132,7 @@ class RenderDomainsStepComponent extends Component {
 				products={ this.props.productsList }
 				basePath={ this.props.path }
 				promoTlds={ promoTlds }
+				hideMatchReasons={ this.props.hideMatchReasons }
 				mapDomainUrl={ this.getUseYourDomainUrl() }
 				otherManagedSubdomains={ this.props.otherManagedSubdomains }
 				otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
@@ -1152,6 +1180,7 @@ class RenderDomainsStepComponent extends Component {
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 				handleClickUseYourDomain={ this.handleUseYourDomainClick }
+				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 			/>
 		);
 	};
@@ -1282,7 +1311,7 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getAnalyticsSection() {
-		return this.props.isDomainOnly ? 'domain-first' : 'signup';
+		return this.props.analyticsSection ?? ( this.props.isDomainOnly ? 'domain-first' : 'signup' );
 	}
 
 	getContentColumns() {
@@ -1420,7 +1449,7 @@ class RenderDomainsStepComponent extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( 'domain-for-gravatar' === flowName ) {
+		} else if ( isDomainForGravatarFlow( flowName ) ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
@@ -1469,6 +1498,22 @@ class RenderDomainsStepComponent extends Component {
 
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
+
+		if ( this.props.render ) {
+			const [ content, sideContent ] = this.getContentColumns();
+
+			const mainContent = (
+				<>
+					<QueryProductsList type="domains" />
+					{ content }
+				</>
+			);
+
+			return this.props.render( {
+				mainContent,
+				sideContent,
+			} );
+		}
 
 		if ( shouldUseStepContainerV2( flowName ) ) {
 			const [ content, sideContent ] = this.getContentColumns();

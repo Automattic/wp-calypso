@@ -530,12 +530,18 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			// If the menu was already open due to another action, don't open it again.
+			if ( ! ( await this.editorBlockToolbarComponent.isOptionsMenuOpen() ) ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 			await this.editorPopoverMenuComponent.clickMenuButton(
 				`Select parent block (${ expectedParentBlockName })`
 			);
-			// It stays open on modal! We have to close it again.
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			// The menu usually closes itself on click, but this might be inconsistent.
+			// Check if it did close and if not, close it for sure.
+			if ( await this.editorBlockToolbarComponent.isOptionsMenuOpen() ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 		}
 	}
 

@@ -14,4 +14,5 @@ export type OfferingItemProps = {
 	clickableHeader?: boolean;
 	buttonTitle: string;
 	actionHandler: () => void;
+	href?: string;
 };

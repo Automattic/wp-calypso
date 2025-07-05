@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	Field,
 	tryToGuessPostalCodeFormat,
@@ -88,7 +87,6 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryTaxRequirements( countriesList, countryCode?.value )
 			: {};
-	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 	const fields: ReactElement[] = [
 		<CountrySelectMenu
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -142,7 +140,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete={ section + ' postal-code' }
+				autoComplete={ `section-${ section } postal-code` }
 				isError={ postalCode?.isTouched && ! isValid( postalCode ) }
 				errorMessage={
 					postalCode?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) )
@@ -174,7 +172,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete={ section + ' city' }
+				autoComplete={ `section-${ section } city` }
 				isError={ city?.isTouched && ! isValid( city ) }
 				errorMessage={ city?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) ) }
 			/>
@@ -231,7 +229,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete="organization"
+				autoComplete={ `section-${ section } organization` }
 			/>
 		);
 	}
@@ -259,7 +257,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete="address"
+				autoComplete={ `section-${ section } street-address` }
 			/>
 		);
 	}
@@ -274,7 +272,7 @@ export default function TaxFields( {
 						{ fields[ index * 2 + 1 ] && <RightColumn>{ fields[ index * 2 + 1 ] }</RightColumn> }
 					</FieldRow>
 				) ) }
-			{ isVatSupported && (
+			{ allowVat && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
 			{ allowIsForBusinessUseCheckbox && handleIsForBusinessChange && (

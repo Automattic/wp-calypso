@@ -3,9 +3,9 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
-import { sitePrimaryDataCenterQuery } from '../../app/queries';
+import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canGetPrimaryDataCenter } from './index';
+import { canViewPrimaryDataCenterSettings } from '../features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -17,8 +17,8 @@ export default function SettingsPrimaryDataCenterSummary( {
 	density?: Density;
 } ) {
 	const { data: primaryDataCenter } = useQuery( {
-		...sitePrimaryDataCenterQuery( site.slug ),
-		enabled: canGetPrimaryDataCenter( site ),
+		...sitePrimaryDataCenterQuery( site.ID ),
+		enabled: canViewPrimaryDataCenterSettings( site ),
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();

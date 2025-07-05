@@ -4,15 +4,23 @@ import { MenuGroup, MenuItem, SearchControl, Icon, Modal } from '@wordpress/comp
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
-import { sitesQuery } from '../../app/queries';
+import { sitesQuery } from '../../app/queries/sites';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
+import { getSiteDisplayName } from '../../utils/site-name';
 import AddNewSite from '../add-new-site';
 import SiteIcon from '../site-icon';
+import type { Site } from '../../data/types';
 import type { View } from '@automattic/dataviews';
 
 import './switcher.scss';
 
-const fields = [ { id: 'name', enableGlobalSearch: true } ];
+const fields = [
+	{
+		id: 'name',
+		getValue: ( { item }: { item: Site } ) => getSiteDisplayName( item ),
+		enableGlobalSearch: true,
+	},
+];
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -39,6 +47,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 					label={ __( 'Search' ) }
 					value={ view.search }
 					onChange={ ( value ) => setView( { ...view, search: value } ) }
+					size="compact"
 					__nextHasNoMarginBottom
 				/>
 			</MenuGroup>
@@ -50,7 +59,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 							<span
 								style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
 							>
-								{ site.name }
+								{ fields[ 0 ].getValue( { item: site } ) }
 							</span>
 						</div>
 					</RouterLinkMenuItem>

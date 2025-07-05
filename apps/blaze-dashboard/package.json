@@ -59,14 +59,14 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"autoprefixer": "^10.4.21",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.3",
 		"lodash": "^4.17.21",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.5.3",
-		"webpack": "^5.97.1",
+		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
 }

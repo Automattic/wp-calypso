@@ -3,6 +3,7 @@ import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -20,6 +21,17 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER':
 			return action.show;
+	}
+	return state;
+};
+
+const helpCenterRouterHistory: Reducer<
+	{ entries: Location[]; index: number } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
+			return action.history;
 	}
 	return state;
 };
@@ -48,15 +60,6 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 			return action.minimized;
 	}
 	return state;
-};
-
-const lastMessageReceivedAt: Reducer< number | undefined, HelpCenterAction > = (
-	state,
-	action
-) => {
-	return action.type === 'HELP_CENTER_SET_LAST_MESSAGE_RECEIVED_AT'
-		? action.lastMessageReceivedAt
-		: state;
 };
 
 const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
@@ -198,9 +201,9 @@ const reducer = combineReducers( {
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
-	lastMessageReceivedAt,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	helpCenterRouterHistory,
 	allowPremiumSupport,
 	contextTerm,
 	helpCenterOptions,

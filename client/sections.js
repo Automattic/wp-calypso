@@ -10,7 +10,7 @@ const sections = [
 	},
 	{
 		name: 'reauth-required',
-		paths: [ '/reauth-required' ],
+		paths: [ '/me/reauth-required' ],
 		module: 'calypso/reauth-required',
 	},
 	{
@@ -500,19 +500,6 @@ const sections = [
 		group: 'reader',
 	},
 	{
-		name: 'help',
-		paths: [ '/help' ],
-		module: 'calypso/me/help',
-		enableLoggedOut: true,
-		group: 'me',
-	},
-	{
-		name: 'help',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/help',
-		group: 'me',
-	},
-	{
 		name: 'auth',
 		paths: [ '/api/oauth/token' ],
 		module: 'calypso/auth',
@@ -777,7 +764,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-auth',
-		paths: [ '/connect', '/connect/oauth/token' ],
+		paths: [ '/log-in', '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
@@ -786,6 +773,12 @@ const sections = [
 		name: 'a8c-for-agencies-overview',
 		paths: [ '/overview' ],
 		module: 'calypso/a8c-for-agencies/sections/overview',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-reports',
+		paths: [ '/reports', '/reports/overview', '/reports/dashboard' ],
+		module: 'calypso/a8c-for-agencies/sections/reports',
 		group: 'a8c-for-agencies',
 	},
 	{

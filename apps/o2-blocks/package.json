@@ -47,8 +47,8 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@wordpress/readable-js-assets-webpack-plugin": "^3.19.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"postcss": "^8.5.3",
-		"webpack": "^5.97.1"
+		"webpack": "^5.99.8"
 	}
 }
