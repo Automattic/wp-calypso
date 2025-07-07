@@ -109,6 +109,13 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return pathIncludes( path, 'themes', 1 );
 	}
 
+	if (
+		currentPath.startsWith( '/earn/jetpack-monetize/' ) ||
+		path.startsWith( '/earn/jetpack-monetize/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
 
