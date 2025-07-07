@@ -22,6 +22,7 @@ import {
 	domainRegistration,
 	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
+import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
@@ -484,6 +485,23 @@ class DomainSearch extends Component< DomainSearchProps > {
 	}
 }
 
+const StyleWrappedDomainSearch = ( props: DomainSearchProps ) => {
+	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( 'domains/add' );
+
+	if ( isLoading ) {
+		return null;
+	}
+
+	return (
+		<>
+			<DomainSearch { ...props } />
+			{ ! shouldUseDomainSearchV2 && (
+				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--my-sites' ] } />
+			) }
+		</>
+	);
+};
+
 export default connect(
 	( state: IAppState ) => {
 		const site = getSelectedSite( state );
@@ -528,4 +546,4 @@ export default connect(
 		setDesignType,
 		fetchUsernameSuggestion,
 	}
-)( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );
+)( withCartKey( withShoppingCart( localize( StyleWrappedDomainSearch ) ) ) );

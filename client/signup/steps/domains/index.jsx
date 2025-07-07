@@ -39,6 +39,7 @@ import {
 	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
 	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -57,6 +58,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -1615,8 +1617,26 @@ class RenderDomainsStepComponent extends Component {
 	}
 }
 
+const StyleWrappedDomainsStepComponent = ( props ) => {
+	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flowName );
+
+	if ( isLoading ) {
+		// TODO: Add a loading state to indicate that the experiment is loading.
+		return null;
+	}
+
+	return (
+		<>
+			<RenderDomainsStepComponent { ...props } />
+			{ ! shouldUseDomainSearchV2 && (
+				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--unified' ] } />
+			) }
+		</>
+	);
+};
+
 export const RenderDomainsStep = withViewportMatch( { isDesktop: '>= large' } )(
-	RenderDomainsStepComponent
+	StyleWrappedDomainsStepComponent
 );
 
 export const submitDomainStepSelection = ( suggestion, section ) => {
