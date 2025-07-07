@@ -32,7 +32,7 @@ function initialize() {
 
 const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 	name: ONBOARDING_UNIFIED_FLOW,
-
+	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
 	useStepNavigation( _currentStep, navigate ) {
