@@ -91,7 +91,9 @@ const SiteMigrationOtherPlatform: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 8 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar leftElement={ <Step.BackButton onClick={ () => history.back() } /> } />
+				}
 				heading={ <Step.Heading text={ title } subText={ description } /> }
 			>
 				{ isAnalyzingUrl ? (

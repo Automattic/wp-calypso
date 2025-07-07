@@ -44,7 +44,9 @@ const SiteMigrationFallbackCredentials: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 5 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar leftElement={ <Step.BackButton onClick={ () => history.back() } /> } />
+				}
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
 				{ content }

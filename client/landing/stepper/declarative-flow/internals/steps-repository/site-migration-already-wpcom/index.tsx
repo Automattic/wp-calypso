@@ -47,7 +47,9 @@ const SiteMigrationAlreadyWPCOM: StepType = ( { navigation } ) => {
 			<DocumentHead title={ translate( 'Your site is already on WordPress.com' ) } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 8 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar leftElement={ <Step.BackButton onClick={ () => history.back() } /> } />
+				}
 				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 			>
 				<Form onComplete={ onSubmit } />

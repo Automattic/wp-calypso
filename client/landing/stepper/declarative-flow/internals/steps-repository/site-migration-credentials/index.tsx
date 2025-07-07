@@ -68,6 +68,7 @@ const SiteMigrationCredentials: StepType< {
 	const locale = useLocale();
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
+	const ref = useQuery().get( 'ref' );
 	const siteSlug = siteSlugParam ?? '';
 	const { sendTicketAsync } = useSubmitMigrationTicket( {
 		onSuccess: () => {
@@ -141,6 +142,7 @@ const SiteMigrationCredentials: StepType< {
 	);
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
 	const skipButton = <NeedHelpLink onHelpLinkClicked={ handleSkip } />;
+	const shouldRenderBack = Boolean( ref );
 
 	return (
 		<>
@@ -149,7 +151,9 @@ const SiteMigrationCredentials: StepType< {
 				columnWidth={ 5 }
 				topBar={
 					<Step.TopBar
-						leftElement={ <Step.BackButton onClick={ navigation.goBack } /> }
+						leftElement={
+							shouldRenderBack ? <Step.BackButton onClick={ () => history.back() } /> : null
+						}
 						rightElement={ skipButton }
 					/>
 				}
