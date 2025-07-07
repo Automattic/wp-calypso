@@ -11,6 +11,7 @@ import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site'
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { getSite } from 'calypso/state/sites/selectors';
+import { getIsStagingSiteInTransition } from 'calypso/state/staging-site/selectors';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './preview-pane-header-buttons.scss';
@@ -35,18 +36,12 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const hasStagingSite = useSelector( ( state ) =>
 		hasWpcomStagingSite( state, itemData.blogId ?? null )
 	);
-	const stagingStatus = useSelector( ( state ) =>
-		getStagingSiteStatus( state, itemData.blogId ?? 0 )
+	const isStagingSiteInTransition = useSelector( ( state ) =>
+		getIsStagingSiteInTransition( state, itemData.blogId ?? 0 )
 	);
 
-	const isStagingSiteProgressing =
-		stagingStatus === StagingSiteStatus.INITIATE_TRANSFERRING ||
-		stagingStatus === StagingSiteStatus.TRANSFERRING ||
-		stagingStatus === StagingSiteStatus.INITIATE_REVERTING ||
-		stagingStatus === StagingSiteStatus.REVERTING;
-
 	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign && ( isStagingSite || hasStagingSite ) && ! isStagingSiteProgressing
+		stagingSitesRedesign && ( isStagingSite || hasStagingSite ) && ! isStagingSiteInTransition
 	);
 
 	const productionSiteId = isStagingSite
