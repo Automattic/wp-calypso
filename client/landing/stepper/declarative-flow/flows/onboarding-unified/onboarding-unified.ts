@@ -39,8 +39,10 @@ function parseFlowQueryArgs() {
 	const queryArgs: Record< string, unknown > = getQueryArgs( window.location.href );
 	const source: string | undefined =
 		typeof queryArgs.source === 'string' ? queryArgs.source : undefined;
+	const coupon: string | undefined =
+		typeof queryArgs.coupon === 'string' ? queryArgs.coupon : undefined;
 
-	return { queryArgs, source };
+	return { queryArgs, source, coupon };
 }
 
 const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
@@ -76,7 +78,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		 */
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
-			const { source } = parseFlowQueryArgs();
+			const { source, coupon } = parseFlowQueryArgs();
 
 			switch ( slug ) {
 				case 'plans': {
@@ -129,6 +131,11 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 							// Pass through the source parameter to checkout
 							if ( source ) {
 								urlParams.set( 'source', source );
+							}
+
+							// Pass through the coupon parameter to checkout
+							if ( coupon ) {
+								urlParams.set( 'coupon', coupon );
 							}
 
 							const checkoutUrl = `/checkout/unified/${
