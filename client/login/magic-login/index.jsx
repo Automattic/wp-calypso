@@ -271,19 +271,28 @@ class MagicLogin extends Component {
 			emailAddress: this.props.userEmail,
 			signupUrl: this.props.query?.signup_url,
 			usernameOnly: true,
+			twoFactorAuthType: this.props.twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+			redirectTo: this.props.redirectToOriginal,
+			oauth2ClientId: this.props.oauth2Client?.id,
+			from: this.props.query?.from,
 		};
 
 		page( login( loginParameters ) );
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWCCOM, query } = this.props;
+		const {
+			isJetpackLogin,
+			locale,
+			showCheckYourEmail,
+			translate,
+			query,
+			twoFactorNotificationSent,
+			redirectToSanitized,
+			oauth2Client,
+		} = this.props;
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
-
-		if ( isWCCOM ) {
-			return null;
-		}
 
 		if ( showCheckYourEmail ) {
 			if ( isA4A ) {
@@ -300,9 +309,6 @@ class MagicLogin extends Component {
 				/>
 			);
 		}
-		if ( query?.client_id ) {
-			return null;
-		}
 
 		// The email address from the URL (if present) is added to the login
 		// parameters in this.onClickEnterPasswordInstead(). But it's left out
@@ -311,7 +317,11 @@ class MagicLogin extends Component {
 		const loginParameters = {
 			isJetpack: isJetpackLogin,
 			locale: locale,
-			signupUrl: this.props.query?.signup_url,
+			signupUrl: query?.signup_url,
+			twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+			redirectTo: redirectToSanitized,
+			oauth2ClientId: oauth2Client?.id,
+			from: query?.from,
 		};
 
 		let linkBack = translate( 'Enter a password instead' );
@@ -321,8 +331,12 @@ class MagicLogin extends Component {
 
 		return (
 			<>
-				<div className="magic-login__footer">
-					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
+				<div className="wp-login__login-block-footer">
+					<a
+						className="magic-login__footer-link"
+						href={ login( loginParameters ) }
+						onClick={ this.onClickEnterPasswordInstead }
+					>
 						{ linkBack }
 					</a>
 				</div>
@@ -1240,7 +1254,7 @@ class MagicLogin extends Component {
 			options
 		);
 
-		return <p className="studio-magic-login__tos wp-login__tos">{ tosText }</p>;
+		return <p className="magic-login__tos wp-login__tos">{ tosText }</p>;
 	};
 
 	handlePublicTokenReceived = ( publicToken ) => {
@@ -1379,6 +1393,7 @@ const mapState = ( state ) => ( {
 	twoFactorEnabled: isTwoFactorEnabled( state ),
 	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	redirectToSanitized: getRedirectToSanitized( state ),
+	redirectToOriginal: getRedirectToOriginal( state ),
 	isFromAutomatticForAgenciesPlugin:
 		'automattic-for-agencies-client' ===
 		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),

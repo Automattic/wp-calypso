@@ -382,9 +382,9 @@ $image-height: 47px;
 		display: flex;
 		flex-direction: column;
 		align-self: center;
-		max-width: var(--login-form-column-max-width);
 		gap: 1em;
 
+		.magic-login__footer-link,
 		.login__lost-password-link,
 		.wp-login__login-block-footer-back-link {
 			font-size: $font-body-small;
@@ -395,6 +395,7 @@ $image-height: 47px;
 		}
 
 		.login__lost-password-link,
+		.magic-login__footer-link,
 		.wp-login__login-block-footer-back-link a,
 		a.wp-login__login-block-footer-back-link {
 			color: var(--studio-gray-90, #1d2327);
