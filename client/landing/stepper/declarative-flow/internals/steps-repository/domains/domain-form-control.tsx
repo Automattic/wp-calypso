@@ -8,6 +8,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import DomainCartV2 from 'calypso/components/domain-search-v2/domain-cart';
+import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -15,6 +17,7 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	retrieveSignupDestination,
@@ -176,6 +179,8 @@ export function DomainFormControl( {
 		);
 	};
 
+	const [ , isDomainSearchV2Enabled ] = useDomainSearchV2( flow ?? '' );
+
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -203,9 +208,14 @@ export function DomainFormControl( {
 			showExampleSuggestions = true;
 		}
 
+		const RegisterDomainStepComponent = isDomainSearchV2Enabled
+			? RegisterDomainStepV2
+			: RegisterDomainStep;
+
 		return (
 			<CalypsoShoppingCartProvider>
-				<RegisterDomainStep
+				{ isDomainSearchV2Enabled && <DomainCartV2 /> }
+				<RegisterDomainStepComponent
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					analyticsSection={ analyticsSection }
@@ -253,7 +263,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( isDomainUpsellFlow( flow ) && ! showUseYourDomain ) {
+	if ( isDomainUpsellFlow( flow ) && ! showUseYourDomain && ! isDomainSearchV2Enabled ) {
 		sideContent = getSideContent();
 	}
 

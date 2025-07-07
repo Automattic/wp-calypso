@@ -26,6 +26,8 @@ import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import DomainCartV2 from 'calypso/components/domain-search-v2/domain-cart';
+import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -1119,8 +1121,12 @@ class RenderDomainsStepComponent extends Component {
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
+		const RegisterDomainStepComponent = this.props.shouldUseDomainSearchV2
+			? RegisterDomainStepV2
+			: RegisterDomainStep;
+
 		return (
-			<RegisterDomainStep
+			<RegisterDomainStepComponent
 				key="domainForm"
 				path={ this.props.path }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
@@ -1325,10 +1331,15 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			content = this.domainForm();
+			content = (
+				<>
+					{ this.domainForm() }
+					{ this.props.shouldUseDomainSearchV2 && <DomainCartV2 /> }
+				</>
+			);
 		}
 
-		if ( ! this.props.stepSectionName ) {
+		if ( ! this.props.stepSectionName && ! this.props.shouldUseDomainSearchV2 ) {
 			sideContent = this.getSideContent();
 		}
 
@@ -1627,7 +1638,10 @@ const StyleWrappedDomainsStepComponent = ( props ) => {
 
 	return (
 		<>
-			<RenderDomainsStepComponent { ...props } />
+			<RenderDomainsStepComponent
+				{ ...props }
+				shouldUseDomainSearchV2={ shouldUseDomainSearchV2 }
+			/>
 			{ ! shouldUseDomainSearchV2 && (
 				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--unified' ] } />
 			) }
