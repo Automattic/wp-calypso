@@ -499,7 +499,7 @@ $image-height: 47px;
 		}
 	}
 
-	.layout__primary {
+	&:not(.is-mobile) .layout__primary {
 		margin-top: 0;
 
 		/* START - Note: Patches below needed to continue using the current Divider.
