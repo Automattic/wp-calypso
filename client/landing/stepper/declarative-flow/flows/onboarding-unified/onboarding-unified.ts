@@ -48,9 +48,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		/**
 		 * Get post-checkout destination for onboarding-unified flow (simplified version)
 		 */
-		const getPostCheckoutDestination = async (
-			providedDependencies: ProvidedDependencies
-		): Promise< string > => {
+		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ): string => {
 			// For onboarding-unified, we want to go to the site home page after setup
 			if ( providedDependencies.siteSlug ) {
 				return addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } );
@@ -130,7 +128,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 
 				case 'processing': {
 					// Handle final redirect after site setup is complete
-					const destination = await getPostCheckoutDestination( providedDependencies );
+					const destination = getPostCheckoutDestination( providedDependencies );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
