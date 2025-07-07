@@ -12,7 +12,7 @@ export const BlockedZendeskNotice: React.FC = () => {
 	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
 	const { isEligibleForChat } = useChatStatus();
 
-	const willShowNotice = ! canConnectToZendesk && ! isEligibleForChat;
+	const willShowNotice = ! canConnectToZendesk && isEligibleForChat;
 
 	useEffect( () => {
 		if ( willShowNotice ) {
