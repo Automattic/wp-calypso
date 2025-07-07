@@ -39,3 +39,4 @@ export * from './is-payment-method-enabled';
 export * from './filter-appropriate-payment-methods';
 export * from './payment-processor-countries-fields';
 export * from './processor-specific';
+export * from './stored-payment-method-util';
