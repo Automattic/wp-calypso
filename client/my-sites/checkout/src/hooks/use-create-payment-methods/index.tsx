@@ -18,10 +18,11 @@ import {
 	createRazorpayMethod,
 	isValueTruthy,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	type StoredPaymentMethod,
+	type ContactDetailsType,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useMemo } from 'react';
-import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
 import {
@@ -42,7 +43,6 @@ import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/ca
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
-import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 import type { Stripe } from '@stripe/stripe-js';
 import type { ReactNode } from 'react';
 
