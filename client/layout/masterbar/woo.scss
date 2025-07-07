@@ -1228,8 +1228,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		.signup-form,
-		.login__body--continue-as-user,
-		.login__lostpassword-form {
+		.login__body--continue-as-user {
 			width: 100%;
 			margin: 48px auto 0;
 			padding: 0;
@@ -1505,18 +1504,6 @@ $breakpoint-mobile: 660px;
 		.logged-out-form {
 			padding: 0;
 			margin: 0;
-		}
-
-		.login__lostpassword-form {
-			margin-bottom: 44px;
-
-			.login__form-userdata {
-				width: 100%;
-			}
-
-			input[type="email"].form-text-input {
-				margin-bottom: 0;
-			}
 		}
 
 		.two-factor-authentication__verification-code-form-wrapper {
