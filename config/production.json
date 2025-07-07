@@ -40,6 +40,7 @@
 		"current-site/notice": true,
 		"dashboard/v2/backport/site-settings": true,
 		"dashboard/v2/backport/sites-list": false,
+		"domains/ui-redesign": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,
