@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -497,6 +498,10 @@ const siteSetupFlow: Flow = {
 		}
 
 		const goBack = () => {
+			if ( get( 'flow' )?.entryPoint === SITE_MIGRATION_FLOW ) {
+				return history.back();
+			}
+
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
