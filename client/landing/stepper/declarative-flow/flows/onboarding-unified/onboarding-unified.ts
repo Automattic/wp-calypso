@@ -46,7 +46,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
-		 * Get post-checkout destination for onboarding-unified flow (simplified version)
+		 * Get post-checkout destination for onboarding-unified flow
 		 */
 		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ): string => {
 			// For onboarding-unified, we want to go to the site home page after setup
@@ -114,7 +114,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 							const checkoutUrl = `/checkout/unified/${
 								planItem.product_slug
 							}?${ urlParams.toString() }`;
-							return window.location.replace( checkoutUrl );
+							return window.location.assign( checkoutUrl );
 						}
 					}
 
