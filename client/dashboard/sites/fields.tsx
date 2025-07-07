@@ -90,6 +90,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'preview',
 		label: __( 'Preview' ),
 		render: ( { item } ) => <Preview site={ item } />,
+		enableHiding: false,
 		enableSorting: false,
 	},
 	{
@@ -169,6 +170,10 @@ export function getFields( {
 		}
 
 		if ( field.id === 'icon.ico' && viewType === 'grid' ) {
+			return false;
+		}
+
+		if ( field.id === 'preview' && viewType === 'table' ) {
 			return false;
 		}
 
