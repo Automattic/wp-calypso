@@ -1,0 +1,12 @@
+@import './header.scss';
+@import './page-header.scss';
+@import './page-layout.scss';
+
+@media ( prefers-reduced-motion: reduce ) {
+	::view-transition-group( * ),
+	::view-transition-old( * ),
+	::view-transition-new( * ) {
+		animation: none;
+		transition: none;
+	}
+}

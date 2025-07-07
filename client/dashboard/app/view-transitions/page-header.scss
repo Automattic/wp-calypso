@@ -1,0 +1,33 @@
+html:active-view-transition-type(default) {
+	.dashboard-page-layout.is-large {
+		.dashboard-page-header .dashboard-section-header__prefix {
+			view-transition-name: page-layout-header-prefix-large;
+		}
+
+		.dashboard-page-header .dashboard-section-header__heading-row {
+			view-transition-name: page-layout-header-heading-row-large;
+		}
+
+		.dashboard-page-header .dashboard-section-header__description {
+			view-transition-name: page-layout-header-description-large;
+		}
+
+		.dashboard-page-header .components-button.is-primary {
+			view-transition-name: page-layout-header-large--button;
+		}
+	}
+
+	.dashboard-page-layout.is-small {
+		.dashboard-page-header .dashboard-section-header__prefix {
+			view-transition-name: page-layout-header-prefix-small;
+		}
+
+		.dashboard-page-header .dashboard-section-header__heading-row {
+			view-transition-name: page-layout-header-heading-row-small;
+		}
+
+		.dashboard-page-header .dashboard-section-header__description {
+			view-transition-name: page-layout-header-description-small;
+		}
+	}
+}

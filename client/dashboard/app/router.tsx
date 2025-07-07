@@ -610,7 +610,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree( config );
-	return new Router( {
+	const router = new Router( {
 		routeTree,
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
@@ -621,8 +621,27 @@ export const getRouter = ( config: AppConfig ) => {
 		// Tanstack Router knows how to do it best. Even though it says
 		// "default", we can still customize it in CSS and add more transition
 		// areas.
-		defaultViewTransition: true,
+		defaultViewTransition: {
+			types: ( { fromLocation, toLocation } ) => {
+				const fromMatch = fromLocation ? router.matchRoutes( fromLocation )?.at( -1 ) : false;
+				const toMatch = router.matchRoutes( toLocation )?.at( -1 );
+				if (
+					fromMatch &&
+					fromMatch.routeId.startsWith( siteSettingsRoute.id ) &&
+					toMatch &&
+					toMatch.routeId.startsWith( siteSettingsRoute.id ) &&
+					fromMatch.routeId !== toMatch.routeId
+				) {
+					const direction = toMatch.routeId.length > fromMatch.routeId.length ? 'left' : 'right';
+					return [ `slide-${ direction }` ];
+				}
+
+				return [ 'default' ];
+			},
+		},
 	} );
+
+	return router;
 };
 
 export {

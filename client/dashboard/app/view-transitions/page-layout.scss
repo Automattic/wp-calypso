@@ -1,0 +1,131 @@
+
+// Large and small must be separate so they don't cross-animate.
+.dashboard-page-layout.is-small {
+	view-transition-name: page-layout-small;
+}
+.dashboard-page-layout.is-large {
+	view-transition-name: page-layout-large;
+}
+
+/**
+ * Default Transition
+ */
+html:active-view-transition-type( default ) {
+	&::view-transition-old( page-layout-small ),
+	&::view-transition-old( page-layout-large ) {
+		animation: 0.25s ease-in-out both default-out;
+	}
+
+	&::view-transition-new( page-layout-small ),
+	&::view-transition-new( page-layout-large ) {
+		animation: 0.25s ease-in-out both default-in;
+	}
+}
+
+@keyframes default-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes default-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/**
+ * Slide Left Transition
+ */
+html:active-view-transition-type( slide-left ) {
+	// Disable animation due to the scroll position.
+	&::view-transition-group( page-layout-small ),
+	&::view-transition-group( page-layout-large ) {
+		animation: none;
+	}
+
+	&::view-transition-old( page-layout-small ),
+	&::view-transition-old( page-layout-large ) {
+		animation: 0.25s ease-in-out both slide-out-left;
+		will-change: transform, opacity;
+	}
+
+	&::view-transition-new( page-layout-small ),
+	&::view-transition-new( page-layout-large ) {
+		animation: 0.25s ease-in-out both slide-in-left;
+		will-change: transform, opacity;
+	}
+}
+
+@keyframes slide-out-left {
+	from {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+	to {
+		transform: translateX( -50px );
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-left {
+	from {
+		transform: translateX( 50px );
+		opacity: 0;
+	}
+	to {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+}
+
+/**
+ * Slide Right Transition
+ */
+html:active-view-transition-type( slide-right ) {
+	// Disable animation due to the scroll position.
+	&::view-transition-group( page-layout-small ),
+	&::view-transition-group( page-layout-large ) {
+		animation: none;
+	}
+
+	&::view-transition-old( page-layout-small ),
+	&::view-transition-old( page-layout-large ) {
+		animation: 0.25s ease-in-out both slide-out-right;
+		will-change: transform, opacity;
+	}
+
+	&::view-transition-new( page-layout-small ),
+	&::view-transition-new( page-layout-large ) {
+		animation: 0.25s ease-in-out both slide-in-right;
+		will-change: transform, opacity;
+	}
+}
+
+@keyframes slide-out-right {
+	from {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+	to {
+		transform: translateX( 50px );
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-right {
+	from {
+		transform: translateX( -50px );
+		opacity: 0;
+	}
+	to {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+}

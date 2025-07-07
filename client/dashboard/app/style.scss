@@ -4,6 +4,7 @@
 // Should be implemented differently once v2 is not loaded via the v1 stack
 // I'm tempted to even just replace all this with a display:none on the logo
 @import './loading-screen';
+@import './view-transitions/style.scss';
 
 // Hacks that shouldn't be necessary.
 .environment-badge {
