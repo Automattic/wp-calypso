@@ -713,7 +713,7 @@ describe( 'filters', () => {
 		expect( result ).toStrictEqual( [ testData[ 0 ] ] );
 	} );
 
-	it.skip( 'should filter using OVER operator for datetime (years)', () => {
+	it( 'should filter using OVER operator for datetime (years)', () => {
 		const testData = [
 			{ title: 'Recent', date: subYears( new Date(), 1 ) },
 			{ title: 'Old', date: subYears( new Date(), 2 ) },
