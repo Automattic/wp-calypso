@@ -41,17 +41,14 @@ const initSmooch = (
 			async onInvalidAuth() {
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
 
-				const version = 'v2';
-				const staleTime = 7 * 24 * 60 * 60 * 1000; // 1 week
-
 				await queryClient.invalidateQueries( {
-					queryKey: [ 'getMessagingAuth', version, 'zendesk', isTestMode ],
+					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
 				} );
 				const authData = await queryClient.fetchQuery( {
-					queryKey: [ 'getMessagingAuth', version, 'zendesk', isTestMode ],
+					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
 					queryFn: () => fetchMessagingAuth( 'zendesk' ),
-					staleTime,
 				} );
+
 				return authData.jwt;
 			},
 		},

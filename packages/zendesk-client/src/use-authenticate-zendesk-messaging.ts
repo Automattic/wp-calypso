@@ -11,11 +11,6 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { isTestModeEnvironment } from './util';
 import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
-/**
- * Bump me when the API response structure goes through a breaking change.
- */
-const VERSION = 'v2';
-
 export const fetchMessagingAuth = async ( type: string = 'zendesk' ) => {
 	const isTestMode = isTestModeEnvironment();
 	const params = { type, test_mode: String( isTestMode ) };
@@ -55,7 +50,7 @@ export function useAuthenticateZendeskMessaging(
 ) {
 	const isTestMode = isTestModeEnvironment();
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],
+		queryKey: [ 'getMessagingAuth', type, isTestMode ],
 		queryFn: async () => fetchMessagingAuth( type ),
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
