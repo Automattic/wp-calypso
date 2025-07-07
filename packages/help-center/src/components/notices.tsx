@@ -5,12 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
+import { useSupportStatus } from '../data/use-support-status';
 
 export const BlockedZendeskNotice: React.FC = () => {
 	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
-	const { isEligibleForChat } = useChatStatus();
+	const { data: supportStatus } = useSupportStatus();
+	const isEligibleForChat = supportStatus?.eligibility.is_user_eligible;
 
 	const willShowNotice = ! canConnectToZendesk && isEligibleForChat;
 

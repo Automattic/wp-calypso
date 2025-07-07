@@ -1,4 +1,4 @@
-import { isTestModeEnvironment } from '@automattic/zendesk-client';
+import { isTestModeEnvironment, useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 import type { SupportProvider } from '../types';
@@ -17,9 +17,20 @@ export const useGetSupportInteractions = (
 ) => {
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
 	const isTestMode = isTestModeEnvironment();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( enabled );
+	// Only fetch Zendesk interactions if the user can connect to Zendesk.
+	const shouldFetch = enabled && ( canConnectToZendesk || ! provider?.includes( 'zendesk' ) );
 
 	return useQuery( {
-		queryKey: [ 'support-interactions', 'get-interactions', provider, freshness, path, isTestMode ],
+		queryKey: [
+			'support-interactions',
+			'get-interactions',
+			provider,
+			freshness,
+			path,
+			isTestMode,
+			canConnectToZendesk,
+		],
 		queryFn: async () => {
 			const response = await handleSupportInteractionsFetch( 'GET', path, isTestMode );
 
@@ -31,11 +42,18 @@ export const useGetSupportInteractions = (
 				return response.filter( ( interaction ) =>
 					interaction.events.some( ( event ) => event.event_source === provider )
 				);
+			} else if ( ! canConnectToZendesk ) {
+				// When provider is null, we're fetching interactions from all providers.
+				// We need to filter out Zendesk interactions if the user can't connect to Zendesk.
+				return response.filter(
+					( interaction ) =>
+						! interaction.events.some( ( event ) => event.event_source.includes( 'zendesk' ) )
+				);
 			}
 
 			return response;
 		},
-		enabled,
+		enabled: shouldFetch,
 		staleTime: 1000 * 30, // 30 seconds
 	} );
 };
