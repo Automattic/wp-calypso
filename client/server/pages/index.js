@@ -1020,7 +1020,7 @@ export default function pages() {
 
 	// Redirect legacy `/help` routes to `sites?help-center=home` if logged in, otherwise `/support`
 	// Note: isLoggedIn will only work under *.wordpress.com domains (wpcalypso, horizon, and prod)
-	app.get( [ '/help', '/help/*' ], ( req, res ) => {
+	app.get( [ '/me/chat', '/help', '/help/*' ], ( req, res ) => {
 		if ( req.context.isLoggedIn ) {
 			return res.redirect( 301, '/sites?help-center=home' );
 		}

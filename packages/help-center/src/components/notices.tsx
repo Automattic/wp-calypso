@@ -1,28 +1,42 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
 
-export const NewThirdPartyCookiesNotice: React.FC = () => {
+export const BlockedZendeskNotice: React.FC = () => {
+	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
+	const { isEligibleForChat } = useChatStatus();
+
+	const willShowNotice = ! canConnectToZendesk && isEligibleForChat;
+
+	useEffect( () => {
+		if ( willShowNotice ) {
+			recordTracksEvent( 'calypso_helpcenter_third_party_cookies_notice_open', {
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+		}
+	}, [ willShowNotice, sectionName ] );
+
+	if ( ! willShowNotice ) {
+		return null;
+	}
+
 	return (
 		<div className="help-center__notice cookie-warning">
 			<p>
-				<strong>{ __( 'Enable cookies to get support.', __i18n_text_domain__ ) }</strong>
+				<strong>{ __( 'Live support is unavailable.', __i18n_text_domain__ ) }</strong>
 				&nbsp;
 				{ __(
-					'To access support, please turn on third-party cookies for WordPress.com.',
+					'Your browser settings block our live chat support. This usually happens when an ad blocker or strict tracking protection is enabled.',
 					__i18n_text_domain__
 				) }
-				&nbsp;
-				<a
-					target="_blank"
-					rel="noopener noreferrer"
-					href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
-				>
-					{ __( 'Learn more.', __i18n_text_domain__ ) }
-				</a>
 			</p>
 		</div>
 	);

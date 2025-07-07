@@ -294,20 +294,25 @@ const LayoutLoggedOut = ( {
 					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 				) }
 
-			{ ! isLoggedIn && ! isReaderTagEmbed && (
-				<ReaderJoinConversationDialog
-					onClose={ () => clearLastActionRequiresLogin() }
-					isVisible={ !! loggedInAction }
-					loggedInAction={ loggedInAction }
-					onLoginSuccess={ () => {
-						if ( loggedInAction?.redirectTo ) {
-							window.location = loggedInAction.redirectTo;
-						} else {
-							window.location.reload();
-						}
-					} }
-				/>
-			) }
+			{ ! isLoggedIn &&
+				// Limit this to reader pages. If we need to expand its scope, make sure we do not
+				// render it in the 'signup' sections, otherwise this may appear a second time in
+				// the external signup window it opens.
+				[ 'reader' ].includes( sectionName ) &&
+				! isReaderTagEmbed && (
+					<ReaderJoinConversationDialog
+						onClose={ () => clearLastActionRequiresLogin() }
+						isVisible={ !! loggedInAction }
+						loggedInAction={ loggedInAction }
+						onLoginSuccess={ () => {
+							if ( loggedInAction?.redirectTo ) {
+								window.location = loggedInAction.redirectTo;
+							} else {
+								window.location.reload();
+							}
+						} }
+					/>
+				) }
 		</div>
 	);
 };
