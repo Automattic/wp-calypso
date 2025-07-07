@@ -1,4 +1,6 @@
+import page from '@automattic/calypso-router';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector } from 'calypso/state';
@@ -14,17 +16,29 @@ const getBlogData = ( blog ) => {
 			name,
 			feedUrl,
 			siteId,
+			feedId: blog.feed_ID,
 		};
 	}
 	const { image, name, feed_URL: feedUrl, blog_ID: siteId } = blog.meta?.data?.feed || {};
-	return { image, name, feedUrl, siteId };
+	return { image, name, feedUrl, siteId, feedId: blog.feed_ID };
 };
 
-function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
-	const { image, name, feedUrl, siteId } = getBlogData( blog );
+function RecommendedBlogItem( { blog, classPrefix, compact = false, onLinkClick = () => {} } ) {
+	const { image, name, feedUrl, siteId, feedId } = getBlogData( blog );
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
+
+	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
+
+	const anchorProps = {
+		href: linkUrl,
+		onClick: ( e ) => {
+			e.preventDefault();
+			onLinkClick();
+			page( linkUrl );
+		},
+	};
 
 	return (
 		<li className={ `${ classPrefix }__recommended-blog-item` }>
@@ -35,19 +49,29 @@ function RecommendedBlogItem( { blog, classPrefix, compact = false } ) {
 				followed.
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
-			<ReaderAvatar
-				isCompact={ compact }
-				siteIcon={ siteIcon }
-				className={ `${ classPrefix }__recommended-blog-site-icon` }
-			/>
-			<div className={ `${ classPrefix }__recommended-blog-site-info` }>
-				<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>{ name || feedUrl }</h6>
-				{ ! compact && site?.description && (
-					<p className={ `${ classPrefix }__recommended-blog-site-description` }>
-						{ site.description }
-					</p>
-				) }
-			</div>
+
+			<a { ...anchorProps }>
+				<ReaderAvatar
+					isCompact={ compact }
+					siteIcon={ siteIcon }
+					className={ `${ classPrefix }__recommended-blog-site-icon` }
+				/>
+			</a>
+			<AutoDirection>
+				<div className={ `${ classPrefix }__recommended-blog-site-info` }>
+					<a { ...anchorProps }>
+						<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>
+							{ name || feedUrl }
+						</h6>
+					</a>
+					{ ! compact && site?.description && (
+						<p className={ `${ classPrefix }__recommended-blog-site-description` }>
+							{ site.description }
+						</p>
+					) }
+				</div>
+			</AutoDirection>
+
 			<ReaderFollowButton
 				className={ `${ classPrefix }__recommended-blog-subscribe-button` }
 				siteUrl={ feedUrl }

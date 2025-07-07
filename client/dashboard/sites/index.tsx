@@ -1,11 +1,13 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import fastDeepEqual from 'fast-deep-equal/es6';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
-import { isAutomatticianQuery } from '../app/queries/a8c';
+import { isAutomatticianQuery } from '../app/queries/me-a8c';
+import { userPreferencesQuery, userPreferencesMutation } from '../app/queries/me-preferences';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -15,7 +17,7 @@ import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import { SitesNotices } from './notices';
-import { getView, DEFAULT_LAYOUTS } from './views';
+import { getView, DEFAULT_LAYOUTS, CONFIGURABLE_VIEW_KEYS, PERSISTABLE_VIEW_KEYS } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, ViewTable, ViewGrid, Filter } from '@automattic/dataviews';
 
@@ -48,11 +50,14 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const { data: viewPreferences } = useSuspenseQuery( userPreferencesQuery( 'sites-view' ) );
+	const { mutate: updateViewPreferences } = useMutation( userPreferencesMutation( 'sites-view' ) );
 
 	const { defaultView, view } = getView( {
 		user,
 		isAutomattician,
 		isRestoringAccount,
+		viewPreferences: viewPreferences as Partial< View >,
 		viewOptions,
 	} );
 
@@ -65,6 +70,40 @@ export default function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
+	const handleViewChange = ( nextView: View ) => {
+		if ( nextView.type === 'list' ) {
+			return;
+		}
+
+		const _defaultView = {
+			...defaultView,
+			...DEFAULT_LAYOUTS[ nextView.type as keyof typeof DEFAULT_LAYOUTS ],
+		};
+
+		navigate( {
+			search: {
+				...currentSearchParams,
+				view: Object.fromEntries(
+					Object.entries( nextView ).filter(
+						( [ key, value ] ) =>
+							CONFIGURABLE_VIEW_KEYS.includes( key ) &&
+							! fastDeepEqual( value, _defaultView[ key as keyof typeof _defaultView ] )
+					)
+				),
+			},
+		} );
+
+		updateViewPreferences(
+			Object.fromEntries(
+				Object.entries( nextView ).filter(
+					( [ key, value ] ) =>
+						PERSISTABLE_VIEW_KEYS.includes( key ) &&
+						! fastDeepEqual( value, _defaultView[ key as keyof typeof _defaultView ] )
+				)
+			)
+		);
+	};
 
 	return (
 		<>
@@ -98,22 +137,7 @@ export default function Sites() {
 						actions={ actions }
 						view={ view }
 						isLoading={ isLoadingSites }
-						onChangeView={ ( view ) => {
-							if ( view.type === 'list' ) {
-								return;
-							}
-							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
-							navigate( {
-								search: {
-									...currentSearchParams,
-									view: Object.fromEntries(
-										Object.entries( view ).filter( ( [ key, value ] ) => {
-											return value !== _defaultView[ key as keyof typeof _defaultView ];
-										} )
-									),
-								},
-							} );
-						} }
+						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

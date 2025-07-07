@@ -134,6 +134,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/interval-dropdown": true,
 		"onboarding/user-on-stepper-hosting": true,
+		"entrepreneur/skip-trial-for-migration": true,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"plans/hosting-trial": true,

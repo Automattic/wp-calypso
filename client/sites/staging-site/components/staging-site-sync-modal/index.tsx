@@ -14,7 +14,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
@@ -26,6 +26,7 @@ import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 // TODO: Temporary style for the PoC
 import './style.scss';
@@ -71,7 +72,6 @@ interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
-	siteSlug: string;
 	productionSiteId: number;
 	stagingSiteId: number;
 }
@@ -149,21 +149,22 @@ export default function SyncModal( {
 	onClose,
 	syncType,
 	environment,
-	siteSlug,
 	productionSiteId,
 	stagingSiteId,
 }: SyncModalProps ) {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
 
-	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
-	//const { siteSlug } = siteRoute.useParams();
+	const targetEnvironment = syncConfig[ environment ].syncTo;
+	const sourceEnvironment = syncConfig[ environment ].syncFrom;
 
-	const querySiteId =
-		( environment === 'staging' && syncType === 'push' ) ||
-		( environment === 'production' && syncType === 'pull' )
-			? stagingSiteId
-			: productionSiteId;
+	const productionSiteSlug =
+		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) ?? '';
+	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) ?? '';
+
+	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+
+	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
 
 	const browserCheckList = useSelector( ( state ) =>
 		getBackupBrowserCheckList( state, querySiteId )
@@ -211,19 +212,13 @@ export default function SyncModal( {
 			<VStack spacing={ 6 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
-						a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
+						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
 				<HStack spacing={ 2 } alignment="center">
-					<EnvironmentLabel
-						label={ syncConfig.fromLabel }
-						environmentType={ syncConfig[ environment ].syncFrom }
-					/>
+					<EnvironmentLabel label={ syncConfig.fromLabel } environmentType={ sourceEnvironment } />
 					<DirectionArrow />
-					<EnvironmentLabel
-						label={ syncConfig.toLabel }
-						environmentType={ syncConfig[ environment ].syncTo }
-					/>
+					<EnvironmentLabel label={ syncConfig.toLabel } environmentType={ targetEnvironment } />
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 				{ querySiteId === stagingSiteId && (

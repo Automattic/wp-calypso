@@ -10,6 +10,7 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -178,6 +179,8 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		return ! isJetpackSite;
 	} );
 
+	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 	const savedSubscriptionOptions = settings?.subscription_options;
 
@@ -282,6 +285,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ wpcom_featured_image_in_email }
+					isPrivate={ isPrivate }
 				/>
 			</Card>
 			<Card className="site-settings__card">

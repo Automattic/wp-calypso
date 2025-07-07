@@ -1,13 +1,12 @@
 import { Dispatch, SetStateAction } from 'react';
+import { StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export type EngineTypes = 'substack';
 
-export type StatusType = 'initial' | 'done' | 'pending' | 'skipped' | 'importing';
-
 export interface SubscribersStepProps {
 	cardData: any;
-	status: StatusType;
+	status: StepStatus;
 	engine: 'substack';
 	fromSite: string;
 	nextStepUrl: string;

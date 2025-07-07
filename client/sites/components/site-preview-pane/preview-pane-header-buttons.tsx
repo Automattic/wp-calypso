@@ -27,6 +27,8 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
+	const site = useSelector( ( state ) => getSite( state, itemData.blogId ) );
+
 	const isStagingSite = useSelector( ( state ) =>
 		isSiteWpcomStaging( state, itemData.blogId ?? null )
 	);
@@ -36,27 +38,25 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const shouldShowSyncDropdown = Boolean(
 		stagingSitesRedesign && ( isStagingSite || hasStagingSite )
 	);
-	const site = useSelector( ( state ) => getSite( state, itemData.blogId ) );
 
-	const siteSlug = site?.slug ?? '';
+	const productionSiteId = isStagingSite
+		? site?.options?.wpcom_production_blog_id ?? 0
+		: itemData.blogId ?? 0;
 
-	const productionSiteId = site?.is_wpcom_staging_site
-		? site.options?.wpcom_production_blog_id
-		: site?.ID;
+	const stagingSiteId = hasStagingSite
+		? site?.options?.wpcom_staging_blog_ids?.[ 0 ] ?? 0
+		: itemData.blogId ?? 0;
 
-	const stagingSiteId = ! site?.is_wpcom_staging_site
-		? site?.options?.wpcom_staging_blog_ids?.[ 0 ]
-		: site?.ID;
+	const environment = isStagingSite ? 'staging' : 'production';
 
 	return (
 		<>
 			{ shouldShowSyncDropdown && (
 				<SyncDropdown
 					className="item-preview__sync-dropdown"
-					environment={ isStagingSite ? 'staging' : 'production' }
-					siteSlug={ siteSlug }
-					productionSiteId={ productionSiteId ?? -1 }
-					stagingSiteId={ stagingSiteId ?? -1 }
+					environment={ environment }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
 				/>
 			) }
 			<Button

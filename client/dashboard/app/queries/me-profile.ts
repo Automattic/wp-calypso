@@ -3,7 +3,7 @@ import { queryClient } from '../query-client';
 import type { UserProfile } from '../../data/me-profile';
 
 export const profileQuery = () => ( {
-	queryKey: [ 'profile' ],
+	queryKey: [ 'me', 'profile' ],
 	queryFn: fetchProfile,
 } );
 

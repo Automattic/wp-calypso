@@ -31,6 +31,8 @@ import {
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
 	isVIPOAuth2Client,
+	isAndroidOAuth2Client,
+	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -292,20 +294,25 @@ const LayoutLoggedOut = ( {
 					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 				) }
 
-			{ ! isLoggedIn && ! isReaderTagEmbed && (
-				<ReaderJoinConversationDialog
-					onClose={ () => clearLastActionRequiresLogin() }
-					isVisible={ !! loggedInAction }
-					loggedInAction={ loggedInAction }
-					onLoginSuccess={ () => {
-						if ( loggedInAction?.redirectTo ) {
-							window.location = loggedInAction.redirectTo;
-						} else {
-							window.location.reload();
-						}
-					} }
-				/>
-			) }
+			{ ! isLoggedIn &&
+				// Limit this to reader pages. If we need to expand its scope, make sure we do not
+				// render it in the 'signup' sections, otherwise this may appear a second time in
+				// the external signup window it opens.
+				[ 'reader' ].includes( sectionName ) &&
+				! isReaderTagEmbed && (
+					<ReaderJoinConversationDialog
+						onClose={ () => clearLastActionRequiresLogin() }
+						isVisible={ !! loggedInAction }
+						loggedInAction={ loggedInAction }
+						onLoginSuccess={ () => {
+							if ( loggedInAction?.redirectTo ) {
+								window.location = loggedInAction.redirectTo;
+							} else {
+								window.location.reload();
+							}
+						} }
+					/>
+				) }
 		</div>
 	);
 };
@@ -337,7 +344,9 @@ export default withCurrentRoute(
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
+			const isAndroid = isAndroidOAuth2Client( oauth2Client );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
+			const isIos = isIosOAuth2Client( oauth2Client );
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
@@ -359,7 +368,9 @@ export default withCurrentRoute(
 						isWoo ||
 						isJetpackCloudClient ||
 						isJetpackLogin ||
-						isVIPClient ) ) ||
+						isVIPClient ||
+						isAndroid ||
+						isIos ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

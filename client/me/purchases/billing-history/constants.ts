@@ -1,9 +1,10 @@
-import type { View } from '@wordpress/dataviews';
+import type { SortDirection, View } from '@wordpress/dataviews';
 
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PER_PAGE = 10;
 
 export const defaultSortField: string = 'date';
+export const defaultSortDirection: SortDirection = 'desc';
 
 export const wideFields = [ 'date', 'service', 'type', 'amount' ];
 export const desktopFields = [ 'date', 'service' ];
@@ -17,7 +18,7 @@ export const defaultDataViewsState: View = {
 	perPage: DEFAULT_PER_PAGE,
 	sort: {
 		field: defaultSortField,
-		direction: 'desc',
+		direction: defaultSortDirection,
 	},
 	fields: wideFields,
 	layout: {

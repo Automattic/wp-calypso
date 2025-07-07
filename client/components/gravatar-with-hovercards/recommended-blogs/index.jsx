@@ -11,8 +11,8 @@ import RecommendedBlogItem from './item';
 function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
 	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
+	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 
 	const shouldShowRecommendedBlogs =
 		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
@@ -22,8 +22,6 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 			dispatch( requestUserRecommendedBlogs( userLogin ) );
 		}
 	}, [ userLogin, recommendedBlogs, dispatch ] );
-
-	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
@@ -58,6 +56,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 							blog={ blog }
 							classPrefix="gravatar-hovercard"
 							compact
+							onLinkClick={ closeCard }
 						/>
 					) ) }
 			</ul>
