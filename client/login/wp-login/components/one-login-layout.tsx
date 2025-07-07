@@ -57,6 +57,7 @@ const OneLoginLayout = ( {
 			columnWidth={ 6 }
 			topBar={ <Step.TopBar rightElement={ <SignUpLink /> } compactLogo="always" /> }
 			verticalAlign="center"
+			wrapperClassName="wp-login__one-login-layout-content-wrapper"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__header">
