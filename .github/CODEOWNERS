@@ -86,6 +86,7 @@
 
 # Domains entrypoints and UI components
 /client/components/domains @Automattic/quake
+/client/components/domain-search-v2 @Automattic/quake
 /client/signup/steps/domains @Automattic/quake
 /client/landing/stepper/declarative-flow/internals/steps-repository/unified-domains @Automattic/quake
 /client/landing/stepper/declarative-flow/internals/steps-repository/domains @Automattic/quake
