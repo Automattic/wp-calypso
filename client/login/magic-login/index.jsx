@@ -1216,7 +1216,7 @@ class MagicLogin extends Component {
 		);
 	}
 
-	renderStudioLoginTos = () => {
+	renderTos = () => {
 		const options = {
 			components: {
 				tosLink: (
@@ -1240,7 +1240,7 @@ class MagicLogin extends Component {
 			options
 		);
 
-		return <p className="studio-magic-login__tos">{ tosText }</p>;
+		return <p className="studio-magic-login__tos wp-login__tos">{ tosText }</p>;
 	};
 
 	handlePublicTokenReceived = ( publicToken ) => {
@@ -1298,11 +1298,11 @@ class MagicLogin extends Component {
 			isJetpackMagicLinkSignUpEnabled: this.props.isJetpackLogin,
 			createAccountForNewUser: true,
 			isFromJetpackOnboarding,
+			tosComponent: this.renderTos(),
 			...( isStudio
 				? {
 						customFormLabel: translate( 'Your email address' ),
 						submitButtonLabel: translate( 'Send activation link' ),
-						tosComponent: this.renderStudioLoginTos(),
 				  }
 				: {} ),
 		};

@@ -36,6 +36,7 @@ const RequestLoginCode = ( {
 	translate,
 	shouldShowLoadingEllipsis,
 	publicToken,
+	tosComponent,
 } ) => {
 	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
 	const usernameOrEmailRef = useRef( null );
@@ -145,6 +146,8 @@ const RequestLoginCode = ( {
 						placeholder={ translate( 'Email or Username' ) }
 						ref={ usernameOrEmailRef }
 					/>
+
+					{ tosComponent }
 
 					{ requestError && (
 						<Notice
