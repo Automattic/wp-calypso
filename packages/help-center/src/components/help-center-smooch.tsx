@@ -4,6 +4,7 @@ import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
+	fetchMessagingAuth,
 	isTestModeEnvironment,
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
@@ -35,7 +36,7 @@ const initSmooch = ( {
 		delegate: {
 			onInvalidAuth() {
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
-				return Promise.resolve( '' );
+				return fetchMessagingAuth( 'zendesk' ).then( ( response ) => response.jwt );
 			},
 		},
 		embedded: true,
