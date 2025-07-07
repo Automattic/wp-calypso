@@ -367,6 +367,7 @@ export default function CheckoutMainContent( {
 	loadingHeader,
 	onStepChanged,
 	showSitePreview = false,
+	productSourceFromUrl,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
@@ -389,6 +390,7 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
 	showSitePreview?: boolean;
+	productSourceFromUrl?: string;
 } ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
@@ -500,6 +502,9 @@ export default function CheckoutMainContent( {
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
+
+	// Hide coupon section for Paid Media sources to prevent discount conflicts
+	const shouldShowCouponSection = productSourceFromUrl !== 'pm';
 
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
@@ -845,13 +850,15 @@ export default function CheckoutMainContent( {
 						} }
 					/>
 
-					<CouponFieldArea
-						isCouponFieldVisible={ isCouponFieldVisible }
-						setCouponFieldVisible={ setCouponFieldVisible }
-						isPurchaseFree={ isPurchaseFree }
-						couponStatus={ couponStatus }
-						couponFieldStateProps={ couponFieldStateProps }
-					/>
+					{ shouldShowCouponSection && (
+						<CouponFieldArea
+							isCouponFieldVisible={ isCouponFieldVisible }
+							setCouponFieldVisible={ setCouponFieldVisible }
+							isPurchaseFree={ isPurchaseFree }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
 
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }

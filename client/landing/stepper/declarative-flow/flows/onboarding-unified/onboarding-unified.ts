@@ -76,6 +76,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		 */
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
+			const { source } = parseFlowQueryArgs();
 
 			switch ( slug ) {
 				case 'plans': {
@@ -123,6 +124,11 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 							// Only add signup=1 for logged-out users
 							if ( ! userIsLoggedIn ) {
 								urlParams.set( 'signup', '1' );
+							}
+
+							// Pass through the source parameter to checkout
+							if ( source ) {
+								urlParams.set( 'source', source );
 							}
 
 							const checkoutUrl = `/checkout/unified/${

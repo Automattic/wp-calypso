@@ -856,6 +856,7 @@ export default function CheckoutMain( {
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
+					productSourceFromUrl={ productSourceFromUrl }
 				/>
 				{
 					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
