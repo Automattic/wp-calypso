@@ -13,7 +13,7 @@ import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
-import { NewThirdPartyCookiesNotice } from './notices';
+import { BlockedZendeskNotice } from './notices';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 
@@ -92,7 +92,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			<NewThirdPartyCookiesNotice />
+			<BlockedZendeskNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }

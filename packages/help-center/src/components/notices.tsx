@@ -8,7 +8,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
 
-export const NewThirdPartyCookiesNotice: React.FC = () => {
+export const BlockedZendeskNotice: React.FC = () => {
 	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
 	const { isEligibleForChat } = useChatStatus();
 
