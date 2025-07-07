@@ -1,8 +1,10 @@
 import { Onboard, OnboardActions, UserSelect, Visibility } from '@automattic/data-stores';
 import { ONBOARDING_UNIFIED_FLOW } from '@automattic/onboarding';
 import { dispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { useEffect } from '@wordpress/element';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
@@ -30,11 +32,23 @@ function initialize() {
 	return [ STEPS.UNIFIED_PLANS, STEPS.POST_CHECKOUT_ONBOARDING, STEPS.PROCESSING, STEPS.ERROR ];
 }
 
+/**
+ * Parse flow-specific query arguments - single source of truth
+ */
+function parseFlowQueryArgs() {
+	const queryArgs: Record< string, unknown > = getQueryArgs( window.location.href );
+	const source: string | undefined =
+		typeof queryArgs.source === 'string' ? queryArgs.source : undefined;
+
+	return { queryArgs, source };
+}
+
 const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 	name: ONBOARDING_UNIFIED_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
@@ -149,6 +163,18 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		};
 
 		return { submit };
+	},
+
+	useSideEffect() {
+		// Use same parsing logic as useStepsProps
+		const { source } = parseFlowQueryArgs();
+
+		// Load Hotjar if source is 'affiliate'
+		useEffect( () => {
+			if ( source === 'affiliate' ) {
+				addHotJarScript();
+			}
+		}, [ source ] );
 	},
 };
 
