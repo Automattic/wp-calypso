@@ -102,24 +102,28 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'uptime',
 		label: __( 'Uptime' ),
+		header: <span title={ __( 'Past 7 days' ) }>{ __( 'Uptime' ) }</span>,
 		render: ( { item } ) => <Uptime site={ item } />,
 		enableSorting: false,
 	},
 	{
 		id: 'visitors',
 		label: __( 'Visitors' ),
+		header: <span title={ __( 'Past 7 days' ) }>{ __( 'Visitors' ) }</span>,
 		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
 		enableSorting: false,
 	},
 	{
 		id: 'views',
 		label: __( 'Views' ),
+		header: <span title={ __( 'Past 7 days' ) }>{ __( 'Views' ) }</span>,
 		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
 		enableSorting: false,
 	},
 	{
 		id: 'likes',
 		label: __( 'Likes' ),
+		header: <span title={ __( 'Past 7 days' ) }>{ __( 'Likes' ) }</span>,
 		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
 		enableSorting: false,
 	},
