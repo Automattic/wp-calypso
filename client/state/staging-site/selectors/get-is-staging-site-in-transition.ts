@@ -5,8 +5,8 @@ import type { AppState } from 'calypso/types';
 import 'calypso/state/staging-site/init';
 
 /**
- * Helper to determine if staging site is in a transition state
- * @param {Object} state automated transfer state sub-tree for a site
+ * Helper to determine if staging site is in a transition state (transferring or reverting)
+ * @param {Object} state global app state
  * @returns {boolean} whether staging site is in a transition state
  */
 export const getStagingSiteIsInTransition = ( state: AppState ): boolean => {
@@ -20,9 +20,9 @@ export const getStagingSiteIsInTransition = ( state: AppState ): boolean => {
 };
 
 /**
- * Returns whether staging site is in a transition state
+ * Returns whether staging site is in a transition state (transferring or reverting)
  * @param {Object} state global app state
- * @param {number} siteId requested site for transfer info
+ * @param {number} siteId requested site for transition info
  * @returns {boolean} true if staging site is in a transition state
  */
 export function getIsStagingSiteInTransition( state: AppState, siteId: number | null ): boolean {
