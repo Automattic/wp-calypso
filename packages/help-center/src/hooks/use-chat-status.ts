@@ -10,8 +10,9 @@ export default function useChatStatus() {
 	// All paying customers are eligible for chat.
 	// They're only eligible if they can connect to Zendesk.
 	// See: pdDR7T-1vN-p2
-	const isEligibleForChat =
-		Boolean( supportStatus?.eligibility?.is_user_eligible ) && canConnectToZendesk;
+	const isEligibleForChat = Boolean(
+		supportStatus?.eligibility?.is_user_eligible && canConnectToZendesk
+	);
 
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } =
 		useSupportActivity( isEligibleForChat );
