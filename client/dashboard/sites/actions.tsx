@@ -63,7 +63,6 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			},
 			isEligible: ( item: Site ) =>
 				canManageSite( item ) &&
-				item.is_a4a_dev_site &&
 				! item.is_wpcom_staging_site &&
 				item.launch_status === 'unlaunched',
 		},
