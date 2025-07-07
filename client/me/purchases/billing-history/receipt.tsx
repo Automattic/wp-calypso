@@ -33,6 +33,7 @@ import {
 	requestBillingTransaction,
 } from 'calypso/state/billing-transactions/individual-transactions/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
 	getTransactionTermLabel,
@@ -55,6 +56,18 @@ import type { FormEvent } from 'react';
 
 import './style.scss';
 
+function getBillingHistoryUrl( previousRoute: string ): string {
+	/**
+	 * Preserve the previous route if it's the billing history page because it
+	 * may contain a query string with pagination and other view properties
+	 * that we want to return to.
+	 */
+	if ( previousRoute.includes( '/purchases/billing' ) ) {
+		return previousRoute;
+	}
+	return billingHistory;
+}
+
 interface BillingReceiptProps {
 	transactionId: number;
 	recordGoogleEvent: ( key: string, message: string ) => void;
@@ -65,6 +78,7 @@ interface BillingReceiptConnectedProps {
 	transactionFetchError?: string;
 	transaction: BillingTransaction | undefined;
 	translate: LocalizeProps[ 'translate' ];
+	previousRoute: string;
 }
 
 class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConnectedProps > {
@@ -97,7 +111,7 @@ class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConn
 	}
 
 	render() {
-		const { transaction, transactionId, translate } = this.props;
+		const { transaction, transactionId, translate, previousRoute } = this.props;
 
 		return (
 			<Main wideLayout className="receipt">
@@ -111,7 +125,7 @@ class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConn
 
 				<QueryBillingTransaction transactionId={ transactionId } />
 
-				<ReceiptTitle backHref={ billingHistory } />
+				<ReceiptTitle backHref={ getBillingHistoryUrl( previousRoute ) } />
 
 				{ transaction ? (
 					<ReceiptBody
@@ -746,6 +760,7 @@ export default connect(
 		return {
 			transaction: transaction && 'service' in transaction ? transaction : undefined,
 			transactionFetchError: isPastBillingTransactionError( state, transactionId ),
+			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	{

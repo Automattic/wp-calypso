@@ -8,9 +8,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
 	const translate = useTranslate();
@@ -123,6 +125,7 @@ const CancelPurchaseDomainOptions = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ confirmCancel, setConfirmCancel ] = useState( false );
+	const dispatch = useDispatch();
 
 	const onCancelBundledDomainChange = useCallback(
 		( event ) => {
@@ -143,8 +146,24 @@ const CancelPurchaseDomainOptions = ( {
 				cancelBundledDomain,
 				confirmCancelBundledDomain: checked,
 			} );
+
+			// Record tracks event for domain confirmation checkbox
+			dispatch(
+				recordTracksEvent( 'calypso_purchases_domain_confirm_checkbox', {
+					product_slug: purchase.productSlug,
+					purchase_id: purchase.id,
+					domain_name: includedDomainPurchase.meta,
+					checked: checked,
+				} )
+			);
 		},
-		[ cancelBundledDomain, onCancelConfirmationStateChange ]
+		[
+			cancelBundledDomain,
+			onCancelConfirmationStateChange,
+			purchase,
+			includedDomainPurchase,
+			dispatch,
+		]
 	);
 
 	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {

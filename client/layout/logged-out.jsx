@@ -31,6 +31,8 @@ import {
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
 	isVIPOAuth2Client,
+	isAndroidOAuth2Client,
+	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -337,7 +339,9 @@ export default withCurrentRoute(
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
+			const isAndroid = isAndroidOAuth2Client( oauth2Client );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
+			const isIos = isIosOAuth2Client( oauth2Client );
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
@@ -359,7 +363,9 @@ export default withCurrentRoute(
 						isWoo ||
 						isJetpackCloudClient ||
 						isJetpackLogin ||
-						isVIPClient ) ) ||
+						isVIPClient ||
+						isAndroid ||
+						isIos ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =

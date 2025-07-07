@@ -7,7 +7,6 @@ import {
 	code,
 	cog,
 	commentAuthorAvatar,
-	help,
 	lockOutline,
 	notAllowed,
 	payment,
@@ -216,14 +215,6 @@ class MeSidebar extends Component {
 						link="/me/get-apps"
 						label={ translate( 'Apps' ) }
 						icon="plans"
-						onNavigate={ this.onNavigate }
-					/>
-
-					<SidebarItem
-						selected={ itemLinkMatches( '/help', path ) }
-						link="/help"
-						label={ translate( 'Support' ) }
-						icon={ help }
 						onNavigate={ this.onNavigate }
 					/>
 				</SidebarMenu>

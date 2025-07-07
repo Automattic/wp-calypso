@@ -80,13 +80,13 @@ function usePreservePurchasesViewInUrl( {
 	currentView: View;
 	setView: ( setter: View | ( ( currentView: View ) => View ) ) => void;
 } ) {
-	const urlSortField = 'sortField';
-	const urlSortDirection = 'sortDir';
-	const urlPaginationPage = 'pageNumber';
-	const urlPaginationPerPage = 'perPage';
-	const urlSiteFilterKey = 'siteFilter';
-	const urlTypeFilterKey = 'typeFilter';
-	const urlExpiringSoonFilter = 'expiringSoonFilter';
+	const urlSortField = 'purchaseSortField';
+	const urlSortDirection = 'purchaseSortDir';
+	const urlPaginationPage = 'purchasePageNumber';
+	const urlPaginationPerPage = 'purchasePerPage';
+	const urlSiteFilterKey = 'purchaseSiteFilter';
+	const urlTypeFilterKey = 'purchaseTypeFilter';
+	const urlExpiringSoonFilter = 'purchaseExpiringSoonFilter';
 	const currentUrl = window.location.href;
 
 	// Apply view from URL
