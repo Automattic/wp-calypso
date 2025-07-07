@@ -29,6 +29,10 @@ export default function Step3Send( { state }: StepProps ) {
 
 	const isSendingPreview = isSendPreview && sendReportEmailMutation.isPending;
 
+	const loadingText = translate(
+		'Please wait while we prepare your report. This may take a few minutes, depending on your data range and data selected. Do not navigate away from this screen.'
+	);
+
 	if ( reportId ) {
 		if ( isReportPending ) {
 			return (
@@ -40,12 +44,10 @@ export default function Step3Send( { state }: StepProps ) {
 						className="build-report__loading-state build-report__content-description"
 						role="status"
 						aria-live="polite"
-						aria-label={ translate( 'Please wait while we prepare your report…' ) }
+						aria-label={ loadingText }
 					>
 						<Spinner aria-hidden="true" />
-						<span aria-hidden="true">
-							{ translate( 'Please wait while we prepare your report…' ) }
-						</span>
+						<span aria-hidden="true">{ loadingText }</span>
 					</p>
 				</>
 			);

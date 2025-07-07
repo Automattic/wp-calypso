@@ -345,6 +345,11 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 					) }
 				</div>
 			) }
+			<p className="build-report__step-note">
+				{ translate(
+					"You'll be able to select your data, preview the report, and send during the next 2 steps."
+				) }
+			</p>
 		</>
 	);
 }
