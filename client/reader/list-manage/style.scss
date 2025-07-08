@@ -104,7 +104,9 @@
 }
 
 .list-manage__subscriptions-header {
-	margin: 1em 0;
+	margin: 1em 0.5em;
+	font-weight: 500;
+	font-size: 1.25rem;
 
 	.button {
 		margin-left: 1em;
@@ -130,10 +132,4 @@
 		position: relative;
 		z-index: 1;
 	}
-}
-
-.list-manage-subscription-item-adder__title {
-	font-size: 1.25rem;
-	font-weight: 500;
-	margin-bottom: 10px;
 }

@@ -21,15 +21,13 @@ export default function SubscriptionItemAdder( { list, listItems, owner } ) {
 		}
 	}, [ listItems ] );
 
-	if ( ! renderAllFollows ) {
+	if ( ! renderAllFollows || ! allFollows?.length ) {
 		return null;
 	}
 
 	return (
 		<>
-			<h2 className="list-manage-subscription-item-adder__title">
-				{ translate( 'Your subscriptions' ) }
-			</h2>
+			<h2 className="list-manage__subscriptions-header">{ translate( 'Your subscriptions' ) }</h2>
 			{ allFollows.map( ( item ) => (
 				<ListItem
 					hideIfInList
