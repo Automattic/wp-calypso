@@ -37959,6 +37959,7 @@ __metadata:
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/domain-search": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"

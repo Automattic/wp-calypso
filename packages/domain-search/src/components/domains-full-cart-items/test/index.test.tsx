@@ -26,8 +26,8 @@ describe( 'DomainsFullCartItems', () => {
 					...defaultContextValue,
 					cart: {
 						items: [
-							{ domain: 'example', tld: 'com', price: '$10' },
-							{ domain: 'test', tld: 'org', price: '$15' },
+							{ uuid: '1', domain: 'example', tld: 'com', price: '$10' },
+							{ uuid: '2', domain: 'test', tld: 'org', price: '$15' },
 						],
 						total: '$25',
 						onAddItem: () => {},
@@ -52,7 +52,7 @@ describe( 'DomainsFullCartItems', () => {
 				value={ {
 					...defaultContextValue,
 					cart: {
-						items: [ { domain: 'example', tld: 'com', price: '$10' } ],
+						items: [ { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ],
 						total: '$10',
 						onAddItem: () => {},
 						onRemoveItem,
@@ -80,6 +80,7 @@ describe( 'DomainsFullCartItems', () => {
 					cart: {
 						items: [
 							{
+								uuid: '1',
 								domain: 'example',
 								tld: 'com',
 								price: '$10',

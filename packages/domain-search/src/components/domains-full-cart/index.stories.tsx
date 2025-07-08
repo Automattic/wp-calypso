@@ -25,11 +25,29 @@ export const Default = () => {
 			} }
 			cart={ {
 				items: [
-					{ domain: 'the-lasso', tld: 'net', price: '$74' },
-					{ domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
-					{ domain: 'the-different-domain', tld: 'com', originalPrice: '$18', price: '$8' },
-					{ domain: 'the-different-domain1', tld: 'com', originalPrice: '$18', price: '$8' },
-					{ domain: 'the-different-domain2', tld: 'com', originalPrice: '$18', price: '$8' },
+					{ uuid: '1', domain: 'the-lasso', tld: 'net', price: '$74' },
+					{ uuid: '2', domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
+					{
+						uuid: '3',
+						domain: 'the-different-domain',
+						tld: 'com',
+						originalPrice: '$18',
+						price: '$8',
+					},
+					{
+						uuid: '4',
+						domain: 'the-different-domain1',
+						tld: 'com',
+						originalPrice: '$18',
+						price: '$8',
+					},
+					{
+						uuid: '5',
+						domain: 'the-different-domain2',
+						tld: 'com',
+						originalPrice: '$18',
+						price: '$8',
+					},
 				],
 				total: '$74',
 				onAddItem: () => {},

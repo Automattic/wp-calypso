@@ -90,7 +90,7 @@ describe( 'DomainsFullCart', () => {
 					...defaultContextValue,
 					isFullCartOpen: true,
 					cart: {
-						items: [ { domain: 'the-lasso', tld: 'com', price: '$10' } ],
+						items: [ { uuid: '1', domain: 'the-lasso', tld: 'com', price: '$10' } ],
 						total: '$10',
 						onAddItem: () => {},
 						onRemoveItem: () => {},
@@ -113,7 +113,7 @@ describe( 'DomainsFullCart', () => {
 					...defaultContextValue,
 					isFullCartOpen: true,
 					cart: {
-						items: [ { domain: 'the-lasso', tld: 'com', price: '$10' } ],
+						items: [ { uuid: '1', domain: 'the-lasso', tld: 'com', price: '$10' } ],
 						total: '$10',
 						onAddItem: () => {},
 						onRemoveItem: () => {},

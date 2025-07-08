@@ -1,5 +1,70 @@
+import {
+	DomainSearch,
+	type DomainSearchCart,
+	DomainsMiniCart,
+	DomainsFullCart,
+} from '@automattic/domain-search';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { useMemo } from 'react';
+import { getDomainsInCart } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+
 const DomainCartV2 = () => {
-	return null;
+	const cartKey = useCartKey();
+	const { responseCart, removeProductFromCart } = useShoppingCart( cartKey );
+
+	const cart = useMemo( () => {
+		const domainsInCart = getDomainsInCart( responseCart );
+
+		const total = formatCurrency(
+			domainsInCart.reduce( ( total, item ) => total + item.item_subtotal_integer, 0 ),
+			responseCart.currency ?? 'USD',
+			{
+				isSmallestUnit: true,
+			}
+		);
+
+		return {
+			items: domainsInCart.map( ( domain ) => {
+				const [ domainName, ...tld ] = domain.meta.split( '.' );
+
+				const hasPromotion = domain.cost_overrides?.some(
+					( override ) => ! override.does_override_original_cost
+				);
+
+				return {
+					uuid: domain.uuid,
+					domain: domainName,
+					tld: tld.join( '.' ),
+					originalPrice: hasPromotion
+						? formatCurrency( domain.item_original_cost_integer, domain.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+						  } )
+						: undefined,
+					price: formatCurrency( domain.item_subtotal_integer, domain.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				};
+			} ),
+			total,
+			onAddItem: () => {},
+			onRemoveItem: ( domain ) => {
+				removeProductFromCart( domain.uuid );
+			},
+		} satisfies DomainSearchCart;
+	}, [ responseCart, removeProductFromCart ] );
+
+	return (
+		<DomainSearch onContinue={ () => {} } cart={ cart }>
+			<DomainsMiniCart />
+			<DomainsFullCart>
+				<DomainsFullCart.Items />
+			</DomainsFullCart>
+		</DomainSearch>
+	);
 };
 
 export default DomainCartV2;
