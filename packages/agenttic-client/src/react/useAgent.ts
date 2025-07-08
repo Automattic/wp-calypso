@@ -6,6 +6,7 @@ import {
 	extractToolCallsFromMessage,
 	generateMessageId,
 } from '../client/utils/index';
+import { log } from '../client/utils/logger';
 import type {
 	Client,
 	ClientConfig,
@@ -131,10 +132,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						} ) );
 					}
 				} catch ( error ) {
-					console.warn(
-						'Failed to load conversation history:',
-						error
-					);
+					log( 'Failed to load conversation history:', error );
 				} finally {
 					setInitialHistoryLoaded( true );
 				}
@@ -150,10 +148,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				try {
 					await storeConversation( sessionId, messages );
 				} catch ( error ) {
-					console.warn(
-						'Failed to persist conversation history:',
-						error
-					);
+					log( 'Failed to persist conversation history:', error );
 				}
 			}
 		},

@@ -26,7 +26,6 @@ import {
 	createAgentTextMessage,
 	generateMessageId,
 } from './utils/index';
-import { defaultDispatcher } from './utils/dispatcher';
 
 /**
  * Default timeout for requests (2 minutes)
@@ -60,7 +59,7 @@ async function executeToolCallBatch(
 				toolId as string,
 				args,
 				messageId,
-				toolCallId as string 
+				toolCallId as string
 			);
 			const { result, returnToAgent, agentMessage } =
 				processToolExecutionResult( executionResult );
@@ -665,10 +664,8 @@ export function createClient( config: ClientConfig ): Client {
 		authProvider,
 		defaultSessionId,
 		timeout = DEFAULT_TIMEOUT,
-		proxy,
 		toolProvider,
 		contextProvider,
-		dispatcher = defaultDispatcher,
 	} = config;
 
 	// Create request configuration
@@ -677,8 +674,6 @@ export function createClient( config: ClientConfig ): Client {
 		agentUrl,
 		authProvider,
 		timeout,
-		proxy,
-		dispatcher,
 	};
 
 	return {

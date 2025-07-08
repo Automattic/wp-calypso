@@ -9,8 +9,6 @@ import { createSendTaskRequest } from '../core';
 import { enhanceMessage } from './messages';
 import { formatObject, logger } from '../logger';
 import { parseSSEStream } from './streaming';
-import type { RequestDispatcher } from '../dispatcher';
-import { defaultDispatcher } from '../dispatcher';
 import {
 	createTimeoutHandler,
 	handleRequestError,
@@ -28,7 +26,6 @@ export interface RequestConfig {
 	authProvider?: AuthProvider;
 	timeout: number;
 	proxy?: string;
-	dispatcher?: RequestDispatcher;
 }
 
 /**
@@ -57,19 +54,14 @@ export interface RequestOptions {
  * @param url     - Request URL
  * @param headers - Request headers
  * @param body    - Request body
- * @param proxy   - Proxy configuration
  */
 function logRequest(
 	method: string,
 	url: string,
 	headers: Record< string, string >,
-	body?: any,
-	proxy?: string
+	body?: any
 ) {
 	logger( 'Request: %s %s', method, url );
-	if ( proxy ) {
-		logger( 'Proxy: %s', proxy );
-	}
 	logger( 'Headers: %o', headers );
 	if ( body ) {
 		logger( 'Body: %s', formatObject( body ) );
@@ -104,23 +96,24 @@ async function getHeaders(
 }
 
 /**
- * Create fetch options with optional proxy using the provided dispatcher
+ * Create fetch options for browser requests
  *
- * @param headers    - Request headers
- * @param body       - Request body
- * @param signal     - Abort signal
- * @param proxy      - Optional proxy configuration
- * @param dispatcher - Request dispatcher to use
- * @return Fetch options with optional dispatcher
+ * @param headers - Request headers
+ * @param body    - Request body
+ * @param signal  - Abort signal
+ * @return Basic fetch options
  */
 function createFetchOptions(
 	headers: Record< string, string >,
 	body: string,
-	signal: AbortSignal,
-	proxy?: string,
-	dispatcher: RequestDispatcher = defaultDispatcher
-): RequestInit & { dispatcher?: any } {
-	return dispatcher.createFetchOptions( headers, body, signal, proxy );
+	signal: AbortSignal
+): RequestInit {
+	return {
+		method: 'POST',
+		headers,
+		body,
+		signal,
+	};
 }
 
 /**
@@ -171,7 +164,7 @@ export async function prepareRequest(
 	const headers = await getHeaders( authProvider, isStreaming );
 
 	// Log the request details
-	logRequest( 'POST', fullAgentUrl, headers, request, proxy );
+	logRequest( 'POST', fullAgentUrl, headers, request );
 
 	return {
 		request,
@@ -194,7 +187,7 @@ export async function executeRequest(
 	config: RequestConfig
 ): Promise< Task > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
-	const { timeout, proxy, dispatcher } = config;
+	const { timeout } = config;
 
 	const { timeoutId, controller } = createTimeoutHandler(
 		timeout,
@@ -205,19 +198,15 @@ export async function executeRequest(
 		const options = createFetchOptions(
 			headers,
 			JSON.stringify( request ),
-			controller.signal,
-			proxy,
-			dispatcher
+			controller.signal
 		);
 
 		logger( 'Making request to %s with options: %O', fullAgentUrl, {
 			method: options.method,
 			headers: options.headers,
-			hasDispatcher: !! options.dispatcher,
-			proxy,
 		} );
 
-		const response = await fetch( fullAgentUrl, options as any );
+		const response = await fetch( fullAgentUrl, options );
 
 		clearTimeout( timeoutId );
 
@@ -255,7 +244,7 @@ export async function* executeStreamingRequest(
 	options: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
-	const { proxy, dispatcher } = config;
+	const {} = config;
 	const { streamingTimeout = 60000 } = options;
 
 	const { timeoutId, controller } = createTimeoutHandler(
@@ -267,12 +256,10 @@ export async function* executeStreamingRequest(
 		const fetchOptions = createFetchOptions(
 			headers,
 			JSON.stringify( request ),
-			controller.signal,
-			proxy,
-			dispatcher
+			controller.signal
 		);
 
-		const response = await fetch( fullAgentUrl, fetchOptions as any );
+		const response = await fetch( fullAgentUrl, fetchOptions );
 
 		clearTimeout( timeoutId );
 

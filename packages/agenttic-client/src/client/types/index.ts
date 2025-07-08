@@ -177,10 +177,8 @@ export interface ClientConfig {
 	authProvider?: AuthProvider;
 	defaultSessionId?: string;
 	timeout?: number;
-	proxy?: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	dispatcher?: import('../utils/dispatcher').RequestDispatcher;
 }
 
 export interface SendMessageParams {

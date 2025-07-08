@@ -14,6 +14,7 @@ import {
 	extractToolCallsFromMessage,
 	generateMessageId,
 } from '../client/utils/index';
+import { log } from '../client/utils/logger';
 import {
 	clearConversation,
 	loadConversation,
@@ -79,6 +80,8 @@ function createAgentManager(): AgentManager {
 
 	/**
 	 * Persist conversation history for an agent
+	 * @param key
+	 * @param messages
 	 */
 	async function persistConversationHistory(
 		key: string,
@@ -89,7 +92,7 @@ function createAgentManager(): AgentManager {
 			try {
 				await storeConversation( agent.sessionId, messages );
 			} catch ( error ) {
-				console.warn(
+				log(
 					`Failed to persist conversation history for agent ${ key }:`,
 					error
 				);
@@ -115,7 +118,7 @@ function createAgentManager(): AgentManager {
 				try {
 					conversationHistory = await loadConversation( sessionId );
 				} catch ( error ) {
-					console.warn(
+					log(
 						`Failed to load conversation history for agent ${ key } with session ${ sessionId }:`,
 						error
 					);

@@ -10,7 +10,7 @@ import { logger } from '../logger';
  */
 export function handleRequestError(
 	error: unknown,
-	timeoutId: NodeJS.Timeout,
+	timeoutId: number,
 	operation: string = 'request'
 ): never {
 	clearTimeout( timeoutId );
@@ -88,8 +88,8 @@ export function validateStreamingResponse(
 export function createTimeoutHandler(
 	timeout: number,
 	operation: string = 'request'
-): { timeoutId: NodeJS.Timeout; controller: AbortController } {
+): { timeoutId: number; controller: AbortController } {
 	const controller = new AbortController();
-	const timeoutId = setTimeout( () => controller.abort(), timeout );
+	const timeoutId = setTimeout( () => controller.abort(), timeout ) as unknown as number;
 	return { timeoutId, controller };
 }

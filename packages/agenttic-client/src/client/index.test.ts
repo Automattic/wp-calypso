@@ -5,16 +5,16 @@ import type { ToolProvider } from './types/index';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
-vi.stubGlobal('fetch', mockFetch);
+vi.stubGlobal( 'fetch', mockFetch );
 
 describe( 'Client', () => {
-	beforeEach(() => {
+	beforeEach( () => {
 		mockFetch.mockClear();
-	});
+	} );
 
-	afterEach(() => {
+	afterEach( () => {
 		vi.restoreAllMocks();
-	});
+	} );
 
 	describe( 'Message ID behavior', () => {
 		it( 'should pass message ID to tool execution when message has an ID', async () => {
@@ -30,25 +30,30 @@ describe( 'Client', () => {
 							input_schema: {
 								type: 'object',
 								properties: {
-									input: { type: 'string' }
-								}
-							}
-						}
+									input: { type: 'string' },
+								},
+							},
+						},
 					];
 				},
-				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
+				async executeTool(
+					toolId: string,
+					args: any,
+					messageId?: string,
+					toolCallId?: string
+				) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
-				}
+				},
 			};
 
 			// Mock SSE stream response for streaming request
 			const createMockSSEStream = () => {
 				const encoder = new TextEncoder();
-				const stream = new ReadableStream({
-					start(controller) {
+				const stream = new ReadableStream( {
+					start( controller ) {
 						// Send initial message with tool call
-						const sseData = `data: ${JSON.stringify({
+						const sseData = `data: ${ JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id',
 							result: {
@@ -62,42 +67,44 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'I need to use a tool'
+												text: 'I need to use a tool',
 											},
 											{
 												type: 'data',
 												data: {
 													toolCallId: 'call-123',
 													toolId: 'test-tool',
-													arguments: { input: 'test input' }
-												}
-											}
-										]
-									}
-								}
-							}
-						})}\n\n`;
-						
-						controller.enqueue(encoder.encode(sseData));
-						
+													arguments: {
+														input: 'test input',
+													},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+
 						// Close the stream after sending the data
-						setTimeout(() => {
+						setTimeout( () => {
 							controller.close();
-						}, 10);
-					}
-				});
+						}, 10 );
+					},
+				} );
 				return stream;
 			};
 
 			// Mock the streaming response
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({
-					'content-type': 'text/event-stream'
-				}),
-				body: createMockSSEStream()
-			});
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
 
 			// Mock the follow-up streaming response after tool execution
 			const createFollowUpSSEStream = () => {
@@ -152,15 +159,17 @@ describe( 'Client', () => {
 
 			const client = createClient( {
 				agentId: 'test-agent',
-				toolProvider: mockToolProvider
+				toolProvider: mockToolProvider,
 			} );
 
 			// Act: Send a message and let the client handle tool calls
 			const userMessage = createTextMessage( 'Please use the test tool' );
-			
+
 			// Use sendMessageStream to trigger tool execution
 			const updates = [];
-			for await ( const update of client.sendMessageStream( { message: userMessage } ) ) {
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
 				updates.push( update );
 			}
 
@@ -181,25 +190,30 @@ describe( 'Client', () => {
 							input_schema: {
 								type: 'object',
 								properties: {
-									input: { type: 'string' }
-								}
-							}
-						}
+									input: { type: 'string' },
+								},
+							},
+						},
 					];
 				},
-				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
+				async executeTool(
+					toolId: string,
+					args: any,
+					messageId?: string,
+					toolCallId?: string
+				) {
 					capturedMessageId = messageId;
 					return { result: 'tool executed' };
-				}
+				},
 			};
 
 			// Mock SSE stream response for streaming request (without message ID)
 			const createMockSSEStream = () => {
 				const encoder = new TextEncoder();
-				const stream = new ReadableStream({
-					start(controller) {
+				const stream = new ReadableStream( {
+					start( controller ) {
 						// Send initial message with tool call but no message ID
-						const sseData = `data: ${JSON.stringify({
+						const sseData = `data: ${ JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id',
 							result: {
@@ -213,42 +227,44 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'I need to use a tool'
+												text: 'I need to use a tool',
 											},
 											{
 												type: 'data',
 												data: {
 													toolCallId: 'call-123',
 													toolId: 'test-tool',
-													arguments: { input: 'test input' }
-												}
-											}
-										]
-									}
-								}
-							}
-						})}\n\n`;
-						
-						controller.enqueue(encoder.encode(sseData));
-						
+													arguments: {
+														input: 'test input',
+													},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+
 						// Close the stream after sending the data
-						setTimeout(() => {
+						setTimeout( () => {
 							controller.close();
-						}, 10);
-					}
-				});
+						}, 10 );
+					},
+				} );
 				return stream;
 			};
 
 			// Mock the streaming response
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({
-					'content-type': 'text/event-stream'
-				}),
-				body: createMockSSEStream()
-			});
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
 
 			// Mock the follow-up streaming response after tool execution
 			const createFollowUpSSEStream = () => {
@@ -303,15 +319,17 @@ describe( 'Client', () => {
 
 			const client = createClient( {
 				agentId: 'test-agent',
-				toolProvider: mockToolProvider
+				toolProvider: mockToolProvider,
 			} );
 
 			// Act: Send a message and let the client handle tool calls
 			const userMessage = createTextMessage( 'Please use the test tool' );
-			
+
 			// Use sendMessageStream to trigger tool execution
 			const updates = [];
-			for await ( const update of client.sendMessageStream( { message: userMessage } ) ) {
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
 				updates.push( update );
 			}
 
@@ -321,7 +339,7 @@ describe( 'Client', () => {
 
 		it( 'should pass message ID to tool execution in nested tool call scenarios', async () => {
 			// Arrange: Create a mock tool provider that captures messageId from multiple executions
-			const capturedMessageIds: (string | undefined)[] = [];
+			const capturedMessageIds: ( string | undefined )[] = [];
 			const mockToolProvider: ToolProvider = {
 				async getAvailableTools() {
 					return [
@@ -332,24 +350,29 @@ describe( 'Client', () => {
 							input_schema: {
 								type: 'object',
 								properties: {
-									input: { type: 'string' }
-								}
-							}
-						}
+									input: { type: 'string' },
+								},
+							},
+						},
 					];
 				},
-				async executeTool( toolId: string, args: any, messageId?: string, toolCallId?: string ) {
+				async executeTool(
+					toolId: string,
+					args: any,
+					messageId?: string,
+					toolCallId?: string
+				) {
 					capturedMessageIds.push( messageId );
 					return { result: 'tool executed' };
-				}
+				},
 			};
 
 			// Mock the initial SSE stream response with first tool calls
 			const createInitialSSEStream = () => {
 				const encoder = new TextEncoder();
-				const stream = new ReadableStream({
-					start(controller) {
-						const sseData = `data: ${JSON.stringify({
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const sseData = `data: ${ JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id-1',
 							result: {
@@ -363,36 +386,38 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'I need to use the first tool'
+												text: 'I need to use the first tool',
 											},
 											{
 												type: 'data',
 												data: {
 													toolCallId: 'call-first',
 													toolId: 'test-tool',
-													arguments: { input: 'first input' }
-												}
-											}
-										]
-									}
-								}
-							}
-						})}\n\n`;
-						
-						controller.enqueue(encoder.encode(sseData));
-						setTimeout(() => controller.close(), 10);
-					}
-				});
+													arguments: {
+														input: 'first input',
+													},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
 				return stream;
 			};
 
 			// Mock the first fetch call (initial SSE stream)
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({ 'content-type': 'text/event-stream' }),
-				body: createInitialSSEStream()
-			});
+				headers: new Headers( { 'content-type': 'text/event-stream' } ),
+				body: createInitialSSEStream(),
+			} );
 
 			// Mock the second fetch call (continue task with tool results) - now streaming
 			// This response contains MORE tool calls, triggering the nested execution path
@@ -504,14 +529,18 @@ describe( 'Client', () => {
 
 			const client = createClient( {
 				agentId: 'test-agent',
-				toolProvider: mockToolProvider
+				toolProvider: mockToolProvider,
 			} );
 
 			// Act: Send a message and let the client handle multiple rounds of tool calls
-			const userMessage = createTextMessage( 'Please use tools as needed' );
-			
+			const userMessage = createTextMessage(
+				'Please use tools as needed'
+			);
+
 			const updates = [];
-			for await ( const update of client.sendMessageStream( { message: userMessage } ) ) {
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
 				updates.push( update );
 			}
 
@@ -519,8 +548,8 @@ describe( 'Client', () => {
 			// First execution should capture 'message-first' (line ~521 path)
 			// Second execution should capture 'message-second' (line ~650 path)
 			expect( capturedMessageIds ).toHaveLength( 2 );
-			expect( capturedMessageIds[0] ).toBe( 'message-first' );
-			expect( capturedMessageIds[1] ).toBe( 'message-second' );
+			expect( capturedMessageIds[ 0 ] ).toBe( 'message-first' );
+			expect( capturedMessageIds[ 1 ] ).toBe( 'message-second' );
 		} );
 	} );
-} ); 
+} );
