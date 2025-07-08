@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import Main from 'calypso/components/main';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { saveUserSettings } from 'calypso/state/user-settings/actions';
+import setUserSetting from 'calypso/state/user-settings/thunks/set-user-setting';
 import { ReaderPendingActionHandler } from './pending-action-handler';
 import './style.scss';
 
@@ -29,8 +32,13 @@ const setIsReaderPage = ( add ) => {
 	}
 };
 
-const loadSurvicateScript = ( userId ) => {
+const loadSurvicateScript = ( userId, hasCompletedSurvey, onSurveyCompleted ) => {
 	if ( survicateScriptLoaded || typeof window === 'undefined' ) {
+		return;
+	}
+
+	// Don't load script if user has already completed a survey
+	if ( hasCompletedSurvey ) {
 		return;
 	}
 
@@ -48,6 +56,17 @@ const loadSurvicateScript = ( userId ) => {
 		script.src =
 			'https://survey.survicate.com/workspaces/e4794374cce15378101b63de24117572/web_surveys.js';
 		script.async = true;
+
+		// Set up event listener once script loads
+		script.onload = () => {
+			if ( window._sva && typeof window._sva.addEventListener === 'function' ) {
+				// Listen for survey completion
+				window._sva.addEventListener( 'survey_completed', ( surveyId ) => {
+					// Call the callback to save user preference
+					onSurveyCompleted( surveyId );
+				} );
+			}
+		};
 
 		const firstScript = document.getElementsByTagName( 'script' )[ 0 ];
 		if ( firstScript && firstScript.parentNode ) {
@@ -67,10 +86,25 @@ const loadSurvicateScript = ( userId ) => {
  * Notably, this overrides the background color of the document and is used as a hook by other parts to override styles.
  */
 class ReaderMain extends Component {
+	// eslint-disable-next-line no-unused-vars
+	handleSurveyCompleted = ( surveyId ) => {
+		const { dispatch } = this.props;
+
+		// Set user preference to indicate they've completed a poll
+		dispatch( setUserSetting( 'reader_poll_completed', true ) );
+
+		// Save the settings immediately
+		dispatch( saveUserSettings() );
+	};
+
 	componentDidMount() {
 		activeReaderMainRefCount++;
 		setIsReaderPage( true );
-		loadSurvicateScript( this.props.userId );
+		loadSurvicateScript(
+			this.props.userId,
+			this.props.hasCompletedSurvey,
+			this.handleSurveyCompleted
+		);
 	}
 
 	componentWillUnmount() {
@@ -92,6 +126,10 @@ class ReaderMain extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	userId: getCurrentUserId( state ),
-} ) )( ReaderMain );
+export default connect(
+	( state ) => ( {
+		userId: getCurrentUserId( state ),
+		hasCompletedSurvey: getUserSetting( state, 'reader_poll_completed' ) === true,
+	} ),
+	{ setUserSetting, saveUserSettings }
+)( ReaderMain );
