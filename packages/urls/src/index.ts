@@ -75,3 +75,6 @@ export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registrat
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;
 export const UPDATE_NAMESERVERS = `${ root }/domains/change-name-servers/`;
 export const WPCC = `${ root }/wpcc-faq/`;
+
+export const isThisASupportArticleLink = ( href: string ) =>
+	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );
