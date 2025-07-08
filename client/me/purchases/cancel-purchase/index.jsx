@@ -410,6 +410,103 @@ class CancelPurchase extends Component {
 		);
 	};
 
+	renderMainContent = () => {
+		const { purchase, isJetpackPurchase, includedDomainPurchase, atomicTransfer } = this.props;
+		const purchaseName = getName( purchase );
+		const plan = getPlan( purchase?.productSlug );
+		const planDescription = plan?.getPlanCancellationDescription?.();
+
+		const cancellationFeatures =
+			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
+
+		return (
+			<>
+				{ includedDomainPurchase && atomicTransfer?.created_at && ! isRefundable( purchase ) && (
+					<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
+						{ this.props.translate( 'What happens when you cancel' ) }
+					</h2>
+				) }
+
+				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
+
+				<CancelPurchaseRefundInformation
+					purchase={ purchase }
+					isJetpackPurchase={ isJetpackPurchase }
+				/>
+
+				<CancelPurchaseFeatureList
+					purchase={ purchase }
+					cancellationFeatures={ cancellationFeatures }
+				/>
+
+				{ ! cancellationFeatures.length ? (
+					<>
+						<CompactCard className="cancel-purchase__product-information">
+							<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
+							<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
+							{ planDescription && (
+								<div className="cancel-purchase__plan-description">{ planDescription }</div>
+							) }
+							<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
+						</CompactCard>
+
+						<CompactCard className="cancel-purchase__footer">
+							{ isDomainRegistration( purchase ) && (
+								<div className="cancel-purchase__domain-confirmation">
+									<FormCheckbox
+										checked={ this.state.domainConfirmationConfirmed }
+										onChange={ this.onDomainConfirmationChange }
+									/>
+									<span>
+										{ this.props.translate(
+											'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
+											{
+												components: {
+													strong: <strong />,
+												},
+											}
+										) }
+									</span>
+								</div>
+							) }
+							<div className="cancel-purchase__footer-text-wrapper">
+								<div className="cancel-purchase__footer-text">
+									{ hasAmountAvailableToRefund( purchase ) ? (
+										<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
+									) : (
+										<p className="cancel-purchase__expiration-text">
+											{ this.renderExpirationText() }
+										</p>
+									) }
+								</div>
+								{ this.renderCancelButton() }
+							</div>
+						</CompactCard>
+					</>
+				) : (
+					<>
+						<AtomicRevertChanges
+							atomicTransfer={ atomicTransfer }
+							purchase={ purchase }
+							onConfirmationChange={ this.onAtomicRevertConfirmationChange }
+							needsAtomicRevertConfirmation={
+								atomicTransfer?.created_at && ! isRefundable( purchase )
+							}
+							isLoading={ this.state.isLoading }
+						/>
+
+						<p>{ this.renderFullText() }</p>
+
+						<div className="cancel-purchase__confirm-buttons">
+							{ this.renderCancelButton() }
+							{ this.renderKeepSubscriptionButton() }
+						</div>
+					</>
+				) }
+			</>
+		);
+	};
+
 	renderDomainOptionsContent = () => {
 		const { includedDomainPurchase, purchase, translate } = this.props;
 		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
@@ -477,14 +574,9 @@ class CancelPurchase extends Component {
 			return null;
 		}
 
-		const { purchase, isJetpackPurchase } = this.props;
+		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
-		const plan = getPlan( purchase?.productSlug );
-		const planDescription = plan?.getPlanCancellationDescription?.();
 		const { siteName, siteId } = purchase;
-
-		const cancellationFeatures =
-			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
 
 		let heading;
 
@@ -541,102 +633,9 @@ class CancelPurchase extends Component {
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
-							{ this.state.showDomainOptionsStep ? (
-								this.renderDomainOptionsContent()
-							) : (
-								<>
-									{ this.props.includedDomainPurchase &&
-										this.props.atomicTransfer?.created_at &&
-										! isRefundable( purchase ) && (
-											<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
-												{ this.props.translate( 'What happens when you cancel' ) }
-											</h2>
-										) }
-
-									<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
-
-									<CancelPurchaseRefundInformation
-										purchase={ purchase }
-										isJetpackPurchase={ isJetpackPurchase }
-									/>
-
-									<CancelPurchaseFeatureList
-										purchase={ purchase }
-										cancellationFeatures={ cancellationFeatures }
-									/>
-
-									{ ! cancellationFeatures.length ? (
-										<>
-											<CompactCard className="cancel-purchase__product-information">
-												<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-												<div className="cancel-purchase__description">
-													{ purchaseType( purchase ) }
-												</div>
-												{ planDescription && (
-													<div className="cancel-purchase__plan-description">
-														{ planDescription }
-													</div>
-												) }
-												<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
-											</CompactCard>
-
-											<CompactCard className="cancel-purchase__footer">
-												{ isDomainRegistration( purchase ) && (
-													<div className="cancel-purchase__domain-confirmation">
-														<FormCheckbox
-															checked={ this.state.domainConfirmationConfirmed }
-															onChange={ this.onDomainConfirmationChange }
-														/>
-														<span>
-															{ this.props.translate(
-																'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
-																{
-																	components: {
-																		strong: <strong />,
-																	},
-																}
-															) }
-														</span>
-													</div>
-												) }
-												<div className="cancel-purchase__footer-text-wrapper">
-													<div className="cancel-purchase__footer-text">
-														{ hasAmountAvailableToRefund( purchase ) ? (
-															<p className="cancel-purchase__refund-amount">
-																{ this.renderFooterText() }
-															</p>
-														) : (
-															<p className="cancel-purchase__expiration-text">
-																{ this.renderExpirationText() }
-															</p>
-														) }
-													</div>
-													{ this.renderCancelButton() }
-												</div>
-											</CompactCard>
-										</>
-									) : (
-										<>
-											<AtomicRevertChanges
-												atomicTransfer={ this.props.atomicTransfer }
-												purchase={ purchase }
-												onConfirmationChange={ this.onAtomicRevertConfirmationChange }
-												needsAtomicRevertConfirmation={
-													this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
-												}
-												isLoading={ this.state.isLoading }
-											/>
-
-											<p>{ this.renderFullText() }</p>
-
-											<div className="cancel-purchase__confirm-buttons">
-												{ this.renderCancelButton() }
-												{ this.renderKeepSubscriptionButton() }
-											</div>
-										</>
-									) }
-								</>
-							) }
+							{ this.state.showDomainOptionsStep
+								? this.renderDomainOptionsContent()
+								: this.renderMainContent() }
 						</div>
 
 						<div className="cancel-purchase__right">
