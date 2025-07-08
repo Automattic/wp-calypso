@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Card,
 	CardBody,
@@ -116,8 +117,15 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 };
 
 const StagingSiteManagementMoveInfo: FunctionComponent = () => {
+	const isMobile = useBreakpoint( '<660px' );
+
 	return (
-		<Grid alignment="topLeft" columns={ 2 } gap={ 6 } style={ { maxWidth: '748px' } }>
+		<Grid
+			alignment="topLeft"
+			columns={ isMobile ? 1 : 2 }
+			gap={ 6 }
+			style={ { maxWidth: '748px' } }
+		>
 			{ infoCardItems.map( ( item, index ) => (
 				<Item key={ index } style={ { padding: '0' } }>
 					<InfoCard item={ item } />
