@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
@@ -15,6 +15,7 @@ import ListItem from './list-item';
 
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
+	const [ renderAllFollows, setRenderAllFollows ] = useState( false );
 
 	const [ query, updateQuery ] = useState( '' );
 	const queryIsUrl = resemblesUrl( query );
@@ -26,8 +27,14 @@ export default function ItemAdder( props ) {
 		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
 	);
 
-	const isEmptyList = props.listItems?.length === 0;
-	const showAllFollows = isEmptyList && ! query;
+	// Continue showing the all follows list when there is no query, if we have been in the empty
+	// state and exposed it once in this session.
+	useEffect( () => {
+		if ( props.listItems?.length === 0 ) {
+			setRenderAllFollows( true );
+		}
+	}, [ props.listItems ] );
+	const showAllFollows = renderAllFollows && ! query;
 
 	return (
 		<div className="list-manage__item-adder" id="reader-list-item-adder">
