@@ -99,30 +99,55 @@ describe( 'Client', () => {
 				body: createMockSSEStream()
 			});
 
-			// Mock the follow-up response after tool execution
+			// Mock the follow-up streaming response after tool execution
+			const createFollowUpSSEStream = () => {
+				const stream = new ReadableStream({
+					start(controller) {
+						const encoder = new TextEncoder();
+						
+						// Send the completion event
+						const completionEvent = JSON.stringify({
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Task completed!'
+											}
+										]
+									},
+									final: true
+								}
+							}
+						});
+						
+						const sseData = `data: ${completionEvent}\n\n`;
+						controller.enqueue(encoder.encode(sseData));
+						
+						// Close the stream after sending the data
+						setTimeout(() => {
+							controller.close();
+						}, 10);
+					}
+				});
+				return stream;
+			};
+
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
-				json: async () => ({
-					jsonrpc: '2.0',
-					id: 'test-request-id-2',
-					result: {
-						id: 'test-task-id',
-						status: {
-							state: 'completed',
-							message: {
-								role: 'agent',
-								kind: 'message',
-								parts: [
-									{
-										type: 'text',
-										text: 'Task completed!'
-									}
-								]
-							}
-						}
-					}
-				})
+				headers: new Headers({
+					'content-type': 'text/event-stream'
+				}),
+				body: createFollowUpSSEStream()
 			});
 
 			const client = createClient( {
@@ -225,30 +250,55 @@ describe( 'Client', () => {
 				body: createMockSSEStream()
 			});
 
-			// Mock the follow-up response after tool execution
+			// Mock the follow-up streaming response after tool execution
+			const createFollowUpSSEStream = () => {
+				const stream = new ReadableStream({
+					start(controller) {
+						const encoder = new TextEncoder();
+						
+						// Send the completion event
+						const completionEvent = JSON.stringify({
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Task completed!'
+											}
+										]
+									},
+									final: true
+								}
+							}
+						});
+						
+						const sseData = `data: ${completionEvent}\n\n`;
+						controller.enqueue(encoder.encode(sseData));
+						
+						// Close the stream after sending the data
+						setTimeout(() => {
+							controller.close();
+						}, 10);
+					}
+				});
+				return stream;
+			};
+
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
-				json: async () => ({
-					jsonrpc: '2.0',
-					id: 'test-request-id-2',
-					result: {
-						id: 'test-task-id',
-						status: {
-							state: 'completed',
-							message: {
-								role: 'agent',
-								kind: 'message',
-								parts: [
-									{
-										type: 'text',
-										text: 'Task completed!'
-									}
-								]
-							}
-						}
-					}
-				})
+				headers: new Headers({
+					'content-type': 'text/event-stream'
+				}),
+				body: createFollowUpSSEStream()
 			});
 
 			const client = createClient( {
@@ -344,66 +394,112 @@ describe( 'Client', () => {
 				body: createInitialSSEStream()
 			});
 
-			// Mock the second fetch call (continue task with tool results)
+			// Mock the second fetch call (continue task with tool results) - now streaming
 			// This response contains MORE tool calls, triggering the nested execution path
+			const createSecondSSEStream = () => {
+				const stream = new ReadableStream({
+					start(controller) {
+						const encoder = new TextEncoder();
+						
+						const secondEvent = JSON.stringify({
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'message-second', // Second message ID - this should be passed to nested tool calls
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'I need to use another tool'
+											},
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-second',
+													toolId: 'test-tool',
+													arguments: { input: 'second input' }
+												}
+											}
+										]
+									},
+									final: true
+								}
+							}
+						});
+						
+						const sseData = `data: ${secondEvent}\n\n`;
+						controller.enqueue(encoder.encode(sseData));
+						
+						setTimeout(() => {
+							controller.close();
+						}, 10);
+					}
+				});
+				return stream;
+			};
+
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
-				json: async () => ({
-					jsonrpc: '2.0',
-					id: 'test-request-id-2',
-					result: {
-						id: 'test-task-id',
-						status: {
-							state: 'input-required',
-							message: {
-								messageId: 'message-second', // Second message ID - this should be passed to nested tool calls
-								role: 'agent',
-								kind: 'message',
-								parts: [
-									{
-										type: 'text',
-										text: 'I need to use another tool'
-									},
-									{
-										type: 'data',
-										data: {
-											toolCallId: 'call-second',
-											toolId: 'test-tool',
-											arguments: { input: 'second input' }
-										}
-									}
-								]
-							}
-						}
-					}
-				})
+				headers: new Headers({
+					'content-type': 'text/event-stream'
+				}),
+				body: createSecondSSEStream()
 			});
 
-			// Mock the third fetch call (final completion)
+			// Mock the third fetch call (final completion) - now streaming
+			const createThirdSSEStream = () => {
+				const stream = new ReadableStream({
+					start(controller) {
+						const encoder = new TextEncoder();
+						
+						const finalEvent = JSON.stringify({
+							jsonrpc: '2.0',
+							id: 'test-request-id-3',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'All tasks completed!'
+											}
+										]
+									},
+									final: true
+								}
+							}
+						});
+						
+						const sseData = `data: ${finalEvent}\n\n`;
+						controller.enqueue(encoder.encode(sseData));
+						
+						setTimeout(() => {
+							controller.close();
+						}, 10);
+					}
+				});
+				return stream;
+			};
+
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
-				json: async () => ({
-					jsonrpc: '2.0',
-					id: 'test-request-id-3',
-					result: {
-						id: 'test-task-id',
-						status: {
-							state: 'completed',
-							message: {
-								role: 'agent',
-								kind: 'message',
-								parts: [
-									{
-										type: 'text',
-										text: 'All tasks completed!'
-									}
-								]
-							}
-						}
-					}
-				})
+				headers: new Headers({
+					'content-type': 'text/event-stream'
+				}),
+				body: createThirdSSEStream()
 			});
 
 			const client = createClient( {
