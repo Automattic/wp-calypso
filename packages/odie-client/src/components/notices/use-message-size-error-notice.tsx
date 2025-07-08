@@ -9,7 +9,7 @@ export default function useMessageSizeErrorNotice() {
 
 	const isMessageLengthValid = useMemo( () => {
 		return ( message?: string ) => {
-			if ( message?.length && message.length > 3 ) {
+			if ( message?.length && message.length > 4096 ) {
 				return false;
 			}
 			return true;
