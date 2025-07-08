@@ -7,7 +7,10 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import {
+	useCanConnectToZendeskMessaging,
+	useLoadZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
@@ -58,9 +61,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isLoading: isLoadingChatStatus,
 		supportActivity,
 	} = useChatStatus();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+
 	useLoadZendeskMessaging(
-		isEligibleForChat || hasActiveChats,
-		isEligibleForChat || hasActiveChats
+		canConnectToZendesk && ( isEligibleForChat || hasActiveChats ),
+		canConnectToZendesk && ( isEligibleForChat || hasActiveChats )
 	);
 
 	const { sectionName, site } = useHelpCenterContext();

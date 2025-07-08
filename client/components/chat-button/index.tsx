@@ -66,7 +66,7 @@ const ChatButton: FC< Props > = ( {
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	function shouldShowChatButton(): boolean {
-		if ( isEligibleForChat && hasActiveChats ) {
+		if ( isEligibleForChat && hasActiveChats && canConnectToZendesk ) {
 			return true;
 		}
 
