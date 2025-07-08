@@ -58,8 +58,8 @@ export default function BuildReportActions( {
 		[ setCurrentStep ]
 	);
 
-	const changeTimeframe = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_reports_change_timeframe_click' ) );
+	const changeReportDetails = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_reports_change_report_details_click' ) );
 		handleUpdateUrl( 1 );
 	}, [ handleUpdateUrl, dispatch ] );
 
@@ -168,8 +168,8 @@ export default function BuildReportActions( {
 					) }
 					{ reportErrorMetadata.errorCode === 'report_empty_data' && (
 						<div className="build-report__actions">
-							<Button variant="primary" onClick={ changeTimeframe }>
-								{ translate( 'Change date range' ) }
+							<Button variant="primary" onClick={ changeReportDetails }>
+								{ translate( 'Change report details' ) }
 							</Button>
 						</div>
 					) }

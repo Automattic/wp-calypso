@@ -19,7 +19,7 @@ export const useReportError = ( reportData?: Report ) => {
 		switch ( errorCode ) {
 			case 'report_empty_data':
 				return translate(
-					"We didn't find any data for the selected dates. The site may be new or inactive during this period. Try picking a different date range to see results."
+					'No data found for this timeframe. The site may be new, inactive, or missing Jetpack (required for reports). Try another date range or install Jetpack to see results.'
 				);
 			default:
 				return translate( 'There was an error preparing your report.' );
