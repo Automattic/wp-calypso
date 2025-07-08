@@ -21,14 +21,13 @@ import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
-import FileBrowser, {
-	type FileBrowserFilterConfig,
-} from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import type { FileBrowserFilterConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
 // TODO: Temporary style for the PoC
 import './style.scss';
