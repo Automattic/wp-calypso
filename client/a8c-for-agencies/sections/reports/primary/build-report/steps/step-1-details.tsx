@@ -94,6 +94,8 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 															)
 														)
 													}
+													target="_blank"
+													rel="noreferrer"
 												/>
 											),
 										},
