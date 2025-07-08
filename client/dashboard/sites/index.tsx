@@ -76,6 +76,17 @@ export default function Sites() {
 			return;
 		}
 
+		if ( nextView.type !== view.type ) {
+			navigate( {
+				search: {
+					...currentSearchParams,
+					view: { type: nextView.type },
+				},
+			} );
+			updateViewPreferences( { type: nextView.type } );
+			return;
+		}
+
 		const _defaultView = {
 			...defaultView,
 			...DEFAULT_LAYOUTS[ nextView.type as keyof typeof DEFAULT_LAYOUTS ],
