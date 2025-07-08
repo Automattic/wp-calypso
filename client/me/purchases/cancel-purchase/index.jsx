@@ -8,8 +8,10 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card, CompactCard } from '@automattic/components';
+import { Card, CompactCard, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
+import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -20,6 +22,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormRadio from 'calypso/components/forms/form-radio';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
@@ -55,7 +58,6 @@ import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
-import DomainOptionsStep from './domain-options-step';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
 
@@ -396,6 +398,189 @@ class CancelPurchase extends Component {
 		);
 	};
 
+	renderDomainOptionsContent = () => {
+		const { includedDomainPurchase, purchase, translate } = this.props;
+		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
+
+		if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+			return null;
+		}
+
+		const onCancelBundledDomainChange = ( event ) => {
+			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
+			this.setState( {
+				cancelBundledDomain: newCancelBundledDomainValue,
+				confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancelBundledDomain,
+			} );
+		};
+
+		const onConfirmCancelBundledDomainChange = ( event ) => {
+			const checked = event.target.checked;
+			this.setState( {
+				confirmCancelBundledDomain: checked,
+			} );
+		};
+
+		const canContinue = () => {
+			if ( ! cancelBundledDomain ) {
+				return true;
+			}
+			return confirmCancelBundledDomain;
+		};
+
+		return (
+			<>
+				<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
+					{ translate( 'Domain Options' ) }
+				</h2>
+				<div className="cancel-purchase__domain-options">
+					<p>
+						{ translate(
+							'Your plan includes the custom domain {{strong}}%(domain)s{{/strong}}. What would you like to do with the domain?',
+							{
+								args: {
+									domain: includedDomainPurchase.meta,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<CompactCard>
+						<FormLabel key="keep_bundled_domain">
+							<FormRadio
+								name="keep_bundled_domain"
+								value="keep"
+								checked={ ! cancelBundledDomain }
+								onChange={ onCancelBundledDomainChange }
+								label={
+									<>
+										{ translate( 'Cancel the plan, but keep "%(domain)s"', {
+											args: {
+												domain: includedDomainPurchase.meta,
+											},
+										} ) }
+										<br />
+										<span className="cancel-purchase__refund-domain-info">
+											{ translate(
+												"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
+													'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
+													"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
+												{
+													args: {
+														productName: getName( purchase ),
+														domainCost: includedDomainPurchase.costToUnbundleText,
+														refundAmount: purchase.refundText,
+													},
+												}
+											) }
+										</span>
+									</>
+								}
+							/>
+						</FormLabel>
+					</CompactCard>
+					<CompactCard>
+						<FormLabel key="cancel_bundled_domain">
+							<FormRadio
+								name="cancel_bundled_domain"
+								value="cancel"
+								checked={ cancelBundledDomain }
+								onChange={ onCancelBundledDomainChange }
+								label={
+									<>
+										{ translate(
+											'Cancel the plan {{strong}}and{{/strong}} the domain "%(domain)s"',
+											{
+												args: {
+													domain: includedDomainPurchase.meta,
+												},
+												components: {
+													strong: <strong />,
+												},
+											}
+										) }
+										<br />
+										<span className="cancel-purchase__refund-domain-info">
+											{ translate(
+												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
+													"you'll lose it permanently.",
+												{
+													args: {
+														planCost: purchase.totalRefundText,
+													},
+												}
+											) }
+										</span>
+									</>
+								}
+							/>
+						</FormLabel>
+					</CompactCard>
+					{ cancelBundledDomain && (
+						<span className="cancel-purchase__domain-warning">
+							{ translate(
+								"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
+									"available again, so it's possible you won't have another chance to register it in the future. " +
+									"If you'd like to use your domain on a site hosted elsewhere, consider {{a}}updating your name " +
+									'servers{{/a}} instead.',
+								{
+									components: {
+										a: (
+											<a
+												href={ localizeUrl( UPDATE_NAMESERVERS ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+							<FormLabel>
+								<FormCheckbox
+									checked={ confirmCancelBundledDomain }
+									onChange={ onConfirmCancelBundledDomainChange }
+								/>
+								<span className="cancel-purchase__domain-confirm">
+									{ translate(
+										'I understand that canceling my domain means I might {{strong}}never be able to register it ' +
+											'again{{/strong}}.',
+										{
+											components: {
+												strong: <strong />,
+											},
+										}
+									) }
+								</span>
+							</FormLabel>
+						</span>
+					) }
+				</div>
+				<div className="cancel-purchase__confirm-buttons">
+					<FormButton
+						isPrimary
+						disabled={ ! canContinue() }
+						onClick={ () =>
+							this.onDomainOptionsComplete( {
+								cancelBundledDomain,
+								confirmCancelBundledDomain,
+							} )
+						}
+					>
+						{ translate( 'Continue' ) }
+					</FormButton>
+					<FormButton
+						isPrimary={ false }
+						onClick={ () => this.setState( { showDomainOptionsStep: false } ) }
+					>
+						{ translate( 'Back' ) }
+					</FormButton>
+				</div>
+			</>
+		);
+	};
+
 	render() {
 		if ( ! this.isDataValid() ) {
 			return null;
@@ -440,55 +625,49 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
-				{ this.state.showDomainOptionsStep ? (
-					<DomainOptionsStep
-						includedDomainPurchase={ this.props.includedDomainPurchase }
-						purchase={ purchase }
-						isVisible
-						onClose={ () => this.setState( { showDomainOptionsStep: false } ) }
-						onContinue={ this.onDomainOptionsComplete }
+				<CancelPurchaseForm
+					disableButtons={ this.state.isLoading }
+					purchase={ purchase }
+					isVisible={ this.state.surveyShown }
+					onClose={ () => this.setState( { surveyShown: false } ) }
+					onSurveyComplete={ this.onSurveyComplete }
+					flowType={ getPurchaseCancellationFlowType( purchase ) }
+					cancelBundledDomain={ this.state.cancelBundledDomain }
+					includedDomainPurchase={ this.props.includedDomainPurchase }
+					cancellationCompleted={ this.state.cancellationCompleted }
+					cancellationMessage={ this.state.cancellationMessage }
+					cancellationInProgress={ this.state.isLoading }
+				/>
+				<Card className="cancel-purchase__wrapper-card">
+					<QueryProductsList />
+					<TrackPurchasePageView
+						eventName="calypso_cancel_purchase_purchase_view"
+						purchaseId={ this.props.purchaseId }
 					/>
-				) : (
-					<>
-						<CancelPurchaseForm
-							disableButtons={ this.state.isLoading }
-							purchase={ purchase }
-							isVisible={ this.state.surveyShown }
-							onClose={ () => this.setState( { surveyShown: false } ) }
-							onSurveyComplete={ this.onSurveyComplete }
-							flowType={ getPurchaseCancellationFlowType( purchase ) }
-							cancelBundledDomain={ this.state.cancelBundledDomain }
-							includedDomainPurchase={ this.props.includedDomainPurchase }
-							cancellationCompleted={ this.state.cancellationCompleted }
-							cancellationMessage={ this.state.cancellationMessage }
-							cancellationInProgress={ this.state.isLoading }
+
+					<div className="cancel-purchase__back">
+						<HeaderCakeBack
+							icon="chevron-left"
+							href={ this.props.getManagePurchaseUrlFor(
+								this.props.siteSlug,
+								this.props.purchaseId
+							) }
 						/>
-						<Card className="cancel-purchase__wrapper-card">
-							<QueryProductsList />
-							<TrackPurchasePageView
-								eventName="calypso_cancel_purchase_purchase_view"
-								purchaseId={ this.props.purchaseId }
-							/>
+					</div>
 
-							<div className="cancel-purchase__back">
-								<HeaderCakeBack
-									icon="chevron-left"
-									href={ this.props.getManagePurchaseUrlFor(
-										this.props.siteSlug,
-										this.props.purchaseId
-									) }
-								/>
-							</div>
+					<FormattedHeader
+						className="cancel-purchase__formatted-header"
+						brandFont
+						headerText={ heading }
+						align="left"
+					/>
 
-							<FormattedHeader
-								className="cancel-purchase__formatted-header"
-								brandFont
-								headerText={ heading }
-								align="left"
-							/>
-
-							<div className="cancel-purchase__inner-wrapper">
-								<div className="cancel-purchase__left">
+					<div className="cancel-purchase__inner-wrapper">
+						<div className="cancel-purchase__left">
+							{ this.state.showDomainOptionsStep ? (
+								this.renderDomainOptionsContent()
+							) : (
+								<>
 									{ this.props.includedDomainPurchase &&
 										this.props.atomicTransfer?.created_at &&
 										! isRefundable( purchase ) && (
@@ -589,18 +768,18 @@ class CancelPurchase extends Component {
 											</div>
 										</>
 									) }
-								</div>
+								</>
+							) }
+						</div>
 
-								<div className="cancel-purchase__right">
-									<div className="cancel-purchase__sticky-sidebar">
-										<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-										<SupportLink usage="cancel-purchase" purchase={ purchase } />
-									</div>
-								</div>
+						<div className="cancel-purchase__right">
+							<div className="cancel-purchase__sticky-sidebar">
+								<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+								<SupportLink usage="cancel-purchase" purchase={ purchase } />
 							</div>
-						</Card>
-					</>
-				) }
+						</div>
+					</div>
+				</Card>
 			</>
 		);
 	}
