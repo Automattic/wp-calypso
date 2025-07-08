@@ -104,7 +104,9 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 						<Icon icon={ item.icon.icon } size={ 20 } />
 					</div>
 					<VStack>
-						<Text weight={ 500 }>{ item.title }</Text>
+						<Text weight={ 500 } size={ 16 }>
+							{ item.title }
+						</Text>
 						<Text>{ item.description }</Text>
 						<HStack alignment="left" spacing={ 1 }>
 							<Icon icon={ item.locationIcon } size={ 16 } style={ { fill: '#757575' } } />
@@ -123,7 +125,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	return (
 		<VStack spacing={ 10 }>
 			<div>
-				<Heading level={ 2 } weight={ 500 } size={ 24 }>
+				<Heading level={ 1 } weight={ 500 } size={ 20 }>
 					{ __( 'Staging site management has moved' ) }
 				</Heading>
 				<Text>
