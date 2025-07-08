@@ -3,6 +3,7 @@ import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import { useLoginContext } from 'calypso/login/login-context';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
@@ -12,8 +13,6 @@ import HeadingLogo from './heading-logo';
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromAkismet: boolean;
-	headingText: string;
-	headingSubText: React.ReactNode;
 	children: React.ReactNode;
 	signupUrl?: string;
 	shouldUseWideHeading?: number;
@@ -22,8 +21,6 @@ interface OneLoginLayoutProps {
 const OneLoginLayout = ( {
 	isJetpack,
 	isFromAkismet,
-	headingText,
-	headingSubText,
 	children,
 	signupUrl: signupUrlProp,
 	shouldUseWideHeading,
@@ -33,6 +30,7 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const { headingText, subHeadingText } = useLoginContext();
 
 	const SignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
@@ -64,12 +62,12 @@ const OneLoginLayout = ( {
 					text={
 						<>
 							<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
-							<div className="wp-login__heading-text">{ headingText }</div>
+							{ headingText && <div className="wp-login__heading-text">{ headingText }</div> }
 						</>
 					}
 					subText={
 						// <span> here because the Step.Heading renders subtext as a <p> tag.
-						<span className="wp-login__heading-subtext">{ headingSubText }</span>
+						subHeadingText && <span className="wp-login__heading-subtext">{ subHeadingText }</span>
 					}
 				/>
 			}

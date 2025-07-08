@@ -331,8 +331,10 @@ export class Login extends Component {
 			translate,
 		} );
 
-		this.context.setHeadingText( headingText );
-		this.context.setHeadingSubText( headingSubText );
+		this.context.setHeaders( {
+			heading: headingText,
+			subHeading: headingSubText,
+		} );
 	}
 
 	render() {
@@ -387,8 +389,6 @@ export class Login extends Component {
 					<OneLoginLayout
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
-						headingText={ this.context.headingText }
-						headingSubText={ this.context.headingSubText }
 						shouldUseWideHeading={ 'lostpassword' !== action }
 						signupUrl={ this.props.signupUrl }
 					>
