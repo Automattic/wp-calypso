@@ -46,7 +46,6 @@ class CancelPurchaseButton extends Component {
 		onCancellationStart: PropTypes.func,
 		onCancellationComplete: PropTypes.func,
 		onSurveyComplete: PropTypes.func,
-		onPerformCancellation: PropTypes.func,
 		moment: PropTypes.func,
 		triggerCancellation: PropTypes.bool,
 	};
