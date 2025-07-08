@@ -166,8 +166,8 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
-	getCancelPurchaseSurveyCompletedPreferenceKey,
 	isA4ATemporarySitePurchase,
+	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
