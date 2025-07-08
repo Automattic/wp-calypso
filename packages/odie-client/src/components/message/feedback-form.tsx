@@ -112,9 +112,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 					{ ! isFormHidden && (
 						<div ref={ feedbackRef } className="odie-conversation-feedback__message">
 							<h3>{ __( 'Thank you for your input' ) }</h3>
-							<p>
-								{ __( 'Please share any other details that can help understand your rating.' ) }
-							</p>
+							<p>{ __( 'Please share any details that can help us understand your rating' ) }</p>
 							{ score === 'bad' && (
 								<SelectControl
 									className="odie-conversation-feedback__reason"
