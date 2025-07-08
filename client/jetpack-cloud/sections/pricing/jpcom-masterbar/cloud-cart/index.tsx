@@ -29,7 +29,7 @@ const CloudCart = ( { cartStyle }: { cartStyle?: React.CSSProperties } ) => {
 		const buildUrlParams =
 			responseCart.products.length > 1
 				? {
-						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/recommendations/site-type`,
+						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=my-jetpack`,
 				  }
 				: undefined;
 
