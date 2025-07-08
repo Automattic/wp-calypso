@@ -69,12 +69,13 @@ export default function useJetpackFreeButtonProps(
 
 	const adminUrlBase = urlQueryArgs?.admin_url || site?.options?.admin_url || undefined;
 
-	const siteWpAdminUrl = adminUrlBase
-		? getUrlFromParts( {
-				...getUrlParts( adminUrlBase + 'admin.php' ),
-				search: '?page=my-jetpack',
-		  } ).href
-		: undefined;
+	const siteWpAdminUrl =
+		adminUrlBase && site?.jetpack !== false
+			? getUrlFromParts( {
+					...getUrlParts( adminUrlBase + 'admin.php' ),
+					search: '?page=my-jetpack',
+			  } ).href
+			: undefined;
 
 	const trackCallback = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
 		site_id: siteId || undefined,
