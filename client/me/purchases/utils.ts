@@ -43,7 +43,7 @@ export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
 	// site(s) to work. This function may need to be updated in the future as additional products types
 	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless.(jetpack|akismet|marketplace.wp|agencies.automattic).com$/.test( domain );
+	return /^siteless.(jetpack|akismet|marketplace.wp|agencies.automattic|a4a).com$/.test( domain );
 }
 
 export function getTemporarySiteType( purchase: Purchase ): string | null {
@@ -67,10 +67,8 @@ export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 }
 
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	const { productType } = purchase;
-	console.log( 'purchase', purchase );
-	console.log( 'productType', productType );
-	return isTemporarySitePurchase( purchase ) && productType === 'a4a';
+	const { meta } = purchase;
+	return isTemporarySitePurchase( purchase ) && meta === 'is-a4a';
 }
 
 export function getCancelPurchaseSurveyCompletedPreferenceKey(

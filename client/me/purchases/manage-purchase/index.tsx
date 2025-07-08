@@ -167,6 +167,7 @@ import {
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
+	isA4ATemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -1155,7 +1156,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		if (
+			isMarketplaceTemporarySitePurchase( purchase ) ||
+			isA4ATemporarySitePurchase( purchase )
+		) {
 			return null;
 		}
 

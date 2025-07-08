@@ -352,9 +352,6 @@ export function PurchaseItemStatus( {
 		}
 	}
 
-	console.log( '######################### purchase', purchase );
-	console.log( '######################### isDisconnectedSite', isDisconnectedSite );
-
 	if (
 		isDisconnectedSite &&
 		! isAkismetTemporarySitePurchase( purchase ) &&
