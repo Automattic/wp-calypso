@@ -126,7 +126,7 @@ export const HelpCenterSupportChatMessage = ( {
 							</svg>
 						}
 					/>
-					<span>
+					<span className="help-center-support-chat__conversation-information-time">
 						<TimeSince date={ receivedDateISO } dateFormat="lll" />
 					</span>
 				</div>
