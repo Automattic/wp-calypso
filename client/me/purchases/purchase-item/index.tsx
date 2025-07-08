@@ -13,6 +13,7 @@ import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
+import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -23,12 +24,10 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
-import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
 	getDisplayName,
 	isExpired,

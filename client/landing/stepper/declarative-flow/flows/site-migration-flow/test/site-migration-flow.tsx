@@ -215,6 +215,33 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			it( 'redirects to SITE_MIGRATION_UPGRADE_PLAN when the action=migrate and how=difm', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+					query: {
+						from: 'https://site-to-be-migrated.com',
+						platform: 'wordpress',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+						action: 'migrate',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://site-to-be-migrated.com',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+					},
+				} );
+			} );
+
 			it( 'redirects to the import flow if there is no from query parameter', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,

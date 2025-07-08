@@ -14,11 +14,13 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { useSelector } from 'react-redux';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 const DirectionArrow = () => {
 	return (
@@ -61,7 +63,8 @@ interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
-	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
 }
 
 interface EnvironmentConfig {
@@ -133,11 +136,23 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
-export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
+export default function SyncModal( {
+	onClose,
+	syncType,
+	environment,
+	productionSiteId,
+	stagingSiteId,
+}: SyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
 
-	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
-	//const { siteSlug } = siteRoute.useParams();
+	const targetEnvironment = syncConfig[ environment ].syncTo;
+	const sourceEnvironment = syncConfig[ environment ].syncFrom;
+
+	const productionSiteSlug =
+		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) ?? '';
+	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) ?? '';
+
+	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
 
 	return (
 		<Modal
@@ -149,19 +164,16 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 				<VStack spacing={ 7 }>
 					<Text>
 						{ createInterpolateElement( syncConfig[ environment ].description, {
-							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
+							a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
 						} ) }
 					</Text>
 					<HStack spacing={ 2 } alignment="center">
 						<EnvironmentLabel
 							label={ syncConfig.fromLabel }
-							environmentType={ syncConfig[ environment ].syncFrom }
+							environmentType={ sourceEnvironment }
 						/>
 						<DirectionArrow />
-						<EnvironmentLabel
-							label={ syncConfig.toLabel }
-							environmentType={ syncConfig[ environment ].syncTo }
-						/>
+						<EnvironmentLabel label={ syncConfig.toLabel } environmentType={ targetEnvironment } />
 					</HStack>
 					<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 					<Text>

@@ -7,6 +7,8 @@ import {
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	getIntroductoryOfferIntervalDisplay,
 	isUserVisibleCostOverride,
+	PARTNER_PAYPAL_EXPRESS,
+	PARTNER_PAYPAL_PPCP,
 } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -20,7 +22,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { PARTNER_PAYPAL_EXPRESS, PARTNER_PAYPAL_PPCP } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';

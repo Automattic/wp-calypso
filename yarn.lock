@@ -2438,9 +2438,12 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
+    "@automattic/js-utils": "workspace:^"
     "@automattic/number-formatters": "npm:^1.0.1"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
+    "@fnando/cnpj": "npm:2.0.0"
+    "@fnando/cpf": "npm:1.0.2"
     "@stripe/stripe-js": "npm:^1.54.2"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
@@ -5945,6 +5948,20 @@ __metadata:
   version: 0.2.1
   resolution: "@floating-ui/utils@npm:0.2.1"
   checksum: ee77756712cf5b000c6bacf11992ffb364f3ea2d0d51cc45197a7e646a17aeb86ea4b192c0b42f3fbb29487aee918a565e84f710b8c3645827767f406a6b4cc9
+  languageName: node
+  linkType: hard
+
+"@fnando/cnpj@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@fnando/cnpj@npm:2.0.0"
+  checksum: 02097098affaf67f4ebdb48cdb47cc34e8dd6b0e31a2e0bab84d1a771d2943b6ca117f1a3d36a45b7da9f4e7eae01c2ffb2d9ecbc9a7123a1d4c29b263a1f531
+  languageName: node
+  linkType: hard
+
+"@fnando/cpf@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@fnando/cpf@npm:1.0.2"
+  checksum: bb8ffb5775ce3ad4c468d8085ba9486c5ea7ee12c470e5ad1c32b4bbdcc0c88ff5361ac97276936f56cffed425642c07550a0e8f153e15f185b7308bc92e9092
   languageName: node
   linkType: hard
 
@@ -15038,7 +15055,6 @@ __metadata:
     cookie: "npm:^0.7.2"
     cookie-parser: "npm:^1.4.7"
     core-js-bundle: "npm:^3.6.4"
-    cpf_cnpj: "npm:^0.2.0"
     creditcards: "npm:^3.1.0"
     csv-parse: "npm:^5.1.0"
     d3-array: "npm:^2.4.0"
@@ -16563,13 +16579,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 1c1703be4f02a250b1d6ca3267e408ce16abfe8364193891afc94c2d5c060b69611fdc8d97af74b7e6d5d1aac0ab2fb94d6b079573146bc2d756c2484ce5f0ee
-  languageName: node
-  linkType: hard
-
-"cpf_cnpj@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "cpf_cnpj@npm:0.2.0"
-  checksum: 19f938f968004718748886bc032fc42484abe94747a77416a6be1aa535e22b314bf0b7470c132fae1cda1fef3b1486f95c5da502cf1d55ce870a06dda41cdd3e
   languageName: node
   linkType: hard
 

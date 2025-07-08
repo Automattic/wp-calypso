@@ -7,10 +7,16 @@ import AsyncLoad from 'calypso/components/async-load';
 interface SyncDropdownProps {
 	className?: string;
 	environment: 'production' | 'staging';
-	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
 }
 
-export default function SyncDropdown( { className, environment, siteSlug }: SyncDropdownProps ) {
+export default function SyncDropdown( {
+	className,
+	environment,
+	productionSiteId,
+	stagingSiteId,
+}: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
 
@@ -77,7 +83,8 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 					onClose={ handleCloseModal }
 					syncType={ syncType }
 					environment={ environment }
-					siteSlug={ siteSlug }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
 				/>
 			) }
 		</>

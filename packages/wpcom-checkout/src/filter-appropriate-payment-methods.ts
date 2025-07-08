@@ -1,9 +1,8 @@
-import isPaymentMethodEnabled from './is-payment-method-enabled';
-import { readCheckoutPaymentMethodSlug } from './translate-payment-method-names';
+import { isPaymentMethodEnabled, readCheckoutPaymentMethodSlug } from './index';
+import type { CheckoutPaymentMethodSlug } from './types';
 import type { PaymentMethod } from '@automattic/composite-checkout';
-import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
-export default function filterAppropriatePaymentMethods( {
+export function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
 	allowedPaymentMethods,
 }: {

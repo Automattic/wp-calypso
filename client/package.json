@@ -130,7 +130,6 @@
 		"cookie": "^0.7.2",
 		"cookie-parser": "^1.4.7",
 		"core-js-bundle": "^3.6.4",
-		"cpf_cnpj": "^0.2.0",
 		"creditcards": "^3.1.0",
 		"csv-parse": "^5.1.0",
 		"d3-array": "^2.4.0",

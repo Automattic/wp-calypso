@@ -10,6 +10,7 @@ import {
 	ReportStatusColumn,
 	ReportDateColumn,
 	ReportTimeframeColumn,
+	ReportClientEmailsColumn,
 } from '../primary/dashboard/report-columns';
 import type { Report } from '../types';
 
@@ -40,6 +41,11 @@ export default function ReportsMobileView( {
 									startDate={ report.data.start_date }
 									endDate={ report.data.end_date }
 								/>
+							</div>
+						</ListItemCardContent>
+						<ListItemCardContent title={ translate( 'Client Emails' ) }>
+							<div className="reports-details-mobile-view__column">
+								<ReportClientEmailsColumn emails={ report.data.client_emails } />
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Created' ) }>

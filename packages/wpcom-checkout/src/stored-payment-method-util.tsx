@@ -1,15 +1,29 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
-import creditCardCartesBancairesImage from 'calypso/assets/images/upgrades/cc-cb.svg';
-import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
-import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
-import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
-import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
-import creditCardPlaceholderImage from 'calypso/assets/images/upgrades/cc-placeholder.svg';
-import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
-import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
-import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
-import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
+import creditCardAmexImage from './images/cc-amex.svg';
+import creditCardCartesBancairesImage from './images/cc-cb.svg';
+import creditCardDinersImage from './images/cc-diners.svg';
+import creditCardDiscoverImage from './images/cc-discover.svg';
+import creditCardJCBImage from './images/cc-jcb.svg';
+import creditCardMasterCardImage from './images/cc-mastercard.svg';
+import creditCardPlaceholderImage from './images/cc-placeholder.svg';
+import creditCardUnionPayImage from './images/cc-unionpay.svg';
+import creditCardVisaImage from './images/cc-visa.svg';
+import payPalImage from './images/paypal.svg';
+import razorpayImage from './images/upi.svg';
+
+export {
+	creditCardAmexImage,
+	creditCardCartesBancairesImage,
+	creditCardDinersImage,
+	creditCardDiscoverImage,
+	creditCardJCBImage,
+	creditCardMasterCardImage,
+	creditCardPlaceholderImage,
+	creditCardUnionPayImage,
+	creditCardVisaImage,
+	payPalImage,
+	razorpayImage,
+};
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PARTNER_PAYPAL_PPCP = 'paypal_ppcp';
