@@ -396,6 +396,20 @@ class CancelPurchase extends Component {
 		);
 	};
 
+	renderKeepSubscriptionButton = () => {
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<FormButton
+				isPrimary={ false }
+				href={ this.props.getManagePurchaseUrlFor( siteSlug, this.props.purchaseId ) }
+				onClick={ this.onKeepSubscriptionClick }
+			>
+				{ translate( 'Keep subscription' ) }
+			</FormButton>
+		);
+	};
+
 	renderDomainOptionsContent = () => {
 		const { includedDomainPurchase, purchase, translate } = this.props;
 		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
@@ -438,16 +452,7 @@ class CancelPurchase extends Component {
 					>
 						{ translate( 'Cancel subscription' ) }
 					</FormButton>
-					<FormButton
-						isPrimary={ false }
-						href={ this.props.getManagePurchaseUrlFor(
-							this.props.siteSlug,
-							this.props.purchaseId
-						) }
-						onClick={ this.onKeepSubscriptionClick }
-					>
-						{ translate( 'Keep subscription' ) }
-					</FormButton>
+					{ this.renderKeepSubscriptionButton() }
 				</div>
 			</>
 		);
@@ -626,17 +631,7 @@ class CancelPurchase extends Component {
 
 											<div className="cancel-purchase__confirm-buttons">
 												{ this.renderCancelButton() }
-												<FormButton
-													isPrimary={ false }
-													disabled={ this.state.isLoading }
-													href={ this.props.getManagePurchaseUrlFor(
-														this.props.siteSlug,
-														this.props.purchaseId
-													) }
-													onClick={ this.onKeepSubscriptionClick }
-												>
-													{ this.props.translate( 'Keep subscription' ) }
-												</FormButton>
+												{ this.renderKeepSubscriptionButton() }
 											</div>
 										</>
 									) }
