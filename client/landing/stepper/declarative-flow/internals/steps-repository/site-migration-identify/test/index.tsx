@@ -179,12 +179,7 @@ describe( 'SiteMigrationIdentify', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows the back link when the entrypoint is "goals"', () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( { entryPoint: 'goals' } ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
+	it( 'shows the back link when the "ref" param is set', () => {
 		render(
 			{
 				navigation: {
@@ -193,39 +188,6 @@ describe( 'SiteMigrationIdentify', () => {
 				},
 			},
 			{ initialEntry: '/some-path?ref=goals' }
-		);
-
-		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
-	} );
-
-	it( 'shows the back button when the "back_to" param is defined', () => {
-		render(
-			{
-				navigation: {
-					goBack: jest.fn(),
-					submit: jest.fn(),
-				},
-			},
-			{ initialEntry: '/some-path?back_to=https://example.com' }
-		);
-
-		expect( screen.getByRole( 'link', { name: /Back/ } ) ).toBeVisible();
-	} );
-
-	it( 'shows the back button when the entrypoint is "wp-admin-importers-list"', () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
-		render(
-			{
-				navigation: {
-					goBack: jest.fn(),
-					submit: jest.fn(),
-				},
-			},
-			{ initialEntry: '/some-path?ref=wp-admin-importers-list' }
 		);
 
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();

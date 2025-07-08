@@ -72,18 +72,21 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
+	const isScanning = isFetching || ( isFetched && ! hasError );
+
 	useEffect( () => {
 		if ( siteInfo ) {
 			onComplete( siteInfo );
 		}
 	}, [ onComplete, siteInfo ] );
 
-	if ( isFetching || ( isFetched && ! hasError ) ) {
-		onVisibilityChange?.( false );
+	useEffect( () => {
+		onVisibilityChange?.( ! isScanning );
+	}, [ isScanning, onVisibilityChange ] );
+
+	if ( isScanning ) {
 		return <ScanningStep />;
 	}
-
-	onVisibilityChange?.( true );
 
 	const hostingDetailItems = {
 		'blazing-fast-speed': {
