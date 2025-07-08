@@ -60,7 +60,7 @@ export default function Step3Send( { state }: StepProps ) {
 						{ translate( 'Step 3 of 3: Report preparation failed' ) }
 					</h2>
 					<p className="build-report__step-description" role="alert" aria-live="assertive">
-						{ translate( 'There was an error preparing your report.' ) }
+						{ state.reportErrorMetadata.errorText }
 					</p>
 				</>
 			);
