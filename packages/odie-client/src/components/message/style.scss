@@ -226,11 +226,14 @@ $blueberry-color: #3858e9;
 			}
 		}
 
+		.odie-chatbox-message__content {
+			flex-basis: calc(100% - 78px);
+		}
+
 		.odie-conversation__feedback {
 			width: 100%;
-			margin-left: 30px;
+			margin-left: 46px;
 			display: flex;
-			gap: 76px;
 			align-items: center;
 
 			&.has_message {
@@ -295,6 +298,11 @@ $blueberry-color: #3858e9;
 			button.is-primary {
 				margin-top: 10px;
     			margin-right: 8px;
+				background: var(--studio-wordpress-blue, #3858e9);
+			}
+
+			button.is-tertiary {
+				color: var(--studio-wordpress-blue, #3858e9);
 			}
 		}
 	}

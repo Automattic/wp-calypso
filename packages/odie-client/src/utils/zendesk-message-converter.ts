@@ -60,6 +60,11 @@ function getContentMessage( message: ZendeskMessage ): string {
 			// We don't support it yet return generic message.
 			messageContent = __( 'Message content not supported' );
 	}
+
+	if ( message?.metadata?.type === 'csat' && message.actions?.length ) {
+		messageContent = __( 'Please help us improve. How would you rate your support experience?' );
+	}
+
 	return messageContent;
 }
 

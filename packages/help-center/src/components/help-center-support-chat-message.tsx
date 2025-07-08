@@ -41,7 +41,10 @@ export const HelpCenterSupportChatMessage = ( {
 	const { __ } = useI18n();
 	const { currentUser } = useHelpCenterContext();
 	const { displayName, received, role, text, altText } = message;
-
+	const messageText =
+		'metadata' in message && message.metadata?.type === 'csat'
+			? __( 'Please help us improve. How would you rate your support experience?' )
+			: text;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
@@ -103,7 +106,7 @@ export const HelpCenterSupportChatMessage = ( {
 			</div>
 			<div className="help-center-support-chat__conversation-information">
 				<div className="help-center-support-chat__conversation-information-message">
-					{ text || altText }
+					{ messageText || altText }
 				</div>
 				<div className="help-center-support-chat__conversation-sub-information">
 					<span className="help-center-support-chat__conversation-information-name">

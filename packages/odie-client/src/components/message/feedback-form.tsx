@@ -88,9 +88,6 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	return (
 		<>
 			<div className={ clsx( 'odie-conversation__feedback', { has_message: score } ) }>
-				<div className="odie-conversation-feedback__text">
-					<p>{ __( 'Was this helpful?' ) }</p>
-				</div>
 				<div className="odie-conversation-feedback__thumbs">
 					<Button onClick={ () => postScore( 'good' ) }>
 						<ThumbsUpIcon />
