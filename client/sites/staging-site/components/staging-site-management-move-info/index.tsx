@@ -84,7 +84,7 @@ interface InfoCardProps {
 const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 	return (
 		<Card>
-			<CardBody>
+			<CardBody style={ { padding: '16px' } }>
 				<HStack spacing={ 4 } alignment="topLeft">
 					<div
 						style={ {
@@ -117,9 +117,9 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 
 const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	return (
-		<Grid alignment="topLeft" columns={ 2 } gap={ 2 } style={ { maxWidth: '748px' } }>
+		<Grid alignment="topLeft" columns={ 2 } gap={ 6 } style={ { maxWidth: '748px' } }>
 			{ infoCardItems.map( ( item, index ) => (
-				<Item key={ index }>
+				<Item key={ index } style={ { padding: '0' } }>
 					<InfoCard item={ item } />
 				</Item>
 			) ) }
