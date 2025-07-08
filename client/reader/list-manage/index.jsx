@@ -25,6 +25,7 @@ import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
 import ListItem from './list-item';
+import SubscriptionItemAdder from './subscription-item-adder';
 
 import './style.scss';
 
@@ -62,6 +63,7 @@ function Items( { list, listItems, owner } ) {
 					) ) }
 				</>
 			) }
+			<SubscriptionItemAdder list={ list } listItems={ listItems } owner={ owner } />
 		</>
 	);
 }
