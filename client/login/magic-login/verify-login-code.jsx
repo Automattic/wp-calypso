@@ -38,7 +38,7 @@ const VerifyLoginCode = ( {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ showError, setShowError ] = useState( false );
 	const dispatch = useDispatch();
-	const { setHeadingText, setHeadingSubText } = useLoginContext();
+	const { setHeaders } = useLoginContext();
 
 	// Create refs for each input field to manage focus
 	const inputRefs = useRef( Array.from( { length: CODE_LENGTH }, () => createRef() ) );
@@ -59,18 +59,18 @@ const VerifyLoginCode = ( {
 	}, [ isAuthenticated, authSuccessData ] );
 
 	useEffect( () => {
-		setHeadingText( translate( 'Check your email for a code' ) );
-		setHeadingSubText(
-			translate( 'Enter the code sent to your email {{strong}}%(email)s{{/strong}}', {
+		setHeaders( {
+			heading: translate( 'Check your email for a code' ),
+			subHeading: translate( 'Enter the code sent to your email {{strong}}%(email)s{{/strong}}', {
 				args: {
 					email: usernameOrEmail,
 				},
 				components: {
 					strong: <strong />,
 				},
-			} )
-		);
-	}, [ setHeadingText, setHeadingSubText, translate, usernameOrEmail ] );
+			} ),
+		} );
+	}, [ setHeaders, translate, usernameOrEmail ] );
 
 	// Focus first input on page load for an easy input
 	useEffect( () => {

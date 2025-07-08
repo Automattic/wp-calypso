@@ -85,8 +85,10 @@ class RequestLoginEmailForm extends Component {
 				.then( ( result ) => this.setState( { site: result } ) );
 		}
 
-		this.context?.setHeadingText( this.props.translate( 'Email me a login link' ) );
-		this.context?.setHeadingSubText( this.getSubHeaderText() );
+		this.context?.setHeaders( {
+			heading: this.props.translate( 'Email me a login link' ),
+			subHeading: this.getSubHeaderText(),
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -95,7 +97,10 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		if ( this.state.site?.name && prevProps.site?.name !== this.state.site?.name ) {
-			this.context?.setHeadingSubText( this.getSubHeaderText() );
+			this.context?.setHeaders( {
+				heading: this.context?.heading,
+				subHeading: this.getSubHeaderText(),
+			} );
 		}
 	}
 

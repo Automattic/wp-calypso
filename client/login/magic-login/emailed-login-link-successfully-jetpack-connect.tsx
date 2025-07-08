@@ -24,7 +24,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { setHeadingText, setHeadingSubText } = useLoginContext();
+	const { setHeaders } = useLoginContext();
 
 	useEffect( () => {
 		const enhancedRecordPageView = withEnhancers( recordPageView, [ enhanceWithSiteType ] );
@@ -32,9 +32,9 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 	}, [] );
 
 	useEffect( () => {
-		setHeadingText( translate( 'Check your email' ) );
-		setHeadingSubText(
-			emailAddress
+		setHeaders( {
+			heading: translate( 'Check your email' ),
+			subHeading: emailAddress
 				? translate(
 						'We sent a message to {{strong}}%(emailAddress)s{{/strong}} with a link to log in to WordPress.com.',
 						{
@@ -46,9 +46,9 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 							},
 						}
 				  )
-				: translate( 'We sent a message to log in to WordPress.com' )
-		);
-	}, [ setHeadingText, setHeadingSubText, translate, emailAddress ] );
+				: translate( 'We sent a message to log in to WordPress.com' ),
+		} );
+	}, [ setHeaders, translate, emailAddress ] );
 
 	return (
 		<div className="magic-login__successfully-jetpack">

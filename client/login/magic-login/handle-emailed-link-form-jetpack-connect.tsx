@@ -56,7 +56,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'from' ) ===
 		'automattic-for-agencies-client';
 
-	const { setHeadingText, setHeadingSubText } = useLoginContext();
+	const { setHeaders } = useLoginContext();
 
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {
@@ -66,8 +66,10 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			dispatch( fetchMagicLoginAuthenticate( token, redirectToOriginal ) );
 		}
 
-		setHeadingText( translate( 'Email confirmed!' ) );
-		setHeadingSubText( null );
+		setHeaders( {
+			heading: translate( 'Email confirmed!' ),
+			subHeading: null,
+		} );
 	}, [] );
 
 	// Lifted from `blocks/login`

@@ -29,7 +29,6 @@ import {
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
-import { LoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -131,9 +130,6 @@ class MagicLogin extends Component {
 		maskedEmailAddress: '',
 		hashedEmail: null,
 	};
-
-	// @ts-ignore
-	static contextType = LoginContext;
 
 	componentDidMount() {
 		const { oauth2Client, query } = this.props;
@@ -1362,8 +1358,6 @@ class MagicLogin extends Component {
 			<OneLoginLayout
 				isJetpack={ isJetpackLogin }
 				isFromAkismet={ this.props.isFromAkismet }
-				headingText={ this.context?.headingText }
-				headingSubText={ this.context?.headingSubText }
 				shouldUseWideHeading={ false }
 			>
 				{ mainContent }

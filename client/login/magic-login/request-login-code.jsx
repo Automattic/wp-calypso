@@ -40,17 +40,19 @@ const RequestLoginCode = ( {
 } ) => {
 	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
 	const usernameOrEmailRef = useRef( null );
-	const { setHeadingText, setHeadingSubText } = useLoginContext();
+	const { setHeaders } = useLoginContext();
 	useEffect( () => {
 		if ( onReady ) {
 			onReady();
 		}
 
-		setHeadingText( translate( 'Email me a login code' ) );
-		setHeadingSubText(
-			translate( "We'll send you an email with a code that will log you in right away." )
-		);
-	}, [ onReady, setHeadingText, setHeadingSubText, translate ] );
+		setHeaders( {
+			heading: translate( 'Email me a login code' ),
+			subHeading: translate(
+				"We'll send you an email with a code that will log you in right away."
+			),
+		} );
+	}, [ onReady, setHeaders, translate ] );
 
 	const onUsernameOrEmailFieldChange = ( event ) => {
 		setUsernameOrEmail( event.target.value );

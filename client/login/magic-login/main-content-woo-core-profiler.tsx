@@ -17,7 +17,7 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ resendEmailCountdown, setResendEmailCountdown ] = useState( RESEND_EMAIL_COUNTDOWN_TIME );
-	const { setHeadingText, setHeadingSubText } = useLoginContext();
+	const { setHeaders } = useLoginContext();
 
 	const resetResendEmailCountdown = () => {
 		if ( ! resendEmailCountdownId ) {
@@ -65,9 +65,9 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 	}, [] );
 
 	useEffect( () => {
-		setHeadingText( translate( 'Check your email' ) );
-		setHeadingSubText(
-			emailAddress
+		setHeaders( {
+			heading: translate( 'Check your email' ),
+			subHeading: emailAddress
 				? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}.", {
 						args: {
 							emailAddress,
@@ -76,9 +76,9 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 							strong: <strong />,
 						},
 				  } )
-				: translate( 'We just emailed you a link.' )
-		);
-	}, [ emailAddress, setHeadingText, setHeadingSubText, translate ] );
+				: translate( 'We just emailed you a link.' ),
+		} );
+	}, [ emailAddress, setHeaders, translate ] );
 
 	return (
 		<div className="magic-login__main-content-woo-core-profiler">

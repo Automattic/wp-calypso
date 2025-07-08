@@ -38,13 +38,18 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
-		this.context?.setHeadingText( this.props.translate( 'Check your email' ) );
-		this.context?.setHeadingSubText( this.getSubHeaderText() );
+		this.context?.setHeaders( {
+			heading: this.props.translate( 'Check your email' ),
+			subHeading: this.getSubHeaderText(),
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.emailAddress !== this.props.emailAddress ) {
-			this.context?.setHeadingSubText( this.getSubHeaderText() );
+			this.context?.setHeaders( {
+				heading: this.context?.heading,
+				subHeading: this.getSubHeaderText(),
+			} );
 		}
 	}
 
