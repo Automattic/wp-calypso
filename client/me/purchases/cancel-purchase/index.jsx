@@ -560,6 +560,7 @@ class CancelPurchase extends Component {
 				<div className="cancel-purchase__confirm-buttons">
 					<FormButton
 						isPrimary
+						scary
 						disabled={ ! canContinue() }
 						onClick={ () =>
 							this.onDomainOptionsComplete( {
@@ -568,13 +569,17 @@ class CancelPurchase extends Component {
 							} )
 						}
 					>
-						{ translate( 'Continue' ) }
+						{ translate( 'Cancel subscription' ) }
 					</FormButton>
 					<FormButton
 						isPrimary={ false }
-						onClick={ () => this.setState( { showDomainOptionsStep: false } ) }
+						href={ this.props.getManagePurchaseUrlFor(
+							this.props.siteSlug,
+							this.props.purchaseId
+						) }
+						onClick={ this.onKeepSubscriptionClick }
 					>
-						{ translate( 'Back' ) }
+						{ translate( 'Keep subscription' ) }
 					</FormButton>
 				</div>
 			</>
