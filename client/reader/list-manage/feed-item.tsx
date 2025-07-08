@@ -65,6 +65,7 @@ export default function FeedItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
+	hideFollowButton?: boolean;
 } ) {
 	const { list, owner, item } = props;
 	const feed = useSelector( ( state ) => {
@@ -106,7 +107,7 @@ export default function FeedItem( props: {
 		<Card className="list-manage__site-card">
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
 
-			{ props.isFollowed && (
+			{ props.isFollowed && ! props.hideFollowButton && (
 				<FollowButton followLabel={ translate( 'Following site' ) } following />
 			) }
 

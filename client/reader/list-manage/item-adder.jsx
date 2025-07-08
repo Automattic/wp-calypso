@@ -83,6 +83,7 @@ export default function ItemAdder( props ) {
 						<ListItem
 							hideIfInList
 							isFollowed
+							hideFollowButton
 							item={ item }
 							key={ item.feed_ID || item.site_ID || item.tag_ID || item.feed_URL }
 							list={ props.list }
