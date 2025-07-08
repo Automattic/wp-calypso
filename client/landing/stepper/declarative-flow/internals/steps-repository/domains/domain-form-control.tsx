@@ -32,6 +32,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
+	onContinue: () => void;
 	analyticsSection: string;
 	flow: string | null;
 	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
@@ -45,6 +46,7 @@ interface DomainFormControlProps {
 }
 
 export function DomainFormControl( {
+	onContinue,
 	analyticsSection,
 	flow,
 	onAddDomain,
@@ -214,7 +216,7 @@ export function DomainFormControl( {
 
 		return (
 			<CalypsoShoppingCartProvider>
-				{ isDomainSearchV2Enabled && <DomainCartV2 /> }
+				{ isDomainSearchV2Enabled && <DomainCartV2 onContinue={ onContinue } /> }
 				<RegisterDomainStepComponent
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
