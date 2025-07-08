@@ -1,15 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import './notices.scss';
 import { useSupportStatus } from '../data/use-support-status';
+import './notices.scss';
 
 export const BlockedZendeskNotice: React.FC = () => {
-	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
+	const { sectionName } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportStatus } = useSupportStatus();
 	const isEligibleForChat = supportStatus?.eligibility.is_user_eligible;
 
