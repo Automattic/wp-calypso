@@ -493,6 +493,24 @@ class MasterbarLoggedIn extends Component {
 		const menuItems = [
 			[ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ],
 			[
+				...( ! site?.is_wpcom_staging_site
+					? [
+							{
+								label: (
+									<div className="masterbar__site-info">
+										<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+										<div className="masterbar__info-badges">
+											<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
+										</div>
+									</div>
+								),
+								onClick: () => {
+									this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
+									page( `/plans/${ siteSlug }` );
+								},
+							},
+					  ]
+					: [] ),
 				{
 					label: (
 						<div className="masterbar__site-infos">
@@ -500,14 +518,6 @@ class MasterbarLoggedIn extends Component {
 								<div className="masterbar__site-info">
 									<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
 									<div className="masterbar__info-badges">{ siteBadges }</div>
-								</div>
-							) }
-							{ ! site?.is_wpcom_staging_site && (
-								<div className="masterbar__site-info">
-									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
-									<div className="masterbar__info-badges">
-										<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
-									</div>
 								</div>
 							) }
 						</div>

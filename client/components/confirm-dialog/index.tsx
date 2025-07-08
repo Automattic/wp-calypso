@@ -5,24 +5,26 @@ import './style.scss';
 
 interface DialogFooterProps {
 	children: React.ReactNode;
+	className?: string;
 }
 
-export const DialogFooter = ( { children }: DialogFooterProps ) => {
-	return <div className="confirm-dialog__footer">{ children }</div>;
+export const DialogFooter = ( { children, className }: DialogFooterProps ) => {
+	return <div className={ clsx( 'confirm-dialog__footer', className ) }>{ children }</div>;
 };
 
 interface DialogContentProps {
 	children: React.ReactNode;
+	className?: string;
 }
 
-export const DialogContent = ( { children }: DialogContentProps ) => {
-	return <div className="confirm-dialog__content">{ children }</div>;
+export const DialogContent = ( { children, className }: DialogContentProps ) => {
+	return <div className={ clsx( 'confirm-dialog__content', className ) }>{ children }</div>;
 };
 
 interface ConfirmDialogProps {
 	onRequestClose: ComponentProps< typeof Modal >[ 'onRequestClose' ];
 	children: React.ReactNode;
-	title: string;
+	title?: string;
 	style?: React.CSSProperties;
 	className?: string;
 }

@@ -170,6 +170,10 @@ export default function ReportsDetails( { siteReports, closeSitePreviewPane }: P
 					onConfirm={ () => {
 						dispatch( recordTracksEvent( 'calypso_a4a_reports_delete_report_confirm_click' ) );
 						handleDeleteReport( reportToDelete, () => {
+							// If there is only one report left, close the preview pane
+							if ( siteReports.reports.length === 1 ) {
+								closeSitePreviewPane();
+							}
 							setReportToDelete( null );
 						} );
 					} }

@@ -17,7 +17,7 @@ export const reportsOverviewContext: Callback = ( context, next ) => {
 	context.secondary = <ReportsSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Reports  > Overview" path={ context.path } />
+			<PageViewTracker title="Reports > Overview" path={ context.path } />
 			<ReportsOverview />
 		</>
 	);

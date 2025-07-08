@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { getConversationIdFromInteraction, zendeskMessageConverter } from '../utils';
+import { zendeskMessageConverter } from '../utils';
 import type { ZendeskMessage } from '../types';
 
 /**
@@ -13,16 +13,12 @@ import type { ZendeskMessage } from '../types';
 export const useZendeskMessageListener = () => {
 	const { setChat, chat } = useOdieAssistantContext();
 
-	const { isChatLoaded, currentSupportInteraction } = useSelect( ( select ) => {
+	const { isChatLoaded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
 			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
 		};
 	}, [] );
-
-	const currentZendeskConversationId =
-		getConversationIdFromInteraction( currentSupportInteraction );
 
 	const messageListener = useCallback(
 		( message: unknown, data: { conversation: { id: string } } ) => {
@@ -52,12 +48,5 @@ export const useZendeskMessageListener = () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', messageListener );
 		};
-	}, [
-		isChatLoaded,
-		currentZendeskConversationId,
-		chat,
-		setChat,
-		currentSupportInteraction,
-		messageListener,
-	] );
+	}, [ isChatLoaded, messageListener ] );
 };

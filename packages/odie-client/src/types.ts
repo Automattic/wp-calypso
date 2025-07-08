@@ -20,7 +20,6 @@ export type OdieAssistantContextInterface = {
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
-	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	forceEmailSupport: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
@@ -28,9 +27,6 @@ export type OdieAssistantContextInterface = {
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
-	setWaitAnswerToFirstMessageFromHumanSupport: (
-		waitAnswerToFirstMessageFromHumanSupport: boolean
-	) => void;
 };
 
 export type OdieAssistantProviderProps = {

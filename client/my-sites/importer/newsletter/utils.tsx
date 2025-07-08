@@ -7,6 +7,7 @@ import { ClickHandler } from 'calypso/components/step-progress';
 import {
 	PaidNewsletterData,
 	StepStatus,
+	Steps,
 } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { navigate } from 'calypso/lib/navigate';
 
@@ -26,10 +27,7 @@ export function getStepsProgress(
 	fromSite: string,
 	paidNewsletterData?: PaidNewsletterData
 ) {
-	const summaryStatus = getImporterStatus(
-		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps?.subscribers?.status
-	);
+	const summaryStatus = getImporterStatus( paidNewsletterData?.steps );
 
 	const result: ClickHandler[] = [
 		{
@@ -76,13 +74,11 @@ export function getStepsProgress(
 /*
  * Gather entire engine's status by combining "content" and "subscribers" steps status
  */
-export function getImporterStatus(
-	contentStepStatus?: StepStatus,
-	subscribersStepStatus?: StepStatus
-): StepStatus {
+export function getImporterStatus( steps?: Steps ): StepStatus {
 	// Initialize both statuses to 'initial' if undefined.
-	const content = contentStepStatus || 'initial';
-	const subscribers = subscribersStepStatus || 'initial';
+	const content = steps?.content?.status || 'initial';
+	const contentImportStatus = steps?.content?.content?.importStatus;
+	const subscribers = steps?.subscribers?.status || 'initial';
 
 	if ( content === 'done' && subscribers === 'done' ) {
 		return 'done';
@@ -102,6 +98,10 @@ export function getImporterStatus(
 
 	if ( content === 'importing' || subscribers === 'importing' ) {
 		return 'importing';
+	}
+
+	if ( contentImportStatus === 'importExpired' ) {
+		return 'expired';
 	}
 
 	return 'initial';

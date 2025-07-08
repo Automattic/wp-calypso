@@ -16,6 +16,7 @@ import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
+import ReferEnterpriseHosting from './refer-enterprise-hosting';
 
 export const marketplaceContext: Callback = () => {
 	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
@@ -62,6 +63,20 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
 			<HostingOverview section={ section } />
+		</>
+	);
+	next();
+};
+
+export const marketplaceReferEnterpriseHostingContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker
+				title="Marketplace > Hosting > Refer Enterprise Hosting"
+				path={ context.path }
+			/>
+			<ReferEnterpriseHosting />
 		</>
 	);
 	next();

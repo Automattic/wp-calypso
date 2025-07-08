@@ -21,7 +21,6 @@ import {
 	NewUserResponse,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
 } from '@automattic/calypso-e2e';
@@ -228,19 +227,17 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
-			await purchasesPage.cancelPurchase( 'Cancel plan' );
 		} );
 
 		it( 'Cancel plan renewal', async function () {
-			await cancelPurchaseFlow( page, {
-				reason: 'Another reason…',
-				customReasonText: 'E2E TEST CANCELLATION',
-			} );
-
 			noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-				timeout: 30 * 1000,
-			} );
+			await purchasesPage.cancelPurchase( 'Cancel plan' );
+			await noticeComponent.noticeShown(
+				'Your refund has been processed and your purchase removed.',
+				{
+					timeout: 30 * 1000,
+				}
+			);
 		} );
 	} );
 

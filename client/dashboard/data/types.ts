@@ -6,6 +6,7 @@ export type * from './me-profile';
 export type * from './me-sites';
 export type * from './me-ssh';
 export type * from './site';
+export type * from './site-atomic-transfers';
 export type * from './site-domains';
 export type * from './site-hosting-edge-cache';
 export type * from './site-hosting-sftp';

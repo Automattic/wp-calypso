@@ -14,7 +14,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ChangePaymentMethod from '../change-payment-method';
-import type { StoredPaymentMethod } from '../../../../lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 jest.mock( '@stripe/react-stripe-js', () => {
 	const stripe = jest.requireActual( '@stripe/react-stripe-js' );

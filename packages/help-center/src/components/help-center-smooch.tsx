@@ -32,6 +32,12 @@ const initSmooch = ( {
 
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		delegate: {
+			onInvalidAuth() {
+				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+				return Promise.resolve( '' );
+			},
+		},
 		embedded: true,
 		soundNotificationEnabled: false,
 		externalId,
@@ -162,6 +168,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
+			Smooch.on( 'disconnected', () => {
+				recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
+			} );
+			Smooch.on( 'reconnecting', () => {
+				recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
+			} );
 		}
 
 		return () => {

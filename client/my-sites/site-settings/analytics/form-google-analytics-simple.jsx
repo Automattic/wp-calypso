@@ -10,7 +10,6 @@ import {
 	FormLabel,
 	Button,
 } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
@@ -36,13 +35,11 @@ const GoogleAnalyticsSimpleForm = ( {
 	isSavingSettings,
 	isSubmitButtonDisabled,
 	placeholderText,
-	recordSupportLinkClick,
 	setDisplayForm,
 	showUpgradeNudge,
 	site,
 	translate,
 } ) => {
-	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
 		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
 		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
@@ -101,16 +98,6 @@ const GoogleAnalyticsSimpleForm = ( {
 									'A free analytics tool that offers additional insights into your site.'
 								) }{ ' ' }
 							</p>
-							<p>
-								<InlineSupportLink
-									onClick={ recordSupportLinkClick }
-									showIcon={ false }
-									supportPostId={ 98905 }
-									supportLink={ analyticsSupportUrl }
-								>
-									{ translate( 'Learn more' ) }
-								</InlineSupportLink>
-							</p>
 						</div>
 					</div>
 					{ displayForm && (
@@ -136,7 +123,10 @@ const GoogleAnalyticsSimpleForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<InlineSupportLink supportContext="google-analytics-measurement-id">
+								<InlineSupportLink
+									supportContext="google-analytics-measurement-id"
+									tracksEvent="calypso_traffic_settings_google_support_click"
+								>
 									{ translate( 'Where can I find my Measurement ID?' ) }
 								</InlineSupportLink>
 							</FormFieldset>
@@ -149,22 +139,6 @@ const GoogleAnalyticsSimpleForm = ( {
 									{
 										components: {
 											a: <a href={ '/stats/' + site.domain } />,
-										},
-									}
-								) }
-							</p>
-							<p>
-								{ translate(
-									'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
-									{
-										components: {
-											a: (
-												<InlineSupportLink
-													showIcon={ false }
-													supportPostId={ 98905 }
-													supportLink={ analyticsSupportUrl }
-												/>
-											),
 										},
 									}
 								) }

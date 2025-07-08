@@ -38,7 +38,7 @@ export class PurchasesPage {
 			.locator( '#purchases-list .dataviews-view-table__row' )
 			.filter( { hasText: name } )
 			.filter( { hasText: siteSlug } )
-			.locator( '.purchase-item__title button' )
+			.locator( '.purchase-item__title-link' )
 			.click();
 	}
 

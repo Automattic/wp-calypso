@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
@@ -15,12 +15,18 @@ const LostPasswordForm = ( {
 	from,
 	isWooJPC,
 	isWoo,
+	isJetpack,
 } ) => {
 	const translate = useTranslate();
 	const [ userLogin, setUserLogin ] = useState( '' );
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
+
+	const inputRef = useRef( null );
+	useEffect( () => {
+		inputRef.current?.focus();
+	}, [] );
 
 	const validateUserLogin = () => {
 		// Allow empty input or any non-empty value (username or email)
@@ -115,8 +121,8 @@ const LostPasswordForm = ( {
 					redirectTo: redirectToAfterLoginUrl,
 					emailAddress: userLogin,
 					lostpasswordFlow: true,
-					action: isWooJPC ? 'jetpack' : null,
 					from,
+					isJetpack: isWooJPC || isJetpack,
 				} )
 			);
 		} catch ( _httpError ) {
@@ -156,6 +162,7 @@ const LostPasswordForm = ( {
 							setError( null );
 						}
 					} }
+					ref={ inputRef }
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>

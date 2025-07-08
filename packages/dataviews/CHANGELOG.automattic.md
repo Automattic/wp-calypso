@@ -16,6 +16,7 @@
 - Allow readonly fields in DataForm when `readOnly` is set to `true`.
 - Add new filter operators: `on` and `notOn` for date fields that use proper date comparison instead of string equality. Filter labels use "Date is:" and "Date is not:" for consistency.
 - Add new filter operator: `inThePast`, `over` for date fields.
+- Adjust the padding when the component is placed inside a `Card`.
 
 ## 0.2.1
 

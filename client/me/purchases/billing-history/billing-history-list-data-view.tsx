@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
-import { DataViews, View } from '@wordpress/dataviews';
+import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
@@ -9,7 +10,7 @@ import { useFieldDefinitions } from './hooks/use-field-definitions';
 import { useReceiptActions } from './hooks/use-receipt-actions';
 import { useTransactionsFiltering } from './hooks/use-transactions-filtering';
 import { useTransactionsSorting } from './hooks/use-transactions-sorting';
-import { useViewStateUpdate } from './hooks/use-view-state-update';
+import { useViewStateUpdate, updateUrlForView } from './hooks/use-view-state-update';
 
 import 'calypso/components/dataviews/style.scss';
 import './style-data-view.scss';
@@ -26,8 +27,9 @@ export default function BillingHistoryListDataView( {
 	siteId,
 }: BillingHistoryListProps ) {
 	const transactions = useSelector( getPastBillingTransactions );
+	const fields = useFieldDefinitions( transactions, getReceiptUrlFor );
 	const isLoading = useSelector( isRequestingBillingTransactions );
-	const viewState = useViewStateUpdate();
+	const viewState = useViewStateUpdate( fields );
 	const receiptActions = useReceiptActions( getReceiptUrlFor );
 
 	const actions = receiptActions.map( ( action ) => ( {
@@ -44,22 +46,27 @@ export default function BillingHistoryListDataView( {
 		viewState.view.perPage ?? 100
 	);
 	const translate = useTranslate();
-	const fields = useFieldDefinitions( transactions, getReceiptUrlFor );
 
-	const handleViewChange = ( view: View ) => viewState.updateView( view );
+	const paginationInfo = useMemo(
+		() => ( {
+			totalItems,
+			totalPages,
+		} ),
+		[ totalItems, totalPages ]
+	);
 
 	return (
 		<DataViews
 			data={ paginatedItems }
-			paginationInfo={ {
-				totalItems,
-				totalPages,
-			} }
+			paginationInfo={ paginationInfo }
 			fields={ fields }
 			view={ viewState.view }
 			search
 			searchLabel={ translate( 'Search receipts' ) }
-			onChangeView={ handleViewChange }
+			onChangeView={ ( newView ) => {
+				updateUrlForView( newView, fields );
+				viewState.updateView( newView );
+			} }
 			defaultLayouts={ DEFAULT_LAYOUT }
 			actions={ actions }
 			isLoading={ isLoading }

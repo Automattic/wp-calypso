@@ -158,43 +158,74 @@ $card_width: $font-body * 3.75; // roughly 60px wide
 }
 
 .payment-method-delete-dialog {
-	&.dialog {
-		max-width: 660px;
+	--max-width: 660px;
 
-		span {
-			display: block;
-			font-size: $font-body-small;
+	&__explanation {
+		display: flex;
+		gap: 12px;
+		align-items: flex-start;
+	}
 
-			&.payment-method-delete-dialog__affected-subscription-domain {
-				color: var( --color-text-subtle );
-				font-size: $font-body-extra-small;
-			}
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
 
-			&.payment-method-delete-dialog__affected-subscription-date span {
-				color: var( --color-error );
-				font-size: $font-body-extra-small;
-				text-align: center;
-			}
+	&__affected-subscriptions-wrapper {
+		margin-top: 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+
+	&__affected-subscriptions-table {
+		border-collapse: collapse;
+		table-layout: fixed;
+		width: 100%;
+		thead tr {
+			border-bottom: 1px solid #ddd ;
+		}
+		th, td {
+			padding: 12px 4px;
+		}
+		th:first-child {
+			width: 70%;
+
 		}
 	}
-
-	.payment-method-delete-dialog__affected-subscriptions-wrapper {
-		border-top: 1px solid var( --color-border-subtle );
-		padding-top: 12px;
+	&__affected-subscription-details-product {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding-right: 12px;
+		text-wrap: nowrap;
+		overflow-x: auto;
+		scrollbar-width: thin;
+		scrollbar-gutter: stable;
 	}
 
-	.payment-method-delete-dialog__warning {
-		display: flex;
-		margin-top: 12px;
-		gap: 12px;
+	&__affected-subscription-details-renew-date {
+		vertical-align: middle;
+		text-wrap: nowrap;
+	}
 
+
+	&__warning {
+		display: flex;
+		gap: 8px;
 		.gridicon {
 			fill: var( --color-warning );
 		}
+		border: 1px solid var(--color-warning);
+		padding: 8px;
+		border-radius: 4px;
 
 		p {
 			color: var( --color-warning );
 			font-size: $font-body-small;
+			margin: 0;
 		}
 	}
 }
