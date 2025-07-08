@@ -14,6 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	getSelectedDomain,
@@ -263,6 +264,7 @@ const EmailProvidersStackedComparison = ( {
 			} ) }
 			wideLayout
 		>
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }

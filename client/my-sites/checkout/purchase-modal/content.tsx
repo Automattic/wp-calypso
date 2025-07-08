@@ -19,7 +19,7 @@ import CheckoutNextSteps from '../src/components/checkout-next-steps';
 import { CheckoutSummaryFeaturesList } from '../src/components/wp-checkout-order-summary';
 import { BEFORE_SUBMIT } from './constants';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 import type { MouseEventHandler, ReactNode } from 'react';
 
 function formatDate( cardExpiry: string ): string {

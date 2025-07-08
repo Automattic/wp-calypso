@@ -23,7 +23,7 @@ import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -152,10 +152,14 @@ export function confirmCancelDomain( context, next ) {
 }
 
 export function list( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+	const userId = currentUser?.ID;
 	const ListWrapper = localize( () => {
 		return (
 			<PurchasesWrapper>
 				<PurchasesListDataView
+					userId={ userId }
 					noticeType={ context.params.noticeType }
 					getManagePurchaseUrlFor={ managePurchaseUrl }
 				/>

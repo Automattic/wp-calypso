@@ -43,7 +43,7 @@ export function useProductsWithPremiumSupport(
 				hasPremiumSupport: hasPremiumSupport || false,
 				helpCenterButtonCopy: hasPremiumSupport
 					? __( 'Questions?', __i18n_text_domain__ )
-					: defaultButtonLink,
+					: undefined,
 				helpCenterButtonLink: hasPremiumSupport
 					? __( 'Contact our site-building team', __i18n_text_domain__ )
 					: defaultButtonLink,

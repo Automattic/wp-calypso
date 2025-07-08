@@ -2,15 +2,25 @@ import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
-import SyncModal from '../staging-site-sync-modal';
+import { lazy, Suspense } from 'react';
+
+const StagingSiteSyncModal = lazy(
+	() => import( 'calypso/sites/staging-site/components/staging-site-sync-modal' )
+);
 
 interface SyncDropdownProps {
 	className?: string;
 	environment: 'production' | 'staging';
-	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
 }
 
-export default function SyncDropdown( { className, environment, siteSlug }: SyncDropdownProps ) {
+export default function SyncDropdown( {
+	className,
+	environment,
+	productionSiteId,
+	stagingSiteId,
+}: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
 
@@ -19,12 +29,12 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 	const pushLabel =
 		environment === 'staging' ? __( 'Push to Production' ) : __( 'Push to Staging' );
 
-	const handleOpenModal = ( type: 'pull' | 'push' ) => {
+	const handleOpenModal = ( type: 'pull' | 'push' ): void => {
 		setSyncType( type );
 		setIsModalOpen( true );
 	};
 
-	const handleCloseModal = () => {
+	const handleCloseModal = (): void => {
 		setIsModalOpen( false );
 	};
 
@@ -72,12 +82,15 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 				) }
 			/>
 			{ isModalOpen && (
-				<SyncModal
-					onClose={ handleCloseModal }
-					syncType={ syncType }
-					environment={ environment }
-					siteSlug={ siteSlug }
-				/>
+				<Suspense fallback={ null }>
+					<StagingSiteSyncModal
+						onClose={ handleCloseModal }
+						syncType={ syncType }
+						environment={ environment }
+						productionSiteId={ productionSiteId }
+						stagingSiteId={ stagingSiteId }
+					/>
+				</Suspense>
 			) }
 		</>
 	);

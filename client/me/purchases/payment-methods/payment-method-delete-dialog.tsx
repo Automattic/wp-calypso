@@ -1,10 +1,10 @@
 import { Gridicon } from '@automattic/components';
+import { getPaymentMethodImageURL, isCreditCard } from '@automattic/wpcom-checkout';
 import { Button } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getPaymentMethodImageURL, isCreditCard } from 'calypso/lib/checkout/payment-methods';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import 'calypso/me/purchases/payment-methods/style.scss';
 

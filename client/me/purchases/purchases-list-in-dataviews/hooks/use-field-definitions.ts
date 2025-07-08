@@ -1,4 +1,4 @@
-import { SiteDetails } from '@automattic/data-stores';
+import { SiteDetails, Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -11,9 +11,11 @@ import {
 
 export function usePurchasesFieldDefinitions( {
 	sites,
+	transferredOwnershipPurchases = [],
 	getManagePurchaseUrlFor,
 }: {
 	sites: SiteDetails[];
+	transferredOwnershipPurchases?: Purchases.Purchase[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 } ) {
 	const translate = useTranslate();
@@ -27,9 +29,17 @@ export function usePurchasesFieldDefinitions( {
 			paymentMethods,
 			getManagePurchaseUrlFor,
 			sites,
+			transferredOwnershipPurchases,
 		} );
 		return fieldDefinitions;
-	}, [ translate, moment, paymentMethods, sites, getManagePurchaseUrlFor ] );
+	}, [
+		translate,
+		moment,
+		paymentMethods,
+		sites,
+		transferredOwnershipPurchases,
+		getManagePurchaseUrlFor,
+	] );
 }
 
 export function useMembershipsFieldDefinitions() {

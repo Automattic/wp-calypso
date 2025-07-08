@@ -1,5 +1,3 @@
-import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
 import { type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -150,16 +148,12 @@ export function getFieldDefinitions(
 			render: ( { item }: { item: BillingTransaction } ) => {
 				return (
 					<div className="billing-history__item-service">
-						<Button
-							variant="link"
+						<a
 							title={ translate( 'View receipt', { textOnly: true } ) }
-							label={ translate( 'View receipt', { textOnly: true } ) }
-							onClick={ () => {
-								page( getReceiptUrlFor( item.id ) );
-							} }
+							href={ getReceiptUrlFor( item.id ) }
 						>
 							{ renderServiceName( item, translate ) }
-						</Button>
+						</a>
 					</div>
 				);
 			},

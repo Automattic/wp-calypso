@@ -13,7 +13,8 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 
 export function shouldFeedBeFetched( state, feedId ) {
 	const isNotQueued = ! state.reader.feeds.queuedRequests[ feedId ];
-	const isMissing = ! getFeed( state, feedId );
+	const feed = getFeed( state, feedId );
+	const isMissing = ! feed || feed.is_error;
 	return isNotQueued && ( isMissing || isStale( state, feedId ) );
 }
 

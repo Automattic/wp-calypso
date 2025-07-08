@@ -20,9 +20,13 @@ import { FileBrowserCheckState } from './types';
 
 interface FileBrowserHeaderProps {
 	rewindId: number;
+	showHeaderButtons?: boolean;
 }
 
-const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewindId } ) => {
+const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
+	rewindId,
+	showHeaderButtons = true,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -67,7 +71,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 
 	return (
 		<div className="file-browser-header">
-			{ browserCheckList.totalItems > 0 && (
+			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
 				<div className="file-browser-header__action-buttons">
 					<Button className="file-browser-header__download-button" onClick={ onDownloadClick }>
 						{ translate( 'Download selected files' ) }

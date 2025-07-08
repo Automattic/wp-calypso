@@ -114,6 +114,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		saleAmountInteger: purchase.sale_amount_integer,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
+		siteSlug: purchase.site_slug,
 		subscribedDate: purchase.subscribed_date,
 		subscriptionStatus: purchase.subscription_status,
 		tagLine: purchase.tag_line,
@@ -123,6 +124,10 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: parseInt( purchase.auto_renew ?? '' ) === 1,
 	};
+
+	if ( purchase.purchaser_id ) {
+		object.purchaserId = Number( purchase.purchaser_id );
+	}
 
 	if ( isCreditCardPurchase( purchase ) ) {
 		object.payment.creditCard = {

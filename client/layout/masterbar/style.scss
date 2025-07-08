@@ -959,11 +959,11 @@ body.is-mobile-app-view {
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	
+
 	.masterbar__site-info-label {
 		margin-bottom: 4px;
 	}
-	
+
 	.masterbar__info-badges {
 		display: flex;
 		flex-wrap: wrap;
@@ -973,8 +973,12 @@ body.is-mobile-app-view {
 	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
 	.masterbar__info-badge {
 		background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
-		color: var(--color-global-masterbar-site-info-badge-color);
+		color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text)) !important; //override the link color
 	}
+}
+
+.button > .masterbar__site-info {
+	padding: 6px 0;
 }
 
 .masterbar__item-reader-label {
