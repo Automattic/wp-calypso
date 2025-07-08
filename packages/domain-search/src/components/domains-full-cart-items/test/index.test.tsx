@@ -66,6 +66,7 @@ describe( 'DomainsFullCartItems', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
 		expect( onRemoveItem ).toHaveBeenCalledWith( {
+			uuid: '1',
 			domain: 'example',
 			tld: 'com',
 			price: '$10',
