@@ -438,13 +438,13 @@ class CancelPurchase extends Component {
 				/>
 
 				{ ! cancellationFeatures.length
-					? this.renderProductInformationContent()
-					: this.renderAtomicRevertContent() }
+					? this.renderProductRevertContent()
+					: this.renderPlanRevertContent() }
 			</>
 		);
 	};
 
-	renderProductInformationContent = () => {
+	renderProductRevertContent = () => {
 		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
 		const plan = getPlan( purchase?.productSlug );
@@ -495,7 +495,7 @@ class CancelPurchase extends Component {
 		);
 	};
 
-	renderAtomicRevertContent = () => {
+	renderPlanRevertContent = () => {
 		const { purchase, atomicTransfer } = this.props;
 
 		return (
