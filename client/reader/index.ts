@@ -84,7 +84,7 @@ export default async function (): Promise< void > {
 
 		// User profile
 		page(
-			[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
+			'/reader/users/id/:user_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
@@ -94,7 +94,7 @@ export default async function (): Promise< void > {
 		);
 
 		page(
-			'/reader/users/id/:user_id',
+			[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
