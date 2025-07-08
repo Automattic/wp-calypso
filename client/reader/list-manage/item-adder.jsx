@@ -21,9 +21,13 @@ export default function ItemAdder( props ) {
 	const followResults = useSelector( ( state ) =>
 		filterFollowsByQuery( query, getReaderFollows( state ) ).slice( 0, 7 )
 	);
+	const allFollows = useSelector( ( state ) => getReaderFollows( state ) );
 	const feedResults = useSelector( ( state ) =>
 		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
 	);
+
+	const isEmptyList = props.listItems?.length === 0;
+	const showAllFollows = isEmptyList && ! query;
 
 	return (
 		<div className="list-manage__item-adder" id="reader-list-item-adder">
@@ -70,6 +74,23 @@ export default function ItemAdder( props ) {
 						owner={ props.owner }
 					/>
 				) ) }
+			{ showAllFollows && (
+				<>
+					<h2 className="list-manage-item-adder__all-subscriptions">
+						{ translate( 'Your subscriptions' ) }
+					</h2>
+					{ allFollows.map( ( item ) => (
+						<ListItem
+							hideIfInList
+							isFollowed
+							item={ item }
+							key={ item.feed_ID || item.site_ID || item.tag_ID || item.feed_URL }
+							list={ props.list }
+							owner={ props.owner }
+						/>
+					) ) }
+				</>
+			) }
 		</div>
 	);
 }
