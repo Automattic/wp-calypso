@@ -8,10 +8,8 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card, CompactCard, FormLabel } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { Card, CompactCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -22,7 +20,6 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormRadio from 'calypso/components/forms/form-radio';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
@@ -58,6 +55,7 @@ import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
+import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
 
@@ -406,19 +404,8 @@ class CancelPurchase extends Component {
 			return null;
 		}
 
-		const onCancelBundledDomainChange = ( event ) => {
-			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
-			this.setState( {
-				cancelBundledDomain: newCancelBundledDomainValue,
-				confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancelBundledDomain,
-			} );
-		};
-
-		const onConfirmCancelBundledDomainChange = ( event ) => {
-			const checked = event.target.checked;
-			this.setState( {
-				confirmCancelBundledDomain: checked,
-			} );
+		const onCancelConfirmationStateChange = ( newState ) => {
+			this.setState( newState );
 		};
 
 		const canContinue = () => {
@@ -430,130 +417,13 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
-				<div className="cancel-purchase__domain-options">
-					<p>
-						{ translate(
-							'Your plan includes the custom domain {{strong}}%(domain)s{{/strong}}. What would you like to do with the domain?',
-							{
-								args: {
-									domain: includedDomainPurchase.meta,
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
-					<CompactCard>
-						<FormLabel key="keep_bundled_domain">
-							<FormRadio
-								name="keep_bundled_domain"
-								value="keep"
-								checked={ ! cancelBundledDomain }
-								onChange={ onCancelBundledDomainChange }
-								label={
-									<>
-										{ translate( 'Cancel the plan, but keep "%(domain)s"', {
-											args: {
-												domain: includedDomainPurchase.meta,
-											},
-										} ) }
-										<br />
-										<span className="cancel-purchase__refund-domain-info">
-											{ translate(
-												"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
-													'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
-													"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
-												{
-													args: {
-														productName: getName( purchase ),
-														domainCost: includedDomainPurchase.costToUnbundleText,
-														refundAmount: purchase.refundText,
-													},
-												}
-											) }
-										</span>
-									</>
-								}
-							/>
-						</FormLabel>
-					</CompactCard>
-					<CompactCard>
-						<FormLabel key="cancel_bundled_domain">
-							<FormRadio
-								name="cancel_bundled_domain"
-								value="cancel"
-								checked={ cancelBundledDomain }
-								onChange={ onCancelBundledDomainChange }
-								label={
-									<>
-										{ translate(
-											'Cancel the plan {{strong}}and{{/strong}} the domain "%(domain)s"',
-											{
-												args: {
-													domain: includedDomainPurchase.meta,
-												},
-												components: {
-													strong: <strong />,
-												},
-											}
-										) }
-										<br />
-										<span className="cancel-purchase__refund-domain-info">
-											{ translate(
-												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
-													"you'll lose it permanently.",
-												{
-													args: {
-														planCost: purchase.totalRefundText,
-													},
-												}
-											) }
-										</span>
-									</>
-								}
-							/>
-						</FormLabel>
-					</CompactCard>
-					{ cancelBundledDomain && (
-						<span className="cancel-purchase__domain-warning">
-							{ translate(
-								"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
-									"available again, so it's possible you won't have another chance to register it in the future. " +
-									"If you'd like to use your domain on a site hosted elsewhere, consider {{a}}updating your name " +
-									'servers{{/a}} instead.',
-								{
-									components: {
-										a: (
-											<a
-												href={ localizeUrl( UPDATE_NAMESERVERS ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-							<FormLabel>
-								<FormCheckbox
-									checked={ confirmCancelBundledDomain }
-									onChange={ onConfirmCancelBundledDomainChange }
-								/>
-								<span className="cancel-purchase__domain-confirm">
-									{ translate(
-										'I understand that canceling my domain means I might {{strong}}never be able to register it ' +
-											'again{{/strong}}.',
-										{
-											components: {
-												strong: <strong />,
-											},
-										}
-									) }
-								</span>
-							</FormLabel>
-						</span>
-					) }
-				</div>
+				<CancelPurchaseDomainOptions
+					includedDomainPurchase={ includedDomainPurchase }
+					cancelBundledDomain={ cancelBundledDomain }
+					purchase={ purchase }
+					onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+					isLoading={ false }
+				/>
 				<div className="cancel-purchase__confirm-buttons">
 					<FormButton
 						isPrimary
