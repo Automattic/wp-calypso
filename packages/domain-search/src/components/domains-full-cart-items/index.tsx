@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 import './style.scss';
 
 export const DomainsFullCartItems = () => {

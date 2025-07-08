@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { DomainSearch, useDomainSearch } from '../DomainSearch/DomainSearch';
+import { DomainSearch, useDomainSearch } from '../domain-search';
 import { DomainsFullCart } from '.';
 import type { Meta } from '@storybook/react';
 

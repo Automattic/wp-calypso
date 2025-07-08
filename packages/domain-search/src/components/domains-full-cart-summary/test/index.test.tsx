@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { DomainsFullCartSummary } from '..';
-import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
+import { DomainSearchContext } from '../../domain-search';
 
 const defaultContextValue = {
 	isFullCartOpen: false,

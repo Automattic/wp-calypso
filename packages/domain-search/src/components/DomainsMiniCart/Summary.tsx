@@ -1,7 +1,7 @@
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 
 export const DomainsMiniCartSummary = () => {
 	const { _n } = useI18n();

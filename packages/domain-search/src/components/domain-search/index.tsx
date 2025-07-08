@@ -53,7 +53,7 @@ export const DomainSearch = ( {
 	cart: DomainSearchCart;
 } ) => {
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
-	const [ isFullCartOpen, setIsFullCartOpen ] = useState( true );
+	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 
 	useLayoutEffect( () => {
 		setQuery( initialQuery ?? '' );

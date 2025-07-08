@@ -14,7 +14,7 @@ import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
 import { useClickOutside } from '../../hooks/use-click-outside';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 import { DomainsFullCartItems } from '../domains-full-cart-items';
 import { DomainsFullCartSummary } from '../domains-full-cart-summary';
 
