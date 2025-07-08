@@ -22,7 +22,7 @@ import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser, {
-	FileBrowserFilterConfig,
+	type FileBrowserFilterConfig,
 } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
