@@ -393,13 +393,35 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		// on the last step or the offer step
 		// show the cancel button here
-		if ( lastStep === cancellationStep || steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
+		if ( lastStep === cancellationStep ) {
 			// If loading offers, show a "loading" button in place of the remove button.
 			// The steps may change if an offer is available and this may no longer be the last step.
 			if ( loadingOffers ) {
 				return firstButtons.concat( [ loading ] );
 			}
 			return firstButtons.concat( [ cancel ] );
+		}
+
+		// For the offer step, show a single "No, thanks" button instead of close + cancel
+		if ( steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
+			// If loading offers, show a "loading" button
+			if ( loadingOffers ) {
+				return [ loading ];
+			}
+
+			const noThanksButton = (
+				<Button
+					disabled={ disabled || disableContinuation || applyingOffer }
+					busy={ cancellationInProgress }
+					onClick={ onSubmit }
+					primary
+					scary={ ! cancellationCompleted }
+				>
+					{ translate( 'No, thanks' ) }
+				</Button>
+			);
+
+			return [ noThanksButton ];
 		}
 
 		return firstButtons.concat( [ next ] );
