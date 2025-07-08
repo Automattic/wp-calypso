@@ -67,7 +67,6 @@ export const OdieSendMessageButton = () => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
-		setNotice,
 	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
@@ -85,7 +84,8 @@ export const OdieSendMessageButton = () => {
 		}
 	}, [ isInitialLoading ] );
 
-	const isMessageLengthValid = useMessageSizeErrorNotice();
+	const { isMessageLengthValid, setMessageLengthErrorNotice, clearMessageLengthErrorNotice } =
+		useMessageSizeErrorNotice();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -148,15 +148,17 @@ export const OdieSendMessageButton = () => {
 		}
 	};
 
-	const onKeyUp = useCallback( () => {
-		setNotice( 'message-size-error', null );
-	}, [ setNotice ] );
-
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
-		if ( message === '' || isChatBusy || ! isMessageLengthValid( message ) ) {
+		if ( message === '' || isChatBusy ) {
 			return;
 		}
+
+		if ( ! isMessageLengthValid( message ) ) {
+			setMessageLengthErrorNotice();
+			return;
+		}
+
 		const messageString = inputRef.current?.value;
 		// Immediately remove the message from the input field
 		if ( chat?.provider === 'odie' ) {
@@ -234,7 +236,7 @@ export const OdieSendMessageButton = () => {
 								className="odie-send-message-input"
 								inputRef={ inputRef }
 								setSubmitDisabled={ setSubmitDisabled }
-								keyUpHandle={ onKeyUp }
+								keyUpHandle={ clearMessageLengthErrorNotice }
 								onPasteHandle={ onPaste }
 								placeholder={ textAreaPlaceholder }
 							/>
