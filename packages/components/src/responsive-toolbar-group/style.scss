@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .responsive-toolbar-group__dropdown .responsive-toolbar-group__button-item,
 .responsive-toolbar-group__dropdown .responsive-toolbar-group__menu-item,
 .responsive-toolbar-group__swipe .responsive-toolbar-group__swipe-item {
@@ -33,7 +35,8 @@
 		opacity: 0;
 
 		.responsive-toolbar-group__menu-item {
-			font-size: rem(13px);
+			// font-size: rem(13px);
+			font-size: math.div( 13px, 16px ) * 1rem;
 
 			&.is-selected {
 				color: var(--color-text-inverted);

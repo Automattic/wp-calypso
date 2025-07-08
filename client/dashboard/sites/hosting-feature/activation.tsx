@@ -1,7 +1,7 @@
 import { __experimentalText as Text, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { lazy, useEffect, useState, Suspense } from 'react';
+import { /*lazy,*/ useEffect, useState, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import { HostingFeatures } from '../features';
@@ -14,7 +14,7 @@ interface HostingFeatureActivationProps {
 	tracksFeatureId: string;
 }
 
-const EligibilityWarnings = lazy( () => import( 'calypso/blocks/eligibility-warnings' ) );
+// const EligibilityWarnings = lazy( () => import( 'calypso/blocks/eligibility-warnings' ) );
 
 export default function HostingFeatureActivation( {
 	site,
@@ -111,6 +111,7 @@ export default function HostingFeatureActivation( {
 						onRequestClose={ () => setIsModalOpen( false ) }
 						size="medium"
 					>
+						{ /*
 						<EligibilityWarnings
 							onDismiss={ () => setIsModalOpen( false ) }
 							onProceed={ handleConfirm }
@@ -118,6 +119,7 @@ export default function HostingFeatureActivation( {
 							standaloneProceed
 							currentContext="hosting-features"
 						/>
+						*/ }
 					</Modal>
 				</Suspense>
 			) }

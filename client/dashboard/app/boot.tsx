@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+// import { isEnabled } from '@automattic/calypso-config';
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
@@ -8,10 +8,10 @@ import { persistPromise } from './query-client';
 import type { AppConfig } from './context';
 
 function boot( config: AppConfig ) {
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
-		throw new Error( 'Dashboard v2 is not enabled' );
-		return;
-	}
+	// if ( ! isEnabled( 'dashboard/v2' ) ) {
+	// 	throw new Error( 'Dashboard v2 is not enabled' );
+	// 	return;
+	// }
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {
 		throw new Error( 'No root element found' );

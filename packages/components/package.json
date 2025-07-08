@@ -16,7 +16,8 @@
 			"require": "./dist/cjs/index.js"
 		},
 		"./src/*": {
-			"calypso:src": "./src/*"
+			"calypso:src": "./src/*",
+			"module": "./src/*"
 		},
 		"./styles/*": {
 			"calypso:src": "./styles/*"

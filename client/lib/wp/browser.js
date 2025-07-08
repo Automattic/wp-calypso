@@ -37,7 +37,7 @@ if ( config.isEnabled( 'oauth' ) ) {
 wpcom = wpcomSupport( wpcom );
 
 if ( 'development' === process.env.NODE_ENV ) {
-	require( './offline-library' ).makeOffline( wpcom );
+	import( './offline-library' ).then( ( module ) => module.makeOffline( wpcom ) );
 
 	// expose wpcom global var in development mode
 	window.wpcom = wpcom;
