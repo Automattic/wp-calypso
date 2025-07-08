@@ -69,5 +69,11 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 				</div>
 			);
 		}
-	}, [ shouldDisplayNotice, setNotice, handleNoticeOnClick, totalNumberOfConversations ] );
+	}, [
+		shouldDisplayNotice,
+		setNotice,
+		handleNoticeOnClick,
+		totalNumberOfConversations,
+		isEnabled,
+	] );
 }
