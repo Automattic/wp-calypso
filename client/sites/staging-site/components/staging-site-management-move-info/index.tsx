@@ -8,6 +8,7 @@ import {
 	__experimentalItem as Item,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { arrowUp, cog } from '@wordpress/icons';
 import { FunctionComponent } from 'react';
 
@@ -18,13 +19,15 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 				<Card>
 					<CardBody>
 						<VStack>
-							<Text weight={ 500 }>Create new staging site</Text>
+							<Text weight={ 500 }>{ __( 'Create new staging site' ) }</Text>
 							<Text>
-								Create and manage staging environments using the button in the top navigation bar.
+								{ __(
+									'Create and manage staging environments using the button in the top navigation bar.'
+								) }
 							</Text>
 							<HStack alignment="left" spacing={ 1 }>
 								<Icon icon={ arrowUp } size={ 16 } style={ { fill: '#757575' } } />
-								<Text variant="muted">Located in top navigation</Text>
+								<Text variant="muted">{ __( 'Located in top navigation' ) }</Text>
 							</HStack>
 						</VStack>
 					</CardBody>
@@ -34,13 +37,15 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 				<Card>
 					<CardBody>
 						<VStack>
-							<Text weight={ 500 }>Switch environment</Text>
+							<Text weight={ 500 }>{ __( 'Switch environment' ) }</Text>
 							<Text>
-								Switch between production and staging environments using the environment switcher.
+								{ __(
+									'Switch between production and staging environments using the environment switcher.'
+								) }
 							</Text>
 							<HStack alignment="left" spacing={ 1 }>
 								<Icon icon={ arrowUp } size={ 16 } style={ { fill: '#757575' } } />
-								<Text variant="muted">Located in top navigation</Text>
+								<Text variant="muted">{ __( 'Located in top navigation' ) }</Text>
 							</HStack>
 						</VStack>
 					</CardBody>
@@ -50,11 +55,13 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 				<Card>
 					<CardBody>
 						<VStack>
-							<Text weight={ 500 }>Delete staging site</Text>
-							<Text>Remove staging sites and manage advanced configurations in the Settings.</Text>
+							<Text weight={ 500 }>{ __( 'Delete staging site' ) }</Text>
+							<Text>
+								{ __( 'Remove staging sites and manage advanced configurations in the Settings.' ) }
+							</Text>
 							<HStack alignment="left" spacing={ 1 }>
 								<Icon icon={ cog } size={ 16 } style={ { fill: '#757575' } } />
-								<Text variant="muted">Available in settings</Text>
+								<Text variant="muted">{ __( 'Available in settings' ) }</Text>
 							</HStack>
 						</VStack>
 					</CardBody>
@@ -64,11 +71,13 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 				<Card>
 					<CardBody>
 						<VStack>
-							<Text weight={ 500 }>Try selective sync</Text>
-							<Text>Sync specific files and folders, as well as well as database tables.</Text>
+							<Text weight={ 500 }>{ __( 'Try selective sync' ) }</Text>
+							<Text>
+								{ __( 'Sync specific files and folders, as well as well as database tables.' ) }
+							</Text>
 							<HStack alignment="left" spacing={ 1 }>
 								<Icon icon={ arrowUp } size={ 16 } style={ { fill: '#757575' } } />
-								<Text variant="muted">Located in top navigation</Text>
+								<Text variant="muted">{ __( 'Located in top navigation' ) }</Text>
 							</HStack>
 						</VStack>
 					</CardBody>
