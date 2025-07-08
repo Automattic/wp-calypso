@@ -122,7 +122,6 @@ const CancelPlanWithoutCancellingDomainMessage = ( { planPurchase, includedDomai
 const DomainOptionsStep = ( {
 	includedDomainPurchase,
 	purchase,
-	onClose,
 	onContinue,
 	isVisible = false,
 } ) => {
@@ -192,9 +191,6 @@ const DomainOptionsStep = ( {
 		if ( ! isRefundable( purchase ) ) {
 			return (
 				<BlankCanvas className="domain-options-step">
-					<BlankCanvas.Header onBackClick={ onClose }>
-						{ translate( 'Domain Options' ) }
-					</BlankCanvas.Header>
 					<BlankCanvas.Content>
 						<NonRefundableDomainMappingMessage includedDomainPurchase={ includedDomainPurchase } />
 					</BlankCanvas.Content>
@@ -211,9 +207,6 @@ const DomainOptionsStep = ( {
 
 		return (
 			<BlankCanvas className="domain-options-step">
-				<BlankCanvas.Header onBackClick={ onClose }>
-					{ translate( 'Domain Options' ) }
-				</BlankCanvas.Header>
 				<BlankCanvas.Content>
 					<CancelableDomainMappingMessage
 						includedDomainPurchase={ includedDomainPurchase }
@@ -239,9 +232,6 @@ const DomainOptionsStep = ( {
 	) {
 		return (
 			<BlankCanvas className="domain-options-step">
-				<BlankCanvas.Header onBackClick={ onClose }>
-					{ translate( 'Domain Options' ) }
-				</BlankCanvas.Header>
 				<BlankCanvas.Content>
 					<CancelPlanWithoutCancellingDomainMessage
 						includedDomainPurchase={ includedDomainPurchase }
@@ -261,9 +251,6 @@ const DomainOptionsStep = ( {
 
 	return (
 		<BlankCanvas className="domain-options-step">
-			<BlankCanvas.Header onBackClick={ onClose }>
-				{ translate( 'Domain Options' ) }
-			</BlankCanvas.Header>
 			<BlankCanvas.Content>
 				<div className="domain-options-step__content">
 					<p>

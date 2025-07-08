@@ -430,9 +430,6 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
-				<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
-					{ translate( 'Domain Options' ) }
-				</h2>
 				<div className="cancel-purchase__domain-options">
 					<p>
 						{ translate(
