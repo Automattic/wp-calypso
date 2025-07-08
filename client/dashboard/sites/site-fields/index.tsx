@@ -397,7 +397,7 @@ export function Plan( { site }: { site: Site } ) {
 			return <IneligibleIndicator />;
 		}
 		return (
-			<HStack spacing={ 1 } expanded={ false }>
+			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
 				<JetpackLogo size={ 16 } />
 				<span>{ site.plan?.product_name_short }</span>
 			</HStack>
