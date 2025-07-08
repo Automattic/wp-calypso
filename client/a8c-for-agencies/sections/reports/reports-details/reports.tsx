@@ -8,6 +8,7 @@ import {
 	ReportDateColumn,
 	ReportStatusColumn,
 	ReportTimeframeColumn,
+	ReportClientEmailsColumn,
 } from '../primary/dashboard/report-columns';
 import type { Report } from '../types';
 import type { Action } from 'calypso/a8c-for-agencies/components/list-item-cards';
@@ -17,7 +18,7 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'status', 'timeframe', 'createdAt' ],
+		fields: [ 'status', 'timeframe', 'createdAt', 'client-emails' ],
 	} );
 
 	const fields = useMemo(
@@ -49,6 +50,16 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 				label: translate( 'Created' ),
 				getValue: () => '-',
 				render: ( { item }: { item: Report } ) => <ReportDateColumn date={ item.created_at } />,
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'client-emails',
+				label: translate( 'Client Emails' ),
+				getValue: () => '-',
+				render: ( { item }: { item: Report } ) => (
+					<ReportClientEmailsColumn emails={ item.data.client_emails } />
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},

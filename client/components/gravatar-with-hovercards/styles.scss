@@ -112,14 +112,25 @@
 				.site-icon {
 					border-radius: 50%;
 					border: 1px solid var(--color-border-subtle);
+
+					img {
+						object-fit: cover;
+						/* !rtl:ignore */
+						object-position: left center;
+						height: 100%;
+					}
 				}
 			}
 
-			.gravatar-hovercard__recommended-blog-site-name {
+			.gravatar-hovercard__recommended-blog-site-info {
 				flex: 1 1 0%;
-				white-space: nowrap;
 				overflow: hidden;
-				text-overflow: ellipsis;
+
+				.gravatar-hovercard__recommended-blog-site-name {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 		}
 	}

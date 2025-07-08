@@ -55,7 +55,7 @@ export default function WooPaymentsCustomDescription() {
 				</p>
 				<p className="jetpack-product-info__description">
 					{ translate(
-						'You will receive a revenue share of 5 basis points on new Total Payments Volume (“TPV”) on client sites through June 30, 2025. {{a}}View full terms{{/a}}',
+						'You will receive a revenue share of 5 basis points on new Total Payments Volume (“TPV”) on client sites. {{a}}View full terms{{/a}}',
 						{
 							components: {
 								a: (

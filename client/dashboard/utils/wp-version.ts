@@ -20,10 +20,8 @@ export function getFormattedWordPressVersion(
 		return '';
 	}
 
-	if ( ! site.is_wpcom_atomic ) {
-		// On Simple sites, the version string has suffix e.g. 6.8.1-alpha-60199
-		wpVersion = wpVersion.split( '-' )[ 0 ];
-	}
+	// The version string could have suffix like 6.8.1-alpha-60199, e.g. on Simple sites
+	wpVersion = wpVersion.split( '-' )[ 0 ];
 
 	if ( versionTag ) {
 		wpVersion = `${ wpVersion } (${ getWordPressVersionTagName( versionTag ) })`;

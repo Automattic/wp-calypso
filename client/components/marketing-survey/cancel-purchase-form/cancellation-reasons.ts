@@ -84,31 +84,31 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'lackOfCustomization',
 				get label() {
-					return translate( 'Lack of customization features (e.g., colors, fonts, themes).' );
+					return translate( 'Lack of customization features (e.g., colors, fonts, themes)' );
 				},
 			},
 			{
 				value: 'freeIsGoodEnough',
 				get label() {
-					return translate( 'The free plan is sufficient for my current needs.' );
+					return translate( 'The free plan is sufficient for my current needs' );
 				},
 			},
 			{
 				value: 'foundBetterValue',
 				get label() {
-					return translate( 'I found a competitor with better pricing/value.' );
+					return translate( 'I found a competitor with better pricing/value' );
 				},
 			},
 			{
 				value: 'budgetConstraints',
 				get label() {
-					return translate( 'Budget constraints / Can no longer afford it.' );
+					return translate( 'Budget constraints / Can no longer afford it' );
 				},
 			},
 			{
 				value: 'otherPriceValue',
 				get label() {
-					return translate( 'Something else related to price/value.' );
+					return translate( 'Something else related to price/value' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more about your price/value concern' );
@@ -126,31 +126,31 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'complicatedDashboard',
 				get label() {
-					return translate( 'The platform/dashboard is too complicated or confusing to navigate.' );
+					return translate( 'The platform/dashboard is too complicated or confusing to navigate' );
 				},
 			},
 			{
 				value: 'difficultEditor',
 				get label() {
-					return translate( 'The website editor is difficult or unintuitive to use.' );
+					return translate( 'The website editor is difficult or unintuitive to use' );
 				},
 			},
 			{
 				value: 'tooMuchTimeToLearn',
 				get label() {
-					return translate( 'It takes too much time to learn how to use the platform.' );
+					return translate( 'It takes too much time to learn how to use the platform' );
 				},
 			},
 			{
 				value: 'inadequateOnboarding',
 				get label() {
-					return translate( 'Onboarding or tutorials were not helpful enough.' );
+					return translate( 'Onboarding or tutorials were not helpful enough' );
 				},
 			},
 			{
 				value: 'otherTooHardToUse',
 				get label() {
-					return translate( 'Something else related to too hard to use.' );
+					return translate( 'Something else related to too hard to use' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -169,21 +169,21 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'cannotInstallPlugins',
 				get label() {
 					return translate(
-						'Cannot install desired plugins (e.g., from WordPress.org or third-party).'
+						'Cannot install desired plugins (e.g., from WordPress.org or third-party)'
 					);
 				},
 			},
 			{
 				value: 'cannotUploadThemes',
 				get label() {
-					return translate( 'Cannot upload custom themes.' );
+					return translate( 'Cannot upload custom themes' );
 				},
 			},
 			{
 				value: 'limitedCustomization',
 				get label() {
 					return translate(
-						'Limited design or customization options (e.g., layout, specific elements).'
+						'Limited design or customization options (e.g., layout, specific elements)'
 					);
 				},
 			},
@@ -191,20 +191,20 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'missingFunctionality',
 				get label() {
 					return translate(
-						'Lacking specific functionality I need (e.g., e-commerce, specific integrations, advanced SEO tools).'
+						'Lacking specific functionality I need (e.g., e-commerce, specific integrations, advanced SEO tools)'
 					);
 				},
 			},
 			{
 				value: 'coreFeaturesMissing',
 				get label() {
-					return translate( 'Core features I expected are only available on a much higher plan.' );
+					return translate( 'Core features I expected are only available on a much higher plan' );
 				},
 			},
 			{
 				value: 'otherMissingFeatures',
 				get label() {
-					return translate( 'Something else related to features/flexibility.' );
+					return translate( 'Something else related to features/flexibility' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -222,31 +222,31 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'tooSlow',
 				get label() {
-					return translate( 'Site is slow or experiences performance issues.' );
+					return translate( 'Site is slow or experiences performance issues' );
 				},
 			},
 			{
 				value: 'bugsOrGlitches',
 				get label() {
-					return translate( 'Encountered bugs, errors, or glitches.' );
+					return translate( 'Encountered bugs, errors, or glitches' );
 				},
 			},
 			{
 				value: 'migrationProblems',
 				get label() {
-					return translate( 'Problems migrating my existing site or content.' );
+					return translate( 'Problems migrating my existing site or content' );
 				},
 			},
 			{
 				value: 'downtime',
 				get label() {
-					return translate( 'Site was down or inaccessible.' );
+					return translate( 'Site was down or inaccessible' );
 				},
 			},
 			{
 				value: 'otherTechnicalIssues',
 				get label() {
-					return translate( 'Something else related to technical problems.' );
+					return translate( 'Something else related to technical problems' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -264,25 +264,25 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'troubleConnectingOrTransferring',
 				get label() {
-					return translate( 'Trouble connecting or transferring my existing domain.' );
+					return translate( 'Trouble connecting or transferring my existing domain' );
 				},
 			},
 			{
 				value: 'confusedAboutDomains',
 				get label() {
-					return translate( 'Confused about how domains work with the WordPress.com plan.' );
+					return translate( 'Confused about how domains work with the WordPress.com plan' );
 				},
 			},
 			{
 				value: 'domainIncorrect',
 				get label() {
-					return translate( 'Didn’t get the domain name I expected / My domain is incorrect.' );
+					return translate( 'Didn’t get the domain name I expected / My domain is incorrect' );
 				},
 			},
 			{
 				value: 'otherDomain',
 				get label() {
-					return translate( 'Something else related to domains.' );
+					return translate( 'Something else related to domains' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -300,25 +300,25 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'wrongPlan',
 				get label() {
-					return translate( 'I purchased this plan by mistake.' );
+					return translate( 'I purchased this plan by mistake' );
 				},
 			},
 			{
 				value: 'wrongSite',
 				get label() {
-					return translate( 'I meant to upgrade a different website or account.' );
+					return translate( 'I meant to upgrade a different website or account' );
 				},
 			},
 			{
 				value: 'noMatch',
 				get label() {
-					return translate( 'The plan I chose didn’t match what I thought I was buying.' );
+					return translate( 'The plan I chose didn’t match what I thought I was buying' );
 				},
 			},
 			{
 				value: 'otherWrongPlanOrSite',
 				get label() {
-					return translate( 'Something else related to an accidental purchase.' );
+					return translate( 'Something else related to an accidental purchase' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -336,25 +336,25 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'slowOrUnhelpful',
 				get label() {
-					return translate( 'Support was unhelpful or slow to respond.' );
+					return translate( 'Support was unhelpful or slow to respond' );
 				},
 			},
 			{
 				value: 'noHumanSupport',
 				get label() {
-					return translate( 'Could not easily reach a human support agent.' );
+					return translate( 'Could not easily reach a human support agent' );
 				},
 			},
 			{
 				value: 'AIInsufficient',
 				get label() {
-					return translate( 'AI/automated support was not sufficient for my issue.' );
+					return translate( 'AI/automated support was not sufficient for my issue' );
 				},
 			},
 			{
 				value: 'otherBadSupport',
 				get label() {
-					return translate( 'Something else related to support.' );
+					return translate( 'Something else related to support' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -372,31 +372,31 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			{
 				value: 'projectChanged',
 				get label() {
-					return translate( 'My project/business plans have changed.' );
+					return translate( 'My project/business plans have changed' );
 				},
 			},
 			{
 				value: 'justExploring',
 				get label() {
-					return translate( 'I was just exploring/testing the platform.' );
+					return translate( 'I was just exploring/testing the platform' );
 				},
 			},
 			{
 				value: 'noLongerNeedSite',
 				get label() {
-					return translate( 'I no longer need this website/service.' );
+					return translate( 'I no longer need this website/service' );
 				},
 			},
 			{
 				value: 'mayReturn',
 				get label() {
-					return translate( 'Temporary cancellation, I might return.' );
+					return translate( 'Temporary cancellation, I might return' );
 				},
 			},
 			{
 				value: 'otherNoLongerNeedSite',
 				get label() {
-					return translate( 'Something else related to changed needs.' );
+					return translate( 'Something else related to changed needs' );
 				},
 				get textPlaceholder() {
 					return translate( 'Please tell us more' );
@@ -410,7 +410,7 @@ export const JETPACK_CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'didNotInclude',
 		get label() {
-			return translate( "This upgrade didn't include what I needed." );
+			return translate( "This upgrade didn't include what I needed" );
 		},
 		get textPlaceholder() {
 			return translate( 'What are we missing that you need?' );
@@ -419,7 +419,7 @@ export const JETPACK_CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'onlyNeedFree',
 		get label() {
-			return translate( 'The plan was too expensive.' );
+			return translate( 'The plan was too expensive' );
 		},
 		get textPlaceholder() {
 			return translate( 'How can we improve our upgrades?' );
@@ -428,7 +428,7 @@ export const JETPACK_CANCELLATION_REASONS: CancellationReason[] = [
 	{
 		value: 'couldNotActivate',
 		get label() {
-			return translate( 'I was unable to activate or use the product.' );
+			return translate( 'I was unable to activate or use the product' );
 		},
 		get textPlaceholder() {
 			return translate( 'Where did you run into problems?' );

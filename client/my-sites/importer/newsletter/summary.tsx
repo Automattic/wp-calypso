@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
@@ -5,7 +6,7 @@ import { useReducedMotion } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
@@ -59,7 +60,9 @@ export default function Summary( {
 	const prefersReducedMotion = useReducedMotion();
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
 	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
-
+	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
+	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
+	const importerStatus = getImporterStatus( steps );
 	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content', fromSite );
 	const paidSubscribersCount = parseInt(
 		steps.subscribers.content?.meta?.paid_subscribed_count || '0'
@@ -72,11 +75,32 @@ export default function Summary( {
 		}
 	}, [ showConfetti, shouldShownConfetti ] );
 
-	// Combined status of subscriber & content importer
-	const importerStatus = getImporterStatus( steps?.content?.status, steps.subscribers.status );
+	/**
+	 * We have a state to manage the Summary page after we reset the importer.
+	 * Otherwise when we reset the importer we lose the returned data.
+	 */
+	useEffect( () => {
+		if ( ! isImportCompleted && importerStatus === 'done' ) {
+			setIsImportCompleted( true );
+
+			if ( ! importStepsResults && steps ) {
+				setImportStepsResults( steps );
+			}
+		}
+
+		if ( isImportCompleted && importStepsResults ) {
+			resetImporter();
+		}
+	}, [ importerStatus, importStepsResults, isImportCompleted, steps ] );
+
+	useEffect( () => {
+		if ( importerStatus === 'expired' && ! isImportCompleted ) {
+			page.redirect( `/import/${ selectedSite.slug }` );
+		}
+	}, [] );
 
 	// Either content- or subscriber-import is still in progress
-	if ( importerStatus === 'importing' || importerStatus === 'initial' ) {
+	if ( importerStatus === 'importing' ) {
 		return (
 			<Card>
 				<h2>{ __( 'Almost there…' ) }</h2>
@@ -132,7 +156,7 @@ export default function Summary( {
 	}
 
 	// Both done!
-	if ( importerStatus === 'done' ) {
+	if ( isImportCompleted ) {
 		return (
 			<Card>
 				{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
@@ -145,13 +169,13 @@ export default function Summary( {
 					) }
 				</p>
 				<div className="summary__content">
-					{ steps?.content?.content && (
-						<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
+					{ importStepsResults?.content?.content && (
+						<ContentSummary stepContent={ importStepsResults.content.content } status="done" />
 					) }
-					{ steps.subscribers.content && (
+					{ importStepsResults?.subscribers?.content && (
 						<SubscribersSummary
-							stepContent={ steps.subscribers.content }
-							status={ steps.subscribers.status }
+							stepContent={ importStepsResults?.subscribers?.content }
+							status={ importStepsResults.subscribers.status }
 						/>
 					) }
 				</div>
@@ -184,41 +208,30 @@ export default function Summary( {
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
-					{ isJetpack ? (
-						<ImporterActionButton
-							href={ `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter` }
-							primary
-						>
-							{ __( 'Customize your newsletter' ) }
-						</ImporterActionButton>
-					) : (
-						<ImporterActionButton
-							href={ `/settings/newsletter/${ selectedSite.slug }` }
-							onClick={ resetImporter }
-							primary
-						>
-							{ __( 'Customize your newsletter' ) }
-						</ImporterActionButton>
-					) }
+					<ImporterActionButton
+						href={
+							isJetpack
+								? `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter`
+								: `/settings/newsletter/${ selectedSite.slug }`
+						}
+						primary
+					>
+						{ __( 'Customize your newsletter' ) }
+					</ImporterActionButton>
 					{ steps?.content && (
-						<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ resetImporter }>
+						<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }
-					{ isJetpack ? (
-						<ImporterActionButton
-							href={ `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }` }
-						>
-							{ __( 'Manage subscribers' ) }
-						</ImporterActionButton>
-					) : (
-						<ImporterActionButton
-							href={ `/subscribers/${ selectedSite.slug }` }
-							onClick={ resetImporter }
-						>
-							{ __( 'Manage subscribers' ) }
-						</ImporterActionButton>
-					) }
+					<ImporterActionButton
+						href={
+							isJetpack
+								? `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`
+								: `/subscribers/${ selectedSite.slug }`
+						}
+					>
+						{ __( 'Manage subscribers' ) }
+					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</Card>
 		);

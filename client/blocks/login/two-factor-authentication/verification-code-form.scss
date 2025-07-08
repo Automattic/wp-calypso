@@ -128,15 +128,3 @@
 .security-key-form__add-wait-for-key-heading {
 	font-weight: 600;
 }
-
-.layout.is-white-login {
-	.wp-login__main.is-social-first {
-		.login__form-header {
-			width: $login-container-width;
-			margin: 0 auto;
-			padding: 0 24px;
-			text-align: left;
-			line-height: 40px;
-		}
-	}
-}

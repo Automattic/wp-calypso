@@ -3,10 +3,6 @@ export { zendeskMessageConverter } from './zendesk-message-converter';
 export { isOdieAllowedBot } from './is-odie-allowed-bot';
 export { generateUUID } from './generate-uuid';
 export {
-	setHelpCenterZendeskConversationStarted,
-	getHelpCenterZendeskConversationStarted,
-} from './storage-utils';
-export {
 	interactionHasZendeskEvent,
 	interactionHasEnded,
 	getConversationIdFromInteraction,

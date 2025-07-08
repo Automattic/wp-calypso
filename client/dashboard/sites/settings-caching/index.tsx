@@ -8,6 +8,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
+	Tooltip,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -19,7 +20,9 @@ import {
 	siteEdgeCacheStatusQuery,
 	siteEdgeCacheStatusMutation,
 	siteEdgeCacheClearMutation,
+	siteEdgeCacheLastClearedTimestampQuery,
 	siteObjectCacheClearMutation,
+	siteObjectCacheLastClearedTimestampQuery,
 } from '../../app/queries/site-cache';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -51,10 +54,23 @@ const form = {
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const canView = canViewCachingSettings( site );
+
 	const { data: isEdgeCacheActive } = useQuery( {
 		...siteEdgeCacheStatusQuery( site.ID ),
-		enabled: canViewCachingSettings( site ),
+		enabled: canView,
 	} );
+
+	const { data: lastEdgeCacheClearedTimestamp = 0 } = useQuery( {
+		...siteEdgeCacheLastClearedTimestampQuery( site.ID ),
+		enabled: canView,
+	} );
+
+	const { data: lastObjectCacheClearedTimestamp = 0 } = useQuery( {
+		...siteObjectCacheLastClearedTimestampQuery( site.ID ),
+		enabled: canView,
+	} );
+
 	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( site.ID ) );
 	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( site.ID ) );
 	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( site.ID ) );
@@ -181,6 +197,32 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderActions = () => {
+		const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
+
+		const isClearingEdgeCacheRateLimited =
+			lastEdgeCacheClearedTimestamp > Date.now() - ONE_MINUTE_IN_MILLISECONDS;
+		const isClearingObjectCacheRateLimited =
+			lastObjectCacheClearedTimestamp > Date.now() - ONE_MINUTE_IN_MILLISECONDS;
+		const isClearingAllCachesRateLimited =
+			isClearingEdgeCacheRateLimited && isClearingObjectCacheRateLimited;
+
+		const wrapMaybeDisabledButtonWithTooltip = (
+			isButtonDisabled: boolean,
+			tooltipText: string,
+			button: JSX.Element
+		) => {
+			if ( ! isButtonDisabled ) {
+				return button;
+			}
+
+			// We must wrap the disabled button in a div so that the hover event reaches the Tooltip component.
+			return (
+				<Tooltip text={ tooltipText } placement="top">
+					<div>{ button }</div>
+				</Tooltip>
+			);
+		};
+
 		return (
 			<VStack spacing={ 4 }>
 				<ActionList
@@ -190,50 +232,66 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 					<ActionList.ActionItem
 						title={ __( 'Global edge cache' ) }
 						description={ __( 'Edge caching enables faster content delivery.' ) }
-						actions={
+						actions={ wrapMaybeDisabledButtonWithTooltip(
+							isClearingEdgeCacheRateLimited,
+							__(
+								'You cleared the global edge cache recently. Please wait a minute and try again.'
+							),
 							<Button
 								variant="secondary"
 								size="compact"
 								onClick={ handleClearEdgeCache }
 								isBusy={ edgeCacheClearMutation.isPending && ! isClearingAllCaches }
 								disabled={
-									! isEdgeCacheEnabled || edgeCacheClearMutation.isPending || isClearingAllCaches
+									! isEdgeCacheEnabled ||
+									edgeCacheClearMutation.isPending ||
+									isClearingEdgeCacheRateLimited ||
+									isClearingAllCaches
 								}
 							>
 								{ __( 'Clear' ) }
 							</Button>
-						}
+						) }
 					/>
+
 					<ActionList.ActionItem
 						title={ __( 'Object cache' ) }
 						description={ __( 'Data is cached using Memcached to reduce database lookups.' ) }
-						actions={
+						actions={ wrapMaybeDisabledButtonWithTooltip(
+							isClearingObjectCacheRateLimited,
+							__( 'You cleared the object cache recently. Please wait a minute and try again.' ),
 							<Button
 								variant="secondary"
 								size="compact"
 								onClick={ handleClearObjectCache }
 								isBusy={ objectCacheClearMutation.isPending && ! isClearingAllCaches }
-								disabled={ objectCacheClearMutation.isPending || isClearingAllCaches }
+								disabled={
+									objectCacheClearMutation.isPending ||
+									isClearingObjectCacheRateLimited ||
+									isClearingAllCaches
+								}
 							>
 								{ __( 'Clear' ) }
 							</Button>
-						}
+						) }
 					/>
 				</ActionList>
 				<ActionList>
 					<ActionList.ActionItem
 						title={ __( 'Clear all caches' ) }
-						actions={
+						actions={ wrapMaybeDisabledButtonWithTooltip(
+							isClearingAllCachesRateLimited,
+							__( 'You cleared all caches recently. Please wait a minute and try again.' ),
 							<Button
 								variant="secondary"
 								size="compact"
 								onClick={ handleClearAllCaches }
 								isBusy={ isClearingAllCaches }
-								disabled={ isClearingAllCaches }
+								disabled={ isClearingAllCachesRateLimited || isClearingAllCaches }
 							>
 								{ __( 'Clear all' ) }
 							</Button>
-						}
+						) }
 					/>
 				</ActionList>
 			</VStack>

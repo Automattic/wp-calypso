@@ -1,4 +1,5 @@
 import { type BadgeType, Gridicon, Tooltip } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
@@ -9,15 +10,15 @@ import type { ReportStatus } from '../../types';
 
 export const ReportSiteColumn = ( { site }: { site: string } ) => urlToSlug( site );
 
-export const ReportCountColumn = ( { count }: { count: number } ) => {
+export const ReportCountColumn = ( { count, onClick }: { count: number; onClick: () => void } ) => {
 	const translate = useTranslate();
 	return (
-		<span className="reports-list__count">
+		<Button variant="tertiary" onClick={ onClick }>
 			{ translate( '%(count)d report', '%(count)d reports', {
 				count,
 				args: { count },
 			} ) }
-		</span>
+		</Button>
 	);
 };
 
@@ -90,4 +91,53 @@ export const ReportTimeframeColumn = ( {
 	}
 
 	return timeframeText;
+};
+
+export const ReportClientEmailsColumn = ( { emails }: { emails: string[] } ) => {
+	const tooltipRef = useRef( null );
+	const [ showTooltip, setShowTooltip ] = useState( false );
+	const translate = useTranslate();
+
+	if ( ! emails || emails.length === 0 ) {
+		return <Gridicon icon="minus" />;
+	}
+
+	if ( emails.length === 1 ) {
+		return emails[ 0 ];
+	}
+
+	const firstEmail = emails[ 0 ];
+	const remainingCount = emails.length - 1;
+	const remainingEmails = emails.slice( 1 );
+
+	return (
+		<>
+			{ firstEmail }
+			{ remainingCount > 0 && (
+				<>
+					<span
+						onMouseEnter={ () => setShowTooltip( true ) }
+						onMouseLeave={ () => setShowTooltip( false ) }
+						onTouchStart={ () => setShowTooltip( true ) }
+						onTouchEnd={ () => setShowTooltip( false ) }
+						role="button"
+						tabIndex={ 0 }
+						ref={ tooltipRef }
+					>
+						{ translate( ' + %(count)d more', {
+							args: { count: remainingCount },
+						} ) }
+					</span>
+					<Tooltip
+						context={ tooltipRef.current }
+						showOnMobile
+						isVisible={ showTooltip }
+						position="top"
+					>
+						{ remainingEmails.join( ', ' ) }
+					</Tooltip>
+				</>
+			) }
+		</>
+	);
 };

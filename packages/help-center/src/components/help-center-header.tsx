@@ -2,7 +2,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
@@ -89,7 +88,6 @@ const ChatEllipsisMenu = () => {
 
 	const clearChat = async () => {
 		await resetSupportInteraction();
-		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
 	};
 

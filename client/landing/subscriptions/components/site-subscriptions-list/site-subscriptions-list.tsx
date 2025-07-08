@@ -1,6 +1,12 @@
+import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
+import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
+import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
 import { Notice, NoticeType } from '../notice';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
@@ -17,12 +23,22 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	layout = 'full',
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const currentUserName = useSelector( getCurrentUserName );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const { filterOption, searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 	const { subscriptions, totalCount } = data;
 
 	const isCompactLayout = layout === 'compact';
+	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
+
+	// Fetch recommended blogs data once for all subscription rows
+	useEffect( () => {
+		if ( currentUserName && isRecommendedBlogsEnabled ) {
+			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
+		}
+	}, [ currentUserName, dispatch, isRecommendedBlogsEnabled ] );
 
 	if ( error ) {
 		return (
@@ -94,6 +110,25 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="email-frequency-cell" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
+				{ isRecommendedBlogsEnabled && isLoggedIn && ! isCompactLayout && (
+					<span className="recommend-cell" role="columnheader">
+						{ translate( 'Recommend' ) }
+						<Tooltip
+							className="site-subscriptions-list__recommend-tooltip"
+							text={ translate(
+								'Recommending a blog adds it to your profile and helps it to be discovered in the Reader.'
+							) }
+						>
+							<span>
+								<Icon
+									className="site-subscriptions-list__recommend-tooltip-icon"
+									icon={ info }
+									size={ 16 }
+								/>
+							</span>
+						</Tooltip>
+					</span>
+				) }
 				<span className="unsubscribe-action-cell" role="columnheader">
 					{ translate( 'Action' ) }
 				</span>

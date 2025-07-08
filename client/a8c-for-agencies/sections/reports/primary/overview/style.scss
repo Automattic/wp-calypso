@@ -53,17 +53,20 @@
 	flex-direction: column;
 	gap: 8px;
 
-	a.components-button {
-		width: 100%;
-		text-wrap: balance;
+	a, button {
+		&.components-button {
+			width: 100%;
+			text-wrap: balance;
+		}
 	}
 
 	@include break-wide {
 		flex-direction: row;
 
-		a.components-button {
-			width: auto;
+		a, button {
+			&.components-button {
+				width: auto;
+			}
 		}
 	}
 }
-

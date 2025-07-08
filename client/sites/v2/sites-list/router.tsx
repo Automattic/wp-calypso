@@ -5,11 +5,14 @@ import {
 	createRouter,
 	redirect,
 } from '@tanstack/react-router';
-import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/a8c';
+import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
+
+// Keep the loading state active to prevent displaying a white screen during the redirection.
+const infiniteLoader = () => new Promise( () => {} );
 
 const rootRoute = createRootRoute( { component: Root } );
 
@@ -33,6 +36,7 @@ const sitesRoute = createRoute( {
 const dummySitesOverviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'overview/$siteSlug',
+	loader: infiniteLoader,
 	component: () => null,
 } );
 
@@ -50,6 +54,7 @@ const sitesOverviewCompatibilityRoute = createRoute( {
 const dummySitesSettingsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/settings/v2/$siteSlug',
+	loader: infiniteLoader,
 	component: () => null,
 } );
 
@@ -64,6 +69,17 @@ const sitesSettingsCompatibilityRoute = createRoute( {
 	},
 } );
 
+const dashboardSiteSettingsWithFeatureCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings/$feature',
+	beforeLoad: ( { cause, params: { siteSlug, feature } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		throw redirect( { to: `/sites/settings/v2/${ siteSlug }/${ feature }` } );
+	},
+} );
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		sitesRoute,
@@ -71,9 +87,14 @@ const createRouteTree = () =>
 		sitesOverviewCompatibilityRoute,
 		dummySitesSettingsRoute,
 		sitesSettingsCompatibilityRoute,
+		dashboardSiteSettingsWithFeatureCompatibilityRoute,
 	] );
 
-const compatibilityRoutes = [ sitesOverviewCompatibilityRoute, sitesSettingsCompatibilityRoute ];
+const compatibilityRoutes = [
+	sitesOverviewCompatibilityRoute,
+	sitesSettingsCompatibilityRoute,
+	dashboardSiteSettingsWithFeatureCompatibilityRoute,
+];
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );

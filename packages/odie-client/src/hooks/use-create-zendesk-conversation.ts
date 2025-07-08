@@ -7,7 +7,6 @@ import { logToLogstash } from 'calypso/lib/logstash'; // eslint-disable-line no-
 import { ODIE_ON_ERROR_TRANSFER_MESSAGE, ODIE_TRANSFER_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
-import { setHelpCenterZendeskConversationStarted } from '../utils';
 
 declare const process: {
 	env: {
@@ -113,7 +112,8 @@ export const useCreateZendeskConversation = (): ( ( {
 			status: 'transfer',
 		} ) );
 
-		if ( ! chatId ) {
+		// `direct_url` sends users directly to ZD, so there'll be no AI chat
+		if ( ! chatId && createdFrom !== 'direct_url' ) {
 			logMessageData( {
 				createdFrom,
 				selectedSiteId,
@@ -131,7 +131,6 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_flow: userFieldFlowName || null,
 			messaging_source: section,
 		} );
-		setHelpCenterZendeskConversationStarted();
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),

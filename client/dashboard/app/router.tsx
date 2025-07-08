@@ -20,10 +20,11 @@ import {
 } from '../sites/features';
 import NotFound from './404';
 import UnknownError from './500';
-import { isAutomatticianQuery } from './queries/a8c';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
-import { profileQuery } from './queries/profile';
+import { isAutomatticianQuery } from './queries/me-a8c';
+import { userPreferencesQuery } from './queries/me-preferences';
+import { profileQuery } from './queries/me-profile';
 import { siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
@@ -77,7 +78,10 @@ const sitesRoute = createRoute( {
 		// Preload the default sites list response without blocking.
 		queryClient.ensureQueryData( sitesQuery() );
 
-		await queryClient.ensureQueryData( isAutomatticianQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+			queryClient.ensureQueryData( userPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
