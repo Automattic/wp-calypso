@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from '@wordpress/element';
+import { createContext, useContext, useState, useCallback } from '@wordpress/element';
 import { type TranslateResult } from 'i18n-calypso';
 
 export interface LoginContextType {
@@ -22,16 +22,19 @@ const LoginContextProvider = ( { children }: { children: React.ReactNode } ) => 
 	const [ subHeadingText, setSubHeadingText ] = useState< TranslateResult | undefined | null >(
 		undefined
 	);
-	const setHeaders = ( {
-		heading,
-		subHeading,
-	}: {
-		heading?: TranslateResult | null;
-		subHeading?: TranslateResult | null;
-	} ) => {
-		setHeadingText( heading );
-		setSubHeadingText( subHeading );
-	};
+	const setHeaders = useCallback(
+		( {
+			heading,
+			subHeading,
+		}: {
+			heading?: TranslateResult | null;
+			subHeading?: TranslateResult | null;
+		} ) => {
+			setHeadingText( heading );
+			setSubHeadingText( subHeading );
+		},
+		[]
+	);
 
 	return (
 		<LoginContext.Provider
