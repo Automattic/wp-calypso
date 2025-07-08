@@ -190,7 +190,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				return true;
 			}
 			// Check if this node type should always be excluded
-			if ( filterConfig?.excludeTypes?.includes( item.name ) ) {
+			if ( filterConfig?.excludeTypes?.includes( item.type ) ) {
 				return false;
 			}
 
