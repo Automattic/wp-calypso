@@ -32,6 +32,7 @@ export interface HelpCenterSite {
 	is_wpcom_atomic: boolean;
 	jetpack: boolean;
 	logo: SiteLogo;
+	site_owner: number;
 	options: {
 		launchpad_screen: string;
 		site_intent: string;
