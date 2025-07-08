@@ -149,8 +149,6 @@ export const OdieSendMessageButton = () => {
 	};
 
 	const onKeyUp = useCallback( () => {
-		// Only triggered when the message is empty
-		// used to remove validation message.
 		setNotice( 'message-size-error', null );
 	}, [ setNotice ] );
 
