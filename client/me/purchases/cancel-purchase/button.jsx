@@ -48,10 +48,12 @@ class CancelPurchaseButton extends Component {
 		onSurveyComplete: PropTypes.func,
 		onPerformCancellation: PropTypes.func,
 		moment: PropTypes.func,
+		triggerCancellation: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
+		triggerCancellation: false,
 	};
 
 	state = {
@@ -288,6 +290,13 @@ class CancelPurchaseButton extends Component {
 		// Close dialog and redirect after handling the completion
 		this.closeDialog();
 	};
+
+	componentDidUpdate( prevProps ) {
+		// Handle external cancellation triggering
+		if ( this.props.triggerCancellation && ! prevProps.triggerCancellation ) {
+			this.performCancellation();
+		}
+	}
 
 	performCancellation = async () => {
 		this.setState( {

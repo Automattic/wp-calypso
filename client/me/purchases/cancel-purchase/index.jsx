@@ -33,7 +33,6 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { cancelAndRefundPurchaseAsync, cancelPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -85,6 +84,7 @@ class CancelPurchase extends Component {
 		isLoading: false,
 		domainConfirmationConfirmed: false,
 		showDomainOptionsStep: false,
+		triggerCancellation: false,
 	};
 
 	static defaultProps = {
@@ -160,7 +160,7 @@ class CancelPurchase extends Component {
 		} else {
 			this.setState( { surveyShown: true, isLoading: true } );
 			// Trigger the actual cancellation immediately when no domain options are needed
-			this.performCancellation();
+			this.setState( { triggerCancellation: true } );
 		}
 	};
 
@@ -174,7 +174,7 @@ class CancelPurchase extends Component {
 		} );
 
 		// Trigger the actual cancellation
-		this.performCancellation();
+		this.setState( { triggerCancellation: true } );
 	};
 
 	onSurveyComplete = () => {
@@ -187,32 +187,8 @@ class CancelPurchase extends Component {
 			isLoading: false,
 			cancellationCompleted: true,
 			cancellationMessage: message,
+			triggerCancellation: false,
 		} );
-	};
-
-	performCancellation = async () => {
-		const { purchase } = this.props;
-		const refundable = hasAmountAvailableToRefund( purchase );
-
-		try {
-			let result;
-			if ( refundable ) {
-				result = await cancelAndRefundPurchaseAsync( purchase.id, {
-					product_id: purchase.productId,
-					cancel_bundled_domain: this.state.cancelBundledDomain ? 1 : 0,
-				} );
-			} else {
-				result = await cancelPurchaseAsync( purchase.id );
-			}
-
-			if ( result ) {
-				this.onCancellationComplete( 'Your purchase has been cancelled successfully.' );
-			} else {
-				this.onCancellationComplete( 'There was an error cancelling your purchase.' );
-			}
-		} catch ( error ) {
-			this.onCancellationComplete( `Error: ${ error.message }` );
-		}
 	};
 
 	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
@@ -392,6 +368,7 @@ class CancelPurchase extends Component {
 				onCancellationComplete={ this.onCancellationComplete }
 				onSurveyComplete={ this.onSurveyComplete }
 				moment={ this.props.moment }
+				triggerCancellation={ this.state.triggerCancellation }
 			/>
 		);
 	};
