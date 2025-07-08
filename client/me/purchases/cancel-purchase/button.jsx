@@ -13,7 +13,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
-import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
 import {
 	getName,
@@ -45,7 +44,9 @@ class CancelPurchaseButton extends Component {
 		disabled: PropTypes.bool,
 		activeSubscriptions: PropTypes.array,
 		onCancellationStart: PropTypes.func,
+		onCancellationComplete: PropTypes.func,
 		onSurveyComplete: PropTypes.func,
+		onPerformCancellation: PropTypes.func,
 		moment: PropTypes.func,
 	};
 
@@ -95,33 +96,15 @@ class CancelPurchaseButton extends Component {
 			return;
 		}
 
-		this.setState( {
-			isLoading: true,
-		} );
-
+		// For other purchases, trigger the cancellation start which may show domain options step
 		if ( this.props.onCancellationStart ) {
 			this.props.onCancellationStart();
 		}
+	};
 
-		try {
-			const result = await this.submitCancelAndRefundPurchase();
-			if ( result.success ) {
-				// Handle marketplace subscriptions if any
-				const refundable = hasAmountAvailableToRefund( this.props.purchase );
-				await this.handleMarketplaceSubscriptions( refundable );
-
-				this.setState( {
-					showDialog: true,
-					cancellationCompleted: true,
-					cancellationMessage: result.message,
-					isLoading: false,
-				} );
-			} else {
-				this.cancellationFailed( result.error );
-			}
-		} catch ( error ) {
-			this.cancellationFailed( error.message );
-		}
+	// Expose performCancellation as a method that can be called via prop
+	performCancellationViaProp = async () => {
+		return this.performCancellation();
 	};
 
 	closeDialog = () => {
@@ -311,6 +294,39 @@ class CancelPurchaseButton extends Component {
 		this.closeDialog();
 	};
 
+	performCancellation = async () => {
+		this.setState( {
+			isLoading: true,
+		} );
+
+		try {
+			const result = await this.submitCancelAndRefundPurchase();
+
+			if ( result.success ) {
+				// Handle marketplace subscriptions if any
+				const refundable = hasAmountAvailableToRefund( this.props.purchase );
+				await this.handleMarketplaceSubscriptions( refundable );
+
+				// Call the callback to notify the parent component that cancellation is complete
+				if ( this.props.onCancellationComplete ) {
+					this.props.onCancellationComplete( result.message );
+				} else {
+					// Fallback to showing dialog if no callback provided
+					this.setState( {
+						showDialog: true,
+						cancellationCompleted: true,
+						cancellationMessage: result.message,
+						isLoading: false,
+					} );
+				}
+			} else {
+				this.cancellationFailed( result.error );
+			}
+		} catch ( error ) {
+			this.cancellationFailed( error.message );
+		}
+	};
+
 	cancellationFailed = ( errorMessage ) => {
 		this.setState( {
 			showDialog: false,
@@ -327,7 +343,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
+		const { purchase, translate } = this.props;
 
 		const onClick = ( () => {
 			return this.handleCancelPurchaseClick;
@@ -374,24 +390,6 @@ class CancelPurchaseButton extends Component {
 				>
 					{ text }
 				</Button>
-
-				{ ! isJetpack && (
-					<CancelPurchaseForm
-						disableButtons={ disableButtons }
-						purchase={ purchase }
-						isVisible={ this.state.showDialog }
-						onClose={ this.closeDialog }
-						onSurveyComplete={ this.handleSurveyComplete }
-						downgradeClick={ this.downgradeClick }
-						freeMonthOfferClick={ this.freeMonthOfferClick }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
-						cancelBundledDomain={ cancelBundledDomain }
-						includedDomainPurchase={ includedDomainPurchase }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
-					/>
-				) }
 
 				{ ( isJetpack || isAkismet ) && (
 					<CancelJetpackForm
