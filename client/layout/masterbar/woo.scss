@@ -156,8 +156,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	a:not(.components-button),
-	.wp-login__links a,
-	.wp-login__links button,
 	.button,
 	.magic-login__footer a {
 		color: $gray-50;
@@ -484,7 +482,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.wp-login__links,
 	.login__social-connect-prompt,
 	.magic-login__request-link,
 	.signup-form,

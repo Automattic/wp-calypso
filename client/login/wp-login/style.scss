@@ -110,53 +110,6 @@ $image-height: 47px;
 	}
 }
 
-.wp-login__links {
-
-	a,
-	a:visited,
-	button {
-		color: var(--color-neutral-50);
-
-		body.is-section-signup & {
-			color: var(--color-text-inverted);
-		}
-	}
-
-	a,
-	button,
-	.components-button {
-		border-bottom: 1px solid var(--color-neutral-10);
-		box-sizing: border-box;
-		cursor: pointer;
-		display: block;
-		font-size: $font-body-small;
-		font-weight: 600;
-		padding: 16px 24px;
-		text-align: center;
-		width: 100%;
-
-		&:hover,
-		&:active {
-			color: var(--color-accent);
-		}
-
-		&:last-child {
-			border-bottom: none;
-		}
-	}
-
-	.gridicon {
-		margin-right: 3px;
-		vertical-align: text-bottom;
-
-		&.gridicons-external {
-			top: 0;
-			margin-right: 0;
-			margin-left: 3px;
-		}
-	}
-}
-
 .wp-login__site-return-link {
 	overflow: hidden;
 	position: relative;
@@ -214,20 +167,6 @@ $image-height: 47px;
 
 .layout.is-wccom-oauth-flow {
 	background-color: var(--color-woocommerce-onboarding-background);
-
-	.wp-login__links {
-		margin-top: 1em;
-	}
-
-	.wp-login__links a {
-		border-bottom: none;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 3.4em;
-		color: var(--color-neutral-60);
-		font-size: $font-body-small;
-		text-decoration: underline;
-		font-weight: normal;
-	}
 
 	.wp-login__main.main {
 		max-width: 476px;
@@ -390,50 +329,6 @@ $image-height: 47px;
 				text-align: start;
 			}
 		}
-	}
-
-	.wp-login__links > .button,
-	.wp-login__links:not(.has-2fa-links) > a:first-of-type {
-		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
-		background: transparent;
-		margin: 0;
-		outline: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		text-decoration: none;
-		box-sizing: border-box;
-		font-size: $font-body-small;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		background-color: var(--color-surface);
-		color: var(--color-neutral-70);
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 4px;
-		letter-spacing: 0.32px;
-		line-height: 17px;
-		height: 44px;
-		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-
-		&:hover,
-		&:focus {
-			border-color: var(--color-neutral-20);
-			color: var(--color-neutral-70);
-		}
-	}
-
-	.wp-login__links > button,
-	.wp-login__links > a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.wp-login__links a:hover,
-	.wp-login__links a:active,
-	.wp-login__links button:hover,
-	.wp-login__links button:active {
-		color: #00a0d2;
 	}
 
 	.wp-login__main {
@@ -851,8 +746,7 @@ $image-height: 47px;
 		margin: 24px 0;
 	}
 
-	.grav-powered-login__footer,
-	.wp-login__links.has-2fa-links {
+	.grav-powered-login__footer {
 		display: flex;
 		flex-direction: column;
 		font-size: 16px;
@@ -867,20 +761,6 @@ $image-height: 47px;
 
 		button:focus {
 			outline: dotted;
-		}
-	}
-
-	.wp-login__links.has-2fa-links {
-		align-items: center;
-		margin-top: 24px;
-
-		a,
-		button {
-			color: var(--color-gravatar);
-			font-weight: normal;
-			text-decoration: underline;
-			padding: 0;
-			border: 0;
 		}
 	}
 
@@ -900,8 +780,7 @@ $image-height: 47px;
 			font-size: 40px;
 		}
 
-		.grav-powered-login__footer,
-		.wp-login__links.has-2fa-links {
+		.grav-powered-login__footer {
 			gap: 16px;
 		}
 	}
