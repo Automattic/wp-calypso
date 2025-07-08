@@ -9,7 +9,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
@@ -118,12 +117,12 @@ export function LaunchForm( {
 } ) {
 	const { data: domains = [], isLoading } = useQuery( siteDomainsQuery( site.ID ) );
 	const { recordTracksEvent } = useAnalytics();
-	const buttonClickEvent = 'calypso_launch_site_button_click';
+	const buttonClickEvent = 'calypso_dashboard_site_settings_launch_site_click';
 
-	const handleLaunchClick = useCallback( () => {
+	const handleLaunchClick = () => {
 		recordTracksEvent( buttonClickEvent );
 		onLaunchClick();
-	}, [ recordTracksEvent, buttonClickEvent, onLaunchClick ] );
+	};
 
 	if ( isLoading ) {
 		return null;
