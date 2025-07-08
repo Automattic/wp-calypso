@@ -21,7 +21,9 @@ import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
-import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import FileBrowser, {
+	FileBrowserFilterConfig,
+} from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -31,8 +33,14 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 // TODO: Temporary style for the PoC
 import './style.scss';
 
-const restrictedTypes = [ 'plugin', 'theme' ];
-const restrictedPaths = [ 'wp-content' ];
+const filterConfig: FileBrowserFilterConfig = {
+	restrictedTypes: [ 'plugin', 'theme' ],
+	restrictedPaths: [ 'wp-content' ],
+	excludeTypes: [ 'wordpress' ],
+	alwaysInclude: [ 'wp-config.php' ],
+	showHeaderButtons: false,
+	showFileCard: false,
+};
 
 const DirectionArrow = () => {
 	return (
@@ -226,12 +234,7 @@ export default function SyncModal( {
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 				{ querySiteId === stagingSiteId && (
 					<div className="staging-site-card">
-						<FileBrowser
-							rewindId={ rewindId }
-							showHeaderButtons={ false }
-							restrictedTypes={ restrictedTypes }
-							restrictedPaths={ restrictedPaths }
-						/>
+						<FileBrowser rewindId={ rewindId } filterConfig={ filterConfig } />
 					</div>
 				) }
 				<Text>

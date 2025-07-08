@@ -4,19 +4,21 @@ import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
 
-interface FileBrowserProps {
-	rewindId: number;
-	restrictedTypes?: string[];
+export interface FileBrowserFilterConfig {
 	restrictedPaths?: string[];
+	restrictedTypes?: string[];
+	excludeTypes?: string[];
+	alwaysInclude?: string[];
 	showHeaderButtons?: boolean;
+	showFileCard?: boolean;
 }
 
-const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
-	rewindId,
-	restrictedTypes,
-	restrictedPaths,
-	showHeaderButtons = true,
-} ) => {
+interface FileBrowserProps {
+	rewindId: number;
+	filterConfig?: FileBrowserFilterConfig;
+}
+
+const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId, filterConfig } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 
@@ -32,7 +34,10 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 
 	return (
 		<div>
-			<FileBrowserHeader rewindId={ rewindId } showHeaderButtons={ showHeaderButtons } />
+			<FileBrowserHeader
+				rewindId={ rewindId }
+				showHeaderButtons={ filterConfig?.showHeaderButtons ?? true }
+			/>
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }
@@ -40,8 +45,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				isAlternate
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
-				restrictedTypes={ restrictedTypes }
-				restrictedPaths={ restrictedPaths }
+				filterConfig={ filterConfig }
 			/>
 		</div>
 	);

@@ -13,6 +13,7 @@ import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem, FileBrowserCheckState } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
+import { FileBrowserFilterConfig } from './index';
 
 interface FileBrowserNodeProps {
 	item: FileBrowserItem;
@@ -22,8 +23,7 @@ interface FileBrowserNodeProps {
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
-	restrictedTypes?: string[];
-	restrictedPaths?: string[];
+	filterConfig?: FileBrowserFilterConfig;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -34,12 +34,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	setActiveNodePath,
 	activeNodePath,
 	parentItem,
-	restrictedTypes,
-	restrictedPaths,
+	filterConfig,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
+	const showFileCard = filterConfig?.showFileCard ?? true;
+	const applyFiltering = !! filterConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
@@ -80,12 +81,15 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 	const shouldRestrictChildren = useCallback(
 		( childItem: FileBrowserItem ) => {
-			if ( restrictedTypes && restrictedTypes.includes( childItem.type ) ) {
+			if (
+				filterConfig?.restrictedTypes &&
+				filterConfig?.restrictedTypes.includes( childItem.type )
+			) {
 				return true;
 			}
 			return false;
 		},
-		[ restrictedTypes ]
+		[ filterConfig?.restrictedTypes ]
 	);
 
 	// When we load the children from the API we'll add their check status info to the state
@@ -181,24 +185,42 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 	const filterItems = useCallback(
 		( item: FileBrowserItem ) => {
-			if ( restrictedPaths && restrictedPaths.length > 0 ) {
-				if ( item.type === 'wordpress' ) {
-					return false;
-				}
-				if ( item.name === 'wp-config.php' ) {
-					return true;
-				}
-				if ( isRoot && restrictedPaths.includes( item.name ) ) {
-					return true;
-				}
-				if ( restrictedPaths.some( ( restrictedPath ) => path.includes( restrictedPath ) ) ) {
-					return true;
-				}
+			// No filter is needed
+			if ( ! applyFiltering ) {
+				return true;
+			}
+			// Check if this node type should always be excluded
+			if ( filterConfig?.excludeTypes?.includes( item.name ) ) {
 				return false;
 			}
-			return true;
+
+			// Check if this node should always be included
+			if ( filterConfig?.alwaysInclude?.includes( item.name ) ) {
+				return true;
+			}
+
+			// Check if we're at root and this item is in restricted paths
+			if ( isRoot && filterConfig?.restrictedPaths?.includes( item.name ) ) {
+				return true;
+			}
+
+			// Check if current path includes any restricted path
+			if (
+				filterConfig?.restrictedPaths &&
+				filterConfig.restrictedPaths.some( ( restrictedPath ) => path.includes( restrictedPath ) )
+			) {
+				return true;
+			}
+			return false;
 		},
-		[ restrictedPaths, path, isRoot ]
+		[
+			applyFiltering,
+			filterConfig?.alwaysInclude,
+			filterConfig?.excludeTypes,
+			filterConfig?.restrictedPaths,
+			isRoot,
+			path,
+		]
 	);
 
 	const renderChildren = () => {
@@ -237,8 +259,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
-						restrictedTypes={ restrictedTypes }
-						restrictedPaths={ restrictedPaths }
+						filterConfig={ filterConfig }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
@@ -301,7 +322,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</>
 				) }
 			</div>
-			{ isCurrentNodeClicked && (
+			{ isCurrentNodeClicked && showFileCard && (
 				<FileInfoCard
 					siteId={ siteId }
 					rewindId={ rewindId }
