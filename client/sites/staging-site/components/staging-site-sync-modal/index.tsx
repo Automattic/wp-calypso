@@ -31,7 +31,8 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 // TODO: Temporary style for the PoC
 import './style.scss';
 
-const restrictedTypes = [ 'plugin', 'theme', 'uploads' ];
+const restrictedTypes = [ 'plugin', 'theme' ];
+const restrictedPaths = [ 'wp-content' ];
 
 const DirectionArrow = () => {
 	return (
@@ -229,6 +230,7 @@ export default function SyncModal( {
 							rewindId={ rewindId }
 							showHeaderButtons={ false }
 							restrictedTypes={ restrictedTypes }
+							restrictedPaths={ restrictedPaths }
 						/>
 					</div>
 				) }

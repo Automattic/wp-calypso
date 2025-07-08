@@ -23,6 +23,7 @@ interface FileBrowserNodeProps {
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	restrictedTypes?: string[];
+	restrictedPaths?: string[];
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -34,6 +35,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	activeNodePath,
 	parentItem,
 	restrictedTypes,
+	restrictedPaths,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
@@ -177,6 +179,28 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		setIsOpen( ! isOpen );
 	}, [ dispatch, isOpen, item, path, setActiveNodePath ] );
 
+	const filterItems = useCallback(
+		( item: FileBrowserItem ) => {
+			if ( restrictedPaths && restrictedPaths.length > 0 ) {
+				if ( item.type === 'wordpress' ) {
+					return false;
+				}
+				if ( item.name === 'wp-config.php' ) {
+					return true;
+				}
+				if ( isRoot && restrictedPaths.includes( item.name ) ) {
+					return true;
+				}
+				if ( restrictedPaths.some( ( restrictedPath ) => path.includes( restrictedPath ) ) ) {
+					return true;
+				}
+				return false;
+			}
+			return true;
+		},
+		[ restrictedPaths, path, isRoot ]
+	);
+
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
 			return (
@@ -192,7 +216,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		if ( isSuccess && addedAnyChildren ) {
 			let childIsAlternate = isAlternate;
 
-			return backupFiles.map( ( childItem ) => {
+			return backupFiles.filter( filterItems ).map( ( childItem ) => {
 				// Let's hide archives that don't have an extension version
 				// and changed extensions item node
 				if (
@@ -214,6 +238,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
 						restrictedTypes={ restrictedTypes }
+						restrictedPaths={ restrictedPaths }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>

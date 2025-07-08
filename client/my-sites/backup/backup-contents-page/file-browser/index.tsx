@@ -7,12 +7,14 @@ import { FileBrowserItem } from './types';
 interface FileBrowserProps {
 	rewindId: number;
 	restrictedTypes?: string[];
+	restrictedPaths?: string[];
 	showHeaderButtons?: boolean;
 }
 
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 	rewindId,
 	restrictedTypes,
+	restrictedPaths,
 	showHeaderButtons = true,
 } ) => {
 	// This is the path of the node that is clicked
@@ -39,6 +41,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
 				restrictedTypes={ restrictedTypes }
+				restrictedPaths={ restrictedPaths }
 			/>
 		</div>
 	);
