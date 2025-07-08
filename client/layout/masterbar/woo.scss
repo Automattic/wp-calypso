@@ -1068,10 +1068,6 @@ $breakpoint-mobile: 660px;
 			font-weight: 700;
 			line-height: 39.6px;
 			letter-spacing: -0.72px;
-
-			@media (max-width: $break-mobile) {
-				text-align: left;
-			}
 		}
 
 		input[type="text"].form-text-input,
