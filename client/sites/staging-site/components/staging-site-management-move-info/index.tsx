@@ -4,6 +4,7 @@ import {
 	CardBody,
 	Icon,
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 	__experimentalGrid as Grid,
 	__experimentalItem as Item,
@@ -120,18 +121,32 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	const isMobile = useBreakpoint( '<660px' );
 
 	return (
-		<Grid
-			alignment="topLeft"
-			columns={ isMobile ? 1 : 2 }
-			gap={ 6 }
-			style={ { maxWidth: '748px' } }
-		>
-			{ infoCardItems.map( ( item, index ) => (
-				<Item key={ index } style={ { padding: '0' } }>
-					<InfoCard item={ item } />
-				</Item>
-			) ) }
-		</Grid>
+		<VStack spacing={ 10 }>
+			<div>
+				<Heading level={ 2 } weight={ 500 } size={ 24 }>
+					{ __( 'Staging site management has moved' ) }
+				</Heading>
+				<Text>
+					{ __(
+						"We've reorganized staging site controls to make them more accessible and intuitive."
+					) }
+					<br />
+					{ __( 'Find everything you need in the new locations highlighted below.' ) }
+				</Text>
+			</div>
+			<Grid
+				alignment="topLeft"
+				columns={ isMobile ? 1 : 2 }
+				gap={ 6 }
+				style={ { maxWidth: '748px' } }
+			>
+				{ infoCardItems.map( ( item, index ) => (
+					<Item key={ index } style={ { padding: '0' } }>
+						<InfoCard item={ item } />
+					</Item>
+				) ) }
+			</Grid>
+		</VStack>
 	);
 };
 
