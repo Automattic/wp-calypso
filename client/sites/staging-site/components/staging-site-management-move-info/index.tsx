@@ -1,6 +1,7 @@
 import {
 	Card,
 	CardBody,
+	Icon,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalGrid as Grid,
@@ -8,7 +9,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, arrowUp, cog } from '@wordpress/icons';
+import { arrowUp, cog } from '@wordpress/icons';
 import { FunctionComponent } from 'react';
 
 interface InfoCardItem {
