@@ -51,6 +51,12 @@
 			}
 		}
 	}
+
+	.hosting-dashboard-item-view {
+		display: flex;
+		flex-direction: column;
+		height: calc(100vh - 32px);
+	}
 }
 
 .reports-dashboard__actions {
@@ -100,7 +106,6 @@
 	flex-direction: column;
 	gap: 8px;
 	margin-block-start: 16px;
-	align-items: center;
 
 	@include break-large {
 		margin-block-start: 0;
@@ -109,6 +114,7 @@
 	@include break-xlarge {
 		flex-direction: row;
 		gap: 12px;
+		align-items: center;
 	}
 
 	button {
@@ -119,4 +125,9 @@
 			min-width: 160px;
 		}
 	}
+}
+
+.reports-dashboard-empty-state__footnote {
+	@include body-medium;
+	color: var(--color-neutral-50);
 }

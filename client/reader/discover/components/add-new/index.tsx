@@ -59,7 +59,7 @@ const DiscoverAddNew = () => {
 						<h2 className="discover-add-new__subscriptions-title">
 							{ translate( 'Your subscriptions' ) }
 						</h2>
-						<SiteSubscriptionsList />
+						<SiteSubscriptionsList layout="compact" />
 					</div>
 				) }
 			</SubscriptionManagerContextProvider>

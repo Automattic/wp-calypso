@@ -23,6 +23,7 @@ import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
@@ -36,6 +37,18 @@ function useLogBillingHistoryError( message: string ) {
 		},
 		[ message ]
 	);
+}
+
+function getBillingHistoryUrl( previousRoute: string, site: string ): string {
+	/**
+	 * Preserve the previous route if it's the billing history page because it
+	 * may contain a query string with pagination and other view properties
+	 * that we want to return to.
+	 */
+	if ( previousRoute.includes( '/purchases/billing' ) ) {
+		return previousRoute;
+	}
+	return getBillingHistoryUrlFor( site );
 }
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
@@ -92,6 +105,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 	const transaction = useSelector( ( state: IAppState ) =>
 		getPastBillingTransaction( state, receiptId )
 	);
+	const previousRoute = useSelector( getPreviousRoute );
 	const logBillingHistoryError = useLogBillingHistoryError( 'site level receipt view load error' );
 	const reduxDispatch = useDispatch();
 
@@ -122,7 +136,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logBillingHistoryError }
 			>
-				<ReceiptTitle backHref={ getBillingHistoryUrlFor( siteSlug ) } />
+				<ReceiptTitle backHref={ getBillingHistoryUrl( previousRoute, siteSlug ) } />
 				{ transaction && isCorrectSite ? (
 					<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
 				) : (

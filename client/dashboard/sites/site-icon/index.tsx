@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { getSiteStatus } from '../../utils/site-status';
+import SiteMigrationIcon from './site-migration-icon';
 import type { Site } from '../../data/types';
 
 import './style.scss';
@@ -29,6 +31,11 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 				style={ { width: size, height: size } }
 			/>
 		);
+	}
+
+	const status = getSiteStatus( site );
+	if ( status === 'migration_pending' || status === 'migration_started' ) {
+		return <SiteMigrationIcon size={ size } />;
 	}
 
 	return (

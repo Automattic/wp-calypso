@@ -1,6 +1,7 @@
+import config from '@automattic/calypso-config';
 import { DotcomFeatures } from '../data/constants';
 import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
-import { isJetpackNotAtomic, isP2 } from '../utils/site-types';
+import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '../data/types';
 
 export const HostingFeatures = {
@@ -33,8 +34,8 @@ export function canManageSite( site: Site ) {
 		return false;
 	}
 
-	// Jetpack sites are not supported, yet.
-	if ( isJetpackNotAtomic( site ) ) {
+	// Self-hosted Jetpack-connected sites are not supported, yet.
+	if ( isSelfHostedJetpackConnected( site ) ) {
 		return false;
 	}
 
@@ -116,4 +117,21 @@ export function canTransferSite( site: Site, user: User ) {
 
 	const isSiteOwner = site.site_owner === user.ID;
 	return isAllowedSiteType && isSiteOwner;
+}
+
+export function canLeaveSite( site: Site ) {
+	return ! site.is_wpcom_staging_site;
+}
+
+export function canResetSite( site: Site ) {
+	return ! site.is_wpcom_staging_site;
+}
+
+export function canDeleteSite( site: Site ) {
+	// For staging sites, only show delete if the redesign feature flag is enabled
+	if ( site.is_wpcom_staging_site ) {
+		return config.isEnabled( 'hosting/staging-sites-redesign' );
+	}
+
+	return ! site.is_wpcom_staging_site;
 }

@@ -256,6 +256,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {
+						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+							return navigate(
+								paths.upgradePlanPath( {
+									siteId,
+									from: fromQueryParam,
+									siteSlug,
+									how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+								} )
+							);
+						}
+
 						return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
 					}
 

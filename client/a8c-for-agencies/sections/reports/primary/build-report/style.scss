@@ -27,10 +27,14 @@
 		@include body-medium;
 		color: var( --color-neutral-70 );
 		margin-block-end: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.build-report__group-label {
 		@include heading-medium;
+		margin-block-end: 16px;
 	}
 
 	// Fixing margins from StyledHelp-deprecatedMarginHelp which is being inserted by the component
@@ -82,6 +86,12 @@
 	}
 }
 
+.build-report__select-site-subtitle {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
 .build-report__content-header {
 	display: flex;
 	flex-direction: column;
@@ -103,11 +113,42 @@
 	@include body-small;
 	display: flex;
 	align-items: center;
-	gap: 4px;
+
+	svg {
+		margin: 5px 10px 5px 0;
+	}
 }
 
 .build-report__date-popover {
 	.components-popover__content {
 		padding: 16px;
 	}
+}
+
+.build-report__loading-state {
+	display: flex;
+	padding-block: 16px;
+	align-items: center;
+
+	svg {
+		margin: 5px 15px 5px 0;
+	}
+}
+
+.build-report__loading-actions,
+.build-report__error-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.build-report__step-note {
+	@include body-small;
+	color: var(--color-neutral-50);
+	margin-block: 0.5rem -0.5rem;
+}
+
+.build-report__stats-fieldset {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }

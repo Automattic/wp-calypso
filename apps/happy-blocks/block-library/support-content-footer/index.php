@@ -14,108 +14,7 @@ if ( ! isset( $args ) ) {
 $site_type         = isset( $args['site_type'] ) ? $args['site_type'] : '';
 $current_page_slug = isset( $args['current_page_slug'] ) ? $args['current_page_slug'] : '';
 
-if ( 'home' === $current_page_slug ) {
-	//phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
-	$subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';
-	$signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn%23support-content-subscribe' );
-	?>
-
-<div class="happy-blocks-support-content-footer">
-	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
-		<div class="support-content-resource">
-			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Go further', 'happy-blocks' ); ?>
-			</h4>
-			<p>
-	<?php esc_html_e( 'Upgrade and unlock features, tools, and expert help with a paid plan.', 'happy-blocks' ); ?>
-			</p>
-			<div class="resource-link">
-				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/pricing' ) ); ?>">
-					<?php esc_html_e( 'View plans', 'happy-blocks' ); ?>
-				</a>
-			</div>
-		</div>
-		<div class="support-content-resource">
-			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Join the forum', 'happy-blocks' ); ?>
-			</h4>
-			<p>
-				<?php esc_html_e( 'Connect and learn with the WordPress.com community.', 'happy-blocks' ); ?>
-			</p>
-			<div class="resource-link">
-				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
-					<?php esc_html_e( 'Join the Community', 'happy-blocks' ); ?>
-				</a>
-			</div>
-		</div>
-	<?php if ( 'support' === $site_type ) : ?>
-			<div class="support-content-resource">
-				<h4 class="support-content-resource__title">
-		<?php if ( get_locale() === 'en' ) : ?>
-			<?php esc_html_e( 'Watch a course', 'happy-blocks' ); ?>
-					<?php else : ?>
-						<?php esc_html_e( 'Watch a course (in English)', 'happy-blocks' ); ?>
-					<?php endif; ?>
-				</h4>
-				<p>
-		<?php esc_html_e( 'Learn how to create a website with our step-by-step video course.', 'happy-blocks' ); ?>
-		<?php if ( get_locale() !== 'en' ) : ?>
-						<br /> <br /><em><?php esc_html_e( 'Available in English only.', 'happy-blocks' ); ?></em>
-		<?php endif; ?>
-				</p>
-				<div class="resource-link">
-					<a href="<?php echo esc_url( '//wordpress.com/support/courses/create-your-website/' ); ?>">
-		<?php esc_html_e( 'Create your website', 'happy-blocks' ); ?>
-					</a>
-				</div>
-			</div>
-		<?php else : ?>
-			<div class="support-content-resource">
-				<h4 class="support-content-resource__title">
-			<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
-				</h4>
-				<p>
-			<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
-				</p>
-				<div class="resource-link">
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-						<?php esc_html_e( 'Visit support guides', 'happy-blocks' ); ?>
-					</a>
-				</div>
-			</div>
-		<?php endif; ?>
-	</div>
-	<div class="support-content-links-subscribe">
-	<?php
-	include WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
-	?>
-		<div name="support-content-subscribe" class="support-content-subscribe">
-			<p><?php esc_html_e( 'Get the latest learning in your inbox:', 'happy-blocks' ); ?></p>
-			<div class="subscribe-shortcode-wrapper">
-				<?php if ( is_user_logged_in() ) : ?>
-				<div class="support-content-subscribe-email">
-					<?php esc_html_e( 'Discover new learning updates', 'happy-blocks' ); ?>
-				</div>
-				<div class="support-content-subscribe-submit" type="submit">
-					<?php echo do_shortcode( $subscribe_block ); ?>
-				</div>
-				<?php else : ?>
-				<div class="support-content-subscribe-email">
-					<a href="<?php echo esc_attr( $signup_url ); ?>"><?php esc_html_e( 'Create a WordPress.com account or log in to subscribe.', 'happy-blocks' ); ?></a>
-				</div>
-				<?php endif; ?>
-			</div>
-			<p class="support-content-subscribe-disclaimer">
-				<?php
-					// translators: %s: 'WordPress.com privacy policy'.
-					printf( esc_html__( 'Your information will be used in accordance with %s.', 'happy-blocks' ), '<a href="https://automattic.com/privacy/">' . esc_html__( 'WordPress.com privacy policy', 'happy-blocks' ) . '</a>' );
-				?>
-			</p>
-		</div>
-	</div>
-	</div>
-	<?php
-} elseif ( 'contact' === $current_page_slug ) {
+if ( 'contact' === $current_page_slug ) {
 	?>
 	<div class="happy-blocks-new-support-content-footer contact-page">
 		<div class="support-content-resources">
@@ -165,36 +64,6 @@ if ( 'home' === $current_page_slug ) {
 			</a>
 		</div>
 	</div>
-	<?php
-} elseif ( 'courses-2' === $current_page_slug ) {
-	?>
-		<div class="happy-blocks-new-support-content-footer">
-			<h2 class="support-footer__heading"><?php esc_html_e( 'Continue your learning journey', 'happy-blocks' ); ?></h2>
-			<div class="support-content-resources">
-				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides/' ) ); ?>" class="support-content-resource">
-					<div class="support-content-resource__content">
-						<div class="support-footer__icon-wrapper">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-  <path fill="#fff" d="M18 5.5H6a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5ZM6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm1 5h1.5v1.5H7V9Zm1.5 4.5H7V15h1.5v-1.5ZM10 9h7v1.5h-7V9Zm7 4.5h-7V15h7v-1.5Z"/>
-</svg>
-						</div>
-						<h3 class="support-footer__card-title"><?php esc_html_e( 'Browse our guides', 'happy-blocks' ); ?></h3>
-						<p class="support-footer__card-description"><?php esc_html_e( 'Find step-by-step solutions to common questions in our comprehensive guides.', 'happy-blocks' ); ?></p>
-					</div>
-				</a>
-				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/blog/' ) ); ?>" class="support-content-resource">
-					<div class="support-content-resource__content">
-						<div class="support-footer__icon-wrapper">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-  <path fill="#fff" fill-rule="evenodd" d="M6 5.5h12a.5.5 0 0 1 .5.5v7H14a2 2 0 0 1-4 0H5.5V6a.5.5 0 0 1 .5-.5Zm-.5 9V18a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5v-3.5h-3.3a3.5 3.5 0 0 1-6.4 0H5.5ZM4 13V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5Z" clip-rule="evenodd"/>
-</svg>
-						</div>
-						<h3 class="support-footer__card-title"><?php esc_html_e( 'Subscribe to our blog', 'happy-blocks' ); ?></h3>
-						<p class="support-footer__card-description"><?php esc_html_e( 'Sign up to get tips, tutorials, and all the latest news straight to your inbox.', 'happy-blocks' ); ?></p>
-					</div>
-				</a>
-			</div>
-		</div>
 	<?php
 } else {
 	?>

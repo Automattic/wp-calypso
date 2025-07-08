@@ -110,7 +110,8 @@ function getUniqueTransactionTypes(
 
 export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	getReceiptUrlFor: ( receiptId: string ) => string
 ) {
 	return {
 		date: {
@@ -145,7 +146,16 @@ export function getFieldDefinitions(
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item }: { item: BillingTransaction } ) => {
-				return <div>{ renderServiceName( item, translate ) }</div>;
+				return (
+					<div className="billing-history__item-service">
+						<a
+							title={ translate( 'View receipt', { textOnly: true } ) }
+							href={ getReceiptUrlFor( item.id ) }
+						>
+							{ renderServiceName( item, translate ) }
+						</a>
+					</div>
+				);
 			},
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				const [ transactionItem ] = groupDomainProducts( item.items, translate );

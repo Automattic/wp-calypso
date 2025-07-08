@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	Field,
 	tryToGuessPostalCodeFormat,
@@ -88,7 +87,6 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryTaxRequirements( countriesList, countryCode?.value )
 			: {};
-	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 	const fields: ReactElement[] = [
 		<CountrySelectMenu
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -274,7 +272,7 @@ export default function TaxFields( {
 						{ fields[ index * 2 + 1 ] && <RightColumn>{ fields[ index * 2 + 1 ] }</RightColumn> }
 					</FieldRow>
 				) ) }
-			{ isVatSupported && (
+			{ allowVat && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
 			{ allowIsForBusinessUseCheckbox && handleIsForBusinessChange && (

@@ -31,12 +31,15 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'is_difm_lite_in_progress',
+	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
 	'p2_hub_blog_id',
 	'site_creation_flow',
 	'software_version',
 	'updated_at',
+	'wpcom_production_blog_id',
 ];
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
@@ -60,12 +63,13 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
-	is_redirect?: boolean;
+	is_difm_lite_in_progress?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	software_version: string;
 	updated_at?: string;
+	wpcom_production_blog_id?: number;
 }
 
 export interface Site {
@@ -79,8 +83,7 @@ export interface Site {
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;
 	subscribers_count: number;
-	// Can be undefined for deleted sites.
-	options?: SiteOptions;
+	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
@@ -119,6 +122,18 @@ export async function deleteSite( siteId: number ) {
 export async function launchSite( siteId: number ) {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/launch`,
-		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export async function restoreSite( siteId: number ) {
+	return wpcom.req.post(
+		{
+			path: '/restore-site',
+			apiNamespace: 'wpcom/v2',
+			method: 'put',
+		},
+		{
+			site_id: siteId,
+		}
+	);
 }

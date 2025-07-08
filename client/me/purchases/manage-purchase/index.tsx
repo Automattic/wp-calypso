@@ -858,7 +858,7 @@ class ManagePurchase extends Component<
 				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
-				onClickFinalConfirm={ this.cancelSubscription }
+				onSurveyComplete={ this.cancelSubscription }
 				flowType={ getPurchaseCancellationFlowType( purchase ) }
 			/>
 		);

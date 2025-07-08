@@ -55,4 +55,4 @@ An optional prop specifying primary and recent sites to be requested.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-An optional prop specifying all sites to be requested. If true, all visible (i.e. excluding deleted etc) sites for the current user will be requested.
+An optional prop specifying all sites to be requested. If true, all sites for the current user will be requested.

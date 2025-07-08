@@ -17,11 +17,13 @@ import { CompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/u
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { addSchemeIfMissing } from 'calypso/lib/url/scheme-utils';
 import DomainUpsell from 'calypso/me/domain-upsell';
 import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { getValidUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
@@ -41,6 +43,21 @@ class Profile extends Component {
 
 	toggleIsDevAccount = ( isDevAccount ) => {
 		this.props.setUserSetting( 'is_dev_account', isDevAccount );
+	};
+
+	/**
+	 * Handles URL normalization on blur
+	 * @param {Event} event - The blur event
+	 */
+	handleUrlBlur = ( event ) => {
+		const { value } = event.target;
+		const normalizedUrl = addSchemeIfMissing( value, 'https' );
+		if ( normalizedUrl !== value ) {
+			const validUrl = getValidUrl( normalizedUrl );
+			if ( validUrl ) {
+				this.props.setUserSetting( 'user_URL', validUrl );
+			}
+		}
 	};
 
 	render() {
@@ -130,6 +147,7 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Web Address Field' ) }
 								placeholder="https://example.com"
 								value={ this.props.getSetting( 'user_URL' ) }
+								onBlur={ this.handleUrlBlur }
 							/>
 						</FormFieldset>
 

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlanPath, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
@@ -385,7 +386,11 @@ export function useActions( {
 				id: 'prepare-for-launch',
 				label: __( 'Prepare for launch' ),
 				callback: ( sites ) => {
-					page( `/sites/settings/site/${ sites[ 0 ].ID }` );
+					const url = isEnabled( 'dashboard/v2/backport/site-settings' )
+						? `/sites/settings/v2/${ sites[ 0 ].slug }/site-visibility`
+						: `/sites/settings/site/${ sites[ 0 ].ID }`;
+
+					page( url );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' )
 					);

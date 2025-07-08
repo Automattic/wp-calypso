@@ -16,7 +16,18 @@ export interface Purchase {
 	currencyCode: string;
 	currencySymbol: string;
 	description: string;
+
+	/**
+	 * The domain name of the site associated with the purchase.
+	 *
+	 * IMPORTANT: this is not necessarily the primary domain of the site. This
+	 * can cause issues for Atomic sites if you try to use it for things that
+	 * expect the primary domain, like routing.
+	 *
+	 * To get the primary domain instead, use `siteSlug`.
+	 */
 	domain: string;
+
 	domainRegistrationAgreementUrl: string | null;
 	error: null;
 	expiryDate: string;
@@ -60,6 +71,7 @@ export interface Purchase {
 	productSlug: string;
 	productType: string;
 	purchaseRenewalQuantity: number | null;
+	purchaserId?: number;
 
 	/**
 	 * The refund amount for the purchase, not including bundled domains, as a
@@ -106,6 +118,12 @@ export interface Purchase {
 	saleAmountInteger?: number;
 	siteId: number;
 	siteName: string;
+
+	/**
+	 * The primary domain for the site that owns this purchase.
+	 */
+	siteSlug?: string;
+
 	subscribedDate: string;
 	subscriptionStatus: 'active' | 'inactive';
 
@@ -239,6 +257,7 @@ export interface RawPurchase {
 	product_type: string;
 	product_display_price: string;
 	price_integer: number;
+	purchaser_id?: number;
 	total_refund_amount: number | undefined;
 	total_refund_currency: string;
 	total_refund_integer: number;
@@ -256,6 +275,7 @@ export interface RawPurchase {
 	sale_amount_integer: number | undefined;
 	blog_id: number | string;
 	blogname: string;
+	site_slug?: string;
 	subscribed_date: string;
 	subscription_status: 'active' | 'inactive';
 	tag_line: string;

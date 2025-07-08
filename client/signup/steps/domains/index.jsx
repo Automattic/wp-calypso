@@ -26,6 +26,8 @@ import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import DomainCartV2 from 'calypso/components/domain-search-v2/domain-cart';
+import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -39,6 +41,7 @@ import {
 	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
 	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -57,6 +60,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -218,7 +222,8 @@ class RenderDomainsStepComponent extends Component {
 		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 		if (
 			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
-			hasDomainRegistration( this.props.cart )
+			hasDomainRegistration( this.props.cart ) &&
+			this.props.multiDomainDefaultPlan
 		) {
 			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
@@ -230,7 +235,8 @@ class RenderDomainsStepComponent extends Component {
 			if (
 				shouldUseMultipleDomainsInCart( this.props.flowName ) &&
 				hasDomainRegistration( this.props.cart ) &&
-				! hasPersonalPlan( this.props.cart )
+				! hasPersonalPlan( this.props.cart ) &&
+				this.props.multiDomainDefaultPlan
 			) {
 				// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
@@ -243,6 +249,11 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getUseYourDomainUrl = () => {
+		if ( this.props.getUseYourDomainUrl ) {
+			const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
+			return this.props.getUseYourDomainUrl( lastQuery );
+		}
+
 		return getStepUrl(
 			this.props.flowName,
 			this.props.stepName,
@@ -534,6 +545,10 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	handleAddMapping = ( { sectionName, domain, state } ) => {
+		if ( this.props.handleAddMapping ) {
+			this.props.handleAddMapping( domain );
+			return;
+		}
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -575,6 +590,11 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	handleAddTransfer = ( { domain, authCode } ) => {
+		if ( this.props.handleAddTransfer ) {
+			this.props.handleAddTransfer( domain );
+			return;
+		}
+
 		const domainItem = domainTransfer( {
 			domain,
 			extra: {
@@ -662,6 +682,7 @@ class RenderDomainsStepComponent extends Component {
 			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
+			'domains/add',
 		].includes( flowName );
 	};
 
@@ -726,9 +747,10 @@ class RenderDomainsStepComponent extends Component {
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			// TODO: remove productsToAdd
-			const productsToAdd = ! hasPlan( this.props.cart )
-				? [ registration, this.props.multiDomainDefaultPlan ]
-				: [ registration ];
+			const productsToAdd =
+				! hasPlan( this.props.cart ) && this.props.multiDomainDefaultPlan
+					? [ registration, this.props.multiDomainDefaultPlan ]
+					: [ registration ];
 
 			// Replace the products in the cart with the freshly sorted products.
 			clearTimeout( this.state.addDomainTimeout );
@@ -798,6 +820,8 @@ class RenderDomainsStepComponent extends Component {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
 		} );
+
+		this.props.recordRemoveDomainButtonClick( domain.meta );
 	};
 
 	async removeDomain( { domain_name, product_slug } ) {
@@ -932,9 +956,11 @@ class RenderDomainsStepComponent extends Component {
 		);
 		this.props.submitSignupStep( stepDependencies, providedDependencies );
 
-		const productToRemove = cart.products.find(
-			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
-		);
+		const productToRemove = multiDomainDefaultPlan
+			? cart.products.find(
+					( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
+			  )
+			: null;
 
 		if ( productToRemove && productToRemove.uuid ) {
 			shoppingCartManager.removeProductFromCart( productToRemove.uuid ).then( () => {
@@ -1063,6 +1089,7 @@ class RenderDomainsStepComponent extends Component {
 
 		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
 		const initialQuery =
+			this.props.suggestion ||
 			get( this.props, 'queryObject.new', '' ) ||
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
@@ -1094,10 +1121,16 @@ class RenderDomainsStepComponent extends Component {
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
+		const RegisterDomainStepComponent = this.props.shouldUseDomainSearchV2
+			? RegisterDomainStepV2
+			: RegisterDomainStep;
+
 		return (
-			<RegisterDomainStep
+			<RegisterDomainStepComponent
 				key="domainForm"
 				path={ this.props.path }
+				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+				onDomainsAvailabilityChange={ this.props.onDomainsAvailabilityChange }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				onMappingError={ this.handleDomainMappingError }
@@ -1107,6 +1140,7 @@ class RenderDomainsStepComponent extends Component {
 				products={ this.props.productsList }
 				basePath={ this.props.path }
 				promoTlds={ promoTlds }
+				hideMatchReasons={ this.props.hideMatchReasons }
 				mapDomainUrl={ this.getUseYourDomainUrl() }
 				otherManagedSubdomains={ this.props.otherManagedSubdomains }
 				otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
@@ -1154,6 +1188,7 @@ class RenderDomainsStepComponent extends Component {
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 				handleClickUseYourDomain={ this.handleUseYourDomainClick }
+				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 			/>
 		);
 	};
@@ -1284,7 +1319,7 @@ class RenderDomainsStepComponent extends Component {
 	}
 
 	getAnalyticsSection() {
-		return this.props.isDomainOnly ? 'domain-first' : 'signup';
+		return this.props.analyticsSection ?? ( this.props.isDomainOnly ? 'domain-first' : 'signup' );
 	}
 
 	getContentColumns() {
@@ -1296,10 +1331,15 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			content = this.domainForm();
+			content = (
+				<>
+					{ this.domainForm() }
+					{ this.props.shouldUseDomainSearchV2 && <DomainCartV2 /> }
+				</>
+			);
 		}
 
-		if ( ! this.props.stepSectionName ) {
+		if ( ! this.props.stepSectionName && ! this.props.shouldUseDomainSearchV2 ) {
 			sideContent = this.getSideContent();
 		}
 
@@ -1472,6 +1512,22 @@ class RenderDomainsStepComponent extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		if ( this.props.render ) {
+			const [ content, sideContent ] = this.getContentColumns();
+
+			const mainContent = (
+				<>
+					<QueryProductsList type="domains" />
+					{ content }
+				</>
+			);
+
+			return this.props.render( {
+				mainContent,
+				sideContent,
+			} );
+		}
+
 		if ( shouldUseStepContainerV2( flowName ) ) {
 			const [ content, sideContent ] = this.getContentColumns();
 
@@ -1572,8 +1628,29 @@ class RenderDomainsStepComponent extends Component {
 	}
 }
 
+const StyleWrappedDomainsStepComponent = ( props ) => {
+	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flowName );
+
+	if ( isLoading ) {
+		// TODO: Add a loading state to indicate that the experiment is loading.
+		return null;
+	}
+
+	return (
+		<>
+			<RenderDomainsStepComponent
+				{ ...props }
+				shouldUseDomainSearchV2={ shouldUseDomainSearchV2 }
+			/>
+			{ ! shouldUseDomainSearchV2 && (
+				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--unified' ] } />
+			) }
+		</>
+	);
+};
+
 export const RenderDomainsStep = withViewportMatch( { isDesktop: '>= large' } )(
-	RenderDomainsStepComponent
+	StyleWrappedDomainsStepComponent
 );
 
 export const submitDomainStepSelection = ( suggestion, section ) => {

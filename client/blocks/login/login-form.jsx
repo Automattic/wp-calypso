@@ -96,7 +96,6 @@ export class LoginForm extends Component {
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
-		hideSignupLink: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
@@ -748,19 +747,16 @@ export class LoginForm extends Component {
 		let loginUrl;
 
 		const {
-			oauth2Client,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isWoo,
 			isBlazePro,
-			hideSignupLink,
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
 		} = this.props;
 
 		const isPasswordHidden = this.isUsernameOrEmailView();
-		const isOauthLogin = !! oauth2Client;
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
 
@@ -993,19 +989,6 @@ export class LoginForm extends Component {
 								buttonText={ this.getLoginButtonText() }
 							/>
 						</div>
-
-						{ ! hideSignupLink && isOauthLogin && (
-							<p className={ clsx( 'login__form-signup-link' ) }>
-								{ this.props.translate(
-									'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
-									{
-										components: {
-											signupLink: <a href={ signupUrl } />,
-										},
-									}
-								) }
-							</p>
-						) }
 					</>
 				) }
 			</Card>

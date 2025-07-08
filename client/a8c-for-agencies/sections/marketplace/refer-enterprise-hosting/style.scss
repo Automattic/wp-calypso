@@ -1,0 +1,60 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "../variables";
+
+.a4a-form.refer-enterprise-hosting-form {
+	margin-block-start: 64px;
+
+	.a4a-form__section-field-label {
+		text-transform: uppercase;
+		@include heading-small;
+	}
+
+	.a4a-form__section-body {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	select {
+		width: 100%;
+	}
+}
+
+.refer-enterprise-hosting__top {
+	background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg ) no-repeat top right $header-background-color;
+
+	.hosting-dashboard-layout__header-breadcrumb {
+		color: var(--color-neutral-40);
+		fill: var(--color-neutral-40);
+
+		a {
+			color: var(--color-primary-5);
+		}
+	}
+}
+
+div.refer-enterprise-hosting-form__contact-name {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@include break-large {
+		flex-direction: row;
+	}
+
+	> * {
+		flex-grow: 1;
+	}
+}
+
+.refer-enterprise-hosting-form__rfp-file {
+	@include body-medium;
+	margin-block-start: 16px;
+}
+
+.refer-enterprise-hosting-form__footer {
+	padding: 16px 24px;
+	border-block-start: 1px solid var(--color-neutral-5);
+}

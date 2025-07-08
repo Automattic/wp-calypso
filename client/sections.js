@@ -500,19 +500,6 @@ const sections = [
 		group: 'reader',
 	},
 	{
-		name: 'help',
-		paths: [ '/help' ],
-		module: 'calypso/me/help',
-		enableLoggedOut: true,
-		group: 'me',
-	},
-	{
-		name: 'help',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/help',
-		group: 'me',
-	},
-	{
 		name: 'auth',
 		paths: [ '/api/oauth/token' ],
 		module: 'calypso/auth',

@@ -37,10 +37,10 @@ export const HelpCenterArticle = () => {
 				if ( anchorId ) {
 					const element = document.getElementById( anchorId );
 					if ( element ) {
-						element.scrollIntoView();
+						element.scrollIntoView( { behavior: 'instant' } );
 					}
 				}
-			}, 0 );
+			}, 100 );
 		}
 	}, [ postUrl, post ] );
 

@@ -12,10 +12,10 @@ export function PurchasesByOtherAdminsNotice( { sites }: { sites: SiteDetails[] 
 	const affectedSites = sites
 		.filter( ( site ) => {
 			if ( ! site?.plan?.is_free ) {
-				return site.capabilities.manage_options;
+				return site.capabilities?.manage_options;
 			}
 			if ( site?.products && site?.products?.length > 0 ) {
-				return site.capabilities.manage_options;
+				return site.capabilities?.manage_options;
 			}
 			return false;
 		} )

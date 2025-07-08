@@ -19,11 +19,19 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/sites/delete/index.js', {
 					},
 					action
 				),
-			onSuccess: () =>
-				successNotice( translate( 'Site removed from list successfully.' ), {
-					duration: DEFAULT_NOTICE_DURATION,
-				} ),
-			onError: () => errorNotice( translate( 'Unable to remove site from list.' ) ),
+			onSuccess: ( action ) => {
+				// Support custom success messages
+				const successMessage =
+					action.successMessage || translate( 'Site removed from list successfully.' );
+				return successNotice( successMessage, {
+					duration: action.noticeDuration || DEFAULT_NOTICE_DURATION,
+				} );
+			},
+			onError: ( action ) => {
+				// Support custom error messages
+				const errorMessage = action.errorMessage || translate( 'Unable to remove site from list.' );
+				return errorNotice( errorMessage );
+			},
 		} ),
 	],
 } );

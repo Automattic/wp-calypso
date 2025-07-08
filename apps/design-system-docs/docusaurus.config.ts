@@ -9,11 +9,9 @@ const config: Config = {
 	tagline: 'Build sustainably with WordPress and Automattic components.',
 	favicon: 'img/ds-favicon.png',
 
-	// TODO: Set the production url here
-	url: 'https://your-docusaurus-site.example.com',
-	// Set the /<baseUrl>/ pathname under which your site is served
-	// For GitHub pages deployment, it is often '/<projectName>/'
+	url: 'https://system.automattic.design',
 	baseUrl: '/',
+	noIndex: true,
 
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',

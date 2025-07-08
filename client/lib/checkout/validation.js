@@ -1,12 +1,12 @@
-import { isValidPostalCode } from '@automattic/wpcom-checkout';
-import creditcards from 'creditcards';
-import i18n from 'i18n-calypso';
-import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
 import {
+	isValidPostalCode,
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
-} from 'calypso/lib/checkout/processor-specific';
+} from '@automattic/wpcom-checkout';
+import creditcards from 'creditcards';
+import i18n from 'i18n-calypso';
+import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
 
 /**
  * Returns the credit card validation rule set

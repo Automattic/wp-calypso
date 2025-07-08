@@ -42,6 +42,7 @@
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
 		"a4a-client-checkout-v2": true,
+		"a4a-vip-partner-opportunity-referrals": false,
 		"jetpack/crm-downloads": true
 	},
 	"enable_all_sections": false,
@@ -51,6 +52,7 @@
 		"a8c-for-agencies-landing": true,
 		"a8c-for-agencies-feedback": true,
 		"a8c-for-agencies-overview": true,
+		"a8c-for-agencies-reports": true,
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,

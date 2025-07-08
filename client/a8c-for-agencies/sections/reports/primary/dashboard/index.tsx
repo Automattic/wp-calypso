@@ -38,11 +38,11 @@ export default function ReportsDashboard() {
 
 	const { data: reports, isLoading } = useFetchReports();
 
-	const showEmptyState = ! isLoading && ( ! reports || reports.length === 0 );
-
 	const siteReports = useMemo( () => {
 		return getSiteReports( reports );
 	}, [ reports ] );
+
+	const showEmptyState = ! isLoading && ( ! siteReports || siteReports.length === 0 );
 
 	const handleBuildNewReport = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_new_report_click' ) );
@@ -101,7 +101,7 @@ export default function ReportsDashboard() {
 			title={ title }
 			wide
 		>
-			<LayoutColumn wide className="reports-dashboard__column">
+			<LayoutColumn wide className="reports-dashboard__column" scrollable>
 				<LayoutTop isFullWidth={ isFullWidth }>
 					<LayoutHeader>
 						<Title>{ title }</Title>

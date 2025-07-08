@@ -43,7 +43,11 @@ export function ListItemCardActions( { actions, item }: { actions: Action[]; ite
 		setIsOpen( false );
 	}, [] );
 
-	const hasEligibleActions = actions.some( ( action ) => action.isEligible?.( item ) );
+	const isEligible = ( action: Action ) => {
+		return action.isEligible?.( item ) ?? true;
+	};
+
+	const hasEligibleActions = actions.some( isEligible );
 
 	if ( ! hasEligibleActions ) {
 		return null;
@@ -61,7 +65,7 @@ export function ListItemCardActions( { actions, item }: { actions: Action[]; ite
 				position="bottom left"
 			>
 				{ actions.map( ( action ) =>
-					action.isEligible?.( item ) ? (
+					isEligible( action ) ? (
 						<PopoverMenuItem
 							key={ action.id }
 							onClick={ () => {

@@ -28,6 +28,10 @@ export const OPERATOR_CONTAINS = 'contains';
 export const OPERATOR_NOT_CONTAINS = 'notContains';
 export const OPERATOR_STARTS_WITH = 'startsWith';
 export const OPERATOR_BETWEEN = 'between';
+export const OPERATOR_ON = 'on';
+export const OPERATOR_NOT_ON = 'notOn';
+export const OPERATOR_IN_THE_PAST = 'inThePast';
+export const OPERATOR_OVER = 'over';
 
 export const ALL_OPERATORS: Operator[] = [
 	OPERATOR_IS,
@@ -48,6 +52,10 @@ export const ALL_OPERATORS: Operator[] = [
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
 	OPERATOR_BETWEEN,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
+	OPERATOR_IN_THE_PAST,
+	OPERATOR_OVER,
 ];
 
 export const SINGLE_SELECTION_OPERATORS: Operator[] = [
@@ -64,6 +72,8 @@ export const SINGLE_SELECTION_OPERATORS: Operator[] = [
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
+	OPERATOR_ON,
+	OPERATOR_NOT_ON,
 ];
 
 export const OPERATORS: Record< Operator, { key: string; label: string } > = {
@@ -138,6 +148,22 @@ export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	[ OPERATOR_BETWEEN ]: {
 		key: 'between-filter',
 		label: __( 'Between (inc)' ),
+	},
+	[ OPERATOR_ON ]: {
+		key: 'on-filter',
+		label: __( 'On' ),
+	},
+	[ OPERATOR_NOT_ON ]: {
+		key: 'not-on-filter',
+		label: __( 'Not on' ),
+	},
+	[ OPERATOR_IN_THE_PAST ]: {
+		key: 'in-the-past-filter',
+		label: __( 'In the past' ),
+	},
+	[ OPERATOR_OVER ]: {
+		key: 'over-filter',
+		label: __( 'Over' ),
 	},
 };
 

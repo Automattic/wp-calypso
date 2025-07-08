@@ -1,144 +1,189 @@
-import { useState, useCallback, useMemo } from 'react';
-import { defaultDataViewsState } from '../constants';
-import type { ViewState, ViewStateUpdate, SortableField, Filter, Sort } from '../data-views-types';
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { View, Filter, SortDirection, Field } from '@wordpress/dataviews';
+import { isShallowEqualArrays } from '@wordpress/is-shallow-equal';
+import { useState, useMemo, useEffect } from 'react';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { useMemoCompare } from 'calypso/lib/use-memo-compare';
+import { setRoute } from 'calypso/state/route/actions';
+import {
+	DEFAULT_PER_PAGE,
+	defaultDataViewsState,
+	defaultSortField,
+	defaultSortDirection,
+	desktopFields,
+	mobileFields,
+	wideFields,
+} from '../constants';
 
-type Filters = undefined | Filter[];
-
-interface ViewStateUpdateResult {
-	view: ViewState;
-	updateView: ( newView: ViewStateUpdate ) => void;
+function alterUrlForViewProp(
+	url: URL,
+	urlKey: string,
+	currentViewPropValue: string | number | string[] | number[] | undefined,
+	defaultValue?: string | number | undefined
+): void {
+	if ( currentViewPropValue && defaultValue && currentViewPropValue !== defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else if ( currentViewPropValue && ! defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else {
+		url.searchParams.delete( urlKey );
+	}
 }
 
-function scrollToTop(): void {
-	window.scrollTo( { top: 0, behavior: 'smooth' } );
+function writeUrlAfterUpdates( url: URL ): void {
+	if ( url.search === window.location.search ) {
+		return;
+	}
+	window.history.pushState( undefined, '', url );
+	// getPreviousRoute will not find this updated route unless we set it
+	// explicitly. It only records the route when the page first loads.
+	// This seems like a bug but it appears to be how it works.
+	reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
 }
 
-function verifySortField( field: string ): field is SortableField {
-	return [ 'date', 'service', 'type', 'amount' ].includes( field );
+const urlSortField = 'billingSortField';
+const urlSortDirection = 'billingSortDir';
+const urlPaginationPage = 'billingPageNumber';
+const urlPaginationPerPage = 'billingPerPage';
+
+export function updateUrlForView< F >( view: View, fields: Field< F >[] ) {
+	const url = new URL( window.location.href );
+
+	const filterKeys = fields.map( ( field ) => field.id );
+
+	filterKeys.forEach( ( filterKey ) => {
+		const thisFilter = view.filters?.find( ( filter ) => filter.field === filterKey );
+		alterUrlForViewProp( url, filterKey, thisFilter?.value );
+	} );
+
+	const pageNumber = view.page;
+	alterUrlForViewProp( url, urlPaginationPage, pageNumber, 1 );
+
+	const perPage = view.perPage;
+	alterUrlForViewProp( url, urlPaginationPerPage, perPage, DEFAULT_PER_PAGE );
+
+	const sort = view.sort;
+	alterUrlForViewProp( url, urlSortField, sort?.field, defaultSortField );
+	alterUrlForViewProp( url, urlSortDirection, sort?.direction, defaultSortDirection );
+
+	writeUrlAfterUpdates( url );
 }
 
-function areSortsEqual( a: Sort | undefined, b: Sort | undefined ): boolean {
-	if ( a?.field !== b?.field ) {
-		return false;
-	}
-	if ( a?.direction !== b?.direction ) {
-		return false;
-	}
-	return true;
-}
-
-function areFiltersEqual( a: Filters, b: Filters ): boolean {
-	if ( a === b ) {
-		return true;
-	}
-	if ( ! a || ! b ) {
-		return false;
-	}
-	if ( a.length !== b.length ) {
-		return false;
-	}
-	return a.every(
-		( filter, index ) =>
-			filter.field === b[ index ].field &&
-			filter.operator === b[ index ].operator &&
-			filter.value === b[ index ].value
+function useUpdateViewFromUrl< F >( {
+	setView,
+	fields,
+}: {
+	setView: ( setter: View | ( ( currentView: View ) => View ) ) => void;
+	fields: Field< F >[];
+} ) {
+	const filterKeys = useMemoCompare(
+		fields.map( ( field ) => field.id ),
+		isShallowEqualArrays
 	);
+
+	const currentUrl = window.location.href;
+
+	// Apply view from URL
+	useEffect( () => {
+		const url = new URL( currentUrl );
+		const filters: Filter[] = [];
+		url.searchParams.forEach( ( searchParamValue, searchParamKey ) => {
+			if ( filterKeys.includes( searchParamKey ) ) {
+				// NOTE: If this needs to handle filter operators other than
+				// "is", more work will need to be done to generalize this
+				// logic!
+				filters.push( {
+					value: searchParamValue,
+					operator: 'is',
+					field: searchParamKey,
+				} );
+			}
+		} );
+		const pageNumber = url.searchParams.get( urlPaginationPage );
+		const perPage = url.searchParams.get( urlPaginationPerPage );
+		const sortField = url.searchParams.get( urlSortField );
+		const sortDir = (
+			url.searchParams.get( urlSortDirection ) === 'asc' ? 'asc' : 'desc'
+		) as SortDirection;
+		setView( ( currentView ) => ( {
+			...currentView,
+			...( filters.length > 0 ? { filters } : {} ),
+			...( pageNumber ? { page: parseInt( pageNumber ) } : {} ),
+			...( perPage ? { perPage: parseInt( perPage ) } : {} ),
+			...( sortField ? { sort: { field: sortField, direction: sortDir } } : {} ),
+		} ) );
+	}, [ setView, currentUrl, filterKeys ] );
 }
 
-function handlePageUpdate( updatedView: ViewState, newView: ViewStateUpdate ): void {
-	if ( newView.page !== undefined ) {
-		updatedView.page = newView.page;
-		scrollToTop();
-	}
-}
-
-function handlePerPageUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
-	if ( newView.perPage !== undefined && newView.perPage !== currentView.perPage ) {
-		updatedView.perPage = newView.perPage;
-		updatedView.page = 1;
-		scrollToTop();
-	}
-}
-
-function handleSortUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
-	if ( newView.sort && ! areSortsEqual( newView.sort, currentView.sort ) ) {
-		if ( verifySortField( newView.sort.field ) ) {
-			updatedView.sort = {
-				field: newView.sort.field,
-				direction: newView.sort.direction,
-			};
-			if ( newView.page === undefined ) {
-				updatedView.page = 1;
-				scrollToTop();
+function useHidePurchasesFieldsAtCertainWidths( {
+	setView,
+}: {
+	setView: ( setter: View | ( ( view: View ) => View ) ) => void;
+} ): void {
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const currentWidth = ( () => {
+		if ( isWide ) {
+			return 'wide';
+		}
+		if ( isDesktop ) {
+			return 'desktop';
+		}
+		return 'mobile';
+	} )();
+	useEffect( () => {
+		switch ( currentWidth ) {
+			case 'wide': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== wideFields.length ) {
+						return {
+							...view,
+							fields: wideFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+			case 'desktop': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== desktopFields.length ) {
+						return {
+							...view,
+							fields: desktopFields,
+						};
+					}
+					return view;
+				} );
+				return;
+			}
+			case 'mobile': {
+				setView( ( view ) => {
+					if ( view.fields?.length !== mobileFields.length ) {
+						return {
+							...view,
+							fields: mobileFields,
+						};
+					}
+					return view;
+				} );
+				return;
 			}
 		}
-	}
+	}, [ currentWidth, setView ] );
 }
 
-function handleFiltersUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
-	if ( newView.filters && ! areFiltersEqual( newView.filters, currentView.filters ) ) {
-		updatedView.filters = newView.filters;
-		if ( newView.page === undefined ) {
-			updatedView.page = 1;
-			scrollToTop();
-		}
-	}
-}
+export function useViewStateUpdate< F >( fields: Field< F >[] ) {
+	const [ view, setView ] = useState< View >( defaultDataViewsState );
 
-function handleSearchUpdate(
-	updatedView: ViewState,
-	currentView: ViewState,
-	newView: ViewStateUpdate
-): void {
-	if ( newView.search !== undefined && newView.search !== currentView.search ) {
-		updatedView.search = newView.search;
-		if ( newView.page === undefined ) {
-			updatedView.page = 1;
-			scrollToTop();
-		}
-	}
-}
-
-function handleFieldsUpdate( updatedView: ViewState, newView: ViewStateUpdate ): void {
-	if ( newView.fields !== undefined ) {
-		updatedView.fields = newView.fields;
-	}
-}
-
-export function useViewStateUpdate(): ViewStateUpdateResult {
-	const [ view, setView ] = useState< ViewState >( defaultDataViewsState );
-
-	const updateView = useCallback( ( newView: ViewStateUpdate ) => {
-		setView( ( currentView ) => {
-			const updatedView = { ...currentView };
-
-			handlePageUpdate( updatedView, newView );
-			handlePerPageUpdate( updatedView, currentView, newView );
-			handleSortUpdate( updatedView, currentView, newView );
-			handleFiltersUpdate( updatedView, currentView, newView );
-			handleSearchUpdate( updatedView, currentView, newView );
-			handleFieldsUpdate( updatedView, newView );
-
-			return updatedView;
-		} );
-	}, [] );
+	useUpdateViewFromUrl( { setView, fields } );
+	useHidePurchasesFieldsAtCertainWidths( { setView } );
 
 	return useMemo( () => {
 		return {
 			view,
-			updateView,
+			updateView: setView,
 		};
-	}, [ view, updateView ] );
+	}, [ view ] );
 }
