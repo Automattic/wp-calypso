@@ -102,11 +102,6 @@ class CancelPurchaseButton extends Component {
 		}
 	};
 
-	// Expose performCancellation as a method that can be called via prop
-	performCancellationViaProp = async () => {
-		return this.performCancellation();
-	};
-
 	closeDialog = () => {
 		this.setState( {
 			showDialog: false,
