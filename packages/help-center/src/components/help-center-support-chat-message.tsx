@@ -43,7 +43,10 @@ export const HelpCenterSupportChatMessage = ( {
 	const { displayName, received, role, text, altText } = message;
 	const messageText =
 		'metadata' in message && message.metadata?.type === 'csat'
-			? __( 'Please help us improve. How would you rate your support experience?' )
+			? __(
+					'Please help us improve. How would you rate your support experience?',
+					__i18n_text_domain__
+			  )
 			: text;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;

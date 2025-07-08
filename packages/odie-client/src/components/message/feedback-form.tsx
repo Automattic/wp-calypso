@@ -43,7 +43,10 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	const generateFeedbackMessage = useCallback(
 		( score: 'good' | 'bad' ): Message => {
 			return {
-				content: score === 'good' ? __( 'Good 👍' ) : __( 'Bad 👎' ),
+				content:
+					score === 'good'
+						? __( 'Good 👍', __i18n_text_domain__ )
+						: __( 'Bad 👎', __i18n_text_domain__ ),
 				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
 				metadata: { rated: true },
 				role: 'user',
@@ -100,7 +103,11 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			{ score && (
 				<>
 					<div className="odie-rating-feedback-message">
-						<div>{ score === 'good' ? __( 'Good 👍' ) : __( 'Bad 👎' ) }</div>
+						<div>
+							{ score === 'good'
+								? __( 'Good 👍', __i18n_text_domain__ )
+								: __( 'Bad 👎', __i18n_text_domain__ ) }
+						</div>
 					</div>
 
 					{ isSubmitting && (
@@ -111,8 +118,13 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 
 					{ ! isFormHidden && (
 						<div ref={ feedbackRef } className="odie-conversation-feedback__message">
-							<h3>{ __( 'Thank you for your input' ) }</h3>
-							<p>{ __( 'Please share any details that can help us understand your rating' ) }</p>
+							<h3>{ __( 'Thank you for your input', __i18n_text_domain__ ) }</h3>
+							<p>
+								{ __(
+									'Please share any details that can help us understand your rating',
+									__i18n_text_domain__
+								) }
+							</p>
 							{ score === 'bad' && (
 								<SelectControl
 									className="odie-conversation-feedback__reason"
@@ -125,7 +137,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 							) }
 
 							<TextareaControl
-								label={ score === 'bad' ? __( 'Additional Comments' ) : '' }
+								label={ score === 'bad' ? __( 'Additional Comments', __i18n_text_domain__ ) : '' }
 								__nextHasNoMarginBottom
 								value={ comment }
 								onChange={ ( value ) => setComment( value ) }
@@ -133,7 +145,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 
 							<div>
 								<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
-									{ __( 'Send' ) }
+									{ __( 'Send', __i18n_text_domain__ ) }
 								</Button>
 
 								<Button
@@ -141,7 +153,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 									onClick={ () => setIsFormHidden( true ) }
 									rel="noreferrer"
 								>
-									{ __( 'No thanks' ) }
+									{ __( 'No thanks', __i18n_text_domain__ ) }
 								</Button>
 							</div>
 						</div>
