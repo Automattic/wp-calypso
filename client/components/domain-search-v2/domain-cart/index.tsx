@@ -6,7 +6,12 @@ import {
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalView as View,
+	__experimentalSpacer as Spacer,
+} from '@wordpress/components';
 import { useMemo } from 'react';
 import { getDomainsInCart } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -68,7 +73,11 @@ const DomainCartV2 = ( { onContinue }: { onContinue: () => void } ) => {
 				<VStack spacing={ 6 }>
 					<FreeDomainForAYearPromo />
 					<DomainsFullCart.Items />
-					<HundredYearPromo />
+					<View>
+						<Spacer marginTop={ 4 }>
+							<HundredYearPromo />
+						</Spacer>
+					</View>
 				</VStack>
 			</DomainsFullCart>
 		</DomainSearch>
