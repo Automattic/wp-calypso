@@ -75,6 +75,7 @@ export default function FeedItem( props: {
 		}
 		return feed;
 	} );
+	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const isInList = !! useSelector( ( state ) =>
 		getMatchingItem( state, { feedId: item.feed_ID, listId: list.ID } )
@@ -113,7 +114,7 @@ export default function FeedItem( props: {
 
 			{ ! isInList ? (
 				<Button primary onClick={ addItem }>
-					{ translate( 'Add' ) }
+					{ isRecommendedBlogsList ? translate( 'Recommend' ) : translate( 'Add' ) }
 				</Button>
 			) : (
 				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>

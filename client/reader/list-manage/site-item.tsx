@@ -77,6 +77,7 @@ export default function SiteItem( props: {
 	const isInList = !! useSelector( ( state ) =>
 		getMatchingItem( state, { siteId: props.item.site_ID, listId: props.list.ID } )
 	);
+	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () =>
@@ -111,7 +112,7 @@ export default function SiteItem( props: {
 
 			{ ! isInList ? (
 				<Button primary onClick={ addItem }>
-					{ translate( 'Add' ) }
+					{ isRecommendedBlogsList ? translate( 'Recommend' ) : translate( 'Add' ) }
 				</Button>
 			) : (
 				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
