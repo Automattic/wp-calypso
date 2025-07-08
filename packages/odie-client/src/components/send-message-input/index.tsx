@@ -198,7 +198,14 @@ export const OdieSendMessageButton = () => {
 			setSubmitDisabled( false );
 			inputRef.current?.focus();
 		}
-	}, [ isChatBusy, chat?.provider, trackEvent, sendMessage ] );
+	}, [
+		isChatBusy,
+		chat?.provider,
+		trackEvent,
+		sendMessage,
+		isMessageLengthValid,
+		setMessageLengthErrorNotice,
+	] );
 
 	const inputContainerClasses = clsx(
 		'odie-chat-message-input-container',
@@ -212,6 +219,13 @@ export const OdieSendMessageButton = () => {
 
 	const showAttachmentButton = chat.conversationId && inferredClientId;
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
+
+	const handleOnKeyUp = useCallback( () => {
+		const message = inputRef.current?.value.trim();
+		if ( isMessageLengthValid( message ) ) {
+			clearMessageLengthErrorNotice();
+		}
+	}, [ clearMessageLengthErrorNotice, isMessageLengthValid ] );
 
 	return (
 		<>
@@ -236,7 +250,7 @@ export const OdieSendMessageButton = () => {
 								className="odie-send-message-input"
 								inputRef={ inputRef }
 								setSubmitDisabled={ setSubmitDisabled }
-								keyUpHandle={ clearMessageLengthErrorNotice }
+								keyUpHandle={ handleOnKeyUp }
 								onPasteHandle={ onPaste }
 								placeholder={ textAreaPlaceholder }
 							/>
