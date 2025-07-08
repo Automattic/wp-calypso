@@ -41,7 +41,9 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	getSitePurchases,
@@ -50,6 +52,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
 import AtomicRevertChanges from './atomic-revert-changes';
@@ -84,7 +87,6 @@ class CancelPurchase extends Component {
 		isLoading: false,
 		domainConfirmationConfirmed: false,
 		showDomainOptionsStep: false,
-		triggerCancellation: false,
 	};
 
 	static defaultProps = {
@@ -152,15 +154,10 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		const { includedDomainPurchase, purchase } = this.props;
-
-		// Check if we need to show domain options step
-		if ( includedDomainPurchase && isSubscription( purchase ) ) {
+		if ( this.props.includedDomainPurchase ) {
 			this.setState( { showDomainOptionsStep: true } );
 		} else {
 			this.setState( { surveyShown: true, isLoading: true } );
-			// Trigger the actual cancellation immediately when no domain options are needed
-			this.setState( { triggerCancellation: true } );
 		}
 	};
 
@@ -172,12 +169,26 @@ class CancelPurchase extends Component {
 			cancelBundledDomain: domainOptions.cancelBundledDomain,
 			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
 		} );
-
-		// Trigger the actual cancellation
-		this.setState( { triggerCancellation: true } );
 	};
 
 	onSurveyComplete = () => {
+		// Handle success flow after survey completion
+		if ( this.state.cancellationCompleted ) {
+			// Refresh data and show success notice
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
+
+			if ( this.state.cancellationMessage ) {
+				this.props.successNotice( this.state.cancellationMessage, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
+			}
+
+			// Redirect to purchases page
+			page.redirect( this.props.purchaseListUrl );
+		}
+
 		this.setState( { surveyShown: false, isLoading: false } );
 	};
 
@@ -187,7 +198,6 @@ class CancelPurchase extends Component {
 			isLoading: false,
 			cancellationCompleted: true,
 			cancellationMessage: message,
-			triggerCancellation: false,
 		} );
 	};
 
@@ -368,7 +378,6 @@ class CancelPurchase extends Component {
 				onCancellationComplete={ this.onCancellationComplete }
 				onSurveyComplete={ this.onSurveyComplete }
 				moment={ this.props.moment }
-				triggerCancellation={ this.state.triggerCancellation }
 			/>
 		);
 	};
@@ -496,7 +505,7 @@ class CancelPurchase extends Component {
 	};
 
 	renderDomainOptionsContent = () => {
-		const { includedDomainPurchase, purchase, translate } = this.props;
+		const { includedDomainPurchase, purchase } = this.props;
 		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
 
 		if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
@@ -524,19 +533,19 @@ class CancelPurchase extends Component {
 					isLoading={ false }
 				/>
 				<div className="cancel-purchase__confirm-buttons">
-					<FormButton
-						isPrimary
-						scary
+					<CancelPurchaseButton
+						purchase={ purchase }
+						includedDomainPurchase={ includedDomainPurchase }
 						disabled={ ! canContinue() }
-						onClick={ () =>
-							this.onDomainOptionsComplete( {
-								cancelBundledDomain,
-								confirmCancelBundledDomain,
-							} )
-						}
-					>
-						{ translate( 'Cancel subscription' ) }
-					</FormButton>
+						siteSlug={ this.props.siteSlug }
+						cancelBundledDomain={ cancelBundledDomain }
+						purchaseListUrl={ this.props.purchaseListUrl }
+						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+						onCancellationComplete={ this.onCancellationComplete }
+						onSurveyComplete={ this.onSurveyComplete }
+						moment={ this.props.moment }
+						onCancellationStart={ null }
+					/>
 					{ this.renderKeepSubscriptionButton() }
 				</div>
 			</>
@@ -665,5 +674,5 @@ export default connect(
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice }
 )( localize( withLocalizedMoment( CancelPurchase ) ) );

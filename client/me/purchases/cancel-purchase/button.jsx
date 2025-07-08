@@ -47,12 +47,10 @@ class CancelPurchaseButton extends Component {
 		onCancellationComplete: PropTypes.func,
 		onSurveyComplete: PropTypes.func,
 		moment: PropTypes.func,
-		triggerCancellation: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
-		triggerCancellation: false,
 	};
 
 	state = {
@@ -97,9 +95,16 @@ class CancelPurchaseButton extends Component {
 			return;
 		}
 
-		// For other purchases, trigger the cancellation start which may show domain options step
+		// For other purchases, check if we need domain options step
 		if ( this.props.onCancellationStart ) {
 			this.props.onCancellationStart();
+			// If there's no included domain purchase, perform cancellation immediately
+			if ( ! this.props.includedDomainPurchase ) {
+				await this.performCancellation();
+			}
+		} else {
+			// If no onCancellationStart callback, perform cancellation directly
+			await this.performCancellation();
 		}
 	};
 
@@ -113,7 +118,7 @@ class CancelPurchaseButton extends Component {
 		} );
 
 		// Always redirect to purchases page when dialog is closed
-		page( this.props.purchaseListUrl );
+		page.redirect( this.props.purchaseListUrl );
 	};
 
 	cancelPurchase = async ( purchase ) => {
@@ -272,7 +277,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleSurveyComplete = () => {
-		// For other purchases, only show if cancellation was just completed
+		// Handle success flow after survey completion
 		if ( this.state.cancellationCompleted ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
@@ -289,13 +294,6 @@ class CancelPurchaseButton extends Component {
 		// Close dialog and redirect after handling the completion
 		this.closeDialog();
 	};
-
-	componentDidUpdate( prevProps ) {
-		// Handle external cancellation triggering
-		if ( this.props.triggerCancellation && ! prevProps.triggerCancellation ) {
-			this.performCancellation();
-		}
-	}
 
 	performCancellation = async () => {
 		this.setState( {
