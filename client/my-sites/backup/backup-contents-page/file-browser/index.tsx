@@ -6,7 +6,7 @@ import { FileBrowserItem } from './types';
 
 interface FileBrowserProps {
 	rewindId: number;
-	restrictedTypes?: [ string ];
+	restrictedTypes?: string[];
 	showHeaderButtons?: boolean;
 }
 

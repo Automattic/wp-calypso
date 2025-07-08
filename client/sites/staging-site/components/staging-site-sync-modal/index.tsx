@@ -31,6 +31,8 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 // TODO: Temporary style for the PoC
 import './style.scss';
 
+const restrictedTypes = [ 'plugin', 'theme', 'uploads' ];
+
 const DirectionArrow = () => {
 	return (
 		<div style={ { marginTop: '44px' } }>
@@ -223,7 +225,11 @@ export default function SyncModal( {
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 				{ querySiteId === stagingSiteId && (
 					<div className="staging-site-card">
-						<FileBrowser rewindId={ rewindId } showHeaderButtons={ false } />
+						<FileBrowser
+							rewindId={ rewindId }
+							showHeaderButtons={ false }
+							restrictedTypes={ restrictedTypes }
+						/>
 					</div>
 				) }
 				<Text>
