@@ -24,16 +24,16 @@ export const DomainSuggestionPrice = ( {
 			<HStack spacing={ 2 } justify={ alignment === 'left' ? 'start' : 'end' }>
 				{ originalPrice ? (
 					<>
-						<Text size="title" variant="muted" style={ { textDecoration: 'line-through' } }>
+						<Text size={ 18 } variant="muted" style={ { textDecoration: 'line-through' } }>
 							{ originalPrice }
 						</Text>
-						<Text size="title" color="green">
+						<Text size={ 18 } color="green">
 							{ price }
 						</Text>
 					</>
 				) : (
 					<HStack spacing={ 1 } alignment="baseline">
-						<Text size="title">{ price }</Text>
+						<Text size={ 18 }>{ price }</Text>
 						<Text>{ __( '/year' ) }</Text>
 					</HStack>
 				) }

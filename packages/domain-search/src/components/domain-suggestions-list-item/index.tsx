@@ -29,9 +29,11 @@ export const DomainSuggestionsListItem = ( {
 	const { activeQuery } = useDomainSuggestionsListContext();
 
 	const domainName = (
-		<Text>
+		<Text size={ activeQuery === 'large' ? 18 : 16 }>
 			{ domain }
-			<Text weight={ 500 }>.{ tld }</Text>
+			<Text size="inherit" weight={ 500 }>
+				.{ tld }
+			</Text>
 		</Text>
 	);
 
@@ -41,8 +43,8 @@ export const DomainSuggestionsListItem = ( {
 		if ( activeQuery === 'large' ) {
 			return (
 				<HStack spacing={ 3 }>
-					<HStack alignment="left">
-						<Icon icon={ globe } size={ 24 } />
+					<HStack alignment="left" spacing={ 3 }>
+						<Icon icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
 						{ domainName }
 					</HStack>
 

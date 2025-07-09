@@ -34,19 +34,26 @@ export const Unavailable = ( {
 		if ( unavailableReason === 'already-registered' ) {
 			return createInterpolateElement( __( '<domainName /> is already registered.' ), {
 				domainName: (
-					<Text>
+					<Text size="inherit">
 						{ domain }
-						<Text weight={ 500 }>.{ tld }</Text>
+						<Text size="inherit" weight={ 500 }>
+							.{ tld }
+						</Text>
 					</Text>
 				),
 			} );
 		}
 	}, [ __, unavailableReason, domain, tld ] );
 
-	const reason = <Text size="body">{ reasonText }</Text>;
+	const reason = <Text size={ activeQuery === 'large' ? 18 : 16 }>{ reasonText }</Text>;
 
 	const onTransfer = onTransferClick && (
-		<div style={ { marginLeft: activeQuery === 'large' ? 'auto' : undefined } }>
+		<div
+			style={ {
+				marginLeft: activeQuery === 'large' ? 'auto' : undefined,
+				textAlign: activeQuery === 'large' ? 'right' : 'left',
+			} }
+		>
 			<Text>
 				{ createInterpolateElement( __( 'Already yours? <button>Bring it over</button>' ), {
 					button: (
@@ -65,7 +72,7 @@ export const Unavailable = ( {
 		if ( activeQuery === 'large' ) {
 			return (
 				<HStack alignment="left" spacing={ 3 }>
-					<Icon icon={ notAllowed } size={ 24 } />
+					<Icon icon={ notAllowed } size={ 24 } style={ { flexShrink: 0 } } />
 					{ reason }
 					{ onTransfer }
 				</HStack>
