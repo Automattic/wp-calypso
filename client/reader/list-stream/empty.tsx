@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
 import { getListItems } from 'calypso/state/reader/lists/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -20,7 +21,7 @@ export default function ListEmptyContent( { list }: ListEmptyContentProps ): JSX
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
-	const isEmptyList = listItems?.length === 0;
+	const isEmptyList = ! listItems?.length;
 	const shouldPromptManagement = isEmptyList && list?.is_owner;
 	const isRecommendedBlogsList = list?.slug === 'recommended-blogs';
 
@@ -72,5 +73,10 @@ export default function ListEmptyContent( { list }: ListEmptyContentProps ): JSX
 		</a>
 	);
 
-	return <EmptyContent title={ getTitle() } line={ getLine() } action={ action } />;
+	return (
+		<>
+			<QueryReaderListItems owner={ list?.owner } slug={ list?.slug } />
+			<EmptyContent title={ getTitle() } line={ getLine() } action={ action } />
+		</>
+	);
 }
