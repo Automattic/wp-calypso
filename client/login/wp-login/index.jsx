@@ -346,7 +346,6 @@ export class Login extends Component {
 			isWhiteLogin,
 			isJetpack,
 			isFromAkismet,
-			action,
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
@@ -389,7 +388,6 @@ export class Login extends Component {
 					<OneLoginLayout
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
-						shouldUseWideHeading={ 'lostpassword' !== action }
 						signupUrl={ this.props.signupUrl }
 					>
 						{ mainContent }
