@@ -106,7 +106,6 @@ $image-height: 47px;
 .wp-login__header {
 	color: var( --color-neutral-100 );
 	font-size: $font-body;
-	margin-bottom: 16px;
 	text-align: center;
 
 	body.is-section-signup & {
@@ -116,6 +115,18 @@ $image-height: 47px;
 
 .wp-login__main {
 	width: 100%;
+}
+
+.wp-login__one-login-layout-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 3em;
+
+	.is-magic-login & {
+		gap: 2em;
+	}
 }
 
 .wp-login__site-return-link {
@@ -460,14 +471,6 @@ $image-height: 47px;
 			font-size: $font-body-small;
 		}
 	}
-}
-
-.wp-login__one-login-layout-content-wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 3em;
 }
 
 /* stylelint-disable scales/font-weights, scales/radii */

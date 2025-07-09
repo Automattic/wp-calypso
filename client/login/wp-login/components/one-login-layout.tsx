@@ -14,8 +14,6 @@ interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromAkismet: boolean;
 	children: React.ReactNode;
-	headingText?: string;
-	headingSubText?: React.ReactNode;
 	signupUrl?: string;
 }
 
