@@ -11,12 +11,15 @@ import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 import { Unavailable } from './unavailable';
 
+import './style.scss';
+
 interface DomainSuggestionsListItemProps {
 	domainUuid: string;
 	domain: string;
 	tld: string;
 	originalPrice?: string;
 	price: string;
+	badges?: React.ReactNode;
 }
 
 export const DomainSuggestionsListItem = ( {
@@ -25,15 +28,17 @@ export const DomainSuggestionsListItem = ( {
 	tld,
 	originalPrice,
 	price,
+	badges,
 }: DomainSuggestionsListItemProps ) => {
 	const { activeQuery } = useDomainSuggestionsListContext();
 
 	const domainName = (
 		<Text size={ activeQuery === 'large' ? 18 : 16 }>
 			{ domain }
-			<Text size="inherit" weight={ 500 }>
+			<Text size="inherit" weight={ 500 } style={ { marginRight: badges ? '12px' : undefined } }>
 				.{ tld }
 			</Text>
+			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
 		</Text>
 	);
 
