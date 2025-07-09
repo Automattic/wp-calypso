@@ -7,7 +7,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-$input-z-index: 0;
+$input-z-index: 20;
 
 .search-component {
 	border-radius: 2px;
@@ -17,7 +17,7 @@ $input-z-index: 0;
 	position: relative;
 	align-items: center;
 	// places search above filters
-	z-index: $input-z-index;
+	z-index: 1;
 	transition: all 0.15s ease-in-out;
 
 	.search-component__left-icon-container {

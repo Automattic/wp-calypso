@@ -4,6 +4,7 @@
 .search-filters__dropdown-filters {
 	align-items: center;
 	height: 40px;
+	z-index: z-index("root", ".search");
 	margin-left: 12px;
 
 	@include break-mobile {

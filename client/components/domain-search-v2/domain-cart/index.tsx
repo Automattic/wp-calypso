@@ -18,6 +18,8 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { FreeDomainForAYearPromo } from './free-domain-for-a-year-promo';
 import { HundredYearPromo } from './hundred-year-promo';
 
+import './style.scss';
+
 const DomainCartV2 = ( { onContinue }: { onContinue: () => void } ) => {
 	const cartKey = useCartKey();
 	const { responseCart, removeProductFromCart } = useShoppingCart( cartKey );
@@ -69,7 +71,7 @@ const DomainCartV2 = ( { onContinue }: { onContinue: () => void } ) => {
 	return (
 		<DomainSearch onContinue={ onContinue } cart={ cart }>
 			<DomainsMiniCart />
-			<DomainsFullCart>
+			<DomainsFullCart className="domains-search-v2__full-cart">
 				<VStack spacing={ 6 }>
 					<FreeDomainForAYearPromo />
 					<DomainsFullCart.Items />
