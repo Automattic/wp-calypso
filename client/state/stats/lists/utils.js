@@ -391,7 +391,8 @@ export const normalizers = {
 		const viewData = get( data, dataPath, [] );
 
 		return map( viewData, ( item ) => {
-			const detailPage = site ? `/stats/post/${ item.id }/${ site.slug }` : null;
+			// To avoid showing a detail page for the Homepage set as latest posts.
+			const detailPage = site && item.href ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
 
 			// Archive and home pages do not have dates
