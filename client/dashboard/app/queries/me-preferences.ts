@@ -7,7 +7,7 @@ export const userPreferencesQuery = ( preferenceName?: keyof UserPreferences ) =
 	queryFn: fetchPreferences,
 	select: ( data: UserPreferences ) => {
 		if ( preferenceName ) {
-			return data[ preferenceName ];
+			return data[ preferenceName ] || {};
 		}
 
 		return data;
@@ -22,7 +22,7 @@ export const userPreferencesMutation = ( preferenceName?: keyof UserPreferences 
 			} );
 		}
 
-		return updatePreferences( data );
+		return updatePreferences( data as UserPreferences );
 	},
 	onSuccess: ( newData: Partial< UserPreferences > ) => {
 		queryClient.setQueryData(

@@ -3,7 +3,6 @@ import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import fastDeepEqual from 'fast-deep-equal/es6';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
 import { isAutomatticianQuery } from '../app/queries/me-a8c';
@@ -17,9 +16,10 @@ import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import { SitesNotices } from './notices';
-import { getView, DEFAULT_LAYOUTS, CONFIGURABLE_VIEW_KEYS, PERSISTABLE_VIEW_KEYS } from './views';
+import { getView, getUpdatedView, DEFAULT_LAYOUTS } from './views';
+import type { ViewPreferences, ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
-import type { View, ViewTable, ViewGrid, Filter } from '@automattic/dataviews';
+import type { View, Filter } from '@automattic/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
 	const filters = view.filters ?? [];
@@ -45,20 +45,23 @@ export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const router = useRouter();
 	const currentSearchParams = sitesRoute.useSearch();
-	const viewOptions: Partial< ViewTable | ViewGrid > = currentSearchParams.view ?? {};
+	const viewSearchParams: ViewSearchParams = currentSearchParams.view ?? {};
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const { data: viewPreferences } = useSuspenseQuery( userPreferencesQuery( 'sites-view' ) );
-	const { mutate: updateViewPreferences } = useMutation( userPreferencesMutation( 'sites-view' ) );
+	const viewPreferences = useSuspenseQuery( userPreferencesQuery( 'dashboard-sites-view' ) )
+		.data as ViewPreferences;
+	const { mutate: updateViewPreferences } = useMutation(
+		userPreferencesMutation( 'dashboard-sites-view' )
+	);
 
 	const { defaultView, view } = getView( {
 		user,
 		isAutomattician,
 		isRestoringAccount,
-		viewPreferences: viewPreferences as Partial< View >,
-		viewOptions,
+		viewPreferences,
+		viewSearchParams,
 	} );
 
 	const { data: sites, isLoading: isLoadingSites } = useQuery(
@@ -76,44 +79,21 @@ export default function Sites() {
 			return;
 		}
 
-		if ( nextView.type !== view.type ) {
-			navigate( {
-				search: {
-					...currentSearchParams,
-					view: { type: nextView.type },
-				},
-			} );
-			updateViewPreferences( { type: nextView.type } );
-			return;
-		}
-
-		const _defaultView = {
-			...defaultView,
-			...DEFAULT_LAYOUTS[ nextView.type as keyof typeof DEFAULT_LAYOUTS ],
-		};
+		const { updatedViewPreferences, updatedViewSearchParams } = getUpdatedView( {
+			defaultView,
+			view,
+			viewPreferences,
+			nextView,
+		} );
 
 		navigate( {
 			search: {
 				...currentSearchParams,
-				view: Object.fromEntries(
-					Object.entries( nextView ).filter(
-						( [ key, value ] ) =>
-							CONFIGURABLE_VIEW_KEYS.includes( key ) &&
-							! fastDeepEqual( value, _defaultView[ key as keyof typeof _defaultView ] )
-					)
-				),
+				view: updatedViewSearchParams,
 			},
 		} );
 
-		updateViewPreferences(
-			Object.fromEntries(
-				Object.entries( nextView ).filter(
-					( [ key, value ] ) =>
-						PERSISTABLE_VIEW_KEYS.includes( key ) &&
-						! fastDeepEqual( value, _defaultView[ key as keyof typeof _defaultView ] )
-				)
-			)
-		);
+		updateViewPreferences( updatedViewPreferences as Record< string, unknown > );
 	};
 
 	return (
