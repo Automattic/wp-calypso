@@ -6,15 +6,10 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalInputControl as InputControl,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
@@ -24,9 +19,10 @@ import SiteEnvironmentBadge, {
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
 // TODO: Temporary style for the PoC
@@ -57,23 +53,28 @@ const DirectionArrow = () => {
 interface EnvironmentLabelProps {
 	label: string;
 	environmentType: EnvironmentType;
+	siteTitle?: string;
 }
 
-const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) => {
+const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLabelProps ) => {
 	return (
-		<VStack spacing={ 1 } style={ { flex: 1 } }>
+		<VStack spacing={ 1 }>
 			<SectionHeader level={ 3 } title={ label } />
-			<InputControl
-				readOnly
-				prefix={
-					<InputControlPrefixWrapper>
-						<SiteEnvironmentBadge environmentType={ environmentType } />
-					</InputControlPrefixWrapper>
-				}
-				__next40pxDefaultSize
-				tabIndex={ -1 }
-				aria-hidden="true"
-			/>
+			<HStack spacing={ 2 }>
+				<SiteEnvironmentBadge environmentType={ environmentType } />
+				{ siteTitle && (
+					<Text
+						style={ {
+							whiteSpace: 'nowrap',
+							overflow: 'hidden',
+							textOverflow: 'ellipsis',
+							maxWidth: '180px',
+						} }
+					>
+						{ siteTitle }
+					</Text>
+				) }
+			</HStack>
 		</VStack>
 	);
 };
@@ -172,7 +173,15 @@ export default function SyncModal( {
 		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) ?? '';
 	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) ?? '';
 
+	const productionSiteTitle =
+		useSelector( ( state ) => getSiteTitle( state, productionSiteId ) ) || '';
+	const stagingSiteTitle = useSelector( ( state ) => getSiteTitle( state, stagingSiteId ) ) || '';
+
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+
+	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
+	const targetSiteTitle =
+		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
 	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
 
@@ -225,10 +234,18 @@ export default function SyncModal( {
 						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
-				<HStack spacing={ 2 } alignment="center">
-					<EnvironmentLabel label={ syncConfig.fromLabel } environmentType={ sourceEnvironment } />
+				<HStack spacing={ 4 } alignment="left">
+					<EnvironmentLabel
+						label={ syncConfig.fromLabel }
+						environmentType={ sourceEnvironment }
+						siteTitle={ sourceSiteTitle }
+					/>
 					<DirectionArrow />
-					<EnvironmentLabel label={ syncConfig.toLabel } environmentType={ targetEnvironment } />
+					<EnvironmentLabel
+						label={ syncConfig.toLabel }
+						environmentType={ targetEnvironment }
+						siteTitle={ targetSiteTitle }
+					/>
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 				{ querySiteId === stagingSiteId && (
