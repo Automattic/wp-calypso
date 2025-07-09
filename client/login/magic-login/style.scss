@@ -458,10 +458,14 @@
 			color: #2404eb;
 		}
 
-		.magic-login__form-action button[type="submit"].form-button.is-primary {
+		.magic-login__form-action button[type="submit"].components-button.is-primary {
 			min-height: unset;
 			margin-top: 0;
 			border-radius: 2px;
+
+			&.is-busy {
+				background-image: linear-gradient(-45deg, #2404eb 33%, darken(#2404eb, 10%) 33%, darken(#2404eb, 10%) 70%, #2404eb 70%);
+			}
 
 			&,
 			&:disabled {
@@ -484,7 +488,7 @@
 			}
 
 			.calypso-notice__content {
-				padding-left: 13px;
+				padding: 0 13px;
 			}
 		}
 
@@ -529,15 +533,15 @@
 		}
 	}
 
-	button[type="submit"].form-button.is-primary,
-	.magic-login__form-action button[type="submit"].form-button.is-primary {
+	button[type="submit"].components-button.is-primary,
+	.magic-login__form-action button[type="submit"].components-button.is-primary {
 		width: 100%;
 		min-height: 56px;
 		margin-top: 24px;
 		border-radius: 4px;
 
 		&.is-busy {
-			background-image: linear-gradient(-45deg, #1d4fc4 28%, darken(#1d4fc4, 10%) 28%, darken(#1d4fc4, 10%) 72%, #1d4fc4 72%);
+			background-image: linear-gradient(-45deg, #1d4fc4 33%, darken(#1d4fc4, 10%) 33%, darken(#1d4fc4, 10%) 70%, #1d4fc4 70%);
 		}
 
 		&:disabled {
@@ -564,7 +568,7 @@
 		}
 
 		.calypso-notice__content {
-			padding-left: 0;
+			padding: 10px 0 0;
 		}
 
 		a {
@@ -746,6 +750,7 @@
 
 	.grav-powered-magic-login__gravatar-info {
 		margin-top: 32px;
+		padding: 0 30px;
 	}
 
 	.grav-powered-magic-login__gravatar-info-heading {
@@ -835,6 +840,7 @@
 
 		.grav-powered-magic-login__gravatar-info {
 			margin-top: 40px;
+			padding: unset;
 		}
 	}
 }
@@ -858,12 +864,12 @@
 		border: none;
 	}
 }
+/* stylelint-enable scales/font-weights */
 
 .magic-login__a4a-logo {
 	display: block;
 	margin: 0 auto;
 }
-/* stylelint-enable scales/font-weights */
 
 .card.magic-login__verify-code-form {
 	--magic-login-error-color: #cc1818;
