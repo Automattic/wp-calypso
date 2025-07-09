@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useChatStatus } from '../hooks';
+import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
 
 export const BlockedZendeskNotice: React.FC = () => {
