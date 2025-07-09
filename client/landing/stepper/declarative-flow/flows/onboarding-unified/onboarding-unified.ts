@@ -123,7 +123,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 				}
 
 				case 'post-checkout-onboarding':
-					setShouldShowNotification( providedDependencies?.siteId as number );
+					setShouldShowNotification( providedDependencies?.siteId );
 					return navigate( 'processing' );
 
 				case 'processing': {
