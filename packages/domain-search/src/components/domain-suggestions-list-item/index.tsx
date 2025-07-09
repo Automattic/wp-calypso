@@ -70,7 +70,7 @@ export const DomainSuggestionsListItem = ( {
 	};
 
 	return (
-		<Card>
+		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
 			<CardBody>{ getContent() }</CardBody>
 		</Card>
 	);

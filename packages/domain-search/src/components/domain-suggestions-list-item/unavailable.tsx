@@ -81,7 +81,7 @@ export const Unavailable = ( {
 	};
 
 	return (
-		<Card>
+		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
 			<CardBody>{ getContent() }</CardBody>
 		</Card>
 	);
