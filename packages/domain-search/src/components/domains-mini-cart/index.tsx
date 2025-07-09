@@ -4,6 +4,7 @@ import {
 	__unstableMotion as motion,
 	Card,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useDomainSearch } from '../domain-search';
 import { DomainsMiniCartActions } from './actions';
 import { DomainsMiniCartSummary } from './summary';
@@ -30,7 +31,7 @@ const animation = {
 	},
 };
 
-const DomainsMiniCart = () => {
+const DomainsMiniCart = ( { className }: { className?: string } ) => {
 	const { cart, isFullCartOpen } = useDomainSearch();
 
 	const shouldDisplayMiniCart = cart.items.length > 0 && ! isFullCartOpen;
@@ -40,7 +41,7 @@ const DomainsMiniCart = () => {
 			initial={ animation.initial }
 			animate={ shouldDisplayMiniCart ? animation.animateIn : animation.animateOut }
 			transition={ { type: 'tween', duration: 0.25 } }
-			className="domains-mini-cart"
+			className={ clsx( 'domains-mini-cart', className ) }
 			isRounded={ false }
 			elevation={ 2 }
 		>
