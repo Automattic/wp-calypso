@@ -3,17 +3,15 @@ import { arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../domain-search';
 import { shoppingCartIcon } from './shopping-cart-icon';
-import type { SelectedDomain } from '../domain-search/types';
 
 import './style.scss';
 
-export const DomainSuggestionCTA = ( {
-	compact,
-	domainUuid,
-}: {
+interface DomainSuggestionCTAProps {
 	compact?: boolean;
-	domainUuid: SelectedDomain[ 'uuid' ];
-} ) => {
+	domainUuid: string;
+}
+
+export const DomainSuggestionCTA = ( { compact, domainUuid }: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
 	const { cart, onContinue } = useDomainSearch();
 

@@ -6,15 +6,17 @@ import {
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 
+interface DomainSuggestionPriceProps {
+	originalPrice?: string;
+	price: string;
+	alignment?: 'left' | 'right';
+}
+
 export const DomainSuggestionPrice = ( {
 	originalPrice,
 	price,
 	alignment = 'left',
-}: {
-	originalPrice?: string;
-	price: string;
-	alignment?: 'left' | 'right';
-} ) => {
+}: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
 
 	return (

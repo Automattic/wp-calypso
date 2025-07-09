@@ -2,11 +2,15 @@ import { Card, CardDivider } from '@wordpress/components';
 import { createContext, useContext, useMemo, Children, isValidElement, Fragment } from 'react';
 import { useContainerQuery } from '../../hooks/use-container-query';
 
+interface DomainsSuggestionsListProps {
+	children: React.ReactNode;
+}
+
 const DomainSuggestionListContext = createContext( {
 	activeQuery: 'small' as 'small' | 'large',
 } );
 
-export const DomainsSuggestionsList = ( { children }: { children: React.ReactNode } ) => {
+export const DomainsSuggestionsList = ( { children }: DomainsSuggestionsListProps ) => {
 	const { ref: containerRef, activeQuery } = useContainerQuery( {
 		small: 480,
 		large: 1024,
