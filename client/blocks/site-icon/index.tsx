@@ -21,6 +21,8 @@ export type Site = {
 	};
 };
 
+export type SiteIconVariant = 'primary' | 'blank';
+
 type SiteIconProps = {
 	siteId?: number;
 	site?: object;
@@ -33,6 +35,7 @@ type SiteIconProps = {
 	href?: string;
 	title?: string;
 	lazy?: boolean;
+	variant?: SiteIconVariant;
 	onClick?: () => void;
 };
 
@@ -48,13 +51,14 @@ export function SiteIcon( {
 	href = '',
 	title = '',
 	lazy = false,
+	variant = 'blank',
 	onClick = () => {},
 }: SiteIconProps ) {
 	iconUrl = iconUrl?.replace( /\/$/, '' ); // Remove trailing slash from URL as it may lead to 404 errors when adding size parameters.
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
 	const classes = clsx( 'site-icon', {
-		'is-blank': ! iconSrc,
+		[ `is-${ variant }` ]: ! iconSrc,
 		'is-transient': isTransientIcon,
 	} );
 
