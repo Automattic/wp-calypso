@@ -2,7 +2,7 @@ import {
 	DomainSearchContextType,
 	DomainSearchCart,
 	SelectedDomain,
-} from '../components/domain-search';
+} from '../components/domain-search/types';
 
 export const buildDomainSearchCart = (
 	overrides: Partial< DomainSearchCart > = {}
@@ -11,6 +11,7 @@ export const buildDomainSearchCart = (
 	total: '$0',
 	onAddItem: () => {},
 	onRemoveItem: () => {},
+	hasItem: () => false,
 	...overrides,
 } );
 

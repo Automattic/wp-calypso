@@ -70,6 +70,7 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 				total: '',
 				onAddItem: () => {},
 				onRemoveItem: () => {},
+				hasItem: () => false,
 			} }
 			initialQuery={ initialQuery }
 			onContinue={ () => {
