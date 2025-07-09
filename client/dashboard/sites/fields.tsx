@@ -15,8 +15,8 @@ import {
 	Status,
 	URL,
 	Uptime,
+	SiteIconLink,
 } from './site-fields';
-import SiteIcon from './site-icon';
 import type { Site } from '../data/types';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -39,7 +39,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'icon.ico',
 		label: __( 'Site icon' ),
-		render: ( { item } ) => <SiteIcon site={ item } />,
+		render: ( { item } ) => <SiteIconLink site={ item } />,
 		enableSorting: false,
 	},
 	{
