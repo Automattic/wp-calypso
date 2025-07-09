@@ -1,5 +1,6 @@
 import { buildDomainSearchCart } from '../../test-helpers/factories';
 import { DomainSearch } from '../domain-search';
+import { DomainSuggestionsListItem } from '../domain-suggestions-list-item';
 import { DomainsSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -22,7 +23,14 @@ export const Default = () => {
 				} }
 				cart={ cart }
 			>
-				<DomainsSuggestionsList>hello</DomainsSuggestionsList>
+				<DomainsSuggestionsList>
+					<DomainSuggestionsListItem.Unavailable
+						domain="example"
+						tld="com"
+						unavailableReason="already-registered"
+						onTransferClick={ () => alert( 'Your wish is an order!' ) }
+					/>
+				</DomainsSuggestionsList>
 			</DomainSearch>
 		</div>
 	);
