@@ -170,8 +170,8 @@ export default function SyncModal( {
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
 
 	const productionSiteSlug =
-		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) ?? '';
-	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) ?? '';
+		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) || '';
+	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) || '';
 
 	const productionSiteTitle =
 		useSelector( ( state ) => getSiteTitle( state, productionSiteId ) ) || '';
