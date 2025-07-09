@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import './style.scss';
 
-interface SelectedDomain {
+export interface SelectedDomain {
 	uuid: string;
 	domain: string;
 	tld: string;
@@ -79,6 +79,14 @@ export const DomainSearch = ( {
 		} ),
 		[ query, setQuery, onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
 	);
+
+	const cartItemsLength = cart.items.length;
+
+	useLayoutEffect( () => {
+		if ( cartItemsLength === 0 && isFullCartOpen ) {
+			closeFullCart();
+		}
+	}, [ cartItemsLength, isFullCartOpen, closeFullCart ] );
 
 	return (
 		<DomainSearchContext.Provider value={ contextValue }>
