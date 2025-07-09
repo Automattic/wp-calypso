@@ -1,0 +1,9 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.domains-mini-cart {
+	position: fixed !important;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
