@@ -1,5 +1,5 @@
-import { Card } from '@wordpress/components';
-import { createContext, useContext, useMemo } from 'react';
+import { Card, CardDivider } from '@wordpress/components';
+import { createContext, useContext, useMemo, Children, isValidElement, Fragment } from 'react';
 import { useContainerQuery } from '../../hooks/use-container-query';
 
 const DomainSuggestionListContext = createContext( {
@@ -14,10 +14,27 @@ export const DomainsSuggestionsList = ( { children }: { children: React.ReactNod
 
 	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
 
+	const childrenWithSeparators = useMemo( () => {
+		const totalChildren = Children.count( children );
+
+		return Children.toArray( children ).map( ( child, index ) => {
+			if ( ! isValidElement( child ) ) {
+				return <Fragment key={ `child-${ index }` }>{ child }</Fragment>;
+			}
+
+			return (
+				<Fragment key={ `child-${ index }` }>
+					{ child }
+					{ index < totalChildren - 1 && <CardDivider /> }
+				</Fragment>
+			);
+		} );
+	}, [ children ] );
+
 	return (
 		<Card ref={ containerRef }>
 			<DomainSuggestionListContext.Provider value={ contextValue }>
-				{ children }
+				{ childrenWithSeparators }
 			</DomainSuggestionListContext.Provider>
 		</Card>
 	);
