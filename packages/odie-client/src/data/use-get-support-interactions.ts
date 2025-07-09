@@ -18,8 +18,11 @@ export const useGetSupportInteractions = (
 	const path = `?per_page=${ per_page }&page=${ page }&status=${ status }`;
 	const isTestMode = isTestModeEnvironment();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( enabled );
+	let shouldFetch = enabled;
 	// Only fetch Zendesk interactions if the user can connect to Zendesk.
-	const shouldFetch = enabled && ( canConnectToZendesk || ! provider?.includes( 'zendesk' ) );
+	if ( ( provider === 'zendesk' || provider === 'zendesk-staging' ) && ! canConnectToZendesk ) {
+		shouldFetch = false;
+	}
 
 	return useQuery( {
 		queryKey: [
@@ -43,7 +46,7 @@ export const useGetSupportInteractions = (
 					interaction.events.some( ( event ) => event.event_source === provider )
 				);
 			} else if ( ! canConnectToZendesk ) {
-				// When provider is null, we're fetching interactions from all providers.
+				// When provider is null, we'll get interactions from all providers.
 				// We need to filter out Zendesk interactions if the user can't connect to Zendesk.
 				return response.filter(
 					( interaction ) =>
