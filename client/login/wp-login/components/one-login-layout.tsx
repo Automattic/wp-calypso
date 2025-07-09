@@ -15,7 +15,6 @@ interface OneLoginLayoutProps {
 	isFromAkismet: boolean;
 	children: React.ReactNode;
 	signupUrl?: string;
-	shouldUseWideHeading?: number;
 }
 
 const OneLoginLayout = ( {
@@ -23,7 +22,6 @@ const OneLoginLayout = ( {
 	isFromAkismet,
 	children,
 	signupUrl: signupUrlProp,
-	shouldUseWideHeading,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -55,7 +53,6 @@ const OneLoginLayout = ( {
 	return (
 		<Step.CenteredColumnLayout
 			columnWidth={ 6 }
-			{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
 			topBar={ <Step.TopBar rightElement={ <SignUpLink /> } compactLogo="always" /> }
 			heading={
 				<Step.Heading
