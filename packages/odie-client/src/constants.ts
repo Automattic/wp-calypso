@@ -33,7 +33,6 @@ export const getOdieForwardToForumsMessage = (): string =>
 	);
 
 export const getOdieForwardToZendeskMessage = (): string =>
-	// eslint-disable-next-line quotes
 	__(
 		'It sounds like you want to talk to a human. We’re here to help! Use the option below to message our Happiness Engineers.',
 		__i18n_text_domain__
