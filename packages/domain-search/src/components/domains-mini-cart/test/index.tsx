@@ -4,37 +4,23 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DomainsMiniCart } from '..';
+import {
+	buildDomain,
+	buildDomainSearchCart,
+	buildDomainSearchContext,
+} from '../../../test-helpers/factories';
 import { DomainSearchContext } from '../../domain-search';
-
-const defaultContextValue = {
-	isFullCartOpen: false,
-	closeFullCart: () => {},
-	onContinue: () => {},
-	query: '',
-	setQuery: () => {},
-	cart: {
-		items: [],
-		total: '',
-		onAddItem: () => {},
-		onRemoveItem: () => {},
-	},
-	openFullCart: () => {},
-};
 
 describe( 'DomainsMiniCart', () => {
 	describe( 'cart display', () => {
 		test( 'displays the mini cart when there are items and full cart is closed', async () => {
 			render(
 				<DomainSearchContext.Provider
-					value={ {
-						...defaultContextValue,
-						cart: {
-							items: [ { uuid: '1', domain: 'test', tld: 'com', price: '$10' } ],
-							total: '$10',
-							onAddItem: () => {},
-							onRemoveItem: () => {},
-						},
-					} }
+					value={ buildDomainSearchContext( {
+						cart: buildDomainSearchCart( {
+							items: [ buildDomain( { domain: 'test', tld: 'com', price: '$10' } ) ],
+						} ),
+					} ) }
 				>
 					<DomainsMiniCart />
 				</DomainSearchContext.Provider>
@@ -47,7 +33,7 @@ describe( 'DomainsMiniCart', () => {
 
 		test( 'does not display the mini cart when there are no items', () => {
 			render(
-				<DomainSearchContext.Provider value={ defaultContextValue }>
+				<DomainSearchContext.Provider value={ buildDomainSearchContext() }>
 					<DomainsMiniCart />
 				</DomainSearchContext.Provider>
 			);
@@ -58,16 +44,12 @@ describe( 'DomainsMiniCart', () => {
 		test( 'does not display the mini cart when full cart is open', () => {
 			render(
 				<DomainSearchContext.Provider
-					value={ {
-						...defaultContextValue,
+					value={ buildDomainSearchContext( {
 						isFullCartOpen: true,
-						cart: {
-							items: [ { uuid: '1', domain: 'test', tld: 'com', price: '$10' } ],
-							total: '$10',
-							onAddItem: () => {},
-							onRemoveItem: () => {},
-						},
-					} }
+						cart: buildDomainSearchCart( {
+							items: [ buildDomain( { domain: 'test', tld: 'com', price: '$10' } ) ],
+						} ),
+					} ) }
 				>
 					<DomainsMiniCart />
 				</DomainSearchContext.Provider>
@@ -83,16 +65,12 @@ describe( 'DomainsMiniCart', () => {
 
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
+				value={ buildDomainSearchContext( {
 					openFullCart,
-					cart: {
-						items: [ { uuid: '1', domain: 'test', tld: 'com', price: '$10' } ],
-						total: '$10',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { domain: 'test', tld: 'com', price: '$10' } ) ],
+					} ),
+				} ) }
 			>
 				<DomainsMiniCart />
 			</DomainSearchContext.Provider>
@@ -106,15 +84,12 @@ describe( 'DomainsMiniCart', () => {
 	test( 'displays the cart total', async () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						items: [ { uuid: '1', domain: 'test', tld: 'com', price: '$10' } ],
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { domain: 'test', tld: 'com', price: '$10' } ) ],
 						total: '$10',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsMiniCart />
 			</DomainSearchContext.Provider>

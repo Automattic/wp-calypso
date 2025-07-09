@@ -4,28 +4,20 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DomainsFullCart } from '../';
+import {
+	buildDomain,
+	buildDomainSearchCart,
+	buildDomainSearchContext,
+} from '../../../test-helpers/factories';
 import { DomainSearchContext } from '../../domain-search';
-
-const defaultContextValue = {
-	isFullCartOpen: false,
-	closeFullCart: () => {},
-	onContinue: () => {},
-	query: '',
-	setQuery: () => {},
-	cart: {
-		items: [],
-		total: '',
-		onAddItem: () => {},
-		onRemoveItem: () => {},
-	},
-	openFullCart: () => {},
-};
 
 describe( 'DomainsFullCart', () => {
 	describe( 'cart display', () => {
 		test( 'displays the cart when isFullCartOpen is true', async () => {
 			render(
-				<DomainSearchContext.Provider value={ { ...defaultContextValue, isFullCartOpen: true } }>
+				<DomainSearchContext.Provider
+					value={ buildDomainSearchContext( { isFullCartOpen: true } ) }
+				>
 					<DomainsFullCart />
 				</DomainSearchContext.Provider>
 			);
@@ -37,7 +29,9 @@ describe( 'DomainsFullCart', () => {
 
 		test( 'doesnt display the cart when isFullCartOpen is false', () => {
 			render(
-				<DomainSearchContext.Provider value={ { ...defaultContextValue, isFullCartOpen: false } }>
+				<DomainSearchContext.Provider
+					value={ buildDomainSearchContext( { isFullCartOpen: false } ) }
+				>
 					<DomainsFullCart />
 				</DomainSearchContext.Provider>
 			);
@@ -53,7 +47,7 @@ describe( 'DomainsFullCart', () => {
 
 			render(
 				<DomainSearchContext.Provider
-					value={ { ...defaultContextValue, isFullCartOpen: true, closeFullCart } }
+					value={ buildDomainSearchContext( { isFullCartOpen: true, closeFullCart } ) }
 				>
 					<DomainsFullCart />
 				</DomainSearchContext.Provider>
@@ -70,7 +64,7 @@ describe( 'DomainsFullCart', () => {
 
 			render(
 				<DomainSearchContext.Provider
-					value={ { ...defaultContextValue, isFullCartOpen: true, closeFullCart } }
+					value={ buildDomainSearchContext( { isFullCartOpen: true, closeFullCart } ) }
 				>
 					<div>outside</div>
 					<DomainsFullCart />
@@ -86,16 +80,12 @@ describe( 'DomainsFullCart', () => {
 	test( 'renders the items', async () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
+				value={ buildDomainSearchContext( {
 					isFullCartOpen: true,
-					cart: {
-						items: [ { uuid: '1', domain: 'the-lasso', tld: 'com', price: '$10' } ],
-						total: '$10',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { domain: 'the-lasso', tld: 'com', price: '$10' } ) ],
+					} ),
+				} ) }
 			>
 				<DomainsFullCart />
 			</DomainSearchContext.Provider>
@@ -109,16 +99,12 @@ describe( 'DomainsFullCart', () => {
 	test( 'allows rendering other elements within the cart body', async () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
+				value={ buildDomainSearchContext( {
 					isFullCartOpen: true,
-					cart: {
-						items: [ { uuid: '1', domain: 'the-lasso', tld: 'com', price: '$10' } ],
-						total: '$10',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { domain: 'the-lasso', tld: 'com', price: '$10' } ) ],
+					} ),
+				} ) }
 			>
 				<DomainsFullCart>
 					<p>Hello, World!</p>
@@ -141,7 +127,7 @@ describe( 'DomainsFullCart', () => {
 
 		render(
 			<DomainSearchContext.Provider
-				value={ { ...defaultContextValue, isFullCartOpen: true, onContinue } }
+				value={ buildDomainSearchContext( { isFullCartOpen: true, onContinue } ) }
 			>
 				<DomainsFullCart />
 			</DomainSearchContext.Provider>

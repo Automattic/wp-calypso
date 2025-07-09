@@ -16,7 +16,7 @@ export interface DomainSearchCart {
 	onRemoveItem: ( item: SelectedDomain ) => void;
 }
 
-type DomainSearchContextType = {
+export interface DomainSearchContextType {
 	query: string;
 	setQuery: ( query: string ) => void;
 	onContinue: () => void;
@@ -24,7 +24,7 @@ type DomainSearchContextType = {
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
-};
+}
 
 export const DomainSearchContext = createContext< DomainSearchContextType >( {
 	query: '',
