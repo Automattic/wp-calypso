@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useMemo } from 'react';
 import { getSiteStatus } from '../../utils/site-status';
 import SiteMigrationIcon from './site-migration-icon';
@@ -20,10 +21,14 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 		return url.toString();
 	}, [ ico ] );
 
+	const className = clsx( {
+		'is-small': size <= 16,
+	} );
+
 	if ( ico ) {
 		return (
 			<img
-				className="site-icon"
+				className={ clsx( 'site-icon', className ) }
 				src={ src }
 				alt={ site.name }
 				{ ...dims }
@@ -35,11 +40,11 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 
 	const status = getSiteStatus( site );
 	if ( status === 'migration_pending' || status === 'migration_started' ) {
-		return <SiteMigrationIcon size={ size } />;
+		return <SiteMigrationIcon className={ clsx( 'site-icon', className ) } size={ size } />;
 	}
 
 	return (
-		<div className="site-letter" style={ { ...dims, fontSize: size * 0.5 } }>
+		<div className={ clsx( 'site-letter', className ) } style={ { ...dims, fontSize: size * 0.5 } }>
 			<span>{ site.name.charAt( 0 ) }</span>
 		</div>
 	);

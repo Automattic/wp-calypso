@@ -71,6 +71,11 @@ $blueberry-color: #3858e9;
 
 	.hosting-dashboard-item-view__header-favicon {
 		margin-inline-end: 12px;
+
+		.site-icon {
+			border: none;
+			background: none;
+		}
 	}
 
 	@media ( min-width: $break-large ) {
