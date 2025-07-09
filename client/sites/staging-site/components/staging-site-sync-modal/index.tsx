@@ -68,7 +68,7 @@ const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLab
 							whiteSpace: 'nowrap',
 							overflow: 'hidden',
 							textOverflow: 'ellipsis',
-							maxWidth: '180px',
+							maxWidth: '190px',
 						} }
 					>
 						{ siteTitle }
