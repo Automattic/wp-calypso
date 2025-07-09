@@ -68,6 +68,7 @@ const LayoutLoggedOut = ( {
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
+	isMobile,
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
@@ -139,6 +140,7 @@ const LayoutLoggedOut = ( {
 		'is-popup': isPopup,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-gravatar': isGravatar,
+		'is-mobile': isMobile,
 		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': hasGravPoweredClientClass,
 		'is-woocommerce-core-profiler-flow': isWooJPC,
@@ -344,9 +346,8 @@ export default withCurrentRoute(
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
-			const isAndroid = isAndroidOAuth2Client( oauth2Client );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-			const isIos = isIosOAuth2Client( oauth2Client );
+			const isMobile = isAndroidOAuth2Client( oauth2Client ) || isIosOAuth2Client( oauth2Client );
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
@@ -369,8 +370,7 @@ export default withCurrentRoute(
 						isJetpackCloudClient ||
 						isJetpackLogin ||
 						isVIPClient ||
-						isAndroid ||
-						isIos ) ) ||
+						isMobile ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =
@@ -403,6 +403,7 @@ export default withCurrentRoute(
 				isPopup,
 				isJetpackWooDnaFlow,
 				isGravatar,
+				isMobile,
 				isWPJobManager,
 				isGravPoweredClient,
 				wccomFrom,

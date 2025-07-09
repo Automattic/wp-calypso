@@ -23,9 +23,9 @@ export const ResizableTextarea: React.FC< {
 } ) => {
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			// call the handler to remove the validation message if visible.
+			keyUpHandle();
 			if ( inputRef.current?.value.trim() === '' ) {
-				// call the handler to remove the validation message if visible.
-				keyUpHandle();
 				setSubmitDisabled( true );
 				return;
 			}

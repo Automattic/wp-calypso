@@ -336,6 +336,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 			display: none;
 		}
 	}
+
+	&.is-mobile {
+		.login__lostpassword-form  {
+			padding: 16px 16px 0;
+		}
+	}
 }
 
 .is-gravatar {

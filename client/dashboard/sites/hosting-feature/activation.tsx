@@ -5,7 +5,7 @@ import { lazy, useEffect, useState, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import { HostingFeatures } from '../features';
-import illustrationUrl from './activation-illustration.svg';
+import illustrationUrl from './upsell-illustration.svg';
 import type { Site } from '../../data/types';
 
 interface HostingFeatureActivationProps {

@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 import './style.scss';
 
 export const DomainsFullCartItems = () => {
@@ -21,7 +21,7 @@ export const DomainsFullCartItems = () => {
 				<Card key={ `${ domain.domain }.${ domain.tld }` }>
 					<CardBody size="small">
 						<HStack alignment="top" justify="space-between" spacing={ 6 }>
-							<VStack spacing={ 2 }>
+							<VStack spacing={ 2 } alignment="left">
 								<Text size="medium" aria-label={ `${ domain.domain }.${ domain.tld }` }>
 									{ domain.domain }
 									<Text size="inherit" weight={ 500 }>

@@ -1,14 +1,15 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import './style.scss';
 
-interface SelectedDomain {
+export interface SelectedDomain {
+	uuid: string;
 	domain: string;
 	tld: string;
 	originalPrice?: string;
 	price: string;
 }
 
-interface Cart {
+export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
 	onAddItem: ( item: SelectedDomain ) => void;
@@ -19,7 +20,7 @@ type DomainSearchContextType = {
 	query: string;
 	setQuery: ( query: string ) => void;
 	onContinue: () => void;
-	cart: Cart;
+	cart: DomainSearchCart;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
@@ -49,7 +50,7 @@ export const DomainSearch = ( {
 	children: React.ReactNode;
 	initialQuery?: string;
 	onContinue: () => void;
-	cart: Cart;
+	cart: DomainSearchCart;
 } ) => {
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
@@ -78,6 +79,14 @@ export const DomainSearch = ( {
 		} ),
 		[ query, setQuery, onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
 	);
+
+	const cartItemsLength = cart.items.length;
+
+	useLayoutEffect( () => {
+		if ( cartItemsLength === 0 && isFullCartOpen ) {
+			closeFullCart();
+		}
+	}, [ cartItemsLength, isFullCartOpen, closeFullCart ] );
 
 	return (
 		<DomainSearchContext.Provider value={ contextValue }>

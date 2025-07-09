@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
@@ -24,6 +23,7 @@ interface FileBrowserNodeProps {
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	fileBrowserConfig?: FileBrowserConfig;
+	siteId: number;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -35,6 +35,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	activeNodePath,
 	parentItem,
 	fileBrowserConfig,
+	siteId,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
@@ -44,7 +45,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
-	const siteId = useSelector( getSelectedSiteId ) as number;
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
 
 	const {
@@ -263,6 +263,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
 						fileBrowserConfig={ fileBrowserConfig }
+						siteId={ siteId }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>

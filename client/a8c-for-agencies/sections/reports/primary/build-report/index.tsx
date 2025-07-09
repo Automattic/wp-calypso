@@ -22,6 +22,7 @@ import {
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
 import usePollReportStatus from '../../hooks/use-poll-report-status';
+import { useReportError } from '../../hooks/use-report-error';
 import useSendReportEmailMutation from '../../hooks/use-send-report-email-mutation';
 import useSendReportMutation from '../../hooks/use-send-report-mutation';
 import BuildReportActions from './build-report-actions';
@@ -91,11 +92,14 @@ const BuildReport = () => {
 
 	// Poll report status when reportId exists
 	const {
+		data: reportData,
 		isProcessed,
 		isError: isReportError,
 		isPending: isReportPending,
 		isErrorStatus: isReportErrorStatus,
 	} = usePollReportStatus( reportId );
+
+	const reportErrorMetadata = useReportError( reportData );
 
 	useEffect( () => {
 		if ( reportId ) {
@@ -150,6 +154,8 @@ const BuildReport = () => {
 		showValidationErrors,
 		validationErrors,
 		isReportError,
+		reportData,
+		reportErrorMetadata,
 	};
 
 	return (

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DomainsFullCartItems } from '..';
-import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
+import { DomainSearchContext } from '../../domain-search';
 
 const defaultContextValue = {
 	isFullCartOpen: false,
@@ -26,8 +26,8 @@ describe( 'DomainsFullCartItems', () => {
 					...defaultContextValue,
 					cart: {
 						items: [
-							{ domain: 'example', tld: 'com', price: '$10' },
-							{ domain: 'test', tld: 'org', price: '$15' },
+							{ uuid: '1', domain: 'example', tld: 'com', price: '$10' },
+							{ uuid: '2', domain: 'test', tld: 'org', price: '$15' },
 						],
 						total: '$25',
 						onAddItem: () => {},
@@ -52,7 +52,7 @@ describe( 'DomainsFullCartItems', () => {
 				value={ {
 					...defaultContextValue,
 					cart: {
-						items: [ { domain: 'example', tld: 'com', price: '$10' } ],
+						items: [ { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ],
 						total: '$10',
 						onAddItem: () => {},
 						onRemoveItem,
@@ -66,6 +66,7 @@ describe( 'DomainsFullCartItems', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
 		expect( onRemoveItem ).toHaveBeenCalledWith( {
+			uuid: '1',
 			domain: 'example',
 			tld: 'com',
 			price: '$10',
@@ -80,6 +81,7 @@ describe( 'DomainsFullCartItems', () => {
 					cart: {
 						items: [
 							{
+								uuid: '1',
 								domain: 'example',
 								tld: 'com',
 								price: '$10',

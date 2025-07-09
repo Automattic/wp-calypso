@@ -7,12 +7,12 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import {
-	ODIE_FORWARD_TO_FORUMS_MESSAGE,
-	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
-	ODIE_THIRD_PARTY_MESSAGE_CONTENT,
-	ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT,
-	ODIE_ERROR_MESSAGE,
-	ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+	getOdieForwardToForumsMessage,
+	getOdieForwardToZendeskMessage,
+	getOdieThirdPartyMessageContent,
+	getOdieEmailFallbackMessageContent,
+	getOdieErrorMessage,
+	getOdieErrorMessageNonEligible,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import {
@@ -38,7 +38,7 @@ const getDisplayMessage = (
 	isErrorMessage?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
-		return ODIE_THIRD_PARTY_MESSAGE_CONTENT;
+		return getOdieThirdPartyMessageContent();
 	}
 
 	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
@@ -46,18 +46,18 @@ const getDisplayMessage = (
 	}
 
 	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
-		return ODIE_EMAIL_FALLBACK_MESSAGE_CONTENT;
+		return getOdieEmailFallbackMessageContent();
 	}
 
 	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
-		return ODIE_ERROR_MESSAGE_NON_ELIGIBLE;
+		return getOdieErrorMessageNonEligible();
 	}
 
 	const forwardMessage = isUserEligibleForPaidSupport
-		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
-		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
+		? getOdieForwardToZendeskMessage()
+		: getOdieForwardToForumsMessage();
 
-	return isErrorMessage ? ODIE_ERROR_MESSAGE : forwardMessage;
+	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
 };
 
 export const UserMessage = ( {

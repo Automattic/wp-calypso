@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { DomainsFullCartSummary } from '..';
-import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
+import { DomainSearchContext } from '../../domain-search';
 
 const defaultContextValue = {
 	isFullCartOpen: false,
@@ -28,7 +28,7 @@ describe( 'DomainsFullCartSummary', () => {
 					...defaultContextValue,
 					cart: {
 						...defaultContextValue.cart,
-						items: [ { domain: 'test', tld: 'test', price: '$10.00' } ],
+						items: [ { uuid: '1', domain: 'test', tld: 'test', price: '$10.00' } ],
 						total: '$10.00',
 					},
 				} }
@@ -49,8 +49,8 @@ describe( 'DomainsFullCartSummary', () => {
 					cart: {
 						...defaultContextValue.cart,
 						items: [
-							{ domain: 'test', tld: 'test', price: '$10.00' },
-							{ domain: 'test', tld: 'test', price: '$10.00' },
+							{ uuid: '1', domain: 'test', tld: 'test', price: '$10.00' },
+							{ uuid: '2', domain: 'test', tld: 'test', price: '$10.00' },
 						],
 						total: '$20.00',
 					},

@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 
@@ -14,7 +14,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
 	const { isEligibleForChat, forceEmailSupport } = useChatStatus();
-	const { canConnectToZendesk } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );

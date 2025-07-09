@@ -233,7 +233,11 @@ export default function SyncModal( {
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 				{ querySiteId === stagingSiteId && (
 					<div className="staging-site-card">
-						<FileBrowser rewindId={ rewindId } fileBrowserConfig={ fileBrowserConfig } />
+						<FileBrowser
+							rewindId={ rewindId }
+							siteId={ querySiteId }
+							fileBrowserConfig={ fileBrowserConfig }
+						/>
 					</div>
 				) }
 				<Text>

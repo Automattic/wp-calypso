@@ -116,6 +116,7 @@ export const ReportClientEmailsColumn = ( { emails }: { emails: string[] } ) => 
 			{ remainingCount > 0 && (
 				<>
 					<span
+						className="a4a-reports-dashboard__more-emails"
 						onMouseEnter={ () => setShowTooltip( true ) }
 						onMouseLeave={ () => setShowTooltip( false ) }
 						onTouchStart={ () => setShowTooltip( true ) }

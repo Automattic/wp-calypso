@@ -1,10 +1,8 @@
+import { isThisASupportArticleLink } from '@automattic/urls';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-
-const isThisASupportArticleLink = ( href: string ) =>
-	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );
 
 export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();

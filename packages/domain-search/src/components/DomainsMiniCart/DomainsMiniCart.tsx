@@ -1,5 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 import { DomainsMiniCartActions } from './Actions';
 import { DomainsMiniCartSummary } from './Summary';
 

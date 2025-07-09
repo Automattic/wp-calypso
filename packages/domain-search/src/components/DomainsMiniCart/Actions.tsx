@@ -1,5 +1,5 @@
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 
 export const DomainsMiniCartActions = () => {
 	const { onContinue, openFullCart } = useDomainSearch();

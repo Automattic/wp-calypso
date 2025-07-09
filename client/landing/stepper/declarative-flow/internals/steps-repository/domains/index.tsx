@@ -15,11 +15,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -279,6 +281,8 @@ const DomainsStep: Step< {
 
 	const renderContent = () => (
 		<DomainFormControl
+			// TODO: Implement this in DOTOBRD-233.
+			onContinue={ () => {} }
 			analyticsSection={ getAnalyticsSection() }
 			flow={ flow }
 			onAddDomain={ handleAddDomain }
@@ -356,4 +360,22 @@ const DomainsStep: Step< {
 	);
 };
 
-export default DomainsStep;
+const StyleWrappedDomainsStep: typeof DomainsStep = ( props ) => {
+	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flow );
+
+	if ( isLoading ) {
+		// TODO: Add a loading state to indicate that the experiment is loading.
+		return null;
+	}
+
+	return (
+		<>
+			<DomainsStep { ...props } />
+			{ ! shouldUseDomainSearchV2 && (
+				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--stepper' ] } />
+			) }
+		</>
+	);
+};
+
+export default StyleWrappedDomainsStep;

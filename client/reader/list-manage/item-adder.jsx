@@ -21,6 +21,7 @@ export default function ItemAdder( props ) {
 	const followResults = useSelector( ( state ) =>
 		filterFollowsByQuery( query, getReaderFollows( state ) ).slice( 0, 7 )
 	);
+
 	const feedResults = useSelector( ( state ) =>
 		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
 	);

@@ -24,6 +24,13 @@ export interface ReportFormData {
 export interface ReportFormAPIResponse extends ReportFormData {
 	managed_site_url: string;
 	blog_id: number;
+	errors:
+		| {
+				code: string;
+				message: string;
+				timestamp: number;
+		  }[]
+		| [];
 }
 
 export type ReportStatus = 'sent' | 'error' | 'pending' | 'processed';
@@ -122,7 +129,12 @@ export interface BuildReportState {
 	isReportPending: boolean;
 	isReportError: boolean;
 	isReportErrorStatus: boolean;
+	reportData?: Report;
 	isProcessed: boolean;
 	showValidationErrors: boolean;
 	validationErrors: Array< { field: string; message: string } >;
+	reportErrorMetadata: {
+		errorText: string;
+		errorCode?: string;
+	};
 }

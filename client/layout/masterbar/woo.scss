@@ -156,8 +156,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	a:not(.components-button),
-	.wp-login__links a,
-	.wp-login__links button,
 	.button,
 	.magic-login__footer a {
 		color: $gray-50;
@@ -484,7 +482,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.wp-login__links,
 	.login__social-connect-prompt,
 	.magic-login__request-link,
 	.signup-form,
@@ -1068,10 +1065,6 @@ $breakpoint-mobile: 660px;
 			font-weight: 700;
 			line-height: 39.6px;
 			letter-spacing: -0.72px;
-
-			@media (max-width: $break-mobile) {
-				text-align: left;
-			}
 		}
 
 		input[type="text"].form-text-input,

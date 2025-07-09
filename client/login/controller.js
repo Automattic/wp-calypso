@@ -17,6 +17,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import LoginContextProvider from './login-context';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -86,20 +87,22 @@ const enhanceContextWithLogin = ( context ) => {
 		isVIPClient;
 
 	context.primary = (
-		<WPLogin
-			action={ action }
-			isJetpack={ isJetpackLogin }
-			isWhiteLogin={ isWhiteLogin }
-			isGravPoweredClient={ isGravPoweredClient }
-			path={ path }
-			twoFactorAuthType={ twoFactorAuthType }
-			socialService={ socialService }
-			socialServiceResponse={ socialServiceResponse }
-			socialConnect={ flow === 'social-connect' }
-			domain={ ( query && query.domain ) || null }
-			fromSite={ ( query && query.site ) || null }
-			signupUrl={ ( query && query.signup_url ) || null }
-		/>
+		<LoginContextProvider>
+			<WPLogin
+				action={ action }
+				isJetpack={ isJetpackLogin }
+				isWhiteLogin={ isWhiteLogin }
+				isGravPoweredClient={ isGravPoweredClient }
+				path={ path }
+				twoFactorAuthType={ twoFactorAuthType }
+				socialService={ socialService }
+				socialServiceResponse={ socialServiceResponse }
+				socialConnect={ flow === 'social-connect' }
+				domain={ ( query && query.domain ) || null }
+				fromSite={ ( query && query.site ) || null }
+				signupUrl={ ( query && query.signup_url ) || null }
+			/>
+		</LoginContextProvider>
 	);
 };
 

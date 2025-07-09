@@ -40,6 +40,7 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import { LoginContext } from '../login-context';
 import OneLoginLayout from './components/one-login-layout';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
 import getHeadingSubText from './hooks/get-heading-subtext';
@@ -67,6 +68,7 @@ export class Login extends Component {
 	};
 
 	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
+	static contextType = LoginContext;
 
 	state = {
 		usernameOrEmail: '',
@@ -80,15 +82,42 @@ export class Login extends Component {
 
 	componentDidMount() {
 		this.recordPageView();
+		this.updateHeadingText();
 	}
 
 	componentDidUpdate( prevProps ) {
+		// Record page view if relevant props changed
 		if ( this.props.twoFactorAuthType !== prevProps.twoFactorAuthType ) {
 			this.recordPageView();
 		}
-
 		if ( this.props.socialConnect !== prevProps.socialConnect ) {
 			this.recordPageView();
+		}
+
+		// List all props that affect the heading text
+		const headingProps = [
+			'isWhiteLogin',
+			'twoFactorAuthType',
+			'isManualRenewalImmediateLoginAttempt',
+			'socialConnect',
+			'linkingSocialService',
+			'action',
+			'oauth2Client',
+			'isWooJPC',
+			'isJetpack',
+			'isWCCOM',
+			'isFromAkismet',
+			'isFromAutomatticForAgenciesPlugin',
+			'isGravPoweredClient',
+			'twoFactorEnabled',
+			'currentQuery',
+			'translate',
+		];
+
+		const headingChanged = headingProps.some( ( key ) => this.props[ key ] !== prevProps[ key ] );
+
+		if ( headingChanged ) {
+			this.updateHeadingText();
 		}
 	}
 
@@ -253,6 +282,61 @@ export class Login extends Component {
 		);
 	}
 
+	updateHeadingText() {
+		const {
+			isWhiteLogin,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			oauth2Client,
+			isWooJPC,
+			isJetpack,
+			isWCCOM,
+			isFromAkismet,
+			isFromAutomatticForAgenciesPlugin,
+			isGravPoweredClient,
+			twoFactorEnabled,
+			currentQuery,
+			translate,
+		} = this.props;
+
+		// TODO: remove isGravPoweredClient when login pages are unified.
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
+
+		const headingText = getHeaderText( {
+			isSocialFirst,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			oauth2Client,
+			isWooJPC,
+			isJetpack,
+			isWCCOM,
+			isFromAkismet,
+			isFromAutomatticForAgenciesPlugin,
+			isGravPoweredClient,
+			twoFactorEnabled,
+			currentQuery,
+			translate,
+		} );
+
+		const headingSubText = getHeadingSubText( {
+			isSocialFirst,
+			twoFactorAuthType,
+			action,
+			translate,
+		} );
+
+		this.context.setHeaders( {
+			heading: headingText,
+			subHeading: headingSubText,
+		} );
+	}
+
 	render() {
 		const {
 			locale,
@@ -262,17 +346,7 @@ export class Login extends Component {
 			isWhiteLogin,
 			isJetpack,
 			isFromAkismet,
-			twoFactorAuthType,
-			isManualRenewalImmediateLoginAttempt,
-			socialConnect,
-			linkingSocialService,
 			action,
-			oauth2Client,
-			isWooJPC,
-			isWCCOM,
-			isFromAutomatticForAgenciesPlugin,
-			currentQuery,
-			twoFactorEnabled,
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
@@ -309,40 +383,12 @@ export class Login extends Component {
 			</Main>
 		);
 
-		const headingText = getHeaderText( {
-			isSocialFirst,
-			twoFactorAuthType,
-			isManualRenewalImmediateLoginAttempt,
-			socialConnect,
-			linkingSocialService,
-			action,
-			oauth2Client,
-			isWooJPC,
-			isJetpack,
-			isWCCOM,
-			isFromAkismet,
-			isFromAutomatticForAgenciesPlugin,
-			isGravPoweredClient,
-			twoFactorEnabled,
-			currentQuery,
-			translate,
-		} );
-
-		const headingSubText = getHeadingSubText( {
-			isSocialFirst,
-			twoFactorAuthType,
-			action,
-			translate,
-		} );
-
 		return (
 			<>
 				{ isWhiteLogin && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
-						headingText={ headingText }
-						headingSubText={ headingSubText }
 						shouldUseWideHeading={ 'lostpassword' !== action }
 						signupUrl={ this.props.signupUrl }
 					>

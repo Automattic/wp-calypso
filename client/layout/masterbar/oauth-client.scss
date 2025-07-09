@@ -304,69 +304,6 @@
 			display: none;
 		}
 
-		.wp-login__crowdsignal-footer {
-			background-color: var(--color-crowdsignal);
-			box-sizing: border-box;
-			color: var(--color-text-inverted);
-			display: flex;
-			flex-direction: row;
-			fill: var(--color-text-inverted);
-			height: 58px;
-			padding: 20px 40px;
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			right: 0;
-		}
-
-		.wp-login__crowdsignal-footer-text {
-			display: none;
-			font-size: $font-body-extra-small;
-			flex: 1;
-			height: 18px;
-			letter-spacing: 0.8px;
-			line-height: 16px;
-			text-align: center;
-			text-transform: uppercase;
-
-			&:last-child {
-				display: inline;
-			}
-
-			@include breakpoint-deprecated(">660px") {
-				display: inline;
-				text-align: left;
-
-				&:last-child {
-					text-align: right;
-				}
-			}
-
-			.automattic-logo,
-			.gridicon {
-				margin: 0 5px;
-				vertical-align: bottom;
-			}
-		}
-
-		.wp-login__links {
-			padding: 20px 0 15px;
-
-			a,
-			button {
-				border: 0;
-				color: var(--color-text);
-				line-height: 21px;
-				padding: 10px 16px;
-				text-align: center;
-
-				&:hover,
-				&:active {
-					color: var(--color-text);
-				}
-			}
-		}
-
 		.wp-login__main.main {
 			max-width: 550px;
 			margin-bottom: 80px;
@@ -397,18 +334,12 @@
 		margin-top: 24px;
 	}
 
-	.wp-login__links,
 	.auth-form__social,
 	.login__form,
 	.two-factor-authentication__verification-code-form,
 	.two-factor-authentication__actions {
 		width: 100%;
 		max-width: 375px;
-	}
-
-	.wp-login__links {
-		font-size: $font-body;
-		font-weight: 400;
 	}
 
 	.login__form-action button {
@@ -545,15 +476,6 @@
 			color: var(--studio-white);
 			background: var(--studio-gray-10);
 			border-color: var(--studio-gray-10);
-		}
-	}
-
-	.wp-login__links button {
-		color: var(--studio-jetpack-green-40);
-
-		&:hover,
-		&:focus {
-			color: var(--studio-jetpack-green-60);
 		}
 	}
 }
