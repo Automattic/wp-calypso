@@ -11,11 +11,12 @@ export const DomainsMiniCartActions = () => {
 			<Button
 				className="domains-mini-cart-actions__view-cart"
 				variant="tertiary"
+				__next40pxDefaultSize
 				onClick={ () => openFullCart() }
 			>
 				{ __( 'View cart' ) }
 			</Button>
-			<Button variant="primary" onClick={ () => onContinue() }>
+			<Button variant="primary" onClick={ () => onContinue() } __next40pxDefaultSize>
 				{ __( 'Continue' ) }
 			</Button>
 		</HStack>

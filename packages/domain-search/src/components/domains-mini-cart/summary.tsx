@@ -18,7 +18,7 @@ export const DomainsMiniCartSummary = () => {
 	return (
 		<VStack spacing={ 2 }>
 			<Text size="footnote">{ domainCount }</Text>
-			<Text>{ cart.total }</Text>
+			<Text className="domains-mini-cart-summary__total">{ cart.total }</Text>
 		</VStack>
 	);
 };
