@@ -3,7 +3,6 @@
  * TODO: Remove this file once the PoC is complete
 */
 
-
 .staging-site-card {
 	overflow-y: auto;
 	max-height: 428px;
@@ -36,12 +35,12 @@
 	}
 
 	.status-card__learn-about a {
-		color: var(--studio-gray-80);
+		color: var( --studio-gray-80 );
 	}
 
 	// We are using the deprecated mixin to match the when the mobile navigation appears
 	// which is at 660px instead of the 600px break-small breakpoint.
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		&__back-button.components-button.is-link {
 			padding: 0 0 12px 0;
 			margin: 0;
@@ -116,6 +115,7 @@
 			width: 22px;
 			height: 22px;
 			margin-right: 4px;
+			fill: var( --theme-base-color );
 		}
 
 		.components-button {
@@ -123,14 +123,15 @@
 			font-size: $font-body-small;
 			font-weight: normal;
 			height: 32px;
+			color: var( --theme-base-color );
 		}
 
 		.is-alternate {
-			background-color: var(--studio-gray-0);
+			background-color: var( --studio-gray-0 );
 		}
 
 		.file-card {
-			background: var(--studio-gray-0);
+			background: var( --studio-gray-0 );
 			margin: 4px 0;
 			padding-top: 20px;
 			padding-bottom: 20px;
@@ -215,7 +216,7 @@
 			}
 
 			&__preview-sensitive {
-				background-color: var(--studio-gray-60);
+				background-color: var( --studio-gray-60 );
 				color: #fff;
 				margin: 16px auto 0;
 				max-width: 100%;
@@ -231,14 +232,14 @@
 		.form-checkbox {
 			margin: 8px;
 			&.mixed {
-				background-color: var(--studio-gray-10);
+				background-color: var( --studio-gray-10 );
 			}
 		}
 	}
 
 	.file-browser-header {
 		padding: 0 2px;
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var( --studio-gray-5 );
 		.file-browser-header__action-buttons .button {
 			padding: 8px 32px;
 			margin-right: 16px;
@@ -262,7 +263,7 @@
 			.form-checkbox {
 				margin: 8px;
 				&.mixed {
-					background-color: var(--studio-gray-10);
+					background-color: var( --studio-gray-10 );
 				}
 			}
 			.button {
