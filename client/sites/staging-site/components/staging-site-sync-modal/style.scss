@@ -111,6 +111,11 @@
 			overflow: hidden;
 		}
 
+		// Move directory dropdown icons to the right
+		&.dir > .file-browser-node__item .components-button > :first-child {
+			order: 1;
+		}
+
 		.components-button.has-icon.has-text svg {
 			width: 22px;
 			height: 22px;
