@@ -111,6 +111,9 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 								urlParams.set( 'signup', '1' );
 							}
 
+							// Set cancel destination to return to plans step when user cancels checkout
+							urlParams.set( 'cancel_to', `/setup/${ flowName }/plans` );
+
 							const checkoutUrl = `/checkout/unified/${
 								planItem.product_slug
 							}?${ urlParams.toString() }`;
