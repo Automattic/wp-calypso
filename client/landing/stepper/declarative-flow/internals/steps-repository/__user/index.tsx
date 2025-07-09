@@ -85,7 +85,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const stepContent = (
 		<>
-			{ queryArgs.get( 'oneTapAuth' ) === 'true' && <OneTapAuthLoader /> }
+			{ !! queryArgs.get( 'oneTapAuth' ) && <OneTapAuthLoader /> }
 			<SignupFormSocialFirst
 				stepName={ stepName }
 				flowName={ flow }
