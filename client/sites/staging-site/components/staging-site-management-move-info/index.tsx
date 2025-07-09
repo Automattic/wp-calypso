@@ -23,7 +23,7 @@ interface IconConfig {
 interface InfoCardItem {
 	title: string;
 	description: string;
-	icon: IconConfig;
+	mainIcon: IconConfig;
 	locationIcon: Parameters< typeof Icon >[ 0 ][ 'icon' ];
 	location: string;
 }
@@ -34,7 +34,7 @@ const infoCardItems: InfoCardItem[] = [
 		description: __(
 			'Create and manage staging environments using the button in the top navigation bar.'
 		),
-		icon: {
+		mainIcon: {
 			icon: plus,
 			fill: '#3858E9',
 			backgroundColor: '#3858E914',
@@ -47,7 +47,7 @@ const infoCardItems: InfoCardItem[] = [
 		description: __(
 			'Switch between production and staging environments using the environment switcher.'
 		),
-		icon: {
+		mainIcon: {
 			icon: chevronUpDown,
 			fill: '#008A20',
 			backgroundColor: '#008A2014',
@@ -58,7 +58,7 @@ const infoCardItems: InfoCardItem[] = [
 	{
 		title: __( 'Delete staging site' ),
 		description: __( 'Remove staging sites and manage advanced configurations in the Settings.' ),
-		icon: {
+		mainIcon: {
 			icon: trash,
 			fill: '#CC1818',
 			backgroundColor: '#CC181814',
@@ -69,7 +69,7 @@ const infoCardItems: InfoCardItem[] = [
 	{
 		title: __( 'Try selective sync' ),
 		description: __( 'Sync specific files and folders, as well as database tables.' ),
-		icon: {
+		mainIcon: {
 			icon: reusableBlock,
 			fill: '#B26200',
 			backgroundColor: '#B2620014',
@@ -93,15 +93,15 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 							width: '32px',
 							height: '32px',
 							minWidth: '32px',
-							fill: item.icon.fill,
-							backgroundColor: item.icon.backgroundColor,
+							fill: item.mainIcon.fill,
+							backgroundColor: item.mainIcon.backgroundColor,
 							borderRadius: '4px',
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
 						} }
 					>
-						<Icon icon={ item.icon.icon } size={ 20 } />
+						<Icon icon={ item.mainIcon.icon } size={ 20 } />
 					</div>
 					<VStack>
 						<Text weight={ 500 } size={ 16 }>
