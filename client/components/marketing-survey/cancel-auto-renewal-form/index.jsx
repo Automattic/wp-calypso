@@ -168,7 +168,6 @@ class CancelAutoRenewalForm extends Component {
 						purchase={ purchase }
 						onClick={ onClose }
 						className="cancel-auto-renewal-form__chat-button"
-						label={ translate( 'Need help?' ) }
 					/>
 					<Button onClick={ onClose } variant="tertiary">
 						{ translate( 'Skip' ) }
