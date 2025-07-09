@@ -13,7 +13,7 @@ import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem, FileBrowserCheckState } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
-import { FileBrowserFilterConfig } from './index';
+import type { FileBrowserConfig } from './index';
 
 interface FileBrowserNodeProps {
 	item: FileBrowserItem;
@@ -23,7 +23,7 @@ interface FileBrowserNodeProps {
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
-	filterConfig?: FileBrowserFilterConfig;
+	fileBrowserConfig?: FileBrowserConfig;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -34,13 +34,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	setActiveNodePath,
 	activeNodePath,
 	parentItem,
-	filterConfig,
+	fileBrowserConfig,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
-	const showFileCard = filterConfig?.showFileCard ?? true;
-	const applyFiltering = !! filterConfig;
+	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
+	const applyFiltering = !! fileBrowserConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
@@ -82,14 +82,14 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const shouldRestrictChildren = useCallback(
 		( childItem: FileBrowserItem ) => {
 			if (
-				filterConfig?.restrictedTypes &&
-				filterConfig?.restrictedTypes.includes( childItem.type )
+				fileBrowserConfig?.restrictedTypes &&
+				fileBrowserConfig?.restrictedTypes.includes( childItem.type )
 			) {
 				return true;
 			}
 			return false;
 		},
-		[ filterConfig?.restrictedTypes ]
+		[ fileBrowserConfig?.restrictedTypes ]
 	);
 
 	// When we load the children from the API we'll add their check status info to the state
@@ -191,24 +191,26 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 
 			// Check if this node should always be included
-			if ( filterConfig?.alwaysInclude?.includes( item.name ) ) {
+			if ( fileBrowserConfig?.alwaysInclude?.includes( item.name ) ) {
 				return true;
 			}
 
 			// Check if this node type should always be excluded
-			if ( filterConfig?.excludeTypes?.includes( item.type ) ) {
+			if ( fileBrowserConfig?.excludeTypes?.includes( item.type ) ) {
 				return false;
 			}
 
 			// Check if we're at root and this item is in restricted paths
-			if ( isRoot && filterConfig?.restrictedPaths?.includes( item.name ) ) {
+			if ( isRoot && fileBrowserConfig?.restrictedPaths?.includes( item.name ) ) {
 				return true;
 			}
 
 			// Check if current path includes any restricted path
 			if (
-				filterConfig?.restrictedPaths &&
-				filterConfig.restrictedPaths.some( ( restrictedPath ) => path.includes( restrictedPath ) )
+				fileBrowserConfig?.restrictedPaths &&
+				fileBrowserConfig.restrictedPaths.some( ( restrictedPath ) =>
+					path.includes( restrictedPath )
+				)
 			) {
 				return true;
 			}
@@ -216,9 +218,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		},
 		[
 			applyFiltering,
-			filterConfig?.alwaysInclude,
-			filterConfig?.excludeTypes,
-			filterConfig?.restrictedPaths,
+			fileBrowserConfig?.alwaysInclude,
+			fileBrowserConfig?.excludeTypes,
+			fileBrowserConfig?.restrictedPaths,
 			isRoot,
 			path,
 		]
@@ -260,7 +262,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
-						filterConfig={ filterConfig }
+						fileBrowserConfig={ fileBrowserConfig }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
