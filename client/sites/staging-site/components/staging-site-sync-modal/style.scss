@@ -284,7 +284,8 @@
 		}
 	}
 
-	.components-checkbox-control {
+	.file-browser-header .components-checkbox-control,
+	.file-browser-node .components-checkbox-control {
 		float: left;
 
 		.components-checkbox-control__input-container {

@@ -10,10 +10,11 @@ import {
 	__experimentalInputControl as InputControl,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
+	CheckboxControl,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { chevronRight, chevronLeft, chevronDown, chevronUp } from '@wordpress/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
@@ -154,6 +155,8 @@ export default function SyncModal( {
 }: SyncModalProps ) {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
+	const [ isFilesAndFoldersSelected, setIsFilesAndFoldersSelected ] = useState( true );
+	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -196,8 +199,8 @@ export default function SyncModal( {
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
-			pullFromStaging( { types: 'paths', include_paths } );
+				const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+				pullFromStaging( { types: 'paths', include_paths } );
 			onClose();
 		}
 	};
@@ -221,9 +224,35 @@ export default function SyncModal( {
 					<EnvironmentLabel label={ syncConfig.toLabel } environmentType={ targetEnvironment } />
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
+
 				{ querySiteId === stagingSiteId && (
 					<div className="staging-site-card">
-						<FileBrowser rewindId={ rewindId } showHeaderButtons={ false } siteId={ querySiteId } />
+						<HStack spacing={ 2 } justify="space-between" alignment="center">
+							<CheckboxControl
+								label={ __( 'Files and folders' ) }
+								checked={ isFilesAndFoldersSelected }
+								onChange={ ( checked ) => {
+									setIsFilesAndFoldersSelected( checked );
+								} }
+							/>
+							<Button
+								onClick={ () => {
+									setIsFileBrowserVisible( ! isFileBrowserVisible );
+								} }
+								icon={ isFileBrowserVisible ? chevronUp : chevronDown }
+								iconPosition="right"
+							>
+								{ __( 'All files and folders' ) }
+							</Button>
+						</HStack>
+
+						{ isFileBrowserVisible && (
+							<FileBrowser
+								rewindId={ rewindId }
+								showHeaderButtons={ false }
+								siteId={ querySiteId }
+							/>
+						) }
 					</div>
 				) }
 				<Text>
