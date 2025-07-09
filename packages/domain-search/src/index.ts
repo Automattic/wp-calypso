@@ -4,3 +4,4 @@ export { DomainSearchControls } from './components/DomainSearchControls/DomainSe
 export { DomainsMiniCart } from './components/domains-mini-cart';
 export { DomainsFullCart } from './components/domains-full-cart';
 export { DomainsSuggestionsList } from './components/domain-suggestions-list';
+export { DomainSuggestionBadge } from './components/domain-suggestion-badge';

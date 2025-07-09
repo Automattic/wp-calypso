@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { buildDomainSearchCart } from '../../test-helpers/factories';
 import { DomainSearch } from '../domain-search';
 import { SelectedDomain } from '../domain-search/types';
+import { DomainSuggestionBadge } from '../domain-suggestion-badge';
 import { DomainSuggestionsListItem } from '../domain-suggestions-list-item';
 import { DomainsSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
@@ -53,6 +54,12 @@ export const Default = () => {
 						tld="com"
 						originalPrice="$10"
 						price="$0"
+						badges={ [
+							<DomainSuggestionBadge key="recommended">Recommended</DomainSuggestionBadge>,
+							<DomainSuggestionBadge variation="warning" key="sale">
+								Sale
+							</DomainSuggestionBadge>,
+						] }
 					/>
 				</DomainsSuggestionsList>
 			</DomainSearch>
