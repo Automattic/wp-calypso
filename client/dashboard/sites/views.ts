@@ -34,21 +34,27 @@ const DEFAULT_LAYOUT_FIELDS: SupportedLayouts = {
 
 export type SitesView = ViewTable | ViewGrid;
 
-export interface ViewPreferences {
-	base?: Partial< SitesView >;
-	table?: Partial< ViewTable >;
-	grid?: Partial< ViewGrid >;
-}
+// The view preferences are a subset of the view object.
+// It includes the merged layout object of all view types ever explicitly set by the user.
+export type ViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' > > & {
+	type?: ViewTable[ 'type' ] | ViewGrid[ 'type' ];
+	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] >;
+};
 
-export type ViewSearchParams = Partial< ViewTable | ViewGrid >;
+// All possible keys that can be stored as view preferences.
+const VIEW_PREFERENCES_KEYS = [
+	'fields',
+	'layout',
+	'perPage',
+	'showDescription',
+	'showMedia',
+	'sort',
+	'type',
+];
 
-// Preferences that are shared for all view types.
-const BASE_VIEW_PREFERENCES_KEYS = [ 'fields', 'perPage', 'showDescription', 'sort', 'type' ];
+export type ViewSearchParams = Partial< SitesView >;
 
-// Preferences that are specific to a view type.
-const TYPE_VIEW_PREFERENCES_KEYS = [ 'layout', 'showMedia' ];
-
-const VIEW_PREFERENCES_KEYS = [ ...BASE_VIEW_PREFERENCES_KEYS, ...TYPE_VIEW_PREFERENCES_KEYS ];
+// All possible keys that can be shown in the query params.
 const VIEW_SEARCH_PARAM_KEYS = [ ...VIEW_PREFERENCES_KEYS, 'filters', 'page', 'search' ];
 
 const DEFAULT_PER_PAGE = 10;
@@ -113,14 +119,13 @@ export function getView( {
 		isRestoringAccount,
 	} );
 
-	const type = viewSearchParams.type || viewPreferences?.base?.type || defaultView.type;
+	const type = viewSearchParams.type || viewPreferences?.type || defaultView.type;
 
 	const view = {
 		...defaultView,
 		...DEFAULT_LAYOUTS[ type ],
 		...DEFAULT_LAYOUT_FIELDS[ type ],
-		...viewPreferences?.base,
-		...viewPreferences?.[ type ],
+		...viewPreferences,
 		...viewSearchParams,
 	} as SitesView;
 
@@ -146,43 +151,46 @@ export function getUpdatedView( {
 } {
 	const nextType = nextView.type;
 
+	let updatedView = nextView;
+
+	if ( nextType !== view.type ) {
+		updatedView = {
+			...updatedView,
+
+			// If the type is changed, we restore the default layout for that type.
+			...DEFAULT_LAYOUTS[ nextType ],
+		} as SitesView;
+
+		if ( ! viewPreferences?.fields ) {
+			updatedView = {
+				...updatedView,
+
+				// If the type is changed, and the user has never explicitly set custom fields,
+				// we restore the default fields for that type.
+				...DEFAULT_LAYOUT_FIELDS[ nextType ],
+			} as SitesView;
+		}
+	}
+
 	const defaultNextView = {
 		...defaultView,
 		...DEFAULT_LAYOUTS[ nextType ],
 		...DEFAULT_LAYOUT_FIELDS[ nextType ],
 	} as SitesView;
 
-	let updatedView = nextView;
-	if ( nextType !== view.type ) {
-		updatedView = {
-			...updatedView,
-
-			// Merge with the previously-stored type-specific preferences.
-			...pickFields( viewPreferences?.[ nextType ] || {}, TYPE_VIEW_PREFERENCES_KEYS ),
-		} as SitesView;
-
-		if ( ! viewPreferences?.base?.fields ) {
-			updatedView = {
-				...updatedView,
-
-				// Reset the fields to the type's default fields.
-				...DEFAULT_LAYOUT_FIELDS[ nextType ],
-			} as SitesView;
-		}
-	}
-
 	const updatedViewPreferences = {
-		...viewPreferences,
+		// Store only fields which have custom values.
+		...pickNonDefaultFields( updatedView, VIEW_PREFERENCES_KEYS, defaultNextView ),
 
-		// Store only fields which have different values than the default ones.
-		base: pickNonDefaultFields( updatedView, BASE_VIEW_PREFERENCES_KEYS, defaultNextView ),
-
-		// Store only fields which have different values than the default ones.
-		[ nextType ]: pickNonDefaultFields( updatedView, TYPE_VIEW_PREFERENCES_KEYS, defaultNextView ),
+		// Store the merged layouts from all possible view types.
+		layout: {
+			...viewPreferences?.layout,
+			...updatedView.layout,
+		},
 	} as ViewPreferences;
 
 	const updatedViewSearchParams = {
-		// Show only params which have different values than the default ones.
+		// Show only params which have custom values.
 		...pickNonDefaultFields( updatedView, VIEW_SEARCH_PARAM_KEYS, defaultNextView ),
 
 		// Show the type param explicitly to ensure the view type is updated immediately.
@@ -193,12 +201,6 @@ export function getUpdatedView( {
 		updatedViewPreferences,
 		updatedViewSearchParams,
 	};
-}
-
-function pickFields( object: Partial< SitesView >, keys: string[] ) {
-	return Object.fromEntries(
-		Object.entries( object ).filter( ( [ key ] ) => keys.includes( key ) )
-	);
 }
 
 function pickNonDefaultFields(
