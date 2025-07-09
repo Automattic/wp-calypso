@@ -44,10 +44,12 @@ const DomainsMiniCart = () => {
 			isRounded={ false }
 			elevation={ 2 }
 		>
-			<HStack spacing={ 2 }>
-				<DomainsMiniCartSummary />
-				<DomainsMiniCartActions />
-			</HStack>
+			<div className="domains-mini-cart__content">
+				<HStack spacing={ 2 }>
+					<DomainsMiniCartSummary />
+					<DomainsMiniCartActions />
+				</HStack>
+			</div>
 		</AnimatedCard>
 	);
 };

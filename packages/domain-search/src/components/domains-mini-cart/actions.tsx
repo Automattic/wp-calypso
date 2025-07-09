@@ -7,7 +7,7 @@ export const DomainsMiniCartActions = () => {
 	const { __ } = useI18n();
 
 	return (
-		<HStack spacing={ 2 }>
+		<HStack spacing={ 2 } style={ { width: 'auto' } }>
 			<Button variant="tertiary" onClick={ () => openFullCart() }>
 				{ __( 'View cart' ) }
 			</Button>
