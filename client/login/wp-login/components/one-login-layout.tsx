@@ -54,23 +54,16 @@ const OneLoginLayout = ( {
 		<Step.CenteredColumnLayout
 			columnWidth={ 6 }
 			topBar={ <Step.TopBar rightElement={ <SignUpLink /> } compactLogo="always" /> }
-			heading={
-				<Step.Heading
-					text={
-						<>
-							<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
-							{ headingText && <div className="wp-login__heading-text">{ headingText }</div> }
-						</>
-					}
-					subText={
-						// <span> here because the Step.Heading renders subtext as a <p> tag.
-						subHeadingText && <span className="wp-login__heading-subtext">{ subHeadingText }</span>
-					}
-				/>
-			}
 			verticalAlign="center"
 		>
-			{ children }
+			<div className="wp-login__one-login-layout-content-wrapper">
+				<div className="wp-login__header">
+					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
+					<Step.Heading text={ <div className="wp-login__heading-text">{ headingText }</div> } />
+					<h2 className="wp-login__heading-subtext">{ subHeadingText }</h2>
+				</div>
+				{ children }
+			</div>
 		</Step.CenteredColumnLayout>
 	);
 };
