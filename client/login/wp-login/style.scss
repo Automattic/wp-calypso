@@ -37,10 +37,6 @@ $image-height: 47px;
 		}
 	}
 
-	.step-container-v2__heading {
-		text-align: center;
-	}
-
 	/* Start: Blaze Pro OAuth client font styles for login page */
 	&.is-blaze-pro {
 		* {
@@ -81,7 +77,6 @@ $image-height: 47px;
 }
 
 .wp-login__heading-logo {
-	text-align: center;
 	margin-bottom: 16px;
 
 	> img {
@@ -91,7 +86,9 @@ $image-height: 47px;
 }
 
 .wp-login__heading-subtext {
+	text-wrap: balance;
 	color: var(--studio-gray-50, #646970);
+	margin-block: 0.5rem 0;
 
 	a {
 		color: var(--studio-gray-50, #646970);
@@ -100,7 +97,7 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: var(--color-neutral-40);
+	color: var( --color-neutral-100 );
 	font-size: $font-body;
 	margin-bottom: 16px;
 	text-align: center;
@@ -108,6 +105,10 @@ $image-height: 47px;
 	body.is-section-signup & {
 		color: var(--color-text-inverted);
 	}
+}
+
+.wp-login__main {
+	width: 100%;
 }
 
 .wp-login__site-return-link {
@@ -453,7 +454,13 @@ $image-height: 47px;
 	}
 }
 
-
+.wp-login__one-login-layout-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 3em;
+}
 
 /* stylelint-disable scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
