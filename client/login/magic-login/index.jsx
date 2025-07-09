@@ -1355,11 +1355,7 @@ class MagicLogin extends Component {
 		);
 
 		return (
-			<OneLoginLayout
-				isJetpack={ isJetpackLogin }
-				isFromAkismet={ this.props.isFromAkismet }
-				shouldUseWideHeading={ false }
-			>
+			<OneLoginLayout isJetpack={ isJetpackLogin } isFromAkismet={ this.props.isFromAkismet }>
 				{ mainContent }
 			</OneLoginLayout>
 		);
