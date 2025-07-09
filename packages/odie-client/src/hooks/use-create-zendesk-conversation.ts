@@ -4,7 +4,7 @@ import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { logToLogstash } from 'calypso/lib/logstash'; // eslint-disable-line no-restricted-imports -- this import is safe, not introudcing any circular deps; also, it should be removed shortly after investigating the chats with missing zd ids issue
-import { ODIE_ON_ERROR_TRANSFER_MESSAGE, ODIE_TRANSFER_MESSAGE } from '../constants';
+import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 
@@ -107,7 +107,7 @@ export const useCreateZendeskConversation = (): ( ( {
 				? prevChat.messages
 				: [
 						...prevChat.messages,
-						...( isFromError ? ODIE_ON_ERROR_TRANSFER_MESSAGE : ODIE_TRANSFER_MESSAGE ),
+						...( isFromError ? getOdieOnErrorTransferMessage() : getOdieTransferMessage() ),
 				  ],
 			status: 'transfer',
 		} ) );

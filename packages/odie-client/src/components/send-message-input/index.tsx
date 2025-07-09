@@ -11,7 +11,7 @@ import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SendMessageIcon } from '../../assets/send-message-icon';
-import { ODIE_WRONG_FILE_TYPE_MESSAGE } from '../../constants';
+import { getOdieWrongFileTypeMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
@@ -115,7 +115,7 @@ export const OdieSendMessageButton = () => {
 					} );
 				}
 			} else {
-				addMessage( ODIE_WRONG_FILE_TYPE_MESSAGE );
+				addMessage( getOdieWrongFileTypeMessage() );
 			}
 		},
 		[
