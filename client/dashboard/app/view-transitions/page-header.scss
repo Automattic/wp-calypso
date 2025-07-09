@@ -1,33 +1,43 @@
-html:active-view-transition-type(default) {
+html:active-view-transition-type( default ) {
 	.dashboard-page-layout.is-large {
-		.dashboard-page-header .dashboard-section-header__prefix {
-			view-transition-name: page-layout-header-prefix-large;
-		}
-
 		.dashboard-page-header .dashboard-section-header__heading-row {
-			view-transition-name: page-layout-header-heading-row-large;
+			view-transition-name: page-layout-header-large-heading-row;
 		}
 
-		.dashboard-page-header .dashboard-section-header__description {
-			view-transition-name: page-layout-header-description-large;
+		.dashboard-page-header .dashboard-section-header__heading {
+			view-transition-name: page-layout-header-large-heading;
 		}
 
 		.dashboard-page-header .components-button.is-primary {
-			view-transition-name: page-layout-header-large--button;
+			view-transition-name: page-layout-header-large-primary-button;
 		}
 	}
 
 	.dashboard-page-layout.is-small {
-		.dashboard-page-header .dashboard-section-header__prefix {
-			view-transition-name: page-layout-header-prefix-small;
-		}
-
 		.dashboard-page-header .dashboard-section-header__heading-row {
-			view-transition-name: page-layout-header-heading-row-small;
+			view-transition-name: page-layout-header-small-heading-row;
 		}
 
-		.dashboard-page-header .dashboard-section-header__description {
-			view-transition-name: page-layout-header-description-small;
+		.dashboard-page-header .dashboard-section-header__heading {
+			view-transition-name: page-layout-header-small-heading;
+		}
+
+		.dashboard-page-header .components-button.is-primary {
+			view-transition-name: page-layout-header-small-primary-button;
 		}
 	}
+}
+
+::view-transition-old( page-layout-header-small-heading ),
+::view-transition-new( page-layout-header-small-heading ),
+::view-transition-old( page-layout-header-large-heading ),
+::view-transition-new( page-layout-header-large-heading ) {
+	height: 100%;
+}
+
+::view-transition-old( page-layout-header-small-primary-button ),
+::view-transition-new( page-layout-header-small-primary-button ),
+::view-transition-old( page-layout-header-large-primary-button ),
+::view-transition-new( page-layout-header-large-primary-button ) {
+	height: 100%;
 }

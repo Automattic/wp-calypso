@@ -1,3 +1,5 @@
+@import './animations.scss';
+
 // The main and sub headers must be separate view transitions, otherwise the sub
 // header won't slide in!
 header.dashboard-header-bar {
@@ -8,20 +10,12 @@ main div.dashboard-header-bar {
 	view-transition-name: sub-header;
 }
 
-::view-transition-group(main-header),
-::view-transition-group(sub-header) {
-	/** Prevent the default animation, so both views remain opacity:1 throughout the transition */
-	animation: none;
-	/** Headers should show on top of any view transition elements (important for sticky) */
+::view-transition-group( main-header ),
+::view-transition-group( sub-header ) {
+	// Headers should show on top of any view transition elements (important for sticky).
 	z-index: 1;
 }
 
-::view-transition-group(sub-header) {
-	/** Prevent the sub-header from overlapping any view transition elements when it's removed */
-	height: fit-content;
-}
-
-::view-transition-old(sub-header) {
-	/** Don't show the frozen old view */
-	display: none;
+::view-transition-group( main-header ) {
+	@include disable-default-animation;
 }

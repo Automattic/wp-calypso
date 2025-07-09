@@ -1,0 +1,77 @@
+/**
+ * Variables
+ */
+$animation-duration: 0.25s;
+
+/**
+ * Mixins
+ */
+@mixin disable-default-animation {
+	// Prevent the default animation, so both views remain opacity:1 throughout the transition.
+	animation: none;
+}
+
+/**
+ * Keyframes
+ */
+@keyframes fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-left {
+	from {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+	to {
+		transform: translateX( -50px );
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-left {
+	from {
+		transform: translateX( 50px );
+		opacity: 0;
+	}
+	to {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-right {
+	from {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+	to {
+		transform: translateX( 50px );
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-right {
+	from {
+		transform: translateX( -50px );
+		opacity: 0;
+	}
+	to {
+		transform: translateX( 0 );
+		opacity: 1;
+	}
+}
