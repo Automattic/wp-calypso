@@ -15,12 +15,12 @@ interface FileBrowserProps {
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 	rewindId,
 	showHeaderButtons = true,
-	siteId: propSiteId,
+	siteId,
 } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 	const selectedSiteId = useSelector( getSelectedSiteId ) as number;
-	const siteId = propSiteId ?? selectedSiteId;
+	const effectiveSiteId = siteId ?? selectedSiteId;
 
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
@@ -37,7 +37,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 			<FileBrowserHeader
 				rewindId={ rewindId }
 				showHeaderButtons={ showHeaderButtons }
-				siteId={ siteId }
+				siteId={ effectiveSiteId }
 			/>
 			<FileBrowserNode
 				rewindId={ rewindId }
@@ -46,7 +46,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				isAlternate
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
-				siteId={ siteId }
+				siteId={ effectiveSiteId }
 			/>
 		</div>
 	);
