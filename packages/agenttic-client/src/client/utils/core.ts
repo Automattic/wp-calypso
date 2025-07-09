@@ -3,8 +3,8 @@ import type {
 	ContextDataPart,
 	JsonRpcId,
 	Message,
-	SendTaskRequest,
-	TaskSendParams,
+	MessageSendParams,
+	SendMessageRequest,
 	TextPart,
 	Tool,
 	ToolCallDataPart,
@@ -58,14 +58,14 @@ export function createTextPart( text: string ): TextPart {
 }
 
 /**
- * Create a tasks/send request payload
+ * Create a message/send request payload
  * @param params
  * @param method
  */
-export function createSendTaskRequest(
-	params: TaskSendParams,
-	method: string = 'tasks/send'
-): SendTaskRequest {
+export function createSendMessageRequest(
+	params: MessageSendParams,
+	method: string = 'message/send'
+): SendMessageRequest {
 	return {
 		jsonrpc: '2.0',
 		id: createRequestId(),

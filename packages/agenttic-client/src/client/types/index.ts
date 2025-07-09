@@ -134,16 +134,16 @@ export interface Task {
 	artifacts?: Artifact[];
 }
 
-// Request/Response for tasks/send method
-export interface TaskSendParams {
+// Request/Response for message/send method
+export interface MessageSendParams {
 	id?: string; // Optional - will be generated if not provided
 	sessionId?: string;
 	message: Message;
 	metadata?: Record< string, unknown >;
 }
 
-export type SendTaskRequest = JsonRpcRequest< TaskSendParams >;
-export type SendTaskResponse = JsonRpcResponse< Task >;
+export type SendMessageRequest = JsonRpcRequest< MessageSendParams >;
+export type SendMessageResponse = JsonRpcResponse< Task >;
 
 // Events for streaming responses
 export interface TaskStatusUpdateEvent {

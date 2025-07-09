@@ -37,9 +37,9 @@ export type {
 	TaskStatus,
 	Artifact,
 	Task,
-	TaskSendParams,
-	SendTaskRequest,
-	SendTaskResponse,
+	MessageSendParams,
+	SendMessageRequest,
+	SendMessageResponse,
 	TaskStatusUpdateEvent,
 	TaskArtifactUpdateEvent,
 

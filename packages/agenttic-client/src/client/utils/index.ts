@@ -3,7 +3,7 @@ export {
 	createRequestId,
 	createTaskId,
 	createTextPart,
-	createSendTaskRequest,
+	createSendMessageRequest,
 	extractTextFromMessage,
 	extractToolCallsFromMessage,
 	createToolDataPart,

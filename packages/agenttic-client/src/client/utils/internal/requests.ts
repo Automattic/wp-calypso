@@ -5,7 +5,7 @@ import type {
 	Task,
 	TaskUpdate,
 } from '../../types/index';
-import { createSendTaskRequest } from '../core';
+import { createSendMessageRequest } from '../core';
 import { enhanceMessage } from './messages';
 import { formatObject, logger } from '../logger';
 import { parseSSEStream } from './streaming';
@@ -150,14 +150,14 @@ export async function prepareRequest(
 	);
 
 	// Create request payload
-	const request = createSendTaskRequest(
+	const request = createSendMessageRequest(
 		{
 			id: taskId,
 			sessionId: effectiveSessionId,
 			message: enhancedMessage,
 			metadata,
 		},
-		isStreaming ? 'tasks/sendSubscribe' : 'tasks/send'
+		isStreaming ? 'message/stream' : 'message/send'
 	);
 
 	// Get headers
