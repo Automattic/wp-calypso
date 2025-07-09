@@ -27,6 +27,7 @@ export default function HostingFeatures( { heading, isPressable }: Props ) {
 						translate( 'High-burst capacity' ),
 						translate( 'Automated datacenter failover' ),
 						translate( 'Extremely fast DNS with SSL' ),
+						// todo: update this for new plans. If new plan: 5 PHP workers
 						translate( '10 PHP workers w/ auto-scaling' ),
 						translate( 'Uptime monitoring' ),
 					],
