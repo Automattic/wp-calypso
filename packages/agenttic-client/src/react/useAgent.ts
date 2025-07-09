@@ -24,8 +24,8 @@ import {
 	storeConversation,
 } from './conversationStorage';
 import {
-	extractNewContentFromMessage,
 	createTextMessageWithHistory,
+	extractNewContentFromMessage,
 	extractToolResultsFromMessage,
 } from './conversationUtils';
 
@@ -37,8 +37,6 @@ export interface ChatMessage {
 	content: string | any; // Allow string or JSX.Element for flexible content
 	timestamp: number;
 }
-
-
 
 /**
  * Configuration for the useAgent hook
@@ -232,9 +230,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 
 				// Check if there's a separate agent message to add
 				let finalConversationHistory = newConversationHistory;
-				if ( withHistory && (task as any).agentMessage ) {
+				if ( withHistory && ( task as any ).agentMessage ) {
 					const separateAgentMessage = extractNewContentFromMessage(
-						(task as any).agentMessage
+						( task as any ).agentMessage
 					);
 					finalConversationHistory = [
 						...newConversationHistory,
@@ -253,7 +251,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 
 				// Persist the updated conversation history
 				if ( withHistory ) {
-					await persistConversationHistory( finalConversationHistory );
+					await persistConversationHistory(
+						finalConversationHistory
+					);
 				}
 
 				return task;

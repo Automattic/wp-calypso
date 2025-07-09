@@ -17,14 +17,14 @@ import {
 	type RequestConfig,
 } from './utils/index';
 import {
+	createAgentTextMessage,
 	createTextMessage,
 	createToolResultDataPart,
 	createToolResultMessage,
 	extractTextFromMessage,
 	extractToolCallsFromMessage,
-	processToolExecutionResult,
-	createAgentTextMessage,
 	generateMessageId,
+	processToolExecutionResult,
 } from './utils/index';
 
 /**
@@ -33,7 +33,7 @@ import {
 const DEFAULT_TIMEOUT = 120000;
 
 /**
- * Execute a batch of tool calls and return their results
+ * Execute a batch of tool calls and return their results.
  * @param toolCalls
  * @param toolProvider
  * @param messageId
@@ -256,8 +256,10 @@ async function continueTaskStreamed(
 	);
 
 	// Create the stream and process it with shared logic
-	const stream = executeStreamingRequest( preparedRequest, requestConfig, { isStreaming: true } );
-	
+	const stream = executeStreamingRequest( preparedRequest, requestConfig, {
+		isStreaming: true,
+	} );
+
 	return processAgentResponseStream(
 		stream,
 		toolProvider,
@@ -274,12 +276,12 @@ async function continueTaskStreamed(
  * This shared function handles the complex stream processing logic for both
  * sendMessageStream and continueTask when streaming is enabled.
  *
- * @param stream - The initial SSE stream from the agent
- * @param toolProvider - Tool provider for executing tool calls
- * @param contextProvider - Context provider for message enhancement  
- * @param requestConfig - Request configuration
- * @param sessionId - Session identifier
- * @param withHistory - Whether to include conversation history
+ * @param stream               - The initial SSE stream from the agent
+ * @param toolProvider         - Tool provider for executing tool calls
+ * @param contextProvider      - Context provider for message enhancement
+ * @param requestConfig        - Request configuration
+ * @param sessionId            - Session identifier
+ * @param withHistory          - Whether to include conversation history
  * @param newConversationParts - Array to track conversation parts for history
  * @return AsyncIterable of task updates
  */
@@ -308,7 +310,8 @@ async function* processAgentResponseStream(
 				let shouldReturnToAgent = false;
 
 				// Track tool calls and results for message enhancement
-				const toolParts: ( ToolCallDataPart | ToolResultDataPart )[] = [];
+				const toolParts: ( ToolCallDataPart | ToolResultDataPart )[] =
+					[];
 
 				// Track agent messages from tool executions
 				const agentMessages: Message[] = [];
@@ -323,9 +326,10 @@ async function* processAgentResponseStream(
 							toolId as string,
 							args,
 							update.status?.message?.messageId,
-							toolCallId as string 
+							toolCallId as string
 						);
-						const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
+						const { result, returnToAgent, agentMessage } =
+							processToolExecutionResult( executionResult );
 
 						// Mark that at least one tool wants to return to agent
 						if ( returnToAgent ) {
@@ -334,7 +338,9 @@ async function* processAgentResponseStream(
 
 						// Create agent message if provided
 						if ( agentMessage ) {
-							agentMessages.push( createAgentTextMessage( agentMessage ) );
+							agentMessages.push(
+								createAgentTextMessage( agentMessage )
+							);
 						}
 
 						const toolResult = createToolResultDataPart(
@@ -372,9 +378,7 @@ async function* processAgentResponseStream(
 					// Create tool result message with only NEW conversation parts since initial message
 					// This avoids duplicating the conversation history that was already sent initially
 					const historyDataParts = withHistory
-						? conversationHistoryToDataParts(
-								newConversationParts
-						  )
+						? conversationHistoryToDataParts( newConversationParts )
 						: [];
 
 					const toolResultMessage = createToolResultMessage(
@@ -406,7 +410,7 @@ async function* processAgentResponseStream(
 					let continuedTaskUpdate: TaskUpdate | null = null;
 					for await ( const streamUpdate of continuedTaskStream ) {
 						// Yield intermediate updates
-						if ( !streamUpdate.final ) {
+						if ( ! streamUpdate.final ) {
 							yield streamUpdate;
 						} else {
 							// Store the final result
@@ -415,13 +419,14 @@ async function* processAgentResponseStream(
 					}
 
 					// If we didn't get a final result, throw an error
-					if ( !continuedTaskUpdate ) {
-						throw new Error( 'Continue task stream ended without final result' );
+					if ( ! continuedTaskUpdate ) {
+						throw new Error(
+							'Continue task stream ended without final result'
+						);
 					}
 
 					// Check if the continued task has more tool calls to process
-					let continuedToolCalls = continuedTaskUpdate.status
-						?.message
+					let continuedToolCalls = continuedTaskUpdate.status?.message
 						? extractToolCallsFromMessage(
 								continuedTaskUpdate.status.message
 						  )
@@ -457,10 +462,7 @@ async function* processAgentResponseStream(
 						// Process additional tool calls
 						while ( continuedToolCalls.length > 0 ) {
 							// Add the current task message (with additional tool calls) to conversation history FIRST
-							if (
-								withHistory &&
-								finalTask.status?.message
-							) {
+							if ( withHistory && finalTask.status?.message ) {
 								newConversationParts.push(
 									finalTask.status.message
 								);
@@ -482,7 +484,12 @@ async function* processAgentResponseStream(
 									id: finalTask.id,
 									status: {
 										state: 'working',
-										message: { role: 'agent', kind: 'message', parts: moreResults, messageId: generateMessageId() }, // Simple message with just the results
+										message: {
+											role: 'agent',
+											kind: 'message',
+											parts: moreResults,
+											messageId: generateMessageId(),
+										}, // Simple message with just the results
 									},
 									final: false,
 									text: '',
@@ -503,20 +510,21 @@ async function* processAgentResponseStream(
 										moreHistoryDataParts
 									);
 								// Continue with more tool results and stream the continuation
-								const moreTaskStream = await continueTaskStreamed(
-									finalTask.id,
-									moreResultMessage,
-									requestConfig,
-									toolProvider,
-									contextProvider,
-									sessionId
-								);
+								const moreTaskStream =
+									await continueTaskStreamed(
+										finalTask.id,
+										moreResultMessage,
+										requestConfig,
+										toolProvider,
+										contextProvider,
+										sessionId
+									);
 
 								// Get the final result from the stream
 								let moreFinalTask: TaskUpdate | null = null;
 								for await ( const streamUpdate of moreTaskStream ) {
 									// Yield intermediate updates
-									if ( !streamUpdate.final ) {
+									if ( ! streamUpdate.final ) {
 										yield streamUpdate;
 									} else {
 										// Store the final result
@@ -525,15 +533,16 @@ async function* processAgentResponseStream(
 								}
 
 								// If we didn't get a final result, throw an error
-								if ( !moreFinalTask ) {
-									throw new Error( 'Continue task stream ended without final result' );
+								if ( ! moreFinalTask ) {
+									throw new Error(
+										'Continue task stream ended without final result'
+									);
 								}
 
 								finalTask = moreFinalTask;
 
 								// Check for more tool calls in the response
-								continuedToolCalls = finalTask.status
-									?.message
+								continuedToolCalls = finalTask.status?.message
 									? extractToolCallsFromMessage(
 											finalTask.status.message
 									  )
@@ -546,8 +555,7 @@ async function* processAgentResponseStream(
 										status: finalTask.status,
 										final: false,
 										text: extractTextFromMessage(
-											finalTask.status
-												?.message || {
+											finalTask.status?.message || {
 												role: 'agent',
 												kind: 'message',
 												parts: [],
@@ -599,11 +607,11 @@ async function* processAgentResponseStream(
 					// If we have agent messages, yield them as a separate message
 					if ( agentMessages.length > 0 ) {
 						const combinedAgentText = agentMessages
-							.map( msg => extractTextFromMessage( msg ) )
+							.map( ( msg ) => extractTextFromMessage( msg ) )
 							.join( ' ' );
 
-
-						const finalAgentMessage = createAgentTextMessage( combinedAgentText );
+						const finalAgentMessage =
+							createAgentTextMessage( combinedAgentText );
 
 						// Yield agent message as completely separate TaskUpdate
 						yield {
@@ -745,7 +753,8 @@ export function createClient( config: ClientConfig ): Client {
 							toolId as string,
 							args
 						);
-						const { result, returnToAgent, agentMessage } = processToolExecutionResult( executionResult );
+						const { result, returnToAgent, agentMessage } =
+							processToolExecutionResult( executionResult );
 
 						// Mark that at least one tool wants to return to agent
 						if ( returnToAgent ) {
@@ -754,7 +763,9 @@ export function createClient( config: ClientConfig ): Client {
 
 						// Create agent message if provided
 						if ( agentMessage ) {
-							agentMessages.push( createAgentTextMessage( agentMessage ) );
+							agentMessages.push(
+								createAgentTextMessage( agentMessage )
+							);
 						}
 
 						const toolResult = createToolResultDataPart(
@@ -830,11 +841,12 @@ export function createClient( config: ClientConfig ): Client {
 			if ( agentMessages.length > 0 ) {
 				// Combine all agent message texts
 				const combinedAgentText = agentMessages
-					.map( msg => extractTextFromMessage( msg ) )
+					.map( ( msg ) => extractTextFromMessage( msg ) )
 					.join( ' ' );
 
 				// Create a separate agent text message
-				const finalAgentMessage = createAgentTextMessage( combinedAgentText );
+				const finalAgentMessage =
+					createAgentTextMessage( combinedAgentText );
 
 				return {
 					...currentTask,
@@ -848,7 +860,12 @@ export function createClient( config: ClientConfig ): Client {
 			return {
 				...currentTask,
 				text: extractTextFromMessage(
-					currentTask.status?.message || { role: 'agent', kind: 'message', parts: [], messageId: generateMessageId() }
+					currentTask.status?.message || {
+						role: 'agent',
+						kind: 'message',
+						parts: [],
+						messageId: generateMessageId(),
+					}
 				),
 			};
 		},
@@ -963,7 +980,12 @@ export function createClient( config: ClientConfig ): Client {
 			return {
 				...currentTask,
 				text: extractTextFromMessage(
-					currentTask.status?.message || { role: 'agent', kind: 'message', parts: [], messageId: generateMessageId() }
+					currentTask.status?.message || {
+						role: 'agent',
+						kind: 'message',
+						parts: [],
+						messageId: generateMessageId(),
+					}
 				),
 			};
 		},

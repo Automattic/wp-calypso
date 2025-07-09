@@ -19,6 +19,7 @@ export function generateRandomId(): string {
 	const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 	let result = '';
 	for ( let i = 0; i < 8; i++ ) {
+		// eslint-disable-next-line no-restricted-syntax
 		result += chars.charAt( Math.floor( Math.random() * chars.length ) );
 	}
 	return result;

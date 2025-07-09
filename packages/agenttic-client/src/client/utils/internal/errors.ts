@@ -90,6 +90,9 @@ export function createTimeoutHandler(
 	operation: string = 'request'
 ): { timeoutId: number; controller: AbortController } {
 	const controller = new AbortController();
-	const timeoutId = setTimeout( () => controller.abort(), timeout ) as unknown as number;
+	const timeoutId = setTimeout(
+		() => controller.abort(),
+		timeout
+	) as unknown as number;
 	return { timeoutId, controller };
 }

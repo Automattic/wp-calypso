@@ -1,8 +1,4 @@
-import type {
-	Message,
-	DataPart,
-	TextPart,
-} from '../client/types/index';
+import type { DataPart, Message, TextPart } from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
 
 /**
@@ -141,4 +137,4 @@ export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
 			'toolCallId' in part.data &&
 			'result' in part.data
 	) as DataPart[];
-} 
+}

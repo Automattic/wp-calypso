@@ -162,7 +162,7 @@ export async function storeConversation(
 
 	// Ignore TypeScript error for environments where sessionStorage might not be available
 	// @ts-ignore
-	if (typeof sessionStorage === 'undefined') {
+	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return;
 	}
@@ -204,7 +204,7 @@ export async function loadConversation(
 
 	// Fallback to sessionStorage
 	// @ts-ignore
-	if (typeof sessionStorage === 'undefined') {
+	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return [];
 	}
@@ -242,7 +242,7 @@ export async function clearConversation( sessionId: string ): Promise< void > {
 	conversationCache.delete( sessionId );
 
 	// @ts-ignore
-	if (typeof sessionStorage === 'undefined') {
+	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return;
 	}
@@ -266,7 +266,7 @@ export async function clearAllConversations(): Promise< void > {
 	conversationCache.clear();
 
 	// @ts-ignore
-	if (typeof sessionStorage === 'undefined') {
+	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return;
 	}
@@ -306,7 +306,7 @@ export async function getStoredSessionIds(): Promise< string[] > {
 
 	// From sessionStorage
 	// @ts-ignore
-	if (typeof sessionStorage === 'undefined') {
+	if ( typeof sessionStorage === 'undefined' ) {
 		// Handle case where sessionStorage is not available
 		return sessionIds;
 	}

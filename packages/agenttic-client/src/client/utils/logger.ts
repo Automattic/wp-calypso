@@ -1,6 +1,6 @@
 // Simple browser-compatible logger
 const logger = ( message: string, ...args: any[] ) => {
-	if (isDebugEnabled() ) {
+	if ( isDebugEnabled() ) {
 		// eslint-disable-next-line no-console
 		console.log( `[agenttic-client] ${ message }`, ...args );
 	}

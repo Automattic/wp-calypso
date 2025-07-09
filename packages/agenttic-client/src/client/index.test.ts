@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createClient } from './index';
 import { createTextMessage } from './utils/index';
 import type { ToolProvider } from './types/index';
@@ -108,12 +108,12 @@ describe( 'Client', () => {
 
 			// Mock the follow-up streaming response after tool execution
 			const createFollowUpSSEStream = () => {
-				const stream = new ReadableStream({
-					start(controller) {
+				const stream = new ReadableStream( {
+					start( controller ) {
 						const encoder = new TextEncoder();
-						
+
 						// Send the completion event
-						const completionEvent = JSON.stringify({
+						const completionEvent = JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id-2',
 							result: {
@@ -127,35 +127,35 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'Task completed!'
-											}
-										]
+												text: 'Task completed!',
+											},
+										],
 									},
-									final: true
-								}
-							}
-						});
-						
-						const sseData = `data: ${completionEvent}\n\n`;
-						controller.enqueue(encoder.encode(sseData));
-						
+									final: true,
+								},
+							},
+						} );
+
+						const sseData = `data: ${ completionEvent }\n\n`;
+						controller.enqueue( encoder.encode( sseData ) );
+
 						// Close the stream after sending the data
-						setTimeout(() => {
+						setTimeout( () => {
 							controller.close();
-						}, 10);
-					}
-				});
+						}, 10 );
+					},
+				} );
 				return stream;
 			};
 
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({
-					'content-type': 'text/event-stream'
-				}),
-				body: createFollowUpSSEStream()
-			});
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createFollowUpSSEStream(),
+			} );
 
 			const client = createClient( {
 				agentId: 'test-agent',
@@ -268,12 +268,12 @@ describe( 'Client', () => {
 
 			// Mock the follow-up streaming response after tool execution
 			const createFollowUpSSEStream = () => {
-				const stream = new ReadableStream({
-					start(controller) {
+				const stream = new ReadableStream( {
+					start( controller ) {
 						const encoder = new TextEncoder();
-						
+
 						// Send the completion event
-						const completionEvent = JSON.stringify({
+						const completionEvent = JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id-2',
 							result: {
@@ -287,35 +287,35 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'Task completed!'
-											}
-										]
+												text: 'Task completed!',
+											},
+										],
 									},
-									final: true
-								}
-							}
-						});
-						
-						const sseData = `data: ${completionEvent}\n\n`;
-						controller.enqueue(encoder.encode(sseData));
-						
+									final: true,
+								},
+							},
+						} );
+
+						const sseData = `data: ${ completionEvent }\n\n`;
+						controller.enqueue( encoder.encode( sseData ) );
+
 						// Close the stream after sending the data
-						setTimeout(() => {
+						setTimeout( () => {
 							controller.close();
-						}, 10);
-					}
-				});
+						}, 10 );
+					},
+				} );
 				return stream;
 			};
 
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({
-					'content-type': 'text/event-stream'
-				}),
-				body: createFollowUpSSEStream()
-			});
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createFollowUpSSEStream(),
+			} );
 
 			const client = createClient( {
 				agentId: 'test-agent',
@@ -422,11 +422,11 @@ describe( 'Client', () => {
 			// Mock the second fetch call (continue task with tool results) - now streaming
 			// This response contains MORE tool calls, triggering the nested execution path
 			const createSecondSSEStream = () => {
-				const stream = new ReadableStream({
-					start(controller) {
+				const stream = new ReadableStream( {
+					start( controller ) {
 						const encoder = new TextEncoder();
-						
-						const secondEvent = JSON.stringify({
+
+						const secondEvent = JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id-2',
 							result: {
@@ -441,50 +441,52 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'I need to use another tool'
+												text: 'I need to use another tool',
 											},
 											{
 												type: 'data',
 												data: {
 													toolCallId: 'call-second',
 													toolId: 'test-tool',
-													arguments: { input: 'second input' }
-												}
-											}
-										]
+													arguments: {
+														input: 'second input',
+													},
+												},
+											},
+										],
 									},
-									final: true
-								}
-							}
-						});
-						
-						const sseData = `data: ${secondEvent}\n\n`;
-						controller.enqueue(encoder.encode(sseData));
-						
-						setTimeout(() => {
+									final: true,
+								},
+							},
+						} );
+
+						const sseData = `data: ${ secondEvent }\n\n`;
+						controller.enqueue( encoder.encode( sseData ) );
+
+						setTimeout( () => {
 							controller.close();
-						}, 10);
-					}
-				});
+						}, 10 );
+					},
+				} );
 				return stream;
 			};
 
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({
-					'content-type': 'text/event-stream'
-				}),
-				body: createSecondSSEStream()
-			});
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createSecondSSEStream(),
+			} );
 
 			// Mock the third fetch call (final completion) - now streaming
 			const createThirdSSEStream = () => {
-				const stream = new ReadableStream({
-					start(controller) {
+				const stream = new ReadableStream( {
+					start( controller ) {
 						const encoder = new TextEncoder();
-						
-						const finalEvent = JSON.stringify({
+
+						const finalEvent = JSON.stringify( {
 							jsonrpc: '2.0',
 							id: 'test-request-id-3',
 							result: {
@@ -498,34 +500,34 @@ describe( 'Client', () => {
 										parts: [
 											{
 												type: 'text',
-												text: 'All tasks completed!'
-											}
-										]
+												text: 'All tasks completed!',
+											},
+										],
 									},
-									final: true
-								}
-							}
-						});
-						
-						const sseData = `data: ${finalEvent}\n\n`;
-						controller.enqueue(encoder.encode(sseData));
-						
-						setTimeout(() => {
+									final: true,
+								},
+							},
+						} );
+
+						const sseData = `data: ${ finalEvent }\n\n`;
+						controller.enqueue( encoder.encode( sseData ) );
+
+						setTimeout( () => {
 							controller.close();
-						}, 10);
-					}
-				});
+						}, 10 );
+					},
+				} );
 				return stream;
 			};
 
-			mockFetch.mockResolvedValueOnce({
+			mockFetch.mockResolvedValueOnce( {
 				ok: true,
 				status: 200,
-				headers: new Headers({
-					'content-type': 'text/event-stream'
-				}),
-				body: createThirdSSEStream()
-			});
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createThirdSSEStream(),
+			} );
 
 			const client = createClient( {
 				agentId: 'test-agent',

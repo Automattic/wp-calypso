@@ -1,11 +1,11 @@
 import type {
 	Client,
 	ClientConfig,
+	DataPart,
+	Message,
 	SendMessageParams,
 	Task,
-	Message,
 	TaskUpdate,
-	DataPart,
 	TextPart,
 } from '../client/types/index';
 import { createClient } from '../client/index';
@@ -21,8 +21,8 @@ import {
 	storeConversation,
 } from './conversationStorage';
 import {
-	extractNewContentFromMessage,
 	createTextMessageWithHistory,
+	extractNewContentFromMessage,
 	extractToolResultsFromMessage,
 } from './conversationUtils';
 
@@ -42,8 +42,6 @@ interface ManagedAgent {
 	sessionId: string | null;
 	conversationHistory: Message[];
 }
-
-
 
 /**
  * Agent manager interface
