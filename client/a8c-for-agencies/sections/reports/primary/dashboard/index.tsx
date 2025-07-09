@@ -24,6 +24,7 @@ import { A4A_REPORTS_BUILD_LINK } from '../../constants';
 import useFetchReports from '../../hooks/use-fetch-reports';
 import { getSiteReports } from '../../lib/get-site-reports';
 import ReportsDetails from '../../reports-details';
+import ReportsSurvey from '../../reports-survey';
 import ReportsDashboardEmptyState from './empty-state';
 import ReportsList from './reports-list';
 import type { SiteReports } from '../../types';
@@ -81,11 +82,14 @@ export default function ReportsDashboard() {
 		}
 
 		return (
-			<ReportsList
-				siteReports={ siteReports }
-				dataViewsState={ updatedDataViewsState }
-				setDataViewsState={ setDataViewsState }
-			/>
+			<>
+				<ReportsList
+					siteReports={ siteReports }
+					dataViewsState={ updatedDataViewsState }
+					setDataViewsState={ setDataViewsState }
+				/>
+				<ReportsSurvey />
+			</>
 		);
 	}, [ isLoading, showEmptyState, siteReports, updatedDataViewsState, setDataViewsState ] );
 
