@@ -189,14 +189,15 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			if ( ! applyFiltering ) {
 				return true;
 			}
-			// Check if this node type should always be excluded
-			if ( filterConfig?.excludeTypes?.includes( item.type ) ) {
-				return false;
-			}
 
 			// Check if this node should always be included
 			if ( filterConfig?.alwaysInclude?.includes( item.name ) ) {
 				return true;
+			}
+
+			// Check if this node type should always be excluded
+			if ( filterConfig?.excludeTypes?.includes( item.type ) ) {
+				return false;
 			}
 
 			// Check if we're at root and this item is in restricted paths
