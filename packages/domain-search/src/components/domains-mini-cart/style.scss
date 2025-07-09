@@ -15,3 +15,10 @@
 	width: 100%;
 	max-width: 64rem;
 }
+
+.domains-mini-cart-actions__view-cart {
+	// We need to use !important here because WPCOM adds overrides to the button with a very high specificity.
+	--wp-components-color-accent: var( --domain-search-secondary-action-color ) !important;
+	--wp-components-color-accent-darker-20: var( --domain-search-secondary-action-color ) !important;
+	text-decoration: underline;
+}
