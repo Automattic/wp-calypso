@@ -37,7 +37,7 @@ export const DomainSuggestionPrice = ( {
 				) }
 			</HStack>
 			{ originalPrice && (
-				<Text size="body">
+				<Text size="body" align={ alignment }>
 					{ sprintf(
 						// translators: %(price)s is the price of the domain.
 						__( 'For first year. %(price)s/year renewal.' ),
