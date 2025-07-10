@@ -43,6 +43,7 @@ import {
 } from 'calypso/state/login/selectors';
 import { isPasswordlessAccount } from 'calypso/state/login/utils';
 import { logoutUser } from 'calypso/state/logout/actions';
+import { errorNotice as errorNoticeAction } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -118,6 +119,14 @@ class Login extends Component {
 					locale: this.props.locale,
 					currentQuery: this.props.currentQuery,
 				} )
+			);
+		}
+
+		if ( this.props.currentQuery?.error === 'google_one_tap_auth' ) {
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Something went wrong when trying to connect with Google. Please use any of the login options below.'
+				)
 			);
 		}
 
@@ -685,11 +694,14 @@ export default connect(
 		sendEmailLogin,
 		logoutUser,
 		redirectToLogout,
+		errorNoticeAction,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...ownProps,
 		...stateProps,
 		...dispatchProps,
+		showErrorNotice: ( text, noticeOptions ) =>
+			dispatchProps.errorNoticeAction( text, noticeOptions ),
 		sendEmailLogin: ( options = {} ) => {
 			return dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
