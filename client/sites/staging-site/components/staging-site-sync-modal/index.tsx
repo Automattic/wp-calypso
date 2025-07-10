@@ -12,7 +12,7 @@ import {
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 	CheckboxControl,
 } from '@wordpress/components';
-import { createInterpolateElement, useState } from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft, chevronDown, chevronUp } from '@wordpress/icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -26,7 +26,9 @@ import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-brows
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 // TODO: Temporary style for the PoC
@@ -155,7 +157,6 @@ export default function SyncModal( {
 }: SyncModalProps ) {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
-	const [ isFilesAndFoldersSelected, setIsFilesAndFoldersSelected ] = useState( true );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
@@ -172,6 +173,8 @@ export default function SyncModal( {
 	const browserCheckList = useSelector( ( state ) =>
 		getBackupBrowserCheckList( state, querySiteId )
 	);
+
+	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, '/' ) );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
@@ -199,10 +202,27 @@ export default function SyncModal( {
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
+			if ( rootNode?.checkState === 'checked' ) {
+				// Sync everything
+				pullFromStaging( { types: 'all' } );
+			} else {
+				// Sync only selected files
 				const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 				pullFromStaging( { types: 'paths', include_paths } );
+			}
 			onClose();
 		}
+	};
+
+	const updateNodeCheckState = useCallback(
+		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
+			dispatch( setNodeCheckState( querySiteId, '/', checkState ) );
+		},
+		[ dispatch, querySiteId ]
+	);
+
+	const onCheckboxChange = () => {
+		updateNodeCheckState( rootNode?.checkState === 'unchecked' ? 'checked' : 'unchecked' );
 	};
 
 	return (
@@ -230,10 +250,9 @@ export default function SyncModal( {
 						<HStack spacing={ 2 } justify="space-between" alignment="center">
 							<CheckboxControl
 								label={ __( 'Files and folders' ) }
-								checked={ isFilesAndFoldersSelected }
-								onChange={ ( checked ) => {
-									setIsFilesAndFoldersSelected( checked );
-								} }
+								checked={ rootNode ? rootNode.checkState === 'checked' : false }
+								indeterminate={ rootNode && rootNode.checkState === 'mixed' }
+								onChange={ onCheckboxChange }
 							/>
 							<Button
 								onClick={ () => {
