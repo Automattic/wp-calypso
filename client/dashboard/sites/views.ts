@@ -223,8 +223,8 @@ function pickNonDefaultFields(
 }
 
 export function recordViewChanges(
-	oldView: View,
-	newView: View,
+	oldView: SitesView,
+	newView: SitesView,
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ]
 ) {
 	if ( oldView.type !== newView.type ) {
