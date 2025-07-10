@@ -17,7 +17,12 @@ import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import { SitesNotices } from './notices';
-import { getView, mergeViews, DEFAULT_LAYOUTS } from './views';
+import {
+	getView,
+	mergeViews,
+	DEFAULT_LAYOUTS,
+	recordViewChanges,
+} from './views';
 import type { ViewPreferences, ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, Filter } from '@automattic/dataviews';
@@ -138,64 +143,4 @@ export default function Sites() {
 			</PageLayout>
 		</>
 	);
-}
-
-function recordViewChanges(
-	oldView: View,
-	newView: View,
-	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ]
-) {
-	if ( oldView.type !== newView.type ) {
-		recordTracksEvent( 'calypso_dashboard_sites_list_type_changed', { type: newView.type } );
-
-		// Changing view type can also change fields, but they weren't triggered by a user
-		// action, so we won't record those tracks events.
-		return;
-	}
-
-	if (
-		oldView.sort?.field !== newView.sort?.field ||
-		oldView.sort?.direction !== newView.sort?.direction
-	) {
-		recordTracksEvent( 'calypso_dashboard_sites_list_sort_changed', {
-			field: newView.sort?.field,
-			direction: newView.sort?.direction,
-		} );
-	}
-
-	const oldFilterFields = new Set( oldView.filters?.map( ( { field } ) => field ) || [] );
-	const newFilterFields = new Set( newView.filters?.map( ( { field } ) => field ) || [] );
-
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const added of newFilterFields.difference( oldFilterFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_list_filter_changed', {
-			change: 'added',
-			field: added,
-		} );
-	}
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const removed of oldFilterFields.difference( newFilterFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_list_filter_changed', {
-			change: 'removed',
-			field: removed,
-		} );
-	}
-
-	const oldShownFields = new Set( oldView.fields || [] );
-	const newShownFields = new Set( newView.fields || [] );
-
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const added of newShownFields.difference( oldShownFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_list_field_visibility_changed', {
-			change: 'added',
-			field: added,
-		} );
-	}
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const removed of oldShownFields.difference( newShownFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_list_field_visibility_changed', {
-			change: 'removed',
-			field: removed,
-		} );
-	}
 }
