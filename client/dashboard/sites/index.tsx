@@ -89,10 +89,10 @@ export default function Sites() {
 		} );
 
 		navigate( {
-			search: {
-				...currentSearchParams,
+			search: ( prevSearchParams: { view: ViewSearchParams } ) => ( {
+				...prevSearchParams,
 				view: updatedViewSearchParams,
-			},
+			} ),
 		} );
 
 		updateViewPreferences( updatedViewPreferences as Record< string, unknown > );
