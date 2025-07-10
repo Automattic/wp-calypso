@@ -24,7 +24,7 @@ import {
 	recordViewChanges,
 	DEFAULT_PER_PAGE_SIZES,
 } from './views';
-import type { ViewPreferences, ViewSearchParams } from './views';
+import type { ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -58,8 +58,7 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const viewPreferences = useSuspenseQuery( userPreferencesQuery( 'sites-view', {} ) )
-		.data as ViewPreferences;
+	const { data: viewPreferences } = useSuspenseQuery( userPreferencesQuery( 'sites-view' ) );
 	const { mutate: updateViewPreferences } = useMutation( userPreferencesMutation( 'sites-view' ) );
 
 	const { defaultView, view } = getView( {
@@ -101,7 +100,7 @@ export default function Sites() {
 			},
 		} );
 
-		updateViewPreferences( updatedViewPreferences as Record< string, unknown > );
+		updateViewPreferences( updatedViewPreferences );
 	};
 
 	return (

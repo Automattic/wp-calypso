@@ -1,10 +1,21 @@
 import wpcom from 'calypso/lib/wp';
+import type { ViewTable, ViewGrid } from '@wordpress/dataviews';
+
+export type SitesView = ViewTable | ViewGrid;
+
+// The view preferences are a subset of the view object.
+// It includes the merged layout object of all view types ever explicitly set by the user.
+export type ViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' > > & {
+	type?: ViewTable[ 'type' ] | ViewGrid[ 'type' ];
+	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] >;
+};
 
 export interface UserPreferences {
-	'sites-view'?: Record< string, unknown >;
+	'sites-view': ViewPreferences;
+	'some-string': string;
 }
 
-export async function fetchPreferences(): Promise< UserPreferences > {
+export async function fetchPreferences(): Promise< Partial< UserPreferences > > {
 	const { calypso_preferences } = await wpcom.req.get( '/me/preferences' );
 	return calypso_preferences;
 }
