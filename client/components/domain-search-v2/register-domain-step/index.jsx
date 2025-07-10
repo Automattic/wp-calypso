@@ -1,6 +1,7 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
+import { DomainSearchControl } from '@automattic/domain-search';
 import {
 	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -8,8 +9,8 @@ import {
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
-import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -498,11 +499,7 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				<div className={ containerDivClassName }>
-					<div className={ searchBoxClassName }>
-						<CompactCard className="register-domain-step__search-card">
-							{ this.renderSearchBar() }
-						</CompactCard>
-					</div>
+					<div className={ searchBoxClassName }>{ this.renderSearchBar() }</div>
 					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 
 					{ ! isSignupStep && isQueryInvalid && (
@@ -641,15 +638,13 @@ class RegisterDomainStep extends Component {
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
 			isOnboarding: this.props.isOnboarding,
-			childrenBeforeCloseButton:
-				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
 		return (
-			<>
-				<Search { ...componentProps }></Search>
+			<HStack>
+				<DomainSearchControl { ...componentProps } />
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
-			</>
+			</HStack>
 		);
 	}
 

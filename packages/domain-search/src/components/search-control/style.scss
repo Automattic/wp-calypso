@@ -1,0 +1,22 @@
+.domain-search-control {
+    width: 100%;
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	.domain-search-control__search-input {
+		flex-grow: 1;
+	}
+
+    .components-input-control__container {
+        background-color: var( --color-body-background );
+        border-radius: 4px;
+        border: 1px solid var( --color-border-subtle );
+    }
+
+	.domain-search-control__before-close {
+		margin-inline-start: 8px;
+		display: flex;
+		align-items: center;
+	}
+}
