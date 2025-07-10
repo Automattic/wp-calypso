@@ -14,6 +14,15 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+// Helper function to determine if radio buttons will be shown
+export const willShowDomainOptionsRadioButtons = ( includedDomainPurchase, purchase ) => {
+	return (
+		isDomainRegistration( includedDomainPurchase ) &&
+		isRefundable( purchase ) &&
+		isRefundable( includedDomainPurchase )
+	);
+};
+
 const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
 	const translate = useTranslate();
 	return (

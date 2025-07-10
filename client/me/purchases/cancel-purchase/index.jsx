@@ -57,7 +57,7 @@ import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
-import CancelPurchaseDomainOptions from './domain-options';
+import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
 
@@ -154,8 +154,16 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		if ( this.props.includedDomainPurchase ) {
-			this.setState( { showDomainOptionsStep: true } );
+		const { includedDomainPurchase, purchase } = this.props;
+
+		if ( includedDomainPurchase ) {
+			// Only show domain options as a separate step if radio buttons will be displayed
+			if ( willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase ) ) {
+				this.setState( { showDomainOptionsStep: true } );
+			} else {
+				// For informational domain options, show them inline and proceed with cancellation
+				this.setState( { isLoading: true } );
+			}
 		} else {
 			// For non-domain purchases without domain options, don't show survey yet
 			// The button will handle the cancellation and then show survey when complete
@@ -405,6 +413,11 @@ class CancelPurchase extends Component {
 		const cancellationFeatures =
 			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
 
+		// Check if we should show domain options inline (when they don't need radio buttons)
+		const shouldShowDomainOptionsInline =
+			includedDomainPurchase &&
+			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
+
 		return (
 			<>
 				{ includedDomainPurchase && atomicTransfer?.created_at && ! isRefundable( purchase ) && (
@@ -424,6 +437,16 @@ class CancelPurchase extends Component {
 					purchase={ purchase }
 					cancellationFeatures={ cancellationFeatures }
 				/>
+
+				{ shouldShowDomainOptionsInline && (
+					<CancelPurchaseDomainOptions
+						includedDomainPurchase={ includedDomainPurchase }
+						cancelBundledDomain={ false }
+						purchase={ purchase }
+						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+						isLoading={ false }
+					/>
+				) }
 
 				{ ! cancellationFeatures.length
 					? this.renderProductRevertContent()
