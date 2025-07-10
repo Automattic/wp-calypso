@@ -11,6 +11,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { canManageSite } from '../features';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
+import EnvironmentSwitcher, { CurrentEnvironment } from './environment-switcher';
 import Switcher from './switcher';
 
 function Site() {
@@ -43,6 +44,26 @@ function Site() {
 							renderContent={ ( { onClose } ) => <Switcher onClose={ onClose } /> }
 						/>
 					</HeaderBar.Title>
+					<MenuDivider />
+					<HStack style={ { width: 'auto', flexShrink: 0 } }>
+						<Dropdown
+							renderToggle={ ( { onToggle } ) => (
+								<Button
+									className="dashboard-menu__item active"
+									icon={ chevronDownSmall }
+									iconPosition="right"
+									onClick={ () => onToggle() }
+								>
+									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+										<CurrentEnvironment site={ site } />
+									</div>
+								</Button>
+							) }
+							renderContent={ ( { onClose } ) => (
+								<EnvironmentSwitcher site={ site } onClose={ onClose } />
+							) }
+						/>
+					</HStack>
 					{ isDesktop && <MenuDivider /> }
 					<SiteMenu site={ site } />
 				</HStack>
