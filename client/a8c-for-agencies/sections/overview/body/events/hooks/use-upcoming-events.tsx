@@ -46,10 +46,10 @@ export const useUpcomingEvents = () => {
 				imageClassName: 'a4a-event__image--woo',
 			},
 			{
-				id: 'a4a-2025-07-14',
+				id: 'a4a-2025-07-25',
 				date: {
-					from: moment( '2025-07-14' ),
-					to: moment( '2025-07-14' ),
+					from: moment( '2025-07-25' ),
+					to: moment( '2025-07-25' ),
 				},
 				title: translate( 'Automattic for Agencies Partner Empowerment Survey' ),
 				subtitle: translate( 'Automattic for Agencies' ),
@@ -58,7 +58,7 @@ export const useUpcomingEvents = () => {
 						"Participate in the Automattic for Agencies Partner Empowerment Survey and directly influence the training and resources we develop to better support your agency's success with WordPress and Automattic products. Your feedback is essential in helping us understand your needs and identify opportunities for improvement."
 					),
 					translate(
-						'{{b}}Share your insights by July 14th{{/b}} and play a key role in shaping our future offerings. Together, we can ensure that our programs and resources are tailored to help your agency thrive!',
+						'{{b}}Share your insights by July 25th{{/b}} and play a key role in shaping our future offerings. Together, we can ensure that our programs and resources are tailored to help your agency thrive!',
 						{
 							components: {
 								b: <b />,
@@ -72,7 +72,7 @@ export const useUpcomingEvents = () => {
 				},
 				logoUrl: a4aLogo,
 				imageUrl: a4aEventImage,
-				trackEventName: 'calypso_a4a_overview_events_register_click_a4a_2025_07_14',
+				trackEventName: 'calypso_a4a_overview_events_register_click_a4a_2025_07_25',
 				dateClassName: 'a4a-event__date--a4a',
 				imageClassName: 'a4a-event__image--a4a',
 			},
