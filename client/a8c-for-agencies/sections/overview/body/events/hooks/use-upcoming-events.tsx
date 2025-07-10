@@ -15,10 +15,10 @@ export const useUpcomingEvents = () => {
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
 			{
-				id: 'woo-2025-07-25',
+				id: 'woo-2025-07-14',
 				date: {
-					from: moment( '2025-07-25' ),
-					to: moment( '2025-07-25' ),
+					from: moment( '2025-07-14' ),
+					to: moment( '2025-07-14' ),
 				},
 				title: translate( 'How are you preparing for the busiest time of year?' ),
 				subtitle: translate( 'Woo and Automattic for Agencies' ),
@@ -41,7 +41,7 @@ export const useUpcomingEvents = () => {
 				},
 				logoUrl: wooLogo,
 				imageUrl: wooEventImage,
-				trackEventName: 'calypso_a4a_overview_events_register_click_woo_marketing_2025_07_25',
+				trackEventName: 'calypso_a4a_overview_events_register_click_woo_marketing_2025_07_14',
 				dateClassName: 'a4a-event__date--woo',
 				imageClassName: 'a4a-event__image--woo',
 			},

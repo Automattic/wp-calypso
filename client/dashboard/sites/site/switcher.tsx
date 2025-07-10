@@ -1,6 +1,6 @@
-import { filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { MenuGroup, MenuItem, SearchControl, Icon, Modal } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import AddNewSite from '../add-new-site';
 import SiteIcon from '../site-icon';
 import type { Site } from '../../data/types';
-import type { View } from '@automattic/dataviews';
+import type { View } from '@wordpress/dataviews';
 
 import './switcher.scss';
 

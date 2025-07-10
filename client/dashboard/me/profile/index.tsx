@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -14,6 +13,7 @@ import {
 	ExternalLink,
 	TextControl,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -23,7 +23,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
 import type { UserProfile } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 

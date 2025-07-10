@@ -1001,40 +1001,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/dataviews@workspace:^, @automattic/dataviews@workspace:packages/dataviews":
-  version: 0.0.0-use.local
-  resolution: "@automattic/dataviews@workspace:packages/dataviews"
-  dependencies:
-    "@ariakit/react": "npm:^0.4.15"
-    "@automattic/calypso-storybook": "workspace:^"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@types/jest": "npm:^29.5.14"
-    "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/components": "npm:^29.9.0"
-    "@wordpress/compose": "npm:^7.23.0"
-    "@wordpress/data": "npm:^10.23.0"
-    "@wordpress/element": "npm:^6.23.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/postcss-plugins-preset": "npm:^5.23.0"
-    "@wordpress/primitives": "npm:^4.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
-    "@wordpress/warning": "npm:^3.23.0"
-    clsx: "npm:^2.1.1"
-    date-fns: "npm:^4.1.0"
-    fast-deep-equal: "npm:^3.1.3"
-    postcss: "npm:^8.5.3"
-    postcss-local-keyframes: "npm:^0.0.2"
-    remove-accents: "npm:^0.5.0"
-    sass: "npm:1.54.0"
-    storybook: "npm:^8.6.14"
-    typescript: "npm:5.8.3"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  languageName: unknown
-  linkType: soft
-
 "@automattic/design-picker@workspace:^, @automattic/design-picker@workspace:packages/design-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
@@ -1125,7 +1091,7 @@ __metadata:
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/browserslist-config": "npm:^6.23.0"
     "@wordpress/components": "npm:^29.9.0"
-    "@wordpress/dataviews": "npm:^4.19.0"
+    "@wordpress/dataviews": "npm:^5.0.1-next.719a03cbe.0"
     docusaurus-plugin-sass: "npm:^0.2.6"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^18.3.1"
@@ -12030,26 +11996,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:4.19.0":
-  version: 4.19.0
-  resolution: "@wordpress/dataviews@npm:4.19.0"
+"@wordpress/dataviews@npm:^5.0.1-next.719a03cbe.0":
+  version: 5.0.1-next.719a03cbe.0
+  resolution: "@wordpress/dataviews@npm:5.0.1-next.719a03cbe.0"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
     "@babel/runtime": "npm:7.25.7"
-    "@wordpress/components": "npm:^29.9.0"
-    "@wordpress/compose": "npm:^7.23.0"
-    "@wordpress/data": "npm:^10.23.0"
-    "@wordpress/element": "npm:^6.23.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/primitives": "npm:^4.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
-    "@wordpress/warning": "npm:^3.23.0"
+    "@wordpress/base-styles": "npm:^6.2.1-next.719a03cbe.0"
+    "@wordpress/components": "npm:^29.13.1-next.719a03cbe.0"
+    "@wordpress/compose": "npm:^7.26.1-next.719a03cbe.0"
+    "@wordpress/data": "npm:^10.26.1-next.719a03cbe.0"
+    "@wordpress/date": "npm:^5.26.1-next.719a03cbe.0"
+    "@wordpress/element": "npm:^6.26.1-next.719a03cbe.0"
+    "@wordpress/i18n": "npm:^6.0.1-next.719a03cbe.0"
+    "@wordpress/icons": "npm:^10.26.2-next.719a03cbe.0"
+    "@wordpress/primitives": "npm:^4.26.1-next.719a03cbe.0"
+    "@wordpress/private-apis": "npm:^1.26.1-next.719a03cbe.0"
+    "@wordpress/url": "npm:^4.26.1-next.719a03cbe.0"
+    "@wordpress/warning": "npm:^3.26.1-next.719a03cbe.0"
     clsx: "npm:^2.1.1"
+    date-fns: "npm:^4.1.0"
+    fast-deep-equal: "npm:^3.1.3"
     remove-accents: "npm:^0.5.0"
   peerDependencies:
     react: ^18.0.0
-  checksum: 0afa20509549fe7ad245848a561dd23a825969fed62d1910434611f812be0ac34c54036650b71d0dd187056da116dcb151b253e113bea1be287ca2590f7c26be
+    react-dom: ^18.0.0
+  checksum: f503a503bd88c72826a3199a48e41d88ae97a15920d1ffeb9e67ca3964f9fd37d40c6c59d44a0de994df6daae5068ab8d743ceb44f699839825cc9f68fc2ccc9
   languageName: node
   linkType: hard
 
@@ -12588,18 +12560,6 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 69587511117101d3e67531e06cfe0faf5d8bcd2dcf672f634c975bdb2caf8f9a0ca1a6201cc5cc430cd85d120cd58b817ad94806a682d8ccd33739139e1ed411
-  languageName: node
-  linkType: hard
-
-"@wordpress/postcss-plugins-preset@npm:5.23.0":
-  version: 5.23.0
-  resolution: "@wordpress/postcss-plugins-preset@npm:5.23.0"
-  dependencies:
-    "@wordpress/base-styles": "npm:^5.23.0"
-    autoprefixer: "npm:^10.4.20"
-  peerDependencies:
-    postcss: ^8.0.0
-  checksum: c4ad3bd922db0a6a21c3b61157129231a6db3f5c21d880576575c8060af595b843f9f2f9eec0fde11562dceb0d1cc31de743a4129fa450ce434dc8f3578259a8
   languageName: node
   linkType: hard
 
@@ -14035,7 +13995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.4.19, autoprefixer@npm:^10.4.20, autoprefixer@npm:^10.4.21":
+"autoprefixer@npm:^10.4.19, autoprefixer@npm:^10.4.21":
   version: 10.4.21
   resolution: "autoprefixer@npm:10.4.21"
   dependencies:
@@ -14950,7 +14910,6 @@ __metadata:
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/dataviews": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
@@ -15027,7 +14986,7 @@ __metadata:
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/data": "npm:^10.23.0"
-    "@wordpress/dataviews": "npm:^4.19.0"
+    "@wordpress/dataviews": "npm:^5.0.1-next.719a03cbe.0"
     "@wordpress/date": "npm:^5.23.0"
     "@wordpress/dom": "npm:^4.23.0"
     "@wordpress/edit-post": "npm:^8.23.0"
@@ -29389,15 +29348,6 @@ __metadata:
     postcss: ^7.0.0 || ^8.0.1
     webpack: ^5.0.0
   checksum: 1bf7614aeea9ad1f8ee6be3a5451576c059391688ea67f825aedc2674056369597faeae4e4a81fe10843884c9904a71403d9a54197e1f560e8fbb9e61f2a2680
-  languageName: node
-  linkType: hard
-
-"postcss-local-keyframes@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "postcss-local-keyframes@npm:0.0.2"
-  peerDependencies:
-    postcss: ^8.2.8
-  checksum: d84815005ec75fef50a3f4a9cb7cff59fe1222714bfe1d7864c217d7e305b45774af1567eb88af280274bf1fd56dd5a461e3d4d453bb9b44f051a3d85b79cd79
   languageName: node
   linkType: hard
 

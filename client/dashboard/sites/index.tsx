@@ -1,7 +1,7 @@
-import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
@@ -20,7 +20,7 @@ import { SitesNotices } from './notices';
 import { getView, mergeViews, DEFAULT_LAYOUTS, recordViewChanges } from './views';
 import type { ViewPreferences, ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
-import type { View, Filter } from '@automattic/dataviews';
+import type { View, Filter } from '@wordpress/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
 	const filters = view.filters ?? [];

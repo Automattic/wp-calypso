@@ -1,8 +1,8 @@
 import { SelectControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
-import type { DataFormControlProps } from '@automattic/dataviews';
+import type { DataFormControlProps } from '@wordpress/dataviews';
 
-// A verbatim copy of @automattic/dataviews/src/dataform-controls/select.tsx,
+// A verbatim copy of @wordpress/dataviews/src/dataform-controls/select.tsx,
 // but without the first placeholder option.
 export default function RequiredSelect< Item >( {
 	data,

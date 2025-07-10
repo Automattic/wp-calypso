@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -10,6 +9,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -19,7 +19,7 @@ import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser } from '../../data/types';
-import type { DataFormControlProps, Field } from '@automattic/dataviews';
+import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 const SFTP_URL = 'sftp.wp.com';
 

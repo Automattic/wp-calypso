@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation, Query } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -10,6 +9,7 @@ import {
 	ProgressBar,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -22,7 +22,7 @@ import {
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
 import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
