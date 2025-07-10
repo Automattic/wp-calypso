@@ -15,10 +15,10 @@ export const useUpcomingEvents = () => {
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
 			{
-				id: 'woo-2025-07-25',
+				id: 'woo-2025-07-14',
 				date: {
-					from: moment( '2025-07-25' ),
-					to: moment( '2025-07-25' ),
+					from: moment( '2025-07-14' ),
+					to: moment( '2025-07-14' ),
 				},
 				title: translate( 'How are you preparing for the busiest time of year?' ),
 				subtitle: translate( 'Woo and Automattic for Agencies' ),
@@ -41,15 +41,15 @@ export const useUpcomingEvents = () => {
 				},
 				logoUrl: wooLogo,
 				imageUrl: wooEventImage,
-				trackEventName: 'calypso_a4a_overview_events_register_click_woo_marketing_2025_07_25',
+				trackEventName: 'calypso_a4a_overview_events_register_click_woo_marketing_2025_07_14',
 				dateClassName: 'a4a-event__date--woo',
 				imageClassName: 'a4a-event__image--woo',
 			},
 			{
-				id: 'a4a-2025-07-25',
+				id: 'a4a-2025-07-14',
 				date: {
-					from: moment( '2025-07-25' ),
-					to: moment( '2025-07-25' ),
+					from: moment( '2025-07-14' ),
+					to: moment( '2025-07-14' ),
 				},
 				title: translate( 'Automattic for Agencies Partner Empowerment Survey' ),
 				subtitle: translate( 'Automattic for Agencies' ),
@@ -58,7 +58,7 @@ export const useUpcomingEvents = () => {
 						"Participate in the Automattic for Agencies Partner Empowerment Survey and directly influence the training and resources we develop to better support your agency's success with WordPress and Automattic products. Your feedback is essential in helping us understand your needs and identify opportunities for improvement."
 					),
 					translate(
-						'{{b}}Share your insights by July 25th{{/b}} and play a key role in shaping our future offerings. Together, we can ensure that our programs and resources are tailored to help your agency thrive!',
+						'{{b}}Share your insights by July 14th{{/b}} and play a key role in shaping our future offerings. Together, we can ensure that our programs and resources are tailored to help your agency thrive!',
 						{
 							components: {
 								b: <b />,
@@ -72,7 +72,7 @@ export const useUpcomingEvents = () => {
 				},
 				logoUrl: a4aLogo,
 				imageUrl: a4aEventImage,
-				trackEventName: 'calypso_a4a_overview_events_register_click_a4a_2025_07_25',
+				trackEventName: 'calypso_a4a_overview_events_register_click_a4a_2025_07_14',
 				dateClassName: 'a4a-event__date--a4a',
 				imageClassName: 'a4a-event__image--a4a',
 			},
