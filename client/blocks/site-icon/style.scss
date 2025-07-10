@@ -37,6 +37,9 @@
 }
 
 .site-icon__img {
-	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
+	background: #f0f0f0;
+	border-radius: 4px;
+	outline: 1px solid rgba(0, 0, 0, 0.04);
+	outline-offset: -1px;
 	position: relative;
 }
