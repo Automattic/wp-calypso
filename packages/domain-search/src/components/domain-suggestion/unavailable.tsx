@@ -100,8 +100,8 @@ const UnavailableComponent = ( {
 
 const StandaloneUnavailable = ( props: UnavailableProps ) => {
 	const { ref: containerRef, activeQuery } = useContainerQuery( {
-		small: 480,
-		large: 1024,
+		small: 0,
+		large: 480,
 	} );
 
 	return (

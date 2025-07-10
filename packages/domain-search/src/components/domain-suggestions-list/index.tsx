@@ -16,8 +16,8 @@ const DomainSuggestionListContext = createContext< DomainSuggestionListContextVa
 
 export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps ) => {
 	const { ref: containerRef, activeQuery } = useContainerQuery( {
-		small: 480,
-		large: 1024,
+		small: 0,
+		large: 480,
 	} );
 
 	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
