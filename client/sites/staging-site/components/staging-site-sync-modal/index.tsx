@@ -242,7 +242,7 @@ export default function SyncModal( {
 	);
 
 	const onCheckboxChange = () => {
-		updateNodeCheckState( rootNode?.checkState === 'unchecked' ? 'checked' : 'unchecked' );
+		updateNodeCheckState( rootNode?.checkState === 'checked' ? 'unchecked' : 'checked' );
 	};
 
 	const handleExpanderChange = ( value: string ) => {
