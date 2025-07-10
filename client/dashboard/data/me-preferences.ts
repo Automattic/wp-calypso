@@ -20,7 +20,9 @@ export async function fetchPreferences(): Promise< Partial< UserPreferences > > 
 	return calypso_preferences;
 }
 
-export async function updatePreferences( data: Partial< UserPreferences > ) {
+export async function updatePreferences(
+	data: Partial< UserPreferences >
+): Promise< Partial< UserPreferences > > {
 	const { calypso_preferences } = await wpcom.req.post( '/me/preferences', {
 		calypso_preferences: data,
 	} );

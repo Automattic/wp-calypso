@@ -7,37 +7,27 @@ const defaultValues: UserPreferences = {
 	'some-string': '',
 };
 
-type QueryGetSetData< P > = P extends keyof UserPreferences
-	? UserPreferences[ P ]
-	: UserPreferences;
-
-export const userPreferencesQuery = < P extends keyof UserPreferences | undefined = undefined >(
-	preferenceName?: P
-) => ( {
+export const userPreferencesQuery = () => ( {
 	queryKey: [ 'me', 'preferences' ],
 	queryFn: fetchPreferences,
-	select( data: Partial< UserPreferences > ): QueryGetSetData< P > {
-		if ( ! preferenceName ) {
-			return { ...defaultValues, ...data } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-		}
+} );
+
+export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) => ( {
+	queryKey: userPreferencesQuery().queryKey,
+	queryFn: fetchPreferences,
+	select: ( data: Partial< UserPreferences > ) => {
 		const fetchedValue = data[ preferenceName ];
-		return fetchedValue === undefined
-			? ( defaultValues[ preferenceName ] as any ) // eslint-disable-line @typescript-eslint/no-explicit-any
-			: ( fetchedValue as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
+		return fetchedValue === undefined ? defaultValues[ preferenceName ] : fetchedValue;
 	},
 } );
 
-export const userPreferencesMutation = < P extends keyof UserPreferences | undefined = undefined >(
-	preferenceName?: P
+export const userPreferenceMutation = < P extends keyof UserPreferences >(
+	preferenceName: P
 ) => ( {
-	mutationFn( data: QueryGetSetData< P > ) {
-		if ( ! preferenceName ) {
-			return updatePreferences( data as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
-		}
-		return updatePreferences( {
+	mutationFn: ( data: UserPreferences[ P ] ) =>
+		updatePreferences( {
 			[ preferenceName ]: data,
-		} );
-	},
+		} ),
 	onSuccess: ( newData: Partial< UserPreferences > ) => {
 		queryClient.setQueryData(
 			userPreferencesQuery().queryKey,
