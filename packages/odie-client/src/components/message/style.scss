@@ -873,3 +873,30 @@ $custom-border-corner-size: 16px;
 	margin-top: 16px;
 	margin-left: 46px;
 }
+
+.chatbox-messages {
+	position: relative;
+}
+
+.chatbox-messages__content {
+	/* normal scrollable content */
+	overflow-y: auto;
+}
+
+.chatbox-loading-chat__spinner {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var( --studio-white );
+	z-index: 10;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 500ms ease-in-out;
+}
+
+.chatbox-loading-chat__spinner.is-visible {
+	opacity: 1;
+	pointer-events: all;
+}
