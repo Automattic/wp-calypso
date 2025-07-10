@@ -135,7 +135,11 @@ export function getView( {
 	};
 }
 
-export function getUpdatedView( {
+// Returns the updated view preferences and search params, after `view` has changed to `nextView`.
+// The updated view preferences are produced by merging `nextView` into `viewPreferences`.
+// Finally, the updated view preferences and search params are filtered to remove any default values,
+// so that the remaining values reflect the user's explicit intent.
+export function mergeViews( {
 	defaultView,
 	view,
 	viewPreferences,

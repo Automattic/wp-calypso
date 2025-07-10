@@ -16,7 +16,7 @@ import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import { SitesNotices } from './notices';
-import { getView, getUpdatedView, DEFAULT_LAYOUTS } from './views';
+import { getView, mergeViews, DEFAULT_LAYOUTS } from './views';
 import type { ViewPreferences, ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, Filter } from '@automattic/dataviews';
@@ -77,7 +77,7 @@ export default function Sites() {
 			return;
 		}
 
-		const { updatedViewPreferences, updatedViewSearchParams } = getUpdatedView( {
+		const { updatedViewPreferences, updatedViewSearchParams } = mergeViews( {
 			defaultView,
 			view,
 			viewPreferences,
