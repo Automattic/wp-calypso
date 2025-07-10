@@ -83,6 +83,17 @@ const sitesRoute = createRoute( {
 			queryClient.ensureQueryData( userPreferencesQuery() ),
 		] );
 	},
+	validateSearch: ( search ) => {
+		// Deserialize the view search param if it exists on the first page load.
+		if ( typeof search.view === 'string' ) {
+			try {
+				return { ...search, view: JSON.parse( search.view ) };
+			} catch ( e ) {
+				// pass
+			}
+		}
+		return search;
+	},
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
