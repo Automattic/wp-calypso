@@ -32,9 +32,9 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/api-fetch": "^7.26.1-next.719a03cbe.0",
-		"@wordpress/element": "^6.26.1-next.719a03cbe.0",
-		"@wordpress/url": "^4.26.1-next.719a03cbe.0",
+		"@wordpress/api-fetch": "^7.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/url": "^4.23.0",
 		"react": "^18.3.1",
 		"wpcom-proxy-request": "workspace:^"
 	},

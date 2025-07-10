@@ -35,7 +35,7 @@
 		"@automattic/interpolate-components": "workspace:^",
 		"@babel/runtime": "^7.27.1",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^7.26.1-next.719a03cbe.0",
+		"@wordpress/compose": "^7.23.0",
 		"debug": "^4.4.1",
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",

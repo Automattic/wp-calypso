@@ -49,8 +49,8 @@
 		"@automattic/urls": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/components": "^29.13.1-next.719a03cbe.0",
-		"@wordpress/react-i18n": "^4.26.1-next.719a03cbe.0",
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
 		"react-intersection-observer": "^9.4.3"
 	},
