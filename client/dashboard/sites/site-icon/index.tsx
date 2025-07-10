@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useMemo } from 'react';
+import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteStatus } from '../../utils/site-status';
 import SiteMigrationIcon from './site-migration-icon';
 import type { Site } from '../../data/types';
@@ -45,7 +46,7 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 
 	return (
 		<div className={ clsx( 'site-letter', className ) } style={ { ...dims, fontSize: size * 0.5 } }>
-			<span>{ site.name.charAt( 0 ) }</span>
+			<span>{ getSiteDisplayName( site ).charAt( 0 ) }</span>
 		</div>
 	);
 }
