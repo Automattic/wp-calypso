@@ -25,6 +25,7 @@ export const DomainSuggestionCTA = ( { compact, domainUuid }: DomainSuggestionCT
 				icon={ arrowRight }
 				className="domain-suggestion-cta domain-suggestion-cta--continue"
 				onClick={ onContinue }
+				label={ __( 'Continue' ) }
 			>
 				{ compact ? undefined : __( 'Continue' ) }
 			</Button>
@@ -38,6 +39,7 @@ export const DomainSuggestionCTA = ( { compact, domainUuid }: DomainSuggestionCT
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
 			onClick={ () => cart.onAddItem( domainUuid ) }
+			label={ __( 'Add to Cart' ) }
 		>
 			{ compact ? undefined : __( 'Add to Cart' ) }
 		</Button>
