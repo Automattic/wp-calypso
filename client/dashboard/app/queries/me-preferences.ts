@@ -7,14 +7,16 @@ const defaultValues: UserPreferences = {
 	'some-string': '',
 };
 
-type HookDataType< P > = P extends keyof UserPreferences ? UserPreferences[ P ] : UserPreferences;
+type QueryGetSetData< P > = P extends keyof UserPreferences
+	? UserPreferences[ P ]
+	: UserPreferences;
 
 export const userPreferencesQuery = < P extends keyof UserPreferences | undefined = undefined >(
 	preferenceName?: P
 ) => ( {
 	queryKey: [ 'me', 'preferences' ],
 	queryFn: fetchPreferences,
-	select( data: Partial< UserPreferences > ): HookDataType< P > {
+	select( data: Partial< UserPreferences > ): QueryGetSetData< P > {
 		if ( ! preferenceName ) {
 			return { ...defaultValues, ...data } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
@@ -28,7 +30,7 @@ export const userPreferencesQuery = < P extends keyof UserPreferences | undefine
 export const userPreferencesMutation = < P extends keyof UserPreferences | undefined = undefined >(
 	preferenceName?: P
 ) => ( {
-	mutationFn( data: HookDataType< P > ) {
+	mutationFn( data: QueryGetSetData< P > ) {
 		if ( ! preferenceName ) {
 			return updatePreferences( data as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
