@@ -50,7 +50,7 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const viewPreferences = useSuspenseQuery( userPreferencesQuery( 'sites-view' ) )
+	const viewPreferences = useSuspenseQuery( userPreferencesQuery( 'sites-view', {} ) )
 		.data as ViewPreferences;
 	const { mutate: updateViewPreferences } = useMutation( userPreferencesMutation( 'sites-view' ) );
 
