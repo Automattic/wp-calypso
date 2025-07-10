@@ -12,6 +12,7 @@ export const DomainSuggestionBadge = ( { children, variation }: DomainSuggestion
 	return (
 		<Text
 			size={ 12 }
+			lineHeight={ 1 }
 			className={ clsx(
 				'domain-suggestion-badge',
 				variation && `domain-suggestion-badge--${ variation }`
