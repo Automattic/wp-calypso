@@ -116,7 +116,12 @@
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
-				margin-bottom: 10px;
+				margin: 8px 0;
+			}
+
+			.gravatar-hovercard__recommended-blogs-title {
+				color: var( --color-text-subtle );
+				font-weight: 400;
 			}
 
 			.gravatar-hovercard__recommended-blogs-view-all {
@@ -136,12 +141,13 @@
 				.site-icon {
 					border-radius: 50%;
 					border: 1px solid var(--color-border-subtle);
+					height: 30px;
+					width: 30px;
 
 					img {
 						object-fit: cover;
 						/* !rtl:ignore */
 						object-position: left center;
-						height: 100%;
 					}
 				}
 			}
