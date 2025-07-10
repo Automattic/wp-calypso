@@ -11,7 +11,7 @@ import type {
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'status', 'visitors', 'subscribers_count', 'wp_version' ],
+		fields: [ 'status', 'visitors', 'subscribers_count' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
