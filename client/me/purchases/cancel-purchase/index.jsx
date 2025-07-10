@@ -157,18 +157,20 @@ class CancelPurchase extends Component {
 		if ( this.props.includedDomainPurchase ) {
 			this.setState( { showDomainOptionsStep: true } );
 		} else {
-			this.setState( { surveyShown: true, isLoading: true } );
+			// For non-domain purchases without domain options, don't show survey yet
+			// The button will handle the cancellation and then show survey when complete
+			this.setState( { isLoading: true } );
 		}
 	};
 
 	onDomainOptionsComplete = ( domainOptions ) => {
 		this.setState( {
 			showDomainOptionsStep: false,
-			surveyShown: true,
 			isLoading: true,
 			cancelBundledDomain: domainOptions.cancelBundledDomain,
 			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
 		} );
+		// Don't show survey yet - wait for cancellation to complete
 	};
 
 	onSurveyComplete = () => {

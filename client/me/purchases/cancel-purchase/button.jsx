@@ -102,6 +102,8 @@ class CancelPurchaseButton extends Component {
 			if ( ! this.props.includedDomainPurchase ) {
 				await this.performCancellation();
 			}
+			// If there is an included domain purchase, the cancellation will be triggered
+			// from the domain options step, so we don't call performCancellation here
 		} else {
 			// If no onCancellationStart callback, perform cancellation directly
 			await this.performCancellation();
