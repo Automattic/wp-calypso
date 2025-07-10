@@ -8,7 +8,7 @@ import type { Meta } from '@storybook/react';
 
 const SUGGESTIONS = [
 	buildDomain( { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ),
-	buildDomain( { uuid: '2', domain: 'example', tld: 'com', price: '$10' } ),
+	buildDomain( { uuid: '2', domain: 'example', tld: 'com', price: '$10', originalPrice: '$20' } ),
 ];
 
 export const Default = () => {
