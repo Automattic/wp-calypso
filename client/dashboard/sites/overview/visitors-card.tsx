@@ -12,7 +12,6 @@ export default function VisitorsCard( { engagementStats }: { engagementStats: En
 			icon={ people }
 			heading={ `${ currentData.visitors }` }
 			metaText={ __( 'Past 7 days' ) }
-			isLink
 		>
 			<TrendComparisonBadge
 				count={ currentData.visitors }

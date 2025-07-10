@@ -12,7 +12,6 @@ export default function LikesCard( { engagementStats }: { engagementStats: Engag
 			icon={ starEmpty }
 			heading={ `${ currentData.likes }` }
 			metaText={ __( 'Past 7 days' ) }
-			isLink
 		>
 			<TrendComparisonBadge count={ currentData.likes } previousCount={ previousData.likes } />
 		</OverviewCard>

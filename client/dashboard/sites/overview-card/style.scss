@@ -1,11 +1,58 @@
+@import "@wordpress/base-styles/colors";
+
 .dashboard-overview-card {
+	&--disabled {
+		background-color: transparent !important;
+		box-shadow: 0 0 0 1px $gray-100 !important;
+	}
+
 	.components-card__body {
+		border-radius: 8px !important; /* stylelint-disable-line scales/radii */
 		padding: 24px;
 	}
 }
 
 .dashboard-overview-card__icon {
-	fill: #757575;
+	fill: $gray-700;
+
+	.dashboard-overview-card--success & {
+		fill: $alert-green;
+	}
+
+	.dashboard-overview-card--error & {
+		fill: $alert-red;
+		background-color: color-mix(in srgb, $alert-red 8%, transparent);
+	}
+}
+
+.dashboard-overview-card__link {
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	display: flex;
+	text-decoration: none;
+
+	.dashboard-overview-card {
+		flex: 1;
+
+		&:hover {
+			background-color: color-mix(in srgb, var( --wp-admin-theme-color ) 2%, transparent);
+			box-shadow: 0 0 0 1px color-mix(in srgb, var( --wp-admin-theme-color ) 12%, transparent);
+
+			span, h2 {
+				color: var( --wp-admin-theme-color );
+			}
+
+			.dashboard-overview-card__icon {
+				fill: var( --wp-admin-theme-color );
+				background-color: transparent;
+			}	
+		}
+	}
+}
+
+.dashboard-overview-card__description {
+	.dashboard-overview-card--error & {
+		color: $alert-red;
+	}
 }
 
 .dashboard-overview-card__progress-bar {

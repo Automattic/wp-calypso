@@ -17,6 +17,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
 import PerformanceCards from './performance-cards';
+import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
 import StorageCard from './storage-card';
@@ -74,6 +75,7 @@ function SiteOverview() {
 						<PerformanceCards site={ site } />
 					</VStack>
 					<VStack spacing={ 6 } justify="start">
+						<ScanCard site={ site } />
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>

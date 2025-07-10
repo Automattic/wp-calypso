@@ -4,11 +4,6 @@ import OverviewCard from '../overview-card';
 
 export default function SubscribersCard( { subscribers }: { subscribers: number } ) {
 	return (
-		<OverviewCard
-			title={ __( 'Subscribers' ) }
-			icon={ envelope }
-			heading={ `${ subscribers }` }
-			isLink
-		/>
+		<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } heading={ `${ subscribers }` } />
 	);
 }

@@ -12,7 +12,6 @@ export default function CommentsCard( { engagementStats }: { engagementStats: En
 			icon={ comment }
 			heading={ `${ currentData.comments }` }
 			metaText={ __( 'Past 7 days' ) }
-			isLink
 		>
 			<TrendComparisonBadge
 				count={ currentData.comments }

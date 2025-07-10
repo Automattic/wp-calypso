@@ -35,7 +35,8 @@ export function canManageSite( site: Site ) {
 	}
 
 	// Self-hosted Jetpack-connected sites are not supported, yet.
-	if ( isSelfHostedJetpackConnected( site ) ) {
+	// Only enable for the development environment, for now.
+	if ( isSelfHostedJetpackConnected( site ) && config( 'env_id' ) !== 'development' ) {
 		return false;
 	}
 

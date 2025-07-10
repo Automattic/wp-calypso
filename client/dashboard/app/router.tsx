@@ -33,6 +33,7 @@ import { siteDomainsQuery } from './queries/site-domains';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
+import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
 import { siteSshAccessStatusQuery } from './queries/site-ssh';
@@ -126,6 +127,7 @@ const siteOverviewRoute = createRoute( {
 			// The current plan is nice to have preloaded, but not blocking for
 			// navigation.
 			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ) : undefined,
+			preload ? queryClient.ensureQueryData( siteScanQuery( site.ID ) ) : undefined,
 			queryClient.ensureQueryData( siteEngagementStatsQuery( site.ID ) ),
 		] );
 	},

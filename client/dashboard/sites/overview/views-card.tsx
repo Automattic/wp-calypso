@@ -12,7 +12,6 @@ export default function ViewsCard( { engagementStats }: { engagementStats: Engag
 			icon={ seen }
 			heading={ `${ currentData.views }` }
 			metaText={ __( 'Past 7 days' ) }
-			isLink
 		>
 			<TrendComparisonBadge count={ currentData.views } previousCount={ previousData.views } />
 		</OverviewCard>
