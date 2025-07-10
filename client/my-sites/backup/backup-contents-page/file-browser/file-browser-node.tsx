@@ -226,6 +226,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		]
 	);
 
+	const renderLabel = ( label: string ) => {
+		if ( fileBrowserConfig?.transformLabels?.[ label ] ) {
+			return fileBrowserConfig.transformLabels[ label ];
+		}
+		return label;
+	};
+
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
 			return (
@@ -301,7 +308,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const nodeItemClassName = clsx( 'file-browser-node__item', {
 		'is-alternate': isAlternate,
 	} );
-	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
+	const [ label, isLabelTruncated ] = useTruncatedFileName(
+		renderLabel( item.name ),
+		30,
+		item.type
+	);
 
 	const nodeClassName = clsx( 'file-browser-node', item.type, {
 		'is-root': isRoot,

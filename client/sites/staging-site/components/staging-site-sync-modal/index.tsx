@@ -30,9 +30,10 @@ import './style.scss';
 
 const fileBrowserConfig: FileBrowserConfig = {
 	restrictedTypes: [ 'plugin', 'theme' ],
-	restrictedPaths: [ 'wp-content' ],
+	restrictedPaths: [ 'wp-content', 'sql' ],
 	excludeTypes: [ 'wordpress' ],
 	alwaysInclude: [ 'wp-config.php' ],
+	transformLabels: { sql: 'Database' },
 	showHeaderButtons: false,
 	showFileCard: false,
 };

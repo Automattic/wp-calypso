@@ -11,9 +11,9 @@ export interface FileBrowserConfig {
 	restrictedTypes?: string[];
 	excludeTypes?: string[];
 	alwaysInclude?: string[];
+	transformLabels?: Record< string, string >;
 	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
-	siteId?: number;
 }
 
 interface FileBrowserProps {
