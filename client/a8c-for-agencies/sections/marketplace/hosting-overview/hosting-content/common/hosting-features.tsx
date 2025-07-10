@@ -6,9 +6,10 @@ import HostingFeaturesSectionV2 from '../../../common/hosting-features-section-v
 type Props = {
 	heading: string;
 	isPressable?: boolean;
+	useSignaturePlans?: boolean;
 };
 
-export default function HostingFeatures( { heading, isPressable }: Props ) {
+export default function HostingFeatures( { heading, isPressable, useSignaturePlans }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -27,8 +28,12 @@ export default function HostingFeatures( { heading, isPressable }: Props ) {
 						translate( 'High-burst capacity' ),
 						translate( 'Automated datacenter failover' ),
 						translate( 'Extremely fast DNS with SSL' ),
-						// todo: update this for new plans. If new plan: 5 PHP workers
-						translate( '10 PHP workers w/ auto-scaling' ),
+						translate( '%(workers)d PHP workers w/ auto-scaling', {
+							args: {
+								workers: useSignaturePlans ? 5 : 10,
+							},
+							comment: '%(workers)s is the number of PHP workers.',
+						} ),
 						translate( 'Uptime monitoring' ),
 					],
 				},
