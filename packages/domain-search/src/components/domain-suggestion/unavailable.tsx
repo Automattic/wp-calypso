@@ -36,7 +36,7 @@ const UnavailableComponent = ( {
 		if ( unavailableReason === 'already-registered' ) {
 			return createInterpolateElement( __( '<domainName /> is already registered.' ), {
 				domainName: (
-					<Text size="inherit">
+					<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
 						{ domain }
 						<Text size="inherit" weight={ 500 }>
 							.{ tld }

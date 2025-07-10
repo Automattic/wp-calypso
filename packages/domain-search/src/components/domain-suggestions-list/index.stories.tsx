@@ -3,7 +3,7 @@ import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories
 import { DomainSearch } from '../domain-search';
 import { DomainSuggestion } from '../domain-suggestion';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
-import { DomainsSuggestionsList } from '.';
+import { DomainSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
 
 const SUGGESTIONS = [
@@ -43,7 +43,7 @@ export const Default = () => {
 				} }
 				cart={ cart }
 			>
-				<DomainsSuggestionsList>
+				<DomainSuggestionsList>
 					<DomainSuggestion.Unavailable
 						domain="example-unavailable"
 						tld="com"
@@ -53,7 +53,7 @@ export const Default = () => {
 					{ SUGGESTIONS.map( ( suggestion ) => (
 						<DomainSuggestion
 							key={ suggestion.uuid }
-							domainUuid={ suggestion.uuid }
+							uuid={ suggestion.uuid }
 							domain={ suggestion.domain }
 							tld={ suggestion.tld }
 							originalPrice={ suggestion.originalPrice }
@@ -66,7 +66,7 @@ export const Default = () => {
 							}
 						/>
 					) ) }
-				</DomainsSuggestionsList>
+				</DomainSuggestionsList>
 			</DomainSearch>
 		</div>
 	);
@@ -79,7 +79,7 @@ Default.parameters = {
 };
 
 const meta: Meta< typeof Default > = {
-	title: 'DomainsSuggestionsList',
+	title: 'DomainSuggestionsList',
 	component: Default,
 };
 

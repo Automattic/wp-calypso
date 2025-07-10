@@ -8,14 +8,14 @@ import './style.scss';
 
 interface DomainSuggestionCTAProps {
 	compact?: boolean;
-	domainUuid: string;
+	uuid: string;
 }
 
-export const DomainSuggestionCTA = ( { compact, domainUuid }: DomainSuggestionCTAProps ) => {
+export const DomainSuggestionCTA = ( { compact, uuid }: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
 	const { cart, onContinue } = useDomainSearch();
 
-	const isDomainOnCart = cart.hasItem( domainUuid );
+	const isDomainOnCart = cart.hasItem( uuid );
 
 	if ( isDomainOnCart ) {
 		return (
@@ -38,7 +38,7 @@ export const DomainSuggestionCTA = ( { compact, domainUuid }: DomainSuggestionCT
 			variant="primary"
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
-			onClick={ () => cart.onAddItem( domainUuid ) }
+			onClick={ () => cart.onAddItem( uuid ) }
 			label={ __( 'Add to Cart' ) }
 		>
 			{ compact ? undefined : __( 'Add to Cart' ) }

@@ -14,7 +14,7 @@ import { Unavailable } from './unavailable';
 import './style.scss';
 
 interface DomainSuggestionProps {
-	domainUuid: string;
+	uuid: string;
 	domain: string;
 	tld: string;
 	originalPrice?: string;
@@ -23,7 +23,7 @@ interface DomainSuggestionProps {
 }
 
 export const DomainSuggestion = ( {
-	domainUuid,
+	uuid,
 	domain,
 	tld,
 	originalPrice,
@@ -39,16 +39,22 @@ export const DomainSuggestion = ( {
 	const { activeQuery } = listContext;
 
 	const domainName = (
-		<Text size={ activeQuery === 'large' ? 18 : 16 }>
-			{ domain }
-			<Text size="inherit" weight={ 500 } style={ { marginRight: badges ? '12px' : undefined } }>
-				.{ tld }
+		<span>
+			<Text
+				size={ activeQuery === 'large' ? 18 : 16 }
+				style={ { marginRight: badges ? '12px' : undefined } }
+				aria-label={ `${ domain }.${ tld }` }
+			>
+				{ domain }
+				<Text size="inherit" weight={ 500 }>
+					.{ tld }
+				</Text>
 			</Text>
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
-		</Text>
+		</span>
 	);
 
-	const cta = <DomainSuggestionCTA compact domainUuid={ domainUuid } />;
+	const cta = <DomainSuggestionCTA compact uuid={ uuid } />;
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {

@@ -8,7 +8,7 @@ describe( 'DomainSuggestionCTA', () => {
 	it( 'should render Add to Cart button when domain is not in cart', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
-				<DomainSuggestionCTA domainUuid="1" />
+				<DomainSuggestionCTA uuid="1" />
 			</DomainSearch>
 		);
 
@@ -25,7 +25,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ) }
 				onContinue={ jest.fn() }
 			>
-				<DomainSuggestionCTA domainUuid="1" />
+				<DomainSuggestionCTA uuid="1" />
 			</DomainSearch>
 		);
 
@@ -44,7 +44,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ) }
 				onContinue={ jest.fn() }
 			>
-				<DomainSuggestionCTA domainUuid="1" />
+				<DomainSuggestionCTA uuid="1" />
 			</DomainSearch>
 		);
 
@@ -65,7 +65,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ) }
 				onContinue={ onContinue }
 			>
-				<DomainSuggestionCTA domainUuid="1" />
+				<DomainSuggestionCTA uuid="1" />
 			</DomainSearch>
 		);
 
@@ -78,7 +78,7 @@ describe( 'DomainSuggestionCTA', () => {
 	it( 'should not show Add to Cart text when compact prop is true', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
-				<DomainSuggestionCTA domainUuid="1" compact />
+				<DomainSuggestionCTA uuid="1" compact />
 			</DomainSearch>
 		);
 
@@ -95,7 +95,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ) }
 				onContinue={ jest.fn() }
 			>
-				<DomainSuggestionCTA domainUuid="1" compact />
+				<DomainSuggestionCTA uuid="1" compact />
 			</DomainSearch>
 		);
 

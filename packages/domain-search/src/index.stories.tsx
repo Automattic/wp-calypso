@@ -10,7 +10,7 @@ import {
 	DomainSearchControls,
 	DomainsFullCart,
 	DomainsMiniCart,
-	DomainsSuggestionsList,
+	DomainSuggestionsList,
 } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -97,7 +97,7 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 				<VStack spacing={ 8 }>
 					<DomainSearchControls />
 					<HStack spacing={ 4 }>TODO Recommendations</HStack>
-					<DomainsSuggestionsList>TODO</DomainsSuggestionsList>
+					<DomainSuggestionsList>TODO</DomainSuggestionsList>
 				</VStack>
 			</Step.CenteredColumnLayout>
 			<DomainsFullCart />
