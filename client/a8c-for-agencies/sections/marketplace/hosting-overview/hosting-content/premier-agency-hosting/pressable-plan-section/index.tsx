@@ -55,7 +55,7 @@ export default function PressablePlanSection( {
 	const useSignaturePlans = useMemo( () => {
 		return (
 			isReferralMode ||
-			existingPlanInfo === null ||
+			! existingPlanInfo ||
 			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
 			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
 		);

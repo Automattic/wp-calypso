@@ -73,7 +73,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const useSignaturePlans = useMemo( () => {
 		return (
 			isReferralMode ||
-			existingPlanInfo === null ||
+			! existingPlanInfo ||
 			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
 			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
 		);
