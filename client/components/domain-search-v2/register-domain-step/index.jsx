@@ -1,6 +1,8 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
+import { DomainSearch } from '@automattic/domain-search';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -62,7 +64,7 @@ import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/s
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
-import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
 	getAvailableTlds,
@@ -79,6 +81,7 @@ import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/uti
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { DomainCartV2 } from '../domain-cart';
 import AlreadyOwnADomain from './already-own-a-domain';
 
 import './style.scss';
@@ -454,8 +457,58 @@ class RegisterDomainStep extends Component {
 		return suggestions;
 	}
 
+	getCart = () => {
+		const { cart, addProductToCart, removeProductFromCart } = this.props;
+		const searchResults = this.state.searchResults || [];
+
+		const domainsInCart = getDomainsInCart( cart );
+
+		const total = formatCurrency(
+			domainsInCart.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
+			cart.currency ?? 'USD',
+			{
+				isSmallestUnit: true,
+				stripZeros: true,
+			}
+		);
+
+		return {
+			items: domainsInCart.map( ( domain ) => {
+				const [ domainName, ...tld ] = domain.meta.split( '.' );
+
+				const hasPromotion = domain.cost_overrides?.some(
+					( override ) => ! override.does_override_original_cost
+				);
+
+				return {
+					uuid: domain.uuid,
+					domain: domainName,
+					tld: tld.join( '.' ),
+					originalPrice: hasPromotion
+						? formatCurrency( domain.item_original_cost_integer, domain.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+						  } )
+						: undefined,
+					price: formatCurrency( domain.item_subtotal_integer, domain.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				};
+			} ),
+			total,
+			onAddItem: ( uuid ) =>
+				addProductToCart( searchResults.find( ( item ) => item.uuid === uuid ) ),
+			onRemoveItem: ( uuid ) => removeProductFromCart( uuid ),
+			hasItem: ( uuid ) => {
+				return cart.products.some( ( item ) => item.uuid === uuid );
+			},
+		};
+	};
+
 	render() {
 		const {
+			onContinue,
 			isSignupStep,
 			showAlreadyOwnADomain,
 			isDomainAndPlanPackageFlow,
@@ -496,7 +549,7 @@ class RegisterDomainStep extends Component {
 		} );
 
 		return (
-			<>
+			<DomainSearch onContinue={ onContinue } cart={ this.getCart() }>
 				<div className={ containerDivClassName }>
 					<div className={ searchBoxClassName }>
 						<CompactCard className="register-domain-step__search-card">
@@ -545,7 +598,8 @@ class RegisterDomainStep extends Component {
 						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 					/>
 				) }
-			</>
+				<DomainCartV2 />
+			</DomainSearch>
 		);
 	}
 
