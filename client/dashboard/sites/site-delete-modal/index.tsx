@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -10,6 +9,7 @@ import {
 	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -20,7 +20,7 @@ import { siteDeleteMutation } from '../../app/queries/site';
 import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
 import Notice from '../../components/notice';
 import type { Site } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 type SiteDeleteFormData = {
 	domain: string;

@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -9,6 +8,7 @@ import {
 	CheckboxControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -19,8 +19,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
 import type { Site, SiteSettings } from '../../data/types';
-import type { Field, Form } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
+import type { Field, Form } from '@wordpress/dataviews';
 
 // The raw SiteSettings don't map nicely to the controls in the form. Mapping from SiteSettings to
 // PrivacyFormData allows us to create a more user-friendly form.

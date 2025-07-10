@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
@@ -10,6 +9,7 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -21,7 +21,7 @@ import { SectionHeader } from '../../components/section-header';
 import { canViewHundredYearPlanSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '../../data/types';
-import type { Field, SimpleFormField } from '@automattic/dataviews';
+import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{

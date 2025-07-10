@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -14,6 +13,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
@@ -32,7 +32,7 @@ import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser, SiteSshKey, UserSshKey } from '../../data/types';
-import type { DataFormControlProps, Field } from '@automattic/dataviews';
+import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 type SshCardFormData = {
 	connection_command: string;

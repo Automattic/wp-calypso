@@ -18,7 +18,7 @@ import {
 } from './site-fields';
 import SiteIcon from './site-icon';
 import type { Site } from '../data/types';
-import type { Field, Operator } from '@automattic/dataviews';
+import type { Field, Operator } from '@wordpress/dataviews';
 
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{

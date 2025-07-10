@@ -1,4 +1,4 @@
-import type { Field, NormalizedField } from '@automattic/dataviews';
+import type { Field, NormalizedField } from '@wordpress/dataviews';
 
 export interface VatFormData {
 	country: string;

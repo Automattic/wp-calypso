@@ -1,4 +1,3 @@
-import { DataForm, isItemValid } from '@automattic/dataviews';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -7,6 +6,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
 import { SectionHeader } from '../../components/section-header';
 import type { Site } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 export type ConfirmNewOwnerFormData = {
 	email: string;

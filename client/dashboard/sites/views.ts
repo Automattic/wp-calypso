@@ -7,7 +7,7 @@ import type {
 	ViewTable,
 	ViewGrid,
 	SupportedLayouts,
-} from '@automattic/dataviews';
+} from '@wordpress/dataviews';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
