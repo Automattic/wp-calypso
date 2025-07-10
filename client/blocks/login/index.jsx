@@ -565,7 +565,7 @@ class Login extends Component {
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isSendingEmail={ this.props.isSendingEmail }
-				isSocialFirst={ isSocialFirst }
+				isSocialFirst={ isSocialFirst } // TODO just not gravatar
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 				loginButtonText={

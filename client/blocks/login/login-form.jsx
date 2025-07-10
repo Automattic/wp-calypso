@@ -1006,7 +1006,6 @@ export class LoginForm extends Component {
 		const {
 			oauth2Client,
 			currentQuery,
-			isWoo,
 			isWooJPC,
 			isSocialFirst,
 			isJetpack,
@@ -1048,8 +1047,6 @@ export class LoginForm extends Component {
 							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ false }
-							isWoo={ isWoo }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
@@ -1106,7 +1103,6 @@ export class LoginForm extends Component {
 						handleLogin={ this.handleSocialLogin }
 						trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						shouldRenderToS={ false }
 						isJetpack={ isJetpack }
 					/>
 				</Fragment>
