@@ -1,23 +1,19 @@
+import { sprintf } from '@wordpress/i18n';
 import { code, copy, key, plus } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { BackgroundType9 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingFeaturesSectionV2 from '../../../common/hosting-features-section-v2';
 
 type Props = {
 	heading: string;
 	isPressable?: boolean;
-	useSignaturePlans?: boolean;
+	areSignaturePlans?: boolean;
 };
 
-export default function HostingFeatures( { heading, isPressable, useSignaturePlans }: Props ) {
+export default function HostingFeatures( { heading, isPressable, areSignaturePlans }: Props ) {
 	const translate = useTranslate();
-
-	const phpWorkers = useMemo( () => {
-		return useSignaturePlans
-			? translate( '5 PHP workers w/ auto-scaling' )
-			: translate( '10 PHP workers w/ auto-scaling' );
-	}, [ useSignaturePlans, translate ] );
+	const { __ } = useI18n();
 
 	return (
 		<HostingFeaturesSectionV2
@@ -35,7 +31,11 @@ export default function HostingFeatures( { heading, isPressable, useSignaturePla
 						translate( 'High-burst capacity' ),
 						translate( 'Automated datacenter failover' ),
 						translate( 'Extremely fast DNS with SSL' ),
-						phpWorkers,
+						sprintf(
+							/* translators: %s is the number of PHP workers */
+							__( '%s PHP workers w/ auto-scaling' ),
+							areSignaturePlans ? '5' : '10'
+						),
 						translate( 'Uptime monitoring' ),
 					],
 				},
