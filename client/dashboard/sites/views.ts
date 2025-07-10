@@ -248,15 +248,13 @@ export function recordViewChanges(
 	const oldFilterFields = new Set( oldView.filters?.map( ( { field } ) => field ) || [] );
 	const newFilterFields = new Set( newView.filters?.map( ( { field } ) => field ) || [] );
 
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const added of newFilterFields.difference( oldFilterFields ) ) {
+	for ( const added of setDifference( newFilterFields, oldFilterFields ) ) {
 		recordTracksEvent( 'calypso_dashboard_sites_list_filter_changed', {
 			change: 'added',
 			field: added,
 		} );
 	}
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const removed of oldFilterFields.difference( newFilterFields ) ) {
+	for ( const removed of setDifference( oldFilterFields, newFilterFields ) ) {
 		recordTracksEvent( 'calypso_dashboard_sites_list_filter_changed', {
 			change: 'removed',
 			field: removed,
@@ -266,18 +264,25 @@ export function recordViewChanges(
 	const oldShownFields = new Set( oldView.fields || [] );
 	const newShownFields = new Set( newView.fields || [] );
 
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const added of newShownFields.difference( oldShownFields ) ) {
+	for ( const added of setDifference( newShownFields, oldShownFields ) ) {
 		recordTracksEvent( 'calypso_dashboard_sites_list_field_visibility_changed', {
 			change: 'added',
 			field: added,
 		} );
 	}
-	// @ts-ignore Set.difference should be available in Hosting Dashboard environments
-	for ( const removed of oldShownFields.difference( newShownFields ) ) {
+	for ( const removed of setDifference( oldShownFields, newShownFields ) ) {
 		recordTracksEvent( 'calypso_dashboard_sites_list_field_visibility_changed', {
 			change: 'removed',
 			field: removed,
 		} );
 	}
+}
+
+// Ponyfill for Set.prototype.difference, which is not available in all target environments.
+function setDifference< T >( a: Set< T >, b: Set< T > ): Set< T > {
+	const difference = new Set( a );
+	for ( const item of b ) {
+		difference.delete( item );
+	}
+	return difference;
 }
