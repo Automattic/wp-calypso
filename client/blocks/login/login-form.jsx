@@ -1073,6 +1073,7 @@ export class LoginForm extends Component {
 			isSocialFirst,
 			isJetpack,
 			isOneTapAuth,
+			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
 
 		const socialToS = this.props.translate(
@@ -1124,7 +1125,7 @@ export class LoginForm extends Component {
 
 		return (
 			<>
-				{ isOneTapAuth && <OneTapAuthLoader /> }
+				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoader /> }
 				<form
 					className={ clsx( {
 						'is-social-first': isSocialFirst,
