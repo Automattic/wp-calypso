@@ -306,7 +306,7 @@ describe( 'recordViewChanges', () => {
 		} );
 	} );
 
-	test( 'sort field change change', () => {
+	test( 'sort field change', () => {
 		const tracks = jest.fn();
 		const oldView: SitesView = {
 			type: 'grid',
