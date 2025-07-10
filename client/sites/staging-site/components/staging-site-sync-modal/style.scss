@@ -249,37 +249,7 @@
 			margin-right: 16px;
 		}
 		.file-browser-header__selecting {
-			display: flex;
-
-			.bulk-select {
-				padding: 6px 0;
-			}
-			.count {
-				border: none;
-				font-weight: 400;
-				padding-top: 2px;
-			}
-			.file-browser-header__selecting-info {
-				flex-grow: 1;
-				font-size: $font-body-extra-small;
-				padding: 6px 0;
-			}
-			.form-checkbox {
-				margin: 8px;
-				&.mixed {
-					background-color: var( --studio-gray-10 );
-				}
-			}
-			.button {
-				margin-left: 8px;
-				color: #000;
-				&.is-primary {
-					&:disabled {
-						color: #000;
-					}
-					color: #fff;
-				}
-			}
+			display: none;
 		}
 	}
 
