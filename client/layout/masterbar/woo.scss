@@ -182,7 +182,7 @@ $breakpoint-mobile: 660px;
 
 	.button.is-primary,
 	.login .button.is-primary,
-	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+	.magic-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		background-color: var(--woo-purple-60);
 		border: none;
 		color: #fff;
@@ -1099,7 +1099,7 @@ $breakpoint-mobile: 660px;
 
 		.button.is-primary,
 		.login .button.is-primary,
-		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+		.magic-login .magic-login__form-action .button.is-primary:not([disabled]) {
 			background-color: var(--woo-purple-50);
 			font-family: $woo-inter-font;
 			font-size: 1rem;
@@ -1863,7 +1863,7 @@ $breakpoint-mobile: 660px;
 
 	.button.is-primary,
 	.login .button.is-primary,
-	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+	.magic-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		@include button-primary;
 	}
 

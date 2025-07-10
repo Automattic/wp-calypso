@@ -66,7 +66,6 @@ class Login extends Component {
 		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isWhiteLogin: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
@@ -106,7 +105,6 @@ class Login extends Component {
 
 	static defaultProps = {
 		isJetpack: false,
-		isWhiteLogin: false,
 	};
 
 	componentDidMount() {
@@ -594,7 +592,6 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
 			isSignupExistingAccount,
-			isWhiteLogin,
 			linkingSocialService,
 			socialConnect,
 			twoStepNonce,
@@ -635,7 +632,7 @@ class Login extends Component {
 
 				{ this.renderNotice() }
 
-				{ ! isWhiteLogin && this.renderToS() }
+				{ isGravPoweredClient && this.renderToS() }
 
 				{ this.renderContent() }
 

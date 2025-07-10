@@ -13,13 +13,6 @@ $image-height: 47px;
 	position: relative;
 	min-height: 100%; // Needed for any screen not yet using a StepContainerV2 wireframe (e.g. magic login).
 
-	// This adjustment is only necessary when rendering the Jetpack colophon.
-	// isWhiteLogin screens don't need it.
-	&:where(:not(.is-white-login)) {
-		padding-bottom: $image-height;
-		min-height: calc(100% - #{$image-height});
-	}
-
 	.layout__content {
 		position: static;
 	}
@@ -257,7 +250,7 @@ $image-height: 47px;
 	display: none;
 }
 
-.layout.is-white-login {
+.layout:not(.is-grav-powered-client) {
 	background-color: var( --color-main-background, #fcfcfc );
 
 	// Specificity bump.

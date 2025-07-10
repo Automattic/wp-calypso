@@ -45,7 +45,7 @@
 	}
 }
 
-.is-white-login {
+:not(.is-grav-powered-client) {
 	.continue-as-user {
 		height: auto;
 	}
