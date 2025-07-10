@@ -37,7 +37,7 @@
 }
 
 .site-icon__img {
-	background: #f0f0f0;
+	background: var(--color-surface);
 	border-radius: 4px;
 	outline: 1px solid rgba(0, 0, 0, 0.04);
 	outline-offset: -1px;
