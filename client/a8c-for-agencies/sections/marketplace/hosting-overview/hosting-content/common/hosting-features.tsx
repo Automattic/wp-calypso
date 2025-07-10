@@ -1,5 +1,6 @@
 import { code, copy, key, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { BackgroundType9 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingFeaturesSectionV2 from '../../../common/hosting-features-section-v2';
 
@@ -12,12 +13,11 @@ type Props = {
 export default function HostingFeatures( { heading, isPressable, useSignaturePlans }: Props ) {
 	const translate = useTranslate();
 
-	const phpWorkers = translate( '%(workers)d PHP workers w/ auto-scaling', {
-		args: {
-			workers: useSignaturePlans ? 5 : 10,
-		},
-		comment: '%(workers)s is the number of PHP workers.',
-	} ).toString();
+	const phpWorkers = useMemo( () => {
+		return useSignaturePlans
+			? translate( '5 PHP workers w/ auto-scaling' )
+			: translate( '10 PHP workers w/ auto-scaling' );
+	}, [ useSignaturePlans, translate ] );
 
 	return (
 		<HostingFeaturesSectionV2
