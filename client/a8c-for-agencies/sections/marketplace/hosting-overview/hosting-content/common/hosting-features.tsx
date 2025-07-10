@@ -12,6 +12,13 @@ type Props = {
 export default function HostingFeatures( { heading, isPressable, useSignaturePlans }: Props ) {
 	const translate = useTranslate();
 
+	const phpWorkers = translate( '%(workers)d PHP workers w/ auto-scaling', {
+		args: {
+			workers: useSignaturePlans ? 5 : 10,
+		},
+		comment: '%(workers)s is the number of PHP workers.',
+	} ).toString();
+
 	return (
 		<HostingFeaturesSectionV2
 			heading={ heading }
@@ -28,12 +35,7 @@ export default function HostingFeatures( { heading, isPressable, useSignaturePla
 						translate( 'High-burst capacity' ),
 						translate( 'Automated datacenter failover' ),
 						translate( 'Extremely fast DNS with SSL' ),
-						translate( '%(workers)d PHP workers w/ auto-scaling', {
-							args: {
-								workers: useSignaturePlans ? 5 : 10,
-							},
-							comment: '%(workers)s is the number of PHP workers.',
-						} ),
+						phpWorkers,
 						translate( 'Uptime monitoring' ),
 					],
 				},
