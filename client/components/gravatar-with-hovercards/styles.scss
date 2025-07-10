@@ -1,6 +1,15 @@
 .gravatar-hovercard {
 	// Ensure our styles take precedence over the default styles
 	.gravatar-hovercard__inner {
+		.gravatar-hovercard__header {
+			.gravatar-hovercard__name {
+				color: var( --color-text );
+			}
+			.gravatar-hovercard__description {
+				color: var( --color-text );
+				margin-bottom: 4px;
+			}
+		}
 		.gravatar-hovercard__primary-blog-card {
 			background: var( --color-main-background );
 			border: 1px solid var( --color-border-subtle );
