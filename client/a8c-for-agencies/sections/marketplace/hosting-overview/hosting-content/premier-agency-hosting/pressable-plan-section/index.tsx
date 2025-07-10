@@ -56,8 +56,8 @@ export default function PressablePlanSection( {
 		return (
 			isReferralMode ||
 			existingPlanInfo === null ||
-			existingPlanInfo.category === PLAN_CATEGORY_SIGNATURE ||
-			existingPlanInfo.category === PLAN_CATEGORY_SIGNATURE_HIGH
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
 		);
 	}, [ existingPlanInfo, isReferralMode ] );
 
