@@ -86,11 +86,13 @@ const sitesRoute = createRoute( {
 	validateSearch: ( search ) => {
 		// Deserialize the view search param if it exists on the first page load.
 		if ( typeof search.view === 'string' ) {
+			let parsedView;
 			try {
-				return { ...search, view: JSON.parse( search.view ) };
+				parsedView = JSON.parse( search.view );
 			} catch ( e ) {
 				// pass
 			}
+			return { ...search, view: parsedView };
 		}
 		return search;
 	},
