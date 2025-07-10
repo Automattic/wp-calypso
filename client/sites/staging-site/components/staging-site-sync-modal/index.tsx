@@ -287,6 +287,7 @@ export default function SyncModal( {
 					<div className="staging-site-card">
 						<HStack spacing={ 2 } justify="space-between" alignment="center">
 							<CheckboxControl
+								__nextHasNoMarginBottom
 								label={ __( 'Files and folders' ) }
 								checked={ rootNode ? rootNode.checkState === 'checked' : false }
 								indeterminate={ rootNode && rootNode.checkState === 'mixed' }
