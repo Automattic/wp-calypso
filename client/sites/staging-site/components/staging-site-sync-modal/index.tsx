@@ -7,10 +7,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	CheckboxControl,
+	SelectControl,
 } from '@wordpress/components';
 import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronRight, chevronLeft, chevronDown, chevronUp } from '@wordpress/icons';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
@@ -223,7 +224,7 @@ export default function SyncModal( {
 		) {
 			if ( rootNode?.checkState === 'checked' ) {
 				// Sync everything
-				pullFromStaging( { types: 'all' } );
+				pullFromStaging( { types: 'all', include_paths: '' } );
 			} else {
 				// Sync only selected files
 				const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -242,6 +243,16 @@ export default function SyncModal( {
 
 	const onCheckboxChange = () => {
 		updateNodeCheckState( rootNode?.checkState === 'unchecked' ? 'checked' : 'unchecked' );
+	};
+
+	const handleExpanderChange = ( value: string ) => {
+		const isExpanded = value === 'true';
+		setIsFileBrowserVisible( isExpanded );
+
+		if ( ! isExpanded ) {
+			// When collapsing, select all files
+			updateNodeCheckState( 'checked' );
+		}
 	};
 
 	return (
@@ -281,15 +292,24 @@ export default function SyncModal( {
 								indeterminate={ rootNode && rootNode.checkState === 'mixed' }
 								onChange={ onCheckboxChange }
 							/>
-							<Button
-								onClick={ () => {
-									setIsFileBrowserVisible( ! isFileBrowserVisible );
-								} }
-								icon={ isFileBrowserVisible ? chevronUp : chevronDown }
-								iconPosition="right"
-							>
-								{ __( 'All files and folders' ) }
-							</Button>
+							<SelectControl
+								value={ isFileBrowserVisible ? 'true' : 'false' }
+								variant="minimal"
+								options={ [
+									{
+										label: __( 'All files and folders' ),
+										value: 'false',
+									},
+									{
+										label: __( 'Specific files and folders' ),
+										value: 'true',
+									},
+								] }
+								onChange={ handleExpanderChange }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								aria-label={ __( 'Select files and folders to sync' ) }
+							/>
 						</HStack>
 
 						{ isFileBrowserVisible && (
