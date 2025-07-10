@@ -468,6 +468,8 @@ $image-height: 47px;
 
 /* stylelint-disable scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
+	padding-bottom: $image-height;
+	min-height: calc(100% - #{$image-height});
 	background-color: #fff;
 
 	&.is-wp-job-manager {

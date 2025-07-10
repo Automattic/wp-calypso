@@ -309,7 +309,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	display: none;
 }
 
-:not(.is-grav-powered-client) {
+.layout:not(.is-grav-powered-client) {
 	.is-social-first {
 		.login__form-subheader-terms {
 			display: block;

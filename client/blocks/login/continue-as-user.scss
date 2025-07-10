@@ -45,7 +45,7 @@
 	}
 }
 
-:not(.is-grav-powered-client) {
+.layout:not(.is-grav-powered-client) {
 	.continue-as-user {
 		height: auto;
 	}

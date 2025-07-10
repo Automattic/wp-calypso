@@ -168,8 +168,8 @@
 	}
 }
 
-:not(.is-grav-powered-client) .magic-login__handle-link,
-:not(.is-grav-powered-client) .magic-login__link-expired {
+.layout:not(.is-grav-powered-client) .magic-login__handle-link,
+.layout:not(.is-grav-powered-client) .magic-login__link-expired {
 	.empty-content__title {
 		font-family: $brand-serif;
 		font-size: rem(42px);

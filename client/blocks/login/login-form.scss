@@ -14,7 +14,7 @@ form {
 	}
 }
 
-:not(.is-grav-powered-client) {
+.layout:not(.is-grav-powered-client) {
 	.login {
 		display: flex;
 		flex-direction: column;

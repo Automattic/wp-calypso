@@ -339,9 +339,9 @@ export default withCurrentRoute(
 			const isMobile = isAndroidOAuth2Client( oauth2Client ) || isIosOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-			const isGravPoweredLogin = currentRoute.startsWith( '/log-in' ) && isGravPoweredClient;
+			const isLogin = currentRoute.startsWith( '/log-in' );
 
-			const noMasterbarForRoute = isGravPoweredLogin || isInvitationURL;
+			const noMasterbarForRoute = isLogin || isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
