@@ -33,7 +33,7 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 				alt={ site.name }
 				{ ...dims }
 				loading="lazy"
-				style={ { width: size, height: size } }
+				style={ { width: size, height: size, minWidth: size } }
 			/>
 		);
 	}
