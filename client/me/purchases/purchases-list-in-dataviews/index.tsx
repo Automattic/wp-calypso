@@ -1,8 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
+import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { LocalizeProps, localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
@@ -16,7 +18,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
-	GetManagePurchaseUrlFor,
+	type GetManagePurchaseUrlFor,
 	MembershipSubscription,
 	Purchase,
 } from 'calypso/lib/purchases/types';
@@ -27,6 +29,7 @@ import {
 	WithStoredPaymentMethodsProps,
 	withStoredPaymentMethods,
 } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -44,6 +47,7 @@ import { AppState } from 'calypso/types';
 import { PurchasesByOtherAdminsNotice } from '../purchases-list/purchases-by-other-admins-notice';
 import PurchasesSite from '../purchases-site';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
+import './style.scss';
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;
@@ -53,13 +57,14 @@ export interface PurchasesListProps {
 export interface PurchasesListConnectedProps {
 	hasLoadedUserPurchasesFromServer: boolean;
 	isFetchingUserPurchases: boolean;
-	purchases: Purchase[] | null;
+	purchases: Purchase[];
 	subscriptions: MembershipSubscription[];
 	sites: SiteDetails[];
 	nextAppointment: NextAppointment | null;
 	isUserBlocked: boolean;
 	availableSessions: number[];
 	siteId: number | null;
+	userId?: number | null;
 }
 
 function MembershipSubscriptions( {
@@ -74,107 +79,52 @@ function MembershipSubscriptions( {
 	return <MembershipsDataViews memberships={ memberships } />;
 }
 
-function isDataLoading( {
-	isFetchingUserPurchases,
+const PurchasesListDataView: React.FC<
+	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps
+> = ( {
 	hasLoadedUserPurchasesFromServer,
-}: {
-	hasLoadedUserPurchasesFromServer: boolean;
-	isFetchingUserPurchases: boolean;
-} ) {
-	if ( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) {
-		return true;
-	}
-}
-
-function ConciergeBanner( {
+	isFetchingUserPurchases,
+	getManagePurchaseUrlFor,
+	purchases,
+	subscriptions,
+	sites,
 	nextAppointment,
-	availableSessions,
 	isUserBlocked,
-}: Pick<
-	PurchasesListConnectedProps,
-	'nextAppointment' | 'availableSessions' | 'isUserBlocked'
-> ) {
-	return (
-		<PurchaseListConciergeBanner
-			nextAppointment={ nextAppointment ?? undefined }
-			availableSessions={ availableSessions }
-			isUserBlocked={ isUserBlocked }
-		/>
-	);
-}
+	availableSessions,
+	userId,
+} ) => {
+	const translate = useTranslate();
+	const {
+		data: transferredOwnershipPurchases = [],
+		isLoading,
+		isSuccess: hasLoadedTransferredOwnershipPurchases,
+	} = useGetJetpackTransferredLicensePurchases( { userId: userId || undefined } );
 
-function PurchasesListDataView(
-	props: PurchasesListProps &
-		PurchasesListConnectedProps &
-		WithStoredPaymentMethodsProps &
-		LocalizeProps
-) {
-	const { purchases, sites, translate, subscriptions } = props;
-	const commonEventProps = { context: 'me' };
-	let content;
-
-	if (
-		isDataLoading( {
-			isFetchingUserPurchases: props.isFetchingUserPurchases,
-			hasLoadedUserPurchasesFromServer: props.hasLoadedUserPurchasesFromServer,
-		} )
-	) {
-		content = <PurchasesSite isPlaceholder />;
-	}
-
-	if ( purchases && purchases.length ) {
-		content = (
-			<PurchasesDataViews
-				purchases={ purchases }
-				sites={ sites }
-				getManagePurchaseUrlFor={ props.getManagePurchaseUrlFor }
-			/>
-		);
-	}
-
-	if ( purchases && ! purchases.length && ! subscriptions.length ) {
-		if ( ! sites.length ) {
-			return (
-				<Main wideLayout className="purchases-list">
-					<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-					<PurchasesNavigation section="activeUpgrades" />
-					<NoSitesMessage />
-				</Main>
-			);
+	const isDataLoading = useCallback( () => {
+		if (
+			( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) ||
+			( isLoading && ! hasLoadedTransferredOwnershipPurchases )
+		) {
+			return true;
 		}
-		content = (
-			<>
-				<ConciergeBanner
-					nextAppointment={ props.nextAppointment }
-					availableSessions={ props.availableSessions }
-					isUserBlocked={ props.isUserBlocked }
-				/>
-				<CompactCard className="purchases-list__no-content">
-					<>
-						<TrackComponentView
-							eventName="calypso_no_purchases_upgrade_nudge_impression"
-							eventProperties={ commonEventProps }
-						/>
-						<PurchasesByOtherAdminsNotice sites={ sites } />
-						<EmptyContent
-							title={ translate( 'Looking to upgrade?' ) }
-							line={ translate(
-								'Our plans give your site the power to thrive. ' +
-									'Find the plan that works for you.'
-							) }
-							action={ translate( 'Upgrade now' ) }
-							actionURL="/plans"
-							illustration={ noSitesIllustration }
-							actionCallback={ () => {
-								recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
-							} }
-						/>
-					</>
-				</CompactCard>
-			</>
-		);
-	}
+
+		return false;
+	}, [
+		hasLoadedUserPurchasesFromServer,
+		isFetchingUserPurchases,
+		isLoading,
+		hasLoadedTransferredOwnershipPurchases,
+	] );
+
+	const allPurchasesLoaded =
+		hasLoadedUserPurchasesFromServer && hasLoadedTransferredOwnershipPurchases;
+
+	const allPurchases = useMemo( () => {
+		if ( allPurchasesLoaded ) {
+			return [ ...( purchases || [] ), ...transferredOwnershipPurchases ];
+		}
+		return [];
+	}, [ allPurchasesLoaded, purchases, transferredOwnershipPurchases ] );
 
 	return (
 		<Main wideLayout className="purchases-list">
@@ -186,7 +136,7 @@ function PurchasesListDataView(
 				navigationItems={ [] }
 				title={ titles.sectionTitle }
 				subtitle={ translate(
-					'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
@@ -195,23 +145,129 @@ function PurchasesListDataView(
 				) }
 			/>
 			<PurchasesNavigation section="activeUpgrades" />
-			{ content }
+			<PurchasesContent
+				isDataLoading={ isDataLoading() }
+				allPurchases={ allPurchases }
+				transferredOwnershipPurchases={ transferredOwnershipPurchases }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				subscriptions={ subscriptions }
+				sites={ sites }
+				nextAppointment={ nextAppointment }
+				isUserBlocked={ isUserBlocked }
+				availableSessions={ availableSessions }
+			/>
 			<MembershipSubscriptions memberships={ subscriptions } />
 			<QueryConciergeInitial />
 		</Main>
+	);
+};
+
+function PurchasesContent( {
+	isDataLoading,
+	allPurchases,
+	transferredOwnershipPurchases,
+	getManagePurchaseUrlFor,
+	subscriptions,
+	sites,
+	nextAppointment,
+	isUserBlocked,
+	availableSessions,
+}: {
+	isDataLoading: boolean;
+	allPurchases: Purchase[];
+	transferredOwnershipPurchases: Purchase[];
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	subscriptions: MembershipSubscription[];
+	sites: SiteDetails[];
+	nextAppointment: NextAppointment | null;
+	isUserBlocked: boolean;
+	availableSessions: number[];
+} ) {
+	const translate = useTranslate();
+
+	// If the data is loading, render the loading indicator.
+	if ( isDataLoading ) {
+		return <PurchasesSite isPlaceholder />;
+	}
+
+	// If the user has regular subscriptions, render them. Note that
+	// memberships subscriptions are rendered separately in the parent
+	// component.
+	if ( allPurchases.length ) {
+		return (
+			<PurchasesDataViews
+				purchases={ allPurchases }
+				sites={ sites }
+				transferredOwnershipPurchases={ transferredOwnershipPurchases }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+			/>
+		);
+	}
+
+	// If the user has no regular subscriptions, but does have memberships
+	// subscriptions, render nothing. The memberships subscriptions will be
+	// rendered separately in the parent component.
+	if ( subscriptions.length ) {
+		return null;
+	}
+
+	// If the user has no regular subscriptions, no memberships subscriptions,
+	// and no sites, render the "no sites" page.
+	if ( ! sites.length ) {
+		return (
+			<Main wideLayout className="purchases-list">
+				<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+				<PurchasesNavigation section="activeUpgrades" />
+				<NoSitesMessage />
+			</Main>
+		);
+	}
+
+	// If the user has no regular subscriptions, no memberships subscriptions,
+	// but does have sites, render the upsell page.
+	const commonEventProps = { context: 'me' };
+	return (
+		<>
+			<PurchaseListConciergeBanner
+				nextAppointment={ nextAppointment ?? undefined }
+				availableSessions={ availableSessions }
+				isUserBlocked={ isUserBlocked }
+			/>
+			<CompactCard className="purchases-list__no-content">
+				<>
+					<TrackComponentView
+						eventName="calypso_no_purchases_upgrade_nudge_impression"
+						eventProperties={ commonEventProps }
+					/>
+					<PurchasesByOtherAdminsNotice sites={ sites } />
+					<EmptyContent
+						title={ translate( 'Looking to upgrade?' ) }
+						line={ translate(
+							'Our plans give your site the power to thrive. ' + 'Find the plan that works for you.'
+						) }
+						action={ translate( 'Upgrade now' ) }
+						actionURL="/plans"
+						illustration={ noSitesIllustration }
+						actionCallback={ () => {
+							recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+						} }
+					/>
+				</>
+			</CompactCard>
+		</>
 	);
 }
 
 export default connect( ( state: AppState ) => ( {
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	isFetchingUserPurchases: isFetchingUserPurchases( state ),
-	purchases: getUserPurchases( state ),
+	purchases: getUserPurchases( state ) ?? [],
 	subscriptions: getAllSubscriptions( state ),
 	sites: getSites( state ).filter( isValueTruthy ),
 	nextAppointment: getConciergeNextAppointment( state ),
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-} ) )(
-	withStoredPaymentMethods( localize( PurchasesListDataView ), { type: 'card', expired: true } )
-);
+	userId: getCurrentUserId( state ),
+} ) )( withStoredPaymentMethods( PurchasesListDataView, { type: 'card', expired: true } ) );

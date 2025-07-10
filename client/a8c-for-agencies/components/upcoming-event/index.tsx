@@ -1,28 +1,57 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { UpcomingEventProps } from './types';
+
 import './style.scss';
 
 const UpcomingEvent = ( {
 	date,
 	title,
 	subtitle,
-	description,
-	registrationUrl,
+	descriptions,
+	cta,
 	logoUrl,
 	imageUrl,
 	trackEventName,
 	dateClassName,
 	imageClassName,
+	extraContent,
+	id,
 }: UpcomingEventProps ): JSX.Element => {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const displayDate = date ? date.format( 'MMMM Do' ) : '';
-	const dateTimeString = date ? date.format( 'YYYY-MM-DD' ) : undefined;
+	const displayDate = useMemo( () => {
+		if ( ! date ) {
+			return '';
+		}
+
+		if ( date.from.isSame( date.to, 'day' ) ) {
+			return date.to.format( 'MMMM Do' );
+		}
+
+		if ( date.from.isSame( date.to, 'month' ) ) {
+			return `${ date.from.format( 'MMMM' ) } ${ date.from.format( 'Do' ) }-${ date.to.format(
+				'Do'
+			) }`;
+		}
+
+		return `${ date.from.format( 'MMMM Do' ) }-${ date.to.format( 'MMMM Do' ) }`;
+	}, [ date ] );
+
+	const dateTimeString = useMemo( () => {
+		if ( ! date ) {
+			return '';
+		}
+
+		if ( date.from.isSame( date.to, 'day' ) ) {
+			return date.to.format( 'YYYY-MM-DD' );
+		}
+
+		return `${ date.from.format( 'YYYY-MM-DD' ) }/${ date.to.format( 'YYYY-MM-DD' ) }`;
+	}, [ date ] );
 
 	const handleRegisterClick = (): void => {
 		dispatch( recordTracksEvent( trackEventName ) );
@@ -44,17 +73,24 @@ const UpcomingEvent = ( {
 					</div>
 				</div>
 
-				<p className="a4a-event__description">{ description }</p>
+				<div className="a4a-event__descriptions">
+					{ descriptions.map( ( item, index ) => (
+						<p key={ `event-${ id }-deescription-${ index }` }>{ item }</p>
+					) ) }
+				</div>
 
-				<Button
-					className="a4a-event__button"
-					variant="secondary"
-					target="_blank"
-					href={ registrationUrl }
-					onClick={ handleRegisterClick }
-				>
-					{ translate( 'Register for free ↗' ) }
-				</Button>
+				<div className="a4a-event__footer">
+					<Button
+						className="a4a-event__button"
+						variant="secondary"
+						target="_blank"
+						href={ cta.url }
+						onClick={ handleRegisterClick }
+					>
+						{ cta.label }
+					</Button>
+					{ extraContent }
+				</div>
 			</div>
 			<div
 				className={ clsx( 'a4a-event__image', imageClassName ) }

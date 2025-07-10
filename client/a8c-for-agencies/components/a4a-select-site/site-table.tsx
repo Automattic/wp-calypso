@@ -1,6 +1,6 @@
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -37,7 +37,20 @@ const A4ASelectSiteTable = ( {
 		[ dispatch, setSelectedSite ]
 	);
 
-	const updatedSelectedSiteId = selectedSite?.rawSite.blog_id || selectedSiteId;
+	const prevSelectedSiteId = useRef< number | undefined >();
+
+	// Only update when selectedSiteId actually changes, not when items array is recreated
+	useEffect( () => {
+		if ( selectedSiteId && selectedSiteId !== prevSelectedSiteId.current && items?.length > 0 ) {
+			const foundSite = items.find( ( item ) => item.rawSite.blog_id === selectedSiteId );
+			if ( foundSite ) {
+				setSelectedSite( foundSite );
+				prevSelectedSiteId.current = selectedSiteId;
+			}
+		}
+	}, [ items, selectedSiteId, setSelectedSite ] );
+
+	const updatedSelectedSiteId = selectedSite?.rawSite.blog_id;
 
 	const fields = useMemo( () => {
 		const siteColumn = {

@@ -10,7 +10,8 @@ import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getIsStagingSiteInTransition } from 'calypso/state/staging-site/selectors';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './preview-pane-header-buttons.scss';
@@ -27,25 +28,40 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
+	const site = useSelector( ( state ) => getSite( state, itemData.blogId ) );
+
 	const isStagingSite = useSelector( ( state ) =>
 		isSiteWpcomStaging( state, itemData.blogId ?? null )
 	);
 	const hasStagingSite = useSelector( ( state ) =>
 		hasWpcomStagingSite( state, itemData.blogId ?? null )
 	);
-	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign && ( isStagingSite || hasStagingSite )
+	const isStagingSiteInTransition = useSelector( ( state ) =>
+		getIsStagingSiteInTransition( state, itemData.blogId ?? 0 )
 	);
 
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, itemData.blogId ) ) ?? '';
+	const shouldShowSyncDropdown = Boolean(
+		stagingSitesRedesign && ( isStagingSite || hasStagingSite ) && ! isStagingSiteInTransition
+	);
+
+	const productionSiteId = isStagingSite
+		? site?.options?.wpcom_production_blog_id ?? 0
+		: itemData.blogId ?? 0;
+
+	const stagingSiteId = hasStagingSite
+		? site?.options?.wpcom_staging_blog_ids?.[ 0 ] ?? 0
+		: itemData.blogId ?? 0;
+
+	const environment = isStagingSite ? 'staging' : 'production';
 
 	return (
 		<>
 			{ shouldShowSyncDropdown && (
 				<SyncDropdown
 					className="item-preview__sync-dropdown"
-					environment={ isStagingSite ? 'staging' : 'production' }
-					siteSlug={ siteSlug }
+					environment={ environment }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
 				/>
 			) }
 			<Button

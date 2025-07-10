@@ -1,5 +1,4 @@
 import { MaterialIcon } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	StepContainer,
 	GOOGLE_TRANSFER,
@@ -20,7 +19,6 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
-	const hasEnTranslation = useHasEnTranslation();
 
 	const handleSubmit = () => {
 		submit?.();
@@ -85,9 +83,7 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 					section="domains-transfer"
 				>
 					<MaterialIcon icon="chat_bubble" />
-					{ hasEnTranslation( 'Need help? Contact us' )
-						? __( 'Need help? Contact us' )
-						: __( 'Need help? Chat with us' ) }
+					{ __( 'Need help?' ) }
 				</ChatButton>
 			}
 		/>

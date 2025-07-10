@@ -1,5 +1,5 @@
+import { isCreditCard, type StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { isCreditCard, type StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import {
 	getTaxValidationResult,

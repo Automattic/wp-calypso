@@ -16,7 +16,6 @@ type Props = {
 	surveyStep?: string;
 	onClick: () => void;
 	className?: string;
-	label?: string;
 };
 
 const PrecancellationChatButton: FC< Props > = ( {
@@ -24,7 +23,6 @@ const PrecancellationChatButton: FC< Props > = ( {
 	surveyStep = '',
 	onClick,
 	className,
-	label,
 } ) => {
 	const translate = useTranslate();
 	const siteUrl =
@@ -60,10 +58,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 			onClick={ handleClick }
 			section="pre-cancellation"
 		>
-			{ label ||
-				translate( 'Need help? {{span}}Contact us{{/span}}', {
-					components: { span: <span /> },
-				} ) }
+			{ translate( 'Need help?' ) }
 		</ChatButton>
 	);
 };

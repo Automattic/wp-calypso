@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
@@ -11,6 +10,7 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -22,7 +22,7 @@ import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Site, SiteSettings } from '../../data/types';
-import type { Field, SimpleFormField } from '@automattic/dataviews';
+import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 export function canUpdateA4AFullyManagedSetting( site: Site ) {
 	return site.is_wpcom_atomic;

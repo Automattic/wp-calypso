@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -7,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import {
@@ -19,7 +19,7 @@ import SitePreviewLink from '../../components/site-preview-link';
 import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
 import type { Site } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 interface SitePreviewLinkProps {
 	site: Site;

@@ -37,6 +37,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
+		"test": "yarn jest",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
@@ -61,9 +62,12 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^6.6.3",
 		"@types/autosize": "^4.0.3",
+		"@types/jest": "^29.5.14",
 		"@types/react": "^18.3.23",
 		"@types/smooch": "^5.3.7",
+		"jest": "^29.7.0",
 		"typescript": "^5.8.3"
 	}
 }

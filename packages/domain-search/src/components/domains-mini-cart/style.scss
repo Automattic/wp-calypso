@@ -1,0 +1,28 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.domains-mini-cart {
+	position: fixed !important;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.domains-mini-cart__content {
+	box-sizing: border-box;
+	margin: 0 auto;
+	padding: 1rem;
+	width: 100%;
+	max-width: 64rem;
+}
+
+.domains-mini-cart-actions__view-cart {
+	// We need to use !important here because WPCOM adds overrides to the button with a very high specificity.
+	--wp-components-color-accent: var( --domain-search-secondary-action-color ) !important;
+	--wp-components-color-accent-darker-20: var( --domain-search-secondary-action-color ) !important;
+	text-decoration: underline;
+}
+
+.domains-mini-cart-summary__total {
+	font-size: 1rem;
+}

@@ -2,12 +2,13 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
-import { useRef, useEffect, useCallback, FC } from 'react';
+import { useRef, useEffect, useCallback, FC, useState } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 /**
  * Internal Dependencies
@@ -26,10 +27,26 @@ interface OptionalDraggableProps extends Partial< DraggableProps > {
 }
 
 const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props } ) => {
+	const dims = useWindowDimensions();
+	const [ position, setPosition ] = useState( { x: 0, y: 0 } );
+
+	useEffect( () => {
+		// Reset drag position when window dimensions change
+		setPosition( { x: 0, y: 0 } );
+	}, [ dims.width, dims.height ] );
+
 	if ( ! draggable ) {
 		return <>{ props.children }</>;
 	}
-	return <Draggable { ...props } />;
+
+	return (
+		<Draggable
+			position={ position }
+			onDrag={ ( _, p ) => setPosition( p ) }
+			bounds="body"
+			{ ...props }
+		/>
+	);
 };
 
 const HelpCenterContainer: React.FC< Container > = ( {

@@ -25,6 +25,8 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			persist: false,
 		},
 		enabled,
+		// Cast down to boolean.
+		select: ( data ) => !! data,
 	} );
 
 	useEffect( () => {

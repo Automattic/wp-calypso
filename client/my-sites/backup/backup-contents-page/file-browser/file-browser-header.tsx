@@ -14,18 +14,22 @@ import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { backupGranularRestorePath } from '../../paths';
 import { FileBrowserCheckState } from './types';
 
 interface FileBrowserHeaderProps {
 	rewindId: number;
+	showHeaderButtons?: boolean;
+	siteId: number;
 }
 
-const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewindId } ) => {
+const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
+	rewindId,
+	showHeaderButtons = true,
+	siteId,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId ) as number;
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
@@ -67,7 +71,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 
 	return (
 		<div className="file-browser-header">
-			{ browserCheckList.totalItems > 0 && (
+			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
 				<div className="file-browser-header__action-buttons">
 					<Button className="file-browser-header__download-button" onClick={ onDownloadClick }>
 						{ translate( 'Download selected files' ) }

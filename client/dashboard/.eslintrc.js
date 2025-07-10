@@ -7,10 +7,6 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
-							// Allowed: calypso/components/async-load
-							'!calypso/components',
-							'calypso/components/*',
-							'!calypso/components/async-load',
 							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',
@@ -44,7 +40,6 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/calypso-analytics',
-							'!@automattic/dataviews',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
 							'!@automattic/viewport',

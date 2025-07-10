@@ -27,7 +27,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { PROFESSIONAL_EMAIL_UPSELL } from '../index';
-import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
+import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '@automattic/data-stores', () => ( {

@@ -145,7 +145,7 @@ export default function ProductInfo( {
 								},
 							} ) }
 					</label>
-					<span className="product-info__count">{ countInfo }</span>
+					{ ! isAutomatedReferrals && <span className="product-info__count">{ countInfo }</span> }
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
 				{

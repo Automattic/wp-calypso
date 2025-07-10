@@ -94,6 +94,8 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 															)
 														)
 													}
+													target="_blank"
+													rel="noreferrer"
 												/>
 											),
 										},
@@ -102,7 +104,7 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 							</span>
 							<span>
 								{ translate(
-									'Only live WordPress.com or Pressable sites using Jetpack or the Automattic for Agencies plugin are supported.'
+									'Only live WordPress.com or Pressable sites using Jetpack are supported.'
 								) }
 							</span>
 						</div>
@@ -115,7 +117,6 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 					} }
 					buttonLabel={ selectedSite?.domain || translate( 'Choose a site to report on' ) }
 					trackingEvent="calypso_a4a_reports_select_site_button_click"
-					data-field="selectedSite"
 					aria-required="true"
 					aria-describedby="selected-site-error"
 				/>
@@ -198,7 +199,16 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 										// Disable dates from today onwards (only yesterday and earlier allowed)
 										const today = new Date();
 										today.setHours( 0, 0, 0, 0 ); // Start of today
-										return new Date( date ) >= today;
+
+										// Calculate 6 months ago
+										const sixMonthsAgo = new Date();
+										sixMonthsAgo.setMonth( sixMonthsAgo.getMonth() - 6 );
+										sixMonthsAgo.setHours( 0, 0, 0, 0 );
+
+										const selectedDate = new Date( date );
+
+										// Disable if date is today or later, OR if date is older than 6 months
+										return selectedDate >= today || selectedDate < sixMonthsAgo;
 									} }
 								/>
 							</Popover>
@@ -337,6 +347,11 @@ export default function Step1Details( { formData, state, handlers }: StepProps )
 					) }
 				</div>
 			) }
+			<p className="build-report__step-note">
+				{ translate(
+					"You'll be able to select your data, preview the report, and send during the next 2 steps."
+				) }
+			</p>
 		</>
 	);
 }

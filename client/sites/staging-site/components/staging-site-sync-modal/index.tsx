@@ -6,19 +6,36 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalInputControl as InputControl,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
+import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
+import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
+import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+
+// TODO: Temporary style for the PoC
+import './style.scss';
+
+const fileBrowserConfig: FileBrowserConfig = {
+	restrictedTypes: [ 'plugin', 'theme' ],
+	restrictedPaths: [ 'wp-content' ],
+	excludeTypes: [ 'wordpress' ],
+	alwaysInclude: [ 'wp-config.php' ],
+	showHeaderButtons: false,
+	showFileCard: false,
+};
 
 const DirectionArrow = () => {
 	return (
@@ -36,23 +53,28 @@ const DirectionArrow = () => {
 interface EnvironmentLabelProps {
 	label: string;
 	environmentType: EnvironmentType;
+	siteTitle?: string;
 }
 
-const EnvironmentLabel = ( { label, environmentType }: EnvironmentLabelProps ) => {
+const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLabelProps ) => {
 	return (
-		<VStack spacing={ 1 } style={ { flex: 1 } }>
+		<VStack spacing={ 1 }>
 			<SectionHeader level={ 3 } title={ label } />
-			<InputControl
-				readOnly
-				prefix={
-					<InputControlPrefixWrapper>
-						<SiteEnvironmentBadge environmentType={ environmentType } />
-					</InputControlPrefixWrapper>
-				}
-				__next40pxDefaultSize
-				tabIndex={ -1 }
-				aria-hidden="true"
-			/>
+			<HStack spacing={ 2 }>
+				<SiteEnvironmentBadge environmentType={ environmentType } />
+				{ siteTitle && (
+					<Text
+						style={ {
+							whiteSpace: 'nowrap',
+							overflow: 'hidden',
+							textOverflow: 'ellipsis',
+							maxWidth: '190px',
+						} }
+					>
+						{ siteTitle }
+					</Text>
+				) }
+			</HStack>
 		</VStack>
 	);
 };
@@ -61,7 +83,8 @@ interface SyncModalProps {
 	onClose: () => void;
 	syncType: 'pull' | 'push';
 	environment: 'production' | 'staging';
-	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
 }
 
 interface EnvironmentConfig {
@@ -133,11 +156,70 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
-export default function SyncModal( { onClose, syncType, environment, siteSlug }: SyncModalProps ) {
+export default function SyncModal( {
+	onClose,
+	syncType,
+	environment,
+	productionSiteId,
+	stagingSiteId,
+}: SyncModalProps ) {
+	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
 
-	// TODO: Once we use the component in the Dashbaord V2, let's get siteSlug from Router instead of the passed prop
-	//const { siteSlug } = siteRoute.useParams();
+	const targetEnvironment = syncConfig[ environment ].syncTo;
+	const sourceEnvironment = syncConfig[ environment ].syncFrom;
+
+	const productionSiteSlug =
+		useSelector( ( state ) => getSiteSlug( state, productionSiteId ) ) || '';
+	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSiteId ) ) || '';
+
+	const productionSiteTitle =
+		useSelector( ( state ) => getSiteTitle( state, productionSiteId ) ) || '';
+	const stagingSiteTitle = useSelector( ( state ) => getSiteTitle( state, stagingSiteId ) ) || '';
+
+	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
+
+	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
+	const targetSiteTitle =
+		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
+
+	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+
+	const browserCheckList = useSelector( ( state ) =>
+		getBackupBrowserCheckList( state, querySiteId )
+	);
+
+	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
+			// setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+					code: error.code,
+				} )
+			);
+			// setSyncError( error.code );
+		},
+	} );
+
+	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
+		sortOrder: 'desc',
+		successOnly: true,
+	} );
+	const rewindId = lastKnownBackupAttempt?.rewindId;
+
+	const handleConfirm = () => {
+		if (
+			( syncType === 'pull' && environment === 'production' ) ||
+			( syncType === 'push' && environment === 'staging' )
+		) {
+			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+			pullFromStaging( { types: 'paths', include_paths } );
+			onClose();
+		}
+	};
 
 	return (
 		<Modal
@@ -145,36 +227,48 @@ export default function SyncModal( { onClose, syncType, environment, siteSlug }:
 			onRequestClose={ onClose }
 			style={ { maxWidth: '668px' } }
 		>
+			<QueryRewindState siteId={ querySiteId } />
 			<VStack spacing={ 6 }>
-				<VStack spacing={ 7 }>
-					<Text>
-						{ createInterpolateElement( syncConfig[ environment ].description, {
-							a: <ExternalLink href={ `/backup/${ siteSlug }` } children={ null } />,
-						} ) }
-					</Text>
-					<HStack spacing={ 2 } alignment="center">
-						<EnvironmentLabel
-							label={ syncConfig.fromLabel }
-							environmentType={ syncConfig[ environment ].syncFrom }
+				<Text>
+					{ createInterpolateElement( syncConfig[ environment ].description, {
+						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
+					} ) }
+				</Text>
+				<HStack spacing={ 4 } alignment="left">
+					<EnvironmentLabel
+						label={ syncConfig.fromLabel }
+						environmentType={ sourceEnvironment }
+						siteTitle={ sourceSiteTitle }
+					/>
+					<DirectionArrow />
+					<EnvironmentLabel
+						label={ syncConfig.toLabel }
+						environmentType={ targetEnvironment }
+						siteTitle={ targetSiteTitle }
+					/>
+				</HStack>
+				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
+				{ querySiteId === stagingSiteId && (
+					<div className="staging-site-card">
+						<FileBrowser
+							rewindId={ rewindId }
+							siteId={ querySiteId }
+							fileBrowserConfig={ fileBrowserConfig }
 						/>
-						<DirectionArrow />
-						<EnvironmentLabel
-							label={ syncConfig.toLabel }
-							environmentType={ syncConfig[ environment ].syncTo }
-						/>
-					</HStack>
-					<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
-					<Text>
-						{ createInterpolateElement( syncConfig.learnMore, {
-							a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
-						} ) }
-					</Text>
-				</VStack>
+					</div>
+				) }
+				<Text>
+					{ createInterpolateElement( syncConfig.learnMore, {
+						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
+					} ) }
+				</Text>
 				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button variant="primary">{ syncConfig.submit }</Button>
+					<Button variant="primary" onClick={ handleConfirm }>
+						{ syncConfig.submit }
+					</Button>
 				</HStack>
 			</VStack>
 		</Modal>

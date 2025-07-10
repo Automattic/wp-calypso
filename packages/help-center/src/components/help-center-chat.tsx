@@ -4,6 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -23,8 +24,8 @@ export function HelpCenterChat( {
 	const shouldUseWapuu = useShouldUseWapuu();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
-	const { currentUser, site, canConnectToZendesk, isLoadingCanConnectToZendesk } =
-		useHelpCenterContext();
+	const { currentUser, site } = useHelpCenterContext();
+	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
@@ -46,7 +47,7 @@ export function HelpCenterChat( {
 		<OdieAssistantProvider
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
-			isLoadingCanConnectToZendesk={ isLoadingCanConnectToZendesk }
+			isLoadingCanConnectToZendesk={ isLoading }
 			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }

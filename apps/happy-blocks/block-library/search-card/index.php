@@ -38,7 +38,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 -->
 	<div class="content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
-			<form class="" role="search" method="get" action="">
+			<form id="support-search-form" class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">
 					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>
 

@@ -19,3 +19,16 @@ export function getLastActionRequiresLogin( state ) {
 	}
 	return state.readerUi?.lastActionRequiresLogin;
 }
+
+/**
+ * Get last reader action that requires user to be logged in
+ * @param state redux state
+ * @returns string|null {loggedInAction} logged in action clicked in the reader
+ */
+export function getPersistedLastActionPriorToLogin( state ) {
+	// Check if lastActionRequiresLogin is defined, if not return null
+	if ( ! state.readerUi?.persistedLastActionPriorToLogin ) {
+		return null;
+	}
+	return state.readerUi?.persistedLastActionPriorToLogin;
+}

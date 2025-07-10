@@ -13,7 +13,7 @@ import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
-import { NewThirdPartyCookiesNotice } from './notices';
+import { BlockedZendeskNotice } from './notices';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 
@@ -26,7 +26,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
+	const { sectionName, site, currentUser } = useHelpCenterContext();
 	const query = params.get( 'query' );
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -45,7 +45,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const launchpadEnabled = site?.options?.launchpad_screen === 'full';
+	const isSiteOwner = site?.site_owner === currentUser?.ID;
+	const launchpadEnabled = site?.options?.launchpad_screen === 'full' && isSiteOwner;
 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that
@@ -92,7 +93,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			{ ! canConnectToZendesk && <NewThirdPartyCookiesNotice /> }
+			<BlockedZendeskNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }

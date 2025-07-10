@@ -5,29 +5,21 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import {
-	useState,
-	useCallback,
-	useEffect,
-	ChangeEvent,
-	Dispatch,
-	SetStateAction,
-	forwardRef,
-} from 'react';
+import { useState, useCallback, ChangeEvent, Dispatch, SetStateAction, forwardRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
-import usePlanBillingPeriod from '../../hooks/data-store/use-plan-billing-period';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import { useVisibleGridPlans } from '../../hooks/use-visible-grid-plans';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import PlanTypeSelector from '../plan-type-selector';
@@ -992,87 +984,15 @@ const ComparisonGrid = ( {
 	gridSize,
 	siteId,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
+	const { gridPlans, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
-	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
 
-	useEffect( () => {
-		let numPlansToDisplay = gridPlans.length;
-
-		switch ( gridSize ) {
-			case 'large':
-				numPlansToDisplay = 4;
-				break;
-			case 'medium':
-				numPlansToDisplay = 3;
-				break;
-			case 'smedium':
-			case 'small':
-				numPlansToDisplay = 2;
-				break;
-		}
-
-		let visiblePlanSlugs = gridPlans
-			.slice( 0, numPlansToDisplay )
-			.map( ( { planSlug } ) => planSlug );
-
-		const isCurrentPlanVisible =
-			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
-
-		/**
-		 * Plans are sorted by least to most expensive unless:
-		 * - a current plan exists and
-		 * - the current plan's term matches the selected term and
-		 * - the current plan would not be displayed due to the number of plans that can be visible at once
-		 *
-		 * If those conditions are met:
-		 * - the current plan is placed at the start of the grid and
-		 * - the last plan is removed to maintain the expected number of visible plans
-		 */
-		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
-			visiblePlanSlugs = [ currentSitePlanSlug, ...visiblePlanSlugs ].slice( 0, numPlansToDisplay );
-		}
-
-		setVisiblePlans( visiblePlanSlugs );
-	}, [
+	const { visibleGridPlans, setVisibleGridPlans } = useVisibleGridPlans( {
 		gridSize,
-		gridPlansIndex,
 		currentSitePlanSlug,
-		gridPlans,
-		currentPlanTerm,
-		selectedPlanTerm,
+		siteId,
 		intervalType,
-	] );
-
-	const visibleGridPlans = useMemo(
-		() =>
-			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = gridPlans.find(
-					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-				);
-
-				if ( gridPlan ) {
-					acc.push( gridPlan );
-				}
-
-				return acc;
-			}, [] as GridPlan[] ),
-		[ visiblePlans, gridPlans ]
-	);
-
-	const onPlanChange = useCallback(
-		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
-
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
+	} );
 
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
@@ -1107,6 +1027,20 @@ const ComparisonGrid = ( {
 		};
 	}, [ featureGroupMap ] );
 
+	const onPlanChange = useCallback(
+		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
+			const newPlanSlug = event.currentTarget.value;
+			const newPlan = gridPlans.find( ( plan ) => plan.planSlug === newPlanSlug );
+
+			if ( newPlan ) {
+				setVisibleGridPlans( ( previousGridPlans ) =>
+					previousGridPlans.map( ( plan ) => ( plan.planSlug === currentPlan ? newPlan : plan ) )
+				);
+			}
+		},
+		[ gridPlans, setVisibleGridPlans ]
+	);
+
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
@@ -1123,7 +1057,7 @@ const ComparisonGrid = ( {
 	return (
 		<table className={ classes }>
 			<StickyGrid
-				visiblePlans={ visiblePlans.length }
+				visiblePlans={ visibleGridPlans.length }
 				element="thead"
 				disabled={ isBottomHeaderInView }
 				stickyClass="is-sticky-header-row"
@@ -1158,7 +1092,7 @@ const ComparisonGrid = ( {
 					showUpgradeableStorage={ showUpgradeableStorage }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					plansLength={ visiblePlans.length }
+					plansLength={ visibleGridPlans.length }
 				/>
 			) ) }
 			<tbody>

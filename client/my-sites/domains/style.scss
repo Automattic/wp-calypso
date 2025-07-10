@@ -1,51 +1,53 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
-.domains__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		align-items: center;
-	}
-}
-
-body.is-section-domains.is-domain-plan-package-flow {
-	background: var(--color-body-background);
-
+.domain-search-legacy--my-sites {
 	.domains__header {
-		display: block;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
 
-		h1 {
-			font-family: $brand-serif;
-			font-size: $font-headline-small;
-		}
-
-		p {
-			font-size: $font-body;
-			color: var(--color-text-subtle);
-			text-align: center;
-			padding: 0 10px;
-			max-width: $break-small;
-			margin-inline: auto;
-		}
-
-		.domains__header-decide-later {
-			color: var(--studio-gray-90);
-			font-weight: 500;
-			padding-left: 5px;
-			text-decoration: underline;
+		@include breakpoint-deprecated( '<660px' ) {
+			align-items: center;
 		}
 	}
 
-	@include break-small {
+	&.is-section-domains.is-domain-plan-package-flow {
+		background: var( --color-body-background );
+
 		.domains__header {
+			display: block;
+
 			h1 {
-				font-size: $font-headline-medium;
+				font-family: $brand-serif;
+				font-size: $font-headline-small;
 			}
+
 			p {
-				padding: 0 80px;
+				font-size: $font-body;
+				color: var( --color-text-subtle );
+				text-align: center;
+				padding: 0 10px;
+				max-width: $break-small;
+				margin-inline: auto;
+			}
+
+			.domains__header-decide-later {
+				color: var( --studio-gray-90 );
+				font-weight: 500;
+				padding-left: 5px;
+				text-decoration: underline;
+			}
+		}
+
+		@include break-small {
+			.domains__header {
+				h1 {
+					font-size: $font-headline-medium;
+				}
+				p {
+					padding: 0 80px;
+				}
 			}
 		}
 	}

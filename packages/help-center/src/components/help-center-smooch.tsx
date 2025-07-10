@@ -4,10 +4,13 @@ import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
+	fetchMessagingAuth,
 	isTestModeEnvironment,
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
+	useCanConnectToZendeskMessaging,
 } from '@automattic/zendesk-client';
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
@@ -20,18 +23,36 @@ const destroy = () => {
 	Smooch.destroy();
 };
 
-const initSmooch = ( {
-	jwt,
-	externalId,
-}: {
-	isLoggedIn: boolean;
-	jwt: string;
-	externalId: string | undefined;
-} ) => {
+const initSmooch = (
+	{
+		jwt,
+		externalId,
+	}: {
+		isLoggedIn: boolean;
+		jwt: string;
+		externalId: string | undefined;
+	},
+	queryClient: QueryClient
+) => {
 	const isTestMode = isTestModeEnvironment();
 
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		delegate: {
+			async onInvalidAuth() {
+				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+
+				await queryClient.invalidateQueries( {
+					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+				} );
+				const authData = await queryClient.fetchQuery( {
+					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+					queryFn: () => fetchMessagingAuth( 'zendesk' ),
+				} );
+
+				return authData.jwt;
+			},
+		},
 		embedded: true,
 		soundNotificationEnabled: false,
 		externalId,
@@ -64,7 +85,9 @@ const playNotificationSound = () => {
 
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
 	const { isEligibleForChat } = useChatStatus();
+	const queryClient = useQueryClient();
 	const smoochRef = useRef< HTMLDivElement >( null );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled, allowPremiumSupport } =
 		useSelect( ( select ) => {
 			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -76,7 +99,8 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			};
 		}, [] );
 
-	const allowChat = enableAuth && ( isEligibleForChat || allowPremiumSupport );
+	const allowChat =
+		canConnectToZendesk && enableAuth && ( isEligibleForChat || allowPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
@@ -96,7 +120,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown, areSoundNotificationsEnabled ]
+		[ isHelpCenterShown, areSoundNotificationsEnabled, getUnreadNotifications ]
 	);
 
 	const clientIdListener = useCallback(
@@ -125,7 +149,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
 
 		const initializeSmooch = async () => {
-			initSmooch( authData )
+			initSmooch( authData, queryClient )
 				.then( () => {
 					setIsChatLoaded( true );
 					recordTracksEvent( 'calypso_smooch_messenger_init', {
@@ -153,7 +177,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			clearTimeout( retryTimeout );
 			destroy();
 		};
-	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded ] );
+	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded, queryClient ] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations ) {

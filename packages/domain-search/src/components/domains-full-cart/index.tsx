@@ -12,9 +12,10 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { useRef } from 'react';
 import { useClickOutside } from '../../hooks/use-click-outside';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 import { DomainsFullCartItems } from '../domains-full-cart-items';
 import { DomainsFullCartSummary } from '../domains-full-cart-summary';
 
@@ -40,7 +41,13 @@ const createSlideAnimation = ( axis: 'x' | 'y' ) => ( {
 	},
 } );
 
-const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
+const DomainsFullCart = ( {
+	className,
+	children,
+}: {
+	className?: string;
+	children?: React.ReactNode;
+} ) => {
 	const { isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
 	const { __ } = useI18n();
 	const isMobile = ! useViewportMatch( 'small' );
@@ -61,7 +68,7 @@ const DomainsFullCart = ( { children }: { children?: React.ReactNode } ) => {
 			initial={ animation.initial }
 			animate={ isFullCartOpen ? animation.animateIn : animation.animateOut }
 			transition={ { type: 'tween', duration: 0.25 } }
-			className="domains-full-cart"
+			className={ clsx( 'domains-full-cart', className ) }
 			isRounded={ false }
 			elevation={ 2 }
 		>

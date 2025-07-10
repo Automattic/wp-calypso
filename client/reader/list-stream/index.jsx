@@ -18,7 +18,11 @@ import ListStreamHeader from './header';
 import ListMissing from './missing';
 import './style.scss';
 
-const emptyContent = () => <EmptyContent />;
+const createEmptyContent = ( list ) => {
+	const EmptyContentWithList = () => <EmptyContent list={ list } />;
+	EmptyContentWithList.displayName = 'EmptyContentWithList';
+	return EmptyContentWithList;
+};
 
 class ListStream extends Component {
 	constructor( props ) {
@@ -72,7 +76,7 @@ class ListStream extends Component {
 			<Stream
 				{ ...this.props }
 				listName={ this.title }
-				emptyContent={ emptyContent }
+				emptyContent={ createEmptyContent( list ) }
 				showFollowInHeader={ shouldShowFollow }
 			>
 				<DocumentHead

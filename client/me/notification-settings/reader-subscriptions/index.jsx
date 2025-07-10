@@ -136,7 +136,7 @@ class NotificationSubscriptions extends Component {
 			{ value: '4', label: translate( 'Thursday' ) },
 			{ value: '5', label: translate( 'Friday' ) },
 			{ value: '6', label: translate( 'Saturday' ) },
-			{ value: '7', label: translate( 'Sunday' ) },
+			{ value: '0', label: translate( 'Sunday' ) },
 		];
 
 		// Rotate the array based on startOfWeek
