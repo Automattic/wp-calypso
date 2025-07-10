@@ -52,7 +52,7 @@ export default function PressablePlanSection( {
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
-	const useSignaturePlans = useMemo( () => {
+	const areSignaturePlans = useMemo( () => {
 		return (
 			isReferralMode ||
 			! existingPlanInfo ||
@@ -66,23 +66,23 @@ export default function PressablePlanSection( {
 			return [];
 		}
 
-		if ( useSignaturePlans ) {
+		if ( areSignaturePlans ) {
 			return pressablePlans.filter( ( plan ) => plan.slug.startsWith( 'pressable-signature-' ) );
 		}
 
 		return pressablePlans.filter( ( plan ) => ! plan.slug.startsWith( 'pressable-signature-' ) );
-	}, [ pressablePlans, useSignaturePlans ] );
+	}, [ pressablePlans, areSignaturePlans ] );
 
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
-			const defaultSlug = useSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
+			const defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
 			setSelectedPlan(
 				isReferralMode
 					? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
 					: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ]
 			);
 		}
-	}, [ isReferralMode, pressablePlans, setSelectedPlan, useSignaturePlans ] );
+	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans ] );
 
 	useEffect( () => {
 		if ( ! isReferralMode && existingPlan ) {
@@ -114,7 +114,7 @@ export default function PressablePlanSection( {
 					onSelectPlan={ setSelectedPlan }
 					pressablePlan={ isReferralMode ? null : existingPlanInfo }
 					isLoading={ ! isFetching }
-					useSignaturePlans={ useSignaturePlans }
+					areSignaturePlans={ areSignaturePlans }
 				/>
 			</HostingPlanSection.Banner>
 		);
@@ -125,7 +125,7 @@ export default function PressablePlanSection( {
 		isReferralMode,
 		existingPlanInfo,
 		isFetching,
-		useSignaturePlans,
+		areSignaturePlans,
 	] );
 
 	const heading = useMemo( () => {
@@ -141,7 +141,7 @@ export default function PressablePlanSection( {
 	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
 	const isStandardPlan =
-		! useSignaturePlans && selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
+		! areSignaturePlans && selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 
 	const onScheduleDemo = useCallback( () => {
 		dispatch(
@@ -181,7 +181,7 @@ export default function PressablePlanSection( {
 					</p>
 				) : (
 					<p>
-						{ useSignaturePlans || isStandardPlan
+						{ areSignaturePlans || isStandardPlan
 							? translate(
 									'With Signature Plans, your traffic & storage limits are shared amongst your total sites.'
 							  )

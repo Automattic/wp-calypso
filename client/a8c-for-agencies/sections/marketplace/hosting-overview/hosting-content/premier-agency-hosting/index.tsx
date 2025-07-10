@@ -70,7 +70,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	const existingPlanInfo = getPressablePlan( agencyPressablePlan?.slug ?? '' );
 
-	const useSignaturePlans = useMemo( () => {
+	const areSignaturePlans = useMemo( () => {
 		return (
 			isReferralMode ||
 			! existingPlanInfo ||
@@ -96,7 +96,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<HostingFeatures
 				heading={ translate( 'Included with every Pressable site' ) }
 				isPressable
-				useSignaturePlans={ useSignaturePlans }
+				areSignaturePlans={ areSignaturePlans }
 			/>
 
 			<HostingAdditionalFeaturesSection

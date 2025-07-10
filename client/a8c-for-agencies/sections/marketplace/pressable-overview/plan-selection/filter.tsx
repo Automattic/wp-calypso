@@ -33,7 +33,7 @@ type Props = {
 	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
 	showHighResourceTab?: boolean;
-	useSignaturePlans?: boolean;
+	areSignaturePlans?: boolean;
 };
 
 export default function PlanSelectionFilter( {
@@ -43,14 +43,14 @@ export default function PlanSelectionFilter( {
 	pressablePlan,
 	isLoading,
 	showHighResourceTab = false,
-	useSignaturePlans = false,
+	areSignaturePlans: areSignaturePlans = false,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
 	const [ selectedTab, setSelectedTab ] = useState(
-		useSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD
+		areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD
 	);
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
@@ -61,10 +61,10 @@ export default function PlanSelectionFilter( {
 			getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				useSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
+				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
 				isMobile
 			),
-		[ filterType, isMobile, plans, useSignaturePlans ]
+		[ filterType, isMobile, plans, areSignaturePlans ]
 	);
 
 	const highPlanOptions = useMemo(
@@ -72,7 +72,7 @@ export default function PlanSelectionFilter( {
 			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				useSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
+				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
 				isMobile
 			),
 			...( showHighResourceTab
@@ -85,7 +85,7 @@ export default function PlanSelectionFilter( {
 						},
 				  ] ),
 		],
-		[ filterType, isMobile, plans, showHighResourceTab, translate, useSignaturePlans ]
+		[ filterType, isMobile, plans, showHighResourceTab, translate, areSignaturePlans ]
 	);
 
 	const onSelectOption = useCallback(
@@ -159,16 +159,16 @@ export default function PlanSelectionFilter( {
 	);
 
 	useEffect( () => {
-		// If there's no existing plan, set the default tab based on useSignaturePlans
+		// If there's no existing plan, set the default tab based on areSignaturePlans
 		if ( ! pressablePlan ) {
-			setSelectedTab( useSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD );
+			setSelectedTab( areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD );
 			setDisableStandardTab( false ); // Ensure standard tab is not disabled if no existing plan
 			return;
 		}
 
 		// If there is an existing plan, map its category to the appropriate tab
 		let tabCategory = pressablePlan.category;
-		if ( useSignaturePlans ) {
+		if ( areSignaturePlans ) {
 			if ( pressablePlan.category === PLAN_CATEGORY_STANDARD ) {
 				tabCategory = PLAN_CATEGORY_SIGNATURE;
 			} else if ( pressablePlan.category === PLAN_CATEGORY_ENTERPRISE ) {
@@ -194,7 +194,7 @@ export default function PlanSelectionFilter( {
 		} else {
 			setDisableStandardTab( false );
 		}
-	}, [ pressablePlan, lowPlanOptions, useSignaturePlans ] );
+	}, [ pressablePlan, lowPlanOptions, areSignaturePlans ] );
 
 	useEffect( () => {
 		if ( selectedTab === PLAN_CATEGORY_HIGH_RESOURCE ) {
@@ -242,7 +242,7 @@ export default function PlanSelectionFilter( {
 				onSelect={ setSelectedTab }
 				initialTabName={ selectedTab }
 				tabs={
-					useSignaturePlans
+					areSignaturePlans
 						? [
 								{
 									name: PLAN_CATEGORY_SIGNATURE,
@@ -300,7 +300,7 @@ export default function PlanSelectionFilter( {
 										onChange={ onSelectOption }
 										options={ lowPlanOptions }
 										minimum={ getSliderMinimum(
-											useSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
+											areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
 											lowPlanOptions
 										) }
 									/>
@@ -321,7 +321,7 @@ export default function PlanSelectionFilter( {
 										onChange={ onSelectOption }
 										options={ highPlanOptions }
 										minimum={ getSliderMinimum(
-											useSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
+											areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
 											highPlanOptions
 										) }
 									/>
