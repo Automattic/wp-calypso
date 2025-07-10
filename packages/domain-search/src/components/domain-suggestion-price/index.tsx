@@ -5,7 +5,6 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import './style.scss';
 
 interface DomainSuggestionPriceProps {
 	originalPrice?: string;
@@ -28,7 +27,7 @@ export const DomainSuggestionPrice = ( {
 						<Text size={ 18 } variant="muted" style={ { textDecoration: 'line-through' } }>
 							{ originalPrice }
 						</Text>
-						<Text size={ 18 } className="domain-suggestion-price__promotional-price">
+						<Text size={ 18 } color="var( --domain-search-promotional-price-color )">
 							{ price }
 						</Text>
 					</>

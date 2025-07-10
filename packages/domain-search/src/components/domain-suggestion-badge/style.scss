@@ -5,6 +5,6 @@
 }
 
 .domain-suggestion-badge--warning {
-	box-shadow: 0 0 0 1px #f4df7b;
-	background-color: #f9edb4;
+	box-shadow: 0 0 0 1px var( --domain-search-warning-badge-border-color );
+	background-color: var( --domain-search-warning-badge-background-color );
 }
