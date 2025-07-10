@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DomainSuggestionsListItem } from '..';
+import { DomainSuggestion } from '..';
 
-describe( 'DomainSuggestionsListItem.Unavailable', () => {
+describe( 'DomainSuggestion.Unavailable', () => {
 	it( 'shows already registered message', () => {
 		const { container } = render(
-			<DomainSuggestionsListItem.Unavailable
+			<DomainSuggestion.Unavailable
 				domain="example"
 				tld="com"
 				unavailableReason="already-registered"
@@ -20,7 +20,7 @@ describe( 'DomainSuggestionsListItem.Unavailable', () => {
 		const onTransferClick = jest.fn();
 
 		const { container } = render(
-			<DomainSuggestionsListItem.Unavailable
+			<DomainSuggestion.Unavailable
 				domain="example"
 				tld="com"
 				unavailableReason="already-registered"

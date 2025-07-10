@@ -13,7 +13,7 @@ import { Unavailable } from './unavailable';
 
 import './style.scss';
 
-interface DomainSuggestionsListItemProps {
+interface DomainSuggestionProps {
 	domainUuid: string;
 	domain: string;
 	tld: string;
@@ -22,15 +22,21 @@ interface DomainSuggestionsListItemProps {
 	badges?: React.ReactNode;
 }
 
-export const DomainSuggestionsListItem = ( {
+export const DomainSuggestion = ( {
 	domainUuid,
 	domain,
 	tld,
 	originalPrice,
 	price,
 	badges,
-}: DomainSuggestionsListItemProps ) => {
-	const { activeQuery } = useDomainSuggestionsListContext();
+}: DomainSuggestionProps ) => {
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		throw new Error( 'DomainSuggestion must be used within a DomainSuggestionsList' );
+	}
+
+	const { activeQuery } = listContext;
 
 	const domainName = (
 		<Text size={ activeQuery === 'large' ? 18 : 16 }>
@@ -83,4 +89,4 @@ export const DomainSuggestionsListItem = ( {
 	);
 };
 
-DomainSuggestionsListItem.Unavailable = Unavailable;
+DomainSuggestion.Unavailable = Unavailable;

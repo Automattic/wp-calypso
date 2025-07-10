@@ -6,9 +6,13 @@ interface DomainsSuggestionsListProps {
 	children: React.ReactNode;
 }
 
-const DomainSuggestionListContext = createContext( {
-	activeQuery: 'small' as 'small' | 'large',
-} );
+interface DomainSuggestionListContextValue {
+	activeQuery: 'small' | 'large';
+}
+
+const DomainSuggestionListContext = createContext< DomainSuggestionListContextValue | undefined >(
+	undefined
+);
 
 export const DomainsSuggestionsList = ( { children }: DomainsSuggestionsListProps ) => {
 	const { ref: containerRef, activeQuery } = useContainerQuery( {

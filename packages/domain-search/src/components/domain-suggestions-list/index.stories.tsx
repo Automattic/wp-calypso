@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories';
 import { DomainSearch } from '../domain-search';
+import { DomainSuggestion } from '../domain-suggestion';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
-import { DomainSuggestionsListItem } from '../domain-suggestions-list-item';
 import { DomainsSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -44,14 +44,14 @@ export const Default = () => {
 				cart={ cart }
 			>
 				<DomainsSuggestionsList>
-					<DomainSuggestionsListItem.Unavailable
+					<DomainSuggestion.Unavailable
 						domain="example-unavailable"
 						tld="com"
 						unavailableReason="already-registered"
 						onTransferClick={ () => alert( 'Your wish is an order!' ) }
 					/>
 					{ SUGGESTIONS.map( ( suggestion ) => (
-						<DomainSuggestionsListItem
+						<DomainSuggestion
 							key={ suggestion.uuid }
 							domainUuid={ suggestion.uuid }
 							domain={ suggestion.domain }

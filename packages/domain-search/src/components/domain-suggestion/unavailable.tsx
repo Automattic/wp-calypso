@@ -10,6 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Icon, notAllowed } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
+import { useContainerQuery } from '../../hooks/use-container-query';
 import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 
 import './unavailable.scss';
@@ -21,13 +22,14 @@ export interface UnavailableProps {
 	onTransferClick?(): void;
 }
 
-export const Unavailable = ( {
+const UnavailableComponent = ( {
 	domain,
 	tld,
 	unavailableReason,
 	onTransferClick,
-}: UnavailableProps ) => {
-	const { activeQuery } = useDomainSuggestionsListContext();
+	activeQuery,
+	isWithinList,
+}: UnavailableProps & { activeQuery: 'small' | 'large'; isWithinList: boolean } ) => {
 	const { __ } = useI18n();
 
 	const reasonText = useMemo( () => {
@@ -88,8 +90,33 @@ export const Unavailable = ( {
 	};
 
 	return (
-		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody>{ getContent() }</CardBody>
+		<Card isBorderless={ isWithinList } size={ activeQuery === 'large' ? 'medium' : 'small' }>
+			<CardBody style={ { borderRadius: 0 } } isShady={ isWithinList }>
+				{ getContent() }
+			</CardBody>
 		</Card>
 	);
+};
+
+const StandaloneUnavailable = ( props: UnavailableProps ) => {
+	const { ref: containerRef, activeQuery } = useContainerQuery( {
+		small: 480,
+		large: 1024,
+	} );
+
+	return (
+		<div ref={ containerRef }>
+			<UnavailableComponent { ...props } activeQuery={ activeQuery } isWithinList={ false } />
+		</div>
+	);
+};
+
+export const Unavailable = ( props: UnavailableProps ) => {
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		return <StandaloneUnavailable { ...props } />;
+	}
+
+	return <UnavailableComponent { ...props } activeQuery={ listContext.activeQuery } isWithinList />;
 };
