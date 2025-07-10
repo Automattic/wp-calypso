@@ -41,7 +41,7 @@
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/url": "^4.23.0",
+		"@wordpress/url": "^4.26.1-next.719a03cbe.0",
 		"i18n-calypso": "workspace:^",
 		"social-logos": "^3.1.18"
 	},

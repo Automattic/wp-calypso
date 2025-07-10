@@ -39,8 +39,8 @@
 	"dependencies": {
 		"@automattic/global-styles": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/block-editor": "^14.18.0",
-		"@wordpress/compose": "^7.23.0",
+		"@wordpress/block-editor": "^14.21.1-next.719a03cbe.0",
+		"@wordpress/compose": "^7.26.1-next.719a03cbe.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0",

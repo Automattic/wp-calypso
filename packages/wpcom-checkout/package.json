@@ -56,9 +56,9 @@
 		"@fnando/cnpj": "2.0.0",
 		"@fnando/cpf": "1.0.2",
 		"@stripe/stripe-js": "^1.54.2",
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/react-i18n": "^4.23.0",
+		"@wordpress/data": "^10.26.1-next.719a03cbe.0",
+		"@wordpress/i18n": "^6.0.1-next.719a03cbe.0",
+		"@wordpress/react-i18n": "^4.26.1-next.719a03cbe.0",
 		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
 		"prop-types": "^15.8.1"
