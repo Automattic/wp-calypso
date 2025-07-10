@@ -6,6 +6,7 @@ import {
 	redirect,
 } from '@tanstack/react-router';
 import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
+import { userPreferencesQuery } from 'calypso/dashboard/app/queries/me-preferences';
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import Root from '../components/root';
@@ -23,7 +24,23 @@ const sitesRoute = createRoute( {
 		// Preload the default sites list response without blocking.
 		queryClient.ensureQueryData( sitesQuery() );
 
-		await queryClient.ensureQueryData( isAutomatticianQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+			queryClient.ensureQueryData( userPreferencesQuery() ),
+		] );
+	},
+	validateSearch: ( search ) => {
+		// Deserialize the view search param if it exists on the first page load.
+		if ( typeof search.view === 'string' ) {
+			let parsedView;
+			try {
+				parsedView = JSON.parse( search.view );
+			} catch ( e ) {
+				// pass
+			}
+			return { ...search, view: parsedView };
+		}
+		return search;
 	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites' ).then( ( d ) =>

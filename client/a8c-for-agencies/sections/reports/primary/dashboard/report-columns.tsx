@@ -13,7 +13,7 @@ export const ReportSiteColumn = ( { site }: { site: string } ) => urlToSlug( sit
 export const ReportCountColumn = ( { count, onClick }: { count: number; onClick: () => void } ) => {
 	const translate = useTranslate();
 	return (
-		<Button variant="tertiary" onClick={ onClick }>
+		<Button variant="link" onClick={ onClick }>
 			{ translate( '%(count)d report', '%(count)d reports', {
 				count,
 				args: { count },

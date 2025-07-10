@@ -70,7 +70,7 @@ const DomainCartV2 = ( { onContinue }: { onContinue: () => void } ) => {
 
 	return (
 		<DomainSearch onContinue={ onContinue } cart={ cart }>
-			<DomainsMiniCart />
+			<DomainsMiniCart className="domains-search-v2__mini-cart" />
 			<DomainsFullCart className="domains-search-v2__full-cart">
 				<VStack spacing={ 6 }>
 					<FreeDomainForAYearPromo />

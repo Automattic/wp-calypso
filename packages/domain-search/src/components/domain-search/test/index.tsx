@@ -6,19 +6,17 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { SelectedDomain } from '..';
 import { DomainSearch, DomainsMiniCart, DomainsFullCart } from '../../..';
+import { buildDomain, buildDomainSearchCart } from '../../../test-helpers/factories';
 
 const Component = () => {
-	const [ items, setItems ] = useState< SelectedDomain[] >( [
-		{ uuid: '1', domain: 'test.com', tld: 'com', price: '10' },
-	] );
+	const [ items, setItems ] = useState< SelectedDomain[] >( [ buildDomain() ] );
 
-	const cart = {
+	const cart = buildDomainSearchCart( {
 		items,
-		total: '10',
 		onAddItem: ( item: SelectedDomain ) => setItems( [ ...items, item ] ),
 		onRemoveItem: ( item: SelectedDomain ) =>
 			setItems( items.filter( ( i ) => i.uuid !== item.uuid ) ),
-	};
+	} );
 
 	return (
 		<DomainSearch onContinue={ jest.fn() } cart={ cart }>

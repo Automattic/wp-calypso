@@ -3,35 +3,23 @@
  */
 import { render, screen } from '@testing-library/react';
 import { DomainsFullCartSummary } from '..';
+import {
+	buildDomain,
+	buildDomainSearchCart,
+	buildDomainSearchContext,
+} from '../../../test-helpers/factories';
 import { DomainSearchContext } from '../../domain-search';
-
-const defaultContextValue = {
-	isFullCartOpen: false,
-	closeFullCart: () => {},
-	onContinue: () => {},
-	query: '',
-	setQuery: () => {},
-	cart: {
-		items: [],
-		total: '',
-		onAddItem: () => {},
-		onRemoveItem: () => {},
-	},
-	openFullCart: () => {},
-};
 
 describe( 'DomainsFullCartSummary', () => {
 	it( 'should display single domain count and total', () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						...defaultContextValue.cart,
-						items: [ { uuid: '1', domain: 'test', tld: 'test', price: '$10.00' } ],
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { domain: 'test', tld: 'test', price: '$10.00' } ) ],
 						total: '$10.00',
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsFullCartSummary />
 			</DomainSearchContext.Provider>
@@ -44,17 +32,15 @@ describe( 'DomainsFullCartSummary', () => {
 	it( 'should display multiple domain count and total', () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						...defaultContextValue.cart,
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
 						items: [
-							{ uuid: '1', domain: 'test', tld: 'test', price: '$10.00' },
-							{ uuid: '2', domain: 'test', tld: 'test', price: '$10.00' },
+							buildDomain( { uuid: '1', domain: 'test1', tld: 'test', price: '$10.00' } ),
+							buildDomain( { uuid: '2', domain: 'test2', tld: 'test', price: '$10.00' } ),
 						],
 						total: '$20.00',
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsFullCartSummary />
 			</DomainSearchContext.Provider>

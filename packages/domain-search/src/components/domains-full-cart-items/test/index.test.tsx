@@ -1,39 +1,25 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DomainsFullCartItems } from '..';
+import {
+	buildDomain,
+	buildDomainSearchCart,
+	buildDomainSearchContext,
+} from '../../../test-helpers/factories';
 import { DomainSearchContext } from '../../domain-search';
-
-const defaultContextValue = {
-	isFullCartOpen: false,
-	closeFullCart: () => {},
-	onContinue: () => {},
-	query: '',
-	setQuery: () => {},
-	cart: {
-		items: [],
-		total: '',
-		onAddItem: () => {},
-		onRemoveItem: () => {},
-	},
-	openFullCart: () => {},
-};
 
 describe( 'DomainsFullCartItems', () => {
 	test( 'renders domains list including name and tld', () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
 						items: [
-							{ uuid: '1', domain: 'example', tld: 'com', price: '$10' },
-							{ uuid: '2', domain: 'test', tld: 'org', price: '$15' },
+							buildDomain( { domain: 'example', tld: 'com', price: '$10' } ),
+							buildDomain( { domain: 'test', tld: 'org', price: '$15' } ),
 						],
-						total: '$25',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsFullCartItems />
 			</DomainSearchContext.Provider>
@@ -49,15 +35,12 @@ describe( 'DomainsFullCartItems', () => {
 
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						items: [ { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ],
-						total: '$10',
-						onAddItem: () => {},
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain() ],
 						onRemoveItem,
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsFullCartItems />
 			</DomainSearchContext.Provider>
@@ -76,23 +59,11 @@ describe( 'DomainsFullCartItems', () => {
 	test( 'renders the original price if included', () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						items: [
-							{
-								uuid: '1',
-								domain: 'example',
-								tld: 'com',
-								price: '$10',
-								originalPrice: '$20',
-							},
-						],
-						total: '$10',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { originalPrice: '$20' } ) ],
+					} ),
+				} ) }
 			>
 				<DomainsFullCartItems />
 			</DomainSearchContext.Provider>

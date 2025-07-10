@@ -52,14 +52,22 @@ function getContentMessage( message: ZendeskMessage ): string {
 			if ( message.mediaUrl ) {
 				messageContent = createDownloadableMarkdownLink(
 					message.mediaUrl,
-					message.altText || __( 'Attachment' )
+					message.altText || __( 'Attachment', __i18n_text_domain__ )
 				);
 			}
 			break;
 		default:
 			// We don't support it yet return generic message.
-			messageContent = __( 'Message content not supported' );
+			messageContent = __( 'Message content not supported', __i18n_text_domain__ );
 	}
+
+	if ( message?.metadata?.type === 'csat' && message.actions?.length ) {
+		messageContent = __(
+			'Please help us improve. How would you rate your support experience?',
+			__i18n_text_domain__
+		);
+	}
+
 	return messageContent;
 }
 

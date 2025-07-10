@@ -6,15 +6,25 @@ import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
 
+export interface FileBrowserConfig {
+	restrictedPaths?: string[];
+	restrictedTypes?: string[];
+	excludeTypes?: string[];
+	alwaysInclude?: string[];
+	showHeaderButtons?: boolean;
+	showFileCard?: boolean;
+	siteId?: number;
+}
+
 interface FileBrowserProps {
 	rewindId: number;
-	showHeaderButtons?: boolean;
+	fileBrowserConfig?: FileBrowserConfig;
 	siteId?: number;
 }
 
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 	rewindId,
-	showHeaderButtons = true,
+	fileBrowserConfig,
 	siteId,
 } ) => {
 	// This is the path of the node that is clicked
@@ -36,7 +46,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 		<div>
 			<FileBrowserHeader
 				rewindId={ rewindId }
-				showHeaderButtons={ showHeaderButtons }
+				showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
 				siteId={ effectiveSiteId }
 			/>
 			<FileBrowserNode
@@ -46,6 +56,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				isAlternate
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
+				fileBrowserConfig={ fileBrowserConfig }
 				siteId={ effectiveSiteId }
 			/>
 		</div>
