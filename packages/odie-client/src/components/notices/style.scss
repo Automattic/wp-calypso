@@ -1,12 +1,13 @@
-.odie-notice {
+.odie-notices {
 	display: flex;
-	padding: 0 16px;
+	flex-direction: column;
+	gap: 8px;
 	font-size: 0.75rem;
-	position: absolute;
-	bottom: 86px;
+	width: 100%;
 
-	.odie-notice__container {
+	.odie-notice {
 		display: flex;
+		justify-content: space-between;
 		background-color: var( --studio-yellow-0 );
 		border-left: 4px solid var( --studio-yellow-20 );
 		padding: 8px 16px;

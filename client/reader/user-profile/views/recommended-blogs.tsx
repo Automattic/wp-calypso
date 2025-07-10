@@ -7,6 +7,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import RecommendedBlogItem from 'calypso/components/gravatar-with-hovercards/recommended-blogs/item';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector, useDispatch } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
 import {
 	isRequestingUserRecommendedBlogs,
@@ -32,6 +33,7 @@ const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Elemen
 	const recommendedBlogs = useSelector( ( state ) =>
 		getUserRecommendedBlogs( state, userLogin || '' )
 	);
+	const currentUser = useSelector( getCurrentUser );
 
 	useEffect( () => {
 		if ( ! recommendedBlogs && userLogin && ! hasRequested ) {
@@ -48,12 +50,21 @@ const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Elemen
 	}
 
 	if ( ! recommendedBlogs?.length ) {
+		const action = currentUser?.username === userLogin && (
+			<a
+				className="empty-content__action button is-primary"
+				href={ `/reader/list/${ userLogin }/recommended-blogs/edit/items` }
+			>
+				{ translate( 'Add recommendations' ) }
+			</a>
+		);
 		return (
 			<EmptyContent
 				illustration={ null }
 				icon={ <Icon icon={ siteLogo } size={ 48 } /> }
 				title={ null }
 				line={ translate( 'No blogs have been recommended yet.' ) }
+				action={ action }
 			/>
 		);
 	}

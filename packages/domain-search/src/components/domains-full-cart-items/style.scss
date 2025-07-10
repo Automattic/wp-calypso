@@ -1,5 +1,6 @@
 .domains-full-cart-items__remove {
-	--wp-components-color-accent: var( --domain-search-secondary-action-color );
+	// We need to use !important here because WPCOM adds overrides to the button with a very high specificity.
+	--wp-components-color-accent: var( --domain-search-secondary-action-color ) !important;
 }
 
 .domains-full-cart-items__price {

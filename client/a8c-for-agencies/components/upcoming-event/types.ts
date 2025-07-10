@@ -1,15 +1,20 @@
+import { TranslateResult } from 'i18n-calypso';
 import { Moment } from 'moment';
 
 export type UpcomingEventProps = {
 	id: string;
-	date: Moment;
+	date: { from: Moment; to: Moment };
 	title: string;
 	subtitle: string;
-	description: string;
-	registrationUrl: string;
+	descriptions: TranslateResult[];
 	logoUrl: string;
 	imageUrl: string;
 	trackEventName: string;
 	dateClassName?: string;
 	imageClassName?: string;
+	cta: {
+		label: string;
+		url: string;
+	};
+	extraContent?: React.ReactNode;
 };

@@ -1,7 +1,7 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 
 export const DomainsFullCartSummary = () => {
 	const { _n } = useI18n();

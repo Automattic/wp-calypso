@@ -4,6 +4,7 @@
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -37,7 +38,8 @@ const HelpCenter: React.FC< Container > = ( {
 			isMinimized: helpCenterSelect.getIsMinimized(),
 		};
 	}, [] );
-	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
+	const { currentUser } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk', 10, 'open' );
 	const hasOpenZendeskConversations =

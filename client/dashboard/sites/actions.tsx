@@ -50,6 +50,15 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			isEligible: ( item: Site ) => canManageSite( item ),
 		},
 		{
+			id: 'jetpack-cloud',
+			label: __( 'Jetpack Cloud ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				window.open( `https://cloud.jetpack.com/landing/${ site.slug }` );
+			},
+			isEligible: ( item: Site ) => isSelfHostedJetpackConnected( item ),
+		},
+		{
 			id: 'prepare-for-launch',
 			label: __( 'Prepare for launch' ),
 			callback: ( sites ) => {

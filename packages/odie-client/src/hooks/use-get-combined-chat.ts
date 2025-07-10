@@ -3,7 +3,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
-import { ODIE_TRANSFER_MESSAGE } from '../constants';
+import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import {
@@ -98,7 +98,7 @@ export const useGetCombinedChat = (
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
-								...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
+								...( odieChat ? getOdieTransferMessage() : [] ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',

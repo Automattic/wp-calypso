@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,6 +17,7 @@ import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-sync
 import { IAppState } from 'calypso/state/types';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
+import StagingSiteManagementMoveInfo from '../staging-site-management-move-info';
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { SiteSyncCard } from './card-content/staging-sync-card';
 import { ConfirmationModal } from './confirmation-modal';
@@ -178,6 +180,10 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				'Unable to load production site detail. Please contact support if you believe you are seeing this message in error.'
 			)
 		);
+	}
+
+	if ( isEnabled( 'hosting/staging-sites-redesign' ) ) {
+		return <StagingSiteManagementMoveInfo />;
 	}
 
 	return (

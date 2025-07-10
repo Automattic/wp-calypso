@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +10,8 @@ import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
 
 export const BlockedZendeskNotice: React.FC = () => {
-	const { sectionName, canConnectToZendesk } = useHelpCenterContext();
+	const { sectionName } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { isEligibleForChat } = useChatStatus();
 
 	const willShowNotice = ! canConnectToZendesk && isEligibleForChat;

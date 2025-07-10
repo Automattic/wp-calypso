@@ -281,6 +281,8 @@ const DomainsStep: Step< {
 
 	const renderContent = () => (
 		<DomainFormControl
+			// TODO: Implement this in DOTOBRD-233.
+			onContinue={ () => {} }
 			analyticsSection={ getAnalyticsSection() }
 			flow={ flow }
 			onAddDomain={ handleAddDomain }

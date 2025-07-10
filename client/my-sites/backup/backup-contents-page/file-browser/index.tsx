@@ -1,20 +1,36 @@
 import { useState } from '@wordpress/element';
 import { FunctionComponent } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
 
+export interface FileBrowserConfig {
+	restrictedPaths?: string[];
+	restrictedTypes?: string[];
+	excludeTypes?: string[];
+	alwaysInclude?: string[];
+	showHeaderButtons?: boolean;
+	showFileCard?: boolean;
+	siteId?: number;
+}
+
 interface FileBrowserProps {
 	rewindId: number;
-	showHeaderButtons?: boolean;
+	fileBrowserConfig?: FileBrowserConfig;
+	siteId?: number;
 }
 
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 	rewindId,
-	showHeaderButtons = true,
+	fileBrowserConfig,
+	siteId,
 } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
+	const selectedSiteId = useSelector( getSelectedSiteId ) as number;
+	const effectiveSiteId = siteId ?? selectedSiteId;
 
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
@@ -28,7 +44,11 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 
 	return (
 		<div>
-			<FileBrowserHeader rewindId={ rewindId } showHeaderButtons={ showHeaderButtons } />
+			<FileBrowserHeader
+				rewindId={ rewindId }
+				showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
+				siteId={ effectiveSiteId }
+			/>
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }
@@ -36,6 +56,8 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				isAlternate
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
+				fileBrowserConfig={ fileBrowserConfig }
+				siteId={ effectiveSiteId }
 			/>
 		</div>
 	);

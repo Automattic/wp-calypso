@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -34,6 +35,7 @@ import { useGetLockQuery, USE_STAGING_SITE_LOCK_QUERY_KEY } from '../../hooks/us
 import { useHasValidQuotaQuery } from '../../hooks/use-has-valid-quota';
 import { useStagingSite } from '../../hooks/use-staging-site';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
+import StagingSiteManagementMoveInfo from '../staging-site-management-move-info';
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from './card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
@@ -517,6 +519,10 @@ export const StagingSiteCard = ( {
 			dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 		}
 	}, [ dispatch, isJetpack, siteId ] );
+
+	if ( isEnabled( 'hosting/staging-sites-redesign' ) ) {
+		return <StagingSiteManagementMoveInfo />;
+	}
 
 	return (
 		<CardContentWrapper>

@@ -130,6 +130,16 @@
 		background-color: var(--color-primary-50);
 	}
 
+	.components-button.is-link {
+		&:hover {
+			background-color: transparent;
+		}
+		&:focus-visible,
+		&:focus {
+			color: inherit;
+		}
+	}
+
 	.components-button.is-primary,
 	.button.is-primary {
 		&:not( :disabled ),

@@ -1334,7 +1334,9 @@ class RenderDomainsStepComponent extends Component {
 			content = (
 				<>
 					{ this.domainForm() }
-					{ this.props.shouldUseDomainSearchV2 && <DomainCartV2 /> }
+					{ this.props.shouldUseDomainSearchV2 && (
+						<DomainCartV2 onContinue={ this.props.goToNextStep } />
+					) }
 				</>
 			);
 		}
