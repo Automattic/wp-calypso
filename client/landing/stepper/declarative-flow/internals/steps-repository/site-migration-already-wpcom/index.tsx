@@ -48,7 +48,11 @@ const SiteMigrationAlreadyWPCOM: StepType = ( { navigation } ) => {
 			<Step.CenteredColumnLayout
 				columnWidth={ 8 }
 				topBar={
-					<Step.TopBar leftElement={ <Step.BackButton onClick={ () => history.back() } /> } />
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
 				}
 				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 			>

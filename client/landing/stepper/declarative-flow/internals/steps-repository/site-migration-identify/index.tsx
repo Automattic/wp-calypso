@@ -169,18 +169,6 @@ const SiteMigrationIdentify: StepType< {
 
 	const urlQueryParams = useQuery();
 
-	const shouldShowBackButton = () => {
-		return urlQueryParams.has( 'ref' );
-	};
-
-	const getBackButton = () => {
-		if ( ! shouldShowBackButton() ) {
-			return null;
-		}
-
-		return <Step.BackButton onClick={ () => history.back() } />;
-	};
-
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	const stepContent = (
@@ -197,14 +185,19 @@ const SiteMigrationIdentify: StepType< {
 		/>
 	);
 
-	const backButton = getBackButton();
 	return (
 		<>
 			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<Step.CenteredColumnLayout
 				className="step-container-v2--site-migration-identify"
 				columnWidth={ 4 }
-				topBar={ <Step.TopBar leftElement={ backButton } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
+				}
 				heading={
 					isVisible ? (
 						<Step.Heading

@@ -76,8 +76,8 @@ const SiteMigrationHowToMigrate: StepType< {
 
 	const goBack = useCallback( () => {
 		cancelMigration();
-		history.back();
-	}, [ cancelMigration ] );
+		navigation?.goBack?.();
+	}, [ cancelMigration, navigation ] );
 
 	const renderSubHeaderText = () => {
 		const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';

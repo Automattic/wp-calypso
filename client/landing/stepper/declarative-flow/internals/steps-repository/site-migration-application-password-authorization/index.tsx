@@ -128,7 +128,11 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 			<Step.CenteredColumnLayout
 				columnWidth={ 5 }
 				topBar={
-					<Step.TopBar leftElement={ <Step.BackButton onClick={ () => history.back() } /> } />
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
 				}
 				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 				className="site-migration-application-password-authorization-v2"
