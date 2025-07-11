@@ -4,8 +4,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import React from 'react';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -194,15 +192,10 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'hides the back button and link by default', async () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( {} ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
 		render(
 			{
 				navigation: {
-					goBack: jest.fn(),
+					goBack: undefined,
 					submit: jest.fn(),
 				},
 			},
