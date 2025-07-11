@@ -1,4 +1,4 @@
-@import "@automattic/onboarding/styles/mixins";
+@import '@automattic/onboarding/styles/mixins';
 
 /**
  * A different selector (not `.step-container.${flowName}`) is needed for the 100-year domain transfer
@@ -8,47 +8,57 @@
  */
 .step-container.hundred-year-plan.hundred-year-plan,
 .step-container.hundred-year-domain.hundred-year-domain,
-.hundred-year-domain-transfer>.step-container.domain-transfer {
-	max-width: none;
-	height: 100%;
-	padding: 0;
-	
-	.step-container__content {
-		min-height: 100%;
-	}
+.hundred-year-domain-transfer > .step-container.domain-transfer {
+	&,
+	.domain-search-legacy--stepper & {
+		max-width: none;
+		height: 100%;
+		padding: 0;
 
-	.step-container__navigation.action-buttons .step-container__navigation-logo {
-		fill: var(--studio-gray-0);
-		stroke: var(--studio-gray-0);
-	}
-
-	.hundred-year-plan-step-wrapper__info-column-container {
-		@media (min-width: 960px) {
-			background-image: url(calypso/assets/images/hundred-year-plan-onboarding/stars-solo.webp);
-			background-color: #000;
+		.step-container__content {
+			min-height: 100%;
 		}
 
-		.is-price-loading {
-			@include onboarding-placeholder;
-			width: 100px;
-		}
-	}
-
-	&.step-container.domain-transfer {
-		margin-top: 0;
-		width: 100%;
-
-		.hundred-year-plan-step-wrapper__step-container {
-			max-width: $break-large;
-			box-sizing: border-box;
-			padding: 0 20px;
+		.step-container__navigation.action-buttons .step-container__navigation-logo {
+			fill: var( --studio-gray-0 );
+			stroke: var( --studio-gray-0 );
 		}
 
 		.hundred-year-plan-step-wrapper__info-column-container {
+			@media ( min-width: 960px ) {
+				background-image: url( calypso/assets/images/hundred-year-plan-onboarding/stars-solo.webp );
+				background-color: #000;
+			}
+
 			.is-price-loading {
 				@include onboarding-placeholder;
 				width: 100px;
 			}
 		}
+
+		&.step-container.domain-transfer {
+			margin-top: 0;
+			width: 100%;
+
+			.hundred-year-plan-step-wrapper__step-container {
+				max-width: $break-large;
+				box-sizing: border-box;
+				padding: 0 20px;
+			}
+
+			.hundred-year-plan-step-wrapper__info-column-container {
+				.is-price-loading {
+					@include onboarding-placeholder;
+					width: 100px;
+				}
+			}
+		}
+	}
+}
+
+.hundred-year-plan.step-route,
+.hundred-year-domain.step-route {
+	.signup-header {
+		display: none;
 	}
 }
