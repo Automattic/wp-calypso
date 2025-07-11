@@ -3,6 +3,7 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Dropdown,
+	MenuGroup,
 	MenuItem,
 	Spinner,
 } from '@wordpress/components';
@@ -48,15 +49,6 @@ const staging = (
 );
 
 const Environment = ( { env }: { env: Env } ) => {
-	if ( env === 'production' ) {
-		return (
-			<HStack justify="flex-start">
-				<Icon icon={ production } />
-				<span>{ __( 'Production' ) }</span>
-			</HStack>
-		);
-	}
-
 	if ( env === 'staging' ) {
 		return (
 			<HStack justify="flex-start">
@@ -65,6 +57,13 @@ const Environment = ( { env }: { env: Env } ) => {
 			</HStack>
 		);
 	}
+
+	return (
+		<HStack justify="flex-start">
+			<Icon icon={ production } />
+			<span>{ __( 'Production' ) }</span>
+		</HStack>
+	);
 };
 
 export const CurrentEnvironment = ( { site }: { site: Site } ) => {
@@ -82,12 +81,14 @@ const EnvironmentSwitcherDropdown = ( {
 	onClose,
 }: {
 	currentSite: Site;
-	otherEnvironment?: Env;
+	otherEnvironment: Env;
 	otherEnvironmentSite?: Site;
 	onClose: () => void;
 } ) => {
+	const productionSite = otherEnvironment === 'staging' ? currentSite : otherEnvironmentSite;
+	const stagingSite = otherEnvironment === 'staging' ? otherEnvironmentSite : currentSite;
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( stagingSiteCreateMutation( currentSite.ID ) );
+	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 	const handleCreate = () => {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
@@ -111,35 +112,37 @@ const EnvironmentSwitcherDropdown = ( {
 	// TODO: Handle upsell.
 	const handleUpsell = () => {};
 
-	if ( otherEnvironment && otherEnvironmentSite ) {
-		return (
-			<RouterLinkMenuItem to={ `/sites/${ otherEnvironmentSite.slug }` } onClick={ onClose }>
-				<Environment env={ otherEnvironment } />
-			</RouterLinkMenuItem>
-		);
-	}
-
-	if ( otherEnvironment === 'staging' ) {
-		return (
-			<MenuItem onClick={ canCreateStagingSite( currentSite ) ? handleCreate : handleUpsell }>
-				<HStack justify="flex-start">
-					{ mutation.isPending ? (
-						<>
-							<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
-							<span>{ __( 'Creating staging site…' ) }</span>
-						</>
-					) : (
-						<>
-							<Icon icon={ plus } />
-							<span>{ __( 'Add staging site' ) }</span>
-						</>
-					) }
-				</HStack>
-			</MenuItem>
-		);
-	}
-
-	return null;
+	return (
+		<MenuGroup>
+			{ productionSite && canManageSite( productionSite ) && (
+				<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
+					<Environment env="production" />
+				</RouterLinkMenuItem>
+			) }
+			{ stagingSite && canManageSite( stagingSite ) && (
+				<RouterLinkMenuItem to={ `/sites/${ stagingSite.slug }` } onClick={ onClose }>
+					<Environment env="staging" />
+				</RouterLinkMenuItem>
+			) }
+			{ otherEnvironment === 'staging' && productionSite && ! stagingSite && (
+				<MenuItem onClick={ canCreateStagingSite( productionSite ) ? handleCreate : handleUpsell }>
+					<HStack justify="flex-start">
+						{ mutation.isPending ? (
+							<>
+								<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
+								<span>{ __( 'Creating staging site…' ) }</span>
+							</>
+						) : (
+							<>
+								<Icon icon={ plus } />
+								<span>{ __( 'Add staging site' ) }</span>
+							</>
+						) }
+					</HStack>
+				</MenuItem>
+			) }
+		</MenuGroup>
+	);
 };
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
