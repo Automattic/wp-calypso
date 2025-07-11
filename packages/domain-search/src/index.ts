@@ -1,6 +1,6 @@
 export { DomainSearch } from './components/domain-search';
 export type { DomainSearchCart } from './components/domain-search/types';
-export { default as DomainSearchControl } from './components/search-control';
+export { DomainSearchControl } from './components/domain-search-control';
 export { DomainSearchControls } from './components/DomainSearchControls/DomainSearchControls';
 export { DomainsMiniCart } from './components/domains-mini-cart';
 export { DomainsFullCart } from './components/domains-full-cart';

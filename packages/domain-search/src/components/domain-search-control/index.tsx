@@ -134,4 +134,4 @@ const DomainSearchControl = forwardRef( function DomainSearchControl(
 	);
 } );
 
-export default DomainSearchControl;
+export { DomainSearchControl };
