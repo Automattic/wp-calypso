@@ -4,6 +4,10 @@
 	display: flex;
 	align-items: center;
 
+	.components-input-base {
+		height: 56px;
+	}
+
 	.domain-search-control__search-input {
 		flex-grow: 1;
 	}
@@ -12,6 +16,15 @@
         background-color: var( --color-body-background );
         border-radius: 4px;
         border: 1px solid var( --color-border-subtle );
+
+		input.components-input-control__input {
+			font-size: $font-body-large;
+			padding: 16px;
+		}
+
+		.components-input-control__suffix > div {
+			padding-inline-end: 12px;
+		}
     }
 
 	.domain-search-control__before-close {
