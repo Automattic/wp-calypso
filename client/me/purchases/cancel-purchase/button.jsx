@@ -317,8 +317,16 @@ class CancelPurchaseButton extends Component {
 				const refundable = hasAmountAvailableToRefund( this.props.purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
 
-				// Call the callback to notify the parent component that cancellation is complete
-				if ( this.props.onCancellationComplete ) {
+				// For Jetpack/Akismet products, always show the button's own survey
+				if ( this.props.isJetpack || this.props.isAkismet ) {
+					this.setState( {
+						showDialog: true,
+						cancellationCompleted: true,
+						cancellationMessage: result.message,
+						isLoading: false,
+					} );
+				} else if ( this.props.onCancellationComplete ) {
+					// For other products, call the callback to notify the parent component
 					this.props.onCancellationComplete( result.message );
 				} else {
 					// Fallback to showing dialog if no callback provided
