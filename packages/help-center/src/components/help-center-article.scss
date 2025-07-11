@@ -158,9 +158,13 @@
 					background-color: var(--color-surface);
 					border: 1px solid var(--color-neutral-10);
 					border-radius: 2px;
+					box-sizing: border-box;
 					color: var(--color-neutral-70);
+					display: inline-block;
 					font-size: $font-body-small;
 					padding: 8px 14px;
+					text-align: center;
+					text-decoration: none;
 					width: 100%;
 				}
 			}
