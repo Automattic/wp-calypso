@@ -1,5 +1,5 @@
 import { TextControl } from '@wordpress/components';
-import { useDomainSearch } from '../DomainSearch/DomainSearch';
+import { useDomainSearch } from '../domain-search';
 
 export const DomainSearchControlsInput = ( {
 	onChange,

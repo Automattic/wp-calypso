@@ -13,7 +13,7 @@ import PaymentMethodList from '../payment-method-list';
 import type {
 	StoredPaymentMethodCard,
 	StoredPaymentMethodPayPal,
-} from '../../../../lib/checkout/payment-methods';
+} from '@automattic/wpcom-checkout';
 
 const card: StoredPaymentMethodCard = {
 	stored_details_id: '1234',

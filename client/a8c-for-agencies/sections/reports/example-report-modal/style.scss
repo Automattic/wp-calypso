@@ -44,7 +44,7 @@ $report-header-background-color: #b9e4fe;
 	&::after {
 		content: '';
 		position: absolute;
-		inset-block-start: -120px;
+		inset-block-start: -45%;
 		inset-inline-end: 0;
 		width: 50%;
 		height: 100%;
@@ -53,6 +53,10 @@ $report-header-background-color: #b9e4fe;
 		background-position: right center;
 		background-size: contain;
 		pointer-events: none;
+
+		@include break-medium {
+			inset-block-start: -30%;
+		}
 	}
 }
 

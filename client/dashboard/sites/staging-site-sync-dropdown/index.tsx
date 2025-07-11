@@ -2,15 +2,25 @@ import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
-import AsyncLoad from 'calypso/components/async-load';
+import { lazy, Suspense } from 'react';
+
+const StagingSiteSyncModal = lazy(
+	() => import( 'calypso/sites/staging-site/components/staging-site-sync-modal' )
+);
 
 interface SyncDropdownProps {
 	className?: string;
 	environment: 'production' | 'staging';
-	siteSlug: string;
+	productionSiteId: number;
+	stagingSiteId: number;
 }
 
-export default function SyncDropdown( { className, environment, siteSlug }: SyncDropdownProps ) {
+export default function SyncDropdown( {
+	className,
+	environment,
+	productionSiteId,
+	stagingSiteId,
+}: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
 
@@ -72,13 +82,15 @@ export default function SyncDropdown( { className, environment, siteSlug }: Sync
 				) }
 			/>
 			{ isModalOpen && (
-				<AsyncLoad
-					require="calypso/sites/staging-site/components/staging-site-sync-modal"
-					onClose={ handleCloseModal }
-					syncType={ syncType }
-					environment={ environment }
-					siteSlug={ siteSlug }
-				/>
+				<Suspense fallback={ null }>
+					<StagingSiteSyncModal
+						onClose={ handleCloseModal }
+						syncType={ syncType }
+						environment={ environment }
+						productionSiteId={ productionSiteId }
+						stagingSiteId={ stagingSiteId }
+					/>
+				</Suspense>
 			) }
 		</>
 	);

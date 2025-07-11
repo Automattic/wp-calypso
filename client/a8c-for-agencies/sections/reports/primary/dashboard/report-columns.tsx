@@ -13,7 +13,7 @@ export const ReportSiteColumn = ( { site }: { site: string } ) => urlToSlug( sit
 export const ReportCountColumn = ( { count, onClick }: { count: number; onClick: () => void } ) => {
 	const translate = useTranslate();
 	return (
-		<Button variant="tertiary" onClick={ onClick }>
+		<Button variant="link" onClick={ onClick }>
 			{ translate( '%(count)d report', '%(count)d reports', {
 				count,
 				args: { count },
@@ -91,4 +91,54 @@ export const ReportTimeframeColumn = ( {
 	}
 
 	return timeframeText;
+};
+
+export const ReportClientEmailsColumn = ( { emails }: { emails: string[] } ) => {
+	const tooltipRef = useRef( null );
+	const [ showTooltip, setShowTooltip ] = useState( false );
+	const translate = useTranslate();
+
+	if ( ! emails || emails.length === 0 ) {
+		return <Gridicon icon="minus" />;
+	}
+
+	if ( emails.length === 1 ) {
+		return emails[ 0 ];
+	}
+
+	const firstEmail = emails[ 0 ];
+	const remainingCount = emails.length - 1;
+	const remainingEmails = emails.slice( 1 );
+
+	return (
+		<>
+			{ firstEmail }
+			{ remainingCount > 0 && (
+				<>
+					<span
+						className="a4a-reports-dashboard__more-emails"
+						onMouseEnter={ () => setShowTooltip( true ) }
+						onMouseLeave={ () => setShowTooltip( false ) }
+						onTouchStart={ () => setShowTooltip( true ) }
+						onTouchEnd={ () => setShowTooltip( false ) }
+						role="button"
+						tabIndex={ 0 }
+						ref={ tooltipRef }
+					>
+						{ translate( ' + %(count)d more', {
+							args: { count: remainingCount },
+						} ) }
+					</span>
+					<Tooltip
+						context={ tooltipRef.current }
+						showOnMobile
+						isVisible={ showTooltip }
+						position="top"
+					>
+						{ remainingEmails.join( ', ' ) }
+					</Tooltip>
+				</>
+			) }
+		</>
+	);
 };

@@ -36,7 +36,10 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isMarketplaceTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import {
+	isMarketplaceTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
+} from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -926,6 +929,10 @@ export function purchaseType( purchase: Purchase ): string | null {
 	}
 
 	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		return null;
+	}
+
+	if ( isA4ATemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 

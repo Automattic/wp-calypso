@@ -15,6 +15,7 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	notices: Record< string, string | ReactNode >;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
@@ -25,6 +26,7 @@ export type OdieAssistantContextInterface = {
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
+	setNotice: ( noticeId: string, content: string | ReactNode | null ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
 };
@@ -45,6 +47,7 @@ export type OdieAssistantProviderProps = {
 	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
+	setNotice?: ( noticeId: string, content: string | ReactNode | null ) => void;
 } & PropsWithChildren;
 
 export type CurrentUser = {

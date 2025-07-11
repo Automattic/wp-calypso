@@ -508,15 +508,6 @@ body.is-section-signup {
 		}
 	}
 
-	.login__lostpassword-form {
-		max-width: $login-form-max-width;
-		margin-bottom: 32px;
-
-		.login__form-userdata {
-			margin-bottom: 20px;
-		}
-	}
-
 	.wp-login__main.main:has(.login form.is-blaze-pro) {
 		max-width: unset;
 	}

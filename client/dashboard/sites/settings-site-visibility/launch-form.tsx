@@ -9,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useAnalytics } from '../../app/analytics';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
@@ -115,6 +116,14 @@ export function LaunchForm( {
 	onLaunchClick: () => void;
 } ) {
 	const { data: domains = [], isLoading } = useQuery( siteDomainsQuery( site.ID ) );
+	const { recordTracksEvent } = useAnalytics();
+	const buttonClickEvent = 'calypso_dashboard_site_settings_launch_site_click';
+
+	const handleLaunchClick = () => {
+		recordTracksEvent( buttonClickEvent );
+		onLaunchClick();
+	};
+
 	if ( isLoading ) {
 		return null;
 	}
@@ -152,14 +161,18 @@ export function LaunchForm( {
 
 		if ( shouldImmediatelyLaunch ) {
 			return (
-				<Button { ...commonProps } onClick={ onLaunchClick }>
+				<Button { ...commonProps } onClick={ handleLaunchClick }>
 					{ __( 'Launch site' ) }
 				</Button>
 			);
 		}
 
 		return (
-			<Button { ...commonProps } href={ getLaunchUrl() }>
+			<Button
+				{ ...commonProps }
+				onClick={ () => recordTracksEvent( buttonClickEvent ) }
+				href={ getLaunchUrl() }
+			>
 				{ __( 'Launch site' ) }
 			</Button>
 		);

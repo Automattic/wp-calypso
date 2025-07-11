@@ -793,7 +793,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			{ ! shouldShowUpsells ? null : (
 				<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 			) }
-			{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
+			{ ! wpcomShowUpsell && (
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 			) }
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }

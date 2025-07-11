@@ -37,10 +37,6 @@ $image-height: 47px;
 		}
 	}
 
-	.step-container-v2__heading {
-		text-align: center;
-	}
-
 	/* Start: Blaze Pro OAuth client font styles for login page */
 	&.is-blaze-pro {
 		* {
@@ -81,7 +77,6 @@ $image-height: 47px;
 }
 
 .wp-login__heading-logo {
-	text-align: center;
 	margin-bottom: 16px;
 
 	> img {
@@ -90,8 +85,17 @@ $image-height: 47px;
 	}
 }
 
+.wp-login__tos {
+	a {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+}
+
 .wp-login__heading-subtext {
+	text-wrap: balance;
 	color: var(--studio-gray-50, #646970);
+	margin-block: 0.5rem 0;
 
 	a {
 		color: var(--studio-gray-50, #646970);
@@ -100,9 +104,8 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: var(--color-neutral-40);
+	color: var( --color-neutral-100 );
 	font-size: $font-body;
-	margin-bottom: 16px;
 	text-align: center;
 
 	body.is-section-signup & {
@@ -110,50 +113,19 @@ $image-height: 47px;
 	}
 }
 
-.wp-login__links {
+.wp-login__main {
+	width: 100%;
+}
 
-	a,
-	a:visited,
-	button {
-		color: var(--color-neutral-50);
+.wp-login__one-login-layout-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 3em;
 
-		body.is-section-signup & {
-			color: var(--color-text-inverted);
-		}
-	}
-
-	a,
-	button,
-	.components-button {
-		border-bottom: 1px solid var(--color-neutral-10);
-		box-sizing: border-box;
-		cursor: pointer;
-		display: block;
-		font-size: $font-body-small;
-		font-weight: 600;
-		padding: 16px 24px;
-		text-align: center;
-		width: 100%;
-
-		&:hover,
-		&:active {
-			color: var(--color-accent);
-		}
-
-		&:last-child {
-			border-bottom: none;
-		}
-	}
-
-	.gridicon {
-		margin-right: 3px;
-		vertical-align: text-bottom;
-
-		&.gridicons-external {
-			top: 0;
-			margin-right: 0;
-			margin-left: 3px;
-		}
+	.is-magic-login & {
+		gap: 2em;
 	}
 }
 
@@ -214,20 +186,6 @@ $image-height: 47px;
 
 .layout.is-wccom-oauth-flow {
 	background-color: var(--color-woocommerce-onboarding-background);
-
-	.wp-login__links {
-		margin-top: 1em;
-	}
-
-	.wp-login__links a {
-		border-bottom: none;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 3.4em;
-		color: var(--color-neutral-60);
-		font-size: $font-body-small;
-		text-decoration: underline;
-		font-weight: normal;
-	}
 
 	.wp-login__main.main {
 		max-width: 476px;
@@ -392,50 +350,6 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links > .button,
-	.wp-login__links:not(.has-2fa-links) > a:first-of-type {
-		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
-		background: transparent;
-		margin: 0;
-		outline: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		text-decoration: none;
-		box-sizing: border-box;
-		font-size: $font-body-small;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		background-color: var(--color-surface);
-		color: var(--color-neutral-70);
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 4px;
-		letter-spacing: 0.32px;
-		line-height: 17px;
-		height: 44px;
-		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-
-		&:hover,
-		&:focus {
-			border-color: var(--color-neutral-20);
-			color: var(--color-neutral-70);
-		}
-	}
-
-	.wp-login__links > button,
-	.wp-login__links > a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.wp-login__links a:hover,
-	.wp-login__links a:active,
-	.wp-login__links button:hover,
-	.wp-login__links button:active {
-		color: #00a0d2;
-	}
-
 	.wp-login__main {
 		max-width: 540px;
 	}
@@ -479,9 +393,9 @@ $image-height: 47px;
 		display: flex;
 		flex-direction: column;
 		align-self: center;
-		max-width: var(--login-form-column-max-width);
 		gap: 1em;
 
+		.magic-login__footer-link,
 		.login__lost-password-link,
 		.wp-login__login-block-footer-back-link {
 			font-size: $font-body-small;
@@ -492,6 +406,7 @@ $image-height: 47px;
 		}
 
 		.login__lost-password-link,
+		.magic-login__footer-link,
 		.wp-login__login-block-footer-back-link a,
 		a.wp-login__login-block-footer-back-link {
 			color: var(--studio-gray-90, #1d2327);
@@ -499,7 +414,7 @@ $image-height: 47px;
 		}
 	}
 
-	.layout__primary {
+	&:not(.is-mobile) .layout__primary {
 		margin-top: 0;
 
 		/* START - Note: Patches below needed to continue using the current Divider.
@@ -557,8 +472,6 @@ $image-height: 47px;
 		}
 	}
 }
-
-
 
 /* stylelint-disable scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
@@ -723,7 +636,7 @@ $image-height: 47px;
 
 	button.form-button.is-primary,
 	.two-factor-authentication__actions .button {
-		min-height: 56px;
+		min-height: 50px;
 		margin: 0;
 		padding: 10px 16px;
 		font-size: 16px;
@@ -751,7 +664,7 @@ $image-height: 47px;
 	}
 
 	.components-button.is-primary {
-		min-height: 56px;
+		min-height: 50px;
 		margin-top: 16px;
 		font-size: 16px;
 		font-weight: 600;
@@ -851,8 +764,7 @@ $image-height: 47px;
 		margin: 24px 0;
 	}
 
-	.grav-powered-login__footer,
-	.wp-login__links.has-2fa-links {
+	.grav-powered-login__footer {
 		display: flex;
 		flex-direction: column;
 		font-size: 16px;
@@ -870,26 +782,12 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links.has-2fa-links {
-		align-items: center;
-		margin-top: 24px;
-
-		a,
-		button {
-			color: var(--color-gravatar);
-			font-weight: normal;
-			text-decoration: underline;
-			padding: 0;
-			border: 0;
-		}
-	}
-
 	@include break-small {
 		background-color: #efefef;
 
 		.wp-login__main:not(:has(.locale-suggestions)) .login,
 		.grav-powered-magic-login:not(:has(.locale-suggestions)) .grav-powered-magic-login__content {
-			margin-top: 40px;
+			margin-top: 50px;
 		}
 
 		.login {
@@ -900,8 +798,7 @@ $image-height: 47px;
 			font-size: 40px;
 		}
 
-		.grav-powered-login__footer,
-		.wp-login__links.has-2fa-links {
+		.grav-powered-login__footer {
 			gap: 16px;
 		}
 	}

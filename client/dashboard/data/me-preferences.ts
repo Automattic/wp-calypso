@@ -1,7 +1,7 @@
 import wpcom from 'calypso/lib/wp';
 
 export interface UserPreferences {
-	'sites-view': Record< string, unknown >;
+	'sites-view'?: Record< string, unknown >;
 }
 
 export async function fetchPreferences(): Promise< UserPreferences > {

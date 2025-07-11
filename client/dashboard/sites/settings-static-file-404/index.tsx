@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -8,6 +7,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -20,7 +20,7 @@ import PageLayout from '../../components/page-layout';
 import { HostingFeatures, canViewStaticFile404Settings } from '../features';
 import HostingFeature from '../hosting-feature';
 import SettingsPageHeader from '../settings-page-header';
-import type { Field } from '@automattic/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< { setting: string } >[] = [
 	{

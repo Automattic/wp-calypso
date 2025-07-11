@@ -67,6 +67,7 @@ export default function SiteItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
+	hideFollowButton?: boolean;
 } ) {
 	const { item, list, owner } = props;
 	const site = props.item.meta?.data?.site as Site | SiteError | undefined;
@@ -76,6 +77,7 @@ export default function SiteItem( props: {
 	const isInList = !! useSelector( ( state ) =>
 		getMatchingItem( state, { siteId: props.item.site_ID, listId: props.list.ID } )
 	);
+	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () =>
@@ -104,13 +106,13 @@ export default function SiteItem( props: {
 		<Card className="list-manage__site-card">
 			{ isSiteError( site ) ? renderSiteError( site ) : renderSite( site ) }
 
-			{ props.isFollowed && (
+			{ props.isFollowed && ! props.hideFollowButton && (
 				<FollowButton followLabel={ translate( 'Following site' ) } following />
 			) }
 
 			{ ! isInList ? (
 				<Button primary onClick={ addItem }>
-					{ translate( 'Add' ) }
+					{ isRecommendedBlogsList ? translate( 'Recommend' ) : translate( 'Add' ) }
 				</Button>
 			) : (
 				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>

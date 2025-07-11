@@ -3,6 +3,7 @@ import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import { useLoginContext } from 'calypso/login/login-context';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
@@ -12,27 +13,22 @@ import HeadingLogo from './heading-logo';
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromAkismet: boolean;
-	headingText: string;
-	headingSubText: React.ReactNode;
 	children: React.ReactNode;
 	signupUrl?: string;
-	shouldUseWideHeading?: number;
 }
 
 const OneLoginLayout = ( {
 	isJetpack,
 	isFromAkismet,
-	headingText,
-	headingSubText,
 	children,
 	signupUrl: signupUrlProp,
-	shouldUseWideHeading,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const { headingText, subHeadingText } = useLoginContext();
 
 	const SignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
@@ -57,25 +53,17 @@ const OneLoginLayout = ( {
 	return (
 		<Step.CenteredColumnLayout
 			columnWidth={ 6 }
-			{ ...( shouldUseWideHeading && { columnWidthHeading: 8 } ) }
 			topBar={ <Step.TopBar rightElement={ <SignUpLink /> } compactLogo="always" /> }
-			heading={
-				<Step.Heading
-					text={
-						<>
-							<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
-							<div className="wp-login__heading-text">{ headingText }</div>
-						</>
-					}
-					subText={
-						// <span> here because the Step.Heading renders subtext as a <p> tag.
-						<span className="wp-login__heading-subtext">{ headingSubText }</span>
-					}
-				/>
-			}
 			verticalAlign="center"
 		>
-			{ children }
+			<div className="wp-login__one-login-layout-content-wrapper">
+				<div className="wp-login__header">
+					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
+					<Step.Heading text={ <div className="wp-login__heading-text">{ headingText }</div> } />
+					<h2 className="wp-login__heading-subtext">{ subHeadingText }</h2>
+				</div>
+				{ children }
+			</div>
 		</Step.CenteredColumnLayout>
 	);
 };

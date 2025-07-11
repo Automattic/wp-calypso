@@ -18,7 +18,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
-	GetManagePurchaseUrlFor,
+	type GetManagePurchaseUrlFor,
 	MembershipSubscription,
 	Purchase,
 } from 'calypso/lib/purchases/types';
@@ -126,79 +126,6 @@ const PurchasesListDataView: React.FC<
 		return [];
 	}, [ allPurchasesLoaded, purchases, transferredOwnershipPurchases ] );
 
-	const renderConciergeBanner = () => {
-		return (
-			<PurchaseListConciergeBanner
-				nextAppointment={ nextAppointment ?? undefined }
-				availableSessions={ availableSessions }
-				isUserBlocked={ isUserBlocked }
-			/>
-		);
-	};
-
-	const commonEventProps = { context: 'me' };
-	let content;
-
-	if ( isDataLoading() ) {
-		content = <PurchasesSite isPlaceholder />;
-	}
-
-	if ( allPurchases.length ) {
-		content = (
-			<PurchasesDataViews
-				purchases={ allPurchases }
-				sites={ sites }
-				transferredOwnershipPurchases={ transferredOwnershipPurchases }
-				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-			/>
-		);
-	}
-
-	if (
-		purchases &&
-		! purchases.length &&
-		! subscriptions.length &&
-		! transferredOwnershipPurchases.length
-	) {
-		if ( ! sites.length ) {
-			return (
-				<Main wideLayout className="purchases-list">
-					<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-					<PurchasesNavigation section="activeUpgrades" />
-					<NoSitesMessage />
-				</Main>
-			);
-		}
-		content = (
-			<>
-				{ renderConciergeBanner() }
-				<CompactCard className="purchases-list__no-content">
-					<>
-						<TrackComponentView
-							eventName="calypso_no_purchases_upgrade_nudge_impression"
-							eventProperties={ commonEventProps }
-						/>
-						<PurchasesByOtherAdminsNotice sites={ sites } />
-						<EmptyContent
-							title={ translate( 'Looking to upgrade?' ) }
-							line={ translate(
-								'Our plans give your site the power to thrive. ' +
-									'Find the plan that works for you.'
-							) }
-							action={ translate( 'Upgrade now' ) }
-							actionURL="/plans"
-							illustration={ noSitesIllustration }
-							actionCallback={ () => {
-								recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
-							} }
-						/>
-					</>
-				</CompactCard>
-			</>
-		);
-	}
-
 	return (
 		<Main wideLayout className="purchases-list">
 			<QueryUserPurchases />
@@ -218,12 +145,119 @@ const PurchasesListDataView: React.FC<
 				) }
 			/>
 			<PurchasesNavigation section="activeUpgrades" />
-			{ content }
+			<PurchasesContent
+				isDataLoading={ isDataLoading() }
+				allPurchases={ allPurchases }
+				transferredOwnershipPurchases={ transferredOwnershipPurchases }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				subscriptions={ subscriptions }
+				sites={ sites }
+				nextAppointment={ nextAppointment }
+				isUserBlocked={ isUserBlocked }
+				availableSessions={ availableSessions }
+			/>
 			<MembershipSubscriptions memberships={ subscriptions } />
 			<QueryConciergeInitial />
 		</Main>
 	);
 };
+
+function PurchasesContent( {
+	isDataLoading,
+	allPurchases,
+	transferredOwnershipPurchases,
+	getManagePurchaseUrlFor,
+	subscriptions,
+	sites,
+	nextAppointment,
+	isUserBlocked,
+	availableSessions,
+}: {
+	isDataLoading: boolean;
+	allPurchases: Purchase[];
+	transferredOwnershipPurchases: Purchase[];
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	subscriptions: MembershipSubscription[];
+	sites: SiteDetails[];
+	nextAppointment: NextAppointment | null;
+	isUserBlocked: boolean;
+	availableSessions: number[];
+} ) {
+	const translate = useTranslate();
+
+	// If the data is loading, render the loading indicator.
+	if ( isDataLoading ) {
+		return <PurchasesSite isPlaceholder />;
+	}
+
+	// If the user has regular subscriptions, render them. Note that
+	// memberships subscriptions are rendered separately in the parent
+	// component.
+	if ( allPurchases.length ) {
+		return (
+			<PurchasesDataViews
+				purchases={ allPurchases }
+				sites={ sites }
+				transferredOwnershipPurchases={ transferredOwnershipPurchases }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+			/>
+		);
+	}
+
+	// If the user has no regular subscriptions, but does have memberships
+	// subscriptions, render nothing. The memberships subscriptions will be
+	// rendered separately in the parent component.
+	if ( subscriptions.length ) {
+		return null;
+	}
+
+	// If the user has no regular subscriptions, no memberships subscriptions,
+	// and no sites, render the "no sites" page.
+	if ( ! sites.length ) {
+		return (
+			<Main wideLayout className="purchases-list">
+				<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+				<PurchasesNavigation section="activeUpgrades" />
+				<NoSitesMessage />
+			</Main>
+		);
+	}
+
+	// If the user has no regular subscriptions, no memberships subscriptions,
+	// but does have sites, render the upsell page.
+	const commonEventProps = { context: 'me' };
+	return (
+		<>
+			<PurchaseListConciergeBanner
+				nextAppointment={ nextAppointment ?? undefined }
+				availableSessions={ availableSessions }
+				isUserBlocked={ isUserBlocked }
+			/>
+			<CompactCard className="purchases-list__no-content">
+				<>
+					<TrackComponentView
+						eventName="calypso_no_purchases_upgrade_nudge_impression"
+						eventProperties={ commonEventProps }
+					/>
+					<PurchasesByOtherAdminsNotice sites={ sites } />
+					<EmptyContent
+						title={ translate( 'Looking to upgrade?' ) }
+						line={ translate(
+							'Our plans give your site the power to thrive. ' + 'Find the plan that works for you.'
+						) }
+						action={ translate( 'Upgrade now' ) }
+						actionURL="/plans"
+						illustration={ noSitesIllustration }
+						actionCallback={ () => {
+							recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+						} }
+					/>
+				</>
+			</CompactCard>
+		</>
+	);
+}
 
 export default connect( ( state: AppState ) => ( {
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),

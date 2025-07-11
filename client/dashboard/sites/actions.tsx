@@ -6,8 +6,8 @@ import { lazy, Suspense } from 'react';
 import { isP2, isSelfHostedJetpackConnected } from '../utils/site-types';
 import { canManageSite } from './features';
 import type { Site } from '../data/types';
-import type { Action } from '@automattic/dataviews';
 import type { AnyRouter } from '@tanstack/react-router';
+import type { Action } from '@wordpress/dataviews';
 
 const SiteLeaveContentInfo = lazy( () => import( './site-leave-modal/content-info' ) );
 const SiteRestoreContentInfo = lazy( () => import( './site-restore-modal/content-info' ) );
@@ -50,6 +50,15 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			isEligible: ( item: Site ) => canManageSite( item ),
 		},
 		{
+			id: 'jetpack-cloud',
+			label: __( 'Jetpack Cloud ↗' ),
+			callback: ( sites: Site[] ) => {
+				const site = sites[ 0 ];
+				window.open( `https://cloud.jetpack.com/landing/${ site.slug }` );
+			},
+			isEligible: ( item: Site ) => isSelfHostedJetpackConnected( item ),
+		},
+		{
 			id: 'prepare-for-launch',
 			label: __( 'Prepare for launch' ),
 			callback: ( sites ) => {
@@ -63,7 +72,6 @@ export function getActions( router: AnyRouter ): Action< Site >[] {
 			},
 			isEligible: ( item: Site ) =>
 				canManageSite( item ) &&
-				item.is_a4a_dev_site &&
 				! item.is_wpcom_staging_site &&
 				item.launch_status === 'unlaunched',
 		},

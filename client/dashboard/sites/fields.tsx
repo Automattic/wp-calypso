@@ -15,10 +15,10 @@ import {
 	Status,
 	URL,
 	Uptime,
+	SiteIconLink,
 } from './site-fields';
-import SiteIcon from './site-icon';
 import type { Site } from '../data/types';
-import type { Field, Operator } from '@automattic/dataviews';
+import type { Field, Operator } from '@wordpress/dataviews';
 
 const DEFAULT_FIELDS: Field< Site >[] = [
 	{
@@ -39,7 +39,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'icon.ico',
 		label: __( 'Site icon' ),
-		render: ( { item } ) => <SiteIcon site={ item } />,
+		render: ( { item } ) => <SiteIconLink site={ item } />,
 		enableSorting: false,
 	},
 	{
@@ -90,6 +90,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'preview',
 		label: __( 'Preview' ),
 		render: ( { item } ) => <Preview site={ item } />,
+		enableHiding: false,
 		enableSorting: false,
 	},
 	{
@@ -101,25 +102,25 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	},
 	{
 		id: 'uptime',
-		label: __( 'Uptime' ),
+		label: __( '7-day uptime' ),
 		render: ( { item } ) => <Uptime site={ item } />,
 		enableSorting: false,
 	},
 	{
 		id: 'visitors',
-		label: __( 'Visitors' ),
+		label: __( '7-day visitors' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
 		enableSorting: false,
 	},
 	{
 		id: 'views',
-		label: __( 'Views' ),
+		label: __( '7-day views' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="views" />,
 		enableSorting: false,
 	},
 	{
 		id: 'likes',
-		label: __( 'Likes' ),
+		label: __( '7-day likes' ),
 		render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
 		enableSorting: false,
 	},
@@ -169,6 +170,10 @@ export function getFields( {
 		}
 
 		if ( field.id === 'icon.ico' && viewType === 'grid' ) {
+			return false;
+		}
+
+		if ( field.id === 'preview' && viewType === 'table' ) {
 			return false;
 		}
 

@@ -47,7 +47,7 @@ describe( '<Status>', () => {
 		expect( container.textContent ).toBe( 'Migration started' );
 	} );
 
-	test( 'for unlaunched sites, it renders a "Coming soon" link', () => {
+	test( 'for unlaunched sites, it renders a "Finish setup" link', () => {
 		const site = {
 			slug: 'test.wordpress.com',
 			site_migration: {},
@@ -55,8 +55,8 @@ describe( '<Status>', () => {
 			is_private: true,
 		} as Site;
 		const { container, getByRole } = render( <Status site={ site } /> );
-		expect( container.textContent ).toBe( 'Coming soon↗' );
-		expect( getByRole( 'link', { name: /Coming soon/ } ) ).toHaveAttribute(
+		expect( container.textContent ).toBe( 'Finish setup↗' );
+		expect( getByRole( 'link', { name: /Finish setup/ } ) ).toHaveAttribute(
 			'href',
 			'/home/test.wordpress.com'
 		);

@@ -12,16 +12,19 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import {
 	A4A_REPORTS_LINK,
 	A4A_REPORTS_BUILD_LINK,
 	A4A_REPORTS_DASHBOARD_LINK,
+	A4A_REPORTS_SURVEY_PREFERENCE_KEY,
 } from '../../constants';
 import { useFormValidation } from '../../hooks/use-build-report-form-validation';
 import { useDuplicateReportFormData } from '../../hooks/use-duplicate-report-form-data';
 import usePollReportStatus from '../../hooks/use-poll-report-status';
+import { useReportError } from '../../hooks/use-report-error';
 import useSendReportEmailMutation from '../../hooks/use-send-report-email-mutation';
 import useSendReportMutation from '../../hooks/use-send-report-mutation';
 import BuildReportActions from './build-report-actions';
@@ -33,6 +36,11 @@ import './style.scss';
 const BuildReport = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	// Check if the survey has been shown to the user
+	const surveyShown = useSelector( ( state ) =>
+		getPreference( state, A4A_REPORTS_SURVEY_PREFERENCE_KEY )
+	);
 
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 
@@ -74,7 +82,10 @@ const BuildReport = () => {
 				)
 			);
 			if ( ! isPreview ) {
-				page.redirect( A4A_REPORTS_DASHBOARD_LINK );
+				const dashboardUrl = ! surveyShown
+					? addQueryArgs( A4A_REPORTS_DASHBOARD_LINK, { 'show-survey': 'true' } )
+					: A4A_REPORTS_DASHBOARD_LINK;
+				page.redirect( dashboardUrl );
 			}
 		},
 		onError: ( error ) => {
@@ -91,11 +102,14 @@ const BuildReport = () => {
 
 	// Poll report status when reportId exists
 	const {
+		data: reportData,
 		isProcessed,
 		isError: isReportError,
 		isPending: isReportPending,
 		isErrorStatus: isReportErrorStatus,
 	} = usePollReportStatus( reportId );
+
+	const reportErrorMetadata = useReportError( reportData );
 
 	useEffect( () => {
 		if ( reportId ) {
@@ -150,6 +164,8 @@ const BuildReport = () => {
 		showValidationErrors,
 		validationErrors,
 		isReportError,
+		reportData,
+		reportErrorMetadata,
 	};
 
 	return (

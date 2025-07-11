@@ -1,39 +1,25 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DomainsFullCartItems } from '..';
-import { DomainSearchContext } from '../../DomainSearch/DomainSearch';
-
-const defaultContextValue = {
-	isFullCartOpen: false,
-	closeFullCart: () => {},
-	onContinue: () => {},
-	query: '',
-	setQuery: () => {},
-	cart: {
-		items: [],
-		total: '',
-		onAddItem: () => {},
-		onRemoveItem: () => {},
-	},
-	openFullCart: () => {},
-};
+import {
+	buildDomain,
+	buildDomainSearchCart,
+	buildDomainSearchContext,
+} from '../../../test-helpers/factories';
+import { DomainSearchContext } from '../../domain-search';
 
 describe( 'DomainsFullCartItems', () => {
 	test( 'renders domains list including name and tld', () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
 						items: [
-							{ domain: 'example', tld: 'com', price: '$10' },
-							{ domain: 'test', tld: 'org', price: '$15' },
+							buildDomain( { domain: 'example', tld: 'com', price: '$10' } ),
+							buildDomain( { domain: 'test', tld: 'org', price: '$15' } ),
 						],
-						total: '$25',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsFullCartItems />
 			</DomainSearchContext.Provider>
@@ -49,15 +35,12 @@ describe( 'DomainsFullCartItems', () => {
 
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						items: [ { domain: 'example', tld: 'com', price: '$10' } ],
-						total: '$10',
-						onAddItem: () => {},
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain() ],
 						onRemoveItem,
-					},
-				} }
+					} ),
+				} ) }
 			>
 				<DomainsFullCartItems />
 			</DomainSearchContext.Provider>
@@ -65,32 +48,17 @@ describe( 'DomainsFullCartItems', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
-		expect( onRemoveItem ).toHaveBeenCalledWith( {
-			domain: 'example',
-			tld: 'com',
-			price: '$10',
-		} );
+		expect( onRemoveItem ).toHaveBeenCalledWith( '1' );
 	} );
 
 	test( 'renders the original price if included', () => {
 		render(
 			<DomainSearchContext.Provider
-				value={ {
-					...defaultContextValue,
-					cart: {
-						items: [
-							{
-								domain: 'example',
-								tld: 'com',
-								price: '$10',
-								originalPrice: '$20',
-							},
-						],
-						total: '$10',
-						onAddItem: () => {},
-						onRemoveItem: () => {},
-					},
-				} }
+				value={ buildDomainSearchContext( {
+					cart: buildDomainSearchCart( {
+						items: [ buildDomain( { originalPrice: '$20' } ) ],
+					} ),
+				} ) }
 			>
 				<DomainsFullCartItems />
 			</DomainSearchContext.Provider>

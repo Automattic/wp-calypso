@@ -1,0 +1,9 @@
+.domain-suggestion-cta {
+	justify-content: center !important;
+}
+
+.domain-suggestion-cta--continue {
+	--wp-components-color-accent: var( --domain-search-secondary-action-color );
+	--wp-components-color-accent-darker-10: var( --domain-search-secondary-action-color-darker-10 );
+	--wp-components-color-accent-darker-20: var( --domain-search-secondary-action-color-darker-10 );
+}

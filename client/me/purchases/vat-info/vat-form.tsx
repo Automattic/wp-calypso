@@ -1,4 +1,3 @@
-import { DataForm } from '@automattic/dataviews';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
 	Button,
@@ -10,6 +9,7 @@ import {
 	__experimentalVStack as VStack,
 	SelectControl,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';

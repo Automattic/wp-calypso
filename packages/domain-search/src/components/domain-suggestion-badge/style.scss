@@ -1,0 +1,10 @@
+.domain-suggestion-badge {
+	padding: 4px 8px;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 );
+}
+
+.domain-suggestion-badge--warning {
+	box-shadow: 0 0 0 1px var( --domain-search-warning-badge-border-color );
+	background-color: var( --domain-search-warning-badge-background-color );
+}

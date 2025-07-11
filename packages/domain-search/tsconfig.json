@@ -3,9 +3,9 @@
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src"
+		"rootDir": "src",
+		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/test/*" ],
 	"references": [ { "path": "../components" } ]
 }

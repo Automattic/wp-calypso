@@ -6,9 +6,9 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
-	ODIE_RATE_LIMIT_MESSAGE,
-	ODIE_EMAIL_FALLBACK_MESSAGE,
-	ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+	getOdieRateLimitMessage,
+	getOdieEmailFallbackMessage,
+	getOdieErrorMessageNonEligible,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -21,7 +21,7 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
 	internal_message_id: string
 ): Message => {
 	return {
-		content: ODIE_ERROR_MESSAGE_NON_ELIGIBLE,
+		content: getOdieErrorMessageNonEligible(),
 		internal_message_id,
 		role: 'bot',
 		type: 'message',
@@ -109,7 +109,7 @@ export const useSendOdieMessage = () => {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
-						messages: [ ...prevChat.messages, ...[ ODIE_EMAIL_FALLBACK_MESSAGE ] ],
+						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
 						status: 'loaded',
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );
@@ -227,7 +227,7 @@ export const useSendOdieMessage = () => {
 
 			if ( isRateLimitError ) {
 				// Handle rate limit error with standard rate limit message
-				const message: Message = { ...ODIE_RATE_LIMIT_MESSAGE, internal_message_id };
+				const message: Message = { ...getOdieRateLimitMessage(), internal_message_id };
 				addMessage( { message, props: {}, isFromError: true } );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 				// User is eligible for premium support - transfer to Zendesk

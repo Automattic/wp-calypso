@@ -17,7 +17,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -49,9 +49,12 @@
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
 		"@automattic/number-formatters": "^1.0.1",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
+		"@fnando/cnpj": "2.0.0",
+		"@fnando/cpf": "1.0.2",
 		"@stripe/stripe-js": "^1.54.2",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/i18n": "^5.23.0",
@@ -72,6 +75,5 @@
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1",
 		"redux": "^5.0.1"
-	},
-	"private": true
+	}
 }

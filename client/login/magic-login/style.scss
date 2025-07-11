@@ -22,8 +22,6 @@
 }
 
 .layout.is-jetpack-login:not(.woo) {
-	background-color: #fff;
-
 	&, .empty-content__title {
 		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	}
@@ -37,27 +35,11 @@
 	}
 
 	.magic-login {
-		max-width: calc(450px + 48px);
-		margin-top: calc(96px - 48px);
 
-		@include break-small {
-			margin-top: calc(160px - 48px);
+		.magic-login__form-form {
+			box-shadow: none;
 		}
-
-		&.is-section-login {
-			min-height: 100%;
-			padding-bottom: 0;
-		}
-
 		.magic-login__form {
-			.magic-login__form-header {
-				padding: 0 24px 0 24px;
-			}
-
-			.magic-login__form-form {
-				box-shadow: none;
-			}
-
 			.magic-login__form-action {
 				.button.is-primary {
 					background-color: var(--studio-jetpack-green-50);
@@ -76,22 +58,7 @@
 		}
 
 		.magic-login__form-header {
-			margin-top: 0;
-			margin-bottom: 16px;
-
 			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-			font-size: 32px;
-			font-weight: 500;
-
-			text-align: initial;
-		}
-
-		.logged-out-form {
-			max-width: calc(450px + 48px);
-
-			> form {
-				margin: 0;
-			}
 		}
 
 		.magic-login__successfully-jetpack {
@@ -126,6 +93,8 @@
 	line-height: 20px;
 	word-wrap: break-word;
 
+	text-align: center;
+
 	margin-top: 45px;
 	margin-bottom: 45px;
 
@@ -148,10 +117,6 @@
 }
 
 .layout.is-wpcom-magic-login {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
 	.magic-login__form-header-icon {
 		text-align: center;
 		img {
@@ -167,12 +132,11 @@
 		}
 	}
 
-	.logged-out-form {
-		padding: 0 24px 0 24px;
-		.magic-login__form-sub-header {
-			text-align: center;
-		}
+	.magic-login__form-sub-header {
+		text-align: center;
+	}
 
+	.logged-out-form {
 		.form-label {
 			font-weight: 400;
 		}
@@ -251,7 +215,6 @@
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 auto;
 		max-width: 400px;
-		padding: 0 24px;
 
 		p {
 			margin-bottom: 20px;
@@ -296,7 +259,6 @@
 		display: block;
 		font-size: $font-body-small;
 		font-weight: 600;
-		padding: 0 24px;
 		text-align: center;
 		text-decoration: underline;
 
@@ -369,8 +331,8 @@
 	}
 }
 .is-section-login .app-promo.magic-link-app-promo {
-	margin-top: 4px;
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	margin-top: 3em;
+	box-shadow: 0 0 0 1px var(--color-border-subtle) inset;
 	border-radius: 16px; /* stylelint-disable-line scales/radii */
 	font-weight: 400;
 	letter-spacing: -0.4px;
@@ -408,23 +370,7 @@
 	}
 }
 
-.magic-login__gutenboarding-wordpress-logo {
-	height: 64px;
-	position: absolute;
-	left: 0;
-	top: 0;
-	padding: 0 24px;
-	box-sizing: border-box;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-
-	@include break-mobile {
-		padding: 8px 24px;
-	}
-}
-
-.studio-magic-login__tos {
+.magic-login__tos {
 	font-size: $font-body-extra-small;
 	margin: 20px 0 20px;
 	text-align: left;
@@ -458,10 +404,14 @@
 			color: #2404eb;
 		}
 
-		.magic-login__form-action button[type="submit"].form-button.is-primary {
+		.magic-login__form-action button[type="submit"].components-button.is-primary {
 			min-height: unset;
 			margin-top: 0;
 			border-radius: 2px;
+
+			&.is-busy {
+				background-image: linear-gradient(-45deg, #2404eb 33%, darken(#2404eb, 10%) 33%, darken(#2404eb, 10%) 70%, #2404eb 70%);
+			}
 
 			&,
 			&:disabled {
@@ -484,7 +434,7 @@
 			}
 
 			.calypso-notice__content {
-				padding-left: 13px;
+				padding: 13px 13px 13px 0;
 			}
 		}
 
@@ -530,18 +480,20 @@
 	}
 
 	button[type="submit"].form-button.is-primary,
-	.magic-login__form-action button[type="submit"].form-button.is-primary {
+	.magic-login__form-action button[type="submit"].components-button.is-primary {
 		width: 100%;
-		min-height: 56px;
+		min-height: 50px;
 		margin-top: 24px;
 		border-radius: 4px;
 
 		&.is-busy {
-			background-image: linear-gradient(-45deg, #1d4fc4 28%, darken(#1d4fc4, 10%) 28%, darken(#1d4fc4, 10%) 72%, #1d4fc4 72%);
+			background-image: linear-gradient(-50deg, #1d4fc4 33%, darken(#1d4fc4, 10%) 33%, darken(#1d4fc4, 10%) 70%, #1d4fc4 70%);
 		}
 
 		&:disabled {
+			opacity: 0.3;
 			color: #fff;
+			cursor: not-allowed;
 		}
 	}
 
@@ -564,7 +516,7 @@
 		}
 
 		.calypso-notice__content {
-			padding-left: 0;
+			padding: 10px 0 0;
 		}
 
 		a {
@@ -746,6 +698,7 @@
 
 	.grav-powered-magic-login__gravatar-info {
 		margin-top: 32px;
+		padding: 0 30px;
 	}
 
 	.grav-powered-magic-login__gravatar-info-heading {
@@ -835,6 +788,7 @@
 
 		.grav-powered-magic-login__gravatar-info {
 			margin-top: 40px;
+			padding: unset;
 		}
 	}
 }
@@ -858,12 +812,12 @@
 		border: none;
 	}
 }
+/* stylelint-enable scales/font-weights */
 
 .magic-login__a4a-logo {
 	display: block;
 	margin: 0 auto;
 }
-/* stylelint-enable scales/font-weights */
 
 .card.magic-login__verify-code-form {
 	--magic-login-error-color: #cc1818;

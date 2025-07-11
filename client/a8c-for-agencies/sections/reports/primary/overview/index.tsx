@@ -101,7 +101,7 @@ export default function ReportsOverview() {
 								</div>
 								<div className="reports-overview__description">
 									{ translate(
-										"Prove your agency's impact with polished, easy-to-read reports. Pull in traffic stats, security checks, and performance metrics automatically, then send a snapshot that keeps clients informed, impressed, and confident in the work you do each month."
+										"Prove your agency's impact with polished, easy-to-read reports. Highlight key traffic stats (more data types coming soon) and send monthly snapshots that keep clients informed, impressed, and confident in your work."
 									) }
 								</div>
 							</div>

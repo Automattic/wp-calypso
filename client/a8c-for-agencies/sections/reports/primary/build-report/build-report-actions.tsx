@@ -34,6 +34,7 @@ export default function BuildReportActions( {
 		reportId,
 		isProcessed,
 		isReportError,
+		reportErrorMetadata,
 	} = state;
 
 	const { setCurrentStep, handleNextStep, handlePrevStep } = handlers;
@@ -44,16 +45,28 @@ export default function BuildReportActions( {
 		setCurrentStep( 1 );
 	}, [ setCurrentStep, dispatch ] );
 
+	// We need to replace the reportId with the sourceId so that
+	// we can prefill the form with the previous data
+	const handleUpdateUrl = useCallback(
+		( step: number ) => {
+			const currentReportId = getQueryArg( window.location.href, 'reportId' );
+			const urlWithoutReportId = removeQueryArgs( window.location.pathname, 'reportId' );
+			const urlWithSourceId = addQueryArgs( urlWithoutReportId, { sourceId: currentReportId } );
+			page.redirect( urlWithSourceId );
+			setCurrentStep( step );
+		},
+		[ setCurrentStep ]
+	);
+
+	const changeReportDetails = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_reports_change_report_details_click' ) );
+		handleUpdateUrl( 1 );
+	}, [ handleUpdateUrl, dispatch ] );
+
 	const handleBackToStep2 = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_send_report_back_click' ) );
-		// We need to replace the reportId with the sourceId so that
-		// we can prefill the form with the previous data
-		const currentReportId = getQueryArg( window.location.href, 'reportId' );
-		const urlWithoutReportId = removeQueryArgs( window.location.pathname, 'reportId' );
-		const urlWithSourceId = addQueryArgs( urlWithoutReportId, { sourceId: currentReportId } );
-		page.redirect( urlWithSourceId );
-		setCurrentStep( 2 );
-	}, [ setCurrentStep, dispatch ] );
+		handleUpdateUrl( 2 );
+	}, [ handleUpdateUrl, dispatch ] );
 
 	const isCreatingReport = sendReportMutation.isPending;
 	const isSendingReport = sendReportEmailMutation.isPending;
@@ -150,6 +163,13 @@ export default function BuildReportActions( {
 						<div className="build-report__actions">
 							<Button variant="primary" onClick={ handleBuildNewReport }>
 								{ translate( 'Build a new report' ) }
+							</Button>
+						</div>
+					) }
+					{ reportErrorMetadata.errorCode === 'report_empty_data' && (
+						<div className="build-report__actions">
+							<Button variant="primary" onClick={ changeReportDetails }>
+								{ translate( 'Change report details' ) }
 							</Button>
 						</div>
 					) }
