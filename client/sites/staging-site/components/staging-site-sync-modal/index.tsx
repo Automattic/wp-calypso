@@ -9,7 +9,7 @@ import {
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -195,6 +195,11 @@ export default function SyncModal( {
 	);
 
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, '/' ) );
+	useEffect( () => {
+		if ( querySiteId === stagingSiteId ) {
+			dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
+		}
+	}, [ dispatch, querySiteId, stagingSiteId ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
