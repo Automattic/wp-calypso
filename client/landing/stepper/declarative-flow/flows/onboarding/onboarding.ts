@@ -5,6 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
+import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
@@ -84,6 +85,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
+		const refParam = useQuery().get( 'ref' );
+		const { addBlogStickerAsync } = useAddBlogStickerMutation();
+
+		const isWpcomEsContact = refParam === 'wpcom-es-contact';
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -242,6 +247,12 @@ const onboarding: FlowV2< typeof initialize > = {
 
 						if ( providedDependencies.goToCheckout ) {
 							const siteSlug = providedDependencies.siteSlug as string;
+
+							if ( isWpcomEsContact ) {
+								try {
+									await addBlogStickerAsync( providedDependencies.siteId, 'wpcom-es-contact' );
+								} catch ( error ) {}
+							}
 
 							/**
 							 * If the user comes from the Playground onboarding flow,

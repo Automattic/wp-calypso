@@ -24,12 +24,17 @@ export const useAddBlogStickerMutation = ( options = {} ) => {
 		},
 	} );
 
-	const { mutate } = mutation;
+	const { mutate, mutateAsync } = mutation;
 
 	const addBlogSticker = useCallback(
 		( blogId, stickerName ) => mutate( { blogId, stickerName } ),
 		[ mutate ]
 	);
 
-	return { addBlogSticker, ...mutation };
+	const addBlogStickerAsync = useCallback(
+		( blogId, stickerName ) => mutateAsync( { blogId, stickerName } ),
+		[ mutateAsync ]
+	);
+
+	return { addBlogSticker, addBlogStickerAsync, ...mutation };
 };
