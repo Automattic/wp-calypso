@@ -66,7 +66,7 @@ const Environment = ( { env }: { env: Env } ) => {
 	);
 };
 
-export const CurrentEnvironment = ( { site }: { site: Site } ) => {
+const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	if ( site.is_wpcom_staging_site ) {
 		return <Environment env="staging" />;
 	}
