@@ -175,9 +175,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 							disabled={ ! canToggle }
 							onClick={ canToggle ? onToggle : undefined }
 						>
-							<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+							<HStack justify="center">
 								<CurrentEnvironment site={ site } />
-							</div>
+							</HStack>
 						</Button>
 					);
 				} }
