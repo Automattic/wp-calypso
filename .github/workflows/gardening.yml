@@ -3,10 +3,6 @@ name: Repo gardening
 on:
   pull_request_target: # When a PR is opened, edited, updated, closed, or a label is added.
     types: [opened, reopened, synchronize, edited, labeled, closed]
-  issues: # For auto-triage of issues.
-    types: [opened, labeled, reopened, edited, closed]
-  issue_comment: # To gather support references in issue comments.
-    types: [created]
 concurrency:
   # For pull_request_target, cancel any concurrent jobs with the same type (e.g. "opened", "labeled") and branch.
   # Don't cancel any for other events, accomplished by grouping on the unique run_id.
@@ -15,10 +11,10 @@ concurrency:
 
 jobs:
   repo-gardening:
-    name: 'Assign issues, Clean up labels, and notify Design and Editorial when necessary'
+    name: 'Clean up PR labels, notify Design/Editorial when necessary, and flag OSS PRs'
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
-    timeout-minutes: 60 # 2025-07-11 -- Bump from 30 to 60 minutes to allow for more time to process issues and PRs
+    timeout-minutes: 60 # 2025-07-11 -- Bump from 30 to 60 minutes to allow for more time to process PRs
 
     steps:
      - name: Checkout
@@ -42,9 +38,4 @@ jobs:
          slack_design_channel: ${{ secrets.SLACK_DESIGN_CHANNEL }}
          slack_editorial_channel: ${{ secrets.SLACK_EDITORIAL_CHANNEL }}
          slack_team_channel: ${{ secrets.SLACK_TEAM_CHANNEL }}
-         slack_he_triage_channel: ${{ secrets.SLACK_HE_TRIAGE_CHANNEL }}
-         slack_quality_channel: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-         triage_projects_token: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
-         project_board_url: ${{ secrets.PROJECT_BOARD_URL }}
-         openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageIssues,gatherSupportReferences,replyToCustomersReminder,updateBoard'
+         tasks: 'cleanLabels,notifyDesign,notifyEditorial,flagOss'
