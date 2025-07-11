@@ -1,9 +1,12 @@
-import ReactDom from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 
 export function render( context ) {
-	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
+	const container = document.getElementById( 'wpcom' );
+	const root = createRoot( container );
+	root.render( context.layout );
 }
 
 export function hydrate( context ) {
-	ReactDom.hydrate( context.layout, document.getElementById( 'wpcom' ) );
+	const container = document.getElementById( 'wpcom' );
+	hydrateRoot( container, context.layout );
 }
