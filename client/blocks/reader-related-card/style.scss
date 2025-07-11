@@ -43,8 +43,8 @@
 }
 
 .reader-related-card__list-item {
-	flex-basis: 0;
-	flex-grow: 1;
+	flex: 1 1 0;
+	min-width: 0;
 	list-style-type: none;
 	margin-top: -3px;
 
