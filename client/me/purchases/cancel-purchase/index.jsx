@@ -420,6 +420,16 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
+				{ shouldShowDomainOptionsInline && (
+					<CancelPurchaseDomainOptions
+						includedDomainPurchase={ includedDomainPurchase }
+						cancelBundledDomain={ false }
+						purchase={ purchase }
+						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+						isLoading={ false }
+					/>
+				) }
+
 				{ includedDomainPurchase && atomicTransfer?.created_at && ! isRefundable( purchase ) && (
 					<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
 						{ this.props.translate( 'What happens when you cancel' ) }
@@ -437,16 +447,6 @@ class CancelPurchase extends Component {
 					purchase={ purchase }
 					cancellationFeatures={ cancellationFeatures }
 				/>
-
-				{ shouldShowDomainOptionsInline && (
-					<CancelPurchaseDomainOptions
-						includedDomainPurchase={ includedDomainPurchase }
-						cancelBundledDomain={ false }
-						purchase={ purchase }
-						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
-						isLoading={ false }
-					/>
-				) }
 
 				{ ! cancellationFeatures.length
 					? this.renderProductRevertContent()
