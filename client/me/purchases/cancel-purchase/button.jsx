@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
 import {
 	getName,
@@ -97,18 +98,22 @@ class CancelPurchaseButton extends Component {
 		}
 
 		// For other purchases, determine if we need domain options step
-		const needsDomainOptionsStep =
-			this.props.includedDomainPurchase &&
-			willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
-
-		if ( needsDomainOptionsStep ) {
-			// Step 1: Show domain options step
-			if ( this.props.onCancellationStart ) {
-				this.props.onCancellationStart();
-			}
-		} else {
-			// Step 2: Perform cancellation immediately
+		// If onCancellationStart is null, we're already in the domain options step
+		if ( this.props.onCancellationStart === null ) {
+			// We're in the domain options step, perform cancellation directly
 			await this.performCancellation();
+		} else {
+			const needsDomainOptionsStep =
+				this.props.includedDomainPurchase &&
+				willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
+
+			if ( needsDomainOptionsStep ) {
+				// Step 1: Show domain options step
+				this.props.onCancellationStart();
+			} else {
+				// Step 2: Perform cancellation immediately
+				await this.performCancellation();
+			}
 		}
 	};
 
@@ -348,7 +353,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 
 		const onClick = ( () => {
 			return this.handleCancelPurchaseClick;
@@ -395,6 +400,24 @@ class CancelPurchaseButton extends Component {
 				>
 					{ text }
 				</Button>
+
+				{ ! isJetpack && ! isAkismet && ! isDomainRegistration( purchase ) && (
+					<CancelPurchaseForm
+						disableButtons={ disableButtons }
+						purchase={ purchase }
+						isVisible={ this.state.showDialog }
+						onClose={ this.closeDialog }
+						onSurveyComplete={ this.handleSurveyComplete }
+						downgradeClick={ this.downgradeClick }
+						freeMonthOfferClick={ this.freeMonthOfferClick }
+						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						cancelBundledDomain={ cancelBundledDomain }
+						includedDomainPurchase={ includedDomainPurchase }
+						cancellationCompleted={ this.state.cancellationCompleted }
+						cancellationMessage={ this.state.cancellationMessage }
+						cancellationInProgress={ this.state.isLoading }
+					/>
+				) }
 
 				{ ( isJetpack || isAkismet ) && (
 					<CancelJetpackForm
