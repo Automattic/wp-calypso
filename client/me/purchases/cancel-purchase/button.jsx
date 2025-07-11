@@ -49,6 +49,13 @@ class CancelPurchaseButton extends Component {
 		onCancellationComplete: PropTypes.func,
 		onSurveyComplete: PropTypes.func,
 		moment: PropTypes.func,
+		// Props from parent component
+		showDialog: PropTypes.bool,
+		cancellationCompleted: PropTypes.bool,
+		cancellationMessage: PropTypes.string,
+		isLoading: PropTypes.bool,
+		onDialogClose: PropTypes.func,
+		onSetLoading: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -57,11 +64,7 @@ class CancelPurchaseButton extends Component {
 
 	state = {
 		disabled: false,
-		showDialog: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
-		cancellationCompleted: false,
-		cancellationMessage: '',
-		isLoading: false,
 	};
 
 	setDisabled = ( disabled ) => {
@@ -71,9 +74,10 @@ class CancelPurchaseButton extends Component {
 	handleCancelPurchaseClick = async () => {
 		// Handle domain cancellations immediately instead of redirecting to confirmation page
 		if ( isDomainRegistration( this.props.purchase ) ) {
-			this.setState( {
-				isLoading: true,
-			} );
+			// Set loading state using parent callback
+			if ( this.props.onSetLoading ) {
+				this.props.onSetLoading( true );
+			}
 
 			if ( this.props.onCancellationStart ) {
 				this.props.onCancellationStart();
@@ -82,12 +86,10 @@ class CancelPurchaseButton extends Component {
 			try {
 				const result = await this.submitCancelAndRefundPurchase();
 				if ( result.success ) {
-					this.setState( {
-						showDialog: true,
-						cancellationCompleted: true,
-						cancellationMessage: result.message,
-						isLoading: false,
-					} );
+					// Use parent state management instead of local state
+					if ( this.props.onCancellationComplete ) {
+						this.props.onCancellationComplete( result.message );
+					}
 				} else {
 					this.cancellationFailed( result.error );
 				}
@@ -119,12 +121,13 @@ class CancelPurchaseButton extends Component {
 
 	closeDialog = () => {
 		this.setState( {
-			showDialog: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
-			cancellationCompleted: false,
-			cancellationMessage: '',
-			isLoading: false,
 		} );
+
+		// Call parent's dialog close handler if provided
+		if ( this.props.onDialogClose ) {
+			this.props.onDialogClose();
+		}
 
 		// Always redirect to purchases page when dialog is closed
 		page.redirect( this.props.purchaseListUrl );
@@ -287,13 +290,13 @@ class CancelPurchaseButton extends Component {
 
 	handleSurveyComplete = () => {
 		// Handle success flow after survey completion
-		if ( this.state.cancellationCompleted ) {
+		if ( this.props.cancellationCompleted ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
 
 			// Show success notice after survey completion using the API response message
-			if ( this.state.cancellationMessage ) {
-				this.props.successNotice( this.state.cancellationMessage, {
+			if ( this.props.cancellationMessage ) {
+				this.props.successNotice( this.props.cancellationMessage, {
 					displayOnNextPage: true,
 					duration: 10000,
 				} );
@@ -305,10 +308,18 @@ class CancelPurchaseButton extends Component {
 	};
 
 	performCancellation = async () => {
-		const { isJetpack, isAkismet, purchase, onCancellationComplete } = this.props;
-		this.setState( {
-			isLoading: true,
-		} );
+		const { purchase, onCancellationComplete, onCancellationStart, onSetLoading } = this.props;
+
+		// Set loading state if callback is provided
+		if ( onSetLoading ) {
+			onSetLoading( true );
+		}
+
+		// Notify parent that cancellation is starting (for loading state)
+		// Only call if onCancellationStart is provided and not null
+		if ( onCancellationStart ) {
+			onCancellationStart();
+		}
 
 		try {
 			const result = await this.submitCancelAndRefundPurchase();
@@ -318,16 +329,9 @@ class CancelPurchaseButton extends Component {
 				const refundable = hasAmountAvailableToRefund( purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
 
-				if ( onCancellationComplete && ! isJetpack && ! isAkismet ) {
-					// For other products, call the callback to notify the parent component
+				// Always call the callback to notify the parent component
+				if ( onCancellationComplete ) {
 					onCancellationComplete( result.message );
-				} else {
-					this.setState( {
-						showDialog: true,
-						cancellationCompleted: true,
-						cancellationMessage: result.message,
-						isLoading: false,
-					} );
 				}
 			} else {
 				this.cancellationFailed( result.error );
@@ -338,12 +342,10 @@ class CancelPurchaseButton extends Component {
 	};
 
 	cancellationFailed = ( errorMessage ) => {
-		this.setState( {
-			showDialog: false,
-			cancellationCompleted: false,
-			cancellationMessage: '',
-			isLoading: false,
-		} );
+		// Reset loading state using parent callback
+		if ( this.props.onSetLoading ) {
+			this.props.onSetLoading( false );
+		}
 
 		if ( this.props.onSurveyComplete ) {
 			this.props.onSurveyComplete();
@@ -382,7 +384,16 @@ class CancelPurchaseButton extends Component {
 		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
-		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
+		const {
+			isJetpack,
+			isAkismet,
+			purchaseListUrl,
+			activeSubscriptions,
+			isLoading,
+			showDialog,
+			cancellationCompleted,
+			cancellationMessage,
+		} = this.props;
 
 		const planName = getName( purchase );
 
@@ -391,7 +402,7 @@ class CancelPurchaseButton extends Component {
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
-					busy={ this.state.isLoading }
+					busy={ isLoading }
 					scary
 					onClick={
 						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
@@ -405,7 +416,7 @@ class CancelPurchaseButton extends Component {
 					<CancelPurchaseForm
 						disableButtons={ disableButtons }
 						purchase={ purchase }
-						isVisible={ this.state.showDialog }
+						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.handleSurveyComplete }
 						downgradeClick={ this.downgradeClick }
@@ -413,9 +424,9 @@ class CancelPurchaseButton extends Component {
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
+						cancellationCompleted={ cancellationCompleted }
+						cancellationMessage={ cancellationMessage }
+						cancellationInProgress={ isLoading }
 					/>
 				) }
 
@@ -424,14 +435,14 @@ class CancelPurchaseButton extends Component {
 						disableButtons={ disableButtons }
 						purchase={ purchase }
 						purchaseListUrl={ purchaseListUrl }
-						isVisible={ this.state.showDialog }
+						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.handleSurveyComplete }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						isAkismet={ isAkismet }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
+						cancellationCompleted={ cancellationCompleted }
+						cancellationMessage={ cancellationMessage }
+						cancellationInProgress={ isLoading }
 					/>
 				) }
 
@@ -440,12 +451,12 @@ class CancelPurchaseButton extends Component {
 						disableButtons={ disableButtons }
 						purchase={ purchase }
 						purchaseListUrl={ purchaseListUrl }
-						isVisible={ this.state.showDialog }
+						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.handleSurveyComplete }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
-						cancellationInProgress={ this.state.isLoading }
+						cancellationCompleted={ cancellationCompleted }
+						cancellationMessage={ cancellationMessage }
+						cancellationInProgress={ isLoading }
 					/>
 				) }
 

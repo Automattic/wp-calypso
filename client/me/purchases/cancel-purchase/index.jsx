@@ -5,6 +5,7 @@ import {
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
+	isAkismetProduct,
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -87,6 +88,10 @@ class CancelPurchase extends Component {
 		isLoading: false,
 		domainConfirmationConfirmed: false,
 		showDomainOptionsStep: false,
+		// Cancellation state moved from button component
+		showDialog: false,
+		cancellationCompleted: false,
+		cancellationMessage: '',
 	};
 
 	static defaultProps = {
@@ -163,6 +168,7 @@ class CancelPurchase extends Component {
 		) {
 			this.setState( { showDomainOptionsStep: true } );
 		} else {
+			// For direct cancellations (no domain options step), set loading state
 			this.setState( { isLoading: true } );
 		}
 	};
@@ -198,13 +204,39 @@ class CancelPurchase extends Component {
 		this.setState( { surveyShown: false, isLoading: false } );
 	};
 
-	onCancellationComplete = ( message ) => {
+	onDialogClose = () => {
 		this.setState( {
-			surveyShown: true,
+			showDialog: false,
+			cancellationCompleted: false,
+			cancellationMessage: '',
 			isLoading: false,
-			cancellationCompleted: true,
-			cancellationMessage: message,
 		} );
+	};
+
+	onSetLoading = ( isLoading ) => {
+		this.setState( { isLoading } );
+	};
+
+	onCancellationComplete = ( message ) => {
+		const { isJetpack, isAkismet, purchase } = this.props;
+
+		// For Jetpack/Akismet products and domain registrations, show the button's own dialog
+		// For other products, show the main component's survey
+		if ( isJetpack || isAkismet || isDomainRegistration( purchase ) ) {
+			this.setState( {
+				showDialog: true,
+				isLoading: false,
+				cancellationCompleted: true,
+				cancellationMessage: message,
+			} );
+		} else {
+			this.setState( {
+				surveyShown: true,
+				isLoading: false,
+				cancellationCompleted: true,
+				cancellationMessage: message,
+			} );
+		}
 	};
 
 	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
@@ -384,6 +416,13 @@ class CancelPurchase extends Component {
 				onCancellationComplete={ this.onCancellationComplete }
 				onSurveyComplete={ this.onSurveyComplete }
 				moment={ this.props.moment }
+				// Cancellation state props
+				showDialog={ this.state.showDialog }
+				cancellationCompleted={ this.state.cancellationCompleted }
+				cancellationMessage={ this.state.cancellationMessage }
+				isLoading={ this.state.isLoading }
+				onDialogClose={ this.onDialogClose }
+				onSetLoading={ this.onSetLoading }
 			/>
 		);
 	};
@@ -566,6 +605,13 @@ class CancelPurchase extends Component {
 						onSurveyComplete={ this.onSurveyComplete }
 						moment={ this.props.moment }
 						onCancellationStart={ null }
+						// Cancellation state props
+						showDialog={ this.state.showDialog }
+						cancellationCompleted={ this.state.cancellationCompleted }
+						cancellationMessage={ this.state.cancellationMessage }
+						isLoading={ this.state.isLoading }
+						onDialogClose={ this.onDialogClose }
+						onSetLoading={ this.onSetLoading }
 					/>
 					{ this.renderKeepSubscriptionButton() }
 				</div>
@@ -686,6 +732,8 @@ export default connect(
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isJetpackPurchase,
+			isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
+			isAkismet: purchase && isAkismetProduct( purchase ),
 			purchase,
 			purchases,
 			productsList,
