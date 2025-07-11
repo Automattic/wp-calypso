@@ -64,11 +64,13 @@ const getHeadingSubText = ( { isSocialFirst, twoFactorAuthType, action, translat
 
 	return (
 		<>
-			{ 'lostpassword' === action
-				? translate(
-						"Please enter your username or email address. You'll receive a link to create a new password via email."
-				  )
-				: tos }
+			{ 'lostpassword' === action ? (
+				translate(
+					"Please enter your username or email address. You'll receive a link to create a new password via email."
+				)
+			) : (
+				<span className="wp-login__tos">{ tos }</span>
+			) }
 		</>
 	);
 };

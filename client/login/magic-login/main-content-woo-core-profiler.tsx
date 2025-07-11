@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { useLoginContext } from '../login-context';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
 
 interface Props {
@@ -16,6 +17,7 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ resendEmailCountdown, setResendEmailCountdown ] = useState( RESEND_EMAIL_COUNTDOWN_TIME );
+	const { setHeaders } = useLoginContext();
 
 	const resetResendEmailCountdown = () => {
 		if ( ! resendEmailCountdownId ) {
@@ -62,22 +64,24 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 		};
 	}, [] );
 
+	useEffect( () => {
+		setHeaders( {
+			heading: translate( 'Check your email' ),
+			subHeading: emailAddress
+				? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}.", {
+						args: {
+							emailAddress,
+						},
+						components: {
+							strong: <strong />,
+						},
+				  } )
+				: translate( 'We just emailed you a link.' ),
+		} );
+	}, [ emailAddress, setHeaders, translate ] );
+
 	return (
 		<div className="magic-login__main-content-woo-core-profiler">
-			<h1 className="magic-login__form-header">{ translate( 'Check your email' ) }</h1>
-
-			<p className="email-sent">
-				{ emailAddress
-					? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}.", {
-							args: {
-								emailAddress,
-							},
-							components: {
-								strong: <strong />,
-							},
-					  } )
-					: translate( 'We just emailed you a link.' ) }
-			</p>
 			<div>
 				<svg
 					width="76"

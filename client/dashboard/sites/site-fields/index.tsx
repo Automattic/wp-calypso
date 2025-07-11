@@ -93,6 +93,18 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	);
 }
 
+export function SiteIconLink( { site }: { site: Site } ) {
+	return (
+		<Link
+			to={ getSiteManagementUrl( site ) }
+			disabled={ site.is_deleted }
+			style={ { textDecoration: 'none' } }
+		>
+			<SiteIcon site={ site } />
+		</Link>
+	);
+}
+
 export function Preview( { site }: { site: Site } ) {
 	const [ resizeListener, { width } ] = useResizeObserver();
 	const { is_deleted, is_private, URL: url } = site;
@@ -268,7 +280,7 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
 				} }
 			>
-				{ getSiteStatusLabel( site ) }
+				{ __( 'Finish setup' ) }
 			</ExternalLink>
 		</>
 	);

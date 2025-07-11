@@ -9,6 +9,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
+import { LoginContext } from 'calypso/login/login-context';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -47,6 +48,7 @@ class RequestLoginEmailForm extends Component {
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 
 		tosComponent: PropTypes.node,
+		hideHeaderText: PropTypes.bool,
 		headerText: PropTypes.string,
 		subHeaderText: PropTypes.string,
 		hideSubHeaderText: PropTypes.bool,
@@ -65,6 +67,9 @@ class RequestLoginEmailForm extends Component {
 		isSubmitButtonBusy: PropTypes.bool,
 	};
 
+	// @ts-ignore
+	static contextType = LoginContext;
+
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
 		site: {},
@@ -79,11 +84,23 @@ class RequestLoginEmailForm extends Component {
 				.get( `/sites/${ this.props.blogId }` )
 				.then( ( result ) => this.setState( { site: result } ) );
 		}
+
+		this.context?.setHeaders( {
+			heading: this.props.translate( 'Email me a login link' ),
+			subHeading: this.getSubHeaderText(),
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.requestError && this.props.requestError ) {
 			this.usernameOrEmailRef.current?.focus();
+		}
+
+		if ( this.state.site?.name && prevProps.site?.name !== this.state.site?.name ) {
+			this.context?.setHeaders( {
+				heading: this.context?.heading,
+				subHeading: this.getSubHeaderText(),
+			} );
 		}
 	}
 
@@ -162,6 +179,7 @@ class RequestLoginEmailForm extends Component {
 			translate,
 			tosComponent,
 			headerText,
+			hideHeaderText,
 			hideSubHeaderText,
 			inputPlaceholder,
 			submitButtonLabel,
@@ -227,9 +245,11 @@ class RequestLoginEmailForm extends Component {
 						/>
 					</div>
 				) }
-				<h1 className="magic-login__form-header">
-					{ headerText || translate( 'Email me a login link' ) }
-				</h1>
+				{ ! hideHeaderText && (
+					<h1 className="magic-login__form-header">
+						{ headerText || translate( 'Email me a login link' ) }
+					</h1>
+				) }
 				<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 					{ currentUser && currentUser.username && (
 						<Notice

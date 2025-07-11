@@ -17,6 +17,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import { useLoginContext } from '../login-context';
 import VerifyLoginCode from './verify-login-code';
 
 const RequestLoginCode = ( {
@@ -35,15 +36,26 @@ const RequestLoginCode = ( {
 	translate,
 	shouldShowLoadingEllipsis,
 	publicToken,
+	tosComponent,
 } ) => {
 	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
 	const usernameOrEmailRef = useRef( null );
+	const { setHeaders } = useLoginContext();
 
 	useEffect( () => {
 		if ( onReady ) {
 			onReady();
 		}
-	}, [ onReady ] );
+	}, [ onReady, setHeaders, translate ] );
+
+	useEffect( () => {
+		setHeaders( {
+			heading: translate( 'Email me a login code' ),
+			subHeading: translate(
+				"We'll send you an email with a code that will log you in right away."
+			),
+		} );
+	}, [] );
 
 	const onUsernameOrEmailFieldChange = ( event ) => {
 		setUsernameOrEmail( event.target.value );
@@ -108,7 +120,6 @@ const RequestLoginCode = ( {
 
 	return (
 		<div className="magic-login__form">
-			<h1 className="magic-login__form-header">{ translate( 'Email me a login code' ) }</h1>
 			<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 				{ currentUser && currentUser.username && (
 					<Notice
@@ -123,10 +134,6 @@ const RequestLoginCode = ( {
 						} ) }
 					></Notice>
 				) }
-
-				<p className="magic-login__form-sub-header">
-					{ translate( "We'll send you an email with a code that will log you in right away." ) }
-				</p>
 
 				<FormLabel htmlFor="usernameOrEmail">
 					{ translate( 'Email Address or Username' ) }
@@ -144,6 +151,8 @@ const RequestLoginCode = ( {
 						placeholder={ translate( 'Email or Username' ) }
 						ref={ usernameOrEmailRef }
 					/>
+
+					{ tosComponent }
 
 					{ requestError && (
 						<Notice

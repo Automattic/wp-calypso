@@ -51,8 +51,9 @@ export const Default = () => {
 				],
 				total: '$74',
 				onAddItem: () => {},
+				hasItem: () => false,
 				onRemoveItem: ( domain ) => {
-					alert( `Remove ${ domain.domain }.${ domain.tld }` );
+					alert( `Remove ${ domain }` );
 				},
 			} }
 		>

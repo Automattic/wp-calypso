@@ -10,7 +10,7 @@ import {
 	DomainSearchControls,
 	DomainsFullCart,
 	DomainsMiniCart,
-	DomainSuggestions,
+	DomainSuggestionsList,
 } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -70,6 +70,7 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 				total: '',
 				onAddItem: () => {},
 				onRemoveItem: () => {},
+				hasItem: () => false,
 			} }
 			initialQuery={ initialQuery }
 			onContinue={ () => {
@@ -95,10 +96,8 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 			>
 				<VStack spacing={ 8 }>
 					<DomainSearchControls />
-					<HStack spacing={ 4 }>
-						<DomainSuggestions.Recommendations />
-					</HStack>
-					<DomainSuggestions.List />
+					<HStack spacing={ 4 }>TODO Recommendations</HStack>
+					<DomainSuggestionsList>TODO</DomainSuggestionsList>
 				</VStack>
 			</Step.CenteredColumnLayout>
 			<DomainsFullCart />

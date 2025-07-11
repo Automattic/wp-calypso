@@ -31,7 +31,7 @@ export const DomainsFullCartItems = () => {
 								<Button
 									variant="link"
 									className="domains-full-cart-items__remove"
-									onClick={ () => cart.onRemoveItem( domain ) }
+									onClick={ () => cart.onRemoveItem( domain.uuid ) }
 								>
 									{ __( 'Remove' ) }
 								</Button>

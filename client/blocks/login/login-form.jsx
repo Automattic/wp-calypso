@@ -101,6 +101,7 @@ export class LoginForm extends Component {
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		loginButtonText: PropTypes.string,
+		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -517,6 +518,10 @@ export class LoginForm extends Component {
 	}
 
 	renderChangeUsername() {
+		if ( this.props.isGravatarFixedAccountLogin ) {
+			return null;
+		}
+
 		return (
 			<Button
 				type="button"
@@ -741,11 +746,6 @@ export class LoginForm extends Component {
 	};
 
 	renderLoginCard() {
-		const { lastUsedAuthenticationMethod } = this.state;
-		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const isSubmitButtonDisabled = isFormDisabled;
-		let loginUrl;
-
 		const {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
@@ -754,8 +754,15 @@ export class LoginForm extends Component {
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
+			isGravatarFixedAccountLogin,
 		} = this.props;
+		const { lastUsedAuthenticationMethod } = this.state;
 
+		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
+		const isEmailOrUsernameInputDisabled =
+			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
+		const isSubmitButtonDisabled = isFormDisabled;
+		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
@@ -858,7 +865,7 @@ export class LoginForm extends Component {
 								name="usernameOrEmail"
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
-								disabled={ isFormDisabled || this.isPasswordView() }
+								disabled={ isEmailOrUsernameInputDisabled }
 								hasCoreStyles
 							/>
 
@@ -996,7 +1003,15 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginOptions() {
-		const { oauth2Client, currentQuery, isWoo, isWooJPC, isSocialFirst, isJetpack } = this.props;
+		const {
+			oauth2Client,
+			currentQuery,
+			isWoo,
+			isWooJPC,
+			isSocialFirst,
+			isJetpack,
+			isGravatarFixedAccountLogin,
+		} = this.props;
 
 		const { lastUsedAuthenticationMethod } = this.state;
 
@@ -1004,14 +1019,6 @@ export class LoginForm extends Component {
 		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
 			currentQuery,
 			oauth2Client
-		);
-
-		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
 		);
 
 		const showLastUsedAuthenticationMethod =
@@ -1024,9 +1031,7 @@ export class LoginForm extends Component {
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
 			! isCoreProfilerLostPasswordFlow &&
-			! isFromGravatar3rdPartyApp &&
-			! isFromGravatarQuickEditor &&
-			! isGravatarFlowWithEmail;
+			! isGravatarFixedAccountLogin;
 
 		return (
 			<>
@@ -1142,13 +1147,23 @@ export class LoginForm extends Component {
 export default connect(
 	( state, props ) => {
 		const accountType = getAuthAccountTypeSelector( state );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const currentQuery = getCurrentQueryArguments( state );
+
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+		const isFromGravatarQuickEditor =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+		);
 
 		return {
 			accountType,
 			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
@@ -1165,8 +1180,10 @@ export default connect(
 				getCurrentQueryArguments( state )?.email_address,
 			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
-			currentQuery: getCurrentQueryArguments( state ),
+			currentQuery,
 			isBlazePro: getIsBlazePro( state ),
+			isGravatarFixedAccountLogin:
+				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
 		};
 	},
 	{

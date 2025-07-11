@@ -48,12 +48,7 @@ describe( 'DomainsFullCartItems', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
-		expect( onRemoveItem ).toHaveBeenCalledWith( {
-			uuid: '1',
-			domain: 'example',
-			tld: 'com',
-			price: '$10',
-		} );
+		expect( onRemoveItem ).toHaveBeenCalledWith( '1' );
 	} );
 
 	test( 'renders the original price if included', () => {

@@ -205,7 +205,11 @@ export async function magicLogin( context, next ) {
 		}
 	}
 
-	context.primary = <MagicLogin path={ path } />;
+	context.primary = (
+		<LoginContextProvider>
+			<MagicLogin path={ path } />
+		</LoginContextProvider>
+	);
 
 	next();
 }

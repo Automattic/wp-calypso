@@ -1,0 +1,4 @@
+.domain-suggestions-list-item-unavailable__transfer-button {
+	// We need to use !important here because WPCOM adds overrides to the button with a very high specificity.
+	--wp-components-color-accent: var( --domain-search-secondary-action-color ) !important;
+}

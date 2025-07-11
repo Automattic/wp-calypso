@@ -1149,6 +1149,7 @@ __metadata:
     "@storybook/addon-a11y": "npm:^8.6.14"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.3.0"
+    "@types/jest": "npm:^29.5.14"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/icons": "npm:^10.23.0"
