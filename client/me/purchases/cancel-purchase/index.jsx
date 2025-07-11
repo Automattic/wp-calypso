@@ -156,17 +156,13 @@ class CancelPurchase extends Component {
 	onCancellationStart = () => {
 		const { includedDomainPurchase, purchase } = this.props;
 
-		if ( includedDomainPurchase ) {
-			// Only show domain options as a separate step if radio buttons will be displayed
-			if ( willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase ) ) {
-				this.setState( { showDomainOptionsStep: true } );
-			} else {
-				// For informational domain options, show them inline and proceed with cancellation
-				this.setState( { isLoading: true } );
-			}
+		// Only show domain options as a separate step if radio buttons will be displayed
+		if (
+			includedDomainPurchase &&
+			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
+		) {
+			this.setState( { showDomainOptionsStep: true } );
 		} else {
-			// For non-domain purchases without domain options, don't show survey yet
-			// The button will handle the cancellation and then show survey when complete
 			this.setState( { isLoading: true } );
 		}
 	};

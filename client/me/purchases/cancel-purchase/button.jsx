@@ -305,6 +305,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	performCancellation = async () => {
+		const { isJetpack, isAkismet, purchase, onCancellationComplete } = this.props;
 		this.setState( {
 			isLoading: true,
 		} );
@@ -314,22 +315,13 @@ class CancelPurchaseButton extends Component {
 
 			if ( result.success ) {
 				// Handle marketplace subscriptions if any
-				const refundable = hasAmountAvailableToRefund( this.props.purchase );
+				const refundable = hasAmountAvailableToRefund( purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
 
-				// For Jetpack/Akismet products, always show the button's own survey
-				if ( this.props.isJetpack || this.props.isAkismet ) {
-					this.setState( {
-						showDialog: true,
-						cancellationCompleted: true,
-						cancellationMessage: result.message,
-						isLoading: false,
-					} );
-				} else if ( this.props.onCancellationComplete ) {
+				if ( onCancellationComplete && ! isJetpack && ! isAkismet ) {
 					// For other products, call the callback to notify the parent component
-					this.props.onCancellationComplete( result.message );
+					onCancellationComplete( result.message );
 				} else {
-					// Fallback to showing dialog if no callback provided
 					this.setState( {
 						showDialog: true,
 						cancellationCompleted: true,
