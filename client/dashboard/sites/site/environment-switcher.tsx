@@ -51,7 +51,7 @@ const staging = (
 const Environment = ( { env }: { env: Env } ) => {
 	if ( env === 'staging' ) {
 		return (
-			<HStack justify="flex-start">
+			<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
 				<Icon icon={ staging } />
 				<span>{ __( 'Staging' ) }</span>
 			</HStack>
@@ -59,7 +59,7 @@ const Environment = ( { env }: { env: Env } ) => {
 	}
 
 	return (
-		<HStack justify="flex-start">
+		<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
 			<Icon icon={ production } />
 			<span>{ __( 'Production' ) }</span>
 		</HStack>
@@ -173,11 +173,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 							icon={ canToggle ? chevronDownSmall : null }
 							iconPosition="right"
 							disabled={ ! canToggle }
-							onClick={ canToggle ? onToggle : undefined }
+							onClick={ onToggle }
 						>
-							<HStack justify="center">
-								<CurrentEnvironment site={ site } />
-							</HStack>
+							<CurrentEnvironment site={ site } />
 						</Button>
 					);
 				} }
