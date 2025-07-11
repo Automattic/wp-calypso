@@ -4,6 +4,8 @@
 // Rules in this file inspired by:
 // client/components/jetpack/profile-dropdown/style.scss
 
+$profile-dropdown-menu-height: 250px;
+
 .a4a-sidebar__header {
 	display: flex;
 	justify-content: space-between;
@@ -84,9 +86,8 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 }
 
 .a4a-sidebar__profile-dropdown.is-align-menu-up .a4a-sidebar__profile-dropdown-menu {
-	inset-block-start: calc(-100% + -92px);
+	inset-block-start: -$profile-dropdown-menu-height;
 }
-
 
 .a4a-sidebar__profile-dropdown-menu-item {
 	padding: 1px 0;
