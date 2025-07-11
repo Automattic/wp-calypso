@@ -135,3 +135,11 @@ export function canDeleteSite( site: Site ) {
 
 	return ! site.is_wpcom_staging_site;
 }
+
+export function canCreateStagingSite( site: Site ) {
+	return (
+		site.is_wpcom_atomic &&
+		! site.is_wpcom_staging_site &&
+		! site?.options?.wpcom_staging_blog_ids?.length
+	);
+}

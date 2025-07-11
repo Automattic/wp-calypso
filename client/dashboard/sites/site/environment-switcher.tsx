@@ -1,11 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, Button, Dropdown, MenuItem } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	Button,
+	Dropdown,
+	MenuItem,
+	Spinner,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { SVG, Path } from '@wordpress/primitives';
 import { siteByIdQuery } from '../../app/queries/site';
+import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
-import { canManageSite } from '../features';
+import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '../../data/types';
 
 type Env = 'production' | 'staging';
@@ -67,31 +76,70 @@ export const CurrentEnvironment = ( { site }: { site: Site } ) => {
 };
 
 const EnvironmentSwitcherDropdown = ( {
-	env,
-	site,
+	currentSite,
+	otherEnvironment,
+	otherEnvironmentSite,
 	onClose,
 }: {
-	env?: Env;
-	site?: Site;
+	currentSite: Site;
+	otherEnvironment?: Env;
+	otherEnvironmentSite?: Site;
 	onClose: () => void;
 } ) => {
-	if ( env && site ) {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( stagingSiteCreateMutation( currentSite.ID ) );
+	const handleCreate = () => {
+		mutation.mutate( undefined, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice(
+					sprintf(
+						// translators: "reason" is why adding the staging site failed.
+						__( 'Failed to create staging site: %(reason)s' ),
+						{ reason: error.message }
+					),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
+	};
+
+	// TODO: Handle upsell.
+	const handleUpsell = () => {};
+
+	if ( otherEnvironment && otherEnvironmentSite ) {
 		return (
-			<RouterLinkMenuItem to={ `/sites/${ site?.slug }` } onClick={ onClose }>
-				<Environment env={ env } />
+			<RouterLinkMenuItem to={ `/sites/${ otherEnvironmentSite.slug }` } onClick={ onClose }>
+				<Environment env={ otherEnvironment } />
 			</RouterLinkMenuItem>
 		);
 	}
 
-	// TODO: Handle upsell.
-	return (
-		<MenuItem>
-			<HStack justify="flex-start">
-				<Icon icon={ plus } />
-				<span>{ __( 'Add staging site' ) }</span>
-			</HStack>
-		</MenuItem>
-	);
+	if ( otherEnvironment === 'staging' ) {
+		return (
+			<MenuItem onClick={ canCreateStagingSite( currentSite ) ? handleCreate : handleUpsell }>
+				<HStack justify="flex-start">
+					{ mutation.isPending ? (
+						<>
+							<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
+							<span>{ __( 'Creating staging site…' ) }</span>
+						</>
+					) : (
+						<>
+							<Icon icon={ plus } />
+							<span>{ __( 'Add staging site' ) }</span>
+						</>
+					) }
+				</HStack>
+			</MenuItem>
+		);
+	}
+
+	return null;
 };
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
@@ -132,8 +180,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 				} }
 				renderContent={ ( { onClose } ) => (
 					<EnvironmentSwitcherDropdown
-						env={ otherEnvironment }
-						site={ otherEnvironmentSite }
+						currentSite={ site }
+						otherEnvironment={ otherEnvironment }
+						otherEnvironmentSite={ otherEnvironmentSite }
 						onClose={ onClose }
 					/>
 				) }
