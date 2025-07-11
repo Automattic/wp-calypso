@@ -12,7 +12,7 @@ interface Props {
 }
 
 function SecurityIcon( props: Props ) {
-	const { icon, className } = props;
+	const { icon = 'success', className } = props;
 
 	let iconPath;
 	switch ( icon ) {
@@ -46,9 +46,5 @@ function SecurityIcon( props: Props ) {
 		/>
 	);
 }
-
-SecurityIcon.defaultProps = {
-	icon: 'success',
-};
 
 export default SecurityIcon;
