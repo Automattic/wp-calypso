@@ -449,11 +449,6 @@ $breakpoint-mobile: 660px;
 		background-color: initial;
 	}
 
-	.magic-login {
-		margin-top: 50px;
-	}
-
-	.magic-login,
 	.step-wrapper,
 	.jetpack-connect__main-logo {
 		box-sizing: border-box;
@@ -505,7 +500,6 @@ $breakpoint-mobile: 660px;
 			box-shadow: none;
 			padding-left: 0;
 			padding-right: 0;
-			padding-bottom: 32px;
 
 			p {
 				text-align: center;
@@ -788,7 +782,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		.wp-login__container,
-		.magic-login,
 		.step-wrapper {
 			@media (max-width: $break-mobile) {
 				padding-top: 40px;
@@ -1168,7 +1161,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.magic-login,
 		.step-wrapper,
 		.jetpack-connect__main-logo {
 			padding: 48px 0 0;
@@ -1394,7 +1386,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		.magic-login {
-			margin-top: 0;
 
 			h1.magic-login__form-header {
 				font-family: var(--woo-font-family-header);
@@ -1419,7 +1410,6 @@ $breakpoint-mobile: 660px;
 
 			.magic-login__form {
 				border: none;
-				padding: 0;
 
 				p {
 					text-align: center;
@@ -1427,7 +1417,6 @@ $breakpoint-mobile: 660px;
 
 				.logged-out-form {
 					max-width: 100%;
-					padding: 0;
 					box-shadow: none;
 
 					form {
@@ -1492,11 +1481,6 @@ $breakpoint-mobile: 660px;
 					line-height: 20px;
 				}
 			}
-		}
-
-		.logged-out-form {
-			padding: 0;
-			margin: 0;
 		}
 
 		.two-factor-authentication__verification-code-form-wrapper {
@@ -1898,10 +1882,6 @@ $breakpoint-mobile: 660px;
 
 	.calypso-notice__text a,
 	.calypso-notice__text a:visited {
-		@include link-woo;
-	}
-
-	.magic-login__footer a {
 		@include link-woo;
 	}
 

@@ -62,8 +62,11 @@ const DomainCartV2 = ( { onContinue }: { onContinue: () => void } ) => {
 			} ),
 			total,
 			onAddItem: () => {},
-			onRemoveItem: ( domain ) => {
-				removeProductFromCart( domain.uuid );
+			onRemoveItem: ( uuid ) => {
+				removeProductFromCart( uuid );
+			},
+			hasItem: ( uuid ) => {
+				return responseCart.products.some( ( item ) => item.uuid === uuid );
 			},
 		} satisfies DomainSearchCart;
 	}, [ responseCart, removeProductFromCart ] );

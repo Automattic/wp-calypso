@@ -68,6 +68,7 @@ export default function SiteIcon( {
 				fallback={ isInProgress ? 'migration' : 'first-grapheme' }
 				size={ size }
 				lazy
+				variant="primary"
 			/>
 		</ThumbnailLink>
 	);

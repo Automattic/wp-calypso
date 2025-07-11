@@ -110,11 +110,13 @@ const LayoutLoggedOut = ( {
 	const hasGravPoweredClientClass =
 		isGravPoweredClient && ! currentRoute.startsWith( '/log-in/link/use' );
 
-	const isMagicLogin = currentRoute && currentRoute.startsWith( '/log-in/link' );
+	const isMagicLogin =
+		currentRoute &&
+		( currentRoute.startsWith( '/log-in/link' ) ||
+			currentRoute.startsWith( '/log-in/jetpack/link' ) );
 
 	const isWpcomMagicLogin =
 		isMagicLogin &&
-		! isJetpackLogin &&
 		! hasGravPoweredClientClass &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );

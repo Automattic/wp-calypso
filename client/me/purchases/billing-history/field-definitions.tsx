@@ -21,8 +21,10 @@ function renderServiceNameDescription(
 ) {
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
-	const shouldShowDomain =
-		transaction.domain && ! transaction.domain.startsWith( 'siteless.marketplace.wp.com' );
+	const isSitelessDomain = /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com/.test(
+		transaction.domain
+	);
+	const shouldShowDomain = transaction.domain && ! isSitelessDomain;
 	return (
 		<div>
 			<strong>{ plan }</strong>

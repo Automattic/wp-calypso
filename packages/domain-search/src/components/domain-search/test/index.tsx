@@ -4,18 +4,28 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { SelectedDomain } from '..';
 import { DomainSearch, DomainsMiniCart, DomainsFullCart } from '../../..';
 import { buildDomain, buildDomainSearchCart } from '../../../test-helpers/factories';
 
+const SUGGESTIONS = [
+	buildDomain( { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ),
+	buildDomain( { uuid: '2', domain: 'example', tld: 'com', price: '$10' } ),
+];
+
 const Component = () => {
-	const [ items, setItems ] = useState< SelectedDomain[] >( [ buildDomain() ] );
+	const [ cartItems, setCartItems ] = useState< string[] >( [ SUGGESTIONS[ 0 ].uuid ] );
 
 	const cart = buildDomainSearchCart( {
-		items,
-		onAddItem: ( item: SelectedDomain ) => setItems( [ ...items, item ] ),
-		onRemoveItem: ( item: SelectedDomain ) =>
-			setItems( items.filter( ( i ) => i.uuid !== item.uuid ) ),
+		items: cartItems
+			.map( ( uuid ) => SUGGESTIONS.find( ( s ) => s.uuid === uuid ) )
+			.filter( ( domain ) => !! domain ),
+		onAddItem: ( uuid ) => {
+			setCartItems( [ ...cartItems, uuid ] );
+		},
+		onRemoveItem: ( item ) => {
+			setCartItems( cartItems.filter( ( i ) => i !== item ) );
+		},
+		hasItem: ( item ) => cartItems.some( ( i ) => i === item ),
 	} );
 
 	return (

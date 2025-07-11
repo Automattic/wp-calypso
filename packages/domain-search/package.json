@@ -37,8 +37,8 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"types": "dist/types",
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
+		"clean": "tsc --build ./tsconfig-build.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig-build.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"storybook:start": "storybook dev"
@@ -55,6 +55,7 @@
 		"@storybook/addon-a11y": "^8.6.14",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/react": "^16.3.0",
+		"@types/jest": "^29.5.14",
 		"@wordpress/base-styles": "^5.23.0",
 		"copyfiles": "^2.4.1",
 		"react": "^18.3.1",

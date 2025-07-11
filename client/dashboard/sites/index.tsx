@@ -17,7 +17,13 @@ import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
 import { SitesNotices } from './notices';
-import { getView, mergeViews, DEFAULT_LAYOUTS, recordViewChanges } from './views';
+import {
+	getView,
+	mergeViews,
+	DEFAULT_LAYOUTS,
+	recordViewChanges,
+	DEFAULT_PER_PAGE_SIZES,
+} from './views';
 import type { ViewPreferences, ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -133,6 +139,7 @@ export default function Sites() {
 						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
+						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
 					/>
 				</DataViewsCard>
 			</PageLayout>

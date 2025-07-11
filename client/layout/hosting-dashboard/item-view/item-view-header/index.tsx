@@ -90,6 +90,7 @@ export default function ItemViewHeader( {
 									color={ itemData.color }
 									className="hosting-dashboard-item-view__header-favicon"
 									size={ size }
+									variant="primary"
 								/>
 							) }
 							<div className="hosting-dashboard-item-view__header-info">

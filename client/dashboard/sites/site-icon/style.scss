@@ -1,14 +1,25 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
 .site-icon,
 .site-letter {
-	border-radius: 2px;
+	border-radius: $radius-medium;
+
+	&.is-small {
+		border-radius: $radius-small;
+	}
+}
+
+.site-icon {
+	outline: 1px solid rgba($black, 0.04);
+	outline-offset: -1px;
+	background: $white;
 }
 
 .site-letter {
 	align-items: center;
-	background-color: #f5f7f7;
-	border: 1px solid #eee;
-	color: var(--wp-admin-theme-color);
-	cursor: default;
+	background: linear-gradient(0deg, rgba($white, 0.32) 0%, rgba($white, 0.32) 100%), var(--wp-admin-theme-color);
+	color: $white;
 	display: flex;
 	flex-shrink: 0;
 	font-size: 24px;
@@ -17,4 +28,5 @@
 	overflow: hidden;
 	width: 48px;
 	box-sizing: border-box;
+	text-transform: uppercase;
 }
