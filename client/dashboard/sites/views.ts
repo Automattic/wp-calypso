@@ -58,7 +58,7 @@ export type ViewSearchParams = Partial< SitesView >;
 // All possible keys that can be shown in the query params.
 const VIEW_SEARCH_PARAM_KEYS = [ ...VIEW_PREFERENCES_KEYS, 'filters', 'page', 'search' ];
 
-export const DEFAULT_PER_PAGE_SIZES = [ 12, 24, 48, 96 ];
+export const DEFAULT_PER_PAGE_SIZES: [ number, number, number, number ] = [ 12, 24, 48, 96 ];
 
 const DEFAULT_PER_PAGE = 12;
 
