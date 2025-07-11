@@ -91,7 +91,7 @@ const SitePreview = ( {
 
 	// We use an iframe rather than mShot to not cache changes.
 	const iframeSrcKeepHomepage = selectedSite
-		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true`
+		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true&iframe=true`
 		: '#';
 
 	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
