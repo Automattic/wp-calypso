@@ -9,7 +9,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Notice from 'calypso/components/notice';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
@@ -146,7 +145,7 @@ class Login extends Component {
 		}
 
 		if (
-			this.props.isJetpackWooDnaFlow &&
+			this.props.isWooJPC &&
 			this.props.requestError?.code === 'unknown_user' &&
 			emailValidator.validate( this.props.usernameOrEmail )
 		) {
@@ -668,7 +667,6 @@ export default connect(
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		isWooJPC: isWooJPCFlow( state ),
 		isWCCOM: getIsWCCOM( state ),
 		isWoo: getIsWoo( state ),
