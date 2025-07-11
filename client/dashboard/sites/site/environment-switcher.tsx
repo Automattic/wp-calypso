@@ -1,9 +1,14 @@
-import { __experimentalHStack as HStack, MenuItem } from '@wordpress/components';
+import { useQuery } from '@tanstack/react-query';
+import { __experimentalHStack as HStack, Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, plus } from '@wordpress/icons';
+import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { SVG, Path } from '@wordpress/primitives';
+import { siteByIdQuery } from '../../app/queries/site';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
+import { canManageSite } from '../features';
 import type { Site } from '../../data/types';
+
+type Env = 'production' | 'staging';
 
 const production = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,7 +38,7 @@ const staging = (
 	</SVG>
 );
 
-const Environment = ( { env }: { env: 'production' | 'staging' } ) => {
+const Environment = ( { env }: { env: Env } ) => {
 	if ( env === 'production' ) {
 		return (
 			<HStack justify="flex-start">
@@ -61,29 +66,24 @@ export const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	return <Environment env="production" />;
 };
 
-const EnvironmentSwitcher = ( { site, onClose }: { site: Site; onClose: () => void } ) => {
-	if ( site.is_wpcom_staging_site ) {
+const EnvironmentSwitcherDropdown = ( {
+	env,
+	site,
+	onClose,
+}: {
+	env?: Env;
+	site?: Site;
+	onClose: () => void;
+} ) => {
+	if ( env && site ) {
 		return (
-			<RouterLinkMenuItem
-				to={ `/sites/${ site.options?.wpcom_production_blog_id }` }
-				onClick={ onClose }
-			>
-				<Environment env="production" />
+			<RouterLinkMenuItem to={ `/sites/${ site?.slug }` } onClick={ onClose }>
+				<Environment env={ env } />
 			</RouterLinkMenuItem>
 		);
 	}
 
-	if ( site?.options?.wpcom_staging_blog_ids?.length ) {
-		return (
-			<RouterLinkMenuItem
-				to={ `/sites/${ site?.options?.wpcom_staging_blog_ids[ 0 ] }` }
-				onClick={ onClose }
-			>
-				<Environment env="staging" />
-			</RouterLinkMenuItem>
-		);
-	}
-
+	// TODO: Handle upsell.
 	return (
 		<MenuItem>
 			<HStack justify="flex-start">
@@ -91,6 +91,54 @@ const EnvironmentSwitcher = ( { site, onClose }: { site: Site; onClose: () => vo
 				<span>{ __( 'Add staging site' ) }</span>
 			</HStack>
 		</MenuItem>
+	);
+};
+
+const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+	const hasStagingSite =
+		! site.is_wpcom_staging_site && site?.options?.wpcom_staging_blog_ids?.length;
+
+	const otherEnvironment = site.is_wpcom_staging_site ? 'production' : 'staging';
+	const otherEnvironmentSiteId = site.is_wpcom_staging_site
+		? site.options?.wpcom_production_blog_id
+		: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+	const { data: otherEnvironmentSite } = useQuery( {
+		...siteByIdQuery( otherEnvironmentSiteId ?? 0 ),
+		enabled: !! otherEnvironmentSiteId,
+	} );
+
+	return (
+		<HStack style={ { width: 'auto', flexShrink: 0 } }>
+			<Dropdown
+				renderToggle={ ( { onToggle } ) => {
+					const canToggle =
+						( otherEnvironment === 'staging' && ! hasStagingSite ) ||
+						( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) );
+
+					return (
+						<Button
+							className="dashboard-menu__item active"
+							icon={ canToggle ? chevronDownSmall : null }
+							iconPosition="right"
+							disabled={ ! canToggle }
+							onClick={ canToggle ? onToggle : undefined }
+						>
+							<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+								<CurrentEnvironment site={ site } />
+							</div>
+						</Button>
+					);
+				} }
+				renderContent={ ( { onClose } ) => (
+					<EnvironmentSwitcherDropdown
+						env={ otherEnvironment }
+						site={ otherEnvironmentSite }
+						onClose={ onClose }
+					/>
+				) }
+			/>
+		</HStack>
 	);
 };
 
