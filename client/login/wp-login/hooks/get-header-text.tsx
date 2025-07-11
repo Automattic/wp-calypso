@@ -28,7 +28,6 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
 	isGravPoweredClient?: boolean;
-	isJetpackWooDnaFlow?: boolean;
 }
 
 /**
@@ -53,15 +52,12 @@ export function getHeaderText( {
 	currentQuery,
 	translate,
 	twoStepNonce,
-	isJetpackWooDnaFlow,
 }: Props ): TranslateResult {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
 		let clientName = oauth2Client?.name;
-		if ( isJetpackWooDnaFlow ) {
-			clientName = 'Woo';
-		} else if ( isFromAkismet ) {
+		if ( isFromAkismet ) {
 			clientName = 'Akismet';
 		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			clientName = 'Blaze Pro';
@@ -71,7 +67,7 @@ export function getHeaderText( {
 			clientName = 'Jetpack Cloud';
 		} else if ( isJetpack ) {
 			clientName = 'Jetpack';
-		} else if ( isWCCOM ) {
+		} else if ( isWCCOM || isWooJPC ) {
 			clientName = 'Woo';
 		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
 			clientName = 'VIP';
