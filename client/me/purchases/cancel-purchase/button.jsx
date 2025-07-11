@@ -33,6 +33,7 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
+import { willShowDomainOptionsRadioButtons } from './domain-options';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -95,17 +96,18 @@ class CancelPurchaseButton extends Component {
 			return;
 		}
 
-		// For other purchases, check if we need domain options step
-		if ( this.props.onCancellationStart ) {
-			this.props.onCancellationStart();
-			// If there's no included domain purchase, perform cancellation immediately
-			if ( ! this.props.includedDomainPurchase ) {
-				await this.performCancellation();
+		// For other purchases, determine if we need domain options step
+		const needsDomainOptionsStep =
+			this.props.includedDomainPurchase &&
+			willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
+
+		if ( needsDomainOptionsStep ) {
+			// Step 1: Show domain options step
+			if ( this.props.onCancellationStart ) {
+				this.props.onCancellationStart();
 			}
-			// If there is an included domain purchase, the cancellation will be triggered
-			// from the domain options step, so we don't call performCancellation here
 		} else {
-			// If no onCancellationStart callback, perform cancellation directly
+			// Step 2: Perform cancellation immediately
 			await this.performCancellation();
 		}
 	};
