@@ -22,9 +22,9 @@ function GravatarWithHovercards( props ) {
 					const extractedAvatarUrl = avatarImg ? avatarImg.src : null;
 
 					inner.innerHTML = '';
+					// Our custom components for the card will render through this portal.
 					setMountNode( inner );
 
-					// Pass the processed URL to your component
 					setProcessedAvatarUrl( extractedAvatarUrl );
 				}
 			}
