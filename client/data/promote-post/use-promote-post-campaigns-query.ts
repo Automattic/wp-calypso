@@ -33,6 +33,7 @@ export type CampaignResponse = {
 		total_budget: number;
 		budget_left: number;
 		total_budget_used: number;
+		weekly_budget_used: number;
 		display_delivery_estimate: string;
 		views_total: number;
 		stats_enabled: boolean;
