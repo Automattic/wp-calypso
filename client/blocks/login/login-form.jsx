@@ -101,7 +101,7 @@ export class LoginForm extends Component {
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		loginButtonText: PropTypes.string,
-		isGravatarSameAccountLogin: PropTypes.bool.isRequired,
+		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -518,7 +518,7 @@ export class LoginForm extends Component {
 	}
 
 	renderChangeUsername() {
-		if ( this.props.isGravatarSameAccountLogin ) {
+		if ( this.props.isGravatarFixedAccountLogin ) {
 			return null;
 		}
 
@@ -754,13 +754,13 @@ export class LoginForm extends Component {
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
-			isGravatarSameAccountLogin,
+			isGravatarFixedAccountLogin,
 		} = this.props;
 		const { lastUsedAuthenticationMethod } = this.state;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
-			isFormDisabled || this.isPasswordView() || isGravatarSameAccountLogin;
+			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
 		const isSubmitButtonDisabled = isFormDisabled;
 		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -1010,7 +1010,7 @@ export class LoginForm extends Component {
 			isWooJPC,
 			isSocialFirst,
 			isJetpack,
-			isGravatarSameAccountLogin,
+			isGravatarFixedAccountLogin,
 		} = this.props;
 
 		const { lastUsedAuthenticationMethod } = this.state;
@@ -1031,7 +1031,7 @@ export class LoginForm extends Component {
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
 			! isCoreProfilerLostPasswordFlow &&
-			! isGravatarSameAccountLogin;
+			! isGravatarFixedAccountLogin;
 
 		return (
 			<>
@@ -1182,7 +1182,7 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
 			isBlazePro: getIsBlazePro( state ),
-			isGravatarSameAccountLogin:
+			isGravatarFixedAccountLogin:
 				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
 		};
 	},
