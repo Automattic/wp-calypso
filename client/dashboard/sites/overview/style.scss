@@ -16,6 +16,12 @@
 	font-size: 12px;
 }
 
+.site-overview-cards {
+	> * {
+		flex-grow: 1;
+		flex-shrink: 0;
+	}
+}
 
 .site-overview-card__badge {
 	// This is hacky way of hiding the badge icon for now.

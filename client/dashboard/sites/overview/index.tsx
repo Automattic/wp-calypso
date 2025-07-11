@@ -1,10 +1,9 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
+	__experimentalDivider as Divider,
+	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	Button,
-	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
@@ -16,10 +15,9 @@ import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
-import OverviewSection from './overview-section';
 import PerformanceCards from './performance-cards';
-import Sidebar from './sidebar';
 import SiteOverviewFields from './site-overview-fields';
+import SitePreviewCard from './site-preview-card';
 import StorageCard from './storage-card';
 import SubscribersCard from './subscribers-card';
 import UptimeCard from './uptime-card';
@@ -56,33 +54,30 @@ function SiteOverview() {
 				/>
 			}
 		>
-			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar site={ site } />
-				<VStack spacing={ 8 }>
-					<Card style={ { padding: '16px' } }>
-						<VStack>
-							<Text>
-								{ __(
-									'Your site is secure with excellent desktop performance and growing subscribers; now focus on boosting mobile speed and investigating recent drops in views and likes.'
-								) }
-							</Text>
-							<Text variant="muted">{ __( 'WordPress with AI' ) }</Text>
-						</VStack>
-					</Card>
-					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
+			<VStack alignment="stretch" spacing={ 10 }>
+				<Grid columns={ 4 } row={ 1 } gap={ 6 }>
+					<SitePreviewCard site={ site } />
+					<VStack className="site-overview-cards" spacing={ 6 }>
 						<VisitorsCard engagementStats={ engagementStats } />
 						<ViewsCard engagementStats={ engagementStats } />
+					</VStack>
+					<VStack className="site-overview-cards" spacing={ 6 }>
 						<LikesCard engagementStats={ engagementStats } />
 						<CommentsCard engagementStats={ engagementStats } />
-						<SubscribersCard subscribers={ site.subscribers_count } />
-					</OverviewSection>
-					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
+					</VStack>
+					<SubscribersCard subscribers={ site.subscribers_count } />
+				</Grid>
+				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
+				<Grid columns={ 2 } row={ 1 } gap={ 6 }>
+					<VStack spacing={ 6 } justify="start">
 						<PerformanceCards site={ site } />
-						<UptimeCard site={ site } />
+					</VStack>
+					<VStack spacing={ 6 } justify="start">
 						<StorageCard site={ site } />
-					</OverviewSection>
-				</VStack>
-			</HStack>
+						<UptimeCard site={ site } />
+					</VStack>
+				</Grid>
+			</VStack>
 		</PageLayout>
 	);
 }
