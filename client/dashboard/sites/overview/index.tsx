@@ -19,12 +19,12 @@ import LikesCard from './likes-card';
 import OverviewSection from './overview-section';
 import PerformanceCards from './performance-cards';
 import Sidebar from './sidebar';
+import SiteOverviewFields from './site-overview-fields';
 import StorageCard from './storage-card';
 import SubscribersCard from './subscribers-card';
 import UptimeCard from './uptime-card';
 import ViewsCard from './views-card';
 import VisitorsCard from './visitors-card';
-
 import './style.scss';
 
 function SiteOverview() {
@@ -40,6 +40,7 @@ function SiteOverview() {
 			header={
 				<PageHeader
 					title={ getSiteDisplayName( site ) }
+					description={ <SiteOverviewFields site={ site } /> }
 					actions={
 						site.options?.admin_url && (
 							<Button
