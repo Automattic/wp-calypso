@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
-import ReactDom from 'react-dom';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 import './tabs.scss';
@@ -143,12 +142,10 @@ class NavTabs extends Component {
 	}
 
 	getTabWidths() {
-		let totalWidth = 0;
-
-		this.tabRefMap.forEach( ( tabElement ) => {
-			const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
-			totalWidth += tabWidth;
-		} );
+		const totalWidth = Array.from( this.tabRefMap.values() ).reduce(
+			( sum, tabElement ) => sum + tabElement.offsetWidth,
+			0
+		);
 
 		this.tabsWidth = Math.max( totalWidth, this.tabsWidth || 0 );
 	}
