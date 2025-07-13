@@ -4,7 +4,7 @@ import i18n from 'i18n-calypso';
 const DEFAULT_LANGUAGE = 'en';
 
 const getLanguageCodeFromLocale = ( localeSlug: string ) => {
-	const preserveFullLocale = [ 'zh-tw', 'zh-cn', 'pt-br' ];
+	const preserveFullLocale = [ 'zh-tw', 'zh-cn', 'pt-br', 'zh-hk', 'zh-sg' ];
 	if ( localeSlug.indexOf( '-' ) > -1 && ! preserveFullLocale.includes( localeSlug ) ) {
 		return localeSlug.split( '-' )[ 0 ];
 	}
