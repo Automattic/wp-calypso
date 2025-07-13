@@ -10,6 +10,7 @@ const defaultValues: UserPreferences = {
 export const userPreferencesQuery = () => ( {
 	queryKey: [ 'me', 'preferences' ],
 	queryFn: fetchPreferences,
+	select: ( data: Partial< UserPreferences > ) => ( { ...defaultValues, ...data } ),
 } );
 
 export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) => ( {
