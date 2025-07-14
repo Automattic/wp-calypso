@@ -2,7 +2,7 @@ import { Badge, Gridicon } from '@automattic/components';
 import { DomainSuggestion } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
+import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -580,6 +580,8 @@ class DomainRegistrationSuggestion extends Component {
 			renewCost,
 			productSaleCost,
 			showStrikedOutPrice,
+			zeroCost,
+			flowName,
 		} = this.props;
 
 		const badges = this.renderBadges();
@@ -594,13 +596,15 @@ class DomainRegistrationSuggestion extends Component {
 				domain={ domainName }
 				tld={ tld.join( '.' ) }
 				price={
-					<DomainProductPrice
-						rule={ priceRule }
-						price={ productCost }
-						renewPrice={ renewCost }
-						salePrice={ productSaleCost }
-						showStrikedOutPrice={ showStrikedOutPrice }
-					/>
+					! isHundredYearPlanFlow( flowName ) && (
+						<DomainProductPrice
+							zeroCost={ zeroCost }
+							rule={ priceRule }
+							price={ productSaleCost ?? productCost }
+							renewPrice={ renewCost }
+							showStrikedOutPrice={ showStrikedOutPrice }
+						/>
+					)
 				}
 			/>
 		);
@@ -644,6 +648,7 @@ const mapStateToProps = ( state, props ) => {
 	}
 
 	return {
+		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros } ),
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,

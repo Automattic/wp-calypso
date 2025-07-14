@@ -1,11 +1,9 @@
 import {
 	PLAN_100_YEARS,
-	PLAN_PERSONAL,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
-import clsx from 'clsx';
+import { DomainSuggestionPrice } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -25,221 +23,51 @@ export class DomainProductPrice extends Component {
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isMappingProduct: PropTypes.bool,
-		salePrice: PropTypes.string,
 		isCurrentPlan100YearPlan: PropTypes.bool,
 		isBusinessOrEcommerceMonthlyPlan: PropTypes.bool,
+		zeroCost: PropTypes.string,
 	};
 
 	static defaultProps = {
 		isMappingProduct: false,
 	};
 
-	renderRenewalPrice() {
-		const { price, renewPrice, translate } = this.props;
-		const isRenewCostDifferent = renewPrice && price !== renewPrice;
-
-		if ( isRenewCostDifferent ) {
-			const ariaLabel = translate( 'Renews for %(cost)s per year', {
-				args: { cost: renewPrice },
-			} );
-			return (
-				<div className="domain-product-price__renewal-price">
-					<span className="screen-reader-text">{ ariaLabel }</span>
-					<span aria-hidden="true">
-						{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
-							args: { cost: renewPrice },
-							components: { small: <small /> },
-							comment: '%(cost)s is the annual renewal price of the domain',
-						} ) }
-					</span>
-				</div>
-			);
-		}
-	}
-
-	// This method returns "Free for the first year" text (different from "Free with plan")
 	renderFreeForFirstYear() {
-		const { translate } = this.props;
+		const { zeroCost, renewPrice } = this.props;
 
-		const className = clsx( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
-		} );
-		const priceText = this.props.translate( '%(cost)s/year', {
-			args: { cost: this.props.price },
-		} );
-		const ariaLabel = this.props.translate( '%(cost)s per year', {
-			args: { cost: this.props.price },
-		} );
-
-		return (
-			<div className={ className }>
-				<div className="domain-product-price__free-text">
-					<span className="domain-product-price__free-price">
-						{ translate( 'Free for the first year' ) }
-					</span>
-				</div>
-				<div className="domain-product-price__price">
-					<span className="screen-reader-text">{ ariaLabel }</span>
-					<del aria-hidden="true">{ priceText }</del>
-				</div>
-			</div>
-		);
-	}
-
-	renderFreeWithPlan() {
-		const {
-			isMappingProduct,
-			translate,
-			isCurrentPlan100YearPlan,
-			isBusinessOrEcommerceMonthlyPlan,
-		} = this.props;
-
-		const className = clsx( 'domain-product-price is-free-domain', {
-			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
-		} );
-
-		let message;
-		if (
-			( isMappingProduct && this.props.rule === DOMAIN_PRICE_RULE.FREE_WITH_PLAN ) ||
-			isCurrentPlan100YearPlan
-		) {
-			message = translate( 'Free with your plan' );
-		} else if ( isMappingProduct ) {
-			message = translate( 'Included in paid plans' );
-		} else if ( isBusinessOrEcommerceMonthlyPlan ) {
-			message = (
-				<span className="domain-product-price__free-price">
-					{ translate( 'Free domain for one year' ) }
-				</span>
-			);
-		} else if ( this.props.rule === DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY ) {
-			message = translate( '%(planName)s plan required', {
-				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
-			} );
-		} else {
-			message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
-				components: { span: <span className="domain-product-price__free-price" /> },
-			} );
-		}
-		const ariaLabel = this.props.translate( '%(cost)s per year', {
-			args: { cost: this.props.price },
-		} );
-
-		return (
-			<div className={ className }>
-				<div className="domain-product-price__free-text">{ message }</div>
-				<div className="domain-product-price__price">
-					<span className="screen-reader-text">{ ariaLabel }</span>
-					<del aria-hidden="true">
-						{ this.props.isMappingProduct
-							? null
-							: this.props.translate( '%(cost)s/year', {
-									args: { cost: this.props.price },
-							  } ) }
-					</del>
-				</div>
-			</div>
-		);
+		return <DomainSuggestionPrice price={ zeroCost } originalPrice={ renewPrice } />;
 	}
 
 	renderFree() {
-		const { showStrikedOutPrice, translate } = this.props;
-		const className = clsx( 'domain-product-price domain-product-single-price', {
-			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
-		} );
-
-		const productPriceClassName = clsx( 'domain-product-price__price', {
-			'domain-product-price__free-price': showStrikedOutPrice,
-		} );
+		const { translate } = this.props;
 
 		return (
-			<div className={ className }>
-				<div className={ productPriceClassName }>
-					<span>{ translate( 'Free', { context: 'Adjective refers to subdomain' } ) }</span>
-				</div>
-			</div>
+			<DomainSuggestionPrice
+				price={ translate( 'Free', { context: 'Adjective refers to subdomain' } ) }
+			/>
 		);
 	}
 
 	renderDomainMovePrice() {
-		const { showStrikedOutPrice, translate } = this.props;
-
-		const className = clsx( 'domain-product-price', {
-			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
-		} );
+		const { translate } = this.props;
 
 		return (
-			<div className={ className }>
-				<span>
-					{ translate( 'Move your existing domain.', {
-						context: 'Line item description in cart.',
-					} ) }
-				</span>
-			</div>
-		);
-	}
-
-	renderSalePrice() {
-		const { price, salePrice, translate } = this.props;
-
-		const className = clsx( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
-			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
-		} );
-		const ariaLabel = this.props.translate( '%(cost)s per year', {
-			args: { cost: this.props.price },
-		} );
-
-		return (
-			<div className={ className }>
-				<div className="domain-product-price__sale-price">
-					{ translate( '%(salePrice)s {{small}}for the first year{{/small}}', {
-						args: { salePrice },
-						components: { small: <small /> },
-					} ) }
-				</div>
-				<div className="domain-product-price__regular-price">
-					<span className="screen-reader-text">{ ariaLabel }</span>
-					<span aria-hidden="true">
-						{ translate( '%(cost)s {{small}}/year{{/small}}', {
-							args: { cost: price },
-							components: { small: <small /> },
-							comment: '%(cost)s is the annual renewal price of a domain currently on sale',
-						} ) }
-					</span>
-				</div>
-				{ this.renderRenewalPrice() }
-			</div>
+			<DomainSuggestionPrice
+				price={ translate( 'Move your existing domain.', {
+					context: 'Line item description in cart.',
+				} ) }
+			/>
 		);
 	}
 
 	renderPrice() {
-		const { salePrice, showStrikedOutPrice, price, translate } = this.props;
-		if ( salePrice ) {
-			return this.renderSalePrice();
-		}
-
-		const className = clsx( 'domain-product-price domain-product-single-price', {
-			'is-free-domain': showStrikedOutPrice,
-			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
-		} );
-		const productPriceClassName = showStrikedOutPrice ? '' : 'domain-product-price__price';
-		const ariaLabel = this.props.translate( '%(cost)s per year', {
-			args: { cost: this.props.price },
-		} );
+		const { price, renewPrice } = this.props;
 
 		return (
-			<div className={ className }>
-				<span className={ productPriceClassName }>
-					<span className="screen-reader-text">{ ariaLabel }</span>
-					<span aria-hidden="true">
-						{ translate( '%(cost)s {{small}}/year{{/small}}', {
-							args: { cost: price },
-							components: { small: <small /> },
-						} ) }
-					</span>
-				</span>
-				{ this.renderRenewalPrice() }
-			</div>
+			<DomainSuggestionPrice
+				price={ price }
+				originalPrice={ renewPrice === price ? undefined : renewPrice }
+			/>
 		);
 	}
 
@@ -247,11 +75,9 @@ export class DomainProductPrice extends Component {
 	 * Used to render the price of 100-year domains, which are a one time purchase
 	 */
 	renderOneTimePrice() {
-		return (
-			<div className="domain-product-price domain-product-single-price">
-				<span>{ this.props.price }</span>
-			</div>
-		);
+		const { price } = this.props;
+
+		return <DomainSuggestionPrice price={ price } renewsAnually={ false } />;
 	}
 
 	render() {
@@ -266,16 +92,15 @@ export class DomainProductPrice extends Component {
 		switch ( this.props.rule ) {
 			case DOMAIN_PRICE_RULE.ONE_TIME_PRICE:
 				return this.renderOneTimePrice();
+			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
+				return this.renderDomainMovePrice();
 			case DOMAIN_PRICE_RULE.FREE_DOMAIN:
 				return this.renderFree();
 			case DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR:
-				return this.renderFreeForFirstYear();
 			case DOMAIN_PRICE_RULE.FREE_WITH_PLAN:
 			case DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN:
 			case DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY:
-				return this.renderFreeWithPlan();
-			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
-				return this.renderDomainMovePrice();
+				return this.renderFreeForFirstYear();
 			case DOMAIN_PRICE_RULE.PRICE:
 			default:
 				return this.renderPrice();

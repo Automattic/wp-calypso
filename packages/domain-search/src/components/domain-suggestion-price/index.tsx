@@ -10,9 +10,14 @@ import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 interface DomainSuggestionPriceProps {
 	originalPrice?: string;
 	price: string;
+	renewsAnually?: boolean;
 }
 
-export const DomainSuggestionPrice = ( { originalPrice, price }: DomainSuggestionPriceProps ) => {
+export const DomainSuggestionPrice = ( {
+	originalPrice,
+	price,
+	renewsAnually = true,
+}: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
 	const listContext = useDomainSuggestionsListContext();
 
@@ -37,11 +42,11 @@ export const DomainSuggestionPrice = ( { originalPrice, price }: DomainSuggestio
 				) : (
 					<HStack spacing={ 1 } alignment="left">
 						<Text size={ 18 }>{ price }</Text>
-						<Text>{ __( '/year' ) }</Text>
+						{ renewsAnually && <Text>{ __( '/year' ) }</Text> }
 					</HStack>
 				) }
 			</HStack>
-			{ originalPrice && (
+			{ originalPrice && renewsAnually && (
 				<Text size="body" align={ alignment }>
 					{ sprintf(
 						// translators: %(price)s is the price of the domain.
