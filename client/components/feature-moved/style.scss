@@ -1,4 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
 .feature-moved {
 	padding: 0 24px;
@@ -18,6 +21,12 @@
 
 	.dashboard-callout {
 		max-width: none;
+	}
+
+	.dashboard-callout__title {
+		@include heading-large;
+		color: $gray-900;
+		margin: 0;
 	}
 
 	.dashboard-callout__image img {
