@@ -248,15 +248,13 @@ export default function SyncModal( {
 					/>
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
-				{ querySiteId === stagingSiteId && (
-					<div className="staging-site-card">
-						<FileBrowser
-							rewindId={ rewindId }
-							siteId={ querySiteId }
-							fileBrowserConfig={ fileBrowserConfig }
-						/>
-					</div>
-				) }
+				<div className="staging-site-card">
+					<FileBrowser
+						rewindId={ rewindId }
+						siteId={ querySiteId }
+						fileBrowserConfig={ fileBrowserConfig }
+					/>
+				</div>
 				<Text>
 					{ createInterpolateElement( syncConfig.learnMore, {
 						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
