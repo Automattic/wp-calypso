@@ -1,5 +1,5 @@
-import { Badge, Gridicon } from '@automattic/components';
-import { DomainSuggestion } from '@automattic/domain-search';
+import { Gridicon } from '@automattic/components';
+import { DomainSuggestion, DomainSuggestionBadge } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
@@ -517,15 +517,15 @@ class DomainRegistrationSuggestion extends Component {
 
 		if ( isRecommended && isFeatured ) {
 			badges.push(
-				<Badge key="recommended" type="info-green">
+				<DomainSuggestionBadge key="recommended">
 					{ translate( 'Recommended' ) }
-				</Badge>
+				</DomainSuggestionBadge>
 			);
 		} else if ( isBestAlternative && isFeatured ) {
 			badges.push(
-				<Badge key="best-alternative" type="info-purple">
+				<DomainSuggestionBadge key="best-alternative">
 					{ translate( 'Best Alternative' ) }
-				</Badge>
+				</DomainSuggestionBadge>
 			);
 		}
 
@@ -534,7 +534,11 @@ class DomainRegistrationSuggestion extends Component {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
-			badges.push( <Badge key="sale">{ saleBadgeText }</Badge> );
+			badges.push(
+				<DomainSuggestionBadge key="sale" variation="warning">
+					{ saleBadgeText }
+				</DomainSuggestionBadge>
+			);
 		}
 
 		if ( isPremium ) {
