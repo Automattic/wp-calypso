@@ -25,7 +25,7 @@ import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { userPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
-import { siteBySlugQuery } from './queries/site';
+import { siteByIdQuery, siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
@@ -107,8 +107,15 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const otherEnvironmentSiteId = site.is_wpcom_staging_site
+			? site.options?.wpcom_production_blog_id
+			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+		if ( otherEnvironmentSiteId ) {
+			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
