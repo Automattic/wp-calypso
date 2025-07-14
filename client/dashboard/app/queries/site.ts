@@ -39,7 +39,7 @@ export const siteByIdQuery = ( siteId: number ) => ( {
 	},
 } );
 
-export const createFilterForSiteSlugQuery = ( siteId: number ) => ( {
+export const siteQueryFilter = ( siteId: number ) => ( {
 	predicate: ( { queryKey, state }: Query ) => {
 		return (
 			( queryKey[ 0 ] === 'site-by-slug' || queryKey[ 0 ] === 'site-by-id' ) &&
@@ -53,7 +53,7 @@ export const siteDeleteMutation = ( siteId: number ) => ( {
 	onSuccess: () => {
 		// Delay the invalidation for the redirection to complete first
 		window.setTimeout( () => {
-			queryClient.invalidateQueries( createFilterForSiteSlugQuery( siteId ) );
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 		}, 1000 );
@@ -63,14 +63,14 @@ export const siteDeleteMutation = ( siteId: number ) => ( {
 export const siteLaunchMutation = ( siteId: number ) => ( {
 	mutationFn: () => launchSite( siteId ),
 	onSuccess: () => {
-		queryClient.invalidateQueries( createFilterForSiteSlugQuery( siteId ) );
+		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 	},
 } );
 
 export const siteRestoreMutation = ( siteId: number ) => ( {
 	mutationFn: () => restoreSite( siteId ),
 	onSuccess: () => {
-		queryClient.invalidateQueries( createFilterForSiteSlugQuery( siteId ) );
+		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 	},
