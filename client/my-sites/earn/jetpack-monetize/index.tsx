@@ -1,3 +1,5 @@
+import page from '@automattic/calypso-router';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -46,9 +48,21 @@ const images: Record< string, string > = {
 
 const JetpackMonetize = () => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const userLocale = useSelector( getCurrentUserLocale );
 	const image = images[ userLocale ] ?? images.en;
+
+	if (
+		! hasEnTranslation( 'Monetize has moved' ) ||
+		! hasEnTranslation(
+			'Monetize is now part of Jetpack for enhanced features. Access it via Jetpack → Monetize in your dashboard.'
+		) ||
+		! hasEnTranslation( 'Go to Jetpack Monetize' )
+	) {
+		page.redirect( `/earn/${ siteSlug }` );
+		return null;
+	}
 
 	return (
 		<Main>
