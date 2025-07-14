@@ -43,7 +43,16 @@ export default function OverviewCard( {
 	const isDisabled = variant === 'disabled';
 
 	const content = (
-		<Card className={ `dashboard-overview-card${ variant ? ` dashboard-overview-card--${ variant }` : '' }` }>
+		<Card
+			className={
+				variant
+					? `dashboard-overview-card dashboard-overview-card--${ variant }`
+					: 'dashboard-overview-card'
+			}
+			style={ {
+				opacity: isDisabled ? 0.5 : 1,
+			} }
+		>
 			<CardBody>
 				{ trackId && (
 					<ComponentViewTracker
