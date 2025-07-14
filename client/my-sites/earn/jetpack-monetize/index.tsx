@@ -52,7 +52,7 @@ const JetpackMonetize = () => {
 
 	return (
 		<Main>
-			<DocumentHead title="Hello" />
+			<DocumentHead title={ translate( 'Monetize' ) } />
 			<FeatureMoved
 				icon={ currencyDollar }
 				title={ translate( 'Monetize has moved' ) }
