@@ -1,6 +1,6 @@
 import { fetchSiteSettings, updateSiteSettings } from '../../data/site-settings';
 import { queryClient } from '../query-client';
-import { createSiteBySlugQueryFilter } from './site';
+import { createFilterForSiteSlugQuery } from './site';
 import type { SiteSettings } from '../../data/site-settings';
 
 export const siteSettingsQuery = ( siteId: number ) => ( {
@@ -15,6 +15,6 @@ export const siteSettingsMutation = ( siteId: number ) => ( {
 			...oldData,
 			...newData,
 		} ) );
-		queryClient.invalidateQueries( createSiteBySlugQueryFilter( siteId ) );
+		queryClient.invalidateQueries( createFilterForSiteSlugQuery( siteId ) );
 	},
 } );
