@@ -47,7 +47,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 			);
 		}
 		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Stats' );
+		await sidebarComponent.navigate( 'Jetpack', 'Stats' );
 	} );
 
 	describe( 'Traffic', function () {
