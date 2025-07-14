@@ -30,10 +30,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
 		} );
 	} );
 
-	form.addEventListener( 'submit', function () {
-		recordTracksEvent( 'calypso_happyblocks_support_custom_search', {
-			query: input.value,
-			location: window.location.href,
+	if ( form ) {
+		form.addEventListener( 'submit', function () {
+			recordTracksEvent( 'calypso_happyblocks_support_custom_search', {
+				query: input.value,
+				location: window.location.href,
+			} );
 		} );
-	} );
+	}
 } );
