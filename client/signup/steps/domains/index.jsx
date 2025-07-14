@@ -1628,6 +1628,10 @@ const StyleWrappedDomainsStepComponent = ( props ) => {
 	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flowName );
 
 	if ( isLoading ) {
+		if ( shouldUseStepContainerV2( props.flowName ) ) {
+			return <Step.Loading />;
+		}
+
 		// TODO: Add a loading state to indicate that the experiment is loading.
 		return null;
 	}
