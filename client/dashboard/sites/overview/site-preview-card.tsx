@@ -27,7 +27,7 @@ const SitePreviewCard = ( { site }: { site: Site } ) => {
 					<SiteIcon site={ site } />
 				</div>
 			) }
-			{ width && height && ! iframeDisabled && (
+			{ !! width && !! height && ! iframeDisabled && (
 				<div
 					style={ {
 						position: 'absolute',

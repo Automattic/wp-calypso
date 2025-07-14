@@ -1,5 +1,7 @@
 .dashboard-overview-card {
-	padding: 16px;
+	.components-card__body {
+		padding: 24px;
+	}
 }
 
 .dashboard-overview-card__icon {

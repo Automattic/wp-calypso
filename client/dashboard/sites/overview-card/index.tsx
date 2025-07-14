@@ -1,5 +1,6 @@
 import {
 	Card,
+	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -33,37 +34,39 @@ export default function OverviewCard( {
 	// TODO: handle `isLink`..
 	return (
 		<Card className="dashboard-overview-card">
-			<VStack spacing={ 4 }>
-				<HStack justify="space-between">
-					<Text variant="muted">
-						{ title }
-						{ isLink && (
-							<span
-								className="components-external-link__icon"
-								aria-label={
-									/* translators: accessibility text */
-									__( '(opens in a new tab)' )
-								}
-							>
-								&#8599;
-							</span>
-						) }
-					</Text>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<HStack justify="space-between">
+						<Text variant="muted">
+							{ title }
+							{ isLink && (
+								<span
+									className="components-external-link__icon"
+									aria-label={
+										/* translators: accessibility text */
+										__( '(opens in a new tab)' )
+									}
+								>
+									&#8599;
+								</span>
+							) }
+						</Text>
 
-					{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-				</HStack>
-				<HStack justify="flex-start" alignment="baseline">
-					{ customHeading ? (
-						customHeading
-					) : (
-						<>
-							<Heading level={ 2 }>{ heading }</Heading>
-							{ metaText && <Text variant="muted">{ metaText }</Text> }
-						</>
-					) }
-				</HStack>
-				{ children }
-			</VStack>
+						{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
+					</HStack>
+					<HStack justify="flex-start" alignment="baseline">
+						{ customHeading ? (
+							customHeading
+						) : (
+							<>
+								<Heading level={ 2 }>{ heading }</Heading>
+								{ metaText && <Text variant="muted">{ metaText }</Text> }
+							</>
+						) }
+					</HStack>
+					{ children }
+				</VStack>
+			</CardBody>
 		</Card>
 	);
 }

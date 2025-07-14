@@ -2,6 +2,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
 	__experimentalGrid as Grid,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
@@ -68,7 +69,7 @@ function SiteOverview() {
 					<SubscribersCard subscribers={ site.subscribers_count } />
 				</Grid>
 				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
-				<Grid columns={ 2 } rows={ 1 } gap={ 6 }>
+				<HStack className="site-overview-cards" spacing={ 6 } alignment="flex-start">
 					<VStack spacing={ 6 } justify="start">
 						<PerformanceCards site={ site } />
 					</VStack>
@@ -76,7 +77,7 @@ function SiteOverview() {
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>
-				</Grid>
+				</HStack>
 			</VStack>
 		</PageLayout>
 	);
