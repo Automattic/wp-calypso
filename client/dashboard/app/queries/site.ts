@@ -26,7 +26,7 @@ export const siteBySlugQuery = ( siteSlug: string ) => ( {
 } );
 
 export const siteByIdQuery = ( siteId: number ) => ( {
-	queryKey: [ 'site-by-slug', siteId, SITE_FIELDS, SITE_OPTIONS ],
+	queryKey: [ 'site-by-id', siteId, SITE_FIELDS, SITE_OPTIONS ],
 	queryFn: async () => {
 		try {
 			return await fetchSite( siteId );
