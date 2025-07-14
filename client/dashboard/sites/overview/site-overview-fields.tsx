@@ -42,18 +42,16 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 		return <Field>{ __( 'Managed through Automattic for Agencies' ) }</Field>;
 	}
 
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		return <Field>{ __( 'Connected via Jetpack' ) }</Field>;
-	}
-
 	const provider = site.hosting_provider_guess;
 	let providerName;
 	if ( provider === 'jurassic_ninja' ) {
 		providerName = 'Jurassic Ninja';
 	} else if ( provider === 'pressable' ) {
 		providerName = 'Pressable';
-	} else {
-		providerName = 'WordPress.com';
+	}
+
+	if ( ! providerName && isSelfHostedJetpackConnected( site ) ) {
+		return <Field>{ __( 'Connected via Jetpack' ) }</Field>;
 	}
 
 	return (
@@ -61,7 +59,7 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 			{ sprintf(
 				/* translators: %s: the hosting provider, e.g.: WordPress.com */
 				__( 'Hosted on %s' ),
-				providerName
+				providerName ?? 'WordPress.com'
 			) }
 		</Field>
 	);
