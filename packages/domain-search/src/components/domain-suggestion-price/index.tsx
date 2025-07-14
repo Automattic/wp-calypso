@@ -5,19 +5,22 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 
 interface DomainSuggestionPriceProps {
 	originalPrice?: string;
 	price: string;
-	alignment?: 'left' | 'right';
 }
 
-export const DomainSuggestionPrice = ( {
-	originalPrice,
-	price,
-	alignment = 'left',
-}: DomainSuggestionPriceProps ) => {
+export const DomainSuggestionPrice = ( { originalPrice, price }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		throw new Error( 'DomainSuggestionPrice must be used within a DomainSuggestionsList' );
+	}
+
+	const alignment = listContext.activeQuery === 'large' ? 'right' : 'left';
 
 	return (
 		<VStack spacing={ 0 }>

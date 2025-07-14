@@ -3,6 +3,7 @@ import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories
 import { DomainSearch } from '../domain-search';
 import { DomainSuggestion } from '../domain-suggestion';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
+import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { DomainSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -56,8 +57,12 @@ export const Default = () => {
 							uuid={ suggestion.uuid }
 							domain={ suggestion.domain }
 							tld={ suggestion.tld }
-							originalPrice={ suggestion.originalPrice }
-							price={ suggestion.price }
+							price={
+								<DomainSuggestionPrice
+									originalPrice={ suggestion.originalPrice }
+									price={ suggestion.price }
+								/>
+							}
 							badges={
 								<>
 									<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>

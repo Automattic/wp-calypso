@@ -7,7 +7,6 @@ import {
 } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
-import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 import { Unavailable } from './unavailable';
 
@@ -17,19 +16,11 @@ interface DomainSuggestionProps {
 	uuid: string;
 	domain: string;
 	tld: string;
-	originalPrice?: string;
-	price: string;
+	price: React.ReactNode;
 	badges?: React.ReactNode;
 }
 
-export const DomainSuggestion = ( {
-	uuid,
-	domain,
-	tld,
-	originalPrice,
-	price,
-	badges,
-}: DomainSuggestionProps ) => {
+export const DomainSuggestion = ( { uuid, domain, tld, price, badges }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
 	if ( ! listContext ) {
@@ -66,11 +57,7 @@ export const DomainSuggestion = ( {
 					</HStack>
 
 					<HStack alignment="right" spacing={ 4 }>
-						<DomainSuggestionPrice
-							alignment="right"
-							originalPrice={ originalPrice }
-							price={ price }
-						/>
+						{ price }
 						{ cta }
 					</HStack>
 				</HStack>
@@ -81,7 +68,7 @@ export const DomainSuggestion = ( {
 			<HStack spacing={ 4 }>
 				<VStack spacing={ 2 }>
 					{ domainName }
-					<DomainSuggestionPrice originalPrice={ originalPrice } price={ price } />
+					{ price }
 				</VStack>
 				{ cta }
 			</HStack>

@@ -13,7 +13,7 @@ describe( 'DomainSuggestion', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
 				<DomainSuggestionsList>
-					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" originalPrice="$20" />
+					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" />
 				</DomainSuggestionsList>
 			</DomainSearch>
 		);
@@ -30,7 +30,6 @@ describe( 'DomainSuggestion', () => {
 						domain="example"
 						tld="com"
 						price="$15"
-						originalPrice="$20"
 						badges={ <DomainSuggestionBadge>Test Badge</DomainSuggestionBadge> }
 					/>
 				</DomainSuggestionsList>
@@ -44,7 +43,7 @@ describe( 'DomainSuggestion', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
 				<DomainSuggestionsList>
-					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" originalPrice="$20" />
+					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" />
 				</DomainSuggestionsList>
 			</DomainSearch>
 		);
@@ -57,7 +56,7 @@ describe( 'DomainSuggestion', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
 				<DomainSuggestionsList>
-					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" originalPrice="$20" />
+					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" />
 				</DomainSuggestionsList>
 			</DomainSearch>
 		);
