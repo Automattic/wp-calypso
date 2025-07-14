@@ -89,7 +89,9 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
-		<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+		<ExternalLink style={ titleFieldTextOverflowStyles } href={ site.URL }>
+			{ value }
+		</ExternalLink>
 	);
 }
 
