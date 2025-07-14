@@ -55,7 +55,7 @@ function SiteOverview() {
 			}
 		>
 			<VStack alignment="stretch" spacing={ 10 }>
-				<Grid columns={ 4 } row={ 1 } gap={ 6 }>
+				<Grid columns={ 4 } rows={ 1 } gap={ 6 }>
 					<SitePreviewCard site={ site } />
 					<VStack className="site-overview-cards" spacing={ 6 }>
 						<VisitorsCard engagementStats={ engagementStats } />
@@ -68,7 +68,7 @@ function SiteOverview() {
 					<SubscribersCard subscribers={ site.subscribers_count } />
 				</Grid>
 				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
-				<Grid columns={ 2 } row={ 1 } gap={ 6 }>
+				<Grid columns={ 2 } rows={ 1 } gap={ 6 }>
 					<VStack spacing={ 6 } justify="start">
 						<PerformanceCards site={ site } />
 					</VStack>
