@@ -57,7 +57,7 @@ const JetpackMonetize = () => {
 				icon={ currencyDollar }
 				title={ translate( 'Monetize has moved' ) }
 				description={ translate(
-					'Monetize is now part of Jetpack for enhanced features. Access them via Jetpack → Monetize in your dashboard.'
+					'Monetize is now part of Jetpack for enhanced features. Access it via Jetpack → Monetize in your dashboard.'
 				) }
 				buttonText={ translate( 'Go to Jetpack Monetize' ) }
 				buttonLink={ `/earn/${ siteSlug }` }
