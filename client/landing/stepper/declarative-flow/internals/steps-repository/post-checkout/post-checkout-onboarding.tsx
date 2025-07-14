@@ -25,7 +25,12 @@ const usePluginByGoal = () => {
 	return null;
 };
 
-const PostCheckoutOnboarding: StepType = ( { flow, navigation } ) => {
+const PostCheckoutOnboarding: StepType< {
+	submits: {
+		siteId: number;
+		siteSlug: string;
+	};
+} > = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/composite-checkout",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "A set of React components and helpers that can be used to create a checkout flow.",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",

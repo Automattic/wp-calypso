@@ -145,6 +145,7 @@ export default function usePrepareProductsForCart( {
 			sitelessCheckoutType === 'akismet' ||
 			sitelessCheckoutType === 'marketplace' ||
 			sitelessCheckoutType === 'a4a' ||
+			sitelessCheckoutType === 'unified' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -223,7 +224,11 @@ function chooseAddHandler( {
 		return 'addRenewalItems';
 	}
 
-	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
+	if (
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'unified'
+	) {
 		return 'addProductFromSlug';
 	}
 

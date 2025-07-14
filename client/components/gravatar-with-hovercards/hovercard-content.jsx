@@ -12,7 +12,7 @@ import './styles.scss';
 
 function HovercardContent( props ) {
 	const dispatch = useDispatch();
-	const { user, gravatarData, closeCard } = props;
+	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
 
 	// Prefer wpcom_id when it is given. Sometimes ID is specific to another site and wpcom_id is
 	// accurate. Use ID as a fallback as sometimes wpcom_id isn't provided (like self user data).
@@ -44,6 +44,7 @@ function HovercardContent( props ) {
 				<div className="gravatar-hovercard__header">
 					<GravatarHeader
 						gravatarData={ gravatarData }
+						processedAvatarUrl={ processedAvatarUrl }
 						userLogin={ userLogin }
 						closeCard={ closeCard }
 					/>

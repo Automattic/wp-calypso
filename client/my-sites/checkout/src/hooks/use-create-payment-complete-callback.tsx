@@ -129,6 +129,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 				siteSlug: siteSlug || undefined,
+				siteId: siteId || undefined,
 				adminUrl,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 				redirectTo,
