@@ -1125,7 +1125,7 @@ export class LoginForm extends Component {
 
 		return (
 			<>
-				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoaderOverlay /> }
+				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoaderOverlay showCompactLogo /> }
 				<form
 					className={ clsx( {
 						'is-social-first': isSocialFirst,
