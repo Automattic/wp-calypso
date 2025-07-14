@@ -8,7 +8,7 @@ import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { canManageSite } from '../features';
+import { canManageSite, canViewStagingSite } from '../features';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
@@ -44,8 +44,12 @@ function Site() {
 							renderContent={ ( { onClose } ) => <Switcher onClose={ onClose } /> }
 						/>
 					</HeaderBar.Title>
-					<MenuDivider />
-					<EnvironmentSwitcher site={ site } />
+					{ canViewStagingSite( site ) && (
+						<>
+							<MenuDivider />
+							<EnvironmentSwitcher site={ site } />
+						</>
+					) }
 					{ isDesktop && <MenuDivider /> }
 					<SiteMenu site={ site } />
 				</HStack>

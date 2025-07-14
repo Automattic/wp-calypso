@@ -15,6 +15,7 @@ export const HostingFeatures = {
 	CACHING: DotcomFeatures.ATOMIC,
 	DEFENSIVE_MODE: DotcomFeatures.SFTP,
 	RESTORE_PLAN_SOFTWARE: DotcomFeatures.ATOMIC,
+	STAGING_SITE: DotcomFeatures.SITE_STAGING_SITES,
 } as const;
 
 export type HostingFeatures = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
@@ -136,9 +137,13 @@ export function canDeleteSite( site: Site ) {
 	return ! site.is_wpcom_staging_site;
 }
 
+export function canViewStagingSite( site: Site ) {
+	return ! isSelfHostedJetpackConnected( site );
+}
+
 export function canCreateStagingSite( site: Site ) {
 	return (
-		site.is_wpcom_atomic &&
+		hasAtomicFeature( site, HostingFeatures.STAGING_SITE ) &&
 		! site.is_wpcom_staging_site &&
 		! site?.options?.wpcom_staging_blog_ids?.length
 	);
