@@ -10,6 +10,7 @@ import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { hasAtomicFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { HostingFeatures } from '../features';
 import { PHPVersion } from '../site-fields';
@@ -68,7 +69,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">
 			<Field>
 				<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-					{ new URL( url ).hostname }
+					{ getSiteDisplayUrl( site ) }
 				</ExternalLink>
 			</Field>
 			{ wpVersion && (
