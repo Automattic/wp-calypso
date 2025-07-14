@@ -5,10 +5,18 @@
     right: 0;
     bottom: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     z-index: 1000;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: var(--studio-white);
+
+    &__top-bar {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    &__progress-bar {
+        margin: auto;
+    }
 
     &__progress-bar > div {
         background-color: var(--studio-wordpress-blue);
