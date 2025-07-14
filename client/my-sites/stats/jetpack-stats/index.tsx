@@ -1,10 +1,10 @@
-import { __experimentalText as Text, Button } from '@wordpress/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { chartBar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import FeatureMoved from 'calypso/components/feature-moved';
 import Main from 'calypso/components/main';
-import { Callout } from 'calypso/dashboard/components/callout';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -27,8 +27,6 @@ import imageTr from './images/menu-tr.png';
 import imageZhCn from './images/menu-zh-cn.png';
 import imageZhTw from './images/menu-zh-tw.png';
 
-import './style.scss';
-
 const images: Record< string, string > = {
 	ar: imageAr,
 	de: imageDe,
@@ -49,40 +47,46 @@ const images: Record< string, string > = {
 	'zh-tw': imageZhTw,
 };
 
-const StatsMoved = () => {
+const JetpackStats = () => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
+	const userLocale = useSelector( getCurrentUserLocale );
+	const image = images[ userLocale ] ?? images.en;
 	const siteId = useSelector( getSelectedSiteId );
 	const wpAdminUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
 	);
 
-	const userLocale = useSelector( getCurrentUserLocale );
-	const image = images[ userLocale ] ?? images.en;
+	if ( ! wpAdminUrl ) {
+		return null;
+	}
+
+	if (
+		! hasEnTranslation( 'Stats have moved' ) ||
+		! hasEnTranslation(
+			'Stats are now part of Jetpack for enhanced features. Access them via Jetpack → Stats in your dashboard.'
+		) ||
+		! hasEnTranslation( 'Go to Jetpack Stats' )
+	) {
+		window.location.replace( wpAdminUrl );
+		return null;
+	}
 
 	return (
-		<Main className="stats-moved" ariaLabel={ STATS_PRODUCT_NAME }>
+		<Main>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
-			<Callout
+			<FeatureMoved
 				icon={ chartBar }
 				title={ translate( 'Stats have moved' ) }
-				description={
-					<Text variant="muted">
-						{ translate(
-							'Stats are now part of Jetpack for enhanced features. Access them via Jetpack → Stats in your dashboard.'
-						) }
-					</Text>
-				}
+				description={ translate(
+					'Stats are now part of Jetpack for enhanced features. Access them via Jetpack → Stats in your dashboard.'
+				) }
+				buttonText={ translate( 'Go to Jetpack Stats' ) }
+				buttonLink={ wpAdminUrl }
 				image={ image }
-				actions={
-					wpAdminUrl && (
-						<Button variant="primary" size="compact" href={ wpAdminUrl }>
-							{ translate( 'Go to Jetpack Stats' ) }
-						</Button>
-					)
-				}
 			/>
 		</Main>
 	);
 };
 
-export default StatsMoved;
+export default JetpackStats;

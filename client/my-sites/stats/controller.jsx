@@ -11,12 +11,12 @@ import { getSite, getSiteOption, isJetpackSite } from 'calypso/state/sites/selec
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import JetpackStats from './jetpack-stats';
 import { rangeOfPeriod, getSiteFilters } from './pages/shared/helpers';
 import PageLoading from './pages/shared/page-loading';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
-import StatsMoved from './stats-moved';
 import StatsPageLoader from './stats-page-loader';
 import { appendQueryStringForRedirection } from './utils';
 
@@ -522,7 +522,7 @@ export { default as realtime } from './pages/realtime/controller';
 export { default as subscribers } from './pages/subscribers/controller';
 export { default as purchase } from './pages/purchase/controller';
 
-export const statsMoved = ( context, next ) => {
+export const jetpackStats = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
@@ -530,7 +530,7 @@ export const statsMoved = ( context, next ) => {
 
 	// Enforce the new location to 10% of users.
 	if ( siteId && ! isJetpack && userId % 100 < 10 ) {
-		context.primary = <StatsMoved />;
+		context.primary = <JetpackStats />;
 	}
 	next();
 };

@@ -19,14 +19,14 @@ import {
 	purchase,
 	redirectToDaySummary,
 	realtime,
-	statsMoved,
+	jetpackStats,
 } from './controller';
 
 import './style.scss';
 
 // all Stats pages (except redirects) have the same handler structure
 const statsPage = ( url, controller ) => {
-	page( url, siteSelection, navigation, controller, statsMoved, makeLayout, clientRender );
+	page( url, siteSelection, navigation, controller, jetpackStats, makeLayout, clientRender );
 };
 
 export default function () {
