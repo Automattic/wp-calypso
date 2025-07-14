@@ -16,9 +16,7 @@ import {
 } from 'calypso/components/domains/domain-registration-suggestion/utility';
 import InfoPopover from 'calypso/components/info-popover';
 import {
-	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
-	hasDomainInCart,
 	isPaidDomain,
 	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
@@ -29,7 +27,6 @@ import {
 	isHstsRequired,
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';
-import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -232,134 +229,6 @@ class DomainRegistrationSuggestion extends Component {
 			default:
 				return baseLabel;
 		}
-	}
-
-	getButtonProps() {
-		const {
-			cart,
-			domainsWithPlansOnly,
-			isSignupStep,
-			selectedSite,
-			suggestion,
-			suggestionSelected,
-			translate,
-			pendingCheckSuggestion,
-			premiumDomain,
-			isCartPendingUpdateDomain,
-			flowName,
-			temporaryCart,
-			domainRemovalQueue,
-		} = this.props;
-		const { domain_name: domain } = suggestion;
-
-		let isAdded =
-			suggestionSelected ||
-			hasDomainInCart( cart, domain ) ||
-			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
-
-		// If we're removing this domain, let's instantly show that for the user
-		if (
-			domainRemovalQueue?.length > 0 &&
-			domainRemovalQueue.some( ( item ) => item.meta === domain ) &&
-			! ( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) )
-		) {
-			isAdded = false;
-		}
-
-		let buttonContent;
-		let ariaLabel;
-		let buttonStyles = this.props.buttonStyles;
-
-		if ( isAdded ) {
-			buttonContent = translate( '{{checkmark/}} In Cart', {
-				context: 'Domain is already added to shopping cart',
-				components: { checkmark: <Gridicon icon="checkmark" /> },
-			} );
-			ariaLabel = translate( 'Domain %(domainName)s is already added to shopping cart', {
-				args: { domainName: suggestion.domain_name },
-				context:
-					'Accessible label for domain that is already added to shopping cart. %(domainName)s is the domain name.',
-			} );
-
-			buttonStyles = { ...buttonStyles, primary: false };
-
-			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-				buttonStyles = { ...buttonStyles, borderless: true };
-
-				buttonContent = translate( '{{checkmark/}} Selected', {
-					context: 'Domain is already added to shopping cart',
-					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
-				} );
-				ariaLabel = translate( 'Selected domain %(domainName)s', {
-					args: { domainName: suggestion.domain_name },
-					context:
-						'Accessible label for domain that is selected. %(domainName)s is the domain name.',
-				} );
-			}
-		} else {
-			const shouldUpgrade =
-				! isSignupStep &&
-				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion );
-
-			if ( shouldUpgrade ) {
-				buttonContent = translate( 'Upgrade', {
-					context: 'Domain mapping suggestion button with plan upgrade',
-				} );
-				ariaLabel = translate( 'Upgrade plan to add domain %(domainName)s', {
-					args: { domainName: suggestion.domain_name },
-					context:
-						'Accessible label for domain mapping suggestion button with plan upgrade. %(domainName)s is the domain name.',
-				} );
-			} else {
-				buttonContent = translate( 'Select', {
-					context: 'Domain mapping suggestion button',
-				} );
-				ariaLabel = this.getSelectDomainAriaLabel();
-			}
-		}
-
-		if ( premiumDomain?.pending ) {
-			buttonStyles = { ...buttonStyles, disabled: true };
-		} else if ( premiumDomain?.is_price_limit_exceeded ) {
-			buttonStyles = { ...buttonStyles, disabled: true };
-			buttonContent = translate( 'Restricted', {
-				context: 'Premium domain is not available for registration',
-			} );
-			ariaLabel = translate( 'Premium domain %(domainName)s is not available for registration', {
-				args: { domainName: suggestion.domain_name },
-				context: 'Accessible label for restricted premium domain',
-			} );
-		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
-			buttonStyles = { ...buttonStyles, disabled: true };
-			buttonContent = translate( 'Unavailable', {
-				context: 'Domain suggestion is not available for registration',
-			} );
-			ariaLabel = translate( 'Domain %(domainName)s is not available for registration', {
-				args: { domainName: suggestion.domain_name },
-				context: 'Accessible label for unavailable domain',
-			} );
-		} else if (
-			pendingCheckSuggestion?.domain_name === domain ||
-			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name === domain )
-		) {
-			buttonStyles = { ...buttonStyles, busy: true, disabled: true };
-		} else if (
-			pendingCheckSuggestion ||
-			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name !== domain )
-		) {
-			buttonStyles = { ...buttonStyles, disabled: true };
-		}
-
-		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-			buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
-		}
-
-		return {
-			buttonContent,
-			buttonStyles,
-			isAdded,
-			ariaLabel,
-		};
 	}
 
 	getPriceRule() {
@@ -579,24 +448,42 @@ class DomainRegistrationSuggestion extends Component {
 
 	render() {
 		const {
-			suggestion: { domain_name: domain },
+			suggestion: { domain_name: fullDomain },
 			productCost,
 			renewCost,
 			productSaleCost,
 			showStrikedOutPrice,
 			zeroCost,
 			flowName,
+			premiumDomain,
+			translate,
 		} = this.props;
+
+		const [ domainName, ...tld ] = fullDomain.split( '.' );
+
+		if ( premiumDomain?.is_price_limit_exceeded ) {
+			return (
+				<DomainSuggestion.Unavailable
+					domain={ domainName }
+					tld={ tld.join( '.' ) }
+					getReasonText={ ( { domain } ) =>
+						translate( 'Premium domain {{domain/}} is not available for registration', {
+							components: {
+								domain,
+							},
+						} )
+					}
+				/>
+			);
+		}
 
 		const badges = this.renderBadges();
 		const priceRule = this.getPriceRule();
 
-		const [ domainName, ...tld ] = domain.split( '.' );
-
 		return (
 			<DomainSuggestion
 				badges={ badges }
-				uuid={ domain }
+				uuid={ fullDomain }
 				domain={ domainName }
 				tld={ tld.join( '.' ) }
 				price={
