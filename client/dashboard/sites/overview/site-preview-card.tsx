@@ -12,7 +12,7 @@ const SitePreviewCard = ( { site }: { site: Site } ) => {
 	const iframeDisabled = is_a8c && is_private;
 
 	return (
-		<Card>
+		<Card style={ { overflow: 'hidden' } }>
 			{ resizeListener }
 			{ iframeDisabled && (
 				<div
