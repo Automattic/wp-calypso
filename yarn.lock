@@ -698,28 +698,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-shopping-cart-item-components@workspace:packages/calypso-shopping-cart-item-components":
-  version: 0.0.0-use.local
-  resolution: "@automattic/calypso-shopping-cart-item-components@workspace:packages/calypso-shopping-cart-item-components"
-  dependencies:
-    "@automattic/calypso-config": "workspace:^"
-    "@automattic/calypso-products": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/composite-checkout": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
-    "@automattic/shopping-cart": "workspace:^"
-    "@emotion/styled": "npm:^11.11.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/react-i18n": "npm:^4.23.0"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@emotion/react": ^11.4.1
-    redux: ^5.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/calypso-storybook@workspace:^, @automattic/calypso-storybook@workspace:packages/calypso-storybook":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
