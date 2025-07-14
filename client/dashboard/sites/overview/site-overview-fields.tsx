@@ -39,7 +39,7 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 	}
 
 	if ( agencyBlog ) {
-		return <Field>{ __( 'Managed through Automattic for Agencies' ) }</Field>;
+		return <Field>{ __( 'Managed by Automattic for Agencies' ) }</Field>;
 	}
 
 	const provider = site.hosting_provider_guess;
