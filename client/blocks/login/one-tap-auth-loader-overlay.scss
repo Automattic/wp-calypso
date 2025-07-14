@@ -1,21 +1,8 @@
 .one-tap-auth-loader-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
     z-index: z-index("root", ".fullscreen-overlay");
     background-color: var(--studio-white);
-
-    &__progress-bar {
-        margin: auto;
-        position: relative;
-        top: calc(-1 * var(--step-container-v2-top-bar-height) / 2);
-    }
-
-    &__progress-bar > div {
-        background-color: var(--studio-wordpress-blue);
-    }
 }
