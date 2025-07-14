@@ -283,7 +283,10 @@ class DomainSearchResults extends Component {
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			const regularSuggestions = suggestions.filter(
-				( suggestion ) => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+				( suggestion ) =>
+					! suggestion.isRecommended &&
+					! suggestion.isBestAlternative &&
+					! suggestion.isSubDomainSuggestion
 			);
 			const featuredSuggestions = suggestions.filter(
 				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative

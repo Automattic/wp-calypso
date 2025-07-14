@@ -1,11 +1,12 @@
 import { Badge, Gridicon } from '@automattic/components';
+import { DomainSuggestion } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -34,6 +35,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import DomainProductPrice from '../domain-product-price';
 import PremiumBadge from './premium-badge';
 
 class DomainRegistrationSuggestion extends Component {
@@ -126,10 +128,6 @@ class DomainRegistrationSuggestion extends Component {
 		}
 
 		this.props.onButtonClick( suggestion, uiPosition, previousState );
-	};
-
-	isUnavailableDomain = ( domain ) => {
-		return includes( this.props.unavailableDomains, domain );
 	};
 
 	getSelectDomainAriaLabel() {
@@ -549,9 +547,7 @@ class DomainRegistrationSuggestion extends Component {
 			);
 		}
 
-		if ( badges.length > 0 ) {
-			return <div className="domain-registration-suggestion__badges">{ badges }</div>;
-		}
+		return badges;
 	}
 
 	renderMatchReason() {
@@ -579,28 +575,35 @@ class DomainRegistrationSuggestion extends Component {
 
 	render() {
 		const {
-			domainsWithPlansOnly,
-			isFeatured,
 			suggestion: { domain_name: domain },
 			productCost,
 			renewCost,
 			productSaleCost,
-			premiumDomain,
 			showStrikedOutPrice,
-			hideMatchReasons,
 		} = this.props;
-
-		const isUnavailableDomain = this.isUnavailableDomain( domain );
-
-		const extraClasses = clsx( {
-			'featured-domain-suggestion': isFeatured,
-			'is-unavailable': isUnavailableDomain,
-		} );
 
 		const badges = this.renderBadges();
 		const priceRule = this.getPriceRule();
 
-		return <p>New content goes here</p>;
+		const [ domainName, ...tld ] = domain.split( '.' );
+
+		return (
+			<DomainSuggestion
+				badges={ badges }
+				uuid={ domain }
+				domain={ domainName }
+				tld={ tld.join( '.' ) }
+				price={
+					<DomainProductPrice
+						rule={ priceRule }
+						price={ productCost }
+						renewPrice={ renewCost }
+						salePrice={ productSaleCost }
+						showStrikedOutPrice={ showStrikedOutPrice }
+					/>
+				}
+			/>
+		);
 	}
 }
 
