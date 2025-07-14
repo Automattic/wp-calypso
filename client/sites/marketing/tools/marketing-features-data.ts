@@ -78,9 +78,9 @@ export const getMarketingFeaturesData = (
 			categories: [ 'share', 'new' ],
 			imagePath: activityPubLogo,
 			imageAlt: translate( 'Activitypub logo' ),
-			buttonText: translate( 'Enable ActivityPub' ),
+			buttonText: translate( 'Enter the fediverse' ),
 			onClick: () => {
-				recordTracksEvent( 'calypso_marketing_tools_start_sharing_button_click' );
+				recordTracksEvent( 'calypso_marketing_tools_activitypub_button_click' );
 
 				page( marketingConnections( selectedSiteSlug ) );
 			},
