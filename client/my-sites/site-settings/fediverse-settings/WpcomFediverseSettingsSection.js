@@ -10,13 +10,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains.ts';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
-import { getSiteAdminUrl } from 'calypso/sites-dashboard/utils';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
 	getSiteTitle,
 	getSiteDomain,
 	getSite,
+	getSiteAdminUrl,
 	getSitePlanSlug,
 } from 'calypso/state/sites/selectors';
 
@@ -183,6 +183,9 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const activityPubSettingsUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'options-general.php?page=activitypub' )
+	);
 	const isPrivate = site?.is_private || site?.is_coming_soon;
 	const noticeArgs = {
 		args: {
@@ -194,7 +197,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 		( response ) => {
 			if ( response.enabled ) {
 				// Redirect to the ActivityPub onboarding checklist.
-				window.location.href = getSiteAdminUrl( site ) + 'options-general.php?page=activitypub';
+				window.location.href = activityPubSettingsUrl;
 			}
 
 			const message = response.enabled
