@@ -9,7 +9,7 @@ type Props = {
 export default function OneTapAuthLoaderOverlay( { showCompactLogo }: Props ) {
 	return (
 		<div className="one-tap-auth-loader-overlay">
-			<Step.Loading showCompactLogo={ showCompactLogo } />
+			<Step.Loading compactLogo={ showCompactLogo ? 'always' : undefined } />
 		</div>
 	);
 }
