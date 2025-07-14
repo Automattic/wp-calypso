@@ -23,6 +23,30 @@
 		max-width: none;
 	}
 
+	.dashboard-callout__h-container {
+		flex-direction: column;
+
+		@include break-small {
+			flex-direction: row;
+		}
+
+		@include break-medium {
+			flex-direction: column;
+		}
+
+		@include break-large {
+			flex-direction: row;
+		}
+	}
+
+	.is-sidebar-collapsed & {
+		.dashboard-callout__h-container {
+			@include break-medium {
+				flex-direction: row;
+			}
+		}
+	}
+
 	.dashboard-callout__title {
 		@include heading-large;
 		color: $gray-900;
@@ -30,7 +54,7 @@
 	}
 
 	.dashboard-callout__image img {
-		object-fit: contain;
-		object-position: top;
+		object-position: left;
+		position: relative;
 	}
 }
