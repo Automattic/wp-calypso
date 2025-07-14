@@ -8,6 +8,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { hasAtomicFeature } from '../../utils/site-features';
+import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { HostingFeatures } from '../features';
@@ -42,14 +43,7 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 		return <Field>{ __( 'Managed by Automattic for Agencies' ) }</Field>;
 	}
 
-	const provider = site.hosting_provider_guess;
-	let providerName;
-	if ( provider === 'jurassic_ninja' ) {
-		providerName = 'Jurassic Ninja';
-	} else if ( provider === 'pressable' ) {
-		providerName = 'Pressable';
-	}
-
+	const providerName = getSiteProviderName( site );
 	if ( ! providerName && isSelfHostedJetpackConnected( site ) ) {
 		return <Field>{ __( 'Connected via Jetpack' ) }</Field>;
 	}
@@ -59,7 +53,7 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 			{ sprintf(
 				/* translators: %s: the hosting provider, e.g.: WordPress.com */
 				__( 'Hosted on %s' ),
-				providerName ?? 'WordPress.com'
+				providerName ?? DEFAULT_PROVIDER_NAME
 			) }
 		</Field>
 	);
