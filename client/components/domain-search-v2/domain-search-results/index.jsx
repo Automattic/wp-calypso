@@ -1,12 +1,15 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { CompactCard, MaterialIcon } from '@automattic/components';
-import { DomainSuggestionsList, DomainSuggestion } from '@automattic/domain-search';
+import { DomainSuggestionsList } from '@automattic/domain-search';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
@@ -14,6 +17,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import DomainRegistrationSuggestion from '../domain-registration-suggestion';
 
 class DomainSearchResults extends Component {
 	static propTypes = {
@@ -265,34 +269,112 @@ class DomainSearchResults extends Component {
 		}
 	};
 
-	renderDomainSuggestion = ( { domain_name, cost } ) => {
-		const [ domainName, ...tld ] = domain_name.split( '.' );
+	renderPlaceholders() {
+		return times( this.props.placeholderQuantity, function ( n ) {
+			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
+		} );
+	}
+
+	renderDomainSuggestions() {
+		const { isDomainOnly, suggestions, showStrikedOutPrice } = this.props;
+		let featuredSuggestionElement;
+		let suggestionElements;
+		let domainSkipSuggestion;
+
+		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
+			const regularSuggestions = suggestions.filter(
+				( suggestion ) => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+			);
+			const featuredSuggestions = suggestions.filter(
+				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative
+			);
+
+			featuredSuggestionElement = (
+				<FeaturedDomainSuggestions
+					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.isCartPendingUpdate }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					isDomainOnly={ isDomainOnly }
+					fetchAlgo={ this.props.fetchAlgo }
+					isSignupStep={ this.props.isSignupStep }
+					showStrikedOutPrice={ showStrikedOutPrice }
+					key="featured"
+					onButtonClick={ this.props.onClickResult }
+					premiumDomains={ this.props.premiumDomains }
+					featuredSuggestions={ featuredSuggestions }
+					query={ this.props.lastDomainSearched }
+					railcarId={ this.props.railcarId }
+					selectedSite={ this.props.selectedSite }
+					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
+					unavailableDomains={ this.props.unavailableDomains }
+					hideMatchReasons={ this.props.hideMatchReasons }
+					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+					temporaryCart={ this.props.temporaryCart }
+					domainRemovalQueue={ this.props.domainRemovalQueue }
+				/>
+			);
+
+			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
+				return (
+					<DomainRegistrationSuggestion
+						isCartPendingUpdate={ this.props.isCartPendingUpdate }
+						isDomainOnly={ isDomainOnly }
+						suggestion={ suggestion }
+						suggestionSelected={
+							this.props.wpcomSubdomainSelected?.domain_name === suggestion?.domain_name
+						}
+						key={ suggestion.domain_name }
+						cart={ this.props.cart }
+						isSignupStep={ this.props.isSignupStep }
+						showStrikedOutPrice={ this.props.showStrikedOutPrice }
+						selectedSite={ this.props.selectedSite }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
+						uiPosition={ i + 2 }
+						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
+						query={ this.props.lastDomainSearched }
+						onButtonClick={ this.props.onClickResult }
+						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
+						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
+						unavailableDomains={ this.props.unavailableDomains }
+						hideMatchReasons={ this.props.hideMatchReasons }
+						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+						temporaryCart={ this.props.temporaryCart }
+						domainRemovalQueue={ this.props.domainRemovalQueue }
+					/>
+				);
+			} );
+
+			domainSkipSuggestion = (
+				<DomainSkipSuggestion
+					selectedSiteSlug={ this.props.selectedSite?.slug }
+					onButtonClick={ () => this.props.onSkip() }
+				/>
+			);
+		} else {
+			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
+			suggestionElements = this.renderPlaceholders();
+		}
 
 		return (
-			<DomainSuggestion
-				key={ domain_name }
-				uuid={ domain_name }
-				domain={ domainName }
-				tld={ tld.join( '.' ) }
-				price={ cost }
-				badges={ [] }
-				originalPrice={ undefined }
-			/>
+			<div className="domain-search-results__domain-suggestions">
+				{ featuredSuggestionElement }
+				{ this.props.showSkipButton && domainSkipSuggestion }
+				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
+			</div>
 		);
-	};
+	}
 
 	render() {
-		const regularSuggestions = this.props.suggestions.filter(
-			( suggestion ) =>
-				! suggestion.isRecommended &&
-				! suggestion.isBestAlternative &&
-				! suggestion.isSubDomainSuggestion
-		);
-
 		return (
-			<DomainSuggestionsList>
-				{ regularSuggestions.map( this.renderDomainSuggestion ) }
-			</DomainSuggestionsList>
+			<div className="domain-search-results">
+				{ this.renderDomainAvailability() }
+				{ this.renderDomainSuggestions() }
+			</div>
 		);
 	}
 }
