@@ -53,9 +53,12 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		 * Get post-checkout destination for onboarding-unified flow
 		 */
 		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ): string => {
-			// For onboarding-unified, we want to go to the site home page after setup
+			// For onboarding-unified, redirect to site-setup/goals like the old flows
 			if ( providedDependencies.siteSlug ) {
-				return addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } );
+				return addQueryArgs( '/setup/site-setup/goals', {
+					siteSlug: providedDependencies.siteSlug,
+					ref: flowName,
+				} );
 			}
 			// Fallback to generic home if no siteSlug
 			return '/';
