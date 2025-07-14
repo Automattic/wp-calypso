@@ -246,12 +246,12 @@ export default function PlanSelectionFilter( {
 						? [
 								{
 									name: PLAN_CATEGORY_SIGNATURE,
-									title: translate( 'Signature Plans 1-10' ),
+									title: translate( 'Signature Plans 1–10' ),
 									disabled: disableStandardTab,
 								},
 								{
 									name: PLAN_CATEGORY_SIGNATURE_HIGH,
-									title: translate( 'Signature Plans 11-17' ),
+									title: translate( 'Signature Plans 11–17' ),
 								},
 								...( showHighResourceTab
 									? [
