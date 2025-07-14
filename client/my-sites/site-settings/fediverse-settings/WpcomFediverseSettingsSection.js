@@ -10,6 +10,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains.ts';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import { getSiteAdminUrl } from 'calypso/sites-dashboard/utils';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
@@ -191,6 +192,11 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const { isEnabled, setEnabled, isLoading, isError, data } = useActivityPubStatus(
 		siteId,
 		( response ) => {
+			if ( response.enabled ) {
+				// Redirect to the ActivityPub onboarding checklist.
+				window.location.href = getSiteAdminUrl( site ) + 'options-general.php?page=activitypub';
+			}
+
 			const message = response.enabled
 				? translate( '%(site_title)s has entered the fediverse!', noticeArgs )
 				: translate( '%(site_title)s has exited the fediverse.', noticeArgs );
