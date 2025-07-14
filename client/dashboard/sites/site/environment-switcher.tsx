@@ -18,9 +18,9 @@ import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '../../data/types';
 
-type Env = 'production' | 'staging';
+type EnvironmentType = 'production' | 'staging';
 
-const Environment = ( { env }: { env: Env } ) => {
+const Environment = ( { env }: { env: EnvironmentType } ) => {
 	if ( env === 'staging' ) {
 		return (
 			<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
@@ -53,7 +53,7 @@ const EnvironmentSwitcherDropdown = ( {
 	onClose,
 }: {
 	currentSite: Site;
-	otherEnvironment: Env;
+	otherEnvironment: EnvironmentType;
 	otherEnvironmentSite?: Site;
 	onClose: () => void;
 } ) => {
