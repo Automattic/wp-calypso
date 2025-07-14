@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
-import OneTapAuthLoader from 'calypso/blocks/login/one-tap-auth-loader';
+import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -85,7 +85,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const stepContent = (
 		<>
-			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoader /> }
+			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
 			<SignupFormSocialFirst
 				stepName={ stepName }
 				flowName={ flow }

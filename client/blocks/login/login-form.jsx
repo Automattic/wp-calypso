@@ -63,7 +63,7 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
-import OneTapAuthLoader from './one-tap-auth-loader';
+import OneTapAuthLoaderOverlay from './one-tap-auth-loader-overlay';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
@@ -1125,7 +1125,7 @@ export class LoginForm extends Component {
 
 		return (
 			<>
-				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoader /> }
+				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoaderOverlay /> }
 				<form
 					className={ clsx( {
 						'is-social-first': isSocialFirst,
