@@ -37,14 +37,14 @@ export const siteByIdQuery = ( siteId: number ) => ( {
 			throw e;
 		}
 	},
-	meta: {
-		persist: false,
-	},
 } );
 
 export const createFilterForSiteSlugQuery = ( siteId: number ) => ( {
 	predicate: ( { queryKey, state }: Query ) => {
-		return queryKey[ 0 ] === 'site-by-slug' && ( state.data as Site )?.ID === siteId;
+		return (
+			( queryKey[ 0 ] === 'site-by-slug' || queryKey[ 0 ] === 'site-by-id' ) &&
+			( state.data as Site )?.ID === siteId
+		);
 	},
 } );
 
