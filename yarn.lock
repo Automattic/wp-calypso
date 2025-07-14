@@ -2424,10 +2424,12 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.23.0"
     debug: "npm:^4.4.1"
     i18n-calypso: "workspace:^"
+    postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
+    webpack: "npm:^5.99.8"
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^5.0.1

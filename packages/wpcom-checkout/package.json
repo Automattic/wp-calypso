@@ -61,6 +61,7 @@
 		"@wordpress/react-i18n": "^4.23.0",
 		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
+		"postcss": "^8.5.3",
 		"prop-types": "^15.8.1"
 	},
 	"devDependencies": {
@@ -71,7 +72,8 @@
 		"@testing-library/react": "^16.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.8.3"
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1",
