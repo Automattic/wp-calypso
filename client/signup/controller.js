@@ -121,10 +121,10 @@ export default {
 		if ( config.isEnabled( 'onboarding/unified' ) ) {
 			if ( flowName === 'onboarding-affiliate' || flowName === 'onboarding-pm' ) {
 				const source = flowName === 'onboarding-affiliate' ? 'affiliate' : 'pm';
-				const params = new URLSearchParams( context.querystring || '' );
-				params.set( 'source', source );
+				const baseUrl =
+					'/setup/onboarding-unified' + ( context.querystring ? '?' + context.querystring : '' );
+				const redirectUrl = addQueryArgs( { source }, baseUrl );
 
-				const redirectUrl = `/setup/onboarding-unified?${ params.toString() }`;
 				window.location.replace( redirectUrl );
 				return;
 			}
