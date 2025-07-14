@@ -11,6 +11,8 @@
 
     &__progress-bar {
         margin: auto;
+        position: relative;
+        top: calc(-1 * var(--step-container-v2-top-bar-height) / 2);
     }
 
     &__progress-bar > div {
