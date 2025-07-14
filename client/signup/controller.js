@@ -117,6 +117,19 @@ export default {
 		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
 		const signupProgress = getSignupProgress( context.store.getState() );
 
+		// Redirect affiliate and PM flows to new stepper framework when feature flag is enabled
+		if ( config.isEnabled( 'onboarding/unified' ) ) {
+			if ( flowName === 'onboarding-affiliate' || flowName === 'onboarding-pm' ) {
+				const source = flowName === 'onboarding-affiliate' ? 'affiliate' : 'pm';
+				const params = new URLSearchParams( context.querystring || '' );
+				params.set( 'source', source );
+
+				const redirectUrl = `/setup/onboarding-unified?${ params.toString() }`;
+				window.location.replace( redirectUrl );
+				return;
+			}
+		}
+
 		// Special case for the user step which may use oauth2 redirect flow
 		// Check if there is a valid flow in progress to resume
 		// We're limited in the number of redirect uris we can provide so we only have a single one at /start/user
