@@ -9,11 +9,6 @@
     z-index: z-index("root", ".fullscreen-overlay");
     background-color: var(--studio-white);
 
-    &__top-bar {
-        width: 100%;
-        flex: 0 0 auto;
-    }
-
     &__progress-bar {
         margin: auto;
     }
