@@ -14,11 +14,13 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
+import DomainUpsellCard from './domain-upsell-card';
 import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
 import StorageCard from './storage-card';
+import UpsellWithActionCard from './upsell-with-action-card';
 import UptimeCard from './uptime-card';
 import './style.scss';
 
@@ -81,6 +83,7 @@ function SiteOverview() {
 						<PerformanceCards site={ site } />
 					</VStack>
 					<VStack spacing={ 6 } justify="start">
+						<DomainUpsellCard />
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>
