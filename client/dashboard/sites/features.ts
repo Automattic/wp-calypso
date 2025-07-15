@@ -15,7 +15,7 @@ export const HostingFeatures = {
 	CACHING: DotcomFeatures.ATOMIC,
 	DEFENSIVE_MODE: DotcomFeatures.SFTP,
 	RESTORE_PLAN_SOFTWARE: DotcomFeatures.ATOMIC,
-	STAGING_SITE: DotcomFeatures.SITE_STAGING_SITES,
+	STAGING_SITE: DotcomFeatures.STAGING_SITES,
 } as const;
 
 export type HostingFeatures = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];

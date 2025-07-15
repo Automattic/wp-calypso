@@ -8,7 +8,7 @@ export enum DotcomFeatures {
 	SFTP = 'sftp',
 	SSH = 'ssh',
 	SITE_PREVIEW_LINKS = 'site-preview-links',
-	SITE_STAGING_SITES = 'staging-sites',
+	STAGING_SITES = 'staging-sites',
 }
 
 export enum DotcomPlans {
