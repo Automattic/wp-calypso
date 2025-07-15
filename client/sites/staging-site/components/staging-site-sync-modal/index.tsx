@@ -194,10 +194,46 @@ export default function SyncModal( {
 		getBackupBrowserCheckList( state, querySiteId )
 	);
 
-	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, '/' ) );
+	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
+	const wpContentNode = useSelector( ( state ) =>
+		getBackupBrowserNode( state, querySiteId, '/wp-content' )
+	);
+	const wpConfigNode = useSelector( ( state ) =>
+		getBackupBrowserNode( state, querySiteId, '/wp-config.php' )
+	);
+
+	const getVisibleNodesCheckState = useCallback( () => {
+		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
+		if ( nodes.length === 0 ) {
+			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
+			return 'checked';
+		}
+
+		const checkedCount = nodes.filter( ( node ) => node?.checkState === 'checked' ).length;
+		const mixedCount = nodes.filter( ( node ) => node?.checkState === 'mixed' ).length;
+
+		if ( mixedCount > 0 ) {
+			return 'mixed';
+		}
+
+		if ( checkedCount === nodes.length ) {
+			return 'checked';
+		}
+
+		if ( checkedCount === 0 ) {
+			return 'unchecked';
+		}
+
+		return 'mixed';
+	}, [ wpContentNode, wpConfigNode ] );
+
+	const visibleNodesCheckState = getVisibleNodesCheckState();
+
 	useEffect( () => {
 		if ( querySiteId === stagingSiteId ) {
 			dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
 		}
 	}, [ dispatch, querySiteId, stagingSiteId ] );
 
@@ -227,7 +263,7 @@ export default function SyncModal( {
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			if ( rootNode?.checkState === 'checked' ) {
+			if ( visibleNodesCheckState === 'checked' ) {
 				// Sync everything
 				pullFromStaging( { types: 'all', include_paths: '' } );
 			} else {
@@ -247,7 +283,7 @@ export default function SyncModal( {
 	);
 
 	const onCheckboxChange = () => {
-		updateNodeCheckState( rootNode?.checkState === 'checked' ? 'unchecked' : 'checked' );
+		updateNodeCheckState( visibleNodesCheckState === 'checked' ? 'unchecked' : 'checked' );
 	};
 
 	const handleExpanderChange = ( value: string ) => {
@@ -294,8 +330,8 @@ export default function SyncModal( {
 							<CheckboxControl
 								__nextHasNoMarginBottom
 								label={ __( 'Files and folders' ) }
-								checked={ rootNode ? rootNode.checkState === 'checked' : false }
-								indeterminate={ rootNode && rootNode.checkState === 'mixed' }
+								checked={ visibleNodesCheckState === 'checked' }
+								indeterminate={ visibleNodesCheckState === 'mixed' }
 								onChange={ onCheckboxChange }
 							/>
 							<SelectControl
