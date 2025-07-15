@@ -17,7 +17,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -61,16 +61,19 @@
 		"@wordpress/react-i18n": "^4.23.0",
 		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
+		"postcss": "^8.5.3",
 		"prop-types": "^15.8.1"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.8.3"
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1",

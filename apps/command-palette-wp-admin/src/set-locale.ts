@@ -1,14 +1,25 @@
-import { defaultI18n } from '@wordpress/i18n';
+import { defaultI18n, getLocaleData } from '@wordpress/i18n';
 import i18n from 'i18n-calypso';
 
 const DEFAULT_LANGUAGE = 'en';
-const ALWAYS_LOAD_WITH_LOCALE = [ 'zh' ];
 
 const getLanguageCodeFromLocale = ( localeSlug: string ) => {
-	if ( localeSlug.indexOf( '-' ) > -1 ) {
+	const preserveFullLocale = [ 'zh-tw', 'zh-cn', 'pt-br', 'zh-hk', 'zh-sg' ];
+	if ( localeSlug.indexOf( '-' ) > -1 && ! preserveFullLocale.includes( localeSlug ) ) {
 		return localeSlug.split( '-' )[ 0 ];
 	}
 	return localeSlug;
+};
+
+const getUserLocale = function () {
+	// Try getting the locale from wp.i18n
+	const localeData = getLocaleData();
+	if ( localeData && localeData[ '' ] && localeData[ '' ].localeSlug ) {
+		return localeData[ '' ].localeSlug;
+	}
+	// Fallback to document locale
+	const documentLocale = document.documentElement.lang ?? 'en';
+	return getLanguageCodeFromLocale( documentLocale.toLowerCase() );
 };
 
 const loadLanguageFile = async ( languageFileName: string ) => {
@@ -30,16 +41,12 @@ const loadLanguageFile = async ( languageFileName: string ) => {
 	} );
 };
 
-export default async ( localeSlug: string ) => {
-	const languageCode = getLanguageCodeFromLocale( localeSlug );
+export default async () => {
+	const languageCode = getUserLocale();
 
 	// Load translation file if it's not English.
 	if ( languageCode !== DEFAULT_LANGUAGE ) {
-		const languageFileName = ALWAYS_LOAD_WITH_LOCALE.includes( languageCode )
-			? localeSlug
-			: languageCode;
-
 		// We don't have to wait for the language file to load before rendering the page, because i18n is using hooks to update translations.
-		loadLanguageFile( languageFileName );
+		loadLanguageFile( languageCode );
 	}
 };

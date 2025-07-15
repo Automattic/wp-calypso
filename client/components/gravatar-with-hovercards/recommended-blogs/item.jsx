@@ -54,6 +54,7 @@ function RecommendedBlogItem( { blog, classPrefix, compact = false, onLinkClick 
 				<ReaderAvatar
 					isCompact={ compact }
 					siteIcon={ siteIcon }
+					iconSize={ 30 }
 					className={ `${ classPrefix }__recommended-blog-site-icon` }
 				/>
 			</a>

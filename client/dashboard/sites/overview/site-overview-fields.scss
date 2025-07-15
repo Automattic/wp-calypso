@@ -1,0 +1,6 @@
+.site-overview-field + .site-overview-field {
+	&::before {
+		display: block;
+		content: '•';
+	}
+}

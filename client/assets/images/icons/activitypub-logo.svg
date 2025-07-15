@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="80" height="80" xml:space="preserve">
+	<!-- Background rectangle -->
+	<rect width="80" height="80" fill="#f1027e"/>
+
+	<!-- Original paths with white fill, shifted 8px to the right and 8px down -->
+	<path d="M42.9 19.8L72 36.6v6.7L42.9 60.2v-6.7L66.2 40 42.9 26.6v-6.8z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/>
+	<path d="M42.9 33.3L54.5 40l-11.6 6.7V33.3z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/>
+	<path d="M37.1 19.8L8 36.6v6.7l23.3-13.4v26.9l5.8 3.4V19.8zM25.5 40L13.8 46.7l11.6 6.7V40z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/>
+</svg>

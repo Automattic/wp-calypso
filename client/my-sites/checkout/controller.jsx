@@ -83,6 +83,10 @@ export function checkoutMarketplaceSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
 }
 
+export function checkoutUnifiedSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'unified' } );
+}
+
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );

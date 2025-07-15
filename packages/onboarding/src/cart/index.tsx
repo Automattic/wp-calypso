@@ -179,6 +179,9 @@ export const createSiteWithCart = async (
 	const segmentationSurveyAnswersAnonId = localStorage.getItem( 'ss-anon-id' );
 	localStorage.removeItem( 'ss-anon-id' );
 
+	// This is the parameter that will contain the internal referral, e.g. a landing page.
+	const refParam = new URLSearchParams( document.location.search ).get( 'ref' );
+
 	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
 		path: '/sites/new',
 		apiVersion: '1.1',
@@ -196,6 +199,7 @@ export const createSiteWithCart = async (
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
+				...( refParam && { ref: refParam } ),
 			},
 		},
 	} );

@@ -5,6 +5,7 @@ import {
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
+	isAkismetProduct,
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -22,6 +23,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
@@ -32,6 +34,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
+import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -39,7 +42,9 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	getSitePurchases,
@@ -48,11 +53,12 @@ import {
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
-import CancelPurchaseDomainOptions from './domain-options';
+import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
 
@@ -81,6 +87,11 @@ class CancelPurchase extends Component {
 		atomicRevertConfirmed: false,
 		isLoading: false,
 		domainConfirmationConfirmed: false,
+		showDomainOptionsStep: false,
+		// Cancellation state moved from button component
+		showDialog: false,
+		cancellationCompleted: false,
+		cancellationMessage: '',
 	};
 
 	static defaultProps = {
@@ -148,11 +159,84 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		this.setState( { surveyShown: true, isLoading: true } );
+		const { includedDomainPurchase, purchase } = this.props;
+
+		// Only show domain options as a separate step if radio buttons will be displayed
+		if (
+			includedDomainPurchase &&
+			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
+		) {
+			this.setState( { showDomainOptionsStep: true } );
+		} else {
+			// For direct cancellations (no domain options step), set loading state
+			this.setState( { isLoading: true } );
+		}
+	};
+
+	onDomainOptionsComplete = ( domainOptions ) => {
+		this.setState( {
+			showDomainOptionsStep: false,
+			isLoading: true,
+			cancelBundledDomain: domainOptions.cancelBundledDomain,
+			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
+		} );
+		// Don't show survey yet - wait for cancellation to complete
 	};
 
 	onSurveyComplete = () => {
+		// Handle success flow after survey completion
+		if ( this.state.cancellationCompleted ) {
+			// Refresh data and show success notice
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
+
+			if ( this.state.cancellationMessage ) {
+				this.props.successNotice( this.state.cancellationMessage, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
+			}
+
+			// Redirect to purchases page
+			page.redirect( this.props.purchaseListUrl );
+		}
+
 		this.setState( { surveyShown: false, isLoading: false } );
+	};
+
+	onDialogClose = () => {
+		this.setState( {
+			showDialog: false,
+			cancellationCompleted: false,
+			cancellationMessage: '',
+			isLoading: false,
+		} );
+	};
+
+	onSetLoading = ( isLoading ) => {
+		this.setState( { isLoading } );
+	};
+
+	onCancellationComplete = ( message ) => {
+		const { isJetpack, isAkismet, purchase } = this.props;
+
+		// For Jetpack/Akismet products and domain registrations, show the button's own dialog
+		// For other products, show the main component's survey
+		if ( isJetpack || isAkismet || isDomainRegistration( purchase ) ) {
+			this.setState( {
+				showDialog: true,
+				isLoading: false,
+				cancellationCompleted: true,
+				cancellationMessage: message,
+			} );
+		} else {
+			this.setState( {
+				surveyShown: true,
+				isLoading: false,
+				cancellationCompleted: true,
+				cancellationMessage: message,
+			} );
+		}
 	};
 
 	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
@@ -329,9 +413,209 @@ class CancelPurchase extends Component {
 				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				onCancellationStart={ this.onCancellationStart }
+				onCancellationComplete={ this.onCancellationComplete }
 				onSurveyComplete={ this.onSurveyComplete }
 				moment={ this.props.moment }
+				// Cancellation state props
+				showDialog={ this.state.showDialog }
+				cancellationCompleted={ this.state.cancellationCompleted }
+				cancellationMessage={ this.state.cancellationMessage }
+				isLoading={ this.state.isLoading }
+				onDialogClose={ this.onDialogClose }
+				onSetLoading={ this.onSetLoading }
 			/>
+		);
+	};
+
+	renderKeepSubscriptionButton = () => {
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<FormButton
+				isPrimary={ false }
+				href={ this.props.getManagePurchaseUrlFor( siteSlug, this.props.purchaseId ) }
+				onClick={ this.onKeepSubscriptionClick }
+			>
+				{ translate( 'Keep subscription' ) }
+			</FormButton>
+		);
+	};
+
+	renderMainContent = () => {
+		const { purchase, isJetpackPurchase, includedDomainPurchase, atomicTransfer } = this.props;
+		const plan = getPlan( purchase?.productSlug );
+
+		const cancellationFeatures =
+			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
+
+		// Check if we should show domain options inline (when they don't need radio buttons)
+		const shouldShowDomainOptionsInline =
+			includedDomainPurchase &&
+			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
+
+		return (
+			<>
+				{ shouldShowDomainOptionsInline && (
+					<CancelPurchaseDomainOptions
+						includedDomainPurchase={ includedDomainPurchase }
+						cancelBundledDomain={ false }
+						purchase={ purchase }
+						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+						isLoading={ false }
+					/>
+				) }
+
+				{ includedDomainPurchase && atomicTransfer?.created_at && ! isRefundable( purchase ) && (
+					<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
+						{ this.props.translate( 'What happens when you cancel' ) }
+					</h2>
+				) }
+
+				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
+
+				<CancelPurchaseRefundInformation
+					purchase={ purchase }
+					isJetpackPurchase={ isJetpackPurchase }
+				/>
+
+				<CancelPurchaseFeatureList
+					purchase={ purchase }
+					cancellationFeatures={ cancellationFeatures }
+				/>
+
+				{ ! cancellationFeatures.length
+					? this.renderProductRevertContent()
+					: this.renderPlanRevertContent() }
+			</>
+		);
+	};
+
+	renderProductRevertContent = () => {
+		const { purchase } = this.props;
+		const purchaseName = getName( purchase );
+		const plan = getPlan( purchase?.productSlug );
+		const planDescription = plan?.getPlanCancellationDescription?.();
+
+		return (
+			<>
+				<CompactCard className="cancel-purchase__product-information">
+					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
+					<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
+					{ planDescription && (
+						<div className="cancel-purchase__plan-description">{ planDescription }</div>
+					) }
+					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
+				</CompactCard>
+
+				<CompactCard className="cancel-purchase__footer">
+					{ isDomainRegistration( purchase ) && (
+						<div className="cancel-purchase__domain-confirmation">
+							<FormCheckbox
+								checked={ this.state.domainConfirmationConfirmed }
+								onChange={ this.onDomainConfirmationChange }
+							/>
+							<span>
+								{ this.props.translate(
+									'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</span>
+						</div>
+					) }
+					<div className="cancel-purchase__footer-text-wrapper">
+						<div className="cancel-purchase__footer-text">
+							{ hasAmountAvailableToRefund( purchase ) ? (
+								<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
+							) : (
+								<p className="cancel-purchase__expiration-text">{ this.renderExpirationText() }</p>
+							) }
+						</div>
+						{ this.renderCancelButton() }
+					</div>
+				</CompactCard>
+			</>
+		);
+	};
+
+	renderPlanRevertContent = () => {
+		const { purchase, atomicTransfer } = this.props;
+
+		return (
+			<>
+				<AtomicRevertChanges
+					atomicTransfer={ atomicTransfer }
+					purchase={ purchase }
+					onConfirmationChange={ this.onAtomicRevertConfirmationChange }
+					needsAtomicRevertConfirmation={ atomicTransfer?.created_at && ! isRefundable( purchase ) }
+					isLoading={ this.state.isLoading }
+				/>
+
+				<p>{ this.renderFullText() }</p>
+
+				<div className="cancel-purchase__confirm-buttons">
+					{ this.renderCancelButton() }
+					{ this.renderKeepSubscriptionButton() }
+				</div>
+			</>
+		);
+	};
+
+	renderDomainOptionsContent = () => {
+		const { includedDomainPurchase, purchase } = this.props;
+		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
+
+		if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+			return null;
+		}
+
+		const onCancelConfirmationStateChange = ( newState ) => {
+			this.setState( newState );
+		};
+
+		const canContinue = () => {
+			if ( ! cancelBundledDomain ) {
+				return true;
+			}
+			return confirmCancelBundledDomain;
+		};
+
+		return (
+			<>
+				<CancelPurchaseDomainOptions
+					includedDomainPurchase={ includedDomainPurchase }
+					cancelBundledDomain={ cancelBundledDomain }
+					purchase={ purchase }
+					onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+					isLoading={ false }
+				/>
+				<div className="cancel-purchase__confirm-buttons">
+					<CancelPurchaseButton
+						purchase={ purchase }
+						includedDomainPurchase={ includedDomainPurchase }
+						disabled={ ! canContinue() }
+						siteSlug={ this.props.siteSlug }
+						cancelBundledDomain={ cancelBundledDomain }
+						purchaseListUrl={ this.props.purchaseListUrl }
+						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+						onCancellationComplete={ this.onCancellationComplete }
+						onSurveyComplete={ this.onSurveyComplete }
+						moment={ this.props.moment }
+						onCancellationStart={ null }
+						// Cancellation state props
+						showDialog={ this.state.showDialog }
+						cancellationCompleted={ this.state.cancellationCompleted }
+						cancellationMessage={ this.state.cancellationMessage }
+						isLoading={ this.state.isLoading }
+						onDialogClose={ this.onDialogClose }
+						onSetLoading={ this.onSetLoading }
+					/>
+					{ this.renderKeepSubscriptionButton() }
+				</div>
+			</>
 		);
 	};
 
@@ -354,14 +638,9 @@ class CancelPurchase extends Component {
 			return null;
 		}
 
-		const { purchase, isJetpackPurchase } = this.props;
+		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
-		const plan = getPlan( purchase?.productSlug );
-		const planDescription = plan?.getPlanCancellationDescription?.();
 		const { siteName, siteId } = purchase;
-
-		const cancellationFeatures =
-			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
 
 		let heading;
 
@@ -378,146 +657,60 @@ class CancelPurchase extends Component {
 		}
 
 		return (
-			<Card className="cancel-purchase__wrapper-card">
-				<QueryProductsList />
-				<TrackPurchasePageView
-					eventName="calypso_cancel_purchase_purchase_view"
-					purchaseId={ this.props.purchaseId }
+			<>
+				<CancelPurchaseForm
+					disableButtons={ this.state.isLoading }
+					purchase={ purchase }
+					isVisible={ this.state.surveyShown }
+					onClose={ () => this.setState( { surveyShown: false } ) }
+					onSurveyComplete={ this.onSurveyComplete }
+					flowType={ getPurchaseCancellationFlowType( purchase ) }
+					cancelBundledDomain={ this.state.cancelBundledDomain }
+					includedDomainPurchase={ this.props.includedDomainPurchase }
+					cancellationCompleted={ this.state.cancellationCompleted }
+					cancellationMessage={ this.state.cancellationMessage }
+					cancellationInProgress={ this.state.isLoading }
 				/>
-
-				<div className="cancel-purchase__back">
-					<HeaderCakeBack
-						icon="chevron-left"
-						href={ this.props.getManagePurchaseUrlFor(
-							this.props.siteSlug,
-							this.props.purchaseId
-						) }
+				<Card className="cancel-purchase__wrapper-card">
+					<QueryProductsList />
+					<TrackPurchasePageView
+						eventName="calypso_cancel_purchase_purchase_view"
+						purchaseId={ this.props.purchaseId }
 					/>
-				</div>
 
-				<FormattedHeader
-					className="cancel-purchase__formatted-header"
-					brandFont
-					headerText={ heading }
-					align="left"
-				/>
-
-				<div className="cancel-purchase__inner-wrapper">
-					<div className="cancel-purchase__left">
-						<CancelPurchaseDomainOptions
-							includedDomainPurchase={ this.props.includedDomainPurchase }
-							cancelBundledDomain={ this.state.cancelBundledDomain }
-							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
-							purchase={ purchase }
-							isLoading={ this.state.isLoading }
-						/>
-
-						{ this.props.includedDomainPurchase &&
-							this.props.atomicTransfer?.created_at &&
-							! isRefundable( purchase ) && (
-								<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
-									{ this.props.translate( 'What happens when you cancel' ) }
-								</h2>
+					<div className="cancel-purchase__back">
+						<HeaderCakeBack
+							icon="chevron-left"
+							href={ this.props.getManagePurchaseUrlFor(
+								this.props.siteSlug,
+								this.props.purchaseId
 							) }
-
-						<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
-
-						<CancelPurchaseRefundInformation
-							purchase={ purchase }
-							isJetpackPurchase={ isJetpackPurchase }
 						/>
-
-						<CancelPurchaseFeatureList
-							purchase={ purchase }
-							cancellationFeatures={ cancellationFeatures }
-						/>
-
-						{ ! cancellationFeatures.length ? (
-							<>
-								<CompactCard className="cancel-purchase__product-information">
-									<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-									<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
-									{ planDescription && (
-										<div className="cancel-purchase__plan-description">{ planDescription }</div>
-									) }
-									<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
-								</CompactCard>
-
-								<CompactCard className="cancel-purchase__footer">
-									{ isDomainRegistration( purchase ) && (
-										<div className="cancel-purchase__domain-confirmation">
-											<FormCheckbox
-												checked={ this.state.domainConfirmationConfirmed }
-												onChange={ this.onDomainConfirmationChange }
-											/>
-											<span>
-												{ this.props.translate(
-													'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
-													{
-														components: {
-															strong: <strong />,
-														},
-													}
-												) }
-											</span>
-										</div>
-									) }
-									<div className="cancel-purchase__footer-text-wrapper">
-										<div className="cancel-purchase__footer-text">
-											{ hasAmountAvailableToRefund( purchase ) ? (
-												<p className="cancel-purchase__refund-amount">
-													{ this.renderFooterText() }
-												</p>
-											) : (
-												<p className="cancel-purchase__expiration-text">
-													{ this.renderExpirationText() }
-												</p>
-											) }
-										</div>
-										{ this.renderCancelButton() }
-									</div>
-								</CompactCard>
-							</>
-						) : (
-							<>
-								<AtomicRevertChanges
-									atomicTransfer={ this.props.atomicTransfer }
-									purchase={ purchase }
-									onConfirmationChange={ this.onAtomicRevertConfirmationChange }
-									needsAtomicRevertConfirmation={
-										this.props.atomicTransfer?.created_at && ! isRefundable( purchase )
-									}
-									isLoading={ this.state.isLoading }
-								/>
-
-								<p>{ this.renderFullText() }</p>
-
-								<div className="cancel-purchase__confirm-buttons">
-									{ this.renderCancelButton() }
-									<FormButton
-										isPrimary={ false }
-										disabled={ this.state.isLoading }
-										href={ this.props.getManagePurchaseUrlFor(
-											this.props.siteSlug,
-											this.props.purchaseId
-										) }
-										onClick={ this.onKeepSubscriptionClick }
-									>
-										{ this.props.translate( 'Keep subscription' ) }
-									</FormButton>
-								</div>
-							</>
-						) }
 					</div>
 
-					<div className="cancel-purchase__right">
-						<div className="cancel-purchase__sticky-sidebar">
-							<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-							<SupportLink usage="cancel-purchase" purchase={ purchase } />
+					<FormattedHeader
+						className="cancel-purchase__formatted-header"
+						brandFont
+						headerText={ heading }
+						align="left"
+					/>
+
+					<div className="cancel-purchase__inner-wrapper">
+						<div className="cancel-purchase__left">
+							{ this.state.showDomainOptionsStep
+								? this.renderDomainOptionsContent()
+								: this.renderMainContent() }
+						</div>
+
+						<div className="cancel-purchase__right">
+							<div className="cancel-purchase__sticky-sidebar">
+								<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+								<SupportLink usage="cancel-purchase" purchase={ purchase } />
+							</div>
 						</div>
 					</div>
-				</div>
-			</Card>
+				</Card>
+			</>
 		);
 	}
 }
@@ -539,6 +732,8 @@ export default connect(
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isJetpackPurchase,
+			isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
+			isAkismet: purchase && isAkismetProduct( purchase ),
 			purchase,
 			purchases,
 			productsList,
@@ -548,5 +743,5 @@ export default connect(
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice }
 )( localize( withLocalizedMoment( CancelPurchase ) ) );

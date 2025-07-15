@@ -9,18 +9,23 @@ import '@gravatar-com/hovercards/dist/style.css';
 function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
 	const [ mountNode, setMountNode ] = useState( null );
+	const [ processedAvatarUrl, setProcessedAvatarUrl ] = useState( null );
 	const [ gravatarData, setGravatarData ] = useState( {} );
 
 	const { attach, detach } = useHovercards( {
 		onHovercardShown: ( hash, hovercardElement ) => {
-			// Customize the hovercard.
 			if ( hovercardElement ) {
 				const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
 				if ( inner ) {
-					inner.innerHTML = '';
+					// Get the processed avatar URL before clearing innerHTML
+					const avatarImg = inner.querySelector( '.gravatar-hovercard__avatar' );
+					const extractedAvatarUrl = avatarImg ? avatarImg.src : null;
 
+					inner.innerHTML = '';
 					// Our custom components for the card will render through this portal.
 					setMountNode( inner );
+
+					setProcessedAvatarUrl( extractedAvatarUrl );
 				}
 			}
 		},
@@ -53,6 +58,7 @@ function GravatarWithHovercards( props ) {
 			<HovercardContentPortal
 				mountNode={ mountNode }
 				gravatarData={ gravatarData }
+				processedAvatarUrl={ processedAvatarUrl }
 				closeCard={ closeCard }
 				{ ...props }
 			/>
