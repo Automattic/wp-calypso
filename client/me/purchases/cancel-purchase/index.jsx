@@ -187,7 +187,6 @@ class CancelPurchase extends Component {
 		} );
 	};
 
-	// --- Robust cancellation logic moved from button.jsx ---
 	cancelPurchase = async ( purchase ) => {
 		const { translate, moment } = this.props;
 		try {
