@@ -13,7 +13,6 @@ import JetpackCancellationOfferAccepted from 'calypso/components/marketing-surve
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import Notice from 'calypso/components/notice';
 import { getName, isExpired } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
@@ -45,8 +44,6 @@ interface Props {
 	translate?: () => void;
 	isAkismet?: boolean;
 	cancellationInProgress?: boolean;
-	cancellationCompleted?: boolean;
-	cancellationMessage?: string;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -434,7 +431,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 */
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
-		const { cancellationMessage } = props;
 
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return (
@@ -477,26 +473,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// follow similar pattern used in the Jetpack disconnection flow
 			// make sure the user has the ability to skip the question
 			return (
-				<>
-					{ cancellationMessage && (
-						<div className="cancel-jetpack-form__notice-container">
-							<Notice
-								status="is-success"
-								className="cancel-jetpack-form__notice"
-								theme="light"
-								showDismiss={ false }
-							>
-								{ cancellationMessage }
-							</Notice>
-						</div>
-					) }
-
-					<JetpackCancellationSurvey
-						onAnswerChange={ onSurveyAnswerChange }
-						selectedAnswerId={ surveyAnswerId }
-						isAkismet={ !! props?.isAkismet }
-					/>
-				</>
+				<JetpackCancellationSurvey
+					onAnswerChange={ onSurveyAnswerChange }
+					selectedAnswerId={ surveyAnswerId }
+					isAkismet={ !! props?.isAkismet }
+				/>
 			);
 		}
 

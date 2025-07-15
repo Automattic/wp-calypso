@@ -34,6 +34,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
+import { cancelPurchaseAsync, cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -90,8 +91,6 @@ class CancelPurchase extends Component {
 		showDomainOptionsStep: false,
 		// Cancellation state moved from button component
 		showDialog: false,
-		cancellationCompleted: false,
-		cancellationMessage: '',
 	};
 
 	static defaultProps = {
@@ -168,47 +167,119 @@ class CancelPurchase extends Component {
 		) {
 			this.setState( { showDomainOptionsStep: true } );
 		} else {
-			// For direct cancellations (no domain options step), set loading state
-			this.setState( { isLoading: true } );
+			// For direct cancellations (no domain options step), show survey directly
+			this.setState( { surveyShown: true } );
 		}
 	};
 
 	onDomainOptionsComplete = ( domainOptions ) => {
 		this.setState( {
 			showDomainOptionsStep: false,
-			isLoading: true,
+			surveyShown: true,
 			cancelBundledDomain: domainOptions.cancelBundledDomain,
 			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
 		} );
-		// Don't show survey yet - wait for cancellation to complete
 	};
 
-	onSurveyComplete = () => {
-		// Handle success flow after survey completion
-		if ( this.state.cancellationCompleted ) {
-			// Refresh data and show success notice
-			this.props.refreshSitePlans( this.props.purchase.siteId );
-			this.props.clearPurchases();
-
-			if ( this.state.cancellationMessage ) {
-				this.props.successNotice( this.state.cancellationMessage, {
-					displayOnNextPage: true,
-					duration: 10000,
-				} );
+	// --- Robust cancellation logic moved from button.jsx ---
+	cancelPurchase = async ( purchase ) => {
+		const { translate, moment } = this.props;
+		try {
+			const success = await cancelPurchaseAsync( purchase.id );
+			if ( success ) {
+				const purchaseName = getName( purchase );
+				const subscriptionEndDate = moment( purchase.expiryDate ).format( 'LL' );
+				return {
+					success: true,
+					message: translate(
+						'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.',
+						{
+							args: { purchaseName, subscriptionEndDate },
+						}
+					),
+				};
 			}
-
-			// Redirect to purchases page
-			page.redirect( this.props.purchaseListUrl );
+			return {
+				success: false,
+				error: translate(
+					'There was a problem canceling %(purchaseName)s. Please try again later or contact support.',
+					{ args: { purchaseName: getName( purchase ) } }
+				),
+			};
+		} catch ( error ) {
+			return {
+				success: false,
+				error: translate(
+					'There was a problem canceling %(purchaseName)s. Please try again later or contact support.',
+					{ args: { purchaseName: getName( purchase ) } }
+				),
+			};
 		}
+	};
 
+	cancelAndRefund = async ( purchase ) => {
+		const { cancelBundledDomain } = this.state;
+		try {
+			await cancelAndRefundPurchaseAsync( purchase.id, {
+				product_id: purchase.productId,
+				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
+			} );
+			return {
+				success: true,
+				message: this.props.translate(
+					'Your refund has been processed and your purchase removed.'
+				),
+			};
+		} catch ( error ) {
+			return { success: false, error: error.message };
+		}
+	};
+
+	submitCancelAndRefundPurchase = async ( purchase ) => {
+		const refundable = hasAmountAvailableToRefund( purchase );
+		if ( refundable ) {
+			return await this.cancelAndRefund( purchase );
+		}
+		return await this.cancelPurchase( purchase );
+	};
+
+	handleMarketplaceSubscriptions = async ( isPlanRefundable ) => {
+		const activeSubscriptions = this.getActiveMarketplaceSubscriptions();
+		if ( activeSubscriptions?.length > 0 ) {
+			return Promise.all(
+				activeSubscriptions.map( async ( s ) => {
+					if ( isPlanRefundable && hasAmountAvailableToRefund( s ) ) {
+						await this.cancelAndRefund( s );
+					} else {
+						await this.cancelPurchase( s );
+					}
+				} )
+			);
+		}
+	};
+
+	onSurveyComplete = async () => {
+		try {
+			const result = await this.submitCancelAndRefundPurchase( this.props.purchase );
+			if ( result.success ) {
+				const refundable = hasAmountAvailableToRefund( this.props.purchase );
+				await this.handleMarketplaceSubscriptions( refundable );
+				this.props.refreshSitePlans( this.props.purchase.siteId );
+				this.props.clearPurchases();
+				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
+				page.redirect( this.props.purchaseListUrl );
+			} else {
+				this.props.errorNotice( result.error );
+			}
+		} catch ( error ) {
+			this.props.errorNotice( error.message );
+		}
 		this.setState( { surveyShown: false, isLoading: false } );
 	};
 
 	onDialogClose = () => {
 		this.setState( {
 			showDialog: false,
-			cancellationCompleted: false,
-			cancellationMessage: '',
 			isLoading: false,
 		} );
 	};
@@ -217,24 +288,20 @@ class CancelPurchase extends Component {
 		this.setState( { isLoading } );
 	};
 
-	onCancellationComplete = ( message ) => {
-		const { isJetpack, isAkismet, purchase } = this.props;
+	onCancellationComplete = () => {
+		const { isJetpack, isAkismet } = this.props;
 
-		// For Jetpack/Akismet products and domain registrations, show the button's own dialog
-		// For other products, show the main component's survey
-		if ( isJetpack || isAkismet || isDomainRegistration( purchase ) ) {
+		// For Jetpack/Akismet products, show the button's own dialog
+		// For all other products (including domain registrations), show the main component's survey
+		if ( isJetpack || isAkismet ) {
 			this.setState( {
 				showDialog: true,
 				isLoading: false,
-				cancellationCompleted: true,
-				cancellationMessage: message,
 			} );
 		} else {
 			this.setState( {
 				surveyShown: true,
 				isLoading: false,
-				cancellationCompleted: true,
-				cancellationMessage: message,
 			} );
 		}
 	};
@@ -418,8 +485,6 @@ class CancelPurchase extends Component {
 				moment={ this.props.moment }
 				// Cancellation state props
 				showDialog={ this.state.showDialog }
-				cancellationCompleted={ this.state.cancellationCompleted }
-				cancellationMessage={ this.state.cancellationMessage }
 				isLoading={ this.state.isLoading }
 				onDialogClose={ this.onDialogClose }
 				onSetLoading={ this.onSetLoading }
@@ -607,8 +672,6 @@ class CancelPurchase extends Component {
 						onCancellationStart={ null }
 						// Cancellation state props
 						showDialog={ this.state.showDialog }
-						cancellationCompleted={ this.state.cancellationCompleted }
-						cancellationMessage={ this.state.cancellationMessage }
 						isLoading={ this.state.isLoading }
 						onDialogClose={ this.onDialogClose }
 						onSetLoading={ this.onSetLoading }
@@ -667,8 +730,6 @@ class CancelPurchase extends Component {
 					flowType={ getPurchaseCancellationFlowType( purchase ) }
 					cancelBundledDomain={ this.state.cancelBundledDomain }
 					includedDomainPurchase={ this.props.includedDomainPurchase }
-					cancellationCompleted={ this.state.cancellationCompleted }
-					cancellationMessage={ this.state.cancellationMessage }
 					cancellationInProgress={ this.state.isLoading }
 				/>
 				<Card className="cancel-purchase__wrapper-card">
