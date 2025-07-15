@@ -4,7 +4,7 @@ import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/comp
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Button, TextControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -22,7 +22,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -392,131 +391,6 @@ export class LoginForm extends Component {
 		// Currently we enforce users to create user connection in order to use Jetpack.
 		return false;
 	};
-
-	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
-		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
-
-		return (
-			<form method="post">
-				<Card className="login__form">
-					<div className="login__form-userdata">
-						{ linkingSocialUser && (
-							<p>
-								{ this.props.translate(
-									'We found a WordPress.com account with the email address "%(email)s". ' +
-										'Log in to this account to connect it to your %(service)s profile, ' +
-										'or choose a different %(service)s profile.',
-									{
-										args: {
-											email: this.props.socialAccountLinkEmail,
-											service: capitalize( this.props.socialAccountLinkService ),
-										},
-									}
-								) }
-							</p>
-						) }
-
-						<FormLabel htmlFor="usernameOrEmail">
-							{ this.isPasswordView() ? (
-								<Button
-									variant="link"
-									className="login__form-change-username"
-									onClick={ this.resetView }
-									size="small"
-								>
-									<Gridicon icon="arrow-left" size={ 18 } />
-
-									{ includes( this.state.usernameOrEmail, '@' )
-										? this.props.translate( 'Change Email Address' )
-										: this.props.translate( 'Change Username' ) }
-								</Button>
-							) : null }
-						</FormLabel>
-
-						<TextControl
-							autoCapitalize="off"
-							autoCorrect="off"
-							spellCheck="false"
-							label={ this.props.translate( 'Email address or username' ) }
-							disabled={ isFormDisabled || this.isPasswordView() }
-							id="usernameOrEmail"
-							name="usernameOrEmail"
-							value={ this.state.usernameOrEmail }
-							onChange={ ( value ) => {
-								this.props.formUpdate();
-								this.setState( {
-									usernameOrEmail: value,
-								} );
-							} }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-						/>
-
-						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
-
-						<div
-							className={ clsx( 'login__form-password', {
-								'is-hidden': this.isUsernameOrEmailView(),
-							} ) }
-						>
-							<TextControl
-								label={ this.props.translate( 'Password' ) }
-								disabled={ isFormDisabled }
-								id="password"
-								name="password"
-								type="password"
-								value={ this.state.password }
-								onChange={ ( value ) => {
-									this.props.formUpdate();
-									this.setState( {
-										password: value,
-									} );
-								} }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							/>
-
-							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
-						</div>
-					</div>
-
-					<div className="login__form-footer">
-						<p className="login__social-tos">{ socialToS }</p>
-						<div className="login__form-action">
-							<Button
-								variant="primary"
-								disabled={ isFormDisabled }
-								onClick={ this.handleWooCommerceSubmit }
-								type="submit"
-								__next40pxDefaultSize
-							>
-								{ this.getLoginButtonText() }
-							</Button>
-						</div>
-
-						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
-							<div className="login__form-social">
-								<div className="login__form-social-divider">
-									<span>{ this.props.translate( 'or' ) }</span>
-								</div>
-								<SocialLoginForm
-									handleLogin={ this.handleSocialLogin }
-									trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-									socialServiceResponse={ this.props.socialServiceResponse }
-									isJetpack={ this.props.isJetpack }
-								/>
-							</div>
-						) }
-					</div>
-				</Card>
-			</form>
-		);
-	}
 
 	renderChangeUsername() {
 		if ( this.props.isGravatarFixedAccountLogin ) {
@@ -1061,8 +935,6 @@ export class LoginForm extends Component {
 
 	render() {
 		const {
-			accountType,
-			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
 			isWoo,
@@ -1072,31 +944,6 @@ export class LoginForm extends Component {
 			isOneTapAuth,
 			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
-
-		const socialToS = this.props.translate(
-			// To make any changes to this copy please speak to the legal team
-			'By continuing with any of the options below, ' +
-				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			{
-				components: {
-					tosLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					privacyLink: (
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
@@ -1110,13 +957,6 @@ export class LoginForm extends Component {
 					/>
 				</Fragment>
 			) : null;
-		}
-
-		if ( isJetpackWooDnaFlow ) {
-			return this.renderWooCommerce( {
-				showSocialLogin: !! accountType, // Only show the social buttons after the user entered an email.
-				socialToS,
-			} );
 		}
 
 		return (
@@ -1168,7 +1008,6 @@ export default connect(
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),

@@ -6,6 +6,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import activityPubLogo from 'calypso/assets/images/icons/activitypub-logo.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import { marketingConnections } from 'calypso/my-sites/marketing/paths';
@@ -70,6 +71,21 @@ export const getMarketingFeaturesData = (
 			},
 		},
 		{
+			title: translate( 'Share your blog with a new audience' ),
+			description: translate(
+				'Connect your WordPress.com site to the social web. Let people follow your posts from platforms like Mastodon, Threads, and more—no extra work needed.'
+			),
+			categories: [ 'share', 'new' ],
+			imagePath: activityPubLogo,
+			imageAlt: translate( 'Activitypub logo' ),
+			buttonText: translate( 'Enter the fediverse' ),
+			onClick: () => {
+				recordTracksEvent( 'calypso_marketing_tools_activitypub_button_click' );
+
+				page( marketingConnections( selectedSiteSlug ) );
+			},
+		},
+		{
 			title: translate( 'Hire an SEO expert' ),
 			description: translate(
 				'In today‘s digital age, visibility is key. Hire an SEO expert to boost your online presence and capture valuable opportunities.'
@@ -89,7 +105,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				"Use your site's Jetpack Social tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Facebook, LinkedIn, and more."
 			),
-			categories: [ 'share', 'new' ],
+			categories: [ 'share' ],
 			imagePath: '/calypso/images/marketing/social-media-logos.svg',
 			imageAlt: translate( 'Logos for Facebook, Twitter, LinkedIn, and Tumblr' ),
 			buttonText: translate( 'Start sharing' ),

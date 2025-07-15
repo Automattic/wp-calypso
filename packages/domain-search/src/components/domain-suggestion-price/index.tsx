@@ -5,19 +5,27 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 
 interface DomainSuggestionPriceProps {
 	originalPrice?: string;
 	price: string;
-	alignment?: 'left' | 'right';
+	renewsAnually?: boolean;
 }
 
 export const DomainSuggestionPrice = ( {
 	originalPrice,
 	price,
-	alignment = 'left',
+	renewsAnually = true,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		throw new Error( 'DomainSuggestionPrice must be used within a DomainSuggestionsList' );
+	}
+
+	const alignment = listContext.activeQuery === 'large' ? 'right' : 'left';
 
 	return (
 		<VStack spacing={ 0 }>
@@ -34,11 +42,11 @@ export const DomainSuggestionPrice = ( {
 				) : (
 					<HStack spacing={ 1 } alignment="left">
 						<Text size={ 18 }>{ price }</Text>
-						<Text>{ __( '/year' ) }</Text>
+						{ renewsAnually && <Text>{ __( '/year' ) }</Text> }
 					</HStack>
 				) }
 			</HStack>
-			{ originalPrice && (
+			{ originalPrice && renewsAnually && (
 				<Text size="body" align={ alignment }>
 					{ sprintf(
 						// translators: %(price)s is the price of the domain.

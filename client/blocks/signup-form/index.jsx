@@ -32,9 +32,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
-import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import Notice from 'calypso/components/notice';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -1121,34 +1119,6 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.isJetpackWooDnaFlow ) {
-			return (
-				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
-					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
-						{ this.props.formHeader && (
-							<header className="signup-form__header">{ this.props.formHeader }</header>
-						) }
-
-						{ this.renderWooCommerce() }
-
-						{ this.props.isSocialSignupEnabled && (
-							<SocialSignupForm
-								handleResponse={ this.handleWooCommerceSocialConnect }
-								socialServiceResponse={ this.props.socialServiceResponse }
-								redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-							/>
-						) }
-					</LoggedOutForm>
-
-					{ this.props.footerLink || (
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
-						</LoggedOutFormLinkItem>
-					) }
-				</div>
-			);
-		}
-
 		const logInUrl = this.getLoginLink();
 
 		if ( this.props.isSocialFirst ) {
@@ -1172,8 +1142,7 @@ class SignupForm extends Component {
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			'wpcc' !== this.props.flowName &&
-			( ( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo );
+			'wpcc' !== this.props.flowName && ! config.isEnabled( 'desktop' ) && this.isHorizontal();
 
 		if (
 			( this.props.isPasswordless && ( 'wpcc' !== this.props.flowName || this.props.isWoo ) ) ||
@@ -1294,7 +1263,6 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
 			sectionName: getSectionName( state ),
-			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
 			isWoo: getIsWoo( state ),
