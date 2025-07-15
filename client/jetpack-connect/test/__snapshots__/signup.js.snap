@@ -224,15 +224,6 @@ exports[`JetpackSignup should render 1`] = `
           </form>
         </div>
         <div
-          class="auth-form__separator"
-        >
-          <div
-            class="auth-form__separator-text"
-          >
-            or
-          </div>
-        </div>
-        <div
           class="card auth-form__social is-signup"
         >
           <p
@@ -519,15 +510,6 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
               </button>
             </div>
           </form>
-        </div>
-        <div
-          class="auth-form__separator"
-        >
-          <div
-            class="auth-form__separator-text"
-          >
-            or
-          </div>
         </div>
         <div
           class="card auth-form__social is-signup"
