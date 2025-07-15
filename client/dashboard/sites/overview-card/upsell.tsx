@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { upsell } from '../../components/icons';
-import OverviewCard from '../overview-card';
-import type { OverviewCardProps } from '../overview-card';
+import OverviewCard from './index';
+import type { OverviewCardProps } from './index';
 
 type UpsellCardProps = Pick<
 	OverviewCardProps,
