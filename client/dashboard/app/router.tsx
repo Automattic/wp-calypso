@@ -38,7 +38,6 @@ import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
 import { siteSshAccessStatusQuery } from './queries/site-ssh';
 import { siteStaticFile404SettingQuery } from './queries/site-static-file-404';
-import { siteEngagementStatsQuery } from './queries/site-stats';
 import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
 import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
@@ -124,11 +123,8 @@ const siteOverviewRoute = createRoute( {
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [
-			// The current plan is nice to have preloaded, but not blocking for
-			// navigation.
 			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ) : undefined,
 			preload ? queryClient.ensureQueryData( siteScanQuery( site.ID ) ) : undefined,
-			queryClient.ensureQueryData( siteEngagementStatsQuery( site.ID ) ),
 		] );
 	},
 } ).lazy( () =>
