@@ -1,6 +1,6 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
 import type { AnalyticsClient } from '../app/analytics';
-import type { User, SitesView, ViewPreferences } from '../data/types';
+import type { User, SitesView, SitesViewPreferences } from '../data/types';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
@@ -27,7 +27,7 @@ const DEFAULT_LAYOUT_FIELDS: SupportedLayouts = {
 	},
 };
 
-export type { SitesView, ViewPreferences };
+export type { SitesView, SitesViewPreferences };
 
 // All possible keys that can be stored as view preferences.
 const VIEW_PREFERENCES_KEYS = [
@@ -97,7 +97,7 @@ export function getView( {
 	user: User;
 	isAutomattician: boolean;
 	isRestoringAccount: boolean;
-	viewPreferences?: ViewPreferences;
+	viewPreferences?: SitesViewPreferences;
 	viewSearchParams: ViewSearchParams;
 } ): {
 	defaultView: SitesView;
@@ -137,10 +137,10 @@ export function mergeViews( {
 }: {
 	defaultView: SitesView;
 	view: SitesView;
-	viewPreferences?: ViewPreferences;
+	viewPreferences?: SitesViewPreferences;
 	nextView: SitesView;
 } ): {
-	updatedViewPreferences: ViewPreferences;
+	updatedViewPreferences: SitesViewPreferences;
 	updatedViewSearchParams: ViewSearchParams;
 } {
 	const nextType = nextView.type;
@@ -181,7 +181,7 @@ export function mergeViews( {
 			...viewPreferences?.layout,
 			...updatedView.layout,
 		},
-	} as ViewPreferences;
+	} as SitesViewPreferences;
 
 	const updatedViewSearchParams = {
 		// Show only params which have custom values.
