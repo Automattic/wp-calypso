@@ -26,8 +26,25 @@ export const siteBySlugQuery = ( siteSlug: string ) => ( {
 } );
 
 export const siteByIdQuery = ( siteId: number ) => ( {
+	queryKey: [ 'site-by-id', siteId, SITE_FIELDS, SITE_OPTIONS ],
+	queryFn: async () => {
+		try {
+			return await fetchSite( siteId );
+		} catch ( e: any ) /* eslint-disable-line @typescript-eslint/no-explicit-any */ {
+			if ( e.error === 'unknown_blog' ) {
+				throw notFound();
+			}
+			throw e;
+		}
+	},
+} );
+
+export const siteQueryFilter = ( siteId: number ) => ( {
 	predicate: ( { queryKey, state }: Query ) => {
-		return queryKey[ 0 ] === 'site-by-slug' && ( state.data as Site )?.ID === siteId;
+		return (
+			( queryKey[ 0 ] === 'site-by-slug' || queryKey[ 0 ] === 'site-by-id' ) &&
+			( state.data as Site )?.ID === siteId
+		);
 	},
 } );
 
@@ -36,7 +53,7 @@ export const siteDeleteMutation = ( siteId: number ) => ( {
 	onSuccess: () => {
 		// Delay the invalidation for the redirection to complete first
 		window.setTimeout( () => {
-			queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 		}, 1000 );
@@ -46,14 +63,14 @@ export const siteDeleteMutation = ( siteId: number ) => ( {
 export const siteLaunchMutation = ( siteId: number ) => ( {
 	mutationFn: () => launchSite( siteId ),
 	onSuccess: () => {
-		queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 	},
 } );
 
 export const siteRestoreMutation = ( siteId: number ) => ( {
 	mutationFn: () => restoreSite( siteId ),
 	onSuccess: () => {
-		queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 	},

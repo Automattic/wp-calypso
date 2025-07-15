@@ -1,9 +1,13 @@
 import { JetpackLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
+import {
+	PLAN_CATEGORY_SIGNATURE,
+	PLAN_CATEGORY_SIGNATURE_HIGH,
+} from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import {
@@ -66,6 +70,15 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	const existingPlanInfo = getPressablePlan( agencyPressablePlan?.slug ?? '' );
 
+	const areSignaturePlans = useMemo( () => {
+		return (
+			isReferralMode ||
+			! existingPlanInfo ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
+		);
+	}, [ existingPlanInfo, isReferralMode ] );
+
 	return (
 		<div className="premier-agency-hosting">
 			{ agencyPressablePlan && ! isReferralMode && (
@@ -80,7 +93,11 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				isFetching={ isExistingPlanFetched }
 			/>
 
-			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } isPressable />
+			<HostingFeatures
+				heading={ translate( 'Included with every Pressable site' ) }
+				isPressable
+				areSignaturePlans={ areSignaturePlans }
+			/>
 
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }

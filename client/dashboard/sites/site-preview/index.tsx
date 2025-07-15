@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 export default function SitePreview( {
 	url,
 	scale = 1,
@@ -27,7 +29,7 @@ export default function SitePreview( {
 			loading="lazy"
 			// @ts-expect-error For some reason there's no inert type.
 			inert="true"
-			title="Site Preview"
+			title={ __( 'Site Preview' ) }
 			// Hide banners + `preview` hides cookie banners + `iframe` hides
 			// admin bar for atomic sites.
 			src={ `${ secureUrl }/?hide_banners=true&preview=true&iframe=true` }

@@ -4,7 +4,7 @@ import {
 	confirmSiteOwnerTransfer,
 } from '../../data/site-owner-transfer';
 import { queryClient } from '../query-client';
-import { siteByIdQuery } from './site';
+import { siteQueryFilter } from './site';
 import type {
 	SiteOwnerTransferConfirmation,
 	SiteOwnerTransferContext,
@@ -25,7 +25,7 @@ export const siteOwnerTransferConfirmMutation = ( siteId: number ) => ( {
 	onSuccess: ( { transfer }: SiteOwnerTransferConfirmation ) => {
 		if ( transfer ) {
 			// Invalidate queries as the site has been transferred to new owner.
-			queryClient.invalidateQueries( siteByIdQuery( siteId ) );
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		}
 	},
 } );

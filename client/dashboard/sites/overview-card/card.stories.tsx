@@ -54,6 +54,6 @@ export const WithLink: Story = {
 		heading: '24',
 		metaText: 'Past 7 days',
 		icon: comment,
-		isLink: true,
+		externalLink: 'https://wordpress.com',
 	},
 };

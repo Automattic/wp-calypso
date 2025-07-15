@@ -25,7 +25,7 @@ import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { userPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
-import { siteBySlugQuery } from './queries/site';
+import { siteByIdQuery, siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
@@ -33,11 +33,11 @@ import { siteDomainsQuery } from './queries/site-domains';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
+import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
 import { siteSshAccessStatusQuery } from './queries/site-ssh';
 import { siteStaticFile404SettingQuery } from './queries/site-static-file-404';
-import { siteEngagementStatsQuery } from './queries/site-stats';
 import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
 import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
@@ -107,8 +107,15 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const otherEnvironmentSiteId = site.is_wpcom_staging_site
+			? site.options?.wpcom_production_blog_id
+			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+		if ( otherEnvironmentSiteId ) {
+			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -123,10 +130,8 @@ const siteOverviewRoute = createRoute( {
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [
-			// The current plan is nice to have preloaded, but not blocking for
-			// navigation.
 			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ) : undefined,
-			queryClient.ensureQueryData( siteEngagementStatsQuery( site.ID ) ),
+			preload ? queryClient.ensureQueryData( siteScanQuery( site.ID ) ) : undefined,
 		] );
 	},
 } ).lazy( () =>

@@ -33,6 +33,8 @@ import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { AtomicTransferStatus, Site } from '../../data/types';
 
+import './style.scss';
+
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
 }
@@ -89,7 +91,13 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
-		<span style={ titleFieldTextOverflowStyles }>{ value }</span>
+		<ExternalLink
+			className="dataviews-url-field"
+			style={ titleFieldTextOverflowStyles }
+			href={ site.URL }
+		>
+			{ value }
+		</ExternalLink>
 	);
 }
 
