@@ -265,6 +265,9 @@ class CancelPurchase extends Component {
 	};
 
 	onSurveyComplete = async () => {
+		// Set loading state to show busy button
+		this.setState( { isLoading: true } );
+
 		try {
 			const result = await this.submitCancelAndRefundPurchase( this.props.purchase );
 			if ( result.success ) {
@@ -279,8 +282,10 @@ class CancelPurchase extends Component {
 			}
 		} catch ( error ) {
 			this.props.errorNotice( error.message );
+		} finally {
+			// Reset loading state
+			this.setState( { surveyShown: false, isLoading: false } );
 		}
-		this.setState( { surveyShown: false, isLoading: false } );
 	};
 
 	onDialogClose = () => {

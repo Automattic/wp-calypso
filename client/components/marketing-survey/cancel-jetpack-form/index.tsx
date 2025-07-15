@@ -44,6 +44,7 @@ interface Props {
 	translate?: () => void;
 	isAkismet?: boolean;
 	cancellationInProgress?: boolean;
+	cancellationCompleted?: boolean;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -66,12 +67,13 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return steps.CANCELLATION_REASON_STEP;
 		}
 
-		// In these cases, the subscription is getting removed.
-		// Show the benefits step first.
-		if (
-			flowType === CANCEL_FLOW_TYPE.REMOVE ||
-			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-		) {
+		// For refundable plans, go directly to survey (no intermediate confirmation needed)
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+			return steps.CANCELLATION_REASON_STEP;
+		}
+
+		// For non-refundable plans (REMOVE), show the benefits step first
+		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			return steps.FEATURES_LOST_STEP;
 		}
 
