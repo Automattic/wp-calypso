@@ -119,7 +119,10 @@ function SiteOverview( {
 					</VStack>
 					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />
 				</Grid>
-				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
+				<Divider
+					orientation="horizontal"
+					style={ { width: '100%', color: 'var(--wp-components-color-gray-100)' } }
+				/>
 				<HStack
 					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
 						'is-large': isLargeViewport,
