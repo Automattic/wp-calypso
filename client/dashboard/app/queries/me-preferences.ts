@@ -2,7 +2,7 @@ import { fetchPreferences, updatePreferences } from '../../data/me-preferences';
 import { queryClient } from '../query-client';
 import type { UserPreferences } from '../../data/me-preferences';
 
-const defaultValues: UserPreferences = {
+const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
 	'some-string': '',
 };
@@ -10,26 +10,31 @@ const defaultValues: UserPreferences = {
 export const userPreferencesQuery = () => ( {
 	queryKey: [ 'me', 'preferences' ],
 	queryFn: fetchPreferences,
-	select: ( data: Partial< UserPreferences > ) => ( { ...defaultValues, ...data } ),
+	select: ( data: UserPreferences ) => ( { ...defaultValues, ...data } ),
 } );
 
 export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) => ( {
 	queryKey: userPreferencesQuery().queryKey,
 	queryFn: fetchPreferences,
-	select: ( data: Partial< UserPreferences > ) => {
+	select: ( data: UserPreferences ): Required< UserPreferences >[ P ] => {
 		const fetchedValue = data[ preferenceName ];
-		return fetchedValue === undefined ? defaultValues[ preferenceName ] : fetchedValue;
+		return fetchedValue === undefined
+			? defaultValues[ preferenceName ]
+			: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
+			  // as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
+			  // the query is used in the component.
+			  ( fetchedValue as Required< UserPreferences >[ P ] );
 	},
 } );
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >(
 	preferenceName: P
 ) => ( {
-	mutationFn: ( data: UserPreferences[ P ] ) =>
+	mutationFn: ( data: Required< UserPreferences >[ P ] ) =>
 		updatePreferences( {
 			[ preferenceName ]: data,
 		} ),
-	onSuccess: ( newData: Partial< UserPreferences > ) => {
+	onSuccess: ( newData: UserPreferences ) => {
 		queryClient.setQueryData(
 			userPreferencesQuery().queryKey,
 			( oldData: UserPreferences | undefined ) => ( oldData ? { ...oldData, ...newData } : newData )

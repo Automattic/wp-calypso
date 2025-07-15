@@ -11,18 +11,18 @@ export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' >
 };
 
 export interface UserPreferences {
-	'sites-view': SitesViewPreferences;
-	'some-string': string;
+	'sites-view'?: SitesViewPreferences;
+	'some-string'?: string;
 }
 
-export async function fetchPreferences(): Promise< Partial< UserPreferences > > {
+export async function fetchPreferences(): Promise< UserPreferences > {
 	const { calypso_preferences } = await wpcom.req.get( '/me/preferences' );
 	return calypso_preferences;
 }
 
 export async function updatePreferences(
 	data: Partial< UserPreferences >
-): Promise< Partial< UserPreferences > > {
+): Promise< UserPreferences > {
 	const { calypso_preferences } = await wpcom.req.post( '/me/preferences', {
 		calypso_preferences: data,
 	} );
