@@ -29,22 +29,22 @@ type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
 const SPACING = {
 	DEFAULT: 6,
-	MOBILE: 4,
+	SMALL: 4,
 };
 
 function getGridLayout( {
 	count,
-	isLarge,
-	isMobile,
+	isLargeViewport,
+	isSmallViewport,
 }: {
 	count: number;
-	isLarge: boolean;
-	isMobile: boolean;
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
 } ) {
 	let columns;
-	if ( isLarge ) {
+	if ( isLargeViewport ) {
 		columns = count;
-	} else if ( isMobile ) {
+	} else if ( isSmallViewport ) {
 		columns = 1;
 	} else {
 		columns = Math.min( count / 2 );
@@ -65,11 +65,15 @@ function SiteOverview( {
 } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const isLarge = useViewportMatch( breakpoints?.large ?? 'large' );
-	const isMobile = useViewportMatch( breakpoints?.small ?? 'small', '<' );
-	const showSitePreview = ! ( hideSitePreview || isMobile );
-	const gridLayout = getGridLayout( { count: showSitePreview ? 4 : 3, isLarge, isMobile } );
-	const spacing = isMobile ? SPACING.MOBILE : SPACING.DEFAULT;
+	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
+	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
+	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const gridLayout = getGridLayout( {
+		count: showSitePreview ? 4 : 3,
+		isLargeViewport,
+		isSmallViewport,
+	} );
 
 	return (
 		<PageLayout
@@ -92,7 +96,7 @@ function SiteOverview( {
 				/>
 			}
 		>
-			<VStack alignment="stretch" spacing={ isMobile ? 5 : 10 }>
+			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<VStack className="site-overview-cards" spacing={ spacing }>
@@ -118,7 +122,7 @@ function SiteOverview( {
 				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
 				<HStack
 					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
-						'is-large': isLarge,
+						'is-large': isLargeViewport,
 					} ) }
 					spacing={ spacing }
 					alignment="flex-start"
