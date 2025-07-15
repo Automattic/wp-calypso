@@ -69,6 +69,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 	onLostPasswordClick = ( event ) => {
 		event.preventDefault();
+		// This was tracked with `calypso_magic_login_lost_password_click`, check that event for older analytics
 		recordTracksEvent( 'calypso_login_lost_password_click', {
 			from: 'magic-login',
 		} );
