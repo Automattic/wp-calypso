@@ -1,7 +1,7 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
-import { DomainSearch } from '@automattic/domain-search';
+import { DomainSearch, DomainSearchNotice } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -12,6 +12,10 @@ import {
 } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -60,7 +64,6 @@ import {
 } from 'calypso/components/domains/register-domain-step/utility';
 import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
 	getDomainsInCart,
@@ -85,7 +88,6 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainCartV2 } from '../domain-cart';
 import DomainSearchResults from '../domain-search-results';
-import AlreadyOwnADomain from './already-own-a-domain';
 
 import './style.scss';
 
@@ -532,15 +534,8 @@ class RegisterDomainStep extends Component {
 		};
 	};
 
-	render() {
-		const {
-			onContinue,
-			isSignupStep,
-			showAlreadyOwnADomain,
-			isDomainAndPlanPackageFlow,
-			replaceDomainFailedMessage,
-			dismissReplaceDomainFailed,
-		} = this.props;
+	renderGeneralNotices() {
+		const { replaceDomainFailedMessage, dismissReplaceDomainFailed } = this.props;
 
 		const {
 			availabilityError,
@@ -551,13 +546,7 @@ class RegisterDomainStep extends Component {
 			suggestionError,
 			suggestionErrorData,
 			suggestionErrorDomain,
-			trademarkClaimsNoticeInfo,
-			isQueryInvalid,
 		} = this.state;
-
-		if ( trademarkClaimsNoticeInfo ) {
-			return this.renderTrademarkClaimsNotice();
-		}
 
 		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
 			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
@@ -566,13 +555,39 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
-		const containerDivClassName = clsx( 'register-domain-step', {
-			'register-domain-step__signup': this.props.isSignupStep,
-		} );
+		const notices = [
+			availabilityMessage && (
+				<DomainSearchNotice status={ availabilitySeverity }>
+					{ availabilityMessage }
+				</DomainSearchNotice>
+			),
+			suggestionMessage && availabilityError !== suggestionError && (
+				<DomainSearchNotice status={ suggestionSeverity }>{ suggestionMessage }</DomainSearchNotice>
+			),
+			replaceDomainFailedMessage && (
+				<DomainSearchNotice status="error" onDismiss={ dismissReplaceDomainFailed }>
+					{ replaceDomainFailedMessage }
+				</DomainSearchNotice>
+			),
+		].filter( Boolean );
 
-		const searchBoxClassName = clsx( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step': this.props.isSignupStep,
-		} );
+		if ( notices.length === 0 ) {
+			return null;
+		}
+
+		return notices;
+	}
+
+	render() {
+		const { onContinue, isDomainAndPlanPackageFlow } = this.props;
+
+		const { trademarkClaimsNoticeInfo } = this.state;
+
+		if ( trademarkClaimsNoticeInfo ) {
+			return this.renderTrademarkClaimsNotice();
+		}
+
+		const notices = this.renderGeneralNotices();
 
 		return (
 			<DomainSearch
@@ -580,54 +595,14 @@ class RegisterDomainStep extends Component {
 				cart={ this.getCart() }
 				className="wpcom-domain-search-v2"
 			>
-				<div className={ containerDivClassName }>
-					<div className={ searchBoxClassName }>
-						<CompactCard className="register-domain-step__search-card">
-							{ this.renderSearchBar() }
-						</CompactCard>
-					</div>
-					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
-
-					{ ! isSignupStep && isQueryInvalid && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
-							status="is-info"
-							showDismiss={ false }
-						/>
-					) }
-					{ availabilityMessage && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ availabilityMessage }
-							status={ `is-${ availabilitySeverity }` }
-							showDismiss={ false }
-						/>
-					) }
-					{ suggestionMessage && availabilityError !== suggestionError && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ suggestionMessage }
-							status={ `is-${ suggestionSeverity }` }
-							showDismiss={ false }
-						/>
-					) }
-					{ replaceDomainFailedMessage && (
-						<Notice
-							status="is-error"
-							text={ replaceDomainFailedMessage }
-							showDismiss
-							onDismissClick={ dismissReplaceDomainFailed }
-						/>
-					) }
-					{ this.renderFilterContent() }
-					{ this.renderSideContent() }
-				</div>
-				{ showAlreadyOwnADomain && (
-					<AlreadyOwnADomain
-						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
-					/>
-				) }
+				<VStack spacing={ 8 }>
+					<VStack spacing={ 4 }>
+						{ this.renderSearchBar() }
+						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
+						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
+					</VStack>
+					{ this.renderContent() }
+				</VStack>
 				<DomainCartV2 />
 			</DomainSearch>
 		);
@@ -730,10 +705,10 @@ class RegisterDomainStep extends Component {
 		};
 
 		return (
-			<>
+			<HStack spacing={ 4 }>
 				<Search { ...componentProps }></Search>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
-			</>
+			</HStack>
 		);
 	}
 
@@ -818,17 +793,17 @@ class RegisterDomainStep extends Component {
 		this.setState( { clickedExampleSuggestion: true } );
 	};
 
-	renderFilterContent() {
+	renderContent() {
 		return (
 			<>
-				{ this.renderContent() }
+				{ this.maybeRenderSearchResults() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
 			</>
 		);
 	}
 
-	renderContent() {
+	maybeRenderSearchResults() {
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
 			return this.renderSearchResults();
 		}

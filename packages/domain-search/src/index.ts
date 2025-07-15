@@ -1,6 +1,7 @@
 export { DomainSearch } from './components/domain-search';
 export type { DomainSearchCart } from './components/domain-search/types';
 export { DomainSearchControls } from './components/DomainSearchControls/DomainSearchControls';
+export { DomainSearchNotice } from './components/domain-search-notice';
 export { DomainsMiniCart } from './components/domains-mini-cart';
 export { DomainsFullCart } from './components/domains-full-cart';
 export { DomainSuggestionsList } from './components/domain-suggestions-list';
