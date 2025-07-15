@@ -6,8 +6,10 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chartBar, published, wordpress } from '@wordpress/icons';
+import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
@@ -23,9 +25,51 @@ import StorageCard from './storage-card';
 import UptimeCard from './uptime-card';
 import './style.scss';
 
-function SiteOverview() {
+type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
+
+const SPACING = {
+	DEFAULT: 6,
+	MOBILE: 4,
+};
+
+function getGridLayout( {
+	count,
+	isLarge,
+	isMobile,
+}: {
+	count: number;
+	isLarge: boolean;
+	isMobile: boolean;
+} ) {
+	let columns;
+	if ( isLarge ) {
+		columns = count;
+	} else if ( isMobile ) {
+		columns = 1;
+	} else {
+		columns = Math.min( count / 2 );
+	}
+
+	return {
+		columns,
+		rows: count / columns,
+	};
+}
+
+function SiteOverview( {
+	hideSitePreview = false,
+	breakpoints,
+}: {
+	hideSitePreview: boolean;
+	breakpoints?: { large: Breakpoint; small: Breakpoint };
+} ) {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const isLarge = useViewportMatch( breakpoints?.large ?? 'large' );
+	const isMobile = useViewportMatch( breakpoints?.small ?? 'small', '<' );
+	const showSitePreview = ! ( hideSitePreview || isMobile );
+	const gridLayout = getGridLayout( { count: showSitePreview ? 4 : 3, isLarge, isMobile } );
+	const spacing = isMobile ? SPACING.MOBILE : SPACING.DEFAULT;
 
 	return (
 		<PageLayout
@@ -48,10 +92,10 @@ function SiteOverview() {
 				/>
 			}
 		>
-			<VStack alignment="stretch" spacing={ 10 }>
-				<Grid columns={ 4 } rows={ 1 } gap={ 6 }>
-					<SitePreviewCard site={ site } />
-					<VStack className="site-overview-cards" spacing={ 6 }>
+			<VStack alignment="stretch" spacing={ isMobile ? 5 : 10 }>
+				<Grid { ...gridLayout } gap={ spacing }>
+					{ showSitePreview && <SitePreviewCard site={ site } /> }
+					<VStack className="site-overview-cards" spacing={ spacing }>
 						<OverviewCard
 							title={ __( 'Visibility' ) }
 							icon={ published }
@@ -60,7 +104,7 @@ function SiteOverview() {
 						/>
 						<BackupCard site={ site } />
 					</VStack>
-					<VStack className="site-overview-cards" spacing={ 6 }>
+					<VStack className="site-overview-cards" spacing={ spacing }>
 						<OverviewCard
 							title={ __( 'Performance' ) }
 							icon={ chartBar }
@@ -72,11 +116,17 @@ function SiteOverview() {
 					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />
 				</Grid>
 				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
-				<HStack className="site-overview-cards" spacing={ 6 } alignment="flex-start">
-					<VStack spacing={ 6 } justify="start">
+				<HStack
+					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
+						'is-large': isLarge,
+					} ) }
+					spacing={ spacing }
+					alignment="flex-start"
+				>
+					<VStack spacing={ spacing } justify="start">
 						<PerformanceCards site={ site } />
 					</VStack>
-					<VStack spacing={ 6 } justify="start">
+					<VStack spacing={ spacing } justify="start">
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>
