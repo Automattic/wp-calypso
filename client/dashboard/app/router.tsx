@@ -23,7 +23,7 @@ import UnknownError from './500';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
-import { userPreferencesQuery } from './queries/me-preferences';
+import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
@@ -80,7 +80,7 @@ const sitesRoute = createRoute( {
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
-			queryClient.ensureQueryData( userPreferencesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
 	validateSearch: ( search ) => {

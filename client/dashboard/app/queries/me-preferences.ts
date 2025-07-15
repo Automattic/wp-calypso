@@ -7,14 +7,14 @@ const defaultValues: Required< UserPreferences > = {
 	'some-string': '',
 };
 
-export const userPreferencesQuery = () => ( {
+// Returns all user preferences, without applying any defaults.
+export const rawUserPreferencesQuery = () => ( {
 	queryKey: [ 'me', 'preferences' ],
 	queryFn: fetchPreferences,
-	select: ( data: UserPreferences ) => ( { ...defaultValues, ...data } ),
 } );
 
 export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) => ( {
-	queryKey: userPreferencesQuery().queryKey,
+	queryKey: rawUserPreferencesQuery().queryKey,
 	queryFn: fetchPreferences,
 	select: ( data: UserPreferences ): Required< UserPreferences >[ P ] => {
 		const fetchedValue = data[ preferenceName ];
@@ -36,7 +36,7 @@ export const userPreferenceMutation = < P extends keyof UserPreferences >(
 		} ),
 	onSuccess: ( newData: UserPreferences ) => {
 		queryClient.setQueryData(
-			userPreferencesQuery().queryKey,
+			rawUserPreferencesQuery().queryKey,
 			( oldData: UserPreferences | undefined ) => ( oldData ? { ...oldData, ...newData } : newData )
 		);
 	},
