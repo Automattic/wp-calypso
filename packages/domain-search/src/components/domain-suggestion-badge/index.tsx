@@ -1,7 +1,7 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
-import { BadgePopover } from './badge-popover';
+import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 
 import './style.scss';
 
@@ -26,7 +26,7 @@ export const DomainSuggestionBadge = ( {
 			) }
 		>
 			{ children }
-			{ popover && <BadgePopover>{ popover }</BadgePopover> }
+			{ popover && <DomainSuggestionPopover>{ popover }</DomainSuggestionPopover> }
 		</Text>
 	);
 };

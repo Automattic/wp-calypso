@@ -14,7 +14,6 @@ import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
 } from 'calypso/components/domains/domain-registration-suggestion/utility';
-import InfoPopover from 'calypso/components/info-popover';
 import {
 	getDomainPriceRule,
 	isPaidDomain,
@@ -357,23 +356,6 @@ class DomainRegistrationSuggestion extends Component {
 		);
 	}
 
-	renderInfoBubble() {
-		const { isFeatured, showHstsNotice, showDotGayNotice } = this.props;
-
-		const infoPopoverSize = isFeatured ? 22 : 18;
-		return (
-			<InfoPopover
-				className="domain-registration-suggestion__hsts-tooltip"
-				iconSize={ infoPopoverSize }
-				position="right"
-				showOnHover
-			>
-				{ ( showHstsNotice && this.getHstsMessage() ) ||
-					( showDotGayNotice && this.getDotGayMessage() ) }
-			</InfoPopover>
-		);
-	}
-
 	renderBadges() {
 		const {
 			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
@@ -457,6 +439,8 @@ class DomainRegistrationSuggestion extends Component {
 			flowName,
 			premiumDomain,
 			translate,
+			showHstsNotice,
+			showDotGayNotice,
 		} = this.props;
 
 		const [ domainName, ...tld ] = fullDomain.split( '.' );
@@ -485,6 +469,10 @@ class DomainRegistrationSuggestion extends Component {
 				badges={ badges }
 				uuid={ fullDomain }
 				domain={ domainName }
+				notice={
+					( showHstsNotice && this.getHstsMessage() ) ||
+					( showDotGayNotice && this.getDotGayMessage() )
+				}
 				tld={ tld.join( '.' ) }
 				price={
 					! isHundredYearPlanFlow( flowName ) && (

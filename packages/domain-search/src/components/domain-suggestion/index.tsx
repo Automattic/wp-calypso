@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
+import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 import { Unavailable } from './unavailable';
 
@@ -18,9 +19,17 @@ interface DomainSuggestionProps {
 	tld: string;
 	price: React.ReactNode;
 	badges?: React.ReactNode;
+	notice?: React.ReactNode;
 }
 
-export const DomainSuggestion = ( { uuid, domain, tld, price, badges }: DomainSuggestionProps ) => {
+export const DomainSuggestion = ( {
+	uuid,
+	domain,
+	tld,
+	price,
+	badges,
+	notice,
+}: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
 	if ( ! listContext ) {
@@ -35,6 +44,7 @@ export const DomainSuggestion = ( { uuid, domain, tld, price, badges }: DomainSu
 				size={ activeQuery === 'large' ? 18 : 16 }
 				style={ {
 					verticalAlign: 'middle',
+					lineHeight: 'inherit',
 					marginRight: badges ? '12px' : undefined,
 				} }
 				aria-label={ `${ domain }.${ tld }` }
@@ -43,6 +53,14 @@ export const DomainSuggestion = ( { uuid, domain, tld, price, badges }: DomainSu
 				<Text size="inherit" weight={ 500 }>
 					.{ tld }
 				</Text>
+				{ notice && (
+					<span
+						className="domain-suggestions-list-item__notice"
+						style={ { marginLeft: activeQuery === 'large' ? '8px' : '4px' } }
+					>
+						<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
+					</span>
+				) }
 			</Text>
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
 		</span>
