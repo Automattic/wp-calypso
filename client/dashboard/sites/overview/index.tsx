@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
 	__experimentalGrid as Grid,
@@ -7,34 +7,25 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
+import { backup, chartBar, published, wordpress } from '@wordpress/icons';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
-import CommentsCard from './comments-card';
-import LikesCard from './likes-card';
+import OverviewCard from '../overview-card';
 import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
 import StorageCard from './storage-card';
-import SubscribersCard from './subscribers-card';
 import UptimeCard from './uptime-card';
-import ViewsCard from './views-card';
-import VisitorsCard from './visitors-card';
 import './style.scss';
 
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( site.ID ) );
 
-	if ( ! engagementStats ) {
-		return;
-	}
 	return (
 		<PageLayout
 			header={
@@ -60,14 +51,29 @@ function SiteOverview() {
 				<Grid columns={ 4 } rows={ 1 } gap={ 6 }>
 					<SitePreviewCard site={ site } />
 					<VStack className="site-overview-cards" spacing={ 6 }>
-						<VisitorsCard engagementStats={ engagementStats } />
-						<ViewsCard engagementStats={ engagementStats } />
+						<OverviewCard
+							title={ __( 'Visibility' ) }
+							icon={ published }
+							heading="TBA"
+							description="TBA"
+						/>
+						<OverviewCard
+							title={ __( 'Last backup' ) }
+							icon={ backup }
+							heading="TBA"
+							description="TBA"
+						/>
 					</VStack>
 					<VStack className="site-overview-cards" spacing={ 6 }>
-						<LikesCard engagementStats={ engagementStats } />
-						<CommentsCard engagementStats={ engagementStats } />
+						<OverviewCard
+							title={ __( 'Performance' ) }
+							icon={ chartBar }
+							heading="TBA"
+							description="TBA"
+						/>
+						<ScanCard site={ site } />
 					</VStack>
-					<SubscribersCard subscribers={ site.subscribers_count } />
+					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />
 				</Grid>
 				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
 				<HStack className="site-overview-cards" spacing={ 6 } alignment="flex-start">
@@ -75,7 +81,6 @@ function SiteOverview() {
 						<PerformanceCards site={ site } />
 					</VStack>
 					<VStack spacing={ 6 } justify="start">
-						<ScanCard site={ site } />
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>

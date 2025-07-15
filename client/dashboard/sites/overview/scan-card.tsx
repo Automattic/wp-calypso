@@ -5,6 +5,7 @@ import { siteScanQuery } from '../../app/queries/site-scan';
 import { useTimeSince } from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
+import UpsellCard from './upsell-card';
 import type { SiteScan } from '../../data/site-scan';
 import type { Site } from '../../data/types';
 
@@ -17,6 +18,17 @@ const CARD_PROPS = {
 function getScanURL( site: Site ) {
 	const domain = isSelfHostedJetpackConnected( site ) ? 'cloud.jetpack.com' : 'wordpress.com';
 	return `https://${ domain }/scan/${ site.slug }`;
+}
+
+function ScanCardUpsell( { site }: { site: Site } ) {
+	return (
+		<UpsellCard
+			heading={ __( 'Security scans' ) }
+			description={ __( 'We guard your site. You run your business.' ) }
+			externalLink={ getScanURL( site ) }
+			trackId={ CARD_PROPS.trackId }
+		/>
+	);
 }
 
 function ScanCardUnavailable() {
@@ -80,6 +92,10 @@ export default function ScanCard( { site }: { site: Site } ) {
 	}
 
 	if ( scan.state === 'unavailable' ) {
+		if ( scan.reason === 'wpcom_site' ) {
+			return <ScanCardUpsell site={ site } />;
+		}
+
 		return <ScanCardUnavailable />;
 	}
 
