@@ -13,7 +13,7 @@ import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
-import { siteBackupLastEntryQuery } from '../../app/queries/site-backups';
+import { siteLastBackupTimeQuery } from '../../app/queries/site-backups';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
@@ -182,11 +182,11 @@ export function LastBackup( { site }: { site: Site } ) {
 	const isEligible = hasAtomicFeature( site, HostingFeatures.BACKUPS );
 
 	const {
-		data: lastBackup,
+		data: lastBackupTime,
 		isLoading,
 		isError,
 	} = useQuery( {
-		...siteBackupLastEntryQuery( site.ID ),
+		...siteLastBackupTimeQuery( site.ID ),
 		enabled: isEligible && inView,
 	} );
 
@@ -199,11 +199,11 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <LoadingIndicator label="Unknown" />;
 		}
 
-		if ( ! lastBackup || isError ) {
+		if ( ! lastBackupTime || isError ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince date={ lastBackup.last_updated } />;
+		return <TimeSince date={ lastBackupTime } />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;

@@ -7,13 +7,14 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, chartBar, published, wordpress } from '@wordpress/icons';
+import { chartBar, published, wordpress } from '@wordpress/icons';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
+import BackupCard from './backup-card';
 import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
@@ -57,12 +58,7 @@ function SiteOverview() {
 							heading="TBA"
 							description="TBA"
 						/>
-						<OverviewCard
-							title={ __( 'Last backup' ) }
-							icon={ backup }
-							heading="TBA"
-							description="TBA"
-						/>
+						<BackupCard site={ site } />
 					</VStack>
 					<VStack className="site-overview-cards" spacing={ 6 }>
 						<OverviewCard
