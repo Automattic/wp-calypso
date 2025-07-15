@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import domainUpsellUrl from './domain-upsell-illustration.svg';
-import UpsellWithActionCard from './upsell-with-action-card';
+import UpsellWithActionCard from '../overview/upsell-with-action-card';
+import domainUpsellUrl from './upsell-card-illustration.svg';
 
 export default function DomainUpsellCard() {
 	return (
@@ -9,7 +9,7 @@ export default function DomainUpsellCard() {
 			actionVariant="primary"
 			description="xxx"
 			image={ domainUpsellUrl }
-			imageAlt=""
+			imageAlt={ __( 'Browser window with a domain name' ) }
 			title={ __( 'The perfect domain awaits' ) }
 			trackId="domain-upsell"
 		/>

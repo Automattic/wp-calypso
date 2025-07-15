@@ -41,15 +41,17 @@ export default function UpsellWithActionCard( {
 						properties={ { type: trackId } }
 					/>
 				) }
-				<HStack alignment="stretch" justify="space-between" spacing={ 6 } expanded={ false }>
-					<VStack spacing={ 4 } style={ { padding: '24px' } }>
+				<HStack alignment="stretch" justify="space-between" spacing={ 6 }>
+					<VStack spacing={ 4 } style={ { flexGrow: 1, padding: '24px' } }>
 						<Text lineHeight="20px" size={ 15 } weight={ 500 }>
 							{ title }
 						</Text>
 						<Text variant="muted">{ description }</Text>
-						<Button icon={ upsell } text={ actionText } variant={ actionVariant } />
+						<HStack expanded={ false }>
+							<Button icon={ upsell } text={ actionText } variant={ actionVariant } />
+						</HStack>
 					</VStack>
-					<VStack>
+					<VStack justify="stretch" alignment="stretch">
 						<img src={ image } alt={ imageAlt } />
 					</VStack>
 				</HStack>
