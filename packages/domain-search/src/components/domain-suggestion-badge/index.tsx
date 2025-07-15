@@ -1,14 +1,21 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
+import { ReactNode } from 'react';
+import { BadgePopover } from './badge-popover';
 
 import './style.scss';
 
 interface DomainSuggestionBadgeProps {
-	children: React.ReactNode;
+	children: ReactNode;
 	variation?: 'warning';
+	popover?: ReactNode;
 }
 
-export const DomainSuggestionBadge = ( { children, variation }: DomainSuggestionBadgeProps ) => {
+export const DomainSuggestionBadge = ( {
+	children,
+	variation,
+	popover,
+}: DomainSuggestionBadgeProps ) => {
 	return (
 		<Text
 			size={ 12 }
@@ -19,6 +26,7 @@ export const DomainSuggestionBadge = ( { children, variation }: DomainSuggestion
 			) }
 		>
 			{ children }
+			{ popover && <BadgePopover>{ popover }</BadgePopover> }
 		</Text>
 	);
 };

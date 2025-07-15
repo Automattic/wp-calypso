@@ -1,5 +1,10 @@
 .domain-suggestion-badge {
-	padding: 4px 8px;
+	padding-inline: 8px;
+	height: 24px;
+	box-sizing: border-box;
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
 	border-radius: 2px;
 	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 );
 }
@@ -7,4 +12,11 @@
 .domain-suggestion-badge--warning {
 	box-shadow: 0 0 0 1px var( --domain-search-warning-badge-border-color );
 	background-color: var( --domain-search-warning-badge-background-color );
+}
+
+.domain-suggestion-badge__popover-content {
+	padding: 1rem;
+	width: 700px;
+	max-width: 256px;
+	box-sizing: border-box;
 }

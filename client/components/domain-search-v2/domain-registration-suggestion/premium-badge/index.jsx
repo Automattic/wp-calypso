@@ -1,10 +1,6 @@
-import { Badge } from '@automattic/components';
-import clsx from 'clsx';
+import { DomainSuggestionBadge } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import InfoPopover from 'calypso/components/info-popover';
-
-import './style.scss';
 
 class PremiumBadge extends Component {
 	getPopoverText( restrictedPremium ) {
@@ -26,32 +22,10 @@ class PremiumBadge extends Component {
 	}
 
 	render() {
-		const { restrictedPremium, domainName, translate } = this.props;
+		const { restrictedPremium } = this.props;
 		const { text, description } = this.getPopoverText( restrictedPremium );
-		const badgeClassNames = clsx( 'premium-badge', {
-			'restricted-premium': restrictedPremium,
-		} );
 
-		const popoverAriaLabel = restrictedPremium
-			? translate( '%(domainName)s is a restricted premium domain. Learn more', {
-					args: { domainName },
-					comment:
-						'Accessible label for premium badge when a domain is restricted. %(domainName)s is the domain name',
-			  } )
-			: translate( '%(domainName)s is a premium domain. Learn more', {
-					args: { domainName },
-					comment:
-						'Accessible label for premium badge when a domain is not restricted. %(domainName)s is the domain name',
-			  } );
-
-		return (
-			<Badge className={ badgeClassNames }>
-				{ text }
-				<InfoPopover iconSize={ 16 } aria-label={ popoverAriaLabel }>
-					{ description }
-				</InfoPopover>
-			</Badge>
-		);
+		return <DomainSuggestionBadge popover={ description }>{ text }</DomainSuggestionBadge>;
 	}
 }
 

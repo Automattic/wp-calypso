@@ -30,10 +30,13 @@ export const DomainSuggestion = ( { uuid, domain, tld, price, badges }: DomainSu
 	const { activeQuery } = listContext;
 
 	const domainName = (
-		<span>
+		<span style={ { lineHeight: '24px' } }>
 			<Text
 				size={ activeQuery === 'large' ? 18 : 16 }
-				style={ { marginRight: badges ? '12px' : undefined } }
+				style={ {
+					verticalAlign: 'middle',
+					marginRight: badges ? '12px' : undefined,
+				} }
 				aria-label={ `${ domain }.${ tld }` }
 			>
 				{ domain }
