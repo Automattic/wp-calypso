@@ -1,6 +1,10 @@
+.domain-suggestion-popover {
+	.components-popover__content {
+		width: 100%;
+		max-width: 256px;
+	}
+}
+
 .domain-suggestion-popover__content {
 	padding: 1rem;
-	width: 700px;
-	max-width: 256px;
-	box-sizing: border-box;
 }

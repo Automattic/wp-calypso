@@ -31,6 +31,8 @@ export const DomainSuggestionPopover = ( { children }: { children: ReactNode } )
 			/>
 			{ isPopoverOpen && (
 				<Popover
+					className="domain-suggestion-popover"
+					shift
 					focusOnMount
 					anchor={ buttonRef.current }
 					position="middle right"
