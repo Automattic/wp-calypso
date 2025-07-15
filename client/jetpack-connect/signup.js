@@ -7,8 +7,7 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
-import { Button, Card, Modal } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
@@ -20,7 +19,6 @@ import SignupForm from 'calypso/blocks/signup-form';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -298,57 +296,6 @@ export class JetpackSignup extends Component {
 
 				<HelpButton />
 			</LoggedOutFormLinks>
-		);
-	}
-
-	renderWooDnaFooter( footerLinks ) {
-		const { authQuery } = this.props;
-		footerLinks.push(
-			<LoggedOutFormLinkItem key="back" href={ authQuery.redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{
-					// translators: eg: Return to The WordPress.com Blog
-					this.props.translate( 'Return to %(sitename)s', {
-						args: { sitename: decodeEntities( authQuery.blogname ) },
-					} )
-				}
-			</LoggedOutFormLinkItem>
-		);
-		return <LoggedOutFormLinks>{ footerLinks }</LoggedOutFormLinks>;
-	}
-
-	renderWooDnaLoginMagicLink() {
-		const { translate, usernameOrEmail, sendEmailLogin } = this.props;
-		return (
-			<>
-				<Card className="jetpack-connect__magic-link-card">
-					<p>
-						{ translate( 'We’ve just sent a magic link to {{b}}%(email)s{{/b}}', {
-							args: {
-								email: usernameOrEmail,
-							},
-							components: {
-								b: <strong />,
-							},
-						} ) }
-					</p>
-					<p>{ translate( 'Click the link in the email to connect your store.' ) }</p>
-					<img src="/calypso/images/illustrations/illustration-woo-magic-link.svg" alt="" />
-					<p className="jetpack-connect__magic-link-resend">
-						{ translate( 'This email will expire in an hour. {{a}}Resend it{{/a}}.', {
-							components: {
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								a: <Button isLink onClick={ sendEmailLogin } />,
-							},
-						} ) }
-					</p>
-				</Card>
-				{ this.renderWooDnaFooter( [
-					<LoggedOutFormLinkItem key="login" onClick={ () => this.showWooDnaLoginView() }>
-						{ translate( 'Connect with a different email' ) }
-					</LoggedOutFormLinkItem>,
-				] ) }
-			</>
 		);
 	}
 
