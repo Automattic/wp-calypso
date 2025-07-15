@@ -14,7 +14,7 @@ import ComponentViewTracker from '../../components/component-view-tracker';
 import type { ReactElement, ReactNode } from 'react';
 import './style.scss';
 
-interface OverviewCardProps {
+export interface OverviewCardProps {
 	title: string;
 	customHeading?: ReactNode;
 	description?: string;
@@ -23,7 +23,7 @@ interface OverviewCardProps {
 	icon?: ReactElement;
 	metaText?: string;
 	trackId?: string;
-	variant?: 'disabled' | 'loading' | 'success' | 'error';
+	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	children?: ReactNode;
 }
 
@@ -64,7 +64,14 @@ export default function OverviewCard( {
 					<HStack justify="space-between">
 						<HStack spacing={ 2 } alignment="center" expanded={ false }>
 							{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-							<Text variant="muted" lineHeight="16px" size={ 11 } weight={ 500 } upperCase>
+							<Text
+								className="dashboard-overview-card__title"
+								variant="muted"
+								lineHeight="16px"
+								size={ 11 }
+								weight={ 500 }
+								upperCase
+							>
 								{ title }
 							</Text>
 						</HStack>
