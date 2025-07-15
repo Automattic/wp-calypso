@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -359,37 +358,6 @@ class Login extends Component {
 		);
 	}
 
-	renderToS() {
-		const { isSocialFirst, translate, twoFactorAuthType } = this.props;
-		if ( ! isSocialFirst || twoFactorAuthType ) {
-			return null;
-		}
-
-		const tos = translate(
-			'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			{
-				components: {
-					tosLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					privacyLink: (
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
-
-		return <div className="login__form-subheader-terms">{ tos }</div>;
-	}
-
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -631,8 +599,6 @@ class Login extends Component {
 				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
 
 				{ this.renderNotice() }
-
-				{ isGravPoweredClient && this.renderToS() }
 
 				{ this.renderContent() }
 

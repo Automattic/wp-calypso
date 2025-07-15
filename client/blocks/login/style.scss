@@ -305,30 +305,8 @@ $breakpoint-mobile: 782px; //Mobile size.
 	text-transform: initial;
 }
 
-.login__form-subheader-terms {
-	display: none;
-}
-
 .layout:not(.is-grav-powered-client) {
 	.is-social-first {
-		.login__form-subheader-terms {
-			display: block;
-			max-width: 450px;
-			margin: 0 auto;
-
-			color: var(--studio-gray-50, #646970);
-			text-align: center;
-			font-size: $font-body-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px;
-
-			a {
-				color: var(--studio-gray-50, #646970);
-				text-decoration: underline;
-			}
-		}
-
 		.login__form-terms {
 			display: none;
 		}
