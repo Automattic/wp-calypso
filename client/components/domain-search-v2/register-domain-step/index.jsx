@@ -1,7 +1,7 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
-import { DomainSearchControl } from '@automattic/domain-search';
+import { DomainSearchInput } from '@automattic/domain-search';
 import {
 	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -642,7 +642,7 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<HStack>
-				<DomainSearchControl { ...componentProps } />
+				<DomainSearchInput { ...componentProps } />
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</HStack>
 		);

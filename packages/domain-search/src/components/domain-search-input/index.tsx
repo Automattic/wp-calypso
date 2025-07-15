@@ -1,3 +1,4 @@
+// Renamed from domain-search-control to domain-search-input
 import { SearchControl } from '@wordpress/components';
 import {
 	useState,
@@ -26,7 +27,7 @@ const useUpdateEffect = ( effect: () => void, deps: React.DependencyList ) => {
 	}, deps );
 };
 
-interface DomainSearchControlProps {
+interface DomainSearchInputProps {
 	className?: string;
 	autoFocus?: boolean;
 	delaySearch?: boolean;
@@ -44,7 +45,7 @@ interface DomainSearchControlProps {
 	isOnboarding?: boolean;
 }
 
-const DomainSearchControl = forwardRef( function DomainSearchControl(
+const DomainSearchInput = forwardRef( function DomainSearchInput(
 	{
 		className,
 		autoFocus,
@@ -61,7 +62,7 @@ const DomainSearchControl = forwardRef( function DomainSearchControl(
 		onSearch,
 		onSearchChange,
 		isOnboarding,
-	}: DomainSearchControlProps,
+	}: DomainSearchInputProps,
 	ref: Ref< HTMLInputElement >
 ) {
 	const [ , setValue ] = useState( defaultValue || controlledValue || '' );
@@ -105,7 +106,7 @@ const DomainSearchControl = forwardRef( function DomainSearchControl(
 		handleChange( '' );
 	};
 
-	const containerClassName = clsx( 'domain-search-control', className, {
+	const containerClassName = clsx( 'domain-search-input', className, {
 		'is-onboarding': isOnboarding,
 	} );
 
@@ -115,7 +116,7 @@ const DomainSearchControl = forwardRef( function DomainSearchControl(
 		<div className={ containerClassName }>
 			<SearchControl
 				__nextHasNoMarginBottom
-				className="domain-search-control__search-input"
+				className="domain-search-input__search-input"
 				label={ searchControlLabel }
 				hideLabelFromVision
 				value={ controlledValue }
@@ -134,4 +135,4 @@ const DomainSearchControl = forwardRef( function DomainSearchControl(
 	);
 } );
 
-export { DomainSearchControl };
+export { DomainSearchInput };

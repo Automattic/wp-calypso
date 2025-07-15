@@ -1,4 +1,4 @@
-.domain-search-control {
+.domain-search-input {
     width: 100%;
 	position: relative;
 	display: flex;
@@ -8,7 +8,7 @@
 		height: 56px;
 	}
 
-	.domain-search-control__search-input {
+	.domain-search-input__search-input {
 		flex-grow: 1;
 	}
 
@@ -27,7 +27,7 @@
 		}
     }
 
-	.domain-search-control__before-close {
+	.domain-search-input__before-close {
 		margin-inline-start: 8px;
 		display: flex;
 		align-items: center;
