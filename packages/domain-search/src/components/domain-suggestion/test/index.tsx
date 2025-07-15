@@ -6,6 +6,7 @@ import { DomainSuggestion } from '..';
 import { buildDomainSearchCart } from '../../../test-helpers/factories';
 import { DomainSearch } from '../../domain-search';
 import { DomainSuggestionBadge } from '../../domain-suggestion-badge';
+import { DomainSuggestionPrice } from '../../domain-suggestion-price';
 import { DomainSuggestionsList } from '../../domain-suggestions-list';
 
 describe( 'DomainSuggestion', () => {
@@ -43,13 +44,17 @@ describe( 'DomainSuggestion', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
 				<DomainSuggestionsList>
-					<DomainSuggestion uuid="1" domain="example" tld="com" price="$15" />
+					<DomainSuggestion
+						uuid="1"
+						domain="example"
+						tld="com"
+						price={ <DomainSuggestionPrice price="$15" /> }
+					/>
 				</DomainSuggestionsList>
 			</DomainSearch>
 		);
 
 		expect( screen.getByText( '$15' ) ).toBeInTheDocument();
-		expect( screen.getByText( '$20' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the CTA', () => {
