@@ -49,17 +49,22 @@ export const DomainSuggestion = ( {
 					lineHeight: 'inherit',
 					marginRight: badges ? '12px' : undefined,
 				} }
-				aria-label={ `${ domain }.${ tld }` }
 			>
-				{ domain }
-				<Text size="inherit" weight={ 500 }>
-					.{ tld }
-				</Text>
+				<span
+					aria-label={ `${ domain }.${ tld }` }
+					style={ {
+						wordBreak: 'break-all',
+						// eslint-disable-next-line no-nested-ternary
+						marginRight: notice ? ( activeQuery === 'large' ? '8px' : '4px' ) : undefined,
+					} }
+				>
+					{ domain }
+					<Text size="inherit" weight={ 500 }>
+						.{ tld }
+					</Text>
+				</span>
 				{ notice && (
-					<span
-						className="domain-suggestions-list-item__notice"
-						style={ { marginLeft: activeQuery === 'large' ? '8px' : '4px' } }
-					>
+					<span className="domain-suggestions-list-item__notice">
 						<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
 					</span>
 				) }
