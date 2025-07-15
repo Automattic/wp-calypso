@@ -70,6 +70,7 @@ export interface SiteOptions {
 	software_version: string;
 	updated_at?: string;
 	wpcom_production_blog_id?: number;
+	wpcom_staging_blog_ids?: number[];
 }
 
 export interface Site {

@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import TimeSince from '../components/time-since';
 import { getSiteDisplayName } from '../utils/site-name';
+import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../utils/site-provider';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { getSiteDisplayUrl } from '../utils/site-url';
 import { getFormattedWordPressVersion } from '../utils/wp-version';
@@ -139,19 +140,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'host',
 		label: __( 'Host' ),
 		getValue: ( { item } ) => {
-			const provider = item.hosting_provider_guess;
-			if ( ! provider || provider === 'automattic' ) {
-				return 'WordPress.com';
-			}
-
-			switch ( provider ) {
-				case 'jurassic_ninja':
-					return 'Jurassic Ninja';
-				case 'pressable':
-					return 'Pressable';
-			}
-
-			return provider;
+			return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
 		},
 		render: ( { field, item } ) => field.getValue( { item } ),
 	},

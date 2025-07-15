@@ -78,6 +78,7 @@ const allowedExternalSites = [
 
 export interface PostCheckoutUrlArguments {
 	siteSlug?: string;
+	siteId?: number;
 	adminUrl?: string;
 	redirectTo?: string;
 	receiptId?: number | string;
@@ -124,6 +125,7 @@ export interface PostCheckoutUrlArguments {
  */
 export default function getThankYouPageUrl( {
 	siteSlug,
+	siteId,
 	adminUrl,
 	redirectTo,
 	receiptId,
@@ -305,6 +307,19 @@ export default function getThankYouPageUrl( {
 		debug( 'redirecting to A4A client subscriptions page' );
 		// If redirectTo is specified, use it. Otherwise, redirect to the client subscriptions page
 		return redirectTo || '/client/subscriptions';
+	}
+
+	// Unified affiliate + paid media siteless checkout - handles post-checkout site creation flow
+	if ( sitelessCheckoutType === 'unified' ) {
+		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
+		const urlFromCookie = getUrlFromCookie();
+
+		if (
+			urlFromCookie &&
+			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
+		) {
+			return addQueryArgs( { siteId }, urlFromCookie );
+		}
 	}
 
 	// If there is no purchase, then send the user to a generic page (not

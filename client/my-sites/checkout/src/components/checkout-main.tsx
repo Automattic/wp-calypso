@@ -175,6 +175,11 @@ export default function CheckoutMain( {
 			return marketplaceSiteSlug;
 		}
 
+		// Onboarding unified siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
+		if ( sitelessCheckoutType === 'unified' ) {
+			return undefined;
+		}
+
 		return siteSlug;
 	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
 

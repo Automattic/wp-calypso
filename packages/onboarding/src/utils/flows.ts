@@ -31,6 +31,7 @@ export const EXAMPLE_FLOW = 'example';
 export const DIFM_FLOW = 'do-it-for-me';
 export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
+export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 export const PLAYGROUND_FLOW = 'playground';
 

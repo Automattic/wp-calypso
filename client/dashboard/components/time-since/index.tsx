@@ -94,6 +94,13 @@ function formatDate( date: Date, format: string, locale: string ) {
 	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
 }
 
+export function useTimeSince( date: string, format = 'll' ) {
+	const { user } = useAuth();
+	const locale = user.locale_variant || user.language || 'en';
+
+	return useRelativeTime( date, format, locale );
+}
+
 export default function TimeSince( { date, format = 'll' }: { date: string; format?: string } ) {
 	const { user } = useAuth();
 	const locale = user.locale_variant || user.language || 'en';

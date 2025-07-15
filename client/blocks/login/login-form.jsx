@@ -63,6 +63,7 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
+import OneTapAuthLoaderOverlay from './one-tap-auth-loader-overlay';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
@@ -1006,7 +1007,6 @@ export class LoginForm extends Component {
 		const {
 			oauth2Client,
 			currentQuery,
-			isWoo,
 			isWooJPC,
 			isSocialFirst,
 			isJetpack,
@@ -1048,8 +1048,6 @@ export class LoginForm extends Component {
 							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ false }
-							isWoo={ isWoo }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
@@ -1071,6 +1069,8 @@ export class LoginForm extends Component {
 			isBlazePro,
 			isSocialFirst,
 			isJetpack,
+			isOneTapAuth,
+			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
 
 		const socialToS = this.props.translate(
@@ -1106,7 +1106,6 @@ export class LoginForm extends Component {
 						handleLogin={ this.handleSocialLogin }
 						trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						shouldRenderToS={ false }
 						isJetpack={ isJetpack }
 					/>
 				</Fragment>
@@ -1121,25 +1120,28 @@ export class LoginForm extends Component {
 		}
 
 		return (
-			<form
-				className={ clsx( {
-					'is-social-first': isSocialFirst,
-					'is-woo-passwordless': isWoo,
-					'is-blaze-pro': isBlazePro,
-				} ) }
-				onSubmit={ this.onSubmitForm }
-				method="post"
-			>
-				{ this.renderLoginOptions() }
+			<>
+				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoaderOverlay showCompactLogo /> }
+				<form
+					className={ clsx( {
+						'is-social-first': isSocialFirst,
+						'is-woo-passwordless': isWoo,
+						'is-blaze-pro': isBlazePro,
+					} ) }
+					onSubmit={ this.onSubmitForm }
+					method="post"
+				>
+					{ this.renderLoginOptions() }
 
-				{ this.showJetpackConnectSiteOnly() && (
-					<JetpackConnectSiteOnly
-						homeUrl={ currentQuery?.site }
-						redirectAfterAuth={ currentQuery?.redirect_after_auth }
-						source="login"
-					/>
-				) }
-			</form>
+					{ this.showJetpackConnectSiteOnly() && (
+						<JetpackConnectSiteOnly
+							homeUrl={ currentQuery?.site }
+							redirectAfterAuth={ currentQuery?.redirect_after_auth }
+							source="login"
+						/>
+					) }
+				</form>
+			</>
 		);
 	}
 }
@@ -1182,6 +1184,7 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
 			isBlazePro: getIsBlazePro( state ),
+			isOneTapAuth: !! get( getCurrentQueryArguments( state ), 'oneTapAuth' ),
 			isGravatarFixedAccountLogin:
 				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
 		};

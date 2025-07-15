@@ -1,0 +1,6 @@
+.one-tap-auth-loader-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--studio-white);
+    z-index: z-index("root", ".fullscreen-overlay");
+}

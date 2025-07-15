@@ -142,10 +142,6 @@ export class Login extends Component {
 		this.props.recordPageView( url, title );
 	}
 
-	recordBackToWpcomLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
-	};
-
 	handleUsernameChange( usernameOrEmail ) {
 		this.setState( { usernameOrEmail } );
 	}
@@ -159,10 +155,6 @@ export class Login extends Component {
 
 		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
-
-	recordResetPasswordLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-	};
 
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {

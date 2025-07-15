@@ -1900,4 +1900,85 @@ describe( 'getThankYouPageUrl', () => {
 			expect( result ).toBe( '/client/subscriptions' );
 		} );
 	} );
+
+	describe( 'Unified siteless checkout', () => {
+		it( 'should redirect to the cookie URL with siteId when cookie contains post-checkout-onboarding path', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding/step'
+			);
+			const siteId = 12345;
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/setup/onboarding-unified/post-checkout-onboarding/step?siteId=12345' );
+		} );
+
+		it( 'should append siteId to existing query parameters when cookie URL already has them', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding?existing=param'
+			);
+			const siteId = 67890;
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe(
+				'/setup/onboarding-unified/post-checkout-onboarding?existing=param&siteId=67890'
+			);
+		} );
+
+		it( 'should fall through to other logic when cookie URL does not contain post-checkout-onboarding path', () => {
+			const getUrlFromCookie = jest.fn( () => '/some/other/path' );
+			const siteId = 12345;
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				siteSlug: 'foo.bar',
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+		} );
+
+		it( 'should fall through to other logic when no cookie URL is available', () => {
+			const getUrlFromCookie = jest.fn( () => undefined );
+			const siteId = 12345;
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				siteSlug: 'foo.bar',
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+		} );
+
+		it( 'should fall through to other logic when cookie URL is empty string', () => {
+			const getUrlFromCookie = jest.fn( () => '' );
+			const siteId = 12345;
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				siteSlug: 'foo.bar',
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+		} );
+	} );
 } );

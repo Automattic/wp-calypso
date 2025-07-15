@@ -14,6 +14,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	ONBOARDING_UNIFIED_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -33,6 +34,11 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
+
+	[ ONBOARDING_UNIFIED_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "onboarding-unified-flow" */ './flows/onboarding-unified/onboarding-unified'
+		),
 };
 
 /**

@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
 	GoogleSocialButton,
 	AppleLoginButton,
@@ -19,17 +18,12 @@ class SocialLoginForm extends Component {
 		handleLogin: PropTypes.func.isRequired,
 		trackLoginAndRememberRedirect: PropTypes.func.isRequired,
 		socialServiceResponse: PropTypes.object,
-		shouldRenderToS: PropTypes.bool,
 		magicLoginLink: PropTypes.string,
 		qrLoginLink: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
 		lastUsedAuthenticationMethod: PropTypes.string,
 		resetLastUsedAuthenticationMethod: PropTypes.func,
 		isJetpack: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		shouldRenderToS: false,
 	};
 
 	socialLoginButtons = [
@@ -70,7 +64,7 @@ class SocialLoginForm extends Component {
 		},
 		{
 			service: 'magic-login',
-			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
+			button: this.props.isSocialFirst && this.props.magicLoginLink && (
 				<MagicLoginButton
 					loginUrl={ this.props.magicLoginLink }
 					key={ 4 }
@@ -80,14 +74,14 @@ class SocialLoginForm extends Component {
 		},
 		{
 			service: 'qr-code',
-			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.qrLoginLink && (
+			button: this.props.isSocialFirst && this.props.qrLoginLink && (
 				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 5 } />
 			),
 		},
 	];
 
 	render() {
-		const { shouldRenderToS, isWoo, isSocialFirst, lastUsedAuthenticationMethod } = this.props;
+		const { isSocialFirst, lastUsedAuthenticationMethod } = this.props;
 
 		return (
 			<Card
@@ -106,9 +100,7 @@ class SocialLoginForm extends Component {
 							)
 						) }
 					</div>
-					{ ! isWoo && shouldRenderToS && <SocialToS /> }
 				</div>
-				{ isWoo && shouldRenderToS && <SocialToS /> }
 			</Card>
 		);
 	}
