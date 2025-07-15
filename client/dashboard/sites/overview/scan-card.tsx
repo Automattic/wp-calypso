@@ -5,7 +5,7 @@ import { siteScanQuery } from '../../app/queries/site-scan';
 import { useTimeSince } from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
-import UpsellCard from './upsell-card';
+import UpsellCard from '../overview-card/upsell';
 import type { SiteScan } from '../../data/site-scan';
 import type { Site } from '../../data/types';
 

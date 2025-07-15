@@ -7,15 +7,13 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { ComponentProps } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { upsell } from '../../components/icons';
 import type { ReactNode } from 'react';
 
-import './upsell-with-action-card.scss';
-
 interface UpsellWithActionCardProps {
-	actionText: string;
-	actionVariant: ComponentProps< typeof Button >[ 'variant' ];
+	action: Pick< ComponentProps< typeof Button >, 'href' | 'text' | 'variant' >;
 	description: ReactNode;
 	image: string;
 	imageAlt: string;
@@ -24,16 +22,17 @@ interface UpsellWithActionCardProps {
 }
 
 export default function UpsellWithActionCard( {
-	actionText,
-	actionVariant,
+	action,
 	description,
 	image,
 	imageAlt,
 	title,
 	trackId,
 }: UpsellWithActionCardProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	return (
-		<Card className="dashboard-overview-upsell-with-action-card">
+		<Card className="dashboard-overview-card-upsell-with-action">
 			<CardBody style={ { padding: '0' } }>
 				{ trackId && (
 					<ComponentViewTracker
@@ -41,19 +40,28 @@ export default function UpsellWithActionCard( {
 						properties={ { type: trackId } }
 					/>
 				) }
-				<HStack alignment="stretch" justify="space-between" spacing={ 6 }>
+				<HStack spacing={ 6 }>
 					<VStack spacing={ 4 } style={ { flexGrow: 1, padding: '24px' } }>
 						<Text lineHeight="20px" size={ 15 } weight={ 500 }>
 							{ title }
 						</Text>
 						<Text variant="muted">{ description }</Text>
 						<HStack expanded={ false }>
-							<Button icon={ upsell } text={ actionText } variant={ actionVariant } />
+							<Button
+								href={ action.href }
+								icon={ upsell }
+								target="_blank"
+								text={ action.text }
+								variant={ action.variant }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+										type: trackId,
+									} );
+								} }
+							/>
 						</HStack>
 					</VStack>
-					<VStack justify="stretch" alignment="stretch">
-						<img src={ image } alt={ imageAlt } />
-					</VStack>
+					<img src={ image } alt={ imageAlt } />
 				</HStack>
 			</CardBody>
 		</Card>
