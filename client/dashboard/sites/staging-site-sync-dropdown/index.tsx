@@ -23,6 +23,7 @@ export default function SyncDropdown( {
 }: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
+	const isSyncInProgress = true;
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
@@ -50,8 +51,9 @@ export default function SyncDropdown( {
 						variant="secondary"
 						aria-expanded={ isOpen }
 						onClick={ () => onToggle() }
+						disabled={ isSyncInProgress }
 					>
-						{ __( 'Sync' ) }
+						{ isSyncInProgress ? __( 'Syncing…' ) : __( 'Sync' ) }
 					</Button>
 				) }
 				renderContent={ ( { onClose } ) => (
