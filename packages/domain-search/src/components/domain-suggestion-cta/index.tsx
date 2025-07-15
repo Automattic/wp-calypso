@@ -9,22 +9,28 @@ import './style.scss';
 interface DomainSuggestionCTAProps {
 	compact?: boolean;
 	uuid: string;
+	onClick?( action: 'add-to-cart' | 'continue' ): void;
 }
 
-export const DomainSuggestionCTA = ( { compact, uuid }: DomainSuggestionCTAProps ) => {
+export const DomainSuggestionCTA = ( { compact, uuid, onClick }: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
 	const { cart, onContinue } = useDomainSearch();
 
 	const isDomainOnCart = cart.hasItem( uuid );
 
 	if ( isDomainOnCart ) {
+		const handleContinueClick = () => {
+			onClick?.( 'continue' );
+			onContinue();
+		};
+
 		return (
 			<Button
 				variant="primary"
 				__next40pxDefaultSize
 				icon={ arrowRight }
 				className="domain-suggestion-cta domain-suggestion-cta--continue"
-				onClick={ onContinue }
+				onClick={ handleContinueClick }
 				label={ __( 'Continue' ) }
 			>
 				{ compact ? undefined : __( 'Continue' ) }
@@ -32,13 +38,18 @@ export const DomainSuggestionCTA = ( { compact, uuid }: DomainSuggestionCTAProps
 		);
 	}
 
+	const handleAddToCartClick = () => {
+		onClick?.( 'add-to-cart' );
+		cart.onAddItem( uuid );
+	};
+
 	return (
 		<Button
 			className="domain-suggestion-cta"
 			variant="primary"
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
-			onClick={ () => cart.onAddItem( uuid ) }
+			onClick={ handleAddToCartClick }
 			label={ __( 'Add to Cart' ) }
 		>
 			{ compact ? undefined : __( 'Add to Cart' ) }

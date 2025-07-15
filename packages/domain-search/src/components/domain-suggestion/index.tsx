@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
+import { ComponentProps } from 'react';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
@@ -13,14 +14,14 @@ import { Unavailable } from './unavailable';
 
 import './style.scss';
 
-interface DomainSuggestionProps {
+type DomainSuggestionProps = {
 	uuid: string;
 	domain: string;
 	tld: string;
 	price: React.ReactNode;
 	badges?: React.ReactNode;
 	notice?: React.ReactNode;
-}
+} & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' >;
 
 export const DomainSuggestion = ( {
 	uuid,
@@ -29,6 +30,7 @@ export const DomainSuggestion = ( {
 	price,
 	badges,
 	notice,
+	onClick,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
@@ -66,7 +68,7 @@ export const DomainSuggestion = ( {
 		</span>
 	);
 
-	const cta = <DomainSuggestionCTA compact uuid={ uuid } />;
+	const cta = <DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } />;
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
