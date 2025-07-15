@@ -15,7 +15,7 @@
     .components-input-control__container {
         background-color: var( --color-body-background );
         border-radius: 4px;
-        border: 1px solid var( --color-border-subtle );
+        border: 1px solid var(--color-neutral-20);
 
 		input.components-input-control__input {
 			font-size: $font-body-large;
