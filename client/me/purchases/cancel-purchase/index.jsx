@@ -158,7 +158,13 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		const { includedDomainPurchase, purchase } = this.props;
+		const { includedDomainPurchase, purchase, isJetpack, isAkismet } = this.props;
+
+		// For Jetpack/Akismet products, call onCancellationComplete to show the dialog
+		if ( isJetpack || isAkismet ) {
+			this.onCancellationComplete();
+			return;
+		}
 
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
@@ -721,17 +727,19 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
-				<CancelPurchaseForm
-					disableButtons={ this.state.isLoading }
-					purchase={ purchase }
-					isVisible={ this.state.surveyShown }
-					onClose={ () => this.setState( { surveyShown: false } ) }
-					onSurveyComplete={ this.onSurveyComplete }
-					flowType={ getPurchaseCancellationFlowType( purchase ) }
-					cancelBundledDomain={ this.state.cancelBundledDomain }
-					includedDomainPurchase={ this.props.includedDomainPurchase }
-					cancellationInProgress={ this.state.isLoading }
-				/>
+				{ ! this.props.isJetpack && ! this.props.isAkismet && (
+					<CancelPurchaseForm
+						disableButtons={ this.state.isLoading }
+						purchase={ purchase }
+						isVisible={ this.state.surveyShown }
+						onClose={ () => this.setState( { surveyShown: false } ) }
+						onSurveyComplete={ this.onSurveyComplete }
+						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						cancelBundledDomain={ this.state.cancelBundledDomain }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
+						cancellationInProgress={ this.state.isLoading }
+					/>
+				) }
 				<Card className="cancel-purchase__wrapper-card">
 					<QueryProductsList />
 					<TrackPurchasePageView

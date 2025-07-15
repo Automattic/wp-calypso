@@ -243,7 +243,7 @@ class CancelPurchaseButton extends Component {
 						purchaseListUrl={ purchaseListUrl }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
-						onSurveyComplete={ this.handleSurveyComplete }
+						onSurveyComplete={ this.props.onSurveyComplete }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						isAkismet={ isAkismet }
 						cancellationInProgress={ isLoading }
@@ -257,7 +257,7 @@ class CancelPurchaseButton extends Component {
 						purchaseListUrl={ purchaseListUrl }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
-						onSurveyComplete={ this.handleSurveyComplete }
+						onSurveyComplete={ this.props.onSurveyComplete }
 						cancellationInProgress={ isLoading }
 					/>
 				) }
@@ -266,7 +266,7 @@ class CancelPurchaseButton extends Component {
 					<MarketPlaceSubscriptionsDialog
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ this.handleSurveyComplete }
+						removePlan={ this.props.onSurveyComplete }
 						planName={ planName }
 						activeSubscriptions={ activeSubscriptions }
 						sectionHeadingText={ translate( 'Cancel %(plan)s', {
