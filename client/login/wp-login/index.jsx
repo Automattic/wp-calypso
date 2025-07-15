@@ -290,7 +290,6 @@ export class Login extends Component {
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
 			twoFactorEnabled,
-<<<<<<< HEAD
 			currentQuery,
 			translate,
 		} = this.props;
@@ -339,9 +338,6 @@ export class Login extends Component {
 			isWhiteLogin,
 			isJetpack,
 			isFromAkismet,
-			isJetpackWooDnaFlow,
-=======
->>>>>>> dcfd2f2bccd (merge isWooDnaFlow in isWooJPCFlow)
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
@@ -385,7 +381,6 @@ export class Login extends Component {
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
 						signupUrl={ this.props.signupUrl }
-						isJetpackWooDnaFlow={ isJetpackWooDnaFlow }
 					>
 						{ mainContent }
 					</OneLoginLayout>
