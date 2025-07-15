@@ -99,7 +99,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Last published' ),
 		getValue: ( { item } ) => item.options?.updated_at ?? '',
 		render: ( { item } ) =>
-			item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+			item.options?.updated_at ? <TimeSince timestamp={ item.options.updated_at } /> : '',
 	},
 	{
 		id: 'uptime',

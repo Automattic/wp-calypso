@@ -6,19 +6,13 @@ export const siteBackupsQuery = ( siteId: number ) => ( {
 	queryFn: () => fetchSiteBackups( siteId ),
 } );
 
-export const siteLastBackupTimeQuery = ( siteId: number ) => ( {
+export const siteLastBackupQuery = ( siteId: number ) => ( {
 	...siteBackupsQuery( siteId ),
 	select: ( backups: Backup[] ) => {
 		if ( ! Array.isArray( backups ) ) {
 			return null;
 		}
 
-		const lastBackup = backups.find( ( backup ) => backup.status === 'finished' );
-		if ( ! lastBackup ) {
-			return null;
-		}
-
-		// Return last_updated in UTC in ISO-8601 format.
-		return lastBackup.last_updated.replace( ' ', 'T' ) + 'Z';
+		return backups.find( ( backup ) => backup.status === 'finished' ) ?? null;
 	},
 } );
