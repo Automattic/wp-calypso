@@ -13,6 +13,7 @@ interface SyncDropdownProps {
 	environment: 'production' | 'staging';
 	productionSiteId: number;
 	stagingSiteId: number;
+	isSyncInProgress: boolean;
 }
 
 export default function SyncDropdown( {
@@ -20,10 +21,10 @@ export default function SyncDropdown( {
 	environment,
 	productionSiteId,
 	stagingSiteId,
+	isSyncInProgress,
 }: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
-	const isSyncInProgress = true;
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
