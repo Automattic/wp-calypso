@@ -14,7 +14,7 @@ interface SyncDropdownProps {
 	productionSiteId: number;
 	stagingSiteId: number;
 	isSyncInProgress: boolean;
-	onSyncStart?: () => void;
+	onSyncStart: () => void;
 }
 
 export default function SyncDropdown( {
