@@ -13,7 +13,7 @@ import type { Site } from '../../data/types';
 const CARD_PROPS = {
 	icon: shield,
 	title: __( 'Last scan' ),
-	trackId: 'scan',
+	tracksId: 'scan',
 };
 
 function getScanURL( site: Site ) {

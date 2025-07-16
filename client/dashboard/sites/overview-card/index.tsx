@@ -22,7 +22,7 @@ export interface OverviewCardProps {
 	heading?: ReactNode;
 	icon?: ReactElement;
 	metaText?: string;
-	trackId?: string;
+	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	children?: ReactNode;
 	onClick?: () => void;
@@ -36,7 +36,7 @@ export default function OverviewCard( {
 	icon,
 	metaText,
 	title,
-	trackId,
+	tracksId,
 	variant,
 	children,
 	onClick,
@@ -56,10 +56,16 @@ export default function OverviewCard( {
 			} }
 		>
 			<CardBody>
-				{ trackId && (
+				{ tracksId && (
 					<ComponentViewTracker
 						eventName="calypso_dashboard_overview_card_impression"
-						properties={ { type: trackId, variant } }
+						properties={ { feature: tracksId, variant } }
+					/>
+				) }
+				{ tracksId && variant === 'upsell' && (
+					<ComponentViewTracker
+						eventName="calypso_dashboard_upsell_impression"
+						properties={ { feature: tracksId, type: 'card' } }
 					/>
 				) }
 				<VStack spacing={ 4 }>
@@ -135,9 +141,16 @@ export default function OverviewCard( {
 
 					if ( trackId ) {
 						recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-							type: trackId,
+							type: tracksId,
 							variant,
 						} );
+
+						if ( variant === 'upsell' ) {
+							recordTracksEvent( 'calypso_dashboard_upsell_click', {
+								feature: tracksId,
+								type: 'card',
+							} );
+						}
 					}
 				} }
 			>

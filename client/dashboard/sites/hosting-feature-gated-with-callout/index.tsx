@@ -16,7 +16,7 @@ export default function HostingFeatureGatedWithCallout( {
 	upsellDescription,
 	...props
 }: HostingFeatureGatedWithCalloutProps ) {
-	const { site } = props;
+	const { site, tracksFeatureId } = props;
 
 	return (
 		<HostingFeatureGate
@@ -24,6 +24,7 @@ export default function HostingFeatureGatedWithCallout( {
 			renderUpsellComponent={ ( { onClick } ) => (
 				<UpsellCallout
 					site={ site }
+					tracksFeatureId={ tracksFeatureId }
 					onClick={ onClick }
 					upsellIcon={ upsellIcon }
 					upsellImage={ upsellImage }
