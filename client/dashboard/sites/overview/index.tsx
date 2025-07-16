@@ -41,18 +41,23 @@ function getGridLayout( {
 	isLargeViewport: boolean;
 	isSmallViewport: boolean;
 } ) {
-	let columns;
 	if ( isLargeViewport ) {
-		columns = count;
-	} else if ( isSmallViewport ) {
-		columns = 1;
-	} else {
-		columns = Math.min( count / 2 );
+		return {
+			columns: count,
+			rows: 1,
+		};
+	}
+
+	if ( isSmallViewport ) {
+		return {
+			columns: 1,
+			rows: count,
+		};
 	}
 
 	return {
-		columns,
-		rows: count / columns,
+		columns: 2,
+		rows: Math.floor( count / 2 ) + ( count % 2 ),
 	};
 }
 
