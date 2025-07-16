@@ -13,7 +13,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-const WORDCAMP_US_2025_COUPON_CODE = 'A4AWCUS2025';
+const WORDCAMP_US_2025_COUPON_CODE = 'automattic25';
 
 export const useUpcomingEvents = () => {
 	const translate = useTranslate();
@@ -121,15 +121,11 @@ export const useUpcomingEvents = () => {
 						}
 					),
 					translate(
-						"As a leading agency, we'd love for you to join us and we're excited to offer you an exclusive {{b}}25% discount on registration{{/b}} for your team. Use coupon {{b}}%(couponCode)s{{/b}} during checkout.",
+						"As a leading agency, we'd love for you to join us and we're excited to offer you an exclusive {{b}}25% discount on registration{{/b}} for your team. Use coupon {{b}}automattic25{{/b}} during checkout.",
 						{
-							args: {
-								couponCode: WORDCAMP_US_2025_COUPON_CODE,
-							},
 							components: {
 								b: <b />,
 							},
-							comment: '%(couponCode)s is a placeholder for the coupon code',
 						}
 					),
 				],
