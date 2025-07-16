@@ -1,4 +1,3 @@
-// Renamed from domain-search-control to domain-search-input
 import { SearchControl } from '@wordpress/components';
 import {
 	useState,
@@ -42,7 +41,6 @@ interface DomainSearchInputProps {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onSearch?: ( value: string ) => void;
 	onSearchChange?: ( value: string ) => void;
-	isOnboarding?: boolean;
 }
 
 const DomainSearchInput = forwardRef( function DomainSearchInput(
@@ -61,7 +59,6 @@ const DomainSearchInput = forwardRef( function DomainSearchInput(
 		onBlur,
 		onSearch,
 		onSearchChange,
-		isOnboarding,
 	}: DomainSearchInputProps,
 	ref: Ref< HTMLInputElement >
 ) {
@@ -106,9 +103,7 @@ const DomainSearchInput = forwardRef( function DomainSearchInput(
 		handleChange( '' );
 	};
 
-	const containerClassName = clsx( 'domain-search-input', className, {
-		'is-onboarding': isOnboarding,
-	} );
+	const containerClassName = clsx( 'domain-search-input', className );
 
 	const searchControlLabel = inputLabel || _x( 'Search', 'search label', 'domain-search' );
 
