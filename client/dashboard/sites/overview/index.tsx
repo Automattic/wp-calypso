@@ -57,7 +57,7 @@ function getGridLayout( {
 
 	return {
 		columns: 2,
-		rows: Math.floor( count / 2 ) + ( count % 2 ),
+		rows: Math.ceil( count / 2 ),
 	};
 }
 
