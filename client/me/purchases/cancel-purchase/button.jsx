@@ -75,7 +75,7 @@ class CancelPurchaseButton extends Component {
 		// If onCancellationStart is null, we're already in the domain options step
 		if ( this.props.onCancellationStart === null ) {
 			// We're in the domain options step, show survey directly
-			this.props.onCancellationStart();
+			this.props.onCancellationComplete();
 		} else {
 			const needsDomainOptionsStep =
 				this.props.includedDomainPurchase &&
