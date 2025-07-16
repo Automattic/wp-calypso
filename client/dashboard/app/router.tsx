@@ -17,16 +17,19 @@ import {
 	canViewPrimaryDataCenterSettings,
 	canViewStaticFile404Settings,
 	canViewCachingSettings,
+	HostingFeatures,
 } from '../sites/features';
+import { hasAtomicFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
-import { userPreferencesQuery } from './queries/me-preferences';
+import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
+import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
@@ -80,7 +83,7 @@ const sitesRoute = createRoute( {
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
-			queryClient.ensureQueryData( userPreferencesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
 	validateSearch: ( search ) => {
@@ -129,10 +132,14 @@ const siteOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return Promise.all( [
-			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ) : undefined,
-			preload ? queryClient.ensureQueryData( siteScanQuery( site.ID ) ) : undefined,
-		] );
+		if ( preload ) {
+			Promise.all( [
+				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
+				hasAtomicFeature( site, HostingFeatures.BACKUPS ) &&
+					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>

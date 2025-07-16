@@ -8,7 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
@@ -68,21 +68,20 @@ class EmailedLoginLinkSuccessfully extends Component {
 	}
 
 	onLostPasswordClick = ( event ) => {
-		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
-
-		if ( this.props.isWCCOM ) {
-			event.preventDefault();
-
-			page(
-				login( {
-					redirectTo: this.props.redirectTo,
-					locale: this.props.locale,
-					action: 'lostpassword',
-					oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-					from: get( this.props.currentQuery, 'from' ),
-				} )
-			);
-		}
+		event.preventDefault();
+		// This was tracked with `calypso_magic_login_lost_password_click`, check that event for older analytics
+		recordTracksEvent( 'calypso_login_lost_password_click', {
+			from: 'magic-login',
+		} );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action: 'lostpassword', // TODO add jetpack/lostpassword
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: get( this.props.currentQuery, 'from' ),
+			} )
+		);
 	};
 
 	render() {
@@ -107,13 +106,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
 							{
 								components: {
-									a: (
-										<a
-											href={ lostPassword( { locale: this.props.locale } ) }
-											onClick={ this.onLostPasswordClick }
-											rel="noopener noreferrer"
-										/>
-									),
+									a: <a href="/" onClick={ this.onLostPasswordClick } rel="noopener noreferrer" />,
 								},
 							}
 						) }

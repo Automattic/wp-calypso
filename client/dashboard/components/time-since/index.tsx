@@ -2,7 +2,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 
-function useRelativeTime( date: string, dateFormat = 'll', locale: string ) {
+function useRelativeTime( date: Date, dateFormat = 'll', locale: string ) {
 	const [ now, setNow ] = useState( () => new Date() );
 
 	useEffect( () => {
@@ -11,12 +11,11 @@ function useRelativeTime( date: string, dateFormat = 'll', locale: string ) {
 	}, [] );
 
 	return useMemo( () => {
-		const dateObj = new Date( date );
-		const millisAgo = now.getTime() - dateObj.getTime();
+		const millisAgo = now.getTime() - date.getTime();
 
 		// Handle invalid or future dates
-		if ( isNaN( dateObj.getTime() ) || millisAgo < 0 ) {
-			return formatDate( dateObj, dateFormat, locale );
+		if ( isNaN( date.getTime() ) || millisAgo < 0 ) {
+			return formatDate( date, dateFormat, locale );
 		}
 
 		const secondsAgo = Math.floor( millisAgo / 1000 );
@@ -63,8 +62,18 @@ function useRelativeTime( date: string, dateFormat = 'll', locale: string ) {
 		}
 
 		// For older dates, use the date format
-		return formatDate( dateObj, dateFormat, locale );
+		return formatDate( date, dateFormat, locale );
 	}, [ now, date, dateFormat, locale ] );
+}
+
+function normalizeTimestamp( timestamp: string, isUtc?: boolean ) {
+	if ( isUtc ) {
+		// The timestamp is in UTC, in the 'YYYY-MM-DD HH:MM:SS' format.
+		// Convert it to ISO 8601 format, which is required for the Date constructor
+		// to parse the timestamp correctly.
+		return timestamp.replace( ' ', 'T' ).concat( 'Z' );
+	}
+	return timestamp;
 }
 
 function formatDate( date: Date, format: string, locale: string ) {
@@ -94,22 +103,37 @@ function formatDate( date: Date, format: string, locale: string ) {
 	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
 }
 
-export function useTimeSince( date: string, format = 'll' ) {
+export function useTimeSince(
+	timestamp: string,
+	{ format, isUtc }: { format?: string; isUtc?: boolean } = { format: 'll', isUtc: false }
+) {
 	const { user } = useAuth();
 	const locale = user.locale_variant || user.language || 'en';
 
+	const date = new Date( normalizeTimestamp( timestamp, isUtc ) );
 	return useRelativeTime( date, format, locale );
 }
 
-export default function TimeSince( { date, format = 'll' }: { date: string; format?: string } ) {
+export default function TimeSince( {
+	timestamp,
+	format = 'll',
+	isUtc = false,
+}: {
+	timestamp: string;
+	format?: string;
+	isUtc?: boolean;
+} ) {
 	const { user } = useAuth();
 	const locale = user.locale_variant || user.language || 'en';
 
-	const fullDate = formatDate( new Date( date ), 'llll', locale );
+	const normalizedTimestamp = normalizeTimestamp( timestamp, isUtc );
+	const date = new Date( normalizedTimestamp );
+
+	const fullDate = formatDate( date, 'llll', locale );
 	const relativeDate = useRelativeTime( date, format, locale );
 
 	return (
-		<time dateTime={ date } title={ fullDate }>
+		<time dateTime={ normalizedTimestamp } title={ fullDate }>
 			{ relativeDate }
 		</time>
 	);
