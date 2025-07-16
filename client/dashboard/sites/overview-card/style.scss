@@ -7,7 +7,6 @@
 	}
 
 	.components-card__body {
-		border-radius: 8px !important; /* stylelint-disable-line scales/radii */
 		padding: 24px;
 	}
 }
@@ -70,11 +69,6 @@
 }
 
 .dashboard-overview-card-upsell-with-action {
-	.components-card__body {
-		border-radius: 8px !important; /* stylelint-disable-line scales/radii */
-		overflow: hidden;
-	}
-
 	.components-button svg path {
 		fill: var( --wp-admin-theme-color );
 	}
