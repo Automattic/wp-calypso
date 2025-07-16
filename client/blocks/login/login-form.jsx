@@ -1027,7 +1027,7 @@ export default connect(
 			isOneTapAuth: !! get( getCurrentQueryArguments( state ), 'oneTapAuth' ),
 			isGravatarFixedAccountLogin:
 				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
-			isGravPoweredClient: isGravPoweredOAuth2Client( state ),
+			isGravPoweredClient: isGravPoweredOAuth2Client( oauth2Client ),
 		};
 	},
 	{
