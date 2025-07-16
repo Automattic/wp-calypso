@@ -13,6 +13,7 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
+import { canUseAutomaticGoBack } from './can-use-automatic-go-back';
 import type { Flow, FlowV2, Navigate, ProvidedDependencies, StepperStep } from '../../types';
 
 interface Params {
@@ -41,11 +42,8 @@ export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigat
 	 * the next where the onboard store data has updated, but `currentStepRoute` hasn't yet because the step hasn't been rendered yet. This would cause the back button
 	 * to flash briefly while navigating.
 	 */
-	const canUserGoBack =
-		URL.canParse( document.referrer ) && new URL( document.referrer ).host === window.location.host;
-
+	const canUserGoBack = canUseAutomaticGoBack();
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
-
 	const handleRecordStepNavigation = useCallback(
 		( {
 			event,
