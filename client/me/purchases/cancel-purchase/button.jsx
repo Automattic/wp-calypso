@@ -1,7 +1,5 @@
 import {
 	isDomainRegistration,
-	getMonthlyPlanByYearly,
-	getPlan,
 	isJetpackPlan,
 	isJetpackProduct,
 	isAkismetProduct,
@@ -21,15 +19,10 @@ import {
 	isOneTimePurchase,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import {
-	cancelAndRefundPurchase,
-	extendPurchaseWithFreeMonth,
-} from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { willShowDomainOptionsRadioButtons } from './domain-options';
@@ -52,6 +45,9 @@ class CancelPurchaseButton extends Component {
 		isLoading: PropTypes.bool,
 		onDialogClose: PropTypes.func,
 		onSetLoading: PropTypes.func,
+		// Methods from parent component
+		downgradeClick: PropTypes.func,
+		freeMonthOfferClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -103,59 +99,6 @@ class CancelPurchaseButton extends Component {
 
 		// Always redirect to purchases page when dialog is closed
 		page.redirect( this.props.purchaseListUrl );
-	};
-
-	downgradeClick = ( upsell ) => {
-		const { purchase } = this.props;
-		let downgradePlan = getDowngradePlanFromPurchase( purchase );
-		if ( 'downgrade-monthly' === upsell ) {
-			const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
-			downgradePlan = getPlan( monthlyProductSlug );
-		}
-
-		this.setDisabled( true );
-
-		cancelAndRefundPurchase(
-			purchase.id,
-			{
-				product_id: purchase.productId,
-				type: 'downgrade',
-				to_product_id: downgradePlan.getProductId(),
-			},
-			( error, response ) => {
-				this.setDisabled( false );
-
-				if ( error ) {
-					this.props.errorNotice( error.message );
-					return;
-				}
-
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-				this.props.successNotice( response.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
-			}
-		);
-	};
-
-	freeMonthOfferClick = async () => {
-		const { purchase } = this.props;
-
-		this.setDisabled( true );
-
-		try {
-			const res = await extendPurchaseWithFreeMonth( purchase.id );
-			if ( res.status === 'completed' ) {
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-				this.props.successNotice( res.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
-			}
-		} catch ( err ) {
-			this.props.errorNotice( err.message );
-		} finally {
-			this.setDisabled( false );
-		}
 	};
 
 	shouldHandleMarketplaceSubscriptions() {
@@ -227,8 +170,8 @@ class CancelPurchaseButton extends Component {
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.handleSurveyComplete }
-						downgradeClick={ this.downgradeClick }
-						freeMonthOfferClick={ this.freeMonthOfferClick }
+						downgradeClick={ this.props.downgradeClick }
+						freeMonthOfferClick={ this.props.freeMonthOfferClick }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }

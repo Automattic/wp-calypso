@@ -7,6 +7,7 @@ import {
 	isJetpackProduct,
 	isAkismetProduct,
 	getPlan,
+	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
@@ -34,7 +35,12 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { cancelPurchaseAsync, cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
+import {
+	cancelPurchaseAsync,
+	cancelAndRefundPurchaseAsync,
+	cancelAndRefundPurchase,
+	extendPurchaseWithFreeMonth,
+} from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -43,7 +49,7 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -51,6 +57,7 @@ import {
 	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
+	getDowngradePlanFromPurchase,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -316,6 +323,59 @@ class CancelPurchase extends Component {
 		}
 	};
 
+	downgradeClick = ( upsell ) => {
+		const { purchase } = this.props;
+		let downgradePlan = getDowngradePlanFromPurchase( purchase );
+		if ( 'downgrade-monthly' === upsell ) {
+			const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
+			downgradePlan = getPlan( monthlyProductSlug );
+		}
+
+		this.setState( { isLoading: true } );
+
+		cancelAndRefundPurchase(
+			purchase.id,
+			{
+				product_id: purchase.productId,
+				type: 'downgrade',
+				to_product_id: downgradePlan.getProductId(),
+			},
+			( error, response ) => {
+				this.setState( { isLoading: false } );
+
+				if ( error ) {
+					this.props.errorNotice( error.message );
+					return;
+				}
+
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.clearPurchases();
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
+			}
+		);
+	};
+
+	freeMonthOfferClick = async () => {
+		const { purchase } = this.props;
+
+		this.setState( { isLoading: true } );
+
+		try {
+			const res = await extendPurchaseWithFreeMonth( purchase.id );
+			if ( res.status === 'completed' ) {
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.clearPurchases();
+				this.props.successNotice( res.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
+			}
+		} catch ( err ) {
+			this.props.errorNotice( err.message );
+		} finally {
+			this.setState( { isLoading: false } );
+		}
+	};
+
 	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
 		this.setState( { atomicRevertConfirmed: isConfirmed } );
 	};
@@ -498,6 +558,8 @@ class CancelPurchase extends Component {
 				isLoading={ this.state.isLoading }
 				onDialogClose={ this.onDialogClose }
 				onSetLoading={ this.onSetLoading }
+				downgradeClick={ this.downgradeClick }
+				freeMonthOfferClick={ this.freeMonthOfferClick }
 			/>
 		);
 	};
@@ -685,6 +747,8 @@ class CancelPurchase extends Component {
 						isLoading={ this.state.isLoading }
 						onDialogClose={ this.onDialogClose }
 						onSetLoading={ this.onSetLoading }
+						downgradeClick={ this.downgradeClick }
+						freeMonthOfferClick={ this.freeMonthOfferClick }
 					/>
 					{ this.renderKeepSubscriptionButton() }
 				</div>
@@ -742,6 +806,8 @@ class CancelPurchase extends Component {
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						cancellationInProgress={ this.state.isLoading }
+						downgradeClick={ this.downgradeClick }
+						freeMonthOfferClick={ this.freeMonthOfferClick }
 					/>
 				) }
 				<Card className="cancel-purchase__wrapper-card">
@@ -816,5 +882,5 @@ export default connect(
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 		};
 	},
-	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice }
+	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice, errorNotice }
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
