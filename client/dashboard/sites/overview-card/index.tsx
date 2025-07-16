@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -9,6 +10,7 @@ import {
 	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { chevronRight } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import type { ReactElement, ReactNode } from 'react';
@@ -18,6 +20,7 @@ export interface OverviewCardProps {
 	title: string;
 	customHeading?: ReactNode;
 	description?: string;
+	link?: string;
 	externalLink?: string;
 	heading?: ReactNode;
 	icon?: ReactElement;
@@ -34,6 +37,7 @@ export default function OverviewCard( {
 	externalLink,
 	heading,
 	icon,
+	link,
 	metaText,
 	title,
 	trackId,
@@ -77,9 +81,12 @@ export default function OverviewCard( {
 								{ title }
 							</Text>
 						</HStack>
+						{ link && (
+							<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
+						) }
 						{ externalLink && (
 							<span
-								className="components-external-link__icon"
+								className="dashboard-overview-card__link-icon components-external-link__icon"
 								aria-label={
 									/* translators: accessibility text */
 									__( '(opens in a new tab)' )
@@ -122,6 +129,14 @@ export default function OverviewCard( {
 			</CardBody>
 		</Card>
 	);
+
+	if ( link ) {
+		return (
+			<Link to={ link } className="dashboard-overview-card__link">
+				{ content }
+			</Link>
+		);
+	}
 
 	if ( externalLink ) {
 		return (

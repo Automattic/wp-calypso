@@ -17,6 +17,7 @@ import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
 import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
+import AgencySiteShareCard from './agency-site-share-card';
 import BackupCard from './backup-card';
 import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
@@ -117,12 +118,16 @@ function SiteOverview( {
 						<BackupCard site={ site } />
 					</VStack>
 					<VStack className="site-overview-cards" spacing={ spacing }>
-						<OverviewCard
-							title={ __( 'Performance' ) }
-							icon={ chartBar }
-							heading="TBA"
-							description="TBA"
-						/>
+						{ site.is_a4a_dev_site ? (
+							<AgencySiteShareCard site={ site } />
+						) : (
+							<OverviewCard
+								title={ __( 'Performance' ) }
+								icon={ chartBar }
+								heading="TBA"
+								description="TBA"
+							/>
+						) }
 						<ScanCard site={ site } />
 					</VStack>
 					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />

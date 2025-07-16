@@ -35,6 +35,7 @@ import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
+import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
@@ -139,6 +140,8 @@ const siteOverviewRoute = createRoute( {
 					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 				hasHostingFeature( site, DotcomFeatures.BACKUPS ) &&
 					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
+				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
+					queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] );
 		}
 	},
