@@ -91,8 +91,8 @@
 }
 
 /* Akismet */
-.is-white-login.is-akismet .login,
-.is-white-login.is-akismet .magic-login,
+.is-akismet .login,
+.is-akismet .magic-login,
 .is-akismet .signup-form,
 .is-akismet .auth-form__social {
 	.components-button:not(.is-destructive) {
@@ -115,7 +115,7 @@
 
 /* Woo */
 .woo.is-woo-passwordless {
-	.components-button:not(.is-destructive) {
+	.components-button:not(.is-link):not(.is-destructive) {
 		--wp-components-color-accent: var(--woo-purple-40);
 		--wp-components-color-accent-darker-10: var(--woo-purple-60);
 		--wp-components-color-accent-darker-20: var(--woo-purple-60);

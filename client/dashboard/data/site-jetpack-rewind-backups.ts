@@ -5,7 +5,7 @@ export interface Backup {
 	status: 'started' | 'finished' | 'error';
 }
 
-export async function fetchSiteBackups( siteId: number ) {
+export async function fetchSiteBackups( siteId: number ): Promise< Backup[] > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/rewind/backups`,
 		apiNamespace: 'wpcom/v2',

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { isAutomatticianQuery } from '../app/queries/me-a8c';
-import { userPreferencesQuery, userPreferencesMutation } from '../app/queries/me-preferences';
+import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-preferences';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -24,7 +24,7 @@ import {
 	recordViewChanges,
 	DEFAULT_PER_PAGE_SIZES,
 } from './views';
-import type { ViewPreferences, ViewSearchParams } from './views';
+import type { ViewSearchParams } from './views';
 import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -58,9 +58,8 @@ export default function Sites() {
 
 	const { user } = useAuth();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
-	const viewPreferences = useSuspenseQuery( userPreferencesQuery( 'sites-view', {} ) )
-		.data as ViewPreferences;
-	const { mutate: updateViewPreferences } = useMutation( userPreferencesMutation( 'sites-view' ) );
+	const { data: viewPreferences } = useSuspenseQuery( userPreferenceQuery( 'sites-view' ) );
+	const { mutate: updateViewPreferences } = useMutation( userPreferenceMutation( 'sites-view' ) );
 
 	const { defaultView, view } = getView( {
 		user,
@@ -101,7 +100,7 @@ export default function Sites() {
 			},
 		} );
 
-		updateViewPreferences( updatedViewPreferences as Record< string, unknown > );
+		updateViewPreferences( updatedViewPreferences );
 	};
 
 	return (

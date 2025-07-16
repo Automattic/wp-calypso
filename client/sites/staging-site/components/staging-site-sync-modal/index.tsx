@@ -20,7 +20,10 @@ import SiteEnvironmentBadge, {
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
+import {
+	usePullFromStagingMutation,
+	usePushToStagingMutation,
+} from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
@@ -252,6 +255,21 @@ export default function SyncModal( {
 		},
 	} );
 
+	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
+			// setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			// setSyncError( error.code );
+		},
+	} );
+
 	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
 		sortOrder: 'desc',
 		successOnly: true,
@@ -259,20 +277,22 @@ export default function SyncModal( {
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const handleConfirm = () => {
+		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		if ( visibleNodesCheckState === 'checked' ) {
+			// Sync everything
+			include_paths = '';
+		}
+
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			if ( visibleNodesCheckState === 'checked' ) {
-				// Sync everything
-				pullFromStaging( { types: 'all', include_paths: '' } );
-			} else {
-				// Sync only selected files
-				const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
-				pullFromStaging( { types: 'paths', include_paths } );
-			}
-			onClose();
+			pullFromStaging( { types: 'paths', include_paths } );
+		} else {
+			pushToStaging( { types: 'paths', include_paths } );
 		}
+
+		onClose();
 	};
 
 	const updateNodeCheckState = useCallback(
@@ -324,45 +344,43 @@ export default function SyncModal( {
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 
-				{ querySiteId === stagingSiteId && (
-					<div className="staging-site-card">
-						<HStack spacing={ 2 } justify="space-between" alignment="center">
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Files and folders' ) }
-								checked={ visibleNodesCheckState === 'checked' }
-								indeterminate={ visibleNodesCheckState === 'mixed' }
-								onChange={ onCheckboxChange }
-							/>
-							<SelectControl
-								value={ isFileBrowserVisible ? 'true' : 'false' }
-								variant="minimal"
-								options={ [
-									{
-										label: __( 'All files and folders' ),
-										value: 'false',
-									},
-									{
-										label: __( 'Specific files and folders' ),
-										value: 'true',
-									},
-								] }
-								onChange={ handleExpanderChange }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								aria-label={ __( 'Select files and folders to sync' ) }
-							/>
-						</HStack>
+				<div className="staging-site-card">
+					<HStack spacing={ 2 } justify="space-between" alignment="center">
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							label={ __( 'Files and folders' ) }
+							checked={ visibleNodesCheckState === 'checked' }
+							indeterminate={ visibleNodesCheckState === 'mixed' }
+							onChange={ onCheckboxChange }
+						/>
+						<SelectControl
+							value={ isFileBrowserVisible ? 'true' : 'false' }
+							variant="minimal"
+							options={ [
+								{
+									label: __( 'All files and folders' ),
+									value: 'false',
+								},
+								{
+									label: __( 'Specific files and folders' ),
+									value: 'true',
+								},
+							] }
+							onChange={ handleExpanderChange }
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							aria-label={ __( 'Select files and folders to sync' ) }
+						/>
+					</HStack>
 
-						{ isFileBrowserVisible && (
-							<FileBrowser
-								rewindId={ rewindId }
-								siteId={ querySiteId }
-								fileBrowserConfig={ fileBrowserConfig }
-							/>
-						) }
-					</div>
-				) }
+					{ isFileBrowserVisible && (
+						<FileBrowser
+							rewindId={ rewindId }
+							siteId={ querySiteId }
+							fileBrowserConfig={ fileBrowserConfig }
+						/>
+					) }
+				</div>
 				<Text>
 					{ createInterpolateElement( syncConfig.learnMore, {
 						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,

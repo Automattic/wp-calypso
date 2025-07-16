@@ -3,7 +3,12 @@
 }
 
 .domain-suggestion-cta--continue {
-	--wp-components-color-accent: var( --domain-search-secondary-action-color );
-	--wp-components-color-accent-darker-10: var( --domain-search-secondary-action-color-darker-10 );
-	--wp-components-color-accent-darker-20: var( --domain-search-secondary-action-color-darker-10 );
+	// We need to use !important here because WPCOM adds overrides to the button with a very high specificity.
+	--wp-components-color-accent: var( --domain-search-secondary-action-color ) !important;
+	--wp-components-color-accent-darker-10: var(
+		--domain-search-secondary-action-color-darker-10
+	) !important;
+	--wp-components-color-accent-darker-20: var(
+		--domain-search-secondary-action-color-darker-10
+	) !important;
 }

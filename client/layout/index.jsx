@@ -18,7 +18,6 @@ import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -209,7 +208,6 @@ class Layout extends Component {
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooJPC,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooJPC,
@@ -330,6 +328,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'layout/app-banner' ) && (
+					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
@@ -390,9 +391,6 @@ export default withCurrentRoute(
 			isA8CForAgencies() ||
 			isInStepContainerV2FlowContext( currentRoute, currentQuery );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
-		const isJetpackWooDnaFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			wooDnaConfig( currentQuery ).isWooDnaFlow();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const isEligibleForJITM = [ 'home', 'plans', 'themes', 'plugins', 'comments' ].includes(
@@ -426,7 +424,6 @@ export default withCurrentRoute(
 			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
-			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isWooJPC,
 			isFromAutomatticForAgenciesPlugin,

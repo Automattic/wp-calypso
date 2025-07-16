@@ -41,22 +41,22 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 	}
 
 	if ( agencyBlog ) {
-		return <Field>{ __( 'Managed by Automattic for Agencies' ) }</Field>;
+		return <Text variant="muted">{ __( 'Managed by Automattic for Agencies' ) }</Text>;
 	}
 
 	const providerName = getSiteProviderName( site );
 	if ( ! providerName && isSelfHostedJetpackConnected( site ) ) {
-		return <Field>{ __( 'Connected via Jetpack' ) }</Field>;
+		return <Text variant="muted">{ __( 'Connected via Jetpack' ) }</Text>;
 	}
 
 	return (
-		<Field>
+		<Text variant="muted">
 			{ sprintf(
 				/* translators: %s: the hosting provider, e.g.: WordPress.com */
 				__( 'Hosted on %s' ),
 				providerName ?? DEFAULT_PROVIDER_NAME
 			) }
-		</Field>
+		</Text>
 	);
 };
 

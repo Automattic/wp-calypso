@@ -11,7 +11,6 @@ import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversatio
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -20,17 +19,12 @@ import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
-	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isA4AOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
-	isPartnerPortalOAuth2Client,
-	isStudioAppOAuth2Client,
-	isVIPOAuth2Client,
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -46,7 +40,6 @@ import {
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
@@ -62,9 +55,7 @@ import './style.scss';
 const LayoutLoggedOut = ( {
 	isAkismet,
 	isJetpackLogin,
-	isWhiteLogin,
 	isPopup,
-	isJetpackWooDnaFlow,
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
@@ -138,9 +129,7 @@ const LayoutLoggedOut = ( {
 		'is-akismet': isAkismet,
 		'is-jetpack-login': isJetpackLogin,
 		'is-jetpack-site': isJetpackCheckout,
-		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
-		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-gravatar': isGravatar,
 		'is-mobile': isMobile,
 		'is-wp-job-manager': isWPJobManager,
@@ -170,7 +159,7 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	if ( ( isBlazePro || isWoo ) && isWhiteLogin ) {
+	if ( isBlazePro || isWoo ) {
 		/**
 		 * This effectively removes the masterbar completely from Login pages (only).
 		 * However, in some cases, we want the styles imported from the masterbar to be applied.
@@ -343,40 +332,16 @@ export default withCurrentRoute(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			);
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
-			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-			const isBlazePro = getIsBlazePro( state );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 			const isMobile = isAndroidOAuth2Client( oauth2Client ) || isIosOAuth2Client( oauth2Client );
-			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-			const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
-			const isWoo = getIsWoo( state );
+			const isLogin = currentRoute.startsWith( '/log-in' );
 
-			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
-			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
-			const isA4AClient = isA4AOAuth2Client( oauth2Client );
-			const isVIPClient = isVIPOAuth2Client( oauth2Client );
-			const isWhiteLogin =
-				( currentRoute.startsWith( '/log-in' ) &&
-					( ( Boolean( currentQuery?.client_id ) === false &&
-						Boolean( currentQuery?.oauth2_client_id ) === false ) ||
-						isStudioClient ||
-						isCrowdsignalClient ||
-						isBlazePro ||
-						isA4AClient ||
-						isWoo ||
-						isJetpackCloudClient ||
-						isJetpackLogin ||
-						isVIPClient ||
-						isMobile ) ) ||
-				isPartnerPortal;
-
-			const noMasterbarForRoute =
-				( isWhiteLogin && ! isBlazePro ) || isJetpackWooDnaFlow || isInvitationURL;
+			const noMasterbarForRoute = isLogin || isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
@@ -401,9 +366,7 @@ export default withCurrentRoute(
 			return {
 				isAkismet,
 				isJetpackLogin,
-				isWhiteLogin,
 				isPopup,
-				isJetpackWooDnaFlow,
 				isGravatar,
 				isMobile,
 				isWPJobManager,

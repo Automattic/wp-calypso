@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import type { DomainSearchCart, DomainSearchContextType } from './types';
 
@@ -24,11 +25,13 @@ export const DomainSearch = ( {
 	initialQuery,
 	onContinue,
 	cart,
+	className,
 }: {
 	children: React.ReactNode;
 	initialQuery?: string;
 	onContinue: () => void;
 	cart: DomainSearchCart;
+	className?: string;
 } ) => {
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
@@ -68,7 +71,7 @@ export const DomainSearch = ( {
 
 	return (
 		<DomainSearchContext.Provider value={ contextValue }>
-			<div className="domain-search">{ children }</div>
+			<div className={ clsx( 'domain-search', className ) }>{ children }</div>
 		</DomainSearchContext.Provider>
 	);
 };

@@ -7,6 +7,22 @@
 	}
 }
 
+.site-overview-cards--secondary {
+	flex-wrap: wrap-reverse;
+
+	> * {
+		flex-basis: 100%;
+	}
+
+	&.is-large {
+		flex-wrap: nowrap;
+
+		> * {
+			flex-basis: 0;
+		}
+	}
+}
+
 .site-overview-card__badge {
 	// This is hacky way of hiding the badge icon for now.
 	// We need to handle this in the core Badge component.

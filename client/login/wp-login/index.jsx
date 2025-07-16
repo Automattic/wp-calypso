@@ -53,7 +53,6 @@ export class Login extends Component {
 		clientId: PropTypes.string,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isWhiteLogin: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -67,7 +66,7 @@ export class Login extends Component {
 		isGravPoweredClient: PropTypes.bool,
 	};
 
-	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
+	static defaultProps = { isJetpack: false, isLoginView: true };
 	static contextType = LoginContext;
 
 	state = {
@@ -96,7 +95,6 @@ export class Login extends Component {
 
 		// List all props that affect the heading text
 		const headingProps = [
-			'isWhiteLogin',
 			'twoFactorAuthType',
 			'isManualRenewalImmediateLoginAttempt',
 			'socialConnect',
@@ -216,7 +214,6 @@ export class Login extends Component {
 			clientId,
 			domain,
 			isJetpack,
-			isWhiteLogin,
 			isGravPoweredClient,
 			oauth2Client,
 			socialConnect,
@@ -247,7 +244,6 @@ export class Login extends Component {
 				socialConnect={ socialConnect }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
-				isWhiteLogin={ isWhiteLogin }
 				isGravPoweredClient={ isGravPoweredClient }
 				isGravPoweredLoginPage={ isGravPoweredLoginPage }
 				oauth2Client={ oauth2Client }
@@ -276,7 +272,6 @@ export class Login extends Component {
 
 	updateHeadingText() {
 		const {
-			isWhiteLogin,
 			twoFactorAuthType,
 			isManualRenewalImmediateLoginAttempt,
 			socialConnect,
@@ -295,7 +290,7 @@ export class Login extends Component {
 		} = this.props;
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
-		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
+		const isSocialFirst = ! isGravPoweredClient;
 
 		const headingText = getHeaderText( {
 			isSocialFirst,
@@ -330,20 +325,13 @@ export class Login extends Component {
 	}
 
 	render() {
-		const {
-			locale,
-			translate,
-			isGenericOauth,
-			isGravPoweredClient,
-			isWhiteLogin,
-			isJetpack,
-			isFromAkismet,
-		} = this.props;
+		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, isFromAkismet } =
+			this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
-		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
+		const isSocialFirst = ! isGravPoweredClient;
 
 		const mainContent = (
 			<Main
@@ -353,7 +341,7 @@ export class Login extends Component {
 					'is-jetpack': isJetpack,
 				} ) }
 			>
-				{ ! isWhiteLogin && this.renderI18nSuggestions() }
+				{ isGravPoweredClient && this.renderI18nSuggestions() }
 
 				<DocumentHead
 					title={ translate( 'Log In' ) }
@@ -370,13 +358,13 @@ export class Login extends Component {
 
 				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
 
-				{ isWhiteLogin && this.renderI18nSuggestions() }
+				{ ! isGravPoweredClient && this.renderI18nSuggestions() }
 			</Main>
 		);
 
 		return (
 			<>
-				{ isWhiteLogin && (
+				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
@@ -385,7 +373,7 @@ export class Login extends Component {
 						{ mainContent }
 					</OneLoginLayout>
 				) }
-				{ ! isWhiteLogin && mainContent }
+				{ isGravPoweredClient && mainContent }
 			</>
 		);
 	}

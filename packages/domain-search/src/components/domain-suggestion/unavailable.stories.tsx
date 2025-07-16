@@ -1,9 +1,13 @@
+import { createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { buildDomainSearchCart } from '../../test-helpers/factories';
 import { DomainSearch } from '../domain-search';
 import { DomainSuggestion } from '../domain-suggestion';
 import type { Meta } from '@storybook/react';
 
 export const Default = () => {
+	const { __ } = useI18n();
+
 	return (
 		<div
 			style={ {
@@ -23,7 +27,11 @@ export const Default = () => {
 				<DomainSuggestion.Unavailable
 					domain="example-unavailable"
 					tld="com"
-					unavailableReason="already-registered"
+					getReasonText={ ( { domain } ) =>
+						createInterpolateElement( __( '<domain /> is already registered.' ), {
+							domain,
+						} )
+					}
 					onTransferClick={ () => alert( 'Your wish is an order!' ) }
 				/>
 			</DomainSearch>
