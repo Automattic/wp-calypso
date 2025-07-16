@@ -66,7 +66,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 					productionSiteId={ productionSiteId }
 					stagingSiteId={ stagingSiteId }
 					isSyncInProgress={ isSyncInProgress }
-					onSyncStart={ () => resetSyncStatus() }
+					onSyncStart={ resetSyncStatus }
 				/>
 			) }
 			<Button
