@@ -2,7 +2,7 @@ import { ProgressBar } from '@wordpress/components';
 import { ReactNode, useEffect, useState } from 'react';
 import { Heading } from '../../components/Heading/Heading';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
-import { TopBar } from '../../components/TopBar/TopBar';
+import { TopBar, type TopBarProps } from '../../components/TopBar/TopBar';
 
 import './style.scss';
 
@@ -10,9 +10,10 @@ interface LoadingProps {
 	title?: ReactNode;
 	progress?: number;
 	delay?: number;
+	compactLogo?: TopBarProps[ 'compactLogo' ];
 }
 
-export const Loading = ( { title, progress, delay = 0 }: LoadingProps ) => {
+export const Loading = ( { title, progress, delay = 0, compactLogo }: LoadingProps ) => {
 	const [ shouldDisplayTitle, setShouldDisplayTitle ] = useState( delay === 0 );
 
 	const [ prevDelay, setPrevDelay ] = useState( delay );
@@ -35,7 +36,7 @@ export const Loading = ( { title, progress, delay = 0 }: LoadingProps ) => {
 
 	return (
 		<StepContainerV2>
-			<TopBar />
+			<TopBar compactLogo={ compactLogo } />
 			<div className="step-container-v2--loading">
 				{ title && shouldDisplayTitle && (
 					<div className="step-container-v2--loading__heading-wrapper">

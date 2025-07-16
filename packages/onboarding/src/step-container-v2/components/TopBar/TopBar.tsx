@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 import './style.scss';
 
-interface TopBarProps {
+export interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
 	logo?: ReactNode;

@@ -568,8 +568,8 @@ const contextLinks = {
 		post_id: 41298,
 	},
 	'domain-registrations-and-privacy': {
-		link: 'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection',
-		post_id: 143935,
+		link: 'https://wordpress.com/support/domains/private-domain-registration/#what-is-privacy-protection',
+		post_id: 365563,
 	},
 	'https-ssl': {
 		link: 'https://wordpress.com/support/domains/https-ssl/',

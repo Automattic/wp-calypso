@@ -53,7 +53,6 @@ class Document extends Component {
 			inlineScriptNonce,
 			isSupportSession,
 			isSSP,
-			isWooDna,
 			lang,
 			languageRevisions,
 			manifests,
@@ -98,8 +97,6 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
 
@@ -179,7 +176,6 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
 								<div className="layout__content">

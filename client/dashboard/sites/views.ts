@@ -1,13 +1,7 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
 import type { AnalyticsClient } from '../app/analytics';
-import type { User } from '../data/types';
-import type {
-	Operator,
-	SortDirection,
-	ViewTable,
-	ViewGrid,
-	SupportedLayouts,
-} from '@wordpress/dataviews';
+import type { User, SitesView, SitesViewPreferences } from '../data/types';
+import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {
@@ -33,14 +27,7 @@ const DEFAULT_LAYOUT_FIELDS: SupportedLayouts = {
 	},
 };
 
-export type SitesView = ViewTable | ViewGrid;
-
-// The view preferences are a subset of the view object.
-// It includes the merged layout object of all view types ever explicitly set by the user.
-export type ViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' > > & {
-	type?: ViewTable[ 'type' ] | ViewGrid[ 'type' ];
-	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] >;
-};
+export type { SitesView, SitesViewPreferences };
 
 // All possible keys that can be stored as view preferences.
 const VIEW_PREFERENCES_KEYS = [
@@ -110,7 +97,7 @@ export function getView( {
 	user: User;
 	isAutomattician: boolean;
 	isRestoringAccount: boolean;
-	viewPreferences?: ViewPreferences;
+	viewPreferences?: SitesViewPreferences;
 	viewSearchParams: ViewSearchParams;
 } ): {
 	defaultView: SitesView;
@@ -150,10 +137,10 @@ export function mergeViews( {
 }: {
 	defaultView: SitesView;
 	view: SitesView;
-	viewPreferences?: ViewPreferences;
+	viewPreferences?: SitesViewPreferences;
 	nextView: SitesView;
 } ): {
-	updatedViewPreferences: ViewPreferences;
+	updatedViewPreferences: SitesViewPreferences;
 	updatedViewSearchParams: ViewSearchParams;
 } {
 	const nextType = nextView.type;
@@ -194,7 +181,7 @@ export function mergeViews( {
 			...viewPreferences?.layout,
 			...updatedView.layout,
 		},
-	} as ViewPreferences;
+	} as SitesViewPreferences;
 
 	const updatedViewSearchParams = {
 		// Show only params which have custom values.

@@ -1,5 +1,12 @@
 import wpcom from 'calypso/lib/wp';
 
+export async function createStagingSite( siteId: number ) {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/staging-site`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
 export async function deleteStagingSite( stagingSiteId: number, productionSiteId: number ) {
 	return wpcom.req.post( {
 		method: 'DELETE',

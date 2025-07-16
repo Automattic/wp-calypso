@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { DomainSuggestion } from '..';
 
 describe( 'DomainSuggestion.Unavailable', () => {
@@ -8,7 +10,11 @@ describe( 'DomainSuggestion.Unavailable', () => {
 			<DomainSuggestion.Unavailable
 				domain="example"
 				tld="com"
-				unavailableReason="already-registered"
+				getReasonText={ ( { domain } ) =>
+					createInterpolateElement( __( '<domain /> is already registered.' ), {
+						domain,
+					} )
+				}
 			/>
 		);
 
@@ -23,7 +29,11 @@ describe( 'DomainSuggestion.Unavailable', () => {
 			<DomainSuggestion.Unavailable
 				domain="example"
 				tld="com"
-				unavailableReason="already-registered"
+				getReasonText={ ( { domain } ) =>
+					createInterpolateElement( __( '<domain /> is already registered.' ), {
+						domain,
+					} )
+				}
 				onTransferClick={ onTransferClick }
 			/>
 		);

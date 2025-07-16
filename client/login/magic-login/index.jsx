@@ -1300,8 +1300,6 @@ class MagicLogin extends Component {
 		// "query?.redirect_to" is used to determine if Studio app users are creating a new account (vs. logging in)
 		const isStudio = isStudioAppOAuth2Client( oauth2Client ) && query?.redirect_to;
 
-		const isWhiteLogin = ! this.props.isWCCOM && ! this.props.isFromAutomatticForAgenciesPlugin;
-
 		// If this is part of the Jetpack login flow, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
@@ -1318,11 +1316,7 @@ class MagicLogin extends Component {
 		};
 
 		const mainContent = (
-			<Main
-				className={ clsx( 'magic-login magic-login__request-link', {
-					'is-white-login': isWhiteLogin,
-				} ) }
-			>
+			<Main className="magic-login magic-login__request-link">
 				<GlobalNotices id="notices" />
 
 				{ isWooJPC ? (

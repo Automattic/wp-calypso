@@ -45,7 +45,7 @@
 	}
 
 	/* Jetpack login */
-	.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) &:not(.is-error, .is-valid) {
+	.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow)  &:not(.is-error, .is-valid) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-50);
 	}
 

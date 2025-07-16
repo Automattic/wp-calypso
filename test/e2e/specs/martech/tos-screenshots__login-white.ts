@@ -6,7 +6,7 @@ import { Page, Browser } from 'playwright';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 
 const selectors = {
-	isWhiteLogin: '.is-section-login.is-white-login',
+	isSectionLogin: '.is-section-login',
 };
 declare const browser: Browser;
 
@@ -43,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await loginPage.visit( { path: locale } );
-				page.waitForSelector( selectors.isWhiteLogin );
+				page.waitForSelector( selectors.isSectionLogin );
 				await page.screenshot( {
 					path: `tos_white_login_desktop_${ locale }.png`,
 					fullPage: true,

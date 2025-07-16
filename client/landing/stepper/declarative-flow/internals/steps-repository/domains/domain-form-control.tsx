@@ -8,7 +8,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import DomainCartV2 from 'calypso/components/domain-search-v2/domain-cart';
 import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -216,7 +215,6 @@ export function DomainFormControl( {
 
 		return (
 			<CalypsoShoppingCartProvider>
-				{ isDomainSearchV2Enabled && <DomainCartV2 onContinue={ onContinue } /> }
 				<RegisterDomainStepComponent
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
@@ -252,6 +250,8 @@ export function DomainFormControl( {
 						isDomainOnly: false,
 						flowName: flow || undefined,
 					} ) }
+					// RegisterDomainStepComponentV2 props below
+					onContinue={ onContinue }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

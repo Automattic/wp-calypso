@@ -17,6 +17,7 @@
 	// Layout
 	--dashboard__background-color: #fcfcfc;
 	--dashboard__text-color: #{$gray-900};
+	--dashboard__text-max-width: 660px;
 
 	// Header bar
 	--dashboard-header__background-color: #021A23;
@@ -33,4 +34,7 @@
 
 	// Headings
 	--dashboard-h1__font-weight: 600;
+
+	// Overview
+	--dashboard-overview__divider-color: #{$gray-100};
 }

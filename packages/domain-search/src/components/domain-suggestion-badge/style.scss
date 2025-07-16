@@ -1,5 +1,10 @@
 .domain-suggestion-badge {
-	padding: 4px 8px;
+	padding-inline: 8px;
+	height: 24px;
+	box-sizing: border-box;
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
 	border-radius: 2px;
 	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 );
 }
