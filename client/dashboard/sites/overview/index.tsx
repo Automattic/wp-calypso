@@ -78,22 +78,24 @@ function SiteOverview( {
 	return (
 		<PageLayout
 			header={
-				<PageHeader
-					title={ getSiteDisplayName( site ) }
-					description={ <SiteOverviewFields site={ site } /> }
-					actions={
-						site.options?.admin_url && (
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								href={ site.options.admin_url }
-								icon={ wordpress }
-							>
-								{ __( 'WP Admin' ) }
-							</Button>
-						)
-					}
-				/>
+				<VStack>
+					<PageHeader
+						title={ getSiteDisplayName( site ) }
+						actions={
+							site.options?.admin_url && (
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									href={ site.options.admin_url }
+									icon={ wordpress }
+								>
+									{ __( 'WP Admin' ) }
+								</Button>
+							)
+						}
+					/>
+					<SiteOverviewFields site={ site } />
+				</VStack>
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
