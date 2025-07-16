@@ -182,7 +182,7 @@ export function LastBackup( { site }: { site: Site } ) {
 	const isEligible = hasAtomicFeature( site, HostingFeatures.BACKUPS );
 
 	const {
-		data: lastBackupTime,
+		data: lastBackup,
 		isLoading,
 		isError,
 	} = useQuery( {
@@ -199,11 +199,11 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <LoadingIndicator label="Unknown" />;
 		}
 
-		if ( ! lastBackupTime || isError ) {
+		if ( ! lastBackup || isError ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince timestamp={ lastBackupTime.last_updated } isUtc />;
+		return <TimeSince timestamp={ lastBackup.last_updated } isUtc />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
