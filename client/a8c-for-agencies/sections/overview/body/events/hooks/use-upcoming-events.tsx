@@ -13,6 +13,8 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+const WORDCAMP_US_2025_COUPON_CODE = 'A4AWCUS2025';
+
 export const useUpcomingEvents = () => {
 	const translate = useTranslate();
 	const localizedMoment = useLocalizedMoment();
@@ -119,11 +121,15 @@ export const useUpcomingEvents = () => {
 						}
 					),
 					translate(
-						"As a leading agency, we'd love for you to join us and we're excited to offer you an exclusive {{b}}25% discount on registration{{/b}} for your team. Use coupon {{b}}A4AWCUS2025{{/b}} during checkout.",
+						"As a leading agency, we'd love for you to join us and we're excited to offer you an exclusive {{b}}25% discount on registration{{/b}} for your team. Use coupon {{b}}%(couponCode)s{{/b}} during checkout.",
 						{
+							args: {
+								couponCode: WORDCAMP_US_2025_COUPON_CODE,
+							},
 							components: {
 								b: <b />,
 							},
+							comment: '%(couponCode)s is a placeholder for the coupon code',
 						}
 					),
 				],
@@ -138,7 +144,7 @@ export const useUpcomingEvents = () => {
 				},
 				extraContent: (
 					<CopyToClipboardButton
-						textToCopy="A4AWCUS2025"
+						textToCopy={ WORDCAMP_US_2025_COUPON_CODE }
 						label={ translate( 'Copy coupon code' ) }
 						iconPosition="right"
 						onClick={ handleCopyWCUS2025DiscountCodeClick }
