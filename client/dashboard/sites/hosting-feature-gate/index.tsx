@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { hasAtomicFeature, hasPlanFeature } from '../../utils/site-features';
+import { ReactNode } from 'react';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureActivation from './activation';
 import HostingFeatureUpsell from './upsell';
 import type { Site } from '../../data/types';
@@ -22,7 +22,7 @@ export default function HostingFeatureGate( {
 	renderUpsellComponent,
 	renderActivationComponent,
 }: HostingFeatureGateProps ) {
-	if ( hasAtomicFeature( site, feature ) ) {
+	if ( hasHostingFeature( site, feature ) ) {
 		return children;
 	}
 
