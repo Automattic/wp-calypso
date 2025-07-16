@@ -336,7 +336,7 @@ class MagicLogin extends Component {
 						{ linkBack }
 					</a>
 				</div>
-				{ ! isA4A && (
+				{ ! oauth2Client && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"
