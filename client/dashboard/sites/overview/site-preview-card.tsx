@@ -36,7 +36,7 @@ const SitePreviewCard = ( { site }: { site: Site } ) => {
 						bottom: 0,
 						left: 0,
 						overflow: 'hidden',
-						backgroundColor: 'var(--wp-components-color-gray-100)',
+						backgroundColor: '#f0f0f0',
 					} }
 				>
 					<SitePreview url={ url } scale={ width / 1200 } height={ height / ( width / 1200 ) } />

@@ -121,7 +121,7 @@ function SiteOverview( {
 				</Grid>
 				<Divider
 					orientation="horizontal"
-					style={ { width: '100%', color: 'var(--wp-components-color-gray-100)' } }
+					style={ { color: 'var(--dashboard-overview__divider-color)' } }
 				/>
 				<HStack
 					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
