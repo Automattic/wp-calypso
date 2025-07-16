@@ -16,6 +16,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
+import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
 import BackupCard from './backup-card';
 import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
@@ -141,6 +142,7 @@ function SiteOverview( {
 						<PerformanceCards site={ site } />
 					</VStack>
 					<VStack spacing={ spacing } justify="start">
+						<OverviewCardUpsellDIFM site={ site } />
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>

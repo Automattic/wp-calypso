@@ -18,7 +18,10 @@ import SiteEnvironmentBadge, {
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
+import {
+	usePullFromStagingMutation,
+	usePushToStagingMutation,
+} from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -204,6 +207,21 @@ export default function SyncModal( {
 		},
 	} );
 
+	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
+			// setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			// setSyncError( error.code );
+		},
+	} );
+
 	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
 		sortOrder: 'desc',
 		successOnly: true,
@@ -211,12 +229,15 @@ export default function SyncModal( {
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const handleConfirm = () => {
+		const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 			pullFromStaging( { types: 'paths', include_paths } );
+			onClose();
+		} else {
+			pushToStaging( { types: 'paths', include_paths } );
 			onClose();
 		}
 	};
@@ -248,15 +269,13 @@ export default function SyncModal( {
 					/>
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
-				{ querySiteId === stagingSiteId && (
-					<div className="staging-site-card">
-						<FileBrowser
-							rewindId={ rewindId }
-							siteId={ querySiteId }
-							fileBrowserConfig={ fileBrowserConfig }
-						/>
-					</div>
-				) }
+				<div className="staging-site-card">
+					<FileBrowser
+						rewindId={ rewindId }
+						siteId={ querySiteId }
+						fileBrowserConfig={ fileBrowserConfig }
+					/>
+				</div>
 				<Text>
 					{ createInterpolateElement( syncConfig.learnMore, {
 						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
