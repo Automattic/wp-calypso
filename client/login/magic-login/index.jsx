@@ -4,7 +4,7 @@ import { Gridicon, FormLabel } from '@automattic/components';
 import { addLocaleToPath, localizeUrl, getLanguage } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -1227,6 +1227,7 @@ class MagicLogin extends Component {
 	}
 
 	renderTos = () => {
+		const { translate } = this.props;
 		const options = {
 			components: {
 				tosLink: (
@@ -1245,10 +1246,17 @@ class MagicLogin extends Component {
 				),
 			},
 		};
-		const tosText = this.props.translate(
-			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			options
-		);
+		const tosText = fixMe( {
+			text: 'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			newCopy: translate(
+				'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			),
+			oldCopy: translate(
+				'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			),
+		} );
 
 		return <p className="magic-login__tos wp-login__tos">{ tosText }</p>;
 	};
