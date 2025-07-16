@@ -155,7 +155,12 @@ export default function DomainsCard( {
 					getItemId={ getDomainId }
 					isLoading={ isLoading }
 					defaultLayouts={ defaultLayouts }
-				/>
+				>
+					<>
+						<DataViews.Layout />
+						<DataViews.Pagination />
+					</>
+				</DataViews>
 			</CardBody>
 		</Card>
 	);
