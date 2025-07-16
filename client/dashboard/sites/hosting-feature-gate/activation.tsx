@@ -1,17 +1,16 @@
-import { __experimentalText as Text, Button, Modal } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { lazy, useEffect, useState, Suspense } from 'react';
+import { lazy, useEffect, useState, ReactNode, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { Callout } from '../../components/callout';
 import { HostingFeatures } from '../features';
-import illustrationUrl from './upsell-illustration.svg';
 import type { Site } from '../../data/types';
 
 interface HostingFeatureActivationProps {
 	site: Site;
 	feature: HostingFeatures;
 	tracksFeatureId: string;
+	renderActivationComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
 }
 
 const EligibilityWarnings = lazy( () => import( 'calypso/blocks/eligibility-warnings' ) );
@@ -20,6 +19,7 @@ export default function HostingFeatureActivation( {
 	site,
 	feature,
 	tracksFeatureId,
+	renderActivationComponent,
 }: HostingFeatureActivationProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
@@ -68,42 +68,7 @@ export default function HostingFeatureActivation( {
 
 	return (
 		<>
-			<Callout
-				image={ illustrationUrl }
-				title={ __( 'Activate hosting features' ) }
-				description={
-					<>
-						<Text variant="muted">
-							{ __(
-								'Your plan includes a range of powerful hosting features. Activate them to get started.'
-							) }
-						</Text>
-
-						<ul style={ { paddingInlineStart: '15px', margin: 0 } }>
-							<Text as="li" variant="muted">
-								{ __( 'Git-based deployments' ) }
-							</Text>
-							<Text as="li" variant="muted">
-								{ __( 'Server monitoring' ) }
-							</Text>
-							<Text as="li" variant="muted">
-								{ __( 'Access and error logs' ) }
-							</Text>
-							<Text as="li" variant="muted">
-								{ __( 'Secure access via SFTP/SSH' ) }
-							</Text>
-							<Text as="li" variant="muted">
-								{ __( 'Advanced server settings' ) }
-							</Text>
-						</ul>
-					</>
-				}
-				actions={
-					<Button variant="primary" size="compact" onClick={ handleClick }>
-						{ __( 'Activate' ) }
-					</Button>
-				}
-			/>
+			{ renderActivationComponent( { onClick: handleClick } ) }
 			{ isModalOpen && (
 				<Suspense fallback={ null }>
 					<Modal

@@ -18,7 +18,7 @@ import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { hasPlanFeature } from '../../utils/site-features';
 import { HostingFeatures, canViewPHPSettings } from '../features';
-import HostingFeature from '../hosting-feature';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
@@ -87,7 +87,11 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 			size="small"
 			header={ <SettingsPageHeader title="PHP" description={ description } /> }
 		>
-			<HostingFeature site={ site } feature={ HostingFeatures.PHP } tracksFeatureId="settings-php">
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.PHP }
+				tracksFeatureId="settings-php"
+			>
 				<Card>
 					<CardBody>
 						<form onSubmit={ handleSubmit }>
@@ -114,7 +118,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 						</form>
 					</CardBody>
 				</Card>
-			</HostingFeature>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
