@@ -32,7 +32,7 @@ export function HelpCenterChat( {
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 	const { forceEmailSupport } = useChatStatus();
-	useLastSupportInteraction();
+	useLastSupportInteraction( { isUserEligibleForPaidSupport, userFieldFlowName } );
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {

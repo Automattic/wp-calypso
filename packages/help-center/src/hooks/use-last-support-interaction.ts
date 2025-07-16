@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import {
 	useGetSupportInteractionById,
@@ -10,7 +11,13 @@ import { useSearchParams, useLocation } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 
-export const useLastSupportInteraction = () => {
+export const useLastSupportInteraction = ( {
+	isUserEligibleForPaidSupport,
+	userFieldFlowName,
+}: {
+	isUserEligibleForPaidSupport: boolean;
+	userFieldFlowName?: string;
+} ) => {
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
