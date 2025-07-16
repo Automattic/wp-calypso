@@ -636,7 +636,8 @@ class ReaderStream extends Component {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const isReaderCouncilStream = false; // Disabling banner. Original condition: ( this.props.isDiscoverStream || this.props.streamKey === 'following' );
+		const isReaderCouncilStream =
+			this.props.isDiscoverStream || this.props.streamKey === 'following';
 		let { items, isRequesting } = this.props;
 		let body;
 		let showingStream;
@@ -685,7 +686,12 @@ class ReaderStream extends Component {
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContentFn || streamType === 'search' ) {
-				body = <div className="reader__content">{ bodyContent }</div>;
+				body = (
+					<div className="reader__content">
+						{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
+						{ bodyContent }
+					</div>
+				);
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
