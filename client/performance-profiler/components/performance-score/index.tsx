@@ -103,7 +103,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 						components: {
 							link: (
 								<a
-									href="https://developer.wordpress.com/docs/site-performance/speed-test/#1-performance-score"
+									href="https://developer.wordpress.com/docs/site-performance/speed-test/#performance-score"
 									target="_blank"
 									rel="noreferrer"
 								/>
