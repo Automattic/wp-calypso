@@ -40,24 +40,19 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			children,
 			partnerSlug,
 			translate,
-			wooDnaConfig,
 			pageTitle,
 			useCompactLogo,
 			compactBackButton,
 		} = this.props;
 
-		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
-
 		const wrapperClassName = clsx( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWooDna || isWooJPC,
+			'is-woocommerce': isWooJPC,
 			'is-woocommerce-core-profiler-flow': isWooJPC,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
-		// Note: legacy flow here was "merged" with DNA
-		const width = isWooDna ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (
@@ -95,14 +90,11 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					title={ pageTitle || translate( 'Jetpack Connect' ) }
 					skipTitleFormatting={ Boolean( pageTitle ) }
 				/>
-				{ ! useCompactLogo && (
+				{ ! useCompactLogo && ! isWooJPC && (
 					<div className="jetpack-connect__main-logo">
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-							isWooJPC={ isWooJPC }
-							isWooDna={ isWooDna }
-							width={ width }
 							darkColorScheme={ darkColorScheme }
 						/>
 					</div>

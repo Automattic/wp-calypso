@@ -17,27 +17,30 @@ import {
 	canViewPrimaryDataCenterSettings,
 	canViewStaticFile404Settings,
 	canViewCachingSettings,
+	HostingFeatures,
 } from '../sites/features';
+import { hasAtomicFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
-import { userPreferencesQuery } from './queries/me-preferences';
+import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
-import { siteBySlugQuery } from './queries/site';
+import { siteByIdQuery, siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
+import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
+import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
 import { siteSshAccessStatusQuery } from './queries/site-ssh';
 import { siteStaticFile404SettingQuery } from './queries/site-static-file-404';
-import { siteEngagementStatsQuery } from './queries/site-stats';
 import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
 import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
@@ -80,7 +83,7 @@ const sitesRoute = createRoute( {
 
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
-			queryClient.ensureQueryData( userPreferencesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
 	validateSearch: ( search ) => {
@@ -107,8 +110,15 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const otherEnvironmentSiteId = site.is_wpcom_staging_site
+			? site.options?.wpcom_production_blog_id
+			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+		if ( otherEnvironmentSiteId ) {
+			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -122,12 +132,14 @@ const siteOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return Promise.all( [
-			// The current plan is nice to have preloaded, but not blocking for
-			// navigation.
-			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ) : undefined,
-			queryClient.ensureQueryData( siteEngagementStatsQuery( site.ID ) ),
-		] );
+		if ( preload ) {
+			Promise.all( [
+				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
+				hasAtomicFeature( site, HostingFeatures.BACKUPS ) &&
+					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>

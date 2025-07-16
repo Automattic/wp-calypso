@@ -3,6 +3,7 @@ import { Gridicon, ExternalLink } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
@@ -199,14 +200,7 @@ function ContactInfo( {
 	};
 
 	const renderSidebar = () => {
-		const supportLink = (
-			<ExternalLink
-				href={ localizeUrl(
-					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
-				) }
-				target="_blank"
-			/>
-		);
+		const supportLink = <ExternalLink href={ localizeUrl( PRIVACY_PROTECTION ) } target="_blank" />;
 		const icannLink = (
 			<ExternalLink
 				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"

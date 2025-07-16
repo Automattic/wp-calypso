@@ -102,4 +102,40 @@ describe( 'DomainSuggestionCTA', () => {
 		const button = screen.getByRole( 'button', { name: 'Continue' } );
 		expect( button ).toHaveTextContent( '' );
 	} );
+
+	it( 'should call onClick with add-to-cart when Add to Cart is clicked', async () => {
+		const user = userEvent.setup();
+		const onClick = jest.fn();
+
+		render(
+			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
+				<DomainSuggestionCTA uuid="1" onClick={ onClick } />
+			</DomainSearch>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Add to Cart' } ) );
+
+		expect( onClick ).toHaveBeenCalledWith( 'add-to-cart' );
+	} );
+
+	it( 'should call onClick with continue when Continue is clicked', async () => {
+		const user = userEvent.setup();
+		const onClick = jest.fn();
+
+		render(
+			<DomainSearch
+				cart={ buildDomainSearchCart( {
+					items: [ buildDomain( { uuid: '1' } ) ],
+					hasItem: ( uuid ) => uuid === '1',
+				} ) }
+				onContinue={ jest.fn() }
+			>
+				<DomainSuggestionCTA uuid="1" onClick={ onClick } />
+			</DomainSearch>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( onClick ).toHaveBeenCalledWith( 'continue' );
+	} );
 } );

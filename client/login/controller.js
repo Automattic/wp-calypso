@@ -1,22 +1,12 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import {
-	isGravPoweredOAuth2Client,
-	isPartnerPortalOAuth2Client,
-	isStudioAppOAuth2Client,
-	isCrowdsignalOAuth2Client,
-	isA4AOAuth2Client,
-	isJetpackCloudOAuth2Client,
-	isVIPOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import LoginContextProvider from './login-context';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -64,34 +54,13 @@ const enhanceContextWithLogin = ( context ) => {
 	const oauth2ClientId = query?.oauth2_client_id;
 	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
-	const isWoo = getIsWoo( currentState );
-	const isBlazePro = getIsBlazePro( currentState );
-	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
-	const isCrowdsignalLogin = isCrowdsignalOAuth2Client( oauth2Client );
-	const isA4AClient = isA4AOAuth2Client( oauth2Client );
 	const isJetpackLogin = isJetpack === 'jetpack';
-	const isJetpackCloudClient = isJetpackCloudOAuth2Client( oauth2Client );
-	const isVIPClient = isVIPOAuth2Client( oauth2Client );
-
-	const isWhiteLogin =
-		( Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
-		isPartnerPortalClient ||
-		isStudioLogin ||
-		isCrowdsignalLogin ||
-		isBlazePro ||
-		isA4AClient ||
-		isJetpackCloudClient ||
-		isJetpackLogin ||
-		isWoo ||
-		isVIPClient;
 
 	context.primary = (
 		<LoginContextProvider>
 			<WPLogin
 				action={ action }
 				isJetpack={ isJetpackLogin }
-				isWhiteLogin={ isWhiteLogin }
 				isGravPoweredClient={ isGravPoweredClient }
 				path={ path }
 				twoFactorAuthType={ twoFactorAuthType }

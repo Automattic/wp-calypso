@@ -1,6 +1,7 @@
 import { type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
+import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -24,7 +25,8 @@ function renderServiceNameDescription(
 	const isSitelessDomain = /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com/.test(
 		transaction.domain
 	);
-	const shouldShowDomain = transaction.domain && ! isSitelessDomain;
+	const shouldShowDomain =
+		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
 	return (
 		<div>
 			<strong>{ plan }</strong>

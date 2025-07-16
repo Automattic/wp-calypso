@@ -6,3 +6,4 @@ export { DomainsFullCart } from './components/domains-full-cart';
 export { DomainSuggestionsList } from './components/domain-suggestions-list';
 export { DomainSuggestion } from './components/domain-suggestion';
 export { DomainSuggestionBadge } from './components/domain-suggestion-badge';
+export { DomainSuggestionPrice } from './components/domain-suggestion-price';

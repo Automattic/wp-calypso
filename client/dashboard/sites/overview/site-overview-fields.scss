@@ -1,5 +1,10 @@
-.site-overview-field + .site-overview-field {
-	&::before {
+.site-overview-fields {
+	flex-wrap: wrap;
+	max-width: var(--dashboard__text-max-width);
+}
+
+.site-overview-field:not(:last-child) {
+	&::after {
 		display: block;
 		content: '•';
 	}

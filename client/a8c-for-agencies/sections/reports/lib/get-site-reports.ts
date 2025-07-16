@@ -9,7 +9,7 @@ export const getSiteReports = ( reports: Report[] ): SiteReports[] => {
 	const grouped = reports.reduce(
 		( acc, report ) => {
 			// Only include reports with "sent" status
-			if ( report.status !== 'sent' ) {
+			if ( report.status !== 'sent' || ! report.data.managed_site_id ) {
 				return acc;
 			}
 

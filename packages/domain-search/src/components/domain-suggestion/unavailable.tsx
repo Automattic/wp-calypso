@@ -9,7 +9,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon, notAllowed } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
 import { useContainerQuery } from '../../hooks/use-container-query';
 import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
 
@@ -18,24 +17,24 @@ import './unavailable.scss';
 export interface UnavailableProps {
 	domain: string;
 	tld: string;
-	unavailableReason: 'already-registered';
+	getReasonText: ( { domain }: { domain: React.ReactElement } ) => React.ReactNode;
 	onTransferClick?(): void;
 }
 
 const UnavailableComponent = ( {
 	domain,
 	tld,
-	unavailableReason,
+	getReasonText,
 	onTransferClick,
 	activeQuery,
 	isWithinList,
 }: UnavailableProps & { activeQuery: 'small' | 'large'; isWithinList: boolean } ) => {
 	const { __ } = useI18n();
 
-	const reasonText = useMemo( () => {
-		if ( unavailableReason === 'already-registered' ) {
-			return createInterpolateElement( __( '<domainName /> is already registered.' ), {
-				domainName: (
+	const reason = (
+		<Text size={ activeQuery === 'large' ? 18 : 16 }>
+			{ getReasonText( {
+				domain: (
 					<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
 						{ domain }
 						<Text size="inherit" weight={ 500 }>
@@ -43,11 +42,9 @@ const UnavailableComponent = ( {
 						</Text>
 					</Text>
 				),
-			} );
-		}
-	}, [ __, unavailableReason, domain, tld ] );
-
-	const reason = <Text size={ activeQuery === 'large' ? 18 : 16 }>{ reasonText }</Text>;
+			} ) }
+		</Text>
+	);
 
 	const onTransfer = onTransferClick && (
 		<div
@@ -100,8 +97,8 @@ const UnavailableComponent = ( {
 
 const StandaloneUnavailable = ( props: UnavailableProps ) => {
 	const { ref: containerRef, activeQuery } = useContainerQuery( {
-		small: 480,
-		large: 1024,
+		small: 0,
+		large: 480,
 	} );
 
 	return (

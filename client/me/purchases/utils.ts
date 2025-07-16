@@ -78,3 +78,12 @@ export function getCancelPurchaseSurveyCompletedPreferenceKey(
 ): string {
 	return `cancel-purchase-survey-completed-${ purchaseId }`;
 }
+
+/**
+ * Checks if a domain is for an internal A4A agency site.
+ * @param domain The domain to check
+ * @returns True if the domain is an internal A4A agency domain
+ */
+export function isInternalA4AAgencyDomain( domain: string ): boolean {
+	return domain?.endsWith( '.agencies.automattic.com' );
+}

@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
+import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -33,6 +35,7 @@ const UserStepComponent: StepType = function UserStep( {
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
@@ -82,6 +85,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const stepContent = (
 		<>
+			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
 			<SignupFormSocialFirst
 				stepName={ stepName }
 				flowName={ flow }

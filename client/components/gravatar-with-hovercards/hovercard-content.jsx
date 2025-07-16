@@ -51,7 +51,7 @@ function HovercardContent( props ) {
 				</div>
 
 				{ /* Below is custom for wpcom users, and can use wpcom data more freely */ }
-				{ userID && (
+				{ !! userID && (
 					<>
 						<div className="gravatar-hovercard__body">
 							<PrimaryBlog
