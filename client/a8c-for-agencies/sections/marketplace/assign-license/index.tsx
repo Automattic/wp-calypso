@@ -60,7 +60,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const [ search, setSearch ] = useState< string >( initialSearch );
 	const [ totalSites, setTotalSites ] = useState< number >( 0 );
 
-	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
+	const { assignLicensesToSite, isPending } = useAssignLicensesToSite( selectedSite, {
 		onError: ( error: any ) => {
 			if ( error.code === 'partner_not_connected_to_site' ) {
 				dispatch(
@@ -82,12 +82,12 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 								},
 							}
 						),
-						{ isPersistent: true }
+						{ isPersistent: true, id: 'partner_not_connected_to_site' }
 					)
 				);
 				return;
 			}
-			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+			dispatch( errorNotice( error.message, { isPersistent: true, id: 'assign_license_error' } ) );
 		},
 	} );
 
@@ -192,9 +192,22 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		dispatch( resetSite() );
 		dispatch( setPurchasedLicense( assignLicensesResult ) );
 
+		const rejectedProduct = assignLicensesResult.selectedProducts.find(
+			( product ) => product.status === 'rejected'
+		);
+
+		const hasOnlyOneLicense = licenseKeysArray.length === 1;
+
 		const goToDownloadStep = licenseKeysArray.some( ( licenseKey ) =>
 			isWooCommerceProduct( licenseKey )
 		);
+
+		// We don't want to redirect if there is a rejected product
+		// and there is only one license (there will always be one license as we don't have a flow for multiple licenses)
+		// or the product is a WooCommerce product
+		if ( rejectedProduct && ( hasOnlyOneLicense || goToDownloadStep ) ) {
+			return;
+		}
 
 		if ( goToDownloadStep ) {
 			return page.redirect(
@@ -244,7 +257,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 							<Button
 								borderless
 								onClick={ onClickAssignLater }
-								disabled={ ! isReady }
+								disabled={ isPending }
 								className="assign-license-form__assign-later"
 							>
 								{ translate( 'Assign later' ) }
@@ -254,7 +267,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 								primary
 								className="assign-license__assign-now"
 								disabled={ selectedSite?.ID === 0 }
-								busy={ ! isReady }
+								busy={ isPending }
 								onClick={ onClickAssignLicenses }
 							>
 								{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
@@ -290,7 +303,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 									className="assign-license-form__site-card-radio"
 									label={ site.url_with_scheme }
 									name="site_select"
-									disabled={ ! isReady }
+									disabled={ isPending }
 									checked={ selectedSite?.ID === site.blog_id }
 									onChange={ () =>
 										setSelectedSite( { ID: site.blog_id, domain: site.url_with_scheme } )
