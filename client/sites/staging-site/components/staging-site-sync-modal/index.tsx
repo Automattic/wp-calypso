@@ -88,6 +88,7 @@ interface SyncModalProps {
 	environment: 'production' | 'staging';
 	productionSiteId: number;
 	stagingSiteId: number;
+	onSyncStart?: () => void;
 }
 
 interface EnvironmentConfig {
@@ -165,6 +166,7 @@ export default function SyncModal( {
 	environment,
 	productionSiteId,
 	stagingSiteId,
+	onSyncStart,
 }: SyncModalProps ) {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
@@ -230,6 +232,10 @@ export default function SyncModal( {
 
 	const handleConfirm = () => {
 		const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+
+		// Call the sync start callback to begin polling
+		onSyncStart?.();
+
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )

@@ -55,9 +55,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	const environment = isStagingSite ? 'staging' : 'production';
 
-	const { isSyncInProgress: isProductionSyncInProgress } = useCheckSyncStatus( productionSiteId );
-	const { isSyncInProgress: isStagingSyncInProgress } = useCheckSyncStatus( stagingSiteId );
-	const isSyncInProgress = isProductionSyncInProgress || isStagingSyncInProgress || false;
+	const { resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
 
 	return (
 		<>
@@ -68,6 +66,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 					productionSiteId={ productionSiteId }
 					stagingSiteId={ stagingSiteId }
 					isSyncInProgress={ isSyncInProgress }
+					onSyncStart={ () => resetSyncStatus() }
 				/>
 			) }
 			<Button

@@ -14,6 +14,7 @@ interface SyncDropdownProps {
 	productionSiteId: number;
 	stagingSiteId: number;
 	isSyncInProgress: boolean;
+	onSyncStart?: () => void;
 }
 
 export default function SyncDropdown( {
@@ -22,6 +23,7 @@ export default function SyncDropdown( {
 	productionSiteId,
 	stagingSiteId,
 	isSyncInProgress,
+	onSyncStart,
 }: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
@@ -92,6 +94,7 @@ export default function SyncDropdown( {
 						environment={ environment }
 						productionSiteId={ productionSiteId }
 						stagingSiteId={ stagingSiteId }
+						onSyncStart={ onSyncStart }
 					/>
 				</Suspense>
 			) }
