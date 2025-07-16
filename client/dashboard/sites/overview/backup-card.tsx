@@ -33,7 +33,7 @@ function BackupCardUpsell( { site }: { site: Site } ) {
 	);
 }
 
-function BackupCardWithBackups( { site, lastBackup }: { site: Site; lastBackup?: Backup } ) {
+function BackupCardWithBackups( { site, lastBackup }: { site: Site; lastBackup: Backup | null } ) {
 	const timeSinceLastBackup = useTimeSince(
 		lastBackup?.last_updated ?? new Date( 0 ).toISOString(),
 		{ isUtc: true }
