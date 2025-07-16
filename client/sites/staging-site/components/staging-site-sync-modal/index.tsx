@@ -206,9 +206,10 @@ export default function SyncModal( {
 	const wpConfigNode = useSelector( ( state ) =>
 		getBackupBrowserNode( state, querySiteId, '/wp-config.php' )
 	);
+	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, '/sql' ) );
 
 	const getVisibleNodesCheckState = useCallback( () => {
-		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
+		const nodes = [ wpContentNode, wpConfigNode, sqlNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
 			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
 			return 'checked';
@@ -230,17 +231,16 @@ export default function SyncModal( {
 		}
 
 		return 'mixed';
-	}, [ wpContentNode, wpConfigNode ] );
+	}, [ wpContentNode, wpConfigNode, sqlNode ] );
 
 	const visibleNodesCheckState = getVisibleNodesCheckState();
 
 	useEffect( () => {
-		if ( querySiteId === stagingSiteId ) {
-			dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
-		}
-	}, [ dispatch, querySiteId, stagingSiteId ] );
+		dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, '/sql', 'checked' ) );
+	}, [ dispatch, querySiteId ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
@@ -384,6 +384,13 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 					) }
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={ __( 'Database tables' ) }
+						checked={ visibleNodesCheckState === 'checked' }
+						indeterminate={ visibleNodesCheckState === 'mixed' }
+						onChange={ onCheckboxChange }
+					/>
 				</div>
 				<Text>
 					{ createInterpolateElement( syncConfig.learnMore, {
