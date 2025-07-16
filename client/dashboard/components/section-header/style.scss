@@ -28,7 +28,7 @@
 		font-family: var( --dashboard-h1__font-family );
 		font-size: var( --dashboard-h1__font-size, $font-size-2x-large );
 		font-weight: var( --dashboard-h1__font-weight ) !important;
-		line-height: $font-line-height-2x-large;
+		line-height: var( --dashboard-h1__line-height, $font-line-height-2x-large );
 	}
 
 	.dashboard-section-header.is-level-2 & {
