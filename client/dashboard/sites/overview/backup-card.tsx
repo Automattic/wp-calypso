@@ -7,7 +7,7 @@ import { hasAtomicFeature } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import OverviewCard from '../overview-card';
-import UpsellCard from './upsell-card';
+import UpsellCard from '../overview-card/upsell';
 import type { Backup, Site } from '../../data/types';
 
 const CARD_PROPS = {

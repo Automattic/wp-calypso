@@ -68,8 +68,10 @@
 	width: 100% !important;
 }
 
-.dashboard-overview-card-upsell-with-action {
-	.components-button svg path {
-		fill: var( --wp-admin-theme-color );
+.dashboard-callout {
+	max-width: 100% !important;
+
+	.dashboard-callout__h-container {
+		padding: 24px;
 	}
 }

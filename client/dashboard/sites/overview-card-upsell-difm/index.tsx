@@ -1,5 +1,7 @@
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import UpsellWithActionCard from '../overview-card/upsell-with-action';
+import { Callout } from '../../components/callout';
+import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
 import type { Site } from '../../data/types';
 
@@ -20,19 +22,27 @@ export default function OverviewCardUpsellDIFM( { site }: { site: Site } ) {
 	}
 
 	return (
-		<UpsellWithActionCard
-			action={ {
-				href: '/start/do-it-for-me/new-or-existing-site?ref=site-overview',
-				text: __( 'Build it for me' ),
-				variant: 'secondary',
-			} }
-			description={ __(
-				'Leave the heavy lifting to us and let our professional builders craft your website.'
-			) }
+		<Callout
+			title={ __( 'We’ll bring your vision to life' ) }
+			description={
+				<Text variant="muted">
+					{ __(
+						'Leave the heavy lifting to us and let our professional builders craft your website.'
+					) }
+				</Text>
+			}
 			image={ illustrationUrl }
 			imageAlt={ __( 'Responsive website design' ) }
-			title={ __( 'We’ll bring your vision to life' ) }
-			trackId="upsell-difm"
+			imageVariant="full-bleed"
+			actions={
+				<UpsellCTAButton
+					href="/start/do-it-for-me/new-or-existing-site?ref=site-overview"
+					target="_blank"
+					text={ __( 'Build it for me' ) }
+					variant="secondary"
+					trackId="difm"
+				/>
+			}
 		/>
 	);
 }
