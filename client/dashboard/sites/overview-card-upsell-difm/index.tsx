@@ -24,6 +24,7 @@ export default function OverviewCardUpsellDIFM( { site }: { site: Site } ) {
 	return (
 		<Callout
 			title={ __( 'We’ll bring your vision to life' ) }
+			titleAs="h2"
 			description={
 				<Text variant="muted">
 					{ __(
