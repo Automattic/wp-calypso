@@ -153,17 +153,6 @@ $image-height: 47px;
 		}
 	}
 
-	.login__form-terms a,
-	.login__social-tos a,
-	.form-input-validation a {
-		color: var(--color-accent-dark);
-
-		&:hover,
-		&:focus {
-			color: var(--color-accent);
-		}
-	}
-
 	.translator-invite__content a {
 		border: none;
 	}
@@ -198,18 +187,6 @@ $image-height: 47px;
 
 	.login__form-change-username {
 		color: var(--color-neutral-60);
-	}
-
-	.login__form-terms {
-		text-align: left;
-		color: var(--color-neutral-60);
-		font-size: $font-body-extra-small;
-	}
-
-	.login__form-terms a,
-	.login__form-terms a:hover {
-		text-align: left;
-		font-size: $font-body-extra-small;
 	}
 
 	.auth-form__social {
@@ -425,7 +402,6 @@ $image-height: 47px;
 	}
 
 	.two-factor-authentication__verification-code-form > p,
-	.login__form-terms,
 	.login__social-tos {
 		color: var(--studio-gray-50);
 	}
@@ -434,22 +410,13 @@ $image-height: 47px;
 		text-align: left;
 	}
 
-	.login__form-terms {
-		/* Note: Same as `.login__form .login__form-userdata label` */
-		font-size: 0.875rem;
-	}
-
-	.login__form-terms,
 	.login__social-tos {
+		margin-top: 24px;
 		text-align: left;
 
 		a {
 			text-decoration: underline;
 		}
-	}
-
-	.login__social-tos {
-		margin-top: 24px;
 	}
 
 	.two-factor-authentication__verification-code-form.card {

@@ -28,7 +28,11 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -625,10 +629,9 @@ export class LoginForm extends Component {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isWoo,
-			isBlazePro,
 			isSendingEmail,
 			isSocialFirst,
-			isJetpack,
+			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 		} = this.props;
 		const { lastUsedAuthenticationMethod } = this.state;
@@ -857,9 +860,7 @@ export class LoginForm extends Component {
 							</div>
 						</div>
 
-						{ ! isBlazePro && ! isJetpack && (
-							<p className="login__form-terms">{ renderTerms() }</p>
-						) }
+						{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
@@ -1026,6 +1027,7 @@ export default connect(
 			isOneTapAuth: !! get( getCurrentQueryArguments( state ), 'oneTapAuth' ),
 			isGravatarFixedAccountLogin:
 				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
+			isGravPoweredClient: isGravPoweredOAuth2Client( state ),
 		};
 	},
 	{
