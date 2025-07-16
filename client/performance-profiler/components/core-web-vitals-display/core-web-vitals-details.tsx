@@ -1,7 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	Metrics,
 	PerformanceMetricsHistory,
@@ -143,11 +142,13 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 				<p>
 					{ getMetricValuations( translate )[ activeTab ].explanation }
 					&nbsp;
-					<InlineSupportLink
-						supportLink={ localizeUrl( getMetricValuations( translate )[ activeTab ].docsUrl ) }
+					<a
+						href={ localizeUrl( getMetricValuations( translate )[ activeTab ].docsUrl ) }
+						target="_blank"
+						rel="noreferrer"
 					>
 						{ translate( 'Learn more ↗' ) }
-					</InlineSupportLink>
+					</a>
 				</p>
 				<div className="core-web-vitals-display__ranges">
 					<div className="range">
