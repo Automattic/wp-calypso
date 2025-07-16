@@ -990,6 +990,11 @@ $breakpoint-mobile: 660px;
 		.wp-login__heading-text {
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
+
+			* {
+				font-family: inherit;
+				font-feature-settings: inherit;
+			}
 		}
 
 		h1,
