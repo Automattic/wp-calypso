@@ -19,14 +19,21 @@ export const PULL_FROM_STAGING = 'pull-from-staging-site-mutation-key';
 export const usePushToStagingMutation = (
 	productionSiteId: number,
 	stagingSiteId: number,
-	options: UseMutationOptions< PushStagingMutationResponse, PushStagingMutationError >
+	options: UseMutationOptions<
+		PushStagingMutationResponse,
+		PushStagingMutationError,
+		MutationVariables
+	>
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async () =>
-			wp.req.post( {
-				path: `/sites/${ productionSiteId }/staging-site/push-to-staging/${ stagingSiteId }`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+		mutationFn: async ( options ) =>
+			wp.req.post(
+				{
+					path: `/sites/${ productionSiteId }/staging-site/push-to-staging/${ stagingSiteId }`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{ options }
+			),
 		...options,
 		mutationKey: [ PUSH_TO_STAGING, stagingSiteId ],
 		onSuccess: async ( ...args ) => {
