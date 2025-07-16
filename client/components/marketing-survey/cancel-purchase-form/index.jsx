@@ -634,7 +634,7 @@ class CancelPurchaseForm extends Component {
 					{ translate( 'Submit' ) }
 				</GutenbergButton>
 				<GutenbergButton isSecondary isBusy={ isCancelling } onClick={ this.onSkipSurvey }>
-					{ translate( 'Skip survey' ) }
+					{ translate( 'Skip' ) }
 				</GutenbergButton>
 			</>
 		);
