@@ -1366,6 +1366,22 @@ $breakpoint-mobile: 660px;
 					display: inline-block;
 				}
 			}
+
+			.magic-login__emails-list {
+				li {
+					border-radius: 8px; // stylelint-disable-line scales/radii
+					border: 2px solid var(--studio-gray-10);
+				}
+
+				a {
+					color: var(--studio-gray-100);
+					text-decoration: none;
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 24px;
+				}
+			}
 		}
 
 		.two-factor-authentication__verification-code-form-wrapper {
