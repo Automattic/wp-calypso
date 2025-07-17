@@ -6,6 +6,7 @@ import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notificat
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
@@ -15,7 +16,6 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-
 export default function ReaderFeedHeaderFollow( props ) {
 	const { feed, site, streamKey } = props;
 	const translate = useTranslate();
@@ -75,24 +75,27 @@ export default function ReaderFeedHeaderFollow( props ) {
 			<div className="reader-feed-header__follow-and-settings">
 				{ siteUrl && (
 					<div className="reader-feed-header__follow-button">
-						<ReaderFollowButton
-							siteUrl={ feed?.feed_URL || siteUrl }
-							hasButtonStyle
-							iconSize={ 24 }
-							onFollowToggle={ openSuggestedFollowsModal }
-							followingLabel={ translate( 'Subscribed' ) }
-						/>
-					</div>
-				) }
+						<div className="reader-feed-header__follow-button-and-settings">
+							<ReaderFollowButton
+								siteUrl={ feed?.feed_URL || siteUrl }
+								hasButtonStyle
+								iconSize={ 24 }
+								onFollowToggle={ openSuggestedFollowsModal }
+								followingLabel={ translate( 'Subscribed' ) }
+							/>
 
-				{ site && following && ! isEmailBlocked && (
-					<div className="reader-feed-header__email-settings">
-						<ReaderSiteNotificationSettings
-							iconSize={ 24 }
-							showLabel={ false }
-							siteId={ siteId }
-							subscriptionId={ subscriptionId }
-						/>
+							{ site && following && ! isEmailBlocked && (
+								<div className="reader-feed-header__email-settings">
+									<ReaderSiteNotificationSettings
+										iconSize={ 24 }
+										showLabel={ false }
+										siteId={ siteId }
+										subscriptionId={ subscriptionId }
+									/>
+								</div>
+							) }
+						</div>
+						<RecommendButton feedId={ feed.feed_ID } />
 					</div>
 				) }
 			</div>
