@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { currencyDollar } from '@wordpress/icons';
+import { people } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -68,7 +68,7 @@ const JetpackSubscribers = () => {
 		<Main>
 			<DocumentHead title={ translate( 'Subscribers' ) } />
 			<FeatureMoved
-				icon={ currencyDollar }
+				icon={ people }
 				title={ translate( 'Subscribers has moved' ) }
 				description={ translate(
 					'Subscribers is now part of Jetpack for enhanced features. Access it via Jetpack → Subscribers in your dashboard.'
