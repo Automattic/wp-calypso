@@ -6,6 +6,7 @@ export interface Plan {
 	expiry?: string;
 	subscribed_date?: string;
 	user_facing_expiry?: string;
+	has_domain_credit?: boolean;
 }
 
 export async function fetchCurrentSitePlan( siteId: number ): Promise< Plan > {

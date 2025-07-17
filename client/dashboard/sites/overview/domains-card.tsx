@@ -5,8 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
+import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { SectionHeader } from '../../components/section-header';
 import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import OverviewCardUpsellDomain from '../overview-card-upsell-domain';
 import type { Site, SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
 
@@ -14,13 +16,15 @@ const getDomainId = ( domain: SiteDomain ): string => {
 	return `${ domain.domain }-${ domain.blog_id }`;
 };
 
-export default function DomainsCard( {
+const SiteDomainDataViews = ( {
 	site,
+	domains,
 	type = 'table',
 }: {
 	site: Site;
+	domains: SiteDomain[];
 	type?: DomainsView[ 'type' ];
-} ) {
+} ) => {
 	const fields = useFields( { site } );
 	const [ view, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
@@ -28,12 +32,7 @@ export default function DomainsCard( {
 		type,
 	} );
 
-	const { data: siteDomains, isLoading } = useQuery( siteDomainsQuery( site.ID ) );
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		siteDomains ?? [],
-		view,
-		fields
-	);
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 
 	useEffect( () => {
 		if ( type ) {
@@ -86,7 +85,7 @@ export default function DomainsCard( {
 					search={ false }
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					isLoading={ isLoading }
+					isLoading={ false }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				>
 					<>
@@ -96,5 +95,32 @@ export default function DomainsCard( {
 				</DataViews>
 			</CardBody>
 		</Card>
+	);
+};
+
+export default function DomainsCard( {
+	site,
+	isCompact = false,
+}: {
+	site: Site;
+	isCompact?: boolean;
+} ) {
+	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
+	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
+
+	if ( ! sitePlan || ! siteDomains ) {
+		return null;
+	}
+
+	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+		return <OverviewCardUpsellDomain site={ site } />;
+	}
+
+	return (
+		<SiteDomainDataViews
+			type={ isCompact ? 'list' : 'table' }
+			site={ site }
+			domains={ siteDomains }
+		/>
 	);
 }
