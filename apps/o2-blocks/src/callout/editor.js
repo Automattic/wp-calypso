@@ -18,8 +18,10 @@ import { useMemo } from 'react';
 import metadata from './block.json';
 import {
 	CALLOUT_TEMPLATE_DEFAULT_COLOR,
+	CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
 	CALLOUT_TEMPLATES,
 	CALLOUT_PANEL_COLORS,
+	CALLOUT_PANEL_BACKGROUND_COLORS,
 	CALLOUT_PANEL_DASHICONS,
 } from './constants';
 import { transforms } from './transform';
@@ -48,6 +50,14 @@ const isValidColor = ( color ) => {
 const normalizeColor = ( color ) => {
 	if ( ! isValidColor( color ) ) {
 		return CALLOUT_TEMPLATE_DEFAULT_COLOR;
+	}
+
+	return color;
+};
+
+const normalizeBackgroundColor = ( color ) => {
+	if ( ! isValidColor( color ) ) {
+		return CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR;
 	}
 
 	return color;
@@ -145,17 +155,28 @@ const TemplateControls = ( { templateName, onChange } ) => {
 				options={ templateOptions }
 				value={ selectedTemplate }
 				onChange={ onChange }
+				__next40pxDefaultSize
 			/>
 		</PanelBody>
 	);
 };
 
 const ColorControls = ( { customColor, onColorChange } ) => (
-	<PanelBody title={ __( 'Color' ) }>
+	<PanelBody title={ __( 'Accent Color' ) }>
 		<ColorPalette
 			colors={ CALLOUT_PANEL_COLORS }
 			value={ customColor }
 			onChange={ onColorChange }
+		/>
+	</PanelBody>
+);
+
+const BackgroundColorControls = ( { customBackgroundColor, onBackgroundColorChange } ) => (
+	<PanelBody title={ __( 'Background Color' ) } initialOpen={ false }>
+		<ColorPalette
+			colors={ CALLOUT_PANEL_BACKGROUND_COLORS }
+			value={ customBackgroundColor }
+			onChange={ onBackgroundColorChange }
 		/>
 	</PanelBody>
 );
@@ -177,6 +198,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 	const {
 		calloutTemplate: templateName = 'custom',
 		customColor = CALLOUT_TEMPLATE_DEFAULT_COLOR,
+		customBackgroundColor = CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
 		customIcon = '',
 		headerContent = '',
 	} = attributes;
@@ -184,10 +206,17 @@ const Edit = ( { attributes, setAttributes } ) => {
 	const currentColor = getCurrentColor( templateName, customColor );
 	const currentIcon = getIcon( templateName, customIcon );
 
-	const customStyle =
-		templateName === 'custom'
-			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
-			: {};
+	const customStyle = {
+		'--current-color': currentColor,
+		...( templateName === 'custom'
+			? {
+					'--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR,
+					'--custom-background-color':
+						normalizeBackgroundColor( customBackgroundColor ) ||
+						CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
+			  }
+			: {} ),
+	};
 
 	const blockProps = useBlockProps( {
 		className: `o2-blocks-callout o2-blocks-callout--${ templateName }`,
@@ -213,21 +242,29 @@ const Edit = ( { attributes, setAttributes } ) => {
 					} }
 				/>
 				{ templateName === 'custom' && (
-					<ColorControls
-						customColor={ customColor }
-						onColorChange={ ( color ) => {
-							setAttributes( { customColor: normalizeColor( color ) } );
-						} }
-					/>
+					<>
+						<ColorControls
+							customColor={ customColor }
+							onColorChange={ ( color ) => {
+								setAttributes( { customColor: normalizeColor( color ) } );
+							} }
+						/>
+						<BackgroundColorControls
+							customBackgroundColor={ customBackgroundColor }
+							onBackgroundColorChange={ ( color ) => {
+								setAttributes( { customBackgroundColor: normalizeBackgroundColor( color ) } );
+							} }
+						/>
+						<IconControls
+							customIcon={ customIcon }
+							currentColor={ currentColor }
+							templateName={ templateName }
+							onIconChange={ ( iconName ) => {
+								setAttributes( { customIcon: iconName } );
+							} }
+						/>
+					</>
 				) }
-				<IconControls
-					customIcon={ customIcon }
-					currentColor={ currentColor }
-					templateName={ templateName }
-					onIconChange={ ( iconName ) => {
-						setAttributes( { customIcon: iconName } );
-					} }
-				/>
 			</InspectorControls>
 
 			<aside { ...blockProps }>
@@ -254,6 +291,7 @@ const Save = ( { attributes } ) => {
 	const {
 		calloutTemplate: templateName = 'custom',
 		customColor = CALLOUT_TEMPLATE_DEFAULT_COLOR,
+		customBackgroundColor = CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
 		customIcon = '',
 		headerContent = '',
 	} = attributes;
@@ -261,10 +299,17 @@ const Save = ( { attributes } ) => {
 	const currentColor = getCurrentColor( templateName, customColor );
 	const currentIcon = getIcon( templateName, customIcon );
 
-	const customStyle =
-		templateName === 'custom'
-			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
-			: {};
+	const customStyle = {
+		'--current-color': currentColor,
+		...( templateName === 'custom'
+			? {
+					'--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR,
+					'--custom-background-color':
+						normalizeBackgroundColor( customBackgroundColor ) ||
+						CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
+			  }
+			: {} ),
+	};
 
 	const blockProps = useBlockProps.save( {
 		className: `o2-blocks-callout o2-blocks-callout--${ templateName }`,

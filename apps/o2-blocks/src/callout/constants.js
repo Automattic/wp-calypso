@@ -1,29 +1,14 @@
+import colorStudio from '@automattic/color-studio';
 import { __ } from '@wordpress/i18n';
 
-// Base color palette - these match the $callout-template-colors in style.js
-// Uses hex values from https://github.com/Automattic/color-studio/blob/trunk/dist/colors.json
-const COLOR_PALETTE = {
-	simplenoteBlue: '#618df2',
-	automatticBlue: '#24a3e0',
-	wordPressBlue: '#7b90ff',
-	wooCommercePurple: '#a77eff',
-	purple: '#c475bd',
-	pink: '#eb6594',
-	red: '#f86368',
-	orange: '#e68b28',
-	yellow: '#deb100',
-	green: '#00ba37',
-	jetpackGreen: '#2fb41f',
-	celadon: '#09b585',
-	gray30: '#8c8f94',
-	gray50: '#646970',
-	gray70: '#3c434a',
-};
+// Extract colors from Color Studio
+const COLORS = colorStudio.colors;
 
 // Configuration constants
 export const ICON_GRID_COLUMNS = 5;
 export const ICON_PICKER_MAX_HEIGHT = '310px';
-export const CALLOUT_TEMPLATE_DEFAULT_COLOR = COLOR_PALETTE.gray50;
+export const CALLOUT_TEMPLATE_DEFAULT_COLOR = COLORS[ 'Gray 60' ];
+export const CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR = COLORS.White;
 
 // Callout template definitions
 export const CALLOUT_TEMPLATES = {
@@ -34,43 +19,63 @@ export const CALLOUT_TEMPLATES = {
 	},
 	info: {
 		name: __( 'Info' ),
-		color: COLOR_PALETTE.simplenoteBlue,
+		color: COLORS[ 'Simplenote Blue 40' ],
 		icon: 'dashicons-info-outline',
 	},
 	tip: {
 		name: __( 'Tip' ),
-		color: COLOR_PALETTE.celadon,
+		color: COLORS[ 'Celadon 40' ],
 		icon: 'dashicons-lightbulb',
 	},
 	example: {
 		name: __( 'Example' ),
-		color: COLOR_PALETTE.purple, // Ensures consistency with Purple color
+		color: COLORS[ 'Purple 40' ],
 		icon: 'dashicons-edit-page',
 	},
 	warning: {
 		name: __( 'Warning' ),
-		color: COLOR_PALETTE.red,
+		color: COLORS[ 'Red 40' ],
 		icon: 'dashicons-flag',
 	},
 };
 
 // Color palette for the color picker
 export const CALLOUT_PANEL_COLORS = [
-	{ name: __( 'Simplenote Blue' ), color: COLOR_PALETTE.simplenoteBlue },
-	{ name: __( 'Automattic Blue' ), color: COLOR_PALETTE.automatticBlue },
-	{ name: __( 'WordPress Blue' ), color: COLOR_PALETTE.wordPressBlue },
-	{ name: __( 'WooCommerce Purple' ), color: COLOR_PALETTE.wooCommercePurple },
-	{ name: __( 'Purple' ), color: COLOR_PALETTE.purple },
-	{ name: __( 'Pink' ), color: COLOR_PALETTE.pink },
-	{ name: __( 'Red' ), color: COLOR_PALETTE.red },
-	{ name: __( 'Orange' ), color: COLOR_PALETTE.orange },
-	{ name: __( 'Yellow' ), color: COLOR_PALETTE.yellow },
-	{ name: __( 'Green' ), color: COLOR_PALETTE.green },
-	{ name: __( 'Jetpack Green' ), color: COLOR_PALETTE.jetpackGreen },
-	{ name: __( 'Celadon' ), color: COLOR_PALETTE.celadon },
-	{ name: __( 'Gray 30' ), color: COLOR_PALETTE.gray30 },
-	{ name: __( 'Gray 50' ), color: COLOR_PALETTE.gray50 },
-	{ name: __( 'Gray 70' ), color: COLOR_PALETTE.gray70 },
+	{ name: __( 'Simplenote Blue' ), color: COLORS[ 'Simplenote Blue 40' ] },
+	{ name: __( 'Automattic Blue' ), color: COLORS[ 'Automattic Blue 40' ] },
+	{ name: __( 'WordPress Blue' ), color: COLORS[ 'Blue 40' ] },
+	{ name: __( 'WooCommerce Purple' ), color: COLORS[ 'WooCommerce Purple 40' ] },
+	{ name: __( 'Purple' ), color: COLORS[ 'Purple 40' ] },
+	{ name: __( 'Pink' ), color: COLORS[ 'Pink 40' ] },
+	{ name: __( 'Red' ), color: COLORS[ 'Red 40' ] },
+	{ name: __( 'Orange' ), color: COLORS[ 'Orange 40' ] },
+	{ name: __( 'Yellow' ), color: COLORS[ 'Yellow 40' ] },
+	{ name: __( 'Green' ), color: COLORS[ 'Green 40' ] },
+	{ name: __( 'Jetpack Green' ), color: COLORS[ 'Jetpack Green 40' ] },
+	{ name: __( 'Celadon' ), color: COLORS[ 'Celadon 40' ] },
+	{ name: __( 'Gray 40' ), color: COLORS[ 'Gray 40' ] },
+	{ name: __( 'Gray 60' ), color: COLORS[ 'Gray 60' ] },
+	{ name: __( 'Gray 80' ), color: COLORS[ 'Gray 80' ] },
+];
+
+// Background color palette for the background color picker
+export const CALLOUT_PANEL_BACKGROUND_COLORS = [
+	{ name: __( 'Light Simplenote Blue' ), color: COLORS[ 'Simplenote Blue 0' ] },
+	{ name: __( 'Light Automattic Blue' ), color: COLORS[ 'Automattic Blue 0' ] },
+	{ name: __( 'Light WordPress Blue' ), color: COLORS[ 'Blue 0' ] },
+	{ name: __( 'Light WooCommerce Purple' ), color: COLORS[ 'WooCommerce Purple 0' ] },
+	{ name: __( 'Light Purple' ), color: COLORS[ 'Purple 0' ] },
+	{ name: __( 'Light Pink' ), color: COLORS[ 'Pink 0' ] },
+	{ name: __( 'Light Red' ), color: COLORS[ 'Red 0' ] },
+	{ name: __( 'Light Orange' ), color: COLORS[ 'Orange 0' ] },
+	{ name: __( 'Light Yellow' ), color: COLORS[ 'Yellow 0' ] },
+	{ name: __( 'Light Green' ), color: COLORS[ 'Green 0' ] },
+	{ name: __( 'Light Jetpack Green' ), color: COLORS[ 'Jetpack Green 0' ] },
+	{ name: __( 'Light Celadon' ), color: COLORS[ 'Celadon 0' ] },
+	{ name: __( 'Gray 0' ), color: COLORS[ 'Gray 0' ] },
+	{ name: __( 'Gray 10' ), color: COLORS[ 'Gray 10' ] },
+	{ name: __( 'Gray 20' ), color: COLORS[ 'Gray 20' ] },
+	{ name: __( 'White' ), color: COLORS.White },
 ];
 
 // Dashicons for the icon picker

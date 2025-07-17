@@ -5,6 +5,7 @@
  * Includes responsive design and editor-specific styles.
  */
 
+@import "@automattic/color-studio/dist/color-variables";
 
 /**
  * 1.1 Callout Template Color Variables
@@ -12,11 +13,11 @@
  * Color definitions that match the CALLOUT_TEMPLATES in constants.js
  */
 $callout-template-colors: (
-	"example": #c475bd,    /* Same as Purple in COLOR_PALETTE */
-	"info": #618df2,       /* Same as Simplenote Blue */
-	"warning": #f86368,    /* Same as Red */
-	"tip": #09b585,        /* Same as Celadon */
-	"custom": #646970      /* Same as Gray50 */
+	"example": var(--studio-purple-40),
+	"info": var(--studio-simplenote-blue-40),
+	"warning": var(--studio-red-40),
+	"tip": var(--studio-celadon-40),
+	"custom": var(--studio-gray-50)
 );
 
 
@@ -111,17 +112,18 @@ $callout-template-colors: (
 /**
  * 1.7 Callout Template Specific Styles
  *
- * Generated styles for each callout template using the color map.
+ * Generated styles for each callout template using CSS custom properties.
+ * This allows the border-left-color to dynamically update when templates change.
  */
 @each $template, $color in $callout-template-colors {
 	.o2-blocks-callout--#{$template} {
-		border-left-color: #{$color};
+		border-left-color: var(--current-color, #{$color});
 		transition: color 0s ease-in-out, border-color 0s ease-in-out;
 
 		.o2-blocks-callout__icon,
 		.o2-blocks-callout__header {
-			border-color: #{$color};
-			color: #{$color};
+			border-color: var(--current-color, #{$color});
+			color: var(--current-color, #{$color});
 		}
 	}
 }
@@ -134,6 +136,7 @@ $callout-template-colors: (
  */
 .o2-blocks-callout--custom {
 	border-left-color: var(--custom-color, #{map-get($callout-template-colors, "custom")});
+	background-color: var(--custom-background-color, var(--studio-white));
 	transition: color 0s ease-in-out, border-color 0s ease-in-out;
 
 	.o2-blocks-callout__icon,

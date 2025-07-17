@@ -20,11 +20,15 @@
 		},
 		"customColor": {
 			"type": "string",
-			"default": "#646970"
+			"default": "#50575e"
+		},
+		"customBackgroundColor": {
+			"type": "string",
+			"default": "#fff"
 		},
 		"customIcon": {
 			"type": "string",
-			"default": ""
+			"default": "dashicons-megaphone"
 		},
 		"headerContent": {
 			"type": "string",

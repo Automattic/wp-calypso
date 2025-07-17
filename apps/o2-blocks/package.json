@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/color-studio": "^4.1.0",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/block-editor": "^14.18.0",
