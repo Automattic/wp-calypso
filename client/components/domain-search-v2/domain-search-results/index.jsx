@@ -266,7 +266,7 @@ class DomainSearchResults extends Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, showStrikedOutPrice } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let freeSuggestion;
@@ -353,7 +353,7 @@ class DomainSearchResults extends Component {
 			<>
 				{ featuredSuggestionElement }
 
-				{ freeSuggestion && (
+				{ showSkipButton && freeSuggestion && (
 					<DomainSkipSuggestion
 						domain={ freeSuggestion?.domain_name }
 						onSkip={ this.props.onSkip }
