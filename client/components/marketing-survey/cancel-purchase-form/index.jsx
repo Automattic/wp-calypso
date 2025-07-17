@@ -314,14 +314,6 @@ class CancelPurchaseForm extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	onSkipSurvey = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_skip' );
-
-		if ( this.props.onSurveyComplete ) {
-			this.props.onSurveyComplete();
-		}
-	};
-
 	downgradeClick = ( upsell ) => {
 		if ( ! this.state.isSubmitting ) {
 			this.props.downgradeClick( upsell );
@@ -578,19 +570,14 @@ class CancelPurchaseForm extends Component {
 
 		if ( ! isLastStep ) {
 			return (
-				<>
-					<GutenbergButton
-						isPrimary
-						isDefault
-						disabled={ ! this.canGoNext() }
-						onClick={ this.clickNext }
-					>
-						{ translate( 'Submit' ) }
-					</GutenbergButton>
-					<GutenbergButton isSecondary isBusy={ isCancelling } onClick={ this.onSkipSurvey }>
-						{ translate( 'Skip' ) }
-					</GutenbergButton>
-				</>
+				<GutenbergButton
+					isPrimary
+					isDefault
+					disabled={ ! this.canGoNext() }
+					onClick={ this.clickNext }
+				>
+					{ translate( 'Submit' ) }
+				</GutenbergButton>
 			);
 		}
 
@@ -614,29 +601,21 @@ class CancelPurchaseForm extends Component {
 					>
 						{ translate( 'Keep plan' ) }
 					</GutenbergButton>
-					<GutenbergButton isSecondary isBusy={ isCancelling } onClick={ this.onSkipSurvey }>
-						{ translate( 'Skip' ) }
-					</GutenbergButton>
 				</>
 			);
 		}
 
 		return (
-			<>
-				<GutenbergButton
-					isPrimary={ surveyStep !== UPSELL_STEP }
-					isSecondary={ surveyStep === UPSELL_STEP }
-					isDefault={ surveyStep !== UPSELL_STEP }
-					isBusy={ isCancelling }
-					disabled={ ! this.canGoNext() }
-					onClick={ this.onSubmit }
-				>
-					{ translate( 'Submit' ) }
-				</GutenbergButton>
-				<GutenbergButton isSecondary isBusy={ isCancelling } onClick={ this.onSkipSurvey }>
-					{ translate( 'Skip' ) }
-				</GutenbergButton>
-			</>
+			<GutenbergButton
+				isPrimary={ surveyStep !== UPSELL_STEP }
+				isSecondary={ surveyStep === UPSELL_STEP }
+				isDefault={ surveyStep !== UPSELL_STEP }
+				isBusy={ isCancelling }
+				disabled={ ! this.canGoNext() }
+				onClick={ this.onSubmit }
+			>
+				{ translate( 'Submit' ) }
+			</GutenbergButton>
 		);
 	};
 
