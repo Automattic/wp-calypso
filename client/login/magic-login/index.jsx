@@ -4,7 +4,7 @@ import { Gridicon, FormLabel } from '@automattic/components';
 import { addLocaleToPath, localizeUrl, getLanguage } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -336,7 +336,7 @@ class MagicLogin extends Component {
 						{ linkBack }
 					</a>
 				</div>
-				{ ! isA4A && (
+				{ ! oauth2Client && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"
@@ -1227,6 +1227,7 @@ class MagicLogin extends Component {
 	}
 
 	renderTos = () => {
+		const { translate } = this.props;
 		const options = {
 			components: {
 				tosLink: (
@@ -1245,10 +1246,17 @@ class MagicLogin extends Component {
 				),
 			},
 		};
-		const tosText = this.props.translate(
-			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			options
-		);
+		const tosText = fixMe( {
+			text: 'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			newCopy: translate(
+				'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			),
+			oldCopy: translate(
+				'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			),
+		} );
 
 		return <p className="magic-login__tos wp-login__tos">{ tosText }</p>;
 	};
@@ -1300,8 +1308,6 @@ class MagicLogin extends Component {
 		// "query?.redirect_to" is used to determine if Studio app users are creating a new account (vs. logging in)
 		const isStudio = isStudioAppOAuth2Client( oauth2Client ) && query?.redirect_to;
 
-		const isWhiteLogin = ! this.props.isWCCOM && ! this.props.isFromAutomatticForAgenciesPlugin;
-
 		// If this is part of the Jetpack login flow, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
@@ -1318,11 +1324,7 @@ class MagicLogin extends Component {
 		};
 
 		const mainContent = (
-			<Main
-				className={ clsx( 'magic-login magic-login__request-link', {
-					'is-white-login': isWhiteLogin,
-				} ) }
-			>
+			<Main className="magic-login magic-login__request-link">
 				<GlobalNotices id="notices" />
 
 				{ isWooJPC ? (

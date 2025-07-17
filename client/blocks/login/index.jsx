@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -9,7 +8,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Notice from 'calypso/components/notice';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
@@ -67,7 +65,6 @@ class Login extends Component {
 		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isWhiteLogin: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
@@ -107,7 +104,6 @@ class Login extends Component {
 
 	static defaultProps = {
 		isJetpack: false,
-		isWhiteLogin: false,
 	};
 
 	componentDidMount() {
@@ -146,7 +142,7 @@ class Login extends Component {
 		}
 
 		if (
-			this.props.isJetpackWooDnaFlow &&
+			this.props.isWooJPC &&
 			this.props.requestError?.code === 'unknown_user' &&
 			emailValidator.validate( this.props.usernameOrEmail )
 		) {
@@ -362,37 +358,6 @@ class Login extends Component {
 		);
 	}
 
-	renderToS() {
-		const { isSocialFirst, translate, twoFactorAuthType } = this.props;
-		if ( ! isSocialFirst || twoFactorAuthType ) {
-			return null;
-		}
-
-		const tos = translate(
-			'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			{
-				components: {
-					tosLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					privacyLink: (
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
-
-		return <div className="login__form-subheader-terms">{ tos }</div>;
-	}
-
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -595,7 +560,6 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
 			isSignupExistingAccount,
-			isWhiteLogin,
 			linkingSocialService,
 			socialConnect,
 			twoStepNonce,
@@ -636,8 +600,6 @@ class Login extends Component {
 
 				{ this.renderNotice() }
 
-				{ ! isWhiteLogin && this.renderToS() }
-
 				{ this.renderContent() }
 
 				{ this.renderFooter() }
@@ -668,7 +630,6 @@ export default connect(
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		isWooJPC: isWooJPCFlow( state ),
 		isWCCOM: getIsWCCOM( state ),
 		isWoo: getIsWoo( state ),

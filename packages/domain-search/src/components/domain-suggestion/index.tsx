@@ -6,29 +6,32 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
+import { ComponentProps } from 'react';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
-import { DomainSuggestionPrice } from '../domain-suggestion-price';
-import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { DomainSuggestionPopover } from '../domain-suggestion-popover';
+import { DomainSuggestionsList, useDomainSuggestionsListContext } from '../domain-suggestions-list';
 import { Unavailable } from './unavailable';
 
 import './style.scss';
 
-interface DomainSuggestionProps {
+type DomainSuggestionProps = {
 	uuid: string;
 	domain: string;
 	tld: string;
-	originalPrice?: string;
-	price: string;
+	price: React.ReactNode;
 	badges?: React.ReactNode;
-}
+	notice?: React.ReactNode;
+} & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
-export const DomainSuggestion = ( {
+const DomainSuggestionComponent = ( {
 	uuid,
 	domain,
 	tld,
-	originalPrice,
 	price,
 	badges,
+	notice,
+	onClick,
+	disabled,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
@@ -39,22 +42,41 @@ export const DomainSuggestion = ( {
 	const { activeQuery } = listContext;
 
 	const domainName = (
-		<span>
+		<span style={ { lineHeight: '24px' } }>
 			<Text
 				size={ activeQuery === 'large' ? 18 : 16 }
-				style={ { marginRight: badges ? '12px' : undefined } }
-				aria-label={ `${ domain }.${ tld }` }
+				style={ {
+					verticalAlign: 'middle',
+					lineHeight: 'inherit',
+					marginRight: badges ? '12px' : undefined,
+				} }
 			>
-				{ domain }
-				<Text size="inherit" weight={ 500 }>
-					.{ tld }
-				</Text>
+				<span
+					aria-label={ `${ domain }.${ tld }` }
+					style={ {
+						wordBreak: 'break-all',
+						// eslint-disable-next-line no-nested-ternary
+						marginRight: notice ? ( activeQuery === 'large' ? '8px' : '4px' ) : undefined,
+					} }
+				>
+					{ domain }
+					<Text size="inherit" weight={ 500 }>
+						.{ tld }
+					</Text>
+				</span>
+				{ notice && (
+					<span className="domain-suggestions-list-item__notice">
+						<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
+					</span>
+				) }
 			</Text>
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
 		</span>
 	);
 
-	const cta = <DomainSuggestionCTA compact uuid={ uuid } />;
+	const cta = (
+		<DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } disabled={ disabled } />
+	);
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
@@ -66,11 +88,7 @@ export const DomainSuggestion = ( {
 					</HStack>
 
 					<HStack alignment="right" spacing={ 4 }>
-						<DomainSuggestionPrice
-							alignment="right"
-							originalPrice={ originalPrice }
-							price={ price }
-						/>
+						{ price }
 						{ cta }
 					</HStack>
 				</HStack>
@@ -81,7 +99,7 @@ export const DomainSuggestion = ( {
 			<HStack spacing={ 4 }>
 				<VStack spacing={ 2 }>
 					{ domainName }
-					<DomainSuggestionPrice originalPrice={ originalPrice } price={ price } />
+					{ price }
 				</VStack>
 				{ cta }
 			</HStack>
@@ -90,9 +108,23 @@ export const DomainSuggestion = ( {
 
 	return (
 		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody>{ getContent() }</CardBody>
+			<CardBody style={ { borderRadius: 0 } }>{ getContent() }</CardBody>
 		</Card>
 	);
+};
+
+export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		return (
+			<DomainSuggestionsList>
+				<DomainSuggestionComponent { ...props } />
+			</DomainSuggestionsList>
+		);
+	}
+
+	return <DomainSuggestionComponent { ...props } />;
 };
 
 DomainSuggestion.Unavailable = Unavailable;

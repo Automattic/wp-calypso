@@ -5,11 +5,7 @@ import { DomainSuggestion } from '..';
 describe( 'DomainSuggestion.Unavailable', () => {
 	it( 'shows already registered message', () => {
 		const { container } = render(
-			<DomainSuggestion.Unavailable
-				domain="example"
-				tld="com"
-				unavailableReason="already-registered"
-			/>
+			<DomainSuggestion.Unavailable domain="example" tld="com" reason="already-registered" />
 		);
 
 		expect( container ).toHaveTextContent( 'example.com is already registered.' );
@@ -23,7 +19,7 @@ describe( 'DomainSuggestion.Unavailable', () => {
 			<DomainSuggestion.Unavailable
 				domain="example"
 				tld="com"
-				unavailableReason="already-registered"
+				reason="already-registered"
 				onTransferClick={ onTransferClick }
 			/>
 		);

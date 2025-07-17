@@ -12,7 +12,7 @@ export const useContainerQuery = < T extends string >(
 	const initialMountRef = useRef< Element | null | undefined >( null );
 
 	const callback = useEvent( ( width: number ) => {
-		const query = Object.entries< number >( queries ).find( ( [ , value ] ) => width <= value );
+		const query = Object.entries< number >( queries ).findLast( ( [ , value ] ) => width >= value );
 		if ( query ) {
 			setActiveQuery( query[ 0 ] as T );
 		}

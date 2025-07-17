@@ -25,6 +25,7 @@ export interface OverviewCardProps {
 	trackId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	children?: ReactNode;
+	onClick?: () => void;
 }
 
 export default function OverviewCard( {
@@ -38,6 +39,7 @@ export default function OverviewCard( {
 	trackId,
 	variant,
 	children,
+	onClick,
 }: OverviewCardProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isDisabled = variant === 'disabled';
@@ -129,14 +131,14 @@ export default function OverviewCard( {
 				target="_blank"
 				rel="noreferrer"
 				onClick={ () => {
-					if ( ! trackId ) {
-						return;
-					}
+					onClick?.();
 
-					recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-						type: trackId,
-						variant,
-					} );
+					if ( trackId ) {
+						recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+							type: trackId,
+							variant,
+						} );
+					}
 				} }
 			>
 				{ content }

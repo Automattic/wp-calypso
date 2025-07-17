@@ -3,12 +3,13 @@ import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories
 import { DomainSearch } from '../domain-search';
 import { DomainSuggestion } from '../domain-suggestion';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
+import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { DomainSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
 
 const SUGGESTIONS = [
-	buildDomain( { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ),
-	buildDomain( { uuid: '2', domain: 'example', tld: 'com', price: '$10', originalPrice: '$20' } ),
+	buildDomain( { uuid: '1', domain: 'tha-lasso', tld: 'com', price: '$10' } ),
+	buildDomain( { uuid: '2', domain: 'the-lasso', tld: 'com', price: '$10', originalPrice: '$20' } ),
 ];
 
 export const Default = () => {
@@ -47,7 +48,7 @@ export const Default = () => {
 					<DomainSuggestion.Unavailable
 						domain="example-unavailable"
 						tld="com"
-						unavailableReason="already-registered"
+						reason="already-registered"
 						onTransferClick={ () => alert( 'Your wish is an order!' ) }
 					/>
 					{ SUGGESTIONS.map( ( suggestion ) => (
@@ -56,8 +57,13 @@ export const Default = () => {
 							uuid={ suggestion.uuid }
 							domain={ suggestion.domain }
 							tld={ suggestion.tld }
-							originalPrice={ suggestion.originalPrice }
-							price={ suggestion.price }
+							notice={ suggestion.domain === 'tha-lasso' ? 'hello' : undefined }
+							price={
+								<DomainSuggestionPrice
+									originalPrice={ suggestion.originalPrice }
+									price={ suggestion.price }
+								/>
+							}
 							badges={
 								<>
 									<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>

@@ -6,7 +6,7 @@ import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
 import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
 import { HostingFeatures, canViewSftpSettings, canViewSshSettings } from '../features';
-import HostingFeature from '../hosting-feature';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import EnableSftpCard from './enable-sftp-card';
 import SftpCard from './sftp-card';
@@ -29,7 +29,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-			<HostingFeature
+			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.SFTP }
 				tracksFeatureId="settings-sftp-ssh"
@@ -52,7 +52,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
 					/>
 				) }
-			</HostingFeature>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

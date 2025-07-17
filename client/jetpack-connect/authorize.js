@@ -1282,7 +1282,6 @@ export class JetpackAuthorize extends Component {
 				} ) }
 				isWooJPC={ this.isWooJPC() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-				wooDnaConfig={ wooDna }
 				useCompactLogo={ isFromJetpackOnboarding }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''

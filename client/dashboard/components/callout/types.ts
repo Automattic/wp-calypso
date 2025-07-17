@@ -36,6 +36,13 @@ export interface CalloutProps {
 	 */
 	imageAlt?: string;
 	/**
+	 * Image style variant.
+	 * - default: Display the image within the container's default padding.
+	 * - full-bleed: Display the image covering the full height of the container.
+	 * @default 'default'
+	 */
+	imageVariant?: 'default' | 'full-bleed';
+	/**
 	 * Typically a single button serving as a call to action.
 	 * Elements will be arranged in a VStack with consistent spacing.
 	 */

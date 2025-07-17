@@ -14,7 +14,7 @@ form {
 	}
 }
 
-.is-white-login {
+.layout:not(.is-grav-powered-client) {
 	.login {
 		display: flex;
 		flex-direction: column;

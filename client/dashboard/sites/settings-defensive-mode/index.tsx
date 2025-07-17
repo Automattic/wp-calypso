@@ -24,7 +24,7 @@ import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { HostingFeatures, canViewDefensiveModeSettings } from '../features';
-import HostingFeature from '../hosting-feature';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
@@ -226,13 +226,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				/>
 			}
 		>
-			<HostingFeature
+			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.DEFENSIVE_MODE }
 				tracksFeatureId="settings-defensive-mode"
 			>
 				{ data?.enabled ? renderEnabled() : renderDisabled() }
-			</HostingFeature>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

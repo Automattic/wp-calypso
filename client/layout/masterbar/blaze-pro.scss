@@ -440,7 +440,7 @@ body.is-section-signup {
 		}
 	}
 
-	&.layout.is-white-login,
+	&.layout:not(.is-grav-powered-client),
 	.card.login__form,
 	.signup-form .logged-out-form,
 	.login__lostpassword-form {

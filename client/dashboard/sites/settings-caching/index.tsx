@@ -30,7 +30,7 @@ import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { hasPlanFeature } from '../../utils/site-features';
 import { HostingFeatures, canViewCachingSettings } from '../features';
-import HostingFeature from '../hosting-feature';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
 import type { Field } from '@wordpress/dataviews';
@@ -323,14 +323,14 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			<HostingFeature
+			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.CACHING }
 				tracksFeatureId="settings-caching"
 			>
 				{ renderForm() }
 				{ renderActions() }
-			</HostingFeature>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

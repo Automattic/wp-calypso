@@ -6,14 +6,18 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { backup, chartBar, published, wordpress } from '@wordpress/icons';
+import { chartBar, published, wordpress } from '@wordpress/icons';
+import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
+import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
+import BackupCard from './backup-card';
 import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
@@ -22,49 +26,97 @@ import StorageCard from './storage-card';
 import UptimeCard from './uptime-card';
 import './style.scss';
 
-function SiteOverview() {
+type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
+
+const SPACING = {
+	DEFAULT: 6,
+	SMALL: 4,
+};
+
+function getGridLayout( {
+	count,
+	isLargeViewport,
+	isSmallViewport,
+}: {
+	count: number;
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
+} ) {
+	if ( isLargeViewport ) {
+		return {
+			columns: count,
+			rows: 1,
+		};
+	}
+
+	if ( isSmallViewport ) {
+		return {
+			columns: 1,
+			rows: count,
+		};
+	}
+
+	return {
+		columns: 2,
+		rows: Math.ceil( count / 2 ),
+	};
+}
+
+function SiteOverview( {
+	hideSitePreview = false,
+	breakpoints,
+}: {
+	hideSitePreview: boolean;
+	breakpoints?: { large: Breakpoint; small: Breakpoint };
+} ) {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
+	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
+	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const gridLayout = getGridLayout( {
+		count: showSitePreview ? 4 : 3,
+		isLargeViewport,
+		isSmallViewport,
+	} );
 
 	return (
 		<PageLayout
 			header={
-				<PageHeader
-					title={ getSiteDisplayName( site ) }
-					description={ <SiteOverviewFields site={ site } /> }
-					actions={
-						site.options?.admin_url && (
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								href={ site.options.admin_url }
-								icon={ wordpress }
-							>
-								{ __( 'WP Admin' ) }
-							</Button>
-						)
-					}
-				/>
+				<VStack>
+					<PageHeader
+						title={ getSiteDisplayName( site ) }
+						actions={
+							site.options?.admin_url && (
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									href={ site.options.admin_url }
+									icon={ wordpress }
+								>
+									{ __( 'WP Admin' ) }
+								</Button>
+							)
+						}
+					/>
+					<SiteOverviewFields site={ site } />
+				</VStack>
 			}
 		>
-			<VStack alignment="stretch" spacing={ 10 }>
-				<Grid columns={ 4 } rows={ 1 } gap={ 6 }>
-					<SitePreviewCard site={ site } />
-					<VStack className="site-overview-cards" spacing={ 6 }>
+			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+				<Grid { ...gridLayout } gap={ spacing }>
+					{ showSitePreview && <SitePreviewCard site={ site } /> }
+					<VStack className="site-overview-cards" spacing={ spacing }>
 						<OverviewCard
 							title={ __( 'Visibility' ) }
 							icon={ published }
 							heading="TBA"
 							description="TBA"
 						/>
-						<OverviewCard
-							title={ __( 'Last backup' ) }
-							icon={ backup }
-							heading="TBA"
-							description="TBA"
-						/>
+						<BackupCard site={ site } />
 					</VStack>
-					<VStack className="site-overview-cards" spacing={ 6 }>
+					<VStack className="site-overview-cards" spacing={ spacing }>
 						<OverviewCard
 							title={ __( 'Performance' ) }
 							icon={ chartBar }
@@ -75,12 +127,22 @@ function SiteOverview() {
 					</VStack>
 					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />
 				</Grid>
-				<Divider orientation="horizontal" style={ { width: '100%', color: '#f0f0f0' } } />
-				<HStack className="site-overview-cards" spacing={ 6 } alignment="flex-start">
-					<VStack spacing={ 6 } justify="start">
+				<Divider
+					orientation="horizontal"
+					style={ { color: 'var(--dashboard-overview__divider-color)' } }
+				/>
+				<HStack
+					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
+						'is-large': isLargeViewport,
+					} ) }
+					spacing={ spacing }
+					alignment="flex-start"
+				>
+					<VStack spacing={ spacing } justify="start">
 						<PerformanceCards site={ site } />
 					</VStack>
-					<VStack spacing={ 6 } justify="start">
+					<VStack spacing={ spacing } justify="start">
+						<OverviewCardUpsellDIFM site={ site } />
 						<StorageCard site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>

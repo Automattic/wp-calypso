@@ -45,7 +45,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
-	useViewMostRecentOpenConversationNotice( chat?.provider === 'odie' && ! forceEmailSupport );
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
@@ -56,6 +55,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
+
+	useViewMostRecentOpenConversationNotice(
+		chatMessagesLoaded && chat?.provider === 'odie' && ! forceEmailSupport
+	);
 
 	const { alreadyHasActiveZendeskChat, chatHasEnded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -167,8 +170,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				aria-atomic="false"
 				aria-relevant="additions"
 			>
-				{ chat.messages.map( ( message ) => (
-					<div key={ `${ message.internal_message_id }` }>
+				{ chat.messages.map( ( message, index ) => (
+					<div key={ index }>
 						{ [ 'bot', 'business' ].includes( message.role ) && message.content }
 					</div>
 				) ) }

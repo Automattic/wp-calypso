@@ -6,6 +6,7 @@ import type { Site, User } from '../data/types';
 
 export const HostingFeatures = {
 	BACKUPS: DotcomFeatures.BACKUPS,
+	SCAN: DotcomFeatures.SCAN,
 	PHP: DotcomFeatures.SFTP,
 	SFTP: DotcomFeatures.SFTP,
 	SSH: DotcomFeatures.SSH,

@@ -13,7 +13,7 @@ import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
-import { siteBackupLastEntryQuery } from '../../app/queries/site-backups';
+import { siteLastBackupQuery } from '../../app/queries/site-backups';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
@@ -23,7 +23,12 @@ import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
 import { DotcomFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import { hasAtomicFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
+import {
+	hasAtomicFeature,
+	hasHostingFeature,
+	hasJetpackModule,
+	hasPlanFeature,
+} from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
 import { HostingFeatures, canManageSite } from '../features';
@@ -179,14 +184,14 @@ export function EngagementStat( {
 
 export function LastBackup( { site }: { site: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = hasAtomicFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
 	const {
 		data: lastBackup,
 		isLoading,
 		isError,
 	} = useQuery( {
-		...siteBackupLastEntryQuery( site.ID ),
+		...siteLastBackupQuery( site.ID ),
 		enabled: isEligible && inView,
 	} );
 
@@ -203,7 +208,7 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince date={ lastBackup.last_updated } />;
+		return <TimeSince timestamp={ lastBackup.last_updated } isUtc />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;

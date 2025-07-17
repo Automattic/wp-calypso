@@ -8,7 +8,7 @@ import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useChatStatus, useShouldUseWapuu } from '../hooks';
+import { useChatStatus, useShouldUseWapuu, useLastSupportInteraction } from '../hooks';
 import './help-center-chat.scss';
 
 export function HelpCenterChat( {
@@ -32,6 +32,7 @@ export function HelpCenterChat( {
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 	const { forceEmailSupport } = useChatStatus();
+	useLastSupportInteraction( { isUserEligibleForPaidSupport, userFieldFlowName } );
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -41,7 +42,7 @@ export function HelpCenterChat( {
 			} );
 			navigate( '/' );
 		}
-	}, [] );
+	}, [ navigate, preventOdieAccess ] );
 
 	return (
 		<OdieAssistantProvider

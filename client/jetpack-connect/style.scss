@@ -9,11 +9,11 @@
 $colophon-height: 50px;
 
 .jetpack-connect__main:not(.is-woocommerce):not(.is-automattic-for-agencies-flow),
-.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woo-dna-flow):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
+.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woo-dna-flow {
+.layout.is-woocommerce-core-profiler-flow {
 	@include woocommerce-colors();
 }
 
@@ -972,9 +972,12 @@ $colophon-height: 50px;
 	.site-topic__content .form-fieldset {
 		position: relative;
 	}
+}
 
+.layout.is-section-jetpack-connect,
+.layout.is-section-purchase-product {
 	/** WooCommerce Onboarding Styles **/
-	&.is-jetpack-woo-dna-flow {
+	&.is-woocommerce-core-profiler-flow {
 		background-color: var(--color-woocommerce-onboarding-background);
 
 		.jetpack-connect__main-logo {
@@ -1536,12 +1539,6 @@ $colophon-height: 50px;
 
 body.is-section-jetpack-connect {
 	background-color: var(--color-surface);
-
-	.layout.is-jetpack-woo-dna-flow {
-		.wpcom-site__logo {
-			display: none;
-		}
-	}
 }
 
 // ProductCard overrides

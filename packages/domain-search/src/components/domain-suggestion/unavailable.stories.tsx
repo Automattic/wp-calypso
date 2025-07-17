@@ -23,7 +23,7 @@ export const Default = () => {
 				<DomainSuggestion.Unavailable
 					domain="example-unavailable"
 					tld="com"
-					unavailableReason="already-registered"
+					reason="already-registered"
 					onTransferClick={ () => alert( 'Your wish is an order!' ) }
 				/>
 			</DomainSearch>

@@ -13,7 +13,6 @@ function QrCodeLoginPlaceholder() {
 
 function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 	const translate = useTranslate();
-	const isWhiteLogin = true;
 
 	return (
 		<Main className={ clsx( 'qr-code-login-page', { 'is-jetpack': isJetpack } ) }>
@@ -57,7 +56,7 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 					isJetpack={ isJetpack }
 				/>
 				<div className="qr-code-login-page__footer">
-					<a href={ login( { locale, redirectTo, isWhiteLogin, isJetpack } ) }>
+					<a href={ login( { locale, redirectTo, isJetpack } ) }>
 						{ translate( 'Enter a password instead' ) }
 					</a>
 				</div>
