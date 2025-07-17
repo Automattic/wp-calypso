@@ -88,5 +88,7 @@ export const useLastSupportInteraction = ( {
 		location.pathname,
 		location.search,
 		sectionName,
+		isUserEligibleForPaidSupport,
+		userFieldFlowName,
 	] );
 };
