@@ -236,7 +236,6 @@ export default function SyncModal( {
 	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
 
 	useEffect( () => {
-		dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
 		dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
 		dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
 		dispatch( setNodeCheckState( querySiteId, '/sql', 'checked' ) );
