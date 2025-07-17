@@ -55,6 +55,7 @@ export default function DomainsCard( {
 						<>
 							<Button
 								variant="tertiary"
+								size="compact"
 								href={ addQueryArgs( `/domains/add/use-my-domain/${ site.slug }`, {
 									redirect_to: window.location.pathname,
 								} ) }
@@ -62,7 +63,8 @@ export default function DomainsCard( {
 								{ __( 'Transfer domain' ) }
 							</Button>
 							<Button
-								variant="primary"
+								variant="secondary"
+								size="compact"
 								href={ addQueryArgs( `/domains/add/${ site.slug }`, {
 									redirect_to: window.location.pathname,
 								} ) }
