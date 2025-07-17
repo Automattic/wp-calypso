@@ -5,7 +5,7 @@ import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { DomainSuggestion } from '.';
 import type { Meta } from '@storybook/react';
 
-export const Default = () => {
+const StoryWrapper = ( { children }: { children: React.ReactNode } ) => {
 	return (
 		<div
 			style={ {
@@ -22,29 +22,30 @@ export const Default = () => {
 				} }
 				cart={ buildDomainSearchCart() }
 			>
-				<DomainSuggestion.Recommended
-					badges={
-						<>
-							<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>
-							<DomainSuggestionBadge>Best alternative</DomainSuggestionBadge>
-						</>
-					}
-					uuid="123"
-					domain="example"
-					tld="com"
-					price={ <DomainSuggestionPrice originalPrice="$97" price="$22" alignment="left" /> }
-				/>
+				{ children }
 			</DomainSearch>
 		</div>
 	);
 };
 
-Default.parameters = {
-	viewport: {
-		defaultViewport: 'desktop',
-	},
+export const Default = () => {
+	return (
+		<StoryWrapper>
+			<DomainSuggestion.Recommended
+				badges={
+					<>
+						<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>
+						<DomainSuggestionBadge>Best alternative</DomainSuggestionBadge>
+					</>
+				}
+				uuid="123"
+				domain="example"
+				tld="com"
+				price={ <DomainSuggestionPrice originalPrice="$97" price="$22" alignment="left" /> }
+			/>
+		</StoryWrapper>
+	);
 };
-
 const meta: Meta< typeof Default > = {
 	title: 'DomainSuggestion/Recommended',
 	component: Default,
@@ -52,12 +53,20 @@ const meta: Meta< typeof Default > = {
 
 export default meta;
 
-export const Mobile = () => {
-	return <Default />;
-};
-
-Mobile.parameters = {
-	viewport: {
-		defaultViewport: 'mobile1',
-	},
+export const Highlighted = () => {
+	return (
+		<StoryWrapper>
+			<DomainSuggestion.Recommended
+				badges={
+					<DomainSuggestionBadge variation="success">It's available!</DomainSuggestionBadge>
+				}
+				uuid="123"
+				domain="example"
+				tld="com"
+				isHighlighted
+				matchReasons={ [ 'Exact match', '.com is the most common extension' ] }
+				price={ <DomainSuggestionPrice originalPrice="$97" price="$22" /> }
+			/>
+		</StoryWrapper>
+	);
 };

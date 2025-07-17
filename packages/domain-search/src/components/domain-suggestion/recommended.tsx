@@ -5,12 +5,14 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { ComponentProps, useMemo } from 'react';
 import {
 	DomainSuggestionContainerContext,
 	useDomainSuggestionContainer,
 } from '../../hooks/use-domain-suggestion-container';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
+import { DomainSuggestionMatchReasons } from '../domain-suggestion-match-reasons';
 
 import './recommended.scss';
 
@@ -18,16 +20,20 @@ type DomainSuggestionRecommendedProps = {
 	uuid: string;
 	domain: string;
 	tld: string;
-	badges: React.ReactNode;
+	matchReasons?: string[];
+	badges?: React.ReactNode;
 	price: React.ReactNode;
+	isHighlighted?: boolean;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
 export const Recommended = ( {
 	uuid,
 	domain,
 	tld,
+	matchReasons,
 	badges,
 	price,
+	isHighlighted,
 	onClick,
 	disabled,
 }: DomainSuggestionRecommendedProps ) => {
@@ -43,10 +49,36 @@ export const Recommended = ( {
 		</Text>
 	);
 
-	const badgesElement = <div className="domain-suggestion-recommended__badges">{ badges }</div>;
+	const badgesElement = badges && (
+		<div className="domain-suggestion-recommended__badges">{ badges }</div>
+	);
+
+	const matchReasonsList = matchReasons && (
+		<DomainSuggestionMatchReasons reasons={ matchReasons } />
+	);
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
+			if ( matchReasonsList ) {
+				return (
+					<HStack spacing={ 6 }>
+						<VStack spacing={ 3 } alignment="left">
+							{ badgesElement }
+							{ title }
+							{ matchReasonsList }
+						</VStack>
+						<VStack
+							spacing={ 6 }
+							alignment="right"
+							className="domain-suggestion-recommended__price-info"
+						>
+							{ price }
+							{ cta }
+						</VStack>
+					</HStack>
+				);
+			}
+
 			return (
 				<VStack spacing={ 3 }>
 					<VStack spacing={ 3 } alignment="left">
@@ -62,10 +94,13 @@ export const Recommended = ( {
 		}
 
 		return (
-			<VStack spacing={ 3 }>
-				{ badgesElement }
-				{ title }
-				{ price }
+			<VStack spacing={ 4 }>
+				<VStack spacing={ 3 }>
+					{ badgesElement }
+					{ title }
+					{ price }
+					{ matchReasonsList }
+				</VStack>
 				{ cta }
 			</VStack>
 		);
@@ -75,7 +110,9 @@ export const Recommended = ( {
 		<Card
 			ref={ containerRef }
 			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className="domain-suggestion-recommended--fqdn"
+			className={ clsx( 'domain-suggestion-recommended', {
+				'domain-suggestion-recommended--highlighted': isHighlighted,
+			} ) }
 		>
 			<DomainSuggestionContainerContext.Provider value={ contextValue }>
 				<CardBody>{ getContent() }</CardBody>

@@ -12,7 +12,6 @@ import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { DomainSuggestionsList } from '../domain-suggestions-list';
 import { Recommended } from './recommended';
-import { RecommendedFQDN } from './recommended-fqdn';
 import { Unavailable } from './unavailable';
 
 import './style.scss';
@@ -132,4 +131,3 @@ export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
 
 DomainSuggestion.Unavailable = Unavailable;
 DomainSuggestion.Recommended = Recommended;
-DomainSuggestion.RecommendedFQDN = RecommendedFQDN;
