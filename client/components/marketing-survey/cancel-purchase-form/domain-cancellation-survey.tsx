@@ -148,7 +148,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
-						{ translate( 'Submit feedback' ) }
+						{ translate( 'Submit' ) }
 					</button>
 				</div>
 			</div>
