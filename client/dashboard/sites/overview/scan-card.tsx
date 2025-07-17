@@ -4,8 +4,9 @@ import { shield } from '@wordpress/icons';
 import { siteScanQuery } from '../../app/queries/site-scan';
 import { useTimeSince } from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { HostingFeatures } from '../features';
+import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
-import UpsellCard from '../overview-card/upsell';
 import type { SiteScan } from '../../data/site-scan';
 import type { Site } from '../../data/types';
 
@@ -16,30 +17,9 @@ const CARD_PROPS = {
 };
 
 function getScanURL( site: Site ) {
-	const domain = isSelfHostedJetpackConnected( site ) ? 'cloud.jetpack.com' : 'wordpress.com';
-	return `https://${ domain }/scan/${ site.slug }`;
-}
-
-function ScanCardUpsell( { site }: { site: Site } ) {
-	return (
-		<UpsellCard
-			heading={ __( 'Security scans' ) }
-			description={ __( 'We guard your site. You run your business.' ) }
-			externalLink={ getScanURL( site ) }
-			trackId={ CARD_PROPS.trackId }
-		/>
-	);
-}
-
-function ScanCardUnavailable() {
-	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			heading={ __( 'Unavailable' ) }
-			description={ __( 'Requires the Jetpack module' ) }
-			variant="disabled"
-		/>
-	);
+	return isSelfHostedJetpackConnected( site )
+		? `https://cloud.jetpack.com/scan/${ site.slug }`
+		: `https://wordpress.com/scan/${ site.slug }`;
 }
 
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
@@ -84,19 +64,15 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	);
 }
 
-export default function ScanCard( { site }: { site: Site } ) {
-	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
+function ScanCardContent( { site }: { site: Site } ) {
+	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
 
-	if ( ! scan || isLoading ) {
+	if ( scan === undefined ) {
 		return <OverviewCard { ...CARD_PROPS } variant="loading" />;
 	}
 
-	if ( scan.state === 'unavailable' ) {
-		if ( scan.reason === 'wpcom_site' ) {
-			return <ScanCardUpsell site={ site } />;
-		}
-
-		return <ScanCardUnavailable />;
+	if ( ! scan ) {
+		return null;
 	}
 
 	if ( scan.threats.length > 0 ) {
@@ -104,4 +80,20 @@ export default function ScanCard( { site }: { site: Site } ) {
 	}
 
 	return <ScanCardNoThreats site={ site } scan={ scan } />;
+}
+
+export default function ScanCard( { site }: { site: Site } ) {
+	return (
+		<HostingFeatureGatedWithOverviewCard
+			site={ site }
+			feature={ HostingFeatures.SCAN }
+			featureIcon={ CARD_PROPS.icon }
+			tracksFeatureId={ CARD_PROPS.trackId }
+			upsellHeading={ __( 'Scan for security threats' ) }
+			upsellDescription={ __( 'We guard your site. You run your business.' ) }
+			upsellExternalLink={ getScanURL( site ) }
+		>
+			<ScanCardContent site={ site } />
+		</HostingFeatureGatedWithOverviewCard>
+	);
 }

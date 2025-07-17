@@ -18,7 +18,7 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?: typeof NEWSLETTER_FLOW | typeof DOMAIN_FOR_GRAVATAR_FLOW;
+	flowName?: typeof NEWSLETTER_FLOW | typeof DOMAIN_FOR_GRAVATAR_FLOW | 'domains/add';
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
@@ -37,6 +37,9 @@ export function getDomainSuggestionsVendor(
 	}
 	if ( isHundredYearPlanFlow( options.flowName ) || isHundredYearDomainFlow( options.flowName ) ) {
 		return '100-year-domains';
+	}
+	if ( options.flowName === 'domains/add' ) {
+		return 'variation8_front';
 	}
 	if ( options.flowName === NEWSLETTER_FLOW ) {
 		return 'newsletter';

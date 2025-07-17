@@ -2,41 +2,31 @@ import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
-import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
 import type { Site } from '../../data/types';
 
-interface HostingFeatureUpsellProps {
-	site: Site;
-	tracksFeatureId: string;
-	icon?: CalloutProps[ 'icon' ];
-	image?: CalloutProps[ 'image' ];
-	title?: CalloutProps[ 'title' ];
-	description?: CalloutProps[ 'description' ];
+export interface UpsellCalloutProps {
+	upsellIcon?: CalloutProps[ 'icon' ];
+	upsellImage?: CalloutProps[ 'image' ];
+	upsellTitle?: CalloutProps[ 'title' ];
+	upsellDescription?: CalloutProps[ 'description' ];
 }
 
-export default function HostingFeatureUpsell( {
+export default function UpsellCallout( {
 	site,
-	tracksFeatureId,
-	icon,
-	image,
-	title,
-	description,
-}: HostingFeatureUpsellProps ) {
-	const { recordTracksEvent } = useAnalytics();
-	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_impression', {
-			feature_id: tracksFeatureId,
-		} );
-	}, [ recordTracksEvent, tracksFeatureId ] );
-
-	const handleUpgradePlan = () => {
-		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_click', {
-			feature_id: tracksFeatureId,
-		} );
+	onClick,
+	upsellIcon,
+	upsellImage,
+	upsellTitle,
+	upsellDescription,
+}: {
+	site: Site;
+	onClick: () => void;
+} & UpsellCalloutProps ) {
+	const handleUpsellClick = () => {
+		onClick();
 
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
@@ -60,19 +50,19 @@ export default function HostingFeatureUpsell( {
 
 	return (
 		<Callout
-			icon={ icon ?? defaultProps.icon }
-			image={ image ?? defaultProps.image }
-			title={ title ?? defaultProps.title }
+			icon={ upsellIcon ?? defaultProps.icon }
+			image={ upsellImage ?? defaultProps.image }
+			title={ upsellTitle ?? defaultProps.title }
 			description={
 				<>
-					<Text variant="muted">{ description ?? defaultProps.description }</Text>
+					<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
 					<Text variant="muted">
 						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
 					</Text>
 				</>
 			}
 			actions={
-				<Button variant="primary" size="compact" onClick={ handleUpgradePlan }>
+				<Button variant="primary" size="compact" onClick={ handleUpsellClick }>
 					{ __( 'Upgrade plan' ) }
 				</Button>
 			}

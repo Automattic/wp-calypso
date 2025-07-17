@@ -5,6 +5,7 @@ import {
 	redirect,
 	createLazyRoute,
 } from '@tanstack/react-router';
+import { DotcomFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
 import {
 	canViewAgencySettings,
@@ -17,9 +18,8 @@ import {
 	canViewPrimaryDataCenterSettings,
 	canViewStaticFile404Settings,
 	canViewCachingSettings,
-	HostingFeatures,
 } from '../sites/features';
-import { hasAtomicFeature } from '../utils/site-features';
+import { hasHostingFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import { domainsQuery } from './queries/domains';
@@ -135,8 +135,9 @@ const siteOverviewRoute = createRoute( {
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
-				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
-				hasAtomicFeature( site, HostingFeatures.BACKUPS ) &&
+				hasHostingFeature( site, DotcomFeatures.SCAN ) &&
+					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
+				hasHostingFeature( site, DotcomFeatures.BACKUPS ) &&
 					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
 			] );
 		}

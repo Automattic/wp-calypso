@@ -18,7 +18,7 @@ import {
 } from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
 import { HostingFeatures, canViewStaticFile404Settings } from '../features';
-import HostingFeature from '../hosting-feature';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
 
@@ -97,7 +97,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 				/>
 			}
 		>
-			<HostingFeature
+			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.STATIC_FILE_404 }
 				tracksFeatureId="settings-static-file-404"
@@ -128,7 +128,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 						</form>
 					</CardBody>
 				</Card>
-			</HostingFeature>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
