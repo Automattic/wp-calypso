@@ -113,6 +113,13 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
+	handleSurveyComplete = () => {
+		// Call the parent's survey complete handler
+		if ( this.props.onSurveyComplete ) {
+			this.props.onSurveyComplete();
+		}
+	};
+
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 

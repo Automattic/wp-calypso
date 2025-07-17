@@ -165,10 +165,11 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		const { includedDomainPurchase, purchase, isJetpack, isAkismet } = this.props;
+		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
+			this.props;
 
-		// For Jetpack/Akismet products, call onCancellationComplete to show the dialog
-		if ( isJetpack || isAkismet ) {
+		// For Jetpack/Akismet products and domain registrations, call onCancellationComplete to show the dialog
+		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
 			this.onCancellationComplete();
 			return;
 		}
@@ -306,11 +307,11 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationComplete = () => {
-		const { isJetpack, isAkismet } = this.props;
+		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
 
-		// For Jetpack/Akismet products, show the button's own dialog
-		// For all other products (including domain registrations), show the main component's survey
-		if ( isJetpack || isAkismet ) {
+		// For Jetpack/Akismet products and domain registrations, show the button's own dialog
+		// For all other products, show the main component's survey
+		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
 			this.setState( {
 				showDialog: true,
 				isLoading: false,
@@ -526,6 +527,7 @@ class CancelPurchase extends Component {
 			siteSlug,
 			purchaseListUrl,
 			getConfirmCancelDomainUrlFor,
+			isDomainRegistrationPurchase,
 		} = this.props;
 
 		// Check if we need atomic revert confirmation
@@ -537,7 +539,7 @@ class CancelPurchase extends Component {
 			( needsAtomicRevertConfirmation &&
 				! this.state.atomicRevertConfirmed &&
 				isPlan( purchase ) ) ||
-			( isDomainRegistration( purchase ) && ! this.state.domainConfirmationConfirmed );
+			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed );
 
 		return (
 			<CancelPurchaseButton
@@ -628,7 +630,7 @@ class CancelPurchase extends Component {
 	};
 
 	renderProductRevertContent = () => {
-		const { purchase } = this.props;
+		const { purchase, isDomainRegistrationPurchase } = this.props;
 		const purchaseName = getName( purchase );
 		const plan = getPlan( purchase?.productSlug );
 		const planDescription = plan?.getPlanCancellationDescription?.();
@@ -645,7 +647,7 @@ class CancelPurchase extends Component {
 				</CompactCard>
 
 				<CompactCard className="cancel-purchase__footer">
-					{ isDomainRegistration( purchase ) && (
+					{ isDomainRegistrationPurchase && (
 						<div className="cancel-purchase__domain-confirmation">
 							<FormCheckbox
 								checked={ this.state.domainConfirmationConfirmed }
@@ -775,7 +777,7 @@ class CancelPurchase extends Component {
 			return null;
 		}
 
-		const { purchase } = this.props;
+		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
 		const purchaseName = getName( purchase );
 		const { siteName, siteId } = purchase;
 
@@ -795,7 +797,7 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
-				{ ! this.props.isJetpack && ! this.props.isAkismet && (
+				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
 					<CancelPurchaseForm
 						disableButtons={ this.state.isLoading }
 						purchase={ purchase }
@@ -873,6 +875,7 @@ export default connect(
 			isJetpackPurchase,
 			isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 			isAkismet: purchase && isAkismetProduct( purchase ),
+			isDomainRegistrationPurchase: purchase && isDomainRegistration( purchase ),
 			purchase,
 			purchases,
 			productsList,
