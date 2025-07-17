@@ -22,7 +22,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
 import PremiumBadge from '../domain-registration-suggestion/premium-badge';
-import SubdomainSkip from '../subdomain-skip';
+import DomainSkipSuggestion from '../domain-skip-suggestion';
 
 class DomainSearchResults extends Component {
 	static propTypes = {
@@ -354,7 +354,10 @@ class DomainSearchResults extends Component {
 				{ featuredSuggestionElement }
 
 				{ showSkipButton && freeSuggestion && (
-					<SubdomainSkip domain={ freeSuggestion?.domain_name } onSkip={ this.props.onSkip } />
+					<DomainSkipSuggestion
+						domain={ freeSuggestion?.domain_name }
+						onSkip={ this.props.onSkip }
+					/>
 				) }
 				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
 			</>

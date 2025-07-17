@@ -14,17 +14,17 @@ interface Props {
 	onSkip: () => void;
 }
 
-const SubdomainSkip = ( { domain, onSkip }: Props ) => {
+const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 	const translate = useTranslate();
-	const domainSegments = domain.split( '.' );
+	const domainSegments = domain?.split( '.' );
 
-	const subdomain = domainSegments[ 0 ];
-	const domainName = domainSegments.slice( 1 ).join( '.' );
+	const subdomain = domainSegments?.[ 0 ];
+	const domainName = domainSegments?.slice( 1 ).join( '.' );
 
 	return (
-		<Card className="subdomain-skip">
+		<Card className="subdomain-skip-suggestion">
 			<CardBody>
-				<div className="subdomain-skip__content">
+				<div className="subdomain-skip-suggestion__content">
 					<Heading level="4" weight="normal">
 						{ translate( 'WordPress.com subdomain' ) }
 					</Heading>
@@ -41,7 +41,7 @@ const SubdomainSkip = ( { domain, onSkip }: Props ) => {
 					</Text>
 				</div>
 				{ onSkip && (
-					<Button className="subdomain-skip__btn" variant="secondary" onClick={ onSkip }>
+					<Button className="subdomain-skip-suggestion__btn" variant="secondary" onClick={ onSkip }>
 						{ translate( 'Skip purchase' ) }
 					</Button>
 				) }
@@ -50,4 +50,4 @@ const SubdomainSkip = ( { domain, onSkip }: Props ) => {
 	);
 };
 
-export default SubdomainSkip;
+export default DomainSkipSuggestion;
