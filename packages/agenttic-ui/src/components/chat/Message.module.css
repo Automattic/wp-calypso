@@ -1,0 +1,64 @@
+.message {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--spacing-2) var(--spacing-3);
+}
+
+.message.user {
+    flex-direction: row-reverse;
+    padding-top: var(--spacing-5);
+    padding-bottom: var(--spacing-5);
+}
+
+.message.user .bubble {
+    background-color: var(--color-muted);
+    max-width: 85%;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.message.error {
+    color: var(--color-destructive);
+}
+
+.content {
+    flex: 1;
+    text-align: start;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.message.user .content {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* MARKDOWN */
+
+.message p {
+    text-wrap-style: pretty;
+}
+
+.message.assistant p {
+    margin-bottom: var(--spacing-2);
+}
+    
+.message strong {
+    font-weight: 550;
+}
+
+.message ol, 
+.message ul {
+    margin-bottom: var(--spacing-3);
+    padding-left: var(--spacing-5);
+}
+
+.message p+:where(ol,ul) {
+    margin-top: 0;
+}
+
+.message li::marker {
+    color: var(--color-foreground);
+    font-weight: 550;
+}

@@ -1,0 +1,70 @@
+:root {
+  /* === COLORS === */
+  --white: oklch(1 0 0);
+
+  --gray-800: oklch(0.3052 0 0);
+  --gray-600: oklch(0.665 0 0);
+  --gray-700: oklch(0.5624 0 0);
+  --gray-100: oklch(0.9551 0 0);
+  --gray-200: oklch(0.85 0 0);
+
+  --primary: oklch(0.5379 0.2325 265.77);
+  --destructive: oklch(0.577 0.245 27.325);
+  
+  --color-foreground: var(--gray-800);
+  --color-popover: var(--white);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--white);
+  --color-secondary: var(--gray-600);
+  --color-secondary-foreground: var(--white);
+  --color-muted: var(--gray-100);
+  --color-muted-foreground: var(--gray-700);
+  --color-destructive: var(--destructive);
+  --color-border: var(--gray-200);
+  --color-ring: oklch(0.708 0 0);
+  
+  /* === TYPOGRAPHY === */
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --text-sm: 14px;
+  --text-sm--line-height: calc(1.25 / 0.875);
+  --text-base: 15px;
+  --text-base--line-height: 1.5;
+  --text-base--tracking: -0.01em;
+  --font-weight-normal: 400;
+  --font-weight-medium: 450;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* === SPACING === */
+  
+  --spacing: 0.25rem; /* 4px base unit */
+  --spacing-1: var(--spacing); /* 4px */
+  --spacing-1\.5: calc(var(--spacing) * 1.5); /* 6px */
+  --spacing-2: calc(var(--spacing) * 2); /* 8px */
+  --spacing-3: calc(var(--spacing) * 3); /* 12px */
+  --spacing-4: calc(var(--spacing) * 4); /* 16px */
+  --spacing-5: calc(var(--spacing) * 5); /* 20px */
+  --spacing-6: calc(var(--spacing) * 6); /* 24px */
+  --spacing-8: calc(var(--spacing) * 8); /* 32px */
+  --spacing-10: calc(var(--spacing) * 10); /* 40px */
+  
+  /* === BORDER RADIUS === */
+  
+  --radius: 1rem; /* 16px base radius */
+  --radius-sm: calc(var(--radius) - 8px); /* 8px */
+  --radius-md: calc(var(--radius) - 2px); /* 14px */
+  --radius-lg: var(--radius); /* 16px */
+  --radius-xl: calc(var(--radius) + 8px); /* 24px */
+  --radius-full: 9999px;
+  
+  /* === SHADOWS === */
+  
+  --shadow-sm: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 12px rgba(0, 0, 0, 0.075);
+  --shadow-lg: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 24px rgba(0, 0, 0, 0.08);
+  
+  /* === TRANSITIONS === */
+  
+  --transition-all: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-colors: color, background-color, border-color, text-decoration-color, fill, stroke 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}

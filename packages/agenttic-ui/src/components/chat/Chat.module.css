@@ -1,0 +1,29 @@
+.container {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-weight: 400;
+    font-family: var(--font-sans);
+    letter-spacing: var(--text-base--tracking);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container.embedded {
+    height: 100%;
+}
+
+.container.floating {
+    position: fixed;
+    z-index: 50;
+    bottom: var(--spacing-6);
+    left: var(--spacing-6);
+}
+
+.container.floating .content {
+    background-color: var(--color-popover);
+    color: var(--color-foreground);
+    overflow: hidden;
+    min-height: 56px;
+    padding: var(--spacing-2);
+    box-shadow: var(--shadow-lg);
+}

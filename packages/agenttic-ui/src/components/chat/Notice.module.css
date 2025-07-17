@@ -1,0 +1,81 @@
+.container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--spacing-10);
+    padding: var(--spacing) var(--spacing) var(--spacing) var(--spacing-4);
+    gap: var(--spacing-3);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-sm);
+    color: var(--color-foreground);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--text-sm--line-height);
+}
+
+.containerWithIcon {
+    padding-left: var(--spacing-3);
+}
+
+.content {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    gap: var(--spacing);
+    min-width: 0;
+}
+
+.actions {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--spacing);
+}
+
+.icon {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.icon svg {
+    display: block;
+    height: var(--spacing-5);
+    width: var(--spacing-5);
+}
+
+/* DISMISSIBLE BUTTON */
+
+.dismissible {
+    position: absolute;
+    top: calc(var(--spacing) * -1.5);
+    right: calc(var(--spacing) * -1.5);
+    opacity: 0;
+    transform: scale(0.9);
+    border-radius: var(--radius-full);
+    transition: all 150ms ease;
+}
+
+.dismissible:focus,
+.dismissible:focus-visible, 
+.container:hover .dismissible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.dismissible svg {
+    display: block;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+    padding: 2px;
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+    border-radius: inherit;
+    box-shadow: 0 0 0 2.5px var(--color-popover);
+    transition: var(--transition-all);
+}
+
+.dismissible:hover svg {
+    background-color: var(--color-foreground);
+}

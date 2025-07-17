@@ -1,0 +1,112 @@
+.button {
+  align-items: center;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-weight: var(--font-weight-medium);
+  gap: var(--spacing);
+  justify-content: center;
+  outline: none;
+  transition-duration: 100ms;
+  transition: var(--transition-colors);
+  white-space: nowrap;
+}
+
+.button:disabled {
+  pointer-events: none;
+  background-color: var(--color-muted);
+  color: var(--color-muted-foreground);
+}
+
+.button:focus-visible {
+  border-color: var(--color-ring);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-ring) 50%, transparent);
+}
+
+/* ICON SIZE CLASSES */
+
+.button svg {
+  flex-shrink: 0;
+  pointer-events: none;
+  height: var(--spacing-6);
+  width: var(--spacing-6);
+}
+
+.iconSizeSm svg {
+    height: var(--spacing-5);
+    width: var(--spacing-5);
+}
+
+/* SIZE CLASSES */
+
+.icon {
+    border-radius: var(--radius-sm);
+    height: var(--spacing-8);
+    width: var(--spacing-8);
+}
+
+.xxs {
+    height: var(--spacing-6);
+    width: var(--spacing-6);
+    padding: var(--spacing-2);
+}
+
+.sm {
+    height: var(--spacing-8);
+    padding: var(--spacing-2) var(--spacing-3);
+}
+
+.sm.buttonWithIcon {
+    padding-left: var(--spacing-2);
+}
+
+/* VARIANT CLASSES */
+
+.primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--color-primary) 85%, #000);
+}
+
+.secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+  }
+  
+.secondary:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--color-secondary) 85%, #000);
+}
+
+.tertiary {
+  background-color: transparent;
+  color: var(--color-foreground);
+}
+
+.tertiary:hover:not(:disabled) {
+  color: var(--color-primary);
+}
+
+.outline {
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+}
+  
+.outline:hover:not(:disabled) {
+    color: var(--color-primary);
+}
+
+.link {
+    background-color: transparent;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.link:hover:not(:disabled) {
+    color: color-mix(in srgb, var(--color-primary) 85%, #000);
+}
+

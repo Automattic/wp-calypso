@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    align-items: end;
+    gap: var(--spacing);
+}
+
+.textareaContainer {
+    flex: 1;
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    flex-direction: row;
+    padding-left: var(--spacing);
+    padding-right: var(--spacing);
+    height: var(--spacing-10);
+    align-items: center;
+}
+
+.submitButton {
+    border-radius: var(--radius-full);
+}

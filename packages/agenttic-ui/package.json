@@ -24,7 +24,11 @@
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
 		"lint:fix": "wp-scripts lint-js src --ext .ts,.tsx --fix",
 		"test": "vitest run",
-		"prepublishOnly": "pnpm run build"
+		"prepublishOnly": "pnpm run build",
+		"demo": "cd demo && pnpm dev",
+		"demo:build": "cd demo && pnpm build",
+		"demo:start": "cd demo && pnpm start",
+		"dev:ui": "vite"
 	},
 	"keywords": [
 		"agenttic",
@@ -41,18 +45,37 @@
 		"node": ">=18.0.0"
 	},
 	"devDependencies": {
+        "@wordpress/scripts": "^27.9.0",
+        "@wordpress/prettier-config": "^4.2.0",
 		"@types/node": "^20.0.0",
 		"@types/react": "^18.0.0",
 		"@types/react-dom": "^18.0.0",
+        "@vitejs/plugin-react": "^4.0.0",
 		"jsdom": "^24.0.0",
+		"tailwindcss": "^3.4.0",
+		"postcss": "^8.4.0",
+		"autoprefixer": "^10.4.0",
 		"tsup": "^8.0.0",
 		"typescript": "^5.0.0",
-		"vitest": "^1.0.0"
+		"vitest": "^1.0.0",
+		"vite": "^5.0.0"
 	},
 	"dependencies": {
+        "@wordpress/data": "^10.0.0",
+		"@wordpress/element": "^6.0.0",
 		"@automattic/agenttic-client": "workspace:*",
+		"@radix-ui/react-scroll-area": "^1.2.9",
+		"@radix-ui/react-slot": "^1.2.3",
+		"@tailwindcss/typography": "^0.5.16",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"framer-motion": "^12.23.0",
+		"lucide-react": "^0.525.0",
 		"react": "^18.0.0",
-		"react-dom": "^18.0.0"
+		"react-dom": "^18.0.0",
+		"react-markdown": "^10.1.0",
+		"react-textarea-autosize": "^8.5.9",
+		"tailwind-merge": "^3.3.1"
 	},
 	"peerDependencies": {
 		"react": "^18.0.0",

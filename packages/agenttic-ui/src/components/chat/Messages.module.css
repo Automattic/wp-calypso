@@ -1,0 +1,13 @@
+.container {
+    flex: 1;
+    padding-bottom: var(--spacing-5);
+    overflow-y: auto;
+    height: 100%;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,37 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-2) var(--spacing-3);
+    color: var(--color-muted-foreground);
+    font-size: var(--text-sm);
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+}
+
+.content {
+    background: linear-gradient(90deg, color-mix(in srgb, currentColor 30%, transparent), currentColor, color-mix(in srgb, currentColor 30%, transparent));
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2000ms infinite linear 0ms;
+}
+
+@keyframes shimmer {
+    0% { 
+        background-position: 200% 0;
+    }
+    100% { 
+        background-position: -200% 0;
+    }
+}

@@ -1,0 +1,4 @@
+.button {
+    height: var(--spacing-10);
+    width: var(--spacing-10);
+}
