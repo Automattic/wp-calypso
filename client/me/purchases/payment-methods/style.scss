@@ -67,7 +67,7 @@ $card_width: $font-body * 3.75; // roughly 60px wide
 			flex-wrap: wrap;
 			flex-grow: 1;
 			gap: 0.25rem 0.5rem;
-			align-items: baseline;
+			align-items: center;
 			min-width: 0; // Prevents overflow issues
 		}
 
@@ -89,6 +89,17 @@ $card_width: $font-body * 3.75; // roughly 60px wide
 			font-size: $font-body-small;
 			display: inline-flex;
 			min-width: 0;
+		}
+
+		&__expiration-notice {
+			display: flex;
+			align-items: center;
+			color: var( --color-warning );
+			font-size: $font-body-small;
+
+			.gridicon {
+				margin-right: 2px;
+			}
 		}
 	}
 

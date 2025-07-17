@@ -1,21 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import { DomainSuggestion } from '..';
 
 describe( 'DomainSuggestion.Unavailable', () => {
 	it( 'shows already registered message', () => {
 		const { container } = render(
-			<DomainSuggestion.Unavailable
-				domain="example"
-				tld="com"
-				getReasonText={ ( { domain } ) =>
-					createInterpolateElement( __( '<domain /> is already registered.' ), {
-						domain,
-					} )
-				}
-			/>
+			<DomainSuggestion.Unavailable domain="example" tld="com" reason="already-registered" />
 		);
 
 		expect( container ).toHaveTextContent( 'example.com is already registered.' );
@@ -29,11 +19,7 @@ describe( 'DomainSuggestion.Unavailable', () => {
 			<DomainSuggestion.Unavailable
 				domain="example"
 				tld="com"
-				getReasonText={ ( { domain } ) =>
-					createInterpolateElement( __( '<domain /> is already registered.' ), {
-						domain,
-					} )
-				}
+				reason="already-registered"
 				onTransferClick={ onTransferClick }
 			/>
 		);

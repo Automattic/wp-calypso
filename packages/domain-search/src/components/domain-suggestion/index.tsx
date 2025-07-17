@@ -9,7 +9,7 @@ import { globe, Icon } from '@wordpress/icons';
 import { ComponentProps } from 'react';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
-import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { DomainSuggestionsList, useDomainSuggestionsListContext } from '../domain-suggestions-list';
 import { Unavailable } from './unavailable';
 
 import './style.scss';
@@ -21,9 +21,9 @@ type DomainSuggestionProps = {
 	price: React.ReactNode;
 	badges?: React.ReactNode;
 	notice?: React.ReactNode;
-} & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' >;
+} & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
-export const DomainSuggestion = ( {
+const DomainSuggestionComponent = ( {
 	uuid,
 	domain,
 	tld,
@@ -31,6 +31,7 @@ export const DomainSuggestion = ( {
 	badges,
 	notice,
 	onClick,
+	disabled,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
@@ -73,7 +74,9 @@ export const DomainSuggestion = ( {
 		</span>
 	);
 
-	const cta = <DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } />;
+	const cta = (
+		<DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } disabled={ disabled } />
+	);
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
@@ -105,9 +108,23 @@ export const DomainSuggestion = ( {
 
 	return (
 		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody>{ getContent() }</CardBody>
+			<CardBody style={ { borderRadius: 0 } }>{ getContent() }</CardBody>
 		</Card>
 	);
+};
+
+export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		return (
+			<DomainSuggestionsList>
+				<DomainSuggestionComponent { ...props } />
+			</DomainSuggestionsList>
+		);
+	}
+
+	return <DomainSuggestionComponent { ...props } />;
 };
 
 DomainSuggestion.Unavailable = Unavailable;

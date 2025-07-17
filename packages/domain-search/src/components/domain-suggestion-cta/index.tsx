@@ -10,9 +10,15 @@ interface DomainSuggestionCTAProps {
 	compact?: boolean;
 	uuid: string;
 	onClick?( action: 'add-to-cart' | 'continue' ): void;
+	disabled?: boolean;
 }
 
-export const DomainSuggestionCTA = ( { compact, uuid, onClick }: DomainSuggestionCTAProps ) => {
+export const DomainSuggestionCTA = ( {
+	compact,
+	uuid,
+	onClick,
+	disabled,
+}: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
 	const { cart, onContinue } = useDomainSearch();
 
@@ -51,6 +57,7 @@ export const DomainSuggestionCTA = ( { compact, uuid, onClick }: DomainSuggestio
 			icon={ shoppingCartIcon }
 			onClick={ handleAddToCartClick }
 			label={ __( 'Add to Cart' ) }
+			disabled={ disabled }
 		>
 			{ compact ? undefined : __( 'Add to Cart' ) }
 		</Button>

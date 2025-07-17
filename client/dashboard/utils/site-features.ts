@@ -13,6 +13,13 @@ export function hasAtomicFeature( site: Site, feature: `${ DotcomFeatures }` ) {
 	return site.is_wpcom_atomic && ! site.plan?.expired && hasPlanFeature( site, feature );
 }
 
+export function hasHostingFeature( site: Site, feature: `${ DotcomFeatures }` ) {
+	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
+		return hasAtomicFeature( site, feature );
+	}
+	return hasPlanFeature( site, feature );
+}
+
 export function hasJetpackModule( site: Site, module: `${ JetpackModules }` ) {
 	return site.jetpack && site.jetpack_modules?.includes( module );
 }

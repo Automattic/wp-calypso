@@ -1,7 +1,8 @@
 .domain-suggestion-popover {
 	.components-popover__content {
 		width: 100%;
-		max-width: 256px;
+		/* stylelint-disable-next-line unit-allowed-list */
+		max-width: 30ch;
 	}
 }
 

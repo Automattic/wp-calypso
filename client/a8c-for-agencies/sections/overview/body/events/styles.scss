@@ -13,6 +13,10 @@
 	color: var(--color-klaviyo);
 }
 
+.a4a-event__date--wordcamp {
+	color: var(--color-error);
+}
+
 .a4a-event__date--woo {
 	color: var(--color-woo);
 }
@@ -28,4 +32,9 @@
 
 .a4a-event__image--woo {
 	background-size: auto 110%;
+}
+
+.a4a-event__image--wordcamp {
+	background-size: 80%;
+	background-position: center;
 }

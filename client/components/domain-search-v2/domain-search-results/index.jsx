@@ -1,23 +1,27 @@
-import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
-import { CompactCard, MaterialIcon } from '@automattic/components';
-import { DomainSuggestionsList } from '@automattic/domain-search';
-import clsx from 'clsx';
+import {
+	DomainSuggestionPrice,
+	DomainSuggestionsList,
+	DomainSuggestion,
+	DomainSuggestionBadge,
+} from '@automattic/domain-search';
+import { formatCurrency } from '@automattic/number-formatters';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
-import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
-import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
+import PremiumBadge from '../domain-registration-suggestion/premium-badge';
 
 class DomainSearchResults extends Component {
 	static propTypes = {
@@ -69,10 +73,6 @@ class DomainSearchResults extends Component {
 			translate,
 			isDomainOnly,
 		} = this.props;
-		const availabilityElementClasses = clsx( {
-			'domain-search-results__domain-is-available': availableDomain,
-			'domain-search-results__domain-not-available': ! availableDomain,
-		} );
 		const suggestions = this.props.suggestions || [];
 		const {
 			MAPPABLE,
@@ -86,10 +86,67 @@ class DomainSearchResults extends Component {
 			UNKNOWN,
 		} = domainAvailability;
 
-		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
+		const premiumDomain = this.props.premiumDomains[ lastDomainSearched ];
 
-		let availabilityElement;
-		let offer;
+		if ( premiumDomain?.is_price_limit_exceeded ) {
+			const [ domainName, ...tld ] = lastDomainSearched.split( '.' );
+
+			const currentUserCurrencyCode =
+				premiumDomain.currency_code || this.props.currentUserCurrencyCode;
+
+			let productSaleCost;
+
+			const badges = [];
+
+			if ( premiumDomain.sale_cost ) {
+				productSaleCost = formatCurrency( premiumDomain.sale_cost, currentUserCurrencyCode, {
+					stripZeros: this.props.showStrikedOutPrice,
+				} );
+
+				const saleBadgeText = translate( 'Sale', {
+					comment: 'Shown next to a domain that has a special discounted sale price',
+				} );
+				badges.push(
+					<DomainSuggestionBadge key="sale" variation="warning">
+						{ saleBadgeText }
+					</DomainSuggestionBadge>
+				);
+			}
+
+			const cost = productSaleCost ?? premiumDomain.cost;
+
+			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
+
+			return (
+				<DomainSuggestion
+					badges={ badges }
+					domain={ domainName }
+					tld={ tld.join( '.' ) }
+					disabled
+					price={
+						<DomainSuggestionPrice
+							originalPrice={
+								premiumDomain.renew_cost === cost ? undefined : premiumDomain.renew_cost
+							}
+							price={ cost }
+							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
+								components: {
+									a: (
+										<a
+											href="https://wordpress.com/help/contact"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							} ) }
+						/>
+					}
+				/>
+			);
+		}
+
+		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
 		if (
 			domain &&
@@ -107,8 +164,7 @@ class DomainSearchResults extends Component {
 			].includes( lastDomainStatus ) &&
 			get( this.props, 'products.domain_map', false )
 		) {
-			// eslint-disable-next-line jsx-a11y/anchor-is-valid
-			const components = { a: <a href="#" onClick={ this.handleAddMapping } /> };
+			const unavailableDomainProps = {};
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
 			if (
@@ -117,147 +173,80 @@ class DomainSearchResults extends Component {
 				)
 			) {
 				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
-					offer = translate(
-						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} for free.',
-						{ args: { domain }, components }
-					);
+					unavailableDomainProps.onTransferClick = this.handleAddMapping;
 				} else {
-					offer = translate(
-						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com %(premiumPlanName)s.',
-						{
-							args: { domain, premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
-							components,
-						}
-					);
+					unavailableDomainProps.onTransferClick = this.handleAddMapping;
 				}
 			}
 
 			// Domain Mapping not supported for Store NUX yet.
 			if ( this.props.siteDesignType === DESIGN_TYPE_STORE ) {
-				offer = null;
+				unavailableDomainProps.onTransferClick = null;
 			}
-
-			let domainUnavailableMessage;
 
 			const domainArgument = ! isSubdomain( domain ) ? domain : getRootDomain( domain );
 
-			domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
-				? translate(
-						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
-						{
-							args: { tld: lastDomainTld },
-							components: {
-								strong: <strong />,
-							},
-						}
-				  )
-				: translate(
-						'{{strong}}%(domain)s{{/strong}} is already registered. {{a}}Do you own it?{{/a}}',
-						{
-							args: { domain: domainArgument },
-							components: {
-								strong: <strong />,
-								a: (
-									// eslint-disable-next-line jsx-a11y/anchor-is-valid
-									<a
-										href="#"
-										onClick={ ( event ) =>
-											this.props.onClickUseYourDomain( event, domainArgument )
-										}
-										data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-									/>
-								),
-							},
-						}
-				  );
+			if ( [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
+				unavailableDomainProps.tld = lastDomainTld;
+				unavailableDomainProps.reason = 'tld-not-supported';
+				unavailableDomainProps.onTransferClick = null;
+				unavailableDomainProps.transferLink = null;
+			} else {
+				const [ domainName, ...tld ] = domain.split( '.' );
+
+				unavailableDomainProps.domain = domainName;
+				unavailableDomainProps.tld = tld.join( '.' );
+				unavailableDomainProps.reason = 'already-registered';
+				unavailableDomainProps.onTransferClick = this.props.onClickUseYourDomain;
+				unavailableDomainProps.transferLink = null;
+			}
 
 			if (
 				isSubdomain( domain ) &&
 				! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
 			) {
 				const rootDomain = getRootDomain( domain );
-				domainUnavailableMessage = translate(
-					'{{strong}}%(rootDomain)s{{/strong}} is already registered. Do you own {{strong}}%(rootDomain)s{{/strong}} and want to {{a}}{{strong}}connect %(domain)s{{/strong}}{{/a}} with WordPress.com?',
-					{
-						args: { rootDomain, domain },
-						components: {
-							strong: <strong />,
-							a: (
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								<a
-									href="#"
-									onClick={ this.props.onClickUseYourDomain }
-									data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-								/>
-							),
-						},
-					}
-				);
+				const [ domainName, ...tld ] = rootDomain.split( '.' );
+
+				unavailableDomainProps.domain = domainName;
+				unavailableDomainProps.tld = tld.join( '.' );
+				unavailableDomainProps.reason = 'already-registered';
+				unavailableDomainProps.onTransferClick = this.props.onClickUseYourDomain;
+				unavailableDomainProps.transferLink = null;
 			}
 
 			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
-				domainUnavailableMessage = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered. Do you own this domain? {{a}}Transfer it to WordPress.com{{/a}} now, or try another search.',
-					{
-						args: { domain: domainArgument },
-						components: {
-							strong: <strong />,
-							a: (
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								<a href={ `/setup/domain-transfer?new=${ domain ?? '' }` } />
-							),
-						},
-					}
-				);
+				const [ domainName, ...tld ] = domainArgument.split( '.' );
+
+				unavailableDomainProps.domain = domainName;
+				unavailableDomainProps.tld = tld.join( '.' );
+				unavailableDomainProps.reason = 'already-registered';
+				unavailableDomainProps.onTransferClick = null;
+				unavailableDomainProps.transferLink = `/setup/domain-transfer?new=${
+					domainArgument ?? ''
+				}`;
 			}
 
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
-				domainUnavailableMessage = translate(
-					'{{strong}}.%(tld)s{{/strong}} domains are temporarily not offered on WordPress.com. ' +
-						'Please try again later or choose a different extension.',
-					{
-						args: { tld: lastDomainTld },
-						components: { strong: <strong /> },
-					}
-				);
+				unavailableDomainProps.domain = undefined;
+				unavailableDomainProps.tld = lastDomainTld;
+				unavailableDomainProps.reason = 'tld-not-supported-temporarily';
+				unavailableDomainProps.onTransferClick = null;
+				unavailableDomainProps.transferLink = null;
 			}
 
 			if ( this.props.offerUnavailableOption || this.props.showAlreadyOwnADomain ) {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
-					availabilityElement = (
-						<CompactCard className="domain-search-results__domain-available-notice">
-							<span className="domain-search-results__domain-available-notice-icon">
-								<MaterialIcon icon="info" />
-							</span>
-							<span>{ domainUnavailableMessage }</span>
-						</CompactCard>
-					);
+					return <DomainSuggestion.Unavailable { ...unavailableDomainProps } />;
 				} else if ( lastDomainStatus !== MAPPED ) {
-					availabilityElement = (
-						<CompactCard className="domain-search-results__domain-available-notice">
-							<span className="domain-search-results__domain-available-notice-icon">
-								<MaterialIcon icon="info" />
-							</span>
-							<span>
-								{ domainUnavailableMessage } { offer }
-							</span>
-						</CompactCard>
-					);
+					return <DomainSuggestion.Unavailable { ...unavailableDomainProps } />;
 				}
 			} else {
-				availabilityElement = (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ domainUnavailableMessage }
-					</Notice>
-				);
+				return <DomainSuggestion.Unavailable { ...unavailableDomainProps } />;
 			}
 		}
 
-		return (
-			<div className="domain-search-results__domain-availability">
-				<div className={ availabilityElementClasses }>{ availabilityElement }</div>
-			</div>
-		);
+		return null;
 	}
 
 	handleAddMapping = ( event ) => {
@@ -270,8 +259,8 @@ class DomainSearchResults extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function ( n ) {
-			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
+		return times( this.props.placeholderQuantity, function () {
+			return null;
 		} );
 	}
 
@@ -289,10 +278,12 @@ class DomainSearchResults extends Component {
 					! suggestion.isSubDomainSuggestion
 			);
 			const featuredSuggestions = suggestions.filter(
-				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative
+				( suggestion ) =>
+					( suggestion.isRecommended || suggestion.isBestAlternative ) &&
+					! this.props.premiumDomains[ suggestion.domain_name ]?.is_price_limit_exceeded
 			);
 
-			featuredSuggestionElement = (
+			featuredSuggestionElement = featuredSuggestions.length > 0 && (
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
 					isCartPendingUpdate={ this.props.isCartPendingUpdate }
@@ -364,28 +355,31 @@ class DomainSearchResults extends Component {
 		}
 
 		return (
-			<div className="domain-search-results__domain-suggestions">
+			<>
 				{ featuredSuggestionElement }
 				{ this.props.showSkipButton && domainSkipSuggestion }
 				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
-			</div>
+			</>
 		);
 	}
 
 	render() {
 		return (
-			<div className="domain-search-results">
+			<VStack spacing={ 4 }>
 				{ this.renderDomainAvailability() }
 				{ this.renderDomainSuggestions() }
-			</div>
+			</VStack>
 		);
 	}
 }
 
 const mapStateToProps = ( state, ownProps ) => {
+	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
+
 	return {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
+		currentUserCurrencyCode,
 	};
 };
 

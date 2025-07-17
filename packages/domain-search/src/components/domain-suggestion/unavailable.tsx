@@ -6,47 +6,87 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { Icon, notAllowed } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useContainerQuery } from '../../hooks/use-container-query';
-import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { DomainSuggestionsList, useDomainSuggestionsListContext } from '../domain-suggestions-list';
 
 import './unavailable.scss';
 
 export interface UnavailableProps {
-	domain: string;
+	domain?: string;
 	tld: string;
-	getReasonText: ( { domain }: { domain: React.ReactElement } ) => React.ReactNode;
+	reason: 'tld-not-supported' | 'tld-not-supported-temporarily' | 'already-registered';
 	onTransferClick?(): void;
+	transferLink?: string;
 }
 
 const UnavailableComponent = ( {
 	domain,
 	tld,
-	getReasonText,
+	reason,
 	onTransferClick,
-	activeQuery,
+	transferLink,
 	isWithinList,
-}: UnavailableProps & { activeQuery: 'small' | 'large'; isWithinList: boolean } ) => {
+}: UnavailableProps & { isWithinList: boolean } ) => {
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		throw new Error( 'DomainSuggestion must be used within a DomainSuggestionsList' );
+	}
+
+	const { activeQuery } = listContext;
+
 	const { __ } = useI18n();
 
-	const reason = (
-		<Text size={ activeQuery === 'large' ? 18 : 16 }>
-			{ getReasonText( {
-				domain: (
-					<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
-						{ domain }
-						<Text size="inherit" weight={ 500 }>
-							.{ tld }
-						</Text>
-					</Text>
-				),
-			} ) }
-		</Text>
-	);
+	const reasonText = useMemo( () => {
+		const styledTld = (
+			<Text size="inherit" weight={ 500 }>
+				.{ tld }
+			</Text>
+		);
 
-	const onTransfer = onTransferClick && (
+		const styledDomain = (
+			<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
+				{ domain }
+				{ styledTld }
+			</Text>
+		);
+
+		if ( reason === 'tld-not-supported' ) {
+			return createInterpolateElement(
+				__( '<tld /> domains are not available for registration on WordPress.com.' ),
+				{
+					tld: styledTld,
+				}
+			);
+		}
+
+		if ( reason === 'tld-not-supported-temporarily' ) {
+			return createInterpolateElement(
+				__(
+					'<tld /> domains are temporarily not offered on WordPress.com. Please try again later or choose a different extension.'
+				),
+				{
+					tld: styledTld,
+				}
+			);
+		}
+
+		if ( reason === 'already-registered' ) {
+			return createInterpolateElement( __( '<domain /> is already registered.' ), {
+				domain: styledDomain,
+			} );
+		}
+	}, [ reason, domain, tld, __ ] );
+
+	if ( ! reasonText ) {
+		throw new Error( `Unknown reason: ${ reason }` );
+	}
+
+	const reasonElement = <Text size={ activeQuery === 'large' ? 18 : 16 }>{ reasonText }</Text>;
+
+	const onTransfer = ( onTransferClick || transferLink ) && (
 		<div
 			style={ {
 				marginLeft: activeQuery === 'large' ? 'auto' : undefined,
@@ -60,6 +100,7 @@ const UnavailableComponent = ( {
 							className="domain-suggestions-list-item-unavailable__transfer-button"
 							variant="link"
 							onClick={ onTransferClick }
+							href={ transferLink }
 						/>
 					),
 				} ) }
@@ -72,7 +113,7 @@ const UnavailableComponent = ( {
 			return (
 				<HStack alignment="left" spacing={ 3 }>
 					<Icon icon={ notAllowed } size={ 24 } style={ { flexShrink: 0 } } />
-					{ reason }
+					{ reasonElement }
 					{ onTransfer }
 				</HStack>
 			);
@@ -80,14 +121,14 @@ const UnavailableComponent = ( {
 
 		return (
 			<VStack spacing={ 3 }>
-				{ reason }
+				{ reasonElement }
 				{ onTransfer }
 			</VStack>
 		);
 	};
 
 	return (
-		<Card isBorderless={ isWithinList } size={ activeQuery === 'large' ? 'medium' : 'small' }>
+		<Card size={ activeQuery === 'large' ? 'medium' : 'small' }>
 			<CardBody style={ { borderRadius: 0 } } isShady={ isWithinList }>
 				{ getContent() }
 			</CardBody>
@@ -95,25 +136,16 @@ const UnavailableComponent = ( {
 	);
 };
 
-const StandaloneUnavailable = ( props: UnavailableProps ) => {
-	const { ref: containerRef, activeQuery } = useContainerQuery( {
-		small: 0,
-		large: 480,
-	} );
-
-	return (
-		<div ref={ containerRef }>
-			<UnavailableComponent { ...props } activeQuery={ activeQuery } isWithinList={ false } />
-		</div>
-	);
-};
-
 export const Unavailable = ( props: UnavailableProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
 	if ( ! listContext ) {
-		return <StandaloneUnavailable { ...props } />;
+		return (
+			<DomainSuggestionsList>
+				<UnavailableComponent { ...props } isWithinList={ false } />
+			</DomainSuggestionsList>
+		);
 	}
 
-	return <UnavailableComponent { ...props } activeQuery={ listContext.activeQuery } isWithinList />;
+	return <UnavailableComponent { ...props } isWithinList />;
 };
