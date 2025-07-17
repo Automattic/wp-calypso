@@ -2,11 +2,11 @@
   /* === COLORS === */
   --white: oklch(1 0 0);
 
-  --gray-800: oklch(0.3052 0 0);
+  --gray-800: oklch(0.241 0 0);
   --gray-600: oklch(0.665 0 0);
   --gray-700: oklch(0.5624 0 0);
-  --gray-100: oklch(0.9551 0 0);
-  --gray-200: oklch(0.85 0 0);
+  --gray-100: oklch(0.95 0 0);
+  --gray-200: oklch(0.65 0 0);
 
   --primary: oklch(0.5379 0.2325 265.77);
   --destructive: oklch(0.577 0.245 27.325);
@@ -29,7 +29,7 @@
   --text-sm: 14px;
   --text-sm--line-height: calc(1.25 / 0.875);
   --text-base: 15px;
-  --text-base--line-height: 1.5;
+  --text-base--line-height: 1.45;
   --text-base--tracking: -0.01em;
   --font-weight-normal: 400;
   --font-weight-medium: 450;
@@ -60,8 +60,8 @@
   
   /* === SHADOWS === */
   
-  --shadow-sm: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 12px rgba(0, 0, 0, 0.075);
-  --shadow-lg: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 24px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 12px rgba(0, 0, 0, 0.075);
+  --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 24px rgba(0, 0, 0, 0.08);
   
   /* === TRANSITIONS === */
   

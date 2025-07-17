@@ -65,6 +65,7 @@ export function ConversationView( {
 				isThinking={ isThinking }
 				error={ error }
 				emptyView={ emptyView }
+				fromCompact={ fromCompact }
 			/>
 			<div className={ styles.inputContainer }>
 				<div className={ styles.inputContainerInner }>

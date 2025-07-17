@@ -8,7 +8,7 @@
 .inputContainer {
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-2);
-    border-radius: var(--radius-lg);
+    border-radius: calc( var(--radius-lg) - 1px); /* Accounts for the 1px shadow */
 }
 
 .inputContainerInner {

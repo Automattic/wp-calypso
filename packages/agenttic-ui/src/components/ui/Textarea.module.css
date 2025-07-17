@@ -3,7 +3,7 @@
     width: 100%;
     border-radius: var(--radius-md);
     border: 0;
-    background-color: var(--color-white);
+    background-color: transparent;
     min-height: var(--spacing-10);
     padding-left: var(--spacing-3);
     padding-right: var(--spacing-3);

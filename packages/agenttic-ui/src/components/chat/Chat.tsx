@@ -19,8 +19,6 @@ const STYLE_CONSTANTS = {
 	AUTO_COLLAPSE_DELAY: 1500,
 	BORDER_RADIUS: 24,
 	PADDING: 16,
-	BOX_SHADOW:
-		'0 0 0px 1px rgba(0, 0, 0, 0.065), 0 2px 24px rgba(0, 0, 0, 0.08)',
 } as const;
 
 export function Chat( {
@@ -220,7 +218,6 @@ export function Chat( {
 				} }
 				style={ {
 					borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
-					// boxShadow: STYLE_CONSTANTS.BOX_SHADOW,
 				} }
 			>
 				<AnimatePresence mode="wait">

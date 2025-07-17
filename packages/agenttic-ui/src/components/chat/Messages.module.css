@@ -1,6 +1,6 @@
 .container {
     flex: 1;
-    padding-bottom: var(--spacing-5);
+    padding-bottom: var(--spacing-10);
     overflow-y: auto;
     height: 100%;
 }

@@ -1,7 +1,7 @@
 .message {
     display: flex;
     align-items: flex-start;
-    padding: var(--spacing-2) var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-5);
 }
 
 .message.user {
@@ -38,12 +38,13 @@
 
 .message p {
     text-wrap-style: pretty;
+    margin-bottom: var(--spacing-3);
 }
 
-.message.assistant p {
-    margin-bottom: var(--spacing-2);
+.message p:last-child {
+    margin-bottom: 0;
 }
-    
+
 .message strong {
     font-weight: 550;
 }
@@ -56,6 +57,10 @@
 
 .message p+:where(ol,ul) {
     margin-top: 0;
+}
+
+.message li {
+    margin-bottom: var(--spacing-3);
 }
 
 .message li::marker {

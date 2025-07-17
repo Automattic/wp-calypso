@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Message } from './Message';
 import { ThinkingMessage } from './ThinkingMessage';
@@ -10,6 +10,7 @@ interface MessagesProps {
 	isThinking?: boolean;
 	error?: string | null;
 	emptyView?: React.ReactNode;
+	fromCompact?: boolean;
 }
 
 export function Messages( {
@@ -17,21 +18,49 @@ export function Messages( {
 	isThinking,
 	error,
 	emptyView,
+	fromCompact = false,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
-
-	const scrollToBottom = useCallback( () => {
-		if ( scrollAreaRef.current ) {
-			scrollAreaRef.current.scrollTo( {
-				top: scrollAreaRef.current.scrollHeight,
-				behavior: 'smooth',
-			} );
-		}
-	}, [] );
+	const previousMessagesRef = useRef< MessageType[] >( [] );
+	const isFirstRender = useRef( true );
 
 	useEffect( () => {
-		scrollToBottom();
-	}, [ messages, isThinking, scrollToBottom ] );
+		// Check if a new message was added
+		const hasNewMessage =
+			messages.length > previousMessagesRef.current.length;
+
+		if ( hasNewMessage && scrollAreaRef.current ) {
+			// Find all message elements
+			const messageElements = scrollAreaRef.current.querySelectorAll(
+				'[data-slot="message"]'
+			);
+			const lastMessageElement =
+				messageElements[ messageElements.length - 1 ];
+
+			if ( lastMessageElement ) {
+				// Scroll to the top of the last message
+				const scrollTop =
+					lastMessageElement.getBoundingClientRect().top -
+					scrollAreaRef.current.getBoundingClientRect().top +
+					scrollAreaRef.current.scrollTop;
+
+				// Use instant scroll when coming from compact on first render
+				const behavior =
+					fromCompact && isFirstRender.current ? 'auto' : 'smooth';
+
+				scrollAreaRef.current.scrollTo( {
+					top: scrollTop,
+					behavior: behavior as ScrollBehavior,
+				} );
+			}
+		}
+
+		if ( isFirstRender.current ) {
+			isFirstRender.current = false;
+		}
+
+		previousMessagesRef.current = messages;
+	}, [ messages, fromCompact ] );
 
 	if ( messages.length === 0 ) {
 		if ( emptyView ) {
