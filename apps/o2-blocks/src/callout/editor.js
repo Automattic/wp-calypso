@@ -4,11 +4,18 @@
  * A styled callout box with integrated icon, header, and content sections.
  */
 
-import { RichText, InnerBlocks, InspectorControls, ColorPalette } from '@wordpress/block-editor';
+import {
+	RichText,
+	InnerBlocks,
+	InspectorControls,
+	ColorPalette,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { CustomSelectControl, PanelBody, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import metadata from './block.json';
 import {
 	CALLOUT_TEMPLATE_DEFAULT_COLOR,
 	CALLOUT_TEMPLATES,
@@ -48,8 +55,8 @@ const normalizeColor = ( color ) => {
 
 const getCurrentColor = ( templateName, customColor ) => {
 	return templateName === 'custom'
-		? normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR
-		: CALLOUT_TEMPLATES[ templateName ]?.color || CALLOUT_TEMPLATES.custom.color;
+		? normalizeColor( customColor )
+		: CALLOUT_TEMPLATES[ templateName ]?.color || CALLOUT_TEMPLATE_DEFAULT_COLOR;
 };
 
 // === COMPONENTS ===
@@ -182,70 +189,53 @@ const Edit = ( { attributes, setAttributes } ) => {
 			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
 			: {};
 
-	const handleTemplateChange = useCallback(
-		( { selectedItem } ) => {
-			if ( selectedItem?.key && selectedItem.key !== templateName ) {
-				const newAttributes = { calloutTemplate: selectedItem.key };
-
-				// Clear custom icon when switching to a template type (non-custom)
-				if ( selectedItem.key !== 'custom' && customIcon ) {
-					newAttributes.customIcon = '';
-				}
-
-				setAttributes( newAttributes );
-			}
-		},
-		[ templateName, customIcon, setAttributes ]
-	);
-
-	const handleColorChange = useCallback(
-		( color ) => {
-			const normalizedColor = normalizeColor( color );
-			if ( normalizedColor !== customColor ) {
-				setAttributes( { customColor: normalizedColor } );
-			}
-		},
-		[ customColor, setAttributes ]
-	);
-
-	const handleIconChange = useCallback(
-		( iconName ) => {
-			if ( iconName !== customIcon ) {
-				setAttributes( { customIcon: iconName } );
-			}
-		},
-		[ customIcon, setAttributes ]
-	);
-
-	const handleHeaderChange = useCallback(
-		( newHeaderContent ) => {
-			setAttributes( { headerContent: newHeaderContent } );
-		},
-		[ setAttributes ]
-	);
+	const blockProps = useBlockProps( {
+		className: `o2-blocks-callout o2-blocks-callout--${ templateName }`,
+		style: customStyle,
+	} );
 
 	return (
 		<>
 			<InspectorControls>
-				<TemplateControls templateName={ templateName } onChange={ handleTemplateChange } />
+				<TemplateControls
+					templateName={ templateName }
+					onChange={ ( { selectedItem } ) => {
+						if ( selectedItem?.key ) {
+							const newAttributes = { calloutTemplate: selectedItem.key };
+
+							// Clear custom icon when switching to a template type (non-custom)
+							if ( selectedItem.key !== 'custom' && customIcon ) {
+								newAttributes.customIcon = '';
+							}
+
+							setAttributes( newAttributes );
+						}
+					} }
+				/>
 				{ templateName === 'custom' && (
-					<ColorControls customColor={ customColor } onColorChange={ handleColorChange } />
+					<ColorControls
+						customColor={ customColor }
+						onColorChange={ ( color ) => {
+							setAttributes( { customColor: normalizeColor( color ) } );
+						} }
+					/>
 				) }
 				<IconControls
 					customIcon={ customIcon }
 					currentColor={ currentColor }
 					templateName={ templateName }
-					onIconChange={ handleIconChange }
+					onIconChange={ ( iconName ) => {
+						setAttributes( { customIcon: iconName } );
+					} }
 				/>
 			</InspectorControls>
 
-			<aside
-				className={ `o2-blocks-callout o2-blocks-callout--${ templateName }` }
-				style={ customStyle }
-			>
+			<aside { ...blockProps }>
 				<CalloutHeader
 					content={ headerContent }
-					onChange={ handleHeaderChange }
+					onChange={ ( newHeaderContent ) => {
+						setAttributes( { headerContent: newHeaderContent } );
+					} }
 					placeholder={ __( 'Header' ) }
 					color={ currentColor }
 					iconName={ currentIcon }
@@ -276,11 +266,13 @@ const Save = ( { attributes } ) => {
 			? { '--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR }
 			: {};
 
+	const blockProps = useBlockProps.save( {
+		className: `o2-blocks-callout o2-blocks-callout--${ templateName }`,
+		style: customStyle,
+	} );
+
 	return (
-		<aside
-			className={ `o2-blocks-callout o2-blocks-callout--${ templateName }` }
-			style={ customStyle }
-		>
+		<aside { ...blockProps }>
 			<h2 className="o2-blocks-callout__header" style={ { color: currentColor } }>
 				<CalloutIcon iconName={ currentIcon } color={ currentColor } />
 				<span className="o2-blocks-callout__header-text">
@@ -295,36 +287,7 @@ const Save = ( { attributes } ) => {
 
 // === BLOCK REGISTRATION ===
 
-registerBlockType( 'a8c/callout', {
-	title: __( 'Callout' ),
-	description: __( 'Draw attention with a styled callout box.' ),
-	icon: 'megaphone',
-	category: 'a8c',
-	keywords: [ __( 'callout' ), __( 'info' ), __( 'warning' ), __( 'tip' ) ],
-	supports: {
-		align: [ 'wide', 'full' ],
-		html: false,
-	},
-	attributes: {
-		calloutTemplate: {
-			type: 'string',
-			default: 'custom',
-		},
-		customColor: {
-			type: 'string',
-			default: CALLOUT_TEMPLATE_DEFAULT_COLOR,
-		},
-		customIcon: {
-			type: 'string',
-			default: '',
-		},
-		headerContent: {
-			type: 'string',
-			source: 'html',
-			selector: '.o2-blocks-callout__header-text',
-			default: '',
-		},
-	},
+registerBlockType( metadata, {
 	transforms,
 	edit: Edit,
 	save: Save,

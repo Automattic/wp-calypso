@@ -1,0 +1,41 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "a8c/callout",
+	"version": "1.0.0",
+	"title": "Callout",
+	"description": "Draw attention with a styled callout box.",
+	"icon": "megaphone",
+	"category": "a8c",
+	"keywords": [ "callout", "info", "warning", "tip", "example" ],
+	"textdomain": "o2-blocks",
+	"supports": {
+		"align": [ "wide", "full" ],
+		"html": false
+	},
+	"attributes": {
+		"calloutTemplate": {
+			"type": "string",
+			"default": "custom"
+		},
+		"customColor": {
+			"type": "string",
+			"default": "#646970"
+		},
+		"customIcon": {
+			"type": "string",
+			"default": ""
+		},
+		"headerContent": {
+			"type": "string",
+			"source": "html",
+			"selector": ".o2-blocks-callout__header-text",
+			"default": ""
+		}
+	},
+	"providesContext": {},
+	"usesContext": [],
+	"editorScript": "file:./editor.js",
+	"editorStyle": "file:./editor.scss",
+	"style": "file:./view.scss"
+}
