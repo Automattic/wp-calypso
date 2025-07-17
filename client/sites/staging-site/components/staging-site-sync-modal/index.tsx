@@ -394,7 +394,7 @@ export default function SyncModal( {
 						</Text>
 					</HStack>
 
-					<HStack justify="flex-end">
+					<HStack justify="flex-end" spacing={ 4 }>
 						<Button variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
