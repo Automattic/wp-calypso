@@ -280,7 +280,7 @@ export default function SyncModal( {
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
-		if ( filesAndFoldersNodesCheckState === 'checked' ) {
+		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
 			// Sync everything
 			include_paths = '';
 		}
@@ -301,7 +301,6 @@ export default function SyncModal( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			dispatch( setNodeCheckState( querySiteId, '/', checkState ) );
 			dispatch( setNodeCheckState( querySiteId, '/wp-content', checkState ) );
 			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', checkState ) );
 		},
@@ -389,13 +388,13 @@ export default function SyncModal( {
 						/>
 					</HStack>
 
-					{ isFileBrowserVisible && (
+					<div className={ isFileBrowserVisible ? '' : 'hidden' }>
 						<FileBrowser
 							rewindId={ rewindId }
 							siteId={ querySiteId }
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
-					) }
+					</div>
 					<div
 						style={ {
 							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
@@ -407,7 +406,7 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							checked={ sqlNode?.checkState === 'checked' }
+							checked={ ! sqlNode || sqlNode.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</div>

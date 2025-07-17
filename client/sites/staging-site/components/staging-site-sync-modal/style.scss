@@ -7,6 +7,9 @@
 	.card {
 		padding: 24px 22px;
 	}
+	.hidden {
+		display: none;
+	}
 
 	&__back-button.components-button.is-link {
 		color: #000;
