@@ -31,7 +31,7 @@ const StoryWrapper = ( { children }: { children: React.ReactNode } ) => {
 export const Default = () => {
 	return (
 		<StoryWrapper>
-			<DomainSuggestion.Recommended
+			<DomainSuggestion.Featured
 				badges={
 					<>
 						<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>
@@ -41,13 +41,13 @@ export const Default = () => {
 				uuid="123"
 				domain="example"
 				tld="com"
-				price={ <DomainSuggestionPrice originalPrice="$97" price="$22" alignment="left" /> }
+				price={ <DomainSuggestionPrice originalPrice="$97" price="$22" /> }
 			/>
 		</StoryWrapper>
 	);
 };
 const meta: Meta< typeof Default > = {
-	title: 'DomainSuggestion/Recommended',
+	title: 'DomainSuggestion/Featured',
 	component: Default,
 };
 
@@ -56,7 +56,7 @@ export default meta;
 export const Highlighted = () => {
 	return (
 		<StoryWrapper>
-			<DomainSuggestion.Recommended
+			<DomainSuggestion.Featured
 				badges={
 					<DomainSuggestionBadge variation="success">It's available!</DomainSuggestionBadge>
 				}

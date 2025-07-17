@@ -11,7 +11,7 @@ import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-sugg
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { DomainSuggestionsList } from '../domain-suggestions-list';
-import { Recommended } from './recommended';
+import { Featured } from './featured';
 import { Unavailable } from './unavailable';
 
 import './style.scss';
@@ -130,4 +130,4 @@ export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
 };
 
 DomainSuggestion.Unavailable = Unavailable;
-DomainSuggestion.Recommended = Recommended;
+DomainSuggestion.Featured = Featured;

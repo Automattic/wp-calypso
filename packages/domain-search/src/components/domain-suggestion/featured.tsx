@@ -6,27 +6,28 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
-import { ComponentProps, useMemo } from 'react';
+import { cloneElement, ComponentProps, useMemo } from 'react';
 import {
 	DomainSuggestionContainerContext,
 	useDomainSuggestionContainer,
 } from '../../hooks/use-domain-suggestion-container';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionMatchReasons } from '../domain-suggestion-match-reasons';
+import { DomainSuggestionPrice } from '../domain-suggestion-price';
 
-import './recommended.scss';
+import './featured.scss';
 
-type DomainSuggestionRecommendedProps = {
+type DomainSuggestionFeaturedProps = {
 	uuid: string;
 	domain: string;
 	tld: string;
 	matchReasons?: string[];
 	badges?: React.ReactNode;
-	price: React.ReactNode;
+	price: React.ReactElement< ComponentProps< typeof DomainSuggestionPrice > >;
 	isHighlighted?: boolean;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
-export const Recommended = ( {
+export const Featured = ( {
 	uuid,
 	domain,
 	tld,
@@ -36,7 +37,7 @@ export const Recommended = ( {
 	isHighlighted,
 	onClick,
 	disabled,
-}: DomainSuggestionRecommendedProps ) => {
+}: DomainSuggestionFeaturedProps ) => {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
@@ -50,12 +51,17 @@ export const Recommended = ( {
 	);
 
 	const badgesElement = badges && (
-		<div className="domain-suggestion-recommended__badges">{ badges }</div>
+		<div className="domain-suggestion-featured__badges">{ badges }</div>
 	);
 
 	const matchReasonsList = matchReasons && (
 		<DomainSuggestionMatchReasons reasons={ matchReasons } />
 	);
+
+	// There's something to be improved here. The consumer shouldn't be wrangling the alignment, but at the same time this feels hacky.
+	const priceElement = ! matchReasonsList
+		? cloneElement( price, { ...price.props, alignment: 'left' } )
+		: price;
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
@@ -70,9 +76,9 @@ export const Recommended = ( {
 						<VStack
 							spacing={ 6 }
 							alignment="right"
-							className="domain-suggestion-recommended__price-info"
+							className="domain-suggestion-featured__price-info"
 						>
-							{ price }
+							{ priceElement }
 							{ cta }
 						</VStack>
 					</HStack>
@@ -86,7 +92,7 @@ export const Recommended = ( {
 						{ title }
 					</VStack>
 					<HStack>
-						{ price }
+						{ priceElement }
 						{ cta }
 					</HStack>
 				</VStack>
@@ -98,7 +104,7 @@ export const Recommended = ( {
 				<VStack spacing={ 3 }>
 					{ badgesElement }
 					{ title }
-					{ price }
+					{ priceElement }
 					{ matchReasonsList }
 				</VStack>
 				{ cta }
@@ -110,8 +116,8 @@ export const Recommended = ( {
 		<Card
 			ref={ containerRef }
 			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className={ clsx( 'domain-suggestion-recommended', {
-				'domain-suggestion-recommended--highlighted': isHighlighted,
+			className={ clsx( 'domain-suggestion-featured', {
+				'domain-suggestion-featured--highlighted': isHighlighted,
 			} ) }
 		>
 			<DomainSuggestionContainerContext.Provider value={ contextValue }>
