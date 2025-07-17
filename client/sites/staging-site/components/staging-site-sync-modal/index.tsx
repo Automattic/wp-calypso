@@ -208,8 +208,8 @@ export default function SyncModal( {
 	);
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, '/sql' ) );
 
-	const getVisibleNodesCheckState = useCallback( () => {
-		const nodes = [ wpContentNode, wpConfigNode, sqlNode ].filter( Boolean );
+	const getFilesAndFoldersNodesCheckState = useCallback( () => {
+		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
 			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
 			return 'checked';
@@ -231,9 +231,9 @@ export default function SyncModal( {
 		}
 
 		return 'mixed';
-	}, [ wpContentNode, wpConfigNode, sqlNode ] );
+	}, [ wpContentNode, wpConfigNode ] );
 
-	const visibleNodesCheckState = getVisibleNodesCheckState();
+	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
 
 	useEffect( () => {
 		dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
@@ -280,7 +280,7 @@ export default function SyncModal( {
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
-		if ( visibleNodesCheckState === 'checked' ) {
+		if ( filesAndFoldersNodesCheckState === 'checked' ) {
 			// Sync everything
 			include_paths = '';
 		}
@@ -299,15 +299,27 @@ export default function SyncModal( {
 		onClose();
 	};
 
-	const updateNodeCheckState = useCallback(
+	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
 			dispatch( setNodeCheckState( querySiteId, '/', checkState ) );
+			dispatch( setNodeCheckState( querySiteId, '/wp-content', checkState ) );
+			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', checkState ) );
 		},
 		[ dispatch, querySiteId ]
 	);
 
 	const onCheckboxChange = () => {
-		updateNodeCheckState( visibleNodesCheckState === 'checked' ? 'unchecked' : 'checked' );
+		updateFilesAndFoldersCheckState(
+			filesAndFoldersNodesCheckState === 'checked' ? 'unchecked' : 'checked'
+		);
+	};
+
+	const handleDatabaseCheckboxChange = () => {
+		if ( sqlNode?.checkState === 'checked' ) {
+			dispatch( setNodeCheckState( querySiteId, '/sql', 'unchecked' ) );
+		} else {
+			dispatch( setNodeCheckState( querySiteId, '/sql', 'checked' ) );
+		}
 	};
 
 	const handleExpanderChange = ( value: string ) => {
@@ -316,7 +328,7 @@ export default function SyncModal( {
 
 		if ( ! isExpanded ) {
 			// When collapsing, select all files
-			updateNodeCheckState( 'checked' );
+			updateFilesAndFoldersCheckState( 'checked' );
 		}
 	};
 
@@ -353,8 +365,8 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Files and folders' ) }
-							checked={ visibleNodesCheckState === 'checked' }
-							indeterminate={ visibleNodesCheckState === 'mixed' }
+							checked={ filesAndFoldersNodesCheckState === 'checked' }
+							indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
 							onChange={ onCheckboxChange }
 						/>
 						<SelectControl
@@ -384,13 +396,21 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 					) }
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						label={ __( 'Database tables' ) }
-						checked={ visibleNodesCheckState === 'checked' }
-						indeterminate={ visibleNodesCheckState === 'mixed' }
-						onChange={ onCheckboxChange }
-					/>
+					<div
+						style={ {
+							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							padding: '16px 0',
+							marginTop: '8px',
+						} }
+					>
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							label={ __( 'Database tables' ) }
+							checked={ sqlNode?.checkState === 'checked' }
+							onChange={ handleDatabaseCheckboxChange }
+						/>
+					</div>
 				</div>
 				<Text>
 					{ createInterpolateElement( syncConfig.learnMore, {
