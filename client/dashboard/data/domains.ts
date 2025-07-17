@@ -20,6 +20,7 @@ export interface Domain {
 	wpcom_domain: boolean;
 	is_wpcom_staging_domain: boolean;
 	type: `${ DomainTypes }`;
+	site_slug: string;
 }
 
 export async function fetchDomains(): Promise< Domain[] > {

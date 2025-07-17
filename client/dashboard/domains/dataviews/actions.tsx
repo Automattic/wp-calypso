@@ -1,5 +1,10 @@
-import { isDomainRenewable } from '@automattic/domains-table/src/utils/is-renewable'; // eslint-disable-line
-import { domainManagementLink as getDomainManagementLink } from '@automattic/domains-table/src/utils/paths'; // eslint-disable-line
+/* eslint-disable no-restricted-imports */
+import { isDomainRenewable } from '@automattic/domains-table/src/utils/is-renewable';
+import {
+	domainManagementLink,
+	domainMappingSetup,
+} from '@automattic/domains-table/src/utils/paths';
+/* eslint-enable no-restricted-imports */
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
@@ -24,8 +29,8 @@ export const actions: Action< Domain >[] = [
 		label: __( 'Setup' ),
 		callback: ( items: Domain[] ) => {
 			const domain = items[ 0 ];
-			const primaryDomain = items.find( ( item ) => item.primary_domain ) ?? domain;
-			window.location.pathname = `/domains/mapping/${ primaryDomain.domain }/setup/${ domain.domain }`;
+			const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
+			window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
 		},
 		isEligible: ( item: Domain ) => item.type === DomainTypes.MAPPED,
 	},
@@ -38,10 +43,12 @@ export const actions: Action< Domain >[] = [
 		supportsBulk: false,
 		callback: ( items: Domain[] ) => {
 			const domain = items[ 0 ];
-			const primaryDomain = items.find( ( item ) => item.primary_domain ) ?? domain;
-			window.location.pathname = getDomainManagementLink( domain, primaryDomain.domain, false );
+			const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
+			window.location.pathname = domainManagementLink( domain, siteSlug, false );
 		},
-		isEligible: ( item: Domain ) => item.wpcom_domain,
+		isEligible: ( item: Domain ) => {
+			return item.type !== DomainTypes.WPCOM;
+		},
 	},
 	{
 		id: 'manage-dns-settings',
