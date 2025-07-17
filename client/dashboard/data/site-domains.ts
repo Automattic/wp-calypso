@@ -1,15 +1,7 @@
 import wpcom from 'calypso/lib/wp';
+import type { Domain } from './domains';
 
-export interface SiteDomain {
-	domain: string;
-	blog_id: number;
-	blog_name: string;
-	expiry: string;
-	wpcom_domain: boolean;
-	type: string;
-	primary_domain: boolean;
-	is_wpcom_staging_domain: boolean;
-}
+export type SiteDomain = Omit< Domain, 'domain_status' >;
 
 export async function fetchSiteDomains( siteId: number ): Promise< SiteDomain[] > {
 	const { domains } = await wpcom.req.get( {
