@@ -385,18 +385,23 @@ export default function SyncModal( {
 						/>
 					) }
 				</div>
-				<Text>
-					{ createInterpolateElement( syncConfig.learnMore, {
-						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
-					} ) }
-				</Text>
-				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-					<Button variant="tertiary" onClick={ onClose }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button variant="primary" onClick={ handleConfirm }>
-						{ syncConfig.submit }
-					</Button>
+				<HStack className="staging-site-card__footer">
+					<HStack>
+						<Text className="staging-site-card__footer-text">
+							{ createInterpolateElement( syncConfig.learnMore, {
+								a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
+							} ) }
+						</Text>
+					</HStack>
+
+					<HStack justify="flex-end">
+						<Button variant="tertiary" onClick={ onClose }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button variant="primary" onClick={ handleConfirm }>
+							{ syncConfig.submit }
+						</Button>
+					</HStack>
 				</HStack>
 			</VStack>
 		</Modal>
