@@ -394,14 +394,7 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 					</div>
-					<div
-						style={ {
-							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							padding: '16px 0',
-							marginTop: '8px',
-						} }
-					>
+					<div className="database-item">
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
