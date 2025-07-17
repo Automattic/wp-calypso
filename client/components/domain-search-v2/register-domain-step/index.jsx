@@ -31,6 +31,7 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { DropdownFilters } from 'calypso/components/domain-search-v2/search-filters';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
@@ -58,7 +59,7 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
-import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
+import { FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
