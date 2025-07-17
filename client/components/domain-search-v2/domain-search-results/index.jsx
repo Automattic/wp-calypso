@@ -1,6 +1,12 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { CompactCard, MaterialIcon } from '@automattic/components';
-import { DomainSuggestionsList } from '@automattic/domain-search';
+import {
+	DomainSuggestionPrice,
+	DomainSuggestionsList,
+	DomainSuggestion,
+	DomainSuggestionBadge,
+} from '@automattic/domain-search';
+import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
@@ -8,7 +14,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
-import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
@@ -16,8 +21,10 @@ import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
+import PremiumBadge from '../domain-registration-suggestion/premium-badge';
 
 class DomainSearchResults extends Component {
 	static propTypes = {
@@ -85,6 +92,66 @@ class DomainSearchResults extends Component {
 			TRANSFERRABLE,
 			UNKNOWN,
 		} = domainAvailability;
+
+		const premiumDomain = this.props.premiumDomains[ lastDomainSearched ];
+
+		if ( premiumDomain?.is_price_limit_exceeded ) {
+			const [ domainName, ...tld ] = lastDomainSearched.split( '.' );
+
+			const currentUserCurrencyCode =
+				premiumDomain.currency_code || this.props.currentUserCurrencyCode;
+
+			let productSaleCost;
+
+			const badges = [];
+
+			if ( premiumDomain.sale_cost ) {
+				productSaleCost = formatCurrency( premiumDomain.sale_cost, currentUserCurrencyCode, {
+					stripZeros: this.props.showStrikedOutPrice,
+				} );
+
+				const saleBadgeText = translate( 'Sale', {
+					comment: 'Shown next to a domain that has a special discounted sale price',
+				} );
+				badges.push(
+					<DomainSuggestionBadge key="sale" variation="warning">
+						{ saleBadgeText }
+					</DomainSuggestionBadge>
+				);
+			}
+
+			const cost = productSaleCost ?? premiumDomain.cost;
+
+			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
+
+			return (
+				<DomainSuggestion
+					badges={ badges }
+					domain={ domainName }
+					tld={ tld.join( '.' ) }
+					disabled
+					price={
+						<DomainSuggestionPrice
+							originalPrice={
+								premiumDomain.renew_cost === cost ? undefined : premiumDomain.renew_cost
+							}
+							price={ cost }
+							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
+								components: {
+									a: (
+										<a
+											href="https://wordpress.com/help/contact"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							} ) }
+						/>
+					}
+				/>
+			);
+		}
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
@@ -270,8 +337,8 @@ class DomainSearchResults extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function ( n ) {
-			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
+		return times( this.props.placeholderQuantity, function () {
+			return null;
 		} );
 	}
 
@@ -289,7 +356,9 @@ class DomainSearchResults extends Component {
 					! suggestion.isSubDomainSuggestion
 			);
 			const featuredSuggestions = suggestions.filter(
-				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative
+				( suggestion ) =>
+					( suggestion.isRecommended || suggestion.isBestAlternative ) &&
+					! this.props.premiumDomains[ suggestion.domain_name ]?.is_price_limit_exceeded
 			);
 
 			featuredSuggestionElement = (
@@ -383,9 +452,12 @@ class DomainSearchResults extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
+	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
+
 	return {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
+		currentUserCurrencyCode,
 	};
 };
 

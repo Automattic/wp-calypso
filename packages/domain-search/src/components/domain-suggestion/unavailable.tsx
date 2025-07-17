@@ -9,8 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon, notAllowed } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useContainerQuery } from '../../hooks/use-container-query';
-import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { DomainSuggestionsList, useDomainSuggestionsListContext } from '../domain-suggestions-list';
 
 import './unavailable.scss';
 
@@ -26,9 +25,15 @@ const UnavailableComponent = ( {
 	tld,
 	getReasonText,
 	onTransferClick,
-	activeQuery,
-	isWithinList,
-}: UnavailableProps & { activeQuery: 'small' | 'large'; isWithinList: boolean } ) => {
+}: UnavailableProps ) => {
+	const listContext = useDomainSuggestionsListContext();
+
+	if ( ! listContext ) {
+		throw new Error( 'DomainSuggestion must be used within a DomainSuggestionsList' );
+	}
+
+	const { activeQuery } = listContext;
+
 	const { __ } = useI18n();
 
 	const reason = (
@@ -87,24 +92,11 @@ const UnavailableComponent = ( {
 	};
 
 	return (
-		<Card isBorderless={ isWithinList } size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody style={ { borderRadius: 0 } } isShady={ isWithinList }>
+		<Card size={ activeQuery === 'large' ? 'medium' : 'small' }>
+			<CardBody style={ { borderRadius: 0 } } isShady>
 				{ getContent() }
 			</CardBody>
 		</Card>
-	);
-};
-
-const StandaloneUnavailable = ( props: UnavailableProps ) => {
-	const { ref: containerRef, activeQuery } = useContainerQuery( {
-		small: 0,
-		large: 480,
-	} );
-
-	return (
-		<div ref={ containerRef }>
-			<UnavailableComponent { ...props } activeQuery={ activeQuery } isWithinList={ false } />
-		</div>
 	);
 };
 
@@ -112,8 +104,12 @@ export const Unavailable = ( props: UnavailableProps ) => {
 	const listContext = useDomainSuggestionsListContext();
 
 	if ( ! listContext ) {
-		return <StandaloneUnavailable { ...props } />;
+		return (
+			<DomainSuggestionsList>
+				<UnavailableComponent { ...props } />
+			</DomainSuggestionsList>
+		);
 	}
 
-	return <UnavailableComponent { ...props } activeQuery={ listContext.activeQuery } isWithinList />;
+	return <UnavailableComponent { ...props } />;
 };

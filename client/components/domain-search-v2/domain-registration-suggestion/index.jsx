@@ -1,5 +1,9 @@
 import { Gridicon } from '@automattic/components';
-import { DomainSuggestion, DomainSuggestionBadge } from '@automattic/domain-search';
+import {
+	DomainSuggestion,
+	DomainSuggestionBadge,
+	DomainSuggestionPrice,
+} from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
@@ -506,30 +510,43 @@ class DomainRegistrationSuggestion extends Component {
 			zeroCost,
 			flowName,
 			premiumDomain,
-			translate,
 			showHstsNotice,
 			showDotGayNotice,
+			translate,
 		} = this.props;
 
 		const [ domainName, ...tld ] = fullDomain.split( '.' );
 
+		const badges = this.renderBadges();
+
 		if ( premiumDomain?.is_price_limit_exceeded ) {
 			return (
-				<DomainSuggestion.Unavailable
+				<DomainSuggestion
+					badges={ badges }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					getReasonText={ ( { domain } ) =>
-						translate( 'Premium domain {{domain/}} is not available for registration', {
-							components: {
-								domain,
-							},
-						} )
+					disabled
+					price={
+						<DomainSuggestionPrice
+							originalPrice={ renewCost }
+							price={ productSaleCost ?? productCost }
+							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
+								components: {
+									a: (
+										<a
+											href="https://wordpress.com/help/contact"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							} ) }
+						/>
 					}
 				/>
 			);
 		}
 
-		const badges = this.renderBadges();
 		const priceRule = this.getPriceRule();
 
 		return (
