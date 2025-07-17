@@ -211,6 +211,16 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const settingsLink = isJetpackCloud()
 		? `https://wordpress.com${ baseSettingsLink }`
 		: baseSettingsLink;
+	const toggleActivityPubFeature = ( value ) => {
+		setEnabled( value );
+
+		recordTracksEvent(
+			value
+				? 'calypso_connections_enter_fediverse_button_click'
+				: 'calypso_connections_exit_fediverse_button_click'
+		);
+	};
+
 	return (
 		<>
 			<div className="fediverse-settings-wrapper">
@@ -228,7 +238,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					label={ translate( 'Enter the fediverse' ) }
 					disabled={ disabled }
 					checked={ isEnabled }
-					onChange={ ( value ) => setEnabled( value ) }
+					onChange={ toggleActivityPubFeature }
 				/>
 				{ isPrivate && (
 					<Notice status="is-warning" translate={ translate } isCompact>

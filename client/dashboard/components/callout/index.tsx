@@ -16,6 +16,7 @@ function UnforwardedCallout(
 		icon,
 		image,
 		imageAlt,
+		imageVariant = 'default',
 		description,
 		actions,
 		variant = 'default',
@@ -23,7 +24,7 @@ function UnforwardedCallout(
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	return (
-		<Card ref={ ref } className={ `dashboard-callout is-${ variant }` }>
+		<Card ref={ ref } className={ `dashboard-callout is-${ variant } is-image-${ imageVariant }` }>
 			<HStack
 				className="dashboard-callout__h-container"
 				spacing="6"
@@ -31,7 +32,12 @@ function UnforwardedCallout(
 				justify="stretch"
 				expanded={ false }
 			>
-				<VStack justify="flex-start" alignment="flex-start" spacing="4">
+				<VStack
+					className="dashboard-callout__content"
+					justify="flex-start"
+					alignment="flex-start"
+					spacing="4"
+				>
 					{ icon && <Icon icon={ icon } /> }
 					<TitleComponent className="dashboard-callout__title">{ title }</TitleComponent>
 					{ description }

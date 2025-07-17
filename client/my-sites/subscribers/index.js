@@ -5,10 +5,20 @@ import {
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { subscribers } from './controller';
+import { subscribers, jetpackSubscribers } from './controller';
 
 export default function () {
 	page( '/subscribers', siteSelection, sites, makeLayout, clientRender );
+
+	page(
+		'/subscribers/jetpack-subscribers/:domain',
+		siteSelection,
+		navigation,
+		redirectIfCurrentUserCannot( 'list_users' ),
+		jetpackSubscribers,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/subscribers/:domain',
