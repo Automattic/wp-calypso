@@ -11,7 +11,6 @@ import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
