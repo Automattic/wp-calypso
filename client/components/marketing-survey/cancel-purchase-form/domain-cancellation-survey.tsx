@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from '@automattic/urls';
-import { SelectControl, TextareaControl } from '@wordpress/components';
+import { Button, SelectControl, TextareaControl } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
@@ -145,8 +144,8 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
 					<Button
-						primary
-						busy={ cancellationInProgress }
+						variant="primary"
+						isBusy={ cancellationInProgress }
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
