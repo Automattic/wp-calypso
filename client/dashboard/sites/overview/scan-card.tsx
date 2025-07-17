@@ -87,8 +87,9 @@ export default function ScanCard( { site }: { site: Site } ) {
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }
 			feature={ HostingFeatures.SCAN }
+			featureIcon={ CARD_PROPS.icon }
 			tracksFeatureId={ CARD_PROPS.trackId }
-			upsellHeading={ __( 'Security scans' ) }
+			upsellHeading={ __( 'Scan for security threats' ) }
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
 			upsellExternalLink={ getScanURL( site ) }
 		>

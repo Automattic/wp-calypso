@@ -49,8 +49,9 @@ export default function BackupCard( { site }: { site: Site } ) {
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }
 			feature={ HostingFeatures.BACKUPS }
+			featureIcon={ CARD_PROPS.icon }
 			tracksFeatureId={ CARD_PROPS.trackId }
-			upsellHeading={ __( 'Real-time backups' ) }
+			upsellHeading={ __( 'Back up your site' ) }
 			upsellDescription={ __( 'Get back online quickly with one-click restores' ) }
 			upsellExternalLink={ getBackupUrl( site ) }
 		>

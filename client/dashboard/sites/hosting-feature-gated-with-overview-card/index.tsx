@@ -7,12 +7,14 @@ import type { OverviewCardProps } from '../overview-card';
 
 interface HostingFeatureGatedWithOverviewCardProps
 	extends Omit< HostingFeatureGateProps, 'renderUpsellComponent' | 'renderActivationComponent' > {
+	featureIcon: OverviewCardProps[ 'icon' ];
 	upsellHeading: OverviewCardProps[ 'heading' ];
 	upsellDescription: OverviewCardProps[ 'description' ];
 	upsellExternalLink: OverviewCardProps[ 'externalLink' ];
 }
 
 export default function HostingFeatureGatedWithOverviewCard( {
+	featureIcon,
 	upsellHeading,
 	upsellDescription,
 	upsellExternalLink,
@@ -42,6 +44,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 			renderActivationComponent={ ( { onClick } ) => (
 				<OverviewCard
 					{ ...cardProps }
+					icon={ featureIcon }
 					title={ __( 'Activate to unlock' ) }
 					externalLink=""
 					onClick={ onClick }
