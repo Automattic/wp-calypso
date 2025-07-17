@@ -95,34 +95,41 @@ const CalloutHeader = ( { content, onChange, placeholder, color, iconName } ) =>
 const IconPicker = ( { customIcon, currentColor, onIconChange, templateName } ) => {
 	const currentIconName = getIcon( templateName, customIcon );
 
+	const iconGrid = useMemo(
+		() =>
+			CALLOUT_PANEL_DASHICONS.map( ( iconName ) => {
+				const isSelected = currentIconName === iconName;
+
+				return (
+					<Button
+						key={ iconName }
+						onClick={ () => onIconChange( iconName ) }
+						variant="secondary"
+						className={ `o2-blocks-callout__icon-picker-button${
+							isSelected ? ' o2-blocks-callout__icon-picker-button--selected' : ''
+						}` }
+						style={ {
+							borderColor: isSelected ? currentColor : undefined,
+						} }
+						aria-label={ `Select ${ iconName.replace( 'dashicons-', '' ) } icon${
+							isSelected ? ' (currently selected)' : ''
+						}` }
+						title={ iconName }
+					>
+						<span
+							className={ `dashicons ${ iconName }` }
+							style={ { color: currentColor } }
+							aria-hidden="true"
+						/>
+					</Button>
+				);
+			} ),
+		[ currentIconName, currentColor, onIconChange ]
+	);
+
 	return (
 		<div className="o2-blocks-callout__icon-picker">
-			<div className="o2-blocks-callout__icon-picker-grid">
-				{ CALLOUT_PANEL_DASHICONS.map( ( iconName ) => {
-					const isSelected = currentIconName === iconName;
-
-					return (
-						<Button
-							key={ iconName }
-							onClick={ () => onIconChange( iconName ) }
-							variant="secondary"
-							className={ `o2-blocks-callout__icon-picker-button${
-								isSelected ? ' o2-blocks-callout__icon-picker-button--selected' : ''
-							}` }
-							style={ {
-								borderColor: isSelected ? currentColor : undefined,
-							} }
-							title={ iconName }
-						>
-							<span
-								className={ `dashicons ${ iconName }` }
-								style={ { color: currentColor } }
-								aria-hidden="true"
-							/>
-						</Button>
-					);
-				} ) }
-			</div>
+			<div className="o2-blocks-callout__icon-picker-grid">{ iconGrid }</div>
 			<div className="o2-blocks-callout__icon-picker-selected-info">
 				{ __( 'Selected:' ) } { currentIconName }
 			</div>
@@ -206,17 +213,20 @@ const Edit = ( { attributes, setAttributes } ) => {
 	const currentColor = getCurrentColor( templateName, customColor );
 	const currentIcon = getIcon( templateName, customIcon );
 
-	const customStyle = {
-		'--current-color': currentColor,
-		...( templateName === 'custom'
-			? {
-					'--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR,
-					'--custom-background-color':
-						normalizeBackgroundColor( customBackgroundColor ) ||
-						CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
-			  }
-			: {} ),
-	};
+	const customStyle = useMemo(
+		() => ( {
+			'--current-color': currentColor,
+			...( templateName === 'custom'
+				? {
+						'--custom-color': normalizeColor( customColor ) || CALLOUT_TEMPLATE_DEFAULT_COLOR,
+						'--custom-background-color':
+							normalizeBackgroundColor( customBackgroundColor ) ||
+							CALLOUT_TEMPLATE_DEFAULT_BACKGROUND_COLOR,
+				  }
+				: {} ),
+		} ),
+		[ currentColor, templateName, customColor, customBackgroundColor ]
+	);
 
 	const blockProps = useBlockProps( {
 		className: `o2-blocks-callout o2-blocks-callout--${ templateName }`,
