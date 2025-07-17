@@ -1,13 +1,26 @@
+@import '@wordpress/base-styles/breakpoints';
+
 .subdomain-skip-suggestion {
     .components-card__body {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        gap: 0.5rem;
+
+        @media ( max-width: $break-mobile ) {
+            padding: 1rem;
+        }
     }
 
     .subdomain-skip-suggestion__content {
         display: flex;
         flex-direction: column;
+
+        .components-text {
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+        }
     }
 }
