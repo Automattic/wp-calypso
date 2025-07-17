@@ -18,6 +18,15 @@
 	text-transform: uppercase;
 }
 
+// Need to fix in upstream.
+.components-card__header:has(~ .components-card__body:has(> .dataviews-wrapper .dataviews-view-list) ) {
+	border-bottom: 0;
+}
+
+.components-card__body:has(> .dataviews-wrapper):not(:has(.dataviews__view-actions)) {
+	padding-top: 0;
+}
+
 // Global Styles
 html,
 body,

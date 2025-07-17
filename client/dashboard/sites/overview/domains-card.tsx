@@ -42,7 +42,12 @@ export default function DomainsCard( {
 
 	return (
 		<Card>
-			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
+			<CardHeader
+				style={ {
+					flexDirection: 'column',
+					alignItems: 'stretch',
+				} }
+			>
 				<SectionHeader
 					title={ __( 'Domains' ) }
 					level={ 3 }
