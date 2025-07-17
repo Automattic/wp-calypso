@@ -268,6 +268,7 @@ class DomainSearchResults extends Component {
 		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
+		let domainSkipSuggestion;
 		let freeSuggestion;
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
@@ -343,6 +344,10 @@ class DomainSearchResults extends Component {
 					/>
 				);
 			} );
+
+			domainSkipSuggestion = showSkipButton && freeSuggestion && (
+				<DomainSkipSuggestion domain={ freeSuggestion?.domain_name } onSkip={ this.props.onSkip } />
+			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
@@ -351,13 +356,7 @@ class DomainSearchResults extends Component {
 		return (
 			<>
 				{ featuredSuggestionElement }
-
-				{ showSkipButton && freeSuggestion && (
-					<DomainSkipSuggestion
-						domain={ freeSuggestion?.domain_name }
-						onSkip={ this.props.onSkip }
-					/>
-				) }
+				{ domainSkipSuggestion }
 				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
 			</>
 		);
