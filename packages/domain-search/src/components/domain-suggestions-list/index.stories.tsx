@@ -1,5 +1,3 @@
-import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories';
 import { DomainSearch } from '../domain-search';
@@ -15,7 +13,6 @@ const SUGGESTIONS = [
 ];
 
 export const Default = () => {
-	const { __ } = useI18n();
 	const [ cartItems, setCartItems ] = useState< string[] >( [] );
 
 	const cart = buildDomainSearchCart( {
@@ -51,11 +48,7 @@ export const Default = () => {
 					<DomainSuggestion.Unavailable
 						domain="example-unavailable"
 						tld="com"
-						getReasonText={ ( { domain } ) =>
-							createInterpolateElement( __( '<domain /> is already registered.' ), {
-								domain,
-							} )
-						}
+						reason="already-registered"
 						onTransferClick={ () => alert( 'Your wish is an order!' ) }
 					/>
 					{ SUGGESTIONS.map( ( suggestion ) => (
