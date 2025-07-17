@@ -576,7 +576,7 @@ class CancelPurchaseForm extends Component {
 					disabled={ ! this.canGoNext() }
 					onClick={ this.clickNext }
 				>
-					{ translate( 'Submit' ) }
+					{ translate( 'Continue' ) }
 				</GutenbergButton>
 			);
 		}
