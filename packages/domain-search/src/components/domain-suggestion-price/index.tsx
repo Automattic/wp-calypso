@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -24,7 +24,7 @@ export const DomainSuggestionPrice = ( {
 	subText: subTextProp,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
-	const listContext = useDomainSuggestionsListContext();
+	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
 		throw new Error( 'DomainSuggestionPrice must be used within a DomainSuggestionsList' );

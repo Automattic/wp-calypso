@@ -6,7 +6,7 @@ import { shoppingCartIcon } from './shopping-cart-icon';
 
 import './style.scss';
 
-interface DomainSuggestionCTAProps {
+export interface DomainSuggestionCTAProps {
 	compact?: boolean;
 	uuid: string;
 	onClick?( action: 'add-to-cart' | 'continue' ): void;

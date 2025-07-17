@@ -1,0 +1,7 @@
+.domain-suggestion-recommended--fqdn {
+	box-shadow: 0 0 0 2px var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+}
+
+.domain-suggestion-recommended--fqdn__price-info {
+	align-self: flex-end;
+}
