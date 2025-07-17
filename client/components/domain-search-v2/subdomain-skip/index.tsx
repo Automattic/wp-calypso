@@ -10,12 +10,16 @@ import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
-	subdomain?: string;
+	domain: string;
 	onSkip: () => void;
 }
 
-const SubdomainSkip = ( { subdomain, onSkip }: Props ) => {
+const SubdomainSkip = ( { domain, onSkip }: Props ) => {
 	const translate = useTranslate();
+	const domainSegments = domain.split( '.' );
+
+	const subdomain = domainSegments[ 0 ];
+	const domainName = domainSegments.slice( 1 ).join( '.' );
 
 	return (
 		<Card className="subdomain-skip">
@@ -25,9 +29,10 @@ const SubdomainSkip = ( { subdomain, onSkip }: Props ) => {
 						{ translate( 'WordPress.com subdomain' ) }
 					</Heading>
 					<Text>
-						{ translate( '%(subdomain)s.{{strong}}wordpress.com{{/strong}} is included', {
+						{ translate( '%(subdomain)s.{{strong}}%(domainName)s{{/strong}} is included', {
 							args: {
-								subdomain: subdomain ?? 'wordpress.com',
+								subdomain: subdomain,
+								domainName: domainName,
 							},
 							components: {
 								strong: <strong />,
@@ -35,9 +40,11 @@ const SubdomainSkip = ( { subdomain, onSkip }: Props ) => {
 						} ) }
 					</Text>
 				</div>
-				<Button className="subdomain-skip__btn" variant="secondary" onClick={ onSkip }>
-					{ translate( 'Skip purchase' ) }
-				</Button>
+				{ onSkip && (
+					<Button className="subdomain-skip__btn" variant="secondary" onClick={ onSkip }>
+						{ translate( 'Skip purchase' ) }
+					</Button>
+				) }
 			</CardBody>
 		</Card>
 	);
