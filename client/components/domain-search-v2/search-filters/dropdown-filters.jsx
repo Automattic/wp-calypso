@@ -1,4 +1,4 @@
-import { Count, FormLabel, Popover } from '@automattic/components';
+import { Popover } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { Button, Icon, CheckboxControl } from '@wordpress/components';
 import { funnel } from '@wordpress/icons';
@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 
@@ -136,9 +135,11 @@ export class DropdownFilters extends Component {
 				>
 					<span className="search-filters__dropdown-filters-button-text" aria-label={ ariaLabel }>
 						<Icon icon={ funnel } />
-						{ hasFilterValues && <Count primary count={ this.getFiltercounts() } /> }
 					</span>
 				</Button>
+				{ hasFilterValues && (
+					<span className="search-filters__dropdown-filters-count">{ this.getFiltercounts() }</span>
+				) }
 
 				{ this.state.showPopover && this.renderPopover() }
 			</div>
@@ -201,22 +202,15 @@ export class DropdownFilters extends Component {
 					</ValidationFieldset>
 				) }
 
-				<FormFieldset className="search-filters__checkboxes-fieldset">
-					<FormLabel
-						className="search-filters__label"
-						htmlFor="search-filters-show-exact-matches-only"
-					>
-						<CheckboxControl
-							className="search-filters__checkbox"
-							label={ translate( 'Show exact matches only' ) }
-							checked={ exactSldMatchesOnly }
-							id="search-filters-show-exact-matches-only"
-							name="exactSldMatchesOnly"
-							onChange={ this.handleExactMatchCheckboxChange }
-							value="exactSldMatchesOnly"
-						/>
-					</FormLabel>
-				</FormFieldset>
+				<CheckboxControl
+					className="search-filters__checkbox"
+					label={ translate( 'Show exact matches only' ) }
+					checked={ exactSldMatchesOnly }
+					id="search-filters-show-exact-matches-only"
+					name="exactSldMatchesOnly"
+					onChange={ this.handleExactMatchCheckboxChange }
+					value="exactSldMatchesOnly"
+				/>
 
 				<ValidationFieldset className="search-filters__buttons-fieldset">
 					<div className="search-filters__buttons">

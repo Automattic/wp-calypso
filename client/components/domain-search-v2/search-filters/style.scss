@@ -20,12 +20,8 @@
 		justify-content: center;
 		padding: 0 1em;
 		transition: 0.1s all linear;
-		width: 100%;
+		width: 56px;
 		color: var(--color-text);
-
-		@include break-mobile {
-			min-width: 96px;
-		}
 
 		background-color: var(--studio-white);
 
@@ -206,4 +202,23 @@ body.is-section-signup {
 	.search-filters__buttons .button {
 		border-radius: 4px;
 	}
+}
+
+
+.search-filters__dropdown-filters-count {
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(50%, -50%);
+	background: var(--wp-admin-theme-color, #3858e9);
+	height: $grid-unit-30;
+	min-width: $grid-unit-30;
+	line-height: $grid-unit-30;
+	padding: 0 $grid-unit-05;
+	text-align: center;
+	border-radius: $grid-unit-20;
+	font-size: 12px;
+	outline: var(--wp-admin-border-width-focus) solid $white;
+	color: $white;
+	box-sizing: border-box;
 }
