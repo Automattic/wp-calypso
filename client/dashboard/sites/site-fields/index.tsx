@@ -23,7 +23,12 @@ import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
 import { DotcomFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import { hasAtomicFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
+import {
+	hasAtomicFeature,
+	hasHostingFeature,
+	hasJetpackModule,
+	hasPlanFeature,
+} from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
 import { HostingFeatures, canManageSite } from '../features';
@@ -179,7 +184,7 @@ export function EngagementStat( {
 
 export function LastBackup( { site }: { site: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = hasAtomicFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
 	const {
 		data: lastBackup,
