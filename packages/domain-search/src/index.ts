@@ -8,3 +8,4 @@ export { DomainSuggestionsList } from './components/domain-suggestions-list';
 export { DomainSuggestion } from './components/domain-suggestion';
 export { DomainSuggestionBadge } from './components/domain-suggestion-badge';
 export { DomainSuggestionPrice } from './components/domain-suggestion-price';
+export { DomainSuggestionLoadMore } from './components/domain-suggestion-load-more';
