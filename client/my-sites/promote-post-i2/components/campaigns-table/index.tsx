@@ -102,7 +102,7 @@ export default function CampaignsTable( props: Props ) {
 				</thead>
 				<tbody>
 					{ isLoading && ! isFetchingPageResults ? (
-						<ItemsLoading />
+						<ItemsLoading totalRows={ 6 } />
 					) : (
 						<>
 							{ campaigns.map( ( campaign ) => {
@@ -113,7 +113,7 @@ export default function CampaignsTable( props: Props ) {
 									/>
 								);
 							} ) }
-							{ isFetchingPageResults && <SingleItemLoading /> }
+							{ isFetchingPageResults && <SingleItemLoading totalRows={ 6 } /> }
 						</>
 					) }
 				</tbody>
