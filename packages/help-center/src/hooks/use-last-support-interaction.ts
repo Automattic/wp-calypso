@@ -69,10 +69,7 @@ export const useLastSupportInteraction = ( {
 			} );
 		}
 		// If we have open or resolved interactions and none is selected
-		else if (
-			( openSupportInteractions || resolvedSupportInteractions ) &&
-			! currentSupportInteraction
-		) {
+		else if ( openSupportInteractions || resolvedSupportInteractions ) {
 			if ( resolvedSupportInteractions?.length ) {
 				setCurrentSupportInteraction( resolvedSupportInteractions[ 0 ] );
 			} else if ( openSupportInteractions?.length ) {
