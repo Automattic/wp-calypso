@@ -179,6 +179,7 @@ export interface ClientConfig {
 	timeout?: number;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
+	conversationStorageKey?: string;
 }
 
 export interface SendMessageParams {

@@ -40,6 +40,7 @@ export interface AgentManagerConfig extends ClientConfig {
 interface ManagedAgent {
 	client: Client;
 	sessionId: string | null;
+	conversationStorageKey?: string;
 	conversationHistory: Message[];
 }
 
@@ -88,7 +89,11 @@ function createAgentManager(): AgentManager {
 		const agent = agents.get( key );
 		if ( agent?.sessionId ) {
 			try {
-				await storeConversation( agent.sessionId, messages );
+				await storeConversation(
+					agent.sessionId,
+					messages,
+					agent.conversationStorageKey
+				);
 			} catch ( error ) {
 				log(
 					`Failed to persist conversation history for agent ${ key }:`,
@@ -109,12 +114,16 @@ function createAgentManager(): AgentManager {
 
 			const client = createClient( config );
 			const sessionId = config.sessionId || null;
+			const conversationStorageKey = config.conversationStorageKey;
 
 			// Load existing conversation history if sessionId is provided
 			let conversationHistory: Message[] = [];
 			if ( sessionId ) {
 				try {
-					conversationHistory = await loadConversation( sessionId );
+					conversationHistory = await loadConversation(
+						sessionId,
+						conversationStorageKey
+					);
 				} catch ( error ) {
 					log(
 						`Failed to load conversation history for agent ${ key } with session ${ sessionId }:`,
@@ -126,6 +135,7 @@ function createAgentManager(): AgentManager {
 			const managedAgent: ManagedAgent = {
 				client,
 				sessionId,
+				conversationStorageKey,
 				conversationHistory,
 			};
 
@@ -410,7 +420,10 @@ function createAgentManager(): AgentManager {
 
 			// Clear persistent storage as well
 			if ( managedAgent.sessionId ) {
-				await clearConversation( managedAgent.sessionId );
+				await clearConversation(
+					managedAgent.sessionId,
+					managedAgent.conversationStorageKey
+				);
 			}
 		},
 

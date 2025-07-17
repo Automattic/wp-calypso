@@ -158,7 +158,10 @@ describe( 'agentManager', () => {
 			};
 			await agentManager.createAgent( 'test-key', configWithSession );
 
-			expect( loadConversation ).toHaveBeenCalledWith( 'session-123' );
+			expect( loadConversation ).toHaveBeenCalledWith(
+				'session-123',
+				undefined
+			);
 			const history = agentManager.getConversationHistory( 'test-key' );
 			expect( history ).toEqual( mockHistory );
 		} );
@@ -451,7 +454,10 @@ describe( 'agentManager', () => {
 			await agentManager.createAgent( 'test-key', configWithSession );
 			await agentManager.resetConversation( 'test-key' );
 
-			expect( clearConversation ).toHaveBeenCalledWith( 'session-123' );
+			expect( clearConversation ).toHaveBeenCalledWith(
+				'session-123',
+				undefined
+			);
 		} );
 
 		it( 'should throw error for non-existent agent', async () => {

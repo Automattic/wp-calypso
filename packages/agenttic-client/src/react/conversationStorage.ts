@@ -27,7 +27,7 @@ interface StoredMessage {
  * Stored conversation format
  */
 interface StoredConversation {
-	sessionId: string;
+	storageKey: string;
 	messages: StoredMessage[];
 	lastUpdated: number;
 }
@@ -142,15 +142,20 @@ const maxCacheSize = 50; // Limit number of cached conversations
 
 /**
  * Store conversation messages for a session
- * @param sessionId - The session ID to store messages for
- * @param messages  - The array of messages to store
+ * @param sessionId              - The session ID to store messages for
+ * @param messages               - The array of messages to store
+ * @param conversationStorageKey - Optional custom storage key, defaults to sessionId
  */
 export async function storeConversation(
 	sessionId: string,
-	messages: Message[]
+	messages: Message[],
+	conversationStorageKey?: string
 ): Promise< void > {
+	// Determine effective storage key
+	const currentStorageKey = conversationStorageKey || sessionId;
+
 	// Update in-memory cache
-	conversationCache.set( sessionId, [ ...messages ] );
+	conversationCache.set( currentStorageKey, [ ...messages ] );
 
 	// Maintain cache size limit
 	if ( conversationCache.size > maxCacheSize ) {
@@ -170,21 +175,21 @@ export async function storeConversation(
 	try {
 		// Serialize and store in sessionStorage
 		const stored: StoredConversation = {
-			sessionId,
+			storageKey: currentStorageKey,
 			messages: messages.map( extractStorableContent ),
 			lastUpdated: Date.now(),
 		};
 
 		// @ts-ignore
 		sessionStorage.setItem(
-			`${ STORAGE_KEY }_${ sessionId }`,
+			`${ STORAGE_KEY }_${ currentStorageKey }`,
 			JSON.stringify( stored )
 		);
 	} catch ( error ) {
 		// Handle sessionStorage quota exceeded or other errors
 		logger(
-			'Failed to store conversation in sessionStorage for session %s: %O',
-			sessionId,
+			'Failed to store conversation in sessionStorage for key %s: %O',
+			currentStorageKey,
 			error
 		);
 	}
@@ -192,14 +197,19 @@ export async function storeConversation(
 
 /**
  * Load conversation messages for a session
- * @param sessionId - The session ID to load messages for
+ * @param sessionId              - The session ID to load messages for
+ * @param conversationStorageKey - Optional custom storage key, defaults to sessionId
  */
 export async function loadConversation(
-	sessionId: string
+	sessionId: string,
+	conversationStorageKey?: string
 ): Promise< Message[] > {
+	// Determine effective storage key
+	const currentStorageKey = conversationStorageKey || sessionId;
+
 	// Check in-memory cache first
-	if ( conversationCache.has( sessionId ) ) {
-		return [ ...conversationCache.get( sessionId )! ];
+	if ( conversationCache.has( currentStorageKey ) ) {
+		return [ ...conversationCache.get( currentStorageKey )! ];
 	}
 
 	// Fallback to sessionStorage
@@ -212,21 +222,21 @@ export async function loadConversation(
 	try {
 		// @ts-ignore
 		const stored = sessionStorage.getItem(
-			`${ STORAGE_KEY }_${ sessionId }`
+			`${ STORAGE_KEY }_${ currentStorageKey }`
 		);
 		if ( stored ) {
 			const conversation: StoredConversation = JSON.parse( stored );
 			const messages = conversation.messages.map( restoreMessage );
 
 			// Cache for future access
-			conversationCache.set( sessionId, messages );
+			conversationCache.set( currentStorageKey, messages );
 
 			return [ ...messages ];
 		}
 	} catch ( error ) {
 		logger(
-			'Failed to load conversation from sessionStorage for session %s: %O',
-			sessionId,
+			'Failed to load conversation from sessionStorage for key %s: %O',
+			currentStorageKey,
 			error
 		);
 	}
@@ -236,10 +246,17 @@ export async function loadConversation(
 
 /**
  * Clear conversation for a session
- * @param sessionId - The session ID to clear
+ * @param sessionId              - The session ID to clear
+ * @param conversationStorageKey - Optional custom storage key, defaults to sessionId
  */
-export async function clearConversation( sessionId: string ): Promise< void > {
-	conversationCache.delete( sessionId );
+export async function clearConversation(
+	sessionId: string,
+	conversationStorageKey?: string
+): Promise< void > {
+	// Determine effective storage key
+	const currentStorageKey = conversationStorageKey || sessionId;
+
+	conversationCache.delete( currentStorageKey );
 
 	// @ts-ignore
 	if ( typeof sessionStorage === 'undefined' ) {
@@ -249,11 +266,11 @@ export async function clearConversation( sessionId: string ): Promise< void > {
 
 	try {
 		// @ts-ignore
-		sessionStorage.removeItem( `${ STORAGE_KEY }_${ sessionId }` );
+		sessionStorage.removeItem( `${ STORAGE_KEY }_${ currentStorageKey }` );
 	} catch ( error ) {
 		logger(
-			'Failed to clear conversation from sessionStorage for session %s: %O',
-			sessionId,
+			'Failed to clear conversation from sessionStorage for key %s: %O',
+			currentStorageKey,
 			error
 		);
 	}
