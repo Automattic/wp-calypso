@@ -32,7 +32,7 @@ export const RecommendButton = ( { feedId }: Props ) => {
 		if ( ! hasRequested && ! isRequesting ) {
 			dispatch( requestRecommendedBlogsListItems( owner ) );
 		}
-	}, [ dispatch, hasRequested, isRequesting ] );
+	}, [ dispatch, hasRequested, isRequesting, owner ] );
 
 	const Icon = isRecommended ? ReaderFollowingFeedIcon : ReaderFollowFeedIcon;
 	const classes = clsx( 'reader-recommend-button', {
@@ -48,7 +48,7 @@ export const RecommendButton = ( { feedId }: Props ) => {
 			variant="secondary"
 			disabled={ isRequesting }
 		>
-			{ isRecommended ? translate( 'Recommended' ) : translate( 'Recommended this blog' ) }
+			{ isRecommended ? translate( 'Recommended' ) : translate( 'Recommend this blog' ) }
 		</Button>
 	);
 };

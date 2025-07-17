@@ -48,7 +48,7 @@ describe( 'RecommendButton', () => {
 	it( 'renders the recommended button when is possible to recommend and is not recommended', () => {
 		render( <RecommendButton feedId={ 1 } /> );
 
-		expect( screen.getByRole( 'button', { name: 'Recommended this blog' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Recommend this blog' } ) ).toBeVisible();
 	} );
 
 	it( 'renders the recommended button when is possible to recommend and is recommended', () => {
@@ -69,7 +69,7 @@ describe( 'RecommendButton', () => {
 
 		render( <RecommendButton feedId={ 1 } /> );
 
-		expect( screen.getByRole( 'button', { name: 'Recommended this blog' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Recommend this blog' } ) ).toBeDisabled();
 	} );
 
 	it( 'request the recommended blogs list when is not requested', () => {
