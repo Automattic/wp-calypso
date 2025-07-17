@@ -1,4 +1,6 @@
 import clsx from 'clsx';
+import type { ReactNode } from 'react';
+
 import './style.scss';
 
 const CircularProgressBar = ( {
@@ -8,6 +10,8 @@ const CircularProgressBar = ( {
 	enableDesktopScaling = false,
 	strokeWidth = 4,
 	showProgressText = true,
+	customText,
+	variant,
 }: {
 	currentStep: number | null;
 	numberOfSteps: number | null;
@@ -15,6 +19,8 @@ const CircularProgressBar = ( {
 	enableDesktopScaling?: boolean;
 	strokeWidth?: number;
 	showProgressText?: boolean;
+	customText?: ReactNode;
+	variant?: 'success';
 } ) => {
 	const SIZE = size;
 	const RADIUS = SIZE / 2 - strokeWidth / 2;
@@ -29,6 +35,7 @@ const CircularProgressBar = ( {
 			role="progressbar"
 			className={ clsx( 'circular__progress-bar', {
 				'desktop-scaling': enableDesktopScaling,
+				'is-success': variant === 'success',
 			} ) }
 			style={ { width: SIZE, height: SIZE } }
 		>
@@ -59,9 +66,9 @@ const CircularProgressBar = ( {
 					strokeWidth={ strokeWidth }
 				/>
 			</svg>
-			{ showProgressText && (
+			{ ( customText || showProgressText ) && (
 				<div className="circular__progress-bar-text">
-					{ currentStep }/{ numberOfSteps }
+					{ customText || `${ currentStep }/${ numberOfSteps }` }
 				</div>
 			) }
 		</div>
