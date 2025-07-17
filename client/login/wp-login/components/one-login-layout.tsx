@@ -28,7 +28,7 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
-	const { headingText, subHeadingText } = useLoginContext();
+	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 
 	const SignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
@@ -60,7 +60,14 @@ const OneLoginLayout = ( {
 				<div className="wp-login__header">
 					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
 					<Step.Heading text={ <div className="wp-login__heading-text">{ headingText }</div> } />
-					<h2 className="wp-login__heading-subtext">{ subHeadingText }</h2>
+					<div className="wp-login__heading-subtext-wrapper">
+						<h2 className="wp-login__heading-subtext">{ subHeadingText }</h2>
+						{ subHeadingTextSecondary && (
+							<h3 className="wp-login__heading-subtext is-secondary">
+								{ subHeadingTextSecondary }
+							</h3>
+						) }
+					</div>
 				</div>
 				{ children }
 			</div>

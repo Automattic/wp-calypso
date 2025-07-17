@@ -85,14 +85,30 @@ $image-height: 47px;
 	}
 }
 
+.wp-login__heading-subtext-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
 .wp-login__heading-subtext {
 	text-wrap: balance;
 	color: var(--studio-gray-50, #646970);
 	margin-block: 0.5rem 0;
+	font-size: $font-body;
 
 	a {
 		color: var(--studio-gray-50, #646970);
 		text-decoration: underline;
+	}
+
+	&.is-secondary {
+		font-size: $font-body-extra-small;
+		color: var(--studio-gray-30);
+
+		a {
+			color: var(--studio-gray-30);
+		}
 	}
 }
 

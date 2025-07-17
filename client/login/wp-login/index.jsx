@@ -101,6 +101,7 @@ export class Login extends Component {
 			'linkingSocialService',
 			'action',
 			'oauth2Client',
+			'isWoo',
 			'isWooJPC',
 			'isJetpack',
 			'isWCCOM',
@@ -287,6 +288,7 @@ export class Login extends Component {
 			twoFactorEnabled,
 			currentQuery,
 			translate,
+			isWoo,
 		} = this.props;
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
@@ -316,11 +318,13 @@ export class Login extends Component {
 			twoFactorAuthType,
 			action,
 			translate,
+			isWoo,
 		} );
 
 		this.context.setHeaders( {
 			heading: headingText,
-			subHeading: headingSubText,
+			subHeading: headingSubText.primary,
+			subHeadingSecondary: headingSubText.secondary,
 		} );
 	}
 
