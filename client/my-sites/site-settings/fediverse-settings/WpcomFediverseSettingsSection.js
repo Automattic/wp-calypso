@@ -16,6 +16,7 @@ import {
 	getSiteTitle,
 	getSiteDomain,
 	getSite,
+	getSiteAdminUrl,
 	getSitePlanSlug,
 } from 'calypso/state/sites/selectors';
 
@@ -182,6 +183,9 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const activityPubSettingsUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'options-general.php?page=activitypub' )
+	);
 	const isPrivate = site?.is_private || site?.is_coming_soon;
 	const noticeArgs = {
 		args: {
@@ -191,6 +195,11 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const { isEnabled, setEnabled, isLoading, isError, data } = useActivityPubStatus(
 		siteId,
 		( response ) => {
+			if ( response.enabled ) {
+				// Redirect to the ActivityPub onboarding checklist.
+				window.location.href = activityPubSettingsUrl;
+			}
+
 			const message = response.enabled
 				? translate( '%(site_title)s has entered the fediverse!', noticeArgs )
 				: translate( '%(site_title)s has exited the fediverse.', noticeArgs );
@@ -202,6 +211,16 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const settingsLink = isJetpackCloud()
 		? `https://wordpress.com${ baseSettingsLink }`
 		: baseSettingsLink;
+	const toggleActivityPubFeature = ( value ) => {
+		setEnabled( value );
+
+		recordTracksEvent(
+			value
+				? 'calypso_connections_enter_fediverse_button_click'
+				: 'calypso_connections_exit_fediverse_button_click'
+		);
+	};
+
 	return (
 		<>
 			<div className="fediverse-settings-wrapper">
@@ -219,7 +238,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					label={ translate( 'Enter the fediverse' ) }
 					disabled={ disabled }
 					checked={ isEnabled }
-					onChange={ ( value ) => setEnabled( value ) }
+					onChange={ toggleActivityPubFeature }
 				/>
 				{ isPrivate && (
 					<Notice status="is-warning" translate={ translate } isCompact>

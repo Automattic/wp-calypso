@@ -19,7 +19,7 @@ import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data/site-hosting';
 import { HostingFeatures } from '../features';
-import HostingFeature from '../hosting-feature';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import ResetPasswordModal from './reset-password-modal';
 import upsellIllustrationUrl from './upsell-illustration.svg';
@@ -81,7 +81,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				/>
 			}
 		>
-			<HostingFeature
+			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.DATABASE }
 				tracksFeatureId="settings-database"
@@ -141,7 +141,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 						onError={ handleResetPasswordError }
 					/>
 				) }
-			</HostingFeature>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

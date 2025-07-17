@@ -7,6 +7,7 @@ import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
+import { useCheckSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -54,6 +55,8 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	const environment = isStagingSite ? 'staging' : 'production';
 
+	const { resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
+
 	return (
 		<>
 			{ shouldShowSyncDropdown && (
@@ -62,6 +65,8 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 					environment={ environment }
 					productionSiteId={ productionSiteId }
 					stagingSiteId={ stagingSiteId }
+					isSyncInProgress={ isSyncInProgress }
+					onSyncStart={ resetSyncStatus }
 				/>
 			) }
 			<Button

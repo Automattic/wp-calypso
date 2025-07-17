@@ -1,25 +1,27 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { hasAtomicFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureActivation from './activation';
 import HostingFeatureUpsell from './upsell';
-import type { CalloutProps } from '../../components/callout/types';
 import type { Site } from '../../data/types';
 import type { HostingFeatures } from '../features';
 
-interface HostingFeatureProps {
+export interface HostingFeatureGateProps {
 	site: Site;
 	feature: HostingFeatures;
 	tracksFeatureId: string;
-	upsellIcon?: CalloutProps[ 'icon' ];
-	upsellImage?: CalloutProps[ 'image' ];
-	upsellTitle?: CalloutProps[ 'title' ];
-	upsellDescription?: CalloutProps[ 'description' ];
-	children: React.ReactNode;
+	children: ReactNode;
+	renderUpsellComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
+	renderActivationComponent: ( { onClick }: { onClick: () => void } ) => ReactNode;
 }
 
-export default function HostingFeature( props: HostingFeatureProps ) {
-	const { site, feature, tracksFeatureId, children } = props;
-
+export default function HostingFeatureGate( {
+	site,
+	feature,
+	tracksFeatureId,
+	children,
+	renderUpsellComponent,
+	renderActivationComponent,
+}: HostingFeatureGateProps ) {
 	if ( hasAtomicFeature( site, feature ) ) {
 		return children;
 	}
@@ -30,18 +32,15 @@ export default function HostingFeature( props: HostingFeatureProps ) {
 				site={ site }
 				feature={ feature }
 				tracksFeatureId={ tracksFeatureId }
+				renderActivationComponent={ renderActivationComponent }
 			/>
 		);
 	}
 
 	return (
 		<HostingFeatureUpsell
-			site={ site }
 			tracksFeatureId={ tracksFeatureId }
-			icon={ props.upsellIcon }
-			image={ props.upsellImage }
-			title={ props.upsellTitle }
-			description={ props.upsellDescription }
+			renderUpsellComponent={ renderUpsellComponent }
 		/>
 	);
 }

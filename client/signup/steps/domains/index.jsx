@@ -26,7 +26,6 @@ import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import DomainCartV2 from 'calypso/components/domain-search-v2/domain-cart';
 import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -1189,6 +1188,8 @@ class RenderDomainsStepComponent extends Component {
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 				handleClickUseYourDomain={ this.handleUseYourDomainClick }
 				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
+				// RegisterDomainStepComponentV2 props below
+				onContinue={ this.props.goToNextStep }
 			/>
 		);
 	};
@@ -1331,14 +1332,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			content = (
-				<>
-					{ this.domainForm() }
-					{ this.props.shouldUseDomainSearchV2 && (
-						<DomainCartV2 onContinue={ this.props.goToNextStep } />
-					) }
-				</>
-			);
+			content = this.domainForm();
 		}
 
 		if ( ! this.props.stepSectionName && ! this.props.shouldUseDomainSearchV2 ) {
@@ -1634,6 +1628,10 @@ const StyleWrappedDomainsStepComponent = ( props ) => {
 	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flowName );
 
 	if ( isLoading ) {
+		if ( shouldUseStepContainerV2( props.flowName ) ) {
+			return <Step.Loading />;
+		}
+
 		// TODO: Add a loading state to indicate that the experiment is loading.
 		return null;
 	}

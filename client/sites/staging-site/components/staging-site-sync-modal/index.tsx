@@ -6,8 +6,10 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	CheckboxControl,
+	SelectControl,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -18,10 +20,15 @@ import SiteEnvironmentBadge, {
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import { usePullFromStagingMutation } from 'calypso/sites/staging-site/hooks/use-staging-sync';
+import {
+	usePullFromStagingMutation,
+	usePushToStagingMutation,
+} from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
@@ -85,6 +92,7 @@ interface SyncModalProps {
 	environment: 'production' | 'staging';
 	productionSiteId: number;
 	stagingSiteId: number;
+	onSyncStart: () => void;
 }
 
 interface EnvironmentConfig {
@@ -162,9 +170,11 @@ export default function SyncModal( {
 	environment,
 	productionSiteId,
 	stagingSiteId,
+	onSyncStart,
 }: SyncModalProps ) {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
+	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -189,6 +199,49 @@ export default function SyncModal( {
 		getBackupBrowserCheckList( state, querySiteId )
 	);
 
+	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
+	const wpContentNode = useSelector( ( state ) =>
+		getBackupBrowserNode( state, querySiteId, '/wp-content' )
+	);
+	const wpConfigNode = useSelector( ( state ) =>
+		getBackupBrowserNode( state, querySiteId, '/wp-config.php' )
+	);
+
+	const getVisibleNodesCheckState = useCallback( () => {
+		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
+		if ( nodes.length === 0 ) {
+			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
+			return 'checked';
+		}
+
+		const checkedCount = nodes.filter( ( node ) => node?.checkState === 'checked' ).length;
+		const mixedCount = nodes.filter( ( node ) => node?.checkState === 'mixed' ).length;
+
+		if ( mixedCount > 0 ) {
+			return 'mixed';
+		}
+
+		if ( checkedCount === nodes.length ) {
+			return 'checked';
+		}
+
+		if ( checkedCount === 0 ) {
+			return 'unchecked';
+		}
+
+		return 'mixed';
+	}, [ wpContentNode, wpConfigNode ] );
+
+	const visibleNodesCheckState = getVisibleNodesCheckState();
+
+	useEffect( () => {
+		if ( querySiteId === stagingSiteId ) {
+			dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
+		}
+	}, [ dispatch, querySiteId, stagingSiteId ] );
+
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
@@ -204,6 +257,21 @@ export default function SyncModal( {
 		},
 	} );
 
+	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
+			// setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			// setSyncError( error.code );
+		},
+	} );
+
 	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
 		sortOrder: 'desc',
 		successOnly: true,
@@ -211,13 +279,44 @@ export default function SyncModal( {
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const handleConfirm = () => {
+		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		if ( visibleNodesCheckState === 'checked' ) {
+			// Sync everything
+			include_paths = '';
+		}
+
+		onSyncStart();
+
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			const include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 			pullFromStaging( { types: 'paths', include_paths } );
-			onClose();
+		} else {
+			pushToStaging( { types: 'paths', include_paths } );
+		}
+
+		onClose();
+	};
+
+	const updateNodeCheckState = useCallback(
+		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
+			dispatch( setNodeCheckState( querySiteId, '/', checkState ) );
+		},
+		[ dispatch, querySiteId ]
+	);
+
+	const onCheckboxChange = () => {
+		updateNodeCheckState( visibleNodesCheckState === 'checked' ? 'unchecked' : 'checked' );
+	};
+
+	const handleExpanderChange = ( value: string ) => {
+		const isExpanded = value === 'true';
+		setIsFileBrowserVisible( isExpanded );
+
+		if ( ! isExpanded ) {
+			// When collapsing, select all files
+			updateNodeCheckState( 'checked' );
 		}
 	};
 
@@ -248,15 +347,44 @@ export default function SyncModal( {
 					/>
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
-				{ querySiteId === stagingSiteId && (
-					<div className="staging-site-card">
+
+				<div className="staging-site-card">
+					<HStack spacing={ 2 } justify="space-between" alignment="center">
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							label={ __( 'Files and folders' ) }
+							checked={ visibleNodesCheckState === 'checked' }
+							indeterminate={ visibleNodesCheckState === 'mixed' }
+							onChange={ onCheckboxChange }
+						/>
+						<SelectControl
+							value={ isFileBrowserVisible ? 'true' : 'false' }
+							variant="minimal"
+							options={ [
+								{
+									label: __( 'All files and folders' ),
+									value: 'false',
+								},
+								{
+									label: __( 'Specific files and folders' ),
+									value: 'true',
+								},
+							] }
+							onChange={ handleExpanderChange }
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							aria-label={ __( 'Select files and folders to sync' ) }
+						/>
+					</HStack>
+
+					{ isFileBrowserVisible && (
 						<FileBrowser
 							rewindId={ rewindId }
 							siteId={ querySiteId }
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
-					</div>
-				) }
+					) }
+				</div>
 				<Text>
 					{ createInterpolateElement( syncConfig.learnMore, {
 						a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,

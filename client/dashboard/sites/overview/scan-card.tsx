@@ -5,7 +5,7 @@ import { siteScanQuery } from '../../app/queries/site-scan';
 import { useTimeSince } from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
-import UpsellCard from './upsell-card';
+import UpsellCard from '../overview-card/upsell';
 import type { SiteScan } from '../../data/site-scan';
 import type { Site } from '../../data/types';
 
@@ -45,8 +45,8 @@ function ScanCardUnavailable() {
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	const threatCount = scan.threats.length;
 	const description = sprintf(
-		/* translators: %d: number of threats */
-		_n( '%d threat found', '%d threats found', threatCount ),
+		/* translators: %d: number of risks */
+		_n( '%d risk found', '%d risks found', threatCount ),
 		threatCount
 	);
 
@@ -76,7 +76,7 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			heading={ __( 'No threats found' ) }
+			heading={ __( 'No risks found' ) }
 			description={ description }
 			externalLink={ getScanURL( site ) }
 			variant="success"

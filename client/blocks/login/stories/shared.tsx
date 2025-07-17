@@ -30,7 +30,7 @@ export const A4AWrapper = ( Story: StoryFn ) => (
 );
 
 export const AkismetWrapper = ( Story: StoryFn ) => (
-	<div className="is-white-login is-akismet">
+	<div className="is-akismet">
 		<Story />
 	</div>
 );

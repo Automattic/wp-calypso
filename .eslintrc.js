@@ -505,6 +505,7 @@ module.exports = {
 				'@wordpress/components': [
 					'__experimentalConfirmDialog',
 					'__experimentalDivider',
+					'__experimentalGrid',
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',

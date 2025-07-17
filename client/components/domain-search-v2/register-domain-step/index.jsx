@@ -1,6 +1,8 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
+import { DomainSearch, DomainSearchNotice } from '@automattic/domain-search';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -10,6 +12,10 @@ import {
 } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -31,8 +37,6 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import DomainSearchResults from 'calypso/components/domains/domain-search-results';
-import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
 	recordDomainAvailabilityReceive,
@@ -60,9 +64,12 @@ import {
 } from 'calypso/components/domains/register-domain-step/utility';
 import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import EmptyContent from 'calypso/components/empty-content';
-import Notice from 'calypso/components/notice';
-import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import {
+	domainRegistration,
+	getDomainsInCart,
+	hasDomainInCart,
+	updatePrivacyForDomain,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
 	getAvailableTlds,
@@ -79,7 +86,8 @@ import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/uti
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import AlreadyOwnADomain from './already-own-a-domain';
+import { DomainCartV2 } from '../domain-cart';
+import DomainSearchResults from '../domain-search-results';
 
 import './style.scss';
 
@@ -454,14 +462,80 @@ class RegisterDomainStep extends Component {
 		return suggestions;
 	}
 
-	render() {
-		const {
-			isSignupStep,
-			showAlreadyOwnADomain,
-			isDomainAndPlanPackageFlow,
-			replaceDomainFailedMessage,
-			dismissReplaceDomainFailed,
-		} = this.props;
+	getCart = () => {
+		const { cart, shoppingCartManager } = this.props;
+		const { addProductsToCart, removeProductFromCart } = shoppingCartManager;
+		const searchResults = this.state.searchResults || [];
+
+		const domainsInCart = getDomainsInCart( cart );
+
+		const total = formatCurrency(
+			domainsInCart.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
+			cart.currency ?? 'USD',
+			{
+				isSmallestUnit: true,
+				stripZeros: true,
+			}
+		);
+
+		return {
+			items: domainsInCart.map( ( domain ) => {
+				const [ domainName, ...tld ] = domain.meta.split( '.' );
+
+				const hasPromotion = domain.cost_overrides?.some(
+					( override ) => ! override.does_override_original_cost
+				);
+
+				return {
+					uuid: domain.uuid,
+					domain: domainName,
+					tld: tld.join( '.' ),
+					originalPrice: hasPromotion
+						? formatCurrency( domain.item_original_cost_integer, domain.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+						  } )
+						: undefined,
+					price: formatCurrency( domain.item_subtotal_integer, domain.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				};
+			} ),
+			total,
+			onAddItem: ( domain_name ) => {
+				const suggestion = searchResults.find( ( result ) => result.domain_name === domain_name );
+
+				const {
+					domain_name: domain,
+					product_slug: productSlug,
+					supports_privacy: supportsPrivacy,
+				} = suggestion;
+
+				let registration = domainRegistration( {
+					domain,
+					productSlug,
+					extra: { privacy_available: supportsPrivacy },
+				} );
+
+				if ( supportsPrivacy ) {
+					registration = updatePrivacyForDomain( registration, true );
+				}
+
+				// Add item_subtotal_integer property to registration, so it can be sorted by price.
+				registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
+
+				addProductsToCart( [ registration ] );
+			},
+			onRemoveItem: ( domain_name ) => removeProductFromCart( domain_name ),
+			hasItem: ( domain_name ) => {
+				return cart.products.some( ( item ) => item.meta === domain_name );
+			},
+		};
+	};
+
+	renderGeneralNotices() {
+		const { replaceDomainFailedMessage, dismissReplaceDomainFailed } = this.props;
 
 		const {
 			availabilityError,
@@ -472,13 +546,7 @@ class RegisterDomainStep extends Component {
 			suggestionError,
 			suggestionErrorData,
 			suggestionErrorDomain,
-			trademarkClaimsNoticeInfo,
-			isQueryInvalid,
 		} = this.state;
-
-		if ( trademarkClaimsNoticeInfo ) {
-			return this.renderTrademarkClaimsNotice();
-		}
 
 		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
 			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
@@ -487,65 +555,56 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
-		const containerDivClassName = clsx( 'register-domain-step', {
-			'register-domain-step__signup': this.props.isSignupStep,
-		} );
+		const notices = [
+			availabilityMessage && (
+				<DomainSearchNotice status={ availabilitySeverity }>
+					{ availabilityMessage }
+				</DomainSearchNotice>
+			),
+			suggestionMessage && availabilityError !== suggestionError && (
+				<DomainSearchNotice status={ suggestionSeverity }>{ suggestionMessage }</DomainSearchNotice>
+			),
+			replaceDomainFailedMessage && (
+				<DomainSearchNotice status="error" onDismiss={ dismissReplaceDomainFailed }>
+					{ replaceDomainFailedMessage }
+				</DomainSearchNotice>
+			),
+		].filter( Boolean );
 
-		const searchBoxClassName = clsx( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step': this.props.isSignupStep,
-		} );
+		if ( notices.length === 0 ) {
+			return null;
+		}
+
+		return notices;
+	}
+
+	render() {
+		const { onContinue, isDomainAndPlanPackageFlow } = this.props;
+
+		const { trademarkClaimsNoticeInfo } = this.state;
+
+		if ( trademarkClaimsNoticeInfo ) {
+			return this.renderTrademarkClaimsNotice();
+		}
+
+		const notices = this.renderGeneralNotices();
 
 		return (
-			<>
-				<div className={ containerDivClassName }>
-					<div className={ searchBoxClassName }>
-						<CompactCard className="register-domain-step__search-card">
-							{ this.renderSearchBar() }
-						</CompactCard>
-					</div>
-					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
-
-					{ ! isSignupStep && isQueryInvalid && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
-							status="is-info"
-							showDismiss={ false }
-						/>
-					) }
-					{ availabilityMessage && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ availabilityMessage }
-							status={ `is-${ availabilitySeverity }` }
-							showDismiss={ false }
-						/>
-					) }
-					{ suggestionMessage && availabilityError !== suggestionError && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ suggestionMessage }
-							status={ `is-${ suggestionSeverity }` }
-							showDismiss={ false }
-						/>
-					) }
-					{ replaceDomainFailedMessage && (
-						<Notice
-							status="is-error"
-							text={ replaceDomainFailedMessage }
-							showDismiss
-							onDismissClick={ dismissReplaceDomainFailed }
-						/>
-					) }
-					{ this.renderFilterContent() }
-					{ this.renderSideContent() }
-				</div>
-				{ showAlreadyOwnADomain && (
-					<AlreadyOwnADomain
-						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
-					/>
-				) }
-			</>
+			<DomainSearch
+				onContinue={ onContinue }
+				cart={ this.getCart() }
+				className="wpcom-domain-search-v2"
+			>
+				<VStack spacing={ 8 }>
+					<VStack spacing={ 4 }>
+						{ this.renderSearchBar() }
+						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
+						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
+					</VStack>
+					{ this.renderContent() }
+				</VStack>
+				<DomainCartV2 />
+			</DomainSearch>
 		);
 	}
 
@@ -646,10 +705,10 @@ class RegisterDomainStep extends Component {
 		};
 
 		return (
-			<>
+			<HStack spacing={ 4 }>
 				<Search { ...componentProps }></Search>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
-			</>
+			</HStack>
 		);
 	}
 
@@ -734,35 +793,19 @@ class RegisterDomainStep extends Component {
 		this.setState( { clickedExampleSuggestion: true } );
 	};
 
-	renderFilterContent() {
-		const { isSignupStep } = this.props;
-		const isSearching = this.state.lastQuery !== '' || this.state.loadingResults;
-
-		if ( isSignupStep || isSearching ) {
-			return (
-				<>
-					{ this.renderContent() }
-					{ this.renderFilterResetNotice() }
-					{ this.renderPaginationControls() }
-				</>
-			);
-		}
-
+	renderContent() {
 		return (
 			<>
-				{ this.renderBestNamesPrompt() }
-				<EmptyContent title="" className="register-domain-step__placeholder" />
+				{ this.maybeRenderSearchResults() }
+				{ this.renderFilterResetNotice() }
+				{ this.renderPaginationControls() }
 			</>
 		);
 	}
 
-	renderContent() {
+	maybeRenderSearchResults() {
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
 			return this.renderSearchResults();
-		}
-
-		if ( this.props.showExampleSuggestions ) {
-			return this.renderExampleSuggestions();
 		}
 
 		return null;
@@ -1536,24 +1579,6 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	renderExampleSuggestions() {
-		const { isOnboarding, domainsWithPlansOnly, offerUnavailableOption, products } = this.props;
-
-		if ( isOnboarding ) {
-			return this.renderBestNamesPrompt();
-		}
-
-		return (
-			<ExampleDomainSuggestions
-				domainsWithPlansOnly={ domainsWithPlansOnly }
-				offerUnavailableOption={ offerUnavailableOption }
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				products={ products }
-				url={ this.getUseYourDomainUrl() }
-			/>
-		);
-	}
-
 	renderFreeDomainExplainer() {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
@@ -1652,15 +1677,6 @@ class RegisterDomainStep extends Component {
 		const onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
 		const suggestions = this.getSuggestionsFromProps();
-
-		// the search returned no results
-		if (
-			suggestions.length === 0 &&
-			! this.state.loadingResults &&
-			this.props.showExampleSuggestions
-		) {
-			return this.renderExampleSuggestions();
-		}
 
 		const hasResults =
 			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&

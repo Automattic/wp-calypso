@@ -13,6 +13,8 @@ interface SyncDropdownProps {
 	environment: 'production' | 'staging';
 	productionSiteId: number;
 	stagingSiteId: number;
+	isSyncInProgress: boolean;
+	onSyncStart: () => void;
 }
 
 export default function SyncDropdown( {
@@ -20,6 +22,8 @@ export default function SyncDropdown( {
 	environment,
 	productionSiteId,
 	stagingSiteId,
+	isSyncInProgress,
+	onSyncStart,
 }: SyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
@@ -50,8 +54,9 @@ export default function SyncDropdown( {
 						variant="secondary"
 						aria-expanded={ isOpen }
 						onClick={ () => onToggle() }
+						disabled={ isSyncInProgress }
 					>
-						{ __( 'Sync' ) }
+						{ isSyncInProgress ? __( 'Syncing…' ) : __( 'Sync' ) }
 					</Button>
 				) }
 				renderContent={ ( { onClose } ) => (
@@ -89,6 +94,7 @@ export default function SyncDropdown( {
 						environment={ environment }
 						productionSiteId={ productionSiteId }
 						stagingSiteId={ stagingSiteId }
+						onSyncStart={ onSyncStart }
 					/>
 				</Suspense>
 			) }

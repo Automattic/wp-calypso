@@ -64,7 +64,10 @@
 				color: var( --color-text );
 				overflow: hidden;
 				text-overflow: ellipsis;
-				white-space: nowrap;
+				display: -webkit-box;
+				-webkit-line-clamp: 1;
+				line-clamp: 1;
+				-webkit-box-orient: vertical;
 			}
 
 			.gravatar-hovercard__primary-blog-card-username {

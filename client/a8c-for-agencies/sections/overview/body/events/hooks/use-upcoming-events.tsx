@@ -1,16 +1,36 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-clipboard-button';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
 import a4aEventImage from 'calypso/assets/images/a8c-for-agencies/events/a4a-compliment-image.svg';
 import a4aLogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import wooEventImage from 'calypso/assets/images/a8c-for-agencies/events/woo-compliment-image.svg';
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
+import wordcampUsEventImage from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-us2025-image.svg';
+import wpOrgLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
+const WORDCAMP_US_2025_COUPON_CODE = 'automattic25';
 
 export const useUpcomingEvents = () => {
 	const translate = useTranslate();
 	const localizedMoment = useLocalizedMoment();
+	const dispatch = useDispatch();
+
+	const handleWordCampUSClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_overview_events_wordcamp_us_2025_08_26_link_click' )
+		);
+	}, [ dispatch ] );
+
+	const handleCopyWCUS2025DiscountCodeClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_overview_events_wordcamp_us_2025_08_26_discount_code_copy' )
+		);
+	}, [ dispatch ] );
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
@@ -76,6 +96,57 @@ export const useUpcomingEvents = () => {
 				dateClassName: 'a4a-event__date--a4a',
 				imageClassName: 'a4a-event__image--a4a',
 			},
+			{
+				id: 'wordcamp-us-2025-08-26',
+				date: {
+					from: moment( '2025-08-26' ),
+					to: moment( '2025-08-29' ),
+				},
+				title: translate( 'Join Automattic for Agencies at WordCamp US' ),
+				subtitle: translate( 'Official sponsor' ),
+				descriptions: [
+					translate(
+						"Automattic is a proud sponsor of {{a}}WordCamp US{{/a}} and we're excited to invite you and your team to this year's event—the premier gathering for digital agencies, innovators, and industry leaders. As a valued member of the Automattic for Agencies community, you'll enjoy inspiring keynotes, hands-on workshops, and unparalleled networking opportunities with peers and product experts.",
+						{
+							components: {
+								a: (
+									<a
+										href="https://us.wordcamp.org/2025/"
+										target="_blank"
+										rel="noreferrer"
+										onClick={ handleWordCampUSClick }
+									/>
+								),
+							},
+						}
+					),
+					translate(
+						"As a leading agency, we'd love for you to join us and we're excited to offer you an exclusive {{b}}25% discount on registration{{/b}} for your team. Use coupon {{b}}automattic25{{/b}} during checkout.",
+						{
+							components: {
+								b: <b />,
+							},
+						}
+					),
+				],
+				logoUrl: wpOrgLogo,
+				imageUrl: wordcampUsEventImage,
+				trackEventName: 'calypso_a4a_overview_events_register_click_wordcamp_us_2025_08_26',
+				dateClassName: 'a4a-event__date--wordcamp',
+				imageClassName: 'a4a-event__image--wordcamp',
+				cta: {
+					label: translate( 'Register now ↗' ),
+					url: 'https://us.wordcamp.org/2025/tickets',
+				},
+				extraContent: (
+					<CopyToClipboardButton
+						textToCopy={ WORDCAMP_US_2025_COUPON_CODE }
+						label={ translate( 'Copy coupon code' ) }
+						iconPosition="right"
+						onClick={ handleCopyWCUS2025DiscountCodeClick }
+					/>
+				),
+			},
 		];
 
 		return eventsData.filter( ( event ) => {
@@ -83,5 +154,5 @@ export const useUpcomingEvents = () => {
 			const today = localizedMoment().startOf( 'day' );
 			return eventDate.isSameOrAfter( today );
 		} );
-	}, [ localizedMoment, translate ] );
+	}, [ handleCopyWCUS2025DiscountCodeClick, handleWordCampUSClick, localizedMoment, translate ] );
 };

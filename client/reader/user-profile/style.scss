@@ -75,6 +75,7 @@
 		padding: 20px;
 		margin-bottom: 20px;
 		position: relative;
+		gap: 20px;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			border: none;
@@ -85,7 +86,6 @@
 
 		.user-profile__recommended-blog-site-icon .site-icon {
 			border-radius: 50%;
-			margin-right: 20px;
 			flex-shrink: 0;
 			border: 1px solid var(--color-border-subtle);
 

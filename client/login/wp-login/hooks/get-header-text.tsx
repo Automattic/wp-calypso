@@ -67,8 +67,8 @@ export function getHeaderText( {
 			clientName = 'Jetpack Cloud';
 		} else if ( isJetpack ) {
 			clientName = 'Jetpack';
-		} else if ( isWCCOM ) {
-			headerText = translate( 'Log in to Woo with WordPress.com' );
+		} else if ( isWCCOM || isWooJPC ) {
+			clientName = 'Woo';
 		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
 			clientName = 'VIP';
 		}

@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Card, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -96,14 +97,7 @@ const EditContactInfoPage = ( {
 	};
 
 	const renderSidebar = () => {
-		const supportLink = (
-			<ExternalLink
-				href={ localizeUrl(
-					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
-				) }
-				target="_blank"
-			/>
-		);
+		const supportLink = <ExternalLink href={ localizeUrl( PRIVACY_PROTECTION ) } target="_blank" />;
 		const icannLink = (
 			<ExternalLink
 				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"

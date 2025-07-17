@@ -7,7 +7,6 @@
 	}
 
 	.components-card__body {
-		border-radius: 8px !important; /* stylelint-disable-line scales/radii */
 		padding: 24px;
 	}
 }
@@ -67,4 +66,12 @@
 
 .dashboard-overview-card__progress-bar {
 	width: 100% !important;
+}
+
+.dashboard-callout {
+	max-width: 100% !important;
+
+	.dashboard-callout__h-container {
+		padding: 24px;
+	}
 }

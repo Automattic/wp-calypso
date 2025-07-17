@@ -33,12 +33,12 @@ const UpcomingEvent = ( {
 		}
 
 		if ( date.from.isSame( date.to, 'month' ) ) {
-			return `${ date.from.format( 'MMMM' ) } ${ date.from.format( 'Do' ) }-${ date.to.format(
+			return `${ date.from.format( 'MMMM' ) } ${ date.from.format( 'Do' ) }–${ date.to.format(
 				'Do'
 			) }`;
 		}
 
-		return `${ date.from.format( 'MMMM Do' ) }-${ date.to.format( 'MMMM Do' ) }`;
+		return `${ date.from.format( 'MMMM Do' ) }–${ date.to.format( 'MMMM Do' ) }`;
 	}, [ date ] );
 
 	const dateTimeString = useMemo( () => {
