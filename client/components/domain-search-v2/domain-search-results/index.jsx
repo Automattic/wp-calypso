@@ -7,6 +7,7 @@ import {
 	DomainSuggestionBadge,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
@@ -361,7 +362,7 @@ class DomainSearchResults extends Component {
 					! this.props.premiumDomains[ suggestion.domain_name ]?.is_price_limit_exceeded
 			);
 
-			featuredSuggestionElement = (
+			featuredSuggestionElement = featuredSuggestions.length > 0 && (
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
 					isCartPendingUpdate={ this.props.isCartPendingUpdate }
@@ -433,20 +434,20 @@ class DomainSearchResults extends Component {
 		}
 
 		return (
-			<div className="domain-search-results__domain-suggestions">
+			<>
 				{ featuredSuggestionElement }
 				{ this.props.showSkipButton && domainSkipSuggestion }
 				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
-			</div>
+			</>
 		);
 	}
 
 	render() {
 		return (
-			<div className="domain-search-results">
+			<VStack spacing={ 4 }>
 				{ this.renderDomainAvailability() }
 				{ this.renderDomainSuggestions() }
-			</div>
+			</VStack>
 		);
 	}
 }
