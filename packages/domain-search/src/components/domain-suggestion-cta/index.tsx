@@ -52,7 +52,7 @@ export const DomainSuggestionCTA = ( {
 	return (
 		<Button
 			className="domain-suggestion-cta"
-			variant="primary"
+			variant="secondary"
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
 			onClick={ handleAddToCartClick }

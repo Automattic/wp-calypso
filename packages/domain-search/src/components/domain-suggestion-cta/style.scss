@@ -1,5 +1,8 @@
-.domain-suggestion-cta {
+.domain-suggestion-cta.is-secondary {
 	justify-content: center !important;
+
+	color: var(--domain-search-secondary-action-color);
+	box-shadow: inset 0 0 0 1px var(--domain-search-secondary-action-box-shadow-color);
 
 	&:disabled {
 		background: transparent !important;
