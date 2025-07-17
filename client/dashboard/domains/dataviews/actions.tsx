@@ -1,15 +1,14 @@
-/* eslint-disable no-restricted-imports */
 import { isDomainRenewable } from '@automattic/domains-table/src/utils/is-renewable';
 import {
 	domainManagementLink,
 	domainMappingSetup,
 } from '@automattic/domains-table/src/utils/paths';
-/* eslint-enable no-restricted-imports */
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { DomainTypes } from '../../data/domains';
 import type { Domain } from '../../data/types';
+import type { ResponseDomain } from '@automattic/domains-table';
 import type { Action } from '@wordpress/dataviews';
 
 // TODO: Complete all actions and verify whether it works.
@@ -20,7 +19,8 @@ export const actions: Action< Domain >[] = [
 		icon: <Icon icon={ payment } />,
 		label: __( 'Renew now' ),
 		callback: () => {},
-		isEligible: ( item: Domain ) => isDomainRenewable( item ),
+		// TODO: Fix types here.
+		isEligible: ( item: Domain ) => isDomainRenewable( item as unknown as ResponseDomain ),
 	},
 	{
 		id: 'setup',
