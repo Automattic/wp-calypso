@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from '@automattic/urls';
 import { SelectControl, TextareaControl } from '@wordpress/components';
@@ -137,19 +138,20 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	}, [ selectedReason, cancellationReasons ] );
 
 	const renderButtons = () => {
-		const { disableButtons } = props;
+		const { disableButtons, cancellationInProgress } = props;
 		const disabled = disableButtons || ! selectedReason;
 
 		return (
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
-					<button
-						className="components-button is-primary"
+					<Button
+						primary
+						busy={ cancellationInProgress }
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
 						{ translate( 'Submit' ) }
-					</button>
+					</Button>
 				</div>
 			</div>
 		);
