@@ -4,6 +4,8 @@ import { __ } from '@wordpress/i18n';
 import type { Domain } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
 
+const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
+
 export const fields: Field< Domain >[] = [
 	{
 		id: 'domain',
@@ -44,13 +46,16 @@ export const fields: Field< Domain >[] = [
 		enableHiding: false,
 		enableSorting: true,
 		getValue: ( { item }: { item: Domain } ) =>
-			item.expiry ? dateI18n( 'F j, Y', item.expiry ) : <Text color="#CCCCCC">-</Text>,
+			item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '',
+		render: ( { item } ) =>
+			item.expiry ? dateI18n( 'F j, Y', item.expiry ) : <IneligibleIndicator />,
 	},
 	{
 		id: 'domain_status',
 		label: __( 'Status' ),
 		enableHiding: false,
 		enableSorting: true,
-		getValue: ( { item }: { item: Domain } ) => item.domain_status?.status,
+		getValue: ( { item }: { item: Domain } ) => item.domain_status?.status ?? '',
+		render: ( { item } ) => item.domain_status?.status ?? <IneligibleIndicator />,
 	},
 ];
