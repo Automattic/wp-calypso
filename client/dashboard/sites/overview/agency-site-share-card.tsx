@@ -7,13 +7,13 @@ import type { Site } from '../../data/types';
 
 export default function AgencySiteShareCard( { site }: { site: Site } ) {
 	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
-	const heading = links.length > 0 ? __( 'Preview link enabled' ) : __( 'Preview link disabled' );
+	const heading = links.length > 0 ? __( 'Preview link enabled' ) : __( 'Share a preview link' );
 
 	return (
 		<OverviewCard
 			icon={ link }
 			heading={ heading }
-			description={ __( 'Share a preview link with clients' ) }
+			description={ __( 'Collaborators with the link can view your site' ) }
 			link={ `/sites/${ site.slug }/settings/site-visibility` }
 			title={ __( 'Share' ) }
 			trackId="agency-site-share"

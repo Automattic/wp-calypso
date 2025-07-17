@@ -19,7 +19,7 @@ import {
 	canViewStaticFile404Settings,
 	canViewCachingSettings,
 } from '../sites/features';
-import { hasHostingFeature } from '../utils/site-features';
+import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import { domainsQuery } from './queries/domains';
