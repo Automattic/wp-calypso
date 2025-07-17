@@ -5,7 +5,7 @@ interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
 	action?: string;
-	isWoo?: boolean;
+	isWooJPC?: boolean;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -17,7 +17,7 @@ const getHeadingSubText = ( {
 	twoFactorAuthType,
 	action,
 	translate,
-	isWoo,
+	isWooJPC,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
@@ -49,13 +49,13 @@ const getHeadingSubText = ( {
 		</span>
 	);
 
-	const primary = isWoo
+	const primary = isWooJPC
 		? translate(
 				"To access all of the features and functionality of the extensions you've chosen, you'll first need to connect your store to an account."
 		  )
 		: tos;
 
-	const secondary = isWoo && 'lostpassword' !== action ? tos : null;
+	const secondary = isWooJPC && 'lostpassword' !== action ? tos : null;
 
 	return {
 		primary:
