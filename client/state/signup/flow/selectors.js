@@ -1,7 +1,8 @@
-import { getQueryArgs } from '@wordpress/url';
+import { ONBOARDING_UNIFIED_FLOW } from '@automattic/onboarding';
 import { get } from 'lodash';
 import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
-
+import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import 'calypso/state/signup/init';
 
 export function getCurrentFlowName( state ) {
@@ -25,12 +26,16 @@ export const getIsOnboardingAffiliateFlow = ( state ) => {
 	}
 
 	// Check if it's the new onboarding-unified flow with source=affiliate
-	// getCurrentFlowName returns empty string for onboarding-unified, so we check the URL directly
-	if ( currentFlowName === '' && typeof window !== 'undefined' ) {
-		const flowFromURL = getFlowFromURL();
-		if ( flowFromURL === 'onboarding-unified' ) {
-			const queryArgs = getQueryArgs( window.location.href );
-			return queryArgs.source === 'affiliate';
+	// Use Redux state instead of direct window access
+	if ( currentFlowName === '' ) {
+		const currentRoute = getCurrentRoute( state );
+		const queryArgs = getCurrentQueryArguments( state );
+
+		if ( currentRoute ) {
+			const flowFromURL = getFlowFromURL( currentRoute );
+			if ( flowFromURL === ONBOARDING_UNIFIED_FLOW ) {
+				return queryArgs?.source === 'affiliate';
+			}
 		}
 	}
 

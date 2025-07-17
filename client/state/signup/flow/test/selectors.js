@@ -20,15 +20,6 @@ describe( 'getCurrentFlowName()', () => {
 } );
 
 describe( 'getIsOnboardingAffiliateFlow()', () => {
-	// Store original window object
-	const originalWindow = global.window;
-
-	afterEach( () => {
-		jest.clearAllMocks();
-		// Restore original window
-		global.window = originalWindow;
-	} );
-
 	test( 'should return true for legacy onboarding-affiliate flow', () => {
 		const state = {
 			signup: {
@@ -48,14 +39,15 @@ describe( 'getIsOnboardingAffiliateFlow()', () => {
 					currentFlowName: '',
 				},
 			},
-		};
-
-		// Mock window with realistic URL structure
-		global.window = {
-			location: {
-				href: 'https://example.com/setup/onboarding-unified?source=affiliate',
-				pathname: '/setup/onboarding-unified',
-				search: '?source=affiliate',
+			route: {
+				path: {
+					current: '/setup/onboarding-unified',
+				},
+				query: {
+					current: {
+						source: 'affiliate',
+					},
+				},
 			},
 		};
 
