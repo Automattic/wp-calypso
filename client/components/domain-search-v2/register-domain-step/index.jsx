@@ -66,12 +66,7 @@ import {
 } from 'calypso/components/domains/register-domain-step/utility';
 import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import {
-	domainRegistration,
-	getDomainsInCart,
-	hasDomainInCart,
-	updatePrivacyForDomain,
-} from 'calypso/lib/cart-values/cart-items';
+import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
 	getAvailableTlds,
@@ -466,8 +461,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	getCart = () => {
-		const { cart, shoppingCartManager } = this.props;
-		const { addProductsToCart, removeProductFromCart } = shoppingCartManager;
+		const { cart, onAddDomain, onRemoveDomain } = this.props;
 		const searchResults = this.state.searchResults || [];
 
 		const domainsInCart = getDomainsInCart( cart );
@@ -507,30 +501,27 @@ class RegisterDomainStep extends Component {
 			} ),
 			total,
 			onAddItem: ( domain_name ) => {
-				const suggestion = searchResults.find( ( result ) => result.domain_name === domain_name );
+				const suggestionPosition = searchResults.findIndex(
+					( result ) => result.domain_name === domain_name
+				);
 
-				const {
-					domain_name: domain,
-					product_slug: productSlug,
-					supports_privacy: supportsPrivacy,
-				} = suggestion;
-
-				let registration = domainRegistration( {
-					domain,
-					productSlug,
-					extra: { privacy_available: supportsPrivacy },
-				} );
-
-				if ( supportsPrivacy ) {
-					registration = updatePrivacyForDomain( registration, true );
+				if ( suggestionPosition === -1 ) {
+					return;
 				}
 
-				// Add item_subtotal_integer property to registration, so it can be sorted by price.
-				registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
+				const suggestion = searchResults[ suggestionPosition ];
 
-				addProductsToCart( [ registration ] );
+				return onAddDomain( suggestion, suggestionPosition, false );
 			},
-			onRemoveItem: ( domain_name ) => removeProductFromCart( domain_name ),
+			onRemoveItem: ( itemUuid ) => {
+				const domainInCart = cart.products.find( ( product ) => product.cart_item_id === itemUuid );
+
+				if ( ! domainInCart ) {
+					return;
+				}
+
+				return onRemoveDomain( domainInCart );
+			},
 			hasItem: ( domain_name ) => {
 				return cart.products.some( ( item ) => item.meta === domain_name );
 			},

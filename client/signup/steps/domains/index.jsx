@@ -820,7 +820,7 @@ class RenderDomainsStepComponent extends Component {
 			product_slug: domain.product_slug,
 		} );
 
-		this.props.recordRemoveDomainButtonClick( domain.meta );
+		this.props.recordRemoveDomainButtonClick?.( domain.meta );
 	};
 
 	async removeDomain( { domain_name, product_slug } ) {
@@ -899,7 +899,7 @@ class RenderDomainsStepComponent extends Component {
 	};
 
 	goToNext = ( event ) => {
-		event.stopPropagation();
+		event?.stopPropagation();
 		this.setState( { isMiniCartContinueButtonBusy: true } );
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -1189,7 +1189,8 @@ class RenderDomainsStepComponent extends Component {
 				handleClickUseYourDomain={ this.handleUseYourDomainClick }
 				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 				// RegisterDomainStepComponentV2 props below
-				onContinue={ this.props.goToNextStep }
+				onContinue={ this.goToNext }
+				onRemoveDomain={ ( cartItem ) => this.removeDomainClickHandler( cartItem )() }
 				showFreeDomainPromo={
 					! this.shouldHideDomainExplainer() || this.shouldDisplayDomainOnlyExplainer()
 				}
