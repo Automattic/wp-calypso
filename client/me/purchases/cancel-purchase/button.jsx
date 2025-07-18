@@ -48,10 +48,13 @@ class CancelPurchaseButton extends Component {
 		// Methods from parent component
 		downgradeClick: PropTypes.func,
 		freeMonthOfferClick: PropTypes.func,
+		// Control marketplace dialog visibility
+		showMarketplaceDialog: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
+		showMarketplaceDialog: true,
 	};
 
 	state = {
@@ -102,9 +105,9 @@ class CancelPurchaseButton extends Component {
 	};
 
 	shouldHandleMarketplaceSubscriptions() {
-		const { activeSubscriptions } = this.props;
+		const { activeSubscriptions, showMarketplaceDialog } = this.props;
 
-		return activeSubscriptions?.length > 0;
+		return activeSubscriptions?.length > 0 && showMarketplaceDialog;
 	}
 
 	showMarketplaceDialog = () => {

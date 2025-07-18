@@ -751,6 +751,8 @@ class CancelPurchase extends Component {
 						onSetLoading={ this.onSetLoading }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
+						// Disable marketplace dialog in domain options step to prevent double display
+						showMarketplaceDialog={ false }
 					/>
 					{ this.renderKeepSubscriptionButton() }
 				</div>
