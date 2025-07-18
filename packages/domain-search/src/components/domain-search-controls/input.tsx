@@ -1,4 +1,5 @@
 import { SearchControl } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import './input.scss';
 
 export const DomainSearchControlsInput = ( {
@@ -24,12 +25,14 @@ export const DomainSearchControlsInput = ( {
 	dir: 'ltr' | 'rtl';
 	'aria-describedby': string;
 } ) => {
+	const { __ } = useI18n();
+
 	return (
 		<SearchControl
 			className="domain-search-controls__input"
 			__nextHasNoMarginBottom
 			hideLabelFromVision
-			placeholder="Search..."
+			placeholder={ __( 'Search…' ) }
 			value={ value }
 			label={ label }
 			onChange={ onChange }
