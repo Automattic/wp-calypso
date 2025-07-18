@@ -23,9 +23,6 @@ const getThemeShowcaseEventRecorder = (
 	query: ThemeSearchQuery,
 	themes: Array< Theme >,
 	filterString: string,
-	getThemeType: ( themeId: string ) => string,
-	getThemeTierForTheme: ( themeId: string ) => object,
-	isActiveTheme: ( themeId: string ) => boolean,
 	defaultCollectionId: string | null = null,
 	defaultCollectionIndex: number | null = null
 ) => {
@@ -34,6 +31,9 @@ const getThemeShowcaseEventRecorder = (
 		(
 			themeId: string,
 			themePosition: number,
+			isActive: boolean,
+			themeType: string,
+			themeTier: string,
 			action: string = '',
 			styleVariation: string = '@theme',
 			collectionId: string | null = null,
@@ -49,16 +49,15 @@ const getThemeShowcaseEventRecorder = (
 				search_taxonomies: filterString,
 				search_term: filterString + ( query?.search || '' ),
 				theme: themeId,
-				is_active_theme: isActiveTheme( themeId ),
+				is_active_theme: isActive,
 				style_variation: styleVariation,
 				results_rank: adjustedPosition,
 				results: themes?.map( ( theme ) => theme.id ).join() ?? [],
 				page_number: query?.page || null,
 				theme_on_page: Math.floor( adjustedPosition / query.number ),
 				action: snakeCase( action ),
-				theme_type: getThemeType( themeId ),
-				// @ts-expect-error Tiers are not yet typed
-				theme_tier: getThemeTierForTheme( themeId )?.slug,
+				theme_type: themeType,
+				theme_tier: themeTier,
 				is_collection: isCollection,
 				...( isCollection
 					? {

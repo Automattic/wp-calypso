@@ -14,21 +14,24 @@ const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 	selectedKey,
 	onSelect,
 } ) => {
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const itemsArray = useMemo( () => Object.values( items ), Object.keys( items ) );
+
 	const activeIndex = useMemo( () => {
-		const index = items.findIndex( ( { key } ) => key === selectedKey );
+		const index = itemsArray.findIndex( ( { key } ) => key === selectedKey );
 		// If the selected key is not found, return undefined to disable the active state.
 		return index >= 0 ? index : undefined;
-	}, [ items, selectedKey ] );
+	}, [ itemsArray, selectedKey ] );
 
 	return (
 		<ResponsiveToolbarGroup
 			className="themes-toolbar-group"
 			initialActiveIndex={ activeIndex }
 			forceSwipe={ 'undefined' === typeof window }
-			onClick={ ( index: number ) => onSelect( items[ index ]?.key ) }
+			onClick={ ( index: number ) => onSelect( itemsArray[ index ]?.key ) }
 			swipeEnabled={ false }
 		>
-			{ items.map( ( item ) => (
+			{ itemsArray.map( ( item ) => (
 				<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>
 			) ) }
 		</ResponsiveToolbarGroup>

@@ -22,6 +22,15 @@ import {
 } from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import {
+	getThemeTierForTheme,
+	isInstallingTheme,
+	isThemeActive,
+	getThemeDetailsUrl,
+} from 'calypso/state/themes/selectors';
+import { getIsLivePreviewStarted } from 'calypso/state/themes/selectors/get-is-live-preview-started';
+import { getPremiumThemePrice } from 'calypso/state/themes/selectors/get-premium-theme-price';
+import { getThemeType } from 'calypso/state/themes/selectors/get-theme-type';
 import { isDefaultWooExpressThemeActive } from 'calypso/state/themes/selectors/is-wooexpress-default-theme-active';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -62,7 +71,22 @@ const getWarningModalComponent = ( isDefaultWooExpressTheme, isCurrentThemeAIGen
 	}
 };
 
-export const ThemesList = ( { tabFilter, ...props } ) => {
+export const ThemesList = ( { tabFilter, ...initialProps } ) => {
+	const props = {
+		loading: false,
+		searchTerm: '',
+		themes: [],
+		recordTracksEvent: noop,
+		fetchNextPage: noop,
+		placeholderCount: DEFAULT_THEME_QUERY.number,
+		getActionLabel: () => '',
+		isActive: () => false,
+		getPrice: () => '',
+		isInstalling: () => false,
+		isLivePreviewStarted: () => false,
+		...initialProps,
+	};
+
 	const {
 		themes,
 		translate,
@@ -71,6 +95,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		siteAdminUrl,
 		getButtonOptions,
 	} = props;
+
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
 	const updateShowSecondUpsellNudge = useCallback( () => {
@@ -240,24 +265,27 @@ ThemesList.propTypes = {
 	children: PropTypes.node,
 };
 
-ThemesList.defaultProps = {
-	loading: false,
-	searchTerm: '',
-	themes: [],
-	recordTracksEvent: noop,
-	fetchNextPage: noop,
-	placeholderCount: DEFAULT_THEME_QUERY.number,
-	optionsGenerator: () => [],
-	getActionLabel: () => '',
-	isActive: () => false,
-	getPrice: () => '',
-	isInstalling: () => false,
-	isLivePreviewStarted: () => false,
-};
-
 export function ThemeBlock( props ) {
 	const { theme, index, tabFilter, tier } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
+	const price = useSelector( ( state ) => getPremiumThemePrice( state, theme.id, props.siteId ) );
+	const isInstalling = useSelector( ( state ) =>
+		isInstallingTheme( state, theme.id, props.siteId )
+	);
+	const isLivePreviewStarted = useSelector( ( state ) =>
+		getIsLivePreviewStarted( state, theme.id )
+	);
+
+	const isActive = useSelector( ( state ) => isThemeActive( state, theme.id, props.siteId ) );
+
+	const themeType = useSelector( ( state ) => getThemeType( state, theme.id, props.siteId ) );
+	const themeTier = useSelector( ( state ) =>
+		getThemeTierForTheme( state, theme.id, props.siteId )
+	);
+
+	const themeDetailsUrl = useSelector( ( state ) =>
+		getThemeDetailsUrl( state, theme.id, props.siteId )
+	);
 
 	if ( isEmpty( theme ) ) {
 		return null;
@@ -284,16 +312,24 @@ export function ThemeBlock( props ) {
 			onScreenshotClick={ props.onScreenshotClick }
 			onStyleVariationClick={ ( themeId, themeIndex, variation ) => {
 				setSelectedStyleVariation( variation );
-				props.onStyleVariationClick?.( themeId, themeIndex, variation );
+				props.onStyleVariationClick?.(
+					themeId,
+					themeIndex,
+					variation,
+					isActive,
+					themeType,
+					themeTier,
+					themeDetailsUrl
+				);
 			} }
 			onMoreButtonClick={ props.onMoreButtonClick }
 			onMoreButtonItemClick={ props.onMoreButtonItemClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
 			index={ index }
 			theme={ theme }
-			active={ props.isActive( theme.id ) }
-			loading={ props.isInstalling( theme.id ) || props.isLivePreviewStarted( theme.id ) }
-			price={ props.getPrice( theme.id ) }
+			active={ isActive }
+			loading={ isInstalling || isLivePreviewStarted }
+			price={ price }
 			upsellUrl={ props.upsellUrl }
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }

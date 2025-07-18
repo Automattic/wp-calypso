@@ -63,7 +63,6 @@ const optionShape = PropTypes.shape( {
 	getUrl: PropTypes.func,
 	action: PropTypes.func,
 } );
-
 class ThemeShowcase extends Component {
 	state = {
 		isDesignThemeModalVisible: false,
@@ -637,6 +636,7 @@ class ThemeShowcase extends Component {
 		};
 
 		const tabFilters = this.getTabFilters();
+
 		const tiers = this.getTiers();
 
 		const classnames = clsx( 'theme-showcase', {
@@ -726,7 +726,7 @@ class ThemeShowcase extends Component {
 								>
 									{ tabFilters && ! isSiteECommerceFreeTrial && (
 										<ThemesToolbarGroup
-											items={ Object.values( tabFilters ) }
+											items={ tabFilters }
 											selectedKey={ this.getSelectedTabFilter().key }
 											onSelect={ ( key ) =>
 												this.onFilterClick(

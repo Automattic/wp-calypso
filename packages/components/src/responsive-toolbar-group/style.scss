@@ -92,6 +92,11 @@
 		white-space: nowrap;
 
 		font-size: 0.875rem;
+
+		&::before {
+			animation: none !important;
+			transition: none !important;
+		}
 	}
 }
 
