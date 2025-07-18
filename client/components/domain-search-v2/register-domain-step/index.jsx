@@ -40,7 +40,6 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
 	recordDomainAvailabilityReceive,
 	recordDomainAddAvailabilityPreCheck,
@@ -593,6 +592,9 @@ class RegisterDomainStep extends Component {
 
 		const notices = this.renderGeneralNotices();
 
+		const showFreeDomainPromo =
+			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
+
 		return (
 			<DomainSearch
 				onContinue={ onContinue }
@@ -605,10 +607,10 @@ class RegisterDomainStep extends Component {
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
 					</VStack>
-					<FreeDomainForAYearPromo />
+					{ showFreeDomainPromo && <FreeDomainForAYearPromo /> }
 					{ this.renderContent() }
 				</VStack>
-				<DomainCartV2 />
+				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } />
 			</DomainSearch>
 		);
 	}
@@ -1567,19 +1569,6 @@ class RegisterDomainStep extends Component {
 		this.setState( { pageNumber, pageSize: PAGE_SIZE }, this.save );
 	};
 
-	renderBestNamesPrompt() {
-		const { translate, promptText } = this.props;
-		return (
-			<div className="register-domain-step__example-prompt">
-				{ promptText ?? translate( 'The best names are short and memorable' ) }
-			</div>
-		);
-	}
-
-	renderFreeDomainExplainer() {
-		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
-	}
-
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const rootVendor = get( suggestion, 'vendor' );
@@ -1675,14 +1664,6 @@ class RegisterDomainStep extends Component {
 
 		const suggestions = this.getSuggestionsFromProps();
 
-		const hasResults =
-			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
-			! this.state.loadingResults;
-
-		const isFreeDomainExplainerVisible =
-			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
-			this.props.isPlanSelectionAvailableInFlow;
-
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1726,17 +1707,8 @@ class RegisterDomainStep extends Component {
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
-			>
-				{ ! this.props.isOnboarding &&
-					hasResults &&
-					isFreeDomainExplainerVisible &&
-					this.renderFreeDomainExplainer() }
-			</DomainSearchResults>
+			/>
 		);
-	}
-
-	renderSideContent() {
-		return this.props.isOnboarding && ! this.state.loadingResults && this.props.sideContent;
 	}
 
 	getFetchAlgo() {

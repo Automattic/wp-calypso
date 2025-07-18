@@ -1190,6 +1190,9 @@ class RenderDomainsStepComponent extends Component {
 				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 				// RegisterDomainStepComponentV2 props below
 				onContinue={ this.props.goToNextStep }
+				showFreeDomainPromo={
+					! this.shouldHideDomainExplainer() || this.shouldDisplayDomainOnlyExplainer()
+				}
 			/>
 		);
 	};

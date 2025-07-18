@@ -10,12 +10,12 @@ import { HundredYearPromo } from './hundred-year-promo';
 
 import './style.scss';
 
-export const DomainCartV2 = () => (
+export const DomainCartV2 = ( { showFreeDomainPromo = false } ) => (
 	<>
 		<DomainsMiniCart className="domains-search-v2__mini-cart" />
 		<DomainsFullCart className="domains-search-v2__full-cart">
 			<VStack spacing={ 6 }>
-				<FreeDomainForAYearPromo textOnly />
+				{ showFreeDomainPromo && <FreeDomainForAYearPromo textOnly /> }
 				<DomainsFullCart.Items />
 				<View>
 					<Spacer marginTop={ 4 }>
