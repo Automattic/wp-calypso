@@ -13,7 +13,7 @@
 
 		&.search-filters__button--is-placeholder {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var(--color-neutral-0);
+			background-color: var( --color-neutral-0 );
 			color: transparent;
 			height: 40px;
 		}
@@ -30,5 +30,5 @@
 }
 
 .search-filters__checkbox {
-    margin-bottom: 1.5rem;
+	margin-bottom: 1.5rem;
 }
