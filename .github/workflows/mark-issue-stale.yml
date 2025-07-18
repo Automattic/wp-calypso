@@ -15,9 +15,8 @@ jobs:
           # Get PRs in ascending (oldest first) order.
           ascending: true
           operations-per-run: 50
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          # PRs: Mark as stale after 3 months, close after 1 month more
-          days-before-pr-stale: 90
+          # PRs: Mark as stale after 2 months, close after 1 month more
+          days-before-pr-stale: 60
           days-before-pr-close: 31
           delete-branch: true
           # Label to use when marking a PR as stale
