@@ -91,6 +91,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainCartV2 } from '../domain-cart';
 import DomainSearchResults from '../domain-search-results';
+import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
 
 import './style.scss';
 
@@ -604,6 +605,7 @@ class RegisterDomainStep extends Component {
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
 					</VStack>
+					<FreeDomainForAYearPromo />
 					{ this.renderContent() }
 				</VStack>
 				<DomainCartV2 />
