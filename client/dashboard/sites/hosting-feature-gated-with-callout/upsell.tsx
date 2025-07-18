@@ -66,7 +66,6 @@ export default function UpsellCallout( {
 			}
 			actions={
 				<UpsellCTAButton
-					size="compact"
 					text={ __( 'Upgrade plan' ) }
 					tracksId={ tracksFeatureId }
 					variant="primary"

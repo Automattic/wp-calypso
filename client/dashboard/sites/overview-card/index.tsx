@@ -56,18 +56,18 @@ export default function OverviewCard( {
 			} }
 		>
 			<CardBody>
-				{ tracksId && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_overview_card_impression"
-						properties={ { feature: tracksId, variant } }
-					/>
-				) }
-				{ tracksId && variant === 'upsell' && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_upsell_impression"
-						properties={ { feature: tracksId, type: 'card' } }
-					/>
-				) }
+				{ tracksId &&
+					( variant === 'upsell' ? (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_upsell_impression"
+							properties={ { feature: tracksId, type: 'card' } }
+						/>
+					) : (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_overview_card_impression"
+							properties={ { feature: tracksId, variant } }
+						/>
+					) ) }
 				<VStack spacing={ 4 }>
 					<HStack justify="space-between">
 						<HStack spacing={ 2 } alignment="center" expanded={ false }>
@@ -139,16 +139,16 @@ export default function OverviewCard( {
 				onClick={ () => {
 					onClick?.();
 
-					if ( trackId ) {
-						recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-							type: tracksId,
-							variant,
-						} );
-
+					if ( tracksId ) {
 						if ( variant === 'upsell' ) {
 							recordTracksEvent( 'calypso_dashboard_upsell_click', {
 								feature: tracksId,
 								type: 'card',
+							} );
+						} else {
+							recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+								type: tracksId,
+								variant,
 							} );
 						}
 					}

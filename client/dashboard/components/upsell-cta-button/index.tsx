@@ -33,6 +33,7 @@ export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
 				className="dashboard-upsell-cta-button"
 				icon={ upsell }
 				onClick={ handleClick }
+				size="compact"
 				{ ...buttonProps }
 			/>
 		</>

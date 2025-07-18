@@ -49,7 +49,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.BACKUPS }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.trackId }
+			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Back up your site' ) }
 			upsellDescription={ __( 'Get back online quickly with one-click restores' ) }
 			upsellExternalLink={ getBackupUrl( site ) }
