@@ -117,6 +117,19 @@
 	display: flex;
 	gap: 8px;
 	flex-direction: column;
+
+	// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
+	.follow-button.is-following {
+		svg.reader-following-feed path {
+			fill: initial;
+		}
+
+		&:hover {
+			svg.reader-following-feed path {
+				fill: initial;
+			}
+		}
+	}
 }
 
 .reader-feed-header {
