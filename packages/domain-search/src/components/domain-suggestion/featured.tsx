@@ -83,7 +83,7 @@ export const Featured = ( {
 			}
 
 			return (
-				<VStack spacing={ 3 }>
+				<VStack spacing={ 3 } className="domain-suggestion-featured__content">
 					<VStack spacing={ 3 } alignment="left">
 						{ badgesElement }
 						{ title }
@@ -97,7 +97,7 @@ export const Featured = ( {
 		}
 
 		return (
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 4 } className="domain-suggestion-featured__content--small">
 				<VStack spacing={ 3 }>
 					{ badgesElement }
 					{ title }
@@ -118,7 +118,7 @@ export const Featured = ( {
 			} ) }
 		>
 			<DomainSuggestionContainerContext.Provider value={ contextValue }>
-				<CardBody>{ getContent() }</CardBody>
+				<CardBody className="domain-suggestion-featured__body">{ getContent() }</CardBody>
 			</DomainSuggestionContainerContext.Provider>
 		</Card>
 	);
