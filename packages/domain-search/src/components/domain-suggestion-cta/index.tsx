@@ -7,6 +7,7 @@ import { shoppingCartIcon } from './shopping-cart-icon';
 import './style.scss';
 
 export interface DomainSuggestionCTAProps {
+	variant?: 'primary' | 'secondary';
 	compact?: boolean;
 	uuid: string;
 	onClick?( action: 'add-to-cart' | 'continue' ): void;
@@ -14,6 +15,7 @@ export interface DomainSuggestionCTAProps {
 }
 
 export const DomainSuggestionCTA = ( {
+	variant = 'secondary',
 	compact,
 	uuid,
 	onClick,
@@ -53,7 +55,7 @@ export const DomainSuggestionCTA = ( {
 	return (
 		<Button
 			className="domain-suggestion-cta"
-			variant="secondary"
+			variant={ variant }
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
 			onClick={ handleAddToCartClick }
