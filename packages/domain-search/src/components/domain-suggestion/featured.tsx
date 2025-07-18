@@ -52,7 +52,7 @@ export const Featured = ( {
 	const cta = <DomainSuggestionCTA onClick={ onClick } disabled={ disabled } uuid={ uuid } />;
 
 	const title = (
-		<Text size={ activeQuery === 'large' ? 32 : 24 }>
+		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>
 			{ domain }.{ tld }
 		</Text>
 	);
