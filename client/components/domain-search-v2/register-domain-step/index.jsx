@@ -65,7 +65,7 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
-import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
+import { FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import {
 	domainRegistration,
@@ -90,6 +90,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainCartV2 } from '../domain-cart';
+import DropdownFilters from '../domain-search-filters';
 import DomainSearchResults from '../domain-search-results';
 
 import './style.scss';

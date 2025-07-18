@@ -9,3 +9,4 @@ export { DomainSuggestion } from './components/domain-suggestion';
 export { DomainSuggestionBadge } from './components/domain-suggestion-badge';
 export { DomainSuggestionPrice } from './components/domain-suggestion-price';
 export { DomainSuggestionLoadMore } from './components/domain-suggestion-load-more';
+export { DomainSearchControlsFilterButton } from './components/domain-search-controls/filter-button';
