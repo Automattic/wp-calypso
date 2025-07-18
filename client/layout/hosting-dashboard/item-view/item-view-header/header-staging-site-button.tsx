@@ -127,6 +127,7 @@ export default function HeaderStagingSiteButton( {
 			showTooltip
 			disabled={ !! disabledReason }
 			label={ disabledReason }
+			tooltipPosition="top"
 		>
 			{ __( 'Add staging site' ) }
 		</Button>
