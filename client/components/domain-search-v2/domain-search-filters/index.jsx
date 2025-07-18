@@ -10,6 +10,8 @@ import { createRef, Component } from 'react';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 
+import './style.scss';
+
 const HANDLED_FILTER_KEYS = [ 'tlds', 'exactSldMatchesOnly' ];
 
 export class DropdownFilters extends Component {
@@ -157,7 +159,7 @@ export class DropdownFilters extends Component {
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
 				position={ isWithinBreakpoint( '>660px' ) ? 'bottom' : 'bottom left' }
-				{ ...( isWithinBreakpoint( '>660px' ) && { relativePosition: { left: -238 } } ) }
+				{ ...( isWithinBreakpoint( '>660px' ) && { relativePosition: { left: -280 } } ) }
 				hideArrow
 			>
 				{ showTldFilter && (
