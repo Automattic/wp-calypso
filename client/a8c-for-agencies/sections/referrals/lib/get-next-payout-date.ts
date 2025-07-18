@@ -45,3 +45,42 @@ export const getNextPayoutDateActivityWindow = ( currentDate: Date ) => {
 		finish: new Date( endYear, activityEnd.month - 1, activityEnd.day ),
 	};
 };
+
+const getCurrentCycle = ( currentDate: Date ) => {
+	const currentMonth = currentDate.getMonth() + 1;
+
+	// Find current cycle based on activity periods
+	const currentCycle = PAYOUT_DATES.find(
+		( { activityStart, activityEnd } ) =>
+			currentMonth >= activityStart.month && currentMonth <= activityEnd.month
+	);
+
+	if ( ! currentCycle ) {
+		throw new Error( 'Invalid current date' );
+	}
+
+	return currentCycle;
+};
+
+export const getCurrentCyclePayoutDate = ( currentDate: Date ): Date => {
+	const currentCycle = getCurrentCycle( currentDate );
+	const currentYear = currentDate.getFullYear();
+
+	// For Q4 activity (March payout), the payout is in the next year
+	const payoutYear = currentCycle === PAYOUT_DATES[ 0 ] ? currentYear + 1 : currentYear;
+
+	return new Date( payoutYear, currentCycle.month - 1, currentCycle.day );
+};
+
+export const getCurrentCycleActivityWindow = ( currentDate: Date ) => {
+	const currentCycle = getCurrentCycle( currentDate );
+	const currentYear = currentDate.getFullYear();
+
+	const { activityStart, activityEnd } = currentCycle;
+
+	// Activity window is always in the current year
+	return {
+		start: new Date( currentYear, activityStart.month - 1, activityStart.day ),
+		finish: new Date( currentYear, activityEnd.month - 1, activityEnd.day ),
+	};
+};

@@ -1,7 +1,6 @@
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { Referral } from '../types';
 import { getProductCommissionPercentage } from './commissions';
-import { getNextPayoutDateActivityWindow } from './get-next-payout-date';
 
 export const getDailyPrice = ( product: APIProductFamilyProduct, quantity: number ) => {
 	// If quantity is not 1 than we search corresponding bundle
@@ -18,10 +17,8 @@ export const getDailyPrice = ( product: APIProductFamilyProduct, quantity: numbe
 export const getEstimatedCommission = (
 	referrals: Referral[],
 	products: APIProductFamilyProduct[],
-	date: Date = new Date()
+	activityWindow: { start: Date; finish: Date }
 ) => {
-	const activityWindow = getNextPayoutDateActivityWindow( date );
-
 	const totalCommissionInCents = referrals.reduce( ( acc, referral ) => {
 		if ( ! referral?.purchases?.length ) {
 			return acc;
