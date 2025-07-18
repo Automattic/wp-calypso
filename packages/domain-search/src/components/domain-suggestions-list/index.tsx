@@ -1,24 +1,16 @@
 import { Card, CardDivider } from '@wordpress/components';
-import { createContext, useContext, useMemo, Children, isValidElement, Fragment } from 'react';
-import { useContainerQuery } from '../../hooks/use-container-query';
+import { useMemo, Children, isValidElement, Fragment } from 'react';
+import {
+	DomainSuggestionContainerContext,
+	useDomainSuggestionContainer,
+} from '../../hooks/use-domain-suggestion-container';
 
 interface DomainSuggestionsListProps {
 	children: React.ReactNode;
 }
 
-interface DomainSuggestionListContextValue {
-	activeQuery: 'small' | 'large';
-}
-
-const DomainSuggestionListContext = createContext< DomainSuggestionListContextValue | undefined >(
-	undefined
-);
-
 export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps ) => {
-	const { ref: containerRef, activeQuery } = useContainerQuery( {
-		small: 0,
-		large: 480,
-	} );
+	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
 
@@ -41,11 +33,9 @@ export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps 
 
 	return (
 		<Card ref={ containerRef }>
-			<DomainSuggestionListContext.Provider value={ contextValue }>
+			<DomainSuggestionContainerContext.Provider value={ contextValue }>
 				{ childrenWithSeparators }
-			</DomainSuggestionListContext.Provider>
+			</DomainSuggestionContainerContext.Provider>
 		</Card>
 	);
 };
-
-export const useDomainSuggestionsListContext = () => useContext( DomainSuggestionListContext );

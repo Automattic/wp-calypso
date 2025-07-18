@@ -13,3 +13,8 @@
 	box-shadow: 0 0 0 1px var( --domain-search-warning-badge-border-color );
 	background-color: var( --domain-search-warning-badge-background-color );
 }
+
+.domain-suggestion-badge--success {
+	box-shadow: 0 0 0 1px var( --domain-search-success-badge-border-color );
+	background-color: var( --domain-search-success-badge-background-color );
+}

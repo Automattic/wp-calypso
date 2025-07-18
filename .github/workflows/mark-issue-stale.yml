@@ -1,51 +1,35 @@
-
-name: 'Mark stale issues'
+name: 'Mark stale pull requests'
 on:
   schedule:
     # Run every 6 hours at xx:30.
     - cron: '30 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   stale:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Mark issues and pull requests as stale
-        id: stale
-        uses: actions/stale@v8
+      - uses: actions/stale@v9
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-           # Get issues in ascending (oldest first) order.
+          # Get PRs in ascending (oldest first) order.
           ascending: true
-          # Label to use when marking an issue / PR as stale
-          stale-issue-label: '[Status] Stale'
-          stale-pr-label: '[Status] Stale'
-          # Issues and PRs with these labels will never be considered stale.
-          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Type] Feature Request,[Type] Enhancement,[Type] Janitorial,Good For Community,[Type] Good First Bug'
-          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
-          # Managing stale issues
-          # Message to be added to stale issues.
-          stale-issue-message: |
-            <p>This issue is stale because 180 days have passed with no activity.
-            If you would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.</p>
-            <p>If the issue is not updated in another month, it will be automatically closed.</p>
-          # Days before issue is considered stale.
-          days-before-issue-stale: 180
-          # Auto-close stale issues a month later.
-          days-before-issue-close: 31
-          # Managing stale PRs
-          # After a month, mark PR as stale.
-          days-before-pr-stale: 30
-          # Auto-close PRs marked as stale a month later.
+          operations-per-run: 50
+          # PRs: Mark as stale after 2 months, close after 1 month more
+          days-before-pr-stale: 60
           days-before-pr-close: 31
-          # Delete the branch when closing PRs. GitHub's "restore branch" function works indefinitely, so no reason not to.
           delete-branch: true
-          # Messages to display.
+          # Label to use when marking a PR as stale
+          stale-pr-label: '[Status] Stale'
+          # PRs with these labels will never be considered stale.
+          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
+          # Message to be added to stale PRs.
           stale-pr-message: |
             <p>This PR has been marked as stale. This happened because:</p>
 
             <ul>
-              <li>It has been inactive for the past month.</li>
-              <li>It hasn’t been labeled `[Pri] BLOCKER`, `[Pri] High`, etc.</li>
+              <li>It has been inactive for the past 3 months.</li>
+              <li>It hasn't been labeled `[Pri] BLOCKER`, `[Pri] High`, `[Status] Keep Open`, etc.</li>
             </ul>
 
             <p>If this PR is still useful, please do a trunk merge or rebase
@@ -58,44 +42,6 @@ jobs:
           close-pr-message: |
             <p>This PR has been automatically closed as it has not been updated in some time.
             If you want to resume work on the PR, feel free to restore the branch and reopen the PR.</p>
-          # Increase number of operations executed per run.
-          operations-per-run: 525
-      - name: Build Stale issues list
-        id: stale-build-list
-        uses: actions/github-script@v6
-        env:
-          ISSUES: ${{ steps.stale.outputs.staled-issues-prs }}
-        with:
-          script: |
-            const staleIssues = JSON.parse( process.env.ISSUES );
-            let staleIssuesList = '';
-            staleIssues.forEach(function(issue) {
-                if ( true === issue.markedStaleThisRun ) {
-                    staleIssuesList += `\\n- ${issue.title} (https://github.com/automattic/wp-calypso/issues/${issue.number})`;
-                }
-            });
-            return staleIssuesList;
-      - name: Post about Stale issues on Slack
-        id: stale-post-slack
-        uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ fromJSON( steps.stale-build-list.outputs.result ) != '' }}
-        with:
-          channel-id: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-          payload: |
-            {
-                "blocks": [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": "The following issues have just been marked as stale. Please review them and take appropriate action:\n ${{ fromJSON( steps.stale-build-list.outputs.result ) }}"
-                        }
-                    }
-                ],
-                "text": "The following issues have just been marked as stale. Please review them and take appropriate action.",
-                "unfurl_links": false,
-                "unfurl_media": false
-            }
-        env:
-          SLACK_QUALITY_CHANNEL: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          # Ignore issues, only operating on pull requests.
+          days-before-issue-stale: -1
+          days-before-issue-close: -1

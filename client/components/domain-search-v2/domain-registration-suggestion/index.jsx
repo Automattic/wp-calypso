@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
@@ -297,6 +296,18 @@ class DomainRegistrationSuggestion extends Component {
 		);
 	}
 
+	renderNotice() {
+		const { showHstsNotice, showDotGayNotice } = this.props;
+		return (
+			( showHstsNotice && this.getHstsMessage() ) || ( showDotGayNotice && this.getDotGayMessage() )
+		);
+	}
+
+	isExactMatch = () => {
+		const { query, suggestion } = this.props;
+		return query === suggestion.domain_name;
+	};
+
 	renderBadges() {
 		const {
 			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
@@ -307,7 +318,13 @@ class DomainRegistrationSuggestion extends Component {
 		} = this.props;
 		const badges = [];
 
-		if ( isRecommended && isFeatured ) {
+		if ( isFeatured && this.isExactMatch() ) {
+			badges.push(
+				<DomainSuggestionBadge variation="success">
+					{ translate( 'It’s available!' ) }
+				</DomainSuggestionBadge>
+			);
+		} else if ( isRecommended && isFeatured ) {
 			badges.push(
 				<DomainSuggestionBadge key="recommended">
 					{ translate( 'Recommended' ) }
@@ -346,27 +363,22 @@ class DomainRegistrationSuggestion extends Component {
 		return badges;
 	}
 
-	renderMatchReason() {
+	renderMatchReasons() {
 		const {
 			suggestion: { domain_name: domain },
+			hideMatchReasons,
+			isFeatured,
 		} = this.props;
 
-		if ( ! Array.isArray( this.props.suggestion.match_reasons ) ) {
-			return <div className="domain-registration-suggestion__match-reasons"></div>;
+		if (
+			! Array.isArray( this.props.suggestion.match_reasons ) ||
+			hideMatchReasons ||
+			! isFeatured
+		) {
+			return null;
 		}
 
-		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
-
-		return (
-			<div className="domain-registration-suggestion__match-reasons">
-				{ matchReasons.map( ( phrase, index ) => (
-					<div className="domain-registration-suggestion__match-reason" key={ index }>
-						<Gridicon icon="checkmark" size={ 18 } />
-						{ phrase }
-					</div>
-				) ) }
-			</div>
-		);
+		return parseMatchReasons( domain, this.props.suggestion.match_reasons );
 	}
 
 	render() {
@@ -379,19 +391,25 @@ class DomainRegistrationSuggestion extends Component {
 			zeroCost,
 			flowName,
 			premiumDomain,
-			showHstsNotice,
-			showDotGayNotice,
 			translate,
+			isFeatured,
 		} = this.props;
 
 		const [ domainName, ...tld ] = fullDomain.split( '.' );
 
 		const badges = this.renderBadges();
+		const notice = this.renderNotice();
+
+		const SuggestionComponent = isFeatured ? DomainSuggestion.Featured : DomainSuggestion;
+
+		const matchReasons = this.renderMatchReasons();
 
 		if ( premiumDomain?.is_price_limit_exceeded ) {
 			return (
-				<DomainSuggestion
+				<SuggestionComponent
 					badges={ badges }
+					matchReasons={ matchReasons }
+					notice={ notice }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
 					disabled
@@ -419,15 +437,14 @@ class DomainRegistrationSuggestion extends Component {
 		const priceRule = this.getPriceRule();
 
 		return (
-			<DomainSuggestion
+			<SuggestionComponent
 				badges={ badges }
 				uuid={ fullDomain }
 				domain={ domainName }
 				onClick={ this.onButtonClick }
-				notice={
-					( showHstsNotice && this.getHstsMessage() ) ||
-					( showDotGayNotice && this.getDotGayMessage() )
-				}
+				isHighlighted={ isFeatured && this.isExactMatch() }
+				matchReasons={ matchReasons }
+				notice={ notice }
 				tld={ tld.join( '.' ) }
 				price={
 					! isHundredYearPlanFlow( flowName ) && (

@@ -1,0 +1,31 @@
+.domain-suggestion-featured {
+	height: 100%;
+
+	.domain-suggestion-cta {
+		margin-top: auto;
+	}
+}
+
+.domain-suggestion-featured__body,
+.domain-suggestion-featured__content,
+.domain-suggestion-featured__content--small {
+	height: 100%;
+}
+
+.domain-suggestion-featured__content {
+	justify-content: space-between;
+}
+
+.domain-suggestion-featured--highlighted {
+	box-shadow: 0 0 0 2px var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) ) !important;
+}
+
+.domain-suggestion-featured__badges {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.domain-suggestion-featured__price-info {
+	align-self: flex-end;
+}
