@@ -428,7 +428,11 @@ export default function SyncModal( {
 						<Button variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" onClick={ handleConfirm }>
+						<Button
+							variant="primary"
+							onClick={ handleConfirm }
+							disabled={ ! browserCheckList.totalItems }
+						>
 							{ syncConfig.submit }
 						</Button>
 					</HStack>
