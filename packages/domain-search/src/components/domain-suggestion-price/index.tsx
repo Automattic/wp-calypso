@@ -15,7 +15,6 @@ interface DomainSuggestionPriceProps {
 	price: string;
 	renewsAnually?: boolean;
 	subText?: ReactNode;
-	alignment?: 'left' | 'right';
 }
 
 export const DomainSuggestionPrice = ( {
@@ -23,7 +22,6 @@ export const DomainSuggestionPrice = ( {
 	price,
 	renewsAnually = true,
 	subText: subTextProp,
-	alignment: externalAlignment,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
 	const listContext = useDomainSuggestionContainerContext();
@@ -32,7 +30,8 @@ export const DomainSuggestionPrice = ( {
 		throw new Error( 'DomainSuggestionPrice must be used within a DomainSuggestionsList' );
 	}
 
-	const alignment = externalAlignment ?? ( listContext.activeQuery === 'large' ? 'right' : 'left' );
+	const alignment =
+		listContext.alignment ?? ( listContext.activeQuery === 'large' ? 'right' : 'left' );
 
 	const getSubText = () => {
 		if ( subTextProp ) {
@@ -65,10 +64,7 @@ export const DomainSuggestionPrice = ( {
 						</Text>
 					</>
 				) : (
-					<HStack
-						spacing={ 1 }
-						alignment={ listContext.activeQuery === 'large' ? 'right' : 'left' }
-					>
+					<HStack spacing={ 1 } alignment={ alignment }>
 						<Text size={ 18 }>{ price }</Text>
 						{ renewsAnually && <Text>{ __( '/year' ) }</Text> }
 					</HStack>

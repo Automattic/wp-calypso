@@ -26,7 +26,6 @@ export class DomainProductPrice extends Component {
 		isCurrentPlan100YearPlan: PropTypes.bool,
 		isBusinessOrEcommerceMonthlyPlan: PropTypes.bool,
 		zeroCost: PropTypes.string,
-		alignment: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -34,49 +33,40 @@ export class DomainProductPrice extends Component {
 	};
 
 	renderFreeForFirstYear() {
-		const { zeroCost, renewPrice, alignment } = this.props;
+		const { zeroCost, renewPrice } = this.props;
 
-		return (
-			<DomainSuggestionPrice
-				price={ zeroCost }
-				originalPrice={ renewPrice }
-				alignment={ alignment }
-			/>
-		);
+		return <DomainSuggestionPrice price={ zeroCost } originalPrice={ renewPrice } />;
 	}
 
 	renderFree() {
-		const { translate, alignment } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<DomainSuggestionPrice
 				price={ translate( 'Free', { context: 'Adjective refers to subdomain' } ) }
-				alignment={ alignment }
 			/>
 		);
 	}
 
 	renderDomainMovePrice() {
-		const { translate, alignment } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<DomainSuggestionPrice
 				price={ translate( 'Move your existing domain.', {
 					context: 'Line item description in cart.',
 				} ) }
-				alignment={ alignment }
 			/>
 		);
 	}
 
 	renderPrice() {
-		const { price, renewPrice, alignment } = this.props;
+		const { price, renewPrice } = this.props;
 
 		return (
 			<DomainSuggestionPrice
 				price={ price }
 				originalPrice={ renewPrice === price ? undefined : renewPrice }
-				alignment={ alignment }
 			/>
 		);
 	}
@@ -85,11 +75,9 @@ export class DomainProductPrice extends Component {
 	 * Used to render the price of 100-year domains, which are a one time purchase
 	 */
 	renderOneTimePrice() {
-		const { price, alignment } = this.props;
+		const { price } = this.props;
 
-		return (
-			<DomainSuggestionPrice price={ price } alignment={ alignment } renewsAnually={ false } />
-		);
+		return <DomainSuggestionPrice price={ price } renewsAnually={ false } />;
 	}
 
 	render() {

@@ -6,14 +6,13 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
-import { cloneElement, ComponentProps, useMemo } from 'react';
+import { ComponentProps, useMemo } from 'react';
 import {
 	DomainSuggestionContainerContext,
 	useDomainSuggestionContainer,
 } from '../../hooks/use-domain-suggestion-container';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionMatchReasons } from '../domain-suggestion-match-reasons';
-import { DomainSuggestionPrice } from '../domain-suggestion-price';
 
 import './featured.scss';
 
@@ -23,7 +22,7 @@ type DomainSuggestionFeaturedProps = {
 	tld: string;
 	matchReasons?: string[];
 	badges?: React.ReactNode;
-	price: React.ReactElement< ComponentProps< typeof DomainSuggestionPrice > >;
+	price: React.ReactNode;
 	isHighlighted?: boolean;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
@@ -40,7 +39,10 @@ export const Featured = ( {
 }: DomainSuggestionFeaturedProps ) => {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
-	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
+	const contextValue = useMemo(
+		() => ( { activeQuery, alignment: ! matchReasons ? 'left' : undefined } ) as const,
+		[ activeQuery, matchReasons ]
+	);
 
 	const cta = <DomainSuggestionCTA onClick={ onClick } disabled={ disabled } uuid={ uuid } />;
 
@@ -58,11 +60,6 @@ export const Featured = ( {
 		<DomainSuggestionMatchReasons reasons={ matchReasons } />
 	);
 
-	// There's something to be improved here. The consumer shouldn't be wrangling the alignment, but at the same time this feels hacky.
-	const priceElement = ! matchReasonsList
-		? cloneElement( price, { ...price.props, alignment: 'left' } )
-		: price;
-
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
 			if ( matchReasonsList ) {
@@ -78,7 +75,7 @@ export const Featured = ( {
 							alignment="right"
 							className="domain-suggestion-featured__price-info"
 						>
-							{ priceElement }
+							{ price }
 							{ cta }
 						</VStack>
 					</HStack>
@@ -92,7 +89,7 @@ export const Featured = ( {
 						{ title }
 					</VStack>
 					<HStack>
-						{ priceElement }
+						{ price }
 						{ cta }
 					</HStack>
 				</VStack>
@@ -104,7 +101,7 @@ export const Featured = ( {
 				<VStack spacing={ 3 }>
 					{ badgesElement }
 					{ title }
-					{ priceElement }
+					{ price }
 					{ matchReasonsList }
 				</VStack>
 				{ cta }
