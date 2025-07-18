@@ -29,7 +29,7 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 						{ translate( 'WordPress.com subdomain' ) }
 					</Heading>
 					<Text>
-						{ translate( '%(subdomain)s.{{strong}}%(domainName)s{{/strong}} is included', {
+						{ translate( '%(subdomain)s{{strong}}.%(domainName)s{{/strong}} is included', {
 							args: {
 								subdomain: subdomain,
 								domainName: domainName,
