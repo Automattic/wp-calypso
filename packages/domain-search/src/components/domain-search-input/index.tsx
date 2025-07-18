@@ -1,13 +1,5 @@
 import { SearchControl } from '@wordpress/components';
-import {
-	useState,
-	useEffect,
-	useRef,
-	forwardRef,
-	useImperativeHandle,
-	Ref,
-	useMemo,
-} from '@wordpress/element';
+import { useState, useEffect, useRef, useMemo } from '@wordpress/element';
 import { _x } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { debounce } from 'lodash';
@@ -43,33 +35,23 @@ interface DomainSearchInputProps {
 	onSearchChange?: ( value: string ) => void;
 }
 
-const DomainSearchInput = forwardRef( function DomainSearchInput(
-	{
-		className,
-		autoFocus,
-		delaySearch,
-		delayTimeout = 300,
-		describedBy,
-		dir,
-		defaultValue,
-		value: controlledValue,
-		inputLabel,
-		minLength,
-		maxLength,
-		onBlur,
-		onSearch,
-		onSearchChange,
-	}: DomainSearchInputProps,
-	ref: Ref< HTMLInputElement >
-) {
+const DomainSearchInput = function DomainSearchInput( {
+	className,
+	autoFocus,
+	delaySearch,
+	delayTimeout = 300,
+	describedBy,
+	dir,
+	defaultValue,
+	value: controlledValue,
+	inputLabel,
+	minLength,
+	maxLength,
+	onBlur,
+	onSearch,
+	onSearchChange,
+}: DomainSearchInputProps ) {
 	const [ , setValue ] = useState( defaultValue || controlledValue || '' );
-	const inputRef = useRef< HTMLInputElement >( null );
-	useImperativeHandle( ref, () => inputRef.current as HTMLInputElement );
-
-	useEffect( () => {
-		onSearchChange?.( controlledValue ?? '' );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ controlledValue ] );
 
 	const doSearch = useMemo( () => {
 		if ( ! onSearch ) {
@@ -122,12 +104,11 @@ const DomainSearchInput = forwardRef( function DomainSearchInput(
 				onBlur={ onBlur }
 				minLength={ minLength }
 				maxLength={ maxLength }
-				ref={ inputRef }
 				dir={ dir }
 				aria-describedby={ describedBy }
 			/>
 		</div>
 	);
-} );
+};
 
 export { DomainSearchInput };

@@ -373,14 +373,6 @@ class RegisterDomainStep extends Component {
 	componentDidUpdate( prevProps ) {
 		this.checkForBloggerPlan();
 
-		if (
-			this.props.selectedSite &&
-			prevProps.selectedSite &&
-			this.props.selectedSite.domain !== prevProps.selectedSite.domain
-		) {
-			this.focusSearchCard();
-		}
-
 		// Filter out the free wp.com subdomains to avoid doing another API request.
 		// Please note that it's intentional to be incomplete -- the complete version of this
 		// should be able to handle flag transition the other way around, i.e.
@@ -427,14 +419,6 @@ class RegisterDomainStep extends Component {
 	getNewRailcarId() {
 		return `${ crypto.randomUUID().replace( /-/g, '' ) }-domain-suggestion`;
 	}
-
-	focusSearchCard = () => {
-		this.searchCard.focus();
-	};
-
-	bindSearchCardReference = ( searchCard ) => {
-		this.searchCard = searchCard;
-	};
 
 	getSuggestionsFromProps() {
 		const { pageNumber, pageSize } = this.state;
@@ -636,7 +620,6 @@ class RegisterDomainStep extends Component {
 			onBlur: this.save,
 			onSearch: this.onSearch,
 			onSearchChange: this.onSearchChange,
-			ref: this.bindSearchCardReference,
 			isOnboarding: this.props.isOnboarding,
 		};
 
@@ -722,12 +705,6 @@ class RegisterDomainStep extends Component {
 			</CompactCard>
 		);
 	}
-
-	handleClickExampleSuggestion = () => {
-		this.focusSearchCard();
-
-		this.setState( { clickedExampleSuggestion: true } );
-	};
 
 	renderFilterContent() {
 		const { isSignupStep } = this.props;
@@ -1542,7 +1519,6 @@ class RegisterDomainStep extends Component {
 			<ExampleDomainSuggestions
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				offerUnavailableOption={ offerUnavailableOption }
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
 				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>
