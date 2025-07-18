@@ -64,21 +64,23 @@ export const Featured = ( {
 		if ( activeQuery === 'large' ) {
 			if ( matchReasonsList ) {
 				return (
-					<HStack spacing={ 6 }>
-						<VStack spacing={ 3 } alignment="left">
-							{ badgesElement }
-							{ title }
-							{ matchReasonsList }
-						</VStack>
-						<VStack
-							spacing={ 6 }
-							alignment="right"
-							className="domain-suggestion-featured__price-info"
-						>
-							{ price }
-							{ cta }
-						</VStack>
-					</HStack>
+					<VStack spacing={ 3 } className="domain-suggestion-featured__content">
+						{ badgesElement }
+						<HStack spacing={ 6 }>
+							<VStack spacing={ 3 } alignment="left">
+								{ title }
+								{ matchReasonsList }
+							</VStack>
+							<VStack
+								spacing={ 6 }
+								alignment="right"
+								className="domain-suggestion-featured__price-info"
+							>
+								{ price }
+								{ cta }
+							</VStack>
+						</HStack>
+					</VStack>
 				);
 			}
 
