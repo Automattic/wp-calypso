@@ -1,4 +1,4 @@
-import { DomainSearchControlsInput } from '@automattic/domain-search';
+import { DomainSearchControls } from '@automattic/domain-search';
 import { useState, useEffect, useRef, useMemo } from '@wordpress/element';
 import { _x } from '@wordpress/i18n';
 import { debounce } from 'lodash';
@@ -21,7 +21,7 @@ interface DomainSearchInputProps {
 	delaySearch?: boolean;
 	delayTimeout?: number;
 	describedBy?: string;
-	dir?: string;
+	dir?: 'ltr' | 'rtl';
 	defaultValue?: string;
 	value?: string;
 	inputLabel?: string;
@@ -43,7 +43,7 @@ const DomainSearchInput = function DomainSearchInput( {
 	inputLabel,
 	minLength,
 	maxLength,
-	onBlur,
+	onBlur = () => {},
 	onSearch,
 	onSearchChange,
 }: DomainSearchInputProps ) {
@@ -84,19 +84,18 @@ const DomainSearchInput = function DomainSearchInput( {
 	const searchControlLabel = inputLabel || _x( 'Search', 'search label', 'domain-search' );
 
 	return (
-		<DomainSearchControlsInput
-			className="domain-search-input__search-input"
+		<DomainSearchControls.Input
 			label={ searchControlLabel }
-			value={ controlledValue }
+			value={ controlledValue ?? '' }
 			onChange={ handleChange }
 			onReset={ handleReset }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
-			autoFocus={ autoFocus }
+			autoFocus={ autoFocus ?? false }
 			onBlur={ onBlur }
-			minLength={ minLength }
-			maxLength={ maxLength }
-			dir={ dir }
-			aria-describedby={ describedBy }
+			minLength={ minLength ?? 1 }
+			maxLength={ maxLength ?? 253 }
+			dir={ dir ?? 'ltr' }
+			aria-describedby={ describedBy ?? '' }
 		/>
 	);
 };
