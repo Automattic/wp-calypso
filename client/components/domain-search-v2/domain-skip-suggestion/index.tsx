@@ -16,10 +16,7 @@ interface Props {
 
 const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 	const translate = useTranslate();
-	const domainSegments = domain?.split( '.' );
-
-	const subdomain = domainSegments?.[ 0 ];
-	const domainName = domainSegments?.slice( 1 ).join( '.' );
+	const [ subdomain, ...tlds ] = domain.split( '.' );
 
 	return (
 		<Card className="subdomain-skip-suggestion">
@@ -32,7 +29,7 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 						{ translate( '%(subdomain)s{{strong}}.%(domainName)s{{/strong}} is included', {
 							args: {
 								subdomain: subdomain,
-								domainName: domainName,
+								domainName: tlds.join( '.' ),
 							},
 							components: {
 								strong: <strong />,
