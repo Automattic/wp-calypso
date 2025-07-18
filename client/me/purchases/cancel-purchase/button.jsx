@@ -113,6 +113,16 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
+	handleMarketplaceDialogContinue = () => {
+		// Close the marketplace dialog
+		this.setState( {
+			isShowingMarketplaceSubscriptionsDialog: false,
+		} );
+
+		// Show the appropriate survey based on purchase type
+		this.handleCancelPurchaseClick();
+	};
+
 	handleSurveyComplete = () => {
 		// Call the parent's survey complete handler
 		if ( this.props.onSurveyComplete ) {
@@ -216,7 +226,7 @@ class CancelPurchaseButton extends Component {
 					<MarketPlaceSubscriptionsDialog
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ this.props.onSurveyComplete }
+						removePlan={ this.handleMarketplaceDialogContinue }
 						planName={ planName }
 						activeSubscriptions={ activeSubscriptions }
 						sectionHeadingText={ translate( 'Cancel %(plan)s', {
