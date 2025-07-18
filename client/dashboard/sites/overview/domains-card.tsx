@@ -6,7 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { SectionHeader } from '../../components/section-header';
-import { fields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import type { Site, SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
 
@@ -21,6 +21,7 @@ export default function DomainsCard( {
 	site: Site;
 	type?: DomainsView[ 'type' ];
 } ) {
+	const fields = useFields( { site } );
 	const [ view, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
 		fields: [ 'expiry' ],

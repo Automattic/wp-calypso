@@ -21,6 +21,8 @@ export interface Domain {
 	is_wpcom_staging_domain: boolean;
 	type: `${ DomainTypes }`;
 	site_slug: string;
+	auto_renewing: boolean;
+	is_hundred_year_domain: boolean;
 }
 
 export async function fetchDomains(): Promise< Domain[] > {

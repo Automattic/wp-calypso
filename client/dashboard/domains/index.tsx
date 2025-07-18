@@ -7,7 +7,7 @@ import { domainsQuery } from '../app/queries/domains';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { actions, fields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
+import { actions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
 import type { Domain } from '../data/types';
 
@@ -16,6 +16,7 @@ export function getDomainId( domain: Domain ): string {
 }
 
 function Domains() {
+	const fields = useFields();
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',
