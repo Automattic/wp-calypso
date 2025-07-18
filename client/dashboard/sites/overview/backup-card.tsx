@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import { siteLastBackupQuery } from '../../app/queries/site-backups';
+import { useFormattedTime } from '../../components/formatted-time';
 import { useTimeSince } from '../../components/time-since';
 import { HostingFeatures } from '../../data/constants';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -23,22 +24,33 @@ function getBackupUrl( site: Site ) {
 
 function BackupCardContent( { site }: { site: Site } ) {
 	const { data: lastBackup } = useQuery( siteLastBackupQuery( site.ID ) );
-	const timeSinceLastBackup = useTimeSince(
-		lastBackup?.last_updated ?? new Date( 0 ).toISOString(),
-		{ isUtc: true }
-	);
+	const lastBackupTime = lastBackup?.published ?? new Date( 0 ).toISOString();
+
+	const timeSinceLastBackup = useTimeSince( lastBackupTime );
+	const formattedLastBackupTime = useFormattedTime( lastBackupTime, { timeStyle: 'short' } );
 
 	if ( lastBackup === undefined ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
+	if ( ! lastBackup ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'No backups yet' ) }
+				description={ __( 'Your first backup will be ready soon' ) }
+				externalLink={ getBackupUrl( site ) }
+			/>
+		);
+	}
+
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			heading={ lastBackup ? timeSinceLastBackup : __( 'No backups yet' ) }
-			description="Next scheduled backup in TBA"
+			heading={ timeSinceLastBackup }
+			description={ formattedLastBackupTime }
 			externalLink={ getBackupUrl( site ) }
-			intent={ lastBackup ? 'success' : undefined }
+			intent="success"
 		/>
 	);
 }
