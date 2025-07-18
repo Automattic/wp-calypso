@@ -64,9 +64,12 @@ export const NewStagingSiteCardContent = ( {
 					</WPNotice>
 				</NoticeContainer>
 			) }
+
+			{ /* Can be removed. Handled in new UI. */ }
 			{ isDevelopmentSite && (
 				<p>{ translate( 'Staging sites are only available to sites launched in production.' ) }</p>
 			) }
+
 			{ isButtonDisabled && disabledMessage && (
 				<Notice status="is-error" showDismiss={ false }>
 					{ disabledMessage }
@@ -79,6 +82,8 @@ export const NewStagingSiteCardContent = ( {
 				__next40pxDefaultSize
 				text={ translate( 'Add staging site' ) }
 			></StyledButton>
+
+			{ /* Can be removed. Handled in new UI. */ }
 			{ showQuotaError && <ExceedQuotaErrorContent /> }
 		</>
 	);

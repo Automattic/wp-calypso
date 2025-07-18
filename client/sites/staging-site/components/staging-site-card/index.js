@@ -436,6 +436,7 @@ export const StagingSiteCard = ( {
 			/>
 		);
 	} else if ( hasCompletedInitialLoading && isErrorValidQuota ) {
+		// Can be removed. Handled in new UI.
 		stagingSiteCardContent = (
 			<StagingSiteLoadingErrorCardContent
 				message={ __(

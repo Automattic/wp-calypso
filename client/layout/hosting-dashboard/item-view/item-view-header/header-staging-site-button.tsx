@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
+import { useHasValidQuotaQuery } from 'calypso/sites/staging-site/hooks/use-has-valid-quota';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -35,6 +36,11 @@ export default function HeaderStagingSiteButton( {
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
 	const isA4ADevSite = site?.is_a4a_dev_site || false;
+	const {
+		data: hasValidQuota,
+		isLoading: isLoadingQuotaValidation,
+		error: isErrorValidQuota,
+	} = useHasValidQuotaQuery( siteId );
 
 	// Notice IDs for staging site operations
 	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
@@ -94,9 +100,17 @@ export default function HeaderStagingSiteButton( {
 		return null;
 	}
 
-	let errorMessage = '';
+	let disabledReason: string | undefined;
 	if ( isA4ADevSite ) {
-		errorMessage = translate( 'Staging sites are not available for development sites.' );
+		disabledReason = translate( 'Staging sites are not available for development sites.' );
+	} else if ( isErrorValidQuota && ! isLoadingQuotaValidation ) {
+		disabledReason = __(
+			'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
+		);
+	} else if ( ! hasValidQuota && ! isLoadingQuotaValidation ) {
+		disabledReason = __(
+			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+		);
 	}
 
 	return (
@@ -106,10 +120,10 @@ export default function HeaderStagingSiteButton( {
 			className="hosting-dashboard-item-view__header-add-staging"
 			icon={ plus }
 			iconPosition="right"
-			disabled={ isA4ADevSite }
 			accessibleWhenDisabled
 			showTooltip
-			label={ errorMessage }
+			disabled={ !! disabledReason }
+			label={ disabledReason }
 		>
 			{ translate( 'Add staging site' ) }
 		</Button>
