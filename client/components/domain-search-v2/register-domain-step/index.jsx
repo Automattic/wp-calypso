@@ -14,7 +14,6 @@ import {
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
-import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
 	__experimentalVStack as VStack,
@@ -90,6 +89,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainCartV2 } from '../domain-cart';
+import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
 
 import './style.scss';
@@ -709,7 +709,7 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<HStack spacing={ 4 }>
-				<Search { ...componentProps }></Search>
+				<DomainSearchInput { ...componentProps }></DomainSearchInput>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</HStack>
 		);
