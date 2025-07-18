@@ -1202,12 +1202,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		.wp-login__login-block-footer {
-			display: flex;
-			align-items: center;
-			width: 100%;
-			flex-direction: column;
-			margin: 12px auto 0;
-
 			@media (max-width: $break-mobile) {
 				max-width: $max-width;
 				margin-bottom: 40px;
@@ -1239,11 +1233,6 @@ $breakpoint-mobile: 660px;
 			&::before,
 			&::after {
 				border-block-start-color: #e0e0e1;
-			}
-
-			+ .auth-form__social.card {
-				border: 0;
-				padding: 0;
 			}
 		}
 

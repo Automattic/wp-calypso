@@ -35,15 +35,10 @@
 		}
 	}
 
-	/**
-	* Jetpack Login
-	*/
-	@at-root .is-jetpack-login & {
-		padding: 16px;
+	padding: 16px;
 
-		@include break-mobile {
-			padding: 24px 0;
-		}
+	@include break-mobile {
+		padding: 24px 0;
 	}
 }
 
