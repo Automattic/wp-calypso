@@ -56,7 +56,7 @@ const JetpackPodcasting = () => {
 	if (
 		! hasEnTranslation( 'Podcasting has moved' ) ||
 		! hasEnTranslation(
-			'Podcasting is now part of Jetpack for enhanced features. Access it via Jetpack → Podcasting in your dashboard.'
+			'Podcasting is now part of Jetpack for enhanced features. Access it via Jetpack{{space/}}→{{space/}}Podcasting in your dashboard.'
 		) ||
 		! hasEnTranslation( 'Go to Jetpack Podcasting' )
 	) {
@@ -71,7 +71,14 @@ const JetpackPodcasting = () => {
 				icon={ rss }
 				title={ translate( 'Podcasting has moved' ) }
 				description={ translate(
-					'Podcasting is now part of Jetpack for enhanced features. Access it via Jetpack → Podcasting in your dashboard.'
+					'Podcasting is now part of Jetpack for enhanced features. Access it via Jetpack{{space/}}→{{space/}}Podcasting in your dashboard.',
+					{
+						comment:
+							'"Jetpack → Podcasting" uses especial HTML spaces to prevent the string from being split in separate lines. Please keep the {{space/}} placeholders before and after the arrow.',
+						components: {
+							space: <>&nbsp;</>,
+						},
+					}
 				) }
 				buttonText={ translate( 'Go to Jetpack Podcasting' ) }
 				buttonLink={ `/settings/podcasting/${ siteSlug }` }
