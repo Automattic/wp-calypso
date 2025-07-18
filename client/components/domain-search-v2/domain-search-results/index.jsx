@@ -314,6 +314,10 @@ class DomainSearchResults extends Component {
 			);
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
+				if ( suggestion.is_placeholder ) {
+					return null;
+				}
+
 				return (
 					<DomainRegistrationSuggestion
 						isCartPendingUpdate={ this.props.isCartPendingUpdate }
