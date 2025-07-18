@@ -1271,6 +1271,7 @@ $breakpoint-mobile: 660px;
 				width: 100%;
 				box-sizing: border-box;
 				padding: 32px 24px 16px 24px;
+				background: #fff;
 			}
 
 			~ .card.auth-form__social.is-login {
@@ -1278,7 +1279,6 @@ $breakpoint-mobile: 660px;
 				padding: 0;
 				max-width: initial;
 			}
-
 
 			.continue-as-user__gravatar-content {
 				display: flex;
