@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -10,7 +9,6 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
 import type { Site } from '../../data/types';
 
@@ -21,16 +19,10 @@ export default function StagingSiteDeleteModal( {
 	site: Site;
 	onClose: () => void;
 } ) {
-	const router = useRouter();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
-
-	const { data: productionSite } = useQuery( {
-		...siteByIdQuery( productionSiteId ?? 0 ),
-		enabled: !! productionSiteId,
-	} );
 
 	if ( ! productionSiteId ) {
 		return null;
@@ -38,11 +30,6 @@ export default function StagingSiteDeleteModal( {
 
 	const handleDelete = () => {
 		mutation.mutate( undefined, {
-			onSuccess: () => {
-				const redirectUrl = productionSite?.slug ? `/${ productionSite.slug }` : '/sites';
-				router.navigate( { to: redirectUrl } );
-				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
-			},
 			onError: ( error: Error ) => {
 				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
 					type: 'snackbar',

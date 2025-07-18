@@ -14,3 +14,10 @@ export async function deleteStagingSite( stagingSiteId: number, productionSiteId
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+export async function fetchStagingSiteData( productionSiteId: number ) {
+	return wpcom.req.get( {
+		path: `/sites/${ productionSiteId }/staging-site`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
