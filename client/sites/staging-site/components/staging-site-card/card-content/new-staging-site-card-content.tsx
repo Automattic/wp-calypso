@@ -42,6 +42,7 @@ export const NewStagingSiteCardContent = ( {
 
 	return (
 		<>
+			{ /* Can be removed. Handled in the new UI. */ }
 			{ isSiteWooStore && (
 				<NoticeContainer>
 					<WPNotice status="warning" isDismissible={ false }>
