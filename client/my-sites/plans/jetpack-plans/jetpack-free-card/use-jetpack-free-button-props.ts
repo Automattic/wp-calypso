@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { shouldUseDashboardPage } from 'calypso/lib/jetpack/jetpack-version-utils';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -19,7 +20,9 @@ interface Props {
 const buildHref = (
 	wpAdminUrl: string | undefined,
 	siteId: SiteId,
-	urlQueryArgs: QueryArgs
+	urlQueryArgs: QueryArgs,
+	isMultisite?: boolean,
+	jetpackVersion?: string
 ): string => {
 	const { site } = urlQueryArgs;
 
@@ -37,9 +40,19 @@ const buildHref = (
 		} catch ( e ) {}
 
 		if ( wpAdminUrlFromQuery ) {
+			const redirectToContainsDashboard = urlQueryArgs.redirect_to
+				?.toLowerCase()
+				.includes( 'wp-admin/admin.php?page=jetpack' );
+
+			const useDashboard = shouldUseDashboardPage(
+				isMultisite,
+				jetpackVersion,
+				redirectToContainsDashboard
+			);
+
 			jetpackAdminUrlFromQuery = getUrlFromParts( {
 				...getUrlParts( wpAdminUrlFromQuery.href ),
-				search: '?page=my-jetpack',
+				search: useDashboard ? '?page=jetpack' : '?page=my-jetpack',
 			} ).href;
 		}
 	}
@@ -66,14 +79,23 @@ export default function useJetpackFreeButtonProps(
 	urlQueryArgs: QueryArgs = {}
 ): Props {
 	const site = useSelector( getSelectedSite );
-
 	const adminUrlBase = urlQueryArgs?.admin_url || site?.options?.admin_url || undefined;
+
+	const redirectToContainsDashboard = urlQueryArgs.redirect_to
+		?.toLowerCase()
+		.includes( 'wp-admin/admin.php?page=jetpack' );
+
+	const useDashboard = shouldUseDashboardPage(
+		site?.is_multisite,
+		site?.options?.jetpack_version,
+		redirectToContainsDashboard
+	);
 
 	const siteWpAdminUrl =
 		adminUrlBase && site?.jetpack !== false
 			? getUrlFromParts( {
 					...getUrlParts( adminUrlBase + 'admin.php' ),
-					search: '?page=my-jetpack',
+					search: useDashboard ? '?page=jetpack' : '?page=my-jetpack',
 			  } ).href
 			: undefined;
 
@@ -85,8 +107,15 @@ export default function useJetpackFreeButtonProps(
 		trackCallback();
 	}, [ trackCallback ] );
 	const href = useMemo(
-		() => buildHref( siteWpAdminUrl, siteId, urlQueryArgs ),
-		[ siteWpAdminUrl, siteId, urlQueryArgs ]
+		() =>
+			buildHref(
+				siteWpAdminUrl,
+				siteId,
+				urlQueryArgs,
+				site?.is_multisite,
+				site?.options?.jetpack_version
+			),
+		[ siteWpAdminUrl, siteId, urlQueryArgs, site?.is_multisite, site?.options?.jetpack_version ]
 	);
 
 	return {
