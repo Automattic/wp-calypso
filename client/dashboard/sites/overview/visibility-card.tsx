@@ -21,12 +21,21 @@ function getVisibilityURL( site: Site ) {
 }
 
 function VisibilityCardUnlaunched() {
+	const isSetupComplete = true;
+	let heading = __( 'Coming soon' );
+	let description = __( 'Finish setting up your site' );
+
+	if ( isSetupComplete ) {
+		heading = __( 'Launch site' );
+		description = __( 'Ready to go public?' );
+	}
+
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
 			icon={ launch }
-			heading={ __( 'Coming soon' ) }
-			description={ __( 'Ready to go public?' ) }
+			heading={ heading }
+			description={ description }
 			sideContent={
 				<CircularProgressBar
 					currentStep={ 5 }

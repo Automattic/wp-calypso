@@ -26,7 +26,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 		heading: upsellHeading,
 		icon: upsell,
 		description: upsellDescription,
-		trackId: tracksFeatureId,
+		tracksId: tracksFeatureId,
 		variant: 'upsell' as const,
 	};
 
