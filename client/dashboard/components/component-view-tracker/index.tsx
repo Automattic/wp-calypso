@@ -12,7 +12,7 @@ export default function ComponentViewTracker( {
 
 	useEffect( () => {
 		recordTracksEvent( eventName, properties );
-	}, [ recordTracksEvent, eventName, properties ] );
+	}, [ recordTracksEvent, eventName, JSON.stringify( properties ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return null;
 }

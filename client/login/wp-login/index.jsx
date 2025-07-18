@@ -316,11 +316,13 @@ export class Login extends Component {
 			twoFactorAuthType,
 			action,
 			translate,
+			isWooJPC,
 		} );
 
 		this.context.setHeaders( {
 			heading: headingText,
-			subHeading: headingSubText,
+			subHeading: headingSubText?.primary,
+			subHeadingSecondary: headingSubText?.secondary,
 		} );
 	}
 

@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -24,13 +24,24 @@ export const DomainSuggestionPrice = ( {
 	subText: subTextProp,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
-	const listContext = useDomainSuggestionsListContext();
+	const containerContext = useDomainSuggestionContainerContext();
 
-	if ( ! listContext ) {
+	if ( ! containerContext ) {
 		throw new Error( 'DomainSuggestionPrice must be used within a DomainSuggestionsList' );
 	}
 
-	const alignment = listContext.activeQuery === 'large' ? 'right' : 'left';
+	const alignment =
+		containerContext.alignment ?? ( containerContext.activeQuery === 'large' ? 'right' : 'left' );
+
+	const getPriceSize = () => {
+		if ( containerContext.priceSize ) {
+			return containerContext.priceSize;
+		}
+
+		return 18;
+	};
+
+	const priceSize = getPriceSize();
 
 	const getSubText = () => {
 		if ( subTextProp ) {
@@ -55,19 +66,16 @@ export const DomainSuggestionPrice = ( {
 			<HStack spacing={ 2 } justify={ alignment === 'left' ? 'start' : 'end' }>
 				{ originalPrice ? (
 					<>
-						<Text size={ 18 } variant="muted" style={ { textDecoration: 'line-through' } }>
+						<Text size={ priceSize } variant="muted" style={ { textDecoration: 'line-through' } }>
 							{ originalPrice }
 						</Text>
-						<Text size={ 18 } color="var( --domain-search-promotional-price-color )">
+						<Text size={ priceSize } color="var( --domain-search-promotional-price-color )">
 							{ price }
 						</Text>
 					</>
 				) : (
-					<HStack
-						spacing={ 1 }
-						alignment={ listContext.activeQuery === 'large' ? 'right' : 'left' }
-					>
-						<Text size={ 18 }>{ price }</Text>
+					<HStack spacing={ 1 } alignment={ alignment }>
+						<Text size={ priceSize }>{ price }</Text>
 						{ renewsAnually && <Text>{ __( '/year' ) }</Text> }
 					</HStack>
 				) }

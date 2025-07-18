@@ -18,6 +18,15 @@
 	text-transform: uppercase;
 }
 
+// We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
+.components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
+	padding-top: 0;
+
+	.dataviews-view-list div[role="row"]:first-child {
+		border-top: none;
+	}
+}
+
 // Global Styles
 html,
 body,
@@ -34,7 +43,7 @@ body {
 	line-height: $font-line-height-small;
 
 	/* stylelint-disable-next-line unit-allowed-list */
-	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 		text-rendering: optimizeLegibility;
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-font-smoothing: antialiased;

@@ -17,8 +17,23 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 		return null;
 	}
 
-	const handleClick = ( type?: string ) => {
-		recordTracksEvent( 'calypso_dashboard_trial_upsell_notice_click', { type } );
+	const getTrialType = () => {
+		if ( isSiteOnECommerceTrial ) {
+			return 'ecommerce';
+		}
+
+		if ( isSiteOnMigrationTrial ) {
+			return 'migration';
+		}
+
+		return site.plan?.product_slug ?? 'free';
+	};
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_upsell_click', {
+			feature: 'plans',
+			type: `trial-notice:${ getTrialType() }`,
+		} );
 	};
 
 	const renderContent = () => {
@@ -31,7 +46,7 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 			return createInterpolateElement(
 				__( 'Before you can share your store with the world, you need to <a>pick a plan</a>.' ),
 				{
-					a: <Button { ...buttonProps } onClick={ () => handleClick( 'ecommerce' ) } />,
+					a: <Button { ...buttonProps } onClick={ handleClick } />,
 				}
 			);
 		}
@@ -40,7 +55,7 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 			return createInterpolateElement(
 				__( 'Ready to launch your site? <a>Upgrade to a paid plan</a>.' ),
 				{
-					a: <Button { ...buttonProps } onClick={ () => handleClick( 'migration' ) } />,
+					a: <Button { ...buttonProps } onClick={ handleClick } />,
 				}
 			);
 		}
@@ -48,14 +63,17 @@ export default function TrialUpsellNotice( { site }: { site: Site } ) {
 		return createInterpolateElement(
 			__( 'Ready to launch your site? <a>Upgrade to a paid plan</a>.' ),
 			{
-				a: <Button { ...buttonProps } onClick={ () => handleClick() } />,
+				a: <Button { ...buttonProps } onClick={ handleClick } />,
 			}
 		);
 	};
 
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_trial_upsell_notice_impression" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_upsell_impression"
+				properties={ { feature: 'plans', type: `trial-notice:${ getTrialType() }` } }
+			/>
 			<Notice variant="warning">{ renderContent() }</Notice>
 		</>
 	);

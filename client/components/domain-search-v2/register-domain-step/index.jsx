@@ -1,7 +1,11 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
-import { DomainSearch, DomainSearchNotice } from '@automattic/domain-search';
+import { ResponsiveToolbarGroup } from '@automattic/components';
+import {
+	DomainSearch,
+	DomainSearchNotice,
+	DomainSuggestionLoadMore,
+} from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -16,7 +20,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -770,20 +773,12 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
-		const className = clsx( 'register-domain-step__next-page', {
-			'register-domain-step__next-page--is-loading': isLoading,
-		} );
 		return (
-			<CompactCard className={ className }>
-				<Button
-					className="register-domain-step__next-page-button"
-					disabled={ isLoading }
-					busy={ isLoading }
-					onClick={ this.showNextPage }
-				>
-					{ this.props.translate( 'Show more results' ) }
-				</Button>
-			</CompactCard>
+			<DomainSuggestionLoadMore
+				isBusy={ isLoading }
+				disabled={ isLoading }
+				onClick={ this.showNextPage }
+			/>
 		);
 	}
 

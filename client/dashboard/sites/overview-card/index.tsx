@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -9,6 +10,7 @@ import {
 	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { chevronRight } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import type { ReactElement, ReactNode } from 'react';
@@ -18,11 +20,12 @@ export interface OverviewCardProps {
 	title: string;
 	customHeading?: ReactNode;
 	description?: string;
+	link?: string;
 	externalLink?: string;
 	heading?: ReactNode;
 	icon?: ReactElement;
 	metaText?: string;
-	trackId?: string;
+	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	children?: ReactNode;
 	onClick?: () => void;
@@ -34,9 +37,10 @@ export default function OverviewCard( {
 	externalLink,
 	heading,
 	icon,
+	link,
 	metaText,
 	title,
-	trackId,
+	tracksId,
 	variant,
 	children,
 	onClick,
@@ -56,12 +60,18 @@ export default function OverviewCard( {
 			} }
 		>
 			<CardBody>
-				{ trackId && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_overview_card_impression"
-						properties={ { type: trackId, variant } }
-					/>
-				) }
+				{ tracksId &&
+					( variant === 'upsell' ? (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_upsell_impression"
+							properties={ { feature: tracksId, type: 'card' } }
+						/>
+					) : (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_overview_card_impression"
+							properties={ { feature: tracksId, variant } }
+						/>
+					) ) }
 				<VStack spacing={ 4 }>
 					<HStack justify="space-between">
 						<HStack spacing={ 2 } alignment="center" expanded={ false }>
@@ -77,9 +87,12 @@ export default function OverviewCard( {
 								{ title }
 							</Text>
 						</HStack>
+						{ link && (
+							<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
+						) }
 						{ externalLink && (
 							<span
-								className="components-external-link__icon"
+								className="dashboard-overview-card__link-icon components-external-link__icon"
 								aria-label={
 									/* translators: accessibility text */
 									__( '(opens in a new tab)' )
@@ -123,6 +136,14 @@ export default function OverviewCard( {
 		</Card>
 	);
 
+	if ( link ) {
+		return (
+			<Link to={ link } className="dashboard-overview-card__link">
+				{ content }
+			</Link>
+		);
+	}
+
 	if ( externalLink ) {
 		return (
 			<a
@@ -133,11 +154,18 @@ export default function OverviewCard( {
 				onClick={ () => {
 					onClick?.();
 
-					if ( trackId ) {
-						recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-							type: trackId,
-							variant,
-						} );
+					if ( tracksId ) {
+						if ( variant === 'upsell' ) {
+							recordTracksEvent( 'calypso_dashboard_upsell_click', {
+								feature: tracksId,
+								type: 'card',
+							} );
+						} else {
+							recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+								type: tracksId,
+								variant,
+							} );
+						}
 					}
 				} }
 			>

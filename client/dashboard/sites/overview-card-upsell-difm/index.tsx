@@ -41,7 +41,7 @@ export default function OverviewCardUpsellDIFM( { site }: { site: Site } ) {
 					target="_blank"
 					text={ __( 'Build it for me' ) }
 					variant="secondary"
-					trackId="difm"
+					tracksId="difm"
 				/>
 			}
 		/>

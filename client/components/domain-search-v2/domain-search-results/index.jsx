@@ -11,7 +11,6 @@ import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -22,6 +21,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
 import PremiumBadge from '../domain-registration-suggestion/premium-badge';
 import DomainSkipSuggestion from '../domain-skip-suggestion';
+import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 
 class DomainSearchResults extends Component {
 	static propTypes = {

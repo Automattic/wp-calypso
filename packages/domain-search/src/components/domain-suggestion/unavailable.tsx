@@ -9,7 +9,8 @@ import {
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { Icon, notAllowed } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { DomainSuggestionsList, useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
+import { DomainSuggestionsList } from '../domain-suggestions-list';
 
 import './unavailable.scss';
 
@@ -29,7 +30,7 @@ const UnavailableComponent = ( {
 	transferLink,
 	isWithinList,
 }: UnavailableProps & { isWithinList: boolean } ) => {
-	const listContext = useDomainSuggestionsListContext();
+	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
 		throw new Error( 'DomainSuggestion must be used within a DomainSuggestionsList' );
@@ -137,7 +138,7 @@ const UnavailableComponent = ( {
 };
 
 export const Unavailable = ( props: UnavailableProps ) => {
-	const listContext = useDomainSuggestionsListContext();
+	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
 		return (

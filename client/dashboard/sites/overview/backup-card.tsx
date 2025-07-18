@@ -12,7 +12,7 @@ import type { Site } from '../../data/types';
 const CARD_PROPS = {
 	icon: backup,
 	title: __( 'Last backup' ),
-	trackId: 'backup',
+	tracksId: 'backup',
 };
 
 function getBackupUrl( site: Site ) {
@@ -23,7 +23,6 @@ function getBackupUrl( site: Site ) {
 
 function BackupCardContent( { site }: { site: Site } ) {
 	const { data: lastBackup } = useQuery( siteLastBackupQuery( site.ID ) );
-
 	const timeSinceLastBackup = useTimeSince(
 		lastBackup?.last_updated ?? new Date( 0 ).toISOString(),
 		{ isUtc: true }
@@ -50,7 +49,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.BACKUPS }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.trackId }
+			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Back up your site' ) }
 			upsellDescription={ __( 'Get back online quickly with one-click restores' ) }
 			upsellExternalLink={ getBackupUrl( site ) }

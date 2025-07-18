@@ -616,10 +616,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.login__form-terms {
-		display: none;
-	}
-
 	.signup-form {
 		padding-top: 32px;
 
@@ -985,8 +981,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
-		h2,
-		h3,
 		.wp-login__heading-text {
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
@@ -998,7 +992,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
-		h3 {
+		h3:not(.wp-login__heading-subtext) {
 			color: var(--studio-gray-100);
 			text-align: center;
 			font-size: 2.25rem;

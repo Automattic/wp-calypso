@@ -4,12 +4,15 @@ import { type TranslateResult } from 'i18n-calypso';
 export interface LoginContextType {
 	headingText?: TranslateResult | null;
 	subHeadingText?: TranslateResult | null;
+	subHeadingTextSecondary?: TranslateResult | null;
 	setHeaders: ( {
 		heading,
 		subHeading,
+		subHeadingSecondary,
 	}: {
 		heading?: TranslateResult | null;
 		subHeading?: TranslateResult | null;
+		subHeadingSecondary?: TranslateResult | null;
 	} ) => void;
 }
 
@@ -22,16 +25,23 @@ const LoginContextProvider = ( { children }: { children: React.ReactNode } ) => 
 	const [ subHeadingText, setSubHeadingText ] = useState< TranslateResult | undefined | null >(
 		undefined
 	);
+	const [ subHeadingTextSecondary, setSubHeadingTextSecondary ] = useState<
+		TranslateResult | undefined | null
+	>( undefined );
+
 	const setHeaders = useCallback(
 		( {
 			heading,
 			subHeading,
+			subHeadingSecondary,
 		}: {
 			heading?: TranslateResult | null;
 			subHeading?: TranslateResult | null;
+			subHeadingSecondary?: TranslateResult | null;
 		} ) => {
 			setHeadingText( heading );
 			setSubHeadingText( subHeading );
+			setSubHeadingTextSecondary( subHeadingSecondary );
 		},
 		[]
 	);
@@ -41,6 +51,7 @@ const LoginContextProvider = ( { children }: { children: React.ReactNode } ) => 
 			value={ {
 				headingText,
 				subHeadingText,
+				subHeadingTextSecondary,
 				setHeaders,
 			} }
 		>
