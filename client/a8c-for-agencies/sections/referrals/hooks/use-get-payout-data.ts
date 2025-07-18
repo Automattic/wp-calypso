@@ -6,13 +6,6 @@ import {
 	getNextPayoutDateActivityWindow,
 } from '../lib/get-next-payout-date';
 
-// Helper functions for date formatting
-const formatDate = ( date: Date ) =>
-	date.toLocaleString( 'default', {
-		month: 'short',
-		day: 'numeric',
-	} );
-
 const formatDateWithYear = ( date: Date ) =>
 	date.toLocaleString( 'default', {
 		month: 'short',
@@ -20,9 +13,8 @@ const formatDateWithYear = ( date: Date ) =>
 		year: 'numeric',
 	} );
 
-const formatDateRange = ( start: Date, finish: Date, includeYear = false ) => {
-	const formatter = includeYear ? formatDateWithYear : formatDate;
-	return `${ formatter( start ) } - ${ formatter( finish ) }`;
+const formatDateRange = ( start: Date, finish: Date ) => {
+	return `${ formatDateWithYear( start ) } - ${ formatDateWithYear( finish ) }`;
 };
 
 export default function useGetPayoutData() {
@@ -38,13 +30,9 @@ export default function useGetPayoutData() {
 		const currentCycleWindow = getCurrentCycleActivityWindow( now );
 
 		return {
-			nextPayoutActivityWindow: formatDateRange(
-				nextPayoutWindow.start,
-				nextPayoutWindow.finish,
-				true
-			),
-			nextPayoutDate: formatDate( nextPayoutDateRaw ),
-			currentCyclePayoutDate: formatDate( currentCyclePayoutDateRaw ),
+			nextPayoutActivityWindow: formatDateRange( nextPayoutWindow.start, nextPayoutWindow.finish ),
+			nextPayoutDate: formatDateWithYear( nextPayoutDateRaw ),
+			currentCyclePayoutDate: formatDateWithYear( currentCyclePayoutDateRaw ),
 			currentCycleActivityWindow: formatDateRange(
 				currentCycleWindow.start,
 				currentCycleWindow.finish

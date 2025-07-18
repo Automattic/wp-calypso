@@ -41,6 +41,15 @@ describe( 'useGetConsolidatedPayoutData', () => {
 						revoked_at: null,
 					},
 				},
+				{
+					product_id: 2,
+					status: 'active',
+					quantity: 1,
+					license: {
+						issued_at: '2024-01-15T00:00:00Z',
+						revoked_at: null,
+					},
+				},
 			],
 		},
 	] as never;
@@ -55,6 +64,17 @@ describe( 'useGetConsolidatedPayoutData', () => {
 			slug: 'mock-product',
 			currency: 'USD',
 			amount: '100',
+			price_interval: 'month',
+		},
+		{
+			product_id: 2,
+			family_slug: 'jetpack-security',
+			price_per_unit: 150,
+			supported_bundles: [],
+			name: 'Mock Product 2',
+			slug: 'mock-product-2',
+			currency: 'USD',
+			amount: '150',
 			price_interval: 'month',
 		},
 	];
@@ -130,5 +150,75 @@ describe( 'useGetConsolidatedPayoutData', () => {
 
 		// Should count 3 pending orders (1 from first referral, 2 from second referral)
 		expect( result.current.pendingOrders ).toBe( 3 );
+	} );
+
+	it( 'should handle scenario where one purchase was revoked in previous quarter', () => {
+		const referralsWithRevokedPurchase: Referral[] = [
+			{
+				referralStatuses: [ 'active', 'pending' ],
+				purchaseStatuses: [ 'active', 'revoked' ],
+				purchases: [
+					{
+						product_id: 1,
+						status: 'active',
+						quantity: 1,
+						license: {
+							issued_at: '2024-01-01T00:00:00Z',
+							revoked_at: null,
+						},
+					},
+					{
+						product_id: 2,
+						status: 'revoked',
+						quantity: 1,
+						license: {
+							issued_at: '2024-01-15T00:00:00Z',
+							revoked_at: '2024-02-15T00:00:00Z', // Revoked in previous quarter
+						},
+					},
+				],
+			},
+		] as never;
+
+		// Mock different activity windows for previous and current quarter
+		const previousQuarterWindow = {
+			start: new Date( '2024-01-01' ),
+			finish: new Date( '2024-03-31' ),
+		};
+		const currentQuarterWindow = {
+			start: new Date( '2024-04-01' ),
+			finish: new Date( '2024-06-30' ),
+		};
+
+		mockGetNextPayoutDateActivityWindow.mockReturnValue( previousQuarterWindow );
+		mockGetCurrentCycleActivityWindow.mockReturnValue( currentQuarterWindow );
+
+		// Mock commission calculation - previous quarter should have 2 products, current should have 1
+		mockGetEstimatedCommission.mockImplementation( ( referrals, products, activityWindow ) => {
+			if ( activityWindow === previousQuarterWindow ) {
+				return 75; // Commission for 2 products (before revocation)
+			} else if ( activityWindow === currentQuarterWindow ) {
+				return 50; // Commission for 1 product (after revocation)
+			}
+			return 0;
+		} );
+
+		const { result } = renderHook( () =>
+			useGetConsolidatedPayoutData( referralsWithRevokedPurchase, mockProducts )
+		);
+
+		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
+			referralsWithRevokedPurchase,
+			mockProducts,
+			previousQuarterWindow
+		);
+		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith(
+			referralsWithRevokedPurchase,
+			mockProducts,
+			currentQuarterWindow
+		);
+		expect( result.current.previousQuarterExpectedCommission ).toBe( 75 );
+		expect( result.current.currentQuarterExpectedCommission ).toBe( 50 );
+		expect( result.current.pendingOrders ).toBe( 1 ); // Only 1 pending order (active status)
 	} );
 } );

@@ -85,6 +85,9 @@ export default function PayoutCards( {
 		areNextAndCurrentPayoutDatesEqual,
 	} = useGetPayoutData();
 
+	const previousQuarterTitle = translate( 'Estimated earnings in previous quarter' );
+	const currentQuarterTitle = translate( 'Estimated earnings in current quarter' );
+
 	return (
 		<>
 			{ ! areNextAndCurrentPayoutDatesEqual && (
@@ -93,8 +96,8 @@ export default function PayoutCards( {
 					activityWindow={ nextPayoutActivityWindow }
 					payoutDate={ nextPayoutDate }
 					isFetching={ isFetching }
-					footerText={ translate( 'Estimated earnings in previous quarter' ) }
-					popoverTitle={ translate( 'Estimated amount' ) }
+					footerText={ previousQuarterTitle }
+					popoverTitle={ previousQuarterTitle }
 				/>
 			) }
 			<PayoutAmount
@@ -102,8 +105,8 @@ export default function PayoutCards( {
 				activityWindow={ currentCycleActivityWindow }
 				payoutDate={ currentCyclePayoutDate }
 				isFetching={ isFetching }
-				footerText={ translate( 'Estimated earnings in current quarter' ) }
-				popoverTitle={ translate( 'Estimated amount' ) }
+				footerText={ currentQuarterTitle }
+				popoverTitle={ currentQuarterTitle }
 			/>
 		</>
 	);

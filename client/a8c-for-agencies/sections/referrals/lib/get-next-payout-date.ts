@@ -25,7 +25,7 @@ export const getNextPayoutDate = ( currentDate: Date ): Date => {
 
 export const getNextPayoutDateActivityWindow = ( currentDate: Date ) => {
 	const nextPayoutDate = getNextPayoutDate( currentDate );
-	const nextPayoutMonth = nextPayoutDate.getMonth() + 1;
+	const nextPayoutMonth = nextPayoutDate.getMonth() + 1; // Convert to 1-based month
 
 	const payoutPeriod = PAYOUT_DATES.find( ( { month } ) => month === nextPayoutMonth );
 

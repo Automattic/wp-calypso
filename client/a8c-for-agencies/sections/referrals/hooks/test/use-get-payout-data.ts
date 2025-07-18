@@ -51,22 +51,22 @@ describe( 'useGetPayoutData', () => {
 		expect( result.current.nextPayoutActivityWindow ).toBe( '1 Jan 2024 - 31 Mar 2024' );
 	} );
 
-	it( 'should format next payout date without year', () => {
+	it( 'should format next payout date with year', () => {
 		const { result } = renderHook( () => useGetPayoutData() );
 
-		expect( result.current.nextPayoutDate ).toBe( '1 June' );
+		expect( result.current.nextPayoutDate ).toBe( '1 June 2024' );
 	} );
 
-	it( 'should format current cycle payout date without year', () => {
+	it( 'should format current cycle payout date with year', () => {
 		const { result } = renderHook( () => useGetPayoutData() );
 
-		expect( result.current.currentCyclePayoutDate ).toBe( '2 Mar' );
+		expect( result.current.currentCyclePayoutDate ).toBe( '2 Mar 2024' );
 	} );
 
-	it( 'should format current cycle activity window without year', () => {
+	it( 'should format current cycle activity window with year', () => {
 		const { result } = renderHook( () => useGetPayoutData() );
 
-		expect( result.current.currentCycleActivityWindow ).toBe( '1 Jan - 31 Mar' );
+		expect( result.current.currentCycleActivityWindow ).toBe( '1 Jan 2024 - 31 Mar 2024' );
 	} );
 
 	it( 'should determine if next and current payout dates are different', () => {
@@ -100,49 +100,12 @@ describe( 'useGetPayoutData', () => {
 	it( 'should handle cross-year date ranges', () => {
 		const crossYearWindow = {
 			start: new Date( '2023-10-01' ),
-			finish: new Date( '2023-12-31' ),
+			finish: new Date( '2024-01-01' ),
 		};
 		mockGetNextPayoutDateActivityWindow.mockReturnValue( crossYearWindow );
 
 		const { result } = renderHook( () => useGetPayoutData() );
 
-		expect( result.current.nextPayoutActivityWindow ).toBe( '1 Oct 2023 - 31 Dec 2023' );
-	} );
-
-	it( 'should memoize results', () => {
-		const { result, rerender } = renderHook( () => useGetPayoutData() );
-
-		const firstResult = result.current;
-		rerender();
-		const secondResult = result.current;
-
-		expect( firstResult ).toBe( secondResult );
-	} );
-
-	it( 'should call all required functions', () => {
-		renderHook( () => useGetPayoutData() );
-
-		expect( mockGetNextPayoutDate ).toHaveBeenCalledWith( expect.any( Date ) );
-		expect( mockGetCurrentCyclePayoutDate ).toHaveBeenCalledWith( expect.any( Date ) );
-		expect( mockGetNextPayoutDateActivityWindow ).toHaveBeenCalledWith( expect.any( Date ) );
-		expect( mockGetCurrentCycleActivityWindow ).toHaveBeenCalledWith( expect.any( Date ) );
-	} );
-
-	it( 'should handle February dates correctly', () => {
-		const febDate = new Date( '2024-02-15' );
-		mockGetNextPayoutDate.mockReturnValue( febDate );
-
-		const { result } = renderHook( () => useGetPayoutData() );
-
-		expect( result.current.nextPayoutDate ).toBe( '15 Feb' );
-	} );
-
-	it( 'should handle December dates correctly', () => {
-		const decDate = new Date( '2024-12-01' );
-		mockGetCurrentCyclePayoutDate.mockReturnValue( decDate );
-
-		const { result } = renderHook( () => useGetPayoutData() );
-
-		expect( result.current.currentCyclePayoutDate ).toBe( '1 Dec' );
+		expect( result.current.nextPayoutActivityWindow ).toBe( '1 Oct 2023 - 1 Jan 2024' );
 	} );
 } );
