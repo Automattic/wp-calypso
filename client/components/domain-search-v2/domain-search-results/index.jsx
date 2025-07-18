@@ -347,6 +347,7 @@ class DomainSearchResults extends Component {
 
 			domainSkipSuggestion = showSkipButton && freeSuggestion && (
 				<DomainSkipSuggestion domain={ freeSuggestion?.domain_name } onSkip={ this.props.onSkip } />
+				<DomainSkipSuggestion domain={ freeSuggestion.domain_name } onSkip={ this.props.onSkip } />
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
