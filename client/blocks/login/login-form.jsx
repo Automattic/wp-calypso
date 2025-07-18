@@ -106,6 +106,7 @@ export class LoginForm extends Component {
 		isJetpack: PropTypes.bool,
 		loginButtonText: PropTypes.string,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
+		isGravPoweredClient: PropTypes.bool,
 	};
 
 	state = {
