@@ -52,7 +52,19 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 				} }
 			>
 				<HStack alignment="flex-start" spacing={ 4 }>
-					<DomainSearchControls.Input onChange={ ( value ) => setQuery( value ) } value={ query } />
+					<DomainSearchControls.Input
+						onChange={ ( value ) => setQuery( value ) }
+						value={ query }
+						onReset={ () => {} }
+						label="Search for a domain"
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus={ false }
+						minLength={ 1 }
+						maxLength={ 253 }
+						dir="ltr"
+						aria-describedby="domain-search-description"
+						onBlur={ () => {} }
+					/>
 					<Button __next40pxDefaultSize type="submit" variant="primary">
 						Search domains
 					</Button>
@@ -95,7 +107,19 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 				} }
 			>
 				<VStack spacing={ 8 }>
-					<DomainSearchControls />
+					<DomainSearchControls.Input
+						value={ initialQuery }
+						onChange={ () => {} }
+						onReset={ () => {} }
+						label="Search for a domain"
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus={ false }
+						minLength={ 1 }
+						maxLength={ 253 }
+						dir="ltr"
+						aria-describedby="domain-search-description"
+						onBlur={ () => {} }
+					/>
 					<HStack spacing={ 4 }>TODO Recommendations</HStack>
 					<DomainSuggestionsList>TODO</DomainSuggestionsList>
 				</VStack>

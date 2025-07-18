@@ -1,0 +1,14 @@
+.domain-suggestion-match-reasons {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.domain-suggestion-match-reason__icon {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 4px;
+	margin-top: -2px;
+	flex-shrink: 0;
+	fill: var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+}

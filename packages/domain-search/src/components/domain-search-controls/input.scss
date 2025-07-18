@@ -1,0 +1,22 @@
+.domain-search-controls__input {
+	width: 100%;
+
+	.components-input-base {
+		border-radius: var( --domain-search-input-border-radius );
+	}
+
+	.components-input-control__container {
+		box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.1 );
+		background: #fff;
+
+		input.components-input-control__input {
+			min-height: var( --domain-search-input-size );
+			font-size: 1.25rem;
+			padding-left: 1rem;
+		}
+
+		.components-input-control__suffix > div {
+			padding-inline-end: 1rem;
+		}
+	}
+}

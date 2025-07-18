@@ -15,7 +15,7 @@ const FeatureMoved = ( {
 }: {
 	icon: ComponentProps< typeof Icon >[ 'icon' ];
 	title: string;
-	description: string;
+	description: React.ReactElement | string | number;
 	buttonText: string;
 	buttonLink: string;
 	image: string;
