@@ -19,7 +19,7 @@ import {
 	canViewStaticFile404Settings,
 	canViewCachingSettings,
 } from '../sites/features';
-import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
+import { hasHostingFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import { domainsQuery } from './queries/domains';
@@ -140,8 +140,7 @@ const siteOverviewRoute = createRoute( {
 					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 				hasHostingFeature( site, DotcomFeatures.BACKUPS ) &&
 					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
-				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
-					queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
+				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] );
 		}
 	},
