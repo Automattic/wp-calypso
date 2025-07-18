@@ -32,7 +32,8 @@ export const DomainSuggestionCTA = ( {
 
 		return (
 			<Button
-				variant="primary"
+				isPressed
+				aria-pressed="mixed"
 				__next40pxDefaultSize
 				icon={ arrowRight }
 				className="domain-suggestion-cta domain-suggestion-cta--continue"
