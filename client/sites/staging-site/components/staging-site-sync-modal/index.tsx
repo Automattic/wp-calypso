@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import {
 	Button,
 	ExternalLink,
@@ -8,10 +9,12 @@ import {
 	__experimentalVStack as VStack,
 	CheckboxControl,
 	SelectControl,
+	Notice as WPNotice,
 } from '@wordpress/components';
 import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
@@ -29,6 +32,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
@@ -164,6 +168,11 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
+const WarningTitle = styled.p( {
+	fontWeight: 600,
+	marginBottom: '8px',
+} );
+
 export default function SyncModal( {
 	onClose,
 	syncType,
@@ -198,6 +207,8 @@ export default function SyncModal( {
 	const browserCheckList = useSelector( ( state ) =>
 		getBackupBrowserCheckList( state, querySiteId )
 	);
+
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
 
 	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
 	const wpContentNode = useSelector( ( state ) =>
@@ -333,6 +344,19 @@ export default function SyncModal( {
 						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
+				{ isSiteWooStore && targetEnvironment === 'production' && (
+					<WPNotice status="warning" isDismissible={ false }>
+						<WarningTitle>{ __( 'Syncing WooCommerce sites can overwrite orders' ) }</WarningTitle>
+						{ translate(
+							'Syncing the staging database to production will overwrite orders, products, pages and posts. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: <InlineSupportLink supportContext="staging-to-production-sync" />,
+								},
+							}
+						) }
+					</WPNotice>
+				) }
 				<HStack spacing={ 4 } alignment="left">
 					<EnvironmentLabel
 						label={ syncConfig.fromLabel }
