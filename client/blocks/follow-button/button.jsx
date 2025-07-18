@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
@@ -50,7 +49,7 @@ class FollowButton extends Component {
 		let label = this.props.followLabel
 			? this.props.followLabel
 			: this.props.translate( 'Subscribe' );
-		const menuClasses = [ 'follow-button', 'has-icon', this.props.className ];
+		const menuClasses = [ 'button', 'follow-button', 'has-icon', this.props.className ];
 		const iconSize = this.props.iconSize;
 
 		if ( this.props.following ) {
@@ -79,20 +78,6 @@ class FollowButton extends Component {
 				{ label }
 			</span>
 		);
-
-		if ( this.props.tagName === 'button' ) {
-			return (
-				<Button
-					onClick={ this.toggleFollow }
-					className={ menuClasses.join( ' ' ) }
-					title={ label }
-					variant={ this.props.following ? 'secondary' : 'primary' }
-					icon={ this.props.following ? followingIcon : followIcon }
-				>
-					{ followLabelElement }
-				</Button>
-			);
-		}
 
 		return createElement(
 			this.props.tagName,
