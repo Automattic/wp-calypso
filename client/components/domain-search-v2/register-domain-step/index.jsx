@@ -1,8 +1,9 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { ResponsiveToolbarGroup } from '@automattic/components';
+import { ResponsiveToolbarGroup, SummaryButton } from '@automattic/components';
 import {
 	DomainSearch,
+	DomainSearchControls,
 	DomainSearchNotice,
 	DomainSuggestionLoadMore,
 	DomainSuggestionFilterReset,
@@ -17,9 +18,12 @@ import {
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
+import { globe, Icon } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -568,8 +572,24 @@ class RegisterDomainStep extends Component {
 		return notices;
 	}
 
+	renderAlreadyOwnADomainButton() {
+		const { translate } = this.props;
+
+		return (
+			<div style={ { display: 'flex', justifyContent: 'center' } }>
+				<div style={ { maxWidth: '31.5rem' } }>
+					<SummaryButton
+						decoration={ <Icon icon={ globe } /> }
+						title={ translate( 'Already have a domain?' ) }
+						description={ translate( 'Connect a domain you already own to WordPress.com.' ) }
+					/>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
-		const { onContinue, isDomainAndPlanPackageFlow } = this.props;
+		const { onContinue, isDomainAndPlanPackageFlow, translate } = this.props;
 
 		const { trademarkClaimsNoticeInfo } = this.state;
 
@@ -582,6 +602,49 @@ class RegisterDomainStep extends Component {
 		const showFreeDomainPromo =
 			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
 
+		if ( this.isInInitialState() ) {
+			return (
+				<DomainSearch
+					onContinue={ onContinue }
+					cart={ this.getCart() }
+					className="wpcom-domain-search-v2"
+				>
+					<VStack spacing={ 8 }>
+						<VStack spacing={ 2 }>
+							<HStack spacing={ 4 } className="wpcom-domain-search-v2__empty-state-search-controls">
+								{ this.renderSearchBar() }
+								<DomainSearchControls.Submit onClick={ this.onSearch } />
+							</HStack>
+							<Text variant="muted">
+								{ translate(
+									'Try searching for a word like {{studioLink}}studio{{/studioLink}} or {{coffeeLink}}coffee{{/coffeeLink}} to get started.',
+									{
+										components: {
+											studioLink: (
+												<Button
+													variant="link"
+													onClick={ () => this.onSearch( 'studio' ) }
+													className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
+												/>
+											),
+											coffeeLink: (
+												<Button
+													variant="link"
+													onClick={ () => this.onSearch( 'coffee' ) }
+													className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
+												/>
+											),
+										},
+									}
+								) }
+							</Text>
+						</VStack>
+						{ this.renderAlreadyOwnADomainButton() }
+					</VStack>
+				</DomainSearch>
+			);
+		}
+
 		return (
 			<DomainSearch
 				onContinue={ onContinue }
@@ -590,7 +653,7 @@ class RegisterDomainStep extends Component {
 			>
 				<VStack spacing={ 8 }>
 					<VStack spacing={ 4 }>
-						{ this.renderSearchBar() }
+						{ this.renderSearchControls() }
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
 					</VStack>
@@ -698,9 +761,13 @@ class RegisterDomainStep extends Component {
 				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
+		return <DomainSearchInput { ...componentProps } />;
+	}
+
+	renderSearchControls() {
 		return (
 			<HStack spacing={ 4 }>
-				<DomainSearchInput { ...componentProps }></DomainSearchInput>
+				{ this.renderSearchBar() }
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</HStack>
 		);
@@ -793,20 +860,15 @@ class RegisterDomainStep extends Component {
 	renderContent() {
 		return (
 			<>
-				{ this.maybeRenderSearchResults() }
+				{ this.renderSearchResults() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
 			</>
 		);
 	}
 
-	maybeRenderSearchResults() {
-		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
-			return this.renderSearchResults();
-		}
-
-		return null;
-	}
+	isInInitialState = () => true;
+	// ! Array.isArray( this.state.searchResults ) && ! this.state.loadingResults;
 
 	save = () => {
 		this.props.onSave( this.state );

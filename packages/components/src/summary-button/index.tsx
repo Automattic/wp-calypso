@@ -66,7 +66,11 @@ function UnforwardedSummaryButton(
 								</Text>
 							) }
 							<Text className="summary-button-title">{ title }</Text>
-							{ description && hasLowDensity && <Text variant="muted">{ description }</Text> }
+							{ description && hasLowDensity && (
+								<Text variant="muted" className="summary-button-description">
+									{ description }
+								</Text>
+							) }
 						</VStack>
 						{ hasLowDensity && <BadgesList badges={ badges } /> }
 					</VStack>
