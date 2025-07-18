@@ -1,25 +1,28 @@
 .domain-search-controls__filters {
-    position: relative;
-    .components-button {
-        height: var(--domain-search-input-size);
-        width: var(--domain-search-input-size);
-        box-shadow: 0 0 0 1px var(--domain-search-secondary-action-box-shadow-color);
-        color: var(--domain-search-secondary-action-color);
-    }
+	position: relative;
+	flex-shrink: 0;
 
-    &-count {
-        display: flex;
-        height: 1.5rem;
-        min-width: 1.5rem;
-        position: absolute;
-        top: -1.0rem;
-        right: -1.0rem;
-        background: var(--studio-blue-50);
-        border: solid 2px var(--studio-white);
-        border-radius: 50%;
-        color: var(--studio-white);
-        font-size: 0.75rem;
-        align-items: center;
-        justify-content: center;
-    }
+	.components-button {
+		background: #fff;
+		height: var( --domain-search-input-size );
+		width: var( --domain-search-input-size );
+		box-shadow: inset 0 0 0 1px var( --domain-search-secondary-action-box-shadow-color );
+		color: var( --domain-search-secondary-action-color );
+	}
+
+	&-count {
+		display: flex;
+		height: 1.5rem;
+		min-width: 1.5rem;
+		position: absolute;
+		top: -1rem;
+		right: -1rem;
+		background: var( --wp-admin-theme-color );
+		border: solid 2px #fff;
+		border-radius: 50%;
+		color: #fff;
+		font-size: 0.75rem;
+		align-items: center;
+		justify-content: center;
+	}
 }

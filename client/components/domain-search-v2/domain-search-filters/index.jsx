@@ -1,8 +1,7 @@
 import { Popover } from '@automattic/components';
-import { DomainSearchControlsFilterButton } from '@automattic/domain-search';
+import { DomainSearchControls } from '@automattic/domain-search';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { Button, CheckboxControl } from '@wordpress/components';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
@@ -103,22 +102,14 @@ export class DropdownFilters extends Component {
 	}
 
 	render() {
-		const hasFilterValues = this.getFiltercounts() > 0;
-
 		return (
-			<div
-				className={ clsx( 'search-filters__dropdown-filters', {
-					'search-filters__dropdown-filters--has-filter-values': hasFilterValues,
-					'search-filters__dropdown-filters--is-open': this.state.showPopover,
-				} ) }
+			<DomainSearchControls.FilterButton
+				count={ this.getFiltercounts() }
+				onClick={ this.togglePopover }
+				ref={ this.button }
 			>
-				<DomainSearchControlsFilterButton
-					count={ this.getFiltercounts() }
-					onClick={ this.togglePopover }
-					ref={ this.button }
-				/>
 				{ this.state.showPopover && this.renderPopover() }
-			</div>
+			</DomainSearchControls.FilterButton>
 		);
 	}
 

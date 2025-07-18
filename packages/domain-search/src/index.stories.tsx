@@ -107,19 +107,23 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 				} }
 			>
 				<VStack spacing={ 8 }>
-					<DomainSearchControls.Input
-						value={ initialQuery }
-						onChange={ () => {} }
-						onReset={ () => {} }
-						label="Search for a domain"
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus={ false }
-						minLength={ 1 }
-						maxLength={ 253 }
-						dir="ltr"
-						aria-describedby="domain-search-description"
-						onBlur={ () => {} }
-					/>
+					<HStack spacing={ 4 }>
+						<DomainSearchControls.Input
+							value={ initialQuery }
+							onChange={ () => {} }
+							onReset={ () => {} }
+							label="Search for a domain"
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus={ false }
+							minLength={ 1 }
+							maxLength={ 253 }
+							dir="ltr"
+							aria-describedby="domain-search-description"
+							onBlur={ () => {} }
+						/>
+						<DomainSearchControls.FilterButton count={ 3 } onClick={ () => {} } />
+					</HStack>
+
 					<HStack spacing={ 4 }>TODO Recommendations</HStack>
 					<DomainSuggestionsList>TODO</DomainSuggestionsList>
 				</VStack>

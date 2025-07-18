@@ -8,10 +8,11 @@ import './filter-button.scss';
 type Props = {
 	count: number;
 	onClick: () => void;
+	children?: React.ReactNode;
 };
 
 export const DomainSearchControlsFilterButton = forwardRef(
-	( { count, onClick }: Props, ref: Ref< HTMLButtonElement > ) => {
+	( { count, onClick, children }: Props, ref: Ref< HTMLButtonElement > ) => {
 		const { __, _n } = useI18n();
 
 		let ariaLabel = '';
@@ -43,6 +44,7 @@ export const DomainSearchControlsFilterButton = forwardRef(
 						{ count }
 					</div>
 				) }
+				{ children }
 			</div>
 		);
 	}
