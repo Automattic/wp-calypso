@@ -13,6 +13,7 @@ export const useDomainSuggestionContainer = () => {
 interface DomainSuggestionContainerContextValue {
 	activeQuery: 'small' | 'large';
 	alignment?: 'left' | 'right';
+	priceSize?: number;
 }
 
 export const DomainSuggestionContainerContext = createContext<

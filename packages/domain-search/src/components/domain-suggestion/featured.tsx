@@ -40,7 +40,12 @@ export const Featured = ( {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	const contextValue = useMemo(
-		() => ( { activeQuery, alignment: ! matchReasons ? 'left' : undefined } ) as const,
+		() =>
+			( {
+				activeQuery,
+				alignment: ! matchReasons ? 'left' : undefined,
+				priceSize: activeQuery === 'large' ? 20 : 18,
+			} ) as const,
 		[ activeQuery, matchReasons ]
 	);
 
