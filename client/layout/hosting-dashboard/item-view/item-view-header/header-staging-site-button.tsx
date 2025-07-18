@@ -4,7 +4,6 @@ import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
@@ -100,14 +99,18 @@ export default function HeaderStagingSiteButton( {
 		return null;
 	}
 
+	const hasCompletedLoading = ! isLoadingQuotaValidation;
+
 	let disabledReason: string | undefined;
-	if ( isA4ADevSite ) {
-		disabledReason = translate( 'Staging sites are not available for development sites.' );
-	} else if ( isErrorValidQuota && ! isLoadingQuotaValidation ) {
+	if ( ! hasCompletedLoading ) {
+		disabledReason = __( 'Loading…' );
+	} else if ( isA4ADevSite ) {
+		disabledReason = __( 'Staging sites are not available for development sites.' );
+	} else if ( isErrorValidQuota ) {
 		disabledReason = __(
 			'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
 		);
-	} else if ( ! hasValidQuota && ! isLoadingQuotaValidation ) {
+	} else if ( ! hasValidQuota ) {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
 		);
@@ -125,7 +128,7 @@ export default function HeaderStagingSiteButton( {
 			disabled={ !! disabledReason }
 			label={ disabledReason }
 		>
-			{ translate( 'Add staging site' ) }
+			{ __( 'Add staging site' ) }
 		</Button>
 	);
 }
