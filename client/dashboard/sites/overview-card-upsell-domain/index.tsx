@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { domainSuggestionsQuery } from '../../app/queries/domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { Callout } from '../../components/callout';
@@ -43,8 +44,17 @@ const OverviewCardUpsellDomainContent = ( {
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
+	const { recordTracksEvent } = useAnalytics();
 
 	const backUrl = window.location.href.replace( window.location.origin, '' );
+
+	const handleChooseYourOwn = () => {
+		recordTracksEvent( 'calypso_dashboard_upsell_click', {
+			feature: tracksId,
+			type: 'link',
+		} );
+	};
+
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
@@ -93,6 +103,7 @@ const OverviewCardUpsellDomainContent = ( {
 									domain: true,
 									back_to: backUrl,
 								} ) }
+								onClick={ handleChooseYourOwn }
 							/>
 						),
 					} ) }
