@@ -1,5 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
+	RouterProvider,
+	createMemoryHistory,
+	createRouter,
+	createRootRoute,
+} from '@tanstack/react-router';
+import {
 	people,
 	seen,
 	wordpress,
@@ -9,6 +15,7 @@ import {
 	comment,
 	envelope,
 } from '@wordpress/icons';
+import './style.stories.scss';
 import OverviewCard from './';
 
 const meta = {
@@ -18,6 +25,17 @@ const meta = {
 		layout: 'centered',
 	},
 	tags: [ 'autodocs' ],
+	decorators: [
+		( Story ) => (
+			<RouterProvider
+				router={ createRouter( {
+					basepath: '/',
+					routeTree: createRootRoute( { component: Story } ),
+					history: createMemoryHistory(),
+				} ) }
+			/>
+		),
+	],
 	argTypes: {
 		icon: {
 			control: 'select',
@@ -63,6 +81,7 @@ export const WithProgress: Story = {
 		heading: 'Migrating site',
 		description: 'We’ll email you when it’s done',
 		icon: download,
+		link: '/',
 		progress: {
 			value: 76,
 			max: 100,
@@ -78,5 +97,24 @@ export const WithLink: Story = {
 		description: 'Past 7 days',
 		icon: comment,
 		externalLink: 'https://wordpress.com',
+	},
+};
+
+export const WithExtraBottomContent: Story = {
+	args: {
+		title: 'Plan',
+		heading: 'Personal',
+		description: 'Upgrade to unlock more features',
+		icon: wordpress,
+		link: '/',
+		bottom: (
+			<>
+				<div>Extra content</div>
+				<div style={ { maxWidth: 500 } }>
+					This is some extra content that appears at the bottom of the card. It should not be
+					included as part of the clickable area of the card.
+				</div>
+			</>
+		),
 	},
 };

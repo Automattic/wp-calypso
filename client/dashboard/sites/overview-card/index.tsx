@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
+	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -70,7 +71,9 @@ export default function OverviewCard( {
 						{ title }
 					</Text>
 				</HStack>
-				{ link && <Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } /> }
+				{ link && ! progress && (
+					<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
+				) }
 				{ externalLink && (
 					<span
 						className="dashboard-overview-card__link-icon components-external-link__icon"
@@ -110,7 +113,6 @@ export default function OverviewCard( {
 				) }
 			</HStack>
 			{ variant === 'loading' && <OverviewCardProgressBar /> }
-			{ bottom }
 		</VStack>
 	);
 
@@ -138,7 +140,7 @@ export default function OverviewCard( {
 							properties={ { feature: tracksId, variant } }
 						/>
 					) ) }
-				<HStack justify="space-between">
+				<HStack justify="space-between" className="dashboard-overview-card__content">
 					{ content }
 					{ progress && (
 						<CircularProgressBar
@@ -156,6 +158,14 @@ export default function OverviewCard( {
 						/>
 					) }
 				</HStack>
+				{ bottom && (
+					<>
+						<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
+						<VStack spacing={ 2 } className="dashboard-overview-card__content">
+							{ bottom }
+						</VStack>
+					</>
+				) }
 			</CardBody>
 		</Card>
 	);
