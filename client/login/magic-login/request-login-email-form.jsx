@@ -237,7 +237,7 @@ class RequestLoginEmailForm extends Component {
 					onResendEmail={ this.onSubmit }
 				/>
 			) : (
-				<EmailedLoginLinkSuccessfully key={ emailAddress } emailAddress={ emailAddress } />
+				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
 			);
 		}
 
