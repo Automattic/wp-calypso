@@ -78,6 +78,7 @@ function getSiteDashboardRoutes( state: AppState ) {
 		'/site-logs/',
 		'/hosting-features/',
 		'/staging-site/',
+		'/sites/overview',
 		'/sites/settings',
 		...( isPlansPageUntangled( state ) ? [ '/plans' ] : [] ),
 

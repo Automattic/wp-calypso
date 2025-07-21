@@ -20,7 +20,9 @@ export const SETTINGS_PERFORMANCE = 'settings-performance';
 export const PLAN = 'plan';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
-	[ OVERVIEW ]: 'overview/:site',
+	[ OVERVIEW ]: isEnabled( 'dashboard/v2/backport/site-overview' )
+		? 'sites/overview/v2/:site'
+		: 'overview/:site',
 	[ MONITORING ]: 'site-monitoring/:site',
 	[ LOGS_PHP ]: 'site-logs/:site/php',
 	[ LOGS_WEB ]: 'site-logs/:site/web',

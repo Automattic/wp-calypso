@@ -146,7 +146,7 @@ const siteOverviewRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );

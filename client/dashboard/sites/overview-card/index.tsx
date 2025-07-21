@@ -80,7 +80,7 @@ export default function OverviewCard( {
 
 	const topContent = (
 		<HStack justify="space-between" className="dashboard-overview-card__content">
-			<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
+			<VStack spacing={ 4 } style={ { flexGrow: 1 } }>
 				<HStack justify="space-between">
 					<HStack spacing={ 2 } alignment="center" expanded={ false }>
 						{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }

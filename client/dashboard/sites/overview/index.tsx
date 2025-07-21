@@ -11,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { chartBar, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -66,13 +65,14 @@ function getGridLayout( {
 }
 
 function SiteOverview( {
+	siteSlug,
 	hideSitePreview = false,
 	breakpoints,
 }: {
-	hideSitePreview: boolean;
+	siteSlug: string;
+	hideSitePreview?: boolean;
 	breakpoints?: { large: Breakpoint; small: Breakpoint };
 } ) {
-	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
@@ -113,11 +113,11 @@ function SiteOverview( {
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<VStack className="site-overview-cards" spacing={ spacing }>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 						<VisibilityCard site={ site } />
 						<BackupCard site={ site } />
-					</VStack>
-					<VStack className="site-overview-cards" spacing={ spacing }>
+					</Grid>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 						{ site.is_a4a_dev_site ? (
 							<AgencySiteShareCard site={ site } />
 						) : (
@@ -130,7 +130,7 @@ function SiteOverview( {
 							/>
 						) }
 						<ScanCard site={ site } />
-					</VStack>
+					</Grid>
 					<PlanCard site={ site } />
 				</Grid>
 				<Divider
