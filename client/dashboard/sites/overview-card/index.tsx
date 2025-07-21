@@ -142,7 +142,7 @@ export default function OverviewCard( {
 
 	if ( link ) {
 		return (
-			<Link to={ link } className="dashboard-overview-card__link">
+			<Link to={ link } className="dashboard-overview-card__link" onClick={ onClick }>
 				{ wrappedContent }
 			</Link>
 		);
