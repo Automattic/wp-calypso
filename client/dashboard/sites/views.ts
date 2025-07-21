@@ -91,8 +91,8 @@ export function getView( {
 	user,
 	isAutomattician,
 	isRestoringAccount,
-	viewPreferences,
-	viewSearchParams,
+	viewPreferences: rawViewPreferences,
+	viewSearchParams: rawViewSearchParams,
 }: {
 	user: User;
 	isAutomattician: boolean;
@@ -103,6 +103,8 @@ export function getView( {
 	defaultView: SitesView;
 	view: SitesView;
 } {
+	const viewPreferences = rawViewPreferences && upgradeViewPreferences( rawViewPreferences );
+	const viewSearchParams = upgradeSearchParams( rawViewSearchParams );
 	const defaultView = getDefaultView( {
 		user,
 		isAutomattician,
@@ -265,6 +267,38 @@ export function recordViewChanges(
 			field: removed,
 		} );
 	}
+}
+
+/**
+ * An opportunity to process the user preference data which has been saved in the past
+ * and could now be out of date.
+ * @param oldPreferences Old preferences which have been fetched from the database.
+ * @returns The upgraded view preferences without any unsupported fields.
+ */
+export function upgradeViewPreferences(
+	oldPreferences: SitesViewPreferences
+): SitesViewPreferences {
+	if ( oldPreferences?.sort?.field === 'php_version' ) {
+		const { sort, ...rest } = oldPreferences;
+		return { ...rest };
+	}
+
+	return oldPreferences;
+}
+
+/**
+ * An opportunity to process the search param data which has been kept in the URL but
+ * could now be out of date after a page refresh.
+ * @param oldParams Old search params.
+ * @returns The upgraded search params without any unsupported fields.
+ */
+export function upgradeSearchParams( oldParams: ViewSearchParams ): ViewSearchParams {
+	if ( oldParams?.sort?.field === 'php_version' ) {
+		const { sort, ...rest } = oldParams;
+		return { ...rest };
+	}
+
+	return oldParams;
 }
 
 // Ponyfill for Set.prototype.difference, which is not available in all target environments.

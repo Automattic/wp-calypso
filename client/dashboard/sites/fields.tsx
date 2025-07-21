@@ -129,6 +129,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'php_version',
 		label: __( 'PHP version' ),
 		render: ( { item }: { item: Site } ) => <PHPVersion site={ item } />,
+		enableSorting: false,
 	},
 	{
 		id: 'storage',
