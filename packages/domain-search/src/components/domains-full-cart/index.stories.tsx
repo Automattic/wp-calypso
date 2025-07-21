@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories';
 import { DomainSearch, useDomainSearch } from '../domain-search';
 import { DomainsFullCart } from '.';
 import type { Meta } from '@storybook/react';
@@ -23,31 +24,37 @@ export const Default = () => {
 			onContinue={ () => {
 				alert( 'Continue' );
 			} }
-			cart={ {
+			cart={ buildDomainSearchCart( {
 				items: [
-					{ uuid: '1', domain: 'the-lasso', tld: 'net', price: '$74' },
-					{ uuid: '2', domain: 'the-lasso', tld: 'com', originalPrice: '$18', price: '$8' },
-					{
+					buildDomain( { uuid: '1', domain: 'the-lasso', tld: 'net', price: '$74' } ),
+					buildDomain( {
+						uuid: '2',
+						domain: 'the-lasso',
+						tld: 'com',
+						originalPrice: '$18',
+						price: '$8',
+					} ),
+					buildDomain( {
 						uuid: '3',
 						domain: 'the-different-domain',
 						tld: 'com',
 						originalPrice: '$18',
 						price: '$8',
-					},
-					{
+					} ),
+					buildDomain( {
 						uuid: '4',
 						domain: 'the-different-domain1',
 						tld: 'com',
 						originalPrice: '$18',
 						price: '$8',
-					},
-					{
+					} ),
+					buildDomain( {
 						uuid: '5',
 						domain: 'the-different-domain2',
 						tld: 'com',
 						originalPrice: '$18',
 						price: '$8',
-					},
+					} ),
 				],
 				total: '$74',
 				onAddItem: () => {},
@@ -55,7 +62,7 @@ export const Default = () => {
 				onRemoveItem: ( domain ) => {
 					alert( `Remove ${ domain }` );
 				},
-			} }
+			} ) }
 		>
 			<DomainsFullCart />
 			<FullCartManager />

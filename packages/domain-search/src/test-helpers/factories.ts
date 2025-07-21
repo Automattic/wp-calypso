@@ -12,6 +12,7 @@ export const buildDomainSearchCart = (
 	onAddItem: () => {},
 	onRemoveItem: () => {},
 	hasItem: () => false,
+	isBusy: false,
 	...overrides,
 } );
 
@@ -25,8 +26,6 @@ export const buildDomainSearchContext = (
 	setQuery: () => {},
 	cart: buildDomainSearchCart(),
 	openFullCart: () => {},
-	isBusy: false,
-	setIsBusy: () => {},
 	...overrides,
 } );
 

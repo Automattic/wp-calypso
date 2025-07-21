@@ -22,7 +22,7 @@ export const DomainSuggestionCTA = ( {
 	disabled,
 }: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
-	const { cart, isBusy, setIsBusy, onContinue } = useDomainSearch();
+	const { cart, onContinue } = useDomainSearch();
 
 	const isDomainOnCart = cart.hasItem( uuid );
 
@@ -47,15 +47,9 @@ export const DomainSuggestionCTA = ( {
 		);
 	}
 
-	const handleAddToCartClick = async () => {
-		setIsBusy( true );
-
-		try {
-			await cart.onAddItem( uuid );
-			onClick?.( 'add-to-cart' );
-		} finally {
-			setIsBusy( false );
-		}
+	const handleAddToCartClick = () => {
+		onClick?.( 'add-to-cart' );
+		cart.onAddItem( uuid );
 	};
 
 	return (
@@ -66,8 +60,8 @@ export const DomainSuggestionCTA = ( {
 			icon={ shoppingCartIcon }
 			onClick={ handleAddToCartClick }
 			label={ __( 'Add to Cart' ) }
-			disabled={ disabled || isBusy }
-			isBusy={ isBusy }
+			disabled={ disabled || cart.isBusy }
+			isBusy={ cart.isBusy }
 		>
 			{ compact ? undefined : __( 'Add to Cart' ) }
 		</Button>

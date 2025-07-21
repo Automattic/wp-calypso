@@ -12,6 +12,7 @@ export interface DomainSearchCart {
 	onAddItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void > | void;
 	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void > | void;
 	hasItem: ( uuid: SelectedDomain[ 'uuid' ] ) => boolean;
+	isBusy: boolean;
 }
 
 export interface DomainSearchContextType {
@@ -22,6 +23,4 @@ export interface DomainSearchContextType {
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
-	isBusy: boolean;
-	setIsBusy: ( isBusy: boolean ) => void;
 }

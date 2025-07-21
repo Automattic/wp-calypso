@@ -5,29 +5,18 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Notice,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import { useDomainSearch } from '../domain-search';
 import type { SelectedDomain } from '../domain-search/types';
 
 export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) => {
 	const { __ } = useI18n();
-	const { cart, isBusy, setIsBusy } = useDomainSearch();
-	const [ error, setError ] = useState< string | null >( null );
+	const { cart } = useDomainSearch();
 
 	const removeItem = async () => {
-		setIsBusy( true );
-
-		try {
-			await cart.onRemoveItem( domain.uuid );
-		} catch {
-			setError( __( 'There was a problem removing your domain. Please try again.' ) );
-		} finally {
-			setIsBusy( false );
-		}
+		cart.onRemoveItem( domain.uuid );
 	};
 
 	return (
@@ -43,7 +32,7 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 								</Text>
 							</Text>
 							<Button
-								disabled={ isBusy }
+								disabled={ cart.isBusy }
 								variant="link"
 								className="domains-full-cart-items__remove"
 								onClick={ removeItem }
@@ -68,11 +57,6 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 							</HStack>
 						</VStack>
 					</HStack>
-					{ error && (
-						<Notice onRemove={ () => setError( null ) } status="error">
-							{ error }
-						</Notice>
-					) }
 				</VStack>
 			</CardBody>
 		</Card>
