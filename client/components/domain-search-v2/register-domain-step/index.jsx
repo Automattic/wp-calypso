@@ -5,6 +5,7 @@ import {
 	DomainSearch,
 	DomainSearchNotice,
 	DomainSuggestionLoadMore,
+	DomainSuggestionFilterReset,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -63,7 +64,6 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
-import { FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -743,13 +743,24 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderFilterResetNotice() {
+		const { exactSldMatchesOnly = false, tlds = [] } = this.state.lastFilters;
+		const hasActiveFilters = exactSldMatchesOnly || tlds.length > 0;
+
+		const suggestions = this.state.searchResults;
+		const hasTooFewSuggestions = Array.isArray( suggestions ) && suggestions.length < 10;
+
+		if ( ! ( hasActiveFilters && hasTooFewSuggestions ) ) {
+			return null;
+		}
+
+		const onClickHandle = () => {
+			this.onFiltersReset( 'tlds', 'exactSldMatchesOnly' );
+		};
+
 		return (
-			<FilterResetNotice
-				className="register-domain-step__filter-reset-notice"
-				isLoading={ this.state.loadingResults }
-				lastFilters={ this.state.lastFilters }
-				onReset={ this.onFiltersReset }
-				suggestions={ this.state.searchResults }
+			<DomainSuggestionFilterReset
+				disabled={ this.state.loadingResults }
+				onClick={ onClickHandle }
 			/>
 		);
 	}

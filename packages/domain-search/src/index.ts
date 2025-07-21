@@ -8,6 +8,7 @@ export { DomainSuggestion } from './components/domain-suggestion';
 export { DomainSuggestionBadge } from './components/domain-suggestion-badge';
 export { DomainSuggestionPrice } from './components/domain-suggestion-price';
 export { DomainSuggestionLoadMore } from './components/domain-suggestion-load-more';
+export { DomainSuggestionFilterReset } from './components/domain-suggestion-filter-reset';
 export * as DomainSearchControls from './components/domain-search-controls';
 
 export { useContainerQuery } from './hooks/use-container-query';
