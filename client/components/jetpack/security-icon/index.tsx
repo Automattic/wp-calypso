@@ -7,7 +7,7 @@ import infoIcon from './images/security-info.svg';
 import okayIcon from './images/security-okay.svg';
 
 interface Props {
-	icon: string;
+	icon?: string;
 	className?: string;
 }
 
