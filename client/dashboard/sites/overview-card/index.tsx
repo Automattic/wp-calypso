@@ -28,7 +28,7 @@ export interface OverviewCardProps {
 	sideContent?: ReactNode;
 	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
-	children?: ReactNode;
+	bottom?: ReactNode;
 	onClick?: () => void;
 }
 
@@ -44,7 +44,7 @@ export default function OverviewCard( {
 	title,
 	tracksId,
 	variant,
-	children,
+	bottom,
 	onClick,
 }: OverviewCardProps ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -107,7 +107,7 @@ export default function OverviewCard( {
 				) }
 			</HStack>
 			{ variant === 'loading' && <OverviewCardProgressBar /> }
-			{ children }
+			{ bottom }
 		</VStack>
 	);
 

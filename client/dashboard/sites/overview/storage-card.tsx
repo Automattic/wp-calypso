@@ -44,25 +44,30 @@ export default function StorageCard( { site }: { site: Site } ) {
 					</Heading>
 				)
 			}
-		>
-			<OverviewCardProgressBar
-				value={
-					// Ensure that the displayed usage is never fully empty to
-					// avoid a confusing UI and that in never exceeds 100%.
-					mediaStorage
-						? Math.min(
-								Math.max(
-									MINIMUM_DISPLAYED_USAGE,
-									Math.round(
-										( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
-									)
-								),
-								100
-						  )
-						: undefined
-				}
-			/>
-			<ExternalLink href={ `/add-ons/${ site.slug }` }>{ __( 'Buy more' ) }</ExternalLink>
-		</OverviewCard>
+			bottom={
+				<>
+					<OverviewCardProgressBar
+						value={
+							// Ensure that the displayed usage is never fully empty to
+							// avoid a confusing UI and that in never exceeds 100%.
+							mediaStorage
+								? Math.min(
+										Math.max(
+											MINIMUM_DISPLAYED_USAGE,
+											Math.round(
+												( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) *
+													1000 ) /
+													10
+											)
+										),
+										100
+								  )
+								: undefined
+						}
+					/>
+					<ExternalLink href={ `/add-ons/${ site.slug }` }>{ __( 'Buy more' ) }</ExternalLink>
+				</>
+			}
+		/>
 	);
 }

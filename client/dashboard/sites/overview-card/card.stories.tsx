@@ -44,7 +44,7 @@ export const WithProgressBar: Story = {
 		heading: '236 MB',
 		metaText: 'of 53 GB used',
 		icon: backup,
-		children: <OverviewCardProgressBar value={ 25 } />,
+		bottom: <OverviewCardProgressBar value={ 25 } />,
 	},
 };
 
