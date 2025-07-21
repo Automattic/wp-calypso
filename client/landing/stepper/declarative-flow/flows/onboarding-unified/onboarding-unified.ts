@@ -1,8 +1,10 @@
 import { Onboard, OnboardActions, UserSelect, Visibility } from '@automattic/data-stores';
 import { ONBOARDING_UNIFIED_FLOW } from '@automattic/onboarding';
 import { dispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { useEffect } from '@wordpress/element';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
@@ -10,6 +12,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
@@ -41,6 +44,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const query = useQuery();
 
 		const { setSignupDomainOrigin } = dispatch( ONBOARD_STORE ) as OnboardActions;
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -49,9 +53,12 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		 * Get post-checkout destination for onboarding-unified flow
 		 */
 		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ): string => {
-			// For onboarding-unified, we want to go to the site home page after setup
+			// For onboarding-unified, redirect to site-setup/goals like the old flows
 			if ( providedDependencies.siteSlug ) {
-				return addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } );
+				return addQueryArgs( '/setup/site-setup/goals', {
+					siteSlug: providedDependencies.siteSlug,
+					ref: flowName,
+				} );
 			}
 			// Fallback to generic home if no siteSlug
 			return '/';
@@ -102,21 +109,33 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 
 						if ( planItem ) {
 							// Use dedicated onboarding-unified siteless checkout with plan in URL (similar to Jetpack/Akismet)
-							// Don't add signup=1 for logged-in users to avoid account creation conflicts
-							const urlParams = new URLSearchParams();
-							urlParams.set( 'flow', flowName );
+							// Preserve current query parameters for checkout
+							const currentQueryArgs = getQueryArgs( window.location.href );
+							const cancelUrl = addQueryArgs( `/setup/${ flowName }/plans`, currentQueryArgs );
 
-							// Only add signup=1 for logged-out users
+							const checkoutParams: Record< string, string | number > = {
+								flow: flowName,
+								cancel_to: cancelUrl,
+							};
+
+							// Only add signup=1 for logged-out users to avoid account creation conflicts
 							if ( ! userIsLoggedIn ) {
-								urlParams.set( 'signup', '1' );
+								checkoutParams.signup = 1;
 							}
 
-							// Set cancel destination to return to plans step when user cancels checkout
-							urlParams.set( 'cancel_to', `/setup/${ flowName }/plans` );
+							// Preserve parameters consistent with old flows
+							const paramsToPreserve = [ 'coupon', 'ref', 'source' ];
+							paramsToPreserve.forEach( ( param ) => {
+								const value = query.get( param );
+								if ( value ) {
+									checkoutParams[ param ] = value;
+								}
+							} );
 
-							const checkoutUrl = `/checkout/unified/${
-								planItem.product_slug
-							}?${ urlParams.toString() }`;
+							const checkoutUrl = addQueryArgs(
+								`/checkout/unified/${ planItem.product_slug }`,
+								checkoutParams
+							);
 							return window.location.assign( checkoutUrl );
 						}
 					}
@@ -152,6 +171,16 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		};
 
 		return { submit };
+	},
+
+	useSideEffect() {
+		// Load Hotjar if source is 'affiliate'
+		useEffect( () => {
+			const queryArgs = getQueryArgs( window.location.href );
+			if ( queryArgs.source === 'affiliate' ) {
+				addHotJarScript();
+			}
+		}, [] );
 	},
 };
 

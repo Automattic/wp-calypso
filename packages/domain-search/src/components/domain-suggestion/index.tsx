@@ -7,9 +7,11 @@ import {
 } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
 import { ComponentProps } from 'react';
+import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
 import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
-import { DomainSuggestionsList, useDomainSuggestionsListContext } from '../domain-suggestions-list';
+import { DomainSuggestionsList } from '../domain-suggestions-list';
+import { Featured } from './featured';
 import { Unavailable } from './unavailable';
 
 import './style.scss';
@@ -33,7 +35,7 @@ const DomainSuggestionComponent = ( {
 	onClick,
 	disabled,
 }: DomainSuggestionProps ) => {
-	const listContext = useDomainSuggestionsListContext();
+	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
 		throw new Error( 'DomainSuggestion must be used within a DomainSuggestionsList' );
@@ -81,7 +83,7 @@ const DomainSuggestionComponent = ( {
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
 			return (
-				<HStack spacing={ 3 }>
+				<HStack spacing={ 6 }>
 					<HStack alignment="left" spacing={ 3 }>
 						<Icon icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
 						{ domainName }
@@ -96,7 +98,7 @@ const DomainSuggestionComponent = ( {
 		}
 
 		return (
-			<HStack spacing={ 4 }>
+			<HStack spacing={ 6 }>
 				<VStack spacing={ 2 }>
 					{ domainName }
 					{ price }
@@ -114,7 +116,7 @@ const DomainSuggestionComponent = ( {
 };
 
 export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
-	const listContext = useDomainSuggestionsListContext();
+	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
 		return (
@@ -128,3 +130,4 @@ export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
 };
 
 DomainSuggestion.Unavailable = Unavailable;
+DomainSuggestion.Featured = Featured;

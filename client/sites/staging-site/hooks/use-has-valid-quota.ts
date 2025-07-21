@@ -5,7 +5,7 @@ export const USE_VALID_QUOTA_QUERY_KEY = 'valid-quota';
 
 type HasValidQuotaOptions = Pick< UseQueryOptions, 'enabled' >;
 
-export const useHasValidQuotaQuery = ( siteId: number, options: HasValidQuotaOptions ) => {
+export const useHasValidQuotaQuery = ( siteId: number, options?: HasValidQuotaOptions ) => {
 	return useQuery< boolean, unknown, boolean >( {
 		queryKey: [ USE_VALID_QUOTA_QUERY_KEY, siteId ],
 		queryFn: () =>

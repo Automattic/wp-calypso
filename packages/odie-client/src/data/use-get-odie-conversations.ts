@@ -19,6 +19,7 @@ export const useGetOdieConversations = ( enabled = true ) => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
 				items_per_page: '30',
+				truncation_method: 'first_message',
 			} ).toString();
 
 			const response: any[] = canAccessWpcomApis()
@@ -32,20 +33,23 @@ export const useGetOdieConversations = ( enabled = true ) => {
 						method: 'GET',
 				  } );
 
-			return response.map( ( conversation: any ) => ( {
-				id: String( conversation.chat_id ?? '' ),
-				createdAt: getTimestamp( conversation.created_at ),
-				messages: conversation.last_message
-					? [
-							{
-								displayName: __( 'Support Assistant', __i18n_text_domain__ ),
-								received: getTimestamp( conversation.last_message.created_at ),
-								role: conversation.last_message.role ?? 'bot',
-								text: conversation.last_message.content ?? '',
-							},
-					  ]
-					: [],
-			} ) ) as OdieConversation[];
+			return response.map( ( conversation: any ) => {
+				const summary = conversation.first_message ?? conversation.last_message;
+				return {
+					id: String( conversation.chat_id ?? '' ),
+					createdAt: getTimestamp( conversation.created_at ),
+					messages: summary
+						? [
+								{
+									displayName: __( 'Me', __i18n_text_domain__ ),
+									received: getTimestamp( summary.created_at ),
+									role: summary.role ?? 'bot',
+									text: summary.content ?? '',
+								},
+						  ]
+						: [],
+				};
+			} ) as OdieConversation[];
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,

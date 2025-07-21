@@ -1,0 +1,34 @@
+.search-filters__buttons {
+	display: flex;
+	flex-flow: row;
+	overflow: hidden;
+	justify-content: space-between;
+
+	button {
+		flex: 1 0 auto;
+		margin-left: 1em;
+		&:first-child {
+			margin-left: 0;
+		}
+
+		&.search-filters__button--is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var( --color-neutral-0 );
+			color: transparent;
+			height: 40px;
+		}
+	}
+
+	// Increase specificity to override button styles in signup
+	body.is-section-signup .layout & {
+		button.search-filters__popover-button {
+			font-size: $font-body-small;
+			padding-top: 0.5em;
+			padding-bottom: 0.5em;
+		}
+	}
+}
+
+.search-filters__checkbox {
+	margin-bottom: 1.5rem;
+}

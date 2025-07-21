@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -9,6 +10,7 @@ import {
 	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { chevronRight } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import type { ReactElement, ReactNode } from 'react';
@@ -18,11 +20,13 @@ export interface OverviewCardProps {
 	title: string;
 	customHeading?: ReactNode;
 	description?: string;
+	link?: string;
 	externalLink?: string;
 	heading?: ReactNode;
 	icon?: ReactElement;
 	metaText?: string;
-	trackId?: string;
+	sideContent?: ReactNode;
+	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	children?: ReactNode;
 	onClick?: () => void;
@@ -34,9 +38,11 @@ export default function OverviewCard( {
 	externalLink,
 	heading,
 	icon,
+	link,
 	metaText,
+	sideContent,
 	title,
-	trackId,
+	tracksId,
 	variant,
 	children,
 	onClick,
@@ -45,6 +51,67 @@ export default function OverviewCard( {
 	const isDisabled = variant === 'disabled';
 
 	const content = (
+		<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
+			<HStack justify="space-between">
+				<HStack spacing={ 2 } alignment="center" expanded={ false }>
+					{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
+					<Text
+						className="dashboard-overview-card__title"
+						variant="muted"
+						lineHeight="16px"
+						size={ 11 }
+						weight={ 500 }
+						upperCase
+					>
+						{ title }
+					</Text>
+				</HStack>
+				{ link && <Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } /> }
+				{ externalLink && (
+					<span
+						className="dashboard-overview-card__link-icon components-external-link__icon"
+						aria-label={
+							/* translators: accessibility text */
+							__( '(opens in a new tab)' )
+						}
+					>
+						&#8599;
+					</span>
+				) }
+			</HStack>
+			<HStack justify="flex-start" alignment="baseline">
+				{ customHeading ? (
+					customHeading
+				) : (
+					<VStack spacing={ 2 }>
+						<Heading
+							level={ 2 }
+							size={ 20 }
+							variant={ isDisabled ? 'muted' : undefined }
+							weight={ 500 }
+						>
+							{ heading }
+						</Heading>
+						{ metaText && <Text variant="muted">{ metaText }</Text> }
+						{ description && (
+							<Text
+								className="dashboard-overview-card__description"
+								variant="muted"
+								lineHeight="16px"
+								size={ 12 }
+							>
+								{ description }
+							</Text>
+						) }
+					</VStack>
+				) }
+			</HStack>
+			{ variant === 'loading' && <OverviewCardProgressBar /> }
+			{ children }
+		</VStack>
+	);
+
+	const wrappedContent = (
 		<Card
 			className={
 				variant
@@ -56,72 +123,33 @@ export default function OverviewCard( {
 			} }
 		>
 			<CardBody>
-				{ trackId && (
-					<ComponentViewTracker
-						eventName="calypso_dashboard_overview_card_impression"
-						properties={ { type: trackId, variant } }
-					/>
-				) }
-				<VStack spacing={ 4 }>
-					<HStack justify="space-between">
-						<HStack spacing={ 2 } alignment="center" expanded={ false }>
-							{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-							<Text
-								className="dashboard-overview-card__title"
-								variant="muted"
-								lineHeight="16px"
-								size={ 11 }
-								weight={ 500 }
-								upperCase
-							>
-								{ title }
-							</Text>
-						</HStack>
-						{ externalLink && (
-							<span
-								className="components-external-link__icon"
-								aria-label={
-									/* translators: accessibility text */
-									__( '(opens in a new tab)' )
-								}
-							>
-								&#8599;
-							</span>
-						) }
-					</HStack>
-					<HStack justify="flex-start" alignment="baseline">
-						{ customHeading ? (
-							customHeading
-						) : (
-							<VStack spacing={ 2 }>
-								<Heading
-									level={ 2 }
-									size={ 20 }
-									variant={ isDisabled ? 'muted' : undefined }
-									weight={ 500 }
-								>
-									{ heading }
-								</Heading>
-								{ metaText && <Text variant="muted">{ metaText }</Text> }
-								{ description && (
-									<Text
-										className="dashboard-overview-card__description"
-										variant="muted"
-										lineHeight="16px"
-										size={ 12 }
-									>
-										{ description }
-									</Text>
-								) }
-							</VStack>
-						) }
-					</HStack>
-					{ variant === 'loading' && <OverviewCardProgressBar /> }
-					{ children }
-				</VStack>
+				{ tracksId &&
+					( variant === 'upsell' ? (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_upsell_impression"
+							properties={ { feature: tracksId, type: 'card' } }
+						/>
+					) : (
+						<ComponentViewTracker
+							eventName="calypso_dashboard_overview_card_impression"
+							properties={ { feature: tracksId, variant } }
+						/>
+					) ) }
+				<HStack justify="space-between">
+					{ content }
+					{ sideContent }
+				</HStack>
 			</CardBody>
 		</Card>
 	);
+
+	if ( link ) {
+		return (
+			<Link to={ link } className="dashboard-overview-card__link">
+				{ wrappedContent }
+			</Link>
+		);
+	}
 
 	if ( externalLink ) {
 		return (
@@ -133,20 +161,27 @@ export default function OverviewCard( {
 				onClick={ () => {
 					onClick?.();
 
-					if ( trackId ) {
-						recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-							type: trackId,
-							variant,
-						} );
+					if ( tracksId ) {
+						if ( variant === 'upsell' ) {
+							recordTracksEvent( 'calypso_dashboard_upsell_click', {
+								feature: tracksId,
+								type: 'card',
+							} );
+						} else {
+							recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+								type: tracksId,
+								variant,
+							} );
+						}
 					}
 				} }
 			>
-				{ content }
+				{ wrappedContent }
 			</a>
 		);
 	}
 
-	return content;
+	return wrappedContent;
 }
 
 export function OverviewCardProgressBar( { value }: { value?: number } ) {

@@ -1,8 +1,9 @@
-import { __experimentalText as Text, Button } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { Callout } from '../../components/callout';
+import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
 import type { Site } from '../../data/types';
@@ -16,6 +17,7 @@ export interface UpsellCalloutProps {
 
 export default function UpsellCallout( {
 	site,
+	tracksFeatureId,
 	onClick,
 	upsellIcon,
 	upsellImage,
@@ -23,6 +25,7 @@ export default function UpsellCallout( {
 	upsellDescription,
 }: {
 	site: Site;
+	tracksFeatureId: string;
 	onClick: () => void;
 } & UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
@@ -62,9 +65,12 @@ export default function UpsellCallout( {
 				</>
 			}
 			actions={
-				<Button variant="primary" size="compact" onClick={ handleUpsellClick }>
-					{ __( 'Upgrade plan' ) }
-				</Button>
+				<UpsellCTAButton
+					text={ __( 'Upgrade plan' ) }
+					tracksId={ tracksFeatureId }
+					variant="primary"
+					onClick={ handleUpsellClick }
+				/>
 			}
 		/>
 	);

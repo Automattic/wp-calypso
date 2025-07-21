@@ -306,21 +306,9 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .layout:not(.is-grav-powered-client) {
-	.is-social-first {
-		.login__form-terms {
-			display: none;
-		}
-	}
-
 	&.is-mobile {
 		.login__lostpassword-form  {
 			padding: 16px 16px 0;
 		}
-	}
-}
-
-.is-gravatar {
-	.login__form-terms {
-		display: block;
 	}
 }

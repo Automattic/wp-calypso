@@ -45,7 +45,7 @@ function UnforwardedCallout(
 				</VStack>
 				{ image && (
 					<VStack justify="stretch" alignment="stretch" className="dashboard-callout__image">
-						<img src={ image } alt={ imageAlt } />
+						{ typeof image === 'string' ? <img src={ image } alt={ imageAlt } /> : image }
 					</VStack>
 				) }
 			</HStack>

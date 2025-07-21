@@ -13,7 +13,7 @@ import type { Site } from '../../data/types';
 const CARD_PROPS = {
 	icon: shield,
 	title: __( 'Last scan' ),
-	trackId: 'scan',
+	tracksId: 'scan',
 };
 
 function getScanURL( site: Site ) {
@@ -88,7 +88,7 @@ export default function ScanCard( { site }: { site: Site } ) {
 			site={ site }
 			feature={ HostingFeatures.SCAN }
 			featureIcon={ CARD_PROPS.icon }
-			tracksFeatureId={ CARD_PROPS.trackId }
+			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Scan for security threats' ) }
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
 			upsellExternalLink={ getScanURL( site ) }
