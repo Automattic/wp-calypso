@@ -143,25 +143,21 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-reports' )
-				? [
-						{
-							icon: chartBar,
-							path: A4A_REPORTS_LINK,
-							link: A4A_REPORTS_LINK,
-							title: (
-								<div className="sidebar-menu-item__title-with-badge">
-									<span>{ translate( 'Reports' ) }</span>
-									<Badge type="info">{ translate( 'Beta' ) }</Badge>
-								</div>
-							),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Reports',
-							},
-							withChevron: true,
-						},
-				  ]
-				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: (
+					<div className="sidebar-menu-item__title-with-badge">
+						<span>{ translate( 'Reports' ) }</span>
+						<Badge type="info">{ translate( 'Beta' ) }</Badge>
+					</div>
+				),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 			...( config.isEnabled( 'a4a-partner-directory' ) ||
 			config.isEnabled( 'a8c-for-agencies-agency-tier' )
 				? [
