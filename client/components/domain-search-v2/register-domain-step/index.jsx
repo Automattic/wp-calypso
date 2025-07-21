@@ -1,7 +1,8 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { ResponsiveToolbarGroup, SummaryButton } from '@automattic/components';
+import { ResponsiveToolbarGroup } from '@automattic/components';
 import {
+	DomainOwnUse,
 	DomainSearch,
 	DomainSearchControls,
 	DomainSearchNotice,
@@ -23,7 +24,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { globe, Icon } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -579,19 +579,9 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderAlreadyOwnADomainButton() {
-		const { translate } = this.props;
+		const { handleClickUseYourDomain } = this.props;
 
-		return (
-			<div className="wpcom-domain-search-v2__already-own-domain-btn">
-				<div>
-					<SummaryButton
-						decoration={ <Icon icon={ globe } /> }
-						title={ translate( 'Already have a domain?' ) }
-						description={ translate( 'Connect a domain you already own to WordPress.com.' ) }
-					/>
-				</div>
-			</div>
-		);
+		return <DomainOwnUse onClick={ handleClickUseYourDomain ?? this.useYourDomainFunction() } />;
 	}
 
 	render() {
