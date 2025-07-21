@@ -582,8 +582,8 @@ class RegisterDomainStep extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div style={ { display: 'flex', justifyContent: 'center' } }>
-				<div style={ { maxWidth: '31.5rem' } }>
+			<div className="wpcom-domain-search-v2__already-own-domain-btn">
+				<div>
 					<SummaryButton
 						decoration={ <Icon icon={ globe } /> }
 						title={ translate( 'Already have a domain?' ) }
