@@ -1,5 +1,6 @@
 export { DomainSearch, useDomainSearch } from './components/domain-search';
 export type { DomainSearchCart } from './components/domain-search/types';
+export { DomainOwnUse } from './components/domain-own-use';
 export { DomainSearchNotice } from './components/domain-search-notice';
 export { DomainsMiniCart } from './components/domains-mini-cart';
 export { DomainsFullCart } from './components/domains-full-cart';
