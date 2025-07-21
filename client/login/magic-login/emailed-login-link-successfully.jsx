@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
-import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -38,33 +37,6 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
-		this.context?.setHeaders( {
-			heading: this.props.translate( 'Check your email' ),
-			subHeading: this.getSubHeaderText(),
-		} );
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.emailAddress !== this.props.emailAddress ) {
-			this.context?.setHeaders( {
-				heading: this.context?.heading,
-				subHeading: this.getSubHeaderText(),
-			} );
-		}
-	}
-
-	getSubHeaderText() {
-		return preventWidows(
-			this.props.emailAddress
-				? this.props.translate(
-						"We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}",
-						{
-							args: { emailAddress: this.props.emailAddress },
-							components: { strong: <strong /> },
-						}
-				  )
-				: this.props.translate( 'We just emailed you a link.' )
-		);
 	}
 
 	onLostPasswordClick = ( event ) => {
