@@ -2006,7 +2006,7 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/checkout/thank-you/12345/67890?receiptId=67890' );
+			expect( url ).toBe( '/checkout/thank-you/12345/67890' );
 		} );
 
 		it( 'should follow normal cookie logic when cart has non-ecommerce plan', () => {
