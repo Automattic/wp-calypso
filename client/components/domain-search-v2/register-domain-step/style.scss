@@ -2,6 +2,12 @@
 @import '@wordpress/base-styles/mixins';
 
 .wpcom-domain-search-v2 {
+
+	&.initial-state {
+		max-width: 800px;
+		margin-inline: auto;
+	}
+
 	hr {
 		background-color: initial;
 	}

@@ -607,7 +607,7 @@ class RegisterDomainStep extends Component {
 				<DomainSearch
 					onContinue={ onContinue }
 					cart={ this.getCart() }
-					className="wpcom-domain-search-v2"
+					className="wpcom-domain-search-v2 initial-state"
 				>
 					<VStack spacing={ 8 }>
 						<VStack spacing={ 2 }>
