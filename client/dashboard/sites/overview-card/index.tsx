@@ -21,7 +21,6 @@ import './style.scss';
 
 export interface OverviewCardProps {
 	title: string;
-	customHeading?: ReactNode;
 	description?: string;
 	link?: string;
 	externalLink?: string;
@@ -40,7 +39,6 @@ export interface OverviewCardProps {
 }
 
 export default function OverviewCard( {
-	customHeading,
 	description,
 	externalLink,
 	heading,
@@ -89,30 +87,26 @@ export default function OverviewCard( {
 					) }
 				</HStack>
 				<HStack justify="flex-start" alignment="baseline">
-					{ customHeading ? (
-						customHeading
-					) : (
-						<VStack spacing={ 2 }>
-							<Heading
-								level={ 2 }
-								size={ 20 }
-								variant={ isDisabled ? 'muted' : undefined }
-								weight={ 500 }
+					<VStack spacing={ 2 }>
+						<Heading
+							level={ 2 }
+							size={ 20 }
+							variant={ isDisabled ? 'muted' : undefined }
+							weight={ 500 }
+						>
+							{ heading }
+						</Heading>
+						{ description && (
+							<Text
+								className="dashboard-overview-card__description"
+								variant="muted"
+								lineHeight="16px"
+								size={ 12 }
 							>
-								{ heading }
-							</Heading>
-							{ description && (
-								<Text
-									className="dashboard-overview-card__description"
-									variant="muted"
-									lineHeight="16px"
-									size={ 12 }
-								>
-									{ description }
-								</Text>
-							) }
-						</VStack>
-					) }
+								{ description }
+							</Text>
+						) }
+					</VStack>
 				</HStack>
 				{ variant === 'loading' && <OverviewCardProgressBar /> }
 			</VStack>
