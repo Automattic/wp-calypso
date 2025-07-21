@@ -43,7 +43,6 @@
 		"domains/ui-redesign": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
-		"gravatar/hovercards": true,
 		"help": true,
 		"help/gpt-response": true,
 		"hosting-server-settings-enhancements": true,
