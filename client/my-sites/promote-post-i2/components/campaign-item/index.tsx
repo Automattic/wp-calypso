@@ -76,8 +76,13 @@ export default function CampaignItem( props: Props ) {
 	let spendString = '-';
 	let spendStringMobile = '';
 	if ( campaignDays && ui_status !== campaignStatus.REJECTED ) {
-		/* translators: Daily average spend. dailyAverageSpending is the budget */
-		spendString = formattedTotalSpend;
+		spendString = is_evergreen
+			? sprintf(
+					/* translators: %s is a formatted amount */
+					translate( '%s weekly' ),
+					formattedTotalSpend
+			  )
+			: formattedTotalSpend;
 		spendStringMobile = sprintf(
 			/* translators: %s is a formatted amount */
 			translate( '%s spend' ),
