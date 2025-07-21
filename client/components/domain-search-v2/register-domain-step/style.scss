@@ -44,8 +44,14 @@
 		z-index: z-index('root', '.sticky-panel.is-sticky .sticky-panel__content');
 		display: flex;
 		justify-content: center;
-		bottom: 2.5rem;
-		left: 0;
-		right: 0;
+		left: 1rem;
+		right: 1rem;
+		bottom: 1rem;
+
+		@include break-small() {
+			left: 0;
+			right: 0;
+			bottom: 2.5rem;
+		}
 	}
 }
