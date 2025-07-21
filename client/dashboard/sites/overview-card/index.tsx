@@ -24,7 +24,6 @@ export interface OverviewCardProps {
 	externalLink?: string;
 	heading?: ReactNode;
 	icon?: ReactElement;
-	metaText?: string;
 	sideContent?: ReactNode;
 	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
@@ -39,7 +38,6 @@ export default function OverviewCard( {
 	heading,
 	icon,
 	link,
-	metaText,
 	sideContent,
 	title,
 	tracksId,
@@ -92,7 +90,6 @@ export default function OverviewCard( {
 						>
 							{ heading }
 						</Heading>
-						{ metaText && <Text variant="muted">{ metaText }</Text> }
 						{ description && (
 							<Text
 								className="dashboard-overview-card__description"
