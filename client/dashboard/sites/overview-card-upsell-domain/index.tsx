@@ -1,10 +1,10 @@
-import { useShoppingCart } from '@automattic/shopping-cart'; // eslint-disable-line
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink, __experimentalText as Text } from '@wordpress/components';
+import { Link } from '@tanstack/react-router';
+import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState, Suspense, lazy } from 'react';
+import { useState } from 'react';
 import { domainSuggestionsQuery } from '../../app/queries/domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { Callout } from '../../components/callout';
@@ -12,13 +12,6 @@ import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '../../data/types';
-
-const AsyncShoppingCartProvider = lazy(
-	() =>
-		import(
-			/* webpackChunkName: "async-load-automattic-shopping-cart-provider" */ '../../app/shopping-cart-provider'
-		)
-);
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];
@@ -49,13 +42,17 @@ const OverviewCardUpsellDomain = ( {
 	tracksId: string;
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const shoppingCartManager = useShoppingCart( site.ID );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
 
+	const backUrl = window.location.href.replace( window.location.origin, '' );
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
-			await shoppingCartManager.addProductsToCart( [
+
+			const { shoppingCartManagerClient } = await import(
+				/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
+			);
+			await shoppingCartManagerClient.forCartKey( site.ID ).actions.replaceProductsInCart( [
 				{
 					product_slug: suggestedDomain?.product_slug ?? '',
 					meta: suggestedDomain?.domain_name,
@@ -64,13 +61,13 @@ const OverviewCardUpsellDomain = ( {
 		}
 
 		if ( site.plan?.is_free || site.plan?.billing_period === 'Monthly' ) {
-			window.location.pathname = addQueryArgs( `/plans/yearly/${ site.slug }`, {
+			window.location.href = addQueryArgs( `/plans/yearly/${ site.slug }`, {
 				domain: true,
 				domainAndPlanPackage: true,
+				back_to: backUrl,
 			} );
 		} else {
-			const backUrl = window.location.href.replace( window.location.origin, '' );
-			window.location.pathname = addQueryArgs( `/checkout/${ site.slug }`, {
+			window.location.href = addQueryArgs( `/checkout/${ site.slug }`, {
 				cancel_to: backUrl,
 				redirect_to: backUrl,
 			} );
@@ -90,12 +87,12 @@ const OverviewCardUpsellDomain = ( {
 							<TextBlur>{ search }</TextBlur>
 						),
 						link: (
-							<ExternalLink
-								href={ addQueryArgs( `/domains/add/${ site.slug }`, {
+							<Link
+								to={ addQueryArgs( `${ window.location.origin }/domains/add/${ site.slug }`, {
 									domainAndPlanPackage: true,
 									domain: true,
+									back_to: backUrl,
 								} ) }
-								children={ null }
 							/>
 						),
 					} ) }
@@ -124,39 +121,37 @@ const OverviewCardUpsellDomain = ( {
 	);
 };
 
-const OverviewCardUpsellDomainWithShoppingCart = ( { site }: { site: Site } ) => {
+const OverviewCardUpsellDomainWrapper = ( { site }: { site: Site } ) => {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	if ( ! sitePlan ) {
 		return null;
 	}
 
-	return (
-		<Suspense fallback={ null }>
-			<AsyncShoppingCartProvider>
-				{ sitePlan.has_domain_credit ? (
-					<OverviewCardUpsellDomain
-						site={ site }
-						title={ __( 'Claim your free domain' ) }
-						description={ __(
-							'<domain /> is included free for one year with your paid plan. Claim this domain or <link>choose your own</link>.'
-						) }
-						upsellCTAButtonText={ __( 'Claim this domain' ) }
-						tracksId="claim-this-domain"
-					/>
-				) : (
-					<OverviewCardUpsellDomain
-						site={ site }
-						title={ __( 'The perfect domain awaits' ) }
-						description={ __(
-							'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
-						) }
-						upsellCTAButtonText={ __( 'Get this domain' ) }
-						tracksId="get-this-domain"
-					/>
+	if ( sitePlan.has_domain_credit ) {
+		return (
+			<OverviewCardUpsellDomain
+				site={ site }
+				title={ __( 'Claim your free domain' ) }
+				description={ __(
+					'<domain /> is included free for one year with your paid plan. Claim this domain or <link>choose your own</link>.'
 				) }
-			</AsyncShoppingCartProvider>
-		</Suspense>
+				upsellCTAButtonText={ __( 'Claim this domain' ) }
+				tracksId="claim-this-domain"
+			/>
+		);
+	}
+
+	return (
+		<OverviewCardUpsellDomain
+			site={ site }
+			title={ __( 'The perfect domain awaits' ) }
+			description={ __(
+				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
+			) }
+			upsellCTAButtonText={ __( 'Get this domain' ) }
+			tracksId="get-this-domain"
+		/>
 	);
 };
 
-export default OverviewCardUpsellDomainWithShoppingCart;
+export default OverviewCardUpsellDomainWrapper;
