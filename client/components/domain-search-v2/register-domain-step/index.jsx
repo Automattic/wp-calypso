@@ -202,7 +202,13 @@ class RegisterDomainStep extends Component {
 		this.state.lastFilters = this.getInitialFiltersState();
 
 		if ( props.initialState ) {
-			this.state = { ...this.state, ...props.initialState };
+			this.state = {
+				...this.state,
+				...props.initialState,
+				// Always reset these flags on mount
+				hasSubmitted: false,
+				helperTermSubmitted: false,
+			};
 
 			if ( props.initialState.searchResults ) {
 				this.state.loadingResults = false;
@@ -602,6 +608,9 @@ class RegisterDomainStep extends Component {
 		const showFreeDomainPromo =
 			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
 
+		const showHelperTerm =
+			this.state.helperTermSubmitted || ( this.state.hasSubmitted && ! this.state.lastQuery );
+
 		if ( this.isInInitialState() ) {
 			return (
 				<DomainSearch
@@ -613,31 +622,42 @@ class RegisterDomainStep extends Component {
 						<VStack spacing={ 2 }>
 							<HStack spacing={ 4 } className="wpcom-domain-search-v2__empty-state-search-controls">
 								{ this.renderSearchBar() }
-								<DomainSearchControls.Submit onClick={ this.onSearch } />
+								<DomainSearchControls.Submit
+									onClick={ () => {
+										const query = this.state.lastQuery;
+										this.setState( { hasSubmitted: true } );
+
+										if ( query ) {
+											this.onSearch( query );
+										}
+									} }
+								/>
 							</HStack>
-							<Text variant="muted">
-								{ translate(
-									'Try searching for a word like {{studioLink}}studio{{/studioLink}} or {{coffeeLink}}coffee{{/coffeeLink}} to get started.',
-									{
-										components: {
-											studioLink: (
-												<Button
-													variant="link"
-													onClick={ () => this.onSearch( 'studio' ) }
-													className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
-												/>
-											),
-											coffeeLink: (
-												<Button
-													variant="link"
-													onClick={ () => this.onSearch( 'coffee' ) }
-													className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
-												/>
-											),
-										},
-									}
-								) }
-							</Text>
+							{ showHelperTerm && (
+								<Text variant="muted">
+									{ translate(
+										'Try searching for a word like {{studioLink}}studio{{/studioLink}} or {{coffeeLink}}coffee{{/coffeeLink}} to get started.',
+										{
+											components: {
+												studioLink: (
+													<Button
+														variant="link"
+														onClick={ () => this.onHelperTermClick( 'studio' ) }
+														className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
+													/>
+												),
+												coffeeLink: (
+													<Button
+														variant="link"
+														onClick={ () => this.onHelperTermClick( 'coffee' ) }
+														className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
+													/>
+												),
+											},
+										}
+									) }
+								</Text>
+							) }
 						</VStack>
 						{ this.renderAlreadyOwnADomainButton() }
 					</VStack>
@@ -1699,6 +1719,11 @@ class RegisterDomainStep extends Component {
 		} else {
 			this.props.onAddDomain( suggestion, position, previousState );
 		}
+	};
+
+	onHelperTermClick = ( term ) => {
+		this.onSearch( term );
+		this.setState( { helperTermSubmitted: true } );
 	};
 
 	useYourDomainFunction = () => {
