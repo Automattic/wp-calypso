@@ -503,7 +503,6 @@ $breakpoint-mobile: 660px;
 			justify-items: flex-start;
 			align-items: center;
 			padding: 16px 24px;
-			background: #fff;
 			border: 1px solid #c3c4c7;
 			border-radius: 4px;
 			text-decoration: none;
@@ -1156,7 +1155,7 @@ $breakpoint-mobile: 660px;
 		.signup-form,
 		.login__body--continue-as-user {
 			width: 100%;
-			margin: 48px auto 0;
+			margin: 0 auto;
 			padding: 0;
 			max-width: 327px;
 			display: flex;
@@ -1202,12 +1201,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		.wp-login__login-block-footer {
-			display: flex;
-			align-items: center;
-			width: 100%;
-			flex-direction: column;
-			margin: 12px auto 0;
-
 			@media (max-width: $break-mobile) {
 				max-width: $max-width;
 				margin-bottom: 40px;
@@ -1240,11 +1233,6 @@ $breakpoint-mobile: 660px;
 			&::after {
 				border-block-start-color: #e0e0e1;
 			}
-
-			+ .auth-form__social.card {
-				border: 0;
-				padding: 0;
-			}
 		}
 
 		.continue-as-user {
@@ -1266,6 +1254,7 @@ $breakpoint-mobile: 660px;
 				width: 100%;
 				box-sizing: border-box;
 				padding: 32px 24px 16px 24px;
+				background: #fff;
 			}
 
 			~ .card.auth-form__social.is-login {
@@ -1273,7 +1262,6 @@ $breakpoint-mobile: 660px;
 				padding: 0;
 				max-width: initial;
 			}
-
 
 			.continue-as-user__gravatar-content {
 				display: flex;

@@ -163,62 +163,6 @@ $recoleta-font-family: 'Recoleta', serif;
 		}
 	}
 
-	.support-content-links-subscribe {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 3rem;
-
-		p,
-		form {
-			margin-bottom: 10px;
-			margin-top: 0;
-		}
-
-		.support-content-subscribe-disclaimer {
-			color: var( --studio-gray-60 );
-			font-size: 0.75rem;
-			line-height: 20px;
-
-			a {
-				color: inherit;
-				font-size: inherit;
-				line-height: inherit;
-				text-decoration: underline;
-			}
-		}
-
-		.support-content-subscribe .subscribe-shortcode-wrapper {
-			display: flex;
-			justify-content: space-between;
-			flex-grow: 1;
-			border-radius: 4px;
-			border: 1px solid #dcdcde;
-			font-size: 1rem;
-			padding: 8px;
-			width: 100%;
-			min-height: 40px;
-			margin: 8px 0;
-			gap: 10px;
-
-			.wpcom-guides-learn-button {
-				cursor: pointer;
-
-				&.busy {
-					color: #7f8389;
-				}
-			}
-
-			@media screen and ( max-width: 782px ) {
-				flex-direction: column;
-				align-items: flex-start;
-
-				.wpcom-guides-learn-button {
-					margin-top: 8px;
-				}
-			}
-		}
-	}
-
 	@media ( max-width: $breakpoint-mobile ) {
 		padding: 12px 24px !important;
 
@@ -247,35 +191,6 @@ $recoleta-font-family: 'Recoleta', serif;
 				p {
 					margin-top: 4px;
 					margin-bottom: 16px;
-				}
-			}
-		}
-
-		.support-content-links {
-			a {
-				display: inline-block;
-			}
-
-			p {
-				margin-bottom: 16px !important;
-			}
-		}
-
-		.support-content-links-subscribe {
-			flex-direction: column;
-			padding-bottom: 36px;
-			margin-top: 48px;
-
-			.support-content-subscribe form {
-				.support-content-subscribe-email {
-					padding: 10px 16px 10px 16px;
-					font-size: 0.875rem;
-					line-height: 20px;
-
-					&::placeholder {
-						font-size: 0.875rem;
-						line-height: 20px;
-					}
 				}
 			}
 		}

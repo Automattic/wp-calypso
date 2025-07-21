@@ -50,7 +50,7 @@ const DomainsFullCart = ( {
 } ) => {
 	const { isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
 	const { __ } = useI18n();
-	const isMobile = ! useViewportMatch( 'small' );
+	const isMobile = useViewportMatch( 'small', '<' );
 
 	const fullCartRef = useRef< HTMLDivElement >( null );
 
@@ -65,7 +65,8 @@ const DomainsFullCart = ( {
 	return (
 		<AnimatedCard
 			ref={ fullCartRef }
-			initial={ animation.initial }
+			key={ isMobile ? 'mobile' : 'desktop' }
+			initial={ isFullCartOpen ? animation.animateIn : animation.initial }
 			animate={ isFullCartOpen ? animation.animateIn : animation.animateOut }
 			transition={ { type: 'tween', duration: 0.25 } }
 			className={ clsx( 'domains-full-cart', className ) }

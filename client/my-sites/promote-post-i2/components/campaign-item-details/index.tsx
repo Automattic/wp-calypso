@@ -191,6 +191,7 @@ export default function CampaignItemDetails( props: Props ) {
 		duration_days,
 		total_budget,
 		total_budget_used,
+		weekly_budget_used,
 		conversions_total,
 		conversion_value,
 		conversion_rate,
@@ -280,8 +281,7 @@ export default function CampaignItemDetails( props: Props ) {
 	// const tspClicksFormatted =
 	// 	tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
-	const weeklySpend =
-		total_budget_used && billing_data ? Math.max( 0, total_budget_used - billing_data?.total ) : 0;
+	const weeklySpend = weekly_budget_used || 0;
 
 	const weeklySpendFormatted = `$${ formatCents( weeklySpend, 2 ) }`;
 

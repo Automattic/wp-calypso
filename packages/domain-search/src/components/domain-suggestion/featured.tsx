@@ -49,7 +49,14 @@ export const Featured = ( {
 		[ activeQuery, matchReasons ]
 	);
 
-	const cta = <DomainSuggestionCTA onClick={ onClick } disabled={ disabled } uuid={ uuid } />;
+	const cta = (
+		<DomainSuggestionCTA
+			onClick={ onClick }
+			disabled={ disabled }
+			uuid={ uuid }
+			variant="primary"
+		/>
+	);
 
 	const title = (
 		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>

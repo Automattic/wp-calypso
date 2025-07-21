@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { chartBar, published, wordpress } from '@wordpress/icons';
+import { chartBar, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
@@ -20,11 +20,12 @@ import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
 import AgencySiteShareCard from './agency-site-share-card';
 import BackupCard from './backup-card';
 import DomainsCard from './domains-card';
-import PerformanceCards from './performance-cards';
+import LatestActivitiesCard from './latest-activities-card';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
 import UptimeCard from './uptime-card';
+import VisibilityCard from './visibility-card';
 import './style.scss';
 
 type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
@@ -109,12 +110,7 @@ function SiteOverview( {
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<VStack className="site-overview-cards" spacing={ spacing }>
-						<OverviewCard
-							title={ __( 'Visibility' ) }
-							icon={ published }
-							heading="TBA"
-							description="TBA"
-						/>
+						<VisibilityCard site={ site } />
 						<BackupCard site={ site } />
 					</VStack>
 					<VStack className="site-overview-cards" spacing={ spacing }>
@@ -143,12 +139,10 @@ function SiteOverview( {
 					spacing={ spacing }
 					alignment="flex-start"
 				>
+					<LatestActivitiesCard />
 					<VStack spacing={ spacing } justify="start">
-						<PerformanceCards site={ site } />
-					</VStack>
-					<VStack spacing={ spacing } justify="start">
+						<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						<OverviewCardUpsellDIFM site={ site } />
-						<DomainsCard site={ site } type={ isSmallViewport ? 'list' : 'table' } />
 						<UptimeCard site={ site } />
 					</VStack>
 				</HStack>

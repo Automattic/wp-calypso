@@ -131,11 +131,7 @@ $image-height: 47px;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 3em;
-
-	.is-magic-login & {
-		gap: 2em;
-	}
+	gap: 2em;
 }
 
 .wp-login__site-return-link {

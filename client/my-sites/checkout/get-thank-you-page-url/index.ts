@@ -311,6 +311,12 @@ export default function getThankYouPageUrl( {
 
 	// Unified affiliate + paid media siteless checkout - handles post-checkout site creation flow
 	if ( sitelessCheckoutType === 'unified' ) {
+		// If there is an ecommerce plan in cart, redirect to checkout thank you page
+		if ( cart && hasEcommercePlan( cart ) ) {
+			debug( 'redirecting to Commerce thank you' );
+			return `/checkout/thank-you/${ siteId }/${ receiptIdOrPlaceholder }`;
+		}
+
 		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
 		const urlFromCookie = getUrlFromCookie();
 
@@ -318,6 +324,7 @@ export default function getThankYouPageUrl( {
 			urlFromCookie &&
 			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
 		) {
+			debug( 'redirecting to the saved post-checkout destination' );
 			return addQueryArgs( { siteId }, urlFromCookie );
 		}
 	}

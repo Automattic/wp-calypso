@@ -636,8 +636,7 @@ class ReaderStream extends Component {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const isReaderCouncilStream =
-			this.props.isDiscoverStream || this.props.streamKey === 'following';
+		const isReaderCouncilStream = false; // Disabling banner. Original condition: ( this.props.isDiscoverStream || this.props.streamKey === 'following' );
 		let { items, isRequesting } = this.props;
 		let body;
 		let showingStream;

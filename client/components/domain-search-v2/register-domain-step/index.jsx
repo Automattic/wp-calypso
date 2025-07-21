@@ -14,7 +14,6 @@ import {
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
-import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
 	__experimentalVStack as VStack,
@@ -40,7 +39,6 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
 	recordDomainAvailabilityReceive,
 	recordDomainAddAvailabilityPreCheck,
@@ -65,14 +63,9 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
-import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
+import { FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import {
-	domainRegistration,
-	getDomainsInCart,
-	hasDomainInCart,
-	updatePrivacyForDomain,
-} from 'calypso/lib/cart-values/cart-items';
+import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
 	getAvailableTlds,
@@ -90,7 +83,10 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainCartV2 } from '../domain-cart';
+import DropdownFilters from '../domain-search-filters';
+import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
+import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
 
 import './style.scss';
 
@@ -466,8 +462,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	getCart = () => {
-		const { cart, shoppingCartManager } = this.props;
-		const { addProductsToCart, removeProductFromCart } = shoppingCartManager;
+		const { cart, onAddDomain, onRemoveDomain } = this.props;
 		const searchResults = this.state.searchResults || [];
 
 		const domainsInCart = getDomainsInCart( cart );
@@ -507,30 +502,27 @@ class RegisterDomainStep extends Component {
 			} ),
 			total,
 			onAddItem: ( domain_name ) => {
-				const suggestion = searchResults.find( ( result ) => result.domain_name === domain_name );
+				const suggestionPosition = searchResults.findIndex(
+					( result ) => result.domain_name === domain_name
+				);
 
-				const {
-					domain_name: domain,
-					product_slug: productSlug,
-					supports_privacy: supportsPrivacy,
-				} = suggestion;
-
-				let registration = domainRegistration( {
-					domain,
-					productSlug,
-					extra: { privacy_available: supportsPrivacy },
-				} );
-
-				if ( supportsPrivacy ) {
-					registration = updatePrivacyForDomain( registration, true );
+				if ( suggestionPosition === -1 ) {
+					return;
 				}
 
-				// Add item_subtotal_integer property to registration, so it can be sorted by price.
-				registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
+				const suggestion = searchResults[ suggestionPosition ];
 
-				addProductsToCart( [ registration ] );
+				return onAddDomain( suggestion, suggestionPosition, false );
 			},
-			onRemoveItem: ( domain_name ) => removeProductFromCart( domain_name ),
+			onRemoveItem: ( itemUuid ) => {
+				const domainInCart = cart.products.find( ( product ) => product.cart_item_id === itemUuid );
+
+				if ( ! domainInCart ) {
+					return;
+				}
+
+				return onRemoveDomain( domainInCart );
+			},
 			hasItem: ( domain_name ) => {
 				return cart.products.some( ( item ) => item.meta === domain_name );
 			},
@@ -592,6 +584,9 @@ class RegisterDomainStep extends Component {
 
 		const notices = this.renderGeneralNotices();
 
+		const showFreeDomainPromo =
+			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
+
 		return (
 			<DomainSearch
 				onContinue={ onContinue }
@@ -604,9 +599,10 @@ class RegisterDomainStep extends Component {
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
 					</VStack>
+					{ showFreeDomainPromo && <FreeDomainForAYearPromo /> }
 					{ this.renderContent() }
 				</VStack>
-				<DomainCartV2 />
+				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } />
 			</DomainSearch>
 		);
 	}
@@ -709,7 +705,7 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<HStack spacing={ 4 }>
-				<Search { ...componentProps }></Search>
+				<DomainSearchInput { ...componentProps }></DomainSearchInput>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</HStack>
 		);
@@ -1565,19 +1561,6 @@ class RegisterDomainStep extends Component {
 		this.setState( { pageNumber, pageSize: PAGE_SIZE }, this.save );
 	};
 
-	renderBestNamesPrompt() {
-		const { translate, promptText } = this.props;
-		return (
-			<div className="register-domain-step__example-prompt">
-				{ promptText ?? translate( 'The best names are short and memorable' ) }
-			</div>
-		);
-	}
-
-	renderFreeDomainExplainer() {
-		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
-	}
-
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const rootVendor = get( suggestion, 'vendor' );
@@ -1673,14 +1656,6 @@ class RegisterDomainStep extends Component {
 
 		const suggestions = this.getSuggestionsFromProps();
 
-		const hasResults =
-			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
-			! this.state.loadingResults;
-
-		const isFreeDomainExplainerVisible =
-			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
-			this.props.isPlanSelectionAvailableInFlow;
-
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1724,17 +1699,8 @@ class RegisterDomainStep extends Component {
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
-			>
-				{ ! this.props.isOnboarding &&
-					hasResults &&
-					isFreeDomainExplainerVisible &&
-					this.renderFreeDomainExplainer() }
-			</DomainSearchResults>
+			/>
 		);
-	}
-
-	renderSideContent() {
-		return this.props.isOnboarding && ! this.state.loadingResults && this.props.sideContent;
 	}
 
 	getFetchAlgo() {

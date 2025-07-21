@@ -18,19 +18,18 @@
 }
 
 .dashboard-overview-card__icon {
+	color: var(--wp-admin-theme-color);
 	fill: var(--wp-admin-theme-color);
 
-	.dashboard-overview-card--upsell & path {
-		fill: var( --wp-admin-theme-color );
-	}
-
 	.dashboard-overview-card--success & {
+		color: $alert-green;
 		fill: $alert-green;
 	}
 
 	.dashboard-overview-card--error & {
-		fill: $alert-red;
 		background-color: color-mix(in srgb, $alert-red 8%, transparent);
+		color: $alert-red;
+		fill: $alert-red;
 	}
 }
 
@@ -48,7 +47,6 @@
 }
 
 .dashboard-overview-card__link {
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	display: flex;
 	text-decoration: none;
 

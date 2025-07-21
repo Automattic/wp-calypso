@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
@@ -8,11 +10,13 @@ import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
+import { HELP_CENTER_STORE } from '../stores';
 
 export const BlockedZendeskNotice: React.FC = () => {
 	const { sectionName } = useHelpCenterContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { isEligibleForChat } = useChatStatus();
+	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
 
 	const willShowNotice = ! canConnectToZendesk && isEligibleForChat;
 
@@ -39,6 +43,17 @@ export const BlockedZendeskNotice: React.FC = () => {
 					'Your browser settings block our live chat support. This usually happens when an ad blocker or strict tracking protection is enabled.',
 					__i18n_text_domain__
 				) }
+				&nbsp;
+				<Button
+					variant="link"
+					onClick={ () => {
+						setShowSupportDoc(
+							localizeUrl( 'https://wordpress.com/support/troubleshoot-browser-block-chat/' )
+						);
+					} }
+				>
+					{ __( 'Learn more.', __i18n_text_domain__ ) }
+				</Button>
 			</p>
 		</div>
 	);

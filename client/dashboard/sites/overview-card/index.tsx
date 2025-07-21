@@ -25,6 +25,7 @@ export interface OverviewCardProps {
 	heading?: ReactNode;
 	icon?: ReactElement;
 	metaText?: string;
+	sideContent?: ReactNode;
 	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	children?: ReactNode;
@@ -39,6 +40,7 @@ export default function OverviewCard( {
 	icon,
 	link,
 	metaText,
+	sideContent,
 	title,
 	tracksId,
 	variant,
@@ -49,6 +51,67 @@ export default function OverviewCard( {
 	const isDisabled = variant === 'disabled';
 
 	const content = (
+		<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
+			<HStack justify="space-between">
+				<HStack spacing={ 2 } alignment="center" expanded={ false }>
+					{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
+					<Text
+						className="dashboard-overview-card__title"
+						variant="muted"
+						lineHeight="16px"
+						size={ 11 }
+						weight={ 500 }
+						upperCase
+					>
+						{ title }
+					</Text>
+				</HStack>
+				{ link && <Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } /> }
+				{ externalLink && (
+					<span
+						className="dashboard-overview-card__link-icon components-external-link__icon"
+						aria-label={
+							/* translators: accessibility text */
+							__( '(opens in a new tab)' )
+						}
+					>
+						&#8599;
+					</span>
+				) }
+			</HStack>
+			<HStack justify="flex-start" alignment="baseline">
+				{ customHeading ? (
+					customHeading
+				) : (
+					<VStack spacing={ 2 }>
+						<Heading
+							level={ 2 }
+							size={ 20 }
+							variant={ isDisabled ? 'muted' : undefined }
+							weight={ 500 }
+						>
+							{ heading }
+						</Heading>
+						{ metaText && <Text variant="muted">{ metaText }</Text> }
+						{ description && (
+							<Text
+								className="dashboard-overview-card__description"
+								variant="muted"
+								lineHeight="16px"
+								size={ 12 }
+							>
+								{ description }
+							</Text>
+						) }
+					</VStack>
+				) }
+			</HStack>
+			{ variant === 'loading' && <OverviewCardProgressBar /> }
+			{ children }
+		</VStack>
+	);
+
+	const wrappedContent = (
 		<Card
 			className={
 				variant
@@ -72,66 +135,10 @@ export default function OverviewCard( {
 							properties={ { feature: tracksId, variant } }
 						/>
 					) ) }
-				<VStack spacing={ 4 }>
-					<HStack justify="space-between">
-						<HStack spacing={ 2 } alignment="center" expanded={ false }>
-							{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-							<Text
-								className="dashboard-overview-card__title"
-								variant="muted"
-								lineHeight="16px"
-								size={ 11 }
-								weight={ 500 }
-								upperCase
-							>
-								{ title }
-							</Text>
-						</HStack>
-						{ link && (
-							<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
-						) }
-						{ externalLink && (
-							<span
-								className="dashboard-overview-card__link-icon components-external-link__icon"
-								aria-label={
-									/* translators: accessibility text */
-									__( '(opens in a new tab)' )
-								}
-							>
-								&#8599;
-							</span>
-						) }
-					</HStack>
-					<HStack justify="flex-start" alignment="baseline">
-						{ customHeading ? (
-							customHeading
-						) : (
-							<VStack spacing={ 2 }>
-								<Heading
-									level={ 2 }
-									size={ 20 }
-									variant={ isDisabled ? 'muted' : undefined }
-									weight={ 500 }
-								>
-									{ heading }
-								</Heading>
-								{ metaText && <Text variant="muted">{ metaText }</Text> }
-								{ description && (
-									<Text
-										className="dashboard-overview-card__description"
-										variant="muted"
-										lineHeight="16px"
-										size={ 12 }
-									>
-										{ description }
-									</Text>
-								) }
-							</VStack>
-						) }
-					</HStack>
-					{ variant === 'loading' && <OverviewCardProgressBar /> }
-					{ children }
-				</VStack>
+				<HStack justify="space-between">
+					{ content }
+					{ sideContent }
+				</HStack>
 			</CardBody>
 		</Card>
 	);
@@ -139,7 +146,7 @@ export default function OverviewCard( {
 	if ( link ) {
 		return (
 			<Link to={ link } className="dashboard-overview-card__link">
-				{ content }
+				{ wrappedContent }
 			</Link>
 		);
 	}
@@ -169,12 +176,12 @@ export default function OverviewCard( {
 					}
 				} }
 			>
-				{ content }
+				{ wrappedContent }
 			</a>
 		);
 	}
 
-	return content;
+	return wrappedContent;
 }
 
 export function OverviewCardProgressBar( { value }: { value?: number } ) {
