@@ -14,6 +14,12 @@ export interface Message {
 	icon?: string;
 }
 
+export interface Suggestion {
+	id: string;
+	label: string;
+	prompt: string;
+}
+
 export interface AgentChatState {
 	messages: Message[];
 	isThinking: boolean;
@@ -24,6 +30,8 @@ export interface AgentChatState {
 	pendingToolCallbacks: number;
 	currentToolCall: string;
 	error: string | null;
+	suggestions: Suggestion[];
+	inputValue: string;
 }
 
 export interface AgentConfig {
@@ -61,4 +69,43 @@ export interface AgentChatConfig {
 	contextProvider?: ContextProvider;
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
+}
+
+// Store type definitions
+export interface StoreSelectors {
+	getMessages: () => Message[];
+	getIsThinking: () => boolean;
+	getIsSendingMessage: () => boolean;
+	getIsTyping: () => boolean;
+	getMessagesToDelete: () => Message[];
+	getAssistant: () => string;
+	getPendingToolCallbacks: () => number;
+	getCurrentToolCall: () => string;
+	getError: () => string | null;
+	getLastMessage: () => Message | null;
+	getUserMessages: () => Message[];
+	getAssistantMessages: () => Message[];
+	getConversationHistory: () => Message[];
+	getSuggestions: () => Suggestion[];
+	getInputValue: () => string;
+}
+
+export interface StoreActions {
+	setMessages: ( messages: Message[] ) => void;
+	addMessage: ( message: Message ) => void;
+	deleteMessage: ( id: string ) => void;
+	clearMessages: () => void;
+	setThinking: ( isThinking: boolean ) => void;
+	setIsSendingMessage: ( isSendingMessage: boolean ) => void;
+	setIsTyping: ( isTyping: boolean ) => void;
+	setAssistant: ( assistant: string ) => void;
+	setPendingToolCallbacks: ( count: number ) => void;
+	setCurrentToolCall: ( toolCall: string ) => void;
+	setError: ( error: string | null ) => void;
+	addMessageToDelete: ( message: Message ) => void;
+	clearMessagesToDelete: () => void;
+	setSuggestions: ( suggestions: Suggestion[] ) => void;
+	clearSuggestions: () => void;
+	setInputValue: ( value: string ) => void;
+	clearInputValue: () => void;
 }

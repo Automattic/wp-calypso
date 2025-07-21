@@ -20,12 +20,13 @@
   --color-muted: var(--gray-100);
   --color-muted-foreground: var(--gray-700);
   --color-destructive: var(--destructive);
-  --color-border: var(--gray-200);
+  --color-border: oklch(0.875 0 0);
   --color-ring: oklch(0.708 0 0);
   
   /* === TYPOGRAPHY === */
 
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --text-xs: 13px;
   --text-sm: 14px;
   --text-sm--line-height: calc(1.25 / 0.875);
   --text-base: 15px;
@@ -52,6 +53,7 @@
   /* === BORDER RADIUS === */
   
   --radius: 1rem; /* 16px base radius */
+  --radius-xs: calc(var(--radius) - 12px); /* 14px */
   --radius-sm: calc(var(--radius) - 8px); /* 8px */
   --radius-md: calc(var(--radius) - 2px); /* 14px */
   --radius-lg: var(--radius); /* 16px */
@@ -62,7 +64,8 @@
   
   --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 12px rgba(0, 0, 0, 0.075);
   --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 24px rgba(0, 0, 0, 0.08);
-  
+  --shadow-stroke: 0 0 0 1px rgba(0, 0, 0, 0.1);
+
   /* === TRANSITIONS === */
   
   --transition-all: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);

@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
-import type { UseInputReturn } from '../types';
+import { useCallback, useEffect, useRef } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { STORE_NAME } from '../store';
+import type { StoreActions, StoreSelectors, UseInputReturn } from '../types';
 
 interface UseInputProps {
 	onSubmit: ( value: string ) => void;
@@ -10,7 +12,20 @@ export function useInput( {
 	onSubmit,
 	isProcessing,
 }: UseInputProps ): UseInputReturn {
-	const [ value, setValue ] = useState( '' );
+	const { setInputValue } = useDispatch( STORE_NAME ) as StoreActions;
+
+	const value = useSelect( ( select ) => {
+		const store = select( STORE_NAME ) as StoreSelectors;
+		return store.getInputValue();
+	}, [] );
+
+	const setValue = useCallback(
+		( newValue: string ) => {
+			setInputValue( newValue );
+		},
+		[ setInputValue ]
+	);
+
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
 	const clear = useCallback( () => {
@@ -21,7 +36,7 @@ export function useInput( {
 				textareaRef.current?.focus();
 			}, 100 );
 		}
-	}, [] );
+	}, [ setValue ] );
 
 	const adjustHeight = useCallback( () => {
 		const textarea = textareaRef.current;

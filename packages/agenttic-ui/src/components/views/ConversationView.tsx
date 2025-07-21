@@ -3,6 +3,7 @@ import { Messages } from '../chat/Messages';
 import { ChatInput } from '../chat/ChatInput';
 import { Notice } from '../chat/Notice';
 import { ChatHeader } from '../chat/ChatHeader';
+import { Suggestions } from '../chat/Suggestions';
 import type { Message, NoticeConfig } from '../../types';
 import styles from './ConversationView.module.css';
 
@@ -67,27 +68,30 @@ export function ConversationView( {
 				emptyView={ emptyView }
 				fromCompact={ fromCompact }
 			/>
-			<div className={ styles.inputContainer }>
-				<div className={ styles.inputContainerInner }>
-					{ notice && (
-						<Notice
-							icon={ notice.icon }
-							message={ notice.message }
-							action={ notice.action }
-							dismissible={ notice.dismissible }
-							onDismiss={ notice.onDismiss }
+			<div className={ styles.inputWrapper }>
+				<div className={ styles.inputContainer }>
+					<Suggestions />
+					<div className={ styles.inputContainerInner }>
+						{ notice && (
+							<Notice
+								icon={ notice.icon }
+								message={ notice.message }
+								action={ notice.action }
+								dismissible={ notice.dismissible }
+								onDismiss={ notice.onDismiss }
+							/>
+						) }
+						<ChatInput
+							value={ inputValue }
+							onChange={ onInputChange }
+							onSubmit={ onSubmit }
+							onKeyDown={ onKeyDown }
+							textareaRef={ textareaRef }
+							placeholder={ placeholder }
+							isProcessing={ isProcessing }
+							fromCompact={ fromCompact }
 						/>
-					) }
-					<ChatInput
-						value={ inputValue }
-						onChange={ onInputChange }
-						onSubmit={ onSubmit }
-						onKeyDown={ onKeyDown }
-						textareaRef={ textareaRef }
-						placeholder={ placeholder }
-						isProcessing={ isProcessing }
-						fromCompact={ fromCompact }
-					/>
+					</div>
 				</div>
 			</div>
 		</div>

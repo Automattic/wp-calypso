@@ -10,6 +10,8 @@ const DEFAULT_STATE: AgentChatState = {
 	pendingToolCallbacks: 0,
 	currentToolCall: '',
 	error: null,
+	suggestions: [],
+	inputValue: '',
 };
 
 export const reducer = (
@@ -95,6 +97,39 @@ export const reducer = (
 			return {
 				...state,
 				messagesToDelete: [],
+			};
+
+		case 'SET_SUGGESTIONS':
+			// Only accept suggestions if they would actually be displayed
+			const shouldShow =
+				! state.isThinking &&
+				! state.isSendingMessage &&
+				state.inputValue.trim() === '';
+
+			return {
+				...state,
+				suggestions: shouldShow ? action.suggestions : [],
+			};
+
+		case 'CLEAR_SUGGESTIONS':
+			return {
+				...state,
+				suggestions: [],
+			};
+
+		case 'SET_INPUT_VALUE':
+			return {
+				...state,
+				inputValue: action.value,
+				// Clear suggestions when user starts typing
+				suggestions:
+					action.value.trim() !== '' ? [] : state.suggestions,
+			};
+
+		case 'CLEAR_INPUT_VALUE':
+			return {
+				...state,
+				inputValue: '',
 			};
 
 		default:

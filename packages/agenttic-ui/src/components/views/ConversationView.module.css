@@ -5,6 +5,10 @@
     justify-content: flex-end;
 }
 
+.inputWrapper {
+    position: relative;
+}
+
 .inputContainer {
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-2);

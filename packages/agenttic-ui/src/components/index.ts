@@ -5,6 +5,9 @@ export * from './chat';
 export { Button } from './ui/button';
 export { Textarea } from './ui/textarea';
 
+// Feature components
+export { Suggestions } from './chat/Suggestions';
+
 // View components
 export { CollapsedView } from './views/CollapsedView';
 export { CompactView } from './views/CompactView';

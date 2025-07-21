@@ -32,3 +32,12 @@ export const setError = ( error: string | null ) => ( {
 	type: 'SET_ERROR' as const,
 	error,
 } );
+
+export const setInputValue = ( value: string ) => ( {
+	type: 'SET_INPUT_VALUE' as const,
+	value,
+} );
+
+export const clearInputValue = () => ( {
+	type: 'CLEAR_INPUT_VALUE' as const,
+} );

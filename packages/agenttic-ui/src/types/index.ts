@@ -7,6 +7,9 @@ export type {
 	AuthProvider,
 	ContextProvider,
 	Message,
+	Suggestion,
+	StoreActions,
+	StoreSelectors,
 	ToolProvider,
 } from '../store/types';
 

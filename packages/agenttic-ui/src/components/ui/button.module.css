@@ -1,16 +1,18 @@
 .button {
   align-items: center;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xs);
   border: 1px solid transparent;
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
   font-weight: var(--font-weight-medium);
+  font-size: var(--text-sm);
   gap: var(--spacing);
   justify-content: center;
   outline: none;
   transition-duration: 100ms;
   transition: var(--transition-colors);
+  letter-spacing: var(--text-base--tracking);
   white-space: nowrap;
 }
 
@@ -92,8 +94,8 @@
 }
 
 .outline {
-    border: 1px solid var(--color-border);
-    background-color: transparent;
+    box-shadow: var(--shadow-stroke);
+    background-color: var(--color-popover);
 }
   
 .outline:hover:not(:disabled) {
