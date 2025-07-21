@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useState } from 'react';
+import { buildDomainSearchCart } from './test-helpers/factories';
 import {
 	DomainSearch,
 	DomainSearchControls,
@@ -77,13 +78,7 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 	return (
 		<DomainSearch
-			cart={ {
-				items: [],
-				total: '',
-				onAddItem: () => {},
-				onRemoveItem: () => {},
-				hasItem: () => false,
-			} }
+			cart={ buildDomainSearchCart() }
 			initialQuery={ initialQuery }
 			onContinue={ () => {
 				alert( 'go to checkout' );

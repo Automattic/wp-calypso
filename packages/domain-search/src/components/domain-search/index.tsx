@@ -18,6 +18,8 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 	isFullCartOpen: false,
 	closeFullCart: () => {},
 	openFullCart: () => {},
+	isBusy: false,
+	setIsBusy: () => {},
 } );
 
 export const DomainSearch = ( {
@@ -35,6 +37,7 @@ export const DomainSearch = ( {
 } ) => {
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
+	const [ isBusy, setIsBusy ] = useState( false );
 
 	useLayoutEffect( () => {
 		setQuery( initialQuery ?? '' );
@@ -57,8 +60,10 @@ export const DomainSearch = ( {
 			closeFullCart,
 			openFullCart,
 			isFullCartOpen,
+			isBusy,
+			setIsBusy,
 		} ),
-		[ query, setQuery, onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
+		[ query, setQuery, onContinue, cart, closeFullCart, openFullCart, isFullCartOpen, isBusy ]
 	);
 
 	const cartItemsLength = cart.items.length;

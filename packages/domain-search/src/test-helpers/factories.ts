@@ -25,6 +25,8 @@ export const buildDomainSearchContext = (
 	setQuery: () => {},
 	cart: buildDomainSearchCart(),
 	openFullCart: () => {},
+	isBusy: false,
+	setIsBusy: () => {},
 	...overrides,
 } );
 

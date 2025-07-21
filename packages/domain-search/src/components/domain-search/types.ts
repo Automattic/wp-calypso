@@ -9,8 +9,8 @@ export interface SelectedDomain {
 export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
-	onAddItem: ( item: SelectedDomain[ 'uuid' ] ) => void;
-	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => void;
+	onAddItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void > | void;
+	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void > | void;
 	hasItem: ( uuid: SelectedDomain[ 'uuid' ] ) => boolean;
 }
 
@@ -22,4 +22,6 @@ export interface DomainSearchContextType {
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
+	isBusy: boolean;
+	setIsBusy: ( isBusy: boolean ) => void;
 }
