@@ -1,9 +1,9 @@
+import { DomainSuggestion } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
-import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 
 import './style.scss';
 
@@ -92,8 +92,8 @@ export class FeaturedDomainSuggestions extends Component {
 		return (
 			<div className="featured-domain-suggestions-v2">
 				<div className="featured-domain-suggestions-v2__content">
-					<FeaturedDomainSuggestionsPlaceholder />
-					<FeaturedDomainSuggestionsPlaceholder />
+					<DomainSuggestion.Featured.Placeholder />
+					<DomainSuggestion.Featured.Placeholder />
 				</div>
 			</div>
 		);
