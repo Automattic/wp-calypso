@@ -10,6 +10,6 @@ export const domainSuggestionsQuery = (
 	search: string,
 	domainSuggestionQuery?: Partial< DomainSuggestionQuery >
 ) => ( {
-	queryKey: [ 'domains-suggestions', search, domainSuggestionQuery ],
+	queryKey: [ 'domain-suggestions', search, domainSuggestionQuery ],
 	queryFn: () => fetchDomainSuggestions( search, domainSuggestionQuery ),
 } );
