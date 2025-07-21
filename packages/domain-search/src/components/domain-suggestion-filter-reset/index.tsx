@@ -14,7 +14,7 @@ export const DomainSuggestionFilterReset = ( props: ComponentProps< typeof Butto
 			variant="secondary"
 			__next40pxDefaultSize
 		>
-			{ __( 'Click here to disable filters for more results' ) }
+			{ __( 'Disable filters' ) }
 		</Button>
 	);
 };
