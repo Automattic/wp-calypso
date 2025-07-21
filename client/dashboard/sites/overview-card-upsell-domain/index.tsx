@@ -59,7 +59,6 @@ const OverviewCardUpsellDomain = ( {
 				{
 					product_slug: suggestedDomain?.product_slug ?? '',
 					meta: suggestedDomain?.domain_name,
-					is_domain_registration: true,
 				},
 			] );
 		}
