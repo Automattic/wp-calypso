@@ -1,3 +1,4 @@
+import { CircularProgressBar } from '@automattic/components';
 import { Link } from '@tanstack/react-router';
 import {
 	Card,
@@ -13,7 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import type { ReactElement, ReactNode } from 'react';
+import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
 export interface OverviewCardProps {
@@ -24,7 +25,12 @@ export interface OverviewCardProps {
 	externalLink?: string;
 	heading?: ReactNode;
 	icon?: ReactElement;
-	sideContent?: ReactNode;
+	progress?: {
+		value: number;
+		max: number;
+		label: string;
+		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
+	};
 	tracksId?: string;
 	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	bottom?: ReactNode;
@@ -38,7 +44,7 @@ export default function OverviewCard( {
 	heading,
 	icon,
 	link,
-	sideContent,
+	progress,
 	title,
 	tracksId,
 	variant,
@@ -134,7 +140,21 @@ export default function OverviewCard( {
 					) ) }
 				<HStack justify="space-between">
 					{ content }
-					{ sideContent }
+					{ progress && (
+						<CircularProgressBar
+							currentStep={ progress.value }
+							numberOfSteps={ progress.max }
+							size={ 80 }
+							strokeColor="var(--wp-admin-theme-color)"
+							strokeWidth={ 1.5 }
+							variant={ progress.variant }
+							customText={
+								<Text lineHeight="20px" size={ 15 } weight={ 500 }>
+									{ progress.label }
+								</Text>
+							}
+						/>
+					) }
 				</HStack>
 			</CardBody>
 		</Card>
