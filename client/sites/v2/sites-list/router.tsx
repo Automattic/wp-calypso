@@ -3,7 +3,6 @@ import {
 	createRootRoute,
 	createRoute,
 	createRouter,
-	redirect,
 } from '@tanstack/react-router';
 import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import { rawUserPreferencesQuery } from 'calypso/dashboard/app/queries/me-preferences';
@@ -49,31 +48,19 @@ const sitesRoute = createRoute( {
 		} )
 	)
 );
-const dummySitesOverviewRoute = createRoute( {
+
+const dummySiteOverviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'overview/$siteSlug',
+	path: 'sites/$siteSlug',
 	loader: infiniteLoader,
 	component: () => null,
 } );
 
-const sitesOverviewCompatibilityRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: '/sites/$siteSlug',
-	beforeLoad: ( { cause, params: { siteSlug } } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		throw redirect( { to: `/overview/${ siteSlug }`, replace: true } );
-	},
-} );
-
-const createRouteTree = () =>
-	rootRoute.addChildren( [ sitesRoute, dummySitesOverviewRoute, sitesOverviewCompatibilityRoute ] );
-
-const compatibilityRoutes = [ sitesOverviewCompatibilityRoute ];
+const createRouteTree = () => rootRoute.addChildren( [ sitesRoute, dummySiteOverviewRoute ] );
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
-	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
+	createBrowserHistoryAndMemoryRouterSync();
+
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
 	const router = createRouter( {

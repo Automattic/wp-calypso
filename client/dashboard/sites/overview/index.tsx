@@ -27,8 +27,7 @@ import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import VisibilityCard from '../overview-visibility-card';
 import './style.scss';
-
-type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
+import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
 const SPACING = {
 	DEFAULT: 6,
@@ -71,7 +70,7 @@ function SiteOverview( {
 }: {
 	siteSlug: string;
 	hideSitePreview?: boolean;
-	breakpoints?: { large: Breakpoint; small: Breakpoint };
+	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );

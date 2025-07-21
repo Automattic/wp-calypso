@@ -21,7 +21,6 @@ export function overview( context: PageJSContext, next: () => void ) {
  */
 export async function dashboardBackportSiteOverview( context: PageJSContext, next: () => void ) {
 	const { site: siteSlug } = context.params;
-
 	if ( ! isEnabled( 'dashboard/v2/backport/site-overview' ) ) {
 		return page.redirect( `/overview/${ siteSlug }` );
 	}

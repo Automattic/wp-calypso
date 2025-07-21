@@ -25,7 +25,7 @@ import emailController from 'calypso/my-sites/email/controller';
 import { OVERVIEW } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
 import { redirectToHostingDashboardBackportIfEnabled } from '../v2/site-overview/controller';
-import { overview, dashboardBackportSiteOverview } from './controller';
+import { overview } from './controller';
 
 function registerSiteDomainPage( { path, controllers }: { path: string; controllers: any[] } ) {
 	page(
@@ -141,18 +141,4 @@ export default function () {
 			domainManagementController.domainManagementSubpageView,
 		],
 	} );
-
-	/**
-	 * Overview V2
-	 */
-	page( '/sites/overview/v2', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/overview/v2/:site',
-		siteSelection,
-		navigation,
-		dashboardBackportSiteOverview,
-		siteDashboard( OVERVIEW ),
-		makeLayout,
-		clientRender
-	);
 }

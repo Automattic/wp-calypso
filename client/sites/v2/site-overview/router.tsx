@@ -20,6 +20,7 @@ import { canManageSite } from 'calypso/dashboard/sites/features';
 import { hasHostingFeature } from 'calypso/dashboard/utils/site-features';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
+import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
 const rootRoute = createRootRoute( { component: Root } );
 
@@ -57,13 +58,13 @@ const siteOverviewRoute = createRoute( {
 			component: function SiteOverview() {
 				const isWide = useBreakpoint( WIDE_BREAKPOINT );
 				const breakpoints = isWide
-					? { large: 'huge', small: 'huge' }
-					: { large: 'large', small: 'large' };
+					? { large: 'huge' as WPBreakpoint, small: 'huge' as WPBreakpoint }
+					: { large: 'large' as WPBreakpoint, small: 'large' as WPBreakpoint };
 				return (
 					<d.default
 						siteSlug={ siteRoute.useParams().siteSlug }
 						hideSitePreview
-						breakpoints={ breakpoints as any }
+						breakpoints={ breakpoints }
 					/>
 				);
 			},
@@ -71,24 +72,52 @@ const siteOverviewRoute = createRoute( {
 	)
 );
 
-const sitesOverviewCompatibilityRoute = createRoute( {
+const siteOverviewCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: '/sites/$siteSlug',
+	path: 'sites/$siteSlug',
 	beforeLoad: ( { cause, params: { siteSlug } } ) => {
 		if ( cause !== 'enter' ) {
 			return;
 		}
-		throw redirect( { to: `/overview/${ siteSlug }`, replace: true } );
+		throw redirect( { to: `/${ siteSlug }/overview`, replace: true } );
+	},
+} );
+
+const siteSettingsCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings',
+	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		throw redirect( { to: `/${ siteSlug }/settings`, replace: true } );
+	},
+} );
+
+const siteSettingsWithFeatureCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings/$feature',
+	beforeLoad: ( { cause, params: { siteSlug, feature } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		throw redirect( { to: `/${ siteSlug }/settings/${ feature }`, replace: true } );
 	},
 } );
 
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [ siteOverviewRoute ] ),
-		sitesOverviewCompatibilityRoute,
+		siteOverviewCompatibilityRoute,
+		siteSettingsCompatibilityRoute,
+		siteSettingsWithFeatureCompatibilityRoute,
 	] );
 
-const compatibilityRoutes = [ sitesOverviewCompatibilityRoute ];
+const compatibilityRoutes = [
+	siteOverviewCompatibilityRoute,
+	siteSettingsCompatibilityRoute,
+	siteSettingsWithFeatureCompatibilityRoute,
+];
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
