@@ -1,4 +1,3 @@
-@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/mixins";
@@ -18,13 +17,13 @@
 	}
 
 	&-fill-circle {
-		stroke: var(--color-accent, var(--wp-admin-theme-color));
+		stroke: var(--color-accent);
 		transform-origin: center;
 		transform: rotate(-90deg);
 		stroke-linecap: round;
 	
 		.circular__progress-bar.is-success & {
-			stroke: $alert-green;
+			stroke: $alert-green !important;
 		}
 	}
 

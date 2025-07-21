@@ -41,6 +41,7 @@ function VisibilityCardUnlaunched() {
 					currentStep={ 5 }
 					numberOfSteps={ 5 }
 					size={ 80 }
+					strokeColor="var(--wp-admin-theme-color)"
 					strokeWidth={ 1.5 }
 					variant="success"
 					customText={
