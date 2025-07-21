@@ -3,6 +3,7 @@ import { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import { Fields } from '@wordpress/dataviews';
 import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
 import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
@@ -312,6 +313,19 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				// This should not be possible. Investigating a bug:
+				// https://linear.app/a8c/issue/SHILL-901/
+				if ( ! item?.payment ) {
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Purchase payment method data field getValue got unexpected data',
+						severity: 'warning',
+						extra: {
+							item: JSON.stringify( item ),
+						},
+					} );
+					return 'no-payment-method';
+				}
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return isExpired( item )
 					? // Do not return card number for expired purchases because it
