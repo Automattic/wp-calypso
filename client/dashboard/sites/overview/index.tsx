@@ -147,8 +147,8 @@ function SiteOverview( {
 						<PerformanceCards site={ site } />
 					</VStack>
 					<VStack spacing={ spacing } justify="start">
-						<OverviewCardUpsellDIFM site={ site } />
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
+						<OverviewCardUpsellDIFM site={ site } />
 						<UptimeCard site={ site } />
 					</VStack>
 				</HStack>
