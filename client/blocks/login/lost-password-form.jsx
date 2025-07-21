@@ -73,6 +73,7 @@ const LostPasswordForm = ( {
 		if ( resp.status < 200 || resp.status >= 300 ) {
 			throw resp;
 		}
+
 		return await resp.text();
 	};
 
@@ -125,8 +126,18 @@ const LostPasswordForm = ( {
 					isJetpack: isWooJPC || isJetpack,
 				} )
 			);
-		} catch ( _httpError ) {
+		} catch ( response ) {
 			setBusy( false );
+			const result = await response.text();
+
+			const parser = new DOMParser();
+			const resultHTML = parser.parseFromString( result, 'text/html' );
+
+			const wpDieMessage = resultHTML.querySelector( '.wp-die-message' );
+			if ( wpDieMessage ) {
+				return setError( wpDieMessage.textContent.trim() );
+			}
+
 			setError(
 				translate( 'There was an error sending the password reset email. Please try again.' )
 			);
