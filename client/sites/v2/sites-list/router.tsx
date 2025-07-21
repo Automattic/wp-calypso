@@ -9,6 +9,8 @@ import { rawUserPreferencesQuery } from 'calypso/dashboard/app/queries/me-prefer
 import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import Root from '../components/root';
+import siteOverviewRouter from '../site-overview/router';
+import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
 // Keep the loading state active to prevent displaying a white screen during the redirection.
@@ -51,12 +53,53 @@ const sitesRoute = createRoute( {
 
 const dummySiteOverviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'sites/$siteSlug',
-	loader: infiniteLoader,
-	component: () => null,
+	path: 'overview/$siteSlug',
+	loader: async () => {
+		await infiniteLoader();
+	},
 } );
 
-const createRouteTree = () => rootRoute.addChildren( [ sitesRoute, dummySiteOverviewRoute ] );
+const siteOverviewPreloadRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug',
+	loader: async ( { params: { siteSlug } } ) => {
+		siteOverviewRouter.preloadRoute( {
+			to: `/sites/${ siteSlug }`,
+		} );
+		await infiniteLoader();
+	},
+} );
+
+const siteSettingsPreloadRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings',
+	loader: async ( { params: { siteSlug } } ) => {
+		siteSettingsRouter.preloadRoute( {
+			to: `/sites/${ siteSlug }/settings`,
+		} );
+		await infiniteLoader();
+	},
+} );
+
+const siteSettingsWithFeaturePreloadRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings/$feature',
+	loader: async ( { params: { siteSlug, feature } } ) => {
+		siteSettingsRouter.preloadRoute( {
+			to: `/sites/${ siteSlug }/settings/${ feature }`,
+		} );
+		await infiniteLoader();
+	},
+} );
+
+const createRouteTree = () =>
+	rootRoute.addChildren( [
+		sitesRoute,
+		dummySiteOverviewRoute,
+		siteOverviewPreloadRoute,
+		siteSettingsPreloadRoute,
+		siteSettingsWithFeaturePreloadRoute,
+	] );
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync();
@@ -71,3 +114,9 @@ export const getRouter = ( { basePath }: { basePath: string } ) => {
 
 	return router;
 };
+
+export const routerConfig = {
+	basePath: '/',
+};
+
+export default getRouter( routerConfig );

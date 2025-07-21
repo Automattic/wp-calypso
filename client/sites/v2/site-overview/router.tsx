@@ -19,6 +19,7 @@ import { DotcomFeatures } from 'calypso/dashboard/data/constants';
 import { canManageSite } from 'calypso/dashboard/sites/features';
 import { hasHostingFeature } from 'calypso/dashboard/utils/site-features';
 import Root from '../components/root';
+import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
@@ -79,7 +80,7 @@ const siteOverviewCompatibilityRoute = createRoute( {
 		if ( cause !== 'enter' ) {
 			return;
 		}
-		throw redirect( { to: `/${ siteSlug }/overview`, replace: true } );
+		throw redirect( { to: `/${ siteSlug }`, replace: true } );
 	},
 } );
 
@@ -92,6 +93,11 @@ const siteSettingsCompatibilityRoute = createRoute( {
 		}
 		throw redirect( { to: `/${ siteSlug }/settings`, replace: true } );
 	},
+	loader: ( { params: { siteSlug } } ) => {
+		siteSettingsRouter.preloadRoute( {
+			to: `/${ siteSlug }/settings`,
+		} );
+	},
 } );
 
 const siteSettingsWithFeatureCompatibilityRoute = createRoute( {
@@ -102,6 +108,11 @@ const siteSettingsWithFeatureCompatibilityRoute = createRoute( {
 			return;
 		}
 		throw redirect( { to: `/${ siteSlug }/settings/${ feature }`, replace: true } );
+	},
+	loader: ( { params: { siteSlug, feature } } ) => {
+		siteSettingsRouter.preloadRoute( {
+			to: `/${ siteSlug }/settings/${ feature }`,
+		} );
 	},
 } );
 
@@ -132,3 +143,9 @@ export const getRouter = ( { basePath }: { basePath: string } ) => {
 
 	return router;
 };
+
+export const routerConfig = {
+	basePath: '/sites/v2',
+};
+
+export default getRouter( routerConfig );

@@ -7,7 +7,8 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
-import Layout, { router } from './layout';
+import Layout from './layout';
+import router from './router';
 import './style.scss';
 
 export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?: string } ) {

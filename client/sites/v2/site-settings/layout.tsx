@@ -5,15 +5,12 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
 import { queryClient } from 'calypso/dashboard/app/query-client';
-import { getRouter, syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } from './router';
+import router, {
+	routerConfig,
+	syncBrowserHistoryToRouter,
+	syncMemoryRouterToBrowserHistory,
+} from './router';
 import type { Store } from 'redux';
-
-// Serves a similar purpose to AppConfig form v2 dashboard.
-const config = {
-	basePath: '/',
-};
-
-export const router = getRouter( config );
 
 function RouterProviderWithAuth( { siteSlug, feature }: { siteSlug?: string; feature?: string } ) {
 	const auth = useAuth();
@@ -36,7 +33,7 @@ function RouterProviderWithAuth( { siteSlug, feature }: { siteSlug?: string; fea
 		};
 	}, [] );
 
-	return <RouterProvider router={ router } context={ { auth, config } } />;
+	return <RouterProvider router={ router } context={ { auth, config: routerConfig } } />;
 }
 
 function Layout( {

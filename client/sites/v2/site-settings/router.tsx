@@ -239,3 +239,9 @@ export const getRouter = ( { basePath }: { basePath: string } ) => {
 
 	return router;
 };
+
+export const routerConfig = {
+	basePath: '/sites/v2',
+};
+
+export default getRouter( routerConfig );

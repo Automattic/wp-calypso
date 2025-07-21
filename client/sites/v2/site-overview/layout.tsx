@@ -4,14 +4,11 @@ import { useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
 import { queryClient } from 'calypso/dashboard/app/query-client';
-import { getRouter, syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } from './router';
-
-// Serves a similar purpose to AppConfig form v2 dashboard.
-const config = {
-	basePath: '/sites/v2',
-};
-
-export const router = getRouter( config );
+import router, {
+	routerConfig,
+	syncBrowserHistoryToRouter,
+	syncMemoryRouterToBrowserHistory,
+} from './router';
 
 function RouterProviderWithAuth( { siteSlug }: { siteSlug?: string } ) {
 	const auth = useAuth();
@@ -34,7 +31,7 @@ function RouterProviderWithAuth( { siteSlug }: { siteSlug?: string } ) {
 		};
 	}, [] );
 
-	return <RouterProvider router={ router } context={ { auth, config } } />;
+	return <RouterProvider router={ router } context={ { auth, config: routerConfig } } />;
 }
 
 function Layout( {
