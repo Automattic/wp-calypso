@@ -39,6 +39,10 @@
 		@include body-large;
 	}
 
+	.domain-own-use__description {
+		text-align: start;
+	}
+
 	svg {
 		fill: #{$gray-700};
 	}

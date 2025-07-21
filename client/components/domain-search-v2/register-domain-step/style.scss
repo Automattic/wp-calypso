@@ -12,10 +12,6 @@
 		background-color: initial;
 	}
 
-	.summary-button-description {
-		text-align: left;
-	}
-
 	.wpcom-domain-search-v2__empty-state-search-controls {
 		container-type: inline-size;
 		container-name: search-controls;
@@ -44,22 +40,12 @@
 	}
 
 	.wpcom-domain-search-v2__sticky-bottom {
-		.domain-own-use {
-			width: 100%;
-		}
-
-		@include break-small() {
-			position: fixed;
-			z-index: z-index('root', '.sticky-panel.is-sticky .sticky-panel__content');
-			display: flex;
-			justify-content: center;
-			bottom: 2.5rem;
-			left: 0;
-			right: 0;
-
-			.domain-own-use {
-				width: auto;
-			}
-		}
+		position: fixed;
+		z-index: z-index('root', '.sticky-panel.is-sticky .sticky-panel__content');
+		display: flex;
+		justify-content: center;
+		bottom: 2.5rem;
+		left: 0;
+		right: 0;
 	}
 }
