@@ -13,6 +13,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
@@ -55,74 +56,90 @@ export default function OverviewCard( {
 	const { recordTracksEvent } = useAnalytics();
 	const isDisabled = variant === 'disabled';
 
-	const content = (
-		<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
-			<HStack justify="space-between">
-				<HStack spacing={ 2 } alignment="center" expanded={ false }>
-					{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-					<Text
-						className="dashboard-overview-card__title"
-						variant="muted"
-						lineHeight="16px"
-						size={ 11 }
-						weight={ 500 }
-						upperCase
-					>
-						{ title }
-					</Text>
-				</HStack>
-				{ link && ! progress && (
-					<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
-				) }
-				{ externalLink && (
-					<span
-						className="dashboard-overview-card__link-icon components-external-link__icon"
-						aria-label={
-							/* translators: accessibility text */
-							__( '(opens in a new tab)' )
-						}
-					>
-						&#8599;
-					</span>
-				) }
-			</HStack>
-			<HStack justify="flex-start" alignment="baseline">
-				{ customHeading ? (
-					customHeading
-				) : (
-					<VStack spacing={ 2 }>
-						<Heading
-							level={ 2 }
-							size={ 20 }
-							variant={ isDisabled ? 'muted' : undefined }
+	const topContent = (
+		<HStack justify="space-between" className="dashboard-overview-card__content">
+			<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
+				<HStack justify="space-between">
+					<HStack spacing={ 2 } alignment="center" expanded={ false }>
+						{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
+						<Text
+							className="dashboard-overview-card__title"
+							variant="muted"
+							lineHeight="16px"
+							size={ 11 }
 							weight={ 500 }
+							upperCase
 						>
-							{ heading }
-						</Heading>
-						{ description && (
-							<Text
-								className="dashboard-overview-card__description"
-								variant="muted"
-								lineHeight="16px"
-								size={ 12 }
+							{ title }
+						</Text>
+					</HStack>
+					{ link && ! progress && (
+						<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
+					) }
+					{ externalLink && (
+						<span
+							className="dashboard-overview-card__link-icon components-external-link__icon"
+							aria-label={
+								/* translators: accessibility text */
+								__( '(opens in a new tab)' )
+							}
+						>
+							&#8599;
+						</span>
+					) }
+				</HStack>
+				<HStack justify="flex-start" alignment="baseline">
+					{ customHeading ? (
+						customHeading
+					) : (
+						<VStack spacing={ 2 }>
+							<Heading
+								level={ 2 }
+								size={ 20 }
+								variant={ isDisabled ? 'muted' : undefined }
+								weight={ 500 }
 							>
-								{ description }
-							</Text>
-						) }
-					</VStack>
-				) }
-			</HStack>
-			{ variant === 'loading' && <OverviewCardProgressBar /> }
-		</VStack>
+								{ heading }
+							</Heading>
+							{ description && (
+								<Text
+									className="dashboard-overview-card__description"
+									variant="muted"
+									lineHeight="16px"
+									size={ 12 }
+								>
+									{ description }
+								</Text>
+							) }
+						</VStack>
+					) }
+				</HStack>
+				{ variant === 'loading' && <OverviewCardProgressBar /> }
+			</VStack>
+			{ progress && (
+				<CircularProgressBar
+					currentStep={ progress.value }
+					numberOfSteps={ progress.max }
+					size={ 80 }
+					strokeColor="var(--wp-admin-theme-color)"
+					strokeWidth={ 1.5 }
+					variant={ progress.variant }
+					customText={
+						<Text lineHeight="20px" size={ 15 } weight={ 500 }>
+							{ progress.label }
+						</Text>
+					}
+				/>
+			) }
+		</HStack>
 	);
 
-	const wrappedContent = (
+	return (
 		<Card
-			className={
-				variant
-					? `dashboard-overview-card dashboard-overview-card--${ variant }`
-					: 'dashboard-overview-card'
-			}
+			className={ clsx( 'dashboard-overview-card', {
+				[ `dashboard-overview-card--${ variant }` ]: variant,
+				'dashboard-overview-card--has-bottom': bottom,
+			} ) }
 			style={ {
 				opacity: isDisabled ? 0.5 : 1,
 			} }
@@ -140,24 +157,39 @@ export default function OverviewCard( {
 							properties={ { feature: tracksId, variant } }
 						/>
 					) ) }
-				<HStack justify="space-between" className="dashboard-overview-card__content">
-					{ content }
-					{ progress && (
-						<CircularProgressBar
-							currentStep={ progress.value }
-							numberOfSteps={ progress.max }
-							size={ 80 }
-							strokeColor="var(--wp-admin-theme-color)"
-							strokeWidth={ 1.5 }
-							variant={ progress.variant }
-							customText={
-								<Text lineHeight="20px" size={ 15 } weight={ 500 }>
-									{ progress.label }
-								</Text>
+				{ link && (
+					<Link to={ link } className="dashboard-overview-card__link" onClick={ onClick }>
+						{ topContent }
+					</Link>
+				) }
+				{ ! link && externalLink && (
+					<a
+						href={ externalLink }
+						className="dashboard-overview-card__link"
+						target="_blank"
+						rel="noreferrer"
+						onClick={ () => {
+							onClick?.();
+
+							if ( tracksId ) {
+								if ( variant === 'upsell' ) {
+									recordTracksEvent( 'calypso_dashboard_upsell_click', {
+										feature: tracksId,
+										type: 'card',
+									} );
+								} else {
+									recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+										type: tracksId,
+										variant,
+									} );
+								}
 							}
-						/>
-					) }
-				</HStack>
+						} }
+					>
+						{ topContent }
+					</a>
+				) }
+				{ ! link && ! externalLink && topContent }
 				{ bottom && (
 					<>
 						<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
@@ -169,46 +201,6 @@ export default function OverviewCard( {
 			</CardBody>
 		</Card>
 	);
-
-	if ( link ) {
-		return (
-			<Link to={ link } className="dashboard-overview-card__link" onClick={ onClick }>
-				{ wrappedContent }
-			</Link>
-		);
-	}
-
-	if ( externalLink ) {
-		return (
-			<a
-				href={ externalLink }
-				className="dashboard-overview-card__link"
-				target="_blank"
-				rel="noreferrer"
-				onClick={ () => {
-					onClick?.();
-
-					if ( tracksId ) {
-						if ( variant === 'upsell' ) {
-							recordTracksEvent( 'calypso_dashboard_upsell_click', {
-								feature: tracksId,
-								type: 'card',
-							} );
-						} else {
-							recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-								type: tracksId,
-								variant,
-							} );
-						}
-					}
-				} }
-			>
-				{ wrappedContent }
-			</a>
-		);
-	}
-
-	return wrappedContent;
 }
 
 export function OverviewCardProgressBar( { value }: { value?: number } ) {
