@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
@@ -14,8 +13,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
 	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 
-	const shouldShowRecommendedBlogs =
-		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
+	const shouldShowRecommendedBlogs = recommendedBlogs?.length && userLogin;
 
 	useEffect( () => {
 		if ( ! recommendedBlogs && userLogin ) {

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -107,7 +106,6 @@ const SiteSubscriptionRow = ( {
 	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feed_id ) );
 
 	const isCompactLayout = layout === 'compact';
-	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
@@ -372,7 +370,7 @@ const SiteSubscriptionRow = ( {
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
-			{ isRecommendedBlogsEnabled && isLoggedIn && ! isCompactLayout && (
+			{ isLoggedIn && ! isCompactLayout && (
 				<span className="recommend-cell" role="cell">
 					<FormToggle
 						aria-label={ translate( 'Recommend this site to other users.' ) }
