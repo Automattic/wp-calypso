@@ -1194,6 +1194,7 @@ class RenderDomainsStepComponent extends Component {
 				showFreeDomainPromo={
 					! this.shouldHideDomainExplainer() || this.shouldDisplayDomainOnlyExplainer()
 				}
+				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
 			/>
 		);
 	};

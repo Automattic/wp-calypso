@@ -477,6 +477,7 @@ class RegisterDomainStep extends Component {
 		);
 
 		return {
+			isBusy: this.props.isMiniCartContinueButtonBusy,
 			items: domainsInCart.map( ( domain ) => {
 				const [ domainName, ...tld ] = domain.meta.split( '.' );
 

@@ -1,3 +1,4 @@
+import { useDomainSearch } from '@automattic/domain-search';
 import {
 	Button,
 	__experimentalText as Text,
@@ -16,6 +17,7 @@ interface Props {
 
 const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 	const translate = useTranslate();
+	const { cart } = useDomainSearch();
 	const [ subdomain, ...tlds ] = domain.split( '.' );
 
 	return (
@@ -39,7 +41,12 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 				</Text>
 			}
 			right={
-				<Button className="subdomain-skip-suggestion__btn" variant="secondary" onClick={ onSkip }>
+				<Button
+					className="subdomain-skip-suggestion__btn"
+					variant="secondary"
+					onClick={ onSkip }
+					disabled={ cart.isBusy }
+				>
 					{ translate( 'Skip purchase' ) }
 				</Button>
 			}

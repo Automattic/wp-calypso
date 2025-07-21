@@ -1,4 +1,4 @@
-export { DomainSearch } from './components/domain-search';
+export { DomainSearch, useDomainSearch } from './components/domain-search';
 export type { DomainSearchCart } from './components/domain-search/types';
 export { DomainSearchNotice } from './components/domain-search-notice';
 export { DomainsMiniCart } from './components/domains-mini-cart';
