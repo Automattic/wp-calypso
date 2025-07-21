@@ -280,9 +280,11 @@ export default function SyncModal( {
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
 			// Sync everything
 			include_paths = '';
+			exclude_paths = '';
 		}
 
 		onSyncStart();
@@ -291,9 +293,9 @@ export default function SyncModal( {
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			pullFromStaging( { types: 'paths', include_paths } );
+			pullFromStaging( { types: 'paths', include_paths, exclude_paths } );
 		} else {
-			pushToStaging( { types: 'paths', include_paths } );
+			pushToStaging( { types: 'paths', include_paths, exclude_paths } );
 		}
 
 		onClose();
