@@ -2,9 +2,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
-	Spinner,
-	Notice,
+	__experimentalHStack as HStack,
+	Card,
+	CardBody,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -12,8 +14,8 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteDeleteStatusQuery } from '../../app/queries/site-staging-sites';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import type { Site } from '../../data/types';
 
 export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
@@ -60,22 +62,27 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	}, [ stagingSiteData, productionSite, router, queryClient, productionSiteId ] );
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Staging Site Deletion' ) } /> }>
-			<VStack spacing={ 4 }>
-				<Notice status="info">
-					<VStack spacing={ 2 }>
-						<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-							<Spinner />
-							<Text>{ __( 'Staging site deletion in progress…' ) }</Text>
-						</div>
-						<Text variant="muted">
-							{ __(
-								'You will be redirected to the production site when the deletion is complete.'
-							) }
-						</Text>
-					</VStack>
-				</Notice>
-			</VStack>
+		<PageLayout>
+			<Card>
+				<CardBody style={ { padding: '40px' } }>
+					<HStack spacing={ 4 }>
+						<VStack>
+							<Heading level={ 1 } weight={ 500 }>
+								{ __( 'Deleting staging site' ) }
+							</Heading>
+							<Text as="p" variant="muted">
+								{ __(
+									'We’re permanently deleting your staging site. Your live site is safe and won’t be affected.'
+								) }
+							</Text>
+							<Text as="p" variant="muted">
+								{ __( 'Hang tight, this may take a few moments.' ) }
+							</Text>
+						</VStack>
+						<img src={ deleteStagingSiteIllustration } alt={ __( 'Deleting staging site' ) } />
+					</HStack>
+				</CardBody>
+			</Card>
 		</PageLayout>
 	);
 }
