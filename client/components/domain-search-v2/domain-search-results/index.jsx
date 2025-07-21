@@ -358,6 +358,7 @@ class DomainSearchResults extends Component {
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
+			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;
 			suggestionElements = this.renderPlaceholders();
 		}
 
