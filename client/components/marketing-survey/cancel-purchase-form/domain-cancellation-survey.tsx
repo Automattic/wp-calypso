@@ -1,11 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from '@automattic/urls';
-import { Button, SelectControl, TextareaControl } from '@wordpress/components';
+import { SelectControl, TextareaControl } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Notice from 'calypso/components/notice';
 import { getName } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { useDispatch } from 'calypso/state';
@@ -26,6 +27,8 @@ interface Props {
 	onClose: () => void;
 	onSurveyComplete: () => void;
 	cancellationInProgress?: boolean;
+	cancellationCompleted?: boolean;
+	cancellationMessage?: string;
 }
 
 interface DomainCancellationReason {
@@ -137,20 +140,19 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	}, [ selectedReason, cancellationReasons ] );
 
 	const renderButtons = () => {
-		const { disableButtons, cancellationInProgress } = props;
+		const { disableButtons, cancellationCompleted } = props;
 		const disabled = disableButtons || ! selectedReason;
 
 		return (
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
-					<Button
-						variant="primary"
-						isBusy={ cancellationInProgress }
+					<button
+						className="components-button is-primary"
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
-						{ translate( 'Submit' ) }
-					</Button>
+						{ cancellationCompleted ? translate( 'Submit' ) : translate( 'Submit feedback' ) }
+					</button>
 				</div>
 			</div>
 		);
@@ -163,7 +165,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 
 		return (
 			<div className="cancel-purchase-form__feedback-question">
-				<div className="cancel-purchase-form__notice">
+				<Notice status="is-warning" className="cancel-purchase-form__notice">
 					{ selectedReasonData.helpMessage }
 					{ selectedReasonData.showLink && (
 						<>
@@ -177,7 +179,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 							</a>
 						</>
 					) }
-				</div>
+				</Notice>
 			</div>
 		);
 	};
@@ -196,6 +198,19 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 				</span>
 			</BlankCanvas.Header>
 			<BlankCanvas.Content>
+				{ props.cancellationMessage && (
+					<div className="cancel-purchase-form__notice-container">
+						<Notice
+							status="is-success"
+							className="cancel-purchase-form__notice"
+							theme="light"
+							showDismiss={ false }
+						>
+							{ props.cancellationMessage }
+						</Notice>
+					</div>
+				) }
+
 				<div className="cancel-purchase-form__feedback">
 					<FormattedHeader
 						brandFont

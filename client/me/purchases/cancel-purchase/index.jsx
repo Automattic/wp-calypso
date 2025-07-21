@@ -7,7 +7,6 @@ import {
 	isJetpackProduct,
 	isAkismetProduct,
 	getPlan,
-	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
@@ -35,12 +34,6 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import {
-	cancelPurchaseAsync,
-	cancelAndRefundPurchaseAsync,
-	cancelAndRefundPurchase,
-	extendPurchaseWithFreeMonth,
-} from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -49,7 +42,7 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -57,7 +50,6 @@ import {
 	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
-	getDowngradePlanFromPurchase,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -98,6 +90,8 @@ class CancelPurchase extends Component {
 		showDomainOptionsStep: false,
 		// Cancellation state moved from button component
 		showDialog: false,
+		cancellationCompleted: false,
+		cancellationMessage: '',
 	};
 
 	static defaultProps = {
@@ -165,14 +159,7 @@ class CancelPurchase extends Component {
 	};
 
 	onCancellationStart = () => {
-		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
-			this.props;
-
-		// For Jetpack/Akismet products and domain registrations, call onCancellationComplete to show the dialog
-		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
-			this.onCancellationComplete();
-			return;
-		}
+		const { includedDomainPurchase, purchase } = this.props;
 
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
@@ -181,123 +168,47 @@ class CancelPurchase extends Component {
 		) {
 			this.setState( { showDomainOptionsStep: true } );
 		} else {
-			// For direct cancellations (no domain options step), show survey directly
-			this.setState( { surveyShown: true } );
+			// For direct cancellations (no domain options step), set loading state
+			this.setState( { isLoading: true } );
 		}
 	};
 
 	onDomainOptionsComplete = ( domainOptions ) => {
 		this.setState( {
 			showDomainOptionsStep: false,
-			surveyShown: true,
+			isLoading: true,
 			cancelBundledDomain: domainOptions.cancelBundledDomain,
 			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
 		} );
+		// Don't show survey yet - wait for cancellation to complete
 	};
 
-	cancelPurchase = async ( purchase ) => {
-		const { translate, moment } = this.props;
-		try {
-			const success = await cancelPurchaseAsync( purchase.id );
-			if ( success ) {
-				const purchaseName = getName( purchase );
-				const subscriptionEndDate = moment( purchase.expiryDate ).format( 'LL' );
-				return {
-					success: true,
-					message: translate(
-						'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.',
-						{
-							args: { purchaseName, subscriptionEndDate },
-						}
-					),
-				};
+	onSurveyComplete = () => {
+		// Handle success flow after survey completion
+		if ( this.state.cancellationCompleted ) {
+			// Refresh data and show success notice
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
+
+			if ( this.state.cancellationMessage ) {
+				this.props.successNotice( this.state.cancellationMessage, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
 			}
-			return {
-				success: false,
-				error: translate(
-					'There was a problem canceling %(purchaseName)s. Please try again later or contact support.',
-					{ args: { purchaseName: getName( purchase ) } }
-				),
-			};
-		} catch ( error ) {
-			return {
-				success: false,
-				error: translate(
-					'There was a problem canceling %(purchaseName)s. Please try again later or contact support.',
-					{ args: { purchaseName: getName( purchase ) } }
-				),
-			};
-		}
-	};
 
-	cancelAndRefund = async ( purchase ) => {
-		const { cancelBundledDomain } = this.state;
-		try {
-			await cancelAndRefundPurchaseAsync( purchase.id, {
-				product_id: purchase.productId,
-				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
-			} );
-			return {
-				success: true,
-				message: this.props.translate(
-					'Your refund has been processed and your purchase removed.'
-				),
-			};
-		} catch ( error ) {
-			return { success: false, error: error.message };
+			// Redirect to purchases page
+			page.redirect( this.props.purchaseListUrl );
 		}
-	};
 
-	submitCancelAndRefundPurchase = async ( purchase ) => {
-		const refundable = hasAmountAvailableToRefund( purchase );
-		if ( refundable ) {
-			return await this.cancelAndRefund( purchase );
-		}
-		return await this.cancelPurchase( purchase );
-	};
-
-	handleMarketplaceSubscriptions = async ( isPlanRefundable ) => {
-		const activeSubscriptions = this.getActiveMarketplaceSubscriptions();
-		if ( activeSubscriptions?.length > 0 ) {
-			return Promise.all(
-				activeSubscriptions.map( async ( s ) => {
-					if ( isPlanRefundable && hasAmountAvailableToRefund( s ) ) {
-						await this.cancelAndRefund( s );
-					} else {
-						await this.cancelPurchase( s );
-					}
-				} )
-			);
-		}
-	};
-
-	onSurveyComplete = async () => {
-		// Set loading state to show busy button
-		this.setState( { isLoading: true } );
-
-		try {
-			const result = await this.submitCancelAndRefundPurchase( this.props.purchase );
-			if ( result.success ) {
-				const refundable = hasAmountAvailableToRefund( this.props.purchase );
-				await this.handleMarketplaceSubscriptions( refundable );
-				this.props.refreshSitePlans( this.props.purchase.siteId );
-				this.props.clearPurchases();
-				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				page.redirect( this.props.purchaseListUrl );
-			} else {
-				this.props.errorNotice( result.error );
-			}
-		} catch ( error ) {
-			this.props.errorNotice( error.message );
-		} finally {
-			// Reset loading state
-			this.setState( { surveyShown: false, isLoading: false } );
-		}
+		this.setState( { surveyShown: false, isLoading: false } );
 	};
 
 	onDialogClose = () => {
 		this.setState( {
 			showDialog: false,
+			cancellationCompleted: false,
+			cancellationMessage: '',
 			isLoading: false,
 		} );
 	};
@@ -306,74 +217,25 @@ class CancelPurchase extends Component {
 		this.setState( { isLoading } );
 	};
 
-	onCancellationComplete = () => {
-		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
+	onCancellationComplete = ( message ) => {
+		const { isJetpack, isAkismet, purchase } = this.props;
 
 		// For Jetpack/Akismet products and domain registrations, show the button's own dialog
-		// For all other products, show the main component's survey
-		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
+		// For other products, show the main component's survey
+		if ( isJetpack || isAkismet || isDomainRegistration( purchase ) ) {
 			this.setState( {
 				showDialog: true,
 				isLoading: false,
+				cancellationCompleted: true,
+				cancellationMessage: message,
 			} );
 		} else {
 			this.setState( {
 				surveyShown: true,
 				isLoading: false,
+				cancellationCompleted: true,
+				cancellationMessage: message,
 			} );
-		}
-	};
-
-	downgradeClick = ( upsell ) => {
-		const { purchase } = this.props;
-		let downgradePlan = getDowngradePlanFromPurchase( purchase );
-		if ( 'downgrade-monthly' === upsell ) {
-			const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
-			downgradePlan = getPlan( monthlyProductSlug );
-		}
-
-		this.setState( { isLoading: true } );
-
-		cancelAndRefundPurchase(
-			purchase.id,
-			{
-				product_id: purchase.productId,
-				type: 'downgrade',
-				to_product_id: downgradePlan.getProductId(),
-			},
-			( error, response ) => {
-				this.setState( { isLoading: false } );
-
-				if ( error ) {
-					this.props.errorNotice( error.message );
-					return;
-				}
-
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-				this.props.successNotice( response.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
-			}
-		);
-	};
-
-	freeMonthOfferClick = async () => {
-		const { purchase } = this.props;
-
-		this.setState( { isLoading: true } );
-
-		try {
-			const res = await extendPurchaseWithFreeMonth( purchase.id );
-			if ( res.status === 'completed' ) {
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-				this.props.successNotice( res.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
-			}
-		} catch ( err ) {
-			this.props.errorNotice( err.message );
-		} finally {
-			this.setState( { isLoading: false } );
 		}
 	};
 
@@ -527,7 +389,6 @@ class CancelPurchase extends Component {
 			siteSlug,
 			purchaseListUrl,
 			getConfirmCancelDomainUrlFor,
-			isDomainRegistrationPurchase,
 		} = this.props;
 
 		// Check if we need atomic revert confirmation
@@ -539,7 +400,7 @@ class CancelPurchase extends Component {
 			( needsAtomicRevertConfirmation &&
 				! this.state.atomicRevertConfirmed &&
 				isPlan( purchase ) ) ||
-			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed );
+			( isDomainRegistration( purchase ) && ! this.state.domainConfirmationConfirmed );
 
 		return (
 			<CancelPurchaseButton
@@ -557,11 +418,11 @@ class CancelPurchase extends Component {
 				moment={ this.props.moment }
 				// Cancellation state props
 				showDialog={ this.state.showDialog }
+				cancellationCompleted={ this.state.cancellationCompleted }
+				cancellationMessage={ this.state.cancellationMessage }
 				isLoading={ this.state.isLoading }
 				onDialogClose={ this.onDialogClose }
 				onSetLoading={ this.onSetLoading }
-				downgradeClick={ this.downgradeClick }
-				freeMonthOfferClick={ this.freeMonthOfferClick }
 			/>
 		);
 	};
@@ -630,7 +491,7 @@ class CancelPurchase extends Component {
 	};
 
 	renderProductRevertContent = () => {
-		const { purchase, isDomainRegistrationPurchase } = this.props;
+		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
 		const plan = getPlan( purchase?.productSlug );
 		const planDescription = plan?.getPlanCancellationDescription?.();
@@ -647,7 +508,7 @@ class CancelPurchase extends Component {
 				</CompactCard>
 
 				<CompactCard className="cancel-purchase__footer">
-					{ isDomainRegistrationPurchase && (
+					{ isDomainRegistration( purchase ) && (
 						<div className="cancel-purchase__domain-confirmation">
 							<FormCheckbox
 								checked={ this.state.domainConfirmationConfirmed }
@@ -746,13 +607,11 @@ class CancelPurchase extends Component {
 						onCancellationStart={ null }
 						// Cancellation state props
 						showDialog={ this.state.showDialog }
+						cancellationCompleted={ this.state.cancellationCompleted }
+						cancellationMessage={ this.state.cancellationMessage }
 						isLoading={ this.state.isLoading }
 						onDialogClose={ this.onDialogClose }
 						onSetLoading={ this.onSetLoading }
-						downgradeClick={ this.downgradeClick }
-						freeMonthOfferClick={ this.freeMonthOfferClick }
-						// Disable marketplace dialog in domain options step to prevent double display
-						showMarketplaceDialog={ false }
 					/>
 					{ this.renderKeepSubscriptionButton() }
 				</div>
@@ -779,7 +638,7 @@ class CancelPurchase extends Component {
 			return null;
 		}
 
-		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
+		const { purchase } = this.props;
 		const purchaseName = getName( purchase );
 		const { siteName, siteId } = purchase;
 
@@ -799,21 +658,19 @@ class CancelPurchase extends Component {
 
 		return (
 			<>
-				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
-					<CancelPurchaseForm
-						disableButtons={ this.state.isLoading }
-						purchase={ purchase }
-						isVisible={ this.state.surveyShown }
-						onClose={ () => this.setState( { surveyShown: false } ) }
-						onSurveyComplete={ this.onSurveyComplete }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
-						cancelBundledDomain={ this.state.cancelBundledDomain }
-						includedDomainPurchase={ this.props.includedDomainPurchase }
-						cancellationInProgress={ this.state.isLoading }
-						downgradeClick={ this.downgradeClick }
-						freeMonthOfferClick={ this.freeMonthOfferClick }
-					/>
-				) }
+				<CancelPurchaseForm
+					disableButtons={ this.state.isLoading }
+					purchase={ purchase }
+					isVisible={ this.state.surveyShown }
+					onClose={ () => this.setState( { surveyShown: false } ) }
+					onSurveyComplete={ this.onSurveyComplete }
+					flowType={ getPurchaseCancellationFlowType( purchase ) }
+					cancelBundledDomain={ this.state.cancelBundledDomain }
+					includedDomainPurchase={ this.props.includedDomainPurchase }
+					cancellationCompleted={ this.state.cancellationCompleted }
+					cancellationMessage={ this.state.cancellationMessage }
+					cancellationInProgress={ this.state.isLoading }
+				/>
 				<Card className="cancel-purchase__wrapper-card">
 					<QueryProductsList />
 					<TrackPurchasePageView
@@ -877,7 +734,6 @@ export default connect(
 			isJetpackPurchase,
 			isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 			isAkismet: purchase && isAkismetProduct( purchase ),
-			isDomainRegistrationPurchase: purchase && isDomainRegistration( purchase ),
 			purchase,
 			purchases,
 			productsList,
@@ -887,5 +743,5 @@ export default connect(
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 		};
 	},
-	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice, errorNotice }
+	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice }
 )( localize( withLocalizedMoment( CancelPurchase ) ) );

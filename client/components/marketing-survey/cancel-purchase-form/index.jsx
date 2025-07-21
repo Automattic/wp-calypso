@@ -16,6 +16,7 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
 import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
@@ -71,6 +72,8 @@ class CancelPurchaseForm extends Component {
 		linkedPurchases: PropTypes.array,
 		skipRemovePlanSurvey: PropTypes.bool,
 		cancellationInProgress: PropTypes.bool,
+		cancellationCompleted: PropTypes.bool,
+		cancellationMessage: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -576,7 +579,7 @@ class CancelPurchaseForm extends Component {
 					disabled={ ! this.canGoNext() }
 					onClick={ this.clickNext }
 				>
-					{ translate( 'Continue' ) }
+					{ translate( 'Submit' ) }
 				</GutenbergButton>
 			);
 		}
@@ -714,7 +717,7 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 	render() {
-		const { purchase, site } = this.props;
+		const { purchase, site, cancellationCompleted, cancellationMessage } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( ! surveyStep ) {
@@ -741,7 +744,21 @@ class CancelPurchaseForm extends Component {
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
-						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
+						<BlankCanvas.Content>
+							{ cancellationCompleted && cancellationMessage && (
+								<div className="cancel-purchase-form__notice-container">
+									<Notice
+										status="is-success"
+										className="cancel-purchase-form__notice"
+										theme="light"
+										showDismiss={ false }
+									>
+										{ cancellationMessage }
+									</Notice>
+								</div>
+							) }
+							{ this.surveyContent() }
+						</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div

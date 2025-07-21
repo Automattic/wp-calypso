@@ -13,6 +13,7 @@ import JetpackCancellationOfferAccepted from 'calypso/components/marketing-surve
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import Notice from 'calypso/components/notice';
 import { getName, isExpired } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
@@ -45,6 +46,7 @@ interface Props {
 	isAkismet?: boolean;
 	cancellationInProgress?: boolean;
 	cancellationCompleted?: boolean;
+	cancellationMessage?: string;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -67,13 +69,12 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return steps.CANCELLATION_REASON_STEP;
 		}
 
-		// For refundable plans, go directly to survey (no intermediate confirmation needed)
-		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
-			return steps.CANCELLATION_REASON_STEP;
-		}
-
-		// For non-refundable plans (REMOVE), show the benefits step first
-		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		// In these cases, the subscription is getting removed.
+		// Show the benefits step first.
+		if (
+			flowType === CANCEL_FLOW_TYPE.REMOVE ||
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+		) {
 			return steps.FEATURES_LOST_STEP;
 		}
 
@@ -433,6 +434,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 */
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
+		const { cancellationMessage } = props;
 
 		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
 			return (
@@ -475,11 +477,26 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// follow similar pattern used in the Jetpack disconnection flow
 			// make sure the user has the ability to skip the question
 			return (
-				<JetpackCancellationSurvey
-					onAnswerChange={ onSurveyAnswerChange }
-					selectedAnswerId={ surveyAnswerId }
-					isAkismet={ !! props?.isAkismet }
-				/>
+				<>
+					{ cancellationMessage && (
+						<div className="cancel-jetpack-form__notice-container">
+							<Notice
+								status="is-success"
+								className="cancel-jetpack-form__notice"
+								theme="light"
+								showDismiss={ false }
+							>
+								{ cancellationMessage }
+							</Notice>
+						</div>
+					) }
+
+					<JetpackCancellationSurvey
+						onAnswerChange={ onSurveyAnswerChange }
+						selectedAnswerId={ surveyAnswerId }
+						isAkismet={ !! props?.isAkismet }
+					/>
+				</>
 			);
 		}
 

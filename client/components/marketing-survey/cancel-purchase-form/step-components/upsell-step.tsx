@@ -1,5 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_PERSONAL,
+	PLAN_BUSINESS,
+	findFirstSimilarPlanKey,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { HelpCenter } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -36,7 +42,7 @@ type UpsellProps = {
 
 function Upsell( { image, ...props }: UpsellProps ) {
 	const translate = useTranslate();
-	const declineButtonText = props.declineButtonText || translate( 'Cancel my current plan' );
+	const declineButtonText = props.declineButtonText || translate( 'No, thanks' );
 	const [ busyButton, setBusyButton ] = useState( '' );
 
 	return (
@@ -120,6 +126,9 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const { refundAmount } = props;
 	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+	const monthlyPlanSlug = findFirstSimilarPlanKey( purchase.productSlug, {
+		term: TERM_MONTHLY,
+	} );
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -237,7 +246,12 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 				<Upsell
 					title={ translate( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ translate( 'Switch to monthly payments' ) }
-					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					acceptButtonUrl={
+						monthlyPlanSlug ? `/checkout/${ site.slug }/${ monthlyPlanSlug }` : undefined
+					}
+					onAccept={ () => {
+						recordTracksEvent( 'calypso_cancellation_upsell_step_downgrade_monthly_click' );
+					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgMonthlyPayments }
 				>
@@ -258,16 +272,6 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
 						{ refundAmount && <br /> }
-						{ Number( refundAmount )
-							? translate(
-									'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
-									{
-										args: {
-											refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
-										},
-									}
-							  )
-							: null }
 					</>
 				</Upsell>
 			);
@@ -279,7 +283,10 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					acceptButtonText={ translate( 'Switch to the %(plan)s plan', {
 						args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} ) }
-					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					acceptButtonUrl={ `/checkout/${ site.slug }/personal` }
+					onAccept={ () => {
+						recordTracksEvent( 'calypso_cancellation_upsell_step_downgrade_personal_click' );
+					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgSwitchPlan }
 				>
@@ -299,17 +306,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 									{
 										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 									}
-							  ) }{ ' ' }
-						{ refundAmount &&
-							translate(
-								'You can downgrade and get a partial refund of %(amount)s or ' +
-									'continue to the next step and cancel the plan.',
-								{
-									args: {
-										amount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
-									},
-								}
-							) }
+							  ) }
 					</>
 				</Upsell>
 			);
