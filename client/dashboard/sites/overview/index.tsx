@@ -16,15 +16,14 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
+import OverviewCardSummary from '../overview-card/summary';
 import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
 import AgencySiteShareCard from './agency-site-share-card';
 import BackupCard from './backup-card';
 import DomainsCard from './domains-card';
-import PerformanceCards from './performance-cards';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
-import UptimeCard from './uptime-card';
 import VisibilityCard from './visibility-card';
 import './style.scss';
 
@@ -117,16 +116,25 @@ function SiteOverview( {
 						{ site.is_a4a_dev_site ? (
 							<AgencySiteShareCard site={ site } />
 						) : (
-							<OverviewCard
-								title={ __( 'Performance' ) }
-								icon={ chartBar }
-								heading="TBA"
-								description="TBA"
-							/>
+							<OverviewCard>
+								<OverviewCardSummary
+									title={ __( 'Performance' ) }
+									icon={ chartBar }
+									heading="TBA"
+									description="TBA"
+								/>
+							</OverviewCard>
 						) }
 						<ScanCard site={ site } />
 					</VStack>
-					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />
+					<OverviewCard>
+						<OverviewCardSummary
+							title={ __( 'Plan' ) }
+							icon={ wordpress }
+							heading="TBA"
+							description="TBA"
+						/>
+					</OverviewCard>
 				</Grid>
 				<Divider
 					orientation="horizontal"
@@ -140,12 +148,17 @@ function SiteOverview( {
 					alignment="flex-start"
 				>
 					<VStack spacing={ spacing } justify="start">
-						<PerformanceCards site={ site } />
+						<OverviewCard>
+							<OverviewCardSummary
+								title={ __( 'Latest activity' ) }
+								heading="TBA"
+								description="TBA"
+							/>
+						</OverviewCard>
 					</VStack>
 					<VStack spacing={ spacing } justify="start">
 						<OverviewCardUpsellDIFM site={ site } />
 						<DomainsCard site={ site } type={ isSmallViewport ? 'list' : 'table' } />
-						<UptimeCard site={ site } />
 					</VStack>
 				</HStack>
 			</VStack>

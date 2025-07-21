@@ -1,10 +1,12 @@
 import { CircularProgressBar } from '@automattic/components';
-import { __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import OverviewCard from '../overview-card';
+import OverviewCard, { OverviewCardWithLink } from '../overview-card';
+import { OverviewCardRouterLinkIcon } from '../overview-card/link';
+import OverviewCardSummary from '../overview-card/summary';
 import type { Site } from '../../data/types';
 
 const CARD_PROPS = {
@@ -13,14 +15,10 @@ const CARD_PROPS = {
 };
 
 function getVisibilityURL( site: Site ) {
-	if ( isSelfHostedJetpackConnected( site ) ) {
-		return undefined;
-	}
-
 	return `/sites/${ site.slug }/settings/site-visibility`;
 }
 
-function VisibilityCardUnlaunched() {
+function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 	const isSetupComplete = true;
 	let heading = __( 'Coming soon' );
 	let description = __( 'Finish setting up your site' );
@@ -31,12 +29,14 @@ function VisibilityCardUnlaunched() {
 	}
 
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			icon={ launch }
-			heading={ heading }
-			description={ description }
-			sideContent={
+		<OverviewCardWithLink link={ getVisibilityURL( site ) }>
+			<HStack spacing={ 2 }>
+				<OverviewCardSummary
+					{ ...CARD_PROPS }
+					icon={ launch }
+					heading={ heading }
+					description={ description }
+				/>
 				<CircularProgressBar
 					currentStep={ 5 }
 					numberOfSteps={ 5 }
@@ -50,55 +50,71 @@ function VisibilityCardUnlaunched() {
 						</Text>
 					}
 				/>
-			}
-		/>
+			</HStack>
+		</OverviewCardWithLink>
 	);
 }
 
 function VisibilityCardComingSoon( { site }: { site: Site } ) {
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			icon={ launch }
-			heading={ __( 'Coming soon' ) }
-			description={ __( 'Ready to go public?' ) }
-			link={ getVisibilityURL( site ) }
-		/>
+		<OverviewCardWithLink link={ getVisibilityURL( site ) } tracksId={ CARD_PROPS.trackId }>
+			<OverviewCardSummary
+				{ ...CARD_PROPS }
+				icon={ launch }
+				heading={ __( 'Coming soon' ) }
+				description={ __( 'Ready to go public?' ) }
+				linkIcon={ <OverviewCardRouterLinkIcon /> }
+			/>
+		</OverviewCardWithLink>
 	);
 }
 
 function VisibilityCardPrivate( { site }: { site: Site } ) {
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			icon={ lockOutline }
-			heading={ __( 'Private' ) }
-			description={ __( 'Only invited users can view your site' ) }
-			link={ getVisibilityURL( site ) }
-		/>
+		<OverviewCardWithLink link={ getVisibilityURL( site ) } tracksId={ CARD_PROPS.trackId }>
+			<OverviewCardSummary
+				{ ...CARD_PROPS }
+				icon={ lockOutline }
+				heading={ __( 'Private' ) }
+				description={ __( 'Only invited users can view your site' ) }
+				linkIcon={ <OverviewCardRouterLinkIcon /> }
+			/>
+		</OverviewCardWithLink>
 	);
 }
 
 function VisibilityCardPublic( { site }: { site: Site } ) {
-	const description = site.is_wpcom_staging_site
-		? __( 'Anyone can view your staging site' )
-		: __( 'Anyone can view your site' );
+	const summaryProps = {
+		...CARD_PROPS,
+		icon: published,
+		heading: __( 'Public' ),
+		description: site.is_wpcom_staging_site
+			? __( 'Anyone can view your staging site' )
+			: __( 'Anyone can view your site' ),
+	};
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return (
+			<OverviewCard tracksId={ CARD_PROPS.trackId } variant="success">
+				<OverviewCardSummary { ...summaryProps } />
+			</OverviewCard>
+		);
+	}
 
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			icon={ published }
-			heading={ __( 'Public' ) }
-			description={ description }
+		<OverviewCardWithLink
 			link={ getVisibilityURL( site ) }
+			tracksId={ CARD_PROPS.trackId }
 			variant="success"
-		/>
+		>
+			<OverviewCardSummary { ...summaryProps } linkIcon={ <OverviewCardRouterLinkIcon /> } />
+		</OverviewCardWithLink>
 	);
 }
 
 export default function VisibilityCard( { site }: { site: Site } ) {
 	if ( site.launch_status === 'unlaunched' ) {
-		return <VisibilityCardUnlaunched />;
+		return <VisibilityCardUnlaunched site={ site } />;
 	}
 
 	if ( site.is_coming_soon ) {

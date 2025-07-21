@@ -6,7 +6,9 @@ import { useTimeSince } from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
-import OverviewCard from '../overview-card';
+import { OverviewCardWithLink, OverviewCardWithPlaceholder } from '../overview-card';
+import { OverviewCardExtenalLinkIcon } from '../overview-card/link';
+import OverviewCardSummary from '../overview-card/summary';
 import type { Site } from '../../data/types';
 
 const CARD_PROPS = {
@@ -29,17 +31,23 @@ function BackupCardContent( { site }: { site: Site } ) {
 	);
 
 	if ( lastBackup === undefined ) {
-		return <OverviewCard { ...CARD_PROPS } variant="loading" />;
+		return <OverviewCardWithPlaceholder title={ CARD_PROPS.title } icon={ CARD_PROPS.icon } />;
 	}
 
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			heading={ lastBackup ? timeSinceLastBackup : __( 'No backups yet' ) }
-			description="Next scheduled backup in TBA"
-			externalLink={ getBackupUrl( site ) }
+		<OverviewCardWithLink
+			link={ getBackupUrl( site ) }
+			tracksId={ CARD_PROPS.tracksId }
 			variant={ lastBackup ? 'success' : undefined }
-		/>
+			isExternal
+		>
+			<OverviewCardSummary
+				{ ...CARD_PROPS }
+				heading={ lastBackup ? timeSinceLastBackup : __( 'No backups yet' ) }
+				description="Next scheduled backup in TBA"
+				linkIcon={ <OverviewCardExtenalLinkIcon /> }
+			/>
+		</OverviewCardWithLink>
 	);
 }
 

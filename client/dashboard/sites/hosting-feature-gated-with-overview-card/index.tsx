@@ -1,16 +1,18 @@
 import { __ } from '@wordpress/i18n';
 import { upsell } from '../../components/icons';
 import HostingFeatureGate from '../hosting-feature-gate';
-import OverviewCard from '../overview-card';
+import { OverviewCardWithLink } from '../overview-card';
+import { OverviewCardExtenalLinkIcon } from '../overview-card/link';
+import OverviewCardSummary from '../overview-card/summary';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
-import type { OverviewCardProps } from '../overview-card';
+import type { OverviewCardLinkProps, OverviewCardSummaryProps } from '../overview-card/types';
 
 interface HostingFeatureGatedWithOverviewCardProps
 	extends Omit< HostingFeatureGateProps, 'renderUpsellComponent' | 'renderActivationComponent' > {
-	featureIcon: OverviewCardProps[ 'icon' ];
-	upsellHeading: OverviewCardProps[ 'heading' ];
-	upsellDescription: OverviewCardProps[ 'description' ];
-	upsellExternalLink: OverviewCardProps[ 'externalLink' ];
+	featureIcon: OverviewCardSummaryProps[ 'icon' ];
+	upsellHeading: OverviewCardSummaryProps[ 'heading' ];
+	upsellDescription: OverviewCardSummaryProps[ 'description' ];
+	upsellExternalLink: OverviewCardLinkProps[ 'link' ];
 }
 
 export default function HostingFeatureGatedWithOverviewCard( {
@@ -24,9 +26,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 
 	const cardProps = {
 		heading: upsellHeading,
-		icon: upsell,
 		description: upsellDescription,
-		tracksId: tracksFeatureId,
 		variant: 'upsell' as const,
 	};
 
@@ -34,21 +34,29 @@ export default function HostingFeatureGatedWithOverviewCard( {
 		<HostingFeatureGate
 			{ ...props }
 			renderUpsellComponent={ ( { onClick } ) => (
-				<OverviewCard
-					{ ...cardProps }
-					title={ __( 'Upgrade to unlock' ) }
-					externalLink={ upsellExternalLink }
+				<OverviewCardWithLink
+					link={ upsellExternalLink }
+					tracksId={ tracksFeatureId }
+					isExternal
 					onClick={ onClick }
-				/>
+				>
+					<OverviewCardSummary
+						{ ...cardProps }
+						icon={ upsell }
+						title={ __( 'Upgrade to unlock' ) }
+						linkIcon={ <OverviewCardExtenalLinkIcon /> }
+					/>
+				</OverviewCardWithLink>
 			) }
 			renderActivationComponent={ ( { onClick } ) => (
-				<OverviewCard
-					{ ...cardProps }
-					icon={ featureIcon }
-					title={ __( 'Activate to unlock' ) }
-					externalLink=""
-					onClick={ onClick }
-				/>
+				<OverviewCardWithLink link="" isExternal onClick={ onClick }>
+					<OverviewCardSummary
+						{ ...cardProps }
+						icon={ featureIcon }
+						title={ __( 'Activate to unlock' ) }
+						linkIcon={ <OverviewCardExtenalLinkIcon /> }
+					/>
+				</OverviewCardWithLink>
 			) }
 		/>
 	);

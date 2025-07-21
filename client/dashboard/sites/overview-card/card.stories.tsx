@@ -33,7 +33,6 @@ export const Default: Story = {
 	args: {
 		title: 'Visitors',
 		heading: '1,245',
-		metaText: 'Past 7 days',
 		icon: people,
 	},
 };
@@ -42,7 +41,6 @@ export const WithProgressBar: Story = {
 	args: {
 		title: 'Storage',
 		heading: '236 MB',
-		metaText: 'of 53 GB used',
 		icon: backup,
 		children: <OverviewCardProgressBar value={ 25 } />,
 	},
@@ -52,7 +50,6 @@ export const WithLink: Story = {
 	args: {
 		title: 'Comments',
 		heading: '24',
-		metaText: 'Past 7 days',
 		icon: comment,
 		externalLink: 'https://wordpress.com',
 	},

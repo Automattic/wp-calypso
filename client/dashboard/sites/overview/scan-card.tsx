@@ -6,7 +6,9 @@ import { useTimeSince } from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { HostingFeatures } from '../features';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
-import OverviewCard from '../overview-card';
+import { OverviewCardWithLink, OverviewCardWithPlaceholder } from '../overview-card';
+import { OverviewCardExtenalLinkIcon } from '../overview-card/link';
+import OverviewCardSummary from '../overview-card/summary';
 import type { SiteScan } from '../../data/site-scan';
 import type { Site } from '../../data/types';
 
@@ -31,13 +33,19 @@ function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	);
 
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			heading={ description }
-			description={ __( 'Auto fixes are available' ) }
-			externalLink={ getScanURL( site ) }
+		<OverviewCardWithLink
+			link={ getScanURL( site ) }
+			tracksId={ CARD_PROPS.tracksId }
 			variant="error"
-		/>
+			isExternal
+		>
+			<OverviewCardSummary
+				{ ...CARD_PROPS }
+				heading={ description }
+				description={ __( 'Auto fixes are available' ) }
+				linkIcon={ <OverviewCardExtenalLinkIcon /> }
+			/>
+		</OverviewCardWithLink>
 	);
 }
 
@@ -54,13 +62,19 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	}
 
 	return (
-		<OverviewCard
-			{ ...CARD_PROPS }
-			heading={ __( 'No risks found' ) }
-			description={ description }
-			externalLink={ getScanURL( site ) }
+		<OverviewCardWithLink
+			link={ getScanURL( site ) }
+			tracksId={ CARD_PROPS.tracksId }
 			variant="success"
-		/>
+			isExternal
+		>
+			<OverviewCardSummary
+				{ ...CARD_PROPS }
+				heading={ __( 'No risks found' ) }
+				description={ description }
+				linkIcon={ <OverviewCardExtenalLinkIcon /> }
+			/>
+		</OverviewCardWithLink>
 	);
 }
 
@@ -68,7 +82,7 @@ function ScanCardContent( { site }: { site: Site } ) {
 	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
 
 	if ( scan === undefined ) {
-		return <OverviewCard { ...CARD_PROPS } variant="loading" />;
+		return <OverviewCardWithPlaceholder title={ CARD_PROPS.title } icon={ CARD_PROPS.icon } />;
 	}
 
 	if ( ! scan ) {

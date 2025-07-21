@@ -1,117 +1,26 @@
-import { Link } from '@tanstack/react-router';
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalHeading as Heading,
-	Icon,
-	ProgressBar,
-} from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronRight } from '@wordpress/icons';
-import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody, ProgressBar } from '@wordpress/components';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import OverviewCardLink from './link';
+import OverviewCardSummary from './summary';
+import type { OverviewCardVariant } from './types';
 import type { ReactElement, ReactNode } from 'react';
+
 import './style.scss';
 
-export interface OverviewCardProps {
-	title: string;
-	customHeading?: ReactNode;
-	description?: string;
-	link?: string;
-	externalLink?: string;
-	heading?: ReactNode;
-	icon?: ReactElement;
-	metaText?: string;
-	sideContent?: ReactNode;
+interface OverviewCardProps {
 	tracksId?: string;
-	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
-	children?: ReactNode;
+	variant?: OverviewCardVariant;
+	children: ReactNode;
+}
+
+interface OverviewCardWithLinkProps extends OverviewCardProps {
+	link: string;
+	isExternal?: boolean;
 	onClick?: () => void;
 }
 
-export default function OverviewCard( {
-	customHeading,
-	description,
-	externalLink,
-	heading,
-	icon,
-	link,
-	metaText,
-	sideContent,
-	title,
-	tracksId,
-	variant,
-	children,
-	onClick,
-}: OverviewCardProps ) {
-	const { recordTracksEvent } = useAnalytics();
-	const isDisabled = variant === 'disabled';
-
-	const content = (
-		<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
-			<HStack justify="space-between">
-				<HStack spacing={ 2 } alignment="center" expanded={ false }>
-					{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
-					<Text
-						className="dashboard-overview-card__title"
-						variant="muted"
-						lineHeight="16px"
-						size={ 11 }
-						weight={ 500 }
-						upperCase
-					>
-						{ title }
-					</Text>
-				</HStack>
-				{ link && <Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } /> }
-				{ externalLink && (
-					<span
-						className="dashboard-overview-card__link-icon components-external-link__icon"
-						aria-label={
-							/* translators: accessibility text */
-							__( '(opens in a new tab)' )
-						}
-					>
-						&#8599;
-					</span>
-				) }
-			</HStack>
-			<HStack justify="flex-start" alignment="baseline">
-				{ customHeading ? (
-					customHeading
-				) : (
-					<VStack spacing={ 2 }>
-						<Heading
-							level={ 2 }
-							size={ 20 }
-							variant={ isDisabled ? 'muted' : undefined }
-							weight={ 500 }
-						>
-							{ heading }
-						</Heading>
-						{ metaText && <Text variant="muted">{ metaText }</Text> }
-						{ description && (
-							<Text
-								className="dashboard-overview-card__description"
-								variant="muted"
-								lineHeight="16px"
-								size={ 12 }
-							>
-								{ description }
-							</Text>
-						) }
-					</VStack>
-				) }
-			</HStack>
-			{ variant === 'loading' && <OverviewCardProgressBar /> }
-			{ children }
-		</VStack>
-	);
-
-	const wrappedContent = (
+export default function OverviewCard( { tracksId, variant, children }: OverviewCardProps ) {
+	return (
 		<Card
 			className={
 				variant
@@ -119,7 +28,7 @@ export default function OverviewCard( {
 					: 'dashboard-overview-card'
 			}
 			style={ {
-				opacity: isDisabled ? 0.5 : 1,
+				opacity: variant === 'disabled' ? 0.5 : 1,
 			} }
 		>
 			<CardBody>
@@ -135,53 +44,45 @@ export default function OverviewCard( {
 							properties={ { feature: tracksId, variant } }
 						/>
 					) ) }
-				<HStack justify="space-between">
-					{ content }
-					{ sideContent }
-				</HStack>
+				{ children }
 			</CardBody>
 		</Card>
 	);
+}
 
-	if ( link ) {
-		return (
-			<Link to={ link } className="dashboard-overview-card__link">
-				{ wrappedContent }
-			</Link>
-		);
-	}
+export function OverviewCardWithLink( {
+	tracksId,
+	variant,
+	link,
+	isExternal,
+	onClick,
+	children,
+}: OverviewCardWithLinkProps ) {
+	return (
+		<OverviewCardLink link={ link } isExternal={ isExternal } onClick={ onClick }>
+			<OverviewCard tracksId={ tracksId } variant={ variant }>
+				{ children }
+			</OverviewCard>
+		</OverviewCardLink>
+	);
+}
 
-	if ( externalLink ) {
-		return (
-			<a
-				href={ externalLink }
-				className="dashboard-overview-card__link"
-				target="_blank"
-				rel="noreferrer"
-				onClick={ () => {
-					onClick?.();
-
-					if ( tracksId ) {
-						if ( variant === 'upsell' ) {
-							recordTracksEvent( 'calypso_dashboard_upsell_click', {
-								feature: tracksId,
-								type: 'card',
-							} );
-						} else {
-							recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-								type: tracksId,
-								variant,
-							} );
-						}
-					}
-				} }
-			>
-				{ wrappedContent }
-			</a>
-		);
-	}
-
-	return wrappedContent;
+export function OverviewCardWithPlaceholder( {
+	title,
+	icon,
+}: {
+	title: string;
+	icon?: ReactElement;
+} ) {
+	return (
+		<OverviewCard variant="loading">
+			<OverviewCardSummary
+				title={ title }
+				icon={ icon }
+				customHeading={ <OverviewCardProgressBar /> }
+			/>
+		</OverviewCard>
+	);
 }
 
 export function OverviewCardProgressBar( { value }: { value?: number } ) {
