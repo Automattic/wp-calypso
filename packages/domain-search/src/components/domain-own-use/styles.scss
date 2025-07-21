@@ -1,0 +1,46 @@
+@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.domain-own-use.is-secondary {
+	display: block;
+	width: 100%;
+	height: auto;
+	padding: $grid-unit-30;
+	transition: none;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+	background-color: #{$white};
+	box-shadow: inset 0 0 0 1px #{$gray-200};
+
+	&[aria-disabled="true"] {
+		opacity: 0.6;
+		cursor: default;
+	}
+
+	&:focus-visible {
+		@include button-style__focus();
+	}
+
+	&:hover:not(:disabled, [aria-disabled="true"]) {
+		background: color-mix(in srgb, #{$white} 98%, var(--wp-admin-theme-color, #3858e9));
+		box-shadow: inset 0 0 0 1px #{$gray-200};
+		color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+
+		.domain-own-use__title {
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		svg {
+			fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+	}
+
+	.domain-own-use__title {
+		@include body-large;
+	}
+
+	svg {
+		fill: #{$gray-700};
+	}
+}
