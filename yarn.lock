@@ -738,7 +738,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-typescript-config@npm:^1.0.0, @automattic/calypso-typescript-config@workspace:^, @automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config":
+"@automattic/calypso-typescript-config@workspace:^, @automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config"
   languageName: unknown
@@ -915,7 +915,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/composite-checkout@npm:^2.0.0, @automattic/composite-checkout@workspace:^, @automattic/composite-checkout@workspace:packages/composite-checkout":
+"@automattic/composite-checkout@workspace:^, @automattic/composite-checkout@workspace:packages/composite-checkout":
   version: 0.0.0-use.local
   resolution: "@automattic/composite-checkout@workspace:packages/composite-checkout"
   dependencies:
@@ -1618,11 +1618,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/mini-cart@workspace:packages/mini-cart"
   dependencies:
-    "@automattic/calypso-typescript-config": "npm:^1.0.0"
-    "@automattic/composite-checkout": "npm:^2.0.0"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/composite-checkout": "workspace:^"
     "@automattic/number-formatters": "npm:^1.0.1"
-    "@automattic/shopping-cart": "npm:^2.0.1"
-    "@automattic/wpcom-checkout": "npm:^1.0.1"
+    "@automattic/shopping-cart": "workspace:^"
+    "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
@@ -1630,7 +1630,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     debug: "npm:^4.4.1"
-    i18n-calypso: "npm:^7.4.0"
+    i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
@@ -1993,7 +1993,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/shopping-cart@npm:^2.0.1, @automattic/shopping-cart@workspace:^, @automattic/shopping-cart@workspace:packages/shopping-cart":
+"@automattic/shopping-cart@workspace:^, @automattic/shopping-cart@workspace:packages/shopping-cart":
   version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
@@ -2396,7 +2396,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/wpcom-checkout@npm:^1.0.1, @automattic/wpcom-checkout@workspace:^, @automattic/wpcom-checkout@workspace:packages/wpcom-checkout":
+"@automattic/wpcom-checkout@workspace:^, @automattic/wpcom-checkout@workspace:packages/wpcom-checkout":
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-checkout@workspace:packages/wpcom-checkout"
   dependencies:
@@ -2431,7 +2431,6 @@ __metadata:
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@emotion/react": ^11.4.1
-    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -22335,7 +22334,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"i18n-calypso@npm:^7.4.0, i18n-calypso@workspace:^, i18n-calypso@workspace:packages/i18n-calypso":
+"i18n-calypso@workspace:^, i18n-calypso@workspace:packages/i18n-calypso":
   version: 0.0.0-use.local
   resolution: "i18n-calypso@workspace:packages/i18n-calypso"
   dependencies:
