@@ -1,3 +1,5 @@
+@use '@wordpress/base-styles/colors';
+
 .domain-suggestion-cta {
 	justify-content: center !important;
 
@@ -6,8 +8,14 @@
 		box-shadow: inset 0 0 0 1px var( --domain-search-secondary-action-box-shadow-color );
 	}
 
-	&:disabled {
+	&:disabled:not( .is-primary ) {
 		box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 ) !important;
 		color: rgba( 0, 0, 0, 0.1 ) !important;
+	}
+}
+
+.domain-suggestion-cta--continue {
+	&:disabled {
+		background: colors.$gray-300 !important;
 	}
 }

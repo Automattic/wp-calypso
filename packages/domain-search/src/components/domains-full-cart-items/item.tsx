@@ -8,14 +8,32 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../domain-search';
 import type { SelectedDomain } from '../domain-search/types';
 
 export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) => {
 	const { __ } = useI18n();
 	const { cart } = useDomainSearch();
+	const [ isBusy, setIsBusy ] = useState( false );
+
+	const initiatedByThisComponent = useRef( false );
+
+	useEffect( () => {
+		if ( ! initiatedByThisComponent.current ) {
+			return;
+		}
+
+		if ( cart.isBusy ) {
+			setIsBusy( true );
+		} else {
+			setIsBusy( false );
+			initiatedByThisComponent.current = false;
+		}
+	}, [ cart.isBusy ] );
 
 	const removeItem = async () => {
+		initiatedByThisComponent.current = true;
 		cart.onRemoveItem( domain.uuid );
 	};
 
@@ -33,6 +51,7 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 							</Text>
 							<Button
 								disabled={ cart.isBusy }
+								isBusy={ isBusy }
 								variant="link"
 								className="domains-full-cart-items__remove"
 								onClick={ removeItem }
