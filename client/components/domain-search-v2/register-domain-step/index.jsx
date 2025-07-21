@@ -581,7 +581,11 @@ class RegisterDomainStep extends Component {
 	renderAlreadyOwnADomainButton() {
 		const { handleClickUseYourDomain } = this.props;
 
-		return <DomainOwnUse onClick={ handleClickUseYourDomain ?? this.useYourDomainFunction() } />;
+		return (
+			<div className="wpcom-domain-search-v2__sticky-bottom">
+				<DomainOwnUse onClick={ handleClickUseYourDomain ?? this.useYourDomainFunction() } />
+			</div>
+		);
 	}
 
 	render() {
