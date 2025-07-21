@@ -16,7 +16,8 @@ import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
-import { canViewSubscriptionGiftingSettings } from '../features';
+import { DotcomFeatures } from '../../data/constants';
+import { hasPlanFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
@@ -60,7 +61,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		return null;
 	}
 
-	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
+	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
 		throw notFound();
 	}
 

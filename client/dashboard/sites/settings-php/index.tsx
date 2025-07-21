@@ -16,8 +16,8 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { hasPlanFeature } from '../../utils/site-features';
-import { HostingFeatures, canViewPHPSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -26,7 +26,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentVersion } = useQuery( {
 		...sitePHPVersionQuery( site.ID ),
-		enabled: canViewPHPSettings( site ),
+		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
 	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

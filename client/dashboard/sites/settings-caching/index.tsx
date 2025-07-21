@@ -28,8 +28,8 @@ import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { hasPlanFeature } from '../../utils/site-features';
-import { HostingFeatures, canViewCachingSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
@@ -54,7 +54,7 @@ const form = {
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const canView = canViewCachingSettings( site );
+	const canView = hasHostingFeature( site, HostingFeatures.CACHING );
 
 	const { data: isEdgeCacheActive } = useQuery( {
 		...siteEdgeCacheStatusQuery( site.ID ),

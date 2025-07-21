@@ -19,18 +19,13 @@ import { siteSshAccessStatusQuery } from 'calypso/dashboard/app/queries/site-ssh
 import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/site-static-file-404';
 import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
 import { queryClient } from 'calypso/dashboard/app/query-client';
+import { HostingFeatures } from 'calypso/dashboard/data/constants';
 import {
 	canManageSite,
 	canViewWordPressSettings,
-	canViewPHPSettings,
-	canViewDefensiveModeSettings,
-	canViewPrimaryDataCenterSettings,
-	canViewStaticFile404Settings,
 	canViewHundredYearPlanSettings,
-	canViewCachingSettings,
-	canViewSshSettings,
-	canViewSftpSettings,
 } from 'calypso/dashboard/sites/features';
+import { hasHostingFeature } from 'calypso/dashboard/utils/site-features';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
@@ -139,7 +134,7 @@ const phpRoute = createRoute( {
 	path: 'php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewPHPSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.PHP ) ) {
 			await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
 		}
 	},
@@ -201,7 +196,7 @@ const primaryDataCenterRoute = createRoute( {
 	path: 'primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewPrimaryDataCenterSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
 			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 		}
 	},
@@ -218,7 +213,7 @@ const staticFile404Route = createRoute( {
 	path: 'static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewStaticFile404Settings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.STATIC_FILE_404 ) ) {
 			await queryClient.ensureQueryData( siteStaticFile404SettingQuery( site.ID ) );
 		}
 	},
@@ -235,7 +230,7 @@ const cachingRoute = createRoute( {
 	path: 'caching',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewCachingSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.CACHING ) ) {
 			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( site.ID ) );
 		}
 	},
@@ -252,7 +247,7 @@ const defensiveModeRoute = createRoute( {
 	path: 'defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewDefensiveModeSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.DEFENSIVE_MODE ) ) {
 			await queryClient.ensureQueryData( siteDefensiveModeSettingsQuery( site.ID ) );
 		}
 	},
@@ -270,8 +265,9 @@ const sftpSshRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [
-			canViewSftpSettings( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
-			canViewSshSettings( site ) &&
+			hasHostingFeature( site, HostingFeatures.SFTP ) &&
+				queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
+			hasHostingFeature( site, HostingFeatures.SSH ) &&
 				queryClient.ensureQueryData( siteSshAccessStatusQuery( site.ID ) ),
 		] );
 	},
