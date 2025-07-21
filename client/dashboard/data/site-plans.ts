@@ -1,10 +1,11 @@
 import wpcom from 'calypso/lib/wp';
 
 export interface Plan {
-	id: string | null;
+	id?: string | null;
 	current_plan?: boolean;
 	expiry?: string;
 	has_domain_credit?: boolean;
+	product_slug?: string;
 	subscribed_date?: string;
 	user_facing_expiry?: string;
 }

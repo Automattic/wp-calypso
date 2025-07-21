@@ -1,3 +1,4 @@
+import { queryOptions } from '@tanstack/react-query';
 import { fetchSitePurchases } from '../../data/site-purchases';
 import type { Purchase } from '../../data/site-purchases';
 
@@ -19,3 +20,10 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 		return cancelables.length > 0;
 	},
 } );
+
+export const sitePurchaseQuery = ( siteId: number, purchaseId: string ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'purchases', purchaseId ],
+		queryFn: () => fetchSitePurchases( siteId ),
+		select: ( purchases ) => purchases.find( ( p ) => p.ID === purchaseId ),
+	} );

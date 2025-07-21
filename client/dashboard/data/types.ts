@@ -16,6 +16,7 @@ export type * from './site-media-storage';
 export type * from './site-jetpack-monitor-uptime';
 export type * from './site-jetpack-rewind-backups';
 export type * from './site-owner-transfer';
+export type * from './site-plans';
 export type * from './site-preview-links';
 export type * from './site-profiler';
 export type * from './site-purchases';

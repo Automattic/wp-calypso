@@ -37,6 +37,7 @@ import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
+import { sitePurchaseQuery } from './queries/site-purchases';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
@@ -141,7 +142,11 @@ const siteOverviewRoute = createRoute( {
 				hasHostingFeature( site, DotcomFeatures.BACKUPS ) &&
 					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
-			] );
+			] ).then( ( [ currentPlan ] ) => {
+				if ( currentPlan.id ) {
+					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, currentPlan.id ) );
+				}
+			} );
 		}
 	},
 } ).lazy( () =>

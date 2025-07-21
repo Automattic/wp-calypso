@@ -21,6 +21,7 @@ import AgencySiteShareCard from './agency-site-share-card';
 import BackupCard from './backup-card';
 import DomainsCard from './domains-card';
 import LatestActivitiesCard from './latest-activities-card';
+import PlanCard from './plan-card';
 import ScanCard from './scan-card';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
@@ -126,13 +127,7 @@ function SiteOverview( {
 						) }
 						<ScanCard site={ site } />
 					</VStack>
-					<OverviewCard
-						title={ __( 'Plan' ) }
-						icon={ wordpress }
-						heading="TBA"
-						description="TBA"
-						bottom={ <div /> }
-					/>
+					<PlanCard site={ site } />
 				</Grid>
 				<Divider
 					orientation="horizontal"
