@@ -5,6 +5,7 @@ import './input.scss';
 export const DomainSearchControlsInput = ( {
 	value,
 	label,
+	placeholder,
 	onChange,
 	onReset,
 	autoFocus,
@@ -16,6 +17,7 @@ export const DomainSearchControlsInput = ( {
 }: {
 	value: string;
 	label: string;
+	placeholder?: string;
 	onChange: ( value: string ) => void;
 	onReset: () => void;
 	autoFocus: boolean;
@@ -32,7 +34,7 @@ export const DomainSearchControlsInput = ( {
 			className="domain-search-controls__input"
 			__nextHasNoMarginBottom
 			hideLabelFromVision
-			placeholder={ __( 'Search…' ) }
+			placeholder={ placeholder || __( 'Search…' ) }
 			value={ value }
 			label={ label }
 			onChange={ onChange }

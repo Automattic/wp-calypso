@@ -1,4 +1,4 @@
-import { DomainSearchControls } from '@automattic/domain-search';
+import { DomainSearchControls, useTypedPlaceholder } from '@automattic/domain-search';
 import { useState, useEffect, useRef, useMemo } from '@wordpress/element';
 import { _x } from '@wordpress/i18n';
 import { debounce } from 'lodash';
@@ -49,6 +49,17 @@ const DomainSearchInput = function DomainSearchInput( {
 }: DomainSearchInputProps ) {
 	const [ , setValue ] = useState( defaultValue || controlledValue || '' );
 
+	const { placeholder } = useTypedPlaceholder(
+		[
+			'dailywine.blog',
+			'creatortools.shop',
+			'literatiagency.com',
+			'democratizework.org',
+			'discardedobject.art',
+		],
+		controlledValue
+	);
+
 	const doSearch = useMemo( () => {
 		if ( ! onSearch ) {
 			return;
@@ -87,6 +98,7 @@ const DomainSearchInput = function DomainSearchInput( {
 		<DomainSearchControls.Input
 			label={ searchControlLabel }
 			value={ controlledValue ?? '' }
+			placeholder={ placeholder }
 			onChange={ handleChange }
 			onReset={ handleReset }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
