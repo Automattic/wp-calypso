@@ -1,25 +1,25 @@
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/breakpoints";
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
 
 .profile__settings .edit-gravatar {
 	text-align: center;
 
-	@include breakpoint-deprecated(">960px") {
+	@include breakpoint-deprecated( '>960px' ) {
 		float: left;
 		margin-right: 40px;
 		margin-bottom: 20px;
 	}
 }
 
-@media (min-width: 961px) {
+@media ( min-width: 961px ) {
 	.me-profile-settings .edit-gravatar {
 		margin-bottom: 0;
 	}
 }
 
-.profile__settings .form-fieldset:nth-child(1),
-.profile__settings .form-fieldset:nth-child(2) {
-	@include breakpoint-deprecated(">960px") {
+.profile__settings .form-fieldset:nth-child( 1 ),
+.profile__settings .form-fieldset:nth-child( 2 ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		clear: right;
 	}
 }
@@ -47,16 +47,27 @@
 	}
 }
 
-.profile__gravatar-profile-description {
+.profile__gravatar-profile-explanation {
 	display: flex;
 	flex-direction: column-reverse;
+	justify-content: space-between;
+	margin-bottom: 1.5em;
 	font-size: $font-body-small;
 	line-height: 20px;
 	word-break: break-word;
+	gap: 5px;
 
-	@include breakpoint-deprecated(">960px") {
+	.profile__gravatar-profile-title {
+		font-weight: 600;
+	}
+
+	.profile__gravatar-profile-description {
+		margin: 5px 0 0;
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
-		gap: 50px;
+		gap: 2em;
 	}
 }
 
@@ -75,14 +86,14 @@ main.profile {
 		margin-bottom: 16px;
 		margin-top: 0;
 
-		@media (min-width: $break-small) {
+		@media ( min-width: $break-small ) {
 			margin-top: 24px;
 			margin-bottom: 24px;
 		}
 	}
 
-	&:has(.email-verification-banner) .navigation-header {
-		@media (min-width: $break-small) {
+	&:has( .email-verification-banner ) .navigation-header {
+		@media ( min-width: $break-small ) {
 			padding-bottom: 0;
 		}
 	}
