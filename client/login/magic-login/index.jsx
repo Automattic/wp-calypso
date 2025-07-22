@@ -288,22 +288,10 @@ class MagicLogin extends Component {
 			oauth2Client,
 		} = this.props;
 
-		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
+		const shouldShowAppPromo = ! oauth2Client && ! showCheckYourEmail;
 
 		if ( showCheckYourEmail ) {
-			if ( isA4A ) {
-				return null;
-			}
-			return (
-				<AppPromo
-					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
-					campaign="calypso-login-link-check-email"
-					className="magic-link-app-promo"
-					iconSize={ 32 }
-					hasQRCode
-					hasGetAppButton={ false }
-				/>
-			);
+			return null;
 		}
 
 		// The email address from the URL (if present) is added to the login
@@ -336,7 +324,7 @@ class MagicLogin extends Component {
 						{ linkBack }
 					</a>
 				</div>
-				{ ! oauth2Client && (
+				{ shouldShowAppPromo && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"
