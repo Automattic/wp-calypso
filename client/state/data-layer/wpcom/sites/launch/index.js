@@ -12,7 +12,8 @@ import { launchSiteFailure, launchSiteSuccess } from 'calypso/state/sites/launch
 
 const handleLaunchSiteRequest = dispatchRequest( {
 	fetch: ( action ) => [
-		infoNotice( translate( 'Launching your site…' ), { duration: 1000 } ),
+		// TODO: reenable this notice after bringing the celebratory notice to this file
+		// infoNotice( translate( 'Launching your site…' ), { duration: 1000 } ),
 		http(
 			{
 				method: 'POST',
@@ -26,12 +27,15 @@ const handleLaunchSiteRequest = dispatchRequest( {
 		updateSiteSettings( data.ID, data.options ),
 		requestSiteChecklist( data.ID ),
 		requestEligibility( data.ID ),
-		successNotice(
-			translate( 'Your site has been launched; now you can share it with the world!' ),
-			{
-				duration: 5000,
-			}
-		),
+		() => {
+			console.log( '### lets handle this with the main success celebration!' );
+		},
+		// successNotice(
+		// 	translate( 'Your site has been launched; now you can share it with the world!' ),
+		// 	{
+		// 		duration: 5000,
+		// 	}
+		// ),
 		launchSiteSuccess( data.ID ),
 	],
 	onError: ( action, data ) => {

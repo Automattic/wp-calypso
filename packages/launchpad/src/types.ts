@@ -75,5 +75,4 @@ export interface LaunchpadTaskActionsProps {
 	extraActions: PermittedActions;
 	uiContext?: 'calypso';
 	eventHandlers?: EventHandlers;
-	unifiedLaunchpadExperiment?: string;
 }

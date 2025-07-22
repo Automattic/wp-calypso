@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { useUnifiedLaunchExperiment } from 'calypso/landing/stepper/hooks/use-unified-launch-experiment';
 import { useMyHomeCardLaunchpad } from './use-my-home-card-launchpad';
 import './style.scss';
 
@@ -33,10 +32,8 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 		permanentDismiss,
 	} = useMyHomeCardLaunchpad( { checklistSlug, launchpadContext } );
 
-	const [ isLoading, experiment ] = useUnifiedLaunchExperiment();
-
 	// return nothing if the launchpad is dismissed
-	if ( isDismissed || isLoading ) {
+	if ( isDismissed ) {
 		return null;
 	}
 
@@ -90,7 +87,6 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 				onSiteLaunched={ onSiteLaunched }
-				unifiedLaunchpadExperiment={ experiment }
 			/>
 		</div>
 	);

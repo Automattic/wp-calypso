@@ -3,7 +3,6 @@ import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
@@ -26,7 +25,6 @@ export const setUpActionsForTasks = ( {
 	extraActions,
 	eventHandlers,
 	uiContext = 'calypso',
-	unifiedLaunchpadExperiment,
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, launchpadContext } = tracksData;
 	const { setShareSiteModalIsOpen } = extraActions;
@@ -114,23 +112,7 @@ export const setUpActionsForTasks = ( {
 				case 'site_launched':
 				case 'blog_launched':
 					action = async () => {
-						if (
-							unifiedLaunchpadExperiment === 'gated_site_launch' ||
-							unifiedLaunchpadExperiment === 'gated_site_launch_with_modal'
-						) {
-							const url = addQueryArgs( '/start/launch-site', {
-								siteSlug: siteSlug,
-								hide_initial_query: 'yes',
-							} );
-							window.location.href = url;
-						} else {
-							await wpcomRequest( {
-								path: `/sites/${ siteSlug }/launch`,
-								apiVersion: '1.1',
-								method: 'post',
-							} );
-							onSiteLaunched?.();
-						}
+						onSiteLaunched?.();
 					};
 					useCalypsoPath = false;
 					break;

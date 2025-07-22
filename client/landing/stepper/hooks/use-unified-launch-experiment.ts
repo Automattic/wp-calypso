@@ -8,7 +8,7 @@ export function useUnifiedLaunchExperiment() {
 	return [ isLoading, assignment?.variationName ];
 }
 
-export async function isUnifiedLaunchExperiment() {
+export async function getLaunchExperimentAssignment() {
 	const assignment = await loadExperimentAssignment( UNIFIED_LAUNCH_EXPERIMENT_NAME );
-	return assignment.variationName !== 'control';
+	return assignment.variationName;
 }

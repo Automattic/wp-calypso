@@ -1,3 +1,4 @@
+import { getLaunchExperimentAssignment } from 'calypso/landing/stepper/hooks/use-unified-launch-experiment';
 import { addQueryArgs } from 'calypso/lib/url';
 import { SITE_LAUNCH, SITE_LAUNCH_FAILURE, SITE_LAUNCH_SUCCESS } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
@@ -34,8 +35,19 @@ export const launchSiteFailure = ( siteId ) => ( {
  */
 export const launchSiteOrRedirectToLaunchSignupFlow =
 	( siteId, source = null, siteTitle = null, search = null ) =>
-	( dispatch, getState ) => {
+	async ( dispatch, getState ) => {
 		if ( ! isUnlaunchedSite( getState(), siteId ) ) {
+			return;
+		}
+
+		const experiment = await getLaunchExperimentAssignment();
+
+		if (
+			source === 'home' &&
+			( experiment === null || experiment === 'ungated_site_launch' || experiment === 'control' )
+		) {
+			dispatch( launchSite( siteId ) );
+
 			return;
 		}
 
