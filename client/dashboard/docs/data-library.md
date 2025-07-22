@@ -67,7 +67,7 @@ const siteSettingsPHPRoute = createRoute( {
 	path: 'settings/php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewPHPSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.PHP ) ) {
 			await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
 		}
 	},
@@ -90,7 +90,7 @@ At the component level, we use the `useQuery` hook to fetch data. This includes 
 ```typescript
 const { data: currentVersion } = useQuery( {
 	...sitePHPVersionQuery( site.ID ),
-	enabled: canViewPHPSettings( site ),
+	enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 } );
 ```
 

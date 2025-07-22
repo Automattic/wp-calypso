@@ -1,6 +1,7 @@
-import { DotcomFeatures, JetpackModules } from '../data/constants';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '../data/constants';
 import type { Site } from '../data/types';
 
+// Returns whether the plan supports a specific feature.
 export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures }` ) {
 	if ( ! site.plan ) {
 		return false;
@@ -9,13 +10,13 @@ export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures }` ) {
 	return site.plan.features.active.includes( feature );
 }
 
-export function hasAtomicFeature( site: Site, feature: `${ DotcomFeatures }` ) {
-	return site.is_wpcom_atomic && ! site.plan?.expired && hasPlanFeature( site, feature );
-}
-
-export function hasHostingFeature( site: Site, feature: `${ DotcomFeatures }` ) {
+// Returns whether the plan supports a specific "hosting feature",
+// which is a feature that requires Atomic or self-hosted infrastructure.
+export function hasHostingFeature( site: Site, feature: HostingFeatures ) {
 	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
-		return hasAtomicFeature( site, feature );
+		if ( site.plan?.expired || ! site.is_wpcom_atomic ) {
+			return false;
+		}
 	}
 	return hasPlanFeature( site, feature );
 }

@@ -18,12 +18,12 @@ import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import useStatsStrings from '../../hooks/use-stats-strings';
 import AllTimeHighlightsSection from '../../sections/all-time-highlights-section';
 import AllTimeViewsSection from '../../sections/all-time-views-section';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PostingActivity from '../../sections/posting-activity-section';
 import PageViewTracker from '../../stats-page-view-tracker';
-import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
 import StatsModuleListing from '../shared/stats-module-listing';
 
@@ -31,7 +31,7 @@ function StatsInsights( { context } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const moduleStrings = statsStrings();
+	const moduleStrings = useStatsStrings();
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const reduxDispatch = useDispatch();
 

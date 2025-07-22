@@ -7,10 +7,6 @@ import React from 'react';
 import { UserData } from 'calypso/lib/user/user';
 import UserRecommendedBlogs from '../recommended-blogs';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
 } ) );
@@ -71,7 +67,6 @@ describe( 'UserRecommendedBlogs', () => {
 	const mockHasRequestedUserRecommendedBlogs = jest.requireMock(
 		'calypso/state/reader/lists/selectors'
 	).hasRequestedUserRecommendedBlogs;
-	const mockIsEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
 	const { useSelector, useDispatch } = jest.requireMock( 'calypso/state' );
 
 	beforeEach( () => {
@@ -90,18 +85,9 @@ describe( 'UserRecommendedBlogs', () => {
 			}
 			return undefined;
 		} );
-		mockIsEnabled.mockReturnValue( true );
 		mockIsRequestingUserRecommendedBlogs.mockReturnValue( false );
 		mockHasRequestedUserRecommendedBlogs.mockReturnValue( true );
 		mockGetUserRecommendedBlogs.mockReturnValue( [] );
-	} );
-
-	test( 'should render nothing when feature flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-
-		const { container } = render( <UserRecommendedBlogs user={ defaultUser } /> );
-
-		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should render LoadingPlaceholder when no recommended blogs and still expecting request', () => {

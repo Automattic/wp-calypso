@@ -1,6 +1,7 @@
 import CircularProgressBar from '@automattic/components/src/circular-progress-bar';
 import { Link } from '@tanstack/react-router';
 import {
+	Button,
 	Card,
 	CardBody,
 	__experimentalDivider as Divider,
@@ -128,6 +129,61 @@ export default function OverviewCard( {
 		</HStack>
 	);
 
+	const handleClick = () => {
+		onClick?.();
+
+		if ( tracksId ) {
+			if ( variant === 'upsell' ) {
+				recordTracksEvent( 'calypso_dashboard_upsell_click', {
+					feature: tracksId,
+					type: 'card',
+				} );
+			} else {
+				recordTracksEvent( 'calypso_dashboard_overview_card_click', {
+					type: tracksId,
+					variant,
+				} );
+			}
+		}
+	};
+
+	const renderContent = () => {
+		if ( link ) {
+			return (
+				<Link to={ link } className="dashboard-overview-card__link" onClick={ handleClick }>
+					{ topContent }
+				</Link>
+			);
+		}
+
+		if ( externalLink ) {
+			return (
+				<a
+					href={ externalLink }
+					className="dashboard-overview-card__link"
+					target="_blank"
+					rel="noreferrer"
+					onClick={ handleClick }
+				>
+					{ topContent }
+				</a>
+			);
+		}
+
+		if ( onClick ) {
+			return (
+				<Button
+					className="dashboard-overview-card__link dashboard-overview-card__button"
+					onClick={ handleClick }
+				>
+					{ topContent }
+				</Button>
+			);
+		}
+
+		return topContent;
+	};
+
 	return (
 		<Card
 			className={ clsx( 'dashboard-overview-card', {
@@ -151,39 +207,7 @@ export default function OverviewCard( {
 							properties={ { feature: tracksId, variant } }
 						/>
 					) ) }
-				{ link && (
-					<Link to={ link } className="dashboard-overview-card__link" onClick={ onClick }>
-						{ topContent }
-					</Link>
-				) }
-				{ ! link && externalLink && (
-					<a
-						href={ externalLink }
-						className="dashboard-overview-card__link"
-						target="_blank"
-						rel="noreferrer"
-						onClick={ () => {
-							onClick?.();
-
-							if ( tracksId ) {
-								if ( variant === 'upsell' ) {
-									recordTracksEvent( 'calypso_dashboard_upsell_click', {
-										feature: tracksId,
-										type: 'card',
-									} );
-								} else {
-									recordTracksEvent( 'calypso_dashboard_overview_card_click', {
-										type: tracksId,
-										variant,
-									} );
-								}
-							}
-						} }
-					>
-						{ topContent }
-					</a>
-				) }
-				{ ! link && ! externalLink && topContent }
+				{ renderContent() }
 				{ bottom && (
 					<>
 						<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />

@@ -8,6 +8,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import wpcom from 'calypso/lib/wp';
 import { LoginContext } from 'calypso/login/login-context';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -77,6 +78,33 @@ class RequestLoginEmailForm extends Component {
 
 	usernameOrEmailRef = createRef();
 
+	setRequestLoginHeaders() {
+		this.context?.setHeaders( {
+			heading: this.props.translate( 'Email me a login link' ),
+			subHeading: this.getSubHeaderText(),
+		} );
+	}
+
+	setCheckYourEmailHeaders() {
+		const usernameOrEmail = this.getUsernameOrEmailFromState();
+		const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
+
+		this.context?.setHeaders( {
+			heading: this.props.translate( 'Check your email' ),
+			subHeading: preventWidows(
+				emailAddress
+					? this.props.translate(
+							"We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}",
+							{
+								args: { emailAddress },
+								components: { strong: <strong /> },
+							}
+					  )
+					: this.props.translate( 'We just emailed you a link.' )
+			),
+		} );
+	}
+
 	componentDidMount() {
 		const blogId = this.props.blogId;
 		if ( blogId ) {
@@ -85,10 +113,11 @@ class RequestLoginEmailForm extends Component {
 				.then( ( result ) => this.setState( { site: result } ) );
 		}
 
-		this.context?.setHeaders( {
-			heading: this.props.translate( 'Email me a login link' ),
-			subHeading: this.getSubHeaderText(),
-		} );
+		if ( this.props.showCheckYourEmail ) {
+			this.setCheckYourEmailHeaders();
+		} else {
+			this.setRequestLoginHeaders();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -97,10 +126,11 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		if ( this.state.site?.name && prevProps.site?.name !== this.state.site?.name ) {
-			this.context?.setHeaders( {
-				heading: this.context?.heading,
-				subHeading: this.getSubHeaderText(),
-			} );
+			this.setRequestLoginHeaders();
+		}
+
+		if ( ! prevProps.showCheckYourEmail && this.props.showCheckYourEmail ) {
+			this.setCheckYourEmailHeaders();
 		}
 	}
 

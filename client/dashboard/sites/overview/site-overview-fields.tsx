@@ -7,12 +7,12 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { hasAtomicFeature } from '../../utils/site-features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { HostingFeatures } from '../features';
 import { PHPVersion } from '../site-fields';
 import type { Site } from '../../data/types';
 import './site-overview-fields.scss';
@@ -63,7 +63,7 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
 	const { URL: url } = site;
 	const wpVersion = getFormattedWordPressVersion( site );
-	const hasPHPFeature = hasAtomicFeature( site, HostingFeatures.PHP );
+	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 
 	return (
 		<HStack className="site-overview-fields" spacing={ 1 } justify="flex-start">

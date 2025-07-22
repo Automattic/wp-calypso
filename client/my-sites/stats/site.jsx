@@ -71,6 +71,7 @@ import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-
 import StatsModuleVideos from './features/modules/stats-videos';
 import StatsFeedbackPresentor from './feedback';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
+import useStatsStrings from './hooks/use-stats-strings';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
@@ -83,7 +84,6 @@ import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
-import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
 
@@ -180,7 +180,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 	const queryDate = date.format( DATE_FORMAT );
 
-	const moduleStrings = statsStrings( supportsArchiveStats );
+	const moduleStrings = useStatsStrings( { supportsArchiveStats } );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );

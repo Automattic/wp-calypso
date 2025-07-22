@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { LoadingPlaceholder } from '@automattic/components';
 import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -40,10 +39,6 @@ const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Elemen
 			dispatch( requestUserRecommendedBlogs( userLogin ) );
 		}
 	}, [ userLogin, recommendedBlogs, dispatch, hasRequested ] );
-
-	if ( ! isEnabled( 'reader/recommended-blogs-list' ) ) {
-		return null;
-	}
 
 	if ( ! recommendedBlogs?.length && isExpectingRequest ) {
 		return <LoadingPlaceholder />;

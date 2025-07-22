@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, createRef } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
@@ -223,14 +222,15 @@ const VerifyLoginCode = ( {
 				) }
 
 				<div className="magic-login__form-action">
-					<FormButton
-						primary
+					<Button
+						variant="primary"
 						disabled={ ! submitEnabled && ! isDisabled }
-						busy={ isDisabled }
+						isBusy={ isDisabled }
 						type="submit"
+						__next40pxDefaultSize
 					>
 						{ isDisabled ? translate( 'Verifying code…' ) : translate( 'Verify code' ) }
-					</FormButton>
+					</Button>
 				</div>
 			</LoggedOutForm>
 

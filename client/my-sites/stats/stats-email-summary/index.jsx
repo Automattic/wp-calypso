@@ -16,16 +16,15 @@ import {
 	OpensTooltipContent,
 	ClicksTooltipContent,
 } from '../features/modules/stats-emails/tooltips';
+import useStatsStrings from '../hooks/use-stats-strings';
 import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
-import statsStringsFactory from '../stats-strings';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
 
-const StatsStrings = statsStringsFactory();
-
 // TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
 const StatsEmailSummary = ( { period, query, context } ) => {
+	const StatsStrings = useStatsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );

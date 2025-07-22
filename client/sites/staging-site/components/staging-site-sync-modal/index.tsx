@@ -35,6 +35,11 @@ import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-
 // TODO: Temporary style for the PoC
 import './style.scss';
 
+const ROOT_PATH = '/';
+const WP_CONFIG_PATH = '/wp-config.php';
+const WP_CONTENT_PATH = '/wp-content';
+const SQL_PATH = '/sql';
+
 const fileBrowserConfig: FileBrowserConfig = {
 	restrictedTypes: [ 'plugin', 'theme' ],
 	restrictedPaths: [ 'wp-content' ],
@@ -201,13 +206,14 @@ export default function SyncModal( {
 
 	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
 	const wpContentNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, '/wp-content' )
+		getBackupBrowserNode( state, querySiteId, WP_CONTENT_PATH )
 	);
 	const wpConfigNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, '/wp-config.php' )
+		getBackupBrowserNode( state, querySiteId, WP_CONFIG_PATH )
 	);
+	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
-	const getVisibleNodesCheckState = useCallback( () => {
+	const getFilesAndFoldersNodesCheckState = useCallback( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
 			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
@@ -232,15 +238,14 @@ export default function SyncModal( {
 		return 'mixed';
 	}, [ wpContentNode, wpConfigNode ] );
 
-	const visibleNodesCheckState = getVisibleNodesCheckState();
+	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
 
 	useEffect( () => {
-		if ( querySiteId === stagingSiteId ) {
-			dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
-		}
-	}, [ dispatch, querySiteId, stagingSiteId ] );
+		dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+	}, [ dispatch, querySiteId ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
@@ -280,9 +285,11 @@ export default function SyncModal( {
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
-		if ( visibleNodesCheckState === 'checked' ) {
+		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
 			// Sync everything
 			include_paths = '';
+			exclude_paths = '';
 		}
 
 		onSyncStart();
@@ -291,23 +298,34 @@ export default function SyncModal( {
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			pullFromStaging( { types: 'paths', include_paths } );
+			pullFromStaging( { types: 'paths', include_paths, exclude_paths } );
 		} else {
-			pushToStaging( { types: 'paths', include_paths } );
+			pushToStaging( { types: 'paths', include_paths, exclude_paths } );
 		}
 
 		onClose();
 	};
 
-	const updateNodeCheckState = useCallback(
+	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			dispatch( setNodeCheckState( querySiteId, '/', checkState ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, checkState ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, checkState ) );
 		},
 		[ dispatch, querySiteId ]
 	);
 
 	const onCheckboxChange = () => {
-		updateNodeCheckState( visibleNodesCheckState === 'checked' ? 'unchecked' : 'checked' );
+		updateFilesAndFoldersCheckState(
+			filesAndFoldersNodesCheckState === 'checked' ? 'unchecked' : 'checked'
+		);
+	};
+
+	const handleDatabaseCheckboxChange = () => {
+		if ( sqlNode?.checkState === 'checked' ) {
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'unchecked' ) );
+		} else {
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+		}
 	};
 
 	const handleExpanderChange = ( value: string ) => {
@@ -316,7 +334,7 @@ export default function SyncModal( {
 
 		if ( ! isExpanded ) {
 			// When collapsing, select all files
-			updateNodeCheckState( 'checked' );
+			updateFilesAndFoldersCheckState( 'checked' );
 		}
 	};
 
@@ -353,8 +371,8 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Files and folders' ) }
-							checked={ visibleNodesCheckState === 'checked' }
-							indeterminate={ visibleNodesCheckState === 'mixed' }
+							checked={ filesAndFoldersNodesCheckState === 'checked' }
+							indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
 							onChange={ onCheckboxChange }
 						/>
 						<SelectControl
@@ -377,13 +395,25 @@ export default function SyncModal( {
 						/>
 					</HStack>
 
-					{ isFileBrowserVisible && (
+					{ /*
+					 * Keep the FileBrowser component rendered (using a CSS 'hidden' class instead of conditional rendering)
+					 * to ensure its child nodes initialize properly and can be selected by default.
+					 */ }
+					<div className={ isFileBrowserVisible ? '' : 'hidden' }>
 						<FileBrowser
 							rewindId={ rewindId }
 							siteId={ querySiteId }
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
-					) }
+					</div>
+					<div className="database-item">
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							label={ __( 'Database tables' ) }
+							checked={ ! sqlNode || sqlNode.checkState === 'checked' }
+							onChange={ handleDatabaseCheckboxChange }
+						/>
+					</div>
 				</div>
 				<HStack className="staging-site-card__footer">
 					<HStack>

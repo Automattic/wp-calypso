@@ -26,7 +26,6 @@ export default function HostingFeatureGatedWithOverviewCard( {
 		heading: upsellHeading,
 		icon: upsell,
 		description: upsellDescription,
-		tracksId: tracksFeatureId,
 		variant: 'upsell' as const,
 	};
 
@@ -38,6 +37,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
 					externalLink={ upsellExternalLink }
+					tracksId={ tracksFeatureId }
 					onClick={ onClick }
 				/>
 			) }
@@ -46,7 +46,6 @@ export default function HostingFeatureGatedWithOverviewCard( {
 					{ ...cardProps }
 					icon={ featureIcon }
 					title={ __( 'Activate to unlock' ) }
-					externalLink=""
 					onClick={ onClick }
 				/>
 			) }

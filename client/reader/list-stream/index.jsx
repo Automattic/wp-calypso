@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { followList, unfollowList } from 'calypso/state/reader/lists/actions';
 import {
@@ -65,7 +66,10 @@ class ListStream extends Component {
 		}
 
 		if ( list ) {
-			this.title = list.title;
+			// Show author name in parentheses if the list is owned by someone other than the current user
+			const isOwnedByCurrentUser =
+				this.props.currentUser && list.owner === this.props.currentUser.username;
+			this.title = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
 		}
 
 		if ( this.props.isMissing ) {
@@ -127,6 +131,7 @@ export default connect(
 			isSubscribed: isSubscribedByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 			hasRequested: hasRequestedListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
+			currentUser: getCurrentUser( state ),
 		};
 	},
 	{ followList, recordReaderTracksEvent, unfollowList }

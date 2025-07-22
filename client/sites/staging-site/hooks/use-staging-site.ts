@@ -12,7 +12,7 @@ export interface StagingSite {
 
 type StagingSiteOptions = Pick< UseQueryOptions, 'enabled' >;
 
-export const useStagingSite = ( siteId: number, options: StagingSiteOptions ) => {
+export const useStagingSite = ( siteId: number, options?: StagingSiteOptions ) => {
 	return useQuery< Array< StagingSite >, unknown, Array< StagingSite > >( {
 		queryKey: [ USE_STAGING_SITE_QUERY_KEY, siteId ],
 		queryFn: () =>
@@ -20,7 +20,7 @@ export const useStagingSite = ( siteId: number, options: StagingSiteOptions ) =>
 				path: `/sites/${ siteId }/staging-site`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! siteId && ( options.enabled ?? true ),
+		enabled: !! siteId && ( options?.enabled ?? true ),
 		meta: {
 			persist: false,
 		},

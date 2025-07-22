@@ -1,4 +1,5 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
+import { DEFAULT_FIELDS } from './fields';
 import type { AnalyticsClient } from '../app/analytics';
 import type { User, SitesView, SitesViewPreferences } from '../data/types';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
@@ -111,13 +112,13 @@ export function getView( {
 
 	const type = viewSearchParams.type || viewPreferences?.type || defaultView.type;
 
-	const view = {
+	const view = sanitizeView( {
 		...defaultView,
 		...DEFAULT_LAYOUTS[ type ],
 		...DEFAULT_LAYOUT_FIELDS[ type ],
 		...viewPreferences,
 		...viewSearchParams,
-	} as SitesView;
+	} as SitesView );
 
 	return {
 		defaultView,
@@ -265,6 +266,23 @@ export function recordViewChanges(
 			field: removed,
 		} );
 	}
+}
+
+/**
+ * Sanitize the view preference data by removing any invalid or malformed entries.
+ */
+function sanitizeView( { sort, ...view }: SitesView ) {
+	if ( sort?.field ) {
+		const field = DEFAULT_FIELDS.find( ( field ) => field.id === sort?.field );
+		if ( ! field || field.enableSorting === false ) {
+			return view;
+		}
+	}
+
+	return {
+		...view,
+		sort,
+	};
 }
 
 // Ponyfill for Set.prototype.difference, which is not available in all target environments.

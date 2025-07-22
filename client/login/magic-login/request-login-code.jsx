@@ -1,10 +1,9 @@
 import { FormLabel } from '@automattic/components';
-import { Spinner } from '@wordpress/components';
+import { Spinner, Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
@@ -164,14 +163,15 @@ const RequestLoginCode = ( {
 					) }
 
 					<div className="magic-login__form-action">
-						<FormButton
-							primary
+						<Button
+							variant="primary"
 							disabled={ ! submitEnabled && ! isFetching }
-							busy={ isFetching }
+							isBusy={ isFetching }
 							type="submit"
+							__next40pxDefaultSize
 						>
 							{ isFetching ? translate( 'Sending code…' ) : translate( 'Send Code' ) }
-						</FormButton>
+						</Button>
 					</div>
 				</FormFieldset>
 			</LoggedOutForm>

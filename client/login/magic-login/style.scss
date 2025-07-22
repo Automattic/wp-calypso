@@ -39,23 +39,6 @@
 		.magic-login__form-form {
 			box-shadow: none;
 		}
-		.magic-login__form {
-			.magic-login__form-action {
-				.button.is-primary {
-					background-color: var(--studio-jetpack-green-50);
-					border-color: var(--studio-jetpack-green-50);
-
-					&:hover,
-					&:focus {
-						background-color: var(--studio-jetpack-green-60);
-					}
-
-					.accessible-focus &:focus {
-						box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
-					}
-				}
-			}
-		}
 
 		.magic-login__form-header {
 			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;

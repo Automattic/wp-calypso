@@ -83,9 +83,16 @@
 			.dashboard-overview-card__link-icon {
 				fill: var( --wp-admin-theme-color );
 				background-color: transparent;
-			}	
+			}
 		}
 	}
+}
+
+.dashboard-overview-card__button {
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	text-align: start;
 }
 
 .dashboard-overview-card__description {
