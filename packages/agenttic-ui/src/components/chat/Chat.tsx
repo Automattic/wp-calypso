@@ -1,4 +1,11 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import {
+	animate,
+	AnimatePresence,
+	motion,
+	type PanInfo,
+	useDragControls,
+	useMotionValue,
+} from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAgentChat } from '../../hooks/useAgentChat';
 import { useChat } from '../../hooks/useChat';
@@ -14,11 +21,26 @@ import styles from './Chat.module.css';
 
 const STYLE_CONSTANTS = {
 	COLLAPSED_SIZE: 56,
-	COMPACT_WIDTH: 360,
+	COMPACT_WIDTH: 372,
 	EXPANDED_HEIGHT: 520,
 	AUTO_COLLAPSE_DELAY: 1500,
 	BORDER_RADIUS: 24,
 	PADDING: 16,
+	VIEWPORT_OFFSET: 16,
+} as const;
+
+const DRAG_CONSTANTS = {
+	SPRING_CONFIG: {
+		type: 'spring' as const,
+		damping: 25,
+		stiffness: 300,
+	},
+	VELOCITY_MULTIPLIER: 0.1,
+	NON_DRAGGABLE_SELECTORS: [
+		'[data-slot="message"]',
+		'[data-slot="chat-input"]',
+		'[data-slot="input-container"]',
+	].join( ', ' ),
 } as const;
 
 export function Chat( {
@@ -56,7 +78,17 @@ export function Chat( {
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
+	const [ currentSide, setCurrentSide ] = useState< 'left' | 'right' >(
+		'left'
+	);
 	const compactRef = useRef< HTMLDivElement >( null );
+	const constraintsRef = useRef< HTMLDivElement >( null );
+	const chatRef = useRef< HTMLDivElement >( null );
+
+	// Motion values for programmatic control
+	const x = useMotionValue( 0 );
+	const y = useMotionValue( 0 );
+	const dragControls = useDragControls();
 
 	// Handle opening the chat and call onOpen callback
 	const handleOpen = useCallback( () => {
@@ -139,6 +171,86 @@ export function Chat( {
 		}
 	}, [ input, resetAgentConversation, chat, onClose ] );
 
+	// Calculate snap position based on current side
+	const calculateSnapPosition = useCallback(
+		( side?: 'left' | 'right' ) => {
+			if ( ! chatRef.current || ! constraintsRef.current ) return null;
+
+			const elementBox = chatRef.current.getBoundingClientRect();
+			const constraintBox =
+				constraintsRef.current.getBoundingClientRect();
+
+			// Calculate base position (without transforms)
+			const style = window.getComputedStyle( chatRef.current );
+			const transformMatrix = new DOMMatrixReadOnly( style.transform );
+			const baseX = elementBox.x - transformMatrix.e;
+			const baseY = elementBox.y - transformMatrix.f;
+
+			// Use provided side or fall back to current side
+			const targetSide = side ?? currentSide;
+
+			// Calculate target position
+			const targetX =
+				targetSide === 'left'
+					? constraintBox.left
+					: constraintBox.right - STYLE_CONSTANTS.COMPACT_WIDTH;
+			const targetY =
+				constraintBox.bottom - STYLE_CONSTANTS.EXPANDED_HEIGHT;
+
+			return {
+				x: targetX - baseX,
+				y: targetY - baseY,
+			};
+		},
+		[ currentSide ]
+	);
+
+	// Handle pointer down to control drag initiation
+	const handlePointerDown = useCallback(
+		( event: React.PointerEvent< HTMLDivElement > ) => {
+			const target = event.target as HTMLElement;
+
+			// Don't drag if clicking inside non-draggable areas
+			const isNonDraggable = target.closest(
+				DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS
+			);
+
+			if ( ! isNonDraggable ) {
+				dragControls.start( event.nativeEvent );
+			}
+		},
+		[ dragControls ]
+	);
+
+	// Handle drag end with snap functionality
+	const handleDragEnd = useCallback(
+		( _event: any, info: PanInfo ) => {
+			// Determine which side based on drop position
+			// For true 50/50 split, account for the chat widget's width
+			const dropX = info.point.x;
+			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
+			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
+			const isLeft = dropX < viewportMidpointX;
+			const newSide = isLeft ? 'left' : 'right';
+			setCurrentSide( newSide );
+
+			// Calculate snap position using the new side immediately
+			const position = calculateSnapPosition( newSide );
+			if ( ! position ) return;
+
+			// Animate to snap position using motion values
+			animate( x, position.x, {
+				...DRAG_CONSTANTS.SPRING_CONFIG,
+				velocity: info.velocity.x * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
+			} );
+			animate( y, position.y, {
+				...DRAG_CONSTANTS.SPRING_CONFIG,
+				velocity: info.velocity.y * DRAG_CONSTANTS.VELOCITY_MULTIPLIER,
+			} );
+		},
+		[ x, y, calculateSnapPosition ]
+	);
+
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
 	const fromExpanded =
@@ -149,6 +261,23 @@ export function Chat( {
 	useEffect( () => {
 		prevStateRef.current = chat.state;
 	} );
+
+	// Handle window resize to maintain bottom positioning
+	useEffect( () => {
+		if ( chat.state !== 'expanded' ) return;
+
+		const handleResize = () => {
+			const position = calculateSnapPosition();
+			if ( ! position ) return;
+
+			// Update motion values directly (no animation during resize)
+			x.set( position.x );
+			y.set( position.y );
+		};
+
+		window.addEventListener( 'resize', handleResize );
+		return () => window.removeEventListener( 'resize', handleResize );
+	}, [ chat.state, x, y, calculateSnapPosition ] );
 
 	// Cleanup timeouts on unmount
 	useEffect( () => {
@@ -197,77 +326,114 @@ export function Chat( {
 	}
 
 	return (
-		<div
-			data-slot="chat-floating"
-			className={ cn( styles.container, styles.floating ) }
-			onMouseLeave={ handleAutoCollapse }
-		>
-			<motion.div
-				layout
-				className={ styles.content }
-				initial={ false }
-				animate={ {
-					width:
-						chat.state === 'collapsed'
-							? STYLE_CONSTANTS.COLLAPSED_SIZE
-							: STYLE_CONSTANTS.COMPACT_WIDTH,
-					height: getHeightForState( chat.state ),
-					transition: input.value.trim()
-						? { duration: 0 }
-						: morphSpring,
-				} }
+		<>
+			<div
+				ref={ constraintsRef }
 				style={ {
-					borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+					position: 'fixed',
+					top: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					right: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					pointerEvents: 'none',
+				} }
+			/>
+			<motion.div
+				ref={ chatRef }
+				data-slot="chat-floating"
+				className={ cn( styles.container, styles.floating ) }
+				onMouseLeave={ handleAutoCollapse }
+				drag={ chat.state === 'expanded' }
+				dragControls={ dragControls }
+				dragListener={ false }
+				dragConstraints={ constraintsRef }
+				dragMomentum={ false }
+				dragElastic={ 0.1 }
+				dragTransition={ { power: 0.1, timeConstant: 100 } }
+				onDragEnd={ handleDragEnd }
+				onPointerDown={ handlePointerDown }
+				style={ {
+					x,
+					y,
+					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
 				} }
 			>
-				<AnimatePresence mode="wait">
-					{ chat.state === 'collapsed' && (
-						<CollapsedView
-							key="collapsed"
-							icon={ triggerIcon }
-							onClick={ handleOpen }
-							onHover={ handleHover }
-							fromExpanded={ fromExpanded }
-						/>
-					) }
-					{ chat.state === 'compact' && (
-						<div ref={ compactRef }>
-							<CompactView
-								key="compact"
-								value={ input.value }
-								onChange={ input.setValue }
+				<motion.div
+					layout
+					className={ styles.content }
+					initial={ false }
+					animate={ {
+						width:
+							chat.state === 'collapsed'
+								? STYLE_CONSTANTS.COLLAPSED_SIZE
+								: STYLE_CONSTANTS.COMPACT_WIDTH,
+						height: getHeightForState( chat.state ),
+						x:
+							chat.state === 'collapsed' &&
+							currentSide === 'right'
+								? STYLE_CONSTANTS.COMPACT_WIDTH -
+								  STYLE_CONSTANTS.COLLAPSED_SIZE
+								: 0,
+						transition: input.value.trim()
+							? { duration: 0 }
+							: morphSpring,
+					} }
+					style={ {
+						borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+					} }
+				>
+					<AnimatePresence mode="wait">
+						{ chat.state === 'collapsed' && (
+							<CollapsedView
+								key="collapsed"
+								icon={ triggerIcon }
+								onClick={ handleOpen }
+								onHover={ handleHover }
+								fromExpanded={ fromExpanded }
+							/>
+						) }
+						{ chat.state === 'compact' && (
+							<div ref={ compactRef }>
+								<CompactView
+									key="compact"
+									value={ input.value }
+									onChange={ input.setValue }
+									onSubmit={ handleSubmit }
+									onKeyDown={ input.handleKeyDown }
+									textareaRef={ input.textareaRef }
+									placeholder={ placeholder }
+									isProcessing={
+										isThinking || isSendingMessage
+									}
+									onBlur={ handleAutoCollapse }
+								/>
+							</div>
+						) }
+						{ chat.state === 'expanded' && (
+							<ConversationView
+								key="expanded"
+								messages={ messages }
+								inputValue={ input.value }
+								onInputChange={ input.setValue }
 								onSubmit={ handleSubmit }
 								onKeyDown={ input.handleKeyDown }
 								textareaRef={ input.textareaRef }
 								placeholder={ placeholder }
 								isProcessing={ isThinking || isSendingMessage }
-								onBlur={ handleAutoCollapse }
+								showHeader={ true }
+								onClose={ handleClose }
+								onMinimize={ handleMinimize }
+								fromCompact={ fromCompact }
+								notice={ notice }
+								isThinking={ isThinking }
+								error={ error }
+								emptyView={ emptyView }
 							/>
-						</div>
-					) }
-					{ chat.state === 'expanded' && (
-						<ConversationView
-							key="expanded"
-							messages={ messages }
-							inputValue={ input.value }
-							onInputChange={ input.setValue }
-							onSubmit={ handleSubmit }
-							onKeyDown={ input.handleKeyDown }
-							textareaRef={ input.textareaRef }
-							placeholder={ placeholder }
-							isProcessing={ isThinking || isSendingMessage }
-							showHeader={ true }
-							onClose={ handleClose }
-							onMinimize={ handleMinimize }
-							fromCompact={ fromCompact }
-							notice={ notice }
-							isThinking={ isThinking }
-							error={ error }
-							emptyView={ emptyView }
-						/>
-					) }
-				</AnimatePresence>
+						) }
+					</AnimatePresence>
+				</motion.div>
 			</motion.div>
-		</div>
+		</>
 	);
 }

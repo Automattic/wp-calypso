@@ -15,8 +15,6 @@
 .container.floating {
     position: fixed;
     z-index: 50;
-    bottom: var(--spacing-6);
-    left: var(--spacing-6);
 }
 
 .container.floating .content {

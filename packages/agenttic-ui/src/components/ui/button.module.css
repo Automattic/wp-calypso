@@ -23,8 +23,8 @@
 }
 
 .button:focus-visible {
-  border-color: var(--color-ring);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-ring) 50%, transparent);
+  outline: 2px solid var(--color-ring);
+  outline-offset: 1.5px;
 }
 
 /* ICON SIZE CLASSES */
@@ -105,7 +105,7 @@
 .link {
     background-color: transparent;
     color: var(--color-primary);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-medium);
 }
 
 .link:hover:not(:disabled) {

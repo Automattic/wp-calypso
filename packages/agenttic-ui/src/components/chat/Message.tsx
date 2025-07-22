@@ -14,7 +14,7 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 	function Message( { message }, ref ) {
 		const renderMessageContent = () => {
 			return (
-				<div className={ styles.content }>
+				<>
 					{ message.content.map( ( contentBlock, index ) => {
 						if (
 							contentBlock.type === 'text' &&
@@ -40,7 +40,7 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 						}
 						return null;
 					} ) }
-				</div>
+				</>
 			);
 		};
 

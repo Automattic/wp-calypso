@@ -5,14 +5,14 @@
   --gray-800: oklch(0.241 0 0);
   --gray-600: oklch(0.665 0 0);
   --gray-700: oklch(0.5624 0 0);
-  --gray-100: oklch(0.95 0 0);
+  --gray-100: oklch(0.935 0 0);
   --gray-200: oklch(0.65 0 0);
 
   --primary: oklch(0.5379 0.2325 265.77);
   --destructive: oklch(0.577 0.245 27.325);
   
   --color-foreground: var(--gray-800);
-  --color-popover: var(--white);
+  --color-popover: oklch(0.99 0 0);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--white);
   --color-secondary: var(--gray-600);
@@ -21,21 +21,18 @@
   --color-muted-foreground: var(--gray-700);
   --color-destructive: var(--destructive);
   --color-border: oklch(0.875 0 0);
-  --color-ring: oklch(0.708 0 0);
+  --color-ring: color-mix(in srgb, var(--color-primary) 100%, transparent);
   
   /* === TYPOGRAPHY === */
 
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --text-xs: 13px;
-  --text-sm: 14px;
-  --text-sm--line-height: calc(1.25 / 0.875);
-  --text-base: 15px;
-  --text-base--line-height: 1.45;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.65;
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.625;
   --text-base--tracking: -0.01em;
-  --font-weight-normal: 400;
   --font-weight-medium: 450;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
   
   /* === SPACING === */
   
@@ -47,6 +44,7 @@
   --spacing-4: calc(var(--spacing) * 4); /* 16px */
   --spacing-5: calc(var(--spacing) * 5); /* 20px */
   --spacing-6: calc(var(--spacing) * 6); /* 24px */
+  --spacing-7: calc(var(--spacing) * 7); /* 28px */
   --spacing-8: calc(var(--spacing) * 8); /* 32px */
   --spacing-10: calc(var(--spacing) * 10); /* 40px */
   
@@ -62,10 +60,10 @@
   
   /* === SHADOWS === */
   
-  --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 12px rgba(0, 0, 0, 0.075);
-  --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 24px rgba(0, 0, 0, 0.08);
-  --shadow-stroke: 0 0 0 1px rgba(0, 0, 0, 0.1);
-
+  --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 0, 0.075);
+  --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 2px 24px rgba(0, 0, 0, 0.075);
+    --shadow-stroke: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  
   /* === TRANSITIONS === */
   
   --transition-all: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);

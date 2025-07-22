@@ -1,8 +1,20 @@
 .container {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    padding-top: var(--spacing-2);
     padding-bottom: var(--spacing-10);
+    gap: var(--spacing-8);
     overflow-y: auto;
     height: 100%;
+    position: relative;
+    z-index: 10;
+}
+
+/* Reduce gap for consecutive messages from same role */
+.container [data-role="user"]:has(+ [data-role="user"]),
+.container [data-role="assistant"]:has(+ [data-role="assistant"]) {
+    margin-bottom: calc(-1 * var(--spacing-6));
 }
 
 .emptyState {

@@ -3,8 +3,8 @@ import { Messages } from '../chat/Messages';
 import { ChatInput } from '../chat/ChatInput';
 import { Notice } from '../chat/Notice';
 import { ChatHeader } from '../chat/ChatHeader';
-import { Suggestions } from '../chat/Suggestions';
 import type { Message, NoticeConfig } from '../../types';
+import { Suggestions } from '../chat/Suggestions';
 import styles from './ConversationView.module.css';
 
 interface InputHandlers {
@@ -59,7 +59,12 @@ export function ConversationView( {
 	emptyView,
 }: ConversationViewProps ) {
 	return (
-		<div data-slot="conversation-view" className={ styles.container }>
+		<div
+			data-slot="conversation-view"
+			className={ `${ styles.container }${
+				showHeader ? ` ${ styles.withHeader }` : ''
+			}` }
+		>
 			{ showHeader && <ChatHeader onClose={ onClose } /> }
 			<Messages
 				messages={ messages }
@@ -68,30 +73,31 @@ export function ConversationView( {
 				emptyView={ emptyView }
 				fromCompact={ fromCompact }
 			/>
-			<div className={ styles.inputWrapper }>
-				<div className={ styles.inputContainer }>
-					<Suggestions />
-					<div className={ styles.inputContainerInner }>
-						{ notice && (
-							<Notice
-								icon={ notice.icon }
-								message={ notice.message }
-								action={ notice.action }
-								dismissible={ notice.dismissible }
-								onDismiss={ notice.onDismiss }
-							/>
-						) }
-						<ChatInput
-							value={ inputValue }
-							onChange={ onInputChange }
-							onSubmit={ onSubmit }
-							onKeyDown={ onKeyDown }
-							textareaRef={ textareaRef }
-							placeholder={ placeholder }
-							isProcessing={ isProcessing }
-							fromCompact={ fromCompact }
+			<div
+				className={ styles.inputContainer }
+				data-slot="input-container"
+			>
+				<Suggestions />
+				<div className={ styles.inputContainerInner }>
+					{ notice && (
+						<Notice
+							icon={ notice.icon }
+							message={ notice.message }
+							action={ notice.action }
+							dismissible={ notice.dismissible }
+							onDismiss={ notice.onDismiss }
 						/>
-					</div>
+					) }
+					<ChatInput
+						value={ inputValue }
+						onChange={ onInputChange }
+						onSubmit={ onSubmit }
+						onKeyDown={ onKeyDown }
+						textareaRef={ textareaRef }
+						placeholder={ placeholder }
+						isProcessing={ isProcessing }
+						fromCompact={ fromCompact }
+					/>
 				</div>
 			</div>
 		</div>

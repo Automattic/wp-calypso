@@ -6,7 +6,7 @@
   display: flex;
   flex-wrap: nowrap;
   gap: var(--spacing-2);
-  padding: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-1\.5);
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;

@@ -8,7 +8,11 @@ interface ChatHeaderProps {
 
 export function ChatHeader( { onClose }: ChatHeaderProps ) {
 	return (
-		<div data-slot="chat-header" className={ styles.container }>
+		<div
+			data-slot="chat-header"
+			data-draggable="true"
+			className={ styles.container }
+		>
 			<Button
 				variant="tertiary"
 				size="icon"
