@@ -67,10 +67,13 @@ export const useIsJetpackConnectionProblem = ( siteId ) => {
 /**
  * React HOC to check if the current site has possible Jetpack connection problem.
  */
-export const withJetpackConnectionProblem = ( Wrapped ) => ( props ) => {
-	const siteId = useSelector( getSelectedSiteId );
-	const isPossibleConnectionProblem = useIsJetpackConnectionProblem( siteId );
-	return (
-		<Wrapped { ...props } isPossibleJetpackConnectionProblem={ isPossibleConnectionProblem } />
-	);
+export const withJetpackConnectionProblem = ( Wrapped ) => {
+	const WrappedWithJetpackConnectionProblem = ( props ) => {
+		const siteId = useSelector( getSelectedSiteId );
+		const isPossibleConnectionProblem = useIsJetpackConnectionProblem( siteId );
+		return (
+			<Wrapped { ...props } isPossibleJetpackConnectionProblem={ isPossibleConnectionProblem } />
+		);
+	};
+	return WrappedWithJetpackConnectionProblem;
 };
