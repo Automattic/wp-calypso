@@ -1,15 +1,10 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { useRecommendedSite } from 'calypso/landing/subscriptions/hooks/use-recommended-site';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useCallback } from 'react';
+import { useRecommendedListMutation } from 'calypso/data/reader/recommendations/use-recommend-list-mutation';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
-import {
-	hasRequestedUserRecommendedBlogs,
-	isRequestingUserRecommendedBlogs,
-} from 'calypso/state/reader/lists/selectors';
 import ReaderFollowFeedIcon from '../components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from '../components/icons/following-feed-icon';
 import type { Feed } from 'calypso/state/data-layer/wpcom/read/feed/types';
@@ -17,36 +12,33 @@ import './style.scss';
 
 interface Props {
 	feedId: Feed[ 'feed_ID' ];
+	isRecommended: boolean;
 }
 
-export const RecommendButton = ( { feedId }: Props ) => {
-	const { isRecommended, toggleRecommended } = useRecommendedSite( feedId );
+export const RecommendButton = ( { feedId, isRecommended = false }: Props ) => {
 	const owner = useSelector( getCurrentUserName );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	const { add, remove } = useRecommendedListMutation( owner );
 
-	const isRequesting = useSelector( ( state ) => isRequestingUserRecommendedBlogs( state, owner ) );
-	const hasRequested = useSelector( ( state ) => hasRequestedUserRecommendedBlogs( state, owner ) );
-
-	useEffect( () => {
-		if ( ! hasRequested && ! isRequesting ) {
-			dispatch( requestRecommendedBlogsListItems( owner ) );
+	const addOrRemoveFromRecommendedList = useCallback( () => {
+		if ( isRecommended ) {
+			remove( feedId );
+		} else {
+			add( feedId );
 		}
-	}, [ dispatch, hasRequested, isRequesting, owner ] );
+	}, [ isRecommended, remove, feedId, add ] );
 
 	const Icon = isRecommended ? ReaderFollowingFeedIcon : ReaderFollowFeedIcon;
 	const classes = clsx( 'reader-recommend-button', {
 		'is-recommended': isRecommended,
-		'is-requesting': isRequesting,
 	} );
 
 	return (
 		<Button
 			icon={ <Icon iconSize={ 24 } /> }
 			className={ classes }
-			onClick={ toggleRecommended }
+			onClick={ addOrRemoveFromRecommendedList }
 			variant="secondary"
-			disabled={ isRequesting }
 		>
 			{ isRecommended ? translate( 'Recommended' ) : translate( 'Recommend this blog' ) }
 		</Button>

@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useDispatch, shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
+import { useIsInRecommendedList } from 'calypso/data/reader/recommendations/use-is-in-recommend-list';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
@@ -16,6 +18,7 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+
 export default function ReaderFeedHeaderFollow( props ) {
 	const { feed, site, streamKey } = props;
 	const translate = useTranslate();
@@ -23,6 +26,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
+	const owner = useSelector( getCurrentUserName );
+	const isRecommended = useIsInRecommendedList( owner, feed?.feed_ID );
 
 	const { following, hasOrganization, isEmailBlocked, isWPForTeamsItem, subscriptionId } =
 		useSelector( ( state ) => {
@@ -95,7 +100,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 								</div>
 							) }
 						</div>
-						<RecommendButton feedId={ feed.feed_ID } />
+						<RecommendButton feedId={ feed?.feed_ID } isRecommended={ isRecommended } />
 					</div>
 				) }
 			</div>
