@@ -1044,7 +1044,6 @@ class MagicLogin extends Component {
 						flow={ getGravatarOAuth2Flow( oauth2Client ) }
 						headerText={ headerText }
 						subHeaderText={ subHeader }
-						hideSubHeaderText={ ! subHeader }
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
 						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
