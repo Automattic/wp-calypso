@@ -1,4 +1,4 @@
-import { CircularProgressBar } from '@automattic/components';
+import CircularProgressBar from '@automattic/components/src/circular-progress-bar';
 import { Link } from '@tanstack/react-router';
 import {
 	Card,
