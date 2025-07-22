@@ -1,6 +1,22 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { people, seen, wordpress, backup, starEmpty, comment, envelope } from '@wordpress/icons';
-import OverviewCard, { OverviewCardProgressBar } from './';
+import {
+	RouterProvider,
+	createMemoryHistory,
+	createRouter,
+	createRootRoute,
+} from '@tanstack/react-router';
+import {
+	people,
+	seen,
+	wordpress,
+	backup,
+	download,
+	starEmpty,
+	comment,
+	envelope,
+} from '@wordpress/icons';
+import './style.stories.scss';
+import OverviewCard from './';
 
 const meta = {
 	title: 'client/dashboard/OverviewCard',
@@ -9,15 +25,36 @@ const meta = {
 		layout: 'centered',
 	},
 	tags: [ 'autodocs' ],
+	decorators: [
+		( Story ) => (
+			<RouterProvider
+				router={ createRouter( {
+					basepath: '/',
+					routeTree: createRootRoute( { component: Story } ),
+					history: createMemoryHistory(),
+				} ) }
+			/>
+		),
+	],
 	argTypes: {
 		icon: {
 			control: 'select',
-			options: [ 'people', 'seen', 'wordpress', 'backup', 'starEmpty', 'comment', 'envelope' ],
+			options: [
+				'people',
+				'seen',
+				'wordpress',
+				'backup',
+				'download',
+				'starEmpty',
+				'comment',
+				'envelope',
+			],
 			mapping: {
 				people,
 				seen,
 				wordpress,
 				backup,
+				download,
 				starEmpty,
 				comment,
 				envelope,
@@ -33,18 +70,23 @@ export const Default: Story = {
 	args: {
 		title: 'Visitors',
 		heading: '1,245',
-		metaText: 'Past 7 days',
+		description: 'Past 7 days',
 		icon: people,
 	},
 };
 
-export const WithProgressBar: Story = {
+export const WithProgress: Story = {
 	args: {
-		title: 'Storage',
-		heading: '236 MB',
-		metaText: 'of 53 GB used',
-		icon: backup,
-		children: <OverviewCardProgressBar value={ 25 } />,
+		title: 'Migrate',
+		heading: 'Migrating site',
+		description: 'We’ll email you when it’s done',
+		icon: download,
+		link: '/',
+		progress: {
+			value: 76,
+			max: 100,
+			label: '76%',
+		},
 	},
 };
 
@@ -52,8 +94,27 @@ export const WithLink: Story = {
 	args: {
 		title: 'Comments',
 		heading: '24',
-		metaText: 'Past 7 days',
+		description: 'Past 7 days',
 		icon: comment,
 		externalLink: 'https://wordpress.com',
+	},
+};
+
+export const WithExtraBottomContent: Story = {
+	args: {
+		title: 'Plan',
+		heading: 'Personal',
+		description: 'Upgrade to unlock more features',
+		icon: wordpress,
+		link: '/',
+		bottom: (
+			<>
+				<div>Extra content</div>
+				<div style={ { maxWidth: 500 } }>
+					This is some extra content that appears at the bottom of the card. It should not be
+					included as part of the clickable area of the card.
+				</div>
+			</>
+		),
 	},
 };

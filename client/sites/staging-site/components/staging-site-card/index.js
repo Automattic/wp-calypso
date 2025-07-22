@@ -50,7 +50,6 @@ const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
 export const StagingSiteCard = ( {
 	currentUserId,
-	disabled = false,
 	siteId,
 	siteOwnerId,
 	translate,
@@ -77,17 +76,13 @@ export const StagingSiteCard = ( {
 		data: hasValidQuota,
 		isLoading: isLoadingQuotaValidation,
 		error: isErrorValidQuota,
-	} = useHasValidQuotaQuery( siteId, {
-		enabled: ! disabled,
-	} );
+	} = useHasValidQuotaQuery( siteId );
 
 	const {
 		data: stagingSites,
 		isLoading: isLoadingStagingSites,
 		error: loadingError,
-	} = useStagingSite( siteId, {
-		enabled: ! disabled,
-	} );
+	} = useStagingSite( siteId );
 
 	useEffect( () => {
 		if ( loadingError ) {
@@ -136,7 +131,6 @@ export const StagingSiteCard = ( {
 	);
 
 	const { data: lock, isLoading: isLoadingLockQuery } = useGetLockQuery( siteId, {
-		enabled: ! disabled,
 		refetchInterval: () => {
 			return isLoadingAddStagingSite ? 5000 : 0;
 		},
@@ -471,7 +465,7 @@ export const StagingSiteCard = ( {
 				onDeleteClick={ initiateDelete }
 				onPushClick={ pushToStaging }
 				onPullClick={ pullFromStaging }
-				isButtonDisabled={ disabled || isSyncInProgress }
+				isButtonDisabled={ isSyncInProgress }
 				isBusy={ isReverting }
 				error={ syncError }
 			/>
@@ -499,7 +493,6 @@ export const StagingSiteCard = ( {
 				isDevelopmentSite={ isDevelopmentSite }
 				disabledMessage={ disabledMessage }
 				isButtonDisabled={
-					disabled ||
 					isLoadingAddStagingSite ||
 					isLoadingQuotaValidation ||
 					! hasValidQuota ||

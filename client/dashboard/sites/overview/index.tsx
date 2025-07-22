@@ -126,7 +126,13 @@ function SiteOverview( {
 						) }
 						<ScanCard site={ site } />
 					</VStack>
-					<OverviewCard title={ __( 'Plan' ) } icon={ wordpress } heading="TBA" />
+					<OverviewCard
+						title={ __( 'Plan' ) }
+						icon={ wordpress }
+						heading="TBA"
+						description="TBA"
+						bottom={ <div /> }
+					/>
 				</Grid>
 				<Divider
 					orientation="horizontal"

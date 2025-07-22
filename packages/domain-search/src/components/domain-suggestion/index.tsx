@@ -1,10 +1,4 @@
-import {
-	Card,
-	CardBody,
-	__experimentalText as Text,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
 import { ComponentProps } from 'react';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
@@ -12,6 +6,8 @@ import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { DomainSuggestionsList } from '../domain-suggestions-list';
 import { Featured } from './featured';
+import { SuggestionPlaceholder } from './index.placeholder';
+import { SuggestionSkeleton } from './index.skeleton';
 import { Unavailable } from './unavailable';
 
 import './style.scss';
@@ -80,39 +76,17 @@ const DomainSuggestionComponent = ( {
 		<DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } disabled={ disabled } />
 	);
 
-	const getContent = () => {
-		if ( activeQuery === 'large' ) {
-			return (
-				<HStack spacing={ 6 }>
-					<HStack alignment="left" spacing={ 3 }>
-						<Icon icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
-						{ domainName }
-					</HStack>
-
-					<HStack alignment="right" spacing={ 4 }>
-						{ price }
-						{ cta }
-					</HStack>
-				</HStack>
-			);
-		}
-
-		return (
-			<HStack spacing={ 6 }>
-				<VStack spacing={ 2 }>
-					{ domainName }
-					{ price }
-				</VStack>
-				{ cta }
+	const domainNameElement =
+		activeQuery === 'large' ? (
+			<HStack alignment="left" spacing={ 3 }>
+				<Icon icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
+				{ domainName }
 			</HStack>
+		) : (
+			domainName
 		);
-	};
 
-	return (
-		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody style={ { borderRadius: 0 } }>{ getContent() }</CardBody>
-		</Card>
-	);
+	return <SuggestionSkeleton domainName={ domainNameElement } price={ price } cta={ cta } />;
 };
 
 export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
@@ -131,3 +105,4 @@ export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
 
 DomainSuggestion.Unavailable = Unavailable;
 DomainSuggestion.Featured = Featured;
+DomainSuggestion.Placeholder = SuggestionPlaceholder;

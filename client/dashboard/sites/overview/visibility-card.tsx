@@ -1,5 +1,3 @@
-import { CircularProgressBar } from '@automattic/components';
-import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
@@ -36,21 +34,12 @@ function VisibilityCardUnlaunched() {
 			icon={ launch }
 			heading={ heading }
 			description={ description }
-			sideContent={
-				<CircularProgressBar
-					currentStep={ 5 }
-					numberOfSteps={ 5 }
-					size={ 80 }
-					strokeColor="var(--wp-admin-theme-color)"
-					strokeWidth={ 1.5 }
-					variant="success"
-					customText={
-						<Text lineHeight="20px" size={ 15 } weight={ 500 }>
-							5/5
-						</Text>
-					}
-				/>
-			}
+			progress={ {
+				value: 5,
+				max: 5,
+				label: '5/5',
+				variant: 'success',
+			} }
 		/>
 	);
 }

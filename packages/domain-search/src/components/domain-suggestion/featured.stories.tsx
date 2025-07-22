@@ -70,3 +70,11 @@ export const Highlighted = () => {
 		</StoryWrapper>
 	);
 };
+
+export const Placeholder = () => {
+	return (
+		<StoryWrapper>
+			<DomainSuggestion.Featured.Placeholder />
+		</StoryWrapper>
+	);
+};

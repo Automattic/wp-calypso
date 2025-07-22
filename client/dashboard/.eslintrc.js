@@ -40,6 +40,7 @@ module.exports = {
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
+							'!@automattic/components/src/logos',
 							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
