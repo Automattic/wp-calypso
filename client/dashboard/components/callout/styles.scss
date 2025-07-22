@@ -4,6 +4,7 @@
 
 .dashboard-callout {
 	max-width: 600px;
+	overflow: hidden;
 
 	&.is-highlight {
 		background: rgba(56, 88, 233, 0.04);
@@ -15,13 +16,13 @@
 		}
 
 		.dashboard-callout__content {
-			padding: $grid-unit-40;
+			padding: $grid-unit-30;
 		}
 	}
 }
 
 .dashboard-callout__h-container {
-	padding: $grid-unit-40;
+	padding: $grid-unit-30;
 	@include body-medium;
 	color: $gray-700;
 
@@ -39,12 +40,15 @@
 .dashboard-callout__image {
 	position: relative;
 
+	img,
+	svg {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+
 	img {
 		object-fit: cover;
-		height: 100%;
-		width: 100%;
-		position: absolute;
-		border-radius: $radius-medium;
 	}
 }
 

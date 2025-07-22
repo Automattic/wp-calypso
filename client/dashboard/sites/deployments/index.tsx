@@ -8,7 +8,7 @@ import { CalloutOverlay } from '../../components/callout-overlay';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
+import UpsellCTAButton from '../../components/upsell-cta-button';
 import { SitePlan } from '../../data/types';
 import illustrationUrl from './deployments-callout-illustration.svg';
 import ghIconUrl from './gh-icon.svg';
@@ -46,9 +46,11 @@ function SiteDeployments() {
 							</>
 						}
 						actions={
-							<RouterLinkButton __next40pxDefaultSize variant="primary" to="#">
-								{ __( 'Upgrade plan' ) }
-							</RouterLinkButton>
+							<UpsellCTAButton
+								text={ __( 'Upgrade plan' ) }
+								tracksId="deployments"
+								variant="primary"
+							/>
 						}
 					/>
 				}

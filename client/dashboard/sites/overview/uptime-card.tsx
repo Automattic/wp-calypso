@@ -26,10 +26,9 @@ function UptimeCardEnabled( { siteId }: { siteId: number } ) {
 					`${ uptime }%`
 				)
 			}
-			metaText={ __( 'Past 30 days' ) }
-		>
-			<OverviewCardProgressBar value={ uptime } />
-		</OverviewCard>
+			description={ __( 'Past 30 days' ) }
+			bottom={ <OverviewCardProgressBar value={ uptime } /> }
+		/>
 	);
 }
 

@@ -3,9 +3,9 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { UseShoppingCart, withShoppingCart } from '@automattic/shopping-cart';
-import { addQueryArgs, getQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArgs, getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, translate, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -23,6 +23,7 @@ import {
 	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
 import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { isExternal } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
@@ -247,6 +248,31 @@ class DomainSearch extends Component< DomainSearchProps > {
 		return domainManagementList( selectedSiteSlug ?? undefined, currentRoute );
 	}
 
+	getDomainAndPlanPackageBackButtonProps() {
+		const backTo = ( getQueryArg( window.location.href, 'back_to' ) ?? '' ) as string;
+		if ( ! isExternal( backTo ) ) {
+			return {
+				goBackText: translate( 'Back' ),
+				goBackLink: backTo,
+			};
+		}
+
+		const { selectedSite, selectedSiteSlug, preferredView, wpAdminUrl } = this.props;
+		const launchpadScreen = selectedSite?.options?.launchpad_screen;
+		const siteIntent = selectedSite?.options?.site_intent;
+		return launchpadScreen === 'full'
+			? {
+					goBackText: translate( 'Next Steps' ),
+					goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
+			  }
+			: {
+					goBackLink:
+						preferredView === 'wp-admin' && !! wpAdminUrl
+							? wpAdminUrl
+							: `/home/${ selectedSiteSlug }`,
+			  };
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -274,10 +300,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 		} );
 
 		let content;
-
-		const launchpadScreen = this.props.selectedSite?.options?.launchpad_screen;
-		const siteIntent = this.props.selectedSite?.options?.site_intent;
-
 		if ( ! this.state.domainRegistrationAvailable ) {
 			let maintenanceEndTime = translate( 'shortly', {
 				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
@@ -299,18 +321,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 				/>
 			);
 		} else {
-			const goBackButtonProps =
-				launchpadScreen === 'full'
-					? {
-							goBackText: translate( 'Next Steps' ),
-							goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
-					  }
-					: {
-							goBackLink:
-								this.props.preferredView === 'wp-admin' && !! this.props.wpAdminUrl
-									? this.props.wpAdminUrl
-									: `/home/${ selectedSiteSlug }`,
-					  };
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -326,7 +336,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 							{ isDomainAndPlanPackageFlow && (
 								<>
 									<DomainAndPlanPackageNavigation
-										{ ...goBackButtonProps }
+										{ ...this.getDomainAndPlanPackageBackButtonProps() }
 										hidePlansPage={
 											! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
 										}

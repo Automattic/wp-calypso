@@ -195,7 +195,7 @@ const sections = [
 	},
 	{
 		name: 'settings-podcast',
-		paths: [ '/settings/podcasting' ],
+		paths: [ '/settings/podcasting', '/settings/jetpack-podcasting' ],
 		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},

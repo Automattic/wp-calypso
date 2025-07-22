@@ -685,7 +685,12 @@ class ReaderStream extends Component {
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContentFn || streamType === 'search' ) {
-				body = <div className="reader__content">{ bodyContent }</div>;
+				body = (
+					<div className="reader__content">
+						{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
+						{ bodyContent }
+					</div>
+				);
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">

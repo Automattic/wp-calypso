@@ -7,29 +7,33 @@ import type { ComponentProps } from 'react';
 import './style.scss';
 
 type UpsellCTAButtonProps = ComponentProps< typeof Button > & {
-	trackId: string;
+	tracksId: string;
 	onClick?: ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => void;
 };
 
 export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
-	const { trackId, ...buttonProps } = props;
+	const { tracksId, onClick, ...buttonProps } = props;
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => {
-		recordTracksEvent( 'calypso_dashboard_upsell_cta_button_click', { type: trackId } );
-		buttonProps.onClick?.( event );
+		recordTracksEvent( 'calypso_dashboard_upsell_click', {
+			feature: tracksId,
+			type: 'cta-button',
+		} );
+		onClick?.( event );
 	};
 
 	return (
 		<>
 			<ComponentViewTracker
-				eventName="calypso_dashboard_upsell_cta_button_impression"
-				properties={ { type: trackId } }
+				eventName="calypso_dashboard_upsell_impression"
+				properties={ { feature: tracksId, type: 'cta-button' } }
 			/>
 			<Button
 				className="dashboard-upsell-cta-button"
 				icon={ upsell }
 				onClick={ handleClick }
+				size="compact"
 				{ ...buttonProps }
 			/>
 		</>

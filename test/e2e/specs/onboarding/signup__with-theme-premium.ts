@@ -19,6 +19,7 @@ import {
 	PurchasesPage,
 	ThemesDetailPage,
 	ThemesPage,
+	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -149,6 +150,10 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 				newSiteDetails.blog_details.site_slug
 			);
 			await purchasesPage.cancelPurchase( 'Cancel plan' );
+			await cancelAtomicPurchaseFlow( page, {
+				reason: 'Another reason…',
+				customReasonText: 'E2E TEST CANCELLATION',
+			} );
 			noticeComponent = new NoticeComponent( page );
 			await noticeComponent.noticeShown(
 				'Your refund has been processed and your purchase removed.',

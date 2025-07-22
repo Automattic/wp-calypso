@@ -21,6 +21,8 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'First Contentful Paint reflects the time it takes to display the first text or image to visitors. The best sites load in under 1.8 seconds.'
 		),
+		docsUrl:
+			'https://developer.wordpress.com/docs/site-performance/speed-test/#first-contentful-paint-fcp-',
 	},
 	lcp: {
 		good: translate( 'Your site‘s Largest Contentful Paint is excellent' ),
@@ -31,6 +33,8 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'Largest Contentful Paint measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
 		),
+		docsUrl:
+			'https://developer.wordpress.com/docs/site-performance/speed-test/#largest-contentful-paint-lcp-',
 	},
 	cls: {
 		good: translate( 'Your site‘s Cumulative Layout Shift is excellent' ),
@@ -41,6 +45,8 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'Cumulative Layout Shift is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
 		),
+		docsUrl:
+			'https://developer.wordpress.com/docs/site-performance/speed-test/#cumulative-layout-shift-cls-',
 	},
 	inp: {
 		good: translate( 'Your site‘s Interaction to Next Paint is excellent' ),
@@ -51,6 +57,8 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'Interaction to Next Paint measures the overall responsiveness of a webpage by evaluating how quickly it reacts to user interactions. A good score is 200 milliseconds or less, indicating that the page responds swiftly to user inputs.'
 		),
+		docsUrl:
+			'https://developer.wordpress.com/docs/site-performance/speed-test/#interaction-to-next-paint-inp-',
 	},
 	ttfb: {
 		good: translate( 'Your site‘s Time to First Byte is excellent' ),
@@ -61,6 +69,8 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'Time to First Byte reflects the time taken for a user‘s browser to receive the first byte of data from the server after making a request. The best sites load around 800 milliseconds or less.'
 		),
+		docsUrl:
+			'https://developer.wordpress.com/docs/site-performance/speed-test/#time-to-first-byte-ttfb-',
 	},
 	tbt: {
 		good: translate( 'Your site‘s Total Blocking Time is excellent' ),
@@ -71,6 +81,8 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'Total Blocking Time measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks, screen taps, or keyboard presses. The best sites have a wait time of less than 200 milliseconds.'
 		),
+		docsUrl:
+			'https://developer.wordpress.com/docs/site-performance/speed-test/#total-blocking-time-tbt-',
 	},
 	overall: {
 		good: translate( 'Your site‘s Performance Score is excellent' ),
@@ -81,6 +93,7 @@ export const getMetricValuations = ( translate: ( text: string ) => string ) => 
 		explanation: translate(
 			'The performance score is a combined representation of your site‘s individual speed metrics.'
 		),
+		docsUrl: 'https://developer.wordpress.com/docs/site-performance/speed-test/#performance-score',
 	},
 } );
 

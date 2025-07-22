@@ -1,6 +1,6 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { DomainSuggestion } from '@automattic/data-stores';
-import { useStepPersistedState } from '@automattic/onboarding';
+import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -110,6 +110,7 @@ const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( { navigatio
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
+				showSkipButton={ isOnboardingFlow( props.flow ) }
 				{ ...props }
 				{ ...managedSiteFlowProps }
 				{ ...navigation }

@@ -15,7 +15,6 @@ import OnboardingTourBannerSites from 'calypso/assets/images/a8c-for-agencies/on
 import OnboardingTourBannerTeam from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-team.svg';
 import OnboardingTourBannerWelcome from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-welcome.svg';
 import OnboardingTourBannerWooPayments from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-woopayments.svg';
-import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { RenderableAction, RenderableActionProps } from '../../../onboarding-tour-modal/section';
@@ -310,45 +309,38 @@ export default function useOnboardingTourSections() {
 					];
 				},
 			},
-			...( isSectionNameEnabled( 'a8c-for-agencies-reports' )
-				? [
+			{
+				id: 'reports',
+				title: translate( 'Reports' ),
+				bannerImage: OnboardingTourBannerReports,
+				isDarkBanner: true,
+				content: {
+					title: translate( 'Create professional reports for your clients' ),
+					descriptions: [
+						translate(
+							"Prove your agency's impact with polished, easy-to-read reports that highlight key traffic stats from your clients' sites."
+						),
+						translate(
+							'Our streamlined report builder makes it easy to create professional client reports in minutes.'
+						),
+					],
+				},
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
 						{
-							id: 'reports',
-							title: translate( 'Reports' ),
-							bannerImage: OnboardingTourBannerReports,
-							isDarkBanner: true,
-							content: {
-								title: translate( 'Create professional reports for your clients' ),
-								descriptions: [
-									translate(
-										"Prove your agency's impact with polished, easy-to-read reports that highlight key traffic stats from your clients' sites."
-									),
-									translate(
-										'Our streamlined report builder makes it easy to create professional client reports in minutes.'
-									),
-								],
-							},
-							renderableActions: ( {
-								onNext,
-								onClose,
-							}: RenderableActionProps ): RenderableAction[] => {
-								return [
-									{
-										label: translate( 'Check out Client Reports' ),
-										variant: 'secondary',
-										href: A4A_REPORTS_OVERVIEW_LINK,
-										onClick: () => onExplore( 'reports', onClose ),
-									},
-									{
-										label: translate( 'Next benefit' ),
-										variant: 'primary',
-										onClick: () => onNextBenefit( 'reports', onNext ),
-									},
-								];
-							},
+							label: translate( 'Check out Client Reports' ),
+							variant: 'secondary',
+							href: A4A_REPORTS_OVERVIEW_LINK,
+							onClick: () => onExplore( 'reports', onClose ),
 						},
-				  ]
-				: [] ),
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => onNextBenefit( 'reports', onNext ),
+						},
+					];
+				},
+			},
 			{
 				id: 'partner-directory',
 				title: translate( 'Partner Directories' ),

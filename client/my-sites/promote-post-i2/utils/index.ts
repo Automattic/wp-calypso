@@ -192,37 +192,6 @@ export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) 
 	return calculateDurationDays( dateStart, dateEnd );
 };
 
-export const getCampaignBudgetData = (
-	budget_cents: number,
-	start_date: string,
-	end_date: string,
-	spent_budget_cents: number,
-	is_evergreen = 0
-) => {
-	let campaignDays;
-	if ( is_evergreen ) {
-		campaignDays = 7;
-	} else {
-		campaignDays = getCampaignDurationDays( start_date, end_date );
-	}
-
-	const spentBudgetCents =
-		spent_budget_cents > budget_cents * campaignDays
-			? budget_cents * campaignDays
-			: spent_budget_cents;
-
-	const totalBudget = ( budget_cents * campaignDays ) / 100;
-	const totalBudgetUsed = spentBudgetCents / 100;
-	const totalBudgetLeft = totalBudget - totalBudgetUsed;
-
-	return {
-		totalBudget,
-		totalBudgetUsed,
-		totalBudgetLeft,
-		campaignDays,
-	};
-};
-
 export const formatCents = ( amount: number, decimals?: number ) => {
 	return amount.toLocaleString( undefined, {
 		useGrouping: true,

@@ -4,6 +4,7 @@ export interface Plan {
 	id: string | null;
 	current_plan?: boolean;
 	expiry?: string;
+	has_domain_credit?: boolean;
 	subscribed_date?: string;
 	user_facing_expiry?: string;
 }

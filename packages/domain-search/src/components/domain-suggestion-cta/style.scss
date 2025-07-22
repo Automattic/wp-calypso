@@ -1,20 +1,14 @@
 .domain-suggestion-cta {
 	justify-content: center !important;
 
+	&.is-secondary {
+		color: var( --domain-search-secondary-action-color );
+		box-shadow: inset 0 0 0 1px var( --domain-search-secondary-action-box-shadow-color );
+	}
+
 	&:disabled {
 		background: transparent !important;
 		box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 ) !important;
 		color: rgba( 0, 0, 0, 0.1 ) !important;
 	}
-}
-
-.domain-suggestion-cta--continue {
-	// We need to use !important here because WPCOM adds overrides to the button with a very high specificity.
-	--wp-components-color-accent: var( --domain-search-secondary-action-color ) !important;
-	--wp-components-color-accent-darker-10: var(
-		--domain-search-secondary-action-color-darker-10
-	) !important;
-	--wp-components-color-accent-darker-20: var(
-		--domain-search-secondary-action-color-darker-10
-	) !important;
 }

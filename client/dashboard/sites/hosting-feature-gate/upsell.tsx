@@ -12,14 +12,16 @@ export default function HostingFeatureUpsell( {
 }: HostingFeatureUpsellProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_impression', {
-			feature_id: tracksFeatureId,
+		recordTracksEvent( 'calypso_dashboard_upsell_impression', {
+			feature: tracksFeatureId,
+			type: 'hosting-feature-gate',
 		} );
 	}, [ recordTracksEvent, tracksFeatureId ] );
 
 	const handleClick = () => {
-		recordTracksEvent( 'calypso_dashboard_hosting_feature_upsell_click', {
-			feature_id: tracksFeatureId,
+		recordTracksEvent( 'calypso_dashboard_upsell_click', {
+			feature: tracksFeatureId,
+			type: 'hosting-feature-gate',
 		} );
 	};
 

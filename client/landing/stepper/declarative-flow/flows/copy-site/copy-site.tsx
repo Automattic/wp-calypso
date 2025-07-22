@@ -1,3 +1,4 @@
+import { getPlanPath } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -10,6 +11,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSite } from '../../../hooks/use-site';
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
 import {
@@ -89,12 +91,14 @@ const copySite: Flow = {
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const urlQueryParams = useQuery();
+		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
+		const sourceSite = useSite( sourceSiteSlug );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( _currentStepSlug ) {
 				case 'domains': {
 					return navigate( 'create-site', {
-						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
+						sourceSlug: sourceSiteSlug,
 					} );
 				}
 
@@ -106,14 +110,16 @@ const copySite: Flow = {
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
-						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
+						sourceSlug: sourceSiteSlug,
 						siteSlug: siteSlug,
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
-					const plan = urlQueryParams.get( 'plan' );
+					const plan =
+						urlQueryParams.get( 'plan' ) ??
+						getPlanPath( sourceSite?.plan?.product_slug ?? 'business' );
 					return window.location.assign(
 						`/checkout/${ plan }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''

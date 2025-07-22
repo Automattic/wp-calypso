@@ -4,17 +4,18 @@ import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
+import { useHasValidQuotaQuery } from 'calypso/sites/staging-site/hooks/use-has-valid-quota';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
@@ -32,6 +33,13 @@ export default function HeaderStagingSiteButton( {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
+	const site = useSelector( getSelectedSite );
+	const isA4ADevSite = site?.is_a4a_dev_site || false;
+	const {
+		data: hasValidQuota,
+		isLoading: isLoadingQuotaValidation,
+		error: isErrorValidQuota,
+	} = useHasValidQuotaQuery( siteId );
 
 	// Notice IDs for staging site operations
 	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
@@ -91,6 +99,23 @@ export default function HeaderStagingSiteButton( {
 		return null;
 	}
 
+	const hasCompletedLoading = ! isLoadingQuotaValidation;
+
+	let disabledReason: string | undefined;
+	if ( ! hasCompletedLoading ) {
+		disabledReason = __( 'Loading…' );
+	} else if ( isA4ADevSite ) {
+		disabledReason = __( 'Staging sites are not available for development sites.' );
+	} else if ( isErrorValidQuota ) {
+		disabledReason = __(
+			'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
+		);
+	} else if ( ! hasValidQuota ) {
+		disabledReason = __(
+			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+		);
+	}
+
 	return (
 		<Button
 			variant="link"
@@ -98,8 +123,13 @@ export default function HeaderStagingSiteButton( {
 			className="hosting-dashboard-item-view__header-add-staging"
 			icon={ plus }
 			iconPosition="right"
+			accessibleWhenDisabled
+			showTooltip
+			disabled={ !! disabledReason }
+			label={ disabledReason }
+			tooltipPosition="top"
 		>
-			{ translate( 'Add staging site' ) }
+			{ __( 'Add staging site' ) }
 		</Button>
 	);
 }

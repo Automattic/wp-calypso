@@ -30,7 +30,7 @@ export interface CalloutProps {
 	/**
 	 * An optional larger visual or graphic that enhances the Callout’s impact and draws attention.
 	 */
-	image?: string;
+	image?: string | ReactNode;
 	/**
 	 * Alt text to accompany the image.
 	 */

@@ -11,8 +11,6 @@ import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
-import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -22,6 +20,8 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
 import PremiumBadge from '../domain-registration-suggestion/premium-badge';
+import DomainSkipSuggestion from '../domain-skip-suggestion';
+import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 
 class DomainSearchResults extends Component {
 	static propTypes = {
@@ -259,18 +259,21 @@ class DomainSearchResults extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function () {
-			return null;
+		return times( this.props.placeholderQuantity, function ( n ) {
+			return <DomainSuggestion.Placeholder key={ `placeholder-${ n }` } />;
 		} );
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, showStrikedOutPrice } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let domainSkipSuggestion;
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
+			const subdomainSuggestion = suggestions.find(
+				( suggestion ) => suggestion.isSubDomainSuggestion
+			);
 			const regularSuggestions = suggestions.filter(
 				( suggestion ) =>
 					! suggestion.isRecommended &&
@@ -311,6 +314,10 @@ class DomainSearchResults extends Component {
 			);
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
+				if ( suggestion.is_placeholder ) {
+					return <DomainSuggestion.Placeholder key={ `placeholder-${ i }` } />;
+				}
+
 				return (
 					<DomainRegistrationSuggestion
 						isCartPendingUpdate={ this.props.isCartPendingUpdate }
@@ -343,21 +350,22 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = (
+			domainSkipSuggestion = showSkipButton && subdomainSuggestion && (
 				<DomainSkipSuggestion
-					selectedSiteSlug={ this.props.selectedSite?.slug }
-					onButtonClick={ () => this.props.onSkip() }
+					domain={ subdomainSuggestion.domain_name }
+					onSkip={ this.props.onSkip }
 				/>
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
+			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;
 			suggestionElements = this.renderPlaceholders();
 		}
 
 		return (
 			<>
 				{ featuredSuggestionElement }
-				{ this.props.showSkipButton && domainSkipSuggestion }
+				{ domainSkipSuggestion }
 				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
 			</>
 		);

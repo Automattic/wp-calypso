@@ -1980,5 +1980,59 @@ describe( 'getThankYouPageUrl', () => {
 
 			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 		} );
+
+		it( 'should redirect to checkout thank you page when cart has ecommerce plan', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding'
+			);
+			const siteId = 12345;
+			const receiptId = 67890;
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: PLAN_ECOMMERCE,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				receiptId,
+				cart,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/12345/67890' );
+		} );
+
+		it( 'should follow normal cookie logic when cart has non-ecommerce plan', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding'
+			);
+			const siteId = 12345;
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: PLAN_BUSINESS,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId,
+				cart,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/setup/onboarding-unified/post-checkout-onboarding?siteId=12345' );
+		} );
 	} );
 } );

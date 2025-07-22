@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { WordPressLogo, JetpackLogo, BigSkyLogo } from '@automattic/components';
+import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
+import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
+import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	__experimentalHStack as HStack,
