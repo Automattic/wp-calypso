@@ -593,7 +593,7 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue=""
 												content={ __( 'WordPress Studio', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//developer.wordpress.com/' ) }
+												urlValue={ localizeUrl( '//developer.wordpress.com/studio/' ) }
 												type="dropdown"
 												target="_self"
 											/>
@@ -706,21 +706,21 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Discover New Posts', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/discover/' ) }
+												urlValue={ localizeUrl( '//wordpress.com/discover' ) }
 												type="menu"
 												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Popular Tags', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+												urlValue={ localizeUrl( '//wordpress.com/tags' ) }
 												type="menu"
 												tabIndex={ mobileMenuTabIndex }
 											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Blog Search', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
+												urlValue={ localizeUrl( '//wordpress.com/reader/search' ) }
 												type="menu"
 												tabIndex={ mobileMenuTabIndex }
 											/>
