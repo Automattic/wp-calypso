@@ -80,7 +80,9 @@ export class ReaderSidebarListsListItem extends Component {
 					} ) }
 				>
 					<AutoDirection>
-						<div className="sidebar__menu-item-title">{ displayTitle }</div>
+						<div className="sidebar__menu-item-title" title={ displayTitle }>
+							{ displayTitle }
+						</div>
 					</AutoDirection>
 				</MenuItemLink>
 			</MenuItem>

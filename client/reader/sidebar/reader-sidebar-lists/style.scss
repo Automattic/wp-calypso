@@ -9,3 +9,14 @@
 		}
 	}
 }
+
+.sidebar__menu-item--reader-list {
+	.sidebar__menu-item-title {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+}
