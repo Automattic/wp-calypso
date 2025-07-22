@@ -174,9 +174,9 @@ class Profile extends Component {
 
 						<div className="profile__gravatar-profile-disclosure">
 							<div>
-								<h3 className="profile__gravatar-profile-title">
+								<h4 className="profile__gravatar-profile-title">
 									{ this.props.translate( 'Your WordPress.com profile is powered by Gravatar.' ) }
-								</h3>
+								</h4>
 								<p className="profile__gravatar-profile-description">
 									{ this.props.translate(
 										'Updating your avatar, name, and about info here will also update it across all sites that use Gravatar profiles. {{a}}What is Gravatar?{{/a}}',
