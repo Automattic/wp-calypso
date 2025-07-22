@@ -132,9 +132,8 @@ class StatsSummary extends Component {
 			supportsArchiveStats,
 			shouldGateStatsCsvDownload,
 			lastScreen,
+			statsStrings,
 		} = this.props;
-
-		const StatsStrings = this.props.statsStrings;
 
 		const summaryViews = [];
 		let title;
@@ -183,7 +182,7 @@ class StatsSummary extends Component {
 					<Fragment key="referrers-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleReferrers
-							moduleStrings={ StatsStrings.referrers }
+							moduleStrings={ statsStrings.referrers }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
@@ -201,7 +200,7 @@ class StatsSummary extends Component {
 					<Fragment key="clicks-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleClicks
-							moduleStrings={ StatsStrings.clicks }
+							moduleStrings={ statsStrings.clicks }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
@@ -220,7 +219,7 @@ class StatsSummary extends Component {
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						{ isEnabled( 'stats/locations' ) ? (
 							<StatsModuleLocations
-								moduleStrings={ StatsStrings.countries }
+								moduleStrings={ statsStrings.countries }
 								period={ this.props.period }
 								query={ moduleQuery }
 								summary
@@ -229,7 +228,7 @@ class StatsSummary extends Component {
 							/>
 						) : (
 							<StatsModuleCountries
-								moduleStrings={ StatsStrings.countries }
+								moduleStrings={ statsStrings.countries }
 								period={ this.props.period }
 								query={ moduleQuery }
 								summary
@@ -248,7 +247,7 @@ class StatsSummary extends Component {
 					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleLocations
-							moduleStrings={ StatsStrings.countries }
+							moduleStrings={ statsStrings.countries }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
@@ -261,14 +260,14 @@ class StatsSummary extends Component {
 				break;
 
 			case 'posts':
-				title = StatsStrings.posts.title;
+				title = statsStrings.posts.title;
 				path = 'posts';
 				statType = getValidQueryViewType( moduleQuery?.viewType, supportsArchiveStats );
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleTopPosts
-							moduleStrings={ StatsStrings.posts }
+							moduleStrings={ statsStrings.posts }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
@@ -288,7 +287,7 @@ class StatsSummary extends Component {
 					<Fragment key="authors-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleAuthors
-							moduleStrings={ StatsStrings.authors }
+							moduleStrings={ statsStrings.authors }
 							period={ this.props.period }
 							query={ moduleQuery }
 							className="stats__author-views"
@@ -311,7 +310,7 @@ class StatsSummary extends Component {
 								It can't use the shared header as long as the CSV download button stays there. */ }
 						<VideoPressStatsModule
 							path={ path }
-							moduleStrings={ StatsStrings.videoplays }
+							moduleStrings={ statsStrings.videoplays }
 							period={ this.props.period }
 							query={ query }
 							statType={ statType }
@@ -330,7 +329,7 @@ class StatsSummary extends Component {
 					<Fragment key="filedownloads-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleDownloads
-							moduleStrings={ StatsStrings.filedownloads }
+							moduleStrings={ statsStrings.filedownloads }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
@@ -389,7 +388,7 @@ class StatsSummary extends Component {
 					<Fragment key="search-terms-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleSearch
-							moduleStrings={ StatsStrings.search }
+							moduleStrings={ statsStrings.search }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
