@@ -881,8 +881,8 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	isInInitialState = () => true;
-	// ! Array.isArray( this.state.searchResults ) && ! this.state.loadingResults;
+	isInInitialState = () =>
+		! Array.isArray( this.state.searchResults ) && ! this.state.loadingResults;
 
 	save = () => {
 		this.props.onSave( this.state );
