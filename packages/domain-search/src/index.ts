@@ -13,3 +13,4 @@ export { DomainSuggestionFilterReset } from './components/domain-suggestion-filt
 export * as DomainSearchControls from './components/domain-search-controls';
 
 export { useContainerQuery } from './hooks/use-container-query';
+export { useTypedPlaceholder } from './hooks/use-typed-placeholder';
