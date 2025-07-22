@@ -1,13 +1,11 @@
-import { Card, CardBody, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { Callout } from '../../components/callout';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import illustrationUrl from './performance-callout-illustration.svg';
+import illustrationUrl from './logs-callout-illustration.svg';
 
-export function SitePerformanceCallout( {
+export function SiteLogsCallout( {
 	siteSlug,
 	titleAs = 'h1',
 }: {
@@ -17,14 +15,14 @@ export function SitePerformanceCallout( {
 	return (
 		<Callout
 			icon={ chartBar }
-			title={ __( 'Optimize your site’s performance' ) }
+			title={ __( 'Access detailed logs' ) }
 			titleAs={ titleAs }
 			image={ illustrationUrl }
 			description={
 				<>
 					<Text as="p" variant="muted">
 						{ __(
-							'Make smarter decisions, boost speed and engagement, and see how your site‘s performing with key metrics and contextual insights.'
+							'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
 						) }
 					</Text>
 					<Text as="p" variant="muted">
@@ -35,7 +33,7 @@ export function SitePerformanceCallout( {
 			actions={
 				<UpsellCTAButton
 					text={ __( 'Upgrade plan' ) }
-					tracksId="performance"
+					tracksId="logs"
 					variant="primary"
 					href={ `/checkout/${ siteSlug }/business` }
 				/>
@@ -43,17 +41,3 @@ export function SitePerformanceCallout( {
 		/>
 	);
 }
-
-function SitePerformance() {
-	return (
-		<PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> }>
-			<Card>
-				<CardBody>
-					<></>
-				</CardBody>
-			</Card>
-		</PageLayout>
-	);
-}
-
-export default SitePerformance;

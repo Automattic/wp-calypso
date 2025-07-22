@@ -1,9 +1,13 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
+import { CalloutOverlay } from 'calypso/dashboard/components/callout-overlay';
+import { PageHeader } from 'calypso/dashboard/components/page-header';
+import PageLayout from 'calypso/dashboard/components/page-layout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
@@ -11,6 +15,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
 import { areHostingFeaturesSupported } from './hosting/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
+import type { ComponentType } from 'react';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
@@ -151,7 +156,10 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	if ( ! areHostingFeaturesSupported( site ) ) {
+	if (
+		! areHostingFeaturesSupported( site ) &&
+		! isEnabled( 'hosting/hosting-features-callout' )
+	) {
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
@@ -175,4 +183,35 @@ export function showHostingFeaturesNoticeIfPresent( context: PageJSContext, next
 	}
 
 	next();
+}
+
+export function hostingDashboardCallout(
+	title: string,
+	CalloutComponent: ComponentType< {
+		siteSlug: string;
+		titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
+	} >
+) {
+	return ( context: Context, next: () => void ) => {
+		const state = context.store.getState();
+		const site = getSelectedSite( state );
+
+		if (
+			site &&
+			! areHostingFeaturesSupported( site ) &&
+			isEnabled( 'hosting/hosting-features-callout' )
+		) {
+			context.primary = (
+				<PageLayout header={ <PageHeader title={ title } level={ 2 } /> }>
+					<CalloutOverlay
+						showCallout
+						callout={ <CalloutComponent siteSlug={ site.slug } titleAs="h3" /> }
+						main={ null }
+					/>
+				</PageLayout>
+			);
+		}
+
+		next();
+	};
 }

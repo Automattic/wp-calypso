@@ -36,6 +36,7 @@
 		"google-my-business": false,
 		"help": true,
 		"home/layout-dev": true,
+		"hosting/hosting-features-callout": false,
 		"hosting-server-settings-enhancements": true,
 		"hosting/staging-sites-redesign": false,
 		"i18n/empathy-mode": false,

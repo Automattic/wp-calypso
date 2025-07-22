@@ -1,4 +1,7 @@
+import { __ } from '@wordpress/i18n';
+import { SiteDeploymentsCallout } from 'calypso/dashboard/sites/deployments';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hostingDashboardCallout } from 'calypso/sites/controller';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
@@ -74,3 +77,8 @@ export const deploymentRunLogs: Callback = ( context, next ) => {
 	);
 	next();
 };
+
+export const deploymentCallout = hostingDashboardCallout(
+	__( 'Deployments' ),
+	SiteDeploymentsCallout
+);
