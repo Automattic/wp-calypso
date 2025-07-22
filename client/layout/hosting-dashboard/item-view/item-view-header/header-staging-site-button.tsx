@@ -12,6 +12,7 @@ import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-sit
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -34,6 +35,8 @@ export default function HeaderStagingSiteButton( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID );
+
 	const isA4ADevSite = site?.is_a4a_dev_site || false;
 	const {
 		data: hasValidQuota,
@@ -113,6 +116,10 @@ export default function HeaderStagingSiteButton( {
 	} else if ( ! hasValidQuota ) {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+		);
+	} else if ( isPossibleJetpackConnectionProblem ) {
+		disabledReason = __(
+			'You cannot create a staging site because your site has a Jetpack connection issue. Try to reload the page. If the issue persists, please contact support.'
 		);
 	}
 

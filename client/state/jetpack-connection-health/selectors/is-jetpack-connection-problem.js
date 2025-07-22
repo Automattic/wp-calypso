@@ -25,7 +25,7 @@ export default function isJetpackConnectionProblem( state, siteId ) {
  * Hook to check if the current site has possible Jetpack connection problem.
  *
  * Returns true if the current site has possible Jetpack connection problem
- * @param  {?number}  siteId        Site ID
+ * @param  {(number|undefined)}  siteId        Site ID
  */
 export const useIsJetpackConnectionProblem = ( siteId ) => {
 	const dispatch = useDispatch();
