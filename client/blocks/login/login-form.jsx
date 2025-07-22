@@ -419,14 +419,6 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
-		if ( this.props.isWoo ) {
-			return this.props.translate( 'Your email or username' );
-		}
-
-		if ( this.props.isWoo ) {
-			return this.props.translate( 'Your email address or username' );
-		}
-
 		if ( this.props.currentQuery?.username_only === 'true' ) {
 			return this.props.translate( 'Your username' );
 		}

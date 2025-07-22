@@ -124,18 +124,7 @@
 			--wp-components-color-accent: var(--woo-purple-60);
 		}
 
-		&.is-primary,
-		&.is-secondary,
-		// Used for social auth buttons
-		&.a8c-components-wp-button {
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
-		}
-
 		&.is-primary {
-			&:focus:not(:disabled, [aria-disabled="true"]) {
-				box-shadow: 0 0 0 2px var(--wp-components-color-accent);
-			}
-
 			&:disabled,
 			&[aria-disabled="true"] {
 				--wp-components-color-accent: var(--studio-gray-5);
@@ -145,30 +134,6 @@
 				.components-spinner {
 					--wp-components-color-accent: var(--woo-purple-40);
 				}
-			}
-
-			&.is-busy:has(.components-spinner) {
-				background-image: unset;
-			}
-
-			.components-spinner {
-				margin-top: 0;
-			}
-		}
-
-		&.is-secondary:not(:focus) {
-			box-shadow: inset 0 0 0 2px var(--wp-components-color-accent), 0 0 0 currentColor;
-		}
-
-		// Used for social auth buttons
-		&.a8c-components-wp-button:not(:focus) {
-			box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
-		}
-
-		&.is-secondary,
-		&.a8c-components-wp-button {
-			&:focus:not(:disabled, [aria-disabled="true"]) {
-				box-shadow: inset 0 0 0 1px var(--wp-components-color-background, #fff), 0 0 0 2px var(--wp-components-color-accent);
 			}
 		}
 	}

@@ -104,22 +104,10 @@ $breakpoint-mobile: 660px;
 	$woo-form-whitespace: 60px;
 	$woo-form-whitespace-660: 20px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
-	$gray-60: #50575e;
+	$gray-60: #000;
 	$gray-50: #646970;
 	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
 	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
-
-	background: #fff;
-	min-height: 100%;
-
-	&.layout.is-section-login {
-		min-height: 100%;
-		padding-bottom: 0;
-	}
-
-	.masterbar__woo-link {
-		line-height: 32px;
-	}
 
 	input[type="text"].form-text-input,
 	input[type="email"].form-text-input,
@@ -200,10 +188,6 @@ $breakpoint-mobile: 660px;
 			background-color: var(--studio-gray-0);
 			color: var(--studio-gray-20);
 		}
-	}
-
-	button {
-		background-color: initial;
 	}
 
 	.login__form-user-exists-notice.calypso-notice {
@@ -557,15 +541,6 @@ $breakpoint-mobile: 660px;
 		padding: 0 0 8px;
 	}
 
-	.logged-out-form label.form-label,
-	.login__form-userdata label.form-label {
-		font-weight: normal;
-		font-size: $woo-font-size-base;
-		line-height: 20px;
-		color: $woo-label-color;
-		margin-bottom: 8px;
-	}
-
 	.login__form-password {
 		margin-top: 8px;
 	}
@@ -573,23 +548,6 @@ $breakpoint-mobile: 660px;
 	.auth-form__separator::before,
 	.auth-form__separator::after {
 		border-block-start: $woo-form-divider-border;
-	}
-
-	.auth-form__separator + .auth-form__social.card {
-		clip-path: unset; // unset the rule applied in ./client/blocks/authentication/form-divider/style.scss
-		max-width: 100%;
-	}
-
-	.auth-form__social,
-	.two-factor-authentication__actions {
-		background: initial;
-		padding-top: 40px;
-		padding-bottom: 40px;
-		text-align: center;
-
-		@media (max-width: $break-mobile) {
-			padding-top: 28px;
-		}
 	}
 
 	.login__two-factor-footer {
@@ -1160,44 +1118,6 @@ $breakpoint-mobile: 660px;
 			max-width: 327px;
 			display: flex;
 			flex-direction: column;
-		}
-
-		.login form.is-woo-passwordless {
-			@media (max-width: $break-medium) {
-				flex-direction: column;
-			}
-
-			.card.login__form {
-				padding: 0;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				width: 100%;
-				margin: 0;
-
-				~ .auth-form__social.card {
-					width: 100%;
-					max-width: $max-width;
-					margin: 0;
-				}
-			}
-
-			.auth-form__separator {
-				@media screen and (min-width: $break-medium) {
-					margin-block: 0;
-				}
-			}
-		}
-
-		label.form-label,
-		.logged-out-form label.form-label,
-		.magic-login__form label.form-label {
-			color: var(--studio-gray-100);
-			font-size: 1rem;
-			font-style: normal;
-			font-weight: 600;
-			line-height: 24px;
-			margin-bottom: 10px;
 		}
 
 		.wp-login__login-block-footer {
