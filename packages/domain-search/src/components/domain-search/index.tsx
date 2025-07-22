@@ -12,6 +12,7 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 		items: [],
 		total: '',
 		isBusy: false,
+		errorMessage: null,
 		hasItem: () => false,
 		onAddItem: () => {},
 		onRemoveItem: () => {},

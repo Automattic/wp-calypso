@@ -478,6 +478,7 @@ class RegisterDomainStep extends Component {
 
 		return {
 			isBusy: this.props.isMiniCartContinueButtonBusy,
+			errorMessage: this.props.replaceDomainFailedMessage,
 			items: domainsInCart.map( ( domain ) => {
 				const [ domainName, ...tld ] = domain.meta.split( '.' );
 
@@ -531,8 +532,6 @@ class RegisterDomainStep extends Component {
 	};
 
 	renderGeneralNotices() {
-		const { replaceDomainFailedMessage, dismissReplaceDomainFailed } = this.props;
-
 		const {
 			availabilityError,
 			availabilityErrorData,
@@ -559,11 +558,6 @@ class RegisterDomainStep extends Component {
 			),
 			suggestionMessage && availabilityError !== suggestionError && (
 				<DomainSearchNotice status={ suggestionSeverity }>{ suggestionMessage }</DomainSearchNotice>
-			),
-			replaceDomainFailedMessage && (
-				<DomainSearchNotice status="error" onDismiss={ dismissReplaceDomainFailed }>
-					{ replaceDomainFailedMessage }
-				</DomainSearchNotice>
 			),
 		].filter( Boolean );
 

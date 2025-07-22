@@ -13,6 +13,7 @@ export interface DomainSearchCart {
 	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void > | void;
 	hasItem: ( uuid: SelectedDomain[ 'uuid' ] ) => boolean;
 	isBusy: boolean;
+	errorMessage: string | null;
 }
 
 export interface DomainSearchContextType {

@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
+	Notice,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,6 +17,7 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 	const { __ } = useI18n();
 	const { cart } = useDomainSearch();
 	const [ isBusy, setIsBusy ] = useState( false );
+	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
 
 	const initiatedByThisComponent = useRef( false );
 
@@ -26,11 +28,16 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 
 		if ( cart.isBusy ) {
 			setIsBusy( true );
-		} else {
-			setIsBusy( false );
-			initiatedByThisComponent.current = false;
+			setErrorMessage( null );
+
+			return;
 		}
-	}, [ cart.isBusy ] );
+
+		initiatedByThisComponent.current = false;
+
+		setIsBusy( false );
+		setErrorMessage( cart.errorMessage );
+	}, [ cart.isBusy, cart.errorMessage ] );
 
 	const removeItem = async () => {
 		initiatedByThisComponent.current = true;
@@ -76,6 +83,11 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 							</HStack>
 						</VStack>
 					</HStack>
+					{ errorMessage && (
+						<Notice status="error" onRemove={ () => setErrorMessage( null ) }>
+							{ errorMessage }
+						</Notice>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>

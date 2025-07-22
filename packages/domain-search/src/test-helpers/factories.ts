@@ -13,6 +13,7 @@ export const buildDomainSearchCart = (
 	onRemoveItem: () => {},
 	hasItem: () => false,
 	isBusy: false,
+	errorMessage: null,
 	...overrides,
 } );
 

@@ -841,13 +841,27 @@ class RenderDomainsStepComponent extends Component {
 			} ) );
 		}
 
-		this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
+		this.setState( {
+			isMiniCartContinueButtonBusy: true,
+			isCartPendingUpdateDomain: { domain_name: domain_name },
+		} );
 		clearTimeout( this.state.removeDomainTimeout );
 
 		// Avoid too much API calls for Multi-domains flow
 		this.state.removeDomainTimeout = setTimeout( async () => {
 			if ( this.props.currentUser ) {
-				await this.props.shoppingCartManager.reloadFromServer();
+				try {
+					await this.props.shoppingCartManager.reloadFromServer();
+				} catch {
+					this.setState( {
+						replaceDomainFailedMessage: this.props.translate(
+							'Sorry, there was a problem removing that domain. Please try again later.'
+						),
+						isMiniCartContinueButtonBusy: false,
+					} );
+
+					return;
+				}
 			}
 
 			const productsToKeep = this.props.cart.products.filter( ( product ) => {
