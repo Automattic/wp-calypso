@@ -17,7 +17,7 @@ describe( 'DomainSuggestionPrice', () => {
 	it( 'renders the promotional price when provided', () => {
 		render(
 			<DomainSuggestionsList>
-				<DomainSuggestionPrice originalPrice="$20" price="$15" />
+				<DomainSuggestionPrice salePrice="$20" price="$15" />
 			</DomainSuggestionsList>
 		);
 
@@ -30,11 +30,7 @@ describe( 'DomainSuggestionPrice', () => {
 	it( 'renders the price with a custom sub text', () => {
 		render(
 			<DomainSuggestionsList>
-				<DomainSuggestionPrice
-					price="$15"
-					originalPrice="$20"
-					subText="Here's a different sub text"
-				/>
+				<DomainSuggestionPrice price="$15" salePrice="$20" subText="Here's a different sub text" />
 			</DomainSuggestionsList>
 		);
 

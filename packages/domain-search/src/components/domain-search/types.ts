@@ -2,7 +2,7 @@ export interface SelectedDomain {
 	uuid: string;
 	domain: string;
 	tld: string;
-	originalPrice?: string;
+	salePrice?: string;
 	price: string;
 }
 

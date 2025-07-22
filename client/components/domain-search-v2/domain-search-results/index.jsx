@@ -112,8 +112,6 @@ class DomainSearchResults extends Component {
 				);
 			}
 
-			const cost = productSaleCost ?? premiumDomain.cost;
-
 			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
 
 			return (
@@ -124,10 +122,9 @@ class DomainSearchResults extends Component {
 					disabled
 					price={
 						<DomainSuggestionPrice
-							originalPrice={
-								premiumDomain.renew_cost === cost ? undefined : premiumDomain.renew_cost
-							}
-							price={ cost }
+							salePrice={ productSaleCost }
+							price={ premiumDomain.cost }
+							renewPrice={ premiumDomain.renew_cost }
 							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
 								components: {
 									a: (

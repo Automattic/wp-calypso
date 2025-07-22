@@ -486,20 +486,22 @@ class RegisterDomainStep extends Component {
 					( override ) => ! override.does_override_original_cost
 				);
 
+				const currentPrice = formatCurrency( domain.item_subtotal_integer, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} );
+
+				const originalPrice = formatCurrency( domain.item_original_cost_integer, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} );
+
 				return {
 					uuid: domain.uuid,
 					domain: domainName,
 					tld: tld.join( '.' ),
-					originalPrice: hasPromotion
-						? formatCurrency( domain.item_original_cost_integer, domain.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-						  } )
-						: undefined,
-					price: formatCurrency( domain.item_subtotal_integer, domain.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
+					salePrice: hasPromotion ? currentPrice : undefined,
+					price: hasPromotion ? originalPrice : currentPrice,
 				};
 			} ),
 			total,

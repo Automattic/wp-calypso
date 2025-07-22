@@ -384,7 +384,6 @@ class DomainRegistrationSuggestion extends Component {
 			productCost,
 			renewCost,
 			productSaleCost,
-			showStrikedOutPrice,
 			zeroCost,
 			flowName,
 			premiumDomain,
@@ -412,8 +411,9 @@ class DomainRegistrationSuggestion extends Component {
 					disabled
 					price={
 						<DomainSuggestionPrice
-							originalPrice={ renewCost }
-							price={ productSaleCost ?? productCost }
+							salePrice={ productSaleCost }
+							price={ productCost }
+							renewPrice={ renewCost }
 							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
 								components: {
 									a: (
@@ -448,9 +448,9 @@ class DomainRegistrationSuggestion extends Component {
 						<DomainProductPrice
 							zeroCost={ zeroCost }
 							rule={ priceRule }
-							price={ productSaleCost ?? productCost }
+							salePrice={ productSaleCost }
+							price={ productCost }
 							renewPrice={ renewCost }
-							showStrikedOutPrice={ showStrikedOutPrice }
 						/>
 					)
 				}
