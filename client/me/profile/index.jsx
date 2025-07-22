@@ -172,7 +172,7 @@ class Profile extends Component {
 							} ) }
 						</p>
 
-						<div className="profile__gravatar-profile-explanation">
+						<div className="profile__gravatar-profile-disclosure">
 							<div>
 								<h3 className="profile__gravatar-profile-title">
 									{ this.props.translate( 'Your WordPress.com profile is powered by Gravatar.' ) }
