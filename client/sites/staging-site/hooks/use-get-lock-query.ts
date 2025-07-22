@@ -16,7 +16,7 @@ export const useGetLockQuery = (
 				path: `/sites/${ siteId }/staging-site/lock`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! siteId && options?.enabled,
+		enabled: !! siteId,
 		refetchInterval: options?.refetchInterval ?? false,
 		meta: {
 			persist: false,

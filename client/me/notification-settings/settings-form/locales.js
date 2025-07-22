@@ -8,7 +8,7 @@ export const streamLabels = {
 export const settingLabels = {
 	comment_like: () => i18n.translate( 'Likes on my comments' ),
 	comment_reply: () => i18n.translate( 'Replies to my comments' ),
-
+	recommended_blog: () => i18n.translate( 'Blog recommendations' ),
 	new_comment: () => i18n.translate( 'Comments on my site' ),
 	post_like: () => i18n.translate( 'Likes on my posts' ),
 	follow: () => i18n.translate( 'Subscriptions' ),

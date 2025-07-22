@@ -259,8 +259,8 @@ class DomainSearchResults extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function () {
-			return null;
+		return times( this.props.placeholderQuantity, function ( n ) {
+			return <DomainSuggestion.Placeholder key={ `placeholder-${ n }` } />;
 		} );
 	}
 
@@ -315,7 +315,7 @@ class DomainSearchResults extends Component {
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
-					return null;
+					return <DomainSuggestion.Placeholder key={ `placeholder-${ i }` } />;
 				}
 
 				return (
@@ -358,6 +358,7 @@ class DomainSearchResults extends Component {
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
+			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;
 			suggestionElements = this.renderPlaceholders();
 		}
 

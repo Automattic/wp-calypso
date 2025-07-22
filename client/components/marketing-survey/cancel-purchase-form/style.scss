@@ -184,6 +184,9 @@
 	position: relative;
 	padding: 3px;
 	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 
 	.components-button {
 		font-size: 0.875rem;

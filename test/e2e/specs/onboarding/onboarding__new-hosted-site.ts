@@ -14,6 +14,8 @@ import {
 	PurchasesPage,
 	MyProfilePage,
 	MeSidebarComponent,
+	cancelSubscriptionFlow,
+	cancelAtomicPurchaseFlow,
 	WPAdminSidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -117,11 +119,15 @@ describe(
 				await meSidebarComponent.navigate( 'Purchases' );
 			} );
 
-			it( 'View details of purchased add-on and cancel add-on renewal', async function () {
+			it( 'View details of purchased add-on', async function () {
 				purchasesPage = new PurchasesPage( page );
 
 				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug );
 				await purchasesPage.cancelPurchase( 'Cancel subscription' );
+			} );
+
+			it( 'Cancel add-on renewal', async function () {
+				await cancelSubscriptionFlow( page );
 
 				noticeComponent = new NoticeComponent( page );
 				await noticeComponent.noticeShown(
@@ -151,6 +157,13 @@ describe(
 
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug );
 				await purchasesPage.cancelPurchase( 'Cancel plan' );
+			} );
+
+			it( 'Cancel plan renewal', async function () {
+				await cancelAtomicPurchaseFlow( page, {
+					reason: 'Another reason…',
+					customReasonText: 'E2E TEST CANCELLATION',
+				} );
 
 				noticeComponent = new NoticeComponent( page );
 				await noticeComponent.noticeShown(
