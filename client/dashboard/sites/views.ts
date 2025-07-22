@@ -85,7 +85,7 @@ function getDefaultView( {
 		];
 	}
 
-	return sanitizeView( defaultView );
+	return defaultView;
 }
 
 export function getView( {
