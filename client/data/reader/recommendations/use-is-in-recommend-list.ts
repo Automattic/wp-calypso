@@ -15,7 +15,7 @@ export const useIsInRecommendedList = ( owner: string, feedId: number ) => {
 		if ( ! list ) {
 			return false;
 		}
-		return getMatchingItem( state, { listId: list.ID, feedId: feedId } );
+		return !!getMatchingItem( state, { listId: list.ID, feedId: feedId } );
 	} );
 
 	return isRecommended;
