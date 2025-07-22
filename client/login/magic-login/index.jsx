@@ -1341,11 +1341,7 @@ class MagicLogin extends Component {
 								onPublicTokenReceived={ this.handlePublicTokenReceived }
 							/>
 						) : (
-							<RequestLoginEmailForm
-								{ ...requestLoginEmailFormProps }
-								hideHeaderText
-								hideSubHeaderText
-							/>
+							<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 						) }
 					</>
 				) }

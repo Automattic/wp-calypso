@@ -208,12 +208,16 @@ class RequestLoginEmailForm extends Component {
 
 	getGravatarHeader() {
 		const { headerText } = this.props;
-		return headerText ? <h1 className="magic-login__form-header">{ headerText }</h1> : null;
+		return headerText ? (
+			<h1 className="grav-powered-magic-login__form-header">{ headerText }</h1>
+		) : null;
 	}
 
 	getGravatarSubHeader() {
 		const { subHeaderText } = this.props;
-		return subHeaderText ? <p className="magic-login__form-sub-header">{ subHeaderText }</p> : null;
+		return subHeaderText ? (
+			<p className="grav-powered-magic-login__form-sub-header">{ subHeaderText }</p>
+		) : null;
 	}
 
 	render() {
