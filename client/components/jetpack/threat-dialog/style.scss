@@ -1,4 +1,19 @@
 .dialog.threat-dialog {
+	// Highlight effect for TextControl when validation fails
+	.is-highlighted {
+		.components-text-control__input {
+			outline: 2px solid var(--theme-notification-color);
+		}
+	}
+
+	// Style for visually disabled button that remains clickable
+	.is-visually-disabled {
+		opacity: 0.5;
+
+		&:hover {
+			opacity: 0.55;
+		}
+	}
 	.threat-dialog {
 		&__header {
 			font-size: $font-title-small;

@@ -28,7 +28,14 @@ const ThreatDialog: React.FC< Props > = ( {
 
 	const isDeleteFixer = threat.fixable && threat.fixable.fixer === 'delete';
 	const [ confirmationInput, setConfirmationInput ] = React.useState( '' );
+	const [ isInputHighlighted, setIsInputHighlighted ] = React.useState( false );
 	const slug = threat.extension?.slug || 'unknown-slug';
+
+	const handleDisabledButtonClick = React.useCallback( () => {
+		setIsInputHighlighted( true );
+		// Auto-reset the highlight after a short delay
+		setTimeout( () => setIsInputHighlighted( false ), 1500 );
+	}, [] );
 
 	const buttons = React.useMemo( () => {
 		let primaryButtonText;
@@ -61,9 +68,8 @@ const ThreatDialog: React.FC< Props > = ( {
 				<Button
 					primary
 					scary
-					disabled={ shouldBeDisabled }
-					className="threat-dialog__btn"
-					onClick={ onConfirmation }
+					className={ clsx( 'threat-dialog__btn', { 'is-visually-disabled': shouldBeDisabled } ) }
+					onClick={ shouldBeDisabled ? handleDisabledButtonClick : onConfirmation }
 				>
 					{ translate( 'Delete now' ) }
 				</Button>
@@ -77,7 +83,15 @@ const ThreatDialog: React.FC< Props > = ( {
 		}
 
 		return buttons;
-	}, [ action, onCloseDialog, onConfirmation, isDeleteFixer, confirmationInput, slug ] );
+	}, [
+		action,
+		onCloseDialog,
+		onConfirmation,
+		isDeleteFixer,
+		confirmationInput,
+		slug,
+		handleDisabledButtonClick,
+	] );
 
 	const titleProps = React.useMemo( () => {
 		let title;
@@ -138,6 +152,8 @@ const ThreatDialog: React.FC< Props > = ( {
 						label="Confirm deletion"
 						onChange={ ( value: string ) => setConfirmationInput( value ) }
 						value={ confirmationInput }
+						className={ clsx( { 'is-highlighted': isInputHighlighted } ) }
+						autoComplete="off"
 					/>
 				</>
 			) }
