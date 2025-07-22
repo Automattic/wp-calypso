@@ -57,10 +57,12 @@ export function SubscriptionPrice( {
 	const formatted = formatCurrency( Number( amount ?? 0 ), currency );
 
 	return interval === 'year'
-		? translate( '%(total)s/yr', {
+		? /* translators: %(total)s is the price of the subscription per year */
+		  translate( '%(total)s/yr', {
 				args: { total: formatted },
 		  } )
-		: translate( '%(total)s/mo', {
+		: /* translators: %(total)s is the price of the subscription per month */
+		  translate( '%(total)s/mo', {
 				args: { total: formatted },
 		  } );
 }

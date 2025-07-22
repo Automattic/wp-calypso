@@ -32,7 +32,7 @@ const SubscriptionItem = ( {
 	const isPressable = product?.slug.startsWith( 'pressable' );
 
 	let name = product?.name;
-	let amount = '';
+	let amount = product?.amount;
 	let currency = 'USD';
 	let interval = 'month';
 	if ( isBillingTypeBD ) {
@@ -40,8 +40,6 @@ const SubscriptionItem = ( {
 		amount = subscription.subscription?.purchase_price || '';
 		currency = subscription.subscription?.purchase_currency || '';
 		interval = subscription.subscription?.billing_interval_unit || '';
-	} else {
-		amount = product?.amount || '';
 	}
 
 	return (

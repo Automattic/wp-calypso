@@ -38,8 +38,7 @@ export default function SubscriptionsList() {
 
 	const { data, isFetching, refetch } = useFetchClientSubscriptions();
 	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();
-	const userBillingType = useSelector( getUserBillingType );
-	const isBillingTypeBD = userBillingType === 'billingdragon';
+	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
 
 	const title = translate( 'Your subscriptions' );
 
