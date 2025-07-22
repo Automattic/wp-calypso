@@ -73,6 +73,7 @@ import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginCode from './request-login-code';
 import RequestLoginEmailForm from './request-login-email-form';
@@ -1280,30 +1281,18 @@ class MagicLogin extends Component {
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-			let renderContent = this.renderGravPoweredMagicLogin();
-			const hasSubHeader =
-				isGravatarFlowOAuth2Client( oauth2Client ) ||
-				( isGravatarOAuth2Client( oauth2Client ) &&
-					( query?.gravatar_from === GRAVATAR_FROM_3RD_PARTY ||
-						query?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR ) );
-
-			if ( showSecondaryEmailOptions ) {
-				renderContent = this.renderGravPoweredSecondaryEmailOptions();
-			} else if ( showEmailCodeVerification ) {
-				renderContent = this.renderGravPoweredEmailCodeVerification();
-			} else if ( showEmailLinkVerification ) {
-				renderContent = this.renderGravPoweredEmailLinkVerification();
-			}
-
 			return (
-				<Main
-					className={ clsx( 'grav-powered-magic-login', {
-						'grav-powered-magic-login--has-sub-header': hasSubHeader,
-						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
-					} ) }
-				>
-					{ renderContent }
-				</Main>
+				<GravPoweredMagicLogin
+					renderGravPoweredMagicLogin={ this.renderGravPoweredMagicLogin }
+					oauth2Client={ oauth2Client }
+					query={ query }
+					showSecondaryEmailOptions={ showSecondaryEmailOptions }
+					showEmailCodeVerification={ showEmailCodeVerification }
+					showEmailLinkVerification={ showEmailLinkVerification }
+					renderGravPoweredSecondaryEmailOptions={ this.renderGravPoweredSecondaryEmailOptions }
+					renderGravPoweredEmailCodeVerification={ this.renderGravPoweredEmailCodeVerification }
+					renderGravPoweredEmailLinkVerification={ this.renderGravPoweredEmailLinkVerification }
+				/>
 			);
 		}
 
