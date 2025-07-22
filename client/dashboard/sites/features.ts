@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { DotcomFeatures } from '../data/constants';
 import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
