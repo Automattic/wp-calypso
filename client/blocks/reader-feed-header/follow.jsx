@@ -2,8 +2,12 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, shallowEqual } from 'react-redux';
+import FollowButton from 'calypso/blocks/follow-button/button.jsx';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
+import { useRecommendedSite } from 'calypso/landing/subscriptions/hooks/use-recommended-site';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { useSelector } from 'calypso/state';
@@ -23,6 +27,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
+	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feed?.feed_ID ) );
 
 	const { following, hasOrganization, isEmailBlocked, isWPForTeamsItem, subscriptionId } =
 		useSelector( ( state ) => {
@@ -96,6 +101,17 @@ export default function ReaderFeedHeaderFollow( props ) {
 					</div>
 				) }
 			</div>
+			{ ( following || isRecommended ) && (
+				<FollowButton
+					following={ isRecommended }
+					onFollowToggle={ toggleRecommended }
+					followLabel={ translate( 'Recommend' ) }
+					followingLabel={ translate( 'Recommended' ) }
+					hasButtonStyle
+					followIcon={ <ReaderFollowFeedIcon /> }
+					followingIcon={ <ReaderFollowingFeedIcon /> }
+				/>
+			) }
 			{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && feed && (
 				<button
 					onClick={ markAllAsSeen }
