@@ -22,6 +22,7 @@ type LaunchpadProps = {
 	onTaskClick?: EventHandlers[ 'onTaskClick' ];
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
 	highlightNextAction?: boolean;
+	unifiedLaunchpadExperiment?: string;
 };
 
 const Launchpad = ( {
@@ -32,6 +33,7 @@ const Launchpad = ( {
 	onTaskClick,
 	onPostFilterTasks,
 	highlightNextAction,
+	unifiedLaunchpadExperiment,
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -61,6 +63,7 @@ const Launchpad = ( {
 				onSiteLaunched,
 				onTaskClick,
 			},
+			unifiedLaunchpadExperiment,
 		} );
 
 		if ( onPostFilterTasks ) {
