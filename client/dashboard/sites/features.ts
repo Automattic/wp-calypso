@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { DotcomFeatures } from '../data/constants';
 import { hasAtomicFeature, hasPlanFeature } from '../utils/site-features';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
@@ -37,8 +36,8 @@ export function canManageSite( site: Site ) {
 	}
 
 	// Self-hosted Jetpack-connected sites are not supported, yet.
-	// Only enable for the development environment, for now.
-	if ( isSelfHostedJetpackConnected( site ) && config( 'env_id' ) !== 'development' ) {
+	// Disable this check for v2 for development purposes, as it's not yet user-facing.
+	if ( isSelfHostedJetpackConnected( site ) && ! window?.location?.pathname?.startsWith( '/v2' ) ) {
 		return false;
 	}
 

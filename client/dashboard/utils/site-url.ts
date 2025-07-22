@@ -1,3 +1,4 @@
+import { addQueryArgs } from '@wordpress/url';
 import type { Site } from '../data/types';
 
 /**
@@ -9,4 +10,27 @@ import type { Site } from '../data/types';
  */
 export function getSiteDisplayUrl( site: Site ) {
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
+}
+
+/**
+ * Returns the URL for editing the site.
+ */
+export function getSiteEditUrl( site: Site, isFSEActive?: boolean ) {
+	const location = typeof window !== 'undefined' ? window.location : null;
+	const queryArgs: Record< string, string > = {};
+	const siteAdminUrl = site.options?.admin_url;
+
+	if ( isFSEActive ) {
+		if ( location && location.origin !== 'https://wordpress.com' ) {
+			queryArgs.calypso_origin = location.origin;
+		}
+
+		return addQueryArgs( `${ siteAdminUrl }site-editor.php`, queryArgs );
+	}
+
+	if ( location ) {
+		queryArgs.return = location.href;
+	}
+
+	return addQueryArgs( `${ siteAdminUrl }customize.php`, queryArgs );
 }
