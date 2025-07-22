@@ -9,6 +9,12 @@ export const useFocusedCartAction = ( action: () => void ) => {
 	const initiatedByThisComponent = useRef( false );
 
 	useEffect( () => {
+		if ( ! cart.errorMessage ) {
+			setErrorMessage( null );
+		}
+	}, [ cart.errorMessage ] );
+
+	useEffect( () => {
 		if ( ! initiatedByThisComponent.current ) {
 			return;
 		}

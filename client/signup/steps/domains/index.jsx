@@ -721,7 +721,7 @@ class RenderDomainsStepComponent extends Component {
 		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-			this.setState( { isMiniCartContinueButtonBusy: true } );
+			this.setState( { replaceDomainFailedMessage: null, isMiniCartContinueButtonBusy: true } );
 			if (
 				! this.state.temporaryCart ||
 				! this.state.temporaryCart.some(
@@ -820,6 +820,7 @@ class RenderDomainsStepComponent extends Component {
 			}, 500 );
 		} else {
 			this.setState( {
+				replaceDomainFailedMessage: null,
 				isMiniCartContinueButtonBusy: true,
 			} );
 
@@ -867,6 +868,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		this.setState( {
+			replaceDomainFailedMessage: null,
 			isMiniCartContinueButtonBusy: true,
 			isCartPendingUpdateDomain: { domain_name: domain_name },
 		} );
