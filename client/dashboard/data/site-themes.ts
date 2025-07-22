@@ -4,7 +4,7 @@ export interface Theme {
 	is_block_theme: boolean;
 }
 
-export async function fetchSiteThemesActive( siteId: number ) {
+export async function fetchSiteActiveThemes( siteId: number ) {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/themes?status=active`,
 		apiNamespace: 'wp/v2',
