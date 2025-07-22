@@ -70,7 +70,7 @@ export const DomainSuggestionCTA = ( {
 		return (
 			// @ts-expect-error open is not a valid prop for the WPDS Tooltip component, but accepted by the underlying Tooltip component.
 			<Tooltip delay={ 0 } text={ errorMessage } placement="top" open>
-				<div style={ { marginTop: 'auto' } }>
+				<div className="domain-suggestion-cta-error-container">
 					<Button
 						className="domain-suggestion-cta"
 						isDestructive
@@ -78,6 +78,7 @@ export const DomainSuggestionCTA = ( {
 						disabled
 						__next40pxDefaultSize
 						icon={ warning }
+						style={ { flex: 1 } }
 					>
 						{ compact ? undefined : __( 'Add to Cart' ) }
 					</Button>
