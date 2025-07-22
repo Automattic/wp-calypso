@@ -35,6 +35,11 @@ import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-
 // TODO: Temporary style for the PoC
 import './style.scss';
 
+const ROOT_PATH = '/';
+const WP_CONFIG_PATH = '/wp-config.php';
+const WP_CONTENT_PATH = '/wp-content';
+const SQL_PATH = '/sql';
+
 const fileBrowserConfig: FileBrowserConfig = {
 	restrictedTypes: [ 'plugin', 'theme' ],
 	restrictedPaths: [ 'wp-content' ],
@@ -201,12 +206,12 @@ export default function SyncModal( {
 
 	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
 	const wpContentNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, '/wp-content' )
+		getBackupBrowserNode( state, querySiteId, WP_CONTENT_PATH )
 	);
 	const wpConfigNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, '/wp-config.php' )
+		getBackupBrowserNode( state, querySiteId, WP_CONFIG_PATH )
 	);
-	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, '/sql' ) );
+	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
 	const getFilesAndFoldersNodesCheckState = useCallback( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
@@ -236,10 +241,10 @@ export default function SyncModal( {
 	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
 
 	useEffect( () => {
-		dispatch( setNodeCheckState( querySiteId, '/', 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, '/wp-content', 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, '/wp-config.php', 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, '/sql', 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
+		dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
 	}, [ dispatch, querySiteId ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
@@ -303,8 +308,8 @@ export default function SyncModal( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			dispatch( setNodeCheckState( querySiteId, '/wp-content', checkState ) );
-			dispatch( setNodeCheckState( querySiteId, '/wp-config.php', checkState ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, checkState ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, checkState ) );
 		},
 		[ dispatch, querySiteId ]
 	);
@@ -317,9 +322,9 @@ export default function SyncModal( {
 
 	const handleDatabaseCheckboxChange = () => {
 		if ( sqlNode?.checkState === 'checked' ) {
-			dispatch( setNodeCheckState( querySiteId, '/sql', 'unchecked' ) );
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'unchecked' ) );
 		} else {
-			dispatch( setNodeCheckState( querySiteId, '/sql', 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
 		}
 	};
 
