@@ -20,10 +20,7 @@ export const queryClient = new QueryClient( {
 	},
 } );
 
-const persister = createSyncStoragePersister( {
-	storage: typeof window !== 'undefined' ? window.localStorage : null,
-} );
-
+const persister = createSyncStoragePersister( { storage: window.localStorage } );
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours
 
 const [ , persistPromise ] = persistQueryClient( {
