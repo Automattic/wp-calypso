@@ -759,7 +759,18 @@ class RenderDomainsStepComponent extends Component {
 				// Only saves after all domain are checked.
 				Promise.all( this.state.checkDomainAvailabilityPromises ).then( async () => {
 					if ( this.props.currentUser ) {
-						await this.props.shoppingCartManager.reloadFromServer();
+						try {
+							await this.props.shoppingCartManager.reloadFromServer();
+						} catch {
+							this.setState( {
+								replaceDomainFailedMessage: this.props.translate(
+									'Sorry, there was a problem adding that domain. Please try again later.'
+								),
+								isMiniCartContinueButtonBusy: false,
+							} );
+
+							return;
+						}
 					}
 
 					// Add productsToAdd to productsInCart.
@@ -808,7 +819,21 @@ class RenderDomainsStepComponent extends Component {
 				} );
 			}, 500 );
 		} else {
-			await this.props.shoppingCartManager.addProductsToCart( registration );
+			this.setState( {
+				isMiniCartContinueButtonBusy: true,
+			} );
+
+			try {
+				await this.props.shoppingCartManager.addProductsToCart( registration );
+			} catch {
+				this.handleReplaceProductsInCartError(
+					this.props.translate(
+						'Sorry, there was a problem adding that domain. Please try again later.'
+					)
+				);
+			} finally {
+				this.setState( { isMiniCartContinueButtonBusy: false } );
+			}
 		}
 
 		this.setState( { isCartPendingUpdateDomain: null } );

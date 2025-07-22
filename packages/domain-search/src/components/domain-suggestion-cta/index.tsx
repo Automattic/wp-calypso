@@ -1,7 +1,8 @@
-import { Button } from '@wordpress/components';
-import { arrowRight } from '@wordpress/icons';
+import { Button, Tooltip } from '@wordpress/components';
+import { arrowRight, warning } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
 import { useDomainSearch } from '../domain-search';
 import { shoppingCartIcon } from './shopping-cart-icon';
 
@@ -24,22 +25,22 @@ export const DomainSuggestionCTA = ( {
 }: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
 	const { cart, onContinue } = useDomainSearch();
-	const [ isBusy, setIsBusy ] = useState( false );
-
-	const initiatedByThisComponent = useRef( false );
+	const { isBusy, errorMessage, removeErrorMessage, callback } = useFocusedCartAction( () => {
+		onClick?.( 'add-to-cart' );
+		cart.onAddItem( uuid );
+	} );
 
 	useEffect( () => {
-		if ( ! initiatedByThisComponent.current ) {
+		if ( ! errorMessage ) {
 			return;
 		}
 
-		if ( cart.isBusy ) {
-			setIsBusy( true );
-		} else {
-			setIsBusy( false );
-			initiatedByThisComponent.current = false;
-		}
-	}, [ cart.isBusy ] );
+		const timeout = setTimeout( () => {
+			removeErrorMessage();
+		}, 3000 );
+
+		return () => clearTimeout( timeout );
+	}, [ errorMessage, removeErrorMessage ] );
 
 	const isDomainOnCart = cart.hasItem( uuid );
 
@@ -65,11 +66,25 @@ export const DomainSuggestionCTA = ( {
 		);
 	}
 
-	const handleAddToCartClick = () => {
-		initiatedByThisComponent.current = true;
-		onClick?.( 'add-to-cart' );
-		cart.onAddItem( uuid );
-	};
+	if ( errorMessage ) {
+		return (
+			// @ts-expect-error open is not a valid prop for the WPDS Tooltip component, but accepted by the underlying Tooltip component.
+			<Tooltip delay={ 0 } text={ errorMessage } placement="top" open>
+				<div style={ { marginTop: 'auto' } }>
+					<Button
+						className="domain-suggestion-cta"
+						isDestructive
+						variant="primary"
+						disabled
+						__next40pxDefaultSize
+						icon={ warning }
+					>
+						{ compact ? undefined : __( 'Add to Cart' ) }
+					</Button>
+				</div>
+			</Tooltip>
+		);
+	}
 
 	return (
 		<Button
@@ -77,7 +92,7 @@ export const DomainSuggestionCTA = ( {
 			variant={ variant }
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
-			onClick={ handleAddToCartClick }
+			onClick={ callback }
 			label={ __( 'Add to Cart' ) }
 			disabled={ disabled || cart.isBusy }
 			isBusy={ isBusy }

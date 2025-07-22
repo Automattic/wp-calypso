@@ -54,7 +54,6 @@ class DomainRegistrationSuggestion extends Component {
 			currency_code: PropTypes.string,
 		} ).isRequired,
 		suggestionSelected: PropTypes.bool,
-		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		premiumDomain: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -109,8 +108,8 @@ class DomainRegistrationSuggestion extends Component {
 		}
 	}
 
-	onButtonClick = ( action ) => {
-		const { suggestion, railcarId, uiPosition } = this.props;
+	onButtonClick = () => {
+		const { suggestion, railcarId } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			return;
@@ -124,8 +123,6 @@ class DomainRegistrationSuggestion extends Component {
 				root_vendor: suggestion.vendor,
 			} );
 		}
-
-		this.props.onButtonClick( suggestion, uiPosition, action === 'continue' );
 	};
 
 	isUnavailableDomain = ( domain ) => {

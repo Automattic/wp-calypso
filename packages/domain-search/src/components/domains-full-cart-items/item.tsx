@@ -9,40 +9,16 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
 import { useDomainSearch } from '../domain-search';
 import type { SelectedDomain } from '../domain-search/types';
 
 export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) => {
 	const { __ } = useI18n();
 	const { cart } = useDomainSearch();
-	const [ isBusy, setIsBusy ] = useState( false );
-	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
-
-	const initiatedByThisComponent = useRef( false );
-
-	useEffect( () => {
-		if ( ! initiatedByThisComponent.current ) {
-			return;
-		}
-
-		if ( cart.isBusy ) {
-			setIsBusy( true );
-			setErrorMessage( null );
-
-			return;
-		}
-
-		initiatedByThisComponent.current = false;
-
-		setIsBusy( false );
-		setErrorMessage( cart.errorMessage );
-	}, [ cart.isBusy, cart.errorMessage ] );
-
-	const removeItem = async () => {
-		initiatedByThisComponent.current = true;
+	const { isBusy, errorMessage, removeErrorMessage, callback } = useFocusedCartAction( () => {
 		cart.onRemoveItem( domain.uuid );
-	};
+	} );
 
 	return (
 		<Card>
@@ -61,7 +37,7 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 								isBusy={ isBusy }
 								variant="link"
 								className="domains-full-cart-items__remove"
-								onClick={ removeItem }
+								onClick={ callback }
 							>
 								{ __( 'Remove' ) }
 							</Button>
@@ -84,7 +60,7 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 						</VStack>
 					</HStack>
 					{ errorMessage && (
-						<Notice status="error" onRemove={ () => setErrorMessage( null ) }>
+						<Notice status="error" onRemove={ removeErrorMessage }>
 							{ errorMessage }
 						</Notice>
 					) }

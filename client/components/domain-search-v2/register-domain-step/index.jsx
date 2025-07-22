@@ -1662,7 +1662,6 @@ class RegisterDomainStep extends Component {
 				lastDomainTld={ lastDomainTld }
 				lastDomainIsTransferrable={ lastDomainIsTransferrable }
 				onAddMapping={ onAddMapping }
-				onClickResult={ this.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
