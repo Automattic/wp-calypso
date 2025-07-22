@@ -21,7 +21,7 @@ import {
 import type { Site } from '../data/types';
 import type { Field, Operator } from '@wordpress/dataviews';
 
-const DEFAULT_FIELDS: Field< Site >[] = [
+export const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
 		label: __( 'Site' ),

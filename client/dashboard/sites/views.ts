@@ -1,4 +1,5 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
+import { DEFAULT_FIELDS } from './fields';
 import type { AnalyticsClient } from '../app/analytics';
 import type { User, SitesView, SitesViewPreferences } from '../data/types';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
@@ -84,15 +85,15 @@ function getDefaultView( {
 		];
 	}
 
-	return defaultView;
+	return sanitizeView( defaultView );
 }
 
 export function getView( {
 	user,
 	isAutomattician,
 	isRestoringAccount,
-	viewPreferences: rawViewPreferences,
-	viewSearchParams: rawViewSearchParams,
+	viewPreferences,
+	viewSearchParams,
 }: {
 	user: User;
 	isAutomattician: boolean;
@@ -103,8 +104,6 @@ export function getView( {
 	defaultView: SitesView;
 	view: SitesView;
 } {
-	const viewPreferences = rawViewPreferences && upgradeViewPreferences( rawViewPreferences );
-	const viewSearchParams = upgradeSearchParams( rawViewSearchParams );
 	const defaultView = getDefaultView( {
 		user,
 		isAutomattician,
@@ -113,13 +112,13 @@ export function getView( {
 
 	const type = viewSearchParams.type || viewPreferences?.type || defaultView.type;
 
-	const view = {
+	const view = sanitizeView( {
 		...defaultView,
 		...DEFAULT_LAYOUTS[ type ],
 		...DEFAULT_LAYOUT_FIELDS[ type ],
 		...viewPreferences,
 		...viewSearchParams,
-	} as SitesView;
+	} as SitesView );
 
 	return {
 		defaultView,
@@ -270,35 +269,20 @@ export function recordViewChanges(
 }
 
 /**
- * An opportunity to process the user preference data which has been saved in the past
- * and could now be out of date.
- * @param oldPreferences Old preferences which have been fetched from the database.
- * @returns The upgraded view preferences without any unsupported fields.
+ * Sanitize the view preference data by removing any invalid or malformed entries.
  */
-export function upgradeViewPreferences(
-	oldPreferences: SitesViewPreferences
-): SitesViewPreferences {
-	if ( oldPreferences?.sort?.field === 'php_version' ) {
-		const { sort, ...rest } = oldPreferences;
-		return { ...rest };
+function sanitizeView( { sort, ...view }: SitesView ) {
+	if ( sort?.field ) {
+		const field = DEFAULT_FIELDS.find( ( field ) => field.id === sort?.field );
+		if ( ! field || field.enableSorting === false ) {
+			return view;
+		}
 	}
 
-	return oldPreferences;
-}
-
-/**
- * An opportunity to process the search param data which has been kept in the URL but
- * could now be out of date after a page refresh.
- * @param oldParams Old search params.
- * @returns The upgraded search params without any unsupported fields.
- */
-export function upgradeSearchParams( oldParams: ViewSearchParams ): ViewSearchParams {
-	if ( oldParams?.sort?.field === 'php_version' ) {
-		const { sort, ...rest } = oldParams;
-		return { ...rest };
-	}
-
-	return oldParams;
+	return {
+		...view,
+		sort,
+	};
 }
 
 // Ponyfill for Set.prototype.difference, which is not available in all target environments.
