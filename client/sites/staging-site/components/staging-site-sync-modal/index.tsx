@@ -390,6 +390,10 @@ export default function SyncModal( {
 						/>
 					</HStack>
 
+					{ /*
+					 * Keep the FileBrowser component rendered (using a CSS 'hidden' class instead of conditional rendering)
+					 * to ensure its child nodes initialize properly and can be selected by default.
+					 */ }
 					<div className={ isFileBrowserVisible ? '' : 'hidden' }>
 						<FileBrowser
 							rewindId={ rewindId }
