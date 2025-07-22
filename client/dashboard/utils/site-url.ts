@@ -15,12 +15,12 @@ export function getSiteDisplayUrl( site: Site ) {
 /**
  * Returns the URL for editing the site.
  */
-export function getSiteEditUrl( site: Site, isFSEActive?: boolean ) {
+export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 	const location = typeof window !== 'undefined' ? window.location : null;
 	const queryArgs: Record< string, string > = {};
 	const siteAdminUrl = site.options?.admin_url;
 
-	if ( isFSEActive ) {
+	if ( isSiteUsingBlockTheme ) {
 		if ( location && location.origin !== 'https://wordpress.com' ) {
 			queryArgs.calypso_origin = location.origin;
 		}

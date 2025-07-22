@@ -6,7 +6,7 @@ export const siteThemesActiveQuery = ( siteId: number ) => ( {
 	queryFn: () => fetchSiteThemesActive( siteId ),
 } );
 
-export const isFSEActiveQuery = ( siteId: number ) => ( {
+export const isSiteUsingBlockThemeQuery = ( siteId: number ) => ( {
 	...siteThemesActiveQuery( siteId ),
 	select: ( themes: Theme[] ) => {
 		return themes[ 0 ]?.is_block_theme ?? false;

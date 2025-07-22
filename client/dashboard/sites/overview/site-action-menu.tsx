@@ -4,32 +4,32 @@ import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
-import { isFSEActiveQuery } from '../../app/queries/site-themes';
+import { isSiteUsingBlockThemeQuery } from '../../app/queries/site-themes';
 import { getSiteEditUrl } from '../../utils/site-url';
 import type { Site } from '../../data/types';
 
 const SiteActionMenu = ( { site }: { site: Site } ) => {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: isFSEActive, isLoading: isFSEActiveLoading } = useQuery(
-		isFSEActiveQuery( site.ID )
+	const { data: isSiteUsingBlockTheme, isLoading: isSiteUsingBlockThemeLoading } = useQuery(
+		isSiteUsingBlockThemeQuery( site.ID )
 	);
 
 	const trackActionClick = ( action: string ) => {
-		recordTracksEvent( 'calypso_sites_dashboard_site_action_menu_click', { action } );
+		recordTracksEvent( 'calypso_dashboard_site_action_menu_click', { action } );
 	};
 
 	const handleEditSite = () => {
-		trackActionClick( 'edit_site' );
-		window.open( getSiteEditUrl( site, isFSEActive ), '_blank' );
+		trackActionClick( 'edit-site' );
+		window.open( getSiteEditUrl( site, isSiteUsingBlockTheme ), '_blank' );
 	};
 
 	const handleWritePost = () => {
-		trackActionClick( 'write_post' );
+		trackActionClick( 'write-post' );
 		window.open( `${ site.options?.admin_url }post-new.php`, '_blank' );
 	};
 
 	const handleImportSite = () => {
-		trackActionClick( 'import_site' );
+		trackActionClick( 'import-site' );
 		window.open( addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } ), '_blank' );
 	};
 
@@ -37,7 +37,7 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
 			{ () => (
 				<MenuGroup>
-					<MenuItem disabled={ isFSEActiveLoading } onClick={ handleEditSite }>
+					<MenuItem disabled={ isSiteUsingBlockThemeLoading } onClick={ handleEditSite }>
 						{ __( 'Edit site ↗' ) }
 					</MenuItem>
 					<MenuItem onClick={ handleWritePost }>{ __( 'Write a post ↗' ) }</MenuItem>
