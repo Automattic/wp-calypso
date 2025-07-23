@@ -5,7 +5,7 @@ interface AnimationState {
 	isAnimating: boolean;
 }
 
-export const useTypedPlaceholder = ( phrases: string[], value?: string ) => {
+export const useTypedPlaceholder = ( phrases: string[], pauseAnimation = false ) => {
 	const [ state, setState ] = useState< AnimationState >( {
 		text: '',
 		isAnimating: true,
@@ -18,10 +18,10 @@ export const useTypedPlaceholder = ( phrases: string[], value?: string ) => {
 	const timeBetweenChars = 70;
 	const timeBetweenPhrases = 2000;
 
-	// Stop animation when value changes
+	// Control animation state
 	useEffect( () => {
-		if ( value ) {
-			// Stop animation when there's a value
+		if ( pauseAnimation ) {
+			// Stop animation when paused
 			setState( { text: '', isAnimating: false } );
 		} else {
 			// Reset to initial state and restart animation
@@ -29,10 +29,10 @@ export const useTypedPlaceholder = ( phrases: string[], value?: string ) => {
 			phraseIndexRef.current = 0;
 			charIndexRef.current = 0;
 		}
-	}, [ value ] );
+	}, [ pauseAnimation ] );
 
 	useEffect( () => {
-		if ( ! phrases.length || ! state.isAnimating || value ) {
+		if ( ! phrases.length || ! state.isAnimating || pauseAnimation ) {
 			return;
 		}
 
@@ -66,7 +66,7 @@ export const useTypedPlaceholder = ( phrases: string[], value?: string ) => {
 				clearTimeout( timeoutIdRef.current );
 			}
 		};
-	}, [ phrases, state.isAnimating, value ] );
+	}, [ phrases, state.isAnimating, pauseAnimation ] );
 
 	return { placeholder: state.text };
 };

@@ -57,7 +57,7 @@ const DomainSearchInput = function DomainSearchInput( {
 }: DomainSearchInputProps ) {
 	const [ , setValue ] = useState( defaultValue || controlledValue || '' );
 
-	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, controlledValue );
+	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, !! controlledValue );
 
 	const doSearch = useMemo( () => {
 		if ( ! onSearch ) {
