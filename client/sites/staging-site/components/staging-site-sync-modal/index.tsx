@@ -8,6 +8,7 @@ import {
 	__experimentalVStack as VStack,
 	CheckboxControl,
 	SelectControl,
+	Notice,
 } from '@wordpress/components';
 import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
@@ -29,6 +30,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
@@ -212,6 +214,8 @@ export default function SyncModal( {
 		getBackupBrowserNode( state, querySiteId, WP_CONFIG_PATH )
 	);
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
+
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
 
 	const getFilesAndFoldersNodesCheckState = useCallback( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
@@ -414,6 +418,19 @@ export default function SyncModal( {
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</div>
+					{ isSiteWooStore && targetEnvironment === 'production' && (
+						<Notice status="warning" isDismissible={ false }>
+							<Text>{ __( 'Syncing WooCommerce sites can overwrite orders' ) }</Text>
+							{ createInterpolateElement(
+								__(
+									'Syncing the staging database to production will overwrite orders, products, pages and posts. <a>Learn more</a>'
+								),
+								{
+									a: <InlineSupportLink supportContext="staging-to-production-sync" />,
+								}
+							) }
+						</Notice>
+					) }
 				</div>
 				<HStack className="staging-site-card__footer">
 					<HStack>
