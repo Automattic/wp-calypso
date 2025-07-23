@@ -7,6 +7,7 @@ interface StatProps {
 	descriptionAlignment?: 'start' | 'end';
 	metric: string;
 	progressColor?: 'alert-yellow' | 'alert-red' | 'alert-green';
+	progressLabel?: string;
 	progressValue?: number;
 	strapline?: string;
 }
@@ -17,6 +18,7 @@ export function Stat( {
 	descriptionAlignment = 'start',
 	metric,
 	progressColor,
+	progressLabel,
 	progressValue,
 	strapline,
 }: StatProps ) {
@@ -35,7 +37,7 @@ export function Stat( {
 				<ProgressBar
 					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
 					value={ progressValue }
-					aria-label={ `${ progressValue }%` }
+					aria-label={ progressLabel ?? `${ progressValue }%` }
 				/>
 			) }
 		</div>
