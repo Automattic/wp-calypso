@@ -1,0 +1,29 @@
+/* Storybook-specific styles */
+
+#storybook-root {
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+}
+
+.sb-show-main {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: 400;
+  letter-spacing: var(--text-base--tracking);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+#storybook-root *,
+#storybook-root *::before,
+#storybook-root *::after {
+  box-sizing: border-box;
+}
+
+.sb-show-main {
+  margin: 0;
+  padding: 0;
+  background: var(--white);
+}

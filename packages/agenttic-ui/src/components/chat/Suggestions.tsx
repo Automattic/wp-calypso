@@ -5,10 +5,10 @@ import { cn } from '../../utils/classNames';
 import { STORE_NAME } from '../../store';
 import type { StoreActions, StoreSelectors, Suggestion } from '../../types';
 import { Button } from '../ui/button';
-import { fadeVariants, fastSpringWithDelay } from '../animations';
+import { fastSpringWithDelay } from '../animations';
 import styles from './Suggestions.module.css';
 
-interface SuggestionsProps {
+export interface SuggestionsProps {
 	className?: string;
 }
 

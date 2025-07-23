@@ -1,12 +1,15 @@
 interface XIconProps {
 	className?: string;
+	size?: number;
 	strokeWidth?: number;
 }
 
-export function XIcon( { className, strokeWidth = 2 }: XIconProps ) {
+export function XIcon( { className, size = 24, strokeWidth = 2 }: XIconProps ) {
 	return (
 		<svg
 			className={ className }
+			width={ size }
+			height={ size }
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"

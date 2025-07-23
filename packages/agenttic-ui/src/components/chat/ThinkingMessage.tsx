@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 import { BigSkyIcon } from '../icons/BigSkyIcon';
 import styles from './Thinking.module.css';
 
-interface ThinkingMessageProps {
+export interface ThinkingMessageProps {
 	content?: string;
 }
 

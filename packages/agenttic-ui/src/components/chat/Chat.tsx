@@ -174,7 +174,9 @@ export function Chat( {
 	// Calculate snap position based on current side
 	const calculateSnapPosition = useCallback(
 		( side?: 'left' | 'right' ) => {
-			if ( ! chatRef.current || ! constraintsRef.current ) return null;
+			if ( ! chatRef.current || ! constraintsRef.current ) {
+				return null;
+			}
 
 			const elementBox = chatRef.current.getBoundingClientRect();
 			const constraintBox =
@@ -236,7 +238,9 @@ export function Chat( {
 
 			// Calculate snap position using the new side immediately
 			const position = calculateSnapPosition( newSide );
-			if ( ! position ) return;
+			if ( ! position ) {
+				return;
+			}
 
 			// Animate to snap position using motion values
 			animate( x, position.x, {
@@ -264,11 +268,15 @@ export function Chat( {
 
 	// Handle window resize to maintain bottom positioning
 	useEffect( () => {
-		if ( chat.state !== 'expanded' ) return;
+		if ( chat.state !== 'expanded' ) {
+			return;
+		}
 
 		const handleResize = () => {
 			const position = calculateSnapPosition();
-			if ( ! position ) return;
+			if ( ! position ) {
+				return;
+			}
 
 			// Update motion values directly (no animation during resize)
 			x.set( position.x );

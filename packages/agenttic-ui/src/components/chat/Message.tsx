@@ -6,7 +6,7 @@ import { fadeVariants } from '../animations';
 import { cn } from '../../utils/utils';
 import styles from './Message.module.css';
 
-interface MessageProps {
+export interface MessageProps {
 	message: MessageType;
 }
 
