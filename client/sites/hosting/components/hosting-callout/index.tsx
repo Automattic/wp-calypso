@@ -8,7 +8,7 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { Callout } from 'calypso/dashboard/components/callout';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
-import illustrationUrl from './activation-callout-illustration.svg';
+import illustrationUrl from './hosting-callout-illustration.svg';
 
 export function HostingActivationCallout( {
 	siteId,
@@ -103,5 +103,37 @@ export function HostingActivationCallout( {
 				</Modal>
 			) }
 		</>
+	);
+}
+
+export function HostingUpsellCallout( { siteSlug }: { siteSlug: string } ) {
+	return (
+		<Callout
+			title={ __( 'Unlock all hosting features' ) }
+			titleAs="h3"
+			image={ illustrationUrl }
+			description={
+				<>
+					<Text as="p" variant="muted">
+						{ __( 'Upgrade to the Business plan to unlock a range of powerful hosting features.' ) }
+					</Text>
+					<Text as="p" variant="muted">
+						{ __( 'Git-based deployments' ) }
+						{ __( 'Server monitoring' ) }
+						{ __( 'Access and error logs' ) }
+						{ __( 'Secure access via SFTP/SSH' ) }
+						{ __( 'Advanced server settings' ) }
+					</Text>
+				</>
+			}
+			actions={
+				<Button
+					text={ __( 'Upgrade plan' ) }
+					variant="primary"
+					size="compact"
+					href={ `/checkout/${ siteSlug }/business` }
+				/>
+			}
+		/>
 	);
 }
