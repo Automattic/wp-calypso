@@ -126,6 +126,7 @@ function SiteOverview( {
 								icon={ chartBar }
 								heading="TBA"
 								description="TBA"
+								disabled
 							/>
 						) }
 						<ScanCard site={ site } />
