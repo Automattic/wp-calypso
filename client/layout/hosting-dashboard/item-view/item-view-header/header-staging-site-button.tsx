@@ -4,8 +4,9 @@ import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
+import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
 import { useHasValidQuotaQuery } from 'calypso/sites/staging-site/hooks/use-has-valid-quota';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
@@ -48,6 +49,11 @@ export default function HeaderStagingSiteButton( {
 		enabled: ! hideEnvDataInHeader && isAtomic,
 	} );
 
+	const stagingSiteId = useMemo( () => {
+		return stagingSites?.length ? stagingSites[ 0 ].id : undefined;
+	}, [ stagingSites ] );
+	const transferStatus = useCheckStagingSiteStatus( stagingSiteId as number, true );
+
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
 		dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
@@ -85,7 +91,10 @@ export default function HeaderStagingSiteButton( {
 		}
 	);
 
-	const showAddStagingButton = stagingSites.length === 0 && isAtomic && ! isStagingSite;
+	const showAddStagingButton =
+		isAtomic &&
+		! isStagingSite &&
+		( stagingSites.length === 0 || transferStatus !== StagingSiteStatus.COMPLETE );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -113,7 +122,10 @@ export default function HeaderStagingSiteButton( {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
 		);
-	} else if ( isLoadingAddStagingSite ) {
+	} else if (
+		isLoadingAddStagingSite ||
+		! [ StagingSiteStatus.COMPLETE, null ].includes( transferStatus )
+	) {
 		disabledReason = __( 'Adding staging site…' );
 	}
 
