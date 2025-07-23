@@ -148,6 +148,7 @@ import {
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
+import { isSummerSpecialEnabled } from './is-summer-special-enabled';
 import { FeatureGroupMap } from './types';
 
 const isUploadVideosTranslated = () => {
@@ -488,12 +489,17 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
+			...( isSummerSpecialEnabled() && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],
 			} ),
-			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			...( ! isSummerSpecialEnabled() && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};

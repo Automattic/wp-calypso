@@ -820,9 +820,17 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STATS_BASIC_20250206,
 		];
 
-		return isGlobalStylesOnPersonalEnabled()
-			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
-			: baseFeatures;
+		let features = baseFeatures;
+
+		if ( isSummerSpecialEnabled() ) {
+			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
+		}
+
+		if ( isGlobalStylesOnPersonalEnabled() ) {
+			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
+		}
+
+		return features;
 	},
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
@@ -1407,7 +1415,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
-		return [
+		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
 			FEATURE_CUSTOM_DOMAIN,
@@ -1419,6 +1427,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPLOAD_VIDEO,
 			FEATURE_STATS_ADVANCED_20250206,
 		];
+
+		let features = baseFeatures;
+
+		if ( isSummerSpecialEnabled() ) {
+			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
+		}
+
+		return features;
 	},
 	get2023PlanComparisonFeatureOverride: () => {
 		const baseFeatures = [
