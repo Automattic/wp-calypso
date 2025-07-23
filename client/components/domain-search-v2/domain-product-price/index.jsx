@@ -47,7 +47,6 @@ export class DomainProductPrice extends Component {
 		return (
 			<DomainSuggestionPrice
 				price={ translate( 'Free', { context: 'Adjective refers to subdomain' } ) }
-				renewsAnually={ false }
 			/>
 		);
 	}
@@ -60,7 +59,6 @@ export class DomainProductPrice extends Component {
 				price={ translate( 'Move your existing domain.', {
 					context: 'Line item description in cart.',
 				} ) }
-				renewsAnually={ false }
 			/>
 		);
 	}
@@ -79,7 +77,7 @@ export class DomainProductPrice extends Component {
 	renderOneTimePrice() {
 		const { price } = this.props;
 
-		return <DomainSuggestionPrice price={ price } renewsAnually={ false } />;
+		return <DomainSuggestionPrice price={ price } />;
 	}
 
 	render() {

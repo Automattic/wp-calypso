@@ -14,7 +14,6 @@ interface DomainSuggestionPriceProps {
 	salePrice?: string;
 	price: string;
 	renewPrice?: string;
-	renewsAnually?: boolean;
 	subText?: ReactNode;
 }
 
@@ -22,7 +21,6 @@ export const DomainSuggestionPrice = ( {
 	salePrice,
 	price,
 	renewPrice,
-	renewsAnually = true,
 	subText: subTextProp,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
@@ -50,11 +48,7 @@ export const DomainSuggestionPrice = ( {
 			return subTextProp;
 		}
 
-		if ( ! renewsAnually ) {
-			return null;
-		}
-
-		if ( ! renewPrice && ! salePrice ) {
+		if ( ! renewPrice ) {
 			return null;
 		}
 
@@ -86,7 +80,7 @@ export const DomainSuggestionPrice = ( {
 				) : (
 					<HStack spacing={ 1 } alignment={ alignment }>
 						<Text size={ priceSize }>{ price }</Text>
-						{ renewsAnually && renewPrice === price && <Text>{ __( '/year' ) }</Text> }
+						{ renewPrice && renewPrice === price && <Text>{ __( '/year' ) }</Text> }
 					</HStack>
 				) }
 			</HStack>
