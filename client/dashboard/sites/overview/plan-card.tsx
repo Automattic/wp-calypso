@@ -23,10 +23,10 @@ export default function PlanCard( { site }: { site: Site } ) {
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ icon }
-			heading={ site.plan?.product_name_short || '\u00A0' }
+			heading={ site.plan?.product_name_short }
 			description={ getCardDescription( plan, purchase ) }
 			tracksId="plan"
-			variant={ isLoadingPlan || isLoadingPurchase ? 'loading' : undefined }
+			isLoading={ isLoadingPlan || isLoadingPurchase }
 			link={ site.plan?.is_free ? undefined : '/v2/me/billing/active-subscriptions' }
 			bottom={ <div /> }
 		/>
@@ -38,9 +38,5 @@ function getCardDescription( plan?: Plan, purchase?: Purchase ) {
 		return __( 'Upgrade to access all hosting features.' );
 	}
 
-	if ( purchase?.expiry_message ) {
-		return purchase.expiry_message;
-	}
-
-	return '\u00A0'; // non-breaking space
+	return purchase?.expiry_message;
 }

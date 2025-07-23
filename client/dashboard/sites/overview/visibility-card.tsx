@@ -80,7 +80,7 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 			heading={ __( 'Public' ) }
 			description={ description }
 			link={ getVisibilityURL( site ) }
-			variant="success"
+			intent="success"
 		/>
 	);
 }

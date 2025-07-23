@@ -47,6 +47,11 @@
 		color: $alert-red;
 		fill: $alert-red;
 	}
+
+	.dashboard-overview-card--disabled & {
+		color: $gray-600;
+		fill: $gray-600;
+	}
 }
 
 .dashboard-overview-card__link-icon {
@@ -99,10 +104,6 @@
 	.dashboard-overview-card--error & {
 		color: $alert-red;
 	}
-}
-
-.dashboard-overview-card__progress-bar {
-	width: 100% !important;
 }
 
 .dashboard-callout {

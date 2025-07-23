@@ -29,7 +29,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 	);
 
 	if ( lastBackup === undefined ) {
-		return <OverviewCard { ...CARD_PROPS } variant="loading" />;
+		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
 	return (
@@ -38,7 +38,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 			heading={ lastBackup ? timeSinceLastBackup : __( 'No backups yet' ) }
 			description="Next scheduled backup in TBA"
 			externalLink={ getBackupUrl( site ) }
-			variant={ lastBackup ? 'success' : undefined }
+			intent={ lastBackup ? 'success' : undefined }
 		/>
 	);
 }

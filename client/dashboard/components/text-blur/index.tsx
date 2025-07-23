@@ -1,9 +1,17 @@
 import './style.scss';
 
-export function TextBlur( { children }: { children: React.ReactNode } ) {
+export function TextBlur( {
+	dummyCharacterCount,
+	children,
+}: {
+	dummyCharacterCount?: number;
+	children?: React.ReactNode;
+} ) {
+	const text = dummyCharacterCount ? 'X'.repeat( dummyCharacterCount ) : children;
+
 	return (
 		<span className="dashboard-text-blur" aria-hidden="true">
-			{ children }
+			{ text }
 		</span>
 	);
 }

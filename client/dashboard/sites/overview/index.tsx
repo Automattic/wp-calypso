@@ -26,7 +26,6 @@ import ScanCard from './scan-card';
 import SiteActionMenu from './site-action-menu';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
-import UptimeCard from './uptime-card';
 import VisibilityCard from './visibility-card';
 import './style.scss';
 
@@ -148,7 +147,6 @@ function SiteOverview( {
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						<OverviewCardUpsellDIFM site={ site } />
-						<UptimeCard site={ site } />
 					</VStack>
 				</HStack>
 			</VStack>
