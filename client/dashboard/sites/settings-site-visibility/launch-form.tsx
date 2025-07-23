@@ -9,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useUnifiedLaunchExperiment } from '../../../landing/stepper/hooks/use-unified-launch-experiment';
 import { useAnalytics } from '../../app/analytics';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
@@ -124,14 +125,17 @@ export function LaunchForm( {
 		onLaunchClick();
 	};
 
-	if ( isLoading ) {
+	const [ isLoadingExperiment, assignment ] = useUnifiedLaunchExperiment();
+
+	if ( isLoading || isLoadingExperiment ) {
 		return null;
 	}
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
 	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
-	const shouldImmediatelyLaunch = isSitePlanPaidWithDomains || isSitePlanHostingTrial;
+	const shouldImmediatelyLaunch =
+		isSitePlanPaidWithDomains || isSitePlanHostingTrial || assignment === 'ungated_site_launch';
 
 	const getLaunchUrl = () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
