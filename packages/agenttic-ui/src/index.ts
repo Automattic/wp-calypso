@@ -5,6 +5,7 @@ import './styles/global.css';
 export { AgentChat } from './components/AgentChat';
 
 // Hooks
+export { useMarkdown } from './hooks/useMarkdown';
 export { useSuggestions } from './hooks/useSuggestions';
 
 // Types

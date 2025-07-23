@@ -1,0 +1,148 @@
+.chart-block {
+	margin: var(--spacing-1) 0;
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	overflow: visible;
+	z-index: 1000;
+	font-family: var(--font-sans);
+}
+
+.chart-block-title {
+	margin: 0 0 var(--spacing-2) 0;
+	font-size: var(--text-sm);
+	font-family: inherit;
+	font-weight: var(--font-weight-bold, 700);
+	word-wrap: break-word;
+	white-space: normal;
+	line-height: var(--text-sm--line-height);
+	hyphens: auto;
+}
+
+.chart-container {
+	height: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	z-index: 1001;
+	overflow: hidden;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.chart-container svg {
+	overflow: visible !important;
+}
+
+.chart-error {
+	padding: var(--spacing-4);
+	border: 1px solid var(--color-destructive);
+	border-radius: var(--radius-sm);
+	background-color: var(--color-muted);
+	color: var(--color-destructive);
+	font-size: var(--text-sm);
+}
+
+.chart-error strong {
+	display: inline-block;
+	margin-bottom: var(--spacing-1);
+}
+
+.chart-error details {
+	margin-top: var(--spacing-2);
+}
+
+.chart-error details summary {
+	cursor: pointer;
+	color: var(--color-muted-foreground);
+}
+
+.chart-error details pre {
+	margin-top: var(--spacing-2);
+	padding: var(--spacing-2);
+	background-color: var(--color-muted);
+	border-radius: var(--radius-sm);
+	overflow: auto;
+	font-size: var(--text-sm);
+}
+
+.chart-tooltip {
+	line-height: 1.2;
+	font-size: 11px;
+	max-width: 120px;
+	min-width: auto;
+	background: rgba(0, 0, 0, 0.8);
+	color: var(--white);
+	padding: var(--spacing-2) var(--spacing-4) var(--spacing-2) var(--spacing-2);
+	border-radius: var(--radius-sm);
+	box-shadow: var(--shadow-sm);
+}
+
+.chart-tooltip-date {
+	font-size: 10px;
+	opacity: 0.8;
+	margin-bottom: var(--spacing-1);
+	color: rgba(255, 255, 255, 0.8);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+	padding-bottom: var(--spacing-1);
+}
+
+.chart-tooltip-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-1);
+}
+
+.chart-tooltip-row:last-child {
+	margin-bottom: 0;
+}
+
+.chart-tooltip-label {
+	font-weight: var(--font-weight-normal);
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.8);
+	margin-right: var(--spacing-2);
+}
+
+.chart-tooltip-value {
+	font-weight: var(--font-weight-semibold);
+	font-size: 11px;
+	color: var(--white);
+	text-align: right;
+}
+
+.visx-tooltip {
+	z-index: 10000 !important;
+	max-width: 150px !important;
+	word-wrap: break-word !important;
+	white-space: normal !important;
+}
+
+div[style*="pointer-events: none"][style*="position: absolute"] {
+	z-index: 10000 !important;
+}
+
+body.has-active-chart {
+	overflow-x: hidden;
+}
+
+.chart-block .visx-axis-bottom text {
+	font-size: 11px;
+}
+
+.chart-block .visx-axis-bottom text.visx-axis-tick {
+	text-anchor: middle;
+}
+
+.chart-block .visx-axis-bottom.rotate-labels .visx-axis-tick text {
+	text-anchor: end;
+	transform: rotate(-45deg);
+	transform-origin: right center;
+}
+
+.chart-block .visx-legend .visx-legend-label {
+	font-size: 11px !important;
+	max-width: none !important;
+}

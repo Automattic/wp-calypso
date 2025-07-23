@@ -20,6 +20,10 @@ export interface Suggestion {
 	prompt: string;
 }
 
+// Import markdown types
+import type { Components } from 'react-markdown';
+import type { MarkdownExtensions } from '../markdown-extensions';
+
 export interface AgentChatState {
 	messages: Message[];
 	isThinking: boolean;
@@ -32,6 +36,8 @@ export interface AgentChatState {
 	error: string | null;
 	suggestions: Suggestion[];
 	inputValue: string;
+	markdownComponents: Components;
+	markdownExtensions: MarkdownExtensions;
 }
 
 export interface AgentConfig {
@@ -88,6 +94,8 @@ export interface StoreSelectors {
 	getConversationHistory: () => Message[];
 	getRegisteredSuggestions: () => Suggestion[];
 	getInputValue: () => string;
+	getRegisteredMarkdownComponents: () => Components;
+	getRegisteredMarkdownExtensions: () => MarkdownExtensions;
 }
 
 export interface StoreActions {
@@ -108,4 +116,8 @@ export interface StoreActions {
 	clearSuggestions: () => void;
 	setInputValue: ( value: string ) => void;
 	clearInputValue: () => void;
+	registerMarkdownComponents: ( components: Components ) => void;
+	registerMarkdownExtensions: ( extensions: MarkdownExtensions ) => void;
+	clearMarkdownComponents: () => void;
+	clearMarkdownExtensions: () => void;
 }

@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Message } from './Message';
-import { ThinkingMessage } from './ThinkingMessage';
+import { useEffect, useRef } from 'react';
 import type { Message as MessageType } from '../../types';
+import { Message } from './Message';
 import styles from './Messages.module.css';
+import { ThinkingMessage } from './ThinkingMessage';
 
 interface MessagesProps {
 	messages: MessageType[];

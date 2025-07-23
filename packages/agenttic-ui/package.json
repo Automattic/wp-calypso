@@ -47,6 +47,7 @@
 		"node": ">=18.0.0"
 	},
 	"devDependencies": {
+		"@automattic/charts": "^0.14.0",
 		"@mdx-js/react": "^3.1.0",
 		"@storybook/addon-a11y": "^9.0.18",
 		"@storybook/addon-docs": "^9.0.18",
@@ -62,7 +63,6 @@
 		"@types/react": "^18.0.0",
 		"@types/react-dom": "^18.0.0",
 		"@vitejs/plugin-react": "^4.0.0",
-		"@wordpress/element": "^6.24.0",
 		"@wordpress/prettier-config": "^4.2.0",
 		"@wordpress/scripts": "^27.9.0",
 		"autoprefixer": "^10.4.0",
@@ -80,7 +80,9 @@
 		"@radix-ui/react-scroll-area": "^1.2.9",
 		"@radix-ui/react-slot": "^1.2.3",
 		"@tailwindcss/typography": "^0.5.16",
+		"@visx/xychart": "^3.12.0",
 		"@wordpress/data": "^10.0.0",
+		"@wordpress/element": "^6.24.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"framer-motion": "^12.23.0",
@@ -92,6 +94,7 @@
 		"tailwind-merge": "^3.3.1"
 	},
 	"peerDependencies": {
+		"@automattic/charts": "^0.14.0",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0"
 	},

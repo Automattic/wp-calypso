@@ -38,12 +38,11 @@
 .message p:last-child {
     margin-bottom: 0;
 }
-
 .message strong {
     font-weight: 550;
 }
 
-.message ol, 
+.message ol,
 .message ul {
     margin-bottom: var(--spacing-3);
     padding-left: var(--spacing-5);

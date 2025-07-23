@@ -1,9 +1,9 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import Markdown from 'react-markdown';
+import React from 'react';
 import type { Message as MessageType } from '../../types';
-import { fadeVariants } from '../animations';
 import { cn } from '../../utils/utils';
+import { fadeVariants } from '../animations';
+import { ParseMarkdown } from '../ParseMarkdown';
 import styles from './Message.module.css';
 
 export interface MessageProps {
@@ -21,9 +21,9 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 							contentBlock.text
 						) {
 							return (
-								<Markdown key={ index }>
+								<ParseMarkdown key={ index }>
 									{ contentBlock.text }
-								</Markdown>
+								</ParseMarkdown>
 							);
 						}
 						if (

@@ -13,7 +13,15 @@ export type {
 	ToolProvider,
 } from '../store/types';
 
+// Export react-markdown Components type
+export type { Components } from 'react-markdown';
+
+// Export markdown extensions types
+export type { MarkdownExtensions } from '../markdown-extensions';
+
 // Import types for local use
+import type { Components } from 'react-markdown';
+import type { MarkdownExtensions } from '../markdown-extensions';
 import type {
 	AuthProvider,
 	ContextProvider,

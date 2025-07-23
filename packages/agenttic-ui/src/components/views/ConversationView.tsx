@@ -1,9 +1,9 @@
 import React from 'react';
-import { Messages } from '../chat/Messages';
-import { ChatInput } from '../chat/ChatInput';
-import { Notice } from '../chat/Notice';
-import { ChatHeader } from '../chat/ChatHeader';
 import type { Message, NoticeConfig } from '../../types';
+import { ChatHeader } from '../chat/ChatHeader';
+import { ChatInput } from '../chat/ChatInput';
+import { Messages } from '../chat/Messages';
+import { Notice } from '../chat/Notice';
 import { Suggestions } from '../chat/Suggestions';
 import styles from './ConversationView.module.css';
 

@@ -1,4 +1,9 @@
 import type { AgentChatState } from './types';
+import type { Components } from 'react-markdown';
+import {
+	mergeMarkdownComponents,
+	processMarkdownExtensions,
+} from '../markdown-extensions';
 
 export const getMessages = ( state: AgentChatState ) => state.messages;
 
@@ -40,3 +45,19 @@ export const getRegisteredSuggestions = ( state: AgentChatState ) =>
 	state.suggestions;
 
 export const getInputValue = ( state: AgentChatState ) => state.inputValue;
+
+export const getRegisteredMarkdownComponents = (
+	state: AgentChatState
+): Components => {
+	// Apply same processing logic as current mergeMarkdownComponents
+	const extensionComponents = processMarkdownExtensions(
+		state.markdownExtensions
+	);
+	return mergeMarkdownComponents(
+		extensionComponents,
+		state.markdownComponents
+	);
+};
+
+export const getRegisteredMarkdownExtensions = ( state: AgentChatState ) =>
+	state.markdownExtensions;

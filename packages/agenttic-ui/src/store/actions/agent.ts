@@ -272,8 +272,13 @@ export const loadConversationHistory =
 					agentManager.getConversationHistory( agentKey );
 
 				// Convert and add each message using existing utilities and actions
+				// Filter out messages that shouldn't be displayed in the UI
 				clientMessages.forEach( ( clientMsg ) => {
 					const textContent = extractTextFromMessage( clientMsg );
+
+					if ( ! textContent || textContent.trim().length === 0 ) {
+						return;
+					}
 
 					if ( clientMsg.role === 'user' ) {
 						dispatch.addUserMessage( textContent );

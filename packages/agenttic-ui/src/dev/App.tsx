@@ -1,17 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { useDispatch } from '@wordpress/data';
 import React, { useEffect, useMemo, useState } from 'react';
 import { AgentChat } from '../components/AgentChat';
+import { useMarkdown } from '../hooks/useMarkdown';
 import { useSuggestions } from '../hooks/useSuggestions';
+import { STORE_NAME } from '../store';
 import type { ContextProvider, ToolProvider } from '../types';
 import { getClientContext } from './mockContext';
 import { getClientTools } from './mockTools';
-import { useDispatch } from '@wordpress/data';
-import { STORE_NAME } from '../store';
 //import { XIcon } from '../components/icons/XIcon';
 
 const App: React.FC = () => {
 	const dispatch = useDispatch( STORE_NAME );
 	const { registerSuggestions } = useSuggestions();
+	const { registerMarkdownExtensions, registerMarkdownComponents } =
+		useMarkdown();
 
 	const [ contextProvider ] = useState< ContextProvider >( () => {
 		return {
@@ -96,6 +99,55 @@ const App: React.FC = () => {
 	// const emptyViewExample = (
 	// 	<h2>How can I help you today?</h2>
 	// );
+
+	// Custom markdown components for demo
+	const customMarkdownComponents = useMemo(
+		() => ( {
+			// Custom blockquote with left border and styling
+			blockquote: ( { children, ...props }: any ) => (
+				<blockquote
+					{ ...props }
+					style={ {
+						borderLeft: '4px solid #007cba',
+						backgroundColor: '#f0f8ff',
+						margin: '16px 0',
+						padding: '12px 16px',
+						fontStyle: 'italic',
+						borderRadius: '0 4px 4px 0',
+					} }
+				>
+					{ children }
+				</blockquote>
+			),
+		} ),
+		[]
+	);
+
+	// Register both extensions and components on app load
+	useEffect( () => {
+		// Register chart extensions
+		registerMarkdownExtensions( {
+			charts: {
+				enabled: true,
+			},
+		} );
+
+		// Register custom markdown components
+		registerMarkdownComponents( customMarkdownComponents );
+	}, [
+		registerMarkdownExtensions,
+		registerMarkdownComponents,
+		customMarkdownComponents,
+	] );
+
+	// Sample sales data
+	// const salesData = [
+	// 	{ product: 'Widget Pro', sales: 15420 },
+	// 	{ product: 'Widget Basic', sales: 12750 },
+	// 	{ product: 'Widget Plus', sales: 9830 },
+	// 	{ product: 'Widget Max', sales: 7560 },
+	// 	{ product: 'Widget Mini', sales: 5240 },
+	// ];
 
 	return (
 		<div

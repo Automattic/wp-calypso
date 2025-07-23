@@ -7,8 +7,14 @@
 		"declarationMap": true,
 		"sourceMap": true,
 		"jsx": "react-jsx",
-		"lib": ["DOM", "DOM.Iterable", "ES2022"]
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"composite": true
 	},
 	"include": ["src/**/*"],
-	"exclude": ["node_modules", "dist", "**/*.test.*", "**/*.spec.*"]
+	"exclude": ["node_modules", "dist", "**/*.test.*", "**/*.spec.*"],
+	"references": [
+		{
+			"path": "../agenttic-client"
+		}
+	]
 }

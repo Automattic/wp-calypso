@@ -12,6 +12,8 @@ const DEFAULT_STATE: AgentChatState = {
 	error: null,
 	suggestions: [],
 	inputValue: '',
+	markdownComponents: {},
+	markdownExtensions: {},
 };
 
 export const reducer = (
@@ -130,6 +132,30 @@ export const reducer = (
 			return {
 				...state,
 				inputValue: '',
+			};
+
+		case 'REGISTER_MARKDOWN_COMPONENTS':
+			return {
+				...state,
+				markdownComponents: action.components,
+			};
+
+		case 'REGISTER_MARKDOWN_EXTENSIONS':
+			return {
+				...state,
+				markdownExtensions: action.extensions,
+			};
+
+		case 'CLEAR_MARKDOWN_COMPONENTS':
+			return {
+				...state,
+				markdownComponents: {},
+			};
+
+		case 'CLEAR_MARKDOWN_EXTENSIONS':
+			return {
+				...state,
+				markdownExtensions: {},
 			};
 
 		default:
