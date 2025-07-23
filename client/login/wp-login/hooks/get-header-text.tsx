@@ -73,7 +73,7 @@ export function getHeaderText( {
 
 		/**
 		 * Override WooJPC. It's technically a Jetpack client, but we want to show "Woo" instead of "Jetpack".
-		 * This conditionoverrides the clientName set in the above if/elseif statement.
+		 * This condition overrides the clientName set in the above if/elseif statement.
 		 */
 		if ( isWooJPC ) {
 			clientName = 'Woo';
