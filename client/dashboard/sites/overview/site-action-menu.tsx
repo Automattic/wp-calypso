@@ -5,6 +5,7 @@ import { moreVertical } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { isSiteUsingBlockThemeQuery } from '../../app/queries/site-themes';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteEditUrl } from '../../utils/site-url';
 import type { Site } from '../../data/types';
 
@@ -29,8 +30,12 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 	};
 
 	const handleImportSite = () => {
+		const url = isSelfHostedJetpackConnected( site )
+			? 'https://wordpress.com/move'
+			: addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } );
+
 		trackActionClick( 'import-site' );
-		window.open( addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } ), '_blank' );
+		window.open( url, '_blank' );
 	};
 
 	return (
