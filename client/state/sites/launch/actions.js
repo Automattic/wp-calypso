@@ -42,10 +42,18 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		const experiment = await getLaunchExperimentAssignment();
 
+		// By default home's launchpad launches the site
 		if (
 			source === 'home' &&
 			( experiment === null || experiment === 'ungated_site_launch' || experiment === 'control' )
 		) {
+			dispatch( launchSite( siteId ) );
+
+			return;
+		}
+
+		// By default masterbar redirects to domains + plan selection
+		if ( source === 'masterbar' && experiment === 'ungated_site_launch' ) {
 			dispatch( launchSite( siteId ) );
 
 			return;

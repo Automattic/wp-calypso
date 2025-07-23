@@ -640,7 +640,7 @@ class MasterbarLoggedIn extends Component {
 				}
 				onClick={ () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_launch_site' );
-					this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+					this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId, 'masterbar' );
 				} }
 			>
 				{ translate( 'Launch site' ) }
