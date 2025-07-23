@@ -6,13 +6,13 @@ import type { StoreActions, Suggestion } from '../types';
  * Hook to manage suggestions for external consumers
  */
 export const useSuggestions = () => {
-	const { setSuggestions, clearSuggestions } = useDispatch(
+	const { registerSuggestions, clearSuggestions } = useDispatch(
 		STORE_NAME
 	) as StoreActions;
 
 	return {
-		setSuggestions: ( suggestions: Suggestion[] ) =>
-			setSuggestions( suggestions ),
+		registerSuggestions: ( suggestions: Suggestion[] ) =>
+			registerSuggestions( suggestions ),
 		clearSuggestions: () => clearSuggestions(),
 	};
 };

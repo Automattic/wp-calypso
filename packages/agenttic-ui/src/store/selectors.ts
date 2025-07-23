@@ -36,6 +36,7 @@ export const getAssistantMessages = ( state: AgentChatState ) =>
 export const getConversationHistory = ( state: AgentChatState ) =>
 	state.messages.filter( ( message ) => ! message.archived );
 
-export const getSuggestions = ( state: AgentChatState ) => state.suggestions;
+export const getRegisteredSuggestions = ( state: AgentChatState ) =>
+	state.suggestions;
 
 export const getInputValue = ( state: AgentChatState ) => state.inputValue;

@@ -86,7 +86,7 @@ export interface StoreSelectors {
 	getUserMessages: () => Message[];
 	getAssistantMessages: () => Message[];
 	getConversationHistory: () => Message[];
-	getSuggestions: () => Suggestion[];
+	getRegisteredSuggestions: () => Suggestion[];
 	getInputValue: () => string;
 }
 
@@ -104,7 +104,7 @@ export interface StoreActions {
 	setError: ( error: string | null ) => void;
 	addMessageToDelete: ( message: Message ) => void;
 	clearMessagesToDelete: () => void;
-	setSuggestions: ( suggestions: Suggestion[] ) => void;
+	registerSuggestions: ( suggestions: Suggestion[] ) => void;
 	clearSuggestions: () => void;
 	setInputValue: ( value: string ) => void;
 	clearInputValue: () => void;

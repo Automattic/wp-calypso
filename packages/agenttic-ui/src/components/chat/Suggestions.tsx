@@ -17,7 +17,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( { className } ) => {
 
 	const suggestions = useSelect( ( select ) => {
 		const store = select( STORE_NAME ) as StoreSelectors;
-		return store.getSuggestions();
+		return store.getRegisteredSuggestions();
 	}, [] );
 
 	const handleSuggestionClick = ( suggestion: Suggestion ) => {

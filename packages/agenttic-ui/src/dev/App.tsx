@@ -11,7 +11,7 @@ import { STORE_NAME } from '../store';
 
 const App: React.FC = () => {
 	const dispatch = useDispatch( STORE_NAME );
-	const { setSuggestions } = useSuggestions();
+	const { registerSuggestions } = useSuggestions();
 
 	const [ contextProvider ] = useState< ContextProvider >( () => {
 		return {
@@ -80,7 +80,7 @@ const App: React.FC = () => {
 	};
 
 	const handleContextChange = ( context: keyof typeof suggestionSets ) => {
-		setSuggestions( suggestionSets[ context ] );
+		registerSuggestions( suggestionSets[ context ] );
 	};
 
 	const notice = {

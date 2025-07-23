@@ -99,7 +99,7 @@ export const reducer = (
 				messagesToDelete: [],
 			};
 
-		case 'SET_SUGGESTIONS':
+		case 'REGISTER_SUGGESTIONS':
 			// Only accept suggestions if they would actually be displayed
 			const shouldShow =
 				! state.isThinking &&
