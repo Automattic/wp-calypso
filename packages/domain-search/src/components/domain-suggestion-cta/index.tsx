@@ -55,8 +55,8 @@ export const DomainSuggestionCTA = ( {
 
 	if ( errorMessage ) {
 		return (
-			<Tooltip delay={ 0 } text={ errorMessage } placement="top">
-				<div className="domain-suggestion-cta-error-container">
+			<div className="domain-suggestion-cta-error-container">
+				<Tooltip delay={ 0 } text={ errorMessage } placement="top">
 					<Button
 						className="domain-suggestion-cta"
 						isDestructive
@@ -68,8 +68,8 @@ export const DomainSuggestionCTA = ( {
 					>
 						{ compact ? undefined : __( 'Add to Cart' ) }
 					</Button>
-				</div>
-			</Tooltip>
+				</Tooltip>
+			</div>
 		);
 	}
 

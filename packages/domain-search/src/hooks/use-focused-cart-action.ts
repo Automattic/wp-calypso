@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../components/domain-search';
 
 export const useFocusedCartAction = ( action: () => void ) => {
@@ -8,7 +8,7 @@ export const useFocusedCartAction = ( action: () => void ) => {
 
 	const initiatedByThisComponent = useRef( false );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		if ( ! cart.errorMessage ) {
 			setErrorMessage( null );
 		}
