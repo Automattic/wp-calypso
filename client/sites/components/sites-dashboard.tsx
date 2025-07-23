@@ -13,7 +13,7 @@ import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
@@ -365,22 +365,31 @@ const SitesDashboard = ( {
 		}
 	};
 
-	const sitePreviewPane = {
-		getUrl: ( site: SiteExcerptData ) => {
-			return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`;
-		},
-		open: (
-			site: SiteExcerptData,
-			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-			openInNewTab?: boolean
-		) => {
-			recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
-				site_id: site.ID,
-				source,
-			} );
-			showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
-		},
-	};
+	const initialSiteFeatureRef = useRef( initialSiteFeature );
+	initialSiteFeatureRef.current = initialSiteFeature;
+
+	const sitePreviewPane = useMemo(
+		() => ( {
+			getUrl: ( site: SiteExcerptData ) => {
+				return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeatureRef.current ].replace(
+					':site',
+					site.slug
+				) }`;
+			},
+			open: (
+				site: SiteExcerptData,
+				source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+				openInNewTab?: boolean
+			) => {
+				recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+					site_id: site.ID,
+					source,
+				} );
+				showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
+			},
+		} ),
+		[]
+	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
 		// allSites does not always query all sites (e.g. for small screens),
