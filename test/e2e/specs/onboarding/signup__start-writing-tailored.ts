@@ -18,7 +18,7 @@ declare const browser: Browser;
 
 describe( 'Signup: Tailored Start Writing Flow', () => {
 	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'start_writing',
+		usernamePrefix: 'startwriting',
 	} );
 	let page: Page;
 	let newUserDetails: NewUserResponse;
