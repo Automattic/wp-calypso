@@ -8,7 +8,7 @@ import { useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
-import { useRecommendedSite } from 'calypso/data/reader/use-recommend-site';
+import { useRecommendedSite } from 'calypso/data/reader/use-recommended-site';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,

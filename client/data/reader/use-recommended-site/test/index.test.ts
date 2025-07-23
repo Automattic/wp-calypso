@@ -10,7 +10,7 @@ import {
 	removeRecommendedBlogsSite,
 } from 'calypso/state/reader/lists/actions';
 import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
-import { useRecommendedSite } from '../use-recommend-site';
+import { useRecommendedSite } from '..';
 import type { AppState } from 'calypso/types';
 
 // Mock dependencies
