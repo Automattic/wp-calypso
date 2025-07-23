@@ -75,7 +75,7 @@ export default function OverviewCard( {
 					{ link && ! progress && (
 						<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
 					) }
-					{ externalLink && (
+					{ externalLink && ! progress && (
 						<span
 							className="dashboard-overview-card__link-icon components-external-link__icon"
 							aria-label={
