@@ -4,12 +4,13 @@ import { Button, Modal } from '@wordpress/components';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { removeSiteLaunchCelebration } from 'calypso/state/sites/launch/actions';
+import { getIsSiteLaunchCelebration } from 'calypso/state/sites/launch/selectors';
 
 import './celebrate-launch-modal.scss';
 
@@ -26,6 +27,11 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const hasCustomDomain = customDomains.length > 0;
 	const hasEnTranslation = useHasEnTranslation();
 	const siteDomain = hasCustomDomain ? customDomains[ 0 ].domain : site.slug;
+	// Check if we should show the celebration modal
+	const shouldShowCelebration = useSelector( ( state ) =>
+		getIsSiteLaunchCelebration( state, site.ID )
+	);
+
 	useEffect( () => {
 		// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
 		// make sure the modal is shown only once
@@ -109,10 +115,14 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		);
 	}
 
+	if ( ! shouldShowCelebration ) {
+		return null;
+	}
+
 	return (
 		<Modal
 			onRequestClose={ () => {
-				setModalIsOpen( false );
+				setModalIsOpen && setModalIsOpen( false );
 				dispatch( removeSiteLaunchCelebration( site.ID ) );
 			} }
 			className="launched__modal"

@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
@@ -33,6 +34,13 @@ const handleLaunchSiteRequest = dispatchRequest( {
 		requestEligibility( data.ID ),
 		launchSiteSuccess( data.ID ),
 		launchSiteSuccessCelebration( data.ID ),
+		() => {
+			if ( data.is_wpcom_atomic ) {
+				updateLaunchpadSettings( data.slug, {
+					checklist_statuses: { site_launched: true },
+				} );
+			}
+		},
 	],
 	onError: ( action, data ) => {
 		return [ errorNotice( data.message, { duration: 5000 } ), launchSiteFailure( action.siteId ) ];

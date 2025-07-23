@@ -11,11 +11,6 @@ export function useCelebrateLaunchModal( siteId: number ) {
 	const handleSiteLaunched = ( isWpcomAtomic: boolean ) => {
 		// currently the action to update site_launch status on atomic doesn't fire
 		// this is a workaround until that is fixed
-		if ( isWpcomAtomic ) {
-			updateLaunchpadSettings( siteId, {
-				checklist_statuses: { site_launched: true },
-			} );
-		}
 	};
 
 	return {

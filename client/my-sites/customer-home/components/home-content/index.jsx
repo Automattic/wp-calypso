@@ -200,6 +200,7 @@ const HomeContent = ( {
 			>
 				{ headerActions }
 			</NavigationHeader>
+			<CelebrateLaunchModal site={ site } allDomains={ allDomains } />
 
 			<div className="customer-home__site-content">
 				<SiteIcon site={ site } size={ 58 } />
