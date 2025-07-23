@@ -431,7 +431,7 @@ export class LoginForm extends Component {
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
 				<span className="screen-reader-text">
-					{ this.props.translate( 'WordPress.com Email address or username' ) }
+					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</span>
 				{ showLabel && (
 					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
