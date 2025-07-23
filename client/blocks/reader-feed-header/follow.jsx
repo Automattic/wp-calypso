@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
-import { useRecommendedSite } from 'calypso/data/reader/use-recommended-site';
+import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
@@ -31,7 +31,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
-	const { isRecommended, toggleRecommended } = useRecommendedSite( feed?.feed_ID );
+	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feed?.feed_ID );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )
