@@ -23,6 +23,20 @@
 	}
 }
 
+body:has( .wpcom-domain-search-v2 ) {
+	.step-wrapper__navigation.action-buttons {
+		height: 60px;
+	}
+
+	.step-wrapper__content {
+		padding: 0 16px 32px 16px;
+
+		@include break-small {
+			padding-inline: 24px;
+		}
+	}
+}
+
 body.domain-search-legacy--unified {
 	.domains__step-section-wrapper {
 		margin: 0 auto;

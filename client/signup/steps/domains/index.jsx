@@ -1508,6 +1508,7 @@ class RenderDomainsStepComponent extends Component {
 			previousStepName,
 			useStepperWrapper,
 			goBack,
+			shouldUseDomainSearchV2,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1708,6 +1709,7 @@ class RenderDomainsStepComponent extends Component {
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout
+				isSticky={ ! shouldUseDomainSearchV2 }
 			/>
 		);
 	}
