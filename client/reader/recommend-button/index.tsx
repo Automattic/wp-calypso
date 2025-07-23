@@ -24,6 +24,11 @@ export const RecommendButton = ( { isRecommended = false, onClick }: Props ) => 
 			className={ classes }
 			onClick={ onClick }
 			variant="secondary"
+			aria-label={
+				isRecommended
+					? translate( 'Remove from recommended list' )
+					: translate( 'Add to recommended list' )
+			}
 		>
 			{ isRecommended ? translate( 'Recommended' ) : translate( 'Recommend this blog' ) }
 		</Button>
