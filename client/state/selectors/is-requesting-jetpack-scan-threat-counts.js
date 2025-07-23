@@ -1,5 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
-
 import 'calypso/state/data-layer/wpcom/sites/scan/threat-counts';
 
 /**
@@ -9,7 +7,6 @@ import 'calypso/state/data-layer/wpcom/sites/scan/threat-counts';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?boolean}          Whether the connection data is being requested
  */
-export default createSelector(
-	( state, siteId ) => state.jetpackScan.threatCounts.requestStatus?.[ siteId ] === 'pending',
-	( state, siteId ) => [ state.jetpackScan?.threatCounts?.requestStatus?.[ siteId ] ]
-);
+export default function isRequestingJetpackScanThreatCounts( state, siteId ) {
+	return state.jetpackScan.threatCounts.requestStatus?.[ siteId ] === 'pending';
+}

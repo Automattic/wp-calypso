@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react';
 import * as React from 'react';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
-import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import ThreatListHeader from 'calypso/components/jetpack/threat-list-header';
 import Pagination from 'calypso/components/pagination';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -81,7 +80,7 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 		isRequestingJetpackScanHistory( state, siteId )
 	);
 
-	const threats = useSelector( ( state ) => getSiteScanHistory( state, siteId ) as Threat[] );
+	const threats = useSelector( ( state ) => getSiteScanHistory( state, siteId ) );
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const showPagination = ! isRequestingThreatCounts && filteredThreatCount > THREATS_PER_PAGE;
 

@@ -1,4 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
 import { get } from 'lodash';
 
 import 'calypso/state/data-layer/wpcom/sites/scan';
@@ -10,7 +9,6 @@ import 'calypso/state/data-layer/wpcom/sites/scan';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {import('calypso/components/jetpack/threat-item/types').Threat[]} Array of threats found
  */
-export default createSelector(
-	( state, siteId ) => get( state, [ 'jetpackScan', 'history', 'data', siteId, 'threats' ], [] ),
-	( state, siteId ) => [ state.jetpackScan?.history?.data?.[ siteId ]?.threats ]
-);
+export default function getSiteScanHistory( state, siteId ) {
+	return get( state, [ 'jetpackScan', 'history', 'data', siteId, 'threats' ], [] );
+}

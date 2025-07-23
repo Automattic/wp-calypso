@@ -1,4 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
 import { get } from 'lodash';
 
 import 'calypso/state/data-layer/wpcom/sites/scan/history';
@@ -10,8 +9,6 @@ import 'calypso/state/data-layer/wpcom/sites/scan/history';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?boolean}          Whether the connection data is being requested
  */
-export default createSelector(
-	( state, siteId ) =>
-		get( state.jetpackScan.history.requestStatus, [ siteId ], false ) === 'pending',
-	( state, siteId ) => [ state.jetpackScan?.history?.requestStatus?.[ siteId ] ]
-);
+export default function isRequestingJetpackScanHistory( state, siteId ) {
+	return get( state.jetpackScan.history.requestStatus, [ siteId ], false ) === 'pending';
+}
