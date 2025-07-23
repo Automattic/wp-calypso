@@ -63,7 +63,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 			} );
 			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 		}
-	}, [ stagingSite, productionSite, router, queryClient, productionSiteId ] );
+	}, [ stagingSite, productionSite, router, queryClient, productionSiteId, createSuccessNotice ] );
 
 	return (
 		<PageLayout>
