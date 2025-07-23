@@ -45,21 +45,22 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 	const numberOfTasks = tasks.length;
 	const completedTasks = tasks.filter( ( task ) => task.completed ).length;
 	const isLaunchpadCompleted = completedTasks && completedTasks === numberOfTasks;
-	let heading = __( 'Coming soon' );
-	let description = __( 'Finish setting up your site' );
-
-	if ( isLaunchpadCompleted ) {
-		heading = __( 'Launch site' );
-		description = __( 'Ready to go public?' );
-	}
 
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
 			icon={ launch }
-			heading={ heading }
-			description={ description }
-			externalLink={ `/home/${ site.slug }` }
+			{ ...( isLaunchpadCompleted
+				? {
+						heading: __( 'Launch site' ),
+						description: __( 'Ready to go public?' ),
+						link: getVisibilityURL( site ),
+				  }
+				: {
+						heading: __( 'Coming soon' ),
+						description: __( 'Finish setting up your site' ),
+						externalLink: `/home/${ site.slug }`,
+				  } ) }
 			progress={ {
 				value: completedTasks,
 				max: numberOfTasks,
