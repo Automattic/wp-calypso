@@ -13,6 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { siteByIdQuery } from '../../app/queries/site';
+import { STAGING_SITE_DELETE_MUTATION_KEY } from '../../app/queries/site-staging-sites';
 import PageLayout from '../../components/page-layout';
 import { fetchStagingSiteOf } from '../../data/site-staging-site';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
@@ -50,10 +51,15 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 			stagingSite.length === 0 &&
 			productionSite?.slug
 		) {
-			// Clear the mutation state to prevent banner from showing after redirect
-			queryClient.getMutationCache().clear();
+			// Remove the delete mutation to prevent banner from showing after redirect
+			const mutation = queryClient.getMutationCache().find( {
+				mutationKey: [ STAGING_SITE_DELETE_MUTATION_KEY, site.ID ],
+			} );
+			if ( mutation ) {
+				queryClient.getMutationCache().remove( mutation );
+			}
 
-			// Also clear the staging site delete status query
+			// Clear the staging site query to stop polling
 			queryClient.removeQueries( stagingSiteQuery( productionSiteId ) );
 
 			// Staging site has been deleted, redirect to production site
