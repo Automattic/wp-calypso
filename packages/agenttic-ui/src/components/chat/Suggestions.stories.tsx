@@ -60,13 +60,13 @@ export const Default: Story = {
 };
 
 const EmptySuggestions = () => {
-	const { setSuggestions } = useDispatch( STORE_NAME ) as StoreActions;
+	const { registerSuggestions } = useDispatch( STORE_NAME ) as StoreActions;
 
 	useEffect( () => {
-		setSuggestions( [] );
+		registerSuggestions( [] );
 
 		return () => {
-			setSuggestions( [
+			registerSuggestions( [
 				{
 					id: '1',
 					prompt: 'Show me my site analytics',
@@ -79,7 +79,7 @@ const EmptySuggestions = () => {
 				},
 			] );
 		};
-	}, [ setSuggestions ] );
+	}, [ registerSuggestions ] );
 
 	return <Suggestions />;
 };

@@ -60,7 +60,7 @@ export const Default: Story = {
 	render: ( args ) => {
 		const Component = () => {
 			const dispatch = useDispatch( STORE_NAME );
-			const { setSuggestions } = useSuggestions();
+			const { registerSuggestions } = useSuggestions();
 
 			const [ contextProvider ] = useState< ContextProvider >( () => {
 				return {
@@ -78,7 +78,7 @@ export const Default: Story = {
 
 			// Set some default suggestions
 			React.useEffect( () => {
-				setSuggestions( [
+				registerSuggestions( [
 					{
 						id: '1',
 						label: 'Site analytics',
@@ -90,7 +90,7 @@ export const Default: Story = {
 						prompt: 'Help me optimize my content for better engagement',
 					},
 				] );
-			}, [ setSuggestions ] );
+			}, [ registerSuggestions ] );
 
 			return (
 				<div style={ { height: '100vh', position: 'relative' } }>
