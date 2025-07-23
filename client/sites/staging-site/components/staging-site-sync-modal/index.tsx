@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,
 	Notice,
@@ -34,7 +35,6 @@ import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
-// TODO: Temporary style for the PoC
 import './style.scss';
 
 const ROOT_PATH = '/';
@@ -182,6 +182,7 @@ export default function SyncModal( {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
+	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -342,6 +343,15 @@ export default function SyncModal( {
 		}
 	};
 
+	const showWooCommerceWarning =
+		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
+
+	const showDomainConfirmation = sqlNode?.checkState === 'checked';
+
+	const disableButton =
+		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
+		! browserCheckList.totalItems;
+
 	return (
 		<Modal
 			title={ syncConfig[ environment ].title }
@@ -418,19 +428,31 @@ export default function SyncModal( {
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</div>
-					{ isSiteWooStore && targetEnvironment === 'production' && (
-						<Notice status="warning" isDismissible={ false }>
-							<Text>{ __( 'Syncing WooCommerce sites can overwrite orders' ) }</Text>
-							{ createInterpolateElement(
-								__(
-									'Syncing the staging database to production will overwrite orders, products, pages and posts. <a>Learn more</a>'
-								),
-								{
-									a: <InlineSupportLink supportContext="staging-to-production-sync" />,
-								}
-							) }
-						</Notice>
-					) }
+					<VStack spacing={ 7 }>
+						{ showWooCommerceWarning && (
+							<Notice status="warning" isDismissible={ false }>
+								<Text>{ __( 'Syncing WooCommerce sites can overwrite orders' ) }</Text>
+								{ createInterpolateElement(
+									__(
+										'Syncing the staging database to production will overwrite orders, products, pages and posts. <a>Learn more</a>'
+									),
+									{
+										a: <InlineSupportLink supportContext="staging-to-production-sync" />,
+									}
+								) }
+							</Notice>
+						) }
+						{ showDomainConfirmation && (
+							<VStack>
+								<HStack alignment="left">
+									<Text>{ __( "Enter your site's name" ) }</Text>
+									<Text color="#D63638">{ productionSiteSlug }</Text>
+									<Text>{ __( 'to confirm.' ) }</Text>
+								</HStack>
+								<InputControl onChange={ setDomainConfirmation } />
+							</VStack>
+						) }
+					</VStack>
 				</div>
 				<HStack className="staging-site-card__footer">
 					<HStack>
@@ -445,7 +467,7 @@ export default function SyncModal( {
 						<Button variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" onClick={ handleConfirm }>
+						<Button variant="primary" onClick={ handleConfirm } disabled={ disableButton }>
 							{ syncConfig.submit }
 						</Button>
 					</HStack>
