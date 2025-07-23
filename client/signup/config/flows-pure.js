@@ -303,6 +303,7 @@ export function generateFlows( {
 			destination: getLaunchDestination,
 			description: 'A flow to launch a private site.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
+			hideProgressIndicator: true,
 			lastModified: '2019-11-22',
 			get pageTitle() {
 				return translate( 'Launch your site' );
