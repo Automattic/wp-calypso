@@ -363,7 +363,7 @@ class DomainSearchResults extends Component {
 			<>
 				{ featuredSuggestionElement }
 				{ domainSkipSuggestion }
-				{ suggestionElements && (
+				{ suggestionElements?.length > 0 && (
 					<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
 				) }
 			</>
