@@ -32,6 +32,14 @@ interface DomainSearchInputProps {
 	onSearchChange?: ( value: string ) => void;
 }
 
+const PLACEHOLDER_PHRASES = [
+	'dailywine.blog',
+	'creatortools.shop',
+	'literatiagency.com',
+	'democratizework.org',
+	'discardedobject.art',
+];
+
 const DomainSearchInput = function DomainSearchInput( {
 	autoFocus,
 	delaySearch,
@@ -49,16 +57,7 @@ const DomainSearchInput = function DomainSearchInput( {
 }: DomainSearchInputProps ) {
 	const [ , setValue ] = useState( defaultValue || controlledValue || '' );
 
-	const { placeholder } = useTypedPlaceholder(
-		[
-			'dailywine.blog',
-			'creatortools.shop',
-			'literatiagency.com',
-			'democratizework.org',
-			'discardedobject.art',
-		],
-		controlledValue
-	);
+	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, controlledValue );
 
 	const doSearch = useMemo( () => {
 		if ( ! onSearch ) {
