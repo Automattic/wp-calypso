@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router';
+import { useRouter, useCanGoBack } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
@@ -9,16 +9,19 @@ import type { PageHeaderProps } from '../../components/page-header/types';
 export default function SettingsPageHeader( props: PageHeaderProps ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
+	const canGoBack = useCanGoBack();
 
 	const backButton = (
 		<Button
 			className="dashboard-page-header__back-button"
 			icon={ isRTL() ? chevronRight : chevronLeft }
 			onClick={ () => {
-				router.navigate( { to: `/sites/${ siteSlug }/settings` } );
+				canGoBack
+					? router.history.back()
+					: router.navigate( { to: `/sites/${ siteSlug }/settings` } );
 			} }
 		>
-			{ __( 'Settings' ) }
+			{ canGoBack ? __( 'Back' ) : __( 'Settings' ) }
 		</Button>
 	);
 
