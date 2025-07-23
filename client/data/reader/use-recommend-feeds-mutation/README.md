@@ -1,17 +1,16 @@
-# Subscriptions Hooks
+#  Reader Hooks
 
-This directory contains React hooks for managing subscription-related functionality in the WordPress.com Subscriptions page.
+This directory contains React hooks for managing the list of recommend feeds from the current user.
 
 ## Overview
 
-### `useRecommendedSite`
+### `useRecommendFeedsMutation`
 
-A custom hook for managing recommended site state with optimistic updates and automatic error recovery. Note that sites are actually "feeds."
+A custom hook for managing recommended sites state with optimistic updates and automatic error recovery. Note that sites are actually "feeds."
 
 ## Real-World Example
 
 ```typescript
-// From client/landing/subscriptions/components/site-subscriptions-list/site-subscription-row.tsx
 const SiteSubscriptionRow = ( { feed_ID: feedId, /* other props */ } ) => {
 	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feedId ) );
 

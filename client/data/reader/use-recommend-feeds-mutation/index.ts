@@ -10,7 +10,7 @@ import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lis
 import type { ReaderList } from 'calypso/reader/list-manage/types';
 import type { AppState } from 'calypso/types';
 
-interface UseRecommendedSiteResult {
+interface RecommendedFeedsMutation {
 	isRecommended: boolean;
 	isUpdating: boolean;
 	canToggle: boolean;
@@ -18,11 +18,11 @@ interface UseRecommendedSiteResult {
 }
 
 /**
- * Custom hook for managing recommended site state with optimistic updates
- * @param feedId - The feed ID to add/remove from recommended blogs list
+ * Custom hook for managing mutations on recommended feeds list state with optimistic updates
+ * @param feedId - The feed ID to add/remove from recommended feeds list
  * @returns Object with recommendation state and toggle function
  */
-export const useRecommendedSite = ( feedId: number ): UseRecommendedSiteResult => {
+export const useRecommendedFeedsMutation = ( feedId: number ): RecommendedFeedsMutation => {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
 
