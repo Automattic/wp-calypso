@@ -773,6 +773,7 @@ class RegisterDomainStep extends Component {
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
 			isOnboarding: this.props.isOnboarding,
+			placeholderAnimation: ! this.state.searchResults,
 			childrenBeforeCloseButton:
 				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
