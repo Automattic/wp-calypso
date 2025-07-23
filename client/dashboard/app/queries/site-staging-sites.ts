@@ -1,7 +1,7 @@
 import {
 	createStagingSite,
 	deleteStagingSite,
-	fetchStagingSiteData,
+	fetchStagingSiteOf,
 } from '../../data/site-staging-site';
 
 export const STAGING_SITE_DELETE_MUTATION_KEY = 'staging-site-delete-mutation';
@@ -17,7 +17,7 @@ export const stagingSiteDeleteMutation = ( stagingSiteId: number, productionSite
 
 export const stagingSiteDeleteStatusQuery = ( productionSiteId: number ) => ( {
 	queryKey: [ 'staging-site-delete-status', productionSiteId ],
-	queryFn: () => fetchStagingSiteData( productionSiteId ),
+	queryFn: () => fetchStagingSiteOf( productionSiteId ),
 	refetchInterval: 3000,
 	retry: ( failureCount: number ) => {
 		// Always retry on errors since we expect 200 responses

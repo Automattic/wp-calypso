@@ -15,7 +15,7 @@ export async function deleteStagingSite( stagingSiteId: number, productionSiteId
 	} );
 }
 
-export async function fetchStagingSiteData( productionSiteId: number ) {
+export async function fetchStagingSiteOf( productionSiteId: number ) {
 	return wpcom.req.get( {
 		path: `/sites/${ productionSiteId }/staging-site`,
 		apiNamespace: 'wpcom/v2',
