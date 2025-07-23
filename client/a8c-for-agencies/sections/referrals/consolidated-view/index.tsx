@@ -4,6 +4,7 @@ import {
 	ConsolidatedStatsCard,
 	ConsolidatedStatsGroup,
 } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
+import { AGENCY_EARNINGS_LEARN_MORE_LINK } from 'calypso/a8c-for-agencies/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
 import PayoutCards from './payout-cards';
@@ -20,9 +21,6 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 	const { previousQuarterExpectedCommission, pendingOrders, currentQuarterExpectedCommission } =
 		useGetConsolidatedPayoutData( referrals, productsData );
 
-	const learnMoreLink =
-		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
-
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
 			{ totalPayouts !== undefined && (
@@ -35,7 +33,13 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 							'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 						{
 							components: {
-								a: <a href={ learnMoreLink } target="_blank" rel="noreferrer noopener" />,
+								a: (
+									<a
+										href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
 								br: <br />,
 							},
 						}
@@ -56,7 +60,13 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 						'{{br/}}{{br/}}{{a}}Learn more{{/a}} ↗',
 					{
 						components: {
-							a: <a href={ learnMoreLink } target="_blank" rel="noreferrer noopener" />,
+							a: (
+								<a
+									href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+									target="_blank"
+									rel="noreferrer noopener"
+								/>
+							),
 							br: <br />,
 						},
 					}

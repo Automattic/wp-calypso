@@ -2,6 +2,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ConsolidatedStatsCard } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
+import { AGENCY_EARNINGS_LEARN_MORE_LINK } from 'calypso/a8c-for-agencies/constants';
 import useGetPayoutData from '../hooks/use-get-payout-data';
 
 import './style.scss';
@@ -22,8 +23,6 @@ function PayoutAmount( {
 	popoverTitle: string;
 } ) {
 	const translate = useTranslate();
-	const learnMoreLink =
-		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
 
 	return (
 		<ConsolidatedStatsCard
@@ -55,7 +54,12 @@ function PayoutAmount( {
 					</div>
 
 					<div>
-						<Button href={ learnMoreLink } target="_blank" rel="noreferrer noopener" variant="link">
+						<Button
+							href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+							target="_blank"
+							rel="noreferrer noopener"
+							variant="link"
+						>
 							{ translate( 'Learn more' ) } ↗
 						</Button>
 					</div>

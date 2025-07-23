@@ -25,6 +25,22 @@ const mockGetCurrentCycleActivityWindow =
 		typeof getNextPayoutDate.getCurrentCycleActivityWindow
 	>;
 
+// Mock Date.prototype.toLocaleString to ensure consistent formatting across environments
+const originalToLocaleString = Date.prototype.toLocaleString;
+beforeAll( () => {
+	Date.prototype.toLocaleString = function (
+		locales?: string | string[],
+		options?: Intl.DateTimeFormatOptions
+	) {
+		// Force British English format to match expected test outputs
+		return originalToLocaleString.call( this, 'en-GB', options );
+	};
+} );
+
+afterAll( () => {
+	Date.prototype.toLocaleString = originalToLocaleString;
+} );
+
 describe( 'useGetPayoutData', () => {
 	const mockNextPayoutDate = new Date( '2024-06-01' );
 	const mockCurrentCyclePayoutDate = new Date( '2024-03-02' );
@@ -54,7 +70,7 @@ describe( 'useGetPayoutData', () => {
 	it( 'should format next payout date with year', () => {
 		const { result } = renderHook( () => useGetPayoutData() );
 
-		expect( result.current.nextPayoutDate ).toBe( '1 June 2024' );
+		expect( result.current.nextPayoutDate ).toBe( '1 Jun 2024' );
 	} );
 
 	it( 'should format current cycle payout date with year', () => {
@@ -94,7 +110,7 @@ describe( 'useGetPayoutData', () => {
 
 		const { result } = renderHook( () => useGetPayoutData() );
 
-		expect( result.current.nextPayoutActivityWindow ).toBe( '1 Apr 2024 - 30 June 2024' );
+		expect( result.current.nextPayoutActivityWindow ).toBe( '1 Apr 2024 - 30 Jun 2024' );
 	} );
 
 	it( 'should handle cross-year date ranges', () => {
