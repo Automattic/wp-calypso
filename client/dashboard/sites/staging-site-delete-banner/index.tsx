@@ -16,6 +16,7 @@ import { siteByIdQuery } from '../../app/queries/site';
 import { STAGING_SITE_DELETE_MUTATION_KEY } from '../../app/queries/site-staging-sites';
 import PageLayout from '../../components/page-layout';
 import { fetchStagingSiteOf } from '../../data/site-staging-site';
+import deleteStagingSiteBackground from './delete-staging-site-background.svg';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import type { Site } from '../../data/types';
 
@@ -74,7 +75,20 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	return (
 		<PageLayout>
 			<Card>
-				<CardBody style={ { padding: '40px' } }>
+				<CardBody
+					style={ {
+						padding: '40px',
+						background: `
+							linear-gradient(
+								to right,
+								rgba( 255, 255, 255, 1 ) 0%,
+								rgba( 255, 255, 255, 0.41 ) 59%,
+								rgba( 255, 255, 255, 0 ) 100%
+							),
+							url(${ deleteStagingSiteBackground }) repeat
+						`,
+					} }
+				>
 					<HStack spacing={ 4 }>
 						<VStack>
 							<Heading level={ 1 } weight={ 500 }>
@@ -82,7 +96,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 							</Heading>
 							<Text as="p" variant="muted">
 								{ __(
-									'We’re permanently deleting your staging site. Your live site is safe and won’t be affected.'
+									"We're permanently deleting your staging site. Your live site is safe and won't be affected."
 								) }
 							</Text>
 							<Text as="p" variant="muted">
