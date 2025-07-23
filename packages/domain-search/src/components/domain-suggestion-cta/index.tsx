@@ -1,6 +1,7 @@
 import { Button, Tooltip } from '@wordpress/components';
 import { arrowRight, warning } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { clsx } from 'clsx';
 import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
 import { useDomainSearch } from '../domain-search';
 import { shoppingCartIcon } from './shopping-cart-icon';
@@ -55,16 +56,20 @@ export const DomainSuggestionCTA = ( {
 
 	if ( errorMessage ) {
 		return (
-			<div className="domain-suggestion-cta-error-container">
-				<Tooltip delay={ 0 } text={ errorMessage } placement="top">
+			<div className="domain-suggestion-cta-error">
+				<Tooltip
+					delay={ 0 }
+					text={ errorMessage }
+					placement="top"
+					className="domain-suggestion-cta-error__tooltip"
+				>
 					<Button
-						className="domain-suggestion-cta"
+						className={ clsx( 'domain-suggestion-cta', 'domain-suggestion-cta--error' ) }
 						isDestructive
 						variant="primary"
 						__next40pxDefaultSize
 						onClick={ callback }
 						icon={ warning }
-						style={ { flex: 1 } }
 					>
 						{ compact ? undefined : __( 'Add to Cart' ) }
 					</Button>
