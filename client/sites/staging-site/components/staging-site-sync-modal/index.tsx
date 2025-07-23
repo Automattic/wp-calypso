@@ -11,7 +11,7 @@ import {
 	SelectControl,
 	Notice,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -37,7 +37,6 @@ import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-
 
 import './style.scss';
 
-const ROOT_PATH = '/';
 const WP_CONFIG_PATH = '/wp-config.php';
 const WP_CONTENT_PATH = '/wp-content';
 const SQL_PATH = '/sql';
@@ -221,8 +220,8 @@ export default function SyncModal( {
 	const getFilesAndFoldersNodesCheckState = useCallback( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
-			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
-			return 'checked';
+			// If nodes don't exist yet, default to 'unchecked' since we set the root to unchecked by default
+			return 'unchecked';
 		}
 
 		const checkedCount = nodes.filter( ( node ) => node?.checkState === 'checked' ).length;
@@ -244,13 +243,6 @@ export default function SyncModal( {
 	}, [ wpContentNode, wpConfigNode ] );
 
 	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
-
-	useEffect( () => {
-		dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
-	}, [ dispatch, querySiteId ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
@@ -319,6 +311,11 @@ export default function SyncModal( {
 		[ dispatch, querySiteId ]
 	);
 
+	const handleDomainConfirmation = useCallback(
+		( value: string | undefined ) => setDomainConfirmation( value || '' ),
+		[]
+	);
+
 	const onCheckboxChange = () => {
 		updateFilesAndFoldersCheckState(
 			filesAndFoldersNodesCheckState === 'checked' ? 'unchecked' : 'checked'
@@ -348,7 +345,7 @@ export default function SyncModal( {
 
 	const showDomainConfirmation = sqlNode?.checkState === 'checked';
 
-	const disableButton =
+	const isButtonDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
 		! browserCheckList.totalItems;
 
@@ -424,7 +421,7 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							checked={ ! sqlNode || sqlNode.checkState === 'checked' }
+							checked={ sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</div>
@@ -444,12 +441,12 @@ export default function SyncModal( {
 						) }
 						{ showDomainConfirmation && (
 							<VStack>
-								<HStack alignment="left">
+								<HStack alignment="left" spacing={ 1 }>
 									<Text>{ __( "Enter your site's name" ) }</Text>
 									<Text color="#D63638">{ productionSiteSlug }</Text>
 									<Text>{ __( 'to confirm.' ) }</Text>
 								</HStack>
-								<InputControl onChange={ setDomainConfirmation } />
+								<InputControl onChange={ handleDomainConfirmation } />
 							</VStack>
 						) }
 					</VStack>
@@ -467,7 +464,7 @@ export default function SyncModal( {
 						<Button variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" onClick={ handleConfirm } disabled={ disableButton }>
+						<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
 							{ syncConfig.submit }
 						</Button>
 					</HStack>
