@@ -40,6 +40,15 @@ body:has( .wpcom-domain-search-v2 ) {
 		@include break-small {
 			padding-inline: 24px;
 		}
+
+		.domains-mini-cart__content {
+			padding-inline: 16px;
+			max-width: 1040px;
+
+			@include break-small {
+				padding-inline: 24px;
+			}
+		}
 	}
 
 	.step-wrapper__navigation-link {
