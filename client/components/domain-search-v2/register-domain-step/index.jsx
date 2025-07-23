@@ -881,8 +881,15 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	isInInitialState = () =>
-		! Array.isArray( this.state.searchResults ) && ! this.state.loadingResults;
+	isInInitialState = () => {
+		const domainsInCart = getDomainsInCart( this.props.cart );
+
+		return (
+			! Array.isArray( this.state.searchResults ) &&
+			! this.state.loadingResults &&
+			! domainsInCart.length
+		);
+	};
 
 	save = () => {
 		this.props.onSave( this.state );
