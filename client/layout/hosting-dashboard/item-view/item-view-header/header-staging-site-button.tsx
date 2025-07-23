@@ -85,8 +85,7 @@ export default function HeaderStagingSiteButton( {
 		}
 	);
 
-	const showAddStagingButton =
-		stagingSites.length === 0 && isAtomic && ! isStagingSite && ! isLoadingAddStagingSite;
+	const showAddStagingButton = stagingSites.length === 0 && isAtomic && ! isStagingSite;
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -114,6 +113,8 @@ export default function HeaderStagingSiteButton( {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
 		);
+	} else if ( isLoadingAddStagingSite ) {
+		disabledReason = __( 'Adding staging site…' );
 	}
 
 	return (
