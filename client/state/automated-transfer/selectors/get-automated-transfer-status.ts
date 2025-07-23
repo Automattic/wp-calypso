@@ -14,7 +14,7 @@ export const getStatusData = ( state: AppState ): string | null => state?.status
  * Returns status info for transfer
  * @param {Object} state global app state
  * @param {number} siteId requested site for transfer info
- * @returns {string|null} status if available else `null`
+ * @returns {string|null|undefined} status if available else `null`
  */
-export const getAutomatedTransferStatus = ( state: AppState, siteId: number | null ) =>
+export const getAutomatedTransferStatus = ( state: AppState, siteId: number | null | undefined ) =>
 	getStatusData( getAutomatedTransfer( state, siteId ) );

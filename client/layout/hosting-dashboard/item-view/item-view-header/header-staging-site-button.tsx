@@ -4,7 +4,8 @@ import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
@@ -13,10 +14,14 @@ import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-sit
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
+const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
@@ -52,7 +57,24 @@ export default function HeaderStagingSiteButton( {
 	const stagingSiteId = useMemo( () => {
 		return stagingSites?.length ? stagingSites[ 0 ].id : undefined;
 	}, [ stagingSites ] );
-	const transferStatus = useCheckStagingSiteStatus( stagingSiteId as number, true );
+	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
+
+	useEffect( () => {
+		if ( transferStatus === transferStates.COMPLETE ) {
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
+		}
+	}, [ dispatch, siteId, transferStatus ] );
+
+	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
+
+	useEffect( () => {
+		if ( stagingSiteStatus === StagingSiteStatus.COMPLETE ) {
+			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
+			dispatch(
+				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
+			);
+		}
+	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
@@ -122,9 +144,11 @@ export default function HeaderStagingSiteButton( {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
 		);
+	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
+		disabledReason = __( 'We are deleting your staging site.' );
 	} else if (
 		isLoadingAddStagingSite ||
-		! [ StagingSiteStatus.COMPLETE, null ].includes( transferStatus )
+		( transferStatus !== null && transferStatus !== StagingSiteStatus.COMPLETE )
 	) {
 		disabledReason = __( 'Adding staging site…' );
 	}
