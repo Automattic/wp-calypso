@@ -448,6 +448,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -620,6 +621,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STATS_JP,
 			FEATURE_SPAM_JP,
 			FEATURE_CONTACT_FORM_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 			FEATURE_SITE_ACTIVITY_LOG_JP,
 			FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 			FEATURE_ES_SEARCH_JP,

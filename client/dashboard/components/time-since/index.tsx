@@ -1,8 +1,9 @@
 import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../../app/auth';
+import { useLocale } from '../../app/locale';
+import { formatDate } from '../../utils/datetime';
 
-function useRelativeTime( date: Date, dateFormat = 'll', locale: string ) {
+function useRelativeTime( date: Date, locale: string, formatOptions?: Intl.DateTimeFormatOptions ) {
 	const [ now, setNow ] = useState( () => new Date() );
 
 	useEffect( () => {
@@ -15,7 +16,7 @@ function useRelativeTime( date: Date, dateFormat = 'll', locale: string ) {
 
 		// Handle invalid or future dates
 		if ( isNaN( date.getTime() ) || millisAgo < 0 ) {
-			return formatDate( date, dateFormat, locale );
+			return formatDate( date, locale, formatOptions );
 		}
 
 		const secondsAgo = Math.floor( millisAgo / 1000 );
@@ -62,78 +63,36 @@ function useRelativeTime( date: Date, dateFormat = 'll', locale: string ) {
 		}
 
 		// For older dates, use the date format
-		return formatDate( date, dateFormat, locale );
-	}, [ now, date, dateFormat, locale ] );
+		return formatDate( date, locale, formatOptions );
+	}, [ now, date, locale, formatOptions ] );
 }
 
-function normalizeTimestamp( timestamp: string, isUtc?: boolean ) {
-	if ( isUtc ) {
-		// The timestamp is in UTC, in the 'YYYY-MM-DD HH:MM:SS' format.
-		// Convert it to ISO 8601 format, which is required for the Date constructor
-		// to parse the timestamp correctly.
-		return timestamp.replace( ' ', 'T' ).concat( 'Z' );
-	}
-	return timestamp;
-}
+export function useTimeSince( timestamp: string, formatOptions?: Intl.DateTimeFormatOptions ) {
+	const locale = useLocale();
 
-function formatDate( date: Date, format: string, locale: string ) {
-	if ( ! date || isNaN( date.getTime() ) ) {
-		return '';
-	}
-
-	const formatOptions: Intl.DateTimeFormatOptions = {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	};
-
-	if ( format === 'll' ) {
-		formatOptions.dateStyle = 'medium';
-		delete formatOptions.timeStyle;
-	} else if ( format === 'lll' ) {
-		formatOptions.dateStyle = undefined;
-		formatOptions.timeStyle = undefined;
-		formatOptions.day = 'numeric';
-		formatOptions.month = 'short';
-		formatOptions.year = 'numeric';
-	} else if ( format === 'llll' ) {
-		formatOptions.dateStyle = 'full';
-		formatOptions.timeStyle = 'medium';
-	}
-
-	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
-}
-
-export function useTimeSince(
-	timestamp: string,
-	{ format, isUtc }: { format?: string; isUtc?: boolean } = { format: 'll', isUtc: false }
-) {
-	const { user } = useAuth();
-	const locale = user.locale_variant || user.language || 'en';
-
-	const date = new Date( normalizeTimestamp( timestamp, isUtc ) );
-	return useRelativeTime( date, format, locale );
+	const date = new Date( timestamp );
+	return useRelativeTime( date, locale, formatOptions );
 }
 
 export default function TimeSince( {
 	timestamp,
-	format = 'll',
-	isUtc = false,
+	dateStyle,
+	timeStyle,
 }: {
 	timestamp: string;
-	format?: string;
-	isUtc?: boolean;
+	dateStyle?: 'full' | 'long' | 'medium' | 'short';
+	timeStyle?: 'full' | 'long' | 'medium' | 'short';
 } ) {
-	const { user } = useAuth();
-	const locale = user.locale_variant || user.language || 'en';
+	const locale = useLocale();
 
-	const normalizedTimestamp = normalizeTimestamp( timestamp, isUtc );
-	const date = new Date( normalizedTimestamp );
+	const date = new Date( timestamp );
+	const formatOptions = dateStyle || timeStyle ? { dateStyle, timeStyle } : undefined;
 
-	const fullDate = formatDate( date, 'llll', locale );
-	const relativeDate = useRelativeTime( date, format, locale );
+	const fullDate = formatDate( date, locale, formatOptions );
+	const relativeDate = useRelativeTime( date, locale, formatOptions );
 
 	return (
-		<time dateTime={ normalizedTimestamp } title={ fullDate }>
+		<time dateTime={ timestamp } title={ fullDate }>
 			{ relativeDate }
 		</time>
 	);

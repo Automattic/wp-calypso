@@ -44,7 +44,6 @@ class DomainSearchResults extends Component {
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
 		showAlreadyOwnADomain: PropTypes.bool,
-		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
@@ -296,7 +295,6 @@ class DomainSearchResults extends Component {
 					isSignupStep={ this.props.isSignupStep }
 					showStrikedOutPrice={ showStrikedOutPrice }
 					key="featured"
-					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
 					featuredSuggestions={ featuredSuggestions }
 					query={ this.props.lastDomainSearched }
@@ -336,7 +334,6 @@ class DomainSearchResults extends Component {
 						uiPosition={ i + 2 }
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
-						onButtonClick={ this.props.onClickResult }
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }

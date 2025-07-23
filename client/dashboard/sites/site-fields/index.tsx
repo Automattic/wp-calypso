@@ -203,7 +203,7 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince timestamp={ lastBackup.last_updated } isUtc />;
+		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;

@@ -21,10 +21,11 @@ import AgencySiteShareCard from './agency-site-share-card';
 import BackupCard from './backup-card';
 import DomainsCard from './domains-card';
 import LatestActivitiesCard from './latest-activities-card';
+import PlanCard from './plan-card';
 import ScanCard from './scan-card';
+import SiteActionMenu from './site-action-menu';
 import SiteOverviewFields from './site-overview-fields';
 import SitePreviewCard from './site-preview-card';
-import UptimeCard from './uptime-card';
 import VisibilityCard from './visibility-card';
 import './style.scss';
 
@@ -91,14 +92,17 @@ function SiteOverview( {
 						title={ getSiteDisplayName( site ) }
 						actions={
 							site.options?.admin_url && (
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									href={ site.options.admin_url }
-									icon={ wordpress }
-								>
-									{ __( 'WP Admin' ) }
-								</Button>
+								<>
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										href={ site.options.admin_url }
+										icon={ wordpress }
+									>
+										{ __( 'WP Admin' ) }
+									</Button>
+									<SiteActionMenu site={ site } />
+								</>
 							)
 						}
 					/>
@@ -122,17 +126,12 @@ function SiteOverview( {
 								icon={ chartBar }
 								heading="TBA"
 								description="TBA"
+								disabled
 							/>
 						) }
 						<ScanCard site={ site } />
 					</VStack>
-					<OverviewCard
-						title={ __( 'Plan' ) }
-						icon={ wordpress }
-						heading="TBA"
-						description="TBA"
-						bottom={ <div /> }
-					/>
+					<PlanCard site={ site } />
 				</Grid>
 				<Divider
 					orientation="horizontal"
@@ -149,7 +148,6 @@ function SiteOverview( {
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						<OverviewCardUpsellDIFM site={ site } />
-						<UptimeCard site={ site } />
 					</VStack>
 				</HStack>
 			</VStack>

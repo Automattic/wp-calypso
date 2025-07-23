@@ -36,7 +36,7 @@ function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			heading={ description }
 			description={ __( 'Auto fixes are available' ) }
 			externalLink={ getScanURL( site ) }
-			variant="error"
+			intent="error"
 		/>
 	);
 }
@@ -59,7 +59,7 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			heading={ __( 'No risks found' ) }
 			description={ description }
 			externalLink={ getScanURL( site ) }
-			variant="success"
+			intent="success"
 		/>
 	);
 }
@@ -68,7 +68,7 @@ function ScanCardContent( { site }: { site: Site } ) {
 	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
 
 	if ( scan === undefined ) {
-		return <OverviewCard { ...CARD_PROPS } variant="loading" />;
+		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
 	if ( ! scan ) {

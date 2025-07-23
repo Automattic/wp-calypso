@@ -38,6 +38,7 @@ export const SITE_OPTIONS = [
 	'is_wpforteams_site',
 	'p2_hub_blog_id',
 	'site_creation_flow',
+	'site_intent',
 	'software_version',
 	'updated_at',
 	'wpcom_production_blog_id',
@@ -69,6 +70,7 @@ export interface SiteOptions {
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
+	site_intent?: string;
 	software_version: string;
 	updated_at?: string;
 	wpcom_production_blog_id?: number;

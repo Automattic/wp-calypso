@@ -1,18 +1,8 @@
-import { fetchSiteBackups } from '../../data/site-jetpack-rewind-backups';
-import type { Backup } from '../../data/site-jetpack-rewind-backups';
-
-export const siteBackupsQuery = ( siteId: number ) => ( {
-	queryKey: [ 'site', siteId, 'backups' ],
-	queryFn: () => fetchSiteBackups( siteId ),
-} );
+import { fetchSiteRewindableActivityLog } from '../../data/site-activity-log';
+import type { ActivityLog } from '../../data/site-activity-log';
 
 export const siteLastBackupQuery = ( siteId: number ) => ( {
-	...siteBackupsQuery( siteId ),
-	select: ( backups: Backup[] ) => {
-		if ( ! Array.isArray( backups ) ) {
-			return null;
-		}
-
-		return backups.find( ( backup ) => backup.status === 'finished' ) ?? null;
-	},
+	queryKey: [ 'site', siteId, 'backups', 'last' ],
+	queryFn: () => fetchSiteRewindableActivityLog( siteId, { number: 1 } ),
+	select: ( data: ActivityLog ) => data.current.orderedItems[ 0 ] ?? null,
 } );

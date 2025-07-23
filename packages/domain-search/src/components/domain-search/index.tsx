@@ -11,6 +11,8 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 	cart: {
 		items: [],
 		total: '',
+		isBusy: false,
+		errorMessage: null,
 		hasItem: () => false,
 		onAddItem: () => {},
 		onRemoveItem: () => {},

@@ -1,6 +1,8 @@
-import { Button } from '@wordpress/components';
-import { arrowRight } from '@wordpress/icons';
+import { Button, Tooltip } from '@wordpress/components';
+import { arrowRight, warning } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
+import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
 import { useDomainSearch } from '../domain-search';
 import { shoppingCartIcon } from './shopping-cart-icon';
 
@@ -23,6 +25,22 @@ export const DomainSuggestionCTA = ( {
 }: DomainSuggestionCTAProps ) => {
 	const { __ } = useI18n();
 	const { cart, onContinue } = useDomainSearch();
+	const { isBusy, errorMessage, removeErrorMessage, callback } = useFocusedCartAction( () => {
+		onClick?.( 'add-to-cart' );
+		cart.onAddItem( uuid );
+	} );
+
+	useEffect( () => {
+		if ( ! errorMessage ) {
+			return;
+		}
+
+		const timeout = setTimeout( () => {
+			removeErrorMessage();
+		}, 3000 );
+
+		return () => clearTimeout( timeout );
+	}, [ errorMessage, removeErrorMessage ] );
 
 	const isDomainOnCart = cart.hasItem( uuid );
 
@@ -41,16 +59,33 @@ export const DomainSuggestionCTA = ( {
 				className="domain-suggestion-cta domain-suggestion-cta--continue"
 				onClick={ handleContinueClick }
 				label={ __( 'Continue' ) }
+				disabled={ disabled || cart.isBusy }
 			>
 				{ compact ? undefined : __( 'Continue' ) }
 			</Button>
 		);
 	}
 
-	const handleAddToCartClick = () => {
-		onClick?.( 'add-to-cart' );
-		cart.onAddItem( uuid );
-	};
+	if ( errorMessage ) {
+		return (
+			// @ts-expect-error open is not a valid prop for the WPDS Tooltip component, but accepted by the underlying Tooltip component.
+			<Tooltip delay={ 0 } text={ errorMessage } placement="top" open>
+				<div className="domain-suggestion-cta-error-container">
+					<Button
+						className="domain-suggestion-cta"
+						isDestructive
+						variant="primary"
+						disabled
+						__next40pxDefaultSize
+						icon={ warning }
+						style={ { flex: 1 } }
+					>
+						{ compact ? undefined : __( 'Add to Cart' ) }
+					</Button>
+				</div>
+			</Tooltip>
+		);
+	}
 
 	return (
 		<Button
@@ -58,9 +93,10 @@ export const DomainSuggestionCTA = ( {
 			variant={ variant }
 			__next40pxDefaultSize
 			icon={ shoppingCartIcon }
-			onClick={ handleAddToCartClick }
+			onClick={ callback }
 			label={ __( 'Add to Cart' ) }
-			disabled={ disabled }
+			disabled={ disabled || cart.isBusy }
+			isBusy={ isBusy }
 		>
 			{ compact ? undefined : __( 'Add to Cart' ) }
 		</Button>

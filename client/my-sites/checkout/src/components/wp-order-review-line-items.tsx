@@ -32,7 +32,10 @@ import {
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import {
+	getIsOnboardingAffiliateFlow,
+	getIsOnboardingUnifiedFlow,
+} from 'calypso/state/signup/flow/selectors';
 import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -103,12 +106,14 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
 	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
-		couponLineItem.label = isOnboardingAffiliateFlow
-			? getAffiliateCouponLabel()
-			: couponLineItem.label;
+		couponLineItem.label =
+			isOnboardingAffiliateFlow || isOnboardingUnifiedFlow
+				? getAffiliateCouponLabel()
+				: couponLineItem.label;
 	}
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;

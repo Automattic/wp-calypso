@@ -32,7 +32,6 @@ export class FeaturedDomainSuggestions extends Component {
 			'isDomainOnly',
 			'domainsWithPlansOnly',
 			'showStrikedOutPrice',
-			'onButtonClick',
 			'query',
 			'selectedSite',
 			'pendingCheckSuggestion',

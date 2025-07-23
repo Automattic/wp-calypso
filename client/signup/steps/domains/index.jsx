@@ -721,7 +721,7 @@ class RenderDomainsStepComponent extends Component {
 		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-			this.setState( { isMiniCartContinueButtonBusy: true } );
+			this.setState( { replaceDomainFailedMessage: null, isMiniCartContinueButtonBusy: true } );
 			if (
 				! this.state.temporaryCart ||
 				! this.state.temporaryCart.some(
@@ -759,7 +759,18 @@ class RenderDomainsStepComponent extends Component {
 				// Only saves after all domain are checked.
 				Promise.all( this.state.checkDomainAvailabilityPromises ).then( async () => {
 					if ( this.props.currentUser ) {
-						await this.props.shoppingCartManager.reloadFromServer();
+						try {
+							await this.props.shoppingCartManager.reloadFromServer();
+						} catch {
+							this.setState( {
+								replaceDomainFailedMessage: this.props.translate(
+									'Sorry, there was a problem adding that domain. Please try again later.'
+								),
+								isMiniCartContinueButtonBusy: false,
+							} );
+
+							return;
+						}
 					}
 
 					// Add productsToAdd to productsInCart.
@@ -808,7 +819,22 @@ class RenderDomainsStepComponent extends Component {
 				} );
 			}, 500 );
 		} else {
-			await this.props.shoppingCartManager.addProductsToCart( registration );
+			this.setState( {
+				replaceDomainFailedMessage: null,
+				isMiniCartContinueButtonBusy: true,
+			} );
+
+			try {
+				await this.props.shoppingCartManager.addProductsToCart( registration );
+			} catch {
+				this.handleReplaceProductsInCartError(
+					this.props.translate(
+						'Sorry, there was a problem adding that domain. Please try again later.'
+					)
+				);
+			} finally {
+				this.setState( { isMiniCartContinueButtonBusy: false } );
+			}
 		}
 
 		this.setState( { isCartPendingUpdateDomain: null } );
@@ -841,13 +867,28 @@ class RenderDomainsStepComponent extends Component {
 			} ) );
 		}
 
-		this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
+		this.setState( {
+			replaceDomainFailedMessage: null,
+			isMiniCartContinueButtonBusy: true,
+			isCartPendingUpdateDomain: { domain_name: domain_name },
+		} );
 		clearTimeout( this.state.removeDomainTimeout );
 
 		// Avoid too much API calls for Multi-domains flow
 		this.state.removeDomainTimeout = setTimeout( async () => {
 			if ( this.props.currentUser ) {
-				await this.props.shoppingCartManager.reloadFromServer();
+				try {
+					await this.props.shoppingCartManager.reloadFromServer();
+				} catch {
+					this.setState( {
+						replaceDomainFailedMessage: this.props.translate(
+							'Sorry, there was a problem removing that domain. Please try again later.'
+						),
+						isMiniCartContinueButtonBusy: false,
+					} );
+
+					return;
+				}
 			}
 
 			const productsToKeep = this.props.cart.products.filter( ( product ) => {
@@ -1194,6 +1235,7 @@ class RenderDomainsStepComponent extends Component {
 				showFreeDomainPromo={
 					! this.shouldHideDomainExplainer() || this.shouldDisplayDomainOnlyExplainer()
 				}
+				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
 			/>
 		);
 	};
