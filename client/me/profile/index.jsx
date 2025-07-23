@@ -183,7 +183,7 @@ class Profile extends Component {
 										{
 											components: {
 												a: (
-													<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar" />
+													<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/" />
 												),
 											},
 										}
