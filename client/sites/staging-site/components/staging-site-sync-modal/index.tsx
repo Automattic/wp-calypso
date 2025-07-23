@@ -11,7 +11,7 @@ import {
 	SelectControl,
 	Notice,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -37,6 +37,7 @@ import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-
 
 import './style.scss';
 
+const ROOT_PATH = '/';
 const WP_CONFIG_PATH = '/wp-config.php';
 const WP_CONTENT_PATH = '/wp-content';
 const SQL_PATH = '/sql';
@@ -280,10 +281,24 @@ export default function SyncModal( {
 	} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
+	const shouldDisableGranularSync = ! lastKnownBackupAttempt;
+
+	useEffect( () => {
+		if ( shouldDisableGranularSync ) {
+			dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+		}
+	}, [ dispatch, querySiteId, shouldDisableGranularSync ] );
+
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
-		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
+		if (
+			shouldDisableGranularSync ||
+			( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' )
+		) {
 			// Sync everything
 			include_paths = '';
 			exclude_paths = '';
@@ -349,7 +364,7 @@ export default function SyncModal( {
 
 	const isButtonDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		! browserCheckList.totalItems;
+		( browserCheckList.totalItems === 0 && browserCheckList.includeList.length === 0 );
 
 	return (
 		<Modal
@@ -384,13 +399,15 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Files and folders' ) }
-							checked={ filesAndFoldersNodesCheckState === 'checked' }
+							disabled={ shouldDisableGranularSync }
+							checked={ shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked' }
 							indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
 							onChange={ onCheckboxChange }
 						/>
 						<SelectControl
 							value={ isFileBrowserVisible ? 'true' : 'false' }
 							variant="minimal"
+							disabled={ shouldDisableGranularSync }
 							options={ [
 								{
 									label: __( 'All files and folders' ),
@@ -423,7 +440,8 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							checked={ sqlNode?.checkState === 'checked' }
+							disabled={ shouldDisableGranularSync }
+							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</div>
