@@ -375,31 +375,6 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__login-block-footer {
-		display: flex;
-		flex-direction: column;
-		align-self: center;
-		gap: 1em;
-
-		.magic-login__footer-link,
-		.login__lost-password-link,
-		.wp-login__login-block-footer-back-link {
-			font-size: $font-body-small;
-			display: inline-flex;
-			align-items: center;
-			align-self: center;
-			gap: 0.1em;
-		}
-
-		.login__lost-password-link,
-		.magic-login__footer-link,
-		.wp-login__login-block-footer-back-link a,
-		a.wp-login__login-block-footer-back-link {
-			color: var(--studio-gray-90, #1d2327);
-			font-weight: 500;
-		}
-	}
-
 	&:not(.is-mobile) .layout__primary {
 		margin-top: 0;
 

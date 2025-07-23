@@ -29,6 +29,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
+import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -327,15 +328,17 @@ class MagicLogin extends Component {
 
 		return (
 			<>
-				<div className="wp-login__login-block-footer">
-					<a
-						className="magic-login__footer-link"
-						href={ login( loginParameters ) }
-						onClick={ this.onClickEnterPasswordInstead }
-					>
-						{ linkBack }
-					</a>
-				</div>
+				<OneLoginFooter
+					loginLink={
+						<a
+							className="one-login__footer-link"
+							href={ login( loginParameters ) }
+							onClick={ this.onClickEnterPasswordInstead }
+						>
+							{ linkBack }
+						</a>
+					}
+				/>
 				{ ! oauth2Client && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }

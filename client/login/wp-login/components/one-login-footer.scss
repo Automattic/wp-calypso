@@ -1,0 +1,20 @@
+.one-login__footer {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: 1em;
+
+    .one-login__footer-link {
+        font-size: $font-body-small;
+        display: inline-flex;
+        align-items: center;
+        align-self: center;
+        gap: 0.1em;
+    }
+
+    .one-login__footer-link a,
+    a.one-login__footer-link {
+        color: var(--studio-gray-90, #1d2327);
+        font-weight: 500;
+    }
+}

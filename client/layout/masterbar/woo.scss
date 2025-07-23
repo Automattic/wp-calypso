@@ -1102,21 +1102,6 @@ $breakpoint-mobile: 660px;
 			flex-direction: column;
 		}
 
-		.wp-login__login-block-footer {
-			@media (max-width: $break-mobile) {
-				max-width: $max-width;
-				margin-bottom: 40px;
-			}
-
-			.auth-form__social-buttons-tos {
-				margin: 24px 0 0 0;
-
-				@media (max-width: $break-medium) {
-					max-width: $max-width;
-				}
-			}
-		}
-
 		.signup-form {
 			input[type="email"].form-text-input {
 				margin-bottom: 0;
