@@ -1,21 +1,78 @@
 /**
  * @jest-environment jsdom
  */
-
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import CelebrateLaunchModal from '../components/celebrate-launch-modal';
 
 const mockStore = configureStore();
 
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	updateLaunchpadSettings: jest.fn().mockResolvedValue( {} ),
+} ) );
+
+const testSite = {
+	ID: 1,
+	slug: 'test-site.wordpress.com',
+	options: {
+		site_creation_flow: 'onboarding',
+	},
+};
+
 describe( 'CelebrateLaunchModal', () => {
 	const mockSetModalIsOpen = jest.fn();
+
+	const store = mockStore( {
+		sites: {
+			items: {
+				[ testSite.ID ]: testSite,
+			},
+			plans: {
+				items: [],
+			},
+			domains: {
+				items: [],
+			},
+			launch: {
+				celebration: [ testSite.ID ],
+			},
+		},
+		currentUser: {
+			id: 1,
+			user: {
+				had_hosting_trial: false,
+			},
+			capabilities: {
+				[ testSite.ID ]: {
+					edit_posts: true,
+				},
+			},
+		},
+		plugins: {
+			installed: {
+				items: [],
+				isRequesting: false,
+				plugins: [],
+			},
+		},
+		jetpack: {
+			modules: {
+				fetching: false,
+			},
+			items: [],
+		},
+		ui: {
+			selectedSiteId: testSite.ID,
+		},
+		userSettings: {},
+	} );
 
 	const defaultProps = {
 		setModalIsOpen: mockSetModalIsOpen,
 		site: {
+			ID: 1,
 			slug: 'test-site.wordpress.com',
 			URL: 'https://test-site.wordpress.com',
 			plan: {
@@ -27,7 +84,6 @@ describe( 'CelebrateLaunchModal', () => {
 	};
 
 	test( 'renders site slug when no custom domain is present', () => {
-		const store = mockStore( {} );
 		render(
 			<Provider store={ store }>
 				<CelebrateLaunchModal { ...defaultProps } />
@@ -38,7 +94,6 @@ describe( 'CelebrateLaunchModal', () => {
 	} );
 
 	test( 'renders custom domain when present', () => {
-		const store = mockStore( {} );
 		const customDomain = 'mycustomdomain.com';
 		const propsWithCustomDomain = {
 			...defaultProps,
@@ -61,7 +116,6 @@ describe( 'CelebrateLaunchModal', () => {
 	} );
 
 	test( 'prefers custom domain over site slug when both are present', () => {
-		const store = mockStore( {} );
 		const customDomain = 'mycustomdomain.com';
 		const propsWithBothDomains = {
 			...defaultProps,

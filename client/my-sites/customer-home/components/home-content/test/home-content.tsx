@@ -63,6 +63,9 @@ describe( 'HomeContent', () => {
 			domains: {
 				items: [],
 			},
+			launch: {
+				celebration: [ testSite.ID ],
+			},
 		},
 		currentUser: {
 			id: 1,
