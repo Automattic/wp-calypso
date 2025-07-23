@@ -6,7 +6,7 @@ interface Props {
 	onClick: () => void;
 }
 
-export const DomainOwnUse = ( { onClick }: Props ) => {
+export const DomainSearchAlreadyOwnDomainCTA = ( { onClick }: Props ) => {
 	const { __ } = useI18n();
 
 	return (

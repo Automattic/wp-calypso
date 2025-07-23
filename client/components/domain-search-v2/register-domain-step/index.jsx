@@ -2,12 +2,12 @@ import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-product
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import {
-	DomainOwnUse,
 	DomainSearch,
 	DomainSearchControls,
 	DomainSearchNotice,
 	DomainSuggestionLoadMore,
 	DomainSuggestionFilterReset,
+	DomainSearchAlreadyOwnDomainCTA,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -583,7 +583,9 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<div className="wpcom-domain-search-v2__sticky-bottom">
-				<DomainOwnUse onClick={ handleClickUseYourDomain ?? this.useYourDomainFunction() } />
+				<DomainSearchAlreadyOwnDomainCTA
+					onClick={ handleClickUseYourDomain ?? this.useYourDomainFunction() }
+				/>
 			</div>
 		);
 	}
