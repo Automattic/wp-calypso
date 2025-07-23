@@ -8,9 +8,10 @@ import './style.scss';
 interface Props {
 	isRecommended: boolean;
 	onClick: () => void;
+	isLoading?: boolean;
 }
 
-export const RecommendButton = ( { isRecommended = false, onClick }: Props ) => {
+export const RecommendButton = ( { isRecommended = false, onClick, isLoading = false }: Props ) => {
 	const translate = useTranslate();
 
 	const Icon = isRecommended ? ReaderFollowingFeedIcon : ReaderFollowFeedIcon;
@@ -24,6 +25,7 @@ export const RecommendButton = ( { isRecommended = false, onClick }: Props ) => 
 			className={ classes }
 			onClick={ onClick }
 			variant="secondary"
+			disabled={ isLoading }
 			aria-label={
 				isRecommended
 					? translate( 'Remove from recommended list' )
