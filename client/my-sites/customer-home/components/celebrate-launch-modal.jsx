@@ -13,7 +13,7 @@ import { getIsSiteLaunchCelebration } from 'calypso/state/sites/launch/selectors
 
 import './celebrate-launch-modal.scss';
 
-function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
+function CelebrateLaunchModal( { site, allDomains } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
@@ -115,7 +115,6 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	return (
 		<Modal
 			onRequestClose={ () => {
-				setModalIsOpen && setModalIsOpen( false );
 				dispatch( removeSiteLaunchCelebration( site.ID ) );
 			} }
 			className="launched__modal"
