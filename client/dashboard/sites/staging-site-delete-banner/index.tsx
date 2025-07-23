@@ -13,20 +13,24 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteDeleteStatusQuery } from '../../app/queries/site-staging-sites';
 import PageLayout from '../../components/page-layout';
+import { fetchStagingSiteOf } from '../../data/site-staging-site';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import type { Site } from '../../data/types';
+
+const STAGING_SITE_QUERY_KEY = 'staging-site';
 
 export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { createSuccessNotice } = useDispatch( noticesStore );
-	const productionSiteId = site.options?.wpcom_production_blog_id;
+	const productionSiteId = site.options?.wpcom_production_blog_id ?? 0;
 
-	// Poll for staging site deletion status
-	const { data: stagingSiteData } = useQuery( {
-		...stagingSiteDeleteStatusQuery( productionSiteId ?? 0 ),
+	// Poll for staging site status
+	const { data: stagingSite } = useQuery( {
+		queryKey: [ STAGING_SITE_QUERY_KEY, productionSiteId ],
+		queryFn: () => fetchStagingSiteOf( productionSiteId ),
+		refetchInterval: 3000,
 		enabled: !! productionSiteId,
 	} );
 
@@ -39,9 +43,9 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	// Redirect to the production site when the staging site is deleted
 	useEffect( () => {
 		if (
-			stagingSiteData &&
-			Array.isArray( stagingSiteData ) &&
-			stagingSiteData.length === 0 &&
+			stagingSite &&
+			Array.isArray( stagingSite ) &&
+			stagingSite.length === 0 &&
 			productionSite?.slug
 		) {
 			// Clear the mutation state to prevent banner from showing after redirect
@@ -49,7 +53,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 
 			// Also clear the staging site delete status query
 			queryClient.removeQueries( {
-				queryKey: [ 'staging-site-delete-status', productionSiteId ],
+				queryKey: [ STAGING_SITE_QUERY_KEY, productionSiteId ],
 			} );
 
 			// Staging site has been deleted, redirect to production site
@@ -59,7 +63,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 			} );
 			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 		}
-	}, [ stagingSiteData, productionSite, router, queryClient, productionSiteId ] );
+	}, [ stagingSite, productionSite, router, queryClient, productionSiteId ] );
 
 	return (
 		<PageLayout>
