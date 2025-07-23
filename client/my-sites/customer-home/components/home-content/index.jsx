@@ -27,6 +27,7 @@ import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -40,7 +41,7 @@ import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpac
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { launchSite } from 'calypso/state/sites/launch/actions';
+import { launchSite, launchSiteSuccessCelebration } from 'calypso/state/sites/launch/actions';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
@@ -71,11 +72,11 @@ const HomeContent = ( {
 	handleVerifyIcannEmail,
 	isAdmin,
 } ) => {
-	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 	const isP2 = site?.options?.is_wpforteams_site;
+	const dispatch = useDispatch();
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
@@ -107,7 +108,7 @@ const HomeContent = ( {
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
-			setCelebrateLaunchModalIsOpen( true );
+			dispatch( launchSiteSuccessCelebration( siteId ) );
 		}
 	}, [ isSuccess ] );
 
@@ -160,7 +161,7 @@ const HomeContent = ( {
 					skipCurrentView( null, true );
 				} }
 				onSiteLaunch={ () => {
-					setCelebrateLaunchModalIsOpen( true );
+					dispatch( launchSiteSuccessCelebration( siteId ) );
 					setFocusedLaunchpadDismissed( true );
 				} }
 			/>
@@ -345,13 +346,6 @@ const HomeContent = ( {
 					</div>
 				</>
 			) : null }
-			{ celebrateLaunchModalIsOpen && (
-				<CelebrateLaunchModal
-					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
-					site={ site }
-					allDomains={ allDomains }
-				/>
-			) }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>
 	);

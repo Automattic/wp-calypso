@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { removeSiteLaunchCelebration } from 'calypso/state/sites/launch/actions';
@@ -33,20 +32,14 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	);
 
 	useEffect( () => {
-		// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
-		// make sure the modal is shown only once
-		window.history.replaceState(
-			null,
-			'',
-			omitUrlParams( window.location.href, 'celebrateLaunch' )
-		);
-
-		dispatch(
-			recordTracksEvent( `calypso_launchpad_celebration_modal_view`, {
-				product_slug: site?.plan?.product_slug,
-			} )
-		);
-	}, [] );
+		if ( shouldShowCelebration ) {
+			dispatch(
+				recordTracksEvent( `calypso_launchpad_celebration_modal_view`, {
+					product_slug: site?.plan?.product_slug,
+				} )
+			);
+		}
+	}, [ shouldShowCelebration ] );
 
 	function renderUpsellContent() {
 		let contentElement;
