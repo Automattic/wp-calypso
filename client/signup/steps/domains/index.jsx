@@ -1124,6 +1124,16 @@ class RenderDomainsStepComponent extends Component {
 		);
 	};
 
+	showSkipButton = () => {
+		const { showSkipButton, shouldUseDomainSearchV2 } = this.props;
+
+		if ( showSkipButton || ! shouldUseDomainSearchV2 ) {
+			return showSkipButton;
+		}
+
+		return ! this.shouldHideDomainExplainer();
+	};
+
 	domainForm = () => {
 		const initialState = this.props.step?.domainForm ?? {};
 
@@ -1207,7 +1217,6 @@ class RenderDomainsStepComponent extends Component {
 				} ) }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
-				showSkipButton={ this.props.showSkipButton }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
 				forceHideFreeDomainExplainerAndStrikeoutUi={
@@ -1230,11 +1239,10 @@ class RenderDomainsStepComponent extends Component {
 				handleClickUseYourDomain={ this.handleUseYourDomainClick }
 				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 				// RegisterDomainStepComponentV2 props below
+				showSkipButton={ this.showSkipButton() }
 				onContinue={ this.goToNext }
 				onRemoveDomain={ ( cartItem ) => this.removeDomainClickHandler( cartItem )() }
-				showFreeDomainPromo={
-					! this.shouldHideDomainExplainer() || this.shouldDisplayDomainOnlyExplainer()
-				}
+				showFreeDomainPromo={ ! this.shouldHideDomainExplainer() }
 				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
 			/>
 		);
