@@ -1,0 +1,57 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.dashboard-stat__strapline {
+	font-size: $font-size-x-small;
+	line-height: $font-line-height-medium;
+	font-weight: $font-weight-medium;
+	color: $gray-700;
+	text-transform: uppercase;
+}
+
+.dashboard-stat__metric {
+	color: $gray-900;
+	font-weight: $font-weight-medium;
+}
+
+.dashboard-stat__description {
+	font-size: $font-size-small;
+	line-height: $font-line-height-small;
+	color: $gray-700;
+}
+
+.dashboard-stat__progress-bar {
+	width: 100% !important;
+	margin-block: 0.25 * $grid-unit;
+}
+
+.dashboard-stat__progress-bar--alert-yellow {
+	--wp-components-color-foreground: #{$alert-yellow};
+}
+
+.dashboard-stat__progress-bar--alert-red {
+	--wp-components-color-foreground: #{$alert-red};
+}
+
+.dashboard-stat__progress-bar--alert-green {
+	--wp-components-color-foreground: #{$alert-green};
+}
+
+.dashboard-stat--density-low {
+	.dashboard-stat__metric {
+		font-size: $font-size-2x-large;
+		line-height: $font-line-height-2x-large;
+	}
+
+	.dashboard-stat__progress-bar {
+		height: $grid-unit-05 !important;
+	}
+}
+
+.dashboard-stat--density-high {
+	.dashboard-stat__metric {
+		font-size: $font-size-large;
+		line-height: $font-line-height-small;
+	}
+}
+
