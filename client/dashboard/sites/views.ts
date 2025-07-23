@@ -21,7 +21,7 @@ export const DEFAULT_LAYOUTS: SupportedLayouts = {
 
 const DEFAULT_LAYOUT_FIELDS: SupportedLayouts = {
 	table: {
-		fields: [ 'plan', 'status', 'visitors', 'subscribers_count' ],
+		fields: [ 'status', 'visitors', 'subscribers_count', 'plan' ],
 	},
 	grid: {
 		fields: [ 'status' ],
