@@ -2,29 +2,35 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-.is-section-stepper .domains__step-content,
-.is-section-signup .domains__step-content {
-	& .use-my-domain__page-heading {
-		padding-left: 24px;
-		padding-right: 24px;
-		text-align: center;
+.is-section-stepper,
+.is-section-signup {
+	.step-wrapper__navigation.action-buttons.no-sticky {
+		height: 60px;
 	}
 
-	& .use-my-domain,
-	& .connect-domain-step,
-	& .domain-transfer-or-connect__content {
-		background: transparent;
-		box-shadow: none;
+	.domains__step-content {
+		& .use-my-domain__page-heading {
+			padding-left: 24px;
+			padding-right: 24px;
+			text-align: center;
+		}
 
-		@include break-mobile {
-			padding-left: 0;
-			padding-right: 0;
+		& .use-my-domain,
+		& .connect-domain-step,
+		& .domain-transfer-or-connect__content {
+			background: transparent;
+			box-shadow: none;
+
+			@include break-mobile {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 	}
 }
 
 body:has( .wpcom-domain-search-v2 ) {
-	.step-wrapper__navigation.action-buttons {
+	.step-wrapper__navigation.action-buttons.no-sticky {
 		height: 60px;
 	}
 
@@ -34,6 +40,10 @@ body:has( .wpcom-domain-search-v2 ) {
 		@include break-small {
 			padding-inline: 24px;
 		}
+	}
+
+	.step-wrapper__navigation-link {
+		color: #1d2327;
 	}
 }
 

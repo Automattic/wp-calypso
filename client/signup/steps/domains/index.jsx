@@ -15,6 +15,7 @@ import {
 	isDomainForGravatarFlow,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { withViewportMatch } from '@wordpress/viewport';
 import clsx from 'clsx';
@@ -1244,6 +1245,7 @@ class RenderDomainsStepComponent extends Component {
 				onRemoveDomain={ ( cartItem ) => this.removeDomainClickHandler( cartItem )() }
 				showFreeDomainPromo={ ! this.shouldHideDomainExplainer() }
 				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
+				shouldRenderUseYourDomain={ ! this.shouldHideUseYourDomain() }
 			/>
 		);
 	};
@@ -1493,6 +1495,41 @@ class RenderDomainsStepComponent extends Component {
 		return url.split( '?' )[ 0 ];
 	}
 
+	getUseDomainIOwnLink() {
+		const { shouldUseDomainSearchV2, translate, stepSectionName, step, isSmallScreen, flowName } =
+			this.props;
+
+		const hasSearchedDomains = Array.isArray( step?.domainForm?.searchResults );
+
+		if (
+			! shouldUseDomainSearchV2 ||
+			stepSectionName === 'use-your-domain' ||
+			this.shouldHideUseYourDomain() ||
+			! isSmallScreen ||
+			! hasSearchedDomains
+		) {
+			return null;
+		}
+
+		if ( shouldUseStepContainerV2( flowName ) ) {
+			return (
+				<Step.LinkButton onClick={ this.handleUseYourDomainClick }>
+					{ translate( 'Use a domain I already own' ) }
+				</Step.LinkButton>
+			);
+		}
+
+		return (
+			<Button
+				className="step-wrapper__navigation-link forward"
+				onClick={ this.handleUseYourDomainClick }
+				variant="link"
+			>
+				<span>{ translate( 'Use a domain I already own' ) }</span>
+			</Button>
+		);
+	}
+
 	render() {
 		if ( this.skipRender ) {
 			return null;
@@ -1636,7 +1673,7 @@ class RenderDomainsStepComponent extends Component {
 					topBar={
 						<Step.TopBar
 							leftElement={ ! hideBack && backButton }
-							rightElement={ this.getSkipStepButton() }
+							rightElement={ this.getUseDomainIOwnLink() ?? this.getSkipStepButton() }
 						/>
 					}
 					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
@@ -1683,6 +1720,8 @@ class RenderDomainsStepComponent extends Component {
 			);
 		}
 
+		const useDomainIOwnLink = this.getUseDomainIOwnLink();
+
 		return (
 			<AsyncLoad
 				require="calypso/signup/step-wrapper"
@@ -1710,6 +1749,7 @@ class RenderDomainsStepComponent extends Component {
 				align="center"
 				isWideLayout
 				isSticky={ ! shouldUseDomainSearchV2 }
+				customizedActionButtons={ useDomainIOwnLink }
 			/>
 		);
 	}
@@ -1740,9 +1780,10 @@ const StyleWrappedDomainsStepComponent = ( props ) => {
 	);
 };
 
-export const RenderDomainsStep = withViewportMatch( { isDesktop: '>= large' } )(
-	StyleWrappedDomainsStepComponent
-);
+export const RenderDomainsStep = withViewportMatch( {
+	isSmallScreen: '>= small',
+	isDesktop: '>= large',
+} )( StyleWrappedDomainsStepComponent );
 
 export const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';
