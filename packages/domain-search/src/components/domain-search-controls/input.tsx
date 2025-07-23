@@ -34,7 +34,7 @@ export const DomainSearchControlsInput = ( {
 			className="domain-search-controls__input"
 			__nextHasNoMarginBottom
 			hideLabelFromVision
-			placeholder={ placeholder || __( 'Search…' ) }
+			placeholder={ placeholder ?? __( 'Search…' ) }
 			value={ value }
 			label={ label }
 			onChange={ onChange }
