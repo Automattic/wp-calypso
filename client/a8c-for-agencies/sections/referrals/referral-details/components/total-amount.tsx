@@ -20,13 +20,33 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 		return <TextPlaceholder />;
 	}
 
-	return product?.amount ? (
-		translate( '%(total)s/mo', {
-			args: { total: formatCurrency( Number( product.amount ?? 0 ), product.currency ?? 'USD' ) },
-		} )
-	) : (
-		<Gridicon icon="minus" />
-	);
+	// Use purchase_price from subscription if available, otherwise fall back to product amount
+	// This follows the same pattern as the client subscriptions implementation
+	let amount = product?.amount;
+	let currency = 'USD';
+	let interval = 'month';
+
+	if ( purchase.subscription?.purchase_price ) {
+		amount = purchase.subscription.purchase_price;
+		currency = purchase.subscription.purchase_currency;
+		interval = purchase.subscription.billing_interval_unit;
+	}
+
+	if ( ! amount ) {
+		return <Gridicon icon="minus" />;
+	}
+
+	const formatted = formatCurrency( Number( amount ), currency );
+
+	return interval === 'year'
+		? /* translators: %(total)s is the price of the subscription per year */
+		  translate( '%(total)s/yr', {
+				args: { total: formatted },
+		  } )
+		: /* translators: %(total)s is the price of the subscription per month */
+		  translate( '%(total)s/mo', {
+				args: { total: formatted },
+		  } );
 };
 
 export default TotalAmount;

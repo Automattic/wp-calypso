@@ -9,6 +9,13 @@ interface ReferralPurchaseAPIResponse {
 		revoked_at: string | null;
 	};
 	site_assigned: string;
+	subscription?: {
+		product_name: string;
+		purchase_price: string;
+		purchase_currency: string;
+		purchase_price_usd: string;
+		billing_interval_unit: string;
+	};
 }
 export interface ReferralPurchase extends ReferralPurchaseAPIResponse {
 	status: string;
