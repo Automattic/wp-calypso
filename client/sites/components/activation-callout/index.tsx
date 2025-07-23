@@ -1,0 +1,92 @@
+import { FEATURE_SFTP } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
+import { Button, Modal, __experimentalText as Text } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import { Callout } from 'calypso/dashboard/components/callout';
+import illustrationUrl from './activation-callout-illustration.svg';
+
+export function ActivationCallout( {
+	siteId,
+	redirectUrl,
+}: {
+	siteId: number;
+	redirectUrl?: string;
+} ) {
+	const [ showEligibility, setShowEligibility ] = useState( false );
+
+	const handleClick = () => {
+		setShowEligibility( true );
+	};
+
+	const handleTransfer = ( options: { geo_affinity?: string } ) => {
+		const transferUrl = addQueryArgs( '/setup/transferring-hosted-site', {
+			siteId,
+			redirect_to: addQueryArgs(
+				redirectUrl ?? window.location.href.replace( window.location.origin, '' ),
+				{
+					hosting_features: 'activated',
+				}
+			),
+			feature: FEATURE_SFTP,
+			initiate_transfer_context: 'hosting',
+			initiate_transfer_geo_affinity: options.geo_affinity || '',
+		} );
+
+		page( transferUrl );
+	};
+
+	return (
+		<>
+			<Callout
+				title={ __( 'Active hosting features' ) }
+				titleAs="h3"
+				image={ illustrationUrl }
+				description={
+					<>
+						<Text as="p" variant="muted">
+							{ __(
+								'Your plan includes a range of powerful hosting features. Activate them to get started.'
+							) }
+						</Text>
+						<Text as="p" variant="muted">
+							{ __( 'Git-based deployments' ) }
+							{ __( 'Server monitoring' ) }
+							{ __( 'Access and error logs' ) }
+							{ __( 'Secure access via SFTP/SSH' ) }
+							{ __( 'Advanced server settings' ) }
+						</Text>
+					</>
+				}
+				actions={
+					<Button
+						text={ __( 'Activate' ) }
+						variant="primary"
+						size="compact"
+						onClick={ handleClick }
+					/>
+				}
+			/>
+			{ showEligibility && (
+				<Modal
+					className="plugin-details-cta__dialog-content"
+					title={ __( 'Before you continue' ) }
+					onRequestClose={ () => setShowEligibility( false ) }
+					size="medium"
+				>
+					<EligibilityWarnings
+						className="hosting__activating-warnings"
+						onDismiss={ () => setShowEligibility( false ) }
+						onProceed={ handleTransfer }
+						backUrl={ redirectUrl }
+						showDataCenterPicker
+						standaloneProceed
+						currentContext="hosting-features"
+					/>
+				</Modal>
+			) }
+		</>
+	);
+}

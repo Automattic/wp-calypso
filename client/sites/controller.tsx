@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
@@ -12,6 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { ActivationCallout } from './components/activation-callout';
 import SitesDashboard from './components/sites-dashboard';
 import { areHostingFeaturesSupported } from './hosting/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
@@ -201,13 +203,16 @@ export function hostingDashboardCallout(
 			! areHostingFeaturesSupported( site ) &&
 			isEnabled( 'hosting/hosting-features-callout' )
 		) {
+			const callout =
+				! site.is_wpcom_atomic && site.plan?.features.active.includes( FEATURE_SFTP ) ? (
+					<ActivationCallout siteId={ site.ID } />
+				) : (
+					<CalloutComponent siteSlug={ site.slug } titleAs="h3" />
+				);
+
 			context.primary = (
 				<PageLayout header={ <PageHeader title={ title } level={ 2 } /> }>
-					<CalloutOverlay
-						showCallout
-						callout={ <CalloutComponent siteSlug={ site.slug } titleAs="h3" /> }
-						main={ null }
-					/>
+					<CalloutOverlay showCallout callout={ callout } main={ null } />
 				</PageLayout>
 			);
 		}
