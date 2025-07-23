@@ -16,7 +16,7 @@ import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { TextBlur } from '../../components/text-blur';
+import { TextSkeleton } from '../../components/text-skeleton';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
@@ -60,7 +60,7 @@ export default function OverviewCard( {
 
 	const renderHeading = () => {
 		if ( isLoading ) {
-			return <TextBlur dummyCharacterCount={ 10 } />;
+			return <TextSkeleton length={ 10 } />;
 		}
 		if ( heading ) {
 			return heading;
@@ -70,7 +70,7 @@ export default function OverviewCard( {
 
 	const renderDescription = () => {
 		if ( isLoading ) {
-			return <TextBlur dummyCharacterCount={ 20 } />;
+			return <TextSkeleton length={ 20 } />;
 		}
 		if ( description ) {
 			return description;
