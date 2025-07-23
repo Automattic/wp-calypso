@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import { SiteMonitoringCallout } from 'calypso/dashboard/sites/monitoring';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
@@ -16,7 +15,4 @@ export function siteMonitoring( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export const siteMonitoringCallout = hostingFeaturesCallout(
-	__( 'Monitoring' ),
-	SiteMonitoringCallout
-);
+export const siteMonitoringCallout = hostingFeaturesCallout( SiteMonitoringCallout );

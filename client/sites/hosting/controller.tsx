@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { CalloutOverlay } from 'calypso/dashboard/components/callout-overlay';
-import { PageHeader } from 'calypso/dashboard/components/page-header';
 import PageLayout from 'calypso/dashboard/components/page-layout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -60,7 +59,6 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 }
 
 export function hostingFeaturesCallout(
-	title: string,
 	CalloutComponent: ComponentType< {
 		siteSlug: string;
 		titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
@@ -85,7 +83,7 @@ export function hostingFeaturesCallout(
 				);
 
 			context.primary = (
-				<PageLayout header={ <PageHeader title={ title } level={ 2 } /> }>
+				<PageLayout>
 					<CalloutOverlay showCallout callout={ callout } main={ null } />
 				</PageLayout>
 			);

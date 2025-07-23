@@ -11,5 +11,5 @@ import type { PageHeaderProps } from './types';
  * semantic clarity.
  */
 export const PageHeader = ( props: PageHeaderProps ) => {
-	return <SectionHeader level={ 1 } className="dashboard-page-header" { ...props } />;
+	return <SectionHeader { ...props } level={ 1 } className="dashboard-page-header" />;
 };

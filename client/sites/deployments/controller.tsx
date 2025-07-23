@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import { SiteDeploymentsCallout } from 'calypso/dashboard/sites/deployments';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
@@ -78,7 +77,4 @@ export const deploymentRunLogs: Callback = ( context, next ) => {
 	next();
 };
 
-export const deploymentCallout = hostingFeaturesCallout(
-	__( 'Deployments' ),
-	SiteDeploymentsCallout
-);
+export const deploymentCallout = hostingFeaturesCallout( SiteDeploymentsCallout );
