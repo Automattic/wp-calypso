@@ -452,6 +452,7 @@ import {
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
+import { isSummerSpecialEnabled } from './is-summer-special-enabled';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -836,9 +837,17 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SUPPORT,
 		];
 
-		return isGlobalStylesOnPersonalEnabled()
-			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
-			: baseFeatures;
+		let features = baseFeatures;
+
+		if ( isGlobalStylesOnPersonalEnabled() ) {
+			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
+		}
+
+		if ( isSummerSpecialEnabled() ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
@@ -1412,7 +1421,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
-		return [
+		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
@@ -1422,6 +1431,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
 		];
+
+		let features = baseFeatures;
+
+		if ( isSummerSpecialEnabled() ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
 	},
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
