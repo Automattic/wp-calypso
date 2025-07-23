@@ -9,6 +9,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import { removeSiteLaunchCelebration } from 'calypso/state/sites/launch/actions';
 
 import './celebrate-launch-modal.scss';
 
@@ -109,7 +110,13 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	}
 
 	return (
-		<Modal onRequestClose={ () => setModalIsOpen( false ) } className="launched__modal">
+		<Modal
+			onRequestClose={ () => {
+				setModalIsOpen( false );
+				dispatch( removeSiteLaunchCelebration( site.ID ) );
+			} }
+			className="launched__modal"
+		>
 			<ConfettiAnimation />
 			<div className="launched__modal-content">
 				<div className="launched__modal-text">

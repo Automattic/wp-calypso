@@ -1,6 +1,12 @@
 import { getLaunchExperimentAssignment } from 'calypso/landing/stepper/hooks/use-unified-launch-experiment';
 import { addQueryArgs } from 'calypso/lib/url';
-import { SITE_LAUNCH, SITE_LAUNCH_FAILURE, SITE_LAUNCH_SUCCESS } from 'calypso/state/action-types';
+import {
+	SITE_LAUNCH,
+	SITE_LAUNCH_FAILURE,
+	SITE_LAUNCH_SUCCESS,
+	SITE_LAUNCH_SUCCESS_CELEBRATION,
+	SITE_LAUNCH_SUCCESS_CELEBRATION_REMOVE,
+} from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -29,6 +35,16 @@ export const launchSiteFailure = ( siteId ) => ( {
 	siteId,
 } );
 
+export const launchSiteSuccessCelebration = ( siteId ) => ( {
+	type: SITE_LAUNCH_SUCCESS_CELEBRATION,
+	siteId,
+} );
+
+export const removeSiteLaunchCelebration = ( siteId ) => ( {
+	type: SITE_LAUNCH_SUCCESS_CELEBRATION_REMOVE,
+	siteId,
+} );
+
 /**
  * @param {number} siteId
  * @param {string?} source
@@ -41,7 +57,6 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 		}
 
 		const experiment = await getLaunchExperimentAssignment();
-
 		// By default home's launchpad launches the site
 		if (
 			source === 'home' &&
@@ -55,7 +70,6 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 		// By default masterbar redirects to domains + plan selection
 		if ( source === 'masterbar' && experiment === 'ungated_site_launch' ) {
 			dispatch( launchSite( siteId ) );
-
 			return;
 		}
 

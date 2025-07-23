@@ -3,6 +3,7 @@ import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useUnifiedLaunchExperiment } from 'calypso/landing/stepper/hooks/use-unified-launch-experiment';
 import { useDispatch, useSelector } from 'calypso/state';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { getIsSiteLaunchCelebration } from 'calypso/state/sites/launch/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../../components/celebrate-launch-modal';
@@ -31,6 +32,11 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	} = useCelebrateLaunchModal( siteId, layout );
 	const [ isLoadingExperiment, experiment ] = useUnifiedLaunchExperiment();
 
+	// Check if we should show the celebration modal
+	const shouldShowCelebration = useSelector( ( state: AppState ) =>
+		getIsSiteLaunchCelebration( state, siteId )
+	);
+
 	if ( isLoadingExperiment ) {
 		return null;
 	}
@@ -49,7 +55,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 				checklistSlug={ props.checklistSlug ?? checklistSlug }
 				onSiteLaunched={ handleSiteLaunched }
 			/>
-			{ isOpen && (
+			{ ( isOpen || shouldShowCelebration ) && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setModalIsOpen }
 					site={ site }
