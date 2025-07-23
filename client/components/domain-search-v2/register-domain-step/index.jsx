@@ -1726,8 +1726,11 @@ class RegisterDomainStep extends Component {
 	};
 
 	onHelperTermClick = ( term ) => {
-		this.onSearch( term );
-		this.setState( { helperTermSubmitted: true } );
+		this.setState( {
+			lastQuery: term,
+			helperTermSubmitted: true,
+			loadingResults: true,
+		} );
 	};
 
 	useYourDomainFunction = () => {
