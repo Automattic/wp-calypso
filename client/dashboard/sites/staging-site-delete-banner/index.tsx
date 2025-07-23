@@ -18,7 +18,11 @@ import { fetchStagingSiteOf } from '../../data/site-staging-site';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import type { Site } from '../../data/types';
 
-const STAGING_SITE_QUERY_KEY = 'staging-site';
+const stagingSiteQuery = ( productionSiteId: number ) => ( {
+	queryKey: [ 'staging-site', productionSiteId ],
+	queryFn: () => fetchStagingSiteOf( productionSiteId ),
+	refetchInterval: 3000,
+} );
 
 export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	const router = useRouter();
@@ -28,9 +32,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 
 	// Poll for staging site status
 	const { data: stagingSite } = useQuery( {
-		queryKey: [ STAGING_SITE_QUERY_KEY, productionSiteId ],
-		queryFn: () => fetchStagingSiteOf( productionSiteId ),
-		refetchInterval: 3000,
+		...stagingSiteQuery( productionSiteId ),
 		enabled: !! productionSiteId,
 	} );
 
@@ -52,9 +54,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 			queryClient.getMutationCache().clear();
 
 			// Also clear the staging site delete status query
-			queryClient.removeQueries( {
-				queryKey: [ STAGING_SITE_QUERY_KEY, productionSiteId ],
-			} );
+			queryClient.removeQueries( stagingSiteQuery( productionSiteId ) );
 
 			// Staging site has been deleted, redirect to production site
 			router.navigate( {
