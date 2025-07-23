@@ -265,7 +265,7 @@ export function MediaStorage( { site }: { site: Site } ) {
 
 	const value = mediaStorage ? (
 		`${
-			Math.round( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
 		}%`
 	) : (
 		<IneligibleIndicator />
