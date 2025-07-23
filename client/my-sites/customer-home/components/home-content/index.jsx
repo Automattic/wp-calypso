@@ -22,6 +22,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { omitUrlParams } from 'calypso/lib/url';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -108,6 +109,13 @@ const HomeContent = ( {
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
+			// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
+			// make sure the modal is shown only once
+			window.history.replaceState(
+				null,
+				'',
+				omitUrlParams( window.location.href, 'celebrateLaunch' )
+			);
 			dispatch( launchSiteSuccessCelebration( siteId ) );
 		}
 	}, [ isSuccess ] );
