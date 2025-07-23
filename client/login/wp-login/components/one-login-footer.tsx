@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelector } from 'react-redux';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
-import { isVIPOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import './one-login-footer.scss';
 
@@ -34,17 +33,13 @@ const OneLoginFooter = ( {
 	isLoginView,
 	supportLink,
 }: OneLoginFooterProps ) => {
-	const oauth2Client = useSelector( getCurrentOAuth2Client ) as {
-		name: string;
-		image: string;
-	} | null;
-	const isVIPClient = isVIPOAuth2Client( oauth2Client );
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
 	if ( isLoginView ) {
 		return (
 			<div className="one-login__footer">
 				{ lostPasswordLink }
-				{ isVIPClient && (
+				{ oauth2Client && (
 					<LoggedOutFormBackLink
 						classes={ {
 							'logged-out-form__link-item': false,
