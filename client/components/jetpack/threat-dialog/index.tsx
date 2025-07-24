@@ -1,5 +1,5 @@
-import { Button, Dialog } from '@automattic/components';
-import { TextControl } from '@wordpress/components';
+import { Dialog } from '@automattic/components';
+import { Button, TextControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
@@ -26,7 +26,10 @@ const ThreatDialog: React.FC< Props > = ( {
 } ) => {
 	// console.log( 'this is the threat dialog', threat );
 
-	const isDeleteFixer = threat.fixable && threat.fixable.fixer === 'delete';
+	const isExtensionDeleteFixer =
+		threat.signature === 'Vulnerable.WP.Extension' &&
+		threat.fixable &&
+		threat.fixable.fixer === 'delete';
 	const [ confirmationInput, setConfirmationInput ] = React.useState( '' );
 	const [ isInputHighlighted, setIsInputHighlighted ] = React.useState( false );
 	const slug = threat.extension?.slug || 'unknown-slug';
@@ -62,12 +65,12 @@ const ThreatDialog: React.FC< Props > = ( {
 			</Button>,
 		];
 
-		if ( isDeleteFixer ) {
+		if ( isExtensionDeleteFixer ) {
 			const shouldBeDisabled = confirmationInput !== slug;
 			buttons.push(
 				<Button
-					primary
-					scary
+					variant="primary"
+					isDestructive
 					className={ clsx( 'threat-dialog__btn', { 'is-visually-disabled': shouldBeDisabled } ) }
 					onClick={ shouldBeDisabled ? handleDisabledButtonClick : onConfirmation }
 				>
@@ -76,7 +79,12 @@ const ThreatDialog: React.FC< Props > = ( {
 			);
 		} else {
 			buttons.push(
-				<Button primary scary={ isScary } className="threat-dialog__btn" onClick={ onConfirmation }>
+				<Button
+					variant="primary"
+					isDestructive={ isScary }
+					className="threat-dialog__btn"
+					onClick={ onConfirmation }
+				>
 					{ primaryButtonText }
 				</Button>
 			);
@@ -87,7 +95,7 @@ const ThreatDialog: React.FC< Props > = ( {
 		action,
 		onCloseDialog,
 		onConfirmation,
-		isDeleteFixer,
+		isExtensionDeleteFixer,
 		confirmationInput,
 		slug,
 		handleDisabledButtonClick,
@@ -142,9 +150,54 @@ const ThreatDialog: React.FC< Props > = ( {
 				<ThreatFixHeader threat={ threat } action={ action } />
 			</h3>
 			{ /* this should be extracted into its own component */ }
-			{ isDeleteFixer && (
+			{ isExtensionDeleteFixer && (
 				<>
-					<p>Some extra caution because deletion goes here blabla dangerous</p>
+					{ threat.fixable.extensionStatus === 'active' ? (
+						<p className="threat-dialog__deletion-strong-warning">
+							{ translate(
+								'This %(extension_type)s seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.',
+								{
+									args: {
+										extension_type:
+											threat.extension?.type === 'plugin'
+												? translate( 'plugin' )
+												: translate( 'theme' ),
+									},
+									comment:
+										'%s is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
+								}
+							) }
+						</p>
+					) : (
+						<p className="threat-dialog__deletion-mild-warning">
+							{ translate(
+								'This %(extension_type)s seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.',
+								{
+									args: {
+										extension_type:
+											threat.extension?.type === 'plugin'
+												? translate( 'plugin' )
+												: translate( 'theme' ),
+									},
+									comment:
+										'%s is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
+								}
+							) }
+						</p>
+					) }
+					{ threat.fixable.extras?.is_dotorg !== false && (
+						<p>
+							{ translate(
+								'We did not find this extension on WordPress.org. We encourage you to create a backup of your site prior to fixing this threat, if you have not done so already.'
+							) }
+						</p>
+					) }
+
+					<p>
+						{ translate(
+							'To confirm that you have read and understood the above, please enter the slug into the text field below.'
+						) }
+					</p>
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom

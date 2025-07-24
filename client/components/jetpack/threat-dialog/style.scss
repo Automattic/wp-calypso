@@ -14,6 +14,10 @@
 			opacity: 0.55;
 		}
 	}
+
+	.dialog__content {
+		max-width: 720px;
+	}
 	.threat-dialog {
 		&__header {
 			font-size: $font-title-small;
@@ -42,6 +46,19 @@
 		&__threat-description {
 			color: var(--color-text-subtle);
 			font-size: $font-body-small;
+		}
+
+		&__deletion-strong-warning {
+			color: var(--color-error);
+			font-weight: var(--font-weight-bold);
+			font-size: $font-body-large;
+			padding-top: 24px;
+		}
+
+		&__deletion-mild-warning {
+			color: var(--color-warning);
+			font-weight: var(--font-weight-bold);
+			padding-top: 24px;
 		}
 
 		&__warning {

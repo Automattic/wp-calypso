@@ -14,6 +14,7 @@ export type ThreatFix = {
 	fixer: ThreatFixType;
 	file?: string;
 	target?: string;
+	extensionStatus?: 'active' | 'inactive';
 	extras?: ThreatFixExtras;
 };
 
