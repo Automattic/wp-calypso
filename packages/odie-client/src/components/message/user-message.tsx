@@ -5,6 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { ReactNode } from 'react';
 import Markdown from 'react-markdown';
 import {
 	getOdieForwardToForumsMessage,
@@ -32,7 +33,7 @@ const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
 	isRequestingHumanSupport: boolean,
-	messageContent: string,
+	messageContent: string | ReactNode,
 	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
 	isErrorMessage?: boolean
@@ -139,19 +140,25 @@ export const UserMessage = ( {
 		</>
 	);
 
+	const messageContent = isRequestingHumanSupport ? displayMessage : message.content;
+
 	return (
 		<>
 			<div className="odie-chatbox-message__content">
-				<Markdown
-					urlTransform={ uriTransformer }
-					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
-					} }
-				>
-					{ isRequestingHumanSupport ? displayMessage : message.content }
-				</Markdown>
+				{ typeof messageContent === 'string' ? (
+					<Markdown
+						urlTransform={ uriTransformer }
+						components={ {
+							a: ( props: React.ComponentProps< 'a' > ) => (
+								<CustomALink { ...props } target="_blank" />
+							),
+						} }
+					>
+						{ messageContent }
+					</Markdown>
+				) : (
+					messageContent
+				) }
 			</div>
 			{ isMessageWithEscalationOption && (
 				<div

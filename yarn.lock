@@ -1752,6 +1752,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.23.0"
     autosize: "npm:^6.0.1"
     clsx: "npm:^2.1.1"
+    dompurify: "npm:^3.2.6"
     jest: "npm:^29.7.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
