@@ -198,6 +198,7 @@ export function generateFlows( {
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'rewind-setup',
