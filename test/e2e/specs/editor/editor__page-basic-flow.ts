@@ -76,7 +76,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 			selectedPatternLocator = await modalSelector.getByRole( 'option' ).first();
 		} catch ( e ) {
 			// Probably doesn't exist. Let's add the pattern from the sidebar.
-			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About (Page)' );
+			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About 1' );
 		}
 
 		pageTemplateFirstTextContent =
