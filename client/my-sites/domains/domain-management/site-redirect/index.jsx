@@ -127,7 +127,7 @@ class SiteRedirect extends Component {
 					<Card className={ classes }>
 						<form>
 							<FormFieldset>
-								<FormLabel htmlFor="site-redirect__input">{ translate( 'Redirect To' ) }</FormLabel>
+								<FormLabel htmlFor="site-redirect__input">{ translate( 'Redirect to' ) }</FormLabel>
 
 								<FormTextInputWithAffixes
 									disabled={ isFetching || isUpdating }

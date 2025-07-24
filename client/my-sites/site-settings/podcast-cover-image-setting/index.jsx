@@ -264,7 +264,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 		return (
 			<FormFieldset className="podcast-cover-image-setting">
-				<FormLabel>{ translate( 'Cover Image' ) }</FormLabel>
+				<FormLabel>{ translate( 'Cover image' ) }</FormLabel>
 				{ this.renderCoverPreview() }
 				{ this.renderChangeButton() }
 				{ this.renderRemoveButton() }

@@ -135,7 +135,7 @@ const RequestLoginCode = ( {
 				) }
 
 				<FormLabel htmlFor="usernameOrEmail">
-					{ translate( 'Email Address or Username' ) }
+					{ translate( 'Email address or username' ) }
 				</FormLabel>
 				<FormFieldset className="magic-login__email-fields">
 					<FormTextInput
