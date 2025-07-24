@@ -1,4 +1,6 @@
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 
@@ -9,8 +11,13 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 			header={
 				<SettingsPageHeader
 					title={ __( 'Web Application Firewall (WAF)' ) }
-					description={ __(
-						'Our web application firewall (WAF) examines incoming traffic to your website and decides to allow or block it based on various rules.'
+					description={ createInterpolateElement(
+						__(
+							'Our web application firewall (WAF) examines incoming traffic to your website and decides to allow or block it based on various rules. <link>Learn more</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="security-web-application-firewall" />,
+						}
 					) }
 				/>
 			}
