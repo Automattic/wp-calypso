@@ -99,7 +99,7 @@ class DomainSearchResults extends Component {
 
 			if ( premiumDomain.sale_cost ) {
 				productSaleCost = formatCurrency( premiumDomain.sale_cost, currentUserCurrencyCode, {
-					stripZeros: this.props.showStrikedOutPrice,
+					stripZeros: true,
 				} );
 
 				const saleBadgeText = translate( 'Sale', {

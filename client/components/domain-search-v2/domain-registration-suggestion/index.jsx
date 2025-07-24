@@ -464,7 +464,6 @@ const mapStateToProps = ( state, props ) => {
 	const productsList = props.products ?? getProductsList( state );
 	const currentUserCurrencyCode =
 		props.suggestion.currency_code || getCurrentUserCurrencyCode( state );
-	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 	const flowName = getCurrentFlowName( state );
 
@@ -477,26 +476,26 @@ const mapStateToProps = ( state, props ) => {
 		renewCost = props.premiumDomain?.renew_cost;
 		if ( props.premiumDomain?.sale_cost ) {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
-				stripZeros,
+				stripZeros: true,
 			} );
 		}
 	} else if ( HUNDRED_YEAR_DOMAIN_FLOW === flowName ) {
 		productCost = props.suggestion.cost;
 		renewCost = props.suggestion.renew_cost;
 	} else {
-		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, true );
 		// Renew cost is the same as the product cost for non-premium domains
 		renewCost = productCost;
 		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
-			stripZeros
+			true
 		);
 	}
 
 	return {
-		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros } ),
+		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros: true } ),
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
