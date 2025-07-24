@@ -1,6 +1,19 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+// Style for parent wrapper when in initial state
+.step-container-v2__content-wrapper.is-initial-state {
+	margin-top: 0;
+
+	@include break-small {
+		margin-top: 6rem;
+	}
+
+	@include break-medium {
+		margin-top: 9rem;
+	}
+}
+
 .wpcom-domain-search-v2 {
 
 	&.initial-state {

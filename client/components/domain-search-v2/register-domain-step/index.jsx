@@ -361,6 +361,8 @@ class RegisterDomainStep extends Component {
 	}
 
 	componentDidMount() {
+		this.updateParentClass();
+
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
 		let query = this.state.lastQuery || storedQuery;
 
@@ -386,7 +388,15 @@ class RegisterDomainStep extends Component {
 		this.props.recordSearchFormView( this.props.analyticsSection, this.props.flowName );
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
+		// Check if isInInitialState would return a different value
+		const wasInitialState = ! prevState.lastQuery && ! prevState.searchResults;
+		const isInitialState = this.isInInitialState();
+
+		if ( wasInitialState !== isInitialState ) {
+			this.updateParentClass();
+		}
+
 		this.checkForBloggerPlan();
 
 		if (
@@ -594,6 +604,18 @@ class RegisterDomainStep extends Component {
 				/>
 			</div>
 		);
+	}
+
+	updateParentClass() {
+		// Find the parent element with the step-container-v2__content-wrapper class
+		const parentElement = document.querySelector( '.step-container-v2__content-wrapper' );
+		if ( parentElement ) {
+			if ( this.isInInitialState() ) {
+				parentElement.classList.add( 'is-initial-state' );
+			} else {
+				parentElement.classList.remove( 'is-initial-state' );
+			}
+		}
 	}
 
 	render() {
