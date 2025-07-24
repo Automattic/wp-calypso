@@ -50,6 +50,7 @@ import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic
 import MagicLoginLocaleSuggestions from '../index';
 import RequestLoginEmailForm from '../request-login-email-form';
 import type { AppState } from 'calypso/types';
+import './style.scss';
 
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
 const GRAVATAR_FROM_3RD_PARTY = '3rd-party';
