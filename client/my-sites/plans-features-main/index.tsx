@@ -61,6 +61,7 @@ import {
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
+import { getActivePromotions } from 'calypso/state/active-promotions/selectors';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -398,6 +399,9 @@ const PlansFeaturesMain = ( {
 		siteId ? !! isDomainOnlySiteSelector( state, siteId ) : false
 	);
 
+	// Get active promotions from Redux state
+	const activePromotions = useSelector( getActivePromotions );
+
 	const hiddenPlans = {
 		hideFreePlan,
 		hidePersonalPlan,
@@ -708,17 +712,20 @@ const PlansFeaturesMain = ( {
 	if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid(
 			isInSignup,
-			sitePlanSlug
+			sitePlanSlug,
+			activePromotions
 		);
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
 			isInSignup,
-			sitePlanSlug
+			sitePlanSlug,
+			activePromotions
 		);
 	} else {
 		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid(
 			isInSignup,
-			sitePlanSlug
+			sitePlanSlug,
+			activePromotions
 		);
 	}
 

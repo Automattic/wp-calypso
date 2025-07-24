@@ -310,6 +310,7 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupWpcomFeatures?: ( props?: {
 		isInSignup?: boolean;
 		currentSitePlanSlug?: string;
+		activePromotions?: string[];
 	} ) => Feature[];
 
 	/**

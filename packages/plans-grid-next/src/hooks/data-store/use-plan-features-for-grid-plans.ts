@@ -24,6 +24,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	currentSitePlanSlug,
+	activePromotions,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -33,6 +34,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	currentSitePlanSlug?: string;
+	activePromotions?: string[];
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -49,6 +51,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	currentSitePlanSlug,
+	activePromotions,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -72,6 +75,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
 							isInSignup,
 							currentSitePlanSlug,
+							activePromotions,
 						} ) ?? []
 					);
 				} else if ( 'plans-blog-onboarding' === intent ) {
@@ -90,6 +94,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
 							isInSignup,
 							currentSitePlanSlug,
+							activePromotions,
 						} ) ?? []
 					);
 
@@ -118,6 +123,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
 							isInSignup,
 							currentSitePlanSlug,
+							activePromotions,
 						} ) ?? []
 					);
 

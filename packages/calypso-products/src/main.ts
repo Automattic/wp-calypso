@@ -81,20 +81,27 @@ export function getPlans(): Record< string, Plan > {
 
 export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
 	isInSignup?: boolean,
-	currentSitePlanSlug?: string
+	currentSitePlanSlug?: string,
+	activePromotions?: string[]
 ) {
 	return resolveFeatureGroupsForFeaturesGrid( {
 		showSimplifiedFeatures: true,
 		isInSignup,
 		currentSitePlanSlug,
+		activePromotions,
 	} );
 }
 
 export function getPlanFeaturesGroupedForFeaturesGrid(
 	isInSignup?: boolean,
-	currentSitePlanSlug?: string
+	currentSitePlanSlug?: string,
+	activePromotions?: string[]
 ): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForFeaturesGrid( { isInSignup, currentSitePlanSlug } );
+	return resolveFeatureGroupsForFeaturesGrid( {
+		isInSignup,
+		currentSitePlanSlug,
+		activePromotions,
+	} );
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
@@ -103,10 +110,11 @@ export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroup
 
 export function getWooExpressFeaturesGroupedForFeaturesGrid(
 	isInSignup?: boolean,
-	currentSitePlanSlug?: string
-): Partial< FeatureGroupMap > {
+	currentSitePlanSlug?: string,
+	activePromotions?: string[]
+) {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
-	return getPlanFeaturesGroupedForFeaturesGrid( isInSignup, currentSitePlanSlug );
+	return getPlanFeaturesGroupedForFeaturesGrid( isInSignup, currentSitePlanSlug, activePromotions );
 }
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {

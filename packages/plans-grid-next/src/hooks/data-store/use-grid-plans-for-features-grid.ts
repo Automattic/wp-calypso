@@ -1,4 +1,5 @@
 import { useMemo } from '@wordpress/element';
+import { useSelector } from 'react-redux';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type { UseGridPlansParams } from './types';
@@ -47,6 +48,9 @@ const useGridPlansForFeaturesGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
+	// Get active promotions from Redux state directly
+	const activePromotions = useSelector( ( state: any ) => state.activePromotions?.items || [] );
+
 	const gridPlans = gridPlansResult.gridPlans;
 	const currentSitePlanSlug = gridPlansResult.currentSitePlanSlug;
 
@@ -59,6 +63,7 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		currentSitePlanSlug,
+		activePromotions,
 	} );
 
 	return useMemo( () => {

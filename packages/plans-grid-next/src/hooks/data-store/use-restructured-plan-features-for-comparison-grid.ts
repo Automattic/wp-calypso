@@ -6,6 +6,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
@@ -46,6 +47,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		isInSignup,
 		currentSitePlanSlug,
 	} ) => {
+		// Get active promotions from Redux state directly
+		const activePromotions = useSelector( ( state: any ) => state.activePromotions?.items || [] );
+
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
 			allFeaturesList,
@@ -53,6 +57,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			selectedFeature,
 			showLegacyStorageFeature,
 			currentSitePlanSlug,
+			activePromotions,
 		} );
 
 		return useMemo( () => {
@@ -78,7 +83,11 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					: getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj
-								.get2023PricingGridSignupWpcomFeatures?.( { isInSignup, currentSitePlanSlug } )
+								.get2023PricingGridSignupWpcomFeatures?.( {
+									isInSignup,
+									currentSitePlanSlug,
+									activePromotions,
+								} )
 								.slice()
 					  );
 

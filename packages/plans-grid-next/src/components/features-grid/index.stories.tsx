@@ -43,7 +43,8 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 
 	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid(
 		props.isInSignup,
-		props.currentSitePlanSlug || undefined
+		props.currentSitePlanSlug || undefined,
+		[] // Pass empty array for activePromotions in stories
 	);
 
 	return (
