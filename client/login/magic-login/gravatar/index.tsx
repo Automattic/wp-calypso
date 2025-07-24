@@ -47,9 +47,8 @@ import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-log
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
-import MagicLoginLocaleSuggestions from '../index';
+import { MagicLoginLocaleSuggestions } from '../index';
 import RequestLoginEmailForm from '../request-login-email-form';
-import type { AppState } from 'calypso/types';
 import './style.scss';
 
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
@@ -114,43 +113,46 @@ const emailToSha256 = async ( email: string ) => {
 		.join( '' );
 };
 
+// Utility to ensure email is always a string
+function getEmailString( email: string | string[] | undefined ): string {
+	if ( Array.isArray( email ) ) {
+		return email[ 0 ] || '';
+	}
+	return email || '';
+}
+
 const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const dispatch = useDispatch();
-	const userEmail = useSelector(
-		( state: AppState ) =>
-			getLastCheckedUsernameOrEmail( state ) ||
-			getCurrentQueryArguments( state )?.email_address ||
-			getInitialQueryArguments( state )?.email_address
-	);
+	const lastCheckedUsernameOrEmail = useSelector( getLastCheckedUsernameOrEmail );
+	const gravatarFrom = useSelector( ( state ) => getCurrentQueryArguments( state )?.gravatar_from );
+	const emailAddress = useSelector( ( state ) => getCurrentQueryArguments( state )?.email_address );
+	const initialQueryArguments = useSelector( getInitialQueryArguments );
+	const userEmail =
+		lastCheckedUsernameOrEmail || emailAddress || initialQueryArguments?.email_address;
 	const [ isRequestingEmail, setIsRequestingEmail ] = useState( false );
 	const [ requestEmailErrorMessage, setRequestEmailErrorMessage ] = useState< string | null >(
 		null
 	);
 	const [ isSecondaryEmail, setIsSecondaryEmail ] = useState( false );
 	const [ maskedEmailAddress, setMaskedEmailAddress ] = useState( '' );
-	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail as string | undefined );
+	const [ usernameOrEmail, setUsernameOrEmail ] = useState( userEmail || '' );
 	const [ showSecondaryEmailOptions, setShowSecondaryEmailOptions ] = useState( false );
 	const [ showEmailCodeVerification, setShowEmailCodeVerification ] = useState( false );
-	const [ hashedEmail, setHashedEmail ] = useState< string | null >( null );
 	const [ verificationCodeInputValue, setVerificationCodeInputValue ] = useState( '' );
 	const [ publicToken, setPublicToken ] = useState< string | null >( null );
 	const [ isNewAccount, setIsNewAccount ] = useState( false );
-	const showCheckYourEmail = useSelector(
-		( state ) => getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE
-	);
+	const showCheckYourEmail = useSelector( getMagicLoginCurrentView ) === CHECK_YOUR_EMAIL_PAGE;
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const oauth2ClientId = useSelector( getCurrentOAuth2ClientId );
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentLocaleSlug );
-	const query = useSelector( getCurrentQueryArguments );
-	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+	const isGravatar = isGravatarOAuth2Client( oauth2Client ) || false;
 	const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
-	const isGravatarFlowWithEmail = !! ( isGravatarFlow && query?.email_address );
+	const isGravatarFlowWithEmail = !! ( isGravatarFlow && emailAddress );
 	const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-	const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
-	const isFromGravatar3rdPartyApp = isGravatar && query?.gravatar_from === GRAVATAR_FROM_3RD_PARTY;
-	const isFromGravatarQuickEditor =
-		isGravatar && query?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR;
+	const isFromGravatarSignup = isGravatar && gravatarFrom === 'signup';
+	const isFromGravatar3rdPartyApp = isGravatar && gravatarFrom === GRAVATAR_FROM_3RD_PARTY;
+	const isFromGravatarQuickEditor = isGravatar && gravatarFrom === GRAVATAR_FROM_QUICK_EDITOR;
 	const isEmailInputDisabled =
 		isFromGravatar3rdPartyApp ||
 		isFromGravatarQuickEditor ||
@@ -161,11 +163,11 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		: translate( 'Send me sign in link' );
 	const loginUrl = login( {
 		locale,
-		redirectTo: query?.redirect_to as string,
-		oauth2ClientId: query?.client_id as string,
-		gravatarFrom: query?.gravatar_from as string,
+		redirectTo: emailAddress as string,
+		oauth2ClientId: oauth2ClientId as number,
+		gravatarFrom: gravatarFrom as string,
 		gravatarFlow: isGravatarFlow,
-		emailAddress: query?.email_address as string,
+		emailAddress: emailAddress as string,
 	} );
 
 	let headerText = isFromGravatarSignup
@@ -184,12 +186,13 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 
 	useEffect( () => {
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+
 		recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
 			client_id: oauth2ClientId,
 			client_name: oauth2Client?.title,
-			from: query?.gravatar_from,
+			from: gravatarFrom,
 			is_gravatar_flow: isGravatarFlow,
-			is_gravatar_flow_with_email: Boolean( isGravatarFlow && query?.email_address ),
+			is_gravatar_flow_with_email: Boolean( isGravatarFlow && emailAddress ),
 			is_initial_view: true,
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -201,7 +204,6 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const prevShowSecondaryEmailOptions = useRef( showSecondaryEmailOptions );
 	useEffect( () => {
 		const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
-		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 
 		if (
 			( prevShowCheckYourEmail.current && ! showCheckYourEmail ) ||
@@ -210,9 +212,9 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		) {
 			recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
 				...eventOptions,
-				from: query?.gravatar_from,
+				from: gravatarFrom,
 				is_gravatar_flow: isGravatarFlow,
-				is_gravatar_flow_with_email: Boolean( isGravatarFlow && query?.email_address ),
+				is_gravatar_flow_with_email: Boolean( isGravatarFlow && emailAddress ),
 				is_initial_view: false,
 			} );
 		}
@@ -248,9 +250,10 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		showEmailCodeVerification,
 		showSecondaryEmailOptions,
 		oauth2ClientId,
-		oauth2Client,
-		query?.gravatar_from,
-		query?.email_address,
+		oauth2Client?.title,
+		isGravatarFlow,
+		gravatarFrom,
+		emailAddress,
 	] );
 
 	const resendEmailCountdownId = useRef< NodeJS.Timeout | null >( null );
@@ -270,14 +273,28 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		resetResendEmailCountdown();
 
 		resendEmailCountdownId.current = setInterval( () => {
-			if ( ! resendEmailCountdown && resendEmailCountdownId.current ) {
-				clearInterval( resendEmailCountdownId.current );
-				return;
-			}
-
-			setResendEmailCountdown( resendEmailCountdown - 1 );
+			setResendEmailCountdown( ( prev ) => {
+				if ( prev <= 1 ) {
+					if ( resendEmailCountdownId.current ) {
+						clearInterval( resendEmailCountdownId.current );
+						resendEmailCountdownId.current = null;
+					}
+					return 0;
+				}
+				return prev - 1;
+			} );
 		}, 1000 );
 	};
+
+	// Ensure interval is cleared on unmount
+	useEffect( () => {
+		return () => {
+			if ( resendEmailCountdownId.current ) {
+				clearInterval( resendEmailCountdownId.current );
+				resendEmailCountdownId.current = null;
+			}
+		};
+	}, [] );
 
 	const handleGravPoweredEmailCodeSend = async ( email: string, cb = () => {} ) => {
 		const noticeId = 'email-code-notice';
@@ -302,8 +319,8 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 					client_secret: config( 'wpcom_signup_key' ),
 					locale,
 					lang_id: getLanguage( locale )?.value,
-					email,
-					redirect_to: query?.redirect_to,
+					email: email,
+					redirect_to: emailAddress,
 					flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
 					create_account: true,
 					tos: getToSAcceptancePayload(),
@@ -412,7 +429,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		dispatch(
 			fetchMagicLoginAuthenticate(
 				`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
-				query?.redirect_to as string,
+				emailAddress as string,
 				oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
 				true
 			)
@@ -444,19 +461,23 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	};
 
 	const GravPoweredSecondaryEmailOptions = () => {
+		const [ hashedEmail, setHashedEmail ] = useState< string | null >( null );
 		const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
 		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === GRAVATAR_FROM_3RD_PARTY;
+			isGravatarOAuth2Client( oauth2Client ) && gravatarFrom === GRAVATAR_FROM_3RD_PARTY;
 		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR;
+			isGravatarOAuth2Client( oauth2Client ) && gravatarFrom === GRAVATAR_FROM_QUICK_EDITOR;
 		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+			isGravatarFlowOAuth2Client( oauth2Client ) && emailAddress
 		);
 		const shouldShowSwitchEmail =
 			! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
 
-		usernameOrEmail &&
-			emailToSha256( usernameOrEmail ).then( ( email ) => setHashedEmail( email ) );
+		useEffect( () => {
+			if ( usernameOrEmail ) {
+				emailToSha256( getEmailString( usernameOrEmail ) ).then( setHashedEmail );
+			}
+		}, [] );
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -530,7 +551,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 								'If you continue a new account will be created, and {{strong}}%(emailAddress)s{{/strong}} will be disconnected from the current main account.',
 								{
 									components: { strong: <strong /> },
-									args: { emailAddress: usernameOrEmail ?? '' },
+									args: { emailAddress: getEmailString( usernameOrEmail ) },
 								}
 							) }
 						</div>
@@ -548,7 +569,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				) }
 				<FormButton
 					onClick={ () =>
-						handleGravPoweredEmailCodeSend( usernameOrEmail ?? '', () =>
+						handleGravPoweredEmailCodeSend( getEmailString( usernameOrEmail ), () =>
 							setShowSecondaryEmailOptions( false )
 						)
 					}
@@ -577,11 +598,11 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 
 		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === GRAVATAR_FROM_3RD_PARTY;
+			isGravatarOAuth2Client( oauth2Client ) && gravatarFrom === GRAVATAR_FROM_3RD_PARTY;
 		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR;
+			isGravatarOAuth2Client( oauth2Client ) && gravatarFrom === GRAVATAR_FROM_QUICK_EDITOR;
 		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+			isGravatarFlowOAuth2Client( oauth2Client ) && emailAddress
 		);
 		const shouldShowSwitchEmail =
 			! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
@@ -620,7 +641,9 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 								components: { strong: <strong /> },
 								args: {
 									emailAddress:
-										isSecondaryEmail && ! isNewAccount ? maskedEmailAddress : usernameOrEmail ?? '',
+										isSecondaryEmail && ! isNewAccount
+											? maskedEmailAddress
+											: getEmailString( usernameOrEmail ),
 								},
 							}
 						) }
@@ -676,7 +699,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				>
 					<button
 						onClick={ () => {
-							handleGravPoweredEmailCodeSend( usernameOrEmail ?? '' );
+							handleGravPoweredEmailCodeSend( getEmailString( usernameOrEmail ) );
 
 							recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
 								type: 'code',
@@ -711,7 +734,10 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	};
 
 	const GravPoweredEmailLinkVerification = () => {
-		const emailAddress = usernameOrEmail?.includes( '@' ) ? usernameOrEmail : null;
+		const emailAddress =
+			usernameOrEmail && getEmailString( usernameOrEmail ).includes( '@' )
+				? getEmailString( usernameOrEmail )
+				: null;
 		const isSendingEmail = useSelector( isFetchingMagicLoginEmail );
 
 		const emailTextOptions = {
@@ -721,8 +747,8 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 						onClick={ () => {
 							usernameOrEmail &&
 								dispatch(
-									sendEmailLogin( usernameOrEmail, {
-										redirectTo: ( query?.redirect_to as string ) ?? '',
+									sendEmailLogin( getEmailString( usernameOrEmail ), {
+										redirectTo: emailAddress as string,
 										blogId: '', // Provide actual blog ID if available
 										loginFormFlow: false,
 										requestLoginEmailFormFlow: true,
@@ -992,8 +1018,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const hasSubHeader =
 		isGravatarFlowOAuth2Client( oauth2Client ) ||
 		( isGravatarOAuth2Client( oauth2Client ) &&
-			( query?.gravatar_from === GRAVATAR_FROM_3RD_PARTY ||
-				query?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR ) );
+			( gravatarFrom === GRAVATAR_FROM_3RD_PARTY || gravatarFrom === GRAVATAR_FROM_QUICK_EDITOR ) );
 
 	if ( showSecondaryEmailOptions ) {
 		mainContent = <GravPoweredSecondaryEmailOptions />;
