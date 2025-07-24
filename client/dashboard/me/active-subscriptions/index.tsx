@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useResizeObserver } from '@wordpress/compose';
 import {
 	DataViews,
 	filterSortAndPaginate,
@@ -13,10 +14,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
-// FIXME: collapse fields at other widths
-// const purchasesWideFields = [ 'status', 'payment-method' ];
+const purchasesWideFields = [ 'status', 'payment-method' ];
 const purchasesDesktopFields = [ 'status' ];
-// const purchasesMobileFields: string[] = [];
+const purchasesMobileFields: string[] = [];
 const defaultPerPage = 10;
 const defaultSort = {
 	field: 'site',
@@ -276,26 +276,76 @@ const getItemId = ( item: ActiveSubscription ) => {
 	return item.ID.toString();
 };
 
+function adjustViewFieldsForWidth(
+	width: number,
+	setView: ( setter: View | ( ( view: View ) => View ) ) => void
+): void {
+	if ( width >= 1280 ) {
+		setView( ( view ) => {
+			if ( view.fields?.length !== purchasesWideFields.length ) {
+				return {
+					...view,
+					fields: purchasesWideFields,
+				};
+			}
+			return view;
+		} );
+		return;
+	}
+	if ( width >= 960 ) {
+		setView( ( view ) => {
+			if ( view.fields?.length !== purchasesDesktopFields.length ) {
+				return {
+					...view,
+					fields: purchasesDesktopFields,
+				};
+			}
+			return view;
+		} );
+		return;
+	}
+	if ( width < 960 ) {
+		setView( ( view ) => {
+			if ( view.fields?.length !== purchasesMobileFields.length ) {
+				return {
+					...view,
+					fields: purchasesMobileFields,
+				};
+			}
+			return view;
+		} );
+		return;
+	}
+}
+
 export default function ActiveSubscriptions() {
 	const { data: activeSubscriptions, isLoading } = useQuery( activeSubscriptionsQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
+	const ref = useResizeObserver( ( entries ) => {
+		const firstEntry = entries[ 0 ];
+		if ( firstEntry ) {
+			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
+		}
+	} );
 	const purchasesDataFields = fields;
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );
 	}, [ activeSubscriptions, currentView, purchasesDataFields ] );
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>
-			<DataViews
-				isLoading={ isLoading }
-				data={ filteredSubscriptions ?? [] }
-				fields={ purchasesDataFields }
-				view={ currentView }
-				onChangeView={ setView }
-				defaultLayouts={ { table: {} } }
-				getItemId={ getItemId }
-				paginationInfo={ paginationInfo }
-			/>
+		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>
+			<div ref={ ref }>
+				<DataViews
+					isLoading={ isLoading }
+					data={ filteredSubscriptions ?? [] }
+					fields={ purchasesDataFields }
+					view={ currentView }
+					onChangeView={ setView }
+					defaultLayouts={ { table: {} } }
+					getItemId={ getItemId }
+					paginationInfo={ paginationInfo }
+				/>
+			</div>
 		</PageLayout>
 	);
 }
