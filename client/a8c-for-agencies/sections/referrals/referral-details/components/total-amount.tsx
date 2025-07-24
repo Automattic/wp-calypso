@@ -21,7 +21,6 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 	}
 
 	// Use purchase_price from subscription if available, otherwise fall back to product amount
-	// This follows the same pattern as the client subscriptions implementation
 	let amount = product?.amount;
 	let currency = 'USD';
 	let interval = 'month';
