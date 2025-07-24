@@ -8,6 +8,7 @@ import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { SectionHeader } from '../../components/section-header';
 import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCardUpsellDomain from '../overview-card-upsell-domain';
 import type { Site, SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
@@ -112,7 +113,10 @@ export default function DomainsCard( {
 		return null;
 	}
 
-	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if (
+		isSelfHostedJetpackConnected( site ) ||
+		! siteDomains.find( ( domain ) => ! domain.wpcom_domain )
+	) {
 		return <OverviewCardUpsellDomain site={ site } />;
 	}
 

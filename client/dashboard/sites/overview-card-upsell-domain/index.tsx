@@ -11,7 +11,9 @@ import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { DomainUpsellIllustraction } from './upsell-illustration';
+import illustrationTransferDomainUrl from './upsell-illustration-transfer-domain.svg';
 import type { Site } from '../../data/types';
 
 const useDomainSuggestion = ( site: Site ) => {
@@ -121,7 +123,6 @@ const OverviewCardUpsellDomainContent = ( {
 				<UpsellCTAButton
 					target="_blank"
 					text={ upsellCTAButtonText }
-					variant="primary"
 					size="compact"
 					tracksId={ tracksId }
 					isBusy={ isSubmitting }
@@ -132,10 +133,41 @@ const OverviewCardUpsellDomainContent = ( {
 	);
 };
 
+const OverviewCardUpsellDomainTransfer = () => {
+	return (
+		<Callout
+			title={ __( 'Transfer your domain' ) }
+			titleAs="h2"
+			description={
+				<Text variant="muted">
+					{ __(
+						'Transfer your domain and benefit from some of the lowest prices in the business.'
+					) }
+				</Text>
+			}
+			image={ illustrationTransferDomainUrl }
+			imageVariant="full-bleed"
+			actions={
+				<UpsellCTAButton
+					href="/setup/domain-transfer"
+					text={ __( 'Transfer domain' ) }
+					size="compact"
+					tracksId="transfer-domain"
+					variant="secondary"
+				/>
+			}
+		/>
+	);
+};
+
 const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	if ( ! sitePlan ) {
 		return null;
+	}
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return <OverviewCardUpsellDomainTransfer />;
 	}
 
 	if ( sitePlan.has_domain_credit ) {
