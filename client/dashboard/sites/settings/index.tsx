@@ -28,9 +28,10 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
-	const { data: isStagingSiteDeletionInProgress } = useQuery(
-		isDeletingStagingSiteQuery( site.ID )
-	);
+	const { data: isStagingSiteDeletionInProgress } = useQuery( {
+		...isDeletingStagingSiteQuery( site.ID ),
+		enabled: site.is_wpcom_staging_site,
+	} );
 
 	if ( isStagingSiteDeletionInProgress ) {
 		return <StagingSiteDeleteBanner site={ site } />;
