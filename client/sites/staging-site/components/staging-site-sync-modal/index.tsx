@@ -428,7 +428,9 @@ export default function SyncModal( {
 					<VStack spacing={ 7 }>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
-								<Text>{ __( 'Syncing WooCommerce sites can overwrite orders' ) }</Text>
+								<Text as="p" weight="600" style={ { marginBottom: '8px' } }>
+									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
+								</Text>
 								{ createInterpolateElement(
 									__(
 										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data. <a>Learn more</a>'
