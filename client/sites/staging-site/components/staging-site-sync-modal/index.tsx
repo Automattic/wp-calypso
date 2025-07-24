@@ -441,12 +441,17 @@ export default function SyncModal( {
 						) }
 						{ showDomainConfirmation && (
 							<VStack>
-								<HStack alignment="left" spacing={ 1 }>
-									<Text>{ __( "Enter your site's name" ) }</Text>
-									<Text color="#D63638">{ productionSiteSlug }</Text>
-									<Text>{ __( 'to confirm.' ) }</Text>
-								</HStack>
-								<InputControl onChange={ handleDomainConfirmation } />
+								<InputControl
+									__next40pxDefaultSize
+									label={
+										<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
+											<Text>{ __( "Enter your site's name" ) }</Text>
+											<Text color="var(--studio-red-50)">{ productionSiteSlug }</Text>
+											<Text>{ __( 'to confirm.' ) }</Text>
+										</HStack>
+									}
+									onChange={ handleDomainConfirmation }
+								/>
 							</VStack>
 						) }
 					</VStack>
