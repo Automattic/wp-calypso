@@ -187,6 +187,7 @@ body.is-section-promote-post-i2 {
 				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
 				.campaigns-list__table,
+				.payments-list__table,
 				.posts-list__loading-container,
 				.campaigns-total-stats__container,
 				.blaze-credits-container,
@@ -543,6 +544,7 @@ body.is-section-promote-post-i2 {
 					width: calc(100% - 32px);
 				}
 
+				.payments-list__table,
 				.campaigns-list__table {
 					margin: 16px 16px 0 16px !important;
 					width: calc(100% - 32px);

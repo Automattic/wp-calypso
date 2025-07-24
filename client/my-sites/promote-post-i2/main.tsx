@@ -143,8 +143,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 
-	// TODO fix the values when we know them
+	// TODO fix the values when we know them and remove the comment
 	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9', '0.8.0' );
+	/* query for payments */
 	const { data: payments, isLoading: isLoadingPayments } = usePaymentsQuery( arePaymentsEnabled );
 
 	const paymentBlocked = data?.paymentsBlocked ?? false;
@@ -461,19 +462,18 @@ export default function PromotedPosts( { tab }: Props ) {
 				</>
 			) }
 
-			{ /* Render orders tab */ }
+			{ /* Render payments tab */ }
 			{ selectedTab === 'payments' &&
 				! isLoadingPayments &&
 				typeof payments?.total === 'number' &&
 				payments.total > 0 && (
 					<>
 						<BlazePageViewTracker
-							path={ getAdvertisingDashboardPath( '/orders/:site' ) }
-							title="Advertising > Orders"
+							path={ getAdvertisingDashboardPath( '/payments/:site' ) }
+							title="Advertising > Payments"
 						/>
 						<PaymentsList
-							isLoading={ campaignIsLoadingNewContent }
-							isFetching={ campaignIsFetching }
+							isLoading={ isLoadingPayments }
 							isError={ campaignError as DSPMessage }
 							payments={ payments?.payments }
 						/>
