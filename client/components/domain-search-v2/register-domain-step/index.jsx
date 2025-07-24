@@ -475,9 +475,7 @@ class RegisterDomainStep extends Component {
 		const { cart, onRemoveDomain } = this.props;
 		const searchResults = this.state.searchResults || [];
 
-		const domainsInCart = ! shouldUseMultipleDomainsInCart( this.props.flowName )
-			? []
-			: getDomainsInCart( cart );
+		const domainsInCart = this.getDomainsInCart();
 
 		const total = formatCurrency(
 			domainsInCart.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
@@ -892,8 +890,14 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
+	getDomainsInCart = () => {
+		return ! shouldUseMultipleDomainsInCart( this.props.flowName )
+			? []
+			: getDomainsInCart( this.props.cart );
+	};
+
 	isInInitialState = () => {
-		const domainsInCart = getDomainsInCart( this.props.cart );
+		const domainsInCart = this.getDomainsInCart();
 
 		return (
 			! Array.isArray( this.state.searchResults ) &&
