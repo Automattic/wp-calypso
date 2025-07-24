@@ -143,8 +143,8 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 
-	// TODO fix the values when we know them and remove the comment
-	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9', '0.8.0' );
+	// TODO fix the values when we know them
+	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9-alpha', '0.8.0' );
 	/* query for payments */
 	const { data: payments, isLoading: isLoadingPayments } = usePaymentsQuery( arePaymentsEnabled );
 
