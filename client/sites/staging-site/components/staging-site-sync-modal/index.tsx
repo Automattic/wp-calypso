@@ -9,7 +9,13 @@ import {
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useState,
+	useCallback,
+	useEffect,
+	useMemo,
+} from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -213,7 +219,7 @@ export default function SyncModal( {
 	);
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
-	const getFilesAndFoldersNodesCheckState = useCallback( () => {
+	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
 			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
@@ -237,8 +243,6 @@ export default function SyncModal( {
 
 		return 'mixed';
 	}, [ wpContentNode, wpConfigNode ] );
-
-	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
 
 	useEffect( () => {
 		dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
