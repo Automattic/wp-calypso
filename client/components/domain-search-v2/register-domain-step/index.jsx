@@ -1754,6 +1754,14 @@ class RegisterDomainStep extends Component {
 		return this.goToUseYourDomainStep;
 	};
 
+	getUseYourDomainHandler = () => {
+		if ( this.props.flowName === 'new-hosted-site' ) {
+			return null;
+		}
+
+		return this.props.handleClickUseYourDomain ?? this.useYourDomainFunction();
+	};
+
 	renderSearchResults() {
 		const {
 			exactMatchDomain,
@@ -1786,7 +1794,7 @@ class RegisterDomainStep extends Component {
 				onAddMapping={ onAddMapping }
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
-				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
+				onClickUseYourDomain={ this.getUseYourDomainHandler() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
