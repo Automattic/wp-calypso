@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
+import ProtectForm from './protect-form';
 
 export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug: string } ) {
 	return (
@@ -22,7 +23,13 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 				/>
 			}
 		>
-			{ siteSlug }
+			{ /* JP WAF Module */ }
+
+			<ProtectForm siteSlug={ siteSlug } />
+
+			{ /* JP WAF Module's Block List */ }
+
+			{ /* Allow List */ }
 		</PageLayout>
 	);
 }
