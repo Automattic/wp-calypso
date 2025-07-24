@@ -86,6 +86,9 @@ class RequestLoginEmailForm extends Component {
 		} );
 	}
 
+	/**
+	 * Unreachable by Gravatar flow
+	 */
 	setCheckYourEmailHeaders() {
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 		const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
@@ -115,10 +118,16 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		if ( this.props.showCheckYourEmail ) {
+			/**
+			 * Unreachable by Gravatar flow
+			 */
 			this.setCheckYourEmailHeaders();
+		} else {
+			/**
+			 * Reachable by Gravatar flow
+			 */
+			this.setRequestLoginHeaders();
 		}
-
-		this.setRequestLoginHeaders();
 	}
 
 	componentDidUpdate( prevProps ) {
