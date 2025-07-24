@@ -79,21 +79,34 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
-	return resolveFeatureGroupsForFeaturesGrid( { showSimplifiedFeatures: true } );
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
+	isInSignup?: boolean,
+	currentSitePlanSlug?: string
+) {
+	return resolveFeatureGroupsForFeaturesGrid( {
+		showSimplifiedFeatures: true,
+		isInSignup,
+		currentSitePlanSlug,
+	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForFeaturesGrid();
+export function getPlanFeaturesGroupedForFeaturesGrid(
+	isInSignup?: boolean,
+	currentSitePlanSlug?: string
+): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid( { isInSignup, currentSitePlanSlug } );
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
 	return resolveFeatureGroupsForComparisonGrid();
 }
 
-export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+export function getWooExpressFeaturesGroupedForFeaturesGrid(
+	isInSignup?: boolean,
+	currentSitePlanSlug?: string
+): Partial< FeatureGroupMap > {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
-	return getPlanFeaturesGroupedForFeaturesGrid();
+	return getPlanFeaturesGroupedForFeaturesGrid( isInSignup, currentSitePlanSlug );
 }
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {

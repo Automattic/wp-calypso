@@ -809,7 +809,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: () => {
+	get2023PricingGridSignupWpcomFeatures: ( props?: {
+		isInSignup?: boolean;
+		currentSitePlanSlug?: string;
+	} ) => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -822,7 +825,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		if ( isSummerSpecialEnabled() ) {
+		if ( isSummerSpecialEnabled( props ) ) {
 			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
@@ -835,7 +838,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
-	get2023PlanComparisonFeatureOverride: () => {
+	get2023PlanComparisonFeatureOverride: ( props?: {
+		isInSignup?: boolean;
+		currentSitePlanSlug?: string;
+	} ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -851,7 +857,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
 		}
 
-		if ( isSummerSpecialEnabled() ) {
+		if ( isSummerSpecialEnabled( props ) ) {
 			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 
@@ -1414,7 +1420,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: () => {
+	get2023PricingGridSignupWpcomFeatures: ( props?: {
+		isInSignup?: boolean;
+		currentSitePlanSlug?: string;
+	} ) => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -1430,13 +1439,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		if ( isSummerSpecialEnabled() ) {
+		if ( isSummerSpecialEnabled( props ) ) {
 			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
 		return features;
 	},
-	get2023PlanComparisonFeatureOverride: () => {
+	get2023PlanComparisonFeatureOverride: ( props?: {
+		isInSignup?: boolean;
+		currentSitePlanSlug?: string;
+	} ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1450,7 +1462,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		if ( isSummerSpecialEnabled() ) {
+		if ( isSummerSpecialEnabled( props ) ) {
 			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 

@@ -22,6 +22,8 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
+	isInSignup,
+	currentSitePlanSlug,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -29,6 +31,8 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
+	isInSignup?: boolean;
+	currentSitePlanSlug?: string;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -39,6 +43,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
+		isInSignup,
+		currentSitePlanSlug,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -46,6 +52,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
+			currentSitePlanSlug,
 		} );
 
 		return useMemo( () => {
@@ -58,14 +65,21 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.();
 				const isMonthlyPlan = isMonthly( planSlug );
 
-				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride?.().length
+				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride?.( {
+					isInSignup,
+					currentSitePlanSlug,
+				} ).length
 					? getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj.get2023PlanComparisonFeatureOverride().slice()
+							planConstantObj
+								.get2023PlanComparisonFeatureOverride( { isInSignup, currentSitePlanSlug } )
+								.slice()
 					  )
 					: getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
+							planConstantObj
+								.get2023PricingGridSignupWpcomFeatures?.( { isInSignup, currentSitePlanSlug } )
+								.slice()
 					  );
 
 				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()

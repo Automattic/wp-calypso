@@ -305,10 +305,10 @@ const useGridPlans: UseGridPlansType = ( {
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
 	if ( ! pricingMeta || pricedAPIPlans.isLoading ) {
-		return null;
+		return { gridPlans: null, currentSitePlanSlug: sitePlanSlug };
 	}
 
-	return availablePlanSlugs.map( ( planSlug ) => {
+	const gridPlans = availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
@@ -367,6 +367,8 @@ const useGridPlans: UseGridPlansType = ( {
 			pricing: pricingMeta[ planSlug ],
 		};
 	} );
+
+	return { gridPlans, currentSitePlanSlug: sitePlanSlug };
 };
 
 export default useGridPlans;

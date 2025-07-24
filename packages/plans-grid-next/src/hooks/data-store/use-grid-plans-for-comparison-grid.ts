@@ -18,6 +18,7 @@ const useGridPlansForComparisonGrid = ( {
 	hiddenPlans,
 	intent,
 	isDisplayingPlansNeededForFeature,
+	isInSignup,
 	isSubdomainNotGenerated,
 	selectedFeature,
 	selectedPlan,
@@ -29,7 +30,7 @@ const useGridPlansForComparisonGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
-	const gridPlans = useGridPlans( {
+	const gridPlansResult = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -48,6 +49,9 @@ const useGridPlansForComparisonGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
+	const gridPlans = gridPlansResult.gridPlans;
+	const currentSitePlanSlug = gridPlansResult.currentSitePlanSlug;
+
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
 		gridPlans: gridPlans || [],
 		allFeaturesList,
@@ -55,6 +59,8 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
+		isInSignup,
+		currentSitePlanSlug,
 	} );
 
 	return useMemo( () => {

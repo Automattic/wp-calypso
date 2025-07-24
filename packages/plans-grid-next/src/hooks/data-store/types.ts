@@ -37,6 +37,7 @@ export interface UseGridPlansParams {
 	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
-export type UseGridPlansType = (
-	params: UseGridPlansParams
-) => Omit< GridPlan, 'features' >[] | null;
+export type UseGridPlansType = ( params: UseGridPlansParams ) => {
+	gridPlans: Omit< GridPlan, 'features' >[] | null;
+	currentSitePlanSlug?: PlanSlug;
+};

@@ -706,11 +706,20 @@ const PlansFeaturesMain = ( {
 
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
-		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
+		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid(
+			isInSignup,
+			sitePlanSlug
+		);
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
+			isInSignup,
+			sitePlanSlug
+		);
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid(
+			isInSignup,
+			sitePlanSlug
+		);
 	}
 
 	const getComparisonGridToggleLabel = () => {

@@ -41,7 +41,10 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 		isSpotlightOnCurrentPlan: true,
 	} );
 
-	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid();
+	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid(
+		props.isInSignup,
+		props.currentSitePlanSlug || undefined
+	);
 
 	return (
 		gridPlans && (

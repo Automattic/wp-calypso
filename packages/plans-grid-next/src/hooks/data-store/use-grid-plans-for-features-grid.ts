@@ -26,7 +26,7 @@ const useGridPlansForFeaturesGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
-	const gridPlans = useGridPlans( {
+	const gridPlansResult = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -47,6 +47,9 @@ const useGridPlansForFeaturesGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
+	const gridPlans = gridPlansResult.gridPlans;
+	const currentSitePlanSlug = gridPlansResult.currentSitePlanSlug;
+
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
 		gridPlans: gridPlans || [],
@@ -55,6 +58,7 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
+		currentSitePlanSlug,
 	} );
 
 	return useMemo( () => {

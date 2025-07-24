@@ -23,6 +23,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
+	currentSitePlanSlug,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -31,6 +32,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
+	currentSitePlanSlug?: string;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -46,6 +48,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
+	currentSitePlanSlug,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -66,7 +69,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-p2' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isInSignup,
+							currentSitePlanSlug,
+						} ) ?? []
 					);
 				} else if ( 'plans-blog-onboarding' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -81,7 +87,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-woocommerce' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isInSignup,
+							currentSitePlanSlug,
+						} ) ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -106,7 +115,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isInSignup,
+							currentSitePlanSlug,
+						} ) ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
