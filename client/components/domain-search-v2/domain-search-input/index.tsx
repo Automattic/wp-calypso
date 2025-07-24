@@ -28,9 +28,11 @@ interface DomainSearchInputProps {
 	minLength?: number;
 	maxLength?: number;
 	placeholderAnimation?: boolean;
+	disableAutoSearch?: boolean;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onSearch?: ( value: string ) => void;
 	onSearchChange?: ( value: string ) => void;
+	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 }
 
 const PLACEHOLDER_PHRASES = [
@@ -48,6 +50,7 @@ const DomainSearchInput = function DomainSearchInput( {
 	describedBy,
 	dir,
 	defaultValue,
+	disableAutoSearch,
 	value: controlledValue,
 	inputLabel,
 	minLength,
@@ -65,14 +68,14 @@ const DomainSearchInput = function DomainSearchInput( {
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, pausePlaceholderAnimation );
 
 	const doSearch = useMemo( () => {
-		if ( ! onSearch ) {
+		if ( ! onSearch || disableAutoSearch ) {
 			return;
 		}
 		if ( ! delaySearch ) {
 			return onSearch;
 		}
 		return debounce( onSearch, delayTimeout );
-	}, [ onSearch, delayTimeout, delaySearch ] );
+	}, [ onSearch, delayTimeout, delaySearch, disableAutoSearch ] );
 
 	useUpdateEffect( () => {
 		if ( doSearch ) {
@@ -96,6 +99,13 @@ const DomainSearchInput = function DomainSearchInput( {
 		handleChange( '' );
 	};
 
+	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( event.key === 'Enter' && onSearch ) {
+			event.preventDefault();
+			onSearch( controlledValue ?? '' );
+		}
+	};
+
 	const searchControlLabel = inputLabel || _x( 'Search', 'search label', 'domain-search' );
 
 	return (
@@ -112,6 +122,7 @@ const DomainSearchInput = function DomainSearchInput( {
 			maxLength={ maxLength ?? 253 }
 			dir={ dir ?? 'ltr' }
 			aria-describedby={ describedBy ?? '' }
+			onKeyDown={ handleKeyDown }
 		/>
 	);
 };
