@@ -396,6 +396,17 @@ const siteSettingsTransferSiteRoute = createRoute( {
 	)
 );
 
+const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/web-application-firewall',
+} ).lazy( () =>
+	import( '../sites/settings-web-application-firewall' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-web-application-firewall' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
@@ -572,6 +583,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
 				siteSettingsSftpSshRoute,
+				siteSettingsWebApplicationFirewallRoute,
 			] )
 		);
 	}
