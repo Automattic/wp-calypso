@@ -2,7 +2,6 @@
 @import '@wordpress/base-styles/mixins';
 
 .wpcom-domain-search-v2 {
-
 	&.initial-state {
 		max-width: 800px;
 		margin-inline: auto;
@@ -41,7 +40,7 @@
 
 	.wpcom-domain-search-v2__sticky-bottom {
 		position: fixed;
-		z-index: z-index('root', '.sticky-panel.is-sticky .sticky-panel__content');
+		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 		display: flex;
 		justify-content: center;
 		left: 1rem;
@@ -57,5 +56,9 @@
 		.summary-button {
 			width: auto;
 		}
+	}
+
+	.register-domain-step__domains-quickfilter-group {
+		padding-bottom: 0;
 	}
 }
