@@ -5,7 +5,6 @@ import {
 	StagingSite,
 } from '../../data/site-staging-site';
 import { queryClient } from '../query-client';
-export const STAGING_SITE_DELETE_MUTATION_KEY = 'staging-site-delete-mutation';
 
 export const hasStagingSiteQuery = ( productionSiteId: number ) => ( {
 	queryKey: [ 'staging-site', productionSiteId ],
@@ -25,7 +24,6 @@ export const isDeletingStagingSiteQuery = ( stagingSiteId: number ) => ( {
 
 export const stagingSiteDeleteMutation = ( stagingSiteId: number, productionSiteId: number ) => ( {
 	mutationFn: () => deleteStagingSite( stagingSiteId, productionSiteId ),
-	mutationKey: [ STAGING_SITE_DELETE_MUTATION_KEY, stagingSiteId ],
 	onSuccess: () => {
 		queryClient.setQueryData( isDeletingStagingSiteQuery( stagingSiteId ).queryKey, true );
 	},
