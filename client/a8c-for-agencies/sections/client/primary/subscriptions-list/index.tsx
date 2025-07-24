@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
@@ -76,7 +77,7 @@ export default function SubscriptionsList() {
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					if ( isBillingTypeBD && item.status === 'error' ) {
-						return '---';
+						return <Gridicon icon="minus" />;
 					}
 					let amount = '';
 					let currency = 'USD';
