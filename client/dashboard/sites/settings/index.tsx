@@ -1,9 +1,9 @@
-import { useMutationState, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
-import { STAGING_SITE_DELETE_MUTATION_KEY } from '../../app/queries/site-staging-sites';
+import { isDeletingStagingSiteQuery } from '../../app/queries/site-staging-sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -28,15 +28,9 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
 
-	const stagingSiteDeleteMutationState = useMutationState( {
-		filters: {
-			mutationKey: [ STAGING_SITE_DELETE_MUTATION_KEY, site.ID ],
-			status: 'success',
-		},
-		select: ( mutation ) => mutation.state,
+	const { data: isStagingSiteDeletionInProgress } = useQuery( {
+		...isDeletingStagingSiteQuery( site.ID ),
 	} );
-
-	const isStagingSiteDeletionInProgress = stagingSiteDeleteMutationState.length > 0;
 
 	if ( isStagingSiteDeletionInProgress ) {
 		return <StagingSiteDeleteBanner site={ site } />;
