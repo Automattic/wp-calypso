@@ -8,7 +8,7 @@ import { queryClient } from '../query-client';
 export const STAGING_SITE_DELETE_MUTATION_KEY = 'staging-site-delete-mutation';
 
 export const hasStagingSiteQuery = ( productionSiteId: number ) => ( {
-	queryKey: [ 'staging-site', productionSiteId ],
+	queryKey: [ 'site', productionSiteId, 'has-staging-site' ],
 	queryFn: () => fetchStagingSiteOf( productionSiteId ),
 	select: ( data: Array< StagingSite > ) => data.length > 0,
 } );
