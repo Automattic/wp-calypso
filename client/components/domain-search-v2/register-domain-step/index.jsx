@@ -472,10 +472,12 @@ class RegisterDomainStep extends Component {
 	}
 
 	getCart = () => {
-		const { cart, onAddDomain, onRemoveDomain } = this.props;
+		const { cart, onRemoveDomain } = this.props;
 		const searchResults = this.state.searchResults || [];
 
-		const domainsInCart = getDomainsInCart( cart );
+		const domainsInCart = ! shouldUseMultipleDomainsInCart( this.props.flowName )
+			? []
+			: getDomainsInCart( cart );
 
 		const total = formatCurrency(
 			domainsInCart.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
@@ -487,7 +489,7 @@ class RegisterDomainStep extends Component {
 		);
 
 		return {
-			isBusy: this.props.isMiniCartContinueButtonBusy,
+			isBusy: !! this.state.pendingCheckSuggestion || this.props.isMiniCartContinueButtonBusy,
 			errorMessage: this.props.replaceDomainFailedMessage,
 			items: domainsInCart.map( ( domain ) => {
 				const [ domainName, ...tld ] = domain.meta.split( '.' );
@@ -526,10 +528,10 @@ class RegisterDomainStep extends Component {
 
 				const suggestion = searchResults[ suggestionPosition ];
 
-				return onAddDomain( suggestion, suggestionPosition, false );
+				return this.onAddDomain( suggestion, suggestionPosition, false );
 			},
 			onRemoveItem: ( itemUuid ) => {
-				const domainInCart = cart.products.find( ( product ) => product.cart_item_id === itemUuid );
+				const domainInCart = domainsInCart.find( ( product ) => product.cart_item_id === itemUuid );
 
 				if ( ! domainInCart ) {
 					return;
@@ -538,7 +540,7 @@ class RegisterDomainStep extends Component {
 				return onRemoveDomain( domainInCart );
 			},
 			hasItem: ( domain_name ) => {
-				return cart.products.some( ( item ) => item.meta === domain_name );
+				return domainsInCart.some( ( item ) => item.meta === domain_name );
 			},
 		};
 	};
@@ -1691,7 +1693,9 @@ class RegisterDomainStep extends Component {
 
 			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
-				.catch( () => [] )
+				.catch( () => {
+					this.setState( { pendingCheckSuggestion: null } );
+				} )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
 					this.props.recordDomainAddAvailabilityPreCheck(
