@@ -290,6 +290,17 @@ const transferSiteRoute = createRoute( {
 	)
 );
 
+const webApplicationFirewallRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'web-application-firewall',
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-web-application-firewall' ).then( ( d ) =>
+		createLazyRoute( 'web-application-firewall' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
@@ -307,6 +318,7 @@ const createRouteTree = () =>
 			defensiveModeRoute,
 			transferSiteRoute,
 			sftpSshRoute,
+			webApplicationFirewallRoute,
 		] ),
 		dashboardSitesCompatibilityRoute,
 		dashboardSiteSettingsCompatibilityRouteRoot,
