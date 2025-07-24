@@ -17,10 +17,10 @@ import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import OverviewCard from '../overview-card';
 import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
+import LatestActivityCard from '../overview-last-activity-card';
 import AgencySiteShareCard from './agency-site-share-card';
 import BackupCard from './backup-card';
 import DomainsCard from './domains-card';
-import LatestActivitiesCard from './latest-activities-card';
 import PlanCard from './plan-card';
 import ScanCard from './scan-card';
 import SiteActionMenu from './site-action-menu';
@@ -144,7 +144,7 @@ function SiteOverview( {
 					spacing={ spacing }
 					alignment="flex-start"
 				>
-					<LatestActivitiesCard />
+					<LatestActivityCard site={ site } compact={ isSmallViewport } />
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						<OverviewCardUpsellDIFM site={ site } />
