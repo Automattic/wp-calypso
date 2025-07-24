@@ -15,7 +15,7 @@ import './style.scss';
 export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	const { ref, activeQuery } = useContainerQuery( {
 		small: 0,
-		large: 480,
+		large: 600,
 	} );
 
 	const { __ } = useI18n();
