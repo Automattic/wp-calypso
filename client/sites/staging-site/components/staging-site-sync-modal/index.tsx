@@ -431,10 +431,15 @@ export default function SyncModal( {
 								<Text>{ __( 'Syncing WooCommerce sites can overwrite orders' ) }</Text>
 								{ createInterpolateElement(
 									__(
-										'Syncing the staging database to production will overwrite orders, products, pages and posts. <a>Learn more</a>'
+										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data. <a>Learn more</a>'
 									),
 									{
-										a: <InlineSupportLink supportContext="staging-to-production-sync" />,
+										a: (
+											<ExternalLink
+												href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+												children={ null }
+											/>
+										),
 									}
 								) }
 							</Notice>
