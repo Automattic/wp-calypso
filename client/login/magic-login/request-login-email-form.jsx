@@ -114,18 +114,15 @@ class RequestLoginEmailForm extends Component {
 				.then( ( result ) => this.setState( { site: result } ) );
 		}
 
-<<<<<<< HEAD
 		if ( this.props.showCheckYourEmail ) {
 			this.setCheckYourEmailHeaders();
 		} else {
 			this.setRequestLoginHeaders();
 		}
-=======
 		this.context?.setHeaders( {
 			heading: this.props.headerText || this.props.translate( 'Email me a login link' ),
 			subHeading: this.getSubHeaderText(),
 		} );
->>>>>>> 50f06aa6bff (isolate gravatar header/subheader)
 	}
 
 	componentDidUpdate( prevProps ) {
