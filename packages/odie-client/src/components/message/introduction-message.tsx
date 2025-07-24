@@ -4,7 +4,7 @@ import { uriTransformer } from './uri-transformer';
 import type { ReactNode } from 'react';
 
 interface IntroductionMessageProps {
-	content: string | ReactNode;
+	content: ReactNode;
 }
 
 export const IntroductionMessage = ( { content }: IntroductionMessageProps ) => (

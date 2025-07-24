@@ -33,7 +33,7 @@ const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
 	isRequestingHumanSupport: boolean,
-	messageContent: string | ReactNode,
+	messageContent: ReactNode,
 	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
 	isErrorMessage?: boolean
