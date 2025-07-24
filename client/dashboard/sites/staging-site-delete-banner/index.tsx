@@ -44,7 +44,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	// Redirect to the production site when the staging site is deleted
 	useEffect( () => {
 		if ( ! hasStagingSite && productionSite?.slug ) {
-			queryClient.setQueryData( isDeletingStagingSiteQuery( site.ID ).queryKey, false );
+			queryClient.removeQueries( isDeletingStagingSiteQuery( site.ID ) );
 
 			// Clear the staging site query to stop polling
 			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
