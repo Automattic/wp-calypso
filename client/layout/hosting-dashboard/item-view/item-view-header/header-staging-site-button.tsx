@@ -55,7 +55,7 @@ export default function HeaderStagingSiteButton( {
 	} );
 
 	const stagingSiteId = useMemo( () => {
-		return stagingSites?.length ? stagingSites[ 0 ].id : undefined;
+		return stagingSites?.length ? stagingSites[ 0 ].id : null;
 	}, [ stagingSites ] );
 	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
 
