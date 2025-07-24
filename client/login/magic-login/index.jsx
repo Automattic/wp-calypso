@@ -276,7 +276,7 @@ class MagicLogin extends Component {
 							<RequestLoginCode
 								{ ...requestLoginEmailFormProps }
 								emailRequested={ this.props.emailRequested }
-								publicToken={ this.state.publicToken }
+								publicToken={ this.props.publicToken }
 								onPublicTokenReceived={ this.handlePublicTokenReceived }
 							/>
 						) : (
