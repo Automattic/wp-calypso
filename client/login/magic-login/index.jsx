@@ -31,7 +31,6 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginPublicToken from 'calypso/state/selectors/get-magic-login-public-token';
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
@@ -77,7 +76,7 @@ class MagicLogin extends Component {
 
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
-		publicToken: null,
+		publicToken: this.props.publicToken,
 	};
 
 	componentDidMount() {
@@ -196,16 +195,6 @@ class MagicLogin extends Component {
 		);
 	}
 
-	renderLocaleSuggestions() {
-		const { locale, path, showCheckYourEmail } = this.props;
-
-		if ( showCheckYourEmail ) {
-			return null;
-		}
-
-		return <LocaleSuggestions locale={ locale } path={ path } />;
-	}
-
 	renderTos = () => {
 		const { translate } = this.props;
 		const options = {
@@ -287,7 +276,7 @@ class MagicLogin extends Component {
 							<RequestLoginCode
 								{ ...requestLoginEmailFormProps }
 								emailRequested={ this.props.emailRequested }
-								publicToken={ this.props.publicToken }
+								publicToken={ this.state.publicToken }
 								onPublicTokenReceived={ this.handlePublicTokenReceived }
 							/>
 						) : (
@@ -297,7 +286,10 @@ class MagicLogin extends Component {
 				) }
 
 				{ this.renderLinks() }
-				{ this.renderLocaleSuggestions() }
+				<MagicLoginLocaleSuggestions
+					path={ this.props.path }
+					showCheckYourEmail={ this.props.showCheckYourEmail }
+				/>
 			</Main>
 		);
 
@@ -321,13 +313,9 @@ const mapState = ( state ) => ( {
 		getLastCheckedUsernameOrEmail( state ) ||
 		getCurrentQueryArguments( state ).email_address ||
 		getInitialQueryArguments( state ).email_address,
-	isWCCOM: getIsWCCOM( state ),
 	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	redirectToSanitized: getRedirectToSanitized( state ),
 	redirectToOriginal: getRedirectToOriginal( state ),
-	isFromAutomatticForAgenciesPlugin:
-		'automattic-for-agencies-client' ===
-		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 	isFromJetpackOnboarding:
 		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ) ===
 		'jetpack-onboarding',
