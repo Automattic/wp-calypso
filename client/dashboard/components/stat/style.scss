@@ -23,6 +23,7 @@
 .dashboard-stat__progress-bar {
 	width: 100% !important;
 	margin-block: 0.25 * $grid-unit;
+	--wp-components-color-foreground: var(--wp-admin-theme-color);
 }
 
 .dashboard-stat__progress-bar--alert-yellow {
