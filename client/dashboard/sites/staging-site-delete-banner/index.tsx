@@ -13,18 +13,14 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { siteByIdQuery } from '../../app/queries/site';
-import { STAGING_SITE_DELETE_MUTATION_KEY } from '../../app/queries/site-staging-sites';
+import {
+	STAGING_SITE_DELETE_MUTATION_KEY,
+	hasStagingSiteQuery,
+} from '../../app/queries/site-staging-sites';
 import PageLayout from '../../components/page-layout';
-import { fetchStagingSiteOf } from '../../data/site-staging-site';
 import deleteStagingSiteBackground from './delete-staging-site-background.svg';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import type { Site } from '../../data/types';
-
-const stagingSiteQuery = ( productionSiteId: number ) => ( {
-	queryKey: [ 'staging-site', productionSiteId ],
-	queryFn: () => fetchStagingSiteOf( productionSiteId ),
-	refetchInterval: 3000,
-} );
 
 export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	const router = useRouter();
@@ -33,8 +29,9 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	const productionSiteId = site.options?.wpcom_production_blog_id ?? 0;
 
 	// Poll for staging site status
-	const { data: stagingSite } = useQuery( {
-		...stagingSiteQuery( productionSiteId ),
+	const { data: hasStagingSite } = useQuery( {
+		...hasStagingSiteQuery( productionSiteId ),
+		refetchInterval: 3000,
 		enabled: !! productionSiteId,
 	} );
 
@@ -46,12 +43,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 
 	// Redirect to the production site when the staging site is deleted
 	useEffect( () => {
-		if (
-			stagingSite &&
-			Array.isArray( stagingSite ) &&
-			stagingSite.length === 0 &&
-			productionSite?.slug
-		) {
+		if ( ! hasStagingSite && productionSite?.slug ) {
 			// Remove the delete mutation to prevent banner from showing after redirect
 			const mutation = queryClient.getMutationCache().find( {
 				mutationKey: [ STAGING_SITE_DELETE_MUTATION_KEY, site.ID ],
@@ -61,7 +53,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 			}
 
 			// Clear the staging site query to stop polling
-			queryClient.removeQueries( stagingSiteQuery( productionSiteId ) );
+			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
 
 			// Staging site has been deleted, redirect to production site
 			router.navigate( {
@@ -70,7 +62,15 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 			} );
 			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 		}
-	}, [ stagingSite, productionSite, router, queryClient, productionSiteId, createSuccessNotice ] );
+	}, [
+		hasStagingSite,
+		productionSite,
+		router,
+		queryClient,
+		productionSiteId,
+		createSuccessNotice,
+		site.ID,
+	] );
 
 	return (
 		<PageLayout>
