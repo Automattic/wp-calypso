@@ -40,11 +40,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	);
 
 	return (
-		<Card
-			ref={ ref }
-			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className="free-domain-for-a-year-promo"
-		>
+		<Card ref={ ref } size="small" className="free-domain-for-a-year-promo">
 			<CardBody className="free-domain-for-a-year-promo__body">
 				<HStack spacing={ 6 } alignment="left">
 					{ activeQuery === 'large' && (
