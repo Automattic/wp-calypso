@@ -428,7 +428,7 @@ export default function SyncModal( {
 					<VStack spacing={ 7 }>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
-								<Text as="p" weight="600" style={ { marginBottom: '8px' } }>
+								<Text as="p" weight="bold" style={ { marginBottom: '8px' } }>
 									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
 								</Text>
 								{ createInterpolateElement(
