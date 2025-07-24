@@ -286,19 +286,16 @@ export default function ActiveSubscriptions() {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>
-			<div>Active subscriptions content will go here</div>
-			<ul>
-				<DataViews
-					isLoading={ isLoading }
-					data={ filteredSubscriptions ?? [] }
-					fields={ purchasesDataFields }
-					view={ currentView }
-					onChangeView={ setView }
-					defaultLayouts={ { table: {} } }
-					getItemId={ getItemId }
-					paginationInfo={ paginationInfo }
-				/>
-			</ul>
+			<DataViews
+				isLoading={ isLoading }
+				data={ filteredSubscriptions ?? [] }
+				fields={ purchasesDataFields }
+				view={ currentView }
+				onChangeView={ setView }
+				defaultLayouts={ { table: {} } }
+				getItemId={ getItemId }
+				paginationInfo={ paginationInfo }
+			/>
 		</PageLayout>
 	);
 }
