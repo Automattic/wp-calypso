@@ -13,7 +13,7 @@ interface ReferralPurchaseAPIResponse {
 		product_name: string;
 		purchase_price: string;
 		purchase_currency: string;
-		purchase_price_usd: string;
+		commissionable_amount: string;
 		billing_interval_unit: string;
 	};
 }
