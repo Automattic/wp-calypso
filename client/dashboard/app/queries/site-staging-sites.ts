@@ -7,7 +7,7 @@ import {
 import { queryClient } from '../query-client';
 
 export const hasStagingSiteQuery = ( productionSiteId: number ) => ( {
-	queryKey: [ 'staging-site', productionSiteId ],
+	queryKey: [ 'site', productionSiteId, 'has-staging-site' ],
 	queryFn: () => fetchStagingSiteOf( productionSiteId ),
 	select: ( data: Array< StagingSite > ) => data.length > 0,
 } );
