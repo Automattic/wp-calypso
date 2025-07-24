@@ -66,7 +66,7 @@ class RequestLoginEmailForm extends Component {
 		isEmailInputError: PropTypes.bool,
 		isSubmitButtonDisabled: PropTypes.bool,
 		isSubmitButtonBusy: PropTypes.bool,
-		isGravPoweredClient: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool.isRequired,
 	};
 
 	// @ts-ignore
