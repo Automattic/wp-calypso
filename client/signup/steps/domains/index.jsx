@@ -1323,15 +1323,11 @@ class RenderDomainsStepComponent extends Component {
 			return '';
 		}
 
-		if ( shouldUseDomainSearchV2 ) {
-			return translate( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-		}
-
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+		if ( isNewHostedSiteCreationFlow( flowName ) && ! shouldUseDomainSearchV2 ) {
 			return translate(
 				'Help your site stand out with a custom domain. Not sure yet? {{decideLater}}Decide later{{/decideLater}}.',
 				{
@@ -1365,6 +1361,10 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( ! stepSectionName ) {
+			if ( shouldUseDomainSearchV2 ) {
+				return translate( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
+			}
+
 			return translate( 'Enter some descriptive keywords to get started.' );
 		}
 
@@ -1387,16 +1387,16 @@ class RenderDomainsStepComponent extends Component {
 			return '';
 		}
 
-		if ( shouldUseDomainSearchV2 ) {
-			return translate( 'Claim your space on the web' );
-		}
-
 		if ( headerText ) {
 			return headerText;
 		}
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
+		}
+
+		if ( shouldUseDomainSearchV2 ) {
+			return translate( 'Claim your space on the web' );
 		}
 
 		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
