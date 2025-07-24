@@ -1,11 +1,25 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { canViewSecuritySettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
 import ProtectForm from './protect-form';
 
 export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
+		return null;
+	}
+
+	const canView = canViewSecuritySettings( site );
+
 	return (
 		<PageLayout
 			size="small"
@@ -23,9 +37,20 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 				/>
 			}
 		>
+			{ ! canView && (
+				<Notice>
+					<VStack>
+						<Text as="p">{ __( 'No security configuration is required.' ) }</Text>
+						<Text as="p">
+							{ __( 'Security management is automatic for WordPress.com sites.' ) }
+						</Text>
+					</VStack>
+				</Notice>
+			) }
+
 			{ /* JP WAF Module */ }
 
-			<ProtectForm siteSlug={ siteSlug } />
+			{ canView && <ProtectForm siteSlug={ siteSlug } /> }
 
 			{ /* JP WAF Module's Block List */ }
 

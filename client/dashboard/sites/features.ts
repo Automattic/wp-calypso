@@ -82,3 +82,7 @@ export function canCreateStagingSite( site: Site ) {
 		! site?.options?.wpcom_staging_blog_ids?.length
 	);
 }
+
+export function canViewSecuritySettings( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS );
+}
