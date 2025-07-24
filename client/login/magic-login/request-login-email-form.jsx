@@ -81,7 +81,7 @@ class RequestLoginEmailForm extends Component {
 
 	setRequestLoginHeaders() {
 		this.context?.setHeaders( {
-			heading: this.props.translate( 'Email me a login link' ),
+			heading: this.props.headerText || this.props.translate( 'Email me a login link' ),
 			subHeading: this.getSubHeaderText(),
 		} );
 	}
@@ -116,13 +116,9 @@ class RequestLoginEmailForm extends Component {
 
 		if ( this.props.showCheckYourEmail ) {
 			this.setCheckYourEmailHeaders();
-		} else {
-			this.setRequestLoginHeaders();
 		}
-		this.context?.setHeaders( {
-			heading: this.props.headerText || this.props.translate( 'Email me a login link' ),
-			subHeading: this.getSubHeaderText(),
-		} );
+
+		this.setRequestLoginHeaders();
 	}
 
 	componentDidUpdate( prevProps ) {
