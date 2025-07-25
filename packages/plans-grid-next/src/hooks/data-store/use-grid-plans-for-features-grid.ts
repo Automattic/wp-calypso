@@ -1,3 +1,4 @@
+import { Plans } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import useGridPlans from './use-grid-plans';
@@ -27,7 +28,7 @@ const useGridPlansForFeaturesGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
-	const gridPlansResult = useGridPlans( {
+	const gridPlans = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -48,11 +49,11 @@ const useGridPlansForFeaturesGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
+	// Get current site plan slug directly from the data store
+	const { planSlug: currentSitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
+
 	// Get active promotions from Redux state directly
 	const activePromotions = useSelector( ( state: any ) => state.activePromotions?.items || [] );
-
-	const gridPlans = gridPlansResult.gridPlans;
-	const currentSitePlanSlug = gridPlansResult.currentSitePlanSlug;
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,

@@ -305,7 +305,7 @@ const useGridPlans: UseGridPlansType = ( {
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
 	if ( ! pricingMeta || pricedAPIPlans.isLoading ) {
-		return { gridPlans: null, currentSitePlanSlug: sitePlanSlug };
+		return null;
 	}
 
 	const gridPlans = availablePlanSlugs.map( ( planSlug ) => {
@@ -368,7 +368,7 @@ const useGridPlans: UseGridPlansType = ( {
 		};
 	} );
 
-	return { gridPlans, currentSitePlanSlug: sitePlanSlug };
+	return gridPlans;
 };
 
 export default useGridPlans;

@@ -2,6 +2,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
@@ -30,7 +31,7 @@ const useGridPlansForComparisonGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
-	const gridPlansResult = useGridPlans( {
+	const gridPlans = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -49,8 +50,8 @@ const useGridPlansForComparisonGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
-	const gridPlans = gridPlansResult.gridPlans;
-	const currentSitePlanSlug = gridPlansResult.currentSitePlanSlug;
+	// Get current site plan slug directly from the data store
+	const { planSlug: currentSitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
 		gridPlans: gridPlans || [],
