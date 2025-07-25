@@ -29,7 +29,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 		if ( isVisible && resourceType ) {
 			dispatch(
 				recordReaderTracksEvent( 'calypso_reader_suggested_follows_dialog_viewed', {
-					resourceType,
+					resource_type: resourceType,
 				} )
 			);
 		}

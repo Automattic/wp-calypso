@@ -38,8 +38,7 @@ const getResourceType = (
 export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: QueryOptions ) => {
 	const { author, siteId, postId } = query;
 	const userLogin = author?.wpcom_login || author?.ID;
-	const userName = author?.name;
-	const enabled = options?.enabled;
+	const enabled = options?.enabled ?? true;
 
 	const {
 		data: recommendedFeeds,
@@ -50,9 +49,7 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	} );
 
 	const hasRecommendedFeeds = recommendedFeeds && recommendedFeeds.length > 0;
-
-	const shouldLoadRelatedSites =
-		enabled && ! isLoadingRecommendedFeeds && ! hasRecommendedFeeds && !! userName;
+	const shouldLoadRelatedSites = enabled && ! isLoadingRecommendedFeeds && ! hasRecommendedFeeds;
 
 	const {
 		data: relatedSites,
