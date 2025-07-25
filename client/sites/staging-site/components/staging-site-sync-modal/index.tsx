@@ -20,7 +20,7 @@ import {
 	useEffect,
 } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { error, chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
@@ -458,7 +458,17 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 					</div>
-					<div className="database-item">
+					<HStack
+						alignment="left"
+						spacing={ 2 }
+						style={ {
+							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							padding: '16px 0',
+							marginTop: '8px',
+							marginBottom: '20px',
+						} }
+					>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
@@ -466,7 +476,8 @@ export default function SyncModal( {
 							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-					</div>
+						<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
+					</HStack>
 					<VStack spacing={ 7 }>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
