@@ -372,7 +372,8 @@ class DomainRegistrationSuggestion extends Component {
 		if (
 			! Array.isArray( this.props.suggestion.match_reasons ) ||
 			hideMatchReasons ||
-			! isFeatured
+			! isFeatured ||
+			! this.isExactMatch()
 		) {
 			return null;
 		}
