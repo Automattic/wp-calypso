@@ -44,11 +44,7 @@ export const getEstimatedCommission = (
 				issuedDate.setHours( 0, 0, 0, 0 );
 
 				if ( purchase.subscription ) {
-					if ( purchase.subscription.status !== 'active' ) {
-						continue;
-					}
-
-					// Skip if subscription started outside the activity window
+					// FIXME: We will need to find a better way to handle this
 					if (
 						issuedDate.getTime() < activityWindow.start.getTime() ||
 						issuedDate.getTime() > activityWindow.finish.getTime()
@@ -56,9 +52,7 @@ export const getEstimatedCommission = (
 						continue;
 					}
 
-					// FIXME: We will only consider USD price. This is just for testing
-					const totalPrice =
-						purchase.subscription.purchase_price_usd ?? purchase.subscription.purchase_price;
+					const totalPrice = Number( purchase.subscription.commissionable_amount ) ?? 0;
 
 					// Add commission to subscription total (in dollars)
 					acc.totalCommissionsFromSubscriptions += totalPrice * commissionPercentage;
