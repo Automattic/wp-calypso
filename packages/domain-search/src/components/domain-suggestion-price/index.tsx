@@ -6,7 +6,6 @@ import {
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -14,14 +13,12 @@ interface DomainSuggestionPriceProps {
 	salePrice?: string;
 	price: string;
 	renewPrice?: string;
-	subText?: ReactNode;
 }
 
 export const DomainSuggestionPrice = ( {
 	salePrice,
 	price,
 	renewPrice,
-	subText: subTextProp,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
 	const containerContext = useDomainSuggestionContainerContext();
@@ -44,10 +41,6 @@ export const DomainSuggestionPrice = ( {
 	const priceSize = getPriceSize();
 
 	const getSubText = () => {
-		if ( subTextProp ) {
-			return subTextProp;
-		}
-
 		if ( ! renewPrice ) {
 			return null;
 		}

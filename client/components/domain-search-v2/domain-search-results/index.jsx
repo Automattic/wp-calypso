@@ -3,14 +3,17 @@ import {
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -114,28 +117,34 @@ class DomainSearchResults extends Component {
 
 			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
 
+			const suggestion = this.props.suggestions.find(
+				( s ) => s.domain_name === lastDomainSearched
+			);
+
 			return (
-				<DomainSuggestion
+				<DomainSuggestion.Featured
 					badges={ badges }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					matchReasons={
+						this.props.hideMatchReasons
+							? undefined
+							: parseMatchReasons( lastDomainSearched, suggestion.match_reasons )
+					}
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
 							salePrice={ productSaleCost }
 							price={ premiumDomain.cost }
 							renewPrice={ premiumDomain.renew_cost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
 						/>
 					}
 				/>
