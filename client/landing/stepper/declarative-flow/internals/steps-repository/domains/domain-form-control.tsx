@@ -5,6 +5,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	NEWSLETTER_FLOW,
+	READYMADE_TEMPLATE_FLOW,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
@@ -117,7 +118,10 @@ export function DomainFormControl( {
 		showSkipButton = true;
 	}
 
-	if ( isDomainSearchV2Enabled && flow === NEWSLETTER_FLOW ) {
+	if (
+		isDomainSearchV2Enabled &&
+		[ NEWSLETTER_FLOW, READYMADE_TEMPLATE_FLOW ].includes( flow ?? '' )
+	) {
 		includeWordPressDotCom = true;
 		showSkipButton = true;
 	}
