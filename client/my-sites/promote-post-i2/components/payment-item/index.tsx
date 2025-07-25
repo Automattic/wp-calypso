@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/components';
+import { Badge, ExternalLink } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import {
 	formatCents,
 	getPaymentStatus,
 	getPaymentStatusBadgeColor,
+	paymentStatus,
 } from 'calypso/my-sites/promote-post-i2/utils';
 
 interface Props {
@@ -41,19 +42,32 @@ export default function PaymentItem( props: Props ) {
 			) }` }</td>
 			<td className="payment-item__total">{ `$${ formatCents( payment.total_paid || 0, 2 ) }` }</td>
 			<td className="payment-item__actions">
-				<Button
-					isBusy={ false }
-					disabled={ false }
-					onClick={ getReceipt }
-					className="campaign-item__post-details-button"
-				>
-					<span aria-hidden="true">{ __( 'View receipt' ) }</span>
-					<span className="sr-only">
-						{ translate( 'View receipt for payment %(name)s', {
-							args: { name: payment.id },
-						} ) }
-					</span>
-				</Button>
+				{ payment.status === paymentStatus.FAILED || payment.status === paymentStatus.PENDING ? (
+					<div className="payment-link__link">
+						<ExternalLink href={ payment.payment_link } target="_blank">
+							{ translate( 'Pay now' ) }
+							<span className="sr-only">
+								{ translate( 'Pay for order %(name)s', {
+									args: { name: payment.id },
+								} ) }
+							</span>
+						</ExternalLink>
+					</div>
+				) : (
+					<Button
+						isBusy={ false }
+						disabled={ false }
+						onClick={ getReceipt }
+						className="campaign-item__post-details-button"
+					>
+						<span aria-hidden="true">{ __( 'View receipt' ) }</span>
+						<span className="sr-only">
+							{ translate( 'View receipt for payment %(name)s', {
+								args: { name: payment.id },
+							} ) }
+						</span>
+					</Button>
+				) }
 			</td>
 		</tr>
 	);

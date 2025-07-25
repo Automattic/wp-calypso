@@ -1,8 +1,26 @@
 
-.promote-post-i2__table.payment-list__table {
-
+.promote-post-i2__table.payments-list__table {
 
   td.payment-item__actions {
-    text-align: right;
+	  text-align: right;
+
+	  .payment-link__link a{
+		  background-color: var(--color-surface);
+		  border: 1.5px solid var(--color-accent);
+		  border-radius: 4px;
+		  box-shadow: none;
+		  color: var(--color-accent);
+		  align-items: center;
+		  -webkit-appearance: none;
+		  box-sizing: border-box;
+		  cursor: pointer;
+		  display: inline-flex;
+		  font-family: inherit;
+		  font-size: 13px;
+		  height: 36px;
+		  margin: 0;
+		  padding: 6px 12px;
+		  text-decoration: none;
+	  }
   }
 }

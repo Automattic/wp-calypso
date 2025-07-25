@@ -11,6 +11,7 @@ export type Payment = {
 	total_with_credits: number;
 	total_paid: number;
 	payment_method?: string;
+	payment_link?: string;
 	date: string;
 	credits_used: number;
 	campaigns?: {
