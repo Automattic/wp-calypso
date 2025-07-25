@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Components } from 'react-markdown';
+import type { ComponentType } from 'react';
 import type { Message, NoticeConfig, Suggestion } from '../../types';
 import { ChatHeader } from '../chat/ChatHeader';
 import { ChatInput } from '../chat/ChatInput';
@@ -44,7 +44,7 @@ interface ConversationViewProps extends InputHandlers {
 	clearSuggestions?: () => void;
 
 	// Markdown configuration
-	markdownComponents?: Components;
+	messageRenderer?: ComponentType< { children: string } >;
 }
 
 export function ConversationView( {
@@ -65,7 +65,7 @@ export function ConversationView( {
 	emptyView,
 	suggestions,
 	clearSuggestions,
-	markdownComponents,
+	messageRenderer,
 }: ConversationViewProps ) {
 	return (
 		<div
@@ -81,7 +81,7 @@ export function ConversationView( {
 				error={ error }
 				emptyView={ emptyView }
 				fromCompact={ fromCompact }
-				markdownComponents={ markdownComponents }
+				messageRenderer={ messageRenderer }
 			/>
 			<div
 				className={ styles.inputContainer }

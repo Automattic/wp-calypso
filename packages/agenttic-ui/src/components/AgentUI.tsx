@@ -43,7 +43,7 @@ import { Chat } from './chat/Chat';
  * }
  * ```
  *
- * @param props                    - UI-only props for chat interface
+ * @param props                  - UI-only props for chat interface
  * @param props.variant
  * @param props.triggerIcon
  * @param props.placeholder
@@ -58,7 +58,7 @@ import { Chat } from './chat/Chat';
  * @param props.onSubmit
  * @param props.suggestions
  * @param props.clearSuggestions
- * @param props.markdownComponents
+ * @param props.messageRenderer
  */
 export const AgentUI: React.FC< AgentUIProps > = ( {
 	messages,
@@ -75,7 +75,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 	onClose,
 	suggestions,
 	clearSuggestions,
-	markdownComponents,
+	messageRenderer,
 } ) => {
 	return (
 		<Chat
@@ -93,7 +93,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 			onClose={ onClose }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
-			markdownComponents={ markdownComponents }
+			messageRenderer={ messageRenderer }
 		/>
 	);
 };

@@ -22,19 +22,22 @@ export interface ChartExtensionConfig extends MarkdownExtensionConfigBase {
 	};
 }
 
-// Example of how future extensions would be added:
-// export interface TableExtensionConfig extends MarkdownExtensionConfigBase {
-//     config?: {
-//         sortable?: boolean;
-//         pageSize?: number;
-//     };
-// }
+/**
+ * Configuration for GitHub Flavored Markdown extension
+ * Enables tables, strikethrough, task lists, and other GFM features
+ */
+export interface GfmExtensionConfig extends MarkdownExtensionConfigBase {
+	config?: {
+		// GFM-specific options could be added here
+	};
+}
 
 /**
  * Configuration for all available markdown extensions
  */
 export interface MarkdownExtensions {
 	charts?: ChartExtensionConfig;
+	gfm?: GfmExtensionConfig;
 	// Future extensions can be added here
 }
 

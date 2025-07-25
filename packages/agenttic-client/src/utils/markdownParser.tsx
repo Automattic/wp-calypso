@@ -8,6 +8,7 @@
 import React from 'react';
 import Markdown from 'react-markdown';
 import type { Components } from 'react-markdown';
+import type { PluggableList } from 'unified';
 import {
 	mergeMarkdownComponents,
 	processMarkdownExtensions,
@@ -23,6 +24,7 @@ export type { MarkdownExtensions } from '../markdown-extensions/types';
 interface ParseMarkdownOptions {
 	components?: MarkdownComponents;
 	extensions?: MarkdownExtensions;
+	remarkPlugins?: PluggableList;
 }
 
 /**
@@ -35,19 +37,26 @@ export function parseMarkdownToComponent(
 	text: string,
 	options: ParseMarkdownOptions = {}
 ): React.ReactElement {
-	const { components, extensions } = options;
+	const { components, extensions, remarkPlugins = [] } = options;
 
-	// Process extensions to get extension-specific components
-	const extensionComponents = processMarkdownExtensions( extensions );
+	// Process extensions to get extension-specific components and plugins
+	const processed = processMarkdownExtensions( extensions );
 
 	// User components are already in the correct Components format
 	const userComponents: Components = components || {};
 
 	// Merge extension components with user components (user takes precedence)
 	const finalComponents = mergeMarkdownComponents(
-		extensionComponents,
+		processed.components,
 		userComponents
 	);
 
-	return <Markdown components={ finalComponents }>{ text }</Markdown>;
+	// Merge extension plugins with user plugins
+	const finalPlugins = [ ...processed.remarkPlugins, ...remarkPlugins ];
+
+	return (
+		<Markdown components={ finalComponents } remarkPlugins={ finalPlugins }>
+			{ text }
+		</Markdown>
+	);
 }

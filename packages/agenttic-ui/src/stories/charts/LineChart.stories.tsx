@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { ChartBlock } from '@automattic/agenttic-client';
 
-const meta = {
+const meta: Meta< typeof ChartBlock > = {
 	title: 'Markdown Extensions/Charts/Line Chart',
 	component: ChartBlock,
 	parameters: {

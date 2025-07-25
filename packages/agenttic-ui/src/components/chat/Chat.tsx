@@ -58,7 +58,7 @@ export function Chat( {
 	chatState,
 	suggestions,
 	clearSuggestions,
-	markdownComponents,
+	messageRenderer,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -329,7 +329,7 @@ export function Chat( {
 					clearSuggestions={ clearSuggestions }
 					error={ error }
 					emptyView={ emptyView }
-					markdownComponents={ markdownComponents }
+					messageRenderer={ messageRenderer }
 				/>
 			</div>
 		);
@@ -438,7 +438,7 @@ export function Chat( {
 								clearSuggestions={ clearSuggestions }
 								error={ error }
 								emptyView={ emptyView }
-								markdownComponents={ markdownComponents }
+								messageRenderer={ messageRenderer }
 							/>
 						) }
 					</AnimatePresence>

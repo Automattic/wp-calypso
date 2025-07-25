@@ -4,17 +4,39 @@ import { Meta } from '@storybook/blocks';
 
 # Markdown Extensions
 
-Agenttic UI includes a powerful markdown extension system that allows rendering of rich, interactive content within markdown with built in primitives like charting. This allows AI agents to create dynamic visualizations and interactive elements in their responses.
+Agenttic includes a powerful markdown extension system that allows rendering of rich, interactive content within markdown. This allows AI agents to create dynamic visualizations, tables, and other enhanced markdown features in their responses.
 
 ## Overview
 
-The markdown extension system is built on top of [`react-markdown`](https://github.com/remarkjs/react-markdown) and uses a store-based architecture for registering custom components. Extensions can transform specific markdown patterns into React components, enabling features like charts, interactive buttons, and other custom styling.
+The markdown extension system is built on top of [`react-markdown`](https://github.com/remarkjs/react-markdown) and provides a plugin-based architecture. Extensions can add remark/rehype plugins and custom React components to enhance markdown rendering capabilities.
 
-## Chart Extension
+## Available Extensions
+
+### GFM (GitHub Flavored Markdown)
+
+The GFM extension adds support for GitHub Flavored Markdown features:
+
+- **Tables** - Create tables using pipe syntax
+- **Strikethrough** - Use `~~text~~` for strikethrough
+- **Task Lists** - Checkboxes with `- [ ]` and `- [x]`
+- **Autolinks** - URLs automatically become clickable
+
+#### Example Table
+
+```markdown
+| Feature | Description | Status |
+|---------|-------------|--------|
+| Tables | Pipe-based syntax | ✅ Supported |
+| Strikethrough | ~~Old text~~ | ✅ Supported |
+| Task Lists | Interactive checkboxes | ✅ Supported |
+| Autolinks | https://example.com | ✅ Supported |
+```
+
+### Chart Extension
 
 The chart extension allows rendering of data visualizations directly from markdown code blocks.
 
-### Usage in Markdown
+#### Usage in Markdown
 
 To create a chart, use a code block with the `chart` language identifier:
 
@@ -34,21 +56,21 @@ To create a chart, use a code block with the `chart` language identifier:
 }
 ```
 
-### Available Chart Types
+#### Available Chart Types
 
-#### Line Chart
+##### Line Chart
 
 - **Use Case**: Time-series data, trends over time
 - **Required Fields**: `chartType: "line"`, `data` array
 - **Optional Fields**: `title`, `currency`
 
-#### Bar Chart
+##### Bar Chart
 
 - **Use Case**: Comparisons between categories or time periods
 - **Required Fields**: `chartType: "bar"`, `data` array
 - **Optional Fields**: `title`, `currency`, `mode` ("time-comparison" or "item-comparison")
 
-### Configuration Options
+#### Configuration Options
 
 #### Currency Formatting
 
@@ -100,32 +122,208 @@ To create a chart, use a code block with the `chart` language identifier:
 
 ## Using Markdown Extensions in Your App
 
-### 1. Register Extensions
+> **Important**: The markdown extension system is an **advanced API** provided by **`@automattic/agenttic-client`**, not `@automattic/agenttic-ui`. For most use cases, the `useAgentChat` hook automatically configures markdown rendering with sensible defaults.
 
-Use the `useMarkdown` hook to register extensions:
+### Basic Usage (Recommended)
+
+For most applications, simply use the `useAgentChat` hook which automatically provides markdown rendering:
 
 ```typescript
-import { useMarkdown } from '@automattic/agenttic-ui';
+import { AgentUI } from '@automattic/agenttic-ui';
+import { useAgentChat } from '@automattic/agenttic-client';
 
-function MyComponent() {
-  const { registerMarkdownExtensions } = useMarkdown();
+function MyChat() {
+  const chatProps = useAgentChat({
+    agentId: 'my-agent',
+    // Markdown extensions are automatically configured
+  });
 
-  useEffect(() => {
-    registerMarkdownExtensions({
-      charts: {
-        enabled: true,
-      },
-    });
-  }, [registerMarkdownExtensions]);
+  return <AgentUI {...chatProps} />;
 }
 ```
 
-### 2. Render Markdown with ParseMarkdown
+### Advanced Usage: Custom Message Renderer
+
+**Only use this if you need custom markdown configuration or components.**
+
+#### 1. Create a Message Renderer (Advanced)
+
+Use `createMessageRenderer` from **`@automattic/agenttic-client`** to configure custom markdown extensions:
 
 ```typescript
-import { ParseMarkdown } from '@automattic/agenttic-ui';
+import { createMessageRenderer } from '@automattic/agenttic-client';
 
-function MyMessage({ content }) {
-  return <ParseMarkdown>{content}</ParseMarkdown>;
+// Enable both GFM and charts with custom configuration
+const messageRenderer = createMessageRenderer({
+  extensions: {
+    gfm: { enabled: true },
+    charts: { enabled: true }
+  }
+});
+```
+
+#### 2. Use with AgentUI (Advanced)
+
+Pass the configured renderer to your UI components:
+
+```typescript
+import { AgentUI } from '@automattic/agenttic-ui';
+import { useAgentChat } from '@automattic/agenttic-client';
+
+function MyChat() {
+  const chatProps = useAgentChat({
+    agentId: 'my-agent',
+    // ... other config
+  });
+
+  // Override the default messageRenderer with your custom one
+  return <AgentUI {...chatProps} messageRenderer={messageRenderer} />;
 }
+```
+
+### 3. Custom Components (Advanced)
+
+You can provide custom React components to replace any markdown element, enabling rich, interactive content within chat messages.
+
+> **Note**: This requires using `createMessageRenderer` from **`@automattic/agenttic-client`**. This is advanced usage - most apps should use the default markdown rendering.
+
+#### Available Component Types
+
+You can override any markdown element:
+
+- `p` - Paragraphs
+- `strong` - Bold text  
+- `em` - Italic text
+- `code` - Inline code and code blocks
+- `blockquote` - Block quotes
+- `h1`, `h2`, `h3`, `h4`, `h5`, `h6` - Headings
+- `table`, `thead`, `tbody`, `tr`, `th`, `td` - Table elements
+- `ul`, `ol`, `li` - Lists
+- `a` - Links
+
+#### Example: Custom Blockquotes
+
+```typescript
+const messageRenderer = createMessageRenderer({
+  extensions: {
+    gfm: { enabled: true }
+  },
+  components: {
+    blockquote: ({ children, ...props }) => (
+      <blockquote
+        {...props}
+        style={{
+          borderLeft: '4px solid #007cba',
+          backgroundColor: '#f0f8ff',
+          margin: '16px 0',
+          padding: '12px 16px',
+          fontStyle: 'italic',
+          borderRadius: '0 4px 4px 0',
+        }}
+      >
+        {children}
+      </blockquote>
+    )
+  }
+});
+```
+
+**Markdown usage:**
+```markdown
+> This creates a styled blockquote with blue border and background.
+> Perfect for highlighting important information.
+```
+
+#### Example: Custom Code Components
+
+```typescript
+const messageRenderer = createMessageRenderer({
+  components: {
+    code: ({ inline, children, className, ...props }) => {
+      // Handle special chart code blocks
+      if (className === 'language-chart') {
+        return <ChartBlock data={children} />;
+      }
+      
+      // Inline code
+      if (inline) {
+        return (
+          <code 
+            className="inline-code"
+            style={{
+              backgroundColor: 'rgba(135, 131, 120, 0.15)',
+              borderRadius: '3px',
+              padding: '0.2em 0.4em',
+              fontFamily: 'monospace'
+            }}
+            {...props}
+          >
+            {children}
+          </code>
+        );
+      }
+      
+      // Code blocks
+      return (
+        <pre
+          style={{
+            backgroundColor: '#f6f8fa',
+            borderRadius: '6px',
+            padding: '16px',
+            overflow: 'auto',
+            fontFamily: 'Consolas, Monaco, "Courier New", monospace'
+          }}
+        >
+          <code className={className} {...props}>
+            {children}
+          </code>
+        </pre>
+      );
+    }
+  }
+});
+```
+
+#### Example: Custom Table Styling
+
+```typescript
+const messageRenderer = createMessageRenderer({
+  extensions: {
+    gfm: { enabled: true }
+  },
+  components: {
+    table: ({ children }) => (
+      <table 
+        className="custom-table"
+        style={{
+          width: '100%',
+          borderCollapse: 'collapse',
+          margin: '16px 0',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}
+      >
+        {children}
+      </table>
+    ),
+    th: ({ children }) => (
+      <th style={{
+        backgroundColor: '#f8f9fa',
+        padding: '12px',
+        border: '1px solid #dee2e6',
+        fontWeight: '600',
+        textAlign: 'left'
+      }}>
+        {children}
+      </th>
+    ),
+    td: ({ children }) => (
+      <td style={{
+        padding: '12px',
+        border: '1px solid #dee2e6'
+      }}>
+        {children}
+      </td>
+    )
+  }
+});
 ```

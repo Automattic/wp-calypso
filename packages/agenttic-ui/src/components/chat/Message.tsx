@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 import Markdown from 'react-markdown';
-import type { Components } from 'react-markdown';
+import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/utils';
 import { fadeVariants } from '../animations';
@@ -9,11 +9,14 @@ import styles from './Message.module.css';
 
 export interface MessageProps {
 	message: MessageType;
-	markdownComponents?: Components;
+	messageRenderer?: ComponentType< { children: string } >;
 }
 
 export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
-	function Message( { message, markdownComponents }, ref ) {
+	function Message(
+		{ message, messageRenderer: MessageRenderer = Markdown },
+		ref
+	) {
 		const renderMessageContent = () => {
 			return (
 				<>
@@ -23,12 +26,9 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 							contentBlock.text
 						) {
 							return (
-								<Markdown
-									key={ index }
-									components={ markdownComponents }
-								>
+								<MessageRenderer key={ index }>
 									{ contentBlock.text }
-								</Markdown>
+								</MessageRenderer>
 							);
 						}
 						if (

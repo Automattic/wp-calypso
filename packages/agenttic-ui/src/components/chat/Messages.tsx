@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import type { Components } from 'react-markdown';
+import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
 import { Message } from './Message';
 import styles from './Messages.module.css';
@@ -12,7 +12,7 @@ interface MessagesProps {
 	error?: string | null;
 	emptyView?: React.ReactNode;
 	fromCompact?: boolean;
-	markdownComponents?: Components;
+	messageRenderer?: ComponentType< { children: string } >;
 }
 
 export function Messages( {
@@ -21,7 +21,7 @@ export function Messages( {
 	error,
 	emptyView,
 	fromCompact = false,
-	markdownComponents,
+	messageRenderer,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 	const previousMessagesRef = useRef< MessageType[] >( [] );
@@ -91,7 +91,7 @@ export function Messages( {
 					<Message
 						key={ message.id }
 						message={ message }
-						markdownComponents={ markdownComponents }
+						messageRenderer={ messageRenderer }
 					/>
 				) ) }
 				{ isProcessing && <ThinkingMessage /> }

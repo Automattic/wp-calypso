@@ -18,6 +18,7 @@ export {
 	extractToolCallsFromMessage,
 	extractTextFromMessage,
 } from './client/utils/core';
+export { createMessageRenderer } from './utils/createMessageRenderer';
 
 // All type exports (safe to expose)
 export type {

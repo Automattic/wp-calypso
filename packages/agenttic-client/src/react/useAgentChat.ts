@@ -1,14 +1,11 @@
 import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAgentManager } from './agentManager';
 import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '../utils/markdownParser';
-import {
-	mergeMarkdownComponents,
-	processMarkdownExtensions,
-} from '../markdown-extensions';
+import { createMessageRenderer } from '../utils/createMessageRenderer';
 import type {
 	AuthProvider,
 	Message as ClientMessage,
@@ -164,7 +161,7 @@ export interface UseAgentChatReturn {
 	error: string | null;
 	onSubmit: ( message: string ) => Promise< void >;
 	suggestions: Suggestion[];
-	markdownComponents?: MarkdownComponents;
+	messageRenderer?: React.ComponentType< { children: string } >;
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -452,13 +449,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		[]
 	);
 
-	// Compute merged markdown components
-	const extensionComponents = processMarkdownExtensions(
-		state.markdownExtensions
-	);
-	const mergedComponents = mergeMarkdownComponents(
-		extensionComponents,
-		state.markdownComponents
+	// Create a memoized message renderer with current configuration
+	const messageRenderer = useMemo(
+		() =>
+			createMessageRenderer( {
+				components: state.markdownComponents,
+				extensions: state.markdownExtensions,
+			} ),
+		[ state.markdownComponents, state.markdownExtensions ]
 	);
 
 	return {
@@ -468,7 +466,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		error: state.error,
 		onSubmit,
 		suggestions: state.suggestions,
-		markdownComponents: mergedComponents,
+		messageRenderer,
 
 		// UI management methods
 		registerSuggestions,

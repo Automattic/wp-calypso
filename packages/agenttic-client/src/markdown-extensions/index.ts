@@ -7,26 +7,41 @@
  */
 
 import type { Components } from 'react-markdown';
+import type { PluggableList } from 'unified';
+import remarkGfm from 'remark-gfm';
 import { createChartBlock } from './charts';
 import type { MarkdownExtensions } from './types';
 
 /**
- * Process markdown extensions and return components for react-markdown
+ * Result of processing markdown extensions
+ */
+export interface ProcessedMarkdownExtensions {
+	components: Components;
+	remarkPlugins: PluggableList;
+}
+
+/**
+ * Process markdown extensions and return components and plugins for react-markdown
  * @param extensions - The markdown extensions configuration
- * @return An object containing react-markdown components for the enabled extensions
+ * @return An object containing react-markdown components and remark plugins for the enabled extensions
  */
 export function processMarkdownExtensions(
 	extensions?: MarkdownExtensions
-): Components {
+): ProcessedMarkdownExtensions {
 	const components: Components = {};
+	const remarkPlugins: PluggableList = [];
 
 	if ( extensions?.charts?.enabled ) {
 		components.code = createChartBlock( extensions.charts.config );
 	}
 
+	if ( extensions?.gfm?.enabled ) {
+		remarkPlugins.push( remarkGfm );
+	}
+
 	// Future extensions can be processed here
 
-	return components;
+	return { components, remarkPlugins };
 }
 
 /**

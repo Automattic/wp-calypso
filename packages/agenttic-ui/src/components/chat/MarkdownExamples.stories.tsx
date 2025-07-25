@@ -1,13 +1,36 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
+import { createMessageRenderer } from '@automattic/agenttic-client';
 import { Messages } from './Messages';
 import type { Message } from '../../types';
 
 const meta = {
-	title: 'Chat/Markdown Examples',
+	title: 'Markdown Extensions/Custom Components',
 	component: Messages,
 	parameters: {
 		layout: 'fullscreen',
+		docs: {
+			description: {
+				component: `
+These examples demonstrate how to use custom React components to style markdown content.
+
+You can provide custom components for any markdown element (blockquotes, code blocks, tables, etc.) 
+to match your application's design system.
+
+\`\`\`typescript
+const customComponents = {
+  blockquote: CustomBlockquote,
+  code: CustomCodeBlock,
+  // ... other components
+};
+
+const messageRenderer = createMessageRenderer({
+  components: customComponents
+});
+\`\`\`
+				`,
+			},
+		},
 	},
 	tags: [ 'autodocs' ],
 } satisfies Meta< typeof Messages >;
@@ -48,7 +71,6 @@ const CodeBlockComponent = ( {
 			fontFamily: 'Consolas, Monaco, "Courier New", monospace',
 			fontSize: '14px',
 			lineHeight: '1.45',
-			margin: '16px 0',
 		} }
 	>
 		<code data-language={ language }>{ children }</code>
@@ -59,25 +81,25 @@ const CodeBlockComponent = ( {
 const InlineCodeComponent = ( { children }: { children: React.ReactNode } ) => (
 	<code
 		style={ {
-			backgroundColor: '#f3f4f6',
+			backgroundColor: 'rgba(135, 131, 120, 0.15)',
 			borderRadius: '3px',
-			padding: '2px 4px',
-			fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+			padding: '0.2em 0.4em',
 			fontSize: '85%',
+			fontFamily: 'Consolas, Monaco, "Courier New", monospace',
 		} }
 	>
 		{ children }
 	</code>
 );
 
-// Example messages with actual markdown text
+// Sample messages with markdown content
 const markdownMessages: Message[] = [
 	{
 		id: '1',
 		content: [
 			{
 				type: 'text',
-				text: 'Show me an Einstein quote in markdown block quote format',
+				text: 'Can you share an inspiring quote?',
 			},
 		],
 		role: 'user',
@@ -90,13 +112,12 @@ const markdownMessages: Message[] = [
 		content: [
 			{
 				type: 'text',
-				text: `Here's a famous Einstein quote:
+				text: `Here's one of my favorite quotes:
 
-> Imagination is more important than knowledge. Knowledge
-> is limited. Imagination embraces the entire world,
-> stimulating progress, giving birth to evolution.
+> The only way to do great work is to love what you do.
+> If you haven't found it yet, keep looking. Don't settle.
 
-— Albert Einstein`,
+— Steve Jobs`,
 			},
 		],
 		role: 'agent',
@@ -162,11 +183,19 @@ const customMarkdownComponents = {
 	},
 };
 
+// Create a message renderer with GFM support and custom components
+const messageRenderer = createMessageRenderer( {
+	extensions: {
+		gfm: { enabled: true },
+	},
+	components: customMarkdownComponents,
+} );
+
 export const BlockquoteExample: Story = {
 	args: {
 		messages: markdownMessages.slice( 0, 2 ),
 		isProcessing: false,
-		markdownComponents: customMarkdownComponents,
+		messageRenderer,
 	},
 };
 
@@ -174,7 +203,7 @@ export const CodeBlockExample: Story = {
 	args: {
 		messages: markdownMessages.slice( 2, 4 ),
 		isProcessing: false,
-		markdownComponents: customMarkdownComponents,
+		messageRenderer,
 	},
 };
 
@@ -202,43 +231,29 @@ export const MixedMarkdownContent: Story = {
 						type: 'text',
 						text: `React hooks are functions that let you use state and other React features in functional components. Here are the most common ones:
 
-### 1. useState
-
-The \`useState\` hook lets you add state to functional components:
-
-\`\`\`jsx
-import { useState } from 'react';
-
-function Counter() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <button onClick={() => setCount(count + 1)}>
-      Count: {count}
-    </button>
-  );
-}
+## useState
+\`\`\`javascript
+const [count, setCount] = useState(0);
 \`\`\`
 
-### 2. useEffect
-
-The \`useEffect\` hook performs side effects:
-
-\`\`\`jsx
+## useEffect
+\`\`\`javascript
 useEffect(() => {
-  // This runs after every render
-  document.title = \`Count: \${count}\`;
-
-  // Cleanup function (optional)
+  // Side effects here
   return () => {
-    console.log('Cleanup');
+    // Cleanup
   };
-}, [count]); // Dependency array
+}, [dependencies]);
 \`\`\`
 
-> Remember: Hooks must be called at the top level
-> of your component, not inside conditions, loops,
-> or nested functions.`,
+## useContext
+\`\`\`javascript
+const theme = useContext(ThemeContext);
+\`\`\`
+
+> **Pro tip**: Always follow the Rules of Hooks:
+> 1. Only call hooks at the top level
+> 2. Only call hooks from React functions`,
 					},
 				],
 				role: 'agent',
@@ -248,11 +263,11 @@ useEffect(() => {
 			},
 		],
 		isProcessing: false,
-		markdownComponents: customMarkdownComponents,
+		messageRenderer,
 	},
 };
 
-export const CodeWithMultipleLanguages: Story = {
+export const LongCodeExample: Story = {
 	args: {
 		messages: [
 			{
@@ -260,7 +275,7 @@ export const CodeWithMultipleLanguages: Story = {
 				content: [
 					{
 						type: 'text',
-						text: 'Show me the same logic in Python and JavaScript',
+						text: 'Can you show me a complete React component example?',
 					},
 				],
 				role: 'user',
@@ -273,29 +288,101 @@ export const CodeWithMultipleLanguages: Story = {
 				content: [
 					{
 						type: 'text',
-						text: `Here's a function to calculate factorial in both languages:
+						text: `Here's a complete React component with TypeScript:
 
-#### JavaScript:
+\`\`\`typescript
+import React, { useState, useEffect } from 'react';
 
-\`\`\`javascript
-function factorial(n) {
-  if (n <= 1) return 1;
-  return n * factorial(n - 1);
+interface TodoItem {
+  id: number;
+  text: string;
+  completed: boolean;
 }
 
-console.log(factorial(5)); // Output: 120
+interface TodoListProps {
+  initialItems?: TodoItem[];
+}
+
+export const TodoList: React.FC<TodoListProps> = ({ initialItems = [] }) => {
+  const [todos, setTodos] = useState<TodoItem[]>(initialItems);
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    // Load todos from localStorage on mount
+    const savedTodos = localStorage.getItem('todos');
+    if (savedTodos) {
+      setTodos(JSON.parse(savedTodos));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save todos to localStorage whenever they change
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
+  const addTodo = () => {
+    if (inputValue.trim()) {
+      setTodos([
+        ...todos,
+        {
+          id: Date.now(),
+          text: inputValue,
+          completed: false,
+        },
+      ]);
+      setInputValue('');
+    }
+  };
+
+  const toggleTodo = (id: number) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  const deleteTodo = (id: number) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  return (
+    <div className="todo-list">
+      <h2>My Todo List</h2>
+      <div className="add-todo">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+          placeholder="Add a new todo..."
+        />
+        <button onClick={addTodo}>Add</button>
+      </div>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo.id)}
+            />
+            <span>{todo.text}</span>
+            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 \`\`\`
 
-#### Python:
-
-\`\`\`python
-def factorial(n):
-    if n <= 1:
-        return 1
-    return n * factorial(n - 1)
-
-print(factorial(5))  # Output: 120
-\`\`\``,
+This component demonstrates:
+- TypeScript interfaces for type safety
+- Multiple \`useState\` hooks for state management
+- \`useEffect\` for side effects (localStorage)
+- Event handling and conditional rendering
+- Array manipulation with immutable updates`,
 					},
 				],
 				role: 'agent',
@@ -305,7 +392,7 @@ print(factorial(5))  # Output: 120
 			},
 		],
 		isProcessing: false,
-		markdownComponents: customMarkdownComponents,
+		messageRenderer,
 	},
 };
 
@@ -356,6 +443,6 @@ export const NestedQuotes: Story = {
 			},
 		],
 		isProcessing: false,
-		markdownComponents: customMarkdownComponents,
+		messageRenderer,
 	},
 };

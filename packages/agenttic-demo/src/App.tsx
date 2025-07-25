@@ -36,7 +36,7 @@ const App: React.FC = () => {
 		registerMarkdownComponents,
 		registerMarkdownExtensions,
 		addMessage,
-		markdownComponents,
+		messageRenderer,
 	} = useAgentChat( {
 		agentId: 'test',
 		agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
@@ -153,6 +153,9 @@ const App: React.FC = () => {
 			charts: {
 				enabled: true,
 			},
+			gfm: {
+				enabled: true, // Enables tables, strikethrough, task lists, autolinks
+			},
 		} ),
 		[]
 	);
@@ -247,7 +250,7 @@ const App: React.FC = () => {
 				variant="floating"
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }
-				markdownComponents={ markdownComponents }
+				messageRenderer={ messageRenderer }
 			/>
 		</div>
 	);

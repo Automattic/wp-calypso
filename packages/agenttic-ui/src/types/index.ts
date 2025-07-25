@@ -1,5 +1,5 @@
 // UI package should not import agent communication types
-import type { Components } from 'react-markdown';
+import type { ComponentType } from 'react';
 
 // Define UI-specific types locally
 export interface Suggestion {
@@ -51,7 +51,7 @@ export interface AgentUIProps {
 	chatState?: ChatState;
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
-	markdownComponents?: Components;
+	messageRenderer?: ComponentType< { children: string } >;
 }
 
 export interface NoticeConfig {
