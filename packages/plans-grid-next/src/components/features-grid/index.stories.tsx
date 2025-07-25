@@ -41,11 +41,11 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 		isSpotlightOnCurrentPlan: true,
 	} );
 
-	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid(
-		props.isInSignup,
-		props.currentSitePlanSlug || undefined,
-		[] // Pass empty array for activePromotions in stories
-	);
+	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid( {
+		isInSignup: props.isInSignup,
+		currentSitePlanSlug: props.currentSitePlanSlug || undefined,
+		activePromotions: [], // Pass empty array for activePromotions in stories
+	} );
 
 	return (
 		gridPlans && (

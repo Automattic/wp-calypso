@@ -79,11 +79,12 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
-	isInSignup?: boolean,
-	currentSitePlanSlug?: string,
-	activePromotions?: string[]
-) {
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
+	isInSignup?: boolean;
+	currentSitePlanSlug?: string;
+	activePromotions?: string[];
+} ) {
+	const { isInSignup, currentSitePlanSlug, activePromotions } = props || {};
 	return resolveFeatureGroupsForFeaturesGrid( {
 		showSimplifiedFeatures: true,
 		isInSignup,
@@ -92,11 +93,12 @@ export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
 	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid(
-	isInSignup?: boolean,
-	currentSitePlanSlug?: string,
-	activePromotions?: string[]
-): Partial< FeatureGroupMap > {
+export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
+	isInSignup?: boolean;
+	currentSitePlanSlug?: string;
+	activePromotions?: string[];
+} ): Partial< FeatureGroupMap > {
+	const { isInSignup, currentSitePlanSlug, activePromotions } = props || {};
 	return resolveFeatureGroupsForFeaturesGrid( {
 		isInSignup,
 		currentSitePlanSlug,
@@ -108,13 +110,13 @@ export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroup
 	return resolveFeatureGroupsForComparisonGrid();
 }
 
-export function getWooExpressFeaturesGroupedForFeaturesGrid(
-	isInSignup?: boolean,
-	currentSitePlanSlug?: string,
-	activePromotions?: string[]
-) {
+export function getWooExpressFeaturesGroupedForFeaturesGrid( props?: {
+	isInSignup?: boolean;
+	currentSitePlanSlug?: string;
+	activePromotions?: string[];
+} ) {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
-	return getPlanFeaturesGroupedForFeaturesGrid( isInSignup, currentSitePlanSlug, activePromotions );
+	return getPlanFeaturesGroupedForFeaturesGrid( props );
 }
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {

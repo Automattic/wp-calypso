@@ -708,23 +708,23 @@ const PlansFeaturesMain = ( {
 
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
-		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid(
+		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid( {
 			isInSignup,
-			sitePlanSlug,
-			activePromotions
-		);
+			currentSitePlanSlug: sitePlanSlug,
+			activePromotions,
+		} );
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid(
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
 			isInSignup,
-			sitePlanSlug,
-			activePromotions
-		);
+			currentSitePlanSlug: sitePlanSlug,
+			activePromotions,
+		} );
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid(
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
 			isInSignup,
-			sitePlanSlug,
-			activePromotions
-		);
+			currentSitePlanSlug: sitePlanSlug,
+			activePromotions,
+		} );
 	}
 
 	const getComparisonGridToggleLabel = () => {
