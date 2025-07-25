@@ -105,7 +105,6 @@ export class ContactDetailsFormFields extends Component {
 			form: null,
 			submissionCount: 0,
 			updateWpcomEmail: false,
-			organizationFieldIsVisible: false,
 		};
 
 		this.inputRefs = {};
@@ -129,8 +128,7 @@ export class ContactDetailsFormFields extends Component {
 			nextProps.needsFax !== this.props.needsFax ||
 			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
 			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails ||
-			nextState.updateWpcomEmail !== this.state.updateWpcomEmail ||
-			nextState.organizationFieldIsVisible !== this.state.organizationFieldIsVisible
+			nextState.updateWpcomEmail !== this.state.updateWpcomEmail
 		);
 	}
 
@@ -387,7 +385,6 @@ export class ContactDetailsFormFields extends Component {
 							text: labelTexts.organization || translate( '+ Add organization name' ),
 							placeholder: translate( 'Organization (optional)' ),
 							toggled: formState.getFieldValue( this.state.form, 'organization' ),
-							onToggle: () => this.setState( { organizationFieldIsVisible: true } ),
 						},
 						{
 							needsChildRef: true,
