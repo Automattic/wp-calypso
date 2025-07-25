@@ -1,17 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { isTemporarySitePurchase } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
-
-function isTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
-	const { domain } = purchase;
-	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
-	// site(s) to work. This function may need to be updated in the future as additional products types
-	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless\.(jetpack|akismet|marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
-		domain
-	);
-}
 
 function purchaseType( purchase: ActiveSubscription ): string | null {
 	if ( 'theme' === purchase.product_type ) {

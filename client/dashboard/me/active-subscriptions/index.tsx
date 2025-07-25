@@ -15,6 +15,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
+import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 import type { Site } from '../../data/site';
 
@@ -42,6 +43,7 @@ export const purchasesDataView: View = {
 };
 
 function getDisplayName( item: ActiveSubscription ) {
+	// FIXME: also include info for products with tiers or usage; see getDisplayName in client/lib/purchases
 	if ( item.meta && ( item.is_domain_registration || item.is_domain ) ) {
 		return item.meta;
 	}
@@ -250,8 +252,12 @@ function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
-				// FIXME: status here (like "Expires")
-				return String( item.expiry_status );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				return (
+					<div>
+						<ActiveSubscriptionExpiry purchase={ item } isDisconnectedSite={ ! site } />
+					</div>
+				);
 			},
 		},
 		{
