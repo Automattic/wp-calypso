@@ -495,7 +495,7 @@ export default function SyncModal( {
 									? createInterpolateElement( __( 'Backup contents from: <date />' ), {
 											date: <span>{ displayBackupDate }</span>,
 									  } )
-									: __( 'There are no backups' ) }{ ' ' }
+									: __( 'There are no backups.' ) }{ ' ' }
 								<ExternalLink
 									href={ `/backup/${ sourceSiteSlug }` }
 									children={ __( 'Backup now' ) }
