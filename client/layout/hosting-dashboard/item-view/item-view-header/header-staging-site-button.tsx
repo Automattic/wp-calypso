@@ -112,10 +112,7 @@ export default function HeaderStagingSiteButton( {
 	);
 
 	const showAddStagingButton =
-		isAtomic &&
-		! isStagingSite &&
-		( stagingSites.length === 0 ||
-			( transferStatus !== StagingSiteStatus.COMPLETE && ! isCreatingStagingSite ) );
+		isAtomic && ! isStagingSite && ( stagingSites.length === 0 || isCreatingStagingSite );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
