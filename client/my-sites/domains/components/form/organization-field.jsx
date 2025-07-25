@@ -6,21 +6,22 @@ export class OrganizationField extends PureComponent {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			isToggled: false,
+			toggled: props.toggled,
 		};
 	}
 
 	handleToggle = () => {
-		this.setState( { isToggled: true } );
+		this.setState( { toggled: true } );
 	};
 
 	render() {
 		const { translate } = this.props;
+		const shouldShowExplanation = this.state.toggled || this.props.value;
 
 		return (
 			<div className="organization-field-container">
 				<HiddenInput { ...this.props } onToggle={ this.handleToggle } />
-				{ this.state.isToggled && (
+				{ shouldShowExplanation && (
 					<span>
 						{ translate(
 							'The organization, if filled, will be made public and considered the legal domain owner'

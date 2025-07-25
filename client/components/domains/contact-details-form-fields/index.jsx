@@ -386,6 +386,7 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
 							placeholder: translate( 'Organization (optional)' ),
+							toggled: formState.getFieldValue( this.state.form, 'organization' ),
 							onToggle: () => this.setState( { organizationFieldIsVisible: true } ),
 						},
 						{
