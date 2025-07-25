@@ -99,13 +99,15 @@ export interface ActiveSubscription {
 	is_cancelable: boolean;
 	is_domain: boolean;
 	is_domain_registration: boolean;
+	is_google_workspace_product: boolean;
 	is_hundred_year_domain: boolean;
-	is_locked: boolean;
 	is_iap_purchase: boolean;
+	is_locked: boolean;
 	is_rechargable: boolean;
 	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
+	is_titan_mail_product: boolean;
 	is_woo_express_trial: boolean;
 	meta: string | undefined;
 	ownership_id: number | undefined;
