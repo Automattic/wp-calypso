@@ -178,7 +178,7 @@ const ThreatDialog: React.FC< Props > = ( {
 							) }
 						</p>
 					) }
-					{ threat.fixable.extras?.is_dotorg !== false && (
+					{ threat.fixable.extras?.is_dotorg === false && (
 						<p>
 							{ translate(
 								'We did not find this extension on WordPress.org. We encourage you to create a backup of your site prior to fixing this threat, if you have not done so already.'
@@ -200,7 +200,7 @@ const ThreatDialog: React.FC< Props > = ( {
 								components: {
 									slug: <code>{ slug }</code>,
 								},
-								comment: '%(slug) is the slug of the extension (plugin or theme) being deleted.',
+								comment: '{{slug/}} is the slug of the extension (plugin or theme) being deleted.',
 							}
 						) }
 						label={ translate( 'Confirm deletion' ) }
