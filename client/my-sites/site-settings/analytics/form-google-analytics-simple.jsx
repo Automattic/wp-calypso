@@ -47,7 +47,7 @@ const GoogleAnalyticsSimpleForm = ( {
 		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
 		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 	);
-	const wpAdminUrl = useSelector( ( state ) =>
+	const statsUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
 	);
 
@@ -145,7 +145,7 @@ const GoogleAnalyticsSimpleForm = ( {
 										'normally show slightly different totals for your visits, views, etc.',
 									{
 										components: {
-											a: <a href={ wpAdminUrl } />,
+											a: <a href={ statsUrl } />,
 										},
 									}
 								) }
