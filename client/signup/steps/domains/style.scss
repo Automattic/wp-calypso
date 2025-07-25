@@ -117,12 +117,6 @@ body.domain-search-legacy--unified {
 	}
 
 	.signup__step.is-domains {
-		.action-buttons.step-wrapper__navigation {
-			@media ( max-width: $break-mobile ) {
-				display: none;
-			}
-		}
-
 		.async-load__placeholder {
 			margin: 12px;
 		}

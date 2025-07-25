@@ -1532,6 +1532,16 @@ class RenderDomainsStepComponent extends Component {
 		);
 	}
 
+	shouldRenderStickyNavigation() {
+		if ( this.props.shouldUseDomainSearchV2 ) {
+			return false;
+		}
+
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			return false;
+		}
+	}
+
 	render() {
 		if ( this.skipRender ) {
 			return null;
@@ -1752,7 +1762,7 @@ class RenderDomainsStepComponent extends Component {
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout
-				isSticky={ ! shouldUseDomainSearchV2 }
+				isSticky={ this.shouldRenderStickyNavigation() }
 				customizedActionButtons={ useDomainIOwnLink }
 			/>
 		);
