@@ -86,7 +86,7 @@ export default function LatestActivityCard( {
 					</DataViews>
 				) }
 			</CardBody>
-			{ data && (
+			{ data && data.length > 0 && (
 				<SummaryButtonCardFooter
 					title={ __( 'See all activity' ) }
 					href={ getActivityLogUrl( site ) }
