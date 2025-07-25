@@ -17,6 +17,7 @@ import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
+import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
@@ -126,6 +127,7 @@ const siteOverviewRoute = createRoute( {
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteLastFiveActivityLogEntriesQuery( site.ID ) ),
 				hasHostingFeature( site, HostingFeatures.SCAN ) &&
 					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 				hasHostingFeature( site, HostingFeatures.BACKUPS ) &&

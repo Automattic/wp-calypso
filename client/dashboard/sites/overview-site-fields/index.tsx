@@ -15,7 +15,7 @@ import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
 import type { Site } from '../../data/types';
-import './site-overview-fields.scss';
+import './style.scss';
 
 const Field = ( { children, title }: { children: React.ReactNode; title?: React.ReactNode } ) => {
 	return (

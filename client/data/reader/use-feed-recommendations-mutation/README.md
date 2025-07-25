@@ -1,19 +1,18 @@
-# Subscriptions Hooks
+#  Reader Hooks
 
-This directory contains React hooks for managing subscription-related functionality in the WordPress.com Subscriptions page.
+This directory contains React hooks for managing the list of recommend feeds from the current user.
 
 ## Overview
 
-### `useRecommendedSite`
+### `useFeedRecommendationsMutation`
 
-A custom hook for managing recommended site state with optimistic updates and automatic error recovery. Note that sites are actually "feeds."
+A custom hook for managing recommended sites state with optimistic updates and automatic error recovery. Note that sites are actually "feeds."
 
 ## Real-World Example
 
 ```typescript
-// From client/landing/subscriptions/components/site-subscriptions-list/site-subscription-row.tsx
 const SiteSubscriptionRow = ( { feed_ID: feedId, /* other props */ } ) => {
-	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feedId ) );
+	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( Number( feedId ) );
 
 	return (
 		<div className="subscription-row">
@@ -30,15 +29,15 @@ const SiteSubscriptionRow = ( { feed_ID: feedId, /* other props */ } ) => {
 
 ## API Reference
 
-### `useRecommendedSite(feedId: number)`
+### `useFeedRecommendationsMutation(feedId: number)`
 
 **Parameters:**
 - `feedId: number` - The feed ID to manage recommendations for
 
-**Returns:** `UseRecommendedSiteResult`
+**Returns:** `useFeedRecommendationsMutationResult`
 
 ```typescript
-interface UseRecommendedSiteResult {
+interface useFeedRecommendationsMutationResult {
 	isRecommended: boolean;    // Current recommendation state (from Redux)
 	isUpdating: boolean;       // Whether operation is in progress  
 	canToggle: boolean;        // Whether toggle is allowed

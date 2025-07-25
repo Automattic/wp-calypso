@@ -3,14 +3,14 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import {
-	addRecommendedBlogsSite,
-	removeRecommendedBlogsSite,
+	addRecommendedBlogsSite as addFeedRecommendation,
+	removeRecommendedBlogsSite as removeFeedRecommendation,
 } from 'calypso/state/reader/lists/actions';
 import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import type { ReaderList } from 'calypso/reader/list-manage/types';
 import type { AppState } from 'calypso/types';
 
-interface UseRecommendedSiteResult {
+interface useFeedRecommendationsMutationResult {
 	isRecommended: boolean;
 	isUpdating: boolean;
 	canToggle: boolean;
@@ -18,11 +18,13 @@ interface UseRecommendedSiteResult {
 }
 
 /**
- * Custom hook for managing recommended site state with optimistic updates
- * @param feedId - The feed ID to add/remove from recommended blogs list
+ * Custom hook for managing the feed recommendations state with optimistic updates
+ * @param feedId - The feed ID to add/remove from recommended feeds list
  * @returns Object with recommendation state and toggle function
  */
-export const useRecommendedSite = ( feedId: number ): UseRecommendedSiteResult => {
+export const useFeedRecommendationsMutation = (
+	feedId: number
+): useFeedRecommendationsMutationResult => {
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
 
@@ -74,14 +76,14 @@ export const useRecommendedSite = ( feedId: number ): UseRecommendedSiteResult =
 
 		if ( newValue ) {
 			dispatch(
-				addRecommendedBlogsSite( recommendedBlogsList.ID, feedId, currentUserName as string, {
+				addFeedRecommendation( recommendedBlogsList.ID, feedId, currentUserName as string, {
 					successMessage: translate( 'Site added to your recommended blogs.' ),
 					errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
 				} )
 			);
 		} else {
 			dispatch(
-				removeRecommendedBlogsSite( recommendedBlogsList.ID, feedId, currentUserName as string, {
+				removeFeedRecommendation( recommendedBlogsList.ID, feedId, currentUserName as string, {
 					successMessage: translate( 'Site removed from your recommended blogs.' ),
 					errorMessage: translate( 'Failed to remove site from recommended blogs.' ),
 				} )

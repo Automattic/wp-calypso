@@ -3,6 +3,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
+import { isDeletingStagingSiteQuery } from '../../app/queries/site-staging-sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -19,12 +20,22 @@ import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WordPressSettingsSummary from '../settings-wordpress/summary';
+import StagingSiteDeleteBanner from '../staging-site-delete-banner';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( site.ID ) );
+
+	const { data: isStagingSiteDeletionInProgress } = useQuery( {
+		...isDeletingStagingSiteQuery( site.ID ),
+		enabled: site.is_wpcom_staging_site,
+	} );
+
+	if ( isStagingSiteDeletionInProgress ) {
+		return <StagingSiteDeleteBanner site={ site } />;
+	}
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>

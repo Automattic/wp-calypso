@@ -4,18 +4,24 @@ import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
+import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
 import { useHasValidQuotaQuery } from 'calypso/sites/staging-site/hooks/use-has-valid-quota';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-staging-site-status';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
+const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
@@ -34,6 +40,12 @@ export default function HeaderStagingSiteButton( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
+	const stagingSiteStatus =
+		useSelector( ( state ) => getStagingSiteStatus( state, siteId ) ) ?? StagingSiteStatus.UNSET;
+	const isCreatingStagingSite = [
+		StagingSiteStatus.INITIATE_TRANSFERRING,
+		StagingSiteStatus.TRANSFERRING,
+	].includes( stagingSiteStatus );
 	const isA4ADevSite = site?.is_a4a_dev_site || false;
 	const {
 		data: hasValidQuota,
@@ -47,6 +59,21 @@ export default function HeaderStagingSiteButton( {
 	const { data: stagingSites = [] } = useStagingSite( siteId, {
 		enabled: ! hideEnvDataInHeader && isAtomic,
 	} );
+
+	const stagingSiteId = useMemo( () => {
+		return stagingSites?.length ? stagingSites[ 0 ].id : null;
+	}, [ stagingSites ] );
+	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
+
+	useEffect( () => {
+		if ( isCreatingStagingSite && transferStatus === transferStates.COMPLETE ) {
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
+			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
+			dispatch(
+				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
+			);
+		}
+	}, [ __, dispatch, queryClient, siteId, transferStatus, isCreatingStagingSite ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
@@ -86,7 +113,7 @@ export default function HeaderStagingSiteButton( {
 	);
 
 	const showAddStagingButton =
-		stagingSites.length === 0 && isAtomic && ! isStagingSite && ! isLoadingAddStagingSite;
+		isAtomic && ! isStagingSite && ( stagingSites.length === 0 || isCreatingStagingSite );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -114,6 +141,10 @@ export default function HeaderStagingSiteButton( {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
 		);
+	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
+		disabledReason = __( 'We are deleting your staging site.' );
+	} else if ( isLoadingAddStagingSite || isCreatingStagingSite ) {
+		disabledReason = __( 'Adding staging site…' );
 	}
 
 	return (

@@ -29,7 +29,7 @@ const useDomainSuggestion = ( site: Site ) => {
 	};
 };
 
-const OverviewCardUpsellDomainContent = ( {
+const DomainUpsellCardContent = ( {
 	site,
 	title,
 	description,
@@ -132,7 +132,7 @@ const OverviewCardUpsellDomainContent = ( {
 	);
 };
 
-const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
+const DomainUpsellCard = ( { site }: { site: Site } ) => {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	if ( ! sitePlan ) {
 		return null;
@@ -140,7 +140,7 @@ const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 
 	if ( sitePlan.has_domain_credit ) {
 		return (
-			<OverviewCardUpsellDomainContent
+			<DomainUpsellCardContent
 				site={ site }
 				title={ __( 'Claim your free domain' ) }
 				description={ __(
@@ -153,7 +153,7 @@ const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 	}
 
 	return (
-		<OverviewCardUpsellDomainContent
+		<DomainUpsellCardContent
 			site={ site }
 			title={ __( 'The perfect domain awaits' ) }
 			description={ __(
@@ -165,4 +165,4 @@ const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 	);
 };
 
-export default OverviewCardUpsellDomain;
+export default DomainUpsellCard;

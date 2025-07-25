@@ -6,7 +6,7 @@ import {
 	isFetchingAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
 
-export const useCheckStagingSiteStatus = ( siteId: number, isEnabled: boolean ) => {
+export const useCheckStagingSiteStatus = ( siteId: number | null, isEnabled: boolean = true ) => {
 	const dispatch = useDispatch();
 	const [ isAutomatedTransferFetched, setIsAutomatedTransferFetched ] = useState( false );
 

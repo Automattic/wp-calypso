@@ -11,8 +11,6 @@ import { DomainsMiniCartSummary } from './summary';
 
 import './style.scss';
 
-const AnimatedCard = motion( Card );
-
 const animation = {
 	initial: {
 		y: '100%',
@@ -21,7 +19,7 @@ const animation = {
 	},
 	animateIn: {
 		y: 0,
-		display: 'block',
+		display: 'flex',
 		opacity: 1,
 	},
 	animateOut: {
@@ -34,24 +32,29 @@ const animation = {
 const DomainsMiniCart = ( { className }: { className?: string } ) => {
 	const { cart, isFullCartOpen } = useDomainSearch();
 
-	const shouldDisplayMiniCart = cart.items.length > 0 && ! isFullCartOpen;
+	const isMiniCartOpen = cart.items.length > 0 && ! isFullCartOpen;
 
 	return (
-		<AnimatedCard
-			initial={ animation.initial }
-			animate={ shouldDisplayMiniCart ? animation.animateIn : animation.animateOut }
-			transition={ { type: 'tween', duration: 0.25 } }
-			className={ clsx( 'domains-mini-cart', className ) }
-			isRounded={ false }
-			elevation={ 2 }
-		>
-			<div className="domains-mini-cart__content">
-				<HStack spacing={ 2 }>
-					<DomainsMiniCartSummary />
-					<DomainsMiniCartActions />
-				</HStack>
-			</div>
-		</AnimatedCard>
+		<>
+			<div className="domains-mini-cart__cushion" />
+			<motion.div
+				className={ clsx( 'domains-mini-cart__container', className ) }
+				initial={ animation.initial }
+				animate={ isMiniCartOpen ? animation.animateIn : animation.animateOut }
+				transition={ { type: 'tween', duration: 0.25 } }
+			>
+				<Card isRounded={ false } elevation={ 2 } style={ { width: '100%' } }>
+					<div className="domains-mini-cart">
+						<div className="domains-mini-cart__content">
+							<HStack spacing={ 2 }>
+								<DomainsMiniCartSummary />
+								<DomainsMiniCartActions />
+							</HStack>
+						</div>
+					</div>
+				</Card>
+			</motion.div>
+		</>
 	);
 };
 

@@ -7,7 +7,7 @@ import { useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
-import { useRecommendedSite } from 'calypso/data/reader/use-recommended-site';
+import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -103,7 +103,7 @@ const SiteSubscriptionRow = ( {
 	const currentUserName = useSelector( getCurrentUserName );
 
 	// Use custom hook for recommended site functionality
-	const { isRecommended, toggleRecommended } = useRecommendedSite( Number( feed_id ) );
+	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( Number( feed_id ) );
 
 	const isCompactLayout = layout === 'compact';
 

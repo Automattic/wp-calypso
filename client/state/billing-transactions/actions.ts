@@ -18,7 +18,7 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 			type: BILLING_TRANSACTIONS_REQUEST,
 		} );
 
-		const limit = 200;
+		const limit = 600;
 		let url = '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' );
 		if ( transactionType !== 'upcoming' ) {
 			url = url + '?limit=' + limit;

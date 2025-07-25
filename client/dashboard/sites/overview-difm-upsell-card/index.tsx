@@ -7,7 +7,7 @@ import type { Site } from '../../data/types';
 
 const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
 
-export default function OverviewCardUpsellDIFM( { site }: { site: Site } ) {
+export default function DIFMUpsellCard( { site }: { site: Site } ) {
 	if ( site.launch_status !== 'unlaunched' ) {
 		return null;
 	}
