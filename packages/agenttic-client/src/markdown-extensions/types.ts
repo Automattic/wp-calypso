@@ -2,7 +2,6 @@
  * Type definitions for markdown extensions
  */
 
-import type { DataPointDate } from '@automattic/charts';
 import type { CurrencyOptions } from './charts/BaseChart';
 
 /**
@@ -39,9 +38,18 @@ export interface MarkdownExtensions {
 	// Future extensions can be added here
 }
 
+/**
+ * Chart data structures as provided in JSON format
+ */
+export interface ChartDataPoint {
+	date?: string;
+	label?: string;
+	value: number;
+}
+
 export interface ChartSeries {
 	label: string;
-	data: DataPointDate[];
+	data: ChartDataPoint[];
 }
 
 export interface ChartData {

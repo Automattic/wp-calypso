@@ -1,0 +1,106 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Markdown Extensions/Custom Components/Documentation" />
+
+# Creating Custom Markdown Components
+
+This guide shows you how to create custom markdown components to be rendered by Agenttic UI's markdown handling.
+
+## Overview
+
+The Agenttic UI Markdown system allows you to register custom React components that replace standard markdown elements. This enables rich, interactive content within chat messages.
+
+## Basic Setup
+
+### 1. Use the `useMarkdown` Hook
+
+```typescript
+import { useMarkdown } from '../hooks/useMarkdown';
+
+const MyComponent = () => {
+  const { registerMarkdownComponents } = useMarkdown();
+};
+```
+
+### 2. Register Components
+
+```typescript
+import { useEffect } from 'react';
+
+useEffect(() => {
+  registerMarkdownComponents({
+    // Your custom components here
+  });
+}, []);
+```
+
+## Component Types
+
+You can override any markdown element by providing a custom component:
+
+- `p` - Paragraphs
+- `strong` - Bold text
+- `em` - Italic text
+- `code` - Inline code
+- `blockquote` - Block quotes
+- `h1`, `h2`, `h3`, `h4`, `h5`, `h6` - Headings
+- `pre` - Code blocks
+
+## Example: Custom Blockquotes
+
+Here's how to create styled blockquotes:
+
+```typescript
+const customComponents = {
+  blockquote: ({ children, ...props }) => (
+    <blockquote
+      {...props}
+      style={{
+        borderLeft: '4px solid #007cba',
+        backgroundColor: '#f0f8ff',
+        margin: '16px 0',
+        padding: '12px 16px',
+        fontStyle: 'italic',
+        borderRadius: '0 4px 4px 0',
+      }}
+    >
+      {children}
+    </blockquote>
+  )
+};
+```
+
+Usage:
+
+```markdown
+> This creates a styled blockquote with blue border and background.
+> Perfect for highlighting important information.
+```
+
+## Example: Chart Components
+
+Register chart components for data visualization, using the `react-markdown`'s [component handling](https://github.com/remarkjs/react-markdown?tab=readme-ov-file#use-custom-components-syntax-highlight).
+
+```typescript
+import { ChartBlock } from './ChartBlock';
+
+const customComponents = {
+  code: ({ className, children }) => {
+    if (className === 'language-chart') {
+      return <ChartBlock data={children} />;
+    }
+    return <code className={className}>{children}</code>;
+  }
+};
+```
+
+**Markdown Usage:**
+```markdown
+\`\`\`chart
+{
+  "chartType": "line",
+  "title": "Sales Trend",
+  "data": [...]
+}
+\`\`\`
+```

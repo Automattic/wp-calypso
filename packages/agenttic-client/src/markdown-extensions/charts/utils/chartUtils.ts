@@ -47,21 +47,21 @@ const parseDate = ( dateValue: Date | string ): Date | null => {
  * @return Axis configuration object
  */
 export const getTimeAxisConfig = ( data: SeriesData[] ) => {
-	const dataPoints = data?.[ 0 ]?.data || [];
-	if ( dataPoints.length === 0 ) {
+	// Collect all date points from all series
+	const allDataPoints: any[] = [];
+	data?.forEach( ( series ) => {
+		if ( series?.data ) {
+			allDataPoints.push( ...series.data );
+		}
+	} );
+
+	if ( allDataPoints.length === 0 ) {
 		return {};
 	}
 
-	const indices = [
-		0,
-		Math.floor( dataPoints.length / 3 ),
-		Math.floor( ( 2 * dataPoints.length ) / 3 ),
-		dataPoints.length - 1,
-	];
-
-	const tickValues = indices
-		.map( ( i ) => {
-			const point = dataPoints[ i ];
+	// Extract and sort all unique dates
+	const allDates = allDataPoints
+		.map( ( point ) => {
 			if ( point && 'date' in point && point.date ) {
 				return parseDate( point.date );
 			}
@@ -70,6 +70,30 @@ export const getTimeAxisConfig = ( data: SeriesData[] ) => {
 			}
 			return null;
 		} )
+		.filter(
+			( date ): date is Date => date !== null && ! isNaN( date.getTime() )
+		)
+		.sort( ( a, b ) => a.getTime() - b.getTime() );
+
+	// Remove duplicate
+	const uniqueDates = Array.from(
+		new Set( allDates.map( ( d ) => d.getTime() ) )
+	).map( ( timestamp ) => new Date( timestamp ) );
+
+	if ( uniqueDates.length === 0 ) {
+		return {};
+	}
+
+	// Select tick values from the complete date range
+	const indices = [
+		0,
+		Math.floor( uniqueDates.length / 3 ),
+		Math.floor( ( 2 * uniqueDates.length ) / 3 ),
+		uniqueDates.length - 1,
+	];
+
+	const tickValues = indices
+		.map( ( i ) => uniqueDates[ i ] )
 		.filter(
 			( date ): date is Date => date !== null && ! isNaN( date.getTime() )
 		);
@@ -135,6 +159,6 @@ export const getDefaultChartMargins = ( customMargin?: {
 	return {
 		...defaultMargin,
 		...customMargin,
-		bottom: calculateBottomMargin(),
+		bottom: calculateBottomMargin( 120 ),
 	};
 };

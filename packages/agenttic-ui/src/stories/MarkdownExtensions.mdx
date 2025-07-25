@@ -1,0 +1,131 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Markdown Extensions/Documentation" />
+
+# Markdown Extensions
+
+Agenttic UI includes a powerful markdown extension system that allows rendering of rich, interactive content within markdown with built in primitives like charting. This allows AI agents to create dynamic visualizations and interactive elements in their responses.
+
+## Overview
+
+The markdown extension system is built on top of [`react-markdown`](https://github.com/remarkjs/react-markdown) and uses a store-based architecture for registering custom components. Extensions can transform specific markdown patterns into React components, enabling features like charts, interactive buttons, and other custom styling.
+
+## Chart Extension
+
+The chart extension allows rendering of data visualizations directly from markdown code blocks.
+
+### Usage in Markdown
+
+To create a chart, use a code block with the `chart` language identifier:
+
+```chart
+{
+  "chartType": "line",
+  "title": "Revenue Trend",
+  "data": [
+    {
+      "label": "Revenue",
+      "data": [
+        {"date": "2024-01-01", "value": 1000},
+        {"date": "2024-01-02", "value": 1200}
+      ]
+    }
+  ]
+}
+```
+
+### Available Chart Types
+
+#### Line Chart
+
+- **Use Case**: Time-series data, trends over time
+- **Required Fields**: `chartType: "line"`, `data` array
+- **Optional Fields**: `title`, `currency`
+
+#### Bar Chart
+
+- **Use Case**: Comparisons between categories or time periods
+- **Required Fields**: `chartType: "bar"`, `data` array
+- **Optional Fields**: `title`, `currency`, `mode` ("time-comparison" or "item-comparison")
+
+### Configuration Options
+
+#### Currency Formatting
+
+```json
+{
+  "currency": {
+    "symbol": "$",
+    "symbolPosition": "left"
+  }
+}
+```
+
+#### Chart Modes (Bar Chart)
+
+- **time-comparison**: Default mode for time-based data
+- **item-comparison**: For comparing different items/categories with rotated labels
+
+### Data Format
+
+#### For Line Charts
+
+```json
+{
+  "data": [
+    {
+      "label": "Series Name",
+      "data": [
+        {"date": "YYYY-MM-DD", "value": number}
+      ]
+    }
+  ]
+}
+```
+
+#### For Bar Charts (Item Comparison)
+
+```json
+{
+  "data": [
+    {
+      "label": "Series Name",
+      "data": [
+        {"label": "Category", "value": number}
+      ]
+    }
+  ]
+}
+```
+
+## Using Markdown Extensions in Your App
+
+### 1. Register Extensions
+
+Use the `useMarkdown` hook to register extensions:
+
+```typescript
+import { useMarkdown } from '@automattic/agenttic-ui';
+
+function MyComponent() {
+  const { registerMarkdownExtensions } = useMarkdown();
+
+  useEffect(() => {
+    registerMarkdownExtensions({
+      charts: {
+        enabled: true,
+      },
+    });
+  }, [registerMarkdownExtensions]);
+}
+```
+
+### 2. Render Markdown with ParseMarkdown
+
+```typescript
+import { ParseMarkdown } from '@automattic/agenttic-ui';
+
+function MyMessage({ content }) {
+  return <ParseMarkdown>{content}</ParseMarkdown>;
+}
+```

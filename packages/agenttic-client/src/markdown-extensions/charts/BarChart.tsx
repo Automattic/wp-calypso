@@ -86,14 +86,13 @@ export const BarChart: FC< BarChartProps > = ( props ) => {
 						orientation: 'bottom' as const,
 						tickFormat: ( value: string ) =>
 							truncateText( value, maxLabelLength ),
-						tickLabelProps: ( value: string ) => ( {
+						tickLabelProps: {
 							fontSize: 11,
-							textAnchor: 'end',
+							textAnchor: 'end' as const,
 							angle: -90,
 							dx: 0,
 							dy: -5,
-							title: value,
-						} ),
+						},
 					},
 				},
 			};
@@ -110,6 +109,8 @@ export const BarChart: FC< BarChartProps > = ( props ) => {
 		};
 	};
 
+	const axisConfig = getAxisConfig();
+
 	const chartProps = {
 		data,
 		withTooltips,
@@ -119,7 +120,12 @@ export const BarChart: FC< BarChartProps > = ( props ) => {
 		legendAlignmentHorizontal: 'center' as const,
 		legendAlignmentVertical: 'bottom' as const,
 		margin,
-		options: getAxisConfig(),
+		// TODO: Fix this inconsistency that seems to be in @automattic/charts
+		// Item-comparison mode requires axis config wrapped in 'options' prop
+		// Time-comparison mode requires axis config spread directly
+		...( mode === 'item-comparison'
+			? { options: axisConfig }
+			: axisConfig ),
 		...( currency && { currency } ),
 		...restProps,
 	};

@@ -10,6 +10,8 @@ let mockSuggestions: any[] = [
 	{ id: '1', prompt: 'Show me my sales data', label: 'View Sales' },
 	{ id: '2', prompt: 'What are my top products?', label: 'Top Products' },
 ];
+let mockMarkdownComponents: any = {};
+let mockMarkdownExtensions: any = {};
 
 const mockStore = {
 	getMessages: () => mockMessages,
@@ -22,6 +24,8 @@ const mockStore = {
 	getCurrentToolCall: () => null,
 	getInputValue: () => mockInputValue,
 	getRegisteredSuggestions: () => mockSuggestions,
+	getRegisteredMarkdownComponents: () => mockMarkdownComponents,
+	getRegisteredMarkdownExtensions: () => mockMarkdownExtensions,
 };
 
 const mockActions = {
@@ -136,8 +140,32 @@ const mockActions = {
 		mockSuggestions = suggestions;
 		notifySubscribers();
 	},
+	clearSuggestions: () => {
+		mockSuggestions = [];
+		notifySubscribers();
+	},
 	setIsTyping: ( isTyping: boolean ) => {
 		console.log( 'Set typing:', isTyping );
+	},
+	registerMarkdownComponents: ( components: any ) => {
+		mockMarkdownComponents = { ...mockMarkdownComponents, ...components };
+		console.log( 'Registering markdown components:', components );
+		notifySubscribers();
+	},
+	registerMarkdownExtensions: ( extensions: any ) => {
+		mockMarkdownExtensions = { ...mockMarkdownExtensions, ...extensions };
+		console.log( 'Registering markdown extensions:', extensions );
+		notifySubscribers();
+	},
+	clearMarkdownComponents: () => {
+		mockMarkdownComponents = {};
+		console.log( 'Clearing markdown components' );
+		notifySubscribers();
+	},
+	clearMarkdownExtensions: () => {
+		mockMarkdownExtensions = {};
+		console.log( 'Clearing markdown extensions' );
+		notifySubscribers();
 	},
 };
 
@@ -187,6 +215,11 @@ export const dispatch = ( storeName: string ) => {
 		return mockActions;
 	}
 	return {};
+};
+
+export const createSelector = ( selector: Function, getDependencies?: Function ) => {
+	// Simple mock implementation that just returns the selector
+	return selector;
 };
 
 export const createRegistrySelector = () => {};

@@ -21,12 +21,13 @@
 }
 
 .chart-container {
+	width: 100%;
 	height: auto;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	z-index: 1001;
-	overflow: hidden;
+	overflow: visible;
 	position: relative;
 	box-sizing: border-box;
 }
@@ -124,9 +125,6 @@ div[style*="pointer-events: none"][style*="position: absolute"] {
 	z-index: 10000 !important;
 }
 
-body.has-active-chart {
-	overflow-x: hidden;
-}
 
 .chart-block .visx-axis-bottom text {
 	font-size: 11px;
@@ -145,4 +143,65 @@ body.has-active-chart {
 .chart-block .visx-legend .visx-legend-label {
 	font-size: 11px !important;
 	max-width: none !important;
+}
+
+.chart-block .visx-legend {
+	margin-top: 8px;
+	position: relative;
+	z-index: 1002;
+}
+
+.chart-block .visx-legend-item {
+	display: flex;
+	align-items: center;
+	margin: 0 8px;
+}
+
+.chart-block .visx-legend-shape {
+	width: 12px;
+	height: 12px;
+	margin-right: 6px;
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+
+.chart-block .visx-legend-shape svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+
+.chart-block .visx-legend-shape rect {
+	width: 100%;
+	height: 100%;
+}
+
+.chart-block .visx-legend-shape circle {
+	r: 6;
+	cx: 6;
+	cy: 6;
+}
+
+.chart-block .visx-legend > div {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.chart-block .visx-legend-item > div:first-child {
+	margin-right: 6px;
+}
+
+.chart-block .visx-legend [class*="legend"] svg {
+	opacity: 1;
+	visibility: visible;
+}
+
+.chart-block .visx-legend svg * {
+	opacity: 1;
+	visibility: visible;
+	fill: currentColor;
 }

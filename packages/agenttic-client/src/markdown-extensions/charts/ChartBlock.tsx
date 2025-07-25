@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { DataPointDate } from '@automattic/charts';
+import type { DataPointDate, SeriesData } from '@automattic/charts';
 import type { RenderTooltipParams } from '@visx/xychart/lib/components/Tooltip';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -9,11 +9,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 /**
  * Internal dependencies
  */
-import type { ChartData, ChartExtensionConfig } from '../types';
+import type { ChartData, ChartDataPoint, ChartExtensionConfig } from '../types';
+import type { CurrencyOptions } from './BaseChart';
 import { BarChart } from './BarChart';
 import { ChartError } from './ChartError';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
-import './charts.css';
 import { LineChart } from './LineChart';
 
 export interface ChartBlockProps {
@@ -29,6 +29,17 @@ interface ChartErrorState {
 
 interface TooltipDatumInfo {
 	datum: DataPointDate;
+}
+
+/**
+ * Chart data after processing JSON input (uses @automattic/charts types)
+ */
+interface ProcessedChartData {
+	chartType: 'line' | 'bar';
+	title?: string;
+	data: SeriesData[];
+	currency?: CurrencyOptions;
+	mode?: 'time-comparison' | 'item-comparison';
 }
 
 /**
@@ -59,7 +70,9 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 	config,
 } ) => {
 	const [ error, setError ] = useState< ChartErrorState | null >( null );
-	const [ chartData, setChartData ] = useState< ChartData | null >( null );
+	const [ chartData, setChartData ] = useState< ProcessedChartData | null >(
+		null
+	);
 	const [ containerWidth, setContainerWidth ] = useState< number >( 300 );
 	const resizeObserverRef = useRef< ResizeObserver | null >( null );
 
@@ -175,24 +188,6 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 		[ chartData?.currency ]
 	);
 
-	// This is a bit of a hack to prevent the body from overflowing when tooltips are shown
-	// TODO: Find a better way to handle this
-	useEffect( () => {
-		if ( ! error && chartData ) {
-			document.body.classList.add( 'has-active-chart' );
-
-			return () => {
-				setTimeout( () => {
-					const activeCharts =
-						document.querySelectorAll( '.chart-block' );
-					if ( activeCharts.length <= 1 ) {
-						document.body.classList.remove( 'has-active-chart' );
-					}
-				}, 0 );
-			};
-		}
-	}, [ error, chartData ] );
-
 	useEffect( () => {
 		setError( null );
 		setChartData( null );
@@ -206,9 +201,9 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 		}
 
 		try {
-			const parsedData = JSON.parse( data.trim() );
+			const rawData: ChartData = JSON.parse( data.trim() );
 
-			if ( ! parsedData.chartType ) {
+			if ( ! rawData.chartType ) {
 				setError( {
 					message: 'Chart data must include chartType',
 					details: `Available types: line, bar`,
@@ -216,7 +211,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 				return;
 			}
 
-			if ( ! parsedData.data || ! Array.isArray( parsedData.data ) ) {
+			if ( ! rawData.data || ! Array.isArray( rawData.data ) ) {
 				setError( {
 					message: 'Chart data must include a data array',
 					details: `Input data: ${ data }`,
@@ -224,7 +219,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 				return;
 			}
 
-			if ( parsedData.data.length === 0 ) {
+			if ( rawData.data.length === 0 ) {
 				setError( {
 					message: 'No data points found for chart',
 					details: `Input data: ${ data }`,
@@ -232,12 +227,43 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 				return;
 			}
 
-			const processedData: ChartData = {
-				chartType: parsedData.chartType,
-				title: parsedData.title,
-				data: parsedData.data,
-				currency: parsedData.currency,
-				mode: parsedData.mode || 'time-comparison',
+			// Process dates for line charts - convert string dates to Date objects so we have something consistent to work with
+			const processedDataSeries = rawData.data.map( ( series ) => ( {
+				...series,
+				data: series.data.map( ( point: ChartDataPoint ) => {
+					if ( point.date ) {
+						const parsedDate = new Date( point.date );
+						if ( isNaN( parsedDate.getTime() ) ) {
+							console.warn(
+								`Invalid date string: "${ point.date }" in series "${ series.label }"`
+							);
+							return {
+								label: point.label,
+								value: point.value,
+								date: undefined,
+							};
+						}
+						return {
+							label: point.label,
+							value: point.value,
+							date: parsedDate,
+						};
+					}
+					// For points without dates
+					return {
+						label: point.label,
+						value: point.value,
+						date: undefined,
+					};
+				} ),
+			} ) );
+
+			const processedData: ProcessedChartData = {
+				chartType: rawData.chartType,
+				title: rawData.title,
+				data: processedDataSeries,
+				currency: rawData.currency,
+				mode: rawData.mode || 'time-comparison',
 			};
 
 			setChartData( processedData );

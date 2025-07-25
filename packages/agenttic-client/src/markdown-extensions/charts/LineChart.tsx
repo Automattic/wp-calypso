@@ -14,9 +14,6 @@ import { getDefaultChartMargins, getTimeAxisConfig } from './utils/chartUtils';
 
 export interface LineChartProps extends BaseChartProps {
 	withGradientFill?: boolean;
-	withLegendGlyph?: boolean;
-	withStartGlyphs?: boolean;
-	glyphStyle?: React.SVGProps< SVGCircleElement >;
 }
 
 /**
@@ -32,20 +29,15 @@ export const LineChart: FC< LineChartProps > = ( props ) => {
 		renderTooltip,
 		margin: defaultMargin,
 		withGradientFill = true,
-		withLegendGlyph = true,
-		withStartGlyphs = false,
-		glyphStyle = {
-			r: 4,
-			strokeWidth: 2,
-			fillOpacity: 1,
-			pointerEvents: 'all',
-			cursor: 'pointer',
-		},
 		error,
 		...restProps
 	} = props;
 
-	const margin = getDefaultChartMargins( defaultMargin );
+	// LineChart uses rotated axis labels, so it needs less bottom margin than the default
+	const margin = {
+		...getDefaultChartMargins(),
+		bottom: 80,
+	};
 
 	const chartProps = {
 		data,
@@ -53,9 +45,7 @@ export const LineChart: FC< LineChartProps > = ( props ) => {
 		renderTooltip,
 		showLegend,
 		withGradientFill,
-		withLegendGlyph,
-		withStartGlyphs,
-		glyphStyle,
+		withLegendGlyph: false,
 		legendOrientation: 'horizontal' as const,
 		legendAlignmentHorizontal: 'center' as const,
 		legendAlignmentVertical: 'bottom' as const,

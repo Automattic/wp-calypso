@@ -74,7 +74,10 @@ export const BaseChart: FC< BaseChartInternalProps > = ( {
 			},
 			legendItemStyles: {
 				padding: '2px 0',
+				display: 'flex',
+				alignItems: 'center',
 			},
+			legendGlyphSize: 12,
 		};
 	}, [] );
 
@@ -84,5 +87,13 @@ export const BaseChart: FC< BaseChartInternalProps > = ( {
 		);
 	}
 
-	return <ThemeProvider theme={ customTheme }>{ children }</ThemeProvider>;
+	return (
+		<div className="chart-block">
+			<div className="chart-container">
+				<ThemeProvider theme={ customTheme }>
+					{ children }
+				</ThemeProvider>
+			</div>
+		</div>
+	);
 };
