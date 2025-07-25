@@ -13,6 +13,7 @@ import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -116,11 +117,20 @@ class DomainSearchResults extends Component {
 
 			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
 
+			const suggestion = this.props.suggestions.find(
+				( s ) => s.domain_name === lastDomainSearched
+			);
+
 			return (
-				<DomainSuggestion
+				<DomainSuggestion.Featured
 					badges={ badges }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
+					matchReasons={
+						this.props.hideMatchReasons
+							? undefined
+							: parseMatchReasons( lastDomainSearched, suggestion.match_reasons )
+					}
 					cta={
 						<DomainSuggestionCTA.Primary
 							href="https://wordpress.com/help/contact"

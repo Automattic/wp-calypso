@@ -20,6 +20,7 @@ type DomainSuggestionFeaturedProps = {
 	badges?: React.ReactNode;
 	price: React.ReactNode;
 	isHighlighted?: boolean;
+	cta?: React.ReactNode;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
 const Featured = ( {
@@ -32,6 +33,7 @@ const Featured = ( {
 	isHighlighted,
 	onClick,
 	disabled,
+	cta,
 }: DomainSuggestionFeaturedProps ) => {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
@@ -45,8 +47,6 @@ const Featured = ( {
 			} ) as const,
 		[ activeQuery, matchReasons ]
 	);
-
-	const cta = <DomainSuggestionCTA onClick={ onClick } disabled={ disabled } uuid={ uuid } />;
 
 	const title = (
 		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>
@@ -74,7 +74,9 @@ const Featured = ( {
 				title={ title }
 				matchReasonsList={ matchReasonsList }
 				price={ price }
-				cta={ cta }
+				cta={
+					cta ?? <DomainSuggestionCTA onClick={ onClick } disabled={ disabled } uuid={ uuid } />
+				}
 			/>
 		</DomainSuggestionContainerContext.Provider>
 	);
