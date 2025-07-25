@@ -112,6 +112,13 @@ $blueberry-color: #3858e9;
 		u {
 			text-decoration: underline;
 		}
+
+		pre {
+			padding: 0.5em;
+			white-space: pre-wrap;
+			word-break: break-word;
+			background-color: var( --studio-white );
+		}
 	}
 
 	&.odie-chatbox-message-no-avatar {
