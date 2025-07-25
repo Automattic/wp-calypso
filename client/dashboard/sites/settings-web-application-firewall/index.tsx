@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -16,7 +17,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
-		return null;
+		throw notFound();
 	}
 
 	const canView = hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS );
