@@ -1,4 +1,5 @@
 import {
+	COPY_SITE_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
@@ -57,6 +58,8 @@ export function DomainFormControl( {
 	isCartPendingUpdate,
 	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
+	const [ , isDomainSearchV2Enabled ] = useDomainSearchV2( flow ?? '' );
+
 	const selectedSite = useSelector( getSelectedSite );
 	const productsList = useSelector( getAvailableProductsList );
 
@@ -107,6 +110,10 @@ export function DomainFormControl( {
 	if ( flow === HUNDRED_YEAR_DOMAIN_FLOW ) {
 		includeWordPressDotCom = false;
 		shouldQuerySubdomains = false;
+	}
+
+	if ( isDomainSearchV2Enabled && flow === COPY_SITE_FLOW ) {
+		showSkipButton = true;
 	}
 
 	const domainsWithPlansOnly = true;
@@ -180,8 +187,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const [ , isDomainSearchV2Enabled ] = useDomainSearchV2( flow ?? '' );
-
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -252,6 +257,7 @@ export function DomainFormControl( {
 					} ) }
 					// RegisterDomainStepComponentV2 props below
 					onContinue={ onContinue }
+					shouldRenderUseYourDomain
 				/>
 			</CalypsoShoppingCartProvider>
 		);
