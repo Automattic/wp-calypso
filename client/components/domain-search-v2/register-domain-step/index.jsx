@@ -609,7 +609,9 @@ class RegisterDomainStep extends Component {
 		const notices = this.renderGeneralNotices();
 
 		const showFreeDomainPromo =
-			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
+			this.props.showFreeDomainPromo === false
+				? false
+				: this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
 
 		const showHelperTerm =
 			this.state.helperTermSubmitted || ( this.state.hasSubmitted && ! this.state.lastQuery );

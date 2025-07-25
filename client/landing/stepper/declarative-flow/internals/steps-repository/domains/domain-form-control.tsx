@@ -258,6 +258,9 @@ export function DomainFormControl( {
 					// RegisterDomainStepComponentV2 props below
 					onContinue={ onContinue }
 					shouldRenderUseYourDomain
+					showFreeDomainPromo={
+						! [ HUNDRED_YEAR_DOMAIN_FLOW, HUNDRED_YEAR_PLAN_FLOW ].includes( flow ?? '' )
+					}
 				/>
 			</CalypsoShoppingCartProvider>
 		);
