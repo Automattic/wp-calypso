@@ -1690,6 +1690,7 @@ class RenderDomainsStepComponent extends Component {
 					}
 					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
 					className="domains__step-content domains__step-content-domain-step"
+					noBottomPadding={ shouldUseDomainSearchV2 }
 				>
 					{ mainContent }
 					{ sideContent }

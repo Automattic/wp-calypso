@@ -1,23 +1,30 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.domains-mini-cart__cushion {
+	margin-top: 36px;
+	height: var( --domain-search-mini-cart-height );
+}
+
 .domains-mini-cart__container {
 	position: fixed !important;
 	left: 0;
 	right: 0;
 	bottom: 0;
+	height: var( --domain-search-mini-cart-height );
 }
 
 .domains-mini-cart {
 	justify-content: center;
+	align-items: center;
 	padding-inline: 1rem;
 	display: flex;
 	box-sizing: border-box;
+	height: 100%;
 }
 
 .domains-mini-cart__content {
 	box-sizing: border-box;
-	padding-block: 1rem;
 	width: 100%;
 	max-width: 64rem;
 }
