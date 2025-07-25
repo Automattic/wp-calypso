@@ -60,7 +60,7 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, act
 								'This threat cannot be fixed in bulk because an individual confirmation is required. Please run the individual fix.'
 							) }
 						>
-							<Gridicon icon="info" size={ 36 } />
+							<Gridicon icon="info" size={ 24 } />
 						</Tooltip>
 					) ) }
 			</div>
