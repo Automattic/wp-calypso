@@ -1,4 +1,3 @@
-import { Plans } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
@@ -52,9 +51,6 @@ const useGridPlansForFeaturesGrid = ( {
 	// Get summer special status early
 	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
-	// Get current site plan slug directly from the data store
-	const { planSlug: currentSitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
-
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
 		gridPlans: gridPlans || [],
@@ -63,7 +59,6 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		currentSitePlanSlug,
 		isSummerSpecial,
 	} );
 

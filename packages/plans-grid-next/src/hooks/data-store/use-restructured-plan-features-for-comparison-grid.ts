@@ -22,8 +22,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	isInSignup,
-	currentSitePlanSlug,
 	isSummerSpecial,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
@@ -32,8 +30,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
 	isSummerSpecial?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
@@ -45,8 +41,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isInSignup,
-		currentSitePlanSlug,
 		isSummerSpecial,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
@@ -55,8 +49,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			isInSignup,
-			currentSitePlanSlug,
 			isSummerSpecial,
 		} );
 
@@ -71,22 +63,15 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				const isMonthlyPlan = isMonthly( planSlug );
 
 				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride?.( {
-					currentSitePlanSlug,
+					isSummerSpecial,
 				} ).length
 					? getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj
-								.get2023PlanComparisonFeatureOverride( { currentSitePlanSlug } )
-								.slice()
+							planConstantObj.get2023PlanComparisonFeatureOverride( { isSummerSpecial } ).slice()
 					  )
 					: getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj
-								.get2023PricingGridSignupWpcomFeatures?.( {
-									currentSitePlanSlug,
-									isSummerSpecial,
-								} )
-								.slice()
+							planConstantObj.get2023PricingGridSignupWpcomFeatures?.( { isSummerSpecial } ).slice()
 					  );
 
 				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()

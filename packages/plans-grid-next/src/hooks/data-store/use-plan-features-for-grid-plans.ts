@@ -23,7 +23,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	currentSitePlanSlug,
 	isSummerSpecial,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
@@ -33,7 +32,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
 	isSummerSpecial?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
@@ -50,7 +48,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	currentSitePlanSlug,
 	isSummerSpecial,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -73,7 +70,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							currentSitePlanSlug,
 							isSummerSpecial,
 						} ) ?? []
 					);
@@ -91,7 +87,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							currentSitePlanSlug,
 							isSummerSpecial,
 						} ) ?? []
 					);
@@ -119,7 +114,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							currentSitePlanSlug,
 							isSummerSpecial,
 						} ) ?? []
 					);

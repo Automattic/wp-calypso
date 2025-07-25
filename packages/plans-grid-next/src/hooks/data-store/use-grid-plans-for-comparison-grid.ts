@@ -2,7 +2,6 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
@@ -51,9 +50,6 @@ const useGridPlansForComparisonGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
-	// Get current site plan slug directly from the data store
-	const { planSlug: currentSitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
-
 	// Get summer special status
 	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
@@ -65,7 +61,6 @@ const useGridPlansForComparisonGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		isInSignup,
-		currentSitePlanSlug,
 		isSummerSpecial,
 	} );
 

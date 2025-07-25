@@ -452,7 +452,6 @@ import {
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
-import { isSummerSpecialEnabled } from './is-summer-special-enabled';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -835,10 +834,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
-	get2023PlanComparisonFeatureOverride: ( props?: {
-		currentSitePlanSlug?: string;
-		isSummerSpecial?: boolean;
-	} ) => {
+	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1417,10 +1413,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: ( props?: {
-		isInSignup?: boolean;
-		currentSitePlanSlug?: string;
-	} ) => {
+	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -1436,18 +1429,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		const isSummerSpecial = isSummerSpecialEnabled( props );
-
-		if ( isSummerSpecial ) {
+		if ( props?.isSummerSpecial ) {
 			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
 		return features;
 	},
-	get2023PlanComparisonFeatureOverride: ( props?: {
-		isInSignup?: boolean;
-		currentSitePlanSlug?: string;
-	} ) => {
+	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1461,9 +1449,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		const isSummerSpecial = isSummerSpecialEnabled( props );
-
-		if ( isSummerSpecial ) {
+		if ( props?.isSummerSpecial ) {
 			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 
