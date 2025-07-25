@@ -7,7 +7,8 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { canViewSecuritySettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 import ProtectForm from './protect-form';
 
@@ -18,7 +19,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 		return null;
 	}
 
-	const canView = canViewSecuritySettings( site );
+	const canView = hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS );
 
 	return (
 		<PageLayout
