@@ -809,10 +809,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: ( props?: {
-		isInSignup?: boolean;
-		isSummerSpecial?: boolean;
-	} ) => {
+	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -839,7 +836,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		return [];
 	},
 	get2023PlanComparisonFeatureOverride: ( props?: {
-		isInSignup?: boolean;
+		currentSitePlanSlug?: string;
 		isSummerSpecial?: boolean;
 	} ) => {
 		const baseFeatures = [

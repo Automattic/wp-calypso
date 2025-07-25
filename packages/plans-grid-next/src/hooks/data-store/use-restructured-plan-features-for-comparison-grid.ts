@@ -71,20 +71,18 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				const isMonthlyPlan = isMonthly( planSlug );
 
 				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride?.( {
-					isInSignup,
 					currentSitePlanSlug,
 				} ).length
 					? getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj
-								.get2023PlanComparisonFeatureOverride( { isInSignup, currentSitePlanSlug } )
+								.get2023PlanComparisonFeatureOverride( { currentSitePlanSlug } )
 								.slice()
 					  )
 					: getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj
 								.get2023PricingGridSignupWpcomFeatures?.( {
-									isInSignup,
 									currentSitePlanSlug,
 									isSummerSpecial,
 								} )

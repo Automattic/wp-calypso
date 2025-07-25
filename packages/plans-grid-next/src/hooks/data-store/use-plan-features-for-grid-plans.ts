@@ -73,7 +73,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							isInSignup,
 							currentSitePlanSlug,
 							isSummerSpecial,
 						} ) ?? []
@@ -92,7 +91,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							isInSignup,
 							currentSitePlanSlug,
 							isSummerSpecial,
 						} ) ?? []
@@ -121,7 +119,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							isInSignup,
 							currentSitePlanSlug,
 							isSummerSpecial,
 						} ) ?? []
