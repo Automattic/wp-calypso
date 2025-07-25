@@ -81,9 +81,11 @@ body:has( .wpcom-domain-search-v2 ) {
 			}
 		}
 
-		.domains-mini-cart__content {
-			padding-inline: 16px;
-			max-width: 1040px;
+		.domains-mini-cart {
+			display: flex;
+			justify-content: center;
+			padding-inline: 1rem;
+			box-sizing: border-box;
 
 			@include break-small {
 				padding-inline: 24px;
@@ -92,10 +94,11 @@ body:has( .wpcom-domain-search-v2 ) {
 			@include break-large {
 				padding-inline: 32px;
 			}
+		}
 
-			@include break-xlarge {
-				padding-inline: 0;
-			}
+		.domains-mini-cart__content {
+			max-width: 1040px;
+			padding: 1rem 0;
 		}
 	}
 
