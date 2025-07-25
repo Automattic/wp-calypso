@@ -12,6 +12,7 @@ import { useState, useMemo } from 'react';
 import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscriptions';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ActiveSubscriptionDescription } from './active-subscription-description';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 const purchasesWideFields = [ 'status', 'payment-method' ];
@@ -138,12 +139,8 @@ const fields: Fields< ActiveSubscription > = [
 			return item.blogname + ' ' + item.domain + ' ' + site?.URL;
 		},
 		render: ( { item }: { item: ActiveSubscription } ) => {
-			// FIXME: item product here
-			return (
-				<div className="purchase-item__information">
-					<div className="purchase-item__purchase-type">{ item.product_name }</div>
-				</div>
-			);
+			const site = sites.find( ( site ) => site.ID === item.blog_id );
+			return <ActiveSubscriptionDescription purchase={ item } site={ site } />;
 		},
 	},
 	{
