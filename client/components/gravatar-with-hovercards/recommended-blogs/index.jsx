@@ -2,14 +2,13 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
-import RecommendedBlogItem from './item';
+import { RecommendedFeed } from 'calypso/reader/recommended-feed';
 
 function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
 	const { data: recommendedBlogs } = useFeedRecommendationsQuery( userLogin, {
 		enabled: !! userLogin,
 	} );
-
 	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 	const shouldShowRecommendedBlogs = recommendedBlogs?.length && userLogin;
 
@@ -41,13 +40,15 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 				{ shuffle( recommendedBlogs )
 					.slice( 0, 3 )
 					.map( ( blog ) => (
-						<RecommendedBlogItem
-							key={ blog.ID }
-							blog={ blog }
-							classPrefix="gravatar-hovercard"
-							compact
-							onLinkClick={ closeCard }
-						/>
+						<li key={ blog.ID }>
+							<RecommendedFeed
+								key={ blog.ID }
+								blog={ blog }
+								classPrefix="gravatar-hovercard"
+								compact
+								onLinkClick={ closeCard }
+							/>
+						</li>
 					) ) }
 			</ul>
 		</div>

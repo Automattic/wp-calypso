@@ -2,9 +2,9 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import RecommendedBlogItem from 'calypso/components/gravatar-with-hovercards/recommended-blogs/item';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { UserData } from 'calypso/lib/user/user';
+import { RecommendedFeed } from 'calypso/reader/recommended-feed';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -21,6 +21,7 @@ const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Elemen
 	} );
 
 	const currentUser = useSelector( getCurrentUser );
+
 	if ( isLoading ) {
 		return <LoadingPlaceholder />;
 	}
@@ -48,7 +49,7 @@ const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Elemen
 	return (
 		<ul className="user-profile__recommended-blogs-list">
 			{ recommendedBlogs.map( ( blog ) => (
-				<RecommendedBlogItem key={ blog.ID } blog={ blog } classPrefix="user-profile" />
+				<RecommendedFeed key={ blog.ID } blog={ blog } classPrefix="user-profile" />
 			) ) }
 		</ul>
 	);
