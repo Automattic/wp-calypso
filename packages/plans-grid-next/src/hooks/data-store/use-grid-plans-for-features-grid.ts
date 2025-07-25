@@ -1,8 +1,8 @@
 import { Plans } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
-import { useSelector } from 'react-redux';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
+import { useSummerSpecialStatus } from './use-summer-special-status';
 import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
@@ -49,11 +49,11 @@ const useGridPlansForFeaturesGrid = ( {
 		reflectStorageSelectionInPlanPrices,
 	} );
 
+	// Get summer special status early
+	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
+
 	// Get current site plan slug directly from the data store
 	const { planSlug: currentSitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
-
-	// Get active promotions from Redux state directly
-	const activePromotions = useSelector( ( state: any ) => state.activePromotions?.items || [] );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
@@ -64,7 +64,7 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		currentSitePlanSlug,
-		activePromotions,
+		isSummerSpecial,
 	} );
 
 	return useMemo( () => {

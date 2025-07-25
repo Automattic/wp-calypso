@@ -811,7 +811,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PricingGridSignupWpcomFeatures: ( props?: {
 		isInSignup?: boolean;
-		currentSitePlanSlug?: string;
+		isSummerSpecial?: boolean;
 	} ) => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
@@ -825,7 +825,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		if ( isSummerSpecialEnabled( props ) ) {
+		if ( props?.isSummerSpecial ) {
 			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
@@ -840,7 +840,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PlanComparisonFeatureOverride: ( props?: {
 		isInSignup?: boolean;
-		currentSitePlanSlug?: string;
+		isSummerSpecial?: boolean;
 	} ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -857,7 +857,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
 		}
 
-		if ( isSummerSpecialEnabled( props ) ) {
+		if ( props?.isSummerSpecial ) {
 			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 
@@ -1439,7 +1439,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		if ( isSummerSpecialEnabled( props ) ) {
+		const isSummerSpecial = isSummerSpecialEnabled( props );
+
+		if ( isSummerSpecial ) {
 			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
@@ -1462,7 +1464,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		let features = baseFeatures;
 
-		if ( isSummerSpecialEnabled( props ) ) {
+		const isSummerSpecial = isSummerSpecialEnabled( props );
+
+		if ( isSummerSpecial ) {
 			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 

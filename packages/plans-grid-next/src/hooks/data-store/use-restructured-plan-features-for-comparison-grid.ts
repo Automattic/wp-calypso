@@ -6,7 +6,6 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
@@ -25,6 +24,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	selectedFeature,
 	isInSignup,
 	currentSitePlanSlug,
+	isSummerSpecial,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -34,6 +34,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	currentSitePlanSlug?: string;
+	isSummerSpecial?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -46,18 +47,17 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		showLegacyStorageFeature,
 		isInSignup,
 		currentSitePlanSlug,
+		isSummerSpecial,
 	} ) => {
-		// Get active promotions from Redux state directly
-		const activePromotions = useSelector( ( state: any ) => state.activePromotions?.items || [] );
-
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
 			allFeaturesList,
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
+			isInSignup,
 			currentSitePlanSlug,
-			activePromotions,
+			isSummerSpecial,
 		} );
 
 		return useMemo( () => {
@@ -86,7 +86,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 								.get2023PricingGridSignupWpcomFeatures?.( {
 									isInSignup,
 									currentSitePlanSlug,
-									activePromotions,
+									isSummerSpecial,
 								} )
 								.slice()
 					  );
