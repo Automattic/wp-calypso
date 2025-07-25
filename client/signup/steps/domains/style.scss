@@ -52,6 +52,16 @@ body:has( .wpcom-domain-search-v2 ) {
 		max-width: 1040px;
 	}
 
+	&:has( .step-container-v2 ) {
+		.domains-mini-cart {
+			padding-inline: var( --step-container-v2-content-inline-padding );
+		}
+
+		.domains-mini-cart__content {
+			max-width: var( --step-container-v2-content-row-max-width );
+		}
+	}
+
 	.step-wrapper__navigation-link {
 		color: #1d2327;
 	}

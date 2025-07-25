@@ -13,7 +13,11 @@
 			( var( --columns ) - 1 ) * var( --step-container-v2-content-column-gap )
 		);
 
-		max-width: calc( var( --total-gap-width ) + var( --total-column-width ) );
+		--step-container-v2-content-row-max-width: calc(
+			var( --total-gap-width ) + var( --total-column-width )
+		);
+
+		max-width: var( --step-container-v2-content-row-max-width );
 	}
 
 	&.stretched {
