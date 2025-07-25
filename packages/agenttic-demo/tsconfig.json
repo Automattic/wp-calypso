@@ -1,0 +1,14 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"jsx": "react-jsx",
+		"paths": {
+			"@automattic/agenttic-ui": ["../packages/agenttic-ui/src"],
+			"@automattic/agenttic-ui/*": ["../packages/agenttic-ui/src/*"],
+			"@automattic/agenttic-client": ["../packages/agenttic-client/src"],
+			"@automattic/agenttic-client/*": ["../packages/agenttic-client/src/*"]
+		}
+	},
+	"include": ["src/**/*", "../packages/agenttic-ui/src/**/*", "../packages/agenttic-client/src/**/*"]
+}

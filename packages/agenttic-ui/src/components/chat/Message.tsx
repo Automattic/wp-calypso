@@ -1,17 +1,19 @@
 import { motion } from 'framer-motion';
 import React from 'react';
+import Markdown from 'react-markdown';
+import type { Components } from 'react-markdown';
 import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/utils';
 import { fadeVariants } from '../animations';
-import { ParseMarkdown } from '../ParseMarkdown';
 import styles from './Message.module.css';
 
 export interface MessageProps {
 	message: MessageType;
+	markdownComponents?: Components;
 }
 
 export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
-	function Message( { message }, ref ) {
+	function Message( { message, markdownComponents }, ref ) {
 		const renderMessageContent = () => {
 			return (
 				<>
@@ -21,9 +23,12 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 							contentBlock.text
 						) {
 							return (
-								<ParseMarkdown key={ index }>
+								<Markdown
+									key={ index }
+									components={ markdownComponents }
+								>
 									{ contentBlock.text }
-								</ParseMarkdown>
+								</Markdown>
 							);
 						}
 						if (

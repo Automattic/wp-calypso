@@ -1,5 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import type { Components } from 'react-markdown';
 import type { Message as MessageType } from '../../types';
 import { Message } from './Message';
 import styles from './Messages.module.css';
@@ -7,18 +8,20 @@ import { ThinkingMessage } from './ThinkingMessage';
 
 interface MessagesProps {
 	messages: MessageType[];
-	isThinking?: boolean;
+	isProcessing?: boolean;
 	error?: string | null;
 	emptyView?: React.ReactNode;
 	fromCompact?: boolean;
+	markdownComponents?: Components;
 }
 
 export function Messages( {
 	messages,
-	isThinking,
+	isProcessing,
 	error,
 	emptyView,
 	fromCompact = false,
+	markdownComponents,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 	const previousMessagesRef = useRef< MessageType[] >( [] );
@@ -85,20 +88,24 @@ export function Messages( {
 		>
 			<AnimatePresence mode="popLayout">
 				{ messages.map( ( message ) => (
-					<Message key={ message.id } message={ message } />
-				) ) }
-				{ isThinking && <ThinkingMessage /> }
-				{ error && (
 					<Message
-						message={ {
-							id: 'error',
-							role: 'error',
-							content: [ { type: 'text', text: error } ],
-							created_at: Date.now(),
-							archived: false,
-							showIcon: false,
-						} }
+						key={ message.id }
+						message={ message }
+						markdownComponents={ markdownComponents }
 					/>
+				) ) }
+				{ isProcessing && <ThinkingMessage /> }
+				{ error && (
+					<div
+						className="error-message"
+						style={ {
+							color: 'var(--color-destructive)',
+							padding: '1rem',
+							textAlign: 'center',
+						} }
+					>
+						{ error }
+					</div>
 				) }
 			</AnimatePresence>
 		</div>

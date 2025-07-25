@@ -14,7 +14,7 @@ const meta = {
 			control: 'object',
 			description: 'Array of messages to display',
 		},
-		isThinking: {
+		isProcessing: {
 			control: 'boolean',
 			description: 'Whether the assistant is currently thinking',
 		},
@@ -58,7 +58,7 @@ const mockConversation: Message[] = [
 				text: "I'd be happy to help you with your store analytics! What specific information would you like to see?",
 			},
 		],
-		role: 'assistant',
+		role: 'agent',
 		created_at: Date.now() - 180000,
 		archived: false,
 		showIcon: true,
@@ -95,7 +95,7 @@ Total units sold: 547
 Total revenue from top 5: $9,135`,
 			},
 		],
-		role: 'assistant',
+		role: 'agent',
 		created_at: Date.now() - 60000,
 		archived: false,
 		showIcon: true,
@@ -118,14 +118,14 @@ Total revenue from top 5: $9,135`,
 export const Default: Story = {
 	args: {
 		messages: mockConversation,
-		isThinking: false,
+		isProcessing: false,
 	},
 };
 
 export const Empty: Story = {
 	args: {
 		messages: [],
-		isThinking: false,
+		isProcessing: false,
 		emptyView: <div>No messages yet. Start a conversation!</div>,
 	},
 };
@@ -133,14 +133,14 @@ export const Empty: Story = {
 export const Thinking: Story = {
 	args: {
 		messages: mockConversation,
-		isThinking: true,
+		isProcessing: true,
 	},
 };
 
 export const SingleMessage: Story = {
 	args: {
 		messages: [ mockConversation[ 0 ] ],
-		isThinking: false,
+		isProcessing: false,
 	},
 };
 
@@ -174,7 +174,7 @@ export const LongConversation: Story = {
 - Overall healthy growth trajectory`,
 					},
 				],
-				role: 'assistant',
+				role: 'agent',
 				created_at: Date.now() + 60000,
 				archived: false,
 				showIcon: true,
@@ -200,20 +200,20 @@ export const LongConversation: Story = {
 						text: 'Based on the data, here are my recommendations for improving Basic Widget sales:\n\n1. **Bundle Offers**: Create a starter bundle with Basic Widget + Accessories\n2. **Limited-Time Discount**: Offer 15-20% off for first-time buyers\n3. **Upsell Campaign**: Target Basic Widget customers with upgrade offers\n4. **Content Marketing**: Create tutorials showing Basic Widget use cases',
 					},
 				],
-				role: 'assistant',
+				role: 'agent',
 				created_at: Date.now() + 180000,
 				archived: false,
 				showIcon: true,
 			},
 		],
-		isThinking: false,
+		isProcessing: false,
 	},
 };
 
 export const WithError: Story = {
 	args: {
 		messages: mockConversation.slice( 0, 3 ),
-		isThinking: false,
+		isProcessing: false,
 		error: 'Sorry, I encountered an error while processing your request. Please try again.',
 	},
 };

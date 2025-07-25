@@ -1,7 +1,7 @@
 /**
  * Markdown Extensions Processor
  *
- * This module handles the processing of markdown extensions for agenttic-ui.
+ * This module handles the processing of markdown extensions for agenttic-client.
  * It provides a centralized way to register and process different types of
  * markdown extensions like charts, tables, forms, etc.
  */

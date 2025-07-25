@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Message, NoticeConfig } from '../../types';
+import type { Components } from 'react-markdown';
+import type { Message, NoticeConfig, Suggestion } from '../../types';
 import { ChatHeader } from '../chat/ChatHeader';
 import { ChatInput } from '../chat/ChatInput';
 import { Messages } from '../chat/Messages';
@@ -22,7 +23,6 @@ interface ConversationViewProps extends InputHandlers {
 	messages: Message[];
 
 	// Agent state
-	isThinking?: boolean;
 	error?: string | null;
 
 	// UI state
@@ -38,11 +38,17 @@ interface ConversationViewProps extends InputHandlers {
 
 	// Empty state
 	emptyView?: React.ReactNode;
+
+	// Suggestions
+	suggestions?: Suggestion[];
+	clearSuggestions?: () => void;
+
+	// Markdown configuration
+	markdownComponents?: Components;
 }
 
 export function ConversationView( {
 	messages,
-	isThinking,
 	error,
 	inputValue,
 	onInputChange,
@@ -57,6 +63,9 @@ export function ConversationView( {
 	onMinimize,
 	notice,
 	emptyView,
+	suggestions,
+	clearSuggestions,
+	markdownComponents,
 }: ConversationViewProps ) {
 	return (
 		<div
@@ -68,16 +77,23 @@ export function ConversationView( {
 			{ showHeader && <ChatHeader onClose={ onClose } /> }
 			<Messages
 				messages={ messages }
-				isThinking={ isThinking }
+				isProcessing={ isProcessing }
 				error={ error }
 				emptyView={ emptyView }
 				fromCompact={ fromCompact }
+				markdownComponents={ markdownComponents }
 			/>
 			<div
 				className={ styles.inputContainer }
 				data-slot="input-container"
 			>
-				<Suggestions />
+				<Suggestions
+					suggestions={ suggestions }
+					onSubmit={ ( value ) => {
+						onInputChange( value );
+						clearSuggestions?.();
+					} }
+				/>
 				<div className={ styles.inputContainerInner }>
 					{ notice && (
 						<Notice

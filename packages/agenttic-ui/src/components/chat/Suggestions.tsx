@@ -1,27 +1,26 @@
 import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '../../utils/classNames';
-import { STORE_NAME } from '../../store';
-import type { StoreActions, StoreSelectors, Suggestion } from '../../types';
+import type { Suggestion } from '../../types';
 import { Button } from '../ui/button';
 import { fastSpringWithDelay } from '../animations';
 import styles from './Suggestions.module.css';
 
 export interface SuggestionsProps {
 	className?: string;
+	suggestions?: Suggestion[];
+	onSubmit?: ( message: string ) => void;
 }
 
-export const Suggestions: React.FC< SuggestionsProps > = ( { className } ) => {
-	const { setInputValue } = useDispatch( STORE_NAME ) as StoreActions;
-
-	const suggestions = useSelect( ( select ) => {
-		const store = select( STORE_NAME ) as StoreSelectors;
-		return store.getRegisteredSuggestions();
-	}, [] );
-
+export const Suggestions: React.FC< SuggestionsProps > = ( {
+	className,
+	suggestions,
+	onSubmit,
+} ) => {
 	const handleSuggestionClick = ( suggestion: Suggestion ) => {
-		setInputValue( suggestion.prompt );
+		if ( onSubmit ) {
+			onSubmit( suggestion.prompt );
+		}
 	};
 
 	if ( ! suggestions || suggestions.length === 0 ) {

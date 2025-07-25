@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart } from '../markdown-extensions/charts/BarChart';
+import { BarChart } from '../markdown-extensions/charts';
 
 interface SalesData {
 	product: string;

@@ -35,7 +35,7 @@ const userMessage: MessageType = {
 	showIcon: true,
 };
 
-const assistantMessage: MessageType = {
+const agentMessage: MessageType = {
 	id: '2',
 	content: [
 		{
@@ -43,7 +43,7 @@ const assistantMessage: MessageType = {
 			text: "I'd be happy to help you view your sales data for last month. Let me analyze your store's performance.",
 		},
 	],
-	role: 'assistant',
+	role: 'agent',
 	created_at: Date.now(),
 	archived: false,
 	showIcon: true,
@@ -69,7 +69,7 @@ const markdownMessage: MessageType = {
 *Data current as of yesterday*`,
 		},
 	],
-	role: 'assistant',
+	role: 'agent',
 	created_at: Date.now(),
 	archived: false,
 	showIcon: true,
@@ -91,7 +91,7 @@ const calculateRevenue = (orders) => {
 This function will sum up all your order totals.`,
 		},
 	],
-	role: 'assistant',
+	role: 'agent',
 	created_at: Date.now(),
 	archived: false,
 	showIcon: true,
@@ -105,7 +105,7 @@ export const UserMessage: Story = {
 
 export const AssistantMessage: Story = {
 	args: {
-		message: assistantMessage,
+		message: agentMessage,
 	},
 };
 
@@ -131,7 +131,7 @@ export const LongMessage: Story = {
 					text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
 				},
 			],
-			role: 'assistant',
+			role: 'agent',
 			created_at: Date.now(),
 			archived: false,
 			showIcon: true,
@@ -145,7 +145,7 @@ export const MessageThread: Story = {
 			style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }
 		>
 			<Message message={ userMessage } />
-			<Message message={ assistantMessage } />
+			<Message message={ agentMessage } />
 			<Message message={ markdownMessage } />
 			<Message
 				message={ {

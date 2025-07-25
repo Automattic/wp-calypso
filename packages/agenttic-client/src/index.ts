@@ -8,6 +8,7 @@
 export { useAgent } from './react/useAgent';
 export { useClientContext } from './react/useClientContext';
 export { useClientTools } from './react/useClientTools';
+export { useAgentChat } from './react/useAgentChat';
 
 // Essential utilities for external consumers
 export {
@@ -68,6 +69,15 @@ export type {
 	ChatMessage,
 } from './react/useAgent';
 
+// useAgentChat types
+export type {
+	UseAgentChatConfig,
+	UseAgentChatReturn,
+	UIMessage,
+	Suggestion,
+	MarkdownComponents,
+} from './react/useAgentChat';
+
 // Constants
 export { A2AErrorCodes } from './client/types/index';
 
@@ -77,3 +87,17 @@ export { createClient } from './client/index';
 // Agent Manager - Functional singleton for managing agent instances
 export { getAgentManager } from './react/agentManager';
 export type { AgentManager, AgentManagerConfig } from './react/agentManager';
+
+// Markdown extensions - Chart components
+export { BarChart, LineChart, ChartBlock } from './markdown-extensions/charts';
+export type {
+	MarkdownExtensions,
+	ChartExtensionConfig,
+	ChartData,
+	ChartSeries,
+} from './markdown-extensions/types';
+
+// Mock implementations for development and testing
+export { getClientContext } from './mocks/mockContext';
+export { getClientTools } from './mocks/mockTools';
+export { MockSalesGraph } from './mocks/MockSalesGraph';

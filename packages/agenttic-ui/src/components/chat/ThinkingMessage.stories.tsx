@@ -33,7 +33,7 @@ const userMessage: MessageType = {
 	showIcon: true,
 };
 
-const assistantMessage: MessageType = {
+const agentMessage: MessageType = {
 	id: '2',
 	content: [
 		{
@@ -41,7 +41,7 @@ const assistantMessage: MessageType = {
 			text: 'I will analyze your store performance for the last quarter. Let me gather that data for you...',
 		},
 	],
-	role: 'assistant',
+	role: 'agent',
 	created_at: Date.now(),
 	archived: false,
 	showIcon: true,
@@ -53,7 +53,7 @@ export const InConversation: Story = {
 			style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }
 		>
 			<Message message={ userMessage } />
-			<Message message={ assistantMessage } />
+			<Message message={ agentMessage } />
 			<ThinkingMessage />
 		</div>
 	),

@@ -1,44 +1,43 @@
-// Re-export store types as the single source of truth
-export type {
-	AgentChatConfig,
-	AgentChatState,
-	AgentConfig,
-	AgentOptions,
-	AuthProvider,
-	ContextProvider,
-	Message,
-	Suggestion,
-	StoreActions,
-	StoreSelectors,
-	ToolProvider,
-} from '../store/types';
-
-// Export react-markdown Components type
-export type { Components } from 'react-markdown';
-
-// Export markdown extensions types
-export type { MarkdownExtensions } from '../markdown-extensions';
-
-// Import types for local use
+// UI package should not import agent communication types
 import type { Components } from 'react-markdown';
-import type { MarkdownExtensions } from '../markdown-extensions';
-import type {
-	AuthProvider,
-	ContextProvider,
-	ToolProvider,
-} from '../store/types';
+
+// Define UI-specific types locally
+export interface Suggestion {
+	id: string;
+	label: string;
+	prompt: string;
+}
+
+export interface Message {
+	id: string;
+	role: 'user' | 'agent';
+	content: Array< {
+		type: 'text' | 'image_url' | 'component';
+		text?: string;
+		image_url?: string;
+		component?: React.ComponentType;
+		componentProps?: any;
+	} >;
+	created_at: number;
+	archived: boolean;
+	showIcon: boolean;
+	icon?: string;
+}
+
+// UI package only exports UI-specific types
 
 // Constants
 export const DEFAULT_PLACEHOLDER = 'Ask anything' as const;
 
-// Additional public types for component props
-export interface AgentChatProps {
-	agentId: string;
-	agentUrl?: string;
-	sessionId?: string;
-	contextProvider?: ContextProvider;
-	toolProvider?: ToolProvider;
-	authProvider?: AuthProvider;
+// UI component props - no agent communication concerns
+export interface AgentUIProps {
+	// Core data from agent hook
+	messages: Message[];
+	isProcessing: boolean;
+	error?: string | null;
+	onSubmit: ( message: string ) => void;
+
+	// UI-specific props
 	className?: string;
 	style?: React.CSSProperties;
 	variant?: 'floating' | 'embedded';
@@ -50,6 +49,9 @@ export interface AgentChatProps {
 	onClose?: () => void;
 	emptyView?: React.ReactNode;
 	chatState?: ChatState;
+	suggestions?: Suggestion[];
+	clearSuggestions?: () => void;
+	markdownComponents?: Components;
 }
 
 export interface NoticeConfig {
@@ -64,15 +66,7 @@ export interface NoticeConfig {
 }
 
 // UI-specific types for existing components
-export interface ChatProps {
-	variant?: 'floating' | 'embedded';
-	triggerIcon?: React.ReactNode;
-	placeholder?: string;
-	notice?: NoticeConfig;
-	onOpen?: () => void;
-	onExpand?: () => void;
-	onClose?: () => void;
-	emptyView?: React.ReactNode;
+export interface ChatProps extends AgentUIProps {
 	chatState?: ChatState;
 }
 

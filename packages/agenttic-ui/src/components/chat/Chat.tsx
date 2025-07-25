@@ -7,7 +7,6 @@ import {
 	useMotionValue,
 } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAgentChat } from '../../hooks/useAgentChat';
 import { useChat } from '../../hooks/useChat';
 import { useInput } from '../../hooks/useInput';
 import type { ChatProps } from '../../types';
@@ -44,6 +43,10 @@ const DRAG_CONSTANTS = {
 } as const;
 
 export function Chat( {
+	messages,
+	isProcessing,
+	error,
+	onSubmit,
 	variant = 'floating',
 	triggerIcon,
 	placeholder = DEFAULT_PLACEHOLDER,
@@ -53,28 +56,26 @@ export function Chat( {
 	onClose,
 	emptyView,
 	chatState,
+	suggestions,
+	clearSuggestions,
+	markdownComponents,
 }: ChatProps ) {
-	// Get real agent state from the store
-	const {
-		messages,
-		isThinking,
-		isSendingMessage,
-		error,
-		sendMessage,
-		resetAgentConversation,
-	} = useAgentChat();
+	// Local input state for controlled component pattern
+	const [ inputValue, setInputValue ] = useState( '' );
 
 	const chat = useChat( chatState );
 	const timeoutRefs = useRef< Set< NodeJS.Timeout > >( new Set() );
 	const input = useInput( {
+		value: inputValue,
+		setValue: setInputValue,
 		onSubmit: async ( message: string ) => {
 			if ( chat.state !== 'expanded' ) {
 				onExpand?.();
 			}
 			chat.setState( 'expanded' );
-			await sendMessage( message );
+			await onSubmit( message );
 		},
-		isProcessing: isThinking || isSendingMessage,
+		isProcessing,
 	} );
 
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
@@ -99,11 +100,11 @@ export function Chat( {
 	// Check if should auto-collapse (no input and not focused)
 	const shouldAutoCollapse = useCallback( () => {
 		return (
-			! input.value.trim() &&
+			! inputValue.trim() &&
 			input.textareaRef.current?.ownerDocument?.activeElement?.tagName !==
 				'TEXTAREA'
 		);
-	}, [ input.value, input.textareaRef ] );
+	}, [ inputValue, input.textareaRef ] );
 
 	const getHeightForState = ( state: string ) => {
 		if ( state === 'collapsed' ) {
@@ -151,9 +152,9 @@ export function Chat( {
 				onExpand?.();
 			}
 			chat.setState( 'expanded' );
-			await sendMessage( message );
+			await onSubmit( message );
 		}
-	}, [ input, sendMessage, chat, onExpand ] );
+	}, [ input, onSubmit, chat, onExpand ] );
 
 	// Handle minimize (go back to compact state)
 	const handleMinimize = useCallback( () => {
@@ -163,13 +164,12 @@ export function Chat( {
 	// Handle close (go back to collapsed state)
 	const handleClose = useCallback( () => {
 		input.clear();
-		resetAgentConversation();
 		chat.close();
 
 		if ( onClose ) {
 			onClose();
 		}
-	}, [ input, resetAgentConversation, chat, onClose ] );
+	}, [ input, chat, onClose ] );
 
 	// Calculate snap position based on current side
 	const calculateSnapPosition = useCallback(
@@ -264,7 +264,7 @@ export function Chat( {
 
 	useEffect( () => {
 		prevStateRef.current = chat.state;
-	} );
+	}, [ chat.state ] );
 
 	// Handle window resize to maintain bottom positioning
 	useEffect( () => {
@@ -322,12 +322,14 @@ export function Chat( {
 					onKeyDown={ input.handleKeyDown }
 					textareaRef={ input.textareaRef }
 					placeholder={ placeholder }
-					isProcessing={ isThinking || isSendingMessage }
+					isProcessing={ isProcessing }
 					showHeader={ false }
 					notice={ notice }
-					isThinking={ isThinking }
+					suggestions={ suggestions }
+					clearSuggestions={ clearSuggestions }
 					error={ error }
 					emptyView={ emptyView }
+					markdownComponents={ markdownComponents }
 				/>
 			</div>
 		);
@@ -411,9 +413,7 @@ export function Chat( {
 									onKeyDown={ input.handleKeyDown }
 									textareaRef={ input.textareaRef }
 									placeholder={ placeholder }
-									isProcessing={
-										isThinking || isSendingMessage
-									}
+									isProcessing={ isProcessing }
 									onBlur={ handleAutoCollapse }
 								/>
 							</div>
@@ -428,15 +428,17 @@ export function Chat( {
 								onKeyDown={ input.handleKeyDown }
 								textareaRef={ input.textareaRef }
 								placeholder={ placeholder }
-								isProcessing={ isThinking || isSendingMessage }
+								isProcessing={ isProcessing }
 								showHeader={ true }
 								onClose={ handleClose }
 								onMinimize={ handleMinimize }
 								fromCompact={ fromCompact }
 								notice={ notice }
-								isThinking={ isThinking }
+								suggestions={ suggestions }
+								clearSuggestions={ clearSuggestions }
 								error={ error }
 								emptyView={ emptyView }
+								markdownComponents={ markdownComponents }
 							/>
 						) }
 					</AnimatePresence>

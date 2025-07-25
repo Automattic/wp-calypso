@@ -1,30 +1,28 @@
 import { useCallback, useEffect, useRef } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { STORE_NAME } from '../store';
-import type { StoreActions, StoreSelectors, UseInputReturn } from '../types';
 
 interface UseInputProps {
+	value: string;
+	setValue: ( value: string ) => void;
 	onSubmit: ( value: string ) => void;
 	isProcessing: boolean;
 }
 
+export interface UseInputReturn {
+	value: string;
+	setValue: ( value: string ) => void;
+	clear: () => void;
+	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	handleKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
+	adjustHeight: () => void;
+}
+
 export function useInput( {
+	value,
+	setValue,
 	onSubmit,
 	isProcessing,
 }: UseInputProps ): UseInputReturn {
-	const { setInputValue } = useDispatch( STORE_NAME ) as StoreActions;
-
-	const value = useSelect( ( select ) => {
-		const store = select( STORE_NAME ) as StoreSelectors;
-		return store.getInputValue();
-	}, [] );
-
-	const setValue = useCallback(
-		( newValue: string ) => {
-			setInputValue( newValue );
-		},
-		[ setInputValue ]
-	);
+	// No need for setValue callback since it's passed as prop
 
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 

@@ -13,7 +13,7 @@
 
 /* Reduce gap for consecutive messages from same role */
 .container [data-role="user"]:has(+ [data-role="user"]),
-.container [data-role="assistant"]:has(+ [data-role="assistant"]) {
+.container [data-role="agent"]:has(+ [data-role="agent"]) {
     margin-bottom: calc(-1 * var(--spacing-6));
 }
 

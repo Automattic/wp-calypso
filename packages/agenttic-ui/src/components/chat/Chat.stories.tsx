@@ -2,7 +2,37 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chat } from './Chat';
 import type { Message } from '../../types';
-import { MockProviders } from '../../mocks/providers';
+
+// Mock data for stories
+const mockMessages: Message[] = [
+	{
+		id: '1',
+		role: 'user',
+		content: [ { type: 'text', text: 'Can you help me with my website?' } ],
+		created_at: Date.now() - 60000,
+		archived: false,
+		showIcon: false,
+	},
+	{
+		id: '2',
+		role: 'agent',
+		content: [
+			{
+				type: 'text',
+				text: "Of course! I'd be happy to help you with your website. What specific aspect would you like assistance with?",
+			},
+		],
+		created_at: Date.now() - 30000,
+		archived: false,
+		showIcon: true,
+	},
+];
+
+const mockOnSubmit = ( message: string ) => {
+	console.log( 'Message submitted:', message );
+};
+
+// MockProviders removed - use direct props for stories
 
 const meta = {
 	title: 'Chat/Chat',
@@ -32,20 +62,19 @@ const meta = {
 			options: [ 'collapsed', 'compact', 'expanded' ],
 		},
 	},
-	decorators: [
-		( Story ) => (
-			<MockProviders>
-				<Story />
-			</MockProviders>
-		),
-	],
+	// Decorators removed - stories use direct props
 } satisfies Meta< typeof Chat >;
 
 export default meta;
 type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {
-	args: {},
+	args: {
+		messages: mockMessages,
+		isProcessing: false,
+		error: null,
+		onSubmit: mockOnSubmit,
+	},
 	render: ( args ) => (
 		<div
 			style={ {
@@ -66,6 +95,10 @@ export const Default: Story = {
 
 export const Embedded: Story = {
 	args: {
+		messages: mockMessages,
+		isProcessing: false,
+		error: null,
+		onSubmit: mockOnSubmit,
 		variant: 'embedded',
 	},
 	render: ( args ) => (
@@ -108,12 +141,20 @@ export const Embedded: Story = {
 
 export const Floating: Story = {
 	args: {
+		messages: mockMessages,
+		isProcessing: false,
+		error: null,
+		onSubmit: mockOnSubmit,
 		variant: 'floating',
 	},
 };
 
 export const WithEmptyView: Story = {
 	args: {
+		messages: [], // Empty messages for this story
+		isProcessing: false,
+		error: null,
+		onSubmit: mockOnSubmit,
 		variant: 'embedded',
 		emptyView: (
 			<div

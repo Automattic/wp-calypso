@@ -105,17 +105,17 @@ export const createUserMessage = (
 };
 
 /**
- * Create an assistant message
+ * Create an agent message
  * @param text
  * @param additionalProps
  */
-export const createAssistantMessage = (
+export const createAgentMessage = (
 	text: string,
 	additionalProps: Partial< Message > = {}
 ): Message => {
 	return {
 		id: crypto.randomUUID(),
-		role: 'assistant',
+		role: 'agent',
 		content: [ { type: 'text', text } ],
 		created_at: Date.now(),
 		archived: false,
