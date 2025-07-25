@@ -58,25 +58,29 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       class="contact-details-form-fields__row"
     >
       <div
-        class="contact-details-form-fields__field organization contact-details-form-fields__label"
+        class="organization-field-container"
       >
-        <label
-          class="form-label"
-          for="organization"
+        <div
+          class="contact-details-form-fields__field organization contact-details-form-fields__label"
         >
-          Organization
-        </label>
-        <input
-          aria-describedby="validation-field-organization"
-          aria-invalid="false"
-          autocomplete="on"
-          class="form-text-input"
-          id="organization"
-          name="organization"
-          placeholder="Organization"
-          type="text"
-          value="Il pagliaccio del comune"
-        />
+          <label
+            class="form-label"
+            for="organization"
+          >
+            Organization
+          </label>
+          <input
+            aria-describedby="validation-field-organization"
+            aria-invalid="false"
+            autocomplete="on"
+            class="form-text-input"
+            id="organization"
+            name="organization"
+            placeholder="Organization (optional)"
+            type="text"
+            value="Il pagliaccio del comune"
+          />
+        </div>
       </div>
     </div>
     <div
