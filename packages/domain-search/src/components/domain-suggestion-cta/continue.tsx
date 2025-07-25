@@ -16,7 +16,7 @@ export const DomainSuggestionContinueCTA = ( {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
-		throw new Error( 'DomainSuggestionCTA.AddToCart must be used within a DomainSuggestionsList' );
+		throw new Error( 'DomainSuggestionContinueCTA must be used within a DomainSuggestionsList' );
 	}
 
 	return (

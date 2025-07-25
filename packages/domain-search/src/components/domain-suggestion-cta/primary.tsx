@@ -24,7 +24,7 @@ export const DomainSuggestionPrimaryCTA = ( {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
-		throw new Error( 'DomainSuggestionCTA.Primary must be used within a DomainSuggestionsList' );
+		throw new Error( 'DomainSuggestionPrimaryCTA must be used within a DomainSuggestionsList' );
 	}
 
 	return (

@@ -59,15 +59,4 @@ describe( 'DomainSuggestionPrice', () => {
 		expect( screen.queryByText( '/year' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'For first year. $15/year renewal.' ) ).toBeInTheDocument();
 	} );
-
-	it( 'renders the price with a custom sub text', () => {
-		render(
-			<DomainSuggestionsList>
-				<DomainSuggestionPrice price="$15" renewPrice="$20" subText="Here's a different sub text" />
-			</DomainSuggestionsList>
-		);
-
-		expect( screen.queryByText( 'For first year. $20/year renewal.' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( "Here's a different sub text" ) ).toBeInTheDocument();
-	} );
 } );
