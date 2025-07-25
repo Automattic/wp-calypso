@@ -1,17 +1,23 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.domains-mini-cart {
+.domains-mini-cart__container {
 	position: fixed !important;
 	left: 0;
 	right: 0;
 	bottom: 0;
 }
 
+.domains-mini-cart {
+	justify-content: center;
+	padding-inline: 1rem;
+	display: flex;
+	box-sizing: border-box;
+}
+
 .domains-mini-cart__content {
 	box-sizing: border-box;
-	margin: 0 auto;
-	padding: 1rem;
+	padding-block: 1rem;
 	width: 100%;
 	max-width: 64rem;
 }

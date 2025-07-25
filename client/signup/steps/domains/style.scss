@@ -34,21 +34,22 @@ body:has( .wpcom-domain-search-v2 ) {
 		height: 60px;
 	}
 
-	.step-wrapper__content {
-		padding: 0 16px 32px 16px;
+	.step-wrapper {
+		padding-inline: 16px;
 
 		@include break-small {
 			padding-inline: 24px;
 		}
+	}
 
-		.domains-mini-cart__content {
-			padding-inline: 16px;
-			max-width: 1040px;
-
-			@include break-small {
-				padding-inline: 24px;
-			}
+	.domains-mini-cart {
+		@include break-small {
+			padding-inline: 24px;
 		}
+	}
+
+	.domains-mini-cart__content {
+		max-width: 1040px;
 	}
 
 	.step-wrapper__navigation-link {
@@ -82,23 +83,9 @@ body:has( .wpcom-domain-search-v2 ) {
 		}
 
 		.domains-mini-cart {
-			display: flex;
-			justify-content: center;
-			padding-inline: 1rem;
-			box-sizing: border-box;
-
-			@include break-small {
-				padding-inline: 24px;
-			}
-
 			@include break-large {
 				padding-inline: 32px;
 			}
-		}
-
-		.domains-mini-cart__content {
-			max-width: 1040px;
-			padding: 1rem 0;
 		}
 	}
 
