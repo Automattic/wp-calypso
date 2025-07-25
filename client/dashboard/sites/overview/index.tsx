@@ -144,7 +144,7 @@ function SiteOverview( {
 					spacing={ spacing }
 					alignment="flex-start"
 				>
-					<LatestActivityCard site={ site } compact={ isSmallViewport } />
+					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						<OverviewCardUpsellDIFM site={ site } />

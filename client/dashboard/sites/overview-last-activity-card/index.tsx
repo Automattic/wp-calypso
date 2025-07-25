@@ -44,10 +44,10 @@ function getActivityLogUrl( site: Site ) {
 
 export default function LatestActivityCard( {
 	site,
-	compact = false,
+	isCompact = false,
 }: {
 	site: Site;
-	compact?: boolean;
+	isCompact?: boolean;
 } ) {
 	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
 	const { recordTracksEvent } = useAnalytics();
@@ -57,7 +57,7 @@ export default function LatestActivityCard( {
 		type: 'list' as const,
 		titleField: 'content_text',
 		mediaField: 'gridicon',
-		showMedia: ! compact,
+		showMedia: ! isCompact,
 	};
 
 	const handleClickSeeAll = () => {
