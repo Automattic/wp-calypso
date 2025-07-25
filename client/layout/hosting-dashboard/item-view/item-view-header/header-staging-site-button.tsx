@@ -18,7 +18,7 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
-import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-staging-site-status';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
@@ -40,6 +40,11 @@ export default function HeaderStagingSiteButton( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
+	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
+	const isCreatingStagingSite = [
+		StagingSiteStatus.INITIATE_TRANSFERRING,
+		StagingSiteStatus.TRANSFERRING,
+	].includes( stagingSiteStatus );
 	const isA4ADevSite = site?.is_a4a_dev_site || false;
 	const {
 		data: hasValidQuota,
@@ -60,21 +65,14 @@ export default function HeaderStagingSiteButton( {
 	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
 
 	useEffect( () => {
-		if ( transferStatus === transferStates.COMPLETE ) {
+		if ( isCreatingStagingSite && transferStatus === transferStates.COMPLETE ) {
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
-		}
-	}, [ dispatch, siteId, transferStatus ] );
-
-	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
-
-	useEffect( () => {
-		if ( stagingSiteStatus === StagingSiteStatus.COMPLETE ) {
 			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
+	}, [ __, dispatch, queryClient, siteId, transferStatus, isCreatingStagingSite ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
@@ -116,7 +114,8 @@ export default function HeaderStagingSiteButton( {
 	const showAddStagingButton =
 		isAtomic &&
 		! isStagingSite &&
-		( stagingSites.length === 0 || transferStatus !== StagingSiteStatus.COMPLETE );
+		( stagingSites.length === 0 ||
+			( transferStatus !== StagingSiteStatus.COMPLETE && ! isCreatingStagingSite ) );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -146,10 +145,7 @@ export default function HeaderStagingSiteButton( {
 		);
 	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
 		disabledReason = __( 'We are deleting your staging site.' );
-	} else if (
-		isLoadingAddStagingSite ||
-		( transferStatus !== null && transferStatus !== StagingSiteStatus.COMPLETE )
-	) {
+	} else if ( isLoadingAddStagingSite || isCreatingStagingSite ) {
 		disabledReason = __( 'Adding staging site…' );
 	}
 
