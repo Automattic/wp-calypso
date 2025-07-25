@@ -6,7 +6,7 @@ import 'calypso/state/active-promotions/init';
  * @returns {Array} WordPress activePromotions
  */
 export function getActivePromotions( state ) {
-	return state.activePromotions.items;
+	return state.activePromotions?.items || [];
 }
 
 /**
@@ -25,5 +25,5 @@ export function hasActivePromotion( state, name ) {
  * @returns {boolean} is activePromotions requesting?
  */
 export function isRequestingActivePromotions( state ) {
-	return state.activePromotions.requesting;
+	return state.activePromotions?.requesting || false;
 }
