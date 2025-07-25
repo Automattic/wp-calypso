@@ -300,6 +300,13 @@ class RenderDomainsStepComponent extends Component {
 
 		await this.props.saveSignupStep( stepData );
 
+		if ( this.props.shouldUseDomainSearchV2 && suggestion?.isSubDomainSuggestion ) {
+			this.setState( { isMiniCartContinueButtonBusy: true } );
+			await this.props.saveSignupStep( stepData );
+			await this.submitWithDomain( { signupDomainOrigin, position, suggestion } );
+			return;
+		}
+
 		if (
 			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
 			suggestion?.isSubDomainSuggestion

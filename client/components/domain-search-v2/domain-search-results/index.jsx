@@ -277,7 +277,7 @@ class DomainSearchResults extends Component {
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			const subdomainSuggestion = suggestions.find(
-				( suggestion ) => suggestion.isSubDomainSuggestion
+				( suggestion ) => suggestion.isSubDomainSuggestion || suggestion.is_free
 			);
 			const regularSuggestions = suggestions.filter(
 				( suggestion ) =>
@@ -353,9 +353,10 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton && subdomainSuggestion && (
+			domainSkipSuggestion = showSkipButton && (
 				<DomainSkipSuggestion
-					domain={ subdomainSuggestion.domain_name }
+					selectedSite={ this.props.selectedSite }
+					subdomainSuggestion={ subdomainSuggestion }
 					onSkip={ this.props.onSkip }
 				/>
 			);

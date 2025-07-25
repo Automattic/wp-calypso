@@ -11,14 +11,59 @@ import { DomainSkipSkeleton } from './index.skeleton';
 import './style.scss';
 
 interface Props {
-	domain: string;
-	onSkip: () => void;
+	selectedSite?: { URL: string };
+	subdomainSuggestion?: { domain_name: string };
 }
 
-const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
+const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion }: Props ) => {
 	const translate = useTranslate();
-	const { cart } = useDomainSearch();
-	const [ subdomain, ...tlds ] = domain.split( '.' );
+	const { cart, onContinue } = useDomainSearch();
+
+	if ( selectedSite ) {
+		const [ subdomain, ...tlds ] = new URL( selectedSite.URL ).hostname.split( '.' ) ?? [];
+
+		return (
+			<DomainSkipSkeleton
+				title={
+					<Heading level="4" weight="normal">
+						{ translate( 'Current address' ) }
+					</Heading>
+				}
+				subtitle={
+					<Text>
+						{ translate(
+							'Keep %(subdomain)s{{strong}}.%(domainName)s{{/strong}} as your site address',
+							{
+								args: {
+									subdomain: subdomain,
+									domainName: tlds.join( '.' ),
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</Text>
+				}
+				right={
+					<Button
+						className="subdomain-skip-suggestion__btn"
+						variant="secondary"
+						onClick={ onContinue }
+						disabled={ cart.isBusy }
+					>
+						{ translate( 'Skip purchase' ) }
+					</Button>
+				}
+			/>
+		);
+	}
+
+	if ( ! subdomainSuggestion ) {
+		throw new Error( 'No selected site but no suggestion was passed.' );
+	}
+
+	const [ subdomain, ...tlds ] = subdomainSuggestion.domain_name.split( '.' ) ?? [];
 
 	return (
 		<DomainSkipSkeleton
@@ -44,7 +89,9 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 				<Button
 					className="subdomain-skip-suggestion__btn"
 					variant="secondary"
-					onClick={ onSkip }
+					onClick={ () => {
+						cart.onAddItem( subdomainSuggestion.domain_name );
+					} }
 					disabled={ cart.isBusy }
 				>
 					{ translate( 'Skip purchase' ) }
