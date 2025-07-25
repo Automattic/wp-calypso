@@ -15,18 +15,18 @@ import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
+import AgencySiteShareCard from '../overview-agency-site-share-card';
+import BackupCard from '../overview-backup-card';
 import OverviewCard from '../overview-card';
-import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
-import LatestActivityCard from '../overview-last-activity-card';
-import AgencySiteShareCard from './agency-site-share-card';
-import BackupCard from './backup-card';
-import DomainsCard from './domains-card';
-import PlanCard from './plan-card';
-import ScanCard from './scan-card';
-import SiteActionMenu from './site-action-menu';
-import SiteOverviewFields from './site-overview-fields';
-import SitePreviewCard from './site-preview-card';
-import VisibilityCard from './visibility-card';
+import DIFMUpsellCard from '../overview-difm-upsell-card';
+import DomainsCard from '../overview-domains-card';
+import LatestActivityCard from '../overview-latest-activity-card';
+import PlanCard from '../overview-plan-card';
+import ScanCard from '../overview-scan-card';
+import SiteActionMenu from '../overview-site-action-menu';
+import SiteOverviewFields from '../overview-site-fields';
+import SitePreviewCard from '../overview-site-preview-card';
+import VisibilityCard from '../overview-visibility-card';
 import './style.scss';
 
 type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
@@ -147,7 +147,7 @@ function SiteOverview( {
 					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
-						<OverviewCardUpsellDIFM site={ site } />
+						<DIFMUpsellCard site={ site } />
 					</VStack>
 				</HStack>
 			</VStack>

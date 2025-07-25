@@ -12,7 +12,6 @@ import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import illustrationTransferDomainUrl from './upsell-illustration-transfer-domain.svg';
 import type { Site } from '../../data/types';
 
 const useDomainSuggestion = ( site: Site ) => {
@@ -30,7 +29,7 @@ const useDomainSuggestion = ( site: Site ) => {
 	};
 };
 
-const OverviewCardUpsellDomainContent = ( {
+const DomainUpsellCardContent = ( {
 	site,
 	title,
 	description,
@@ -122,6 +121,7 @@ const OverviewCardUpsellDomainContent = ( {
 				<UpsellCTAButton
 					target="_blank"
 					text={ upsellCTAButtonText }
+					variant="primary"
 					size="compact"
 					tracksId={ tracksId }
 					isBusy={ isSubmitting }
@@ -132,34 +132,7 @@ const OverviewCardUpsellDomainContent = ( {
 	);
 };
 
-export const OverviewCardUpsellDomainTransfer = () => {
-	return (
-		<Callout
-			title={ __( 'Transfer your domain' ) }
-			titleAs="h2"
-			description={
-				<Text variant="muted">
-					{ __(
-						'Transfer your domain and benefit from some of the lowest prices in the business.'
-					) }
-				</Text>
-			}
-			image={ illustrationTransferDomainUrl }
-			imageVariant="full-bleed"
-			actions={
-				<UpsellCTAButton
-					href="/setup/domain-transfer"
-					text={ __( 'Transfer domain' ) }
-					size="compact"
-					tracksId="transfer-domain"
-					variant="secondary"
-				/>
-			}
-		/>
-	);
-};
-
-const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
+const DomainUpsellCard = ( { site }: { site: Site } ) => {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	if ( ! sitePlan ) {
 		return null;
@@ -167,7 +140,7 @@ const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 
 	if ( sitePlan.has_domain_credit ) {
 		return (
-			<OverviewCardUpsellDomainContent
+			<DomainUpsellCardContent
 				site={ site }
 				title={ __( 'Claim your free domain' ) }
 				description={ __(
@@ -180,7 +153,7 @@ const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 	}
 
 	return (
-		<OverviewCardUpsellDomainContent
+		<DomainUpsellCardContent
 			site={ site }
 			title={ __( 'The perfect domain awaits' ) }
 			description={ __(
@@ -192,4 +165,4 @@ const OverviewCardUpsellDomain = ( { site }: { site: Site } ) => {
 	);
 };
 
-export default OverviewCardUpsellDomain;
+export default DomainUpsellCard;
