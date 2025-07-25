@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -51,18 +50,9 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, act
 				</span>
 			</div>
 			<div className="threat-fix-header__autofix-checkbox">
-				{ fixAllDialog &&
-					( threat.fixable && threat.fixable.extras?.is_bulk_fixable !== false ? (
-						<FormInputCheckbox checked={ checkedFix } onChange={ checkFix } value={ threat.id } />
-					) : (
-						<Tooltip
-							text={ translate(
-								'This threat cannot be fixed in bulk because an individual confirmation is required. Please run the individual fix.'
-							) }
-						>
-							<Gridicon icon="info" size={ 24 } />
-						</Tooltip>
-					) ) }
+				{ fixAllDialog && threat.fixable && threat.fixable.extras?.is_bulk_fixable !== false && (
+					<FormInputCheckbox checked={ checkedFix } onChange={ checkFix } value={ threat.id } />
+				) }
 			</div>
 		</>
 	);
