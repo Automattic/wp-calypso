@@ -7,6 +7,7 @@ import {
 	NEWSLETTER_FLOW,
 	READYMADE_TEMPLATE_FLOW,
 	REBLOGGING_FLOW,
+	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
@@ -121,7 +122,9 @@ export function DomainFormControl( {
 
 	if (
 		isDomainSearchV2Enabled &&
-		[ NEWSLETTER_FLOW, READYMADE_TEMPLATE_FLOW, REBLOGGING_FLOW ].includes( flow ?? '' )
+		[ NEWSLETTER_FLOW, READYMADE_TEMPLATE_FLOW, REBLOGGING_FLOW, START_WRITING_FLOW ].includes(
+			flow ?? ''
+		)
 	) {
 		includeWordPressDotCom = true;
 		showSkipButton = true;
