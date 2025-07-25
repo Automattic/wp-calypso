@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
@@ -85,10 +86,9 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 	return null;
 }
 
-function filterSubscriptionsBySite( siteId: number ): void {
-	// eslint-disable-next-line
-	console.log( 'TODO: filter by siteId', siteId );
+function filterSubscriptionsBySiteUrl( siteId: number ): string {
 	// FIXME: do this
+	return `/v2/me/billing/active-subscriptions/${ siteId }`;
 }
 
 export function ActiveSubscriptionDescription( {
@@ -118,13 +118,8 @@ export function ActiveSubscriptionDescription( {
 				),
 				{
 					button: (
-						<button
-							className="purchase-item__link"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-								event.preventDefault();
-								filterSubscriptionsBySite( site.ID );
-							} }
+						<Link
+							to={ filterSubscriptionsBySiteUrl( site.ID ) }
 							title={
 								// translators: the siteName is the name of the site
 								sprintf( __( 'View subscriptions for %(siteName)s' ), {
@@ -135,7 +130,6 @@ export function ActiveSubscriptionDescription( {
 					),
 					link: (
 						<a
-							className="purchase-item__link"
 							href={ 'https://' + site.slug }
 							target="_blank"
 							rel="noreferrer"
@@ -160,13 +154,8 @@ export function ActiveSubscriptionDescription( {
 				} ),
 				{
 					button: (
-						<button
-							className="purchase-item__link"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-								event.preventDefault();
-								filterSubscriptionsBySite( site.ID );
-							} }
+						<Link
+							to={ filterSubscriptionsBySiteUrl( site.ID ) }
 							title={
 								// translators: the siteDomain is the domain of the site
 								sprintf( __( 'View subscriptions for %(siteDomain)s' ), {
@@ -188,13 +177,8 @@ export function ActiveSubscriptionDescription( {
 				} ),
 				{
 					button: (
-						<button
-							className="purchase-item__link"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-								event.preventDefault();
-								filterSubscriptionsBySite( site.ID );
-							} }
+						<Link
+							to={ filterSubscriptionsBySiteUrl( site.ID ) }
 							title={
 								// translators: the siteName is the name of the site
 								sprintf( __( 'View subscriptions for %(siteName)s' ), {
@@ -205,7 +189,6 @@ export function ActiveSubscriptionDescription( {
 					),
 					link: (
 						<a
-							className="purchase-item__link"
 							href={ 'https://' + site.slug }
 							target="_blank"
 							rel="noreferrer"

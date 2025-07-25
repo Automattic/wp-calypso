@@ -13,6 +13,7 @@ import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscripti
 import { sitesQuery } from '../../app/queries/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 import type { Site } from '../../data/site';
@@ -89,11 +90,10 @@ function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			},
 			// Render the site icon
 			render: ( { item }: { item: ActiveSubscription } ) => {
-				const site = { ID: item.blog_id };
-				// FIXME: site icon here
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
-						{ site.ID }
+						{ site ? <SiteIcon site={ site } /> : item.blog_id },
 					</a>
 				);
 			},
@@ -106,7 +106,7 @@ function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableSorting: true,
 			enableHiding: false,
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
-				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
 					getDisplayName( item ) +
@@ -144,11 +144,11 @@ function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableHiding: false,
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return item.blogname + ' ' + item.domain + ' ' + site?.URL;
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
-				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return <ActiveSubscriptionDescription purchase={ item } site={ site } />;
 			},
 		},
