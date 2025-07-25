@@ -308,7 +308,7 @@ const useGridPlans: UseGridPlansType = ( {
 		return null;
 	}
 
-	const gridPlans = availablePlanSlugs.map( ( planSlug ) => {
+	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
@@ -367,8 +367,6 @@ const useGridPlans: UseGridPlansType = ( {
 			pricing: pricingMeta[ planSlug ],
 		};
 	} );
-
-	return gridPlans;
 };
 
 export default useGridPlans;
