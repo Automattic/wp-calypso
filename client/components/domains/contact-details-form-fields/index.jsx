@@ -383,6 +383,9 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
+							description: translate(
+								'The organization, if filled, will be made public and considered the legal domain owner'
+							),
 						},
 						{
 							needsChildRef: true,

@@ -358,6 +358,9 @@ export class ManagedContactDetailsFormFields extends Component<
 						name="organization"
 						text={ translate( '+ Add organization name' ) }
 						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
+						description={ translate(
+							'The organization, if filled, will be made public and considered the legal domain owner'
+						) }
 					/>
 				</div>
 
