@@ -18,6 +18,13 @@
 	.dialog__content {
 		max-width: 720px;
 	}
+
+	code {
+		font-size: $font-body-small;
+		background: var(--studio-gray-5);
+		padding: 3px;
+	}
+
 	.threat-dialog {
 		&__header {
 			font-size: $font-title-small;

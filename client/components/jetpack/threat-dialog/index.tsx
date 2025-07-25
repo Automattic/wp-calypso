@@ -24,8 +24,6 @@ const ThreatDialog: React.FC< Props > = ( {
 	showDialog,
 	threat,
 } ) => {
-	// console.log( 'this is the threat dialog', threat );
-
 	const isExtensionDeleteFixer =
 		threat.signature === 'Vulnerable.WP.Extension' &&
 		threat.fixable &&
@@ -123,16 +121,6 @@ const ThreatDialog: React.FC< Props > = ( {
 		};
 	}, [ action ] );
 
-	const helpText = translate(
-		"Enter the slug '%(slug)s' to confirm that you understand the possible consequences.",
-		{
-			args: {
-				slug: slug,
-			},
-			comment: '%(slug) is the slug of the extension (plugin or theme) being deleted.',
-		}
-	);
-
 	return (
 		<Dialog
 			additionalClassNames={ clsx( 'threat-dialog' ) }
@@ -149,7 +137,6 @@ const ThreatDialog: React.FC< Props > = ( {
 			<h3 className="threat-dialog__threat-title">
 				<ThreatFixHeader threat={ threat } action={ action } />
 			</h3>
-			{ /* this should be extracted into its own component */ }
 			{ isExtensionDeleteFixer && (
 				<>
 					{ threat.fixable.extensionStatus === 'active' ? (
@@ -201,7 +188,15 @@ const ThreatDialog: React.FC< Props > = ( {
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						help={ helpText }
+						help={ translate(
+							'Enter the slug {{slug/}} to confirm that you understand the possible consequences.',
+							{
+								components: {
+									slug: <code>{ slug }</code>,
+								},
+								comment: '%(slug) is the slug of the extension (plugin or theme) being deleted.',
+							}
+						) }
 						label="Confirm deletion"
 						onChange={ ( value: string ) => setConfirmationInput( value ) }
 						value={ confirmationInput }
