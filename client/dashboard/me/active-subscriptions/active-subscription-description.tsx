@@ -85,7 +85,7 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 	return null;
 }
 
-function filterSubscriptionsBySite( siteId: string ): void {
+function filterSubscriptionsBySite( siteId: number ): void {
 	// eslint-disable-next-line
 	console.log( 'TODO: filter by siteId', siteId );
 	// FIXME: do this
@@ -96,7 +96,7 @@ export function ActiveSubscriptionDescription( {
 	site,
 }: {
 	purchase: ActiveSubscription;
-	site?: { name: string; domain: string; ID: string };
+	site?: { name: string; slug: string; ID: number };
 } ) {
 	if ( isTemporarySitePurchase( purchase ) ) {
 		return null;
@@ -105,7 +105,7 @@ export function ActiveSubscriptionDescription( {
 	const productType = purchaseType( purchase );
 
 	if ( site ) {
-		if ( productType && site.name && site.domain ) {
+		if ( productType && site.name && site.slug ) {
 			return createInterpolateElement(
 				sprintf(
 					// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
@@ -113,7 +113,7 @@ export function ActiveSubscriptionDescription( {
 					{
 						purchaseType: productType,
 						siteName: site.name,
-						siteDomain: site.domain,
+						siteDomain: site.slug,
 					}
 				),
 				{
@@ -136,7 +136,7 @@ export function ActiveSubscriptionDescription( {
 					link: (
 						<a
 							className="purchase-item__link"
-							href={ 'https://' + site.domain }
+							href={ 'https://' + site.slug }
 							target="_blank"
 							rel="noreferrer"
 							title={
@@ -151,12 +151,12 @@ export function ActiveSubscriptionDescription( {
 			);
 		}
 
-		if ( productType && site.domain ) {
+		if ( productType && site.slug ) {
 			return createInterpolateElement(
 				// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
 				sprintf( __( '%(purchaseType)s for <button>%(siteDomain)s</button>' ), {
 					purchaseType: productType,
-					siteDomain: site.domain,
+					siteDomain: site.slug,
 				} ),
 				{
 					button: (
@@ -170,7 +170,7 @@ export function ActiveSubscriptionDescription( {
 							title={
 								// translators: the siteDomain is the domain of the site
 								sprintf( __( 'View subscriptions for %(siteDomain)s' ), {
-									siteName: site.domain,
+									siteName: site.slug,
 								} )
 							}
 						/>
@@ -179,12 +179,12 @@ export function ActiveSubscriptionDescription( {
 			);
 		}
 
-		if ( site.name && site.domain ) {
+		if ( site.name && site.slug ) {
 			return createInterpolateElement(
 				// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
 				sprintf( __( 'for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)' ), {
 					siteName: site.name,
-					siteDomain: site.domain,
+					siteDomain: site.slug,
 				} ),
 				{
 					button: (
@@ -206,7 +206,7 @@ export function ActiveSubscriptionDescription( {
 					link: (
 						<a
 							className="purchase-item__link"
-							href={ 'https://' + site.domain }
+							href={ 'https://' + site.slug }
 							target="_blank"
 							rel="noreferrer"
 							title={
