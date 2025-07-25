@@ -492,7 +492,7 @@ export default function SyncModal( {
 						<HStack alignment="left" spacing={ 1 }>
 							<Text color="var(--studio-gray-40)">
 								{ displayBackupDate
-									? createInterpolateElement( __( 'Backup contents from: <date />' ), {
+									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
 											date: <span>{ displayBackupDate }</span>,
 									  } )
 									: __( 'There are no backups.' ) }{ ' ' }
