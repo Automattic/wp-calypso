@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { DashboardDataError } from './error';
 
 export const SITE_FIELDS = [
 	'ID',
@@ -112,10 +113,17 @@ export interface Site {
 }
 
 export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
-	return await wpcom.req.get(
-		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
-	);
+	try {
+		return await wpcom.req.get(
+			{ path: `/sites/${ siteIdOrSlug }` },
+			{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
+		);
+	} catch ( error ) {
+		if ( error instanceof Error && error.message.includes( '[-32710]' ) ) {
+			throw new DashboardDataError( 'inaccessible_jetpack', error );
+		}
+		throw error;
+	}
 }
 
 export async function deleteSite( siteId: number ) {
