@@ -120,7 +120,7 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
-			&.domains:not(.copy-site):not(.onboarding) {
+			&.domains:not(.copy-site):not(.ai-site-builder):not(.domain-upsell):not(.onboarding):not(.newsletter):not(.readymade-template):not(.reblogging):not(.start-writing) {
 				margin-top: -60px;
 			}
 		}
