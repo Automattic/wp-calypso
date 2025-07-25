@@ -40,7 +40,8 @@ export default function HeaderStagingSiteButton( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
-	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
+	const stagingSiteStatus =
+		useSelector( ( state ) => getStagingSiteStatus( state, siteId ) ) ?? StagingSiteStatus.UNSET;
 	const isCreatingStagingSite = [
 		StagingSiteStatus.INITIATE_TRANSFERRING,
 		StagingSiteStatus.TRANSFERRING,
