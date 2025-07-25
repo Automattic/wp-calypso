@@ -1,15 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { HostingFeatures } from '../../data/constants';
-import { hasHostingFeature } from '../../utils/site-features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import ProtectForm from './protect-form';
 
@@ -19,8 +17,6 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		throw notFound();
 	}
-
-	const canView = hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS );
 
 	return (
 		<PageLayout
@@ -39,24 +35,19 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 				/>
 			}
 		>
-			{ ! canView && (
-				<Notice>
-					<VStack>
-						<Text as="p">{ __( 'No security configuration is required.' ) }</Text>
-						<Text as="p">
-							{ __( 'Security management is automatic for WordPress.com sites.' ) }
-						</Text>
-					</VStack>
-				</Notice>
-			) }
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.SECURITY_SETTINGS }
+				tracksFeatureId="settings-security"
+			>
+				{ /* JP WAF Module */ }
 
-			{ /* JP WAF Module */ }
+				<ProtectForm siteSlug={ siteSlug } />
 
-			{ canView && <ProtectForm siteSlug={ siteSlug } /> }
+				{ /* JP WAF Module's Block List */ }
 
-			{ /* JP WAF Module's Block List */ }
-
-			{ /* Allow List */ }
+				{ /* Allow List */ }
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
