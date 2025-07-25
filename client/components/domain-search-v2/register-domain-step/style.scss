@@ -1,7 +1,10 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+
 .wpcom-domain-search-v2 {
+	--domain-search-mini-cart-height: 80px;
+	margin-bottom: var( --domain-search-mini-cart-height );
 
 	&.initial-state {
 		max-width: 800px;

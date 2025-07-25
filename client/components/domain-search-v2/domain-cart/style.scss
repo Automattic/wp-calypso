@@ -2,3 +2,7 @@
 .domains-search-v2__full-cart {
 	z-index: z-index( 'root', '.drawer' );
 }
+
+.domains-search-v2__mini-cart {
+	height: var( --domain-search-mini-cart-height );
+}

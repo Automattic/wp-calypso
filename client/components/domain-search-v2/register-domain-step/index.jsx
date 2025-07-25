@@ -673,7 +673,7 @@ class RegisterDomainStep extends Component {
 				cart={ this.getCart() }
 				className="wpcom-domain-search-v2"
 			>
-				<VStack spacing={ 8 }>
+				<VStack spacing={ 8 } className="wpcom-domain-search-v2__content">
 					<VStack spacing={ 4 }>
 						{ this.renderSearchControls() }
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
