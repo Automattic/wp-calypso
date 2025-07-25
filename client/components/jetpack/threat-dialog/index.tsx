@@ -29,6 +29,12 @@ const ThreatDialog: React.FC< Props > = ( {
 		threat.fixable &&
 		threat.fixable.fixer === 'delete';
 	const [ confirmationInput, setConfirmationInput ] = React.useState( '' );
+	// So we don't share the input value between different threats
+	React.useEffect( () => {
+		if ( showDialog ) {
+			setConfirmationInput( '' );
+		}
+	}, [ showDialog, threat ] );
 	const [ isInputHighlighted, setIsInputHighlighted ] = React.useState( false );
 	const slug = threat.extension?.slug || 'unknown-slug';
 
