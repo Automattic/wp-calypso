@@ -69,7 +69,15 @@ const normalizeFeedRecommendation = ( blog: APIFeedRecommendation ): FeedRecomme
 	};
 };
 
-export const useFeedRecommendationsQuery = ( userLogin?: string, options?: QueryOptions ) => {
+/**
+ * Hook to fetch and manage user recommended blogs.
+ * 
+ * @param userLogin - The user login to fetch recommendations for
+ * @param options - Optional configuration
+ * @param options.enabled - Whether the query should be enabled (default: true)
+ * @returns Object containing loading state, data, and success status
+ */
+export const useFeedRecommendationsQuery = (userLogin?: string, options?: QueryOptions) => {
 	const { enabled = true } = options || {};
 	const dispatch = useDispatch();
 	const hasRequested = useSelector( ( state ) =>
