@@ -13,6 +13,7 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	isDomainForGravatarFlow,
+	AI_SITE_BUILDER_FLOW,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
@@ -693,6 +694,7 @@ class RenderDomainsStepComponent extends Component {
 			DOMAIN_FOR_GRAVATAR_FLOW,
 			'onboarding-with-email',
 			NEW_HOSTED_SITE_FLOW,
+			AI_SITE_BUILDER_FLOW,
 		].includes( flowName );
 	};
 
@@ -1711,7 +1713,9 @@ class RenderDomainsStepComponent extends Component {
 						/>
 					}
 					backLabelText={ backLabelText }
-					hideSkip
+					hideSkip={ ! shouldUseDomainSearchV2 || AI_SITE_BUILDER_FLOW !== flowName }
+					skipLabelText={ translate( 'Decide later' ) }
+					onSkip={ () => this.handleSkip( undefined, true ) }
 					align="center"
 					isWideLayout
 					goBack={ goBack }

@@ -16,6 +16,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
+	NEW_HOSTED_SITE_FLOW,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -1755,7 +1756,7 @@ class RegisterDomainStep extends Component {
 	};
 
 	getUseYourDomainHandler = () => {
-		if ( this.props.flowName === 'new-hosted-site' ) {
+		if ( [ NEW_HOSTED_SITE_FLOW, AI_SITE_BUILDER_FLOW ].includes( this.props.flowName ) ) {
 			return null;
 		}
 
