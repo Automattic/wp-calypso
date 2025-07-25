@@ -388,15 +388,8 @@ class RegisterDomainStep extends Component {
 		this.props.recordSearchFormView( this.props.analyticsSection, this.props.flowName );
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		// Check if isInInitialState would return a different value
-		const wasInitialState = ! prevState.lastQuery && ! prevState.searchResults;
-		const isInitialState = this.isInInitialState();
-
-		if ( wasInitialState !== isInitialState ) {
-			this.updateParentClass();
-		}
-
+	componentDidUpdate( prevProps ) {
+		this.updateParentClass();
 		this.checkForBloggerPlan();
 
 		if (
