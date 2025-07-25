@@ -81,28 +81,26 @@ body:has( .wpcom-domain-search-v2 ) {
 			}
 		}
 
-		.domains-mini-cart {
-			.domains-mini-cart__content {
-				padding-inline: 16px;
-				max-width: 1040px;
+		.domains-mini-cart__content {
+			padding-inline: 16px;
+			max-width: 1040px;
 
-				@include break-small {
-					padding-inline: 24px;
-				}
+			@include break-small {
+				padding-inline: 24px;
+			}
 
-				@include break-large {
-					padding-inline: 32px;
-				}
+			@include break-large {
+				padding-inline: 32px;
+			}
 
-				@include break-xlarge {
-					padding-inline: 0;
-				}
+			@include break-xlarge {
+				padding-inline: 0;
 			}
 		}
 	}
 
 	&:not( .is-domain-plan-package-flow ):has( .site-domains-add-page ) {
-		.domains-mini-cart__content {
+		.domains-mini-cart {
 			@include break-medium {
 				width: calc( 100% - var( --sidebar-width-min ) );
 				left: var( --sidebar-width-min );
