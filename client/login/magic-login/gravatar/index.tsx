@@ -124,8 +124,9 @@ function getEmailString( email: string | string[] | undefined ): string {
 const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const dispatch = useDispatch();
 	const lastCheckedUsernameOrEmail = useSelector( getLastCheckedUsernameOrEmail );
-	const gravatarFrom = useSelector( ( state ) => getCurrentQueryArguments( state )?.gravatar_from );
-	const emailAddress = useSelector( ( state ) => getCurrentQueryArguments( state )?.email_address );
+	const gravatarFrom = useSelector( getCurrentQueryArguments )?.gravatar_from;
+	const emailAddress = useSelector( getCurrentQueryArguments )?.email_address;
+	const redirectTo = useSelector( getCurrentQueryArguments )?.redirect_to;
 	const initialQueryArguments = useSelector( getInitialQueryArguments );
 	const userEmail =
 		lastCheckedUsernameOrEmail || emailAddress || initialQueryArguments?.email_address;
@@ -163,7 +164,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		: translate( 'Send me sign in link' );
 	const loginUrl = login( {
 		locale,
-		redirectTo: emailAddress as string,
+		redirectTo: redirectTo as string,
 		oauth2ClientId: oauth2ClientId as number,
 		gravatarFrom: gravatarFrom as string,
 		gravatarFlow: isGravatarFlow,
