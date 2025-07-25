@@ -10,6 +10,7 @@ import {
 	CheckboxControl,
 	SelectControl,
 	Notice,
+	Tooltip,
 } from '@wordpress/components';
 import {
 	createInterpolateElement,
@@ -406,36 +407,46 @@ export default function SyncModal( {
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 
 				<div className="staging-site-card">
-					<HStack spacing={ 2 } justify="space-between" alignment="center">
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ __( 'Files and folders' ) }
-							disabled={ shouldDisableGranularSync }
-							checked={ shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked' }
-							indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
-							onChange={ onCheckboxChange }
-						/>
-						<SelectControl
-							value={ isFileBrowserVisible ? 'true' : 'false' }
-							variant="minimal"
-							disabled={ shouldDisableGranularSync }
-							options={ [
-								{
-									label: __( 'All files and folders' ),
-									value: 'false',
-								},
-								{
-									label: __( 'Specific files and folders' ),
-									value: 'true',
-								},
-							] }
-							onChange={ handleExpanderChange }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							aria-label={ __( 'Select files and folders to sync' ) }
-						/>
-					</HStack>
-
+					<Tooltip
+						text={
+							shouldDisableGranularSync
+								? __( 'Selective Sync will be enabled automatically once your backup is complete.' )
+								: ''
+						}
+					>
+						<HStack spacing={ 2 } justify="space-between" alignment="center">
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Files and folders' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={
+									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+								}
+								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+								onChange={ onCheckboxChange }
+							/>
+							<SelectControl
+								style={ shouldDisableGranularSync ? { backgroundColor: 'white' } : {} }
+								value={ isFileBrowserVisible ? 'true' : 'false' }
+								variant="minimal"
+								disabled={ shouldDisableGranularSync }
+								options={ [
+									{
+										label: __( 'All files and folders' ),
+										value: 'false',
+									},
+									{
+										label: __( 'Specific files and folders' ),
+										value: 'true',
+									},
+								] }
+								onChange={ handleExpanderChange }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								aria-label={ __( 'Select files and folders to sync' ) }
+							/>
+						</HStack>
+					</Tooltip>
 					{ /*
 					 * Keep the FileBrowser component rendered (using a CSS 'hidden' class instead of conditional rendering)
 					 * to ensure its child nodes initialize properly and can be selected by default.
