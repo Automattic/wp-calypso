@@ -15,7 +15,7 @@ import './style.scss';
 export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	const { ref, activeQuery } = useContainerQuery( {
 		small: 0,
-		large: 480,
+		large: 600,
 	} );
 
 	const { __ } = useI18n();
@@ -40,11 +40,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	);
 
 	return (
-		<Card
-			ref={ ref }
-			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className="free-domain-for-a-year-promo"
-		>
+		<Card ref={ ref } size="small" className="free-domain-for-a-year-promo">
 			<CardBody className="free-domain-for-a-year-promo__body">
 				<HStack spacing={ 6 } alignment="left">
 					{ activeQuery === 'large' && (

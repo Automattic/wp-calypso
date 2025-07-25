@@ -51,7 +51,7 @@ function UnforwardedSummaryButton(
 			ref={ ref }
 			href={ href }
 			onClick={ onClick }
-			className={ clsx( 'summary-button', `has-density-${ density }` ) }
+			className={ clsx( 'summary-button', `has-density-${ density }`, props.className ) }
 			disabled={ disabled }
 			accessibleWhenDisabled
 		>

@@ -6,16 +6,12 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,
+	Notice,
 } from '@wordpress/components';
-import {
-	createInterpolateElement,
-	useState,
-	useCallback,
-	useEffect,
-	useMemo,
-} from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -35,13 +31,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
-// TODO: Temporary style for the PoC
 import './style.scss';
 
-const ROOT_PATH = '/';
 const WP_CONFIG_PATH = '/wp-config.php';
 const WP_CONTENT_PATH = '/wp-content';
 const SQL_PATH = '/sql';
@@ -186,6 +181,7 @@ export default function SyncModal( {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
+	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -219,11 +215,12 @@ export default function SyncModal( {
 	);
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
 	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
-			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
-			return 'checked';
+			// If nodes don't exist yet, default to 'unchecked' since we set the root to unchecked by default
+			return 'unchecked';
 		}
 
 		const checkedCount = nodes.filter( ( node ) => node?.checkState === 'checked' ).length;
@@ -243,13 +240,6 @@ export default function SyncModal( {
 
 		return 'mixed';
 	}, [ wpContentNode, wpConfigNode ] );
-
-	useEffect( () => {
-		dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
-	}, [ dispatch, querySiteId ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {
@@ -318,6 +308,11 @@ export default function SyncModal( {
 		[ dispatch, querySiteId ]
 	);
 
+	const handleDomainConfirmation = useCallback(
+		( value: string | undefined ) => setDomainConfirmation( value || '' ),
+		[]
+	);
+
 	const onCheckboxChange = () => {
 		updateFilesAndFoldersCheckState(
 			filesAndFoldersNodesCheckState === 'checked' ? 'unchecked' : 'checked'
@@ -341,6 +336,17 @@ export default function SyncModal( {
 			updateFilesAndFoldersCheckState( 'checked' );
 		}
 	};
+
+	const showWooCommerceWarning =
+		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
+
+	const showDomainConfirmation =
+		targetEnvironment === 'production' &&
+		( browserCheckList.totalItems > 0 || browserCheckList.includeList.length > 0 );
+
+	const isButtonDisabled =
+		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
+		! browserCheckList.totalItems;
 
 	return (
 		<Modal
@@ -414,10 +420,47 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							checked={ ! sqlNode || sqlNode.checkState === 'checked' }
+							checked={ sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</div>
+					<VStack spacing={ 7 }>
+						{ showWooCommerceWarning && (
+							<Notice status="warning" isDismissible={ false }>
+								<Text as="p" weight="bold" style={ { marginBottom: '8px' } }>
+									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
+								</Text>
+								{ createInterpolateElement(
+									__(
+										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data. <a>Learn more</a>'
+									),
+									{
+										a: (
+											<ExternalLink
+												href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+												children={ null }
+											/>
+										),
+									}
+								) }
+							</Notice>
+						) }
+						{ showDomainConfirmation && (
+							<VStack>
+								<InputControl
+									__next40pxDefaultSize
+									label={
+										<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
+											<Text>{ __( "Enter your site's name" ) }</Text>
+											<Text color="var(--studio-red-50)">{ productionSiteSlug }</Text>
+											<Text>{ __( 'to confirm.' ) }</Text>
+										</HStack>
+									}
+									onChange={ handleDomainConfirmation }
+								/>
+							</VStack>
+						) }
+					</VStack>
 				</div>
 				<HStack className="staging-site-card__footer">
 					<HStack>
@@ -432,7 +475,7 @@ export default function SyncModal( {
 						<Button variant="tertiary" onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" onClick={ handleConfirm }>
+						<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
 							{ syncConfig.submit }
 						</Button>
 					</HStack>
