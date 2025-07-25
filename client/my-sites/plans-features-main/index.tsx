@@ -399,9 +399,7 @@ const PlansFeaturesMain = ( {
 		siteId ? !! isDomainOnlySiteSelector( state, siteId ) : false
 	);
 
-	// Get active promotions from Redux state
 	const activePromotions = useSelector( getActivePromotions );
-
 	const hiddenPlans = {
 		hideFreePlan,
 		hidePersonalPlan,

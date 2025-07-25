@@ -8,26 +8,27 @@ export interface SummerSpecialProps {
 }
 
 export function isSummerSpecialEnabled( props?: SummerSpecialProps ): boolean {
+	const {
+		isInSignup = false,
+		currentSitePlanSlug = '',
+		siteId = null,
+		activePromotions = [],
+	} = props || {};
+
 	if ( process.env.NODE_ENV === 'test' ) {
 		return false;
 	}
 
-	if ( props?.isInSignup ) {
-		return true;
-	}
-
-	if ( props?.currentSitePlanSlug === 'free_plan' ) {
+	if ( isInSignup || currentSitePlanSlug === 'free_plan' ) {
 		return true;
 	}
 
 	// For paid plans, check active promotions
-	if ( props?.currentSitePlanSlug && props?.currentSitePlanSlug !== 'free_plan' ) {
-		const activePromotions = props?.activePromotions || [];
-
+	if ( currentSitePlanSlug && currentSitePlanSlug !== 'free_plan' ) {
 		// For sites with existing plans, only check for site-specific promotion
 		// Global promotion only applies to sites without plans
-		const hasSiteSpecificPromotion = props.siteId
-			? activePromotions.includes( `summer-special-2025-${ props.siteId }` )
+		const hasSiteSpecificPromotion = siteId
+			? activePromotions.includes( `summer-special-2025-${ siteId }` )
 			: false;
 
 		return hasSiteSpecificPromotion;

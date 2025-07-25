@@ -28,7 +28,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 	const annualOnlyFeatures = ( plan as WPComPlan )?.getAnnualPlansOnlyFeatures?.() || [];
 
 	const wpcomFeatures = plan
-		?.get2023PricingGridSignupWpcomFeatures?.( { isInSignup: false } )
+		?.get2023PricingGridSignupWpcomFeatures?.()
 		.filter( ( feature: string ) =>
 			isMonthlyPlan ? ! annualOnlyFeatures.includes( feature ) : true
 		)

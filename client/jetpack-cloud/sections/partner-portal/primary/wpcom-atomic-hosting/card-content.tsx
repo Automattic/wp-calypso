@@ -113,8 +113,7 @@ export default function CardContent( {
 	const getPlanInfo = ( planSlug: string ): PlanInfo => {
 		const plan = getPlan( planSlug );
 
-		const planFeatures =
-			plan?.get2023PricingGridSignupWpcomFeatures?.( { isInSignup: false } ) || [];
+		const planFeatures = plan?.get2023PricingGridSignupWpcomFeatures?.() || [];
 		const planFeaturesObject = getPlanFeaturesObject( planFeatures );
 		const jetpackFeatures = plan?.get2023PricingGridSignupJetpackFeatures?.() || [];
 		const jetpackFeaturesObject = getPlanFeaturesObject( jetpackFeatures );
