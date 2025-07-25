@@ -778,6 +778,7 @@ class RegisterDomainStep extends Component {
 			onSearch: this.onSearch,
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
+			disableAutoSearch: this.isInInitialState(),
 			isOnboarding: this.props.isOnboarding,
 			placeholderAnimation: ! this.state.searchResults,
 			childrenBeforeCloseButton:
@@ -1106,7 +1107,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
-		const loadingResults = Boolean( cleanedQuery );
+		const loadingResults = this.isInInitialState() ? false : Boolean( cleanedQuery );
 		const isInitialQueryActive = ! searchQuery || searchQuery === this.props.suggestion;
 
 		this.setState(
@@ -1740,11 +1741,13 @@ class RegisterDomainStep extends Component {
 	};
 
 	onHelperTermClick = ( term ) => {
-		this.setState( {
-			lastQuery: term,
-			helperTermSubmitted: true,
-			loadingResults: true,
-		} );
+		this.setState(
+			{
+				lastQuery: term,
+				helperTermSubmitted: true,
+			},
+			() => this.onSearch( term )
+		);
 	};
 
 	useYourDomainFunction = () => {

@@ -11,7 +11,13 @@ import {
 	SelectControl,
 	Notice,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+} from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -221,8 +227,7 @@ export default function SyncModal( {
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
-
-	const getFilesAndFoldersNodesCheckState = useCallback( () => {
+	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
 			// If nodes don't exist yet, default to 'unchecked' since we set the root to unchecked by default
@@ -246,8 +251,6 @@ export default function SyncModal( {
 
 		return 'mixed';
 	}, [ wpContentNode, wpConfigNode ] );
-
-	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: () => {

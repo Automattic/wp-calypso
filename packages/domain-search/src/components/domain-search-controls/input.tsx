@@ -10,6 +10,7 @@ export const DomainSearchControlsInput = ( {
 	onReset,
 	autoFocus,
 	onBlur,
+	onKeyDown,
 	minLength,
 	maxLength,
 	dir,
@@ -22,6 +23,7 @@ export const DomainSearchControlsInput = ( {
 	onReset: () => void;
 	autoFocus: boolean;
 	onBlur: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	onKeyDown: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	minLength: number;
 	maxLength: number;
 	dir: 'ltr' | 'rtl';
@@ -42,6 +44,7 @@ export const DomainSearchControlsInput = ( {
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ autoFocus }
 			onBlur={ onBlur }
+			onKeyDown={ onKeyDown }
 			minLength={ minLength }
 			maxLength={ maxLength }
 			dir={ dir }
