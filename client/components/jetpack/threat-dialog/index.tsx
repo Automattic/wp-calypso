@@ -5,8 +5,8 @@ import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
-
 import './style.scss';
+import Notice from 'calypso/dashboard/components/notice';
 
 interface Props {
 	threat: Threat;
@@ -146,7 +146,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			{ isExtensionDeleteFixer && (
 				<>
 					{ threat.fixable.extensionStatus === 'active' ? (
-						<p className="threat-dialog__deletion-strong-warning">
+						<Notice variant="error">
 							{ translate(
 								'This %(extension_type)s seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.',
 								{
@@ -160,9 +160,9 @@ const ThreatDialog: React.FC< Props > = ( {
 										'%s is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
 								}
 							) }
-						</p>
+						</Notice>
 					) : (
-						<p className="threat-dialog__deletion-mild-warning">
+						<Notice variant="warning">
 							{ translate(
 								'This %(extension_type)s seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.',
 								{
@@ -176,34 +176,38 @@ const ThreatDialog: React.FC< Props > = ( {
 										'%s is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
 								}
 							) }
-						</p>
+						</Notice>
 					) }
 					{ threat.fixable.extras?.is_dotorg === false && (
 						<p>
 							{ translate(
-								'We did not find this extension on WordPress.org. We encourage you to create a backup of your site prior to fixing this threat, if you have not done so already.'
+								'We did not find this extension on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
 							) }
 						</p>
 					) }
 
 					<p>
 						{ translate(
-							'To confirm that you have read and understood the above, please enter the slug into the text field below.'
+							'To confirm you have read and understood the consequences, please enter the {{extension_type/}} slug {{slug/}} in the field below.',
+							{
+								components: {
+									slug: <code>{ slug }</code>,
+									extension_type:
+										threat.extension?.type === 'plugin' ? (
+											<>{ translate( 'plugin' ) }</>
+										) : (
+											<>{ translate( 'theme' ) }</>
+										),
+								},
+								comment: '{{slug/}} is the slug of the extension (plugin or theme) being deleted.',
+							}
 						) }
 					</p>
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						help={ translate(
-							'Enter the slug {{slug/}} to confirm that you understand the possible consequences.',
-							{
-								components: {
-									slug: <code>{ slug }</code>,
-								},
-								comment: '{{slug/}} is the slug of the extension (plugin or theme) being deleted.',
-							}
-						) }
-						label={ translate( 'Confirm deletion' ) }
+						help=""
+						label=""
 						onChange={ ( value: string ) => setConfirmationInput( value ) }
 						value={ confirmationInput }
 						className={ clsx( { 'is-highlighted': isInputHighlighted } ) }

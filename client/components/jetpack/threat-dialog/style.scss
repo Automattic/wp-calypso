@@ -16,13 +16,23 @@
 	}
 
 	.dialog__content {
-		max-width: 720px;
+		max-width: 630px;
 	}
 
 	code {
 		font-size: $font-body-small;
-		background: var(--studio-gray-5);
+		font-family: $font-family-mono;
 		padding: 3px;
+	}
+
+	.dashboard-notice {
+		margin: 23px 0 23px;
+	}
+	.dashboard-notice.is-error {
+		color: var(--color-error);
+	}
+	.dashboard-notice.is-warning {
+		color: var(--color-warning);
 	}
 
 	.threat-dialog {
