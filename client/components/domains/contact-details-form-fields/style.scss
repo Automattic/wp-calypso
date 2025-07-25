@@ -116,6 +116,16 @@
 			}
 		}
 	}
+
+	.organization-field-container {
+		flex-grow: 1;
+
+		span {
+			display: block;
+			font-size: $font-body-small;
+			margin-top: 0.5em;
+		}
+	}
 }
 
 .contact-details-form-fields__contact-details {

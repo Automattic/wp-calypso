@@ -105,6 +105,7 @@ export class ContactDetailsFormFields extends Component {
 			form: null,
 			submissionCount: 0,
 			updateWpcomEmail: false,
+			organizationFieldIsVisible: false,
 		};
 
 		this.inputRefs = {};
@@ -128,7 +129,8 @@ export class ContactDetailsFormFields extends Component {
 			nextProps.needsFax !== this.props.needsFax ||
 			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
 			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails ||
-			nextState.updateWpcomEmail !== this.state.updateWpcomEmail
+			nextState.updateWpcomEmail !== this.state.updateWpcomEmail ||
+			nextState.organizationFieldIsVisible !== this.state.organizationFieldIsVisible
 		);
 	}
 
@@ -370,26 +372,13 @@ export class ContactDetailsFormFields extends Component {
 			: false;
 
 	renderContactDetailsFields() {
-		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
+		const { translate, needsFax, hasCountryStates } = this.props;
 		const countryCode = this.getCountryCode();
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
-				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'organization',
-						HiddenInput,
-						{
-							label: translate( 'Organization' ),
-							text: labelTexts.organization || translate( '+ Add organization name' ),
-						},
-						{
-							needsChildRef: true,
-							customErrorMessage: this.props.contactDetailsErrors?.organization,
-						}
-					) }
-				</div>
+				<div className="contact-details-form-fields__row">{ this.renderOrganizationField() }</div>
 
 				<div className="contact-details-form-fields__row">
 					{ this.renderContactEmailInputWithCheckbox() }
@@ -458,6 +447,36 @@ export class ContactDetailsFormFields extends Component {
 		this.props.onUpdateWpcomEmailCheckboxChange( value );
 		this.setState( { updateWpcomEmail: value } );
 	};
+
+	renderOrganizationField() {
+		const { translate, labelTexts } = this.props;
+
+		return (
+			<div className="organization-field-container">
+				{ this.createField(
+					'organization',
+					HiddenInput,
+					{
+						label: translate( 'Organization' ),
+						text: labelTexts.organization || translate( '+ Add organization name' ),
+						placeholder: translate( 'Organization (optional)' ),
+						onToggle: () => this.setState( { organizationFieldIsVisible: true } ),
+					},
+					{
+						needsChildRef: true,
+						customErrorMessage: this.props.contactDetailsErrors?.organization,
+					}
+				) }
+				{ this.state.organizationFieldIsVisible && (
+					<span>
+						{ translate(
+							'The organization, if filled, will be made public and considered the legal domain owner'
+						) }
+					</span>
+				) }
+			</div>
+		);
+	}
 
 	renderContactEmailInputWithCheckbox() {
 		const emailInputFieldProps = this.getFieldProps( 'email', {

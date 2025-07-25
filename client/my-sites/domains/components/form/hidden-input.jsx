@@ -37,6 +37,7 @@ export class HiddenInput extends PureComponent {
 			},
 			() => {
 				this.inputField && this.inputField.focus();
+				this.props.onToggle && this.props.onToggle();
 			}
 		);
 	};
