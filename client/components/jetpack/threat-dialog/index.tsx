@@ -197,7 +197,7 @@ const ThreatDialog: React.FC< Props > = ( {
 								comment: '%(slug) is the slug of the extension (plugin or theme) being deleted.',
 							}
 						) }
-						label="Confirm deletion"
+						label={ translate( 'Confirm deletion' ) }
 						onChange={ ( value: string ) => setConfirmationInput( value ) }
 						value={ confirmationInput }
 						className={ clsx( { 'is-highlighted': isInputHighlighted } ) }
