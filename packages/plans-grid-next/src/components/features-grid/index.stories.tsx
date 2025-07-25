@@ -41,9 +41,7 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 		isSpotlightOnCurrentPlan: true,
 	} );
 
-	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid( {
-		isSummerSpecial: false, // Pass false for stories
-	} );
+	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid();
 
 	return (
 		gridPlans && (
