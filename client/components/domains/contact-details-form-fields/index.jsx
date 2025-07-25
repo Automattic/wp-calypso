@@ -20,7 +20,7 @@ import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
-import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { CountrySelect, Input, OrganizationField } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
@@ -372,13 +372,28 @@ export class ContactDetailsFormFields extends Component {
 			: false;
 
 	renderContactDetailsFields() {
-		const { translate, needsFax, hasCountryStates } = this.props;
+		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
-				<div className="contact-details-form-fields__row">{ this.renderOrganizationField() }</div>
+				<div className="contact-details-form-fields__row">
+					{ this.createField(
+						'organization',
+						OrganizationField,
+						{
+							label: translate( 'Organization' ),
+							text: labelTexts.organization || translate( '+ Add organization name' ),
+							placeholder: translate( 'Organization (optional)' ),
+							onToggle: () => this.setState( { organizationFieldIsVisible: true } ),
+						},
+						{
+							needsChildRef: true,
+							customErrorMessage: this.props.contactDetailsErrors?.organization,
+						}
+					) }
+				</div>
 
 				<div className="contact-details-form-fields__row">
 					{ this.renderContactEmailInputWithCheckbox() }
@@ -447,36 +462,6 @@ export class ContactDetailsFormFields extends Component {
 		this.props.onUpdateWpcomEmailCheckboxChange( value );
 		this.setState( { updateWpcomEmail: value } );
 	};
-
-	renderOrganizationField() {
-		const { translate, labelTexts } = this.props;
-
-		return (
-			<div className="organization-field-container">
-				{ this.createField(
-					'organization',
-					HiddenInput,
-					{
-						label: translate( 'Organization' ),
-						text: labelTexts.organization || translate( '+ Add organization name' ),
-						placeholder: translate( 'Organization (optional)' ),
-						onToggle: () => this.setState( { organizationFieldIsVisible: true } ),
-					},
-					{
-						needsChildRef: true,
-						customErrorMessage: this.props.contactDetailsErrors?.organization,
-					}
-				) }
-				{ this.state.organizationFieldIsVisible && (
-					<span>
-						{ translate(
-							'The organization, if filled, will be made public and considered the legal domain owner'
-						) }
-					</span>
-				) }
-			</div>
-		);
-	}
 
 	renderContactEmailInputWithCheckbox() {
 		const emailInputFieldProps = this.getFieldProps( 'email', {

@@ -19,7 +19,7 @@ import {
 	prepareDomainContactDetails,
 	convertDomainContactDetailsToManagedContactDetails,
 } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
-import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { Input, OrganizationField } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import {
 	getCurrentUserEmail,
@@ -345,7 +345,7 @@ export class ManagedContactDetailsFormFields extends Component<
 		return (
 			<div className="contact-details-form-fields__contact-details">
 				<div className="contact-details-form-fields__row">
-					<HiddenInput
+					<OrganizationField
 						label={ this.props.translate( 'Organization' ) }
 						labelClass="contact-details-form-fields__label"
 						additionalClasses="contact-details-form-fields__field"
