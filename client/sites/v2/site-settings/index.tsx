@@ -9,7 +9,8 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
-import Layout, { router } from './layout';
+import Layout from './layout';
+import router from './router';
 import type { Store } from 'redux';
 import './style.scss';
 

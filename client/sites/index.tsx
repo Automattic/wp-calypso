@@ -1,22 +1,41 @@
-import page from '@automattic/calypso-router';
+import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
-import { navigation } from 'calypso/my-sites/controller';
-import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { siteSelection, navigation } from 'calypso/my-sites/controller';
+import { siteDashboard } from 'calypso/sites/controller';
+import { OVERVIEW, SETTINGS_SITE } from './components/site-preview-pane/constants';
 import {
 	maybeRemoveCheckoutSuccessNotice,
 	sanitizeQueryParameters,
 	sitesDashboard,
 } from './controller';
+import { dashboardBackportSiteSettings } from './settings/controller';
 
 export default function () {
-	// Maintain old `/sites/:id` URLs by redirecting them to My Home
-	page( '/sites/:site', ( context ) => {
-		const state = context.store.getState();
-		const site = getSiteBySlug( state, context.params.site );
-		// The site may not be loaded into state yet.
-		const siteId = site?.ID;
-		page.redirect( getSiteHomeUrl( state, siteId ) );
-	} );
+	/**
+	 * Backport dashboard v2
+	 */
+	page(
+		'/sites/:site/settings/:feature?',
+		siteSelection,
+		navigation,
+		dashboardBackportSiteSettings,
+		siteDashboard( SETTINGS_SITE ),
+		makeLayout,
+		clientRender
+	);
+
+	const redirectToOverview = ( context: PageJSContext ) =>
+		page.redirect( `/overview/${ context.params.site }` );
+
+	page(
+		'/sites/:site',
+		siteSelection,
+		navigation,
+		redirectToOverview,
+		siteDashboard( OVERVIEW ),
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/p2s',

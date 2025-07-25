@@ -26,13 +26,13 @@ import {
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
-	dashboardBackportSiteSettings,
 	serverSettings,
 	sftpSshSettings,
 	databaseSettings,
 	performanceSettings,
 	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 	redirectToSiteSettingsIfHostingFeaturesNotSupported,
+	redirectToSiteSettingsNewUrl,
 } from './controller';
 
 export default function () {
@@ -140,8 +140,7 @@ export default function () {
 		'/sites/settings/v2/:site/:feature?',
 		siteSelection,
 		navigation,
-		dashboardBackportSiteSettings,
-		siteDashboard( SETTINGS_SITE ),
+		redirectToSiteSettingsNewUrl,
 		makeLayout,
 		clientRender
 	);
