@@ -3,9 +3,11 @@ import {
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -119,23 +121,20 @@ class DomainSearchResults extends Component {
 					badges={ badges }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
 							salePrice={ productSaleCost }
 							price={ premiumDomain.cost }
 							renewPrice={ premiumDomain.renew_cost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
 						/>
 					}
 				/>

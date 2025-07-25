@@ -78,7 +78,7 @@ describe( 'DomainSuggestionCTA', () => {
 	it( 'should not show Add to Cart text when compact prop is true', () => {
 		render(
 			<DomainSearch cart={ buildDomainSearchCart() } onContinue={ jest.fn() }>
-				<DomainSuggestionCTA uuid="1" compact />
+				<DomainSuggestionCTA uuid="1" />
 			</DomainSearch>
 		);
 
@@ -95,7 +95,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ) }
 				onContinue={ jest.fn() }
 			>
-				<DomainSuggestionCTA uuid="1" compact />
+				<DomainSuggestionCTA uuid="1" />
 			</DomainSearch>
 		);
 

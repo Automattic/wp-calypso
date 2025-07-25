@@ -1,12 +1,14 @@
 import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -408,23 +410,20 @@ class DomainRegistrationSuggestion extends Component {
 					notice={ notice }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
 							salePrice={ productSaleCost }
 							price={ productCost }
 							renewPrice={ renewCost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
 						/>
 					}
 				/>

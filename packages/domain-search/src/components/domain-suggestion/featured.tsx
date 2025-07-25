@@ -41,18 +41,12 @@ const Featured = ( {
 				activeQuery,
 				alignment: ! matchReasons ? 'left' : undefined,
 				priceSize: activeQuery === 'large' ? 20 : 18,
+				isFeatured: true,
 			} ) as const,
 		[ activeQuery, matchReasons ]
 	);
 
-	const cta = (
-		<DomainSuggestionCTA
-			onClick={ onClick }
-			disabled={ disabled }
-			uuid={ uuid }
-			variant="primary"
-		/>
-	);
+	const cta = <DomainSuggestionCTA onClick={ onClick } disabled={ disabled } uuid={ uuid } />;
 
 	const title = (
 		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>

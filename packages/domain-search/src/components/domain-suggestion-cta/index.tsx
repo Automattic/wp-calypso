@@ -1,29 +1,18 @@
-import { Button, Tooltip } from '@wordpress/components';
-import { arrowRight, warning } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
-import { clsx } from 'clsx';
 import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
 import { useDomainSearch } from '../domain-search';
-import { shoppingCartIcon } from './shopping-cart-icon';
+import { DomainSuggestionContinueCTA } from './continue';
+import { DomainSuggestionErrorCTA } from './error';
+import { DomainSuggestionPrimaryCTA } from './primary';
 
 import './style.scss';
 
 export interface DomainSuggestionCTAProps {
-	variant?: 'primary' | 'secondary';
-	compact?: boolean;
 	uuid: string;
 	onClick?( action: 'add-to-cart' | 'continue' ): void;
 	disabled?: boolean;
 }
 
-export const DomainSuggestionCTA = ( {
-	variant = 'secondary',
-	compact,
-	uuid,
-	onClick,
-	disabled,
-}: DomainSuggestionCTAProps ) => {
-	const { __ } = useI18n();
+const DomainSuggestionCTA = ( { uuid, onClick, disabled }: DomainSuggestionCTAProps ) => {
 	const { cart, onContinue } = useDomainSearch();
 	const { isBusy, errorMessage, callback } = useFocusedCartAction( () => {
 		onClick?.( 'add-to-cart' );
@@ -39,57 +28,26 @@ export const DomainSuggestionCTA = ( {
 		};
 
 		return (
-			<Button
-				isPressed
-				aria-pressed="mixed"
-				__next40pxDefaultSize
-				icon={ arrowRight }
-				className="domain-suggestion-cta domain-suggestion-cta--continue"
-				onClick={ handleContinueClick }
-				label={ __( 'Continue' ) }
+			<DomainSuggestionContinueCTA
 				disabled={ disabled || cart.isBusy }
-			>
-				{ compact ? undefined : __( 'Continue' ) }
-			</Button>
+				onClick={ handleContinueClick }
+			/>
 		);
 	}
 
 	if ( errorMessage ) {
-		return (
-			<div className="domain-suggestion-cta-error">
-				<Tooltip
-					delay={ 0 }
-					text={ errorMessage }
-					placement="top"
-					className="domain-suggestion-cta-error__tooltip"
-				>
-					<Button
-						className={ clsx( 'domain-suggestion-cta', 'domain-suggestion-cta--error' ) }
-						isDestructive
-						variant="primary"
-						__next40pxDefaultSize
-						onClick={ callback }
-						icon={ warning }
-					>
-						{ compact ? undefined : __( 'Add to Cart' ) }
-					</Button>
-				</Tooltip>
-			</div>
-		);
+		return <DomainSuggestionErrorCTA errorMessage={ errorMessage } callback={ callback } />;
 	}
 
 	return (
-		<Button
-			className="domain-suggestion-cta"
-			variant={ variant }
-			__next40pxDefaultSize
-			icon={ shoppingCartIcon }
+		<DomainSuggestionPrimaryCTA
 			onClick={ callback }
-			label={ __( 'Add to Cart' ) }
 			disabled={ disabled || cart.isBusy }
 			isBusy={ isBusy }
-		>
-			{ compact ? undefined : __( 'Add to Cart' ) }
-		</Button>
+		/>
 	);
 };
+
+DomainSuggestionCTA.Primary = DomainSuggestionPrimaryCTA;
+
+export { DomainSuggestionCTA };
