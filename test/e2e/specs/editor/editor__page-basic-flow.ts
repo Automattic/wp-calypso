@@ -75,8 +75,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 			await modalSelector.waitFor( { timeout: 3 * 1000 } );
 			selectedPatternLocator = await modalSelector.getByRole( 'option' ).first();
 		} catch ( e ) {
-			// Probably doesn't exist. Let's add the pattern from the sidebar.
-			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About 1' );
+			// Probably doesn't exist. Let's add the first pattern that starts with "About" from the sidebar.
+			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About', false );
 		}
 
 		pageTemplateFirstTextContent =
