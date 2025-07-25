@@ -32,14 +32,14 @@ export default function PaymentItem( props: Props ) {
 				{ moment.utc( payment.date ).format( 'MMMM DD, YYYY' ) }
 			</td>
 			<td className="payment-item__subtotal">{ `$${ formatCents(
-				payment.subtotal || 0,
+				payment.total_with_credits || 0,
 				2
 			) }` }</td>
 			<td className="payment-item__credits">{ `$${ formatCents(
 				payment.credits_used || 0,
 				2
 			) }` }</td>
-			<td className="payment-item__total">{ `$${ formatCents( payment.total || 0, 2 ) }` }</td>
+			<td className="payment-item__total">{ `$${ formatCents( payment.total_paid || 0, 2 ) }` }</td>
 			<td className="payment-item__actions">
 				<Button
 					isBusy={ false }

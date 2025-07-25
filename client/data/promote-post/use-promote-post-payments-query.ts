@@ -5,11 +5,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export type Payment = {
 	id: number;
-	order_key: string;
+	payment_key: string;
 	status: string;
 	currency: string;
-	total: number;
-	subtotal: number;
+	total_with_credits: number;
+	total_paid: number;
 	payment_method?: string;
 	date: string;
 	credits_used: number;
