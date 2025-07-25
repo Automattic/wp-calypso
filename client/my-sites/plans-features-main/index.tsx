@@ -29,6 +29,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
+	useSummerSpecialStatus,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -61,7 +62,6 @@ import {
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { getActivePromotions } from 'calypso/state/active-promotions/selectors';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -399,7 +399,6 @@ const PlansFeaturesMain = ( {
 		siteId ? !! isDomainOnlySiteSelector( state, siteId ) : false
 	);
 
-	const activePromotions = useSelector( getActivePromotions );
 	const hiddenPlans = {
 		hideFreePlan,
 		hidePersonalPlan,
@@ -701,6 +700,9 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
+	// Get summer special status
+	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
+
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
 	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
 		? getWooExpressFeaturesGroupedForComparisonGrid()
@@ -709,21 +711,15 @@ const PlansFeaturesMain = ( {
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid( {
-			isInSignup,
-			currentSitePlanSlug: sitePlanSlug,
-			activePromotions,
+			isSummerSpecial,
 		} );
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
-			isInSignup,
-			currentSitePlanSlug: sitePlanSlug,
-			activePromotions,
+			isSummerSpecial,
 		} );
 	} else {
 		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
-			isInSignup,
-			currentSitePlanSlug: sitePlanSlug,
-			activePromotions,
+			isSummerSpecial,
 		} );
 	}
 

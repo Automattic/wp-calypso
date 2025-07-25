@@ -80,29 +80,21 @@ export function getPlans(): Record< string, Plan > {
 }
 
 export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
-	activePromotions?: string[];
+	isSummerSpecial?: boolean;
 } ) {
-	const { isInSignup, currentSitePlanSlug, activePromotions } = props || {};
+	const { isSummerSpecial } = props || {};
 	return resolveFeatureGroupsForFeaturesGrid( {
 		showSimplifiedFeatures: true,
-		isInSignup,
-		currentSitePlanSlug,
-		activePromotions,
+		isSummerSpecial,
 	} );
 }
 
 export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
-	activePromotions?: string[];
+	isSummerSpecial?: boolean;
 } ): Partial< FeatureGroupMap > {
-	const { isInSignup, currentSitePlanSlug, activePromotions } = props || {};
+	const { isSummerSpecial } = props || {};
 	return resolveFeatureGroupsForFeaturesGrid( {
-		isInSignup,
-		currentSitePlanSlug,
-		activePromotions,
+		isSummerSpecial,
 	} );
 }
 
@@ -111,9 +103,7 @@ export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroup
 }
 
 export function getWooExpressFeaturesGroupedForFeaturesGrid( props?: {
-	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
-	activePromotions?: string[];
+	isSummerSpecial?: boolean;
 } ) {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
 	return getPlanFeaturesGroupedForFeaturesGrid( props );

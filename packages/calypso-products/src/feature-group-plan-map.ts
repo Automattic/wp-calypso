@@ -148,7 +148,6 @@ import {
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
-import { isSummerSpecialEnabled } from './is-summer-special-enabled';
 import { FeatureGroupMap } from './types';
 
 const isUploadVideosTranslated = () => {
@@ -474,14 +473,10 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 
 export function resolveFeatureGroupsForFeaturesGrid( {
 	showSimplifiedFeatures,
-	isInSignup,
-	currentSitePlanSlug,
-	activePromotions,
+	isSummerSpecial,
 }: {
 	showSimplifiedFeatures?: boolean;
-	isInSignup?: boolean;
-	currentSitePlanSlug?: string;
-	activePromotions?: string[];
+	isSummerSpecial?: boolean;
 } = {} ): Partial< FeatureGroupMap > {
 	if ( showSimplifiedFeatures ) {
 		return {
@@ -495,7 +490,7 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
-			...( isSummerSpecialEnabled( { isInSignup, currentSitePlanSlug, activePromotions } ) && {
+			...( isSummerSpecial && {
 				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
 			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
@@ -503,7 +498,7 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],
 			} ),
-			...( ! isSummerSpecialEnabled( { isInSignup, currentSitePlanSlug, activePromotions } ) && {
+			...( ! isSummerSpecial && {
 				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
 			} ),
 			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
