@@ -1,25 +1,17 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'calypso/state';
-import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
-import { getUserRecommendedBlogs } from 'calypso/state/reader/lists/selectors';
+import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import RecommendedBlogItem from './item';
 
 function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
+	const { data: recommendedBlogs } = useFeedRecommendationsQuery( userLogin, {
+		enabled: !! userLogin,
+	} );
+
 	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
-
 	const shouldShowRecommendedBlogs = recommendedBlogs?.length && userLogin;
-
-	useEffect( () => {
-		if ( ! recommendedBlogs && userLogin ) {
-			dispatch( requestUserRecommendedBlogs( userLogin ) );
-		}
-	}, [ userLogin, recommendedBlogs, dispatch ] );
 
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
