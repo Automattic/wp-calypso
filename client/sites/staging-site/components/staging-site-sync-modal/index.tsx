@@ -479,6 +479,19 @@ export default function SyncModal( {
 						<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
 					</HStack>
 					<VStack spacing={ 7 }>
+						<HStack alignment="left" spacing={ 1 }>
+							<Text color="var(--studio-gray-40)">
+								{ displayBackupDate
+									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
+											date: <span>{ displayBackupDate }</span>,
+									  } )
+									: __( 'There are no backups.' ) }{ ' ' }
+								<ExternalLink
+									href={ `/backup/${ sourceSiteSlug }` }
+									children={ __( 'Backup now' ) }
+								/>
+							</Text>
+						</HStack>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { marginBottom: '8px' } }>
@@ -486,7 +499,7 @@ export default function SyncModal( {
 								</Text>
 								{ createInterpolateElement(
 									__(
-										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data. <a>Learn more</a>'
+										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
 									),
 									{
 										a: (
@@ -514,19 +527,6 @@ export default function SyncModal( {
 								/>
 							</VStack>
 						) }
-						<HStack alignment="left" spacing={ 1 }>
-							<Text color="var(--studio-gray-40)">
-								{ displayBackupDate
-									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
-											date: <span>{ displayBackupDate }</span>,
-									  } )
-									: __( 'There are no backups.' ) }{ ' ' }
-								<ExternalLink
-									href={ `/backup/${ sourceSiteSlug }` }
-									children={ __( 'Backup now' ) }
-								/>
-							</Text>
-						</HStack>
 					</VStack>
 				</div>
 				<HStack className="staging-site-card__footer">
