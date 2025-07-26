@@ -11,12 +11,14 @@ export { Messages } from './components/chat/Messages';
 export { Message } from './components/chat/Message';
 export { Suggestions } from './components/chat/Suggestions';
 
-// NOTE: AgentChat has been removed - use AgentUI with useAgentChat hook from @automattic/agenttic-client
-
-// Hooks - removed useMarkdown and useSuggestions as they depend on AgentProvider context
-// Use the methods from useAgentChat hook directly instead
-
-// Chart components moved to @automattic/agenttic-client
+export { ThumbsUpIcon } from './components/icons/ThumbsUpIcon';
+export { ThumbsDownIcon } from './components/icons/ThumbsDownIcon';
+export { CopyIcon } from './components/icons/CopyIcon';
+export { StylesIcon } from './components/icons/StylesIcon';
+export { BigSkyIcon } from './components/icons/BigSkyIcon';
+export { StopIcon } from './components/icons/StopIcon';
+export { XIcon } from './components/icons/XIcon';
+export { ArrowUpIcon } from './components/icons/ArrowUpIcon';
 
 // Types
 export type * from './types';

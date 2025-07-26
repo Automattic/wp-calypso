@@ -1,0 +1,25 @@
+.container {
+	display: flex;
+	gap: var(--spacing-1);
+	align-items: center;
+    margin-top: var(--spacing-2);
+}
+
+.container button[aria-hidden="true"] {
+	display: none;
+}
+
+/* @todo: we should make this a default button variant (they need cleaning up) */
+.button {
+    height: var(--spacing-6);
+    width: var(--spacing-6);
+    color: var(--color-muted-foreground);
+}
+
+.button:hover svg {
+    color: var(--color-foreground);
+}
+
+.button:disabled svg {
+    color: var(--color-foreground);
+}

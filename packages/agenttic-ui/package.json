@@ -62,6 +62,7 @@
 		"@wordpress/prettier-config": "^4.2.0",
 		"@wordpress/scripts": "^27.9.0",
 		"autoprefixer": "^10.4.0",
+		"eslint-import-resolver-typescript": "^4.4.4",
 		"jsdom": "^24.0.0",
 		"postcss": "^8.4.0",
 		"storybook": "^9.0.18",

@@ -98,6 +98,10 @@ export type {
 	ChartSeries,
 } from './markdown-extensions/types';
 
+// Message actions
+export { createFeedbackActions, useMessageActions } from './message-actions';
+export type { FeedbackActionsManager } from './message-actions';
+
 // Mock implementations for development and testing
 export { getClientContext } from './mocks/mockContext';
 export { getClientTools } from './mocks/mockTools';

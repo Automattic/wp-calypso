@@ -5,6 +5,7 @@ import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/utils';
 import { fadeVariants } from '../animations';
+import { MessageActions } from './MessageActions';
 import styles from './Message.module.css';
 
 export interface MessageProps {
@@ -63,7 +64,13 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >(
 					<div className={ styles.bubble }>
 						{ renderMessageContent() }
 					</div>
+					{ message.role !== 'user' && (
+						<MessageActions message={ message } />
+					) }
 				</div>
+				{ message.role === 'user' && (
+					<MessageActions message={ message } />
+				) }
 			</motion.div>
 		);
 	}

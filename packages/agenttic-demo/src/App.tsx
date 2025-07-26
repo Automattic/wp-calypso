@@ -7,8 +7,13 @@ import React, {
 	useState,
 } from 'react';
 import { useAgentChat } from '@automattic/agenttic-client';
-import type { ContextProvider } from '@automattic/agenttic-client';
-import { AgentUI } from '@automattic/agenttic-ui';
+import type { ContextProvider, UIMessage } from '@automattic/agenttic-client';
+import {
+	AgentUI,
+	CopyIcon,
+	ThumbsDownIcon,
+	ThumbsUpIcon,
+} from '@automattic/agenttic-ui';
 import { getClientContext } from '@automattic/agenttic-client/mocks/mockContext';
 import { getClientTools } from '@automattic/agenttic-client/mocks/mockTools';
 
@@ -35,6 +40,8 @@ const App: React.FC = () => {
 		clearSuggestions,
 		registerMarkdownComponents,
 		registerMarkdownExtensions,
+		registerMessageActions,
+		createFeedbackActions,
 		addMessage,
 		messageRenderer,
 	} = useAgentChat( {
@@ -169,6 +176,32 @@ const App: React.FC = () => {
 		[ onSubmit, clearSuggestions ]
 	);
 
+	// Handler for feedback actions
+	const handleFeedback = useCallback(
+		async ( messageId: string, feedback: 'up' | 'down' ) => {
+			// In a real app, you'd send this feedback to your API
+			console.log( `Feedback for message ${ messageId }: ${ feedback }` );
+		},
+		[]
+	);
+
+	// Handler for copy action
+	const handleCopy = useCallback( async ( message: UIMessage ) => {
+		// Extract text content from the message
+		const textContent = message.content
+			.filter( ( item ) => item.type === 'text' )
+			.map( ( item ) => item.text )
+			.join( '\n' );
+
+		try {
+			// @ts-ignore - navigator is available in browser
+			await navigator.clipboard.writeText( textContent );
+			console.log( 'Message copied to clipboard' );
+		} catch ( err ) {
+			console.error( 'Failed to copy message:', err );
+		}
+	}, [] );
+
 	// Track if we've already registered to avoid re-registration
 	const hasRegistered = useRef( false );
 
@@ -184,12 +217,58 @@ const App: React.FC = () => {
 		// Register custom markdown components
 		registerMarkdownComponents( customMarkdownComponents );
 
+		// Create feedback manager
+		const feedbackManager = createFeedbackActions( {
+			onFeedback: handleFeedback,
+			condition: ( message ) => message.role === 'agent',
+			icons: {
+				up: <ThumbsUpIcon size={ 16 } />,
+				down: <ThumbsDownIcon size={ 16 } />,
+			},
+		} );
+		const feedbackRegistration = {
+			id: 'demo-feedback',
+			actions: ( message: UIMessage ) =>
+				feedbackManager.getActionsForMessage( message ),
+		};
+		registerMessageActions( feedbackRegistration );
+
+		// re-register when feedback state changes..
+		const handleFeedbackChange = () => {
+			registerMessageActions( { ...feedbackRegistration } );
+		};
+		feedbackManager.onChange( handleFeedbackChange );
+
+		// Create and register copy action
+		const copyAction = {
+			id: 'copy',
+			label: 'Copy message',
+			icon: <CopyIcon size={ 16 } />,
+			onClick: handleCopy,
+			condition: ( message: UIMessage ) => message.role === 'agent',
+			tooltip: 'Copy message content',
+		};
+
+		registerMessageActions( {
+			id: 'demo-copy',
+			actions: [ copyAction ],
+		} );
+
 		hasRegistered.current = true;
+
+		// Clean up listener on unmount
+		return () => {
+			feedbackManager.offChange( handleFeedbackChange );
+		};
 	}, [
 		registerMarkdownExtensions,
 		registerMarkdownComponents,
 		customMarkdownExtensions,
 		customMarkdownComponents,
+		registerMessageActions,
+		createFeedbackActions,
+		handleFeedback,
+		handleCopy,
 	] );
 
 	return (

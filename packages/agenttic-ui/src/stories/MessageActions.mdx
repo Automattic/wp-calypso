@@ -1,0 +1,142 @@
+import { Meta } from '@storybook/blocks';
+import * as MessageActionsStories from '../components/chat/MessageActions.stories';
+
+<Meta of={MessageActionsStories} />
+
+# Message Actions
+
+Message Actions provide a flexible way to add contextual action buttons to messages in the Agenttic chat interface. Actions can be static or dynamic, conditional, and stateful.
+
+## Overview
+
+### UI Component (agenttic-ui)
+
+```typescript
+interface MessageAction {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick: (message: Message) => void | Promise<void>;
+  disabled?: boolean;
+  tooltip?: string;
+}
+```
+
+The UI component renders a simple icon button on a `Message` component.
+
+### Client Interface (agenttic-client)
+
+This client interfaces provides the following:
+
+- Conditional rendering based on message configuration
+- Factories for common patterns (i.e. feedback buttons show ChatGPT-like behavior - select one, the other disappears)
+
+The client interface adds a `condition` property for conditional rendering:
+
+```typescript
+interface MessageActionDefinition {
+  id: string;
+  label: string;
+  icon: ReactNode;
+  onClick: (message: UIMessage) => void | Promise<void>;
+  condition?: (message: UIMessage) => boolean;
+  disabled?: boolean;
+  tooltip?: string;
+}
+```
+
+## Copy Action Example
+
+```typescript
+const {
+  registerMessageActions,
+  // ... other hooks
+} = useAgentChat({
+  agentId: 'test',
+  // ... config
+});
+
+// Handler for copy action
+const handleCopy = useCallback(async (message: UIMessage) => {
+  const textContent = message.content
+    .filter((item) => item.type === 'text')
+    .map((item) => item.text)
+    .join('\n');
+
+  try {
+    await navigator.clipboard.writeText(textContent);
+    console.log('Message copied to clipboard');
+  } catch (err) {
+    console.error('Failed to copy message:', err);
+  }
+}, []);
+
+// Create and register copy action
+const copyAction = {
+  id: 'copy',
+  label: 'Copy message',
+  icon: <CopyIcon size={16} />,
+  onClick: handleCopy,
+  condition: (message: UIMessage) => message.role === 'agent',
+  tooltip: 'Copy message content',
+};
+
+registerMessageActions({
+  id: 'demo-copy',
+  actions: [copyAction],
+});
+```
+
+## Feedback Factory Example
+
+```typescript
+const {
+  registerMessageActions,
+  createFeedbackActions,
+  // ... other hooks
+} = useAgentChat({
+  agentId: 'test',
+  // ... config
+});
+
+// Handler for feedback
+const handleFeedback = useCallback(
+  async (messageId: string, feedback: 'up' | 'down') => {
+    console.log(`Feedback for message ${messageId}: ${feedback}`);
+  },
+  []
+);
+
+// Create feedback manager
+const feedbackManager = createFeedbackActions({
+  onFeedback: handleFeedback,
+  condition: (message) => message.role === 'agent',
+  icons: {
+    up: <ThumbsUpIcon size={16} />,
+    down: <ThumbsDownIcon size={16} />,
+  },
+});
+
+// Register feedback actions
+const feedbackRegistration = {
+  id: 'demo-feedback',
+  actions: (message: UIMessage) =>
+    feedbackManager.getActionsForMessage(message),
+};
+
+registerMessageActions(feedbackRegistration);
+
+// Re-register when feedback state changes
+const handleFeedbackChange = () => {
+  registerMessageActions({ ...feedbackRegistration });
+};
+
+feedbackManager.onChange(handleFeedbackChange);
+
+// Clean up listener on unmount
+useEffect(() => {
+  return () => {
+    feedbackManager.offChange(handleFeedbackChange);
+  };
+}, []);
+```

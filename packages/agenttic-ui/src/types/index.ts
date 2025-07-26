@@ -22,6 +22,16 @@ export interface Message {
 	archived: boolean;
 	showIcon: boolean;
 	icon?: string;
+	actions?: MessageAction[];
+}
+
+export interface MessageAction {
+	id: string;
+	icon: React.ReactNode;
+	label: string;
+	onClick: ( message: Message ) => void | Promise< void >;
+	tooltip?: string;
+	disabled?: boolean;
 }
 
 // UI package only exports UI-specific types

@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ArrowUpIcon } from './ArrowUpIcon';
 import { BigSkyIcon } from './BigSkyIcon';
+import { CopyIcon } from './CopyIcon';
 import { StopIcon } from './StopIcon';
 import { StylesIcon } from './StylesIcon';
+import { ThumbsDownIcon } from './ThumbsDownIcon';
+import { ThumbsUpIcon } from './ThumbsUpIcon';
 import { XIcon } from './XIcon';
 
 interface IconStoryArgs {
@@ -74,6 +77,33 @@ export const Styles: Story = {
 export const X: Story = {
 	render: ( args ) => (
 		<XIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Copy: Story = {
+	render: ( args ) => (
+		<CopyIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const ThumbsUp: Story = {
+	render: ( args ) => (
+		<ThumbsUpIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const ThumbsDown: Story = {
+	render: ( args ) => (
+		<ThumbsDownIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,
@@ -153,6 +183,48 @@ export const Gallery: Story = {
 				<XIcon size={ args.size } className={ args.className } />
 				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
 					X
+				</span>
+			</div>
+			<div
+				style={ {
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					gap: '0.5rem',
+				} }
+			>
+				<CopyIcon size={ args.size } className={ args.className } />
+				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
+					Copy
+				</span>
+			</div>
+			<div
+				style={ {
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					gap: '0.5rem',
+				} }
+			>
+				<ThumbsUpIcon size={ args.size } className={ args.className } />
+				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
+					ThumbsUp
+				</span>
+			</div>
+			<div
+				style={ {
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					gap: '0.5rem',
+				} }
+			>
+				<ThumbsDownIcon
+					size={ args.size }
+					className={ args.className }
+				/>
+				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
+					ThumbsDown
 				</span>
 			</div>
 		</div>
