@@ -1,27 +1,10 @@
-import Markdown from 'react-markdown';
-import CustomALink from './custom-a-link';
-import { uriTransformer } from './uri-transformer';
-import type { ReactNode } from 'react';
+import { MarkdownOrChildren } from './mardown-or-children';
+import type { Message } from '../../types';
 
-interface IntroductionMessageProps {
-	content: ReactNode;
-}
-
-export const IntroductionMessage = ( { content }: IntroductionMessageProps ) => (
+export const IntroductionMessage = ( { content }: { content: Message[ 'content' ] } ) => (
 	<div className="odie-introduction-message-content">
 		<div className="odie-chatbox-introduction-message">
-			{ typeof content === 'string' ? (
-				<Markdown
-					urlTransform={ uriTransformer }
-					components={ {
-						a: CustomALink,
-					} }
-				>
-					{ content }
-				</Markdown>
-			) : (
-				content
-			) }
+			<MarkdownOrChildren messageContent={ content } />
 		</div>
 	</div>
 );

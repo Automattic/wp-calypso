@@ -6,7 +6,6 @@ import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
-import Markdown from 'react-markdown';
 import {
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
@@ -24,8 +23,8 @@ import {
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
+import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
-import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
 
@@ -145,20 +144,14 @@ export const UserMessage = ( {
 	return (
 		<>
 			<div className="odie-chatbox-message__content">
-				{ typeof messageContent === 'string' ? (
-					<Markdown
-						urlTransform={ uriTransformer }
-						components={ {
-							a: ( props: React.ComponentProps< 'a' > ) => (
-								<CustomALink { ...props } target="_blank" />
-							),
-						} }
-					>
-						{ messageContent }
-					</Markdown>
-				) : (
-					messageContent
-				) }
+				<MarkdownOrChildren
+					messageContent={ messageContent }
+					components={ {
+						a: ( props: React.ComponentProps< 'a' > ) => (
+							<CustomALink { ...props } target="_blank" />
+						),
+					} }
+				/>
 			</div>
 			{ isMessageWithEscalationOption && (
 				<div

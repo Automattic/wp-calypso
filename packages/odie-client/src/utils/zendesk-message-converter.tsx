@@ -35,7 +35,7 @@ function createDownloadableMarkdownLink( url: string, AttachmentTitle: string ):
 	return `[${ AttachmentTitle } ${ fileName }](${ url })`;
 }
 
-function getContentMessage( message: ZendeskMessage ): ReactNode {
+function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
 	let messageContent: ReactNode = '';
 	switch ( message.type ) {
 		case 'image':
