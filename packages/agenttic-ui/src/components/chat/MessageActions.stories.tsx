@@ -68,12 +68,15 @@ export const FeedbackExample: Story = {
 				useRef< ReturnType< typeof createFeedbackActions > >();
 			if ( ! feedbackManagerRef.current ) {
 				feedbackManagerRef.current = createFeedbackActions( {
-					onFeedback: async ( messageId, feedback ) => {
+					onFeedback: async (
+						messageId: string,
+						feedback: 'up' | 'down'
+					) => {
 						console.log(
 							`Feedback submitted: ${ messageId } - ${ feedback }`
 						);
 					},
-					condition: ( msg ) => msg.role === 'agent',
+					condition: ( msg: MessageType ) => msg.role === 'agent',
 					icons: {
 						up: <ThumbsUpIcon size={ 16 } />,
 						down: <ThumbsDownIcon size={ 16 } />,
