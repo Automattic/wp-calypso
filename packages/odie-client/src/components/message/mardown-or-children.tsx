@@ -4,6 +4,9 @@ import { uriTransformer } from './uri-transformer';
 import type { Message } from '../../types';
 
 export const MarkdownOrChildren = ( {
+	/**
+	 * The message content to render. Messages can be React nodes or strings. When they're strings, they're Markdown.
+	 */
 	messageContent,
 	components = { a: CustomALink },
 }: {
