@@ -398,7 +398,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			} ) );
 
 			try {
-				await agentManager.sendMessage( agentKey, message );
+				let lastUpdate = null;
+				for await ( const update of agentManager.sendMessageStream(
+					agentKey,
+					message
+				) ) {
+					lastUpdate = update;
+				}
 
 				// Update internal messages and transform for UI
 				const updatedClientHistory =

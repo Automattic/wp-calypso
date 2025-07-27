@@ -57,7 +57,7 @@ const meta = {
 		placeholder: {
 			control: 'text',
 		},
-		chatState: {
+		floatingChatState: {
 			control: 'select',
 			options: [ 'collapsed', 'compact', 'expanded' ],
 		},

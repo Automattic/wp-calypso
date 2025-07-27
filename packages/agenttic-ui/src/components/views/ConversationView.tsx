@@ -74,7 +74,9 @@ export function ConversationView( {
 				showHeader ? ` ${ styles.withHeader }` : ''
 			}` }
 		>
-			{ showHeader && <ChatHeader onClose={ onClose } /> }
+			{ showHeader && (
+				<ChatHeader onClose={ onClose } onMinimize={ onMinimize } />
+			) }
 			<Messages
 				messages={ messages }
 				isProcessing={ isProcessing }

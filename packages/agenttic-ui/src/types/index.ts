@@ -58,7 +58,7 @@ export interface AgentUIProps {
 	onExpand?: () => void;
 	onClose?: () => void;
 	emptyView?: React.ReactNode;
-	chatState?: ChatState;
+	floatingChatState?: ChatState;
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
 	messageRenderer?: ComponentType< { children: string } >;
@@ -77,7 +77,7 @@ export interface NoticeConfig {
 
 // UI-specific types for existing components
 export interface ChatProps extends AgentUIProps {
-	chatState?: ChatState;
+	floatingChatState?: ChatState;
 }
 
 export type ChatState = 'collapsed' | 'compact' | 'expanded';

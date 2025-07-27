@@ -43,7 +43,7 @@ import { Chat } from './chat/Chat';
  * }
  * ```
  *
- * @param props                  - UI-only props for chat interface
+ * @param props                   - UI-only props for chat interface
  * @param props.variant
  * @param props.triggerIcon
  * @param props.placeholder
@@ -59,6 +59,7 @@ import { Chat } from './chat/Chat';
  * @param props.suggestions
  * @param props.clearSuggestions
  * @param props.messageRenderer
+ * @param props.floatingChatState
  */
 export const AgentUI: React.FC< AgentUIProps > = ( {
 	messages,
@@ -73,6 +74,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 	onOpen,
 	onExpand,
 	onClose,
+	floatingChatState,
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
@@ -91,6 +93,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 			onOpen={ onOpen }
 			onExpand={ onExpand }
 			onClose={ onClose }
+			floatingChatState={ floatingChatState }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
 			messageRenderer={ messageRenderer }

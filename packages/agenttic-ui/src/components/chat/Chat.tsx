@@ -55,7 +55,7 @@ export function Chat( {
 	onExpand,
 	onClose,
 	emptyView,
-	chatState,
+	floatingChatState,
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
@@ -63,7 +63,7 @@ export function Chat( {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
 
-	const chat = useChat( chatState );
+	const chat = useChat( floatingChatState );
 	const timeoutRefs = useRef< Set< NodeJS.Timeout > >( new Set() );
 	const input = useInput( {
 		value: inputValue,
@@ -430,7 +430,7 @@ export function Chat( {
 								placeholder={ placeholder }
 								isProcessing={ isProcessing }
 								showHeader={ true }
-								onClose={ handleClose }
+								onClose={ onClose }
 								onMinimize={ handleMinimize }
 								fromCompact={ fromCompact }
 								notice={ notice }

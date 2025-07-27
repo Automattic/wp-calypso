@@ -50,7 +50,7 @@ const meta = {
 			control: 'select',
 			options: [ 'floating', 'embedded' ],
 		},
-		chatState: {
+		floatingChatState: {
 			control: 'select',
 			options: [ 'collapsed', 'compact', 'expanded' ],
 		},
@@ -72,7 +72,7 @@ export const CollapsedView: Story = {
 		error: null,
 		onSubmit: mockOnSubmit,
 		variant: 'floating',
-		chatState: 'collapsed',
+		floatingChatState: 'collapsed',
 		placeholder: 'Ask me anything...',
 	},
 	parameters: {
@@ -92,7 +92,7 @@ export const CompactView: Story = {
 		error: null,
 		onSubmit: mockOnSubmit,
 		variant: 'floating',
-		chatState: 'compact',
+		floatingChatState: 'compact',
 		placeholder: 'Ask me anything...',
 	},
 	parameters: {
@@ -112,7 +112,7 @@ export const ConversationView: Story = {
 		error: null,
 		onSubmit: mockOnSubmit,
 		variant: 'floating',
-		chatState: 'expanded',
+		floatingChatState: 'expanded',
 		placeholder: 'Ask me anything...',
 	},
 	parameters: {
