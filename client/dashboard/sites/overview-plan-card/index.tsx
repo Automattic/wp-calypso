@@ -64,7 +64,6 @@ export default function PlanCard( { site }: { site: Site } ) {
 						strapline={ __( 'Storage' ) }
 						metric={ filesize( mediaStorage?.storage_used_bytes ?? 0, { round: 0 } ) }
 						description={ filesize( mediaStorage?.max_storage_bytes ?? 0, { round: 0 } ) }
-						descriptionAlignment="end"
 						progressValue={ progressBarValue }
 						progressColor={ storageWarningColor }
 						progressLabel={ `${ storageUsagePercent }%` }
@@ -74,7 +73,6 @@ export default function PlanCard( { site }: { site: Site } ) {
 						strapline={ __( 'Bandwidth' ) }
 						metric="7.2 GB"
 						description="Unlimited"
-						descriptionAlignment="end"
 						progressValue={ 100 }
 						progressColor="alert-green"
 					/>
