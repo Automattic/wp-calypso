@@ -42,7 +42,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 			>
 				{ /* JP WAF Module */ }
 
-				<ProtectForm siteSlug={ siteSlug } />
+				<ProtectForm site={ site } />
 
 				{ /* JP WAF Module's Block List */ }
 

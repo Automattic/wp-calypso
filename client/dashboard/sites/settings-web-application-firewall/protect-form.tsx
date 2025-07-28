@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -11,12 +11,12 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
 import {
 	siteJetpackModulesQuery,
 	siteJetpackModuleMutation,
 } from '../../app/queries/site-jetpack-module';
 import { SectionHeader } from '../../components/section-header';
+import type { Site } from '../../data/types';
 
 const fields = [
 	{
@@ -31,9 +31,8 @@ const form = {
 	fields: [ 'protect' ],
 };
 
-export default function ProtectForm( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: jetpackModules } = useQuery( siteJetpackModulesQuery( site.ID ) );
+export default function ProtectForm( { site }: { site: Site } ) {
+	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
 	const mutation = useMutation( siteJetpackModuleMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
