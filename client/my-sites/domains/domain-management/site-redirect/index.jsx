@@ -225,6 +225,7 @@ const recordUpdateSiteRedirectClick = ( domainName, location, success ) =>
 		} )
 	);
 
+// eslint-disable-next-line react/display-name
 const withLocationAsKey = createHigherOrderComponent( ( Wrapped ) => ( props ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const location = useSelector( ( state ) =>

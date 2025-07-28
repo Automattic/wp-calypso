@@ -345,6 +345,7 @@ class EditUserForm extends Component {
 }
 
 const withExternalContributors = createHigherOrderComponent(
+	// eslint-disable-next-line react/display-name
 	( Wrapped ) => ( props ) => {
 		const { siteId, user } = props;
 		const {
