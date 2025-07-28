@@ -103,16 +103,7 @@ export function ActiveSubscriptionExpiry( {
 						'You no longer have access to this site and its purchases. <button>Contact support</button>'
 					),
 					{
-						button: (
-							<button
-								className="purchase-item__link purchase-item__link--error"
-								onClick={ () => {
-									// FIXME:
-									throw new Error( 'NOT IMPLEMENTED' );
-								} }
-								title={ __( 'Contact Support' ) }
-							/>
-						),
+						button: <a href="/help/contact" />,
 					}
 				) }
 			</span>
