@@ -45,6 +45,8 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+
 	if ( ! context.params.section ) {
 		const currentAgency = getActiveAgency( context.store.getState() );
 		page.redirect(
@@ -58,11 +60,13 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 
 	const section = getValidHostingSection( context.params.section );
 
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview section={ section } />
+			<HostingOverview section={ section } defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
