@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { DashboardDataError } from './error';
+import { isWpError, DashboardDataError } from './error';
 
 export const SITE_FIELDS = [
 	'ID',
@@ -119,7 +119,7 @@ export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site 
 			{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 		);
 	} catch ( error ) {
-		if ( error instanceof Error && error.message.includes( '[-32710]' ) ) {
+		if ( isWpError( error ) && error.error === 'parse_error' ) {
 			throw new DashboardDataError( 'inaccessible_jetpack', error );
 		}
 		throw error;
