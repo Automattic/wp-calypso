@@ -4,40 +4,41 @@ declare const process: { env: { NODE_ENV?: string } };
 export interface SummerSpecialProps {
 	isInSignup?: boolean;
 	currentSitePlanSlug?: string;
-	siteId?: number;
-	activePromotions?: string[];
+	isSummerSpecialFromSiteOption?: boolean;
 }
 
 export function isSummerSpecialEnabled( props?: SummerSpecialProps ): boolean {
 	const {
 		isInSignup = false,
 		currentSitePlanSlug = '',
-		siteId = null,
-		activePromotions = [],
+		isSummerSpecialFromSiteOption = false,
 	} = props || {};
 
+	// Feature flag check
 	if ( ! config.isEnabled( 'summer-special-2025' ) ) {
 		return false;
 	}
 
+	// Safety check: never enable in test environment
 	if ( process.env.NODE_ENV === 'test' ) {
 		return false;
 	}
 
-	if ( isInSignup || currentSitePlanSlug === 'free_plan' ) {
+	// If we're in signup, always enable summer special
+	if ( isInSignup ) {
 		return true;
 	}
 
-	// For paid plans, check active promotions
-	if ( currentSitePlanSlug && currentSitePlanSlug !== 'free_plan' ) {
-		// For sites with existing plans, only check for site-specific promotion
-		// Global promotion only applies to sites without plans
-		const hasSiteSpecificPromotion = siteId
-			? activePromotions.includes( `summer-special-2025-${ siteId }` )
-			: false;
-
-		return hasSiteSpecificPromotion;
+	// If site has free plan, always enable summer special
+	if ( currentSitePlanSlug === 'free_plan' ) {
+		return true;
 	}
 
+	// If site option is explicitly set to true, enable summer special
+	if ( isSummerSpecialFromSiteOption ) {
+		return true;
+	}
+
+	// For paid plans without explicit site option, summer special is disabled
 	return false;
 }

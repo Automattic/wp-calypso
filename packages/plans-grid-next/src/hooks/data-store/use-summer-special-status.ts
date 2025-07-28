@@ -1,5 +1,6 @@
 import { isSummerSpecialEnabled } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { getSiteOption } from '@automattic/data-stores/src/site/selectors';
 import { useSelector } from 'react-redux';
 
 interface UseSummerSpecialStatusProps {
@@ -11,19 +12,21 @@ export function useSummerSpecialStatus( {
 	isInSignup = false,
 	siteId,
 }: UseSummerSpecialStatusProps = {} ): boolean {
-	// Get current site plan slug directly from the data store
+	// Get current site plan slug
 	const { planSlug: currentSitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
 
-	// Get active promotions from Redux state directly
-	const activePromotions = useSelector( ( state: any ) => state.activePromotions?.items || [] );
-
-	// Determine summer special status using the existing logic
-	const result = isSummerSpecialEnabled( {
-		isInSignup,
-		currentSitePlanSlug,
-		siteId: siteId || undefined,
-		activePromotions,
+	// Get summer special status from site options using the getSiteOption selector
+	const isSummerSpecialFromSiteOption = useSelector( ( state: any ) => {
+		if ( ! siteId ) {
+			return false;
+		}
+		return ( getSiteOption( state, siteId, 'is_summer_special_2025' ) as boolean ) ?? false;
 	} );
 
-	return result;
+	// Use the pure function for all the logic
+	return isSummerSpecialEnabled( {
+		isInSignup,
+		currentSitePlanSlug,
+		isSummerSpecialFromSiteOption: isSummerSpecialFromSiteOption || false,
+	} );
 }
