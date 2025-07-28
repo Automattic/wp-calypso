@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useHovercards } from '@gravatar-com/hovercards/react';
 import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
@@ -6,7 +5,7 @@ import HovercardContentPortal from './hovercard-content';
 
 import '@gravatar-com/hovercards/dist/style.css';
 
-function GravatarWithHovercards( props ) {
+export default function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );
 	const [ mountNode, setMountNode ] = useState( null );
 	const [ processedAvatarUrl, setProcessedAvatarUrl ] = useState( null );
@@ -65,12 +64,4 @@ function GravatarWithHovercards( props ) {
 			<Gravatar { ...props } />
 		</div>
 	);
-}
-
-export default function GravatarWithHovercardsWrapper( props ) {
-	if ( ! config.isEnabled( 'gravatar/hovercards' ) ) {
-		return <Gravatar { ...props } />;
-	}
-
-	return <GravatarWithHovercards { ...props } />;
 }

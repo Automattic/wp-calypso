@@ -12,6 +12,8 @@ export const buildDomainSearchCart = (
 	onAddItem: () => {},
 	onRemoveItem: () => {},
 	hasItem: () => false,
+	isBusy: false,
+	errorMessage: null,
 	...overrides,
 } );
 

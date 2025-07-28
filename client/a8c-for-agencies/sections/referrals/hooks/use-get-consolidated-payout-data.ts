@@ -1,16 +1,33 @@
 import { useMemo } from 'react';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getEstimatedCommission } from '../lib/get-estimated-commission';
+import {
+	getCurrentCycleActivityWindow,
+	getNextPayoutDateActivityWindow,
+} from '../lib/get-next-payout-date';
 import { Referral } from '../types';
 
 export default function useGetConsolidatedPayoutData(
 	referrals: Referral[],
 	products?: APIProductFamilyProduct[]
 ) {
-	const expectedCommission = useMemo(
-		() => getEstimatedCommission( referrals, products || [] ),
-		[ referrals, products ]
-	);
+	const { previousQuarterExpectedCommission, currentQuarterExpectedCommission } = useMemo( () => {
+		const currentDate = new Date();
+		const productsArray = products || [];
+
+		return {
+			previousQuarterExpectedCommission: getEstimatedCommission(
+				referrals,
+				productsArray,
+				getNextPayoutDateActivityWindow( currentDate )
+			),
+			currentQuarterExpectedCommission: getEstimatedCommission(
+				referrals,
+				productsArray,
+				getCurrentCycleActivityWindow( currentDate )
+			),
+		};
+	}, [ referrals, products ] );
 
 	const pendingOrders = useMemo(
 		() =>
@@ -23,7 +40,8 @@ export default function useGetConsolidatedPayoutData(
 	);
 
 	return {
-		expectedCommission,
+		previousQuarterExpectedCommission,
+		currentQuarterExpectedCommission,
 		pendingOrders,
 	};
 }

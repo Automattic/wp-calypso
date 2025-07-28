@@ -14,7 +14,10 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import {
+	getIsOnboardingAffiliateFlow,
+	getIsOnboardingUnifiedFlow,
+} from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -201,6 +204,7 @@ export function CouponFieldArea( {
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
@@ -209,7 +213,12 @@ export function CouponFieldArea( {
 		}
 	}, [ couponStatus, setCouponFieldValue ] );
 
-	if ( isPurchaseFree || couponStatus === 'applied' || isOnboardingAffiliateFlow ) {
+	if (
+		isPurchaseFree ||
+		couponStatus === 'applied' ||
+		isOnboardingAffiliateFlow ||
+		isOnboardingUnifiedFlow
+	) {
 		return null;
 	}
 

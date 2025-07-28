@@ -24,6 +24,10 @@
 		padding-top: 0;
 	}
 
+	&.no-bottom-padding {
+		padding-bottom: 0;
+	}
+
 	--step-container-v2-content-max-width: 1344px;
 
 	max-width: calc(

@@ -124,9 +124,13 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		triggerScanRun( site.ID )( dispatch );
 	}, [ dispatch, site ] );
 
-	const allFixableThreats = threats.filter(
-		( threat ): threat is FixableThreat =>
-			threat.fixable !== false && threat.fixerStatus !== 'in_progress'
+	const allFixableThreats = React.useMemo(
+		() =>
+			threats.filter(
+				( threat ): threat is FixableThreat =>
+					threat.fixable !== false && threat.fixerStatus !== 'in_progress'
+			),
+		[ threats ]
 	);
 	const hasFixableThreats = !! allFixableThreats.length;
 
@@ -185,15 +189,24 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		[ updatingThreats ]
 	);
 
-	const maxSeverity = threats.reduce( ( max, threat ) => Math.max( max, threat.severity ), 0 );
-	const countMap = {
-		low: threats.filter( ( threat ) => threat.severity < 3 ).length,
-		high: threats.filter( ( threat ) => threat.severity >= 3 ).length,
-	};
-	const countMapFixable = {
-		low: allFixableThreats.filter( ( threat ) => threat.severity < 3 ).length,
-		high: allFixableThreats.filter( ( threat ) => threat.severity >= 3 ).length,
-	};
+	const maxSeverity = React.useMemo(
+		() => threats.reduce( ( max, threat ) => Math.max( max, threat.severity ), 0 ),
+		[ threats ]
+	);
+	const countMap = React.useMemo(
+		() => ( {
+			low: threats.filter( ( threat ) => threat.severity < 3 ).length,
+			high: threats.filter( ( threat ) => threat.severity >= 3 ).length,
+		} ),
+		[ threats ]
+	);
+	const countMapFixable = React.useMemo(
+		() => ( {
+			low: allFixableThreats.filter( ( threat ) => threat.severity < 3 ).length,
+			high: allFixableThreats.filter( ( threat ) => threat.severity >= 3 ).length,
+		} ),
+		[ allFixableThreats ]
+	);
 
 	const headerSummary = getThreatCountMessage(
 		countMap.high,
@@ -216,10 +229,17 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		securityIcon = 'okay';
 	}
 
-	const highSeverityThreats = threats
-		.filter( ( threat ) => threat.severity >= 3 )
-		.sort( ( a, b ) => b.severity - a.severity );
-	const lowSeverityThreats = threats.filter( ( threat ) => threat.severity < 3 );
+	const highSeverityThreats = React.useMemo(
+		() =>
+			threats
+				.filter( ( threat ) => threat.severity >= 3 )
+				.sort( ( a, b ) => b.severity - a.severity ),
+		[ threats ]
+	);
+	const lowSeverityThreats = React.useMemo(
+		() => threats.filter( ( threat ) => threat.severity < 3 ),
+		[ threats ]
+	);
 
 	return (
 		<>

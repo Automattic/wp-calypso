@@ -1,28 +1,23 @@
-import { Button } from '@wordpress/components';
-import { arrowRight } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
+import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
 import { useDomainSearch } from '../domain-search';
-import { shoppingCartIcon } from './shopping-cart-icon';
+import { DomainSuggestionContinueCTA } from './continue';
+import { DomainSuggestionErrorCTA } from './error';
+import { DomainSuggestionPrimaryCTA } from './primary';
 
 import './style.scss';
 
 export interface DomainSuggestionCTAProps {
-	variant?: 'primary' | 'secondary';
-	compact?: boolean;
 	uuid: string;
 	onClick?( action: 'add-to-cart' | 'continue' ): void;
 	disabled?: boolean;
 }
 
-export const DomainSuggestionCTA = ( {
-	variant = 'secondary',
-	compact,
-	uuid,
-	onClick,
-	disabled,
-}: DomainSuggestionCTAProps ) => {
-	const { __ } = useI18n();
+const DomainSuggestionCTA = ( { uuid, onClick, disabled }: DomainSuggestionCTAProps ) => {
 	const { cart, onContinue } = useDomainSearch();
+	const { isBusy, errorMessage, callback } = useFocusedCartAction( () => {
+		onClick?.( 'add-to-cart' );
+		cart.onAddItem( uuid );
+	} );
 
 	const isDomainOnCart = cart.hasItem( uuid );
 
@@ -33,36 +28,26 @@ export const DomainSuggestionCTA = ( {
 		};
 
 		return (
-			<Button
-				isPressed
-				aria-pressed="mixed"
-				__next40pxDefaultSize
-				icon={ arrowRight }
-				className="domain-suggestion-cta domain-suggestion-cta--continue"
+			<DomainSuggestionContinueCTA
+				disabled={ disabled || cart.isBusy }
 				onClick={ handleContinueClick }
-				label={ __( 'Continue' ) }
-			>
-				{ compact ? undefined : __( 'Continue' ) }
-			</Button>
+			/>
 		);
 	}
 
-	const handleAddToCartClick = () => {
-		onClick?.( 'add-to-cart' );
-		cart.onAddItem( uuid );
-	};
+	if ( errorMessage ) {
+		return <DomainSuggestionErrorCTA errorMessage={ errorMessage } callback={ callback } />;
+	}
 
 	return (
-		<Button
-			className="domain-suggestion-cta"
-			variant={ variant }
-			__next40pxDefaultSize
-			icon={ shoppingCartIcon }
-			onClick={ handleAddToCartClick }
-			label={ __( 'Add to Cart' ) }
-			disabled={ disabled }
-		>
-			{ compact ? undefined : __( 'Add to Cart' ) }
-		</Button>
+		<DomainSuggestionPrimaryCTA
+			onClick={ callback }
+			disabled={ disabled || cart.isBusy }
+			isBusy={ isBusy }
+		/>
 	);
 };
+
+DomainSuggestionCTA.Primary = DomainSuggestionPrimaryCTA;
+
+export { DomainSuggestionCTA };

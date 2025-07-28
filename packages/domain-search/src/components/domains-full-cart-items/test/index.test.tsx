@@ -15,8 +15,8 @@ describe( 'DomainsFullCartItems', () => {
 				value={ buildDomainSearchContext( {
 					cart: buildDomainSearchCart( {
 						items: [
-							buildDomain( { domain: 'example', tld: 'com', price: '$10' } ),
-							buildDomain( { domain: 'test', tld: 'org', price: '$15' } ),
+							buildDomain( { uuid: '1', domain: 'example', tld: 'com', price: '$10' } ),
+							buildDomain( { uuid: '2', domain: 'test', tld: 'org', price: '$15' } ),
 						],
 					} ),
 				} ) }
@@ -56,7 +56,7 @@ describe( 'DomainsFullCartItems', () => {
 			<DomainSearchContext.Provider
 				value={ buildDomainSearchContext( {
 					cart: buildDomainSearchCart( {
-						items: [ buildDomain( { originalPrice: '$20' } ) ],
+						items: [ buildDomain( { price: '$20', salePrice: '$10' } ) ],
 					} ),
 				} ) }
 			>
@@ -64,7 +64,7 @@ describe( 'DomainsFullCartItems', () => {
 			</DomainSearchContext.Provider>
 		);
 
-		expect( screen.getByText( '$20' ) ).toBeVisible();
-		expect( screen.getByText( '$10/year' ) ).toBeVisible();
+		expect( screen.getByText( '$20/year' ) ).toBeVisible();
+		expect( screen.getByText( '$10' ) ).toBeVisible();
 	} );
 } );

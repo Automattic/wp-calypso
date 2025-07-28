@@ -41,7 +41,7 @@ export const Default = () => {
 				uuid="123"
 				domain="example"
 				tld="com"
-				price={ <DomainSuggestionPrice originalPrice="$97" price="$22" /> }
+				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
 			/>
 		</StoryWrapper>
 	);
@@ -65,7 +65,7 @@ export const Highlighted = () => {
 				tld="com"
 				isHighlighted
 				matchReasons={ [ 'Exact match', '.com is the most common extension' ] }
-				price={ <DomainSuggestionPrice originalPrice="$97" price="$22" /> }
+				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
 			/>
 		</StoryWrapper>
 	);

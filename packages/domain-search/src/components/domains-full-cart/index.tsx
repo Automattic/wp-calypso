@@ -48,7 +48,7 @@ const DomainsFullCart = ( {
 	className?: string;
 	children?: React.ReactNode;
 } ) => {
-	const { isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
+	const { cart, isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
 	const { __ } = useI18n();
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -94,6 +94,7 @@ const DomainsFullCart = ( {
 							__next40pxDefaultSize
 							variant="primary"
 							onClick={ onContinue }
+							disabled={ cart.isBusy }
 						>
 							{ __( 'Continue' ) }
 						</Button>

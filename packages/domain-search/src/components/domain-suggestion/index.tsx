@@ -19,6 +19,7 @@ type DomainSuggestionProps = {
 	price: React.ReactNode;
 	badges?: React.ReactNode;
 	notice?: React.ReactNode;
+	cta?: React.ReactNode;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
 const DomainSuggestionComponent = ( {
@@ -30,6 +31,7 @@ const DomainSuggestionComponent = ( {
 	notice,
 	onClick,
 	disabled,
+	cta,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
@@ -72,10 +74,6 @@ const DomainSuggestionComponent = ( {
 		</span>
 	);
 
-	const cta = (
-		<DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } disabled={ disabled } />
-	);
-
 	const domainNameElement =
 		activeQuery === 'large' ? (
 			<HStack alignment="left" spacing={ 3 }>
@@ -86,7 +84,13 @@ const DomainSuggestionComponent = ( {
 			domainName
 		);
 
-	return <SuggestionSkeleton domainName={ domainNameElement } price={ price } cta={ cta } />;
+	return (
+		<SuggestionSkeleton
+			domainName={ domainNameElement }
+			price={ price }
+			cta={ cta ?? <DomainSuggestionCTA onClick={ onClick } uuid={ uuid } disabled={ disabled } /> }
+		/>
+	);
 };
 
 export const DomainSuggestion = ( props: DomainSuggestionProps ) => {

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/composite-checkout",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "A set of React components and helpers that can be used to create a checkout flow.",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
@@ -44,6 +44,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
+		"@automattic/color-studio": "^4.1.0",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/i18n": "^5.23.0",
@@ -54,7 +55,6 @@
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@automattic/color-studio": "^4.1.0",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",

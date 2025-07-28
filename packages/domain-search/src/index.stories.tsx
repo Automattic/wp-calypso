@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useState } from 'react';
+import { buildDomainSearchCart } from './test-helpers/factories';
 import {
 	DomainSearch,
 	DomainSearchControls,
@@ -64,6 +65,7 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 						dir="ltr"
 						aria-describedby="domain-search-description"
 						onBlur={ () => {} }
+						onKeyDown={ () => {} }
 					/>
 					<Button __next40pxDefaultSize type="submit" variant="primary">
 						Search domains
@@ -77,13 +79,7 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 	return (
 		<DomainSearch
-			cart={ {
-				items: [],
-				total: '',
-				onAddItem: () => {},
-				onRemoveItem: () => {},
-				hasItem: () => false,
-			} }
+			cart={ buildDomainSearchCart() }
 			initialQuery={ initialQuery }
 			onContinue={ () => {
 				alert( 'go to checkout' );
@@ -120,6 +116,7 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 							dir="ltr"
 							aria-describedby="domain-search-description"
 							onBlur={ () => {} }
+							onKeyDown={ () => {} }
 						/>
 						<DomainSearchControls.FilterButton count={ 3 } onClick={ () => {} } />
 					</HStack>

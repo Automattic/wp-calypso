@@ -15,8 +15,8 @@ import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import useStatsStrings from '../../hooks/use-stats-strings';
 import PageViewTracker from '../../stats-page-view-tracker';
-import statsStrings from '../../stats-strings';
 import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
 
@@ -43,7 +43,7 @@ function StatsRealtime( { context } ) {
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const dispatch = useDispatch();
 
-	const moduleStrings = statsStrings();
+	const moduleStrings = useStatsStrings();
 
 	const halfWidthModuleClasses = clsx(
 		'stats__flexible-grid-item--half',

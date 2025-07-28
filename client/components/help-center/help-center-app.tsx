@@ -20,7 +20,7 @@ const HelpCenterApp = ( props: HelpCenterAppProps ) => {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
 	const handleClose = useCallback( () => {
-		setShowHelpCenter( false );
+		setShowHelpCenter( false, undefined, undefined, true );
 	}, [ setShowHelpCenter ] );
 
 	return (

@@ -4,6 +4,7 @@ import {
 	createRootRoute,
 	redirect,
 	createLazyRoute,
+	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
@@ -17,6 +18,7 @@ import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
+import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
@@ -26,6 +28,7 @@ import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
+import { sitePurchaseQuery } from './queries/site-purchases';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
@@ -109,6 +112,7 @@ const siteRoute = createRoute( {
 			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
 	},
+	errorComponent: lazyRouteComponent( () => import( '../sites/site/error' ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -125,12 +129,17 @@ const siteOverviewRoute = createRoute( {
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteLastFiveActivityLogEntriesQuery( site.ID ) ),
 				hasHostingFeature( site, HostingFeatures.SCAN ) &&
 					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 				hasHostingFeature( site, HostingFeatures.BACKUPS ) &&
 					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
-			] );
+			] ).then( ( [ currentPlan ] ) => {
+				if ( currentPlan.id ) {
+					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, currentPlan.id ) );
+				}
+			} );
 		}
 	},
 } ).lazy( () =>

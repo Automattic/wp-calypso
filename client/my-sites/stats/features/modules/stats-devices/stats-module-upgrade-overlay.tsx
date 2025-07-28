@@ -3,8 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import { STATS_TYPE_DEVICE_STATS } from '../../../constants';
+import useStatsStrings from '../../../hooks/use-stats-strings';
 import StatsListCard from '../../../stats-list/stats-list-card';
-import statsStrings from '../../../stats-strings';
 
 import './stats-module-devices.scss';
 
@@ -20,7 +20,7 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 	overlay,
 } ) => {
 	const translate = useTranslate();
-	const { devices } = statsStrings();
+	const { devices } = useStatsStrings();
 
 	const fakeData = [
 		{

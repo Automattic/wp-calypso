@@ -402,6 +402,7 @@ export const FEATURE_SPAM_JP = 'spam-jp';
 export const FEATURE_LTD_SOCIAL_MEDIA_JP = 'ltd-social-media-jp';
 export const FEATURE_SHARES_SOCIAL_MEDIA_JP = 'shares-social-media-jp';
 export const FEATURE_CONTACT_FORM_JP = 'contact-form-jp';
+export const FEATURE_ADVANCED_FORM_FEATURES_JP = 'advanced-form-features-jp';
 export const FEATURE_PAID_SUBSCRIBERS_JP = 'paid-subscribers-jp';
 export const FEATURE_VIDEOPRESS_JP = 'videopress-jp';
 export const FEATURE_UNLTD_SOCIAL_MEDIA_JP = 'unltd-social-media-jp';

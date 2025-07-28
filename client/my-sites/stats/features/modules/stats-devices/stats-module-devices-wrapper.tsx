@@ -3,7 +3,7 @@ import { STATS_TYPE_DEVICE_STATS } from 'calypso/my-sites/stats/constants';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
-import statsStrings from '../../../stats-strings';
+import useStatsStrings from '../../../hooks/use-stats-strings';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-upgrade-overlay';
@@ -18,7 +18,7 @@ const StatsModuleDevicesWrapper: React.FC< StatsAdvancedModuleWrapperProps > = (
 	query,
 	className,
 } ) => {
-	const { devices: devicesStrings } = statsStrings();
+	const { devices: devicesStrings } = useStatsStrings();
 	const shouldGateStats = useShouldGateStats( STATS_TYPE_DEVICE_STATS );
 
 	// Check if blog is internal.

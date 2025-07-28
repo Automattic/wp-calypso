@@ -7,12 +7,12 @@ import infoIcon from './images/security-info.svg';
 import okayIcon from './images/security-okay.svg';
 
 interface Props {
-	icon: string;
+	icon?: string;
 	className?: string;
 }
 
 function SecurityIcon( props: Props ) {
-	const { icon, className } = props;
+	const { icon = 'success', className } = props;
 
 	let iconPath;
 	switch ( icon ) {
@@ -46,9 +46,5 @@ function SecurityIcon( props: Props ) {
 		/>
 	);
 }
-
-SecurityIcon.defaultProps = {
-	icon: 'success',
-};
 
 export default SecurityIcon;

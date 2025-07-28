@@ -203,7 +203,7 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince timestamp={ lastBackup.last_updated } isUtc />;
+		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
@@ -265,7 +265,7 @@ export function MediaStorage( { site }: { site: Site } ) {
 
 	const value = mediaStorage ? (
 		`${
-			Math.round( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
 		}%`
 	) : (
 		<IneligibleIndicator />

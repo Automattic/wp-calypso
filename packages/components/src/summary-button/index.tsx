@@ -51,7 +51,7 @@ function UnforwardedSummaryButton(
 			ref={ ref }
 			href={ href }
 			onClick={ onClick }
-			className={ clsx( 'summary-button', `has-density-${ density }` ) }
+			className={ clsx( 'summary-button', `has-density-${ density }`, props.className ) }
 			disabled={ disabled }
 			accessibleWhenDisabled
 		>
@@ -66,7 +66,11 @@ function UnforwardedSummaryButton(
 								</Text>
 							) }
 							<Text className="summary-button-title">{ title }</Text>
-							{ description && hasLowDensity && <Text variant="muted">{ description }</Text> }
+							{ description && hasLowDensity && (
+								<Text variant="muted" className="summary-button-description">
+									{ description }
+								</Text>
+							) }
 						</VStack>
 						{ hasLowDensity && <BadgesList badges={ badges } /> }
 					</VStack>

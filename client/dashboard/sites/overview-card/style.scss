@@ -9,6 +9,9 @@
 
 	.components-card__body {
 		padding: 0;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 }
 
@@ -47,6 +50,11 @@
 		color: $alert-red;
 		fill: $alert-red;
 	}
+
+	.dashboard-overview-card--disabled & {
+		color: $gray-600;
+		fill: $gray-600;
+	}
 }
 
 .dashboard-overview-card__link-icon {
@@ -65,6 +73,7 @@
 .dashboard-overview-card__link {
 	display: flex;
 	text-decoration: none;
+	flex-grow: 1;
 
 	.dashboard-overview-card__content {
 		flex: 1;
@@ -99,10 +108,6 @@
 	.dashboard-overview-card--error & {
 		color: $alert-red;
 	}
-}
-
-.dashboard-overview-card__progress-bar {
-	width: 100% !important;
 }
 
 .dashboard-callout {

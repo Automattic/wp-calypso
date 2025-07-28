@@ -448,6 +448,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -838,6 +839,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		return isGlobalStylesOnPersonalEnabled()
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
+	},
+	get2023PlanComparisonJetpackFeatureOverride: () => {
+		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => {
@@ -1459,6 +1463,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYPAL_JP,
 			FEATURE_UPLOAD_VIDEO,
 			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
 	},
 	// Features not displayed but used for checking plan abilities
@@ -1648,6 +1653,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPTIME_MONITOR_JP,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
 	},
 	getPlanComparisonFeatureLabels: () => {

@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../domain-search';
 
 export const DomainsMiniCartActions = () => {
-	const { onContinue, openFullCart } = useDomainSearch();
+	const { cart, onContinue, openFullCart } = useDomainSearch();
 	const { __ } = useI18n();
 
 	return (
@@ -16,7 +16,12 @@ export const DomainsMiniCartActions = () => {
 			>
 				{ __( 'View cart' ) }
 			</Button>
-			<Button variant="primary" onClick={ () => onContinue() } __next40pxDefaultSize>
+			<Button
+				variant="primary"
+				onClick={ () => onContinue() }
+				__next40pxDefaultSize
+				disabled={ cart.isBusy }
+			>
 				{ __( 'Continue' ) }
 			</Button>
 		</HStack>

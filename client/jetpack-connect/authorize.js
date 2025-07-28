@@ -614,7 +614,7 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError } = this.props.authorizationData;
 		return (
 			<div className="jetpack-connect__error-details">
-				<FormLabel>{ this.props.translate( 'Error Details' ) }</FormLabel>
+				<FormLabel>{ this.props.translate( 'Error details' ) }</FormLabel>
 				<FormSettingExplanation>{ authorizeError.message }</FormSettingExplanation>
 			</div>
 		);
