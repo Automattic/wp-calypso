@@ -38,21 +38,21 @@ function getDisplayName( item: ActiveSubscription ) {
 	return item.product_name;
 }
 
-const getPurchaseUrl = ( item: ActiveSubscription ) => {
+export function getPurchaseUrl( item: ActiveSubscription ) {
 	const siteUrl = item.site_slug || item.domain;
 	const subscriptionId = item.ID;
 	if ( ! siteUrl ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Cannot display manage purchase page for subscription without site' );
-		return;
+		throw new Error( 'Cannot display manage purchase page for subscription without site' );
 	}
 	if ( ! subscriptionId ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Cannot display manage purchase page for subscription without ID' );
-		return;
+		throw new Error( 'Cannot display manage purchase page for subscription without ID' );
 	}
 	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
-};
+}
 
 function getUrlForSiteLevelView( siteId: number | string ): string {
 	return `/v2/me/billing/active-subscriptions/${ siteId }`;
