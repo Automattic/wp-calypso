@@ -97,6 +97,8 @@ export function getPurchasesFieldDefinitions( {
 		return getManagePurchaseUrlFor( siteUrl, subscriptionId );
 	};
 
+	// No point in having a filter if there's only one site.
+	const shouldAllowSiteFiltering = sites.length > 1;
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'site',
@@ -105,16 +107,13 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			elements: ( () => {
-				if ( sites.length < 2 ) {
-					// No point in having a filter if there's only one site.
-					return undefined;
-				}
-				return sites.map( ( site ) => {
-					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
-				} );
-			} )(),
-			filterBy: { operators: [ 'isAny' ] },
+			elements: shouldAllowSiteFiltering
+				? sites.map( ( site ) => ( {
+						value: String( site.ID ),
+						label: `${ site.name } (${ site.domain })`,
+				  } ) )
+				: undefined,
+			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : undefined,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
