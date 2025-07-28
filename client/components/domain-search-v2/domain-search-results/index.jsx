@@ -15,11 +15,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
-import {
-	isDomainMappingFree,
-	isNextDomainFree,
-	getDomainsInCart,
-} from 'calypso/lib/cart-values/cart-items';
+import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getRootDomain } from 'calypso/lib/domains/utils';
@@ -273,12 +269,9 @@ class DomainSearchResults extends Component {
 
 	onDomainSkipSuggestionClick = async () => {
 		const { selectedSite } = this.props;
-		const domainsInCart = getDomainsInCart( this.props.cart );
 
-		// Skip it when:
-		// - We have a selected site or
-		// - We have domains in cart
-		if ( selectedSite || domainsInCart.length ) {
+		// Skip it when we have a selected site
+		if ( selectedSite ) {
 			this.props.onSkip();
 			return;
 		}
