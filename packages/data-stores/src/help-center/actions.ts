@@ -277,7 +277,6 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
-			| typeof setIsMinimized
 			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
@@ -289,4 +288,5 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >;
+	| GeneratorReturnType< typeof setShowHelpCenter >
+	| GeneratorReturnType< typeof setIsMinimized >;
