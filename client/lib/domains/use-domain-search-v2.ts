@@ -10,7 +10,7 @@ const EXPERIMENT_NAME = 'domains-ui-redesign';
  * This hook is used to determine if the domain search redesign is enabled for a given flow.
  * It should NOT be used within components, only at top level pages.
  */
-export const useDomainSearchV2 = ( flowName: string ) => {
+export const useIsDomainSearchV2Enabled = ( flowName: string ) => {
 	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
 		isEligible: flowName === ONBOARDING_FLOW,
 	} );
