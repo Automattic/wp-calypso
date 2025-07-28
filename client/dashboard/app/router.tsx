@@ -598,6 +598,17 @@ const activeSubscriptionsRoute = createRoute( {
 	)
 );
 
+const activeSubscriptionsSiteRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'billing/active-subscriptions/$siteSlug',
+} ).lazy( () =>
+	import( '../me/active-subscriptions' ).then( ( d ) =>
+		createLazyRoute( 'active-subscriptions-site' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
@@ -736,6 +747,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				billingRoute,
 				billingHistoryRoute,
 				activeSubscriptionsRoute,
+				activeSubscriptionsSiteRoute,
 				paymentMethodsRoute,
 				taxDetailsRoute,
 				securityRoute,
@@ -814,6 +826,7 @@ export {
 	billingRoute,
 	billingHistoryRoute,
 	activeSubscriptionsRoute,
+	activeSubscriptionsSiteRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
 	securityRoute,

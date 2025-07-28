@@ -6,11 +6,13 @@ import {
 	type SortDirection,
 	type View,
 	type Fields,
+	type Filter,
 } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscriptions';
 import { sitesQuery } from '../../app/queries/sites';
+import { activeSubscriptionsSiteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SiteIcon from '../../sites/site-icon';
@@ -66,6 +68,10 @@ const getPurchaseUrl = ( item: ActiveSubscription ) => {
 	// FIXME
 	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
 };
+
+function getUrlForSiteLevelView( siteId: number | string ): string {
+	return `/v2/me/billing/active-subscriptions/${ siteId }`;
+}
 
 function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 	return [
@@ -151,7 +157,13 @@ function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
-				return <ActiveSubscriptionDescription purchase={ item } site={ site } />;
+				return (
+					<ActiveSubscriptionDescription
+						purchase={ item }
+						site={ site }
+						getUrlForSiteLevelView={ getUrlForSiteLevelView }
+					/>
+				);
 			},
 		},
 		{
@@ -331,7 +343,19 @@ function adjustViewFieldsForWidth(
 	}
 }
 
+function getViewFromSettings( { siteId }: { siteId?: string } ) {
+	const filters: Filter[] = [];
+	if ( siteId ) {
+		filters.push( { value: siteId, operator: 'isAny', field: 'site' } );
+	}
+	return ( currentView: View ) => ( {
+		...currentView,
+		...( filters.length > 0 ? { filters } : {} ),
+	} );
+}
+
 export default function ActiveSubscriptions() {
+	const { siteSlug } = activeSubscriptionsSiteRoute.useParams();
 	const { data: activeSubscriptions, isLoading } = useQuery( activeSubscriptionsQuery() );
 	const { data: sites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
@@ -345,6 +369,14 @@ export default function ActiveSubscriptions() {
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );
 	}, [ activeSubscriptions, currentView, purchasesDataFields ] );
+
+	const siteId = siteSlug
+		? sites?.find( ( site ) => site.slug === siteSlug || String( site.ID ) === String( siteSlug ) )
+				?.ID
+		: undefined;
+	useEffect( () => {
+		setView( getViewFromSettings( { siteId: siteId ? String( siteId ) : undefined } ) );
+	}, [ setView, siteId ] );
 
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>

@@ -77,17 +77,14 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 	return null;
 }
 
-function filterSubscriptionsBySiteUrl( siteId: number ): string {
-	// FIXME: do this
-	return `/v2/me/billing/active-subscriptions/${ siteId }`;
-}
-
 export function ActiveSubscriptionDescription( {
 	purchase,
 	site,
+	getUrlForSiteLevelView,
 }: {
 	purchase: ActiveSubscription;
 	site?: { name: string; slug: string; ID: number };
+	getUrlForSiteLevelView: ( siteId: number ) => string;
 } ) {
 	if ( isTemporarySitePurchase( purchase ) ) {
 		return null;
@@ -110,7 +107,7 @@ export function ActiveSubscriptionDescription( {
 				{
 					button: (
 						<Link
-							to={ filterSubscriptionsBySiteUrl( site.ID ) }
+							to={ getUrlForSiteLevelView( site.ID ) }
 							title={
 								// translators: the siteName is the name of the site
 								sprintf( __( 'View subscriptions for %(siteName)s' ), {
@@ -146,7 +143,7 @@ export function ActiveSubscriptionDescription( {
 				{
 					button: (
 						<Link
-							to={ filterSubscriptionsBySiteUrl( site.ID ) }
+							to={ getUrlForSiteLevelView( site.ID ) }
 							title={
 								// translators: the siteDomain is the domain of the site
 								sprintf( __( 'View subscriptions for %(siteDomain)s' ), {
@@ -169,7 +166,7 @@ export function ActiveSubscriptionDescription( {
 				{
 					button: (
 						<Link
-							to={ filterSubscriptionsBySiteUrl( site.ID ) }
+							to={ getUrlForSiteLevelView( site.ID ) }
 							title={
 								// translators: the siteName is the name of the site
 								sprintf( __( 'View subscriptions for %(siteName)s' ), {
