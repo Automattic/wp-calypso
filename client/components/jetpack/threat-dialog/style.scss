@@ -35,6 +35,10 @@
 		color: var(--color-warning);
 	}
 
+	.threat-dialog__btn.is-primary.is-destructive:disabled {
+		opacity: 0.3;
+	}
+
 	.threat-dialog {
 		&__header {
 			font-size: $font-title-small;
