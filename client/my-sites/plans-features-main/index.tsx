@@ -427,6 +427,7 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
+		isInSignup,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
