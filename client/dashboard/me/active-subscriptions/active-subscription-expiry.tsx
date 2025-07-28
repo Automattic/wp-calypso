@@ -2,6 +2,8 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useLocale } from '../../app/locale';
+import { formatDate } from '../../utils/datetime';
 import {
 	isTemporarySitePurchase,
 	isRecentMonthlyPurchase,
@@ -32,12 +34,7 @@ export function ActiveSubscriptionExpiry( {
 	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
-	// FIXME: can we specify the locale? I also see there's a formatDate helper in dashboard/utils
-	const formatter = new Intl.DateTimeFormat( undefined, {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric',
-	} );
+	const locale = useLocale();
 
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
@@ -134,7 +131,7 @@ export function ActiveSubscriptionExpiry( {
 					'Free trial ends on <span>%(date)s</span>, renews automatically at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr>'
 				),
 				{
-					date: formatter.format( new Date( purchase.expiry_date ) ),
+					date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
 						isSmallestUnit: true,
 						stripZeros: true,
@@ -155,7 +152,7 @@ export function ActiveSubscriptionExpiry( {
 				{ createInterpolateElement(
 					// translators: date is a formatted date
 					sprintf( __( 'Free trial ends on <span>%(date)s</span>' ), {
-						date: formatter.format( new Date( purchase.expiry_date ) ),
+						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					} ),
 					{
 						span: <span className="purchase-item__date" />,
@@ -178,7 +175,7 @@ export function ActiveSubscriptionExpiry( {
 						// translators: date is a formatted date
 						__( 'Credit card expires before your next renewal on <span>%(date)s</span>' ),
 						{
-							date: formatter.format( new Date( purchase.renew_date ) ),
+							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						}
 					),
 					{
@@ -196,7 +193,7 @@ export function ActiveSubscriptionExpiry( {
 				stripZeros: true,
 			} ),
 			excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
-			date: formatter.format( new Date( purchase.renew_date ) ),
+			date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 		};
 		const translateComponents = {
 			abbr: <abbr title={ excludeTaxStringTitle } />,
@@ -261,7 +258,7 @@ export function ActiveSubscriptionExpiry( {
 						stripZeros: true,
 					} ),
 					excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
-					date: formatter.format( new Date( purchase.renew_date ) ),
+					date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 				}
 			),
 			{
@@ -283,7 +280,7 @@ export function ActiveSubscriptionExpiry( {
 					// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
 					sprintf( __( 'Expires %(timeUntilExpiry)s on <span>%(date)s</span>' ), {
 						timeUntilExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-						date: formatter.format( new Date( purchase.expiry_date ) ),
+						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					} ),
 					{ span: <span className="purchase-item__date" /> }
 				) }
@@ -295,7 +292,7 @@ export function ActiveSubscriptionExpiry( {
 		return createInterpolateElement(
 			// translators: %s is a formatted expiry date
 			sprintf( __( 'Expires on <span>%s</span>' ), [
-				formatter.format( new Date( purchase.expiry_date ) ),
+				formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 			] ),
 			{
 				span: <span className="purchase-item__date" />,
@@ -305,7 +302,7 @@ export function ActiveSubscriptionExpiry( {
 	if ( isExpired( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
 		return sprintf( __( 'Session used on %s' ), [
-			formatter.format( new Date( purchase.expiry_date ) ),
+			formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 		] );
 	}
 
