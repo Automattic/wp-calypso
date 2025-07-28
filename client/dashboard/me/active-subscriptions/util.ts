@@ -276,3 +276,7 @@ export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ) {
 	// FIXME: figure this out
 	return false;
 }
+
+export function isAutoRenewEnabled( purchase: ActiveSubscription ): boolean {
+	return parseInt( purchase.auto_renew ?? '' ) === 1;
+}

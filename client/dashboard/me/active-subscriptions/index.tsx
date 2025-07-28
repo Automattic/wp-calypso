@@ -18,6 +18,7 @@ import PageLayout from '../../components/page-layout';
 import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
+import { ActiveSubscriptionPaymentMethod } from './active-subscription-payment-method';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 import type { Site } from '../../data/site';
 
@@ -290,8 +291,12 @@ function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
 				// FIXME: show backup info
-				// FIXME: payment method here
-				return <div className="purchase-item__payment-method">{ item.payment_name }</div>;
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
+				return (
+					<div>
+						<ActiveSubscriptionPaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
+					</div>
+				);
 			},
 		},
 	];
