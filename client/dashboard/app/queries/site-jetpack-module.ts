@@ -5,6 +5,7 @@ import {
 } from '../../data/site-jetpack-modules';
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
+import { sitesQuery } from './sites';
 
 export const siteJetpackModulesQuery = ( siteId: number ) => ( {
 	queryKey: [ 'site', siteId, 'jetpack_modules' ],
@@ -25,6 +26,8 @@ export const siteJetpackModuleMutation = ( siteId: number ) => ( {
 			}
 			return oldData.filter( ( module ) => module !== variables.module );
 		} );
+		queryClient.invalidateQueries( { queryKey: siteJetpackModulesQuery( siteId ).queryKey } );
 		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+		queryClient.invalidateQueries( { queryKey: sitesQuery().queryKey } );
 	},
 } );
