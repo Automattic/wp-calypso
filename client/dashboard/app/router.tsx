@@ -402,7 +402,7 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	path: 'settings/web-application-firewall',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewWordPressSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
 			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
 		}
 	},
