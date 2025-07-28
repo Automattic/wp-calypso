@@ -51,7 +51,6 @@ const getPurchaseUrl = ( item: ActiveSubscription ) => {
 		console.error( 'Cannot display manage purchase page for subscription without ID' );
 		return;
 	}
-	// FIXME
 	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
 };
 

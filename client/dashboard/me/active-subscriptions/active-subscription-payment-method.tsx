@@ -3,7 +3,6 @@ import { isAutoRenewEnabled, isExpired, isRenewing, isAkismetFreeProduct } from 
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 function getAddPaymentMethodUrlFor( purchase: ActiveSubscription ): string {
-	// FIXME: do this
 	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
 }
 

@@ -269,7 +269,7 @@ export function isCloseToExpiration( purchase: ActiveSubscription ): boolean {
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
-export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscription ) {
+export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscription ): boolean {
 	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
 		return false;
 	}
@@ -280,19 +280,27 @@ export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscriptio
 		return false;
 	}
 	if (
-		new Date( purchase.payment_expiry ).toTimeString() <
-		new Date( purchase.expiry_date ).toTimeString()
+		new Date( purchase.expiry_date ).toTimeString() >
+		new Date( purchase.payment_expiry ).toTimeString()
 	) {
 		return true;
 	}
 	return false;
 }
 
-export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ) {
+export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ): boolean {
 	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
 		return false;
 	}
-	// FIXME: figure this out
+	// For 100 years plans, the credit card will probably always expire before
+	// the subscription so we should only consider this true if we are close to
+	// the expiration date.
+	if ( purchase.bill_period_days === PLAN_CENTENNIAL_PERIOD && ! isCloseToExpiration( purchase ) ) {
+		return false;
+	}
+	if ( new Date().toTimeString() > new Date( purchase.payment_expiry ).toTimeString() ) {
+		return true;
+	}
 	return false;
 }
 
