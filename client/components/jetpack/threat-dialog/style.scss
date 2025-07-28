@@ -1,20 +1,4 @@
 .dialog.threat-dialog {
-	// Highlight effect for TextControl when validation fails
-	.is-highlighted {
-		.components-text-control__input {
-			outline: 2px solid var(--theme-notification-color);
-		}
-	}
-
-	// Style for visually disabled button that remains clickable
-	.is-visually-disabled {
-		opacity: 0.5;
-
-		&:hover {
-			opacity: 0.55;
-		}
-	}
-
 	.dialog__content {
 		max-width: 630px;
 	}
@@ -33,10 +17,6 @@
 	}
 	.dashboard-notice.is-warning {
 		color: var(--color-warning);
-	}
-
-	.threat-dialog__btn.is-primary.is-destructive:disabled {
-		opacity: 0.3;
 	}
 
 	.threat-dialog {
@@ -104,6 +84,10 @@
 		&__warning-message {
 			color: var(--color-text-subtle);
 			font-size: $font-body-small;
+		}
+
+		&__btn.is-primary.is-destructive:disabled {
+			opacity: 0.3;
 		}
 
 		&__btn {
