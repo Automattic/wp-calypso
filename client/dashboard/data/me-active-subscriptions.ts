@@ -168,7 +168,15 @@ export interface ActiveSubscription {
 	payment_expiry: string | undefined;
 }
 
-export async function fetchActiveSubscriptionsForUser(): Promise< ActiveSubscription[] > {
+export async function fetchActiveSubscriptionsForUser( options?: {
+	siteId?: string | number;
+} ): Promise< ActiveSubscription[] > {
+	if ( options?.siteId ) {
+		return await wpcom.req.get( {
+			path: `/sites/${ encodeURIComponent( options.siteId ) }/purchases`,
+			apiVersion: '1.1',
+		} );
+	}
 	return await wpcom.req.get( {
 		path: '/me/purchases',
 		apiVersion: '1.1',

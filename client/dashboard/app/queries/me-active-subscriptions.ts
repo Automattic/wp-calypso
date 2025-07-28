@@ -1,6 +1,6 @@
 import { fetchActiveSubscriptionsForUser } from '../../data/me-active-subscriptions';
 
-export const activeSubscriptionsQuery = () => ( {
-	queryKey: [ 'me', 'activesubscriptions' ],
-	queryFn: fetchActiveSubscriptionsForUser,
+export const activeSubscriptionsQuery = ( { siteId }: { siteId?: string | number } ) => ( {
+	queryKey: [ 'me', 'active-subscriptions', { siteId } ],
+	queryFn: () => fetchActiveSubscriptionsForUser( { siteId } ),
 } );

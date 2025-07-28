@@ -602,7 +602,7 @@ const activeSubscriptionsSiteRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/active-subscriptions/$siteSlug',
 } ).lazy( () =>
-	import( '../me/active-subscriptions' ).then( ( d ) =>
+	import( '../me/active-subscriptions/site' ).then( ( d ) =>
 		createLazyRoute( 'active-subscriptions-site' )( {
 			component: d.default,
 		} )
