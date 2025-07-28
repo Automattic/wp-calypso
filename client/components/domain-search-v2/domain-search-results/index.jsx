@@ -14,7 +14,11 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
-import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
+import {
+	isDomainMappingFree,
+	isNextDomainFree,
+	getDomainsInCart,
+} from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getRootDomain } from 'calypso/lib/domains/utils';
@@ -265,6 +269,24 @@ class DomainSearchResults extends Component {
 		}
 	};
 
+	onDomainSkipSuggestionClick = async () => {
+		const { selectedSite } = this.props;
+		const domainsInCart = getDomainsInCart( this.props.cart );
+
+		// If we already have a site or domains in cart, just skip
+		if ( selectedSite || domainsInCart.length ) {
+			this.props.onSkip();
+			return;
+		}
+
+		// Find the subdomain suggestion
+		const subdomainSuggestion = this.props.suggestions?.find(
+			( suggestion ) => suggestion.isSubDomainSuggestion
+		);
+
+		// TODO: add subdomainSuggestion to cart
+	};
+
 	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function ( n ) {
 			return <DomainSuggestion.Placeholder key={ `placeholder-${ n }` } />;
@@ -272,7 +294,8 @@ class DomainSearchResults extends Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton, selectedSite } =
+			this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let domainSkipSuggestion;
@@ -355,10 +378,14 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton && subdomainSuggestion && (
+			const domainSkipValue = selectedSite
+				? selectedSite?.domain
+				: subdomainSuggestion?.domain_name;
+
+			domainSkipSuggestion = showSkipButton && domainSkipValue && (
 				<DomainSkipSuggestion
-					domain={ subdomainSuggestion.domain_name }
-					onSkip={ this.props.onSkip }
+					domain={ domainSkipValue }
+					onSkip={ this.onDomainSkipSuggestionClick }
 				/>
 			);
 		} else {
