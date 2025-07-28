@@ -185,7 +185,8 @@ const ThreatDialog: React.FC< Props > = ( {
 											<>{ translate( 'theme' ) }</>
 										),
 								},
-								comment: '{{slug/}} is the slug of the extension (plugin or theme) being deleted.',
+								comment:
+									'{{slug/}} is the slug of the extension (plugin or theme) being deleted. {{extension_type/}} is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
 							}
 						) }
 					</p>
