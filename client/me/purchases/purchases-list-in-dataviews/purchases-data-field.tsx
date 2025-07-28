@@ -139,6 +139,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
@@ -192,6 +193,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
@@ -291,6 +293,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				if ( isExpired( item ) ) {
 					// Prefix expired items with a z so they sort to the end of the list.
@@ -312,6 +315,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// This should not be possible. Investigating a bug:
 				// https://linear.app/a8c/issue/SHILL-901/
@@ -381,6 +385,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: false,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -403,6 +408,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -434,6 +440,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -454,6 +461,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: false,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.end_date ?? '';
 			},
