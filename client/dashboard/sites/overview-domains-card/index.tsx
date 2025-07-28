@@ -28,10 +28,12 @@ const SiteDomainDataViews = ( {
 	domains: SiteDomain[];
 	type?: DomainsView[ 'type' ];
 } ) => {
-	const fields = useFields( { site } );
+	const fields = useFields( {
+		site,
+		showPrimaryDomainBadge: type === 'table',
+	} );
 	const [ view, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
-		fields: [ 'expiry' ],
 		type,
 	} );
 
@@ -39,7 +41,11 @@ const SiteDomainDataViews = ( {
 
 	useEffect( () => {
 		if ( type ) {
-			setView( ( currentView ) => ( { ...currentView, type } ) );
+			setView( ( currentView ) => ( {
+				...currentView,
+				type,
+				fields: [ ...( type === 'list' ? [ 'is_primary_domain' ] : [] ), 'expiry' ],
+			} ) );
 		}
 	}, [ type ] );
 
@@ -85,10 +91,8 @@ const SiteDomainDataViews = ( {
 					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }
 					view={ view }
 					actions={ actions }
-					search={ false }
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					isLoading={ false }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				>
 					<>
