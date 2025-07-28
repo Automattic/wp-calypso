@@ -113,7 +113,7 @@ export function getPurchasesFieldDefinitions( {
 						label: `${ site.name } (${ site.domain })`,
 				  } ) )
 				: undefined,
-			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : undefined,
+			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
