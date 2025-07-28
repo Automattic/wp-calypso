@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 declare const process: { env: { NODE_ENV?: string } };
 
 export interface SummerSpecialProps {
@@ -14,6 +15,10 @@ export function isSummerSpecialEnabled( props?: SummerSpecialProps ): boolean {
 		siteId = null,
 		activePromotions = [],
 	} = props || {};
+
+	if ( ! config.isEnabled( 'summer-special-2025' ) ) {
+		return false;
+	}
 
 	if ( process.env.NODE_ENV === 'test' ) {
 		return false;

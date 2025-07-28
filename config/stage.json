@@ -46,6 +46,7 @@
 		"help": true,
 		"help/gpt-response": true,
 		"hosting-server-settings-enhancements": true,
+		"summer-special-2025": false,
 		"hosting/staging-sites-redesign": false,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
