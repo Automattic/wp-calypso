@@ -70,7 +70,6 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			// FIXME: this is still showing up as a filter even when disabled. I think this is a DataViews bug.
 			...( shouldAllowSiteFilter
 				? {
 						elements: sites.map( ( site ) => {
@@ -78,7 +77,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 						} ),
 						filterBy: { operators: [ 'isAny' ] },
 				  }
-				: {} ),
+				: { filterBy: false } ),
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.blog_id );
@@ -100,6 +99,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
@@ -137,6 +137,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
@@ -242,6 +243,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				if ( item.expiry_status === 'expired' ) {
 					// Prefix expired items with a z so they sort to the end of the list.
@@ -266,6 +268,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return item.expiry_status === 'expired'
