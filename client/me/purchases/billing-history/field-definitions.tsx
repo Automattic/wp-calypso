@@ -198,9 +198,7 @@ export function getFieldDefinitions(
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
+			filterBy: false,
 			getValue: ( { item }: { item: BillingTransaction } ) => {
 				return item.amount_integer;
 			},
