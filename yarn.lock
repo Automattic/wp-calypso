@@ -342,7 +342,7 @@ __metadata:
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
     autoprefixer: "npm:^10.4.21"
@@ -375,7 +375,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/global-styles": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/block-editor": "npm:^14.18.0"
     "@wordpress/compose": "npm:^7.23.0"
     clsx: "npm:^2.1.1"
@@ -800,7 +800,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/sites": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
     "@wordpress/dom-ready": "npm:^4.23.0"
@@ -831,7 +831,7 @@ __metadata:
     "@automattic/sites": "workspace:^"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/commands": "npm:^1.23.0"
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/compose": "npm:^7.23.0"
@@ -969,7 +969,7 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": "npm:^1.5.0"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@types/validator": "npm:^13.7.1"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/data-controls": "npm:^4.23.0"
@@ -1014,7 +1014,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
@@ -1180,7 +1180,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@automattic/urls": "workspace:^"
     "@automattic/viewport": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
@@ -1289,7 +1289,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@types/wordpress__block-library": "npm:^2.6.3"
     "@wordpress/block-editor": "npm:^14.18.0"
     "@wordpress/block-library": "npm:^9.23.0"
@@ -1352,7 +1352,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/data": "npm:^10.23.0"
@@ -1389,7 +1389,7 @@ __metadata:
     "@automattic/viewport-react": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@types/smooch": "npm:^5.3.7"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^29.9.0"
@@ -1566,7 +1566,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.14"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/icons": "npm:^10.23.0"
@@ -1739,7 +1739,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/autosize": "npm:^4.0.3"
     "@types/jest": "npm:^29.5.14"
@@ -1785,7 +1785,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@babel/core": "npm:^7.27.1"
     "@size-limit/file": "npm:^8.2.6"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
@@ -2459,7 +2459,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/element": "npm:^6.23.0"
     "@wordpress/url": "npm:^4.23.0"
@@ -9261,6 +9261,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.83.0":
+  version: 5.83.0
+  resolution: "@tanstack/query-core@npm:5.83.0"
+  checksum: e6dc480bc99eaca552a9ad65423788b60368cf99308681252fc7dbe42a3f2c1c978db0d3471cc3349b9112cfb4d967ace4e192a1d7e987e30c5c1ff74809c77c
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-devtools@npm:5.17.7":
   version: 5.17.7
   resolution: "@tanstack/query-devtools@npm:5.17.7"
@@ -9311,14 +9318,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^5.15.5":
-  version: 5.17.9
-  resolution: "@tanstack/react-query@npm:5.17.9"
+"@tanstack/react-query@npm:^5.83.0":
+  version: 5.83.0
+  resolution: "@tanstack/react-query@npm:5.83.0"
   dependencies:
-    "@tanstack/query-core": "npm:5.17.9"
+    "@tanstack/query-core": "npm:5.83.0"
   peerDependencies:
-    react: ^18.0.0
-  checksum: fe9c3c37594cddda1a3c3ec7f489243b5d8117af07cb7096a82ea644c248b31c8c3b9e248fef59ee9d41ff78663e87dd900d17da2b7f95d9b9171479a7c2d4da
+    react: ^18 || ^19
+  checksum: 883229f9219ca906a54d7caafd44d59b57db5dbe87e954f8a7027f460e9f8b97842dfbd0d676dc3111d577baf312c64f6c1fdd67cd1e4b0f0bf574e29670c606
   languageName: node
   linkType: hard
 
@@ -14967,7 +14974,7 @@ __metadata:
     "@stripe/react-stripe-js": "npm:^2.1.0"
     "@stripe/stripe-js": "npm:^1.54.2"
     "@tanstack/query-sync-storage-persister": "npm:^5.15.5"
-    "@tanstack/react-query": "npm:^5.15.5"
+    "@tanstack/react-query": "npm:^5.83.0"
     "@tanstack/react-query-devtools": "npm:^5.15.5"
     "@tanstack/react-query-persist-client": "npm:^5.15.5"
     "@tanstack/react-router": "npm:^1.114.34"
