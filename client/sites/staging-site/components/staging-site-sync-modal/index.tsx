@@ -494,7 +494,7 @@ export default function SyncModal( {
 						</HStack>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
-								<Text as="p" weight="bold" style={ { marginBottom: '8px' } }>
+								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
 								</Text>
 								{ createInterpolateElement(
