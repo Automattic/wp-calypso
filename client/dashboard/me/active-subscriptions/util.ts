@@ -54,22 +54,29 @@ export const PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY = 'ak_ep25k_bi_yearly';
 const msPerHour = 60 * 60 * 1000;
 const msPerDay = 24 * msPerHour;
 
-export function isWithinLastXHours( date: Date, hours: number ): boolean {
-	const now = new Date();
-	const difference = ( now.getTime() - date.getTime() ) / msPerHour;
-	return difference >= 0 && difference <= hours;
+function getMsInUnit( unit: 'hours' | 'days' ): number {
+	switch ( unit ) {
+		case 'hours':
+			return msPerHour;
+		case 'days':
+			return msPerDay;
+		default:
+			throw new Error(
+				`Unknown unit '${ unit }'. Can only work with hours or days because other units (eg: months) are too vague.`
+			);
+	}
 }
 
-export function isWithinLastXDays( date: Date, days: number ): boolean {
+export function isWithinLast( date: Date, count: number, unit: 'hours' | 'days' ): boolean {
 	const now = new Date();
-	const daysDifference = ( now.getTime() - date.getTime() ) / msPerDay;
-	return daysDifference >= 0 && daysDifference <= days;
+	const difference = ( now.getTime() - date.getTime() ) / getMsInUnit( unit );
+	return difference >= 0 && difference <= count;
 }
 
-export function isWithinNextXDays( date: Date, days: number ): boolean {
+export function isWithinNext( date: Date, count: number, unit: 'hours' | 'days' ): boolean {
 	const now = new Date();
-	const daysDifference = ( date.getTime() - now.getTime() ) / msPerDay;
-	return daysDifference >= 0 && daysDifference <= days;
+	const daysDifference = ( date.getTime() - now.getTime() ) / getMsInUnit( unit );
+	return daysDifference >= 0 && daysDifference <= count;
 }
 
 export function getRelativeTimeString( date: Date ): string {
@@ -239,7 +246,7 @@ export function isAkismetFreeProduct( product: ActiveSubscription ): boolean {
 export function isRecentMonthlyPurchase( purchase: ActiveSubscription ): boolean {
 	return Boolean(
 		purchase.subscribed_date &&
-			isWithinLastXDays( new Date( purchase.subscribed_date ), 7 ) &&
+			isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
 			purchase.bill_period_days === PLAN_MONTHLY_PERIOD
 	);
 }
@@ -255,10 +262,11 @@ export function isCloseToExpiration( purchase: ActiveSubscription ): boolean {
 	if ( ! purchase.expiry_date ) {
 		return false;
 	}
-
-	// const expiryThresholdInMonths = purchase.bill_period_days === PLAN_MONTHLY_PERIOD ? 1 : 3;
-	// FIXME: figure this out
-	return false;
+	const threshold =
+		purchase.bill_period_days === PLAN_MONTHLY_PERIOD
+			? PLAN_MONTHLY_PERIOD
+			: PLAN_MONTHLY_PERIOD * 3;
+	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscription ) {

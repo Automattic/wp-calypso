@@ -12,8 +12,8 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
-	isWithinNextXDays,
-	isWithinLastXHours,
+	isWithinNext,
+	isWithinLast,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 	PLAN_MONTHLY_PERIOD,
@@ -283,7 +283,7 @@ export function ActiveSubscriptionExpiry( {
 	if (
 		isExpiring( purchase ) &&
 		! isAkismetFreeProduct( purchase ) &&
-		isWithinNextXDays( new Date( purchase.expiry_date ), 30 ) &&
+		isWithinNext( new Date( purchase.expiry_date ), 30, 'days' ) &&
 		! isRecentMonthlyPurchase( purchase )
 	) {
 		return (
@@ -319,7 +319,7 @@ export function ActiveSubscriptionExpiry( {
 	}
 
 	if ( isExpired( purchase ) ) {
-		const isExpiredToday = isWithinLastXHours( new Date( purchase.expiry_date ), 24 );
+		const isExpiredToday = isWithinLast( new Date( purchase.expiry_date ), 24, 'hours' );
 		const expiredTodayText = __( 'Expired today' );
 		// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
 		const expiredFromNowText = sprintf( __( 'Expired %(timeSinceExpiry)s' ), {
