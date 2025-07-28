@@ -366,9 +366,7 @@ export default function SyncModal( {
 	const showWooCommerceWarning =
 		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
-	const showDomainConfirmation =
-		targetEnvironment === 'production' &&
-		( browserCheckList.totalItems > 0 || browserCheckList.includeList.length > 0 );
+	const showDomainConfirmation = targetEnvironment === 'production';
 
 	const isButtonDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
