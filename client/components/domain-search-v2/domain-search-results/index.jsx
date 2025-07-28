@@ -285,7 +285,7 @@ class DomainSearchResults extends Component {
 
 		// Find the subdomain suggestion
 		const subdomainSuggestion = this.props.suggestions?.find(
-			( suggestion ) => suggestion.isSubDomainSuggestion
+			( suggestion ) => suggestion.isSubDomainSuggestion || suggestion.is_free
 		);
 
 		// Add the subdomain suggestion to the cart and move to the next step
@@ -307,7 +307,7 @@ class DomainSearchResults extends Component {
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			const subdomainSuggestion = suggestions.find(
-				( suggestion ) => suggestion.isSubDomainSuggestion
+				( suggestion ) => suggestion.isSubDomainSuggestion || suggestion.is_free
 			);
 			const regularSuggestions = suggestions.filter(
 				( suggestion ) =>
