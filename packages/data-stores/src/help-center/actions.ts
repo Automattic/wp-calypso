@@ -158,11 +158,18 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
-	options: HelpCenterShowOptions = { hideBackButton: false, contextTerm: '' }
+	options: HelpCenterShowOptions = { hideBackButton: false, contextTerm: '' },
+	/**
+	 * When the Help Center is minimized and someone clicks the (?) toggle button, we should maximize it.
+	 * But this means ignoring the `show=false` value the button will send. The problem is we'll also ignore the `show=false` when the close (x) buttons is clicked too.
+	 * `forceClose` listens to the show value always. Which the (x) button sets to true.
+	 */
+	forceClose = false
 ): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
 	let isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
 
-	if ( ! show && isMinimized ) {
+	// Opening or closing the Help Center should reset the minimized state.
+	if ( ! show && ! forceClose && isMinimized ) {
 		yield setIsMinimized( false );
 		isMinimized = false;
 
@@ -178,7 +185,7 @@ export const setShowHelpCenter = function* (
 
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
-		// Reset the local navigation history when closing the help center
+		// Reset the local navigation history when closing the help center.
 		yield setHelpCenterRouterHistory( undefined );
 	} else {
 		yield setShowMessagingWidget( false );
