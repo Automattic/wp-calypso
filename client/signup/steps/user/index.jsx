@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import SignupForm from 'calypso/blocks/signup-form';
@@ -27,6 +27,8 @@ import {
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
+import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -53,6 +55,20 @@ import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 import './style.scss';
+
+// Wrapper component to set headers in login context
+const LoginContextWrapper = ( { children, headerText, subHeaderText } ) => {
+	const { setHeaders } = useLoginContext();
+
+	React.useEffect( () => {
+		setHeaders( {
+			heading: headerText,
+			subHeading: subHeaderText,
+		} );
+	}, [ setHeaders, headerText, subHeaderText ] );
+
+	return children;
+};
 
 function getRedirectToAfterLoginUrl( {
 	oauth2Signup,
@@ -694,6 +710,26 @@ export class UserStep extends Component {
 			return null;
 		}
 
+		if ( this.props.isUnifiedCreateAccount ) {
+			return (
+				<LoginContextProvider>
+					<LoginContextWrapper
+						headerText={ this.getHeaderText() }
+						subHeaderText={ this.getSubHeaderText() }
+					>
+						<OneLoginLayout
+							isJetpack={ false }
+							isFromAkismet={ false }
+							isSectionSignup
+							loginUrl={ this.getLoginUrl() }
+						>
+							{ this.renderSignupForm() }
+						</OneLoginLayout>
+					</LoginContextWrapper>
+				</LoginContextProvider>
+			);
+		}
+
 		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
@@ -714,17 +750,20 @@ export class UserStep extends Component {
 const ConnectedUser = connect(
 	( state ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWoo = getIsWoo( state );
+		const isUnifiedCreateAccount = isWoo;
 
 		return {
 			oauth2Client: oauth2Client,
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
 			isWCCOM: getIsWCCOM( state ),
-			isWoo: getIsWoo( state ),
+			isWoo,
 			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
+			isUnifiedCreateAccount,
 		};
 	},
 	{

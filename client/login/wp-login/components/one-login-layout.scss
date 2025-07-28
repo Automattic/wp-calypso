@@ -1,0 +1,13 @@
+.wp-login__one-login-layout-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2em;
+}
+
+.wp-login__header {
+	color: var( --color-neutral-100 );
+	font-size: $font-body;
+	text-align: center;
+}
