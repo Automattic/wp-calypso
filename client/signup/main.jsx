@@ -60,6 +60,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -778,7 +779,10 @@ class Signup extends Component {
 			...flowStepProps,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
-		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
+		const isUnifiedCreateAccount =
+			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && this.props.isWoo;
+		const shouldRenderLocaleSuggestions =
+			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && ! isUnifiedCreateAccount;
 
 		let propsForCurrentStep = propsFromConfig;
 		if ( this.props.isManageSiteFlow ) {
@@ -942,6 +946,7 @@ export default connect(
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
+			isWoo: getIsWoo( state ),
 		};
 	},
 	{
