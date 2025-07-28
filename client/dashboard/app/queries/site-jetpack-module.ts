@@ -12,19 +12,18 @@ export const siteJetpackModulesQuery = ( siteId: number ) => ( {
 } );
 
 export const siteJetpackModuleMutation = ( siteId: number ) => ( {
-	mutationFn: ( data: { module: string; value: boolean } ) => {
-		const { module, value } = data;
+	mutationFn: ( variables: { module: string; value: boolean } ) => {
+		const { module, value } = variables;
 		return value
 			? activateJetpackModule( siteId, module )
 			: deactivateJetpackModule( siteId, module );
 	},
-	onSuccess: ( newData: { action: string; module: string } ) => {
+	onSuccess: ( newData: unknown, variables: { module: string; value: boolean } ) => {
 		queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData: string[] ) => {
-			if ( newData.action === 'activate' ) {
-				return [ ...oldData, newData.module ];
-			} else if ( newData.action === 'deactivate' ) {
-				return oldData.filter( ( module ) => module !== newData.module );
+			if ( variables.value ) {
+				return [ ...oldData, variables.module ];
 			}
+			return oldData.filter( ( module ) => module !== variables.module );
 		} );
 		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 	},
