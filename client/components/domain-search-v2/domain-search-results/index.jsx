@@ -376,9 +376,7 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			const domainSkipValue = selectedSite
-				? selectedSite?.domain
-				: subdomainSuggestion?.domain_name;
+			const domainSkipValue = selectedSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
 
 			domainSkipSuggestion = showSkipButton && domainSkipValue && (
 				<DomainSkipSuggestion
