@@ -115,9 +115,11 @@ export default function PlanCard( { site }: { site: Site } ) {
 						density="high"
 						strapline={ __( 'Bandwidth' ) }
 						metric={
-							bandwidth && site.is_wpcom_atomic ? filesize( bandwidth, { round: 1 } ) : 'Unlimited'
+							bandwidth && site.is_wpcom_atomic
+								? filesize( bandwidth, { round: 1 } )
+								: __( 'Unlimited' )
 						}
-						description={ site.is_wpcom_atomic ? 'Unlimited' : undefined }
+						description={ site.is_wpcom_atomic ? __( 'Unlimited' ) : undefined }
 						progressValue={ 100 }
 						progressColor="alert-green"
 					/>
