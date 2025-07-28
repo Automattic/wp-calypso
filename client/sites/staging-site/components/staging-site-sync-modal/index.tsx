@@ -20,7 +20,7 @@ import {
 	useEffect,
 } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { error, chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
@@ -458,7 +458,17 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 					</div>
-					<div className="database-item">
+					<HStack
+						alignment="left"
+						spacing={ 2 }
+						style={ {
+							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							padding: '16px 0',
+							marginTop: '8px',
+							marginBottom: '20px',
+						} }
+					>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
@@ -466,16 +476,30 @@ export default function SyncModal( {
 							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-					</div>
+						<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
+					</HStack>
 					<VStack spacing={ 7 }>
+						<HStack alignment="left" spacing={ 1 }>
+							<Text color="var(--studio-gray-40)">
+								{ displayBackupDate
+									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
+											date: <span>{ displayBackupDate }</span>,
+									  } )
+									: __( 'There are no backups.' ) }{ ' ' }
+								<ExternalLink
+									href={ `/backup/${ sourceSiteSlug }` }
+									children={ __( 'Backup now' ) }
+								/>
+							</Text>
+						</HStack>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
-								<Text as="p" weight="bold" style={ { marginBottom: '8px' } }>
+								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
 								</Text>
 								{ createInterpolateElement(
 									__(
-										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data. <a>Learn more</a>'
+										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
 									),
 									{
 										a: (
@@ -503,19 +527,6 @@ export default function SyncModal( {
 								/>
 							</VStack>
 						) }
-						<HStack alignment="left" spacing={ 1 }>
-							<Text color="var(--studio-gray-40)">
-								{ displayBackupDate
-									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
-											date: <span>{ displayBackupDate }</span>,
-									  } )
-									: __( 'There are no backups.' ) }{ ' ' }
-								<ExternalLink
-									href={ `/backup/${ sourceSiteSlug }` }
-									children={ __( 'Backup now' ) }
-								/>
-							</Text>
-						</HStack>
 					</VStack>
 				</div>
 				<HStack className="staging-site-card__footer">

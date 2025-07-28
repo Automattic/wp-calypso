@@ -46,7 +46,7 @@ class NsRecord extends Component {
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -59,7 +59,7 @@ class NsRecord extends Component {
 							args: { example: 'ns1.example.com' },
 						} ) }
 					/>
-					{ ! isDataValid && <FormInputValidation text={ translate( 'Invalid Host' ) } isError /> }
+					{ ! isDataValid && <FormInputValidation text={ translate( 'Invalid host' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>

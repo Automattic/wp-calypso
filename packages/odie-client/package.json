@@ -52,6 +52,7 @@
 		"@wordpress/icons": "^10.23.0",
 		"autosize": "^6.0.1",
 		"clsx": "^2.1.1",
+		"dompurify": "^3.2.6",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-intersection-observer": "^9.4.3",

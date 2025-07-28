@@ -204,6 +204,9 @@ class Sites extends Component {
 			case 'add-ons':
 				path = translate( 'Add-ons' );
 				break;
+			case 'comments':
+				path = translate( 'Comments' );
+				break;
 		}
 		// We don't have a translated path, capitalize the provided path.
 		const capitalize = initialPath === path;

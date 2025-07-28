@@ -158,7 +158,7 @@ export type ChatFeedbackActions = {
 };
 
 export type Message = {
-	content: string;
+	content: ReactNode;
 	context?: Context;
 	internal_message_id?: string;
 	message_id?: number;
@@ -237,6 +237,7 @@ export type ZendeskMessage = OdieMessage & {
 	type: ZendeskContentType;
 	mediaUrl?: string;
 	metadata?: Record< string, any >;
+	htmlText?: string;
 };
 
 export type ZendeskContentType =
