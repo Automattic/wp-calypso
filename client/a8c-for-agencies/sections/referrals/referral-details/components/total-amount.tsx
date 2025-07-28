@@ -21,7 +21,7 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 	}
 
 	// Use purchase_price from subscription if available, otherwise fall back to product amount
-	let amount = product?.amount;
+	let amount = Number( product?.amount );
 	let currency = 'USD';
 	let interval = 'month';
 
@@ -35,7 +35,7 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 		return <Gridicon icon="minus" />;
 	}
 
-	const formatted = formatCurrency( Number( amount ), currency );
+	const formatted = formatCurrency( amount, currency );
 
 	return interval === 'year'
 		? /* translators: %(total)s is the price of the subscription per year */

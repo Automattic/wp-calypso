@@ -11,9 +11,8 @@ interface ReferralPurchaseAPIResponse {
 	site_assigned: string;
 	subscription?: {
 		product_name: string;
-		purchase_price: string;
+		purchase_price: number;
 		purchase_currency: string;
-		commissionable_amount: string;
 		billing_interval_unit: string;
 	};
 }
