@@ -1,11 +1,14 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useMergeRefs } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
+import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
+import { queryClient } from 'calypso/dashboard/app/query-client';
 import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import { useCheckSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
 import { useDispatch } from 'calypso/state';
@@ -46,8 +49,16 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		getIsStagingSiteInTransition( state, itemData.blogId ?? 0 )
 	);
 
+	const { data: isStagingSiteDeletionInProgress } = useQuery(
+		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+		queryClient
+	);
+
 	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign && ( isStagingSite || hasStagingSite ) && ! isStagingSiteInTransition
+		stagingSitesRedesign &&
+			( isStagingSite || hasStagingSite ) &&
+			! isStagingSiteInTransition &&
+			! isStagingSiteDeletionInProgress
 	);
 
 	const productionSiteId = isStagingSite
