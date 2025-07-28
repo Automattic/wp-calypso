@@ -42,6 +42,7 @@
 		"dashboard/v2/security-settings": false,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
+		"domains/ui-redesign": true,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,
