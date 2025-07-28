@@ -3,7 +3,7 @@ import { Button, Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { SectionHeader } from '../../components/section-header';
@@ -32,22 +32,20 @@ const SiteDomainDataViews = ( {
 		site,
 		showPrimaryDomainBadge: type === 'table',
 	} );
-	const [ view, setView ] = useState< DomainsView >( {
+	const [ viewBeforeMergingType, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
+		fields: [ 'is_primary_domain', 'expiry' ],
 		type,
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
+	const view = useMemo( () => {
+		return {
+			...viewBeforeMergingType,
+			type,
+		};
+	}, [ viewBeforeMergingType, type ] );
 
-	useEffect( () => {
-		if ( type ) {
-			setView( ( currentView ) => ( {
-				...currentView,
-				type,
-				fields: [ ...( type === 'list' ? [ 'is_primary_domain' ] : [] ), 'expiry' ],
-			} ) );
-		}
-	}, [ type ] );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 
 	return (
 		<Card>
@@ -88,7 +86,7 @@ const SiteDomainDataViews = ( {
 				<DataViews< SiteDomain >
 					data={ filteredData || [] }
 					fields={ fields }
-					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }
+					onChangeView={ ( nextView ) => nextView.type !== 'grid' && setView( nextView ) }
 					view={ view }
 					actions={ actions }
 					paginationInfo={ paginationInfo }

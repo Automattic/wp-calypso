@@ -143,6 +143,7 @@ export const useFields = ( {
 				getValue: ( { item }: { item: Domain } ) => item.primary_domain,
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : null,
+				isVisible: () => ! showPrimaryDomainBadge,
 			},
 			{
 				id: 'type',
