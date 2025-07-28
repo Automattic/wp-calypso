@@ -6,11 +6,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		gap: 0.5rem;
-
-		@media ( max-width: $break-mobile ) {
-			padding: 1rem;
-		}
+		gap: 1rem;
 	}
 
 	.subdomain-skip-suggestion__content {

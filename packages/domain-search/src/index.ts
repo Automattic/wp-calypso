@@ -13,5 +13,5 @@ export { DomainSuggestionLoadMore } from './components/domain-suggestion-load-mo
 export { DomainSuggestionFilterReset } from './components/domain-suggestion-filter-reset';
 export * as DomainSearchControls from './components/domain-search-controls';
 
-export { useContainerQuery } from './hooks/use-container-query';
+export { useDomainSuggestionContainer } from './hooks/use-domain-suggestion-container';
 export { useTypedPlaceholder } from './hooks/use-typed-placeholder';

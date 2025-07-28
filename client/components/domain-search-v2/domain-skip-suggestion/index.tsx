@@ -28,16 +28,20 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 				</Heading>
 			}
 			subtitle={
-				<Text style={ { wordBreak: 'break-all' } }>
-					{ translate( '%(subdomain)s{{strong}}.%(domainName)s{{/strong}} is included', {
-						args: {
-							subdomain: subdomain,
-							domainName: tlds.join( '.' ),
-						},
-						components: {
-							strong: <strong style={ { whiteSpace: 'nowrap' } } />,
-						},
-					} ) }
+				<Text>
+					{ translate(
+						'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
+						{
+							args: {
+								subdomain: subdomain,
+								domainName: tlds.join( '.' ),
+							},
+							components: {
+								domain: <span style={ { wordBreak: 'break-all' } } />,
+								strong: <strong style={ { whiteSpace: 'nowrap' } } />,
+							},
+						}
+					) }
 				</Text>
 			}
 			right={
