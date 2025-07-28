@@ -60,7 +60,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isInSignup,
 		isSummerSpecial,
 	} );
 
