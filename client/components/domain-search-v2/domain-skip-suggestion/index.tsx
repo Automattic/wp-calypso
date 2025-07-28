@@ -1,25 +1,41 @@
+import { DomainSuggestion } from '@automattic/data-stores';
 import { useDomainSearch } from '@automattic/domain-search';
 import {
 	Button,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
+import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { Site } from 'calypso/dashboard/data/site';
 import { DomainSkipSuggestionPlaceholder } from './index.placeholder';
 import { DomainSkipSkeleton } from './index.skeleton';
 
 import './style.scss';
 
 interface Props {
-	domain: string;
-	hasExistingSite?: boolean;
+	selectedSite?: Site;
+	subdomainSuggestion?: DomainSuggestion;
 	onSkip: () => void;
 }
 
-const DomainSkipSuggestion = ( { domain, hasExistingSite, onSkip }: Props ) => {
+const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Props ) => {
 	const translate = useTranslate();
 	const { cart } = useDomainSearch();
-	const [ subdomain, ...tlds ] = domain.split( '.' );
+
+	const hasExistingSite = !! selectedSite;
+	const domain = hasExistingSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
+	const [ subdomain, ...tlds ] = domain?.split( '.' ) || [];
+
+	const onSkipClick = useCallback( () => {
+		if ( selectedSite ) {
+			// Skip it when we have a selected site
+			onSkip();
+		} else {
+			// Add the subdomain suggestion to the cart and move to the next step
+			cart.onAddItem( subdomainSuggestion?.domain_name );
+		}
+	}, [ selectedSite, cart, subdomainSuggestion?.domain_name, onSkip ] );
 
 	return (
 		<DomainSkipSkeleton
@@ -65,7 +81,7 @@ const DomainSkipSuggestion = ( { domain, hasExistingSite, onSkip }: Props ) => {
 				<Button
 					className="subdomain-skip-suggestion__btn"
 					variant="secondary"
-					onClick={ onSkip }
+					onClick={ onSkipClick }
 					disabled={ cart.isBusy }
 					__next40pxDefaultSize
 				>

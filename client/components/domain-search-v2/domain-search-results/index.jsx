@@ -1,10 +1,9 @@
 import {
-	DomainSuggestionPrice,
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSuggestionBadge,
 	DomainSuggestionCTA,
-	useDomainSearch,
+	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -267,24 +266,6 @@ class DomainSearchResults extends Component {
 		}
 	};
 
-	onDomainSkipSuggestionClick = async () => {
-		const { selectedSite } = this.props;
-
-		// Skip it when we have a selected site
-		if ( selectedSite ) {
-			this.props.onSkip();
-			return;
-		}
-
-		// Find the subdomain suggestion
-		const subdomainSuggestion = this.props.suggestions?.find(
-			( suggestion ) => suggestion.isSubDomainSuggestion || suggestion.is_free
-		);
-
-		// Add the subdomain suggestion to the cart and move to the next step
-		this.props.domainCart.onAddItem( subdomainSuggestion.domain_name );
-	};
-
 	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function ( n ) {
 			return <DomainSuggestion.Placeholder key={ `placeholder-${ n }` } />;
@@ -376,13 +357,11 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			const domainSkipValue = selectedSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
-
-			domainSkipSuggestion = showSkipButton && domainSkipValue && (
+			domainSkipSuggestion = showSkipButton && (
 				<DomainSkipSuggestion
-					hasExistingSite={ !! selectedSite }
-					domain={ domainSkipValue }
-					onSkip={ this.onDomainSkipSuggestionClick }
+					selectedSite={ selectedSite }
+					subdomainSuggestion={ subdomainSuggestion }
+					onSkip={ this.props.onSkip }
 				/>
 			);
 		} else {
@@ -422,10 +401,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-// Wrapper component to handle the hook
-const DomainSearchResultsWithHook = ( props ) => {
-	const { cart } = useDomainSearch();
-	return <DomainSearchResults { ...props } domainCart={ cart } />;
-};
-
-export default connect( mapStateToProps )( localize( DomainSearchResultsWithHook ) );
+export default connect( mapStateToProps )( localize( DomainSearchResults ) );
