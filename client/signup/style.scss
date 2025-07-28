@@ -40,6 +40,18 @@ body.is-section-signup {
 		padding: 0;
 	}
 
+	.is-unified-create-account {
+		.locale-suggestions {
+			margin: 0;
+		}
+
+		.locale-suggestions__notice {
+			&.calypso-notice.is-compact.is-light.is-info {
+				margin: 0;
+			}
+		}
+	}
+
 	// Hide the masterbar for realz
 	&.has-no-masterbar .masterbar {
 		display: none;

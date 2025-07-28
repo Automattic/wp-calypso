@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -53,7 +54,6 @@ import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-
 import './style.scss';
 
 // Wrapper component to set headers in login context
@@ -596,7 +596,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWCCOM, isWoo } = this.props;
+		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
@@ -647,6 +647,9 @@ export class UserStep extends Component {
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ isWoo ? this.props.translate( 'Your email' ) : null }
 				/>
+				{ isUnifiedCreateAccount && (
+					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+				) }
 				<div id="g-recaptcha"></div>
 			</>
 		);
