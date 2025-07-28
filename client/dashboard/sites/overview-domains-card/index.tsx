@@ -32,7 +32,10 @@ const SiteDomainDataViews = ( {
 		site,
 		showPrimaryDomainBadge: type === 'table',
 	} );
-	const [ viewBeforeMergingType, setView ] = useState< DomainsView >( DEFAULT_VIEW );
+	const [ initialView, setView ] = useState< DomainsView >( {
+		...DEFAULT_VIEW,
+		type,
+	} );
 
 	const handleChangeView = ( nextView: View ) => {
 		if ( nextView.type === 'grid' ) {
@@ -43,11 +46,11 @@ const SiteDomainDataViews = ( {
 
 	const view = useMemo(
 		() => ( {
-			...viewBeforeMergingType,
+			...initialView,
 			type,
 			fields: [ ...( type === 'list' ? [ 'is_primary_domain' ] : [] ), 'expiry' ],
 		} ),
-		[ viewBeforeMergingType, type ]
+		[ initialView, type ]
 	);
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
