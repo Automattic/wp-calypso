@@ -10,6 +10,7 @@ import { HostingFeatures } from '../../data/constants';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import AllowListForm from './allow-list-form';
+import BlockListForm from './block-list-form';
 import ProtectForm from './protect-form';
 
 export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug: string } ) {
@@ -45,7 +46,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 
 				<ProtectForm site={ site } />
 
-				{ /* JP WAF Module's Block List */ }
+				<BlockListForm site={ site } />
 
 				<AllowListForm site={ site } />
 			</HostingFeatureGatedWithCallout>

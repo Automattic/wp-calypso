@@ -16,6 +16,8 @@ export interface SiteSettings {
 	wpcom_locked_mode?: boolean;
 	jetpack_waf_ip_allow_list_enabled?: boolean;
 	jetpack_waf_ip_allow_list?: string;
+	jetpack_waf_ip_block_list_enabled?: boolean;
+	jetpack_waf_ip_block_list?: string;
 }
 
 export async function fetchSiteSettings( siteId: number ): Promise< SiteSettings > {
