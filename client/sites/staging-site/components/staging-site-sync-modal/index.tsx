@@ -456,7 +456,7 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 						<HStack alignment="left" spacing={ 1 }>
-							<Text color="var(--studio-gray-40)">
+							<Text color="var(--studio-gray-40)" style={ { marginInlineStart: '14px' } }>
 								{ displayBackupDate
 									? createInterpolateElement(
 											__( 'Listing files from the latest backup: <date />.' ),
