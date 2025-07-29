@@ -145,13 +145,13 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					getDisplayName( item ) +
 					' ' +
-					purchaseType( item ) +
+					( purchaseType( item ) || '' ) +
 					' ' +
 					item.siteName +
 					' ' +
 					( item.siteSlug || item.domain ) +
 					' ' +
-					site?.URL
+					( site?.URL ?? '' )
 				);
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
@@ -196,7 +196,7 @@ export function getPurchasesFieldDefinitions( {
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
-				return item.siteName + ' ' + item.domain + ' ' + site?.URL;
+				return item.siteName + ' ' + ( item.siteSlug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
