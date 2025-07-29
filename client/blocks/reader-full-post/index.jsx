@@ -868,6 +868,7 @@ export class FullPostView extends Component {
 							siteId={ +post.site_ID }
 							postId={ +post.ID }
 							isVisible={ this.state.isSuggestedFollowsModalOpen }
+							author={ post.author }
 						/>
 					) }
 				</ReaderMain>
