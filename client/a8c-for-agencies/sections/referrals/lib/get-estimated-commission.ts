@@ -30,12 +30,6 @@ export const getEstimatedCommission = (
 				if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
 					continue;
 				}
-				// Find corresponding product for price
-				const product = products.find( ( product ) => purchase.product_id === product.product_id );
-				if ( ! product ) {
-					continue;
-				}
-
 				if ( purchase.commissions ) {
 					// As of Aug 2025, new client purchases will use BD for purchases
 					// In this case the estimated commission has already been calculated on the backend
@@ -47,13 +41,21 @@ export const getEstimatedCommission = (
 				} else {
 					// Legacy approach, but we need to keep it to continue working with old data
 					// Calculate commission using the license data
-					// Day the license was revoked if present
-					// Day the license was issued
 
+					// For legacy calculations, we need to find the corresponding product
+					const product = products.find(
+						( product ) => purchase.product_id === product.product_id
+					);
+					if ( ! product ) {
+						continue;
+					}
+
+					// Day the license was issued
 					const issuedDate = new Date( purchase.license.issued_at );
 					// Set hours to 0 to compare from start of the day
 					issuedDate.setHours( 0, 0, 0, 0 );
 
+					// Day the license was revoked if present
 					const revokedAt = purchase.license.revoked_at
 						? new Date( purchase.license.revoked_at )
 						: null;
