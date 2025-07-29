@@ -35,19 +35,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 			setSubmit( false );
 			setSelectedThreats( threats );
 		}
-	}, [ submit, selectedThreats ] );
-
-	const buttons = useMemo(
-		() => [
-			<Button className="fix-all-threats-dialog__btn" onClick={ () => onCloseDialog() }>
-				{ translate( 'Go back' ) }
-			</Button>,
-			<Button primary className="fix-all-threats-dialog__btn" onClick={ fixAll }>
-				{ translate( 'Fix all threats' ) }
-			</Button>,
-		],
-		[ onCloseDialog, onConfirmation ]
-	);
+	}, [ submit, selectedThreats, onConfirmation, threats ] );
 
 	const bulkFixableThreats = useMemo(
 		() =>
@@ -64,44 +52,67 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 		[ threats ]
 	);
 
+	const buttons = useMemo( () => {
+		const buttons = [
+			<Button className="fix-all-threats-dialog__btn" onClick={ () => onCloseDialog() }>
+				{ translate( 'Go back' ) }
+			</Button>,
+		];
+		if ( bulkFixableThreats.length > 0 ) {
+			buttons.push(
+				<Button primary className="fix-all-threats-dialog__btn" onClick={ fixAll }>
+					{ translate( 'Fix all threats' ) }
+				</Button>
+			);
+		}
+		return buttons;
+	}, [ onCloseDialog, bulkFixableThreats ] );
 	return (
 		<Dialog isVisible={ showDialog } buttons={ buttons } onClose={ onCloseDialog }>
 			<h1>{ translate( 'Fix all threats' ) }</h1>
 			<div className="fix-all-threats-dialog">
-				<p className="fix-all-threats-dialog__warning-message">
-					{ translate( 'Jetpack will be fixing the selected threats and low risk items.' ) }
-				</p>
-				<div className="fix-all-threats-dialog__threats-section">
-					{ bulkFixableThreats.map( ( threat ) => (
-						<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
-							<ThreatFixHeader
-								key={ threat.id }
-								threat={ threat }
-								fixAllDialog
-								onCheckFix={ onSelectCheckbox }
-								action="fix"
-							/>
+				{ bulkFixableThreats.length > 0 && (
+					<>
+						<p className="fix-all-threats-dialog__warning-message">
+							{ translate( 'Jetpack will be fixing the selected threats and low risk items.' ) }
+						</p>
+						<div className="fix-all-threats-dialog__threats-section">
+							{ bulkFixableThreats.map( ( threat ) => (
+								<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
+									<ThreatFixHeader
+										key={ threat.id }
+										threat={ threat }
+										fixAllDialog
+										onCheckFix={ onSelectCheckbox }
+										action="fix"
+									/>
+								</div>
+							) ) }
 						</div>
-					) ) }
-				</div>
-				<p className="fix-all-threats-dialog__warning-message">
-					{ translate(
-						'These threats cannot be fixed in bulk because individual confirmation is required.'
-					) }
-				</p>
-				<div className="fix-all-threats-dialog__threats-section">
-					{ nonBulkFixableThreats.map( ( threat ) => (
-						<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
-							<ThreatFixHeader
-								key={ threat.id }
-								threat={ threat }
-								fixAllDialog
-								onCheckFix={ onSelectCheckbox }
-								action="fix"
-							/>
+					</>
+				) }
+				{ nonBulkFixableThreats.length > 0 && (
+					<>
+						<p className="fix-all-threats-dialog__warning-message">
+							{ translate(
+								'These threats cannot be fixed in bulk because individual confirmation is required.'
+							) }
+						</p>
+						<div className="fix-all-threats-dialog__threats-section">
+							{ nonBulkFixableThreats.map( ( threat ) => (
+								<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
+									<ThreatFixHeader
+										key={ threat.id }
+										threat={ threat }
+										fixAllDialog
+										onCheckFix={ onSelectCheckbox }
+										action="fix"
+									/>
+								</div>
+							) ) }
 						</div>
-					) ) }
-				</div>
+					</>
+				) }
 			</div>
 		</Dialog>
 	);
