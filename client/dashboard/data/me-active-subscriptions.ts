@@ -103,6 +103,7 @@ export interface ActiveSubscription {
 	is_hundred_year_domain: boolean;
 	is_iap_purchase: boolean;
 	is_locked: boolean;
+	is_non_free_plan: boolean;
 	is_rechargable: boolean;
 	is_refundable: boolean;
 	is_renewable: boolean;

@@ -21,8 +21,7 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 		return __( 'Host Managed Plan' );
 	}
 
-	// FIXME: this may not be quite the same as isPlan in calypso-products; we should check the overlap
-	if ( purchase.product_type === 'bundle' ) {
+	if ( purchase.is_non_free_plan ) {
 		return __( 'Site Plan' );
 	}
 
