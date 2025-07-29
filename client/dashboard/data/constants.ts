@@ -17,16 +17,29 @@ export enum DotcomPlans {
 export enum DotcomFeatures {
 	ATOMIC = 'atomic',
 	BACKUPS = 'backups',
-	SCAN = 'scan',
 	SUBSCRIPTION_GIFTING = 'subscription-gifting',
 	COPY_SITE = 'copy-site',
 	LEGACY_CONTACT = 'legacy-contact',
 	LOCKED_MODE = 'locked-mode',
+	SCAN = 'scan',
 	SECURITY_SETTINGS = 'security-settings',
 	SFTP = 'sftp',
 	SSH = 'ssh',
 	SITE_PREVIEW_LINKS = 'site-preview-links',
 	STAGING_SITES = 'staging-sites',
+}
+
+// Features that are used to identify the paid product.
+export enum JetpackFeatures {
+	ANTISPAM = 'antispam',
+	BACKUPS = 'backups',
+	CLOUD_CRITICAL_CSS = 'cloud-critical-css',
+	MONITOR = 'monitor',
+	SCAN = 'scan',
+	SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing',
+	STATS = 'stats-paid',
+	SEARCH = 'search',
+	VIDEOPRESS = 'videopress',
 }
 
 // Features that needs Atomic or self-hosted infrastructure,
@@ -47,6 +60,6 @@ export enum HostingFeatures {
 }
 
 export enum JetpackModules {
-	STATS = 'stats',
 	MONITOR = 'monitor',
+	STATS = 'stats',
 }

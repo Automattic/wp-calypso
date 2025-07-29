@@ -79,12 +79,15 @@
 }
 
 .dashboard-overview-card__link {
-	display: flex;
 	text-decoration: none;
-	flex-grow: 1;
 
-	.dashboard-overview-card__content {
-		flex: 1;
+	&:only-child {
+	    display: flex;
+	    flex-grow: 1;
+
+	    .dashboard-overview-card__content {
+	    	flex: 1;
+	    }
 	}
 
 	&:hover {

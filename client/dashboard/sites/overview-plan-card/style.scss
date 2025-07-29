@@ -1,0 +1,17 @@
+.jetpack-plan-card__icons {
+	align-self: flex-start;
+
+	> div {
+		align-items: center;
+		background-color: #102f14;
+		display: flex;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 4px;
+
+		svg {
+			fill: #66db64;
+		}
+	}
+}
