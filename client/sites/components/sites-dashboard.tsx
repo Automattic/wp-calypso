@@ -36,6 +36,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
@@ -140,6 +141,9 @@ const SitesDashboard = ( {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
+	const getSiteFromState = useSelector(
+		( state ) => ( siteId: number ) => getSite( state, siteId )
+	);
 	const { shouldShow: isRestoringAccount } = useRestoreSitesBanner();
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
@@ -379,7 +383,10 @@ const SitesDashboard = ( {
 	};
 
 	const changeSitePreviewPane = ( siteId: number ) => {
-		const targetSite = allSites.find( ( site ) => site.ID === siteId );
+		// allSites does not always query all sites (e.g. for small screens),
+		// so we need to get the site from the state in those cases
+		const targetSite =
+			allSites.find( ( site ) => site.ID === siteId ) || getSiteFromState( siteId );
 		if ( targetSite ) {
 			sitePreviewPane.open( targetSite, 'environment_switcher' );
 		}
