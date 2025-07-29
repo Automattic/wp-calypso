@@ -109,7 +109,7 @@ $breakpoint-mobile: 660px;
 	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
 	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
 
-	input.form-text-input, 
+	input.form-text-input,
 	textarea.form-text-input {
 		&:focus,
 		&:hover {
@@ -822,8 +822,8 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
-		.signup-form__woo-wrapper, 
-		.wp-login__heading-text {
+		.signup-form__woo-wrapper,
+		.wp-login__one-login-layout-heading-text {
 			color: var(--studio-gray-100);
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
@@ -837,7 +837,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
-		h3:not(.wp-login__heading-subtext) {
+		h3:not(.wp-login__one-login-layout-heading-subtext) {
 			color: var(--studio-gray-100);
 			text-align: center;
 			font-size: 2.25rem;
