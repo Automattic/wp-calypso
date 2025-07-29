@@ -4,12 +4,14 @@ import {
 	CardBody,
 	TextareaControl,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import {
@@ -89,6 +91,8 @@ export default function AllowListForm( { site }: { site: Site } ) {
 		formData.jetpack_waf_ip_allow_list !== currentList;
 	const { isPending } = mutation;
 
+	const ipAddress = window?.app?.clientIp || __( 'Unknown' );
+
 	return (
 		<Card>
 			<CardBody>
@@ -109,6 +113,16 @@ export default function AllowListForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
+						<Text>
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %s: IP address */
+									__( 'Your current IP address is: <strong>%s</strong>' ),
+									ipAddress
+								),
+								{ strong: <strong /> }
+							) }
+						</Text>
 						<HStack justify="flex-start">
 							<Button
 								variant="primary"
