@@ -1,21 +1,20 @@
+import { queryOptions } from '@tanstack/react-query';
 import { fetchBasicMetrics, fetchPerformanceInsights } from '../../data/site-profiler';
-import type { UrlPerformanceInsights } from '../../data/site-profiler';
-import type { Query } from '@tanstack/react-query';
 
-export const basicMetricsQuery = ( url: string ) => ( {
-	queryKey: [ 'performance', url, 'basic-metrics' ],
-	queryFn: () => fetchBasicMetrics( url ),
-} );
+export const basicMetricsQuery = ( url: string ) =>
+	queryOptions( {
+		queryKey: [ 'performance', url, 'basic-metrics' ],
+		queryFn: () => fetchBasicMetrics( url ),
+	} );
 
-export const performanceInsightsQuery = ( url: string, token: string ) => ( {
-	queryKey: [ 'performance', url, token ],
-	queryFn: () => {
-		return fetchPerformanceInsights( url, token );
-	},
-	refetchInterval: ( query: Query< UrlPerformanceInsights > ) => {
-		if ( query.state.data?.pagespeed?.status === 'completed' ) {
-			return false;
-		}
-		return 5000;
-	},
-} );
+export const performanceInsightsQuery = ( url: string, token: string ) =>
+	queryOptions( {
+		queryKey: [ 'performance', url, token ],
+		queryFn: () => fetchPerformanceInsights( url, token ),
+		refetchInterval: ( query ) => {
+			if ( query.state.data?.pagespeed?.status === 'completed' ) {
+				return false;
+			}
+			return 5000;
+		},
+	} );
