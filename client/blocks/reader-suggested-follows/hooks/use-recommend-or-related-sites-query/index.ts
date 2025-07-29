@@ -49,7 +49,7 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	} );
 
 	const hasRecommendedFeeds = recommendedFeeds && recommendedFeeds.length > 0;
-	const shouldLoadRelatedSites = isSuccessRecommendedFeeds && ! hasRecommendedFeeds;
+	const shouldLoadRelatedSites = enabled && isSuccessRecommendedFeeds && ! hasRecommendedFeeds;
 
 	const {
 		data: relatedSites,
