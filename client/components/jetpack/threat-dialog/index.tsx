@@ -128,62 +128,61 @@ const ThreatDialog: React.FC< Props > = ( {
 				<>
 					{ threat.fixable.extensionStatus === 'active' ? (
 						<Notice variant="error">
-							{ translate(
-								'This %(extension_type)s seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.',
-								{
-									args: {
-										extension_type:
-											threat.extension?.type === 'plugin'
-												? translate( 'plugin' )
-												: translate( 'theme' ),
-									},
-									comment:
-										'%s is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
-								}
-							) }
+							{ threat.extension?.type === 'plugin' &&
+								translate(
+									'This plugin seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.'
+								) }
+							{ threat.extension?.type === 'theme' &&
+								translate(
+									'This theme seems to be currently active on your site. Deleting it may break your site. Please disable it first and check if your site is still working as expected, then proceed with the fix.'
+								) }
 						</Notice>
 					) : (
 						<Notice variant="warning">
-							{ translate(
-								'This %(extension_type)s seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.',
-								{
-									args: {
-										extension_type:
-											threat.extension?.type === 'plugin'
-												? translate( 'plugin' )
-												: translate( 'theme' ),
-									},
-									comment:
-										'%s is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
-								}
-							) }
+							{ threat.extension?.type === 'plugin' &&
+								translate(
+									'This plugin seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.'
+								) }
+							{ threat.extension?.type === 'theme' &&
+								translate(
+									'This theme seems to not currently be active on your site. Please note that deleting it may still have adverse effects and this action cannot be undone.'
+								) }
 						</Notice>
 					) }
 					{ threat.fixable.extras?.is_dotorg === false && (
 						<p>
-							{ translate(
-								'We did not find this extension on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
-							) }
+							{ threat.extension?.type === 'plugin' &&
+								translate(
+									'We did not find this plugin on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
+								) }
+							{ threat.extension?.type === 'theme' &&
+								translate(
+									'We did not find this theme on WordPress.org. We encourage you to create a backup of your site before fixing this threat, to keep a copy of it.'
+								) }
 						</p>
 					) }
 
 					<p>
-						{ translate(
-							'To confirm you have read and understood the consequences, please enter the {{extension_type/}} slug {{slug/}} in the field below.',
-							{
-								components: {
-									slug: <code>{ slug }</code>,
-									extension_type:
-										threat.extension?.type === 'plugin' ? (
-											<>{ translate( 'plugin' ) }</>
-										) : (
-											<>{ translate( 'theme' ) }</>
-										),
-								},
-								comment:
-									'{{slug/}} is the slug of the extension (plugin or theme) being deleted. {{extension_type/}} is a translation of either "plugin" or "theme" depending on the type of extension being deleted.',
-							}
-						) }
+						{ threat.extension?.type === 'plugin' &&
+							translate(
+								'To confirm you have read and understood the consequences, please enter the plugin slug {{slug/}} in the field below.',
+								{
+									components: {
+										slug: <code>{ slug }</code>,
+									},
+									comment: '{{slug/}} is the slug of the plugin being deleted.',
+								}
+							) }
+						{ threat.extension?.type === 'theme' &&
+							translate(
+								'To confirm you have read and understood the consequences, please enter the theme slug {{slug/}} in the field below.',
+								{
+									components: {
+										slug: <code>{ slug }</code>,
+									},
+									comment: '{{slug/}} is the slug of the theme being deleted.',
+								}
+							) }
 					</p>
 					<TextControl
 						__next40pxDefaultSize
