@@ -1260,7 +1260,7 @@ class MagicLogin extends Component {
 			),
 		} );
 
-		return <p className="magic-login__tos wp-login__tos">{ tosText }</p>;
+		return <p className="magic-login__tos wp-login__one-login-layout-tos">{ tosText }</p>;
 	};
 
 	handlePublicTokenReceived = ( publicToken ) => {

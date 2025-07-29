@@ -30,6 +30,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
+import getHeadingSubText from 'calypso/login/wp-login/hooks/get-heading-subtext';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -51,6 +52,7 @@ import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -63,7 +65,8 @@ const LoginContextWrapper = ( { children, headerText, subHeaderText } ) => {
 	React.useEffect( () => {
 		setHeaders( {
 			heading: headerText,
-			subHeading: subHeaderText,
+			subHeading: subHeaderText?.primary,
+			subHeadingSecondary: subHeaderText?.secondary,
 		} );
 	}, [ setHeaders, headerText, subHeaderText ] );
 
@@ -718,7 +721,12 @@ export class UserStep extends Component {
 				<LoginContextProvider>
 					<LoginContextWrapper
 						headerText={ this.getHeaderText() }
-						subHeaderText={ this.getSubHeaderText() }
+						subHeaderText={ getHeadingSubText( {
+							isSocialFirst: true,
+							twoFactorAuthType: false,
+							translate: this.props.translate,
+							isWooJPC: this.props.isWooJPC,
+						} ) }
 					>
 						<OneLoginLayout
 							isJetpack={ false }
@@ -762,6 +770,7 @@ const ConnectedUser = connect(
 			wccomFrom: getWccomFrom( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo,
+			isWooJPC: isWooJPCFlow( state ),
 			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),

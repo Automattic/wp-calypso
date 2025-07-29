@@ -79,13 +79,15 @@ const OneLoginLayout = ( {
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
-				<div className="wp-login__header">
+				<div className="wp-login__one-login-layout-heading">
 					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
-					<Step.Heading text={ <div className="wp-login__heading-text">{ headingText }</div> } />
-					<div className="wp-login__heading-subtext-wrapper">
-						<h2 className="wp-login__heading-subtext">{ subHeadingText }</h2>
+					<Step.Heading
+						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
+					/>
+					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
+						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
 						{ subHeadingTextSecondary && (
-							<h3 className="wp-login__heading-subtext is-secondary">
+							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }
 							</h3>
 						) }

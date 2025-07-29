@@ -36,11 +36,11 @@ body.is-section-signup {
 		padding: 48px 0 0;
 	}
 
-	.is-unified-create-account .layout__content {
-		padding: 0;
-	}
+	.layout.is-unified-create-account {
+		.layout__content {
+			padding: 0;
+		}
 
-	.is-unified-create-account {
 		.locale-suggestions {
 			margin: 0;
 		}
