@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { type SortDirection, type View, type Fields } from '@wordpress/dataviews';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
@@ -31,51 +31,15 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function getStorageAmountText( storageType: 'gb' | 'tb', count: number ): string {
-	switch ( storageType ) {
-		case 'gb':
-			// translators: Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.
-			return sprintf( _n( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', count ), {
-				numberOfGigabytes: 10,
-			} );
-		case 'tb':
-			// translators: Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.
-			return sprintf( _n( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', count ), {
-				numberOfTerabytes: 10,
-			} );
-		default:
-			throw new Error( `Unknown storage type '${ storageType }'` );
-	}
-}
-
-const vaultPressBackupName = 'VaultPress Backup';
-
-function getJetpackProductDisplayName( item: ActiveSubscription ): undefined | string {
-	switch ( item.product_slug ) {
-		case 'jetpack_backup_addon_storage_10gb_monthly':
-			// translators: pluginName is the name of the product like "Vaultpress Backup" and storageAmount is something like "50GB".
-			return sprintf( __( '%(pluginName)s Add-on Storage (%(storageAmount)s)' ), {
-				storageAmount: getStorageAmountText( 'gb', 10 ),
-				pluginName: vaultPressBackupName,
-			} );
-		// FIXME: see getJetpackProductsDisplayNames
-		default:
-			return undefined;
-	}
-}
-
 function getDisplayName( item: ActiveSubscription ): string {
-	const jetpackDisplayName = getJetpackProductDisplayName( item );
-
 	if (
 		item.is_jetpack_ai_product &&
 		item.renewal_price_tier_usage_quantity &&
-		item.price_tier_list?.length &&
-		jetpackDisplayName
+		item.price_tier_list?.length
 	) {
 		// translators: productName is the name of the product and quantity is a number
 		return sprintf( __( '%(productName)s (%(quantity)s requests per month)' ), {
-			productName: jetpackDisplayName,
+			productName: item.product_name,
 			quantity: formatNumber( item.renewal_price_tier_usage_quantity ),
 		} );
 	}
@@ -84,18 +48,13 @@ function getDisplayName( item: ActiveSubscription ): string {
 		item.is_jetpack_stats_product &&
 		! item.is_free_jetpack_stats_product &&
 		item.renewal_price_tier_usage_quantity &&
-		item.price_tier_list?.length &&
-		jetpackDisplayName
+		item.price_tier_list?.length
 	) {
 		// translators: productName is the name of the product and quantity is a number
 		return sprintf( __( '%(productName)s (%(quantity)s views per month)' ), {
-			productName: jetpackDisplayName,
+			productName: item.product_name,
 			quantity: formatNumber( item.renewal_price_tier_usage_quantity ),
 		} );
-	}
-
-	if ( jetpackDisplayName ) {
-		return jetpackDisplayName;
 	}
 
 	if (
