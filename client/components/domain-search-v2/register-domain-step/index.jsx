@@ -57,6 +57,7 @@ import {
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 	recordUseYourDomainButtonClick,
+	recordDomainClickMissing,
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'calypso/components/domains/register-domain-step/analytics';
@@ -532,6 +533,14 @@ class RegisterDomainStep extends Component {
 				);
 
 				if ( suggestionPosition === -1 ) {
+					// Not found in regular results, track it
+					this.props.recordDomainClickMissing(
+						domain_name,
+						this.props.analyticsSection,
+						this.props.flowName,
+						this.state.lastQuery,
+						'domain'
+					);
 					return;
 				}
 
@@ -1985,6 +1994,7 @@ export default connect(
 	{
 		recordDomainAvailabilityReceive,
 		recordDomainAddAvailabilityPreCheck,
+		recordDomainClickMissing,
 		recordFiltersReset,
 		recordFiltersSubmit,
 		recordMapDomainButtonClick,
