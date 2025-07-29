@@ -154,7 +154,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				},
 			},
 		],
-		[ navigate, link, node, site?.domain, setIsMinimized ]
+		[ navigate, link, node, site?.domain, setIsMinimized, isDesktop ]
 	);
 
 	useEffect( () => {
