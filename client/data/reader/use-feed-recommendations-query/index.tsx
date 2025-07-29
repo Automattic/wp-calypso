@@ -91,11 +91,13 @@ export const useFeedRecommendationsQuery = ( userLogin?: string, options?: Query
 		getUserRecommendedBlogs( state, userLogin || '' )
 	);
 
+	const needsRequest = ! recommendedBlogs && userLogin && ! hasRequested && enabled;
+
 	useEffect( () => {
-		if ( ! recommendedBlogs && userLogin && ! hasRequested && enabled ) {
+		if ( needsRequest ) {
 			dispatch( requestUserRecommendedBlogs( userLogin ) );
 		}
-	}, [ userLogin, recommendedBlogs, dispatch, hasRequested, enabled ] );
+	}, [ userLogin, needsRequest, dispatch ] );
 
 	const feedRecommendations = useMemo< FeedRecommendation[] >(
 		() => recommendedBlogs?.map?.( normalizeFeedRecommendation ),
@@ -103,8 +105,8 @@ export const useFeedRecommendationsQuery = ( userLogin?: string, options?: Query
 	);
 
 	return {
-		isLoading: isRequesting,
+		isLoading: isRequesting || needsRequest,
 		data: feedRecommendations ?? [],
-		isSuccess: ! isRequesting && hasRequested,
+		isSuccess: ! isRequesting && hasRequested && ! needsRequest,
 	};
 };

@@ -77,7 +77,7 @@ export const useRelatedSites = (
 					http_envelope: 1,
 				}
 			),
-		enabled: enabled,
+		enabled: enabled ?? true,
 		staleTime: 3600000, // 1 hour
 		select: selectRelatedSites,
 		retry: false,

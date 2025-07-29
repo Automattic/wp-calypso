@@ -49,7 +49,7 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	} );
 
 	const hasRecommendedFeeds = recommendedFeeds && recommendedFeeds.length > 0;
-	const shouldLoadRelatedSites = enabled && ! isLoadingRecommendedFeeds && ! hasRecommendedFeeds;
+	const shouldLoadRelatedSites = isSuccessRecommendedFeeds && ! hasRecommendedFeeds;
 
 	const {
 		data: relatedSites,
@@ -60,13 +60,13 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	} );
 
 	const data = recommendedFeeds?.length > 0 ? recommendedFeeds : relatedSites;
-	const hasData = Array.isArray( data ) && data.length > 0;
-	const isLoading = ( isLoadingRecommendedFeeds || isLoadingRelatedSites ) && ! hasData;
+	const isLoading = isLoadingRecommendedFeeds || isLoadingRelatedSites;
+	const isSuccess = isSuccessRecommendedFeeds || isSuccessRelatedSites;
 
 	return {
-		data,
+		data: isSuccess ? data : [],
 		isLoading,
-		isSuccess: isSuccessRecommendedFeeds || isSuccessRelatedSites,
+		isSuccess,
 		resourceType: getResourceType( recommendedFeeds, relatedSites ),
 	};
 };
