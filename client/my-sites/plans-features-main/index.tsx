@@ -711,9 +711,7 @@ const PlansFeaturesMain = ( {
 
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
-		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
 			isSummerSpecial,

@@ -102,11 +102,9 @@ export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroup
 	return resolveFeatureGroupsForComparisonGrid();
 }
 
-export function getWooExpressFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
-} ) {
+export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
 	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
-	return getPlanFeaturesGroupedForFeaturesGrid( props );
+	return getPlanFeaturesGroupedForFeaturesGrid();
 }
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
