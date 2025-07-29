@@ -14,7 +14,22 @@ interface Props {
 }
 
 const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threats }: Props ) => {
-	const [ selectedThreats, setSelectedThreats ] = useState< Threat[] >( threats );
+	const bulkFixableThreats = useMemo(
+		() =>
+			threats.filter(
+				( threat ) => threat.fixable && threat.fixable.extras?.is_bulk_fixable !== false
+			),
+		[ threats ]
+	);
+	const nonBulkFixableThreats = useMemo(
+		() =>
+			threats.filter(
+				( threat ) => ! threat.fixable || threat.fixable.extras?.is_bulk_fixable === false
+			),
+		[ threats ]
+	);
+
+	const [ selectedThreats, setSelectedThreats ] = useState< Threat[] >( bulkFixableThreats );
 	const [ submit, setSubmit ] = useState( false );
 
 	const onSelectCheckbox = ( checked: boolean, threat: Threat ) => {
@@ -33,24 +48,9 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 		if ( submit ) {
 			onConfirmation( selectedThreats );
 			setSubmit( false );
-			setSelectedThreats( threats );
+			setSelectedThreats( bulkFixableThreats );
 		}
-	}, [ submit, selectedThreats, onConfirmation, threats ] );
-
-	const bulkFixableThreats = useMemo(
-		() =>
-			threats.filter(
-				( threat ) => threat.fixable && threat.fixable.extras?.is_bulk_fixable !== false
-			),
-		[ threats ]
-	);
-	const nonBulkFixableThreats = useMemo(
-		() =>
-			threats.filter(
-				( threat ) => ! threat.fixable || threat.fixable.extras?.is_bulk_fixable === false
-			),
-		[ threats ]
-	);
+	}, [ submit, selectedThreats, onConfirmation, bulkFixableThreats ] );
 
 	const buttons = useMemo( () => {
 		const buttons = [
