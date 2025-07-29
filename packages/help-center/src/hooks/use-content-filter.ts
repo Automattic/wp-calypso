@@ -110,13 +110,8 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 						return;
 					}
 
-					// Support sites add `target="_blank"` to Calypso links. We should remove that in context of Calypso.
+					// Support sites add `target="_blank"` to Calypso links. We should remove that in the context of Calypso.
 					if ( isSameOrigin( href ) ) {
-						element.removeAttribute( 'target' );
-						return;
-					}
-
-					if ( href.includes( 'https://wordpress.com' ) ) {
 						element.removeAttribute( 'target' );
 						return;
 					}
