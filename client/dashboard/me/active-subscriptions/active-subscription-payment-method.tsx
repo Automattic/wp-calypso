@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { PaymentMethodImage } from './payment-method-image';
 import { isAutoRenewEnabled, isExpired, isRenewing, isAkismetFreeProduct } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
@@ -58,22 +59,20 @@ export function ActiveSubscriptionPaymentMethod( {
 				? purchase.payment_card_display_brand
 				: purchase.payment_card_type || purchase.payment_card_processor || '';
 
-			// FIXME: show icon for paymentMethodType
 			return (
 				<>
-					{ paymentMethodType }: { purchase.payment_details }
+					<PaymentMethodImage paymentMethodType={ paymentMethodType } />{ ' ' }
+					{ purchase.payment_details }
 				</>
 			);
 		}
 
 		if ( purchase.payment_type === 'paypal' ) {
-			// FIXME: show paypal image
-			return <p>PayPal</p>;
+			return <PaymentMethodImage paymentMethodType={ purchase.payment_type } />;
 		}
 
 		if ( purchase.payment_type === 'upi' ) {
-			// FIXME: show upi image
-			return <p>Razorpay</p>;
+			return <PaymentMethodImage paymentMethodType={ purchase.payment_type } />;
 		}
 
 		return null;
