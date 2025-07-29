@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Gridicon, FormLabel } from '@automattic/components';
 import { localizeUrl, getLanguage } from '@automattic/i18n-utils';
 import { useRef, useState, useEffect } from '@wordpress/element';
@@ -954,13 +955,15 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 								components: {
 									a: (
 										<a
-											href={ loginUrl }
-											onClick={ () =>
+											href="/"
+											onClick={ ( e ) => {
+												e.preventDefault();
 												recordTracksEvent(
 													'calypso_gravatar_powered_magic_login_click_login_page_link',
 													{ client_id: oauth2ClientId, client_name: oauth2Client?.title }
-												)
-											}
+												);
+												page( loginUrl );
+											} }
 										/>
 									),
 								},
