@@ -407,6 +407,11 @@ body.is-section-promote-post-i2 {
 	.section-nav-tab {
 		@media (min-width: 481px) {
 			margin-right: 16px;
+
+			&:last-child {
+				margin-right: 0;
+				margin-left: auto;
+			}
 		}
 
 		&__link {
