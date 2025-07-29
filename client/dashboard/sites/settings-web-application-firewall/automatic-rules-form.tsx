@@ -11,14 +11,13 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteJetpackModulesQuery } from '../../app/queries/site-jetpack-module';
 import {
 	siteJetpackSettingsQuery,
 	siteJetpackSettingsMutation,
 } from '../../app/queries/site-jetpack-settings';
 import { SectionHeader } from '../../components/section-header';
-import { HostingFeatures } from '../../data/constants';
-import { hasHostingFeature } from '../../utils/site-features';
+import { HostingFeatures, JetpackModules } from '../../data/constants';
+import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { SiteSettings } from '../../data/site-settings';
 import type { Site } from '../../data/types';
@@ -38,14 +37,15 @@ const form = {
 };
 
 export default function AutomaticRulesForm( { site }: { site: Site } ) {
-	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
 	const mutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// The WAF module is only supported on self-hosted Jetpack sites, and not supported on VIP
 	const isFirewallModuleSupported =
-		jetpackModules?.includes( 'waf' ) && isSelfHostedJetpackConnected( site ) && ! site.is_vip;
+		hasJetpackModule( site, JetpackModules.WAF ) &&
+		isSelfHostedJetpackConnected( site ) &&
+		! site.is_vip;
 
 	const canUseAutomaticRules =
 		hasHostingFeature( site, HostingFeatures.SCAN ) ||

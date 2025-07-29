@@ -16,6 +16,7 @@ import {
 	siteJetpackModuleMutation,
 } from '../../app/queries/site-jetpack-module';
 import { SectionHeader } from '../../components/section-header';
+import { JetpackModules } from '../../data/constants';
 import type { Site } from '../../data/types';
 
 const fields = [
@@ -36,7 +37,7 @@ export default function ProtectForm( { site }: { site: Site } ) {
 	const mutation = useMutation( siteJetpackModuleMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const currentProtect = jetpackModules?.includes( 'protect' ) ?? false;
+	const currentProtect = jetpackModules?.includes( JetpackModules.PROTECT ) ?? false;
 
 	const [ formData, setFormData ] = useState< { protect: boolean } >( {
 		protect: currentProtect,

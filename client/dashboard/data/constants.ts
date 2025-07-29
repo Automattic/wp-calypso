@@ -45,7 +45,9 @@ export enum JetpackFeatures {
 
 export enum JetpackModules {
 	MONITOR = 'monitor',
+	PROTECT = 'protect',
 	STATS = 'stats',
+	WAF = 'waf',
 }
 
 // Features that needs Atomic or self-hosted infrastructure,
