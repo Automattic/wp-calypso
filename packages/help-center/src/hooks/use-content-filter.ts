@@ -1,5 +1,6 @@
 import { isSameOrigin } from '@automattic/calypso-url';
 import { isThisASupportArticleLink } from '@automattic/urls';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -13,6 +14,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const link = searchParams.get( 'link' ) || '';
 	const { site } = useHelpCenterContext();
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
+	const isDesktop = useViewportMatch( 'medium' );
 
 	const filters = useMemo(
 		() => [
@@ -118,7 +120,11 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					// We should remove that in the context of Calypso.
 					if ( isSameOrigin( href ) ) {
 						element.removeAttribute( 'target' );
-						element.addEventListener( 'click', () => setIsMinimized( true ) );
+						// On mobile, clicking a local in the Help Center means the user wants to,
+						// interact with that page, the Help Center should tuck itself away because there is no space for both.
+						if ( ! isDesktop ) {
+							element.addEventListener( 'click', () => setIsMinimized( true ) );
+						}
 						return;
 					}
 
