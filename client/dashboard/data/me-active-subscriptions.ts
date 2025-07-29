@@ -99,9 +99,12 @@ export interface ActiveSubscription {
 	is_cancelable: boolean;
 	is_domain: boolean;
 	is_domain_registration: boolean;
+	is_free_jetpack_stats_product: boolean;
 	is_google_workspace_product: boolean;
 	is_hundred_year_domain: boolean;
 	is_iap_purchase: boolean;
+	is_jetpack_ai_product: boolean;
+	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
 	is_non_free_plan: boolean;
 	is_rechargable: boolean;
