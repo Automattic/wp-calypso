@@ -1,4 +1,4 @@
-import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import { LineChart, ThemeProvider, jetpackTheme, EventHandlerParams } from '@automattic/charts';
 import { DataPointDate } from '@automattic/charts/src/types';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
@@ -174,7 +174,7 @@ function StatsLineChart( {
 	);
 
 	const onPointerUp = useCallback(
-		( { datum }: { datum: DataPointDate } ) => {
+		( { datum }: EventHandlerParams< DataPointDate > ) => {
 			if ( datum && datum.date ) {
 				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
 			}
@@ -193,9 +193,7 @@ function StatsLineChart( {
 						withGradientFill
 						height={ height }
 						curveType={ curveType }
-						// TODO: figure out the right type for onPointerDown
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						onPointerUp={ onPointerUp as any }
+						onPointerUp={ onPointerUp }
 						margin={ {
 							left: 20,
 							top: 20,
