@@ -314,6 +314,7 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			productSaleCost,
 			premiumDomain,
+			flowName,
 		} = this.props;
 		const badges = [];
 
@@ -337,8 +338,10 @@ class DomainRegistrationSuggestion extends Component {
 			);
 		}
 
+		const skipSaleBadge = isHundredYearPlanFlow( flowName );
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
-		if ( productSaleCost && paidDomain ) {
+		if ( productSaleCost && paidDomain && ! skipSaleBadge ) {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
