@@ -11,6 +11,7 @@ import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { siteAgencyBlogQuery } from 'calypso/dashboard/app/queries/site-agency';
 import { siteEdgeCacheStatusQuery } from 'calypso/dashboard/app/queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from 'calypso/dashboard/app/queries/site-defensive-mode';
+import { siteJetpackModulesQuery } from 'calypso/dashboard/app/queries/site-jetpack-module';
 import { sitePHPVersionQuery } from 'calypso/dashboard/app/queries/site-php-version';
 import { sitePrimaryDataCenterQuery } from 'calypso/dashboard/app/queries/site-primary-data-center';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
@@ -290,6 +291,23 @@ const transferSiteRoute = createRoute( {
 	)
 );
 
+const webApplicationFirewallRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'web-application-firewall',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-web-application-firewall' ).then( ( d ) =>
+		createLazyRoute( 'web-application-firewall' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
@@ -307,6 +325,7 @@ const createRouteTree = () =>
 			defensiveModeRoute,
 			transferSiteRoute,
 			sftpSshRoute,
+			webApplicationFirewallRoute,
 		] ),
 		dashboardSitesCompatibilityRoute,
 		dashboardSiteSettingsCompatibilityRouteRoot,

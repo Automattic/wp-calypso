@@ -24,6 +24,7 @@ import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
+import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
@@ -400,6 +401,23 @@ const siteSettingsTransferSiteRoute = createRoute( {
 	)
 );
 
+const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/web-application-firewall',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-web-application-firewall' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-web-application-firewall' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
@@ -576,6 +594,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
 				siteSettingsSftpSshRoute,
+				siteSettingsWebApplicationFirewallRoute,
 			] )
 		);
 	}

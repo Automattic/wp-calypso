@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -40,6 +41,7 @@ export default function HeaderStagingSiteButton( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID );
 	const stagingSiteStatus =
 		useSelector( ( state ) => getStagingSiteStatus( state, siteId ) ) ?? StagingSiteStatus.UNSET;
 	const isCreatingStagingSite = [
@@ -140,6 +142,10 @@ export default function HeaderStagingSiteButton( {
 	} else if ( ! hasValidQuota ) {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+		);
+	} else if ( isPossibleJetpackConnectionProblem ) {
+		disabledReason = __(
+			'You cannot create a staging site because your site has a Jetpack connection issue. Reload the page or contact support if it persists.'
 		);
 	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
 		disabledReason = __( 'We are deleting your staging site.' );

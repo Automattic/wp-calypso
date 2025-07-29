@@ -42,13 +42,17 @@ const UnavailableComponent = ( {
 
 	const reasonText = useMemo( () => {
 		const styledTld = (
-			<Text size="inherit" weight={ 500 }>
+			<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
 				.{ tld }
 			</Text>
 		);
 
 		const styledDomain = (
-			<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
+			<Text
+				size="inherit"
+				aria-label={ `${ domain }.${ tld }` }
+				style={ { wordBreak: 'break-all' } }
+			>
 				{ domain }
 				{ styledTld }
 			</Text>

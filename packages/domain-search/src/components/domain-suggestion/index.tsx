@@ -60,7 +60,7 @@ const DomainSuggestionComponent = ( {
 					} }
 				>
 					{ domain }
-					<Text size="inherit" weight={ 500 }>
+					<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
 						.{ tld }
 					</Text>
 				</span>

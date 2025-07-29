@@ -50,7 +50,8 @@ const Featured = ( {
 
 	const title = (
 		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>
-			{ domain }.{ tld }
+			{ domain }
+			<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
 		</Text>
 	);
 
