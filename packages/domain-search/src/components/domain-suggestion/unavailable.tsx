@@ -116,7 +116,7 @@ const UnavailableComponent = ( {
 		if ( activeQuery === 'large' ) {
 			return (
 				<HStack alignment="left" spacing={ 3 }>
-					<Icon icon={ notAllowed } size={ 24 } style={ { flexShrink: 0 } } />
+					<Icon icon={ notAllowed } size={ 24 } className="domain-suggestions-list-item__icon" />
 					{ reasonElement }
 					{ onTransfer }
 				</HStack>
