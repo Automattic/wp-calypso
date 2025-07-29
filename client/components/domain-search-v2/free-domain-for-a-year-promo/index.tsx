@@ -20,7 +20,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	if ( textOnly ) {
 		return (
 			<Text>
-				{ __( 'Get your free domain when you checkout and purchase any paid annual plan.' ) }
+				{ __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
 			</Text>
 		);
 	}
