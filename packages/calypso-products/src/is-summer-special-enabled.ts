@@ -14,12 +14,16 @@ export function isSummerSpecialEnabled( props?: SummerSpecialProps ): boolean {
 		isSummerSpecialFromSiteOption = false,
 	} = props || {};
 
+	// If site option is explicitly set to true, enable summer special (highest priority)
+	if ( isSummerSpecialFromSiteOption ) {
+		return true;
+	}
+
 	// Feature flag check
 	if ( ! config.isEnabled( 'summer-special-2025' ) ) {
 		return false;
 	}
 
-	// Safety check: never enable in test environment
 	if ( process.env.NODE_ENV === 'test' ) {
 		return false;
 	}
@@ -31,11 +35,6 @@ export function isSummerSpecialEnabled( props?: SummerSpecialProps ): boolean {
 
 	// If site has free plan, always enable summer special
 	if ( currentSitePlanSlug === 'free_plan' ) {
-		return true;
-	}
-
-	// If site option is explicitly set to true, enable summer special
-	if ( isSummerSpecialFromSiteOption ) {
 		return true;
 	}
 
