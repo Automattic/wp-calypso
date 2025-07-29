@@ -713,7 +713,7 @@ class RenderDomainsStepComponent extends Component {
 		let registration = domainRegistration( {
 			domain,
 			productSlug,
-			extra: { privacy_available: supportsPrivacy },
+			extra: { privacy_available: supportsPrivacy, flow_name: this.props.flowName },
 		} );
 
 		if ( supportsPrivacy ) {
