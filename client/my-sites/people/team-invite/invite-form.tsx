@@ -190,7 +190,7 @@ function InviteForm( props: Props ) {
 			{ [ ...Array( tokenControlNum ) ].map( ( v, i ) => (
 				<FormFieldset key={ i }>
 					{ ! i && (
-						<FormLabel htmlFor={ `token-${ i }` }>{ translate( 'Email or Username' ) }</FormLabel>
+						<FormLabel htmlFor={ `token-${ i }` }>{ translate( 'Email or username' ) }</FormLabel>
 					) }
 					<div className="form-field-wrapper">
 						<FormTextInput

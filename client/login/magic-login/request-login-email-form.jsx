@@ -279,7 +279,7 @@ class RequestLoginEmailForm extends Component {
 
 		const formLabel = customFormLabel
 			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+			: this.props.translate( 'Email address or username' );
 
 		const onSubmit = onSubmitEmail
 			? ( e ) => onSubmitEmail( this.getUsernameOrEmailFromState(), e )

@@ -53,8 +53,8 @@ const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 				icon={ WooLogo }
 				classes="masterbar__woo-client-logo"
 				width="128"
-				height="48"
-				viewBox="0 0 64 24"
+				height="40"
+				viewBox="0 0 60 24"
 			/>
 		);
 	} else if ( isJetpack ) {

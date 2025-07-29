@@ -10,13 +10,21 @@ const meta: Meta< typeof Stat > = {
 export default meta;
 type Story = StoryObj< typeof Stat >;
 
-export const Default: Story = {
+export const WithProgress: Story = {
+	args: {
+		density: 'low',
+		strapline: 'Storage',
+		metric: '1.3 GB',
+		description: '5 GB',
+		progressValue: ( 100 * 1.3 ) / 5,
+	},
+};
+
+export const NoProgress: Story = {
 	args: {
 		density: 'low',
 		strapline: 'Views',
 		metric: '1.3 M',
 		description: '33% left',
-		descriptionAlignment: 'start',
-		progressValue: 15,
 	},
 };

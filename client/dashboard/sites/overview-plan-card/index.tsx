@@ -5,15 +5,33 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import filesize from 'filesize';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
+import { siteMetricsQuery } from '../../app/queries/site-metrics';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { Stat } from '../../components/stat';
 import { DotcomPlans } from '../../data/constants';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import OverviewCard from '../overview-card';
 import type { Site, Plan, Purchase } from '../../data/types';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 const ALERT_PERCENT = 80;
+
+function getCurrentMonthRangeTimestamps() {
+	const now = new Date();
+	const firstDayOfMonth = new Date( now.getFullYear(), now.getMonth(), 1 );
+	const startInSeconds = Math.floor( firstDayOfMonth.getTime() / 1000 );
+
+	const today = new Date();
+	today.setMinutes( 59 );
+	today.setSeconds( 59 );
+	const endInSeconds = Math.floor( today.getTime() / 1000 );
+
+	return {
+		startInSeconds,
+		endInSeconds,
+	};
+}
 
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
@@ -24,6 +42,29 @@ export default function PlanCard( { site }: { site: Site } ) {
 	const { data: mediaStorage, isLoading: isLoadingMediaStorage } = useQuery(
 		siteMediaStorageQuery( site.ID )
 	);
+	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
+	const { data: bandwidth, isLoading: isLoadingBandwidth } = useQuery( {
+		...siteMetricsQuery( site.ID, {
+			start: startInSeconds,
+			end: endInSeconds,
+			metric: 'response_bytes_persec',
+		} ),
+		enabled: !! site.is_wpcom_atomic,
+		select: ( data ) => {
+			if ( ! data ) {
+				return data;
+			}
+			const domain = getSiteDisplayUrl( site );
+			return data.data.periods.reduce(
+				( acc, curr ) => acc + ( curr.dimension[ domain ] || 0 ),
+				0
+			);
+		},
+
+		// Don't update until page is refreshed
+		meta: { persist: false },
+		staleTime: Infinity,
+	} );
 
 	const storageUsagePercent = ! mediaStorage
 		? 0
@@ -55,7 +96,9 @@ export default function PlanCard( { site }: { site: Site } ) {
 			heading={ site.plan?.product_name_short }
 			description={ getCardDescription( plan, purchase ) }
 			tracksId="plan"
-			isLoading={ isLoadingPlan || isLoadingPurchase || isLoadingMediaStorage }
+			isLoading={
+				isLoadingPlan || isLoadingPurchase || isLoadingMediaStorage || isLoadingBandwidth
+			}
 			link={ site.plan?.is_free ? undefined : '/v2/me/billing/active-subscriptions' }
 			bottom={
 				<VStack spacing={ 4 }>
@@ -64,7 +107,6 @@ export default function PlanCard( { site }: { site: Site } ) {
 						strapline={ __( 'Storage' ) }
 						metric={ filesize( mediaStorage?.storage_used_bytes ?? 0, { round: 0 } ) }
 						description={ filesize( mediaStorage?.max_storage_bytes ?? 0, { round: 0 } ) }
-						descriptionAlignment="end"
 						progressValue={ progressBarValue }
 						progressColor={ storageWarningColor }
 						progressLabel={ `${ storageUsagePercent }%` }
@@ -72,9 +114,12 @@ export default function PlanCard( { site }: { site: Site } ) {
 					<Stat
 						density="high"
 						strapline={ __( 'Bandwidth' ) }
-						metric="7.2 GB"
-						description="Unlimited"
-						descriptionAlignment="end"
+						metric={
+							bandwidth && site.is_wpcom_atomic
+								? filesize( bandwidth, { round: 1 } )
+								: __( 'Unlimited' )
+						}
+						description={ site.is_wpcom_atomic ? __( 'Unlimited' ) : undefined }
 						progressValue={ 100 }
 						progressColor="alert-green"
 					/>

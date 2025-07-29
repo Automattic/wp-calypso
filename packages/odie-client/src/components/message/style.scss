@@ -1,5 +1,6 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/components/src/styles/typography';
+@import "@wordpress/base-styles/mixins";
 
 $blueberry-color: #3858e9;
 
@@ -86,6 +87,38 @@ $blueberry-color: #3858e9;
 	img {
 		max-width: 100%;
 		height: auto;
+	}
+
+	.odie-chatbox-message__content {
+		h1 {
+			@include heading-2x-large();
+		}
+		h2 {
+			@include heading-x-large();
+		}
+		h3 {
+			@include heading-large();
+		}
+		h4 {
+			@include heading-medium();
+		}
+		h5 {
+			@include heading-small();
+		}
+		h6 {
+			@include heading-small();
+		}
+
+		u {
+			text-decoration: underline;
+		}
+
+		pre {
+			padding: 0.5em;
+			white-space: pre-wrap;
+			word-break: break-word;
+			background-color: var( --studio-white );
+		}
 	}
 
 	&.odie-chatbox-message-no-avatar {

@@ -4,6 +4,7 @@ import {
 	createRootRoute,
 	redirect,
 	createLazyRoute,
+	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
@@ -111,6 +112,7 @@ const siteRoute = createRoute( {
 			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
 	},
+	errorComponent: lazyRouteComponent( () => import( '../sites/site/error' ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {

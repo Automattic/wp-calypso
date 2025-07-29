@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
+import DOMPurify from 'dompurify';
 import type { Context, Message, MessageRole, MessageType, ZendeskMessage } from '../types';
+import type { ReactNode } from 'react';
 
 // Format markdown to support images attachments that open in a new tab.
 function prepareMarkdownImage( imgUrl: string, isPlaceholder: boolean ): string {
@@ -33,8 +35,8 @@ function createDownloadableMarkdownLink( url: string, AttachmentTitle: string ):
 	return `[${ AttachmentTitle } ${ fileName }](${ url })`;
 }
 
-function getContentMessage( message: ZendeskMessage ): string {
-	let messageContent = '';
+function getContentMessage( message: ZendeskMessage ): Message[ 'content' ] {
+	let messageContent: ReactNode = '';
 	switch ( message.type ) {
 		case 'image':
 		case 'image-placeholder':
@@ -46,7 +48,14 @@ function getContentMessage( message: ZendeskMessage ): string {
 			}
 			break;
 		case 'text':
-			messageContent = convertUrlsToMarkdown( message.text );
+			if ( message.htmlText ) {
+				messageContent = (
+					// eslint-disable-next-line react/no-danger
+					<span dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( message.htmlText ) } } />
+				);
+			} else {
+				messageContent = convertUrlsToMarkdown( message.text );
+			}
 			break;
 		case 'file':
 			if ( message.mediaUrl ) {

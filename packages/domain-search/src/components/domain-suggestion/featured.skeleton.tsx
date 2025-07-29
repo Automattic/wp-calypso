@@ -28,8 +28,12 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 				return (
 					<VStack spacing={ 3 } className="domain-suggestion-featured__content">
 						{ badges }
-						<HStack spacing={ 6 }>
-							<VStack spacing={ 3 } alignment="left">
+						<HStack spacing={ 6 } style={ { alignItems: 'flex-start', height: '100%' } }>
+							<VStack
+								spacing={ 3 }
+								alignment="left"
+								style={ { alignSelf: 'stretch', justifyContent: 'flex-start' } }
+							>
 								{ title }
 								{ matchReasonsList }
 							</VStack>

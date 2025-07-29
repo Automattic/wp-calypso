@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, CardHeader, CardBody } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { SectionHeader } from '../../components/section-header';
@@ -28,20 +28,32 @@ const SiteDomainDataViews = ( {
 	domains: SiteDomain[];
 	type?: DomainsView[ 'type' ];
 } ) => {
-	const fields = useFields( { site } );
-	const [ view, setView ] = useState< DomainsView >( {
+	const fields = useFields( {
+		site,
+		showPrimaryDomainBadge: type === 'table',
+	} );
+	const [ initialView, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
-		fields: [ 'expiry' ],
 		type,
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
-
-	useEffect( () => {
-		if ( type ) {
-			setView( ( currentView ) => ( { ...currentView, type } ) );
+	const handleChangeView = ( nextView: View ) => {
+		if ( nextView.type === 'grid' ) {
+			return;
 		}
-	}, [ type ] );
+		setView( nextView );
+	};
+
+	const view = useMemo(
+		() => ( {
+			...initialView,
+			type,
+			fields: [ ...( type === 'list' ? [ 'is_primary_domain' ] : [] ), 'expiry' ],
+		} ),
+		[ initialView, type ]
+	);
+
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 
 	return (
 		<Card>
@@ -82,13 +94,11 @@ const SiteDomainDataViews = ( {
 				<DataViews< SiteDomain >
 					data={ filteredData || [] }
 					fields={ fields }
-					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }
+					onChangeView={ handleChangeView }
 					view={ view }
 					actions={ actions }
-					search={ false }
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					isLoading={ false }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				>
 					<>

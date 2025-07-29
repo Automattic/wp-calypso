@@ -52,8 +52,12 @@ $image-height: 47px;
 	}
 	/* End: Blaze Pro OAuth client font styles for login page */
 
-	/* Start: Jetpack font styles for login page */
-	&.is-jetpack-login {
+	/*
+	* Start: Jetpack font styles for login page
+	*
+	* If we're on a Woo page, we don't want to apply the Jetpack font styles, as Woo brings in its own font styles.
+	*/
+	&.is-jetpack-login:not(.is-woo-passwordless) {
 		.wp-login__heading-text {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif
 		}

@@ -74,7 +74,7 @@ export class AddImageDialog extends Component {
 					<FormTextInput name="image_title" onChange={ this.setImageTitle } value={ imageTitle } />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="image_alt">{ translate( 'Alt Text' ) }</FormLabel>
+					<FormLabel htmlFor="image_alt">{ translate( 'Alt text' ) }</FormLabel>
 					<FormTextInput name="image_alt" onChange={ this.setImageAlt } value={ imageAlt } />
 				</FormFieldset>
 			</Dialog>

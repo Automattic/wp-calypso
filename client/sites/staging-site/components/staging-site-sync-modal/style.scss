@@ -12,14 +12,6 @@
 		display: none;
 	}
 
-	.database-item {
-		border-top: 1px solid var(--wp-components-color-gray-300, #ddd);
-		border-bottom: 1px solid var(--wp-components-color-gray-300, #ddd);
-		padding: 16px 0;
-		margin-top: 8px;
-		margin-bottom: 20px
-	}
-
 	&__back-button.components-button.is-link {
 		color: #000;
 		padding: 12px 0;

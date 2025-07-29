@@ -97,6 +97,8 @@ export function getPurchasesFieldDefinitions( {
 		return getManagePurchaseUrlFor( siteUrl, subscriptionId );
 	};
 
+	// No point in having a filter if there's only one site.
+	const shouldAllowSiteFiltering = sites.length > 1;
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'site',
@@ -105,16 +107,13 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			elements: ( () => {
-				if ( sites.length < 2 ) {
-					// No point in having a filter if there's only one site.
-					return undefined;
-				}
-				return sites.map( ( site ) => {
-					return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
-				} );
-			} )(),
-			filterBy: { operators: [ 'isAny' ] },
+			elements: shouldAllowSiteFiltering
+				? sites.map( ( site ) => ( {
+						value: String( site.ID ),
+						label: `${ site.name } (${ site.domain })`,
+				  } ) )
+				: undefined,
+			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.siteId );
@@ -139,6 +138,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
@@ -192,6 +192,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
@@ -291,6 +292,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				if ( isExpired( item ) ) {
 					// Prefix expired items with a z so they sort to the end of the list.
@@ -312,6 +314,7 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// This should not be possible. Investigating a bug:
 				// https://linear.app/a8c/issue/SHILL-901/
@@ -381,6 +384,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: false,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -403,6 +407,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -434,6 +439,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -454,6 +460,7 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: false,
 			enableHiding: false,
+			filterBy: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.end_date ?? '';
 			},

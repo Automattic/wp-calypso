@@ -61,7 +61,10 @@ function AdminHelpCenterContent() {
 		}
 	}, [ unreadCount, button ] );
 
-	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+	const closeCallback = useCallback(
+		() => setShowHelpCenter( false, undefined, undefined, true ),
+		[ setShowHelpCenter ]
+	);
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
