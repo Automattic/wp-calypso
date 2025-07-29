@@ -9,9 +9,9 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteRestoreMutation } from '../../app/queries/site';
+import { siteRestoreMutation } from 'calypso/data/queries/site';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 interface ContentInfoProps {
 	site: Site;

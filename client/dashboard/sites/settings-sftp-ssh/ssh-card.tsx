@@ -19,20 +19,20 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
-import { useAuth } from '../../app/auth';
 import {
 	siteSshAccessEnableMutation,
 	siteSshAccessDisableMutation,
 	siteSshKeysQuery,
 	siteSshKeysAttachMutation,
 	siteSshKeysDetachMutation,
-} from '../../app/queries/site-ssh';
-import { sshKeysQuery } from '../../app/queries/ssh';
+} from 'calypso/data/queries/site-ssh';
+import { sshKeysQuery } from 'calypso/data/queries/ssh';
+import { useAuth } from '../../app/auth';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { SftpUser, SiteSshKey, UserSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
+import type { SftpUser, SiteSshKey, UserSshKey } from 'calypso/data/types';
 
 type SshCardFormData = {
 	connection_command: string;

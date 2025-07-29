@@ -9,18 +9,18 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { DotcomPlans } from 'calypso/data/constants';
+import { siteAgencyBlogQuery } from 'calypso/data/queries/site-agency';
+import { siteDomainsQuery } from 'calypso/data/queries/site-domains';
 import { useAnalytics } from '../../app/analytics';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
 import Notice from '../../components/notice';
-import { DotcomPlans } from '../../data/constants';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
 import TrialUpsellNotice from './trial-upsell-notice';
-import type { AgencyBlog, Site } from '../../data/types';
+import type { AgencyBlog, Site } from 'calypso/data/types';
 
 function getAgencyBillingMessage( agency: AgencyBlog | undefined, isAgencyQueryError: boolean ) {
 	if ( ! agency ) {

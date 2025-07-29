@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
-import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
-import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteSftpUsersQuery } from 'calypso/data/queries/site-sftp';
+import { siteSshAccessStatusQuery } from 'calypso/data/queries/site-ssh';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+import type { Site } from 'calypso/data/types';
 
 export default function SftpSshSettingsSummary( {
 	site,

@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import SitePreviewLinks from '../site-preview-links';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 export function ShareSiteForm( { site }: { site: Site } ) {
 	return (

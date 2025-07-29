@@ -3,13 +3,13 @@ import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { domainsQuery } from '../app/queries/domains';
+import { domainsQuery } from 'calypso/data/queries/domains';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { actions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
-import type { Domain } from '../data/types';
+import type { Domain } from 'calypso/data/types';
 
 export function getDomainId( domain: Domain ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;

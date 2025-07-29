@@ -18,8 +18,8 @@ import {
 	Uptime,
 	SiteIconLink,
 } from './site-fields';
-import type { Site } from '../data/types';
 import type { Field, Operator } from '@wordpress/dataviews';
+import type { Site } from 'calypso/data/types';
 
 export const DEFAULT_FIELDS: Field< Site >[] = [
 	{

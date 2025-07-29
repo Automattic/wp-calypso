@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
-import { siteScanQuery } from '../../app/queries/site-scan';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteScanQuery } from 'calypso/data/queries/site-scan';
 import { useTimeSince } from '../../components/time-since';
-import { HostingFeatures } from '../../data/constants';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
-import type { SiteScan } from '../../data/site-scan';
-import type { Site } from '../../data/types';
+import type { Site, SiteScan } from 'calypso/data/types';
 
 const CARD_PROPS = {
 	icon: shield,

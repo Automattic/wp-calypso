@@ -18,11 +18,11 @@ import {
 	siteResetContentSummaryQuery,
 	siteResetMutation,
 	siteResetStatusQuery,
-} from '../../app/queries/site-reset';
+} from 'calypso/data/queries/site-reset';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
-import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { Site, SiteResetContentSummary, SiteResetStatus } from 'calypso/data/types';
 
 import './style.scss';
 

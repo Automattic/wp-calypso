@@ -17,13 +17,13 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { profileQuery, profileMutation } from '../../app/queries/me-profile';
+import { profileQuery, profileMutation } from 'calypso/data/queries/me-profile';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
-import type { UserProfile } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { UserProfile } from 'calypso/data/types';
 
 import './style.scss';
 

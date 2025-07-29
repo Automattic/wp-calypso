@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteStatus } from '../../utils/site-status';
 import SiteMigrationIcon from './site-migration-icon';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 import './style.scss';
 

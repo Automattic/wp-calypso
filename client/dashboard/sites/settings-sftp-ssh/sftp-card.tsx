@@ -14,12 +14,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { siteSftpUsersResetPasswordMutation } from '../../app/queries/site-sftp';
+import { siteSftpUsersResetPasswordMutation } from 'calypso/data/queries/site-sftp';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { SftpUser } from '../../data/types';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
+import type { SftpUser } from 'calypso/data/types';
 
 const SFTP_URL = 'sftp.wp.com';
 

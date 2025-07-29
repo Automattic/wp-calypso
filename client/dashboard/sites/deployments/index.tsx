@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { SitePlan } from 'calypso/data/types';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -9,7 +10,6 @@ import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { SitePlan } from '../../data/types';
 import illustrationUrl from './deployments-callout-illustration.svg';
 import ghIconUrl from './gh-icon.svg';
 

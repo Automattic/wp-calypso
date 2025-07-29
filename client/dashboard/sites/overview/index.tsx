@@ -10,7 +10,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chartBar, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

@@ -1,11 +1,11 @@
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { heading } from '@wordpress/icons';
+import { DotcomFeatures } from 'calypso/data/constants';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
-import type { Site, SiteSettings } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+import type { Site, SiteSettings } from 'calypso/data/types';
 
 export default function SubscriptionGiftingSettingsSummary( {
 	site,

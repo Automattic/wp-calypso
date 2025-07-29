@@ -4,16 +4,16 @@ import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
+import { siteDomainsQuery } from 'calypso/data/queries/site-domains';
+import { siteCurrentPlanQuery } from 'calypso/data/queries/site-plans';
 import { SectionHeader } from '../../components/section-header';
 import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
-import type { Site, SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
+import type { Site, SiteDomain } from 'calypso/data/types';
 
 const getDomainId = ( domain: SiteDomain ): string => {
 	return `${ domain.domain }-${ domain.blog_id }`;

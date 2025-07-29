@@ -1,4 +1,4 @@
-import type { Site } from '../data/types';
+import type { Site } from 'calypso/data/types';
 
 export const DEFAULT_PROVIDER_NAME = 'WordPress.com';
 

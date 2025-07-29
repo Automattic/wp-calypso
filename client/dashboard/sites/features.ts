@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
-import { DotcomFeatures, HostingFeatures } from '../data/constants';
+import { DotcomFeatures, HostingFeatures } from 'calypso/data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
-import type { Site, User } from '../data/types';
+import type { Site, User } from 'calypso/data/types';
 
 export function canManageSite( site: Site ) {
 	if ( site.is_deleted || ! site.capabilities.manage_options ) {

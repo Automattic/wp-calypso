@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
-import { queryClient } from 'calypso/dashboard/app/query-client';
+import { queryClient } from 'calypso/data/query-client';
 import { getRouter, syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } from './router';
 import type { Store } from 'redux';
 

@@ -5,8 +5,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
 import { useAuth } from '../../app/auth';
-import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import { canTransferSite } from '../features';
@@ -15,7 +15,7 @@ import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owne
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
 import { StartSiteTransferForm } from './start-site-transfer-form';
-import type { SiteOwnerTransferContext } from '../../data/types';
+import type { SiteOwnerTransferContext } from 'calypso/data/types';
 
 const MIN_STEP = 0;
 

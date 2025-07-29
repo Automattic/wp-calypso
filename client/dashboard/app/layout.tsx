@@ -7,12 +7,12 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useMemo, useEffect } from 'react';
+import { queryClient } from 'calypso/data/query-client';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { AppProvider, type AppConfig } from './context';
 import { I18nProvider } from './i18n';
-import { queryClient } from './query-client';
 import { getRouter } from './router';
 
 function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {

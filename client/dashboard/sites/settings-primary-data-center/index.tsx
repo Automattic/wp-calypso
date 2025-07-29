@@ -4,12 +4,12 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
+import { HostingFeatures } from 'calypso/data/constants';
 import { getDataCenterOptions } from 'calypso/data/data-center';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { sitePrimaryDataCenterQuery } from 'calypso/data/queries/site-primary-data-center';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 

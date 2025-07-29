@@ -11,11 +11,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { siteOwnerTransferMutation } from '../../app/queries/site-owner-transfer';
+import { siteOwnerTransferMutation } from 'calypso/data/queries/site-owner-transfer';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import type { Site, SiteOwnerTransferContext } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { Site, SiteOwnerTransferContext } from 'calypso/data/types';
 
 export type StartSiteTransferFormData = {
 	accept_authorization: boolean;

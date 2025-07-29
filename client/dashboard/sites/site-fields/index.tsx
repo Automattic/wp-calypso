@@ -10,18 +10,18 @@ import {
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from 'calypso/data/constants';
+import { siteLatestAtomicTransferQuery } from 'calypso/data/queries/site-atomic-transfers';
+import { siteLastBackupQuery } from 'calypso/data/queries/site-backups';
+import { siteMediaStorageQuery } from 'calypso/data/queries/site-media-storage';
+import { sitePHPVersionQuery } from 'calypso/data/queries/site-php-version';
+import { siteEngagementStatsQuery } from 'calypso/data/queries/site-stats';
+import { siteUptimeQuery } from 'calypso/data/queries/site-uptime';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
-import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
-import { siteLastBackupQuery } from '../../app/queries/site-backups';
-import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
-import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
-import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
-import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
@@ -31,7 +31,7 @@ import { isSitePlanTrial } from '../plans';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { AtomicTransferStatus, Site } from '../../data/types';
+import type { AtomicTransferStatus, Site } from 'calypso/data/types';
 
 import './style.scss';
 

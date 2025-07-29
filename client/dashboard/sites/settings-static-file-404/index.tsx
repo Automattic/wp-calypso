@@ -11,13 +11,13 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
 import {
 	siteStaticFile404SettingQuery,
 	siteStaticFile404SettingMutation,
-} from '../../app/queries/site-static-file-404';
+} from 'calypso/data/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';

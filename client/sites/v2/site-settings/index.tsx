@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
-import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
-import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
-import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { siteSettingsQuery } from 'calypso/data/queries/site-settings';
+import { queryClient, persistPromise } from 'calypso/data/query-client';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';

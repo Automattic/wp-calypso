@@ -3,7 +3,7 @@ import { Outlet, notFound } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Dropdown, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
 import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';

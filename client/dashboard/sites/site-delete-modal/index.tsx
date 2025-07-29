@@ -14,13 +14,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { p2HubP2sQuery } from 'calypso/data/queries/p2';
+import { siteDeleteMutation } from 'calypso/data/queries/site';
+import { siteHasCancelablePurchasesQuery } from 'calypso/data/queries/site-purchases';
 import { useAuth } from '../../app/auth';
-import { p2HubP2sQuery } from '../../app/queries/p2';
-import { siteDeleteMutation } from '../../app/queries/site';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
 import Notice from '../../components/notice';
-import type { Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { Site } from 'calypso/data/types';
 
 type SiteDeleteFormData = {
 	domain: string;

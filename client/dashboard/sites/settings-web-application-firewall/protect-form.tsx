@@ -14,9 +14,9 @@ import { useState } from 'react';
 import {
 	siteJetpackModulesQuery,
 	siteJetpackModuleMutation,
-} from '../../app/queries/site-jetpack-module';
+} from 'calypso/data/queries/site-jetpack-module';
 import { SectionHeader } from '../../components/section-header';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 const fields = [
 	{

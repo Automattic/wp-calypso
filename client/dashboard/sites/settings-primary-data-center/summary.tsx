@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
+import { HostingFeatures } from 'calypso/data/constants';
 import { getDataCenterOptions } from 'calypso/data/data-center';
-import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
+import { sitePrimaryDataCenterQuery } from 'calypso/data/queries/site-primary-data-center';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+import type { Site } from 'calypso/data/types';
 
 export default function SettingsPrimaryDataCenterSummary( {
 	site,

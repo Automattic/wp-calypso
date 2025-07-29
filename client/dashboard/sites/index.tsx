@@ -4,11 +4,11 @@ import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { isAutomatticianQuery } from 'calypso/data/queries/me-a8c';
+import { userPreferenceQuery, userPreferenceMutation } from 'calypso/data/queries/me-preferences';
+import { sitesQuery } from 'calypso/data/queries/sites';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { isAutomatticianQuery } from '../app/queries/me-a8c';
-import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-preferences';
-import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
@@ -25,8 +25,8 @@ import {
 	DEFAULT_PER_PAGE_SIZES,
 } from './views';
 import type { ViewSearchParams } from './views';
-import type { FetchSitesOptions, Site } from '../data/types';
 import type { View, Filter } from '@wordpress/dataviews';
+import type { FetchSitesOptions, Site } from 'calypso/data/types';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {
 	const filters = view.filters ?? [];

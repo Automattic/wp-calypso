@@ -15,7 +15,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
 import {
 	siteEdgeCacheStatusQuery,
 	siteEdgeCacheStatusMutation,
@@ -23,12 +24,11 @@ import {
 	siteEdgeCacheLastClearedTimestampQuery,
 	siteObjectCacheClearMutation,
 	siteObjectCacheLastClearedTimestampQuery,
-} from '../../app/queries/site-cache';
+} from 'calypso/data/queries/site-cache';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';

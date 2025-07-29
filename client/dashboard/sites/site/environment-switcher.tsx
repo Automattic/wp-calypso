@@ -11,12 +11,12 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
+import { siteByIdQuery } from 'calypso/data/queries/site';
+import { stagingSiteCreateMutation } from 'calypso/data/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { canManageSite, canCreateStagingSite } from '../features';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 type EnvironmentType = 'production' | 'staging';
 

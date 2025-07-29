@@ -4,13 +4,13 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
-import { sitesQuery } from '../../app/queries/sites';
+import { sitesQuery } from 'calypso/data/queries/sites';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { getSiteDisplayName } from '../../utils/site-name';
 import AddNewSite from '../add-new-site';
 import SiteIcon from '../site-icon';
-import type { Site } from '../../data/types';
 import type { View } from '@wordpress/dataviews';
+import type { Site } from 'calypso/data/types';
 
 import './switcher.scss';
 

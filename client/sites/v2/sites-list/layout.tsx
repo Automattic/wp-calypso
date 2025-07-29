@@ -3,7 +3,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
-import { queryClient } from 'calypso/dashboard/app/query-client';
+import { queryClient } from 'calypso/data/query-client';
 import { getRouter, syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } from './router';
 
 // Serves a similar purpose to AppConfig form v2 dashboard.

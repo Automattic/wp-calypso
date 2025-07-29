@@ -12,15 +12,15 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
-import { siteByIdQuery } from '../../app/queries/site';
+import { siteByIdQuery } from 'calypso/data/queries/site';
 import {
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
-} from '../../app/queries/site-staging-sites';
+} from 'calypso/data/queries/site-staging-sites';
 import PageLayout from '../../components/page-layout';
 import deleteStagingSiteBackground from './delete-staging-site-background.svg';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 	const router = useRouter();

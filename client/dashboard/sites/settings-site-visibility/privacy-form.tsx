@@ -14,13 +14,13 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
+import { siteDomainsQuery } from 'calypso/data/queries/site-domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
-import type { Site, SiteSettings } from '../../data/types';
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { Field, Form } from '@wordpress/dataviews';
+import type { Site, SiteSettings } from 'calypso/data/types';
 
 // The raw SiteSettings don't map nicely to the controls in the form. Mapping from SiteSettings to
 // PrivacyFormData allows us to create a more user-friendly form.

@@ -1,5 +1,5 @@
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '../data/constants';
-import type { Site } from '../data/types';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from 'calypso/data/constants';
+import type { Site } from 'calypso/data/types';
 
 // Returns whether the plan supports a specific feature.
 export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures }` ) {

@@ -2,8 +2,8 @@ import React, { ReactNode } from 'react';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureActivation from './activation';
 import HostingFeatureUpsell from './upsell';
-import type { HostingFeatures } from '../../data/constants';
-import type { Site } from '../../data/types';
+import type { HostingFeatures } from 'calypso/data/constants';
+import type { Site } from 'calypso/data/types';
 
 export interface HostingFeatureGateProps {
 	site: Site;

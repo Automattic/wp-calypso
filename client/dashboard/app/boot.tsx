@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import './style.scss';
+import { persistPromise } from 'calypso/data/query-client';
 import Layout from './layout';
-import { persistPromise } from './query-client';
 import type { AppConfig } from './context';
 
 function boot( config: AppConfig ) {

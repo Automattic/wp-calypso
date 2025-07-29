@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { restoreDatabasePassword } from '../../data/site-hosting';
+import { restoreDatabasePassword } from 'calypso/data/api/site-hosting';
 
 interface ResetPasswordModalProps {
 	siteId: number;

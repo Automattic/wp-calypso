@@ -1,5 +1,5 @@
-import { DotcomPlans } from '../data/constants';
-import type { Site } from '../data/types';
+import { DotcomPlans } from 'calypso/data/constants';
+import type { Site } from 'calypso/data/types';
 
 export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlans[] ) => {
 	if ( ! site.plan ) {

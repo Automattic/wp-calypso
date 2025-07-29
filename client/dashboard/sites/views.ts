@@ -1,8 +1,8 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { DEFAULT_FIELDS } from './fields';
 import type { AnalyticsClient } from '../app/analytics';
-import type { User, SitesView, SitesViewPreferences } from '../data/types';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
+import type { User, SitesView, SitesViewPreferences } from 'calypso/data/types';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
 	table: {

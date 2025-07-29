@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { home } from '@wordpress/icons';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
+import { siteAgencyBlogQuery } from 'calypso/data/queries/site-agency';
+import { siteSettingsQuery } from 'calypso/data/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+import type { Site } from 'calypso/data/types';
 
 export default function AgencySettingsSummary( {
 	site,

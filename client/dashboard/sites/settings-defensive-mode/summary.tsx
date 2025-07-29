@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
-import { siteDefensiveModeSettingsQuery } from '../../app/queries/site-defensive-mode';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteDefensiveModeSettingsQuery } from 'calypso/data/queries/site-defensive-mode';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+import type { Site } from 'calypso/data/types';
 
 export default function DefensiveModeSettingsSummary( {
 	site,

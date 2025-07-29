@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const siteSlug = site.slug;

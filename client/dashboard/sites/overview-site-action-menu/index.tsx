@@ -3,11 +3,11 @@ import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { isSiteUsingBlockThemeQuery } from 'calypso/data/queries/site-themes';
 import { useAnalytics } from '../../app/analytics';
-import { isSiteUsingBlockThemeQuery } from '../../app/queries/site-themes';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteEditUrl } from '../../utils/site-url';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 const SiteActionMenu = ( { site }: { site: Site } ) => {
 	const { recordTracksEvent } = useAnalytics();

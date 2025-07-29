@@ -1,6 +1,6 @@
-import { DotcomFeatures, HostingFeatures } from '../../data/constants';
+import { DotcomFeatures, HostingFeatures } from 'calypso/data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../site-features';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 describe( 'hasPlanFeature', () => {
 	it( 'should return false if the site does not have active plan', () => {

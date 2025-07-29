@@ -15,14 +15,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { siteAgencyBlogQuery } from 'calypso/data/queries/site-agency';
+import { siteSettingsMutation, siteSettingsQuery } from 'calypso/data/queries/site-settings';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site, SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { Site, SiteSettings } from 'calypso/data/types';
 
 export function canUpdateA4AFullyManagedSetting( site: Site ) {
 	return site.is_wpcom_atomic;

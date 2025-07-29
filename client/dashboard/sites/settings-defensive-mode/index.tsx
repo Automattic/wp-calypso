@@ -14,21 +14,21 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
 import {
 	siteDefensiveModeSettingsQuery,
 	siteDefensiveModeSettingsMutation,
-} from '../../app/queries/site-defensive-mode';
+} from 'calypso/data/queries/site-defensive-mode';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
-import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { DefensiveModeSettingsUpdate } from 'calypso/data/types';
 
 const availableTtls = [
 	{

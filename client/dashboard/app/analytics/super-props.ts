@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
-import { siteBySlugQuery } from '../queries/site';
-import { sitesQuery } from '../queries/sites';
-import type { User, Site } from '../../data/types';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { sitesQuery } from 'calypso/data/queries/sites';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AnyRouter } from '@tanstack/react-router';
+import type { User, Site } from 'calypso/data/types';
 
 export const getSuperProps = ( user: User, router: AnyRouter, queryClient: QueryClient ) => () => {
 	const superProps = {

@@ -7,26 +7,26 @@ import {
 	createRoute,
 	redirect,
 } from '@tanstack/react-router';
-import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
-import { siteAgencyBlogQuery } from 'calypso/dashboard/app/queries/site-agency';
-import { siteEdgeCacheStatusQuery } from 'calypso/dashboard/app/queries/site-cache';
-import { siteDefensiveModeSettingsQuery } from 'calypso/dashboard/app/queries/site-defensive-mode';
-import { siteJetpackModulesQuery } from 'calypso/dashboard/app/queries/site-jetpack-module';
-import { sitePHPVersionQuery } from 'calypso/dashboard/app/queries/site-php-version';
-import { sitePrimaryDataCenterQuery } from 'calypso/dashboard/app/queries/site-primary-data-center';
-import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
-import { siteSftpUsersQuery } from 'calypso/dashboard/app/queries/site-sftp';
-import { siteSshAccessStatusQuery } from 'calypso/dashboard/app/queries/site-ssh';
-import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/site-static-file-404';
-import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
-import { queryClient } from 'calypso/dashboard/app/query-client';
-import { HostingFeatures } from 'calypso/dashboard/data/constants';
 import {
 	canManageSite,
 	canViewWordPressSettings,
 	canViewHundredYearPlanSettings,
 } from 'calypso/dashboard/sites/features';
 import { hasHostingFeature } from 'calypso/dashboard/utils/site-features';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { siteAgencyBlogQuery } from 'calypso/data/queries/site-agency';
+import { siteEdgeCacheStatusQuery } from 'calypso/data/queries/site-cache';
+import { siteDefensiveModeSettingsQuery } from 'calypso/data/queries/site-defensive-mode';
+import { siteJetpackModulesQuery } from 'calypso/data/queries/site-jetpack-module';
+import { sitePHPVersionQuery } from 'calypso/data/queries/site-php-version';
+import { sitePrimaryDataCenterQuery } from 'calypso/data/queries/site-primary-data-center';
+import { siteSettingsQuery } from 'calypso/data/queries/site-settings';
+import { siteSftpUsersQuery } from 'calypso/data/queries/site-sftp';
+import { siteSshAccessStatusQuery } from 'calypso/data/queries/site-ssh';
+import { siteStaticFile404SettingQuery } from 'calypso/data/queries/site-static-file-404';
+import { siteWordPressVersionQuery } from 'calypso/data/queries/site-wordpress-version';
+import { queryClient } from 'calypso/data/query-client';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 

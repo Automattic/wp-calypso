@@ -7,18 +7,19 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
-							// Allowed: calypso/data/php-versions
 							'!calypso/data',
 							'calypso/data/*',
-							'!calypso/data/php-versions',
-							// Allowed: calypso/data/data-center
+							'!calypso/data/api',
+							'!calypso/data/constants',
 							'!calypso/data/data-center',
-							// Allowed: calypso/lib/wp
+							'!calypso/data/error',
+							'!calypso/data/php-versions',
+							'!calypso/data/queries',
+							'!calypso/data/query-client',
+							'!calypso/data/types',
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
-							// Allowed: calypso/assets/icons
-							// Allowed: calypso/assets/images
 							'!calypso/assets',
 							'calypso/assets/*',
 							'!calypso/assets/icons',

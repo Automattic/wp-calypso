@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { link } from '@wordpress/icons';
-import { sitePreviewLinksQuery } from '../../app/queries/site-preview-links';
+import { sitePreviewLinksQuery } from 'calypso/data/queries/site-preview-links';
 import OverviewCard from '../overview-card';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 export default function AgencySiteShareCard( { site }: { site: Site } ) {
 	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );

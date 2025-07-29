@@ -6,10 +6,10 @@ import {
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
-import { DomainTypes } from '../../data/domains';
-import type { Domain } from '../../data/types';
+import { DomainTypes } from 'calypso/data/types';
 import type { ResponseDomain } from '@automattic/domains-table';
 import type { Action } from '@wordpress/dataviews';
+import type { Domain } from 'calypso/data/types';
 
 // TODO: Complete all actions and verify whether it works.
 export const actions: Action< Domain >[] = [

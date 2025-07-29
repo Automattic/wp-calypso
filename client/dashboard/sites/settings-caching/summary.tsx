@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { next } from '@wordpress/icons';
-import { siteEdgeCacheStatusQuery } from '../../app/queries/site-cache';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteEdgeCacheStatusQuery } from 'calypso/data/queries/site-cache';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { isEdgeCacheAvailable } from './utils';
-import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+import type { Site } from 'calypso/data/types';
 
 export default function CachingSettingsSummary( {
 	site,

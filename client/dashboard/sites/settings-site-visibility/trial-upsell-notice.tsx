@@ -1,12 +1,12 @@
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { DotcomPlans } from 'calypso/data/constants';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import Notice from '../../components/notice';
-import { DotcomPlans } from '../../data/constants';
 import { isSitePlanLaunchable } from '../plans';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 export default function TrialUpsellNotice( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();

@@ -13,11 +13,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { siteHasCancelablePurchasesQuery } from 'calypso/data/queries/site-purchases';
+import { siteCurrentUserQuery, siteUserDeleteMutation } from 'calypso/data/queries/site-users';
 import { useAuth } from '../../app/auth';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
-import { siteCurrentUserQuery, siteUserDeleteMutation } from '../../app/queries/site-users';
 import RouterLinkButton from '../../components/router-link-button';
-import type { Site, User } from '../../data/types';
+import type { Site, User } from 'calypso/data/types';
 
 interface ContentInfoProps {
 	site: Site;

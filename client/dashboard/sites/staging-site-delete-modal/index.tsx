@@ -9,8 +9,8 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
-import type { Site } from '../../data/types';
+import { stagingSiteDeleteMutation } from 'calypso/data/queries/site-staging-sites';
+import type { Site } from 'calypso/data/types';
 
 export default function StagingSiteDeleteModal( {
 	site,

@@ -1,4 +1,4 @@
-import type { AtomicTransferStatus } from '../data/types';
+import type { AtomicTransferStatus } from 'calypso/data/types';
 
 export function isAtomicTransferInProgress( status: AtomicTransferStatus ) {
 	const inProgressStatuses: AtomicTransferStatus[] = [

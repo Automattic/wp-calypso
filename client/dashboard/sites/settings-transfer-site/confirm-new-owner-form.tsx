@@ -11,10 +11,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
+import { siteOwnerTransferEligibilityCheckMutation } from 'calypso/data/queries/site-owner-transfer';
 import { SectionHeader } from '../../components/section-header';
-import type { Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { Site } from 'calypso/data/types';
 
 export type ConfirmNewOwnerFormData = {
 	email: string;

@@ -1,9 +1,9 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
-import { isDeletingStagingSiteQuery } from '../../app/queries/site-staging-sites';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { siteSettingsQuery } from 'calypso/data/queries/site-settings';
+import { isDeletingStagingSiteQuery } from 'calypso/data/queries/site-staging-sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';

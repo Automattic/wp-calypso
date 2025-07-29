@@ -9,9 +9,9 @@ import { dateI18n } from '@wordpress/date';
 import { sprintf, __ } from '@wordpress/i18n';
 import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
-import { DomainTypes } from '../../data/domains';
-import type { Domain, Site } from '../../data/types';
+import { DomainTypes } from 'calypso/data/types';
 import type { Field } from '@wordpress/dataviews';
+import type { Domain, Site } from 'calypso/data/types';
 
 const textOverflowStyles = {
 	overflowX: 'hidden',

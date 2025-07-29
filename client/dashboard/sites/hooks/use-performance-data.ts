@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { basicMetricsQuery, performanceInsightsQuery } from '../../app/queries/performance';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
-import { UrlPerformanceInsights } from '../../data/types';
+import { basicMetricsQuery, performanceInsightsQuery } from 'calypso/data/queries/performance';
+import { siteSettingsQuery } from 'calypso/data/queries/site-settings';
+import { UrlPerformanceInsights } from 'calypso/data/types';
 
 interface PerformanceData {
 	performanceData: UrlPerformanceInsights | undefined;

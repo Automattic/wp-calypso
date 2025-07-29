@@ -5,10 +5,10 @@ import {
 	createRouter,
 	redirect,
 } from '@tanstack/react-router';
-import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
-import { rawUserPreferencesQuery } from 'calypso/dashboard/app/queries/me-preferences';
-import { sitesQuery } from 'calypso/dashboard/app/queries/sites';
-import { queryClient } from 'calypso/dashboard/app/query-client';
+import { isAutomatticianQuery } from 'calypso/data/queries/me-a8c';
+import { rawUserPreferencesQuery } from 'calypso/data/queries/me-preferences';
+import { sitesQuery } from 'calypso/data/queries/sites';
+import { queryClient } from 'calypso/data/query-client';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 

@@ -5,9 +5,9 @@ import { backup, wordpress } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { isP2, isSelfHostedJetpackConnected } from '../utils/site-types';
 import { canManageSite } from './features';
-import type { Site } from '../data/types';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { Action } from '@wordpress/dataviews';
+import type { Site } from 'calypso/data/types';
 
 const SiteLeaveContentInfo = lazy( () => import( './site-leave-modal/content-info' ) );
 const SiteRestoreContentInfo = lazy( () => import( './site-restore-modal/content-info' ) );

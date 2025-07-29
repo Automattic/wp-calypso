@@ -5,14 +5,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { domainSuggestionsQuery } from 'calypso/data/queries/domains';
+import { siteCurrentPlanQuery } from 'calypso/data/queries/site-plans';
 import { useAnalytics } from '../../app/analytics';
-import { domainSuggestionsQuery } from '../../app/queries/domains';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import type { Site } from '../../data/types';
+import type { Site } from 'calypso/data/types';
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];

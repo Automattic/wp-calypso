@@ -1,11 +1,11 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
-import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
+import { HostingFeatures } from 'calypso/data/constants';
+import { siteBySlugQuery } from 'calypso/data/queries/site';
+import { siteSftpUsersQuery } from 'calypso/data/queries/site-sftp';
+import { siteSshAccessStatusQuery } from 'calypso/data/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
