@@ -25,7 +25,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 		);
 	}
 
-	const title = __( 'Claim your first domain — Free!' );
+	const title = __( 'Claim your first domain—Free!' );
 
 	const subtitle = createInterpolateElement(
 		__(
@@ -49,7 +49,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 						/>
 					) }
 					<VStack spacing={ 2 }>
-						<Text weight="bold">{ title }</Text>
+						<Text weight={ 600 }>{ title }</Text>
 						<Text>{ subtitle }</Text>
 					</VStack>
 				</HStack>
