@@ -474,7 +474,13 @@ export default function SyncModal( {
 							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-						<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
+						<Tooltip
+							text={ __(
+								'Overwrite the site database, including any posts, pages, products, or orders.'
+							) }
+						>
+							<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
+						</Tooltip>
 					</HStack>
 					<VStack spacing={ 7 }>
 						<HStack alignment="left" spacing={ 1 }>
