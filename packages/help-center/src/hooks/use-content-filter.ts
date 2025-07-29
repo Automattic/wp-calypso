@@ -1,3 +1,4 @@
+import { isSameOrigin } from '@automattic/calypso-url';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -19,7 +20,6 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				pattern: 'a[href*="wordpress.com"], a[href^="/"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
-
 					if ( ! href.startsWith( '/' ) && ! isThisASupportArticleLink( href ) ) {
 						return;
 					}
@@ -107,6 +107,17 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 
 					// Skip support articles
 					if ( href && isThisASupportArticleLink( href ) ) {
+						return;
+					}
+
+					// Support sites add `target="_blank"` to Calypso links. We should remove that in context of Calypso.
+					if ( isSameOrigin( href ) ) {
+						element.removeAttribute( 'target' );
+						return;
+					}
+
+					if ( href.includes( 'https://wordpress.com' ) ) {
+						element.removeAttribute( 'target' );
 						return;
 					}
 

@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
+import { isSameOrigin } from '@automattic/calypso-url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import { isSameOrigin } from 'calypso/lib/navigate';
 import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import './navigation-header.scss';
 
