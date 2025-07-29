@@ -269,6 +269,34 @@ export function isCloseToExpiration( purchase: ActiveSubscription ): boolean {
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
+/**
+ * Transforms a credit card expiry date like `11/23` into a Date representing 2023-11-30.
+ *
+ * Returns the last day of the month because credit cards typically expire at the end of the valid month.
+ */
+function getDateFromCreditCardExpiry( cardExpiryDate: string ): Date {
+	const [ month, year ] = cardExpiryDate.split( '/' );
+	if ( ! month || ! year ) {
+		throw new Error( `Could not parse credit card date '${ cardExpiryDate }'` );
+	}
+	const monthNumber = parseInt( month );
+	const yearNumber = parseInt( year );
+	if ( isNaN( monthNumber ) || isNaN( yearNumber ) ) {
+		throw new Error( `Could not parse credit card date '${ cardExpiryDate }'` );
+	}
+	const currentYear = new Date().getFullYear();
+	const currentMillenniumPrefix = Math.floor( currentYear / 100 );
+	const fullYear = parseInt( `${ currentMillenniumPrefix }${ yearNumber }` );
+	if ( isNaN( fullYear ) ) {
+		throw new Error( `Could not parse credit card date '${ cardExpiryDate }'` );
+	}
+	// Note that the Date constructor expects the month to be 0 indexed, so 0
+	// is January, but specifying a 0 as the day "underflows" and goes to the
+	// last day of the previous month, which allows us to pass the wrong index
+	// and get the right result.
+	return new Date( fullYear, monthNumber, 0 );
+}
+
 export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscription ): boolean {
 	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
 		return false;
@@ -280,8 +308,8 @@ export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscriptio
 		return false;
 	}
 	if (
-		new Date( purchase.expiry_date ).toTimeString() >
-		new Date( purchase.payment_expiry ).toTimeString()
+		new Date( purchase.expiry_date ).getTime() >
+		getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime()
 	) {
 		return true;
 	}
@@ -298,7 +326,7 @@ export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ): boo
 	if ( purchase.bill_period_days === PLAN_CENTENNIAL_PERIOD && ! isCloseToExpiration( purchase ) ) {
 		return false;
 	}
-	if ( new Date().toTimeString() > new Date( purchase.payment_expiry ).toTimeString() ) {
+	if ( new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime() ) {
 		return true;
 	}
 	return false;
