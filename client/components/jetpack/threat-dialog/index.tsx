@@ -1,5 +1,5 @@
-import { Dialog } from '@automattic/components';
-import { Button, TextControl } from '@wordpress/components';
+import { Button, Dialog } from '@automattic/components';
+import { TextControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
@@ -66,8 +66,8 @@ const ThreatDialog: React.FC< Props > = ( {
 			const shouldBeDisabled = confirmationInput !== slug;
 			buttons.push(
 				<Button
-					variant="primary"
-					isDestructive
+					primary
+					scary
 					disabled={ shouldBeDisabled }
 					className="threat-dialog__btn"
 					onClick={ onConfirmation }
@@ -77,12 +77,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			);
 		} else {
 			buttons.push(
-				<Button
-					variant="primary"
-					isDestructive={ isScary }
-					className="threat-dialog__btn"
-					onClick={ onConfirmation }
-				>
+				<Button primary scary={ isScary } className="threat-dialog__btn" onClick={ onConfirmation }>
 					{ primaryButtonText }
 				</Button>
 			);

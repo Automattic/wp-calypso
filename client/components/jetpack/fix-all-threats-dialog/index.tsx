@@ -49,14 +49,14 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 		[ onCloseDialog, onConfirmation ]
 	);
 
-	const fixableThreats = useMemo(
+	const bulkFixableThreats = useMemo(
 		() =>
 			threats.filter(
 				( threat ) => threat.fixable && threat.fixable.extras?.is_bulk_fixable !== false
 			),
 		[ threats ]
 	);
-	const nonFixableThreats = useMemo(
+	const nonBulkFixableThreats = useMemo(
 		() =>
 			threats.filter(
 				( threat ) => ! threat.fixable || threat.fixable.extras?.is_bulk_fixable === false
@@ -72,7 +72,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 					{ translate( 'Jetpack will be fixing the selected threats and low risk items.' ) }
 				</p>
 				<div className="fix-all-threats-dialog__threats-section">
-					{ fixableThreats.map( ( threat ) => (
+					{ bulkFixableThreats.map( ( threat ) => (
 						<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
 							<ThreatFixHeader
 								key={ threat.id }
@@ -90,7 +90,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 					) }
 				</p>
 				<div className="fix-all-threats-dialog__threats-section">
-					{ nonFixableThreats.map( ( threat ) => (
+					{ nonBulkFixableThreats.map( ( threat ) => (
 						<div className="fix-all-threats-dialog__card-container" key={ threat.id }>
 							<ThreatFixHeader
 								key={ threat.id }
