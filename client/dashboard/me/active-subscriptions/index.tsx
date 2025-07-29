@@ -14,6 +14,7 @@ import {
 	getItemId,
 	getPurchaseUrl,
 } from './data-view-shared';
+import { useStoredPaymentMethods } from './use-stored-payment-methods';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 export default function ActiveSubscriptions() {
@@ -28,7 +29,11 @@ export default function ActiveSubscriptions() {
 			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
 		}
 	} );
-	const purchasesDataFields = getFields( sites ?? [] );
+	const paymentMethods = useStoredPaymentMethods().paymentMethods;
+	const purchasesDataFields = getFields( {
+		sites: sites ?? [],
+		paymentMethods,
+	} );
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );
 	}, [ activeSubscriptions, currentView, purchasesDataFields ] );
