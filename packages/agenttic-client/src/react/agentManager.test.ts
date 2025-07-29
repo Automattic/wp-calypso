@@ -293,13 +293,17 @@ describe( 'agentManager', () => {
 			expect( storeConversation ).toHaveBeenCalled();
 		} );
 
-		it( 'should not update conversation history when withHistory=false', async () => {
+		it( 'should maintain in-memory conversation history but not persist when withHistory=false', async () => {
+			// Create agent first
+			await agentManager.createAgent( 'test-key', testConfig );
+			mockClient.sendMessage.mockResolvedValue( mockTask );
+
 			await agentManager.sendMessage( 'test-key', 'Hello', {
 				withHistory: false,
 			} );
 
 			const history = agentManager.getConversationHistory( 'test-key' );
-			expect( history ).toHaveLength( 0 );
+			expect( history ).toHaveLength( 2 ); // User message + agent response
 			expect( storeConversation ).not.toHaveBeenCalled();
 		} );
 

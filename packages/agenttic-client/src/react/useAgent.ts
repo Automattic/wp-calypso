@@ -302,27 +302,25 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 			try {
 				const message: Message =
 					options.message ||
-					( withHistory
-						? createTextMessageWithHistory(
-								messageText,
-								currentConversationHistory
-						  )
-						: createTextMessage( messageText ) );
+					createTextMessageWithHistory(
+						messageText,
+						currentConversationHistory
+					);
 
-				// Add user message to local conversation history before streaming (only if withHistory is true)
+				// Add user message to local conversation history before streaming (always)
 				// Store only the clean message without history parts
-				if ( withHistory ) {
-					const userMessage = createTextMessage( messageText );
-					currentConversationHistory = [
-						...currentConversationHistory,
-						userMessage,
-					];
+				const userMessage = createTextMessage( messageText );
+				currentConversationHistory = [
+					...currentConversationHistory,
+					userMessage,
+				];
 
-					setState( ( prev ) => ( {
-						...prev,
-						conversationHistory: currentConversationHistory,
-					} ) );
-					// Persist the user message immediately
+				setState( ( prev ) => ( {
+					...prev,
+					conversationHistory: currentConversationHistory,
+				} ) );
+				// Persist the user message only if withHistory is true
+				if ( withHistory ) {
 					await persistConversationHistory(
 						currentConversationHistory
 					);
@@ -338,8 +336,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 					// Save tool interactions when input is required (this saves the agent message with tool calls)
 					if (
 						update.status?.state === 'input-required' &&
-						update.status?.message &&
-						withHistory
+						update.status?.message
 					) {
 						// Capture the tool call IDs for this batch
 						const toolCalls = extractToolCallsFromMessage(
@@ -363,16 +360,18 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							conversationHistory: currentConversationHistory,
 						} ) );
 
-						await persistConversationHistory(
-							currentConversationHistory
-						);
+						// Persist only if withHistory is true
+						if ( withHistory ) {
+							await persistConversationHistory(
+								currentConversationHistory
+							);
+						}
 					}
 
 					// Capture tool results when tools are executed (state becomes 'working' after tool execution)
 					if (
 						update.status?.state === 'working' &&
 						update.status?.message &&
-						withHistory &&
 						! update.final
 					) {
 						// Extract ALL tool results first
@@ -410,9 +409,12 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 								conversationHistory: currentConversationHistory,
 							} ) );
 
-							await persistConversationHistory(
-								currentConversationHistory
-							);
+							// Persist only if withHistory is true
+							if ( withHistory ) {
+								await persistConversationHistory(
+									currentConversationHistory
+								);
+							}
 						}
 					}
 
@@ -424,7 +426,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						currentToolCallIds = [];
 
 						let finalAgentMessage: Message | null = null;
-						if ( withHistory && update.status?.message ) {
+						if ( update.status?.message ) {
 							finalAgentMessage = extractNewContentFromMessage(
 								update.status.message
 							);
@@ -444,7 +446,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 							conversationHistory: currentConversationHistory,
 						} ) );
 
-						// Persist the final conversation history
+						// Persist the final conversation history only if withHistory is true
 						if ( withHistory && finalAgentMessage ) {
 							await persistConversationHistory(
 								currentConversationHistory

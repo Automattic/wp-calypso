@@ -368,10 +368,8 @@ async function* processAgentResponseStream(
 					}
 				}
 
-				// Add current agent message to new conversation parts (only if withHistory is true)
-				if ( withHistory ) {
-					newConversationParts.push( update.status.message );
-				}
+				// Add current agent message to new conversation parts (always)
+				newConversationParts.push( update.status.message );
 
 				// Only continue to agent if at least one tool wants to return
 				if ( shouldReturnToAgent ) {
@@ -433,7 +431,7 @@ async function* processAgentResponseStream(
 						: [];
 
 					// Add the first tool results to conversation history before processing additional calls
-					if ( withHistory && toolResults.length > 0 ) {
+					if ( toolResults.length > 0 ) {
 						newConversationParts.push( {
 							role: 'agent' as const,
 							kind: 'message',
@@ -462,7 +460,7 @@ async function* processAgentResponseStream(
 						// Process additional tool calls
 						while ( continuedToolCalls.length > 0 ) {
 							// Add the current task message (with additional tool calls) to conversation history FIRST
-							if ( withHistory && finalTask.status?.message ) {
+							if ( finalTask.status?.message ) {
 								newConversationParts.push(
 									finalTask.status.message
 								);
@@ -689,18 +687,11 @@ export function createClient( config: ClientConfig ): Client {
 			const { withHistory = true } = params;
 			const sessionId = params.sessionId || defaultSessionId || undefined;
 
-			// Extract conversation history from the incoming message only if withHistory is true
-			const initialConversationHistory = withHistory
-				? extractConversationHistory( params.message )
-				: [];
-
 			// Track new conversation parts since the initial message for tool result context
 			const newConversationParts: Message[] = [];
 
-			// Add the initial user message to new conversation parts
-			if ( withHistory ) {
-				newConversationParts.push( params.message );
-			}
+			// Add the initial user message to new conversation parts (always)
+			newConversationParts.push( params.message );
 
 			// Prepare the request
 			const preparedRequest = await prepareRequest(
@@ -791,10 +782,8 @@ export function createClient( config: ClientConfig ): Client {
 					}
 				}
 
-				// Add current agent message to new conversation parts (only if withHistory is true)
-				if ( withHistory ) {
-					newConversationParts.push( currentTask.status.message );
-				}
+				// Add current agent message to new conversation parts (always)
+				newConversationParts.push( currentTask.status.message );
 
 				// Only continue with tool results if at least one tool wants to return to agent
 				if ( shouldReturnToAgent ) {
@@ -876,18 +865,11 @@ export function createClient( config: ClientConfig ): Client {
 			const { withHistory = true } = params;
 			const sessionId = params.sessionId || defaultSessionId || undefined;
 
-			// Extract conversation history from the incoming message only if withHistory is true
-			const initialConversationHistory = withHistory
-				? extractConversationHistory( params.message )
-				: [];
-
 			// Track new conversation parts since the initial message for tool result context
 			const newConversationParts: Message[] = [];
 
-			// Add the initial user message to new conversation parts
-			if ( withHistory ) {
-				newConversationParts.push( params.message );
-			}
+			// Add the initial user message to new conversation parts (always)
+			newConversationParts.push( params.message );
 
 			// Prepare the request
 			const preparedRequest = await prepareRequest(

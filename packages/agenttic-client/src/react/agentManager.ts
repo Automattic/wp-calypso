@@ -171,12 +171,7 @@ function createAgentManager(): AgentManager {
 
 			const messageObj: Message =
 				options.message ||
-				( withHistory
-					? createTextMessageWithHistory(
-							message,
-							conversationHistory
-					  )
-					: createTextMessage( message ) );
+				createTextMessageWithHistory( message, conversationHistory );
 
 			const task = await client.sendMessage( {
 				message: messageObj,
@@ -184,67 +179,62 @@ function createAgentManager(): AgentManager {
 				...otherOptions,
 			} );
 
-			// Update conversation history if withHistory is true
-			if ( withHistory ) {
-				// Create a complete agent message with tool calls and results if present
-				let completeAgentMessage: Message | null = null;
-				if ( task.status?.message ) {
-					// Extract all tool-related parts from the final message
-					const toolParts = task.status.message.parts.filter(
-						( part ) =>
-							part.type === 'data' &&
-							'toolCallId' in part.data &&
-							( 'arguments' in part.data ||
-								'result' in part.data )
-					);
+			// Update conversation history (always)
+			// Create a complete agent message with tool calls and results if present
+			let completeAgentMessage: Message | null = null;
+			if ( task.status?.message ) {
+				// Extract all tool-related parts from the final message
+				const toolParts = task.status.message.parts.filter(
+					( part ) =>
+						part.type === 'data' &&
+						'toolCallId' in part.data &&
+						( 'arguments' in part.data || 'result' in part.data )
+				);
 
-					// Extract text parts from final message
-					const textParts = task.status.message.parts.filter(
-						( part ) => part.type === 'text'
-					);
+				// Extract text parts from final message
+				const textParts = task.status.message.parts.filter(
+					( part ) => part.type === 'text'
+				);
 
-					// Create complete message with tool parts + text parts in proper order
-					completeAgentMessage = {
-						role: 'agent',
-						kind: 'message',
-						parts: [ ...toolParts, ...textParts ],
-						messageId: generateMessageId(),
-						metadata: {
-							timestamp: Date.now(),
-						},
-					};
-				}
+				// Create complete message with tool parts + text parts in proper order
+				completeAgentMessage = {
+					role: 'agent',
+					kind: 'message',
+					parts: [ ...toolParts, ...textParts ],
+					messageId: generateMessageId(),
+					metadata: {
+						timestamp: Date.now(),
+					},
+				};
+			}
 
-				const newConversationHistory = [
-					...conversationHistory,
-					// Store only the new content from the user message (without history parts)
-					createTextMessage( message ),
-					// Add complete agent response with tool calls/results if present
-					...( completeAgentMessage
-						? [
-								extractNewContentFromMessage(
-									completeAgentMessage
-								),
-						  ]
-						: [] ),
+			const newConversationHistory = [
+				...conversationHistory,
+				// Store only the new content from the user message (without history parts)
+				createTextMessage( message ),
+				// Add complete agent response with tool calls/results if present
+				...( completeAgentMessage
+					? [ extractNewContentFromMessage( completeAgentMessage ) ]
+					: [] ),
+			];
+
+			// Check if there's a separate agent message to add
+			let finalConversationHistory = newConversationHistory;
+			if ( ( task as any ).agentMessage ) {
+				const separateAgentMessage = extractNewContentFromMessage(
+					( task as any ).agentMessage
+				);
+				finalConversationHistory = [
+					...newConversationHistory,
+					separateAgentMessage,
 				];
+			}
 
-				// Check if there's a separate agent message to add
-				let finalConversationHistory = newConversationHistory;
-				if ( ( task as any ).agentMessage ) {
-					const separateAgentMessage = extractNewContentFromMessage(
-						( task as any ).agentMessage
-					);
-					finalConversationHistory = [
-						...newConversationHistory,
-						separateAgentMessage,
-					];
-				}
+			// Update the agent's conversation history
+			managedAgent.conversationHistory = finalConversationHistory;
 
-				// Update the agent's conversation history
-				managedAgent.conversationHistory = finalConversationHistory;
-
-				// Persist the updated conversation history
+			// Persist the updated conversation history only if withHistory is true
+			if ( withHistory ) {
 				await persistConversationHistory(
 					key,
 					finalConversationHistory
@@ -277,24 +267,22 @@ function createAgentManager(): AgentManager {
 
 			const messageObj: Message =
 				options.message ||
-				( withHistory
-					? createTextMessageWithHistory(
-							message,
-							currentConversationHistory
-					  )
-					: createTextMessage( message ) );
+				createTextMessageWithHistory(
+					message,
+					currentConversationHistory
+				);
 
-			// Add user message to local conversation history before streaming (only if withHistory is true)
+			// Add user message to local conversation history before streaming (always)
+			const userMessage = createTextMessage( message );
+			currentConversationHistory = [
+				...currentConversationHistory,
+				userMessage,
+			];
+
+			// Update agent's conversation history immediately
+			managedAgent.conversationHistory = currentConversationHistory;
+			// Persist the user message only if withHistory is true
 			if ( withHistory ) {
-				const userMessage = createTextMessage( message );
-				currentConversationHistory = [
-					...currentConversationHistory,
-					userMessage,
-				];
-
-				// Update agent's conversation history immediately
-				managedAgent.conversationHistory = currentConversationHistory;
-				// Persist the user message immediately
 				await persistConversationHistory(
 					key,
 					currentConversationHistory
@@ -309,8 +297,7 @@ function createAgentManager(): AgentManager {
 				// Save tool interactions when input is required (this saves the agent message with tool calls)
 				if (
 					update.status?.state === 'input-required' &&
-					update.status?.message &&
-					withHistory
+					update.status?.message
 				) {
 					// Capture the tool call IDs for this batch
 					const toolCalls = extractToolCallsFromMessage(
@@ -331,17 +318,19 @@ function createAgentManager(): AgentManager {
 					// Update agent's conversation history immediately
 					managedAgent.conversationHistory =
 						currentConversationHistory;
-					await persistConversationHistory(
-						key,
-						currentConversationHistory
-					);
+					// Persist only if withHistory is true
+					if ( withHistory ) {
+						await persistConversationHistory(
+							key,
+							currentConversationHistory
+						);
+					}
 				}
 
 				// Capture tool results when tools are executed (state becomes 'working' after tool execution)
 				if (
 					update.status?.state === 'working' &&
 					update.status?.message &&
-					withHistory &&
 					! update.final
 				) {
 					// Extract ALL tool results first
@@ -374,10 +363,13 @@ function createAgentManager(): AgentManager {
 						// Update agent's conversation history immediately
 						managedAgent.conversationHistory =
 							currentConversationHistory;
-						await persistConversationHistory(
-							key,
-							currentConversationHistory
-						);
+						// Persist only if withHistory is true
+						if ( withHistory ) {
+							await persistConversationHistory(
+								key,
+								currentConversationHistory
+							);
+						}
 					}
 				}
 
@@ -389,7 +381,7 @@ function createAgentManager(): AgentManager {
 					currentToolCallIds = [];
 
 					let finalAgentMessage: Message | null = null;
-					if ( withHistory && update.status?.message ) {
+					if ( update.status?.message ) {
 						finalAgentMessage = extractNewContentFromMessage(
 							update.status.message
 						);
@@ -401,11 +393,13 @@ function createAgentManager(): AgentManager {
 						// Update agent's conversation history
 						managedAgent.conversationHistory =
 							currentConversationHistory;
-						// Persist the final conversation history
-						await persistConversationHistory(
-							key,
-							currentConversationHistory
-						);
+						// Persist the final conversation history only if withHistory is true
+						if ( withHistory ) {
+							await persistConversationHistory(
+								key,
+								currentConversationHistory
+							);
+						}
 					}
 				}
 
