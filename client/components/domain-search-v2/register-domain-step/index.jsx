@@ -1836,7 +1836,6 @@ class RegisterDomainStep extends Component {
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
-				onAddDomain={ this.onAddDomain }
 			/>
 		);
 	}
