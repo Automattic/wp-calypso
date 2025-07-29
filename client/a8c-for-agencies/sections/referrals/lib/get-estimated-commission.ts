@@ -17,7 +17,8 @@ export const getDailyPrice = ( product: APIProductFamilyProduct, quantity: numbe
 export const getEstimatedCommission = (
 	referrals: Referral[],
 	products: APIProductFamilyProduct[],
-	activityWindow: { start: Date; finish: Date }
+	activityWindow: { start: Date; finish: Date },
+	usePreviousQuarter: boolean = false
 ) => {
 	const { bdCommissions, legacyCommissionsInCents } = referrals.reduce(
 		( acc, referral ) => {
@@ -39,7 +40,10 @@ export const getEstimatedCommission = (
 					// As of Aug 2025, new client purchases will use BD for purchases
 					// In this case the estimated commission has already been calculated on the backend
 					// and we just need to add it to the total commission
-					acc.bdCommissions += purchase.commissions.estimated_commission_current_quarter ?? 0;
+					const commissionAmount = usePreviousQuarter
+						? purchase.commissions.estimated_commission_previous_quarter ?? 0
+						: purchase.commissions.estimated_commission_current_quarter ?? 0;
+					acc.bdCommissions += commissionAmount;
 				} else {
 					// Legacy approach, but we need to keep it to continue working with old data
 					// Calculate commission using the license data
@@ -83,13 +87,6 @@ export const getEstimatedCommission = (
 		},
 		{ bdCommissions: 0, legacyCommissionsInCents: 0 }
 	);
-
-	// eslint-disable-next-line no-console
-	console.log( 'Commission calculation summary:', {
-		bdCommissions,
-		legacyCommissionsInCents,
-		totalCommission: bdCommissions + legacyCommissionsInCents / 100,
-	} );
 
 	// Convert commission from cents to dollars,
 	// add subscriptions commission and round to 2 decimal places

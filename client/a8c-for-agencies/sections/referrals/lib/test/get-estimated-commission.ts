@@ -244,6 +244,7 @@ describe( 'get-estimated-commission', () => {
 		it( 'uses API commissions data when available', () => {
 			const referrals: Referral[] = [
 				{
+					client: { id: 1, email: 'test@example.com' },
 					purchaseStatuses: [ 'active' ],
 					referralStatuses: [ 'active' ],
 					purchases: [
@@ -263,6 +264,7 @@ describe( 'get-estimated-commission', () => {
 					],
 				} as never,
 				{
+					client: { id: 2, email: 'test2@example.com' },
 					purchaseStatuses: [ 'active' ],
 					referralStatuses: [ 'active' ],
 					purchases: [
@@ -284,14 +286,20 @@ describe( 'get-estimated-commission', () => {
 			];
 
 			// Should use the sum of current quarter commissions from API
-			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow ) ).toBe(
-				350
+			expect(
+				getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, false )
+			).toBe( 350 );
+
+			// Should use the sum of previous quarter commissions from API
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, true ) ).toBe(
+				175
 			);
 		} );
 
 		it( 'combines API commissions with calculated commissions', () => {
 			const referrals: Referral[] = [
 				{
+					client: { id: 1, email: 'test@example.com' },
 					purchaseStatuses: [ 'active' ],
 					referralStatuses: [ 'active' ],
 					purchases: [
@@ -311,6 +319,7 @@ describe( 'get-estimated-commission', () => {
 					],
 				} as never,
 				{
+					client: { id: 2, email: 'test2@example.com' },
 					purchaseStatuses: [ 'active' ],
 					referralStatuses: [ 'active' ],
 					purchases: [
@@ -329,8 +338,13 @@ describe( 'get-estimated-commission', () => {
 			];
 
 			// Should combine API commissions (150) + calculated commissions (15.5) = 165.5
-			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow ) ).toBe(
-				165.5
+			expect(
+				getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, false )
+			).toBe( 165.5 );
+
+			// Should combine API commissions (75) + calculated commissions (15.5) = 90.5
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, true ) ).toBe(
+				90.5
 			);
 		} );
 
