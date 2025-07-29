@@ -28,7 +28,7 @@ const userMessage: MessageType = {
 		},
 	],
 	role: 'user',
-	created_at: Date.now(),
+	timestamp: Date.now(),
 	archived: false,
 	showIcon: true,
 };
@@ -42,7 +42,7 @@ const agentMessage: MessageType = {
 		},
 	],
 	role: 'agent',
-	created_at: Date.now(),
+	timestamp: Date.now(),
 	archived: false,
 	showIcon: true,
 };

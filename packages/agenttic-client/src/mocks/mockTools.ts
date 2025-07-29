@@ -81,7 +81,7 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 								},
 							},
 						],
-						created_at: Date.now(),
+						timestamp: Date.now(),
 						archived: false,
 						showIcon: true,
 					} );

@@ -10,6 +10,10 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
+		},
+		"./mocks": {
+			"types": "./dist/mocks/index.d.ts",
+			"import": "./dist/mocks/index.js"
 		}
 	},
 	"files": [
@@ -17,8 +21,10 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && tsup src/index.ts --format esm --target node18 && tsc --emitDeclarationOnly",
+		"build": "pnpm run clean && tsup src/index.ts src/mocks/index.ts --format esm --target node18 && tsc --emitDeclarationOnly",
+		"build:no-splitting": "pnpm run clean && tsup src/index.ts --format esm --target node18 --splitting=false && tsc --emitDeclarationOnly",
 		"dev": "tsup src/index.ts --format esm --watch",
+		"dev:no-splitting": "tsup src/index.ts --format esm --target node18 --splitting=false --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",

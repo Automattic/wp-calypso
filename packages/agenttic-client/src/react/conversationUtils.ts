@@ -40,6 +40,10 @@ export function extractNewContentFromMessage( message: Message ): Message {
 	return {
 		...message,
 		parts: newParts,
+		// Preserve metadata if it exists, otherwise add timestamp
+		metadata: message.metadata || {
+			timestamp: Date.now(),
+		},
 	};
 }
 
@@ -117,6 +121,9 @@ export function createTextMessageWithHistory(
 		],
 		kind: 'message',
 		messageId: generateMessageId(),
+		metadata: {
+			timestamp: Date.now(),
+		},
 	};
 }
 

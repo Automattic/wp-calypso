@@ -35,6 +35,9 @@ describe( '@automattic/agenttic-client', () => {
 				role: 'user',
 				kind: 'message',
 				messageId: expect.any( String ),
+				metadata: {
+					timestamp: expect.any( Number ),
+				},
 				parts: [
 					{
 						type: 'text',

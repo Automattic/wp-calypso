@@ -101,8 +101,3 @@ export type {
 // Message actions
 export { createFeedbackActions, useMessageActions } from './message-actions';
 export type { FeedbackActionsManager } from './message-actions';
-
-// Mock implementations for development and testing
-export { getClientContext } from './mocks/mockContext';
-export { getClientTools } from './mocks/mockTools';
-export { MockSalesGraph } from './mocks/MockSalesGraph';

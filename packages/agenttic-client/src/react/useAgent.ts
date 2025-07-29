@@ -209,6 +209,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						kind: 'message',
 						parts: [ ...toolParts, ...textParts ],
 						messageId: generateMessageId(),
+						metadata: {
+							timestamp: Date.now(),
+						},
 					};
 				}
 

@@ -76,10 +76,13 @@ function extractStorableContent( message: Message ): StoredMessage {
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
 	const storageRole = hasToolInteractions ? 'agent' : message.role;
 
+	// Extract timestamp from message metadata or use current time as fallback
+	const timestamp = ( message.metadata?.timestamp as number ) ?? Date.now();
+
 	return {
 		role: storageRole,
 		content: textParts || '(No text content)',
-		timestamp: Date.now(),
+		timestamp,
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
 	};
@@ -133,6 +136,9 @@ function restoreMessage( stored: StoredMessage ): Message {
 		kind: 'message',
 		parts,
 		messageId: generateMessageId(),
+		metadata: {
+			timestamp: stored.timestamp,
+		},
 	};
 }
 

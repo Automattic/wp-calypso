@@ -209,6 +209,9 @@ function createAgentManager(): AgentManager {
 						kind: 'message',
 						parts: [ ...toolParts, ...textParts ],
 						messageId: generateMessageId(),
+						metadata: {
+							timestamp: Date.now(),
+						},
 					};
 				}
 

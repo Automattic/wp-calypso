@@ -179,6 +179,9 @@ export function createTextMessage( text: string ): Message {
 		parts: [ createTextPart( text ) ],
 		kind: 'message',
 		messageId: generateMessageId(),
+		metadata: {
+			timestamp: Date.now(),
+		},
 	};
 }
 
@@ -192,6 +195,9 @@ export function createAgentTextMessage( text: string ): Message {
 		parts: [ createTextPart( text ) ],
 		kind: 'message',
 		messageId: generateMessageId(),
+		metadata: {
+			timestamp: Date.now(),
+		},
 	};
 }
 
@@ -238,5 +244,8 @@ export function createToolResultMessage(
 		kind: 'message',
 		parts: [ ...historyDataParts, ...toolResults ],
 		messageId: generateMessageId(),
+		metadata: {
+			timestamp: Date.now(),
+		},
 	};
 }

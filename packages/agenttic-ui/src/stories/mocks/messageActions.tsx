@@ -12,7 +12,7 @@ export const mockAgentMessage: Message = {
 			text: "I've analyzed your sales data for last month. Here are the key insights:\n\n• Total revenue: $45,230 (↑ 12% from previous month)\n• Orders: 892 (↑ 8%)\n• Average order value: $50.71",
 		},
 	],
-	created_at: Date.now() - 60000,
+	timestamp: Date.now() - 60000,
 	archived: false,
 	showIcon: true,
 };
@@ -26,7 +26,7 @@ export const mockUserMessage: Message = {
 			text: 'Can you show me my sales performance for last month?',
 		},
 	],
-	created_at: Date.now() - 120000,
+	timestamp: Date.now() - 120000,
 	archived: false,
 	showIcon: false,
 };
@@ -61,7 +61,7 @@ The total revenue for last month was **$45,230**, representing a 12% increase co
 Would you like me to generate a detailed report or focus on any specific aspect?`,
 		},
 	],
-	created_at: Date.now() - 30000,
+	timestamp: Date.now() - 30000,
 	archived: false,
 	showIcon: true,
 };
@@ -280,7 +280,7 @@ export const mockMessageThread: Message[] = [
 				text: 'Can you provide more details about the top products?',
 			},
 		],
-		created_at: Date.now() - 20000,
+		timestamp: Date.now() - 20000,
 	},
 	createMessageWithActions( mockLongAgentMessage, [
 		copyAction,

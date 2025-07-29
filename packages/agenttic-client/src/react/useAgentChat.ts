@@ -17,6 +17,11 @@ import { useMessageActions } from '../message-actions/useMessageActions';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import type { createFeedbackActions } from '../message-actions/factories';
 
+// Utility function to sort UI messages by timestamp
+const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
+	return [ ...messages ].sort( ( a, b ) => a.timestamp - b.timestamp );
+};
+
 // Re-export types that will be used by consumers
 export interface Suggestion {
 	id: string;
@@ -41,7 +46,7 @@ export interface UIMessage {
 		component?: React.ComponentType;
 		componentProps?: any;
 	} >;
-	created_at: number;
+	timestamp: number;
 	archived: boolean;
 	showIcon: boolean;
 	icon?: string;
@@ -157,11 +162,15 @@ const transformClientMessageToUI = (
 		};
 	} );
 
+	// Extract timestamp from message metadata or use current time as fallback
+	const timestamp =
+		( clientMessage.metadata?.timestamp as number ) ?? Date.now();
+
 	const uiMessage: UIMessage = {
 		id: clientMessage.messageId,
 		role: clientMessage.role === 'agent' ? 'agent' : 'user',
 		content,
-		created_at: Date.now(),
+		timestamp,
 		archived: false,
 		showIcon: clientMessage.role === 'agent',
 		icon: clientMessage.role === 'agent' ? 'assistant' : undefined,
@@ -379,12 +388,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = `${ agentConfig.agentId }-${ agentConfig.sessionId }`;
 
+			// Capture timestamp once for consistency
+			const messageTimestamp = Date.now();
+
 			// Create user message immediately for UI
 			const userMessage: UIMessage = {
-				id: `user-${ Date.now() }`,
+				id: `user-${ messageTimestamp }`,
 				role: 'user',
 				content: [ { type: 'text', text: message } ],
-				created_at: Date.now(),
+				timestamp: messageTimestamp,
 				archived: false,
 				showIcon: false,
 			};
@@ -431,11 +443,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							msg.content[ 0 ]?.type === 'component'
 					);
 
-					// Merge client-based messages with UI-only component messages
-					const mergedUIMessages = [
+					// Merge client-based messages with UI-only component messages and sort by timestamp
+					const mergedUIMessages = sortUIMessagesByTime( [
 						...transformedClientMessages,
 						...uiOnlyMessages,
-					];
+					] );
 
 					return {
 						...prev,
@@ -464,7 +476,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	const addMessage = useCallback( ( message: UIMessage ) => {
 		setState( ( prev ) => ( {
 			...prev,
-			uiMessages: [ ...prev.uiMessages, message ],
+			uiMessages: sortUIMessagesByTime( [ ...prev.uiMessages, message ] ),
 		} ) );
 	}, [] );
 
@@ -513,10 +525,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				);
 
 				// Merge re-transformed messages with UI-only component messages
-				const mergedUIMessages = [
+				const mergedUIMessages = sortUIMessagesByTime( [
 					...updatedUIMessages,
 					...uiOnlyMessages,
-				];
+				] );
 
 				return {
 					...prev,
@@ -558,10 +570,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				);
 
 				// Merge re-transformed messages with UI-only component messages
-				const mergedUIMessages = [
+				const mergedUIMessages = sortUIMessagesByTime( [
 					...updatedUIMessages,
 					...uiOnlyMessages,
-				];
+				] );
 
 				return {
 					...prev,
@@ -600,7 +612,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			return {
 				...prev,
-				uiMessages: [ ...updatedUIMessages, ...uiOnlyMessages ],
+				uiMessages: sortUIMessagesByTime( [
+					...updatedUIMessages,
+					...uiOnlyMessages,
+				] ),
 			};
 		} );
 	}, [ registrations ] );

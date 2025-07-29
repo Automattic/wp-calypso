@@ -14,8 +14,10 @@ import {
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 } from '@automattic/agenttic-ui';
-import { getClientContext } from '@automattic/agenttic-client/mocks/mockContext';
-import { getClientTools } from '@automattic/agenttic-client/mocks/mockTools';
+import {
+	getClientContext,
+	getClientTools,
+} from '@automattic/agenttic-client/mocks';
 
 // Import chart styles from client package source
 import '../../packages/agenttic-client/src/markdown-extensions/charts/charts.css';

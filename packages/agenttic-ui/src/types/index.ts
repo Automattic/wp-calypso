@@ -18,7 +18,7 @@ export interface Message {
 		component?: React.ComponentType;
 		componentProps?: any;
 	} >;
-	created_at: number;
+	timestamp: number;
 	archived: boolean;
 	showIcon: boolean;
 	icon?: string;

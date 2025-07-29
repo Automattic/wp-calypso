@@ -98,7 +98,7 @@ export const createUserMessage = (
 				image_url: url,
 			} ) ),
 		],
-		created_at: Date.now(),
+		timestamp: Date.now(),
 		archived: false,
 		showIcon: true,
 	};
@@ -117,7 +117,7 @@ export const createAgentMessage = (
 		id: crypto.randomUUID(),
 		role: 'agent',
 		content: [ { type: 'text', text } ],
-		created_at: Date.now(),
+		timestamp: Date.now(),
 		archived: false,
 		showIcon: true,
 		...additionalProps,
@@ -129,7 +129,7 @@ export const createAgentMessage = (
  * @param messages
  */
 export const sortMessagesByTime = ( messages: Message[] ): Message[] => {
-	return [ ...messages ].sort( ( a, b ) => a.created_at - b.created_at );
+	return [ ...messages ].sort( ( a, b ) => a.timestamp - b.timestamp );
 };
 
 /**

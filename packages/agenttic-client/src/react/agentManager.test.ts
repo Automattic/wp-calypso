@@ -114,6 +114,11 @@ describe( 'agentManager', () => {
 			( text: string ) => ( {
 				role: 'user',
 				parts: [ { type: 'text', text } ],
+				kind: 'message',
+				messageId: 'test-message-id',
+				metadata: {
+					timestamp: expect.any( Number ),
+				},
 			} )
 		);
 		vi.mocked( loadConversation ).mockResolvedValue( [] );

@@ -91,5 +91,8 @@ export async function enhanceMessage(
 		contextProvider
 	);
 
-	return enhancedMessage;
+	// Remove metadata before sending to agent (metadata is currently only client-side only to manage message timestammps)
+	const { metadata, ...messageForAgent } = enhancedMessage;
+
+	return messageForAgent;
 }
