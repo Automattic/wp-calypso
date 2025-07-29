@@ -455,6 +455,22 @@ export default function SyncModal( {
 							siteId={ querySiteId }
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
+						<HStack alignment="left" spacing={ 1 }>
+							<Text color="var(--studio-gray-40)">
+								{ displayBackupDate
+									? createInterpolateElement(
+											__( 'Listing files from the latest backup: <date />.' ),
+											{
+												date: <span>{ displayBackupDate }</span>,
+											}
+									  )
+									: __( 'There are no backups.' ) }{ ' ' }
+								<ExternalLink
+									href={ `/backup/${ sourceSiteSlug }` }
+									children={ __( 'Create fresh backup now' ) }
+								/>
+							</Text>
+						</HStack>
 					</div>
 					<HStack
 						alignment="left"
@@ -477,19 +493,6 @@ export default function SyncModal( {
 						<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
 					</HStack>
 					<VStack spacing={ 7 }>
-						<HStack alignment="left" spacing={ 1 }>
-							<Text color="var(--studio-gray-40)">
-								{ displayBackupDate
-									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
-											date: <span>{ displayBackupDate }</span>,
-									  } )
-									: __( 'There are no backups.' ) }{ ' ' }
-								<ExternalLink
-									href={ `/backup/${ sourceSiteSlug }` }
-									children={ __( 'Backup now' ) }
-								/>
-							</Text>
-						</HStack>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
