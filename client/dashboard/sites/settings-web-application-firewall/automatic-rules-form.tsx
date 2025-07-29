@@ -82,7 +82,7 @@ export default function AutomaticRulesForm( { site }: { site: Site } ) {
 		);
 	};
 
-	const isDirty = formData.jetpack_waf_ip_block_list_enabled !== currentEnabled;
+	const isDirty = formData.jetpack_waf_automatic_rules !== currentEnabled;
 	const { isPending } = mutation;
 
 	if ( ! isFirewallModuleSupported || ! canUseAutomaticRules ) {
