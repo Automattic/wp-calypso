@@ -14,6 +14,8 @@ export interface SiteSettings {
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
+	jetpack_waf_ip_allow_list_enabled?: boolean;
+	jetpack_waf_ip_allow_list?: string;
 }
 
 export async function fetchSiteSettings( siteId: number ): Promise< SiteSettings > {
