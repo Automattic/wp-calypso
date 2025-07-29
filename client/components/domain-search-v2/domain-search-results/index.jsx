@@ -34,7 +34,6 @@ class DomainSearchResults extends Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
-		domainCart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
 		isCartPendingUpdateDomain: PropTypes.object,
 		premiumDomains: PropTypes.object,
