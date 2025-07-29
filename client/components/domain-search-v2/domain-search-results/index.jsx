@@ -280,7 +280,7 @@ class DomainSearchResults extends Component {
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			const subdomainSuggestion = suggestions.find(
-				( suggestion ) => suggestion.isSubDomainSuggestion || suggestion.is_free
+				( suggestion ) => suggestion.isSubDomainSuggestion
 			);
 			const regularSuggestions = suggestions.filter(
 				( suggestion ) =>
