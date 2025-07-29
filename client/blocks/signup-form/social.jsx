@@ -98,6 +98,8 @@ class SocialSignupForm extends Component {
 			setCurrentStep,
 		} = this.props;
 
+		const isUnifiedCreateAccount = isWoo;
+
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-signup', {
@@ -131,9 +133,8 @@ class SocialSignupForm extends Component {
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
-					{ ! isWoo && ! disableTosText && <SocialToS /> }
+					{ ! isUnifiedCreateAccount && ! disableTosText && <SocialToS /> }
 				</div>
-				{ isWoo && ! disableTosText && <SocialToS /> }
 			</Card>
 		);
 	}
