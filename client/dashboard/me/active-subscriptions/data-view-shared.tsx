@@ -109,7 +109,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 					' ' +
 					( item.site_slug || item.domain ) +
 					' ' +
-					site?.URL
+					( site?.URL ?? '' )
 				);
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
@@ -140,7 +140,7 @@ export function getFields( sites: Site[] ): Fields< ActiveSubscription > {
 			getValue: ( { item }: { item: ActiveSubscription } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
-				return item.blogname + ' ' + item.domain + ' ' + site?.URL;
+				return item.blogname + ' ' + ( item.site_slug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
