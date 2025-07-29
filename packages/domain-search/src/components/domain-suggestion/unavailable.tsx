@@ -28,8 +28,7 @@ const UnavailableComponent = ( {
 	reason,
 	onTransferClick,
 	transferLink,
-	isWithinList,
-}: UnavailableProps & { isWithinList: boolean } ) => {
+}: UnavailableProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
@@ -133,8 +132,11 @@ const UnavailableComponent = ( {
 	};
 
 	return (
-		<Card size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody style={ { borderRadius: 0 } } isShady={ isWithinList }>
+		<Card
+			size={ activeQuery === 'large' ? 'medium' : 'small' }
+			className="domain-suggestions-list-item-unavailable"
+		>
+			<CardBody style={ { borderRadius: 0 } } isShady>
 				{ getContent() }
 			</CardBody>
 		</Card>
@@ -147,10 +149,10 @@ export const Unavailable = ( props: UnavailableProps ) => {
 	if ( ! listContext ) {
 		return (
 			<DomainSuggestionsList>
-				<UnavailableComponent { ...props } isWithinList={ false } />
+				<UnavailableComponent { ...props } />
 			</DomainSuggestionsList>
 		);
 	}
 
-	return <UnavailableComponent { ...props } isWithinList />;
+	return <UnavailableComponent { ...props } />;
 };
