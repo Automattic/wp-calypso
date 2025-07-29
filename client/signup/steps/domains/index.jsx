@@ -518,6 +518,7 @@ class RenderDomainsStepComponent extends Component {
 				productSlug: suggestion.product_slug,
 				extra: {
 					is_gravatar_domain: true,
+					flow_name: this.props.flowName,
 				},
 			} );
 
