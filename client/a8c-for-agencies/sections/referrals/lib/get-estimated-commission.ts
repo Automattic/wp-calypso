@@ -19,7 +19,7 @@ export const getEstimatedCommission = (
 	products: APIProductFamilyProduct[],
 	activityWindow: { start: Date; finish: Date }
 ) => {
-	const { totalCommissionsFromSubscriptions, otherCommissionsInCents } = referrals.reduce(
+	const { bdCommissions, legacyCommissionsInCents } = referrals.reduce(
 		( acc, referral ) => {
 			if ( ! referral?.purchases?.length ) {
 				return acc;
@@ -35,29 +35,21 @@ export const getEstimatedCommission = (
 					continue;
 				}
 
-				// Get commission percentage for the product (common for both subscription and license)
-				const commissionPercentage = getProductCommissionPercentage( product.family_slug );
-
-				// Day the license was issued
-				const issuedDate = new Date( purchase.license.issued_at );
-				// Set hours to 0 to compare from start of the day
-				issuedDate.setHours( 0, 0, 0, 0 );
-
-				if ( purchase.subscription ) {
-					// FIXME: We will need to find a better way to handle this
-					if (
-						issuedDate.getTime() < activityWindow.start.getTime() ||
-						issuedDate.getTime() > activityWindow.finish.getTime()
-					) {
-						continue;
-					}
-
-					const totalPrice = Number( purchase.subscription.commissionable_amount ) ?? 0;
-
-					// Add commission to subscription total (in dollars)
-					acc.totalCommissionsFromSubscriptions += totalPrice * commissionPercentage;
+				if ( purchase.commissions ) {
+					// As of Aug 2025, new client purchases will use BD for purchases
+					// In this case the estimated commission has already been calculated on the backend
+					// and we just need to add it to the total commission
+					acc.bdCommissions += purchase.commissions.estimated_commission_current_quarter ?? 0;
 				} else {
+					// Legacy approach, but we need to keep it to continue working with old data
+					// Calculate commission using the license data
 					// Day the license was revoked if present
+					// Day the license was issued
+
+					const issuedDate = new Date( purchase.license.issued_at );
+					// Set hours to 0 to compare from start of the day
+					issuedDate.setHours( 0, 0, 0, 0 );
+
 					const revokedAt = purchase.license.revoked_at
 						? new Date( purchase.license.revoked_at )
 						: null;
@@ -80,20 +72,28 @@ export const getEstimatedCommission = (
 
 					const dailyPrice = getDailyPrice( product, purchase.quantity );
 
+					// Get commission percentage for the product (common for both subscription and license)
+					const commissionPercentage = getProductCommissionPercentage( product.family_slug );
+
 					// Add commission to the total commission (in cents)
-					acc.otherCommissionsInCents += dailyPrice * totalDays * commissionPercentage;
+					acc.legacyCommissionsInCents += dailyPrice * totalDays * commissionPercentage;
 				}
 			}
 			return acc;
 		},
-		{ totalCommissionsFromSubscriptions: 0, otherCommissionsInCents: 0 }
+		{ bdCommissions: 0, legacyCommissionsInCents: 0 }
 	);
+
+	// eslint-disable-next-line no-console
+	console.log( 'Commission calculation summary:', {
+		bdCommissions,
+		legacyCommissionsInCents,
+		totalCommission: bdCommissions + legacyCommissionsInCents / 100,
+	} );
 
 	// Convert commission from cents to dollars,
 	// add subscriptions commission and round to 2 decimal places
-	const totalCommission = Number(
-		( totalCommissionsFromSubscriptions + otherCommissionsInCents / 100 ).toFixed( 2 )
-	);
+	const totalCommission = Number( ( bdCommissions + legacyCommissionsInCents / 100 ).toFixed( 2 ) );
 
 	return totalCommission;
 };
