@@ -1,14 +1,18 @@
+import { isSameOrigin } from '@automattic/calypso-url';
 import { isThisASupportArticleLink } from '@automattic/urls';
+import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { HELP_CENTER_STORE } from '../stores';
 
 export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
 	const link = searchParams.get( 'link' ) || '';
 	const { site } = useHelpCenterContext();
+	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
 	const filters = useMemo(
 		() => [
@@ -110,6 +114,14 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 						return;
 					}
 
+					// Support sites add `target="_blank"` to Calypso links.
+					// We should remove that in the context of Calypso.
+					if ( isSameOrigin( href ) ) {
+						element.removeAttribute( 'target' );
+						element.addEventListener( 'click', () => setIsMinimized( true ) );
+						return;
+					}
+
 					// Create external link icon SVG
 					const icon = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
 					icon.setAttribute( 'class', 'help-center-external-link-icon' );
@@ -136,7 +148,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				},
 			},
 		],
-		[ navigate, link, node, site?.domain ]
+		[ navigate, link, node, site?.domain, setIsMinimized ]
 	);
 
 	useEffect( () => {
