@@ -128,7 +128,27 @@ const LostPasswordForm = ( {
 			);
 		} catch ( response ) {
 			setBusy( false );
+			const defaultError = translate(
+				'There was an error sending the password reset email. Please try again.'
+			);
+
+			/**
+			 * Check this is a network error first, so that we can run
+			 * Response.text() on it.
+			 */
+			if ( ! ( response instanceof Response ) ) {
+				return setError( defaultError );
+			}
+
 			const result = await response.text();
+
+			/**
+			 * Check if DOMParser is available, in case it's missing in the
+			 * server-side rendering context.
+			 */
+			if ( typeof DOMParser === 'undefined' ) {
+				return setError( defaultError );
+			}
 
 			const parser = new DOMParser();
 			const resultHTML = parser.parseFromString( result, 'text/html' );
@@ -138,9 +158,7 @@ const LostPasswordForm = ( {
 				return setError( wpDieMessage.textContent.trim() );
 			}
 
-			setError(
-				translate( 'There was an error sending the password reset email. Please try again.' )
-			);
+			return setError( defaultError );
 		}
 	};
 
