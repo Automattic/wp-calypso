@@ -29,7 +29,7 @@ export const SuggestionSkeleton = ( {
 				<HStack spacing={ 6 }>
 					{ domainName }
 
-					<HStack alignment="right" spacing={ 4 }>
+					<HStack alignment="right" spacing={ 6 }>
 						{ price }
 						{ cta }
 					</HStack>
