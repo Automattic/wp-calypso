@@ -5,33 +5,16 @@ import {
 	createLazyRoute,
 	createRootRoute,
 	createRoute,
-	redirect,
 } from '@tanstack/react-router';
 import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
-import { siteAgencyBlogQuery } from 'calypso/dashboard/app/queries/site-agency';
-import { siteEdgeCacheStatusQuery } from 'calypso/dashboard/app/queries/site-cache';
-import { siteDefensiveModeSettingsQuery } from 'calypso/dashboard/app/queries/site-defensive-mode';
-import { siteJetpackModulesQuery } from 'calypso/dashboard/app/queries/site-jetpack-module';
-import { sitePHPVersionQuery } from 'calypso/dashboard/app/queries/site-php-version';
-import { sitePrimaryDataCenterQuery } from 'calypso/dashboard/app/queries/site-primary-data-center';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
-import { siteSftpUsersQuery } from 'calypso/dashboard/app/queries/site-sftp';
-import { siteSshAccessStatusQuery } from 'calypso/dashboard/app/queries/site-ssh';
-import { siteStaticFile404SettingQuery } from 'calypso/dashboard/app/queries/site-static-file-404';
-import { siteWordPressVersionQuery } from 'calypso/dashboard/app/queries/site-wordpress-version';
 import { queryClient } from 'calypso/dashboard/app/query-client';
-import { HostingFeatures } from 'calypso/dashboard/data/constants';
-import {
-	canManageSite,
-	canViewWordPressSettings,
-	canViewHundredYearPlanSettings,
-} from 'calypso/dashboard/sites/features';
-import { hasHostingFeature } from 'calypso/dashboard/utils/site-features';
+import * as appRouter from 'calypso/dashboard/app/router';
+import { canManageSite } from 'calypso/dashboard/sites/features';
 import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
 const rootRoute = createRootRoute( { component: Root } );
-
 const dashboardSitesCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
@@ -43,25 +26,9 @@ const dashboardSitesCompatibilityRoute = createRoute( {
 	},
 } );
 
-const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites/$siteSlug/settings',
-	loader: ( { params: { siteSlug } } ) => {
-		throw redirect( { to: `/${ siteSlug }` } );
-	},
-} );
-
-const dashboardSiteSettingsCompatibilityRouteWithFeature = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites/$siteSlug/settings/$feature',
-	loader: ( { params: { siteSlug, feature } } ) => {
-		throw redirect( { to: `/${ siteSlug }/${ feature }` } );
-	},
-} );
-
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: '$siteSlug',
+	path: 'sites/$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! canManageSite( site ) ) {
@@ -73,8 +40,8 @@ const siteRoute = createRoute( {
 } );
 
 const settingsRoute = createRoute( {
+	...appRouter.siteSettingsRoute.options,
 	getParentRoute: () => siteRoute,
-	path: '/',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'settings' )( {
@@ -84,12 +51,8 @@ const settingsRoute = createRoute( {
 );
 
 const siteVisibilityRoute = createRoute( {
+	...appRouter.siteSettingsSiteVisibilityRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'site-visibility',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
@@ -99,12 +62,8 @@ const siteVisibilityRoute = createRoute( {
 );
 
 const subscriptionGiftingRoute = createRoute( {
+	...appRouter.siteSettingsSubscriptionGiftingRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'subscription-gifting',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'subscription-gifting' )( {
@@ -114,14 +73,8 @@ const subscriptionGiftingRoute = createRoute( {
 );
 
 const wordpressRoute = createRoute( {
+	...appRouter.siteSettingsWordPressRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'wordpress',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewWordPressSettings( site ) ) {
-			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-wordpress' ).then( ( d ) =>
 		createLazyRoute( 'wordpress' )( {
@@ -131,14 +84,8 @@ const wordpressRoute = createRoute( {
 );
 
 const phpRoute = createRoute( {
+	...appRouter.siteSettingsPHPRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'php',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.PHP ) ) {
-			await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-php' ).then( ( d ) =>
 		createLazyRoute( 'php' )( {
@@ -149,7 +96,7 @@ const phpRoute = createRoute( {
 
 const databaseRoute = createRoute( {
 	getParentRoute: () => siteRoute,
-	path: 'database',
+	path: 'settings/database', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
@@ -159,14 +106,8 @@ const databaseRoute = createRoute( {
 );
 
 const agencyRoute = createRoute( {
+	...appRouter.siteSettingsAgencyRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'agency',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( site.is_wpcom_atomic ) {
-			await queryClient.ensureQueryData( siteAgencyBlogQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-agency' ).then( ( d ) =>
 		createLazyRoute( 'agency' )( {
@@ -176,14 +117,8 @@ const agencyRoute = createRoute( {
 );
 
 const hundredYearPlanRoute = createRoute( {
+	...appRouter.siteSettingsHundredYearPlanRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'hundred-year-plan',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewHundredYearPlanSettings( site ) ) {
-			await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-hundred-year-plan' ).then( ( d ) =>
 		createLazyRoute( 'hundred-year-plan' )( {
@@ -193,14 +128,8 @@ const hundredYearPlanRoute = createRoute( {
 );
 
 const primaryDataCenterRoute = createRoute( {
+	...appRouter.siteSettingsPrimaryDataCenterRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'primary-data-center',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
-			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'primary-data-center' )( {
@@ -210,14 +139,8 @@ const primaryDataCenterRoute = createRoute( {
 );
 
 const staticFile404Route = createRoute( {
+	...appRouter.siteSettingsStaticFile404Route.options,
 	getParentRoute: () => siteRoute,
-	path: 'static-file-404',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.STATIC_FILE_404 ) ) {
-			await queryClient.ensureQueryData( siteStaticFile404SettingQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'static-file-404' )( {
@@ -227,14 +150,8 @@ const staticFile404Route = createRoute( {
 );
 
 const cachingRoute = createRoute( {
+	...appRouter.siteSettingsCachingRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'caching',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.CACHING ) ) {
-			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-caching' ).then( ( d ) =>
 		createLazyRoute( 'caching' )( {
@@ -244,14 +161,8 @@ const cachingRoute = createRoute( {
 );
 
 const defensiveModeRoute = createRoute( {
+	...appRouter.siteSettingsDefensiveModeRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'defensive-mode',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.DEFENSIVE_MODE ) ) {
-			await queryClient.ensureQueryData( siteDefensiveModeSettingsQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'defensive-mode' )( {
@@ -261,17 +172,8 @@ const defensiveModeRoute = createRoute( {
 );
 
 const sftpSshRoute = createRoute( {
+	...appRouter.siteSettingsSftpSshRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'sftp-ssh',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		return Promise.all( [
-			hasHostingFeature( site, HostingFeatures.SFTP ) &&
-				queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
-			hasHostingFeature( site, HostingFeatures.SSH ) &&
-				queryClient.ensureQueryData( siteSshAccessStatusQuery( site.ID ) ),
-		] );
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'sftp-ssh' )( {
@@ -282,7 +184,7 @@ const sftpSshRoute = createRoute( {
 
 const transferSiteRoute = createRoute( {
 	getParentRoute: () => siteRoute,
-	path: 'transfer-site',
+	path: 'settings/transfer-site', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
@@ -292,14 +194,8 @@ const transferSiteRoute = createRoute( {
 );
 
 const webApplicationFirewallRoute = createRoute( {
+	...appRouter.siteSettingsWebApplicationFirewallRoute.options,
 	getParentRoute: () => siteRoute,
-	path: 'web-application-firewall',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
-			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
-		}
-	},
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-web-application-firewall' ).then( ( d ) =>
 		createLazyRoute( 'web-application-firewall' )( {
@@ -328,17 +224,10 @@ const createRouteTree = () =>
 			webApplicationFirewallRoute,
 		] ),
 		dashboardSitesCompatibilityRoute,
-		dashboardSiteSettingsCompatibilityRouteRoot,
-		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
-const compatibilityRoutes = [
-	dashboardSiteSettingsCompatibilityRouteRoot,
-	dashboardSiteSettingsCompatibilityRouteWithFeature,
-];
-
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
-	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
+	createBrowserHistoryAndMemoryRouterSync( {} );
 
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();

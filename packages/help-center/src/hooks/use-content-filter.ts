@@ -25,7 +25,6 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				pattern: 'a[href*="wordpress.com"], a[href^="/"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
-
 					if ( ! href.startsWith( '/' ) && ! isThisASupportArticleLink( href ) ) {
 						return;
 					}
@@ -120,8 +119,9 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					// We should remove that in the context of Calypso.
 					if ( isSameOrigin( href ) ) {
 						element.removeAttribute( 'target' );
-						// On mobile, clicking a local in the Help Center means the user wants to,
-						// interact with that page, the Help Center should tuck itself away because there is no space for both.
+						// On mobile, clicking a local link in the Help Center means the user wants to
+						// interact with that linked page, the Help Center should tuck itself to make the page accessible,
+            // because the screen doesn't fit both.
 						if ( ! isDesktop ) {
 							element.addEventListener( 'click', () => setIsMinimized( true ) );
 						}

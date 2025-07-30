@@ -332,7 +332,7 @@ class DomainRegistrationSuggestion extends Component {
 		} else if ( isBestAlternative && isFeatured ) {
 			badges.push(
 				<DomainSuggestionBadge key="best-alternative">
-					{ translate( 'Best Alternative' ) }
+					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
 		}

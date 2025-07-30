@@ -77,7 +77,7 @@ const DomainSuggestionComponent = ( {
 	const domainNameElement =
 		activeQuery === 'large' ? (
 			<HStack alignment="left" spacing={ 3 }>
-				<Icon icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
+				<Icon icon={ globe } size={ 24 } className="domain-suggestions-list-item__icon" />
 				{ domainName }
 			</HStack>
 		) : (

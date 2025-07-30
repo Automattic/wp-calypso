@@ -10,7 +10,7 @@ import type { Store } from 'redux';
 
 // Serves a similar purpose to AppConfig form v2 dashboard.
 const config = {
-	basePath: '/sites/settings/v2',
+	basePath: '/',
 };
 
 export const router = getRouter( config );

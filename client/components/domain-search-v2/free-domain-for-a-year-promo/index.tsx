@@ -20,12 +20,12 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	if ( textOnly ) {
 		return (
 			<Text>
-				{ __( 'Get your free domain when you checkout and purchase any paid annual plan.' ) }
+				{ __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
 			</Text>
 		);
 	}
 
-	const title = __( 'Claim your first domain — Free!' );
+	const title = __( 'Claim your first domain—Free!' );
 
 	const subtitle = createInterpolateElement(
 		__(
@@ -49,7 +49,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 						/>
 					) }
 					<VStack spacing={ 2 }>
-						<Text weight="bold">{ title }</Text>
+						<Text weight={ 600 }>{ title }</Text>
 						<Text>{ subtitle }</Text>
 					</VStack>
 				</HStack>
