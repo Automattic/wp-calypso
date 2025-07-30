@@ -27,9 +27,9 @@ export const SuggestionSkeleton = ( {
 		if ( activeQuery === 'large' ) {
 			return (
 				<HStack spacing={ 6 }>
-					{ domainName }
+					<div style={ { flex: 1 } }>{ domainName }</div>
 
-					<HStack alignment="right" spacing={ 6 }>
+					<HStack alignment="right" spacing={ 6 } style={ { width: 'auto' } }>
 						{ price }
 						{ cta }
 					</HStack>
