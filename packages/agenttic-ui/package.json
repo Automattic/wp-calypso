@@ -19,7 +19,7 @@
 	],
 	"scripts": {
 		"build": "pnpm run clean && vite build && tsc --emitDeclarationOnly",
-		"dev": "vite build --watch",
+		"dev": "vite",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
