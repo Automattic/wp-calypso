@@ -4,7 +4,7 @@ import { siteQueryFilter } from './site';
 import type { SiteSettings } from '../../data/site-settings';
 
 export const siteJetpackSettingsQuery = ( siteId: number ) => ( {
-	queryKey: [ 'site', siteId, 'jetpackSettings' ],
+	queryKey: [ 'site', siteId, 'jetpack-settings' ],
 	queryFn: () => fetchJetpackSettings( siteId ),
 } );
 
