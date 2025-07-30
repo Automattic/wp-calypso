@@ -2,6 +2,8 @@
 @import '@wordpress/base-styles/mixins';
 
 .wpcom-domain-search-v2 {
+	--domain-search-v2-background-color: var( --color-main-background );
+
 	&.initial-state {
 		max-width: 800px;
 		margin-inline: auto;

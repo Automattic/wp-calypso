@@ -1,6 +1,6 @@
 .domain-suggestions-list-item-unavailable {
 	overflow: hidden;
-	--wp-components-color-gray-100: #fcfcfc;
+	--wp-components-color-gray-100: var( --domain-search-v2-background-color );
 }
 
 .domain-suggestions-list-item-unavailable__transfer-button {
