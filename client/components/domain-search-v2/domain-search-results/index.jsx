@@ -62,6 +62,7 @@ class DomainSearchResults extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		flowName: PropTypes.string,
 	};
 
 	renderDomainAvailability() {
@@ -360,6 +361,8 @@ class DomainSearchResults extends Component {
 				<DomainSkipSuggestion
 					selectedSite={ selectedSite }
 					subdomainSuggestion={ subdomainSuggestion }
+					flowName={ this.props.flowName }
+					query={ this.props.lastDomainSearched }
 					onSkip={ this.props.onSkip }
 				/>
 			);

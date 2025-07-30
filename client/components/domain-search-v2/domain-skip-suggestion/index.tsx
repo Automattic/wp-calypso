@@ -9,12 +9,16 @@ import {
 import { useEffect, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Site } from 'calypso/dashboard/data/site';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { DomainSkipSuggestionPlaceholder } from './index.placeholder';
 import { DomainSkipSkeleton } from './index.skeleton';
 
 import './style.scss';
 
 type BaseProps = {
+	flowName?: string;
+	query?: string;
 	onSkip: () => void;
 };
 
@@ -30,8 +34,15 @@ type WithSubdomainSuggestion = BaseProps & {
 
 type Props = WithSelectedSite | WithSubdomainSuggestion;
 
-const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Props ) => {
+const DomainSkipSuggestion = ( {
+	selectedSite,
+	subdomainSuggestion,
+	flowName,
+	query,
+	onSkip,
+}: Props ) => {
 	const translate = useTranslate();
+	const currentUser = useSelector( getCurrentUser );
 	const { cart } = useDomainSearch();
 
 	const hasExistingSite = !! selectedSite;
@@ -50,9 +61,13 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 
 	useEffect( () => {
 		if ( ! selectedSite && ! subdomainSuggestion ) {
-			recordTracksEvent( 'calypso_domain_search_skip_no_site_or_suggestion' );
+			recordTracksEvent( 'calypso_domain_search_skip_no_site_or_suggestion', {
+				query,
+				user_id: currentUser?.ID,
+				flow_name: flowName,
+			} );
 		}
-	}, [ selectedSite, subdomainSuggestion ] );
+	}, [ selectedSite, subdomainSuggestion, currentUser?.ID, flowName, query ] );
 
 	const translateArgs = {
 		args: {
