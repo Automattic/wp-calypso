@@ -51,10 +51,6 @@ const DomainSuggestionComponent = ( {
 			<span
 				aria-label={ `${ domain }.${ tld }` }
 				className="domain-suggestions-list-item__domain-name"
-				style={ {
-					// eslint-disable-next-line no-nested-ternary
-					marginRight: notice ? ( activeQuery === 'large' ? '8px' : '4px' ) : undefined,
-				} }
 			>
 				{ domain }
 				<Text
@@ -65,12 +61,20 @@ const DomainSuggestionComponent = ( {
 				>
 					.{ tld }
 				</Text>
+				{ notice && (
+					<>
+						<span
+							aria-hidden="true"
+							style={ {
+								marginRight: activeQuery === 'large' ? '8px' : '4px',
+							} }
+						/>
+						<span className="domain-suggestions-list-item__notice">
+							<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
+						</span>
+					</>
+				) }
 			</span>
-			{ notice && (
-				<span className="domain-suggestions-list-item__notice">
-					<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
-				</span>
-			) }
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
 		</Text>
 	);
