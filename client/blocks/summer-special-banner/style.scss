@@ -1,0 +1,158 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.summer-special-banner {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	margin: 0;
+	z-index: z-index("root", ".summer-special-banner");
+	background: var(--color-neutral-100);
+	color: var(--color-text-inverted);
+	border-radius: 0;
+	box-shadow: none;
+	animation: slideUp 0.4s ease-out;
+
+	// Remove default card padding and add custom
+	padding: 0;
+
+	.card {
+		background: transparent;
+		box-shadow: none;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.summer-special-banner__content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 12px;
+	min-height: 40px;
+	position: relative;
+	gap: 16px;
+
+	@include break-small {
+		padding: 10px 16px;
+		min-height: 44px;
+		gap: 20px;
+	}
+
+	@include break-medium {
+		max-width: 1200px;
+		margin: 0 auto;
+		gap: 24px;
+	}
+}
+
+.summer-special-banner__text {
+	flex: 0 1 auto;
+}
+
+.summer-special-banner__title {
+	font-size: 14px;
+	font-weight: 400;
+	margin: 0;
+	color: var(--color-text-inverted);
+	line-height: 1.4;
+
+	@include break-small {
+		font-size: 15px;
+	}
+
+	@include break-medium {
+		font-size: 16px;
+	}
+}
+
+.summer-special-banner__description {
+	display: none; // Hide description to match single-line design
+}
+
+.summer-special-banner__actions {
+	flex-shrink: 0;
+}
+
+.summer-special-banner__cta {
+	color: var(--color-text-inverted) !important;
+	font-weight: 400;
+	font-size: 14px;
+	text-decoration: underline !important;
+	text-underline-offset: 2px;
+	white-space: nowrap;
+	margin-left: 6px;
+
+	&:hover {
+		color: var(--color-text-inverted) !important;
+		text-decoration: none !important;
+	}
+
+	@include break-small {
+		font-size: 14px;
+	}
+}
+
+.summer-special-banner__close {
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	transform: translateY(-50%);
+	color: var(--color-text-inverted) !important;
+	opacity: 0.7;
+	min-width: 20px !important;
+	height: 20px !important;
+	padding: 0 !important;
+
+	&:hover {
+		color: var(--color-text-inverted) !important;
+		opacity: 1;
+		background: transparent !important;
+	}
+
+	@include break-small {
+		right: 16px;
+		min-width: 24px !important;
+		height: 24px !important;
+	}
+}
+
+// Animation for banner appearance
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+// Responsive adjustments for very small screens
+@media (max-width: 480px) {
+	.summer-special-banner__content {
+		flex-direction: row;
+		text-align: left;
+		padding: 6px 8px;
+		gap: 8px;
+		min-height: 36px;
+	}
+
+	.summer-special-banner__title {
+		font-size: 13px;
+	}
+
+	.summer-special-banner__cta {
+		font-size: 13px;
+		margin-left: 4px;
+	}
+
+	.summer-special-banner__close {
+		right: 8px;
+		min-width: 18px !important;
+		height: 18px !important;
+	}
+}
