@@ -3,7 +3,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		align-items: flex-start;
+		align-items: anchor-center;
 		gap: 11px;
 		flex-wrap: nowrap;
 	}
@@ -13,13 +13,20 @@
 	}
 
 	&__recommended-blog-site-name {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 4px;
 		color: var(--color-neutral-100);
 		font-weight: 600;
 		font-size: $font-body;
+		&:visited {
+			color: var(--color-neutral-100);
+		}
+
+		.components-external-link__contents {
+			text-decoration: none;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 300px;
+		}
 	}
 
 	&__recommended-blog-site-description {

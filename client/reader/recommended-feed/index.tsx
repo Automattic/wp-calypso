@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -69,11 +70,12 @@ export const RecommendedFeed = ( {
 			</a>
 			<AutoDirection>
 				<div className={ `${ classPrefix }__recommended-blog-site-info` }>
-					<a { ...anchorProps }>
-						<h6 className={ `${ classPrefix }__recommended-blog-site-name` }>
-							{ name || feedUrl }
-						</h6>
-					</a>
+					<ExternalLink
+						className={ `${ classPrefix }__recommended-blog-site-name` }
+						href={ linkUrl || '' }
+					>
+						{ name || feedUrl }
+					</ExternalLink>
 					{ ! compact && site?.description && (
 						<p className={ `${ classPrefix }__recommended-blog-site-description` }>
 							{ site.description }
