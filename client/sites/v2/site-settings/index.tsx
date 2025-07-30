@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
-import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
 import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client';
 import { useSelector } from 'calypso/state';
@@ -75,7 +74,8 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		if ( site ) {
-			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
+			// TODO: Figure out how to popular jetpack_modules and subscribers_count too
+			// queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
 		}
 
 		if ( site && siteSettings ) {
