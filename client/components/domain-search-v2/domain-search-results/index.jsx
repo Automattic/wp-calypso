@@ -356,7 +356,7 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton && (
+			domainSkipSuggestion = showSkipButton && suggestionElements?.length > 0 && (
 				<DomainSkipSuggestion
 					selectedSite={ selectedSite }
 					subdomainSuggestion={ subdomainSuggestion }
