@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { formatNumber } from '@automattic/number-formatters';
@@ -31,6 +32,7 @@ import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
 import PaymentsList from 'calypso/my-sites/promote-post-i2/components/payments-list';
+import { PaymentReceipt } from 'calypso/my-sites/promote-post-i2/components/payments-receipt';
 import PostsList, {
 	postsNotReadyErrorMessage,
 } from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -67,6 +69,7 @@ export type TabOption = {
 
 interface Props {
 	tab?: TabType;
+	receiptId?: number;
 }
 
 export type DSPMessage = {
@@ -105,7 +108,7 @@ const setTspBannerCollapsedCookie = ( value: boolean ) => {
 	} );
 };
 
-export default function PromotedPosts( { tab }: Props ) {
+export default function PromotedPosts( { tab, receiptId }: Props ) {
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
@@ -476,17 +479,34 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ selectedTab === 'payments' && (
 				<>
 					<BlazePageViewTracker
-						path={ getAdvertisingDashboardPath( '/payments/:site' ) }
-						title="Advertising > Payments"
+						path={ getAdvertisingDashboardPath(
+							receiptId ? '/payments/receipt/:receiptId/:site' : '/payments/:site'
+						) }
+						title={ receiptId ? 'Advertising > Payment Receipt' : 'Advertising > Payments' }
 					/>
-					<PaymentsList
-						isLoading={ isLoadingPayments }
-						isError={ campaignError as DSPMessage }
-						isFetching={ isFetchingPayments }
-						payments={ payments?.payments }
-						selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
-						setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
-					/>
+
+					{ receiptId ? (
+						<div className="payment-receipt-container">
+							<div className="payment-receipt-container__header">
+								<button
+									className="payment-receipt-container__back-button"
+									onClick={ () => page( getAdvertisingDashboardPath( '/payments' ) ) }
+								>
+									{ translate( '← Back to payments' ) }
+								</button>
+							</div>
+							<PaymentReceipt paymentId={ receiptId } />
+						</div>
+					) : (
+						<PaymentsList
+							isLoading={ isLoadingPayments }
+							isError={ campaignError as DSPMessage }
+							isFetching={ isFetchingPayments }
+							payments={ payments?.payments }
+							selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
+							setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
+						/>
+					) }
 				</>
 			) }
 

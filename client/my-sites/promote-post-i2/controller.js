@@ -17,8 +17,9 @@ export const checkValidTabInNavigation = ( context, next ) => {
 };
 
 export const promotedPosts = ( context, next ) => {
-	const { tab } = context.params;
-	context.primary = <PromotedPostsRedesignI2 tab={ tab } />;
+	const { tab, receiptId = undefined } = context.params;
+	const parsedReceiptId = receiptId ? parseInt( receiptId, 10 ) : undefined;
+	context.primary = <PromotedPostsRedesignI2 tab={ tab } receiptId={ parsedReceiptId } />;
 	next();
 };
 

@@ -1,24 +1,31 @@
+import page from '@automattic/calypso-router';
 import { Badge, ExternalLink } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import {
 	formatCents,
+	getAdvertisingDashboardPath,
 	getPaymentStatus,
 	getPaymentStatusBadgeColor,
 	paymentStatus,
 } from 'calypso/my-sites/promote-post-i2/utils';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface Props {
 	payment: Payment;
 }
+
 export default function PaymentItem( props: Props ) {
 	const { payment } = props;
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const getReceipt = () => {
-		// todo get payment/order details functionality
+		const path = `/payments/receipt/${ payment.id }/${ siteSlug }`;
+		page( getAdvertisingDashboardPath( path ) );
 	};
 
 	return (
