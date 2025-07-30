@@ -9,7 +9,7 @@ import type { Meta } from '@storybook/react';
 
 const SUGGESTIONS = [
 	buildDomain( { uuid: '1', domain: 'tha-lasso', tld: 'com', price: '$10' } ),
-	buildDomain( { uuid: '2', domain: 'the-lasso', tld: 'com', price: '$10', originalPrice: '$20' } ),
+	buildDomain( { uuid: '2', domain: 'the-lasso', tld: 'com', price: '$10', salePrice: '$20' } ),
 ];
 
 export const Default = () => {
@@ -60,7 +60,7 @@ export const Default = () => {
 							notice={ suggestion.domain === 'tha-lasso' ? 'hello' : undefined }
 							price={
 								<DomainSuggestionPrice
-									originalPrice={ suggestion.originalPrice }
+									salePrice={ suggestion.salePrice }
 									price={ suggestion.price }
 								/>
 							}

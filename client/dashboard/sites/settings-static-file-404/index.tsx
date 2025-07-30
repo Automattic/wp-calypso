@@ -17,7 +17,8 @@ import {
 	siteStaticFile404SettingMutation,
 } from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures, canViewStaticFile404Settings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -59,7 +60,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentSetting } = useQuery( {
 		...siteStaticFile404SettingQuery( site.ID ),
-		enabled: canViewStaticFile404Settings( site ),
+		enabled: hasHostingFeature( site, HostingFeatures.STATIC_FILE_404 ),
 	} );
 	const mutation = useMutation( siteStaticFile404SettingMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

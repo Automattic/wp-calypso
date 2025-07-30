@@ -1,4 +1,4 @@
-import { useContainerQuery } from '@automattic/domain-search';
+import { useDomainSuggestionContainer } from '@automattic/domain-search';
 import {
 	Card,
 	CardBody,
@@ -13,22 +13,19 @@ import freeDomainForAYearPromoImage from './graphic.svg';
 import './style.scss';
 
 export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
-	const { ref, activeQuery } = useContainerQuery( {
-		small: 0,
-		large: 480,
-	} );
+	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	const { __ } = useI18n();
 
 	if ( textOnly ) {
 		return (
 			<Text>
-				{ __( 'Get your free domain when you checkout and purchase any paid annual plan.' ) }
+				{ __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
 			</Text>
 		);
 	}
 
-	const title = __( 'Claim your first domain — Free!' );
+	const title = __( 'Claim your first domain—Free!' );
 
 	const subtitle = createInterpolateElement(
 		__(
@@ -40,11 +37,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	);
 
 	return (
-		<Card
-			ref={ ref }
-			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className="free-domain-for-a-year-promo"
-		>
+		<Card ref={ containerRef } size="small" className="free-domain-for-a-year-promo">
 			<CardBody className="free-domain-for-a-year-promo__body">
 				<HStack spacing={ 6 } alignment="left">
 					{ activeQuery === 'large' && (
@@ -56,7 +49,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 						/>
 					) }
 					<VStack spacing={ 2 }>
-						<Text weight="bold">{ title }</Text>
+						<Text weight={ 600 }>{ title }</Text>
 						<Text>{ subtitle }</Text>
 					</VStack>
 				</HStack>

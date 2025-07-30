@@ -30,7 +30,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ STAGING_SITE ]: 'staging-site/:site',
 	[ PERFORMANCE ]: 'sites/performance/:site',
 	[ SETTINGS_SITE ]: isEnabled( 'dashboard/v2/backport/site-settings' )
-		? 'sites/settings/v2/:site'
+		? 'sites/:site/settings'
 		: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',

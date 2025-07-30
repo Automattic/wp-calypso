@@ -1,4 +1,6 @@
+import { SiteDeploymentsCallout } from 'calypso/dashboard/sites/deployments';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
@@ -74,3 +76,5 @@ export const deploymentRunLogs: Callback = ( context, next ) => {
 	);
 	next();
 };
+
+export const deploymentCallout = hostingFeaturesCallout( SiteDeploymentsCallout );

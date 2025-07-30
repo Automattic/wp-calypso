@@ -1,11 +1,12 @@
+import { useDomainSearch } from '@automattic/domain-search';
 import {
-	Card,
-	CardBody,
 	Button,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { DomainSkipSuggestionPlaceholder } from './index.placeholder';
+import { DomainSkipSkeleton } from './index.skeleton';
 
 import './style.scss';
 
@@ -16,35 +17,47 @@ interface Props {
 
 const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 	const translate = useTranslate();
+	const { cart } = useDomainSearch();
 	const [ subdomain, ...tlds ] = domain.split( '.' );
 
 	return (
-		<Card className="subdomain-skip-suggestion">
-			<CardBody>
-				<div className="subdomain-skip-suggestion__content">
-					<Heading level="4" weight="normal">
-						{ translate( 'WordPress.com subdomain' ) }
-					</Heading>
-					<Text>
-						{ translate( '%(subdomain)s{{strong}}.%(domainName)s{{/strong}} is included', {
+		<DomainSkipSkeleton
+			title={
+				<Heading level="4" weight="normal">
+					{ translate( 'WordPress.com subdomain' ) }
+				</Heading>
+			}
+			subtitle={
+				<Text>
+					{ translate(
+						'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
+						{
 							args: {
 								subdomain: subdomain,
 								domainName: tlds.join( '.' ),
 							},
 							components: {
-								strong: <strong />,
+								domain: <span style={ { wordBreak: 'break-all' } } />,
+								strong: <strong style={ { whiteSpace: 'nowrap' } } />,
 							},
-						} ) }
-					</Text>
-				</div>
-				{ onSkip && (
-					<Button className="subdomain-skip-suggestion__btn" variant="secondary" onClick={ onSkip }>
-						{ translate( 'Skip purchase' ) }
-					</Button>
-				) }
-			</CardBody>
-		</Card>
+						}
+					) }
+				</Text>
+			}
+			right={
+				<Button
+					className="subdomain-skip-suggestion__btn"
+					variant="secondary"
+					onClick={ onSkip }
+					disabled={ cart.isBusy }
+				>
+					{ translate( 'Skip purchase' ) }
+				</Button>
+			}
+		/>
 	);
 };
+
+DomainSkipSuggestion.Placeholder = DomainSkipSuggestionPlaceholder;
 
 export default DomainSkipSuggestion;

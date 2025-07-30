@@ -61,6 +61,12 @@
 	}
 }
 
+.reader-feed-header__follow-button-and-settings {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
 .reader-feed-header .reader-feed-header__site-badge {
 	color: var(--color-text-subtle);
 	padding-left: 4px;
@@ -107,8 +113,12 @@
 	margin-bottom: 16px;
 }
 
-// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
 .reader-feed-header__follow-button {
+	display: flex;
+	gap: 8px;
+	flex-direction: column;
+
+	// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
 	.follow-button.is-following {
 		svg.reader-following-feed path {
 			fill: initial;

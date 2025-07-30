@@ -1,9 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
+import { queryClient } from 'calypso/dashboard/app/query-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import ItemViewContent from './item-view-content';
 import ItemViewHeader from './item-view-header';
@@ -48,6 +51,11 @@ export default function ItemView( {
 }: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
+	const { data: isStagingSiteDeletionInProgress } = useQuery(
+		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+		queryClient
+	);
+
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
 		return null;
@@ -89,7 +97,10 @@ export default function ItemView( {
 
 	const shouldHideHeader = hideHeader || shouldShowBreadcrumbs;
 	const shouldHideNav =
-		( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp || shouldShowBreadcrumbs;
+		( hideNavIfSingleTab && featureTabs.length <= 1 ) ||
+		isMobileApp ||
+		shouldShowBreadcrumbs ||
+		isStagingSiteDeletionInProgress;
 
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>

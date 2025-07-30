@@ -28,8 +28,7 @@ const UnavailableComponent = ( {
 	reason,
 	onTransferClick,
 	transferLink,
-	isWithinList,
-}: UnavailableProps & { isWithinList: boolean } ) => {
+}: UnavailableProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
@@ -42,13 +41,17 @@ const UnavailableComponent = ( {
 
 	const reasonText = useMemo( () => {
 		const styledTld = (
-			<Text size="inherit" weight={ 500 }>
+			<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
 				.{ tld }
 			</Text>
 		);
 
 		const styledDomain = (
-			<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
+			<Text
+				size="inherit"
+				aria-label={ `${ domain }.${ tld }` }
+				style={ { wordBreak: 'break-all' } }
+			>
 				{ domain }
 				{ styledTld }
 			</Text>
@@ -113,7 +116,7 @@ const UnavailableComponent = ( {
 		if ( activeQuery === 'large' ) {
 			return (
 				<HStack alignment="left" spacing={ 3 }>
-					<Icon icon={ notAllowed } size={ 24 } style={ { flexShrink: 0 } } />
+					<Icon icon={ notAllowed } size={ 24 } className="domain-suggestions-list-item__icon" />
 					{ reasonElement }
 					{ onTransfer }
 				</HStack>
@@ -129,8 +132,11 @@ const UnavailableComponent = ( {
 	};
 
 	return (
-		<Card size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody style={ { borderRadius: 0 } } isShady={ isWithinList }>
+		<Card
+			size={ activeQuery === 'large' ? 'medium' : 'small' }
+			className="domain-suggestions-list-item-unavailable"
+		>
+			<CardBody style={ { borderRadius: 0 } } isShady>
 				{ getContent() }
 			</CardBody>
 		</Card>
@@ -143,10 +149,10 @@ export const Unavailable = ( props: UnavailableProps ) => {
 	if ( ! listContext ) {
 		return (
 			<DomainSuggestionsList>
-				<UnavailableComponent { ...props } isWithinList={ false } />
+				<UnavailableComponent { ...props } />
 			</DomainSuggestionsList>
 		);
 	}
 
-	return <UnavailableComponent { ...props } isWithinList />;
+	return <UnavailableComponent { ...props } />;
 };

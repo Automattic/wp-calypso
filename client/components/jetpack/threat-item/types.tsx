@@ -14,6 +14,13 @@ export type ThreatFix = {
 	fixer: ThreatFixType;
 	file?: string;
 	target?: string;
+	extensionStatus?: 'active' | 'inactive';
+	extras?: ThreatFixExtras;
+};
+
+export type ThreatFixExtras = {
+	is_bulk_fixable?: boolean;
+	is_dotorg?: boolean;
 };
 
 export type ThreatStatus = 'fixed' | 'ignored' | 'current';

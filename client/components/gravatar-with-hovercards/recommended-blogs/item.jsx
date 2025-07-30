@@ -6,25 +6,8 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
-// A blog from a list may have either a site or feed object, and the data is structured in different
-// property names. This function normalizes the data to a consistent format.
-const getBlogData = ( blog ) => {
-	if ( blog.meta?.data?.site ) {
-		const { name, feed_URL: feedUrl, ID: siteId, icon } = blog.meta.data.site;
-		return {
-			image: icon?.img || icon?.ico,
-			name,
-			feedUrl,
-			siteId,
-			feedId: blog.feed_ID,
-		};
-	}
-	const { image, name, feed_URL: feedUrl, blog_ID: siteId } = blog.meta?.data?.feed || {};
-	return { image, name, feedUrl, siteId, feedId: blog.feed_ID };
-};
-
 function RecommendedBlogItem( { blog, classPrefix, compact = false, onLinkClick = () => {} } ) {
-	const { image, name, feedUrl, siteId, feedId } = getBlogData( blog );
+	const { image, name, feedUrl, siteId, feedId } = blog;
 
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;

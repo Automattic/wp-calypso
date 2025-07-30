@@ -5,7 +5,8 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
 import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures, canViewSftpSettings, canViewSshSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import EnableSftpCard from './enable-sftp-card';
@@ -15,14 +16,18 @@ import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const hasSftpFeature = hasHostingFeature( site, HostingFeatures.SFTP );
+	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
+
 	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( site.ID ),
-		enabled: canViewSftpSettings( site ),
+		enabled: hasSftpFeature,
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
 		...siteSshAccessStatusQuery( site.ID ),
-		enabled: canViewSshSettings( site ),
+		enabled: hasSshFeature,
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
@@ -43,9 +48,9 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				{ sftpEnabled ? (
 					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
 				) : (
-					<EnableSftpCard siteId={ site.ID } canUseSsh={ canViewSshSettings( site ) } />
+					<EnableSftpCard siteId={ site.ID } canUseSsh={ hasSshFeature } />
 				) }
-				{ sftpEnabled && canViewSshSettings( site ) && (
+				{ sftpEnabled && hasSshFeature && (
 					<SshCard
 						siteId={ site.ID }
 						sftpUsers={ sftpUsers }

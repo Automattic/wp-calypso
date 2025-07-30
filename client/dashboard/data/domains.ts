@@ -13,20 +13,21 @@ export enum DomainTypes {
 }
 
 export interface Domain {
-	primary_domain: boolean;
-	domain: string;
+	auto_renewing: boolean;
 	blog_id: number;
 	blog_name: string;
-	expiry: string | false;
+	domain: string;
 	domain_status?: {
 		status: string;
 	};
-	wpcom_domain: boolean;
-	is_wpcom_staging_domain: boolean;
-	type: `${ DomainTypes }`;
-	site_slug: string;
-	auto_renewing: boolean;
+	expiry: string | false;
+	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
+	is_wpcom_staging_domain: boolean;
+	primary_domain: boolean;
+	site_slug: string;
+	type: `${ DomainTypes }`;
+	wpcom_domain: boolean;
 }
 
 export async function fetchDomains(): Promise< Domain[] > {

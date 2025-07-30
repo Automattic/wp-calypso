@@ -1,12 +1,14 @@
 import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -54,7 +56,6 @@ class DomainRegistrationSuggestion extends Component {
 			currency_code: PropTypes.string,
 		} ).isRequired,
 		suggestionSelected: PropTypes.bool,
-		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		premiumDomain: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -109,8 +110,8 @@ class DomainRegistrationSuggestion extends Component {
 		}
 	}
 
-	onButtonClick = ( action ) => {
-		const { suggestion, railcarId, uiPosition } = this.props;
+	onButtonClick = () => {
+		const { suggestion, railcarId } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			return;
@@ -124,8 +125,6 @@ class DomainRegistrationSuggestion extends Component {
 				root_vendor: suggestion.vendor,
 			} );
 		}
-
-		this.props.onButtonClick( suggestion, uiPosition, action === 'continue' );
 	};
 
 	isUnavailableDomain = ( domain ) => {
@@ -315,6 +314,7 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			productSaleCost,
 			premiumDomain,
+			flowName,
 		} = this.props;
 		const badges = [];
 
@@ -333,13 +333,15 @@ class DomainRegistrationSuggestion extends Component {
 		} else if ( isBestAlternative && isFeatured ) {
 			badges.push(
 				<DomainSuggestionBadge key="best-alternative">
-					{ translate( 'Best Alternative' ) }
+					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
 		}
 
+		const skipSaleBadge = isHundredYearPlanFlow( flowName );
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
-		if ( productSaleCost && paidDomain ) {
+		if ( productSaleCost && paidDomain && ! skipSaleBadge ) {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
@@ -373,7 +375,8 @@ class DomainRegistrationSuggestion extends Component {
 		if (
 			! Array.isArray( this.props.suggestion.match_reasons ) ||
 			hideMatchReasons ||
-			! isFeatured
+			! isFeatured ||
+			! this.isExactMatch()
 		) {
 			return null;
 		}
@@ -387,7 +390,6 @@ class DomainRegistrationSuggestion extends Component {
 			productCost,
 			renewCost,
 			productSaleCost,
-			showStrikedOutPrice,
 			zeroCost,
 			flowName,
 			premiumDomain,
@@ -412,22 +414,20 @@ class DomainRegistrationSuggestion extends Component {
 					notice={ notice }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
-							originalPrice={ renewCost }
-							price={ productSaleCost ?? productCost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
+							salePrice={ productSaleCost }
+							price={ productCost }
+							renewPrice={ renewCost }
 						/>
 					}
 				/>
@@ -451,9 +451,9 @@ class DomainRegistrationSuggestion extends Component {
 						<DomainProductPrice
 							zeroCost={ zeroCost }
 							rule={ priceRule }
-							price={ productSaleCost ?? productCost }
+							salePrice={ productSaleCost }
+							price={ productCost }
 							renewPrice={ renewCost }
-							showStrikedOutPrice={ showStrikedOutPrice }
 						/>
 					)
 				}
@@ -467,7 +467,6 @@ const mapStateToProps = ( state, props ) => {
 	const productsList = props.products ?? getProductsList( state );
 	const currentUserCurrencyCode =
 		props.suggestion.currency_code || getCurrentUserCurrencyCode( state );
-	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 	const flowName = getCurrentFlowName( state );
 
@@ -480,26 +479,26 @@ const mapStateToProps = ( state, props ) => {
 		renewCost = props.premiumDomain?.renew_cost;
 		if ( props.premiumDomain?.sale_cost ) {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
-				stripZeros,
+				stripZeros: true,
 			} );
 		}
 	} else if ( HUNDRED_YEAR_DOMAIN_FLOW === flowName ) {
 		productCost = props.suggestion.cost;
 		renewCost = props.suggestion.renew_cost;
 	} else {
-		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, true );
 		// Renew cost is the same as the product cost for non-premium domains
 		renewCost = productCost;
 		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
-			stripZeros
+			true
 		);
 	}
 
 	return {
-		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros } ),
+		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros: true } ),
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,

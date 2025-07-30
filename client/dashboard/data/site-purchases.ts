@@ -1,11 +1,12 @@
 import wpcom from 'calypso/lib/wp';
 
 export interface Purchase {
-	ID: number | string;
+	ID: string;
 	active: boolean;
+	expiry_message: string;
 	is_cancelable: boolean;
 	product_slug: string;
-	user_id: number | string;
+	user_id: string;
 }
 
 export async function fetchSitePurchases( siteId: number ): Promise< Purchase[] > {

@@ -1,5 +1,6 @@
 .domain-suggestion-featured {
-	height: 100%;
+	flex: 1;
+	height: 100% !important;
 
 	.domain-suggestion-cta {
 		margin-top: auto;
@@ -9,11 +10,11 @@
 .domain-suggestion-featured__body,
 .domain-suggestion-featured__content,
 .domain-suggestion-featured__content--small {
-	height: 100%;
+	height: 100% !important;
 }
 
 .domain-suggestion-featured__content {
-	justify-content: space-between;
+	justify-content: space-between !important;
 }
 
 .domain-suggestion-featured--highlighted {

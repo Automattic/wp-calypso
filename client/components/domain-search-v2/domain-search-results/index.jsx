@@ -3,14 +3,17 @@ import {
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -44,7 +47,6 @@ class DomainSearchResults extends Component {
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
 		showAlreadyOwnADomain: PropTypes.bool,
-		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
@@ -100,7 +102,7 @@ class DomainSearchResults extends Component {
 
 			if ( premiumDomain.sale_cost ) {
 				productSaleCost = formatCurrency( premiumDomain.sale_cost, currentUserCurrencyCode, {
-					stripZeros: this.props.showStrikedOutPrice,
+					stripZeros: true,
 				} );
 
 				const saleBadgeText = translate( 'Sale', {
@@ -113,33 +115,36 @@ class DomainSearchResults extends Component {
 				);
 			}
 
-			const cost = productSaleCost ?? premiumDomain.cost;
-
 			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
 
+			const suggestion = this.props.suggestions.find(
+				( s ) => s.domain_name === lastDomainSearched
+			);
+
 			return (
-				<DomainSuggestion
+				<DomainSuggestion.Featured
 					badges={ badges }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					matchReasons={
+						this.props.hideMatchReasons
+							? undefined
+							: parseMatchReasons( lastDomainSearched, suggestion.match_reasons )
+					}
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
-							originalPrice={
-								premiumDomain.renew_cost === cost ? undefined : premiumDomain.renew_cost
-							}
-							price={ cost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
+							salePrice={ productSaleCost }
+							price={ premiumDomain.cost }
+							renewPrice={ premiumDomain.renew_cost }
 						/>
 					}
 				/>
@@ -259,8 +264,8 @@ class DomainSearchResults extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function () {
-			return null;
+		return times( this.props.placeholderQuantity, function ( n ) {
+			return <DomainSuggestion.Placeholder key={ `placeholder-${ n }` } />;
 		} );
 	}
 
@@ -296,7 +301,6 @@ class DomainSearchResults extends Component {
 					isSignupStep={ this.props.isSignupStep }
 					showStrikedOutPrice={ showStrikedOutPrice }
 					key="featured"
-					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
 					featuredSuggestions={ featuredSuggestions }
 					query={ this.props.lastDomainSearched }
@@ -315,7 +319,7 @@ class DomainSearchResults extends Component {
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
-					return null;
+					return <DomainSuggestion.Placeholder key={ `placeholder-${ i }` } />;
 				}
 
 				return (
@@ -336,7 +340,6 @@ class DomainSearchResults extends Component {
 						uiPosition={ i + 2 }
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
-						onButtonClick={ this.props.onClickResult }
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
@@ -358,6 +361,7 @@ class DomainSearchResults extends Component {
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
+			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;
 			suggestionElements = this.renderPlaceholders();
 		}
 
@@ -365,7 +369,9 @@ class DomainSearchResults extends Component {
 			<>
 				{ featuredSuggestionElement }
 				{ domainSkipSuggestion }
-				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
+				{ suggestionElements?.length > 0 && (
+					<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
+				) }
 			</>
 		);
 	}

@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import { AppState } from 'calypso/types';
 
 import 'calypso/state/data-layer/wpcom/sites/scan';
@@ -25,9 +26,9 @@ const NO_INFO: JetpackScanThreatCounts = {};
  * @param  {number}   siteId   		The ID of the site we're querying
  * @returns {JetpackScanThreatCounts} Threat counts, by status
  */
-export default function getSiteScanThreatCounts(
-	state: AppState,
-	siteId: number
-): JetpackScanThreatCounts {
-	return state.jetpackScan.threatCounts.data?.[ siteId ] || NO_INFO;
-}
+export default createSelector(
+	( state: AppState, siteId: number ): JetpackScanThreatCounts => {
+		return state.jetpackScan.threatCounts.data?.[ siteId ] || NO_INFO;
+	},
+	( state: AppState, siteId: number ) => [ state.jetpackScan?.threatCounts?.data?.[ siteId ] ]
+);

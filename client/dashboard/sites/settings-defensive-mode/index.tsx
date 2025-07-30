@@ -23,7 +23,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { HostingFeatures, canViewDefensiveModeSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
@@ -70,7 +71,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useQuery( {
 		...siteDefensiveModeSettingsQuery( site.ID ),
-		enabled: canViewDefensiveModeSettings( site ),
+		enabled: hasHostingFeature( site, HostingFeatures.DEFENSIVE_MODE ),
 	} );
 	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

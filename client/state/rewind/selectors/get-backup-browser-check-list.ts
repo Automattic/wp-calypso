@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import { BackupBrowserItem, BackupBrowserItemCheckList } from 'calypso/state/rewind/browser/types';
 import type { AppState } from 'calypso/types';
 
@@ -101,12 +102,12 @@ const addChildrenToList = (
 };
 
 /**
- * Retrieve the list of checked items and totals from the Backup Browser
+ * Retrieve the list of checked items and totals from the Backup Browser (unmemoized)
  * @param state The application state.
  * @param siteId The site ID we're retrieving for.
  * @returns A list of items to include and exclude from a restore or download.
  */
-const getBackupBrowserCheckList = (
+const getBackupBrowserCheckListUnmemoized = (
 	state: AppState,
 	siteId: number
 ): BackupBrowserItemCheckList => {
@@ -125,5 +126,13 @@ const getBackupBrowserCheckList = (
 
 	return checkList;
 };
+
+/**
+ * Memoized version of getBackupBrowserCheckList to prevent unnecessary rerenders
+ */
+const getBackupBrowserCheckList = createSelector(
+	getBackupBrowserCheckListUnmemoized,
+	( state: AppState, siteId: number ) => [ state.rewind[ siteId ]?.browser ]
+);
 
 export default getBackupBrowserCheckList;

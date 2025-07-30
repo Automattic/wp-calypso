@@ -14,6 +14,7 @@ interface DomainSuggestionContainerContextValue {
 	activeQuery: 'small' | 'large';
 	alignment?: 'left' | 'right';
 	priceSize?: number;
+	isFeatured?: boolean;
 }
 
 export const DomainSuggestionContainerContext = createContext<

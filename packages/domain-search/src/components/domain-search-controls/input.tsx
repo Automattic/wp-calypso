@@ -5,10 +5,12 @@ import './input.scss';
 export const DomainSearchControlsInput = ( {
 	value,
 	label,
+	placeholder,
 	onChange,
 	onReset,
 	autoFocus,
 	onBlur,
+	onKeyDown,
 	minLength,
 	maxLength,
 	dir,
@@ -16,10 +18,12 @@ export const DomainSearchControlsInput = ( {
 }: {
 	value: string;
 	label: string;
+	placeholder?: string;
 	onChange: ( value: string ) => void;
 	onReset: () => void;
 	autoFocus: boolean;
 	onBlur: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	onKeyDown: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	minLength: number;
 	maxLength: number;
 	dir: 'ltr' | 'rtl';
@@ -32,7 +36,7 @@ export const DomainSearchControlsInput = ( {
 			className="domain-search-controls__input"
 			__nextHasNoMarginBottom
 			hideLabelFromVision
-			placeholder={ __( 'Search…' ) }
+			placeholder={ placeholder ?? __( 'Search…' ) }
 			value={ value }
 			label={ label }
 			onChange={ onChange }
@@ -40,6 +44,7 @@ export const DomainSearchControlsInput = ( {
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ autoFocus }
 			onBlur={ onBlur }
+			onKeyDown={ onKeyDown }
 			minLength={ minLength }
 			maxLength={ maxLength }
 			dir={ dir }

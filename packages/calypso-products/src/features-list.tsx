@@ -336,6 +336,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2196,9 +2197,19 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
-		getTitle: () => i18n.translate( 'Contact form' ),
+		getTitle: () => i18n.translate( 'Forms' ),
 		getDescription: () =>
-			i18n.translate( 'Make it easy for your visitors to get in touch, right from your site.' ),
+			i18n.translate(
+				'Make it easy for your visitors to get in touch and create beautiful forms for any need.'
+			),
+	},
+	[ FEATURE_ADVANCED_FORM_FEATURES_JP ]: {
+		getSlug: () => FEATURE_ADVANCED_FORM_FEATURES_JP,
+		getTitle: () => i18n.translate( 'Advanced form features' ),
+		getDescription: () =>
+			i18n.translate(
+				'Build smarter forms with features like file uploads, multi-step logic, and seamless integrations.'
+			),
 	},
 	[ FEATURE_PAID_SUBSCRIBERS_JP ]: {
 		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,

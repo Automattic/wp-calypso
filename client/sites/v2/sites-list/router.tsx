@@ -49,7 +49,6 @@ const sitesRoute = createRoute( {
 		} )
 	)
 );
-
 const dummySitesOverviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'overview/$siteSlug',
@@ -68,54 +67,13 @@ const sitesOverviewCompatibilityRoute = createRoute( {
 	},
 } );
 
-const dummySitesSettingsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites/settings/v2/$siteSlug',
-	loader: infiniteLoader,
-	component: () => null,
-} );
-
-const sitesSettingsCompatibilityRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: '/sites/$siteSlug/settings',
-	beforeLoad: ( { cause, params: { siteSlug } } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		throw redirect( { to: `/sites/settings/v2/${ siteSlug }` } );
-	},
-} );
-
-const dashboardSiteSettingsWithFeatureCompatibilityRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites/$siteSlug/settings/$feature',
-	beforeLoad: ( { cause, params: { siteSlug, feature } } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		throw redirect( { to: `/sites/settings/v2/${ siteSlug }/${ feature }` } );
-	},
-} );
-
 const createRouteTree = () =>
-	rootRoute.addChildren( [
-		sitesRoute,
-		dummySitesOverviewRoute,
-		sitesOverviewCompatibilityRoute,
-		dummySitesSettingsRoute,
-		sitesSettingsCompatibilityRoute,
-		dashboardSiteSettingsWithFeatureCompatibilityRoute,
-	] );
+	rootRoute.addChildren( [ sitesRoute, dummySitesOverviewRoute, sitesOverviewCompatibilityRoute ] );
 
-const compatibilityRoutes = [
-	sitesOverviewCompatibilityRoute,
-	sitesSettingsCompatibilityRoute,
-	dashboardSiteSettingsWithFeatureCompatibilityRoute,
-];
+const compatibilityRoutes = [ sitesOverviewCompatibilityRoute ];
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 	createBrowserHistoryAndMemoryRouterSync( { compatibilityRoutes } );
-
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
 	const router = createRouter( {

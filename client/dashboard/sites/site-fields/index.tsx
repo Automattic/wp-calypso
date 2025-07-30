@@ -21,17 +21,12 @@ import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
-import { DotcomFeatures, JetpackModules } from '../../data/constants';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import {
-	hasAtomicFeature,
-	hasHostingFeature,
-	hasJetpackModule,
-	hasPlanFeature,
-} from '../../utils/site-features';
+import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
-import { HostingFeatures, canManageSite } from '../features';
+import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
@@ -208,7 +203,7 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince timestamp={ lastBackup.last_updated } isUtc />;
+		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
@@ -239,7 +234,7 @@ export function Uptime( { site }: { site: Site } ) {
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
-	const isEligible = hasAtomicFeature( site, HostingFeatures.PHP );
+	const isEligible = hasHostingFeature( site, HostingFeatures.PHP );
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
@@ -270,7 +265,7 @@ export function MediaStorage( { site }: { site: Site } ) {
 
 	const value = mediaStorage ? (
 		`${
-			Math.round( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
 		}%`
 	) : (
 		<IneligibleIndicator />

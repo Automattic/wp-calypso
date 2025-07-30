@@ -1,4 +1,4 @@
-import { WordPressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';

@@ -146,6 +146,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -192,6 +193,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_CONTACT_FORM_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_SMART_REDIRECTS,
 		],
@@ -471,8 +473,10 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 
 export function resolveFeatureGroupsForFeaturesGrid( {
 	showSimplifiedFeatures,
+	isSummerSpecial,
 }: {
 	showSimplifiedFeatures?: boolean;
+	isSummerSpecial?: boolean;
 } = {} ): Partial< FeatureGroupMap > {
 	if ( showSimplifiedFeatures ) {
 		return {
@@ -486,12 +490,17 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
+			...( isSummerSpecial && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],
 			} ),
-			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			...( ! isSummerSpecial && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};

@@ -1,4 +1,4 @@
-import { SummaryButton } from '@automattic/components';
+import SummaryButton from '@automattic/components/src/summary-button';
 import { Meta, StoryObj } from '@storybook/react';
 import { Icon } from '@wordpress/components';
 import { brush, home, seen } from '@wordpress/icons';

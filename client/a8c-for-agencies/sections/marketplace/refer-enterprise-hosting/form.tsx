@@ -7,6 +7,7 @@ import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
@@ -71,6 +72,38 @@ const SearchableDropdownField = ( {
 				onChange={ ( value: string | null | undefined ) => onChange( value ?? '' ) }
 				placeholder={ placeholder }
 			/>
+		</FormField>
+	);
+};
+
+const RadioButtonField = ( {
+	label,
+	name,
+	error,
+	value,
+	onChange,
+	options,
+}: FieldProps & {
+	options: {
+		value: string;
+		label: string;
+	}[];
+} ) => {
+	return (
+		<FormField label={ label } labelFor={ name } error={ error }>
+			<div className="refer-enterprise-hosting-form__radio-group">
+				{ options.map( ( option ) => (
+					<FormRadio
+						key={ option.value }
+						id={ `${ name }-${ option.value }` }
+						name={ name }
+						value={ option.value }
+						checked={ value === option.value }
+						onChange={ () => onChange( option.value ) }
+						label={ option.label }
+					/>
+				) ) }
+			</div>
 		</FormField>
 	);
 };
@@ -217,14 +250,6 @@ export default function ReferEnterpriseHostingForm() {
 					value={ formData.zip }
 					onChange={ ( value: string ) => handleInputChange( 'zip', value ) }
 				/>
-
-				<TextField
-					label={ translate( 'Website' ) }
-					name="website"
-					error={ validationError.website }
-					value={ formData.website }
-					onChange={ ( value: string ) => handleInputChange( 'website', value ) }
-				/>
 			</FormSection>
 
 			<FormSection title={ translate( 'End user contact information' ) }>
@@ -268,6 +293,14 @@ export default function ReferEnterpriseHostingForm() {
 					value={ formData.email }
 					onChange={ ( value: string ) => handleInputChange( 'email', value ) }
 				/>
+
+				<TextField
+					label={ translate( 'Website' ) }
+					name="website"
+					error={ validationError.website }
+					value={ formData.website }
+					onChange={ ( value: string ) => handleInputChange( 'website', value ) }
+				/>
 			</FormSection>
 
 			<FormSection title={ translate( 'Opportunity information' ) }>
@@ -277,6 +310,32 @@ export default function ReferEnterpriseHostingForm() {
 					error={ validationError.opportunityDescription }
 					value={ formData.opportunityDescription }
 					onChange={ ( value: string ) => handleInputChange( 'opportunityDescription', value ) }
+				/>
+
+				<SearchableDropdownField
+					label={ translate( 'Type of lead' ) }
+					name="leadType"
+					error={ validationError.leadType }
+					value={ formData.leadType }
+					onChange={ ( value: string ) => handleInputChange( 'leadType', value ) }
+					placeholder={ translate( 'Select lead type' ) }
+					options={ [
+						{ value: 'Media', label: translate( 'Media' ) },
+						{ value: 'Public Sector', label: translate( 'Public Sector' ) },
+						{ value: 'Other', label: translate( 'Other' ) },
+					] }
+				/>
+
+				<RadioButtonField
+					label={ translate( 'Is this an RFP?' ) }
+					name="isRfp"
+					error={ validationError.isRfp }
+					value={ formData.isRfp === true ? 'yes' : 'no' }
+					onChange={ ( value: string ) => handleInputChange( 'isRfp', value === 'yes' ) }
+					options={ [
+						{ value: 'yes', label: translate( 'Yes' ) },
+						{ value: 'no', label: translate( 'No' ) },
+					] }
 				/>
 			</FormSection>
 

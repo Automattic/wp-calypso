@@ -107,7 +107,6 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromAutomatticForAgenciesPlugin',
 			'isGravPoweredClient',
-			'twoFactorEnabled',
 			'currentQuery',
 			'translate',
 		];
@@ -284,7 +283,6 @@ export class Login extends Component {
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
-			twoFactorEnabled,
 			currentQuery,
 			translate,
 		} = this.props;
@@ -306,7 +304,6 @@ export class Login extends Component {
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
-			twoFactorEnabled,
 			currentQuery,
 			translate,
 		} );

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
-
 import './tabs.scss';
 
 /**

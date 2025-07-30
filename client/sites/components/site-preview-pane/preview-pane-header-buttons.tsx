@@ -1,18 +1,24 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useMergeRefs } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
+import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
+import { queryClient } from 'calypso/dashboard/app/query-client';
 import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import { useCheckSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
+import { useDispatch } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getIsStagingSiteInTransition } from 'calypso/state/staging-site/selectors';
+import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './preview-pane-header-buttons.scss';
@@ -26,6 +32,8 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const adminButtonRef = useRef< HTMLButtonElement | null >( null );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
+	const previousSyncInProgress = useRef< boolean >( false );
 
 	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
@@ -41,8 +49,16 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		getIsStagingSiteInTransition( state, itemData.blogId ?? 0 )
 	);
 
+	const { data: isStagingSiteDeletionInProgress } = useQuery(
+		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+		queryClient
+	);
+
 	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign && ( isStagingSite || hasStagingSite ) && ! isStagingSiteInTransition
+		stagingSitesRedesign &&
+			( isStagingSite || hasStagingSite ) &&
+			! isStagingSiteInTransition &&
+			! isStagingSiteDeletionInProgress
 	);
 
 	const productionSiteId = isStagingSite
@@ -55,7 +71,19 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	const environment = isStagingSite ? 'staging' : 'production';
 
-	const { resetSyncStatus, isSyncInProgress } = useCheckSyncStatus( productionSiteId );
+	const { resetSyncStatus, isSyncInProgress, status } = useCheckSyncStatus( productionSiteId );
+
+	useEffect( () => {
+		if ( previousSyncInProgress.current && ! isSyncInProgress ) {
+			if ( status === SiteSyncStatus.COMPLETED ) {
+				dispatch( successNotice( __( 'Synchronization completed successfully.' ) ) );
+			} else if ( status === SiteSyncStatus.FAILED || status === SiteSyncStatus.ALLOW_RETRY ) {
+				dispatch( errorNotice( __( 'Synchronization failed. Please try again.' ) ) );
+			}
+		}
+
+		previousSyncInProgress.current = isSyncInProgress;
+	}, [ isSyncInProgress, status, dispatch, __ ] );
 
 	return (
 		<>

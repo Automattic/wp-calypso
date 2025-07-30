@@ -4,21 +4,11 @@ import {
 	createRootRoute,
 	redirect,
 	createLazyRoute,
+	lazyRouteComponent,
 } from '@tanstack/react-router';
-import { DotcomFeatures } from '../data/constants';
+import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
-import {
-	canViewAgencySettings,
-	canViewHundredYearPlanSettings,
-	canViewWordPressSettings,
-	canViewPHPSettings,
-	canViewSftpSettings,
-	canViewSshSettings,
-	canViewDefensiveModeSettings,
-	canViewPrimaryDataCenterSettings,
-	canViewStaticFile404Settings,
-	canViewCachingSettings,
-} from '../sites/features';
+import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sites/features';
 import { hasHostingFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
@@ -28,15 +18,18 @@ import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
+import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
+import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
+import { sitePurchaseQuery } from './queries/site-purchases';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
@@ -120,6 +113,7 @@ const siteRoute = createRoute( {
 			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
 	},
+	errorComponent: lazyRouteComponent( () => import( '../sites/site/error' ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -136,12 +130,17 @@ const siteOverviewRoute = createRoute( {
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
-				hasHostingFeature( site, DotcomFeatures.SCAN ) &&
+				queryClient.ensureQueryData( siteLastFiveActivityLogEntriesQuery( site.ID ) ),
+				hasHostingFeature( site, HostingFeatures.SCAN ) &&
 					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
-				hasHostingFeature( site, DotcomFeatures.BACKUPS ) &&
+				hasHostingFeature( site, HostingFeatures.BACKUPS ) &&
 					queryClient.ensureQueryData( siteLastBackupQuery( site.ID ) ),
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
-			] );
+			] ).then( ( [ currentPlan ] ) => {
+				if ( currentPlan.id ) {
+					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, currentPlan.id ) );
+				}
+			} );
 		}
 	},
 } ).lazy( () =>
@@ -244,7 +243,7 @@ const siteSettingsPHPRoute = createRoute( {
 	path: 'settings/php',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewPHPSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.PHP ) ) {
 			await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
 		}
 	},
@@ -272,7 +271,7 @@ const siteSettingsAgencyRoute = createRoute( {
 	path: 'settings/agency',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewAgencySettings( site ) ) {
+		if ( site.is_wpcom_atomic ) {
 			await queryClient.ensureQueryData( siteAgencyBlogQuery( site.ID ) );
 		}
 	},
@@ -306,7 +305,7 @@ const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	path: 'settings/primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewPrimaryDataCenterSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
 			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 		}
 	},
@@ -323,7 +322,7 @@ const siteSettingsStaticFile404Route = createRoute( {
 	path: 'settings/static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewStaticFile404Settings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.STATIC_FILE_404 ) ) {
 			await queryClient.ensureQueryData( siteStaticFile404SettingQuery( site.ID ) );
 		}
 	},
@@ -340,7 +339,7 @@ const siteSettingsCachingRoute = createRoute( {
 	path: 'settings/caching',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewCachingSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.CACHING ) ) {
 			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( site.ID ) );
 		}
 	},
@@ -357,7 +356,7 @@ const siteSettingsDefensiveModeRoute = createRoute( {
 	path: 'settings/defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewDefensiveModeSettings( site ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.DEFENSIVE_MODE ) ) {
 			await queryClient.ensureQueryData( siteDefensiveModeSettingsQuery( site.ID ) );
 		}
 	},
@@ -375,8 +374,9 @@ const siteSettingsSftpSshRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		return Promise.all( [
-			canViewSftpSettings( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
-			canViewSshSettings( site ) &&
+			hasHostingFeature( site, HostingFeatures.SFTP ) &&
+				queryClient.ensureQueryData( siteSftpUsersQuery( site.ID ) ),
+			hasHostingFeature( site, HostingFeatures.SSH ) &&
 				queryClient.ensureQueryData( siteSshAccessStatusQuery( site.ID ) ),
 		] );
 	},
@@ -397,6 +397,23 @@ const siteSettingsTransferSiteRoute = createRoute( {
 			component: () => (
 				<d.default siteSlug={ siteRoute.useParams().siteSlug } context="dashboard_v2" />
 			),
+		} )
+	)
+);
+
+const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/web-application-firewall',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-web-application-firewall' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-web-application-firewall' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -577,6 +594,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
 				siteSettingsSftpSshRoute,
+				siteSettingsWebApplicationFirewallRoute,
 			] )
 		);
 	}
@@ -637,6 +655,18 @@ export {
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
 	siteSettingsSubscriptionGiftingRoute,
+	siteSettingsDatabaseRoute,
+	siteSettingsWordPressRoute,
+	siteSettingsPHPRoute,
+	siteSettingsAgencyRoute,
+	siteSettingsHundredYearPlanRoute,
+	siteSettingsPrimaryDataCenterRoute,
+	siteSettingsStaticFile404Route,
+	siteSettingsCachingRoute,
+	siteSettingsDefensiveModeRoute,
+	siteSettingsTransferSiteRoute,
+	siteSettingsSftpSshRoute,
+	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

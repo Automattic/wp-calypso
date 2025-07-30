@@ -53,26 +53,39 @@ export async function cancelAtomicPurchaseFlow(
 		.getByRole( 'textbox', { name: 'Can you please specify?' } )
 		.fill( feedback.customReasonText );
 
-	// Submit first step.
-	await page.getByRole( 'button', { name: 'Submit' } ).click();
+	// Submit first step - could be "Submit" or "Continue"
+	const firstButton = page
+		.getByRole( 'button', { name: 'Submit' } )
+		.or( page.getByRole( 'button', { name: 'Continue' } ) );
+	await firstButton.waitFor( { state: 'visible' } );
+	await firstButton.click();
 
-	// Submit second step.
-	await page.getByRole( 'button', { name: 'Submit' } ).click();
+	// Select dropdown value to enable the next button
+	await page
+		.getByRole( 'combobox', { name: 'Where is your next adventure taking you?' } )
+		.selectOption( "I'm staying here and using the free plan." );
 
-	// Submit caution step.
-	await page.getByRole( 'checkbox', { name: 'Any themes/plugins you have installed' } ).click();
-	await page.getByRole( 'checkbox', { name: 'your site will return to its original' } ).click();
+	// Submit second step - could be "Submit" or "Continue"
+	const secondButton = page
+		.getByRole( 'button', { name: 'Submit' } )
+		.or( page.getByRole( 'button', { name: 'Continue' } ) );
+	await secondButton.waitFor( { state: 'visible' } );
+	await secondButton.click();
 
-	const hasContentCheck = page.getByRole( 'checkbox', {
-		name: 'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site.',
-	} );
-
-	if ( await hasContentCheck.isVisible() ) {
-		await hasContentCheck.click();
-	}
+	const finalButton = page
+		.getByRole( 'button', { name: 'Submit' } )
+		.or( page.getByRole( 'button', { name: 'Continue' } ) );
 
 	await Promise.all( [
 		page.waitForNavigation( { timeout: 30 * 1000 } ),
-		page.getByRole( 'button', { name: 'Submit' } ).click(),
+		finalButton.waitFor( { state: 'visible' } ),
+		// Wait for button to be enabled
+		page.waitForFunction(
+			() => {
+				const button = document.querySelector( 'button[class*="is-primary"]' );
+				return button && ! button.hasAttribute( 'disabled' );
+			},
+			{ timeout: 10000 }
+		),
 	] );
 }

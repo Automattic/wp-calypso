@@ -251,7 +251,7 @@
 		}
 	}
 	.hosting-dashboard-item-view__content {
-		padding: 32px 48px 48px;
+		padding: 32px 24px 24px;
 		font-size: rem(14px);
 		color: var(--studio-gray-100);
 
@@ -274,6 +274,11 @@
 
 		> .site-logs {
 			margin-bottom: 0;
+		}
+
+		.dashboard-callout-overlay {
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, #FFF 100%);
+			backdrop-filter: blur(2px);
 		}
 
 		@media (max-width: $break-large) {

@@ -17,6 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
+		salePrice: PropTypes.string,
 		price: PropTypes.string,
 		renewPrice: PropTypes.string,
 		freeWithPlan: PropTypes.bool,
@@ -33,9 +34,11 @@ export class DomainProductPrice extends Component {
 	};
 
 	renderFreeForFirstYear() {
-		const { zeroCost, renewPrice } = this.props;
+		const { zeroCost, price, renewPrice } = this.props;
 
-		return <DomainSuggestionPrice price={ zeroCost } originalPrice={ renewPrice } />;
+		return (
+			<DomainSuggestionPrice price={ price } salePrice={ zeroCost } renewPrice={ renewPrice } />
+		);
 	}
 
 	renderFree() {
@@ -61,13 +64,10 @@ export class DomainProductPrice extends Component {
 	}
 
 	renderPrice() {
-		const { price, renewPrice } = this.props;
+		const { price, renewPrice, salePrice } = this.props;
 
 		return (
-			<DomainSuggestionPrice
-				price={ price }
-				originalPrice={ renewPrice === price ? undefined : renewPrice }
-			/>
+			<DomainSuggestionPrice price={ price } salePrice={ salePrice } renewPrice={ renewPrice } />
 		);
 	}
 
@@ -77,7 +77,7 @@ export class DomainProductPrice extends Component {
 	renderOneTimePrice() {
 		const { price } = this.props;
 
-		return <DomainSuggestionPrice price={ price } renewsAnually={ false } />;
+		return <DomainSuggestionPrice price={ price } />;
 	}
 
 	render() {
@@ -92,8 +92,6 @@ export class DomainProductPrice extends Component {
 		switch ( this.props.rule ) {
 			case DOMAIN_PRICE_RULE.ONE_TIME_PRICE:
 				return this.renderOneTimePrice();
-			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
-				return this.renderDomainMovePrice();
 			case DOMAIN_PRICE_RULE.FREE_DOMAIN:
 				return this.renderFree();
 			case DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR:
@@ -101,6 +99,8 @@ export class DomainProductPrice extends Component {
 			case DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN:
 			case DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY:
 				return this.renderFreeForFirstYear();
+			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
+				return this.renderDomainMovePrice();
 			case DOMAIN_PRICE_RULE.PRICE:
 			default:
 				return this.renderPrice();
