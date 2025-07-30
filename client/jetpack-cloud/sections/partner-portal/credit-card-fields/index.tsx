@@ -69,8 +69,8 @@ export default function CreditCardFields() {
 		},
 	};
 
-	const { data, isFetching: isFetchingPaymentMethods } = useRecentPaymentMethodsQuery();
-	const { items: paymentMethods = [] } = data as any;
+	const { data = [], isFetching: isFetchingPaymentMethods } = useRecentPaymentMethodsQuery();
+	const { items: paymentMethods } = data as any;
 
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
