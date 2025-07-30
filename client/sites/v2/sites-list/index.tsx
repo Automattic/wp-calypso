@@ -5,8 +5,7 @@ import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client'
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
-import Layout from './layout';
-import router from './router';
+import Layout, { router } from './layout';
 import './style.scss';
 
 export default function DashboardBackportSitesList() {

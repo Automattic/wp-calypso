@@ -1,7 +1,43 @@
-import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
+import page from '@automattic/calypso-router';
+import {
+	Outlet,
+	Router,
+	createLazyRoute,
+	createRootRoute,
+	createRoute,
+} from '@tanstack/react-router';
+import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
+import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
+import { queryClient } from 'calypso/dashboard/app/query-client';
 import * as appRouter from 'calypso/dashboard/app/router';
-import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
+import { canManageSite } from 'calypso/dashboard/sites/features';
+import Root from '../components/root';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
+
+const rootRoute = createRootRoute( { component: Root } );
+const dashboardSitesCompatibilityRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites',
+	beforeLoad: ( { cause } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+		page.show( '/sites' );
+	},
+} );
+
+const siteRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canManageSite( site ) ) {
+			page.redirect( '/sites' );
+		}
+		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+	component: () => <Outlet />,
+} );
 
 const settingsRoute = createRoute( {
 	...appRouter.siteSettingsRoute.options,
@@ -191,7 +227,7 @@ const createRouteTree = () =>
 	] );
 
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
-	createBrowserHistoryAndMemoryRouterSync();
+	createBrowserHistoryAndMemoryRouterSync( {} );
 
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
@@ -203,9 +239,3 @@ export const getRouter = ( { basePath }: { basePath: string } ) => {
 
 	return router;
 };
-
-export const routerConfig = {
-	basePath: '/',
-};
-
-export default getRouter( routerConfig );
