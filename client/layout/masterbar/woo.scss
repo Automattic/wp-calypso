@@ -952,8 +952,6 @@ $breakpoint-mobile: 660px;
 		}
 
 		div.auth-form__separator {
-			max-width: $max-width;
-
 			&::before,
 			&::after {
 				border-block-start-color: #e0e0e1;

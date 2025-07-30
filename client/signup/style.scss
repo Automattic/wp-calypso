@@ -55,11 +55,32 @@ body.is-section-signup {
 			max-width: 400px;
 		}
 
-		.logged-out-form {
+		.card.logged-out-form {
+			padding: 0;
 			.form-fieldset {
 				margin-bottom: 0;
 			}
 		}
+
+		.auth-form__social {
+			margin: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+
+		}
+
+		.auth-form__separator {
+			margin: 0 auto;
+			max-width: 360px;
+			.auth-form__separator-text {
+				padding: 0 24px;
+			}
+		}
+
+		.signup-form.is-horizontal {
+			gap: 1em;
+		}
+
 	}
 
 	// Hide the masterbar for realz
