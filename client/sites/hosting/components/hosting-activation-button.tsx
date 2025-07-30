@@ -1,6 +1,6 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Modal } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -9,17 +9,12 @@ import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { ComponentProps } from 'react';
 
 interface HostingActivationButtonProps {
 	redirectUrl?: string;
 }
 
-export default function HostingActivationButton( {
-	text,
-	redirectUrl,
-	...props
-}: HostingActivationButtonProps & ComponentProps< typeof Button > ) {
+export default function HostingActivationButton( { redirectUrl }: HostingActivationButtonProps ) {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
@@ -44,13 +39,13 @@ export default function HostingActivationButton( {
 	return (
 		<>
 			<HostingHeroButton
-				{ ...props }
-				text={ text ?? translate( 'Activate now' ) }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
 					return setShowEligibility( true );
 				} }
-			/>
+			>
+				{ translate( 'Activate now' ) }
+			</HostingHeroButton>
 
 			{ showEligibility && (
 				<Modal

@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
@@ -63,12 +63,10 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
-	const stagingSitesRedesign = isEnabled( 'hosting/staging-sites-redesign' );
-	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
+	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
-		const isHostingFeaturesEnabled = isActiveAtomicSite || isHostingFeaturesCalloutEnabled;
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
@@ -82,38 +80,37 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled: ( isSimpleSite || isPlanExpired ) && ! isHostingFeaturesCalloutEnabled,
+				enabled: isSimpleSite || isPlanExpired,
 				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: isActiveAtomicSite,
 				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: isActiveAtomicSite,
 				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: isActiveAtomicSite,
 				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: isActiveAtomicSite,
 				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
-				// We don't have the callout for the staging site tab since we'll retire the tab.
 				enabled: isActiveAtomicSite,
 				featureIds: [ STAGING_SITE ],
 			},
 			{
 				label: __( 'Settings' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
@@ -165,7 +162,6 @@ const DotcomPreviewPane = ( {
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
-		isEnabled,
 	] );
 
 	const itemData: ItemData = {

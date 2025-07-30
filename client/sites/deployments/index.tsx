@@ -4,7 +4,6 @@ import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { DEPLOYMENTS } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import {
-	deploymentCallout,
 	deploymentCreation,
 	deploymentManagement,
 	deploymentRunLogs,
@@ -20,7 +19,6 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentsList,
-		deploymentCallout,
 		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
@@ -32,7 +30,6 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentCreation,
-		deploymentCallout,
 		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
@@ -44,7 +41,6 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentManagement,
-		deploymentCallout,
 		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
@@ -56,7 +52,6 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		deploymentRunLogs,
-		deploymentCallout,
 		siteDashboard( DEPLOYMENTS ),
 		makeLayout,
 		clientRender
