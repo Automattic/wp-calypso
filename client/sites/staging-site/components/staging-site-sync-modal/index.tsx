@@ -479,7 +479,12 @@ export default function SyncModal( {
 								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
 							) }
 						>
-							<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
+							<span>
+								<Icon
+									icon={ error }
+									style={ { fill: 'var(--studio-orange-50)', display: 'flex' } }
+								/>
+							</span>
 						</Tooltip>
 					</HStack>
 					<VStack spacing={ 7 }>
