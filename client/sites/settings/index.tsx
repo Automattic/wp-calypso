@@ -140,8 +140,6 @@ export default function () {
 		'/sites/settings/v2/:site/:feature?',
 		siteSelection,
 		navigation,
-		redirectToSiteSettingsNewUrl,
-		makeLayout,
-		clientRender
+		redirectToSiteSettingsNewUrl
 	);
 }
