@@ -101,7 +101,7 @@ export default function AllowListForm( { site }: { site: Site } ) {
 						<SectionHeader
 							title={ __( 'Always allow specific IP addresses' ) }
 							description={ __(
-								"IP addresses added to this list will never be blocked by Jetpack's security features."
+								'IP addresses added to this list will never be blocked by Jetpack’s security features.'
 							) }
 							level={ 3 }
 						/>
