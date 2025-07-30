@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSuggestion } from '@automattic/data-stores';
 import { useDomainSearch } from '@automattic/domain-search';
 import {
@@ -5,7 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { useCallback } from '@wordpress/element';
+import { useEffect, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Site } from 'calypso/dashboard/data/site';
 import { DomainSkipSuggestionPlaceholder } from './index.placeholder';
@@ -13,11 +14,21 @@ import { DomainSkipSkeleton } from './index.skeleton';
 
 import './style.scss';
 
-interface Props {
-	selectedSite?: Site;
-	subdomainSuggestion?: DomainSuggestion;
+type BaseProps = {
 	onSkip: () => void;
-}
+};
+
+type WithSelectedSite = BaseProps & {
+	selectedSite: Site;
+	subdomainSuggestion?: DomainSuggestion;
+};
+
+type WithSubdomainSuggestion = BaseProps & {
+	selectedSite?: Site;
+	subdomainSuggestion: DomainSuggestion;
+};
+
+type Props = WithSelectedSite | WithSubdomainSuggestion;
 
 const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Props ) => {
 	const translate = useTranslate();
@@ -37,14 +48,11 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 		}
 	}, [ selectedSite, cart, subdomainSuggestion?.domain_name, onSkip ] );
 
-	let title;
-	if ( hasExistingSite ) {
-		title = translate( 'Current address' );
-	} else if ( subdomain ) {
-		title = translate( 'WordPress.com subdomain' );
-	} else {
-		title = translate( 'Skip domain search' );
-	}
+	useEffect( () => {
+		if ( ! selectedSite && ! subdomainSuggestion ) {
+			recordTracksEvent( 'calypso_domain_search_skip_no_site_or_suggestion' );
+		}
+	}, [ selectedSite, subdomainSuggestion ] );
 
 	const translateArgs = {
 		args: {
@@ -57,26 +65,23 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 		},
 	};
 
+	let title;
 	let subtitle;
+	let ctaLabel;
 	if ( hasExistingSite ) {
+		title = translate( 'Current address' );
 		subtitle = translate(
 			'Keep {{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} as your site address',
 			translateArgs
 		);
+		ctaLabel = translate( 'Skip purchase' );
 	} else if ( subdomain ) {
+		title = translate( 'WordPress.com subdomain' );
 		subtitle = translate(
 			'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
 			translateArgs
 		);
-	} else {
-		subtitle = translate( 'You can search for a custom domain later' );
-	}
-
-	let ctaLabel;
-	if ( hasExistingSite || subdomain ) {
 		ctaLabel = translate( 'Skip purchase' );
-	} else {
-		ctaLabel = translate( 'Skip' );
 	}
 
 	return (
