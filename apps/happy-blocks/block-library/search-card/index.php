@@ -53,7 +53,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<ul class="search-terms">
 				<li><a data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain' ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></a></li>
 				<li><a data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan' ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></a></li>
-				<li><a data-search-query="<?php echo esc_attr( __( 'Grow an audience', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'grow an audience' ) ); ?>"><?php echo esc_html( __( 'Grow an audience', 'happy-blocks' ) ); ?></a></li>
+				<li><a data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email' ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></a></li>
 				<li><a data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password' ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></a></li>
 			</ul>
 	</div>
