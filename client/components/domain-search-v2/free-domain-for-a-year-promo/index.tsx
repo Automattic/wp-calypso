@@ -49,7 +49,9 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 						/>
 					) }
 					<VStack spacing={ 2 }>
-						<Text weight={ 600 }>{ title }</Text>
+						<Text size={ 15 } weight={ 500 }>
+							{ title }
+						</Text>
 						<Text>{ subtitle }</Text>
 					</VStack>
 				</HStack>
