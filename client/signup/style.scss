@@ -50,6 +50,16 @@ body.is-section-signup {
 				margin: 0;
 			}
 		}
+
+		.signup-form {
+			max-width: 400px;
+		}
+
+		.logged-out-form {
+			.form-fieldset {
+				margin-bottom: 0;
+			}
+		}
 	}
 
 	// Hide the masterbar for realz

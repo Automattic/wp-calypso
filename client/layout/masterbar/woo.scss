@@ -416,8 +416,6 @@ $breakpoint-mobile: 660px;
 	&:not(.is-section-login) {
 		.card {
 			box-shadow: none;
-			padding-left: 0;
-			padding-right: 0;
 			background-color: initial;
 		}
 	}
@@ -1097,7 +1095,6 @@ $breakpoint-mobile: 660px;
 			width: 100%;
 			margin: 0 auto;
 			padding: 0;
-			max-width: 327px;
 			display: flex;
 			flex-direction: column;
 		}
@@ -1105,11 +1102,6 @@ $breakpoint-mobile: 660px;
 		.signup-form {
 			input[type="email"].form-text-input {
 				margin-bottom: 0;
-			}
-
-			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
-				padding: 0;
-				margin: 24px 0 0 0;
 			}
 		}
 
