@@ -12,7 +12,6 @@ export async function fetchJetpackSettings( siteId: number ): Promise< Partial< 
 export async function updateJetpackSettings( siteId: number, settings: Partial< SiteSettings > ) {
 	return wpcom.req.post( `/jetpack-blogs/${ siteId }/rest-api/`, {
 		path: '/jetpack/v4/settings/',
-		body: JSON.stringify( settings ),
-		json: true,
+		body: settings,
 	} );
 }
