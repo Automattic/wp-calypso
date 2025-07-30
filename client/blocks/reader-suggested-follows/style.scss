@@ -24,7 +24,7 @@
 	scrollbar-gutter: stable;
 	padding: 0 32px;
 	overflow-y: auto;
-	max-height: 400px;
+	max-height: calc(90px * 5 + 16px);
 }
 
 .reader-recommended-follows-dialog__content {
@@ -38,10 +38,6 @@
 			position: sticky;
 			top: 0;
 			border-bottom-color:var(--color-neutral-5);
-		}
-
-		.reader-recommended-follows-dialog__follow-list {
-			padding-bottom: 10px;
 		}
 	}
 	&:not(.has-scrolled-content) {
@@ -72,7 +68,7 @@
 		margin: 0;
 		width: 100%;
 		list-style: none;
-
+		padding-bottom: 12px;
 
 		.reader-suggested-follow-item {
 			display: flex;
