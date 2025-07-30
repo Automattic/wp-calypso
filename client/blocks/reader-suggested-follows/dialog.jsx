@@ -1,18 +1,40 @@
 import { Dialog } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { SuggestedFollowItem } from 'calypso/blocks/reader-suggested-follows';
 import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useRecommendOrRelatedSitesQuery } from './hooks/use-recommend-or-related-sites-query';
 import { RecommendedFeed } from './recommended-feed';
+
 import './style.scss';
+
+const useHasScrolledContent = () => {
+	const [ hasScrolledContent, setHasScrolledContent ] = useState( false );
+
+	const onContentContainerScroll = useCallback(
+		( e ) => {
+			const scrollY = e?.currentTarget?.scrollTop ?? -1;
+
+			if ( ! hasScrolledContent && scrollY > 0 ) {
+				setHasScrolledContent( true );
+			} else if ( hasScrolledContent && scrollY <= 0 ) {
+				setHasScrolledContent( false );
+			}
+		},
+		[ hasScrolledContent ]
+	);
+
+	return { hasScrolledContent, onContentContainerScroll };
+};
 
 const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, author = {} } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const userName = author?.name;
+	const { hasScrolledContent, onContentContainerScroll } = useHasScrolledContent();
 
 	const { data, isLoading, resourceType } = useRecommendOrRelatedSitesQuery(
 		{
@@ -58,7 +80,9 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 
 	return (
 		<Dialog
-			additionalClassNames="reader-recommended-follows-dialog"
+			additionalClassNames={ clsx( 'reader-recommended-follows-dialog', {
+				'is-loading': isLoading,
+			} ) }
 			isBackdropVisible
 			isVisible={ isVisible }
 			onClose={ onClose }
@@ -66,7 +90,11 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 			label={ title }
 			shouldCloseOnEsc
 		>
-			<div className="reader-recommended-follows-dialog__content">
+			<div
+				className={ clsx( 'reader-recommended-follows-dialog__content', {
+					'has-scrolled-content': hasScrolledContent,
+				} ) }
+			>
 				{ isLoading && (
 					<div
 						className="reader-recommended-follows-dialog__loading-placeholder"
@@ -89,32 +117,33 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 							<p className="reader-recommended-follows-dialog__description">{ description }</p>
 						</div>
 
-						<div className="reader-recommended-follows-dialog__body">
-							<div className="reader-recommended-follows-dialog__follow-list">
-								<ul className="reader-recommended-follows-dialog__follow-list">
-									{ resourceType === 'related' &&
-										data.map( ( relatedSite ) => (
-											<li
-												key={ relatedSite.global_ID }
-												className="reader-recommended-follows-dialog__follow-item"
-											>
-												<SuggestedFollowItem
-													site={ relatedSite }
-													followSource={ READER_SUGGESTED_FOLLOWS_DIALOG }
-												/>
-											</li>
-										) ) }
-									{ resourceType === 'recommended' &&
-										data.map( ( recommendedFeed ) => (
-											<li
-												key={ recommendedFeed.feedId }
-												className="reader-recommended-follows-dialog__follow-item"
-											>
-												<RecommendedFeed feed={ recommendedFeed } onClose={ onClose } />
-											</li>
-										) ) }
-								</ul>
-							</div>
+						<div
+							className="reader-recommended-follows-dialog__body"
+							onScroll={ onContentContainerScroll }
+						>
+							<ul className="reader-recommended-follows-dialog__follow-list">
+								{ resourceType === 'related' &&
+									data.map( ( relatedSite ) => (
+										<li
+											key={ relatedSite.global_ID }
+											className="reader-recommended-follows-dialog__follow-item"
+										>
+											<SuggestedFollowItem
+												site={ relatedSite }
+												followSource={ READER_SUGGESTED_FOLLOWS_DIALOG }
+											/>
+										</li>
+									) ) }
+								{ resourceType === 'recommended' &&
+									data.map( ( recommendedFeed ) => (
+										<li
+											key={ recommendedFeed.feedId }
+											className="reader-recommended-follows-dialog__follow-item"
+										>
+											<RecommendedFeed feed={ recommendedFeed } onClose={ onClose } />
+										</li>
+									) ) }
+							</ul>
 						</div>
 					</>
 				) }

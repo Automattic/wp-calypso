@@ -6,25 +6,50 @@
 		padding: 28px 28px 5px 5px;
 	}
 	.dialog__content {
-		padding: 24px 32px 24px;
+		padding: 0;
+		padding: 24px 0 0 0;
 		overflow-y: hidden;
 	}
+	&.is-loading {
+		padding: 0 24px 0 24px;
+	}
 }
+
+.reader-recommended-follows-dialog__header {
+	padding: 0 32px 10px 32px;
+}
+
 .reader-recommended-follows-dialog__body {
-	overflow-y: auto;
-	max-height: 60svh;
 	scrollbar-width: thin;
 	scrollbar-gutter: stable;
+	padding: 0 32px;
+	overflow-y: auto;
+	max-height: 600px;
 }
+
 .reader-recommended-follows-dialog__content {
 	width: 534px;
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+
+	&.has-scrolled-content {
+		.reader-recommended-follows-dialog__header {
+			position: sticky;
+			top: 0;
+			border-bottom-color:var(--color-neutral-5);
+		}
+	}
+	&:not(.has-scrolled-content) {
+		.reader-recommended-follows-dialog__header {
+			position: relative;
+			border-bottom-color: transparent;
+		}
+	}
 
 	.reader-recommended-follows-dialog__header {
-
+		border-bottom: 1px solid transparent;
+		transition: border-bottom-color 0.3s ease-in-out;
 		h2 {
 			color: var(--color-neutral-70);
 			font-size: $font-title-large;
@@ -40,11 +65,9 @@
 	}
 
 	.reader-recommended-follows-dialog__follow-list {
-		ul {
-			margin: 0;
-			width: 100%;
-			list-style: none;
-		}
+		margin: 0;
+		width: 100%;
+		list-style: none;
 
 		.reader-suggested-follow-item {
 			display: flex;
