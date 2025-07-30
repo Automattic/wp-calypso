@@ -258,7 +258,6 @@ export default function SyncModal( {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
 			);
-			// setSyncError( null );
 		},
 		onError: ( error, options ) => {
 			dispatch(
@@ -276,7 +275,6 @@ export default function SyncModal( {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
 			);
-			// setSyncError( null );
 		},
 		onError: ( error, options ) => {
 			dispatch(
