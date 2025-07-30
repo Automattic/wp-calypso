@@ -4,7 +4,7 @@ import { type SortDirection, type View, type Fields } from '@wordpress/dataviews
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
@@ -101,8 +101,6 @@ function getUrlForSiteLevelView( siteId: number | string ): string {
 }
 
 function BackupPaymentMethodNotice() {
-	// FIXME: hook.js:608 Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
-	const elementRef = useRef( null );
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
@@ -111,21 +109,9 @@ function BackupPaymentMethodNotice() {
 		}
 	);
 	return (
-		<span className="purchase-item__backup-payment-method-notice">
-			<Icon
-				icon={ info }
-				ref={ elementRef }
-				onClick={ () => setIsTooltipVisible( ( val ) => ! val ) }
-			/>
-			<Popover
-				className="tooltip tooltip--darker"
-				isVisible={ isTooltipVisible }
-				position="bottom"
-				context={ elementRef.current }
-				hideArrow
-			>
-				{ noticeText }
-			</Popover>
+		<span>
+			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
+			{ isTooltipVisible && <Popover>{ noticeText }</Popover> }
 		</span>
 	);
 }
