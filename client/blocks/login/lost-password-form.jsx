@@ -136,7 +136,7 @@ const LostPasswordForm = ( {
 			 * Check this is a network error first, so that we can run
 			 * Response.text() on it.
 			 */
-			if ( ! ( response instanceof Response ) ) {
+			if ( ! response?.text ) {
 				return setError( defaultError );
 			}
 
