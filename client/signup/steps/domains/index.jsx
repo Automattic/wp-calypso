@@ -153,7 +153,11 @@ class RenderDomainsStepComponent extends Component {
 		) {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
-			const domainItem = domainRegistration( { productSlug, domain } );
+			const domainItem = domainRegistration( {
+				productSlug,
+				domain,
+				extra: { flow_name: props.flowName },
+			} );
 			const domainCart = shouldUseMultipleDomainsInCart( props.flowName )
 				? getDomainsInCart( this.props.cart )
 				: {};
@@ -479,6 +483,7 @@ class RenderDomainsStepComponent extends Component {
 			? domainRegistration( {
 					domain: suggestion.domain_name,
 					productSlug: suggestion.product_slug,
+					extra: { flow_name: this.props.flowName },
 			  } )
 			: undefined;
 
