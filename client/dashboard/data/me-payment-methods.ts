@@ -1,3 +1,5 @@
+import wpcom from 'calypso/lib/wp';
+
 /**
  * A saved payment method (card, PayPal agreement, or Razorpay emandate).
  *
@@ -83,3 +85,18 @@ export interface StoredPaymentMethodTaxLocation {
 	city?: string;
 	is_for_business?: boolean | undefined;
 }
+
+export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
+
+export const fetchPaymentMethods = (
+	type: PaymentMethodRequestType,
+	expired: boolean
+): StoredPaymentMethod[] =>
+	wpcom.req.get( '/me/payment-methods', {
+		type,
+		expired: expired ? 'include' : 'exclude',
+		apiVersion: '1.2',
+	} );
+
+export const requestPaymentMethodDeletion = ( id: StoredPaymentMethod[ 'stored_details_id' ] ) =>
+	wpcom.req.post( { path: '/me/stored-cards/' + id + '/delete' } );

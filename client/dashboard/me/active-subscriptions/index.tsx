@@ -4,6 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscriptions';
+import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { sitesQuery } from '../../app/queries/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -14,7 +15,6 @@ import {
 	getItemId,
 	getPurchaseUrl,
 } from './data-view-shared';
-import { useStoredPaymentMethods } from './use-stored-payment-methods';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 export default function ActiveSubscriptions() {
@@ -29,10 +29,10 @@ export default function ActiveSubscriptions() {
 			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
 		}
 	} );
-	const paymentMethods = useStoredPaymentMethods().paymentMethods;
+	const { data: paymentMethods } = useSuspenseQuery( paymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
-		paymentMethods,
+		paymentMethods: paymentMethods ?? [],
 	} );
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );

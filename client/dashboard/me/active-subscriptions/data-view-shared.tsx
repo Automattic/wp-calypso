@@ -10,8 +10,8 @@ import { ActiveSubscriptionDescription } from './active-subscription-description
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
 import { ActiveSubscriptionPaymentMethod } from './active-subscription-payment-method';
 import { isRenewing } from './util';
-import type { StoredPaymentMethod } from './payment-method-types'; // FIXME: move this to data dir
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
+import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Site } from '../../data/site';
 
 const purchasesWideFields = [ 'status', 'payment-method' ];
