@@ -1,5 +1,9 @@
 @import './tokens.css';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   /* Reset & Box Model */
   *, ::before, ::after, ::backdrop, ::file-selector-button {

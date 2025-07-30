@@ -14,6 +14,23 @@ pnpm install @automattic/agenttic-ui
 import { /* components */ } from '@automattic/agenttic-ui';
 ```
 
+### CSS
+
+The package automatically imports its CSS styles when you import any component.
+
+If you need to import the CSS separately (e.g., for server-side rendering or specific build configurations), you can import it directly:
+
+```css
+/* In your CSS file */
+@import '@automattic/agenttic-ui/index.css';
+```
+
+Or in JavaScript:
+
+```javascript
+import '@automattic/agenttic-ui/index.css';
+```
+
 ## Development
 
 ```bash
