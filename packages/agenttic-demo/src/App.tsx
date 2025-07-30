@@ -287,12 +287,10 @@ const App: React.FC = () => {
 						width: '100%',
 						padding: '12px 20px',
 						fontSize: '14px',
-						fontWeight: 'bold',
 						zIndex: 1000,
 						backgroundColor: '#10b981',
 						color: 'white',
 						textAlign: 'center',
-						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
 						borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
 					} }
 				>
