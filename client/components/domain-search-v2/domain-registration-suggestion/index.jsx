@@ -359,6 +359,10 @@ class DomainRegistrationSuggestion extends Component {
 			);
 		}
 
+		if ( badges.length === 0 ) {
+			return null;
+		}
+
 		return badges;
 	}
 
