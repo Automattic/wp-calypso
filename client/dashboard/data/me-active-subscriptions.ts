@@ -106,7 +106,7 @@ export interface ActiveSubscription {
 	is_jetpack_ai_product: boolean;
 	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
-	is_non_free_plan: boolean;
+	is_plan: boolean;
 	is_rechargable: boolean;
 	is_refundable: boolean;
 	is_renewable: boolean;

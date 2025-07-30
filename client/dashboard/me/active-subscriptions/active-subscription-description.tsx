@@ -21,7 +21,7 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 		return __( 'Host Managed Plan' );
 	}
 
-	if ( purchase.is_non_free_plan ) {
+	if ( purchase.is_plan ) {
 		return __( 'Site Plan' );
 	}
 
