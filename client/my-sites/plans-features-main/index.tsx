@@ -4,6 +4,7 @@ import {
 	getPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isPremiumPlan,
 	PLAN_PERSONAL,
 	PLAN_FREE,
 	type PlanSlug,
@@ -47,6 +48,7 @@ import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -469,6 +471,12 @@ const PlansFeaturesMain = ( {
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
 	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
 		( { planSlug } ) => planSlug === PLAN_FREE
+	);
+
+	// Check if Premium or Personal plans are visible for the banner
+	const hasTargetPlan = gridPlansForFeaturesGrid?.some(
+		( { planSlug, isVisible } ) =>
+			isVisible && ( isPremiumPlan( planSlug ) || isPersonalPlan( planSlug ) )
 	);
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
@@ -973,6 +981,13 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
+			{ config.isEnabled( 'summer-special-2025' ) && isInSignup && (
+				<AsyncLoad
+					require="calypso/blocks/summer-special-banner"
+					placeholder={ null }
+					hasTargetPlan={ hasTargetPlan }
+				/>
+			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);
