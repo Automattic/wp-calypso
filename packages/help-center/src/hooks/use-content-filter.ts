@@ -120,8 +120,8 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					if ( isSameOrigin( href ) ) {
 						element.removeAttribute( 'target' );
 						// On mobile, clicking a local link in the Help Center means the user wants to
-						// interact with that linked page, the Help Center should tuck itself to make the page accessible,
-            // because the screen doesn't fit both.
+						// interact with that linked page, the Help Center should tuck itself away
+						// to make the page accessible, because the screen doesn't fit both.
 						if ( ! isDesktop ) {
 							element.addEventListener( 'click', () => setIsMinimized( true ) );
 						}
