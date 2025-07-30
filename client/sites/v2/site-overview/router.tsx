@@ -3,6 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import * as appRouter from 'calypso/dashboard/app/router';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
+import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
@@ -29,23 +30,19 @@ const siteOverviewRoute = createRoute( {
 	)
 );
 
-const siteSettingsPreloadRoute = createRoute( {
-	...appRouter.siteSettingsRoute.options,
-	getParentRoute: () => siteRoute,
-} );
-
-const siteSettingsSiteVisibilityPreloadRoute = createRoute( {
-	...appRouter.siteSettingsSiteVisibilityRoute.options,
-	getParentRoute: () => siteRoute,
+const siteSettingsWithFeaturePreloadRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteSlug/settings/$feature',
+	loader: async ( { params: { siteSlug, feature } } ) => {
+		siteSettingsRouter.preloadRoute( {
+			to: `/sites/${ siteSlug }/settings/${ feature }`,
+		} );
+	},
 } );
 
 const createRouteTree = () =>
 	rootRoute.addChildren( [
-		siteRoute.addChildren( [
-			siteOverviewRoute,
-			siteSettingsPreloadRoute,
-			siteSettingsSiteVisibilityPreloadRoute,
-		] ),
+		siteRoute.addChildren( [ siteOverviewRoute, siteSettingsWithFeaturePreloadRoute ] ),
 		dashboardSitesCompatibilityRoute,
 	] );
 

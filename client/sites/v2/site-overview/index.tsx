@@ -43,7 +43,7 @@ export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?
 		Promise.all( [
 			persistPromise,
 			router.preloadRoute( {
-				to: `/${ siteSlug }`,
+				to: `/sites/${ siteSlug }`,
 			} ),
 		] ).then( () => {
 			rootInstanceRef.current?.render(

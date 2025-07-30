@@ -55,7 +55,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		Promise.all( [
 			persistPromise,
 			router.preloadRoute( {
-				to: `/${ siteSlug }`,
+				to: `/sites/${ siteSlug }/settings`,
 			} ),
 		] ).then( () => {
 			rootInstanceRef.current?.render(
