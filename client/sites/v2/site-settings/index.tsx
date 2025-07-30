@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
+import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries/site-settings';
 import { queryClient, persistPromise } from 'calypso/dashboard/app/query-client';
 import { useSelector } from 'calypso/state';
@@ -74,8 +75,9 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		if ( site ) {
-			// TODO: Figure out how to popular jetpack_modules and subscribers_count too
-			// queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
+			// The site type used by the hosting dashboard is slightly different, but _mostly_ compatible,
+			// so this is safe to copy in to the cache.
+			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
 
 		if ( site && siteSettings ) {
