@@ -78,12 +78,13 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 	};
 
 	return (
-		<Card
-			ref={ ref }
-			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className={ clsx( 'domain-suggestion-featured', className ) }
-		>
-			<CardBody className="domain-suggestion-featured__body">{ getContent() }</CardBody>
+		<Card ref={ ref } className={ clsx( 'domain-suggestion-featured', className ) }>
+			<CardBody
+				className="domain-suggestion-featured__body"
+				style={ { padding: activeQuery === 'large' ? '1.5rem' : '1rem' } }
+			>
+				{ getContent() }
+			</CardBody>
 		</Card>
 	);
 } );
