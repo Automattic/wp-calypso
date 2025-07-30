@@ -31,9 +31,13 @@
     font-feature-settings: inherit;
     font-variation-settings: inherit;
     letter-spacing: inherit;
-    color: inherit;
-    border-radius: 0;
     background-color: transparent;
     opacity: 1;
+  }
+
+  /* Input elements should inherit color, but not buttons */
+  input, select, optgroup, textarea, ::file-selector-button {
+    color: inherit;
+    border-radius: 0;
   }
 }
