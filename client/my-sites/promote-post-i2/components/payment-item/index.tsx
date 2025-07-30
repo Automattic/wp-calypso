@@ -43,7 +43,7 @@ export default function PaymentItem( props: Props ) {
 			<td className="payment-item__total">{ `$${ formatCents( payment.total_paid || 0, 2 ) }` }</td>
 			<td className="payment-item__actions">
 				{ payment.status === paymentStatus.FAILED || payment.status === paymentStatus.PENDING ? (
-					<div className="payment-link__link">
+					<div className="payment-item__pay-action">
 						<ExternalLink href={ payment.payment_link } target="_blank">
 							{ translate( 'Pay now' ) }
 							<span className="sr-only">
@@ -58,7 +58,7 @@ export default function PaymentItem( props: Props ) {
 						isBusy={ false }
 						disabled={ false }
 						onClick={ getReceipt }
-						className="campaign-item__post-details-button"
+						className="payment-item__view-receipt-action"
 					>
 						<span aria-hidden="true">{ __( 'View receipt' ) }</span>
 						<span className="sr-only">
