@@ -84,6 +84,10 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 		ctaLabel = translate( 'Skip purchase' );
 	}
 
+	if ( ! selectedSite && ! subdomainSuggestion ) {
+		return null;
+	}
+
 	return (
 		<DomainSkipSkeleton
 			title={
