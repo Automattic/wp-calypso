@@ -744,7 +744,7 @@ const GravPoweredEmailLinkVerification = ( {
 }: GravPoweredEmailLinkVerificationProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const emailAddress = usernameOrEmail && usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
+	const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 	const isSendingEmail = useSelector( isFetchingMagicLoginEmail );
 
 	const emailTextOptions = {
@@ -752,21 +752,20 @@ const GravPoweredEmailLinkVerification = ( {
 			sendEmailButton: (
 				<button
 					onClick={ () => {
-						usernameOrEmail &&
-							dispatch(
-								sendEmailLogin( usernameOrEmail, {
-									redirectTo: currentQueryArguments?.redirect_to ?? '',
-									requestLoginEmailFormFlow: true,
-									createAccount: true,
-									flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) ?? '' : '',
-									showGlobalNotices: true,
-									tokenType: 'link',
-									source: false,
-									blogId: '',
-									loginFormFlow: false,
-									isMobileAppLogin: false,
-								} )
-							);
+						dispatch(
+							sendEmailLogin( usernameOrEmail, {
+								redirectTo: currentQueryArguments?.redirect_to ?? '',
+								requestLoginEmailFormFlow: true,
+								createAccount: true,
+								flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) ?? '' : '',
+								showGlobalNotices: true,
+								tokenType: 'link',
+								source: false,
+								blogId: '',
+								loginFormFlow: false,
+								isMobileAppLogin: false,
+							} )
+						);
 
 						recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
 							type: 'link',
@@ -1182,7 +1181,6 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				isSecondaryEmail={ isSecondaryEmail }
 				isNewAccount={ isNewAccount }
 				verificationCodeInputValue={ verificationCodeInputValue }
-				setVerificationCodeInputValue={ setVerificationCodeInputValue }
 				handleGravPoweredCodeInputChange={ handleGravPoweredCodeInputChange }
 				handleGravPoweredCodeSubmit={ handleGravPoweredCodeSubmit }
 				handleGravPoweredEmailCodeSend={ handleGravPoweredEmailCodeSend }
