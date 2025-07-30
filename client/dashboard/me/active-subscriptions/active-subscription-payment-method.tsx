@@ -3,16 +3,14 @@ import { PaymentMethodImage } from './payment-method-image';
 import { isAutoRenewEnabled, isExpired, isRenewing, isAkismetFreeProduct } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
-function getAddPaymentMethodUrlFor( purchase: ActiveSubscription ): string {
-	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
-}
-
 export function ActiveSubscriptionPaymentMethod( {
 	purchase,
 	isDisconnectedSite,
+	getAddPaymentMethodUrlFor,
 }: {
 	purchase: ActiveSubscription;
 	isDisconnectedSite?: boolean;
+	getAddPaymentMethodUrlFor: ( purchase: ActiveSubscription ) => string;
 } ) {
 	if ( purchase.expiry_status === 'included' ) {
 		return __( 'Included with Plan' );

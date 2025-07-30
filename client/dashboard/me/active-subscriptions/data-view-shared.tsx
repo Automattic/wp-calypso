@@ -96,6 +96,10 @@ export function getPurchaseUrl( item: ActiveSubscription ) {
 	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
 }
 
+function getAddPaymentMethodUrlFor( purchase: ActiveSubscription ): string {
+	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
+}
+
 function getUrlForSiteLevelView( siteId: number | string ): string {
 	return `/v2/me/billing/active-subscriptions/${ siteId }`;
 }
@@ -356,7 +360,11 @@ export function getFields( {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<div>
-						<ActiveSubscriptionPaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
+						<ActiveSubscriptionPaymentMethod
+							purchase={ item }
+							isDisconnectedSite={ ! site }
+							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						/>
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
 					</div>
 				);
