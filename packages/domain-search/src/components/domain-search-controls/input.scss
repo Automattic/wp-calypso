@@ -17,15 +17,8 @@
 			padding-left: 1rem;
 		}
 
-		.components-input-control__suffix {
-			> div {
-				padding-inline-end: 0.5rem;
-			}
-
-			svg {
-				width: 2rem;
-				height: 2rem;
-			}
+		.components-input-control__suffix > div {
+			padding-inline-end: 1rem;
 		}
 	}
 }
