@@ -113,7 +113,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Settings' ),
-				enabled: isHostingFeaturesEnabled,
+				enabled: true,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
