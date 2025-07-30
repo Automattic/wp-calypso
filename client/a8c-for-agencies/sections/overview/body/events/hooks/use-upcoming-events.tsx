@@ -45,7 +45,7 @@ export const useUpcomingEvents = () => {
 				subtitle: translate( 'Automattic for Agencies' ),
 				descriptions: [
 					translate(
-						"We're excited to announce that we're working towards supporting annual billing, 26 additional currencies, new payment methods, and more. We're achieving this by transitioning to a new billing system and will conduct the migration in 3 phases, starting with new client referrals in phase 1 on August 6th."
+						"We're excited to announce that we're working towards supporting annual billing, 25 additional currencies, new payment methods, and more. We're achieving this by transitioning to a new billing system and will conduct the migration in 3 phases, starting with new client referrals in phase 1 on August 6th."
 					),
 					translate(
 						"See what's changing and when by visiting our FAQ in the Knowledge Base. Questions? Reach out to our support team anytime."
