@@ -1,11 +1,10 @@
 import { fetchJetpackSettings, updateJetpackSettings } from '../../data/site-jetpack-settings';
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
-import { siteSettingsQuery } from './site-settings';
 import type { SiteSettings } from '../../data/site-settings';
 
 export const siteJetpackSettingsQuery = ( siteId: number ) => ( {
-	queryKey: [ 'site', siteId, 'settings' ],
+	queryKey: [ 'site', siteId, 'jetpackSettings' ],
 	queryFn: () => fetchJetpackSettings( siteId ),
 } );
 
@@ -19,7 +18,6 @@ export const siteJetpackSettingsMutation = ( siteId: number ) => ( {
 				...newSettings,
 			} )
 		);
-		queryClient.invalidateQueries( siteSettingsQuery( siteId ) );
 		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 	},
 } );

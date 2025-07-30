@@ -3,10 +3,10 @@ import { SiteSettings } from './site-settings';
 
 // This request returns roughly the same data as fetchSiteSettings
 export async function fetchJetpackSettings( siteId: number ): Promise< Partial< SiteSettings > > {
-	const { settings } = await wpcom.req.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
+	const { data } = await wpcom.req.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
 		path: '/jetpack/v4/settings/',
 	} );
-	return settings;
+	return data;
 }
 
 export async function updateJetpackSettings( siteId: number, settings: Partial< SiteSettings > ) {
