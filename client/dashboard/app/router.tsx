@@ -25,6 +25,7 @@ import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
+import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
@@ -463,7 +464,10 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
-			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteJetpackSettingsQuery( site.ID ) ),
+			] );
 		}
 	},
 } ).lazy( () =>
