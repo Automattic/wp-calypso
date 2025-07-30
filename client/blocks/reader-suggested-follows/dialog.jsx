@@ -42,19 +42,19 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 
 	const title =
 		resourceType === 'recommended'
-			? translate( 'Recommended sites' )
-			: translate( 'Suggested sites' );
+			? translate( 'Recommended blogs' )
+			: translate( 'Suggested blogs' );
 
 	const description =
 		resourceType === 'recommended'
 			? translate(
-					'While you’re at it, check out these sites {{strong}}%(authorName)s{{/strong}} recommends.',
+					'While you’re at it, check out these blogs {{strong}}%(authorName)s{{/strong}} recommends.',
 					{
 						args: { authorName: userName },
 						components: { strong: <strong /> },
 					}
 			  )
-			: translate( 'While you’re at it, you might check out these sites.' );
+			: translate( 'While you’re at it, you might check out these blogs.' );
 
 	return (
 		<Dialog
@@ -63,7 +63,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 			isVisible={ isVisible }
 			onClose={ onClose }
 			showCloseIcon={ ! isLoading }
-			label={ translate( 'Suggested sites' ) }
+			label={ title }
 			shouldCloseOnEsc
 		>
 			<div className="reader-recommended-follows-dialog__content">
@@ -72,7 +72,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 						className="reader-recommended-follows-dialog__loading-placeholder"
 						role="alert"
 						aria-busy="true"
-						aria-label={ translate( 'Loading suggested sites' ) }
+						aria-label={ translate( 'Loading suggested blogs' ) }
 					>
 						<span className="is-placeholder" />
 						<span className="is-placeholder" />

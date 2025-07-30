@@ -55,13 +55,13 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 		render(
 			<ReaderSuggestedFollowsDialog onClose={ jest.fn() } siteId={ 1 } postId={ 2 } isVisible />
 		);
-		expect( screen.getByLabelText( 'Loading suggested sites' ) ).toBeVisible();
+		expect( screen.getByLabelText( 'Loading suggested blogs' ) ).toBeVisible();
 	} );
 
 	it( 'renders the recommended feeds', () => {
 		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [
-				{ ID: '1', feedId: '1', name: 'Nice Recommended Site', feedUrl: 'https://test.com' },
+				{ ID: '1', feedId: '1', name: 'Nice Recommended Blog', feedUrl: 'https://test.com' },
 			] as FeedRecommendation[],
 			isLoading: false,
 			resourceType: 'recommended',
@@ -77,14 +77,14 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 				isVisible
 			/>
 		);
-		expect( screen.getByText( 'Recommended sites' ) ).toBeVisible();
+		expect( screen.getByText( 'Recommended blogs' ) ).toBeVisible();
 		expect( screen.getByText( /Test Author/ ) ).toBeVisible();
-		expect( screen.getByText( 'Nice Recommended Site' ) ).toBeVisible();
+		expect( screen.getByText( 'Nice Recommended Blog' ) ).toBeVisible();
 	} );
 
 	it( 'renders the related sites', () => {
 		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
-			data: [ { global_ID: '1', name: 'Related Site' } ] as RelatedSite[],
+			data: [ { global_ID: '1', name: 'Related blog' } ] as RelatedSite[],
 			isLoading: false,
 			resourceType: 'related',
 			isSuccess: true,
@@ -94,7 +94,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 			<ReaderSuggestedFollowsDialog onClose={ jest.fn() } siteId={ 1 } postId={ 2 } isVisible />
 		);
 
-		expect( screen.getByText( 'Suggested sites' ) ).toBeVisible();
-		expect( screen.getByText( 'Related Site' ) ).toBeVisible();
+		expect( screen.getByText( 'Suggested blogs' ) ).toBeVisible();
+		expect( screen.getByText( 'Related blog' ) ).toBeVisible();
 	} );
 } );
