@@ -520,7 +520,7 @@ export class UserStep extends Component {
 
 			return (
 				<span className={ clsx( 'signup-form__woo-wrapper' ) }>
-					{ translate( 'Create an account' ) }
+					{ translate( 'Create an account with WordPress.com' ) }
 				</span>
 			);
 		}
