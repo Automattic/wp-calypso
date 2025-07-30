@@ -21,7 +21,7 @@ export const PLAN = 'plan';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ OVERVIEW ]: isEnabled( 'dashboard/v2/backport/site-overview' )
-		? 'sites/v2/:site'
+		? 'sites/:site'
 		: 'overview/:site',
 	[ MONITORING ]: 'site-monitoring/:site',
 	[ LOGS_PHP ]: 'site-logs/:site/php',
