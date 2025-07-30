@@ -957,6 +957,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	is_hundred_year_domain?: boolean;
+	flow_name?: string;
 
 	/**
 	 * A way to signal intent to the back end when included as an extra with

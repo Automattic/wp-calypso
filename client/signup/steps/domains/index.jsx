@@ -972,6 +972,7 @@ class RenderDomainsStepComponent extends Component {
 			domainItem = domainRegistration( {
 				domain: selectedDomain?.domain_name || selectedDomain?.meta,
 				productSlug: selectedDomain?.product_slug,
+				extra: { flow_name: this.props.flowName },
 			} );
 		}
 
