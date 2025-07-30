@@ -1,8 +1,11 @@
 @import './tokens.css';
 
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.agenttic-ui {
+	@tailwind base;
+}
 
 @layer base {
   /* Reset & Box Model */
