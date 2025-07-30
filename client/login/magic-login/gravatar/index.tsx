@@ -544,6 +544,7 @@ const GravPoweredSecondaryEmailOptions = ( {
 		</div>
 	);
 };
+
 interface GravPoweredEmailCodeVerificationProps {
 	oauth2Client: any;
 	oauth2ClientId: string | number | null;
@@ -714,10 +715,6 @@ const GravPoweredEmailCodeVerification = ( {
 		</div>
 	);
 };
-
-// =============================
-// Email Link Verification Component
-// =============================
 
 interface GravPoweredEmailLinkVerificationProps {
 	oauth2Client: any;
