@@ -39,6 +39,10 @@
 			top: 0;
 			border-bottom-color:var(--color-neutral-5);
 		}
+
+		.reader-recommended-follows-dialog__follow-list {
+			padding-bottom: 10px;
+		}
 	}
 	&:not(.has-scrolled-content) {
 		.reader-recommended-follows-dialog__header {
@@ -68,6 +72,7 @@
 		margin: 0;
 		width: 100%;
 		list-style: none;
+
 
 		.reader-suggested-follow-item {
 			display: flex;

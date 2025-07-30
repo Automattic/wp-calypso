@@ -9,6 +9,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
+import './style.scss';
 
 const variantsConfig = {
 	small: {
@@ -32,10 +33,10 @@ export const RecommendedFeed = ( {
 	classPrefix,
 	compact = false,
 	onLinkClick,
-	variant: variantName,
+	variant: variantName = 'default',
 }: Props ) => {
 	const { image, name, feedUrl, siteId, feedId } = blog;
-	const variant = variantsConfig[ variantName ?? 'default' ];
+	const variant = variantsConfig[ variantName ];
 
 	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
@@ -51,7 +52,13 @@ export const RecommendedFeed = ( {
 	};
 
 	return (
-		<div className={ clsx( `${ classPrefix }__recommended-blog-item`, `is-${ variantName }` ) }>
+		<div
+			className={ clsx(
+				'reader-recommended-feed',
+				`${ classPrefix }__recommended-blog-item`,
+				`is-${ variantName }`
+			) }
+		>
 			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
 				One example being mapped domains: initial follows state may list by wpcom subdomain, and
 				the url here might be of a mapped domain. The site request success also updates follows

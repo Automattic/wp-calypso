@@ -19,14 +19,6 @@
 		&:visited {
 			color: var(--color-neutral-100);
 		}
-
-		.components-external-link__contents {
-			text-decoration: none;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: 300px;
-		}
 	}
 
 	&__recommended-blog-site-description {
