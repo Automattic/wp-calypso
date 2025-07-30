@@ -48,7 +48,7 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 	const description =
 		resourceType === 'recommended'
 			? translate(
-					'While you’re at it, check out these blogs {{strong}}%(authorName)s{{/strong}} recommends.',
+					'While you’re at it, check out these blogs that {{strong}}%(authorName)s{{/strong}} recommends.',
 					{
 						args: { authorName: userName },
 						components: { strong: <strong /> },
