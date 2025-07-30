@@ -1,19 +1,29 @@
 .reader-recommended-follows-dialog {
 	border-radius: 6px; /* stylelint-disable scales/radii */
 
+	overflow-y: hidden;
 	.dialog__action-buttons-close {
 		padding: 28px 28px 5px 5px;
 	}
 	.dialog__content {
-		padding: 24px 32px 8px;
+		padding: 24px 32px 24px;
+		overflow-y: hidden;
 	}
 }
-
+.reader-recommended-follows-dialog__body {
+	overflow-y: auto;
+	max-height: 60svh;
+	scrollbar-width: thin;
+	scrollbar-gutter: stable;
+}
 .reader-recommended-follows-dialog__content {
 	width: 534px;
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 
 	.reader-recommended-follows-dialog__header {
-		margin-bottom: 30px;
 
 		h2 {
 			color: var(--color-neutral-70);
