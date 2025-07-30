@@ -114,6 +114,282 @@ const emailToSha256 = async ( email: string ) => {
 		.join( '' );
 };
 
+interface GravPoweredEmailFormProps {
+	path: string;
+	oauth2Client: any;
+	oauth2ClientId: string | number | null;
+	locale: string;
+	currentQueryArguments: Record< string, string > | undefined;
+	isGravatar: boolean;
+	isGravatarFlow: boolean;
+	isWPJobManager: boolean;
+	isFromGravatar3rdPartyApp: boolean;
+	isFromGravatarQuickEditor: boolean;
+	isGravatarFlowWithEmail: boolean;
+	showCheckYourEmail: boolean;
+	isRequestingEmail: boolean;
+	requestEmailErrorMessage: string | null;
+	handleGravPoweredEmailSubmit: (
+		usernameOrEmail: string,
+		e: React.FormEvent< HTMLFormElement >
+	) => Promise< void >;
+	setUsernameOrEmail: ( email: string ) => void;
+	setRequestEmailErrorMessage: ( message: string | null ) => void;
+	recordTracksEvent: ( eventName: string, properties?: Record< string, any > ) => void;
+}
+
+const GravPoweredEmailForm = ( {
+	path,
+	oauth2Client,
+	oauth2ClientId,
+	locale,
+	currentQueryArguments,
+	isGravatar,
+	isGravatarFlow,
+	isWPJobManager,
+	isFromGravatar3rdPartyApp,
+	isFromGravatarQuickEditor,
+	isGravatarFlowWithEmail,
+	showCheckYourEmail,
+	isRequestingEmail,
+	requestEmailErrorMessage,
+	handleGravPoweredEmailSubmit,
+	setUsernameOrEmail,
+	setRequestEmailErrorMessage,
+	recordTracksEvent,
+}: GravPoweredEmailFormProps ) => {
+	const translate = useTranslate();
+
+	const isFromGravatarSignup = isGravatar && currentQueryArguments?.gravatar_from === 'signup';
+	const isEmailInputDisabled =
+		isFromGravatar3rdPartyApp ||
+		isFromGravatarQuickEditor ||
+		isRequestingEmail ||
+		isGravatarFlowWithEmail;
+
+	let headerText = isFromGravatarSignup
+		? translate( 'Create your Gravatar' )
+		: translate( 'Edit your Gravatar' );
+	headerText = isWPJobManager ? translate( 'Sign in with your email' ) : headerText;
+
+	let subHeader: TranslateResult = '';
+	if ( isGravatarFlow ) {
+		subHeader = translate( '%(clientTitle)s profiles are powered by Gravatar.', {
+			args: { clientTitle: oauth2Client?.title ?? '' },
+		} );
+	} else if ( isFromGravatar3rdPartyApp || isFromGravatarQuickEditor ) {
+		subHeader = translate( 'Profiles and avatars are powered by Gravatar.' );
+	}
+
+	const submitButtonLabel = isGravatar
+		? translate( 'Continue' )
+		: translate( 'Send me sign in link' );
+
+	const loginUrl = login( {
+		locale,
+		redirectTo: currentQueryArguments?.redirect_to,
+		oauth2ClientId: oauth2ClientId as number,
+		gravatarFrom: currentQueryArguments?.gravatar_from,
+		gravatarFlow: isGravatarFlow,
+		emailAddress: currentQueryArguments?.email_address,
+	} );
+
+	return (
+		<>
+			<MagicLoginLocaleSuggestions path={ path } showCheckYourEmail={ showCheckYourEmail } />
+			<GlobalNotices id="notices" />
+			<div className="grav-powered-magic-login__content">
+				<GravatarLoginLogo
+					iconUrl={ oauth2Client?.icon }
+					alt={ oauth2Client?.title ?? '' }
+					isCoBrand={ isGravatarFlow }
+				/>
+				<RequestLoginEmailForm
+					flow={ oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined }
+					headerText={ headerText }
+					subHeaderText={ subHeader }
+					inputPlaceholder={ translate( 'Enter your email address' ) }
+					submitButtonLabel={ submitButtonLabel }
+					tosComponent={ ! isGravatar && <GravPoweredMagicLoginTos /> }
+					onSubmitEmail={ isGravatar ? handleGravPoweredEmailSubmit : undefined }
+					onSendEmailLogin={ ( _usernameOrEmail: string ) =>
+						setUsernameOrEmail( _usernameOrEmail )
+					}
+					createAccountForNewUser
+					errorMessage={ requestEmailErrorMessage }
+					onErrorDismiss={ () => setRequestEmailErrorMessage( null ) }
+					isEmailInputDisabled={ isEmailInputDisabled }
+					isEmailInputError={ !! requestEmailErrorMessage }
+					isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
+					isSubmitButtonBusy={ isRequestingEmail }
+				/>
+				{ isGravatar && (
+					<div className="grav-powered-magic-login__feature-items">
+						<div className="grav-powered-magic-login__feature-item">
+							<svg
+								className="grav-powered-magic-login__feature-icon"
+								width="40"
+								height="41"
+								viewBox="0 0 40 41"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<circle
+									cx="20"
+									cy="20.5"
+									r="19.25"
+									fill="white"
+									stroke="#1D4FC4"
+									strokeWidth="1.5"
+								/>
+								<path
+									fillRule="evenodd"
+									clipRule="evenodd"
+									d="M24 17.5C24 19.7091 22.2091 21.5 20 21.5C17.7909 21.5 16 19.7091 16 17.5C16 15.2909 17.7909 13.5 20 13.5C22.2091 13.5 24 15.2909 24 17.5ZM22.5 17.5C22.5 18.8807 21.3807 20 20 20C18.6193 20 17.5 18.8807 17.5 17.5C17.5 16.1193 18.6193 15 20 15C21.3807 15 22.5 16.1193 22.5 17.5Z"
+									fill="#1D4FC4"
+								/>
+								<path
+									d="M26.75 28.5V26.5C26.75 24.9812 25.5188 23.75 24 23.75L16 23.75C14.4812 23.75 13.25 24.9812 13.25 26.5V28.5H14.75L14.75 26.5C14.75 25.8096 15.3096 25.25 16 25.25L24 25.25C24.6904 25.25 25.25 25.8096 25.25 26.5V28.5H26.75Z"
+									fill="#1D4FC4"
+								/>
+							</svg>
+							<div>
+								<h4 className="grav-powered-magic-login__feature-header">
+									{ translate( 'One profile, everywhere' ) }
+								</h4>
+								<p className="grav-powered-magic-login__feature-sub-header">
+									{ translate( 'Your avatar and bio syncs across the web.' ) }
+								</p>
+							</div>
+						</div>
+						<div className="grav-powered-magic-login__feature-item">
+							<svg
+								className="grav-powered-magic-login__feature-icon"
+								width="40"
+								height="41"
+								viewBox="0 0 40 41"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<circle
+									cx="20"
+									cy="20.5"
+									r="19.25"
+									fill="white"
+									stroke="#1D4FC4"
+									strokeWidth="1.5"
+								/>
+								<path
+									fillRule="evenodd"
+									clipRule="evenodd"
+									d="M20 11.75C17.9289 11.75 16.25 13.4289 16.25 15.5V18.5H15C14.4477 18.5 14 18.9477 14 19.5V27.5C14 28.0523 14.4477 28.5 15 28.5H25C25.5523 28.5 26 28.0523 26 27.5V19.5C26 18.9477 25.5523 18.5 25 18.5H23.75V15.5C23.75 13.4289 22.0711 11.75 20 11.75ZM22.25 18.5V15.5C22.25 14.2574 21.2426 13.25 20 13.25C18.7574 13.25 17.75 14.2574 17.75 15.5V18.5H22.25ZM15.5 27V20H24.5V27H15.5Z"
+									fill="#1D4FC4"
+								/>
+							</svg>
+							<div>
+								<h4 className="grav-powered-magic-login__feature-header">
+									{ translate( 'Public, open, and responsible' ) }
+								</h4>
+								<p className="grav-powered-magic-login__feature-sub-header">
+									{ translate( 'Full control over your data and privacy.' ) }
+								</p>
+							</div>
+						</div>
+						<div className="grav-powered-magic-login__feature-item">
+							<svg
+								className="grav-powered-magic-login__feature-icon"
+								width="40"
+								height="41"
+								viewBox="0 0 40 41"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<circle
+									cx="20"
+									cy="20.5"
+									r="19.25"
+									fill="white"
+									stroke="#1D4FC4"
+									strokeWidth="1.5"
+								/>
+								<path
+									d="M19 21.5V26.5H20.5V21.5H25.5V20H20.5V15H19V20H14V21.5H19Z"
+									fill="#1D4FC4"
+								/>
+							</svg>
+							<div>
+								<h4 className="grav-powered-magic-login__feature-header">
+									{ translate( '200+ million users' ) }
+								</h4>
+								<p className="grav-powered-magic-login__feature-sub-header">
+									{ translate( 'Used by WordPress, Slack, and many more.' ) }
+								</p>
+							</div>
+						</div>
+					</div>
+				) }
+				{ isWPJobManager && (
+					<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
+				) }
+				{ ! isFromGravatarSignup && (
+					<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
+						{ translate( '{{a}}Sign in another way{{/a}}', {
+							components: {
+								a: (
+									<a
+										href="/"
+										onClick={ ( e ) => {
+											e.preventDefault();
+											recordTracksEvent(
+												'calypso_gravatar_powered_magic_login_click_login_page_link',
+												{ client_id: oauth2ClientId, client_name: oauth2Client?.title }
+											);
+											page( loginUrl );
+										} }
+									/>
+								),
+							},
+						} ) }
+					</footer>
+				) }
+			</div>
+			{ isWPJobManager && (
+				<div className="grav-powered-magic-login__gravatar-info">
+					<div className="grav-powered-magic-login__gravatar-info-heading">
+						<img
+							src="https://gravatar.com/images/grav-logo-blue.svg"
+							width={ 18 }
+							height={ 18 }
+							alt="Gravatar logo"
+						/>
+						{ translate( 'You will be logging in via Gravatar' ) }
+					</div>
+					<div className="grav-powered-magic-login__gravatar-info-items">
+						<div>
+							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+							{ translate(
+								'Gravatar accounts and profiles are free. You can log in to thousands of sites across the web with one Gravatar account.'
+							) }
+						</div>
+						<div>
+							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+							{ translate( 'Control what information is shared on your public profile.' ) }
+						</div>
+						<div>
+							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+							{ translate( "Have questions? Please see Gravatar's {{a}}documentation here{{/a}}.", {
+								components: {
+									a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</div>
+					</div>
+				</div>
+			) }
+		</>
+	);
+};
+
 const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -344,6 +620,93 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		} );
 	};
 
+	const handleGravPoweredCodeSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+
+		dispatch(
+			fetchMagicLoginAuthenticate(
+				`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
+				currentQueryArguments?.email_address ?? '',
+				oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
+				true
+			)
+		);
+	};
+
+	const handleGravPoweredCodeInputChange = ( e: React.ChangeEvent< HTMLInputElement > ) => {
+		let value = e.target.value.toUpperCase();
+
+		if ( ! /^[A-Z0-9]*$/.test( value ) || value.length > 6 ) {
+			value = verificationCodeInputValue;
+		}
+
+		setVerificationCodeInputValue( value );
+	};
+
+	const handleGravPoweredEmailSubmit = async (
+		usernameOrEmail: string,
+		e: React.FormEvent< HTMLFormElement >
+	) => {
+		e.preventDefault();
+
+		const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
+
+		if ( ! emailValidator.validate( usernameOrEmail ) ) {
+			return setRequestEmailErrorMessage( translate( 'Invalid email.' ) );
+		}
+
+		setUsernameOrEmail( usernameOrEmail );
+		setIsRequestingEmail( true );
+
+		try {
+			recordTracksEvent(
+				'calypso_gravatar_powered_magic_login_gravatar_info_fetching',
+				eventOptions
+			);
+
+			const { is_secondary, main_email_masked } = await wpcom.req.get( '/auth/get-gravatar-info', {
+				email: usernameOrEmail,
+			} );
+
+			if ( is_secondary ) {
+				setUsernameOrEmail( usernameOrEmail );
+				setIsRequestingEmail( false );
+				setIsSecondaryEmail( true );
+				setShowSecondaryEmailOptions( true );
+				setMaskedEmailAddress( main_email_masked );
+			} else {
+				handleGravPoweredEmailCodeSend( usernameOrEmail );
+			}
+
+			recordTracksEvent(
+				'calypso_gravatar_powered_magic_login_gravatar_info_success',
+				eventOptions
+			);
+		} catch ( error ) {
+			const err = error as { error?: string; status?: number; message?: string };
+
+			switch ( err?.error ) {
+				case 'not_found':
+					setIsNewAccount( true );
+					handleGravPoweredEmailCodeSend( usernameOrEmail );
+					break;
+				case 'invalid_email':
+					setRequestEmailErrorMessage( translate( 'Invalid email.' ) );
+					setIsRequestingEmail( false );
+					break;
+				default:
+					setRequestEmailErrorMessage( translate( 'Something went wrong. Please try again.' ) );
+					setIsRequestingEmail( false );
+			}
+
+			recordTracksEvent( 'calypso_gravatar_powered_magic_login_gravatar_info_failure', {
+				...eventOptions,
+				error_code: err.status,
+				error_message: err.message,
+			} );
+		}
+	};
+
 	const GravPoweredSecondaryEmailOptions = () => {
 		const [ hashedEmail, setHashedEmail ] = useState< string | null >( null );
 		const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
@@ -472,29 +835,6 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
 		const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 		const isProcessingCode = isValidatingCode || isCodeValidated;
-
-		const handleGravPoweredCodeSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
-			e.preventDefault();
-
-			dispatch(
-				fetchMagicLoginAuthenticate(
-					`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
-					currentQueryArguments?.email_address ?? '',
-					oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
-					true
-				)
-			);
-		};
-
-		const handleGravPoweredCodeInputChange = ( e: React.ChangeEvent< HTMLInputElement > ) => {
-			let value = e.target.value.toUpperCase();
-
-			if ( ! /^[A-Z0-9]*$/.test( value ) || value.length > 6 ) {
-				value = verificationCodeInputValue;
-			}
-
-			setVerificationCodeInputValue( value );
-		};
 
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -710,320 +1050,42 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		);
 	};
 
-	const GravPoweredEmailForm = () => {
-		const isFromGravatarSignup = isGravatar && currentQueryArguments?.gravatar_from === 'signup';
-		const isEmailInputDisabled =
-			isFromGravatar3rdPartyApp ||
-			isFromGravatarQuickEditor ||
-			isRequestingEmail ||
-			isGravatarFlowWithEmail;
-
-		let headerText = isFromGravatarSignup
-			? translate( 'Create your Gravatar' )
-			: translate( 'Edit your Gravatar' );
-		headerText = isWPJobManager ? translate( 'Sign in with your email' ) : headerText;
-
-		let subHeader: TranslateResult = '';
-		if ( isGravatarFlow ) {
-			subHeader = translate( '%(clientTitle)s profiles are powered by Gravatar.', {
-				args: { clientTitle: oauth2Client?.title ?? '' },
-			} );
-		} else if ( isFromGravatar3rdPartyApp || isFromGravatarQuickEditor ) {
-			subHeader = translate( 'Profiles and avatars are powered by Gravatar.' );
-		}
-
-		const submitButtonLabel = isGravatar
-			? translate( 'Continue' )
-			: translate( 'Send me sign in link' );
-
-		const loginUrl = login( {
-			locale,
-			redirectTo: currentQueryArguments?.redirect_to,
-			oauth2ClientId: oauth2ClientId as number,
-			gravatarFrom: currentQueryArguments?.gravatar_from,
-			gravatarFlow: isGravatarFlow,
-			emailAddress: currentQueryArguments?.email_address,
-		} );
-
-		const handleGravPoweredEmailSubmit = async (
-			usernameOrEmail: string,
-			e: React.FormEvent< HTMLFormElement >
-		) => {
-			e.preventDefault();
-
-			const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
-
-			if ( ! emailValidator.validate( usernameOrEmail ) ) {
-				return setRequestEmailErrorMessage( translate( 'Invalid email.' ) );
-			}
-
-			setUsernameOrEmail( usernameOrEmail );
-			setIsRequestingEmail( true );
-
-			try {
-				recordTracksEvent(
-					'calypso_gravatar_powered_magic_login_gravatar_info_fetching',
-					eventOptions
-				);
-
-				const { is_secondary, main_email_masked } = await wpcom.req.get(
-					'/auth/get-gravatar-info',
-					{
-						email: usernameOrEmail,
-					}
-				);
-
-				if ( is_secondary ) {
-					setUsernameOrEmail( usernameOrEmail );
-					setIsRequestingEmail( false );
-					setIsSecondaryEmail( true );
-					setShowSecondaryEmailOptions( true );
-					setMaskedEmailAddress( main_email_masked );
-				} else {
-					handleGravPoweredEmailCodeSend( usernameOrEmail );
-				}
-
-				recordTracksEvent(
-					'calypso_gravatar_powered_magic_login_gravatar_info_success',
-					eventOptions
-				);
-			} catch ( error ) {
-				const err = error as { error?: string; status?: number; message?: string };
-
-				switch ( err?.error ) {
-					case 'not_found':
-						setIsNewAccount( true );
-						handleGravPoweredEmailCodeSend( usernameOrEmail );
-						break;
-					case 'invalid_email':
-						setRequestEmailErrorMessage( translate( 'Invalid email.' ) );
-						setIsRequestingEmail( false );
-						break;
-					default:
-						setRequestEmailErrorMessage( translate( 'Something went wrong. Please try again.' ) );
-						setIsRequestingEmail( false );
-				}
-
-				recordTracksEvent( 'calypso_gravatar_powered_magic_login_gravatar_info_failure', {
-					...eventOptions,
-					error_code: err.status,
-					error_message: err.message,
-				} );
-			}
-		};
-
-		return (
-			<>
-				<MagicLoginLocaleSuggestions path={ path } showCheckYourEmail={ showCheckYourEmail } />
-				<GlobalNotices id="notices" />
-				<div className="grav-powered-magic-login__content">
-					<GravatarLoginLogo
-						iconUrl={ oauth2Client?.icon }
-						alt={ oauth2Client?.title ?? '' }
-						isCoBrand={ isGravatarFlow }
-					/>
-					<RequestLoginEmailForm
-						flow={ oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined }
-						headerText={ headerText }
-						subHeaderText={ subHeader }
-						inputPlaceholder={ translate( 'Enter your email address' ) }
-						submitButtonLabel={ submitButtonLabel }
-						tosComponent={ ! isGravatar && <GravPoweredMagicLoginTos /> }
-						onSubmitEmail={ isGravatar ? handleGravPoweredEmailSubmit : undefined }
-						onSendEmailLogin={ ( _usernameOrEmail: string ) =>
-							setUsernameOrEmail( _usernameOrEmail )
-						}
-						createAccountForNewUser
-						errorMessage={ requestEmailErrorMessage }
-						onErrorDismiss={ () => setRequestEmailErrorMessage( null ) }
-						isEmailInputDisabled={ isEmailInputDisabled }
-						isEmailInputError={ !! requestEmailErrorMessage }
-						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
-						isSubmitButtonBusy={ isRequestingEmail }
-					/>
-					{ isGravatar && (
-						<div className="grav-powered-magic-login__feature-items">
-							<div className="grav-powered-magic-login__feature-item">
-								<svg
-									className="grav-powered-magic-login__feature-icon"
-									width="40"
-									height="41"
-									viewBox="0 0 40 41"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<circle
-										cx="20"
-										cy="20.5"
-										r="19.25"
-										fill="white"
-										stroke="#1D4FC4"
-										strokeWidth="1.5"
-									/>
-									<path
-										fillRule="evenodd"
-										clipRule="evenodd"
-										d="M24 17.5C24 19.7091 22.2091 21.5 20 21.5C17.7909 21.5 16 19.7091 16 17.5C16 15.2909 17.7909 13.5 20 13.5C22.2091 13.5 24 15.2909 24 17.5ZM22.5 17.5C22.5 18.8807 21.3807 20 20 20C18.6193 20 17.5 18.8807 17.5 17.5C17.5 16.1193 18.6193 15 20 15C21.3807 15 22.5 16.1193 22.5 17.5Z"
-										fill="#1D4FC4"
-									/>
-									<path
-										d="M26.75 28.5V26.5C26.75 24.9812 25.5188 23.75 24 23.75L16 23.75C14.4812 23.75 13.25 24.9812 13.25 26.5V28.5H14.75L14.75 26.5C14.75 25.8096 15.3096 25.25 16 25.25L24 25.25C24.6904 25.25 25.25 25.8096 25.25 26.5V28.5H26.75Z"
-										fill="#1D4FC4"
-									/>
-								</svg>
-								<div>
-									<h4 className="grav-powered-magic-login__feature-header">
-										{ translate( 'One profile, everywhere' ) }
-									</h4>
-									<p className="grav-powered-magic-login__feature-sub-header">
-										{ translate( 'Your avatar and bio syncs across the web.' ) }
-									</p>
-								</div>
-							</div>
-							<div className="grav-powered-magic-login__feature-item">
-								<svg
-									className="grav-powered-magic-login__feature-icon"
-									width="40"
-									height="41"
-									viewBox="0 0 40 41"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<circle
-										cx="20"
-										cy="20.5"
-										r="19.25"
-										fill="white"
-										stroke="#1D4FC4"
-										strokeWidth="1.5"
-									/>
-									<path
-										fillRule="evenodd"
-										clipRule="evenodd"
-										d="M20 11.75C17.9289 11.75 16.25 13.4289 16.25 15.5V18.5H15C14.4477 18.5 14 18.9477 14 19.5V27.5C14 28.0523 14.4477 28.5 15 28.5H25C25.5523 28.5 26 28.0523 26 27.5V19.5C26 18.9477 25.5523 18.5 25 18.5H23.75V15.5C23.75 13.4289 22.0711 11.75 20 11.75ZM22.25 18.5V15.5C22.25 14.2574 21.2426 13.25 20 13.25C18.7574 13.25 17.75 14.2574 17.75 15.5V18.5H22.25ZM15.5 27V20H24.5V27H15.5Z"
-										fill="#1D4FC4"
-									/>
-								</svg>
-								<div>
-									<h4 className="grav-powered-magic-login__feature-header">
-										{ translate( 'Public, open, and responsible' ) }
-									</h4>
-									<p className="grav-powered-magic-login__feature-sub-header">
-										{ translate( 'Full control over your data and privacy.' ) }
-									</p>
-								</div>
-							</div>
-							<div className="grav-powered-magic-login__feature-item">
-								<svg
-									className="grav-powered-magic-login__feature-icon"
-									width="40"
-									height="41"
-									viewBox="0 0 40 41"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<circle
-										cx="20"
-										cy="20.5"
-										r="19.25"
-										fill="white"
-										stroke="#1D4FC4"
-										strokeWidth="1.5"
-									/>
-									<path
-										d="M19 21.5V26.5H20.5V21.5H25.5V20H20.5V15H19V20H14V21.5H19Z"
-										fill="#1D4FC4"
-									/>
-								</svg>
-								<div>
-									<h4 className="grav-powered-magic-login__feature-header">
-										{ translate( '200+ million users' ) }
-									</h4>
-									<p className="grav-powered-magic-login__feature-sub-header">
-										{ translate( 'Used by WordPress, Slack, and many more.' ) }
-									</p>
-								</div>
-							</div>
-						</div>
-					) }
-					{ isWPJobManager && (
-						<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
-					) }
-					{ ! isFromGravatarSignup && (
-						<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
-							{ translate( '{{a}}Sign in another way{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="/"
-											onClick={ ( e ) => {
-												e.preventDefault();
-												recordTracksEvent(
-													'calypso_gravatar_powered_magic_login_click_login_page_link',
-													{ client_id: oauth2ClientId, client_name: oauth2Client?.title }
-												);
-												page( loginUrl );
-											} }
-										/>
-									),
-								},
-							} ) }
-						</footer>
-					) }
-				</div>
-				{ isWPJobManager && (
-					<div className="grav-powered-magic-login__gravatar-info">
-						<div className="grav-powered-magic-login__gravatar-info-heading">
-							<img
-								src="https://gravatar.com/images/grav-logo-blue.svg"
-								width={ 18 }
-								height={ 18 }
-								alt="Gravatar logo"
-							/>
-							{ translate( 'You will be logging in via Gravatar' ) }
-						</div>
-						<div className="grav-powered-magic-login__gravatar-info-items">
-							<div>
-								<Gridicon icon="checkmark" size={ 18 } color="#646970" />
-								{ translate(
-									'Gravatar accounts and profiles are free. You can log in to thousands of sites across the web with one Gravatar account.'
-								) }
-							</div>
-							<div>
-								<Gridicon icon="checkmark" size={ 18 } color="#646970" />
-								{ translate( 'Control what information is shared on your public profile.' ) }
-							</div>
-							<div>
-								<Gridicon icon="checkmark" size={ 18 } color="#646970" />
-								{ translate(
-									"Have questions? Please see Gravatar's {{a}}documentation here{{/a}}.",
-									{
-										components: {
-											a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
-										},
-									}
-								) }
-							</div>
-						</div>
-					</div>
-				) }
-			</>
-		);
-	};
-
 	const hasSubHeader =
 		isGravatarFlowOAuth2Client( oauth2Client ) ||
 		( isGravatarOAuth2Client( oauth2Client ) &&
 			( currentQueryArguments?.gravatar_from === GRAVATAR_FROM_3RD_PARTY ||
 				currentQueryArguments?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR ) );
 
-	let mainContent = <GravPoweredEmailForm />;
+	let mainContent;
 	if ( showSecondaryEmailOptions ) {
 		mainContent = <GravPoweredSecondaryEmailOptions />;
 	} else if ( showEmailCodeVerification ) {
 		mainContent = <GravPoweredEmailCodeVerification />;
 	} else if ( showCheckYourEmail ) {
 		mainContent = <GravPoweredEmailLinkVerification />;
+	} else {
+		mainContent = (
+			<GravPoweredEmailForm
+				path={ path }
+				oauth2Client={ oauth2Client }
+				oauth2ClientId={ oauth2ClientId }
+				locale={ locale }
+				currentQueryArguments={ currentQueryArguments }
+				isGravatar={ isGravatar }
+				isGravatarFlow={ isGravatarFlow }
+				isWPJobManager={ isWPJobManager }
+				isFromGravatar3rdPartyApp={ isFromGravatar3rdPartyApp }
+				isFromGravatarQuickEditor={ isFromGravatarQuickEditor }
+				isGravatarFlowWithEmail={ isGravatarFlowWithEmail }
+				showCheckYourEmail={ showCheckYourEmail }
+				isRequestingEmail={ isRequestingEmail }
+				requestEmailErrorMessage={ requestEmailErrorMessage }
+				handleGravPoweredEmailSubmit={ handleGravPoweredEmailSubmit }
+				setUsernameOrEmail={ setUsernameOrEmail }
+				setRequestEmailErrorMessage={ setRequestEmailErrorMessage }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
 	}
 
 	return (
