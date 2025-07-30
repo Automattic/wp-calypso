@@ -50,6 +50,40 @@ pnpm test
 pnpm type-check
 ```
 
+## Demo Application
+
+A demo application is available in the `demo/` directory to test the UI components.
+
+### Running the Demo
+
+You can run the demo in two different modes:
+
+#### Source Mode (Development)
+```bash
+# From the demo directory
+pnpm dev
+```
+
+This runs the demo using the **source code** directly from the UI package. This is useful for active development and sees changes immediately.
+
+#### Build Mode (Production Testing)
+```bash
+# First build the UI package
+cd packages/agenttic-ui
+pnpm run build
+
+# Then run the demo with the built package
+pnpm dev --mode use-ui-build
+```
+
+This runs the demo using the **built/bundled UI package**. This mode:
+- Shows a green banner "📦 Running with Built UI Package" to indicate build mode
+- Tests the actual production bundle that would be published
+- Verifies CSS Modules scoping works correctly in the built package
+- Useful for testing before publishing
+
+The demo will start on [http://localhost:3001](http://localhost:3001) in both modes.
+
 ## Storybook
 
 Agenttic UI includes a Storybook setup for component development and documentation.

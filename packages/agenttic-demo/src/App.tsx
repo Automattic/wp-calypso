@@ -277,6 +277,28 @@ const App: React.FC = () => {
 		<div
 			style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }
 		>
+			{ __USE_UI_BUILD__ && (
+				<div
+					style={ {
+						position: 'sticky',
+						top: 0,
+						left: 0,
+						right: 0,
+						width: '100%',
+						padding: '12px 20px',
+						fontSize: '14px',
+						fontWeight: 'bold',
+						zIndex: 1000,
+						backgroundColor: '#10b981',
+						color: 'white',
+						textAlign: 'center',
+						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+						borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+					} }
+				>
+					📦 Running with Built UI Package
+				</div>
+			) }
 			<a
 				href="#"
 				onClick={ ( e ) => {
