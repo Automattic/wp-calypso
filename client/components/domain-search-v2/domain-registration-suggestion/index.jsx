@@ -320,7 +320,7 @@ class DomainRegistrationSuggestion extends Component {
 		if ( isFeatured && this.isExactMatch() ) {
 			badges.push(
 				<DomainSuggestionBadge variation="success">
-					{ translate( 'It’s available!' ) }
+					{ translate( "It's available!" ) }
 				</DomainSuggestionBadge>
 			);
 		} else if ( isRecommended && isFeatured ) {
