@@ -476,7 +476,7 @@ export default function SyncModal( {
 						/>
 						<Tooltip
 							text={ __(
-								'Overwrite the site database, including any posts, pages, products, or orders.'
+								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
 							) }
 						>
 							<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
