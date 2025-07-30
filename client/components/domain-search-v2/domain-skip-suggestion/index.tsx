@@ -37,7 +37,7 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 								domainName: tlds.join( '.' ),
 							},
 							components: {
-								domain: <span style={ { wordBreak: 'break-all' } } />,
+								domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
 								strong: <strong style={ { whiteSpace: 'nowrap' } } />,
 							},
 						}
@@ -50,6 +50,7 @@ const DomainSkipSuggestion = ( { domain, onSkip }: Props ) => {
 					variant="secondary"
 					onClick={ onSkip }
 					disabled={ cart.isBusy }
+					__next40pxDefaultSize
 				>
 					{ translate( 'Skip purchase' ) }
 				</Button>
