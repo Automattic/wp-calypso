@@ -8,6 +8,9 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { useSelector } from 'calypso/state';
+import { getIsStagingSiteInTransition } from 'calypso/state/staging-site/selectors/get-is-staging-site-in-transition';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ItemViewContent from './item-view-content';
 import ItemViewHeader from './item-view-header';
 import ItemViewBreadcrumbsHeader from './item-view-header/breadcrumbs';
@@ -51,10 +54,21 @@ export default function ItemView( {
 }: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
+	const site = useSelector( getSelectedSite );
+
 	const { data: isStagingSiteDeletionInProgress } = useQuery(
 		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
 		queryClient
 	);
+
+	// Check if this is a staging site with incomplete atomic transfer
+	const isStagingSiteTransferInProgress = useSelector( ( state ) => {
+		if ( ! site?.is_wpcom_staging_site ) {
+			return false;
+		}
+
+		return getIsStagingSiteInTransition( state, site.ID );
+	} );
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
@@ -100,7 +114,8 @@ export default function ItemView( {
 		( hideNavIfSingleTab && featureTabs.length <= 1 ) ||
 		isMobileApp ||
 		shouldShowBreadcrumbs ||
-		isStagingSiteDeletionInProgress;
+		isStagingSiteDeletionInProgress ||
+		isStagingSiteTransferInProgress;
 
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>

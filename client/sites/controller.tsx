@@ -7,8 +7,7 @@ import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
-import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { getIsStagingSiteInTransition } from 'calypso/state/staging-site/selectors/get-is-staging-site-in-transition';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
@@ -162,14 +161,8 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	// Additional check for staging sites with incomplete atomic transfer when redesign is enabled
 	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 	if ( stagingSitesRedesign && site?.is_wpcom_staging_site ) {
-		const stagingStatus = getStagingSiteStatus( state, site.ID );
-		const isStagingStatusFinished =
-			stagingStatus === StagingSiteStatus.COMPLETE ||
-			stagingStatus === StagingSiteStatus.NONE ||
-			stagingStatus === StagingSiteStatus.UNSET;
-
-		// If atomic transfer is not completed, redirect to hosting features
-		if ( ! isStagingStatusFinished ) {
+		// If staging site is in transition (transferring or reverting), redirect to hosting features
+		if ( getIsStagingSiteInTransition( state, site.ID ) ) {
 			return page.redirect( `/hosting-features/${ site.slug }` );
 		}
 	}
