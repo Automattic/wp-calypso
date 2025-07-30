@@ -518,14 +518,14 @@ class RegisterDomainStep extends Component {
 			} ),
 			total,
 			onAddItem: ( domain_name ) => {
-				const subdomainPosition = this.state.subdomainSearchResults.findIndex(
-					( subdomain ) => subdomain.domain_name === domain_name
+				// Try to find and add subdomain first
+				const subdomain = this.state.subdomainSearchResults?.find(
+					( suggestion ) => suggestion.domain_name === domain_name
 				);
 
-				if ( subdomainPosition !== -1 ) {
-					const subdomain = this.state.subdomainSearchResults[ subdomainPosition ];
-
-					return this.onAddDomain( subdomain, subdomainPosition, false );
+				if ( subdomain ) {
+					const position = this.state.subdomainSearchResults.indexOf( subdomain );
+					return this.onAddDomain( subdomain, position, false );
 				}
 
 				const suggestionPosition = searchResults.findIndex(
