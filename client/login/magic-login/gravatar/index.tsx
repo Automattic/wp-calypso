@@ -390,6 +390,442 @@ const GravPoweredEmailForm = ( {
 	);
 };
 
+interface GravPoweredSecondaryEmailOptionsProps {
+	oauth2Client: any;
+	oauth2ClientId: string | number | null;
+	isGravatarFlow: boolean;
+	usernameOrEmail: string;
+	maskedEmailAddress: string;
+	isNewAccount: boolean;
+	setIsNewAccount: ( value: boolean ) => void;
+	isRequestingEmail: boolean;
+	requestEmailErrorMessage: string | null;
+	setRequestEmailErrorMessage: ( msg: string | null ) => void;
+	shouldShowSwitchEmail: boolean;
+	handleGravPoweredEmailSwitch: () => void;
+	handleGravPoweredEmailCodeSend: ( email: string, cb?: () => void ) => void;
+	setShowSecondaryEmailOptions: ( value: boolean ) => void;
+	recordTracksEvent: ( eventName: string, properties?: Record< string, any > ) => void;
+}
+
+const GravPoweredSecondaryEmailOptions = ( {
+	oauth2Client,
+	oauth2ClientId,
+	isGravatarFlow,
+	usernameOrEmail,
+	maskedEmailAddress,
+	isNewAccount,
+	setIsNewAccount,
+	isRequestingEmail,
+	requestEmailErrorMessage,
+	setRequestEmailErrorMessage,
+	shouldShowSwitchEmail,
+	handleGravPoweredEmailSwitch,
+	handleGravPoweredEmailCodeSend,
+	setShowSecondaryEmailOptions,
+	recordTracksEvent,
+}: GravPoweredSecondaryEmailOptionsProps ) => {
+	const translate = useTranslate();
+	const [ hashedEmail, setHashedEmail ] = useState< string | null >( null );
+
+	useEffect( () => {
+		if ( usernameOrEmail ) {
+			emailToSha256( usernameOrEmail ).then( setHashedEmail );
+		}
+	}, [ usernameOrEmail ] );
+
+	const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
+
+	return (
+		<div className="grav-powered-magic-login__content">
+			<GravatarLoginLogo
+				iconUrl={ oauth2Client?.icon }
+				alt={ oauth2Client?.title ?? '' }
+				isCoBrand={ isGravatarFlow }
+			/>
+			<h1 className="grav-powered-magic-login__header">{ translate( 'Important note' ) }</h1>
+			<p className="grav-powered-magic-login__sub-header">
+				{ translate(
+					'The submitted email is already linked to an existing Gravatar account as a secondary email:'
+				) }
+			</p>
+			<div className="grav-powered-magic-login__account-info">
+				<div className="grav-powered-magic-login__masked-email-address">
+					{ translate( 'Account: {{strong}}%(maskedEmailAddress)s{{/strong}}', {
+						components: { strong: <strong /> },
+						args: { maskedEmailAddress },
+					} ) }
+				</div>
+				{ hashedEmail && (
+					<a href={ `https://gravatar.com/${ hashedEmail }` } target="_blank" rel="noreferrer">
+						{ translate( 'Open profile' ) }
+					</a>
+				) }
+			</div>
+			<div className="grav-powered-magic-login__account-options">
+				<button
+					className={ clsx( 'grav-powered-magic-login__account-option', {
+						'grav-powered-magic-login__account-option--selected': ! isNewAccount,
+					} ) }
+					onClick={ () => {
+						setIsNewAccount( false );
+						recordTracksEvent(
+							'calypso_gravatar_powered_magic_login_click_main_account',
+							eventOptions
+						);
+					} }
+					disabled={ isRequestingEmail }
+				>
+					{ translate( 'Log in with main account (recommended)' ) }
+				</button>
+				{ ! isNewAccount && (
+					<div>
+						{ translate(
+							'Log in with your main account and edit there your avatar for your secondary email address.'
+						) }
+					</div>
+				) }
+				<button
+					className={ clsx( 'grav-powered-magic-login__account-option', {
+						'grav-powered-magic-login__account-option--selected': isNewAccount,
+					} ) }
+					onClick={ () => {
+						setIsNewAccount( true );
+						recordTracksEvent(
+							'calypso_gravatar_powered_magic_login_click_new_account',
+							eventOptions
+						);
+					} }
+					disabled={ isRequestingEmail }
+				>
+					{ translate( 'Create a new account' ) }
+				</button>
+				{ isNewAccount && (
+					<div>
+						{ translate(
+							'If you continue a new account will be created, and {{strong}}%(emailAddress)s{{/strong}} will be disconnected from the current main account.',
+							{
+								components: { strong: <strong /> },
+								args: { emailAddress: usernameOrEmail },
+							}
+						) }
+					</div>
+				) }
+			</div>
+			{ requestEmailErrorMessage && (
+				<Notice
+					duration={ 10000 }
+					text={ requestEmailErrorMessage }
+					className="magic-login__request-login-email-form-notice"
+					showDismiss={ false }
+					onDismissClick={ () => setRequestEmailErrorMessage( null ) }
+					status="is-transparent-info"
+				/>
+			) }
+			<FormButton
+				onClick={ () =>
+					handleGravPoweredEmailCodeSend( usernameOrEmail, () =>
+						setShowSecondaryEmailOptions( false )
+					)
+				}
+				disabled={ isRequestingEmail || !! requestEmailErrorMessage }
+				busy={ isRequestingEmail }
+			>
+				{ translate( 'Continue' ) }
+			</FormButton>
+			<footer className="grav-powered-magic-login__footer">
+				{ shouldShowSwitchEmail && (
+					<button onClick={ handleGravPoweredEmailSwitch }>{ translate( 'Switch email' ) }</button>
+				) }
+				<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
+					{ translate( 'Need help logging in?' ) }
+				</a>
+			</footer>
+		</div>
+	);
+};
+interface GravPoweredEmailCodeVerificationProps {
+	oauth2Client: any;
+	oauth2ClientId: string | number | null;
+	isGravatarFlow: boolean;
+	isFromGravatar3rdPartyApp: boolean;
+	usernameOrEmail: string;
+	maskedEmailAddress: string;
+	isSecondaryEmail: boolean;
+	isNewAccount: boolean;
+	verificationCodeInputValue: string;
+	handleGravPoweredCodeInputChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
+	handleGravPoweredCodeSubmit: ( e: React.FormEvent< HTMLFormElement > ) => void;
+	handleGravPoweredEmailCodeSend: ( email: string ) => void;
+	resendEmailCountdown: number;
+	isRequestingEmail: boolean;
+	shouldShowSwitchEmail: boolean;
+	resetResendEmailCountdown: () => void;
+	handleGravPoweredEmailSwitch: () => void;
+	recordTracksEvent: ( eventName: string, properties?: Record< string, any > ) => void;
+}
+
+const GravPoweredEmailCodeVerification = ( {
+	oauth2Client,
+	oauth2ClientId,
+	isGravatarFlow,
+	isFromGravatar3rdPartyApp,
+	usernameOrEmail,
+	maskedEmailAddress,
+	isSecondaryEmail,
+	isNewAccount,
+	verificationCodeInputValue,
+	handleGravPoweredCodeInputChange,
+	handleGravPoweredCodeSubmit,
+	handleGravPoweredEmailCodeSend,
+	resendEmailCountdown,
+	isRequestingEmail,
+	shouldShowSwitchEmail,
+	resetResendEmailCountdown,
+	handleGravPoweredEmailSwitch,
+	recordTracksEvent,
+}: GravPoweredEmailCodeVerificationProps ) => {
+	const translate = useTranslate();
+
+	const isValidatingCode = useSelector( isFetchingMagicLoginAuth );
+	const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
+	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
+	const isProcessingCode = isValidatingCode || isCodeValidated;
+
+	let errorText = translate( 'Something went wrong. Please try again.' );
+
+	if ( codeValidationError?.type === 'sms_code_throttled' ) {
+		errorText = translate(
+			'Your two-factor code via SMS can only be requested once per minute. Please wait, then request a new code via email to proceed.'
+		);
+	} else if ( codeValidationError?.type === 'user_email' ) {
+		errorText = translate(
+			"We're sorry, you can't create a new account at this time. Please try a different email address or disable any VPN before trying again."
+		);
+	} else if ( codeValidationError?.code === 403 ) {
+		errorText = translate(
+			'Invalid code. If the error persists, please request a new code and try again.'
+		);
+	} else if ( codeValidationError?.code === 429 ) {
+		errorText = translate( 'Please wait a minute before trying again.' );
+	}
+
+	return (
+		<div className="grav-powered-magic-login__content">
+			<GravatarLoginLogo
+				iconUrl={ oauth2Client?.icon }
+				alt={ oauth2Client?.title ?? '' }
+				isCoBrand={ isGravatarFlow }
+			/>
+			<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email' ) }</h1>
+			<p className="grav-powered-magic-login__sub-header">
+				<span>
+					{ translate(
+						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}.',
+						{
+							components: { strong: <strong /> },
+							args: {
+								emailAddress:
+									isSecondaryEmail && ! isNewAccount ? maskedEmailAddress : usernameOrEmail,
+							},
+						}
+					) }
+				</span>
+				{ isSecondaryEmail && isNewAccount && (
+					<span>{ translate( ' A new Gravatar account will be created.' ) }</span>
+				) }
+				{ isSecondaryEmail && ! isNewAccount && (
+					<span>{ translate( ' This email already exists and is synced with Gravatar.' ) }</span>
+				) }
+			</p>
+			{ isNewAccount && <GravPoweredMagicLoginTos /> }
+			<form
+				className="grav-powered-magic-login__verification-code-form"
+				onSubmit={ handleGravPoweredCodeSubmit }
+			>
+				<FormLabel htmlFor="verification-code" hidden>
+					{ translate( 'Enter the verification code' ) }
+				</FormLabel>
+				<FormTextInput
+					id="verification-code"
+					value={ verificationCodeInputValue }
+					onChange={ handleGravPoweredCodeInputChange }
+					placeholder={ translate( 'Verification code' ) }
+					disabled={ isProcessingCode }
+					isError={ !! codeValidationError }
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+				/>
+				{ codeValidationError && (
+					<Notice
+						text={ errorText }
+						className="magic-login__request-login-email-form-notice"
+						showDismiss={ false }
+						status="is-transparent-info"
+					/>
+				) }
+				<FormButton
+					primary
+					disabled={
+						! verificationCodeInputValue ||
+						verificationCodeInputValue.length < 6 ||
+						isProcessingCode
+					}
+					busy={ isProcessingCode }
+				>
+					{ translate( 'Continue' ) }
+				</FormButton>
+			</form>
+			<footer
+				className={ clsx( 'grav-powered-magic-login__footer', {
+					'grav-powered-magic-login__footer--vertical': ! isFromGravatar3rdPartyApp,
+				} ) }
+			>
+				<button
+					onClick={ () => {
+						handleGravPoweredEmailCodeSend( usernameOrEmail );
+						recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
+							type: 'code',
+							client_id: oauth2ClientId,
+							client_name: oauth2Client?.title,
+						} );
+					} }
+					disabled={ Boolean( isRequestingEmail ) || Boolean( resendEmailCountdown ) }
+				>
+					{ resendEmailCountdown === 0
+						? translate( 'Send again' )
+						: translate( 'Send again (%(countdown)d)', {
+								args: { countdown: resendEmailCountdown },
+						  } ) }
+				</button>
+				{ shouldShowSwitchEmail && (
+					<button
+						onClick={ () => {
+							resetResendEmailCountdown();
+							handleGravPoweredEmailSwitch();
+						} }
+					>
+						{ translate( 'Switch email' ) }
+					</button>
+				) }
+				<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
+					{ translate( 'Need help logging in?' ) }
+				</a>
+			</footer>
+		</div>
+	);
+};
+
+// =============================
+// Email Link Verification Component
+// =============================
+
+interface GravPoweredEmailLinkVerificationProps {
+	oauth2Client: any;
+	oauth2ClientId: string | number | null;
+	isGravatarFlow: boolean;
+	usernameOrEmail: string;
+	currentQueryArguments: Record< string, string > | undefined;
+	resendEmailCountdown: number;
+	resetResendEmailCountdown: () => void;
+	handleGravPoweredEmailSwitch: () => void;
+	recordTracksEvent: ( eventName: string, properties?: Record< string, any > ) => void;
+}
+
+const GravPoweredEmailLinkVerification = ( {
+	oauth2Client,
+	oauth2ClientId,
+	isGravatarFlow,
+	usernameOrEmail,
+	currentQueryArguments,
+	resendEmailCountdown,
+	resetResendEmailCountdown,
+	handleGravPoweredEmailSwitch,
+	recordTracksEvent,
+}: GravPoweredEmailLinkVerificationProps ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const emailAddress = usernameOrEmail && usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
+	const isSendingEmail = useSelector( isFetchingMagicLoginEmail );
+
+	const emailTextOptions = {
+		components: {
+			sendEmailButton: (
+				<button
+					onClick={ () => {
+						usernameOrEmail &&
+							dispatch(
+								sendEmailLogin( usernameOrEmail, {
+									redirectTo: currentQueryArguments?.redirect_to ?? '',
+									requestLoginEmailFormFlow: true,
+									createAccount: true,
+									flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) ?? '' : '',
+									showGlobalNotices: true,
+									tokenType: 'link',
+									source: false,
+									blogId: '',
+									loginFormFlow: false,
+									isMobileAppLogin: false,
+								} )
+							);
+
+						recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
+							type: 'link',
+							client_id: oauth2ClientId,
+							client_name: oauth2Client?.title,
+						} );
+					} }
+					disabled={ isSendingEmail }
+				/>
+			),
+			showMagicLoginButton: (
+				<button
+					className="grav-powered-magic-login__show-magic-login"
+					onClick={ () => {
+						resetResendEmailCountdown();
+						handleGravPoweredEmailSwitch();
+					} }
+				/>
+			),
+		},
+	};
+
+	return (
+		<div className="grav-powered-magic-login__content">
+			<GravatarLoginLogo
+				iconUrl={ oauth2Client?.icon }
+				alt={ oauth2Client?.title ?? '' }
+				isCoBrand={ isGravatarFlow }
+			/>
+			<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
+			<p className="grav-powered-magic-login__sub-header">
+				{ emailAddress
+					? translate(
+							"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
+							{ components: { strong: <strong /> }, args: { emailAddress } }
+					  )
+					: translate(
+							'We just emailed you a link. Please check your inbox and click the link to log in.'
+					  ) }
+			</p>
+			<hr className="grav-powered-magic-login__divider" />
+			<div className="grav-powered-magic-login__footer">
+				<div>{ translate( 'Are you having issues receiving it?' ) }</div>
+				<div>
+					{ resendEmailCountdown === 0
+						? translate(
+								'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
+								emailTextOptions
+						  )
+						: translate(
+								'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
+								emailTextOptions
+						  ) }
+				</div>
+			</div>
+		</div>
+	);
+};
+
 const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -428,6 +864,12 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		isGravatar && currentQueryArguments?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR;
 	const shouldShowSwitchEmail =
 		! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
+
+	const hasSubHeader =
+		isGravatarFlowOAuth2Client( oauth2Client ) ||
+		( isGravatarOAuth2Client( oauth2Client ) &&
+			( currentQueryArguments?.gravatar_from === GRAVATAR_FROM_3RD_PARTY ||
+				currentQueryArguments?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR ) );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
@@ -707,362 +1149,65 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		}
 	};
 
-	const GravPoweredSecondaryEmailOptions = () => {
-		const [ hashedEmail, setHashedEmail ] = useState< string | null >( null );
-		const eventOptions = { client_id: oauth2ClientId, client_name: oauth2Client?.title };
-
-		useEffect( () => {
-			if ( usernameOrEmail ) {
-				emailToSha256( usernameOrEmail ).then( setHashedEmail );
-			}
-		}, [] );
-
-		return (
-			<div className="grav-powered-magic-login__content">
-				<GravatarLoginLogo
-					iconUrl={ oauth2Client?.icon }
-					alt={ oauth2Client?.title ?? '' }
-					isCoBrand={ isGravatarFlow }
-				/>
-				<h1 className="grav-powered-magic-login__header">{ translate( 'Important note' ) }</h1>
-				<p className="grav-powered-magic-login__sub-header">
-					{ translate(
-						'The submitted email is already linked to an existing Gravatar account as a secondary email:'
-					) }
-				</p>
-				<div className="grav-powered-magic-login__account-info">
-					<div className="grav-powered-magic-login__masked-email-address">
-						{ translate( 'Account: {{strong}}%(maskedEmailAddress)s{{/strong}}', {
-							components: { strong: <strong /> },
-							args: { maskedEmailAddress },
-						} ) }
-					</div>
-					{ hashedEmail && (
-						<a href={ `https://gravatar.com/${ hashedEmail }` } target="_blank" rel="noreferrer">
-							{ translate( 'Open profile' ) }
-						</a>
-					) }
-				</div>
-				<div className="grav-powered-magic-login__account-options">
-					<button
-						className={ clsx( 'grav-powered-magic-login__account-option', {
-							'grav-powered-magic-login__account-option--selected': ! isNewAccount,
-						} ) }
-						onClick={ () => {
-							setIsNewAccount( false );
-
-							recordTracksEvent(
-								'calypso_gravatar_powered_magic_login_click_main_account',
-								eventOptions
-							);
-						} }
-						disabled={ isRequestingEmail }
-					>
-						{ translate( 'Log in with main account (recommended)' ) }
-					</button>
-					{ ! isNewAccount && (
-						<div>
-							{ translate(
-								'Log in with your main account and edit there your avatar for your secondary email address.'
-							) }
-						</div>
-					) }
-					<button
-						className={ clsx( 'grav-powered-magic-login__account-option', {
-							'grav-powered-magic-login__account-option--selected': isNewAccount,
-						} ) }
-						onClick={ () => {
-							setIsNewAccount( true );
-
-							recordTracksEvent(
-								'calypso_gravatar_powered_magic_login_click_new_account',
-								eventOptions
-							);
-						} }
-						disabled={ isRequestingEmail }
-					>
-						{ translate( 'Create a new account' ) }
-					</button>
-					{ isNewAccount && (
-						<div>
-							{ translate(
-								'If you continue a new account will be created, and {{strong}}%(emailAddress)s{{/strong}} will be disconnected from the current main account.',
-								{
-									components: { strong: <strong /> },
-									args: { emailAddress: usernameOrEmail },
-								}
-							) }
-						</div>
-					) }
-				</div>
-				{ requestEmailErrorMessage && (
-					<Notice
-						duration={ 10000 }
-						text={ requestEmailErrorMessage }
-						className="magic-login__request-login-email-form-notice"
-						showDismiss={ false }
-						onDismissClick={ () => setRequestEmailErrorMessage( null ) }
-						status="is-transparent-info"
-					/>
-				) }
-				<FormButton
-					onClick={ () =>
-						handleGravPoweredEmailCodeSend( usernameOrEmail, () =>
-							setShowSecondaryEmailOptions( false )
-						)
-					}
-					disabled={ isRequestingEmail || !! requestEmailErrorMessage }
-					busy={ isRequestingEmail }
-				>
-					{ translate( 'Continue' ) }
-				</FormButton>
-				<footer className="grav-powered-magic-login__footer">
-					{ shouldShowSwitchEmail && (
-						<button onClick={ handleGravPoweredEmailSwitch }>
-							{ translate( 'Switch email' ) }
-						</button>
-					) }
-					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
-						{ translate( 'Need help logging in?' ) }
-					</a>
-				</footer>
-			</div>
-		);
-	};
-
-	const GravPoweredEmailCodeVerification = () => {
-		const isValidatingCode = useSelector( isFetchingMagicLoginAuth );
-		const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
-		const codeValidationError = useSelector( getMagicLoginRequestAuthError );
-		const isProcessingCode = isValidatingCode || isCodeValidated;
-
-		let errorText = translate( 'Something went wrong. Please try again.' );
-
-		if ( codeValidationError?.type === 'sms_code_throttled' ) {
-			errorText = translate(
-				'Your two-factor code via SMS can only be requested once per minute. Please wait, then request a new code via email to proceed.'
-			);
-		} else if ( codeValidationError?.type === 'user_email' ) {
-			errorText = translate(
-				"We're sorry, you can't create a new account at this time. Please try a different email address or disable any VPN before trying again."
-			);
-		} else if ( codeValidationError?.code === 403 ) {
-			errorText = translate(
-				'Invalid code. If the error persists, please request a new code and try again.'
-			);
-		} else if ( codeValidationError?.code === 429 ) {
-			errorText = translate( 'Please wait a minute before trying again.' );
-		}
-
-		return (
-			<div className="grav-powered-magic-login__content">
-				<GravatarLoginLogo
-					iconUrl={ oauth2Client?.icon }
-					alt={ oauth2Client?.title ?? '' }
-					isCoBrand={ isGravatarFlow }
-				/>
-				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email' ) }</h1>
-				<p className="grav-powered-magic-login__sub-header">
-					<span>
-						{ translate(
-							'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}.',
-							{
-								components: { strong: <strong /> },
-								args: {
-									emailAddress:
-										isSecondaryEmail && ! isNewAccount ? maskedEmailAddress : usernameOrEmail,
-								},
-							}
-						) }
-					</span>
-					{ isSecondaryEmail && isNewAccount && (
-						<span>{ translate( ' A new Gravatar account will be created.' ) }</span>
-					) }
-					{ isSecondaryEmail && ! isNewAccount && (
-						<span>{ translate( ' This email already exists and is synced with Gravatar.' ) }</span>
-					) }
-				</p>
-				{ isNewAccount && <GravPoweredMagicLoginTos /> }
-				<form
-					className="grav-powered-magic-login__verification-code-form"
-					onSubmit={ handleGravPoweredCodeSubmit }
-				>
-					<FormLabel htmlFor="verification-code" hidden>
-						{ translate( 'Enter the verification code' ) }
-					</FormLabel>
-					<FormTextInput
-						id="verification-code"
-						value={ verificationCodeInputValue }
-						onChange={ handleGravPoweredCodeInputChange }
-						placeholder={ translate( 'Verification code' ) }
-						disabled={ isProcessingCode }
-						isError={ !! codeValidationError }
-						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-					/>
-					{ codeValidationError && (
-						<Notice
-							text={ errorText }
-							className="magic-login__request-login-email-form-notice"
-							showDismiss={ false }
-							status="is-transparent-info"
-						/>
-					) }
-					<FormButton
-						primary
-						disabled={
-							! verificationCodeInputValue ||
-							verificationCodeInputValue.length < 6 ||
-							isProcessingCode
-						}
-						busy={ isProcessingCode }
-					>
-						{ translate( 'Continue' ) }
-					</FormButton>
-				</form>
-				<footer
-					className={ clsx( 'grav-powered-magic-login__footer', {
-						'grav-powered-magic-login__footer--vertical': ! isFromGravatar3rdPartyApp,
-					} ) }
-				>
-					<button
-						onClick={ () => {
-							handleGravPoweredEmailCodeSend( usernameOrEmail );
-
-							recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
-								type: 'code',
-								client_id: oauth2ClientId,
-								client_name: oauth2Client?.title,
-							} );
-						} }
-						disabled={ Boolean( isRequestingEmail ) || Boolean( resendEmailCountdown ) }
-					>
-						{ resendEmailCountdown === 0
-							? translate( 'Send again' )
-							: translate( 'Send again (%(countdown)d)', {
-									args: { countdown: resendEmailCountdown },
-							  } ) }
-					</button>
-					{ shouldShowSwitchEmail && (
-						<button
-							onClick={ () => {
-								resetResendEmailCountdown();
-								handleGravPoweredEmailSwitch();
-							} }
-						>
-							{ translate( 'Switch email' ) }
-						</button>
-					) }
-					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
-						{ translate( 'Need help logging in?' ) }
-					</a>
-				</footer>
-			</div>
-		);
-	};
-
-	const GravPoweredEmailLinkVerification = () => {
-		const emailAddress =
-			usernameOrEmail && usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
-		const isSendingEmail = useSelector( isFetchingMagicLoginEmail );
-
-		const emailTextOptions = {
-			components: {
-				sendEmailButton: (
-					<button
-						onClick={ () => {
-							usernameOrEmail &&
-								dispatch(
-									sendEmailLogin( usernameOrEmail, {
-										redirectTo: currentQueryArguments?.redirect_to ?? '', // This is a required field
-										requestLoginEmailFormFlow: true,
-										createAccount: true,
-										flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) ?? '' : '',
-										showGlobalNotices: true,
-										/**
-										 * The below are required fields but not used in this flow
-										 */
-										tokenType: 'link',
-										source: false,
-										blogId: '',
-										loginFormFlow: false,
-										isMobileAppLogin: false,
-									} )
-								);
-
-							recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
-								type: 'link',
-								client_id: oauth2ClientId,
-								client_name: oauth2Client?.title,
-							} );
-						} }
-						disabled={ isSendingEmail }
-					/>
-				),
-				showMagicLoginButton: (
-					<button
-						className="grav-powered-magic-login__show-magic-login"
-						onClick={ () => {
-							resetResendEmailCountdown();
-							handleGravPoweredEmailSwitch();
-						} }
-					/>
-				),
-			},
-		};
-
-		return (
-			<div className="grav-powered-magic-login__content">
-				<GravatarLoginLogo
-					iconUrl={ oauth2Client?.icon }
-					alt={ oauth2Client?.title ?? '' }
-					isCoBrand={ isGravatarFlow }
-				/>
-				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
-				<p className="grav-powered-magic-login__sub-header">
-					{ emailAddress
-						? translate(
-								"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
-								{
-									components: { strong: <strong /> },
-									args: { emailAddress },
-								}
-						  )
-						: translate(
-								'We just emailed you a link. Please check your inbox and click the link to log in.'
-						  ) }
-				</p>
-				<hr className="grav-powered-magic-login__divider" />
-				<div className="grav-powered-magic-login__footer">
-					<div>{ translate( 'Are you having issues receiving it?' ) }</div>
-					<div>
-						{ resendEmailCountdown === 0
-							? translate(
-									'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
-									emailTextOptions
-							  )
-							: translate(
-									'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
-									emailTextOptions
-							  ) }
-					</div>
-				</div>
-			</div>
-		);
-	};
-
-	const hasSubHeader =
-		isGravatarFlowOAuth2Client( oauth2Client ) ||
-		( isGravatarOAuth2Client( oauth2Client ) &&
-			( currentQueryArguments?.gravatar_from === GRAVATAR_FROM_3RD_PARTY ||
-				currentQueryArguments?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR ) );
-
 	let mainContent;
 	if ( showSecondaryEmailOptions ) {
-		mainContent = <GravPoweredSecondaryEmailOptions />;
+		mainContent = (
+			<GravPoweredSecondaryEmailOptions
+				oauth2Client={ oauth2Client }
+				oauth2ClientId={ oauth2ClientId }
+				isGravatarFlow={ isGravatarFlow }
+				usernameOrEmail={ usernameOrEmail }
+				maskedEmailAddress={ maskedEmailAddress }
+				isNewAccount={ isNewAccount }
+				setIsNewAccount={ setIsNewAccount }
+				isRequestingEmail={ isRequestingEmail }
+				requestEmailErrorMessage={ requestEmailErrorMessage }
+				setRequestEmailErrorMessage={ setRequestEmailErrorMessage }
+				shouldShowSwitchEmail={ shouldShowSwitchEmail }
+				handleGravPoweredEmailSwitch={ handleGravPoweredEmailSwitch }
+				handleGravPoweredEmailCodeSend={ handleGravPoweredEmailCodeSend }
+				setShowSecondaryEmailOptions={ setShowSecondaryEmailOptions }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
 	} else if ( showEmailCodeVerification ) {
-		mainContent = <GravPoweredEmailCodeVerification />;
+		mainContent = (
+			<GravPoweredEmailCodeVerification
+				oauth2Client={ oauth2Client }
+				oauth2ClientId={ oauth2ClientId }
+				isGravatarFlow={ isGravatarFlow }
+				isFromGravatar3rdPartyApp={ isFromGravatar3rdPartyApp }
+				usernameOrEmail={ usernameOrEmail }
+				maskedEmailAddress={ maskedEmailAddress }
+				isSecondaryEmail={ isSecondaryEmail }
+				isNewAccount={ isNewAccount }
+				verificationCodeInputValue={ verificationCodeInputValue }
+				setVerificationCodeInputValue={ setVerificationCodeInputValue }
+				handleGravPoweredCodeInputChange={ handleGravPoweredCodeInputChange }
+				handleGravPoweredCodeSubmit={ handleGravPoweredCodeSubmit }
+				handleGravPoweredEmailCodeSend={ handleGravPoweredEmailCodeSend }
+				resendEmailCountdown={ resendEmailCountdown }
+				isRequestingEmail={ isRequestingEmail }
+				shouldShowSwitchEmail={ shouldShowSwitchEmail }
+				resetResendEmailCountdown={ resetResendEmailCountdown }
+				handleGravPoweredEmailSwitch={ handleGravPoweredEmailSwitch }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
 	} else if ( showCheckYourEmail ) {
-		mainContent = <GravPoweredEmailLinkVerification />;
+		mainContent = (
+			<GravPoweredEmailLinkVerification
+				oauth2Client={ oauth2Client }
+				oauth2ClientId={ oauth2ClientId }
+				isGravatarFlow={ isGravatarFlow }
+				usernameOrEmail={ usernameOrEmail }
+				currentQueryArguments={ currentQueryArguments }
+				resendEmailCountdown={ resendEmailCountdown }
+				resetResendEmailCountdown={ resetResendEmailCountdown }
+				handleGravPoweredEmailSwitch={ handleGravPoweredEmailSwitch }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
 	} else {
 		mainContent = (
 			<GravPoweredEmailForm
