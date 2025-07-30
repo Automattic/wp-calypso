@@ -4,7 +4,8 @@ import { type SortDirection, type View, type Fields } from '@wordpress/dataviews
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import { useAuth } from '../../app/auth';
 import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
@@ -104,21 +105,73 @@ function getUrlForSiteLevelView( siteId: number | string ): string {
 	return `/v2/me/billing/active-subscriptions/${ siteId }`;
 }
 
-function BackupPaymentMethodNotice() {
+function InfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
+	return (
+		<span>
+			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
+			{ isTooltipVisible && <Popover>{ children }</Popover> }
+		</span>
+	);
+}
+
+function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
 			link: <a href="/me/purchases/payment-methods" />,
 		}
 	);
-	return (
+	return <InfoPopover>{ noticeText }</InfoPopover>;
+}
+
+function OwnerInfo( {
+	purchase,
+	isTransferredOwnership = false,
+}: {
+	purchase: ActiveSubscription;
+	isTransferredOwnership?: boolean;
+} ) {
+	const { user } = useAuth();
+	if ( String( user.ID ) === String( purchase.user_id ) ) {
+		return null;
+	}
+
+	const tooltipContent = isTransferredOwnership ? (
 		<span>
-			<Icon icon={ info } onClick={ () => setIsTooltipVisible( ( val ) => ! val ) } />
-			{ isTooltipVisible && <Popover>{ noticeText }</Popover> }
+			{ createInterpolateElement(
+				sprintf(
+					// translators: domain is a domain name
+					__(
+						"This license was activated on <strong>%(domain)s</strong> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
+					),
+					{
+						domain: purchase.domain || purchase.site_slug || __( 'a site' ),
+					}
+				),
+				{
+					strong: <strong />,
+					link: (
+						<a
+							href="https://jetpack.com/contact-support/?rel=support"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				}
+			) }
+		</span>
+	) : (
+		<span>
+			{ __(
+				'To manage this subscription, log in to the WordPress.com account that purchased it or contact the owner.'
+			) }
 		</span>
 	);
+
+	return <InfoPopover>{ tooltipContent }</InfoPopover>;
 }
+
 export function getFields( {
 	sites,
 	paymentMethods,
@@ -184,18 +237,18 @@ export function getFields( {
 				);
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
-				// FIXME: ownerInfo here
+				// FIXME: handle transferred purchases
+				const isTransferredOwnership = false;
 				return (
-					<div className="purchase-item__information">
-						<div className="purchase-item__title">
-							<a
-								className="purchase-item__title-link"
-								title={ __( 'Manage purchase' ) }
-								href={ getPurchaseUrl( item ) }
-							>
+					<div>
+						{ isTransferredOwnership ? (
+							getDisplayName( item ) + '&nbsp;'
+						) : (
+							<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
 								{ getDisplayName( item ) }
 							</a>
-						</div>
+						) }
+						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferredOwnership } />
 					</div>
 				);
 			},

@@ -34,6 +34,7 @@ export default function ActiveSubscriptions() {
 		sites: sites ?? [],
 		paymentMethods: paymentMethods ?? [],
 	} );
+	// FIXME: include transferred purchases also
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );
 	}, [ activeSubscriptions, currentView, purchasesDataFields ] );
