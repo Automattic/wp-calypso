@@ -35,7 +35,11 @@ export function GitHubDeployments() {
 	}
 
 	if ( ! hasSshFeature ) {
-		return <DeploymentsUpsellNudge />;
+		return (
+			<PageShell pageTitle={ __( 'Deployments' ) }>
+				<DeploymentsUpsellNudge />
+			</PageShell>
+		);
 	}
 
 	const renderContent = () => {
