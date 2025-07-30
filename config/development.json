@@ -47,7 +47,7 @@
 		"checkout/razorpay": true,
 		"comments/filters-in-posts": true,
 		"cookie-banner": false,
-		"current-site/domain-warning": true,
+		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-settings": true,

@@ -23,7 +23,7 @@
 		"checkout/google-pay": true,
 		"checkout/razorpay": false,
 		"cookie-banner": true,
-		"current-site/domain-warning": true,
+		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2": false,
 		"dashboard/v2/backport/site-settings": true,

@@ -34,7 +34,7 @@
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
 		"cookie-banner": false,
-		"current-site/domain-warning": true,
+		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
