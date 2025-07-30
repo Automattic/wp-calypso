@@ -110,6 +110,7 @@ export default function PlanCard( { site }: { site: Site } ) {
 						progressValue={ progressBarValue }
 						progressColor={ storageWarningColor }
 						progressLabel={ `${ storageUsagePercent }%` }
+						isLoading={ isLoadingMediaStorage }
 					/>
 					<Stat
 						density="high"
@@ -122,6 +123,7 @@ export default function PlanCard( { site }: { site: Site } ) {
 						description={ site.is_wpcom_atomic ? __( 'Unlimited' ) : undefined }
 						progressValue={ 100 }
 						progressColor="alert-green"
+						isLoading={ isLoadingBandwidth }
 					/>
 				</VStack>
 			}

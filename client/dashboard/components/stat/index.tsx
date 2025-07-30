@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack, ProgressBar } from '@wordpress/components';
+import { TextBlur } from '../text-blur';
 import './style.scss';
 
 interface StatProps {
@@ -12,6 +13,11 @@ interface StatProps {
 	 * beside the metric. Otherwise, it describes the maximum value of the metric.
 	 */
 	description?: string;
+
+	/**
+	 * Obscure text while loading.
+	 */
+	isLoading?: boolean;
 
 	/**
 	 * The main value to display. Remember to include units.
@@ -44,12 +50,16 @@ interface StatProps {
 export function Stat( {
 	density = 'low',
 	description,
+	isLoading = false,
 	metric,
 	progressColor,
 	progressValue,
 	progressLabel = `${ progressValue }%`,
 	strapline,
 }: StatProps ) {
+	const metricElement = isLoading ? <TextBlur>{ metric }</TextBlur> : metric;
+	const descriptionElement = isLoading ? <TextBlur>{ description }</TextBlur> : description;
+
 	return (
 		<div className={ `dashboard-stat--density-${ density }` }>
 			{ strapline && <div className="dashboard-stat__strapline">{ strapline }</div> }
@@ -58,14 +68,15 @@ export function Stat( {
 				spacing={ 2 }
 				justify={ progressValue === undefined ? 'start' : 'space-between' }
 			>
-				<div className="dashboard-stat__metric">{ metric }</div>
-				{ description && <div className="dashboard-stat__description">{ description }</div> }
+				<div className="dashboard-stat__metric">{ metricElement }</div>
+				{ description && <div className="dashboard-stat__description">{ descriptionElement }</div> }
 			</HStack>
 			{ progressValue !== undefined && (
 				<ProgressBar
 					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
-					value={ progressValue }
+					value={ isLoading ? 0 : progressValue }
 					aria-label={ progressLabel }
+					aria-hidden={ isLoading }
 				/>
 			) }
 		</div>
