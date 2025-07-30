@@ -1,8 +1,7 @@
 import { createRoot, hydrateRoot } from 'react-dom/client';
 
-// Store the root instances to reuse them across renders
+// Store a single root instance to reuse across renders
 let rootInstance = null;
-let hydrateRootInstance = null;
 
 export function render( context ) {
 	// Reuse the existing root if available, otherwise create a new one
@@ -14,11 +13,11 @@ export function render( context ) {
 }
 
 export function hydrate( context ) {
-	// Reuse the existing hydrate root if available, otherwise create a new one
-	if ( ! hydrateRootInstance ) {
-		hydrateRootInstance = hydrateRoot( document.getElementById( 'wpcom' ), context.layout );
+	// For the first call, use hydrateRoot to attach to server-rendered content
+	if ( ! rootInstance ) {
+		rootInstance = hydrateRoot( document.getElementById( 'wpcom' ), context.layout );
 	} else {
-		// For subsequent calls, use the update method on the existing instance
-		hydrateRootInstance.render( context.layout );
+		// For subsequent calls, use the render method on the existing instance
+		rootInstance.render( context.layout );
 	}
 }
