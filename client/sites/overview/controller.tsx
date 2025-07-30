@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getRouteFromContext } from 'calypso/utils';
 import DashboardBackportSiteOverview from '../v2/site-overview';
@@ -22,7 +21,7 @@ export function overview( context: PageJSContext, next: () => void ) {
 export async function dashboardBackportSiteOverview( context: PageJSContext, next: () => void ) {
 	const { site: siteSlug } = context.params;
 	if ( ! isEnabled( 'dashboard/v2/backport/site-overview' ) ) {
-		return page.redirect( `/overview/${ siteSlug }` );
+		return overview( context, next );
 	}
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
