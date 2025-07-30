@@ -46,6 +46,7 @@
 	"devDependencies": {
 		"@automattic/charts": "^0.14.0",
 		"@mdx-js/react": "^3.1.0",
+		"@playwright/test": "^1.54.1",
 		"@storybook/addon-a11y": "^9.0.18",
 		"@storybook/addon-docs": "^9.0.18",
 		"@storybook/addon-essentials": "9.0.0-alpha.12",
