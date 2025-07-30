@@ -17,6 +17,7 @@
 	"boom_analytics_key": "development",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
+	"survicate_enabled": true,
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
