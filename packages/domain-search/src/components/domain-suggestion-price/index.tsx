@@ -3,6 +3,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
@@ -49,10 +50,13 @@ export const DomainSuggestionPrice = ( {
 			return null;
 		}
 
-		return sprintf(
-			// translators: %(price)s is the price of the domain.
-			__( 'For first year. %(price)s/year renewal.' ),
-			{ price: renewPrice }
+		return createInterpolateElement(
+			sprintf(
+				// translators: %(price)s is the price of the domain.
+				__( 'For first year. <span>%(price)s/year renewal.</span>' ),
+				{ price: renewPrice }
+			),
+			{ span: <span style={ { whiteSpace: 'nowrap' } } /> }
 		);
 	};
 

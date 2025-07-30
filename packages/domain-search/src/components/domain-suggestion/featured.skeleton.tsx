@@ -26,9 +26,9 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 		if ( activeQuery === 'large' ) {
 			if ( matchReasonsList ) {
 				return (
-					<VStack spacing={ 3 } className="domain-suggestion-featured__content">
-						{ badges }
-						<HStack spacing={ 6 } style={ { alignItems: 'flex-start', height: '100%' } }>
+					<HStack spacing={ 6 } className="domain-suggestion-featured__content">
+						<VStack spacing={ 3 } style={ { justifyContent: 'flex-start', height: '100%' } }>
+							{ badges }
 							<VStack
 								spacing={ 3 }
 								alignment="left"
@@ -37,16 +37,16 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 								{ title }
 								{ matchReasonsList }
 							</VStack>
-							<VStack
-								spacing={ 6 }
-								alignment="right"
-								className="domain-suggestion-featured__price-info"
-							>
-								{ price }
-								{ cta }
-							</VStack>
-						</HStack>
-					</VStack>
+						</VStack>
+						<VStack
+							spacing={ 6 }
+							alignment="right"
+							className="domain-suggestion-featured__price-info"
+						>
+							{ price }
+							{ cta }
+						</VStack>
+					</HStack>
 				);
 			}
 
