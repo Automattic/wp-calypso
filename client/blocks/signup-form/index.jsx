@@ -1065,8 +1065,7 @@ class SignupForm extends Component {
 
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
-		const showSeparator =
-			'wpcc' !== this.props.flowName && ! config.isEnabled( 'desktop' ) && this.isHorizontal();
+		const showSeparator = ! config.isEnabled( 'desktop' ) && this.isHorizontal();
 
 		if (
 			( this.props.isPasswordless && ( 'wpcc' !== this.props.flowName || this.props.isWoo ) ) ||
