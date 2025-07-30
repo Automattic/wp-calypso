@@ -84,6 +84,7 @@ class DomainSearchResults extends Component {
 			TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 			TLD_NOT_SUPPORTED_TEMPORARILY,
 			TRANSFERRABLE,
+			TRANSFERRABLE_PREMIUM,
 			UNKNOWN,
 		} = domainAvailability;
 
@@ -97,6 +98,7 @@ class DomainSearchResults extends Component {
 			suggestions.length !== 0 &&
 			[
 				TRANSFERRABLE,
+				TRANSFERRABLE_PREMIUM,
 				MAPPABLE,
 				MAPPED,
 				RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
