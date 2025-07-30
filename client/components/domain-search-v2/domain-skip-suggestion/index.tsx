@@ -61,7 +61,7 @@ const DomainSkipSuggestion = ( {
 
 	useEffect( () => {
 		if ( ! selectedSite && ! subdomainSuggestion ) {
-			recordTracksEvent( 'calypso_domain_search_skip_no_site_or_suggestion', {
+			recordTracksEvent( 'calypso_domain_search_skip_no_site_and_suggestion', {
 				query,
 				user_id: currentUser?.ID,
 				flow_name: flowName,
