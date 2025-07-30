@@ -6,6 +6,7 @@ import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
 import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
@@ -183,6 +184,7 @@ class Document extends Component {
 										app={ app }
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
+										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 									/>
 								</div>
@@ -289,7 +291,17 @@ class Document extends Component {
 		);
 	}
 }
-function LoadingPlaceholder( { app, sectionName, isWCCOM, showStepContainerV2Loader } ) {
+function LoadingPlaceholder( {
+	app,
+	sectionName,
+	isWCCOM,
+	isOneTapAuth,
+	showStepContainerV2Loader,
+} ) {
+	if ( isOneTapAuth ) {
+		return <OneTapAuthLoaderOverlay />;
+	}
+
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
 
