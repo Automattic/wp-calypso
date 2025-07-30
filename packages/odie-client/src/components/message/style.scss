@@ -600,30 +600,8 @@ $feedback-button-size: 28px;
 		gap: 8px;
 
 		.odie-feedback-component-button {
-			font-family: $a8c-font-family-sans;
-			border-style: solid;
-			border-width: 1px;
-			cursor: pointer;
-			margin: 0;
-			outline: 0;
-			overflow: hidden;
-			text-align: center;
-			text-overflow: ellipsis;
-			text-decoration: none;
-			vertical-align: top;
-			box-sizing: border-box;
-			border-radius: 2px;
-			font-size: $font-body-extra-small;
-			line-height: 1;
-			appearance: none;
-			background-color: var( --color-surface );
-			color: var( --color-neutral-70 );
-			border-color: var( --color-neutral-10 );
-			display: flex;
-			height: $feedback-button-size;
-			width: $feedback-button-size;
-			justify-content: center;
-			align-items: center;
+			border: solid 0.5px var(--studio-gray-5);
+			padding: 6px;
 
 			&:focus {
 				outline: 0;
