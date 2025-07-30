@@ -4,6 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscriptions';
+import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { sitesQuery } from '../../app/queries/sites';
 import { activeSubscriptionsSiteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
@@ -33,7 +34,11 @@ export default function ActiveSubscriptionsForSite() {
 				( site ) => site.slug === siteSlugOrId || String( site.ID ) === String( siteSlugOrId )
 		  )
 		: undefined;
-	const purchasesDataFields = getFields( site ? [ site ] : [] );
+	const { data: paymentMethods } = useSuspenseQuery( paymentMethodsQuery( {} ) );
+	const purchasesDataFields = getFields( {
+		sites: sites ?? [],
+		paymentMethods: paymentMethods ?? [],
+	} );
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );
 	}, [ activeSubscriptions, currentView, purchasesDataFields ] );
