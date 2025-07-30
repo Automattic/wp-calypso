@@ -22,6 +22,8 @@ export interface UnavailableProps {
 	transferLink?: string;
 }
 
+const ICON_SIZE = 24;
+
 const UnavailableComponent = ( {
 	domain,
 	tld,
@@ -41,7 +43,7 @@ const UnavailableComponent = ( {
 
 	const reasonText = useMemo( () => {
 		const styledTld = (
-			<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
+			<Text size="inherit" weight={ 500 } lineHeight="inherit" style={ { whiteSpace: 'nowrap' } }>
 				.{ tld }
 			</Text>
 		);
@@ -49,6 +51,7 @@ const UnavailableComponent = ( {
 		const styledDomain = (
 			<Text
 				size="inherit"
+				lineHeight="inherit"
 				aria-label={ `${ domain }.${ tld }` }
 				style={ { wordBreak: 'break-all' } }
 			>
@@ -88,7 +91,11 @@ const UnavailableComponent = ( {
 		throw new Error( `Unknown reason: ${ reason }` );
 	}
 
-	const reasonElement = <Text size={ activeQuery === 'large' ? 18 : 16 }>{ reasonText }</Text>;
+	const reasonElement = (
+		<Text size={ activeQuery === 'large' ? 18 : 16 } lineHeight="inherit">
+			{ reasonText }
+		</Text>
+	);
 
 	const onTransfer = ( onTransferClick || transferLink ) && (
 		<div
@@ -117,8 +124,12 @@ const UnavailableComponent = ( {
 			return (
 				<HStack alignment="left" spacing={ 6 }>
 					<HStack alignment="left" spacing={ 3 } style={ { width: 'auto' } }>
-						<Icon icon={ notAllowed } size={ 24 } className="domain-suggestions-list-item__icon" />
-						{ reasonElement }
+						<Icon
+							icon={ notAllowed }
+							size={ ICON_SIZE }
+							className="domain-suggestions-list-item__icon"
+						/>
+						<span style={ { lineHeight: `${ ICON_SIZE }px` } }>{ reasonElement }</span>
 					</HStack>
 					{ onTransfer }
 				</HStack>

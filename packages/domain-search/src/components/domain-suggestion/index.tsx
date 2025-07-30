@@ -22,6 +22,8 @@ type DomainSuggestionProps = {
 	cta?: React.ReactNode;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
 
+const ICON_SIZE = 24;
+
 const DomainSuggestionComponent = ( {
 	uuid,
 	domain,
@@ -42,43 +44,42 @@ const DomainSuggestionComponent = ( {
 	const { activeQuery } = listContext;
 
 	const domainName = (
-		<span style={ { lineHeight: '24px' } }>
-			<Text
-				size={ activeQuery === 'large' ? 18 : 16 }
+		<Text
+			size={ activeQuery === 'large' ? 18 : 16 }
+			className="domain-suggestions-list-item__domain-name-container"
+		>
+			<span
+				aria-label={ `${ domain }.${ tld }` }
+				className="domain-suggestions-list-item__domain-name"
 				style={ {
-					verticalAlign: 'middle',
-					lineHeight: 'inherit',
-					marginRight: badges ? '12px' : undefined,
+					// eslint-disable-next-line no-nested-ternary
+					marginRight: notice ? ( activeQuery === 'large' ? '8px' : '4px' ) : undefined,
 				} }
 			>
-				<span
-					aria-label={ `${ domain }.${ tld }` }
-					style={ {
-						wordBreak: 'break-all',
-						// eslint-disable-next-line no-nested-ternary
-						marginRight: notice ? ( activeQuery === 'large' ? '8px' : '4px' ) : undefined,
-					} }
+				{ domain }
+				<Text
+					size="inherit"
+					lineHeight="inherit"
+					weight={ 500 }
+					className="domain-suggestions-list-item__domain-name-tld"
 				>
-					{ domain }
-					<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
-						.{ tld }
-					</Text>
+					.{ tld }
+				</Text>
+			</span>
+			{ notice && (
+				<span className="domain-suggestions-list-item__notice">
+					<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
 				</span>
-				{ notice && (
-					<span className="domain-suggestions-list-item__notice">
-						<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
-					</span>
-				) }
-			</Text>
+			) }
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
-		</span>
+		</Text>
 	);
 
 	const domainNameElement =
 		activeQuery === 'large' ? (
 			<HStack alignment="left" spacing={ 3 }>
-				<Icon icon={ globe } size={ 24 } className="domain-suggestions-list-item__icon" />
-				{ domainName }
+				<Icon icon={ globe } size={ ICON_SIZE } className="domain-suggestions-list-item__icon" />
+				<span style={ { lineHeight: `${ ICON_SIZE }px` } }>{ domainName }</span>
 			</HStack>
 		) : (
 			domainName
