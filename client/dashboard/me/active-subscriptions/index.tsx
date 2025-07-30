@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscriptions';
 import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
+import { transferredPurchasesQuery } from '../../app/queries/me-transferred-purchases';
 import { sitesQuery } from '../../app/queries/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -15,11 +16,15 @@ import {
 	getItemId,
 	getPurchaseUrl,
 } from './data-view-shared';
+import { isTransferredOwnership } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 export default function ActiveSubscriptions() {
-	const { data: activeSubscriptions, isLoading } = useSuspenseQuery(
+	const { data: activeSubscriptions, isLoading: isLoadingPurchases } = useSuspenseQuery(
 		activeSubscriptionsQuery( {} )
+	);
+	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useSuspenseQuery(
+		transferredPurchasesQuery( {} )
 	);
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
@@ -33,11 +38,14 @@ export default function ActiveSubscriptions() {
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
 		paymentMethods: paymentMethods ?? [],
+		transferredPurchases: transferredPurchases ?? [],
 	} );
-	// FIXME: include transferred purchases also
+	const allSubscriptions = useMemo( () => {
+		return [ ...( activeSubscriptions ?? [] ), ...( transferredPurchases ?? [] ) ];
+	}, [ activeSubscriptions, transferredPurchases ] );
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( activeSubscriptions ?? [], currentView, purchasesDataFields );
-	}, [ activeSubscriptions, currentView, purchasesDataFields ] );
+		return filterSortAndPaginate( allSubscriptions, currentView, purchasesDataFields );
+	}, [ allSubscriptions, currentView, purchasesDataFields ] );
 
 	const actions = useMemo(
 		() => [
@@ -45,8 +53,12 @@ export default function ActiveSubscriptions() {
 				id: 'manage-purchase',
 				label: __( 'Manage purchase' ),
 				isEligible: ( item: ActiveSubscription ) => {
-					// FIXME: Hide manage button for transferred ownership purchases
-					return Boolean( item.domain && item.ID );
+					// Hide manage button for transferred ownership purchases
+					const hasTransferredOwnership = isTransferredOwnership(
+						item.ID,
+						transferredPurchases ?? []
+					);
+					return Boolean( item.domain && item.ID ) && ! hasTransferredOwnership;
 				},
 				callback: ( items: ActiveSubscription[] ) => {
 					const item = items[ 0 ];
@@ -54,14 +66,14 @@ export default function ActiveSubscriptions() {
 				},
 			},
 		],
-		[]
+		[ transferredPurchases ]
 	);
 
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>
 			<div ref={ ref }>
 				<DataViews
-					isLoading={ isLoading }
+					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases }
 					data={ filteredSubscriptions ?? [] }
 					fields={ purchasesDataFields }
 					view={ currentView }

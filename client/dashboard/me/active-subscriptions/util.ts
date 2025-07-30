@@ -335,3 +335,12 @@ export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ): boo
 export function isAutoRenewEnabled( purchase: ActiveSubscription ): boolean {
 	return parseInt( purchase.auto_renew ?? '' ) === 1;
 }
+
+export function isTransferredOwnership(
+	purchaseId: string | number,
+	transferredOwnershipPurchases: ActiveSubscription[]
+): boolean {
+	return transferredOwnershipPurchases.some(
+		( purchase ) => String( purchase.ID ) === String( purchaseId )
+	);
+}

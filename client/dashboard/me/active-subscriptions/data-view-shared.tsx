@@ -10,7 +10,7 @@ import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
 import { ActiveSubscriptionPaymentMethod } from './active-subscription-payment-method';
-import { isRenewing } from './util';
+import { isRenewing, isTransferredOwnership } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Site } from '../../data/site';
@@ -175,9 +175,11 @@ function OwnerInfo( {
 export function getFields( {
 	sites,
 	paymentMethods,
+	transferredPurchases,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
+	transferredPurchases: Array< ActiveSubscription >;
 } ): Fields< ActiveSubscription > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -237,18 +239,17 @@ export function getFields( {
 				);
 			},
 			render: ( { item }: { item: ActiveSubscription } ) => {
-				// FIXME: handle transferred purchases
-				const isTransferredOwnership = false;
+				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
 					<div>
-						{ isTransferredOwnership ? (
+						{ isTransferred ? (
 							getDisplayName( item ) + '&nbsp;'
 						) : (
 							<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
 								{ getDisplayName( item ) }
 							</a>
 						) }
-						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferredOwnership } />
+						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</div>
 				);
 			},
