@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
@@ -6,6 +7,8 @@ import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
@@ -151,8 +154,24 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
+	// Check if hosting features are supported
 	if ( ! areHostingFeaturesSupported( site ) ) {
 		return page.redirect( `/hosting-features/${ site?.slug }` );
+	}
+
+	// Additional check for staging sites with incomplete atomic transfer when redesign is enabled
+	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
+	if ( stagingSitesRedesign && site?.is_wpcom_staging_site ) {
+		const stagingStatus = getStagingSiteStatus( state, site.ID );
+		const isStagingStatusFinished =
+			stagingStatus === StagingSiteStatus.COMPLETE ||
+			stagingStatus === StagingSiteStatus.NONE ||
+			stagingStatus === StagingSiteStatus.UNSET;
+
+		// If atomic transfer is not completed, redirect to hosting features
+		if ( ! isStagingStatusFinished ) {
+			return page.redirect( `/hosting-features/${ site.slug }` );
+		}
 	}
 
 	next();

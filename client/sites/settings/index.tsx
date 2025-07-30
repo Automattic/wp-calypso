@@ -15,7 +15,7 @@ import {
 	SETTINGS_DATABASE,
 	SETTINGS_SFTP_SSH,
 } from 'calypso/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/sites/controller';
+import { siteDashboard, redirectToHostingFeaturesIfNotAtomic } from 'calypso/sites/controller';
 import { redirectToHostingDashboardBackportIfEnabled } from '../v2/site-settings/controller';
 import {
 	redirectIfCantDeleteSite,
@@ -43,6 +43,7 @@ export default function () {
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectToHostingDashboardBackportIfEnabled,
+		redirectToHostingFeaturesIfNotAtomic,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -140,6 +141,7 @@ export default function () {
 		'/sites/settings/v2/:site/:feature?',
 		siteSelection,
 		navigation,
+		redirectToHostingFeaturesIfNotAtomic,
 		dashboardBackportSiteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,

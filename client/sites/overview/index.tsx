@@ -23,7 +23,7 @@ import {
 } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
 import emailController from 'calypso/my-sites/email/controller';
 import { OVERVIEW } from 'calypso/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/sites/controller';
+import { siteDashboard, redirectToHostingFeaturesIfNotAtomic } from 'calypso/sites/controller';
 import { overview } from './controller';
 
 function registerSiteDomainPage( { path, controllers }: { path: string; controllers: any[] } ) {
@@ -34,6 +34,7 @@ function registerSiteDomainPage( { path, controllers }: { path: string; controll
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectIfP2,
 		redirectIfJetpackNonAtomic,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		...controllers,
 		siteDashboard( undefined ),
@@ -53,6 +54,7 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectIfP2,
 		redirectIfJetpackNonAtomic,
+		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		overview,
 		siteDashboard( OVERVIEW ),
