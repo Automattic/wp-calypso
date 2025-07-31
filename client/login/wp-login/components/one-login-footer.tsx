@@ -6,8 +6,17 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import './one-login-footer.scss';
 
 interface OneLoginFooterProps {
+	/**
+	 * when `isLoginView` is true, this is the "lost password" link
+	 */
 	lostPasswordLink?: JSX.Element;
+	/**
+	 * when `isLoginView` is false, this is the "back to login" link
+	 */
 	loginLink?: string;
+	/**
+	 * when true, this is the footer for the main login screen
+	 */
 	isLoginView?: boolean;
 }
 
