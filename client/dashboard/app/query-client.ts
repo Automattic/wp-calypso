@@ -32,6 +32,7 @@ const [ , persistPromise ] = persistQueryClient( {
 	buster: '3', // Bump when query data shape changes.
 	maxAge,
 	dehydrateOptions: {
+		shouldRedactErrors: () => false,
 		shouldDehydrateQuery: ( { meta } ) => {
 			if ( meta?.persist === false ) {
 				return false;
