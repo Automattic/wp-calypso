@@ -7,11 +7,19 @@
  * @package happy-blocks
  */
 
+/**
+ * Load functions from the h4 theme, we're using localized_wpcom_url here.
+ */
+require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/functions.php';
+
 if ( ! isset( $args ) ) {
 	$args = array();
 }
 
 $show_search = isset( $args['show-search'] ) && $args['show-search'] === true;
+$active_page = isset( $args['active_page'] ) ? $args['active_page'] : '';
+
+
 
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	function get_support_search_link_for_query( $query ) {
@@ -30,12 +38,12 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 <div class="happy-blocks-search-card<?php echo $show_search ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
 		<ul class="navigation">
-			<li class="active"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></li>
+			<li class="active"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support' ) ); ?>"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></a></li>
 			<li class="separator"></li>
-			<li><a href="https://wordpress.com/support/guides"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
-			<li><?php echo esc_html( __( 'Courses', 'happy-blocks' ) ); ?></li>
-			<li><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></li>
-			<li><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></li>
+			<li class="<?php echo ( $active_page === 'guides' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides' ) ); ?>"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( $active_page === 'courses' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/courses' ) ); ?>"><?php echo esc_html( __( 'Courses', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( $active_page === 'forums' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( $active_page === 'contact' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact' ) ); ?>"><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></a></li>
 		</ul>
 	</nav>
 	<?php if ( $show_search ): ?>
