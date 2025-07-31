@@ -957,6 +957,10 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	is_hundred_year_domain?: boolean;
+
+	/**
+	 * Tracks the flow from which a domain registration originated.
+	 */
 	flow_name?: string;
 
 	/**
