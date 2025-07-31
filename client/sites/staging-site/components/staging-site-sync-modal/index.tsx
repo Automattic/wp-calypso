@@ -467,7 +467,7 @@ export default function SyncModal( {
 							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							padding: '16px 0',
 							marginTop: '8px',
-							marginBottom: '20px',
+							marginBottom: '24px',
 						} }
 					>
 						<CheckboxControl
@@ -490,8 +490,8 @@ export default function SyncModal( {
 							</span>
 						</Tooltip>
 					</HStack>
-					<VStack style={ { paddingBottom: '48px' } }>
-						{ showWooCommerceWarning && (
+					{ showWooCommerceWarning && (
+						<VStack style={ { paddingBottom: '52px' } }>
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
@@ -510,8 +510,8 @@ export default function SyncModal( {
 									}
 								) }
 							</Notice>
-						) }
-					</VStack>
+						</VStack>
+					) }
 				</div>
 				<VStack className="staging-site-card__footer" spacing={ 6 }>
 					{ showDomainConfirmation && (
