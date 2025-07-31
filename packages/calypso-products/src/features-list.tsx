@@ -815,10 +815,10 @@ const FEATURES_LIST: FeatureList = {
 		},
 		getDescription: () =>
 			i18n.translate(
-				// translate: %(date)s is a date string in the format of "August 25, 2025"
+				// translators: %(date)s is a date string in the format of "August 25, 2025"
 				'One-time offer: Install plugins available in all paid plans. Valid until %(date)s!',
 				{
-					args: { date: moment( '2025-08-25' ).format( 'LL' ) },
+					args: { date: moment( '2025-08-25' ).format( 'MMMM, Do' ) },
 				}
 			),
 	},
