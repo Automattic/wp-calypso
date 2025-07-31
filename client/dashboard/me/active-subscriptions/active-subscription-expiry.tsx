@@ -6,6 +6,7 @@ import { useLocale } from '../../app/locale';
 import { formatDate } from '../../utils/datetime';
 import {
 	isTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
 	isRecentMonthlyPurchase,
 	getRelativeTimeString,
 	isRenewing,
@@ -80,7 +81,7 @@ export function ActiveSubscriptionExpiry( {
 		);
 	}
 
-	const isA4APurchase = isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+	const isA4APurchase = isA4ATemporarySitePurchase( purchase );
 	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
 	const isKnownTemporarySiteProductType =
 		isTemporarySitePurchase( purchase ) &&

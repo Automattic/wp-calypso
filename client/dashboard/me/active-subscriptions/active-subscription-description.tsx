@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { isTemporarySitePurchase } from './util';
+import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 function purchaseType( purchase: ActiveSubscription ): string | null {
@@ -41,7 +41,7 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'a4a' ) {
+	if ( isTemporarySitePurchase( purchase ) && isA4ATemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 

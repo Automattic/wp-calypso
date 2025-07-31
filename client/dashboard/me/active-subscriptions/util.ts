@@ -344,3 +344,7 @@ export function isTransferredOwnership(
 		( purchase ) => String( purchase.ID ) === String( purchaseId )
 	);
 }
+
+export function isA4ATemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+}
