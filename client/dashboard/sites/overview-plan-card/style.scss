@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/variables';
+
 .jetpack-plan-card__icons {
 	align-self: flex-start;
 
@@ -8,7 +10,7 @@
 		justify-content: center;
 		width: 32px;
 		height: 32px;
-		border-radius: 4px;
+		border-radius: $radius-medium;
 
 		svg {
 			fill: #66db64;
