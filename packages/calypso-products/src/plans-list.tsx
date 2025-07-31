@@ -449,6 +449,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -822,7 +823,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
 		}
 
 		if ( isGlobalStylesOnPersonalEnabled() ) {
@@ -1431,7 +1432,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
 		}
 
 		return features;
