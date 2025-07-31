@@ -4,6 +4,7 @@ import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
 	DomainSuggestionCTA,
+	useDomainSearch,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -38,6 +39,7 @@ class DomainSearchResults extends Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
+		domainCart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
 		isCartPendingUpdateDomain: PropTypes.object,
 		premiumDomains: PropTypes.object,
@@ -273,7 +275,9 @@ class DomainSearchResults extends Component {
 		const { selectedSite } = this.props;
 		const domainsInCart = getDomainsInCart( this.props.cart );
 
-		// If we already have a site or domains in cart, just skip
+		// Skip it when:
+		// - We have a selected site or
+		// - We have domains in cart
 		if ( selectedSite || domainsInCart.length ) {
 			this.props.onSkip();
 			return;
@@ -284,7 +288,8 @@ class DomainSearchResults extends Component {
 			( suggestion ) => suggestion.isSubDomainSuggestion
 		);
 
-		// TODO: add subdomainSuggestion to cart
+		// Add the subdomain suggestion to the cart and move to the next step
+		this.props.domainCart.onAddItem( subdomainSuggestion.domain_name );
 	};
 
 	renderPlaceholders() {
@@ -384,6 +389,7 @@ class DomainSearchResults extends Component {
 
 			domainSkipSuggestion = showSkipButton && domainSkipValue && (
 				<DomainSkipSuggestion
+					hasExistingSite={ !! selectedSite }
 					domain={ domainSkipValue }
 					onSkip={ this.onDomainSkipSuggestionClick }
 				/>
@@ -425,4 +431,10 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( DomainSearchResults ) );
+// Wrapper component to handle the hook
+const DomainSearchResultsWithHook = ( props ) => {
+	const { cart } = useDomainSearch();
+	return <DomainSearchResults { ...props } domainCart={ cart } />;
+};
+
+export default connect( mapStateToProps )( localize( DomainSearchResultsWithHook ) );

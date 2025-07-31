@@ -517,6 +517,16 @@ class RegisterDomainStep extends Component {
 			} ),
 			total,
 			onAddItem: ( domain_name ) => {
+				const subdomainPosition = this.state.subdomainSearchResults.findIndex(
+					( subdomain ) => subdomain.domain_name === domain_name
+				);
+
+				if ( subdomainPosition !== -1 ) {
+					const subdomain = this.state.subdomainSearchResults[ subdomainPosition ];
+
+					return this.onAddDomain( subdomain, subdomainPosition, false );
+				}
+
 				const suggestionPosition = searchResults.findIndex(
 					( result ) => result.domain_name === domain_name
 				);
@@ -1826,6 +1836,7 @@ class RegisterDomainStep extends Component {
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
+				onAddDomain={ this.onAddDomain }
 			/>
 		);
 	}
