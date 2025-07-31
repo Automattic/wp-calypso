@@ -1,5 +1,5 @@
 import { __experimentalHStack as HStack, ProgressBar } from '@wordpress/components';
-import { TextBlur } from '../text-blur';
+import { TextSkeleton } from '../text-skeleton';
 import './style.scss';
 
 interface StatProps {
@@ -22,7 +22,7 @@ interface StatProps {
 	/**
 	 * The main value to display. Remember to include units.
 	 */
-	metric: string;
+	metric?: string;
 
 	/**
 	 * The color of the progress bar. If none is provided the admin theme colour
@@ -57,9 +57,6 @@ export function Stat( {
 	progressLabel = `${ progressValue }%`,
 	strapline,
 }: StatProps ) {
-	const metricElement = isLoading ? <TextBlur>{ metric }</TextBlur> : metric;
-	const descriptionElement = isLoading ? <TextBlur>{ description }</TextBlur> : description;
-
 	return (
 		<div className={ `dashboard-stat--density-${ density }` }>
 			{ strapline && <div className="dashboard-stat__strapline">{ strapline }</div> }
@@ -68,8 +65,14 @@ export function Stat( {
 				spacing={ 2 }
 				justify={ progressValue === undefined ? 'start' : 'space-between' }
 			>
-				<div className="dashboard-stat__metric">{ metricElement }</div>
-				{ description && <div className="dashboard-stat__description">{ descriptionElement }</div> }
+				<div className="dashboard-stat__metric">
+					{ isLoading ? <TextSkeleton length={ 5 } /> : metric }
+				</div>
+				{ description && ! isLoading && (
+					<div className="dashboard-stat__description">
+						{ isLoading ? <TextSkeleton length={ 8 } /> : description }
+					</div>
+				) }
 			</HStack>
 			{ progressValue !== undefined && (
 				<ProgressBar

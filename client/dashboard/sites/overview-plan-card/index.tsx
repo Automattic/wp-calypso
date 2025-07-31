@@ -105,8 +105,8 @@ export default function PlanCard( { site }: { site: Site } ) {
 					<Stat
 						density="high"
 						strapline={ __( 'Storage' ) }
-						metric={ filesize( mediaStorage?.storage_used_bytes ?? 0, { round: 0 } ) }
-						description={ filesize( mediaStorage?.max_storage_bytes ?? 0, { round: 0 } ) }
+						metric={ mediaStorage && filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
+						description={ mediaStorage && filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
 						progressValue={ progressBarValue }
 						progressColor={ storageWarningColor }
 						progressLabel={ `${ storageUsagePercent }%` }
