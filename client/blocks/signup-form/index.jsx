@@ -1063,9 +1063,12 @@ class SignupForm extends Component {
 			);
 		}
 
+		const isUnifiedCreateAccount = this.props.isWoo;
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
-		const showSeparator = ! config.isEnabled( 'desktop' ) && this.isHorizontal();
+		const showSeparator =
+			isUnifiedCreateAccount ||
+			( 'wpcc' !== this.props.flowName && ! config.isEnabled( 'desktop' ) && this.isHorizontal() );
 
 		if (
 			( this.props.isPasswordless && ( 'wpcc' !== this.props.flowName || this.props.isWoo ) ) ||
