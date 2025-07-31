@@ -8,12 +8,11 @@
 	right: 0;
 	width: 100%;
 	margin: 0;
-	z-index: z-index("root", ".summer-special-banner");
+	z-index: 100001;
 	background: var(--color-neutral-100);
 	color: var(--color-text-inverted);
 	border-radius: 0;
 	box-shadow: none;
-	animation: slideUp 0.4s ease-out;
 
 	// Remove default card padding and add custom
 	padding: 0;
@@ -30,22 +29,9 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 8px 12px;
-	min-height: 40px;
+	padding: 12px;
+	min-height: 24px;
 	position: relative;
-	gap: 16px;
-
-	@include break-small {
-		padding: 10px 16px;
-		min-height: 44px;
-		gap: 20px;
-	}
-
-	@include break-medium {
-		max-width: 1200px;
-		margin: 0 auto;
-		gap: 24px;
-	}
 }
 
 .summer-special-banner__text {
@@ -57,14 +43,10 @@
 	font-weight: 400;
 	margin: 0;
 	color: var(--color-text-inverted);
-	line-height: 1.4;
+	line-height: 1.6;
 
 	@include break-small {
 		font-size: 15px;
-	}
-
-	@include break-medium {
-		font-size: 16px;
 	}
 }
 
@@ -101,7 +83,7 @@
 	right: 12px;
 	transform: translateY(-50%);
 	color: var(--color-text-inverted) !important;
-	opacity: 0.7;
+	opacity: 0.9;
 	min-width: 20px !important;
 	height: 20px !important;
 	padding: 0 !important;
@@ -116,43 +98,5 @@
 		right: 16px;
 		min-width: 24px !important;
 		height: 24px !important;
-	}
-}
-
-// Animation for banner appearance
-@keyframes slideUp {
-	from {
-		transform: translateY(100%);
-		opacity: 0;
-	}
-	to {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-// Responsive adjustments for very small screens
-@media (max-width: 480px) {
-	.summer-special-banner__content {
-		flex-direction: row;
-		text-align: left;
-		padding: 6px 8px;
-		gap: 8px;
-		min-height: 36px;
-	}
-
-	.summer-special-banner__title {
-		font-size: 13px;
-	}
-
-	.summer-special-banner__cta {
-		font-size: 13px;
-		margin-left: 4px;
-	}
-
-	.summer-special-banner__close {
-		right: 8px;
-		min-width: 18px !important;
-		height: 18px !important;
 	}
 }

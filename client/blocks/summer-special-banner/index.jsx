@@ -57,7 +57,7 @@ export default function SummerSpecialBanner( { hasTargetPlan = false } ) {
 				onClick={ dismiss }
 				aria-label={ translate( 'Dismiss banner' ) }
 			>
-				<Icon icon={ close } size={ 18 } />
+				<Icon icon={ close } size={ 24 } />
 			</Button>
 		</Card>
 	);
