@@ -1,5 +1,5 @@
-@import "@automattic/typography/styles/variables";
-$brand-text: "SF Pro Text", $sans;
+@import '@automattic/typography/styles/variables';
+$brand-text: 'SF Pro Text', $sans;
 
 .github-deployments-list {
 	display: flex;
@@ -35,14 +35,14 @@ $brand-text: "SF Pro Text", $sans;
 	}
 
 	thead tr,
-	tbody tr:not(:last-of-type) {
-		border-bottom: 1px solid var(--color-border-subtle);
+	tbody tr:not( :last-of-type ) {
+		border-bottom: 1px solid var( --color-border-subtle );
 	}
 
 	tr th {
 		padding: 8px 0 16px 0;
 		font-weight: 500;
-		color: var(--studio-gray-60, #50575e);
+		color: var( --studio-gray-60, #50575e );
 	}
 
 	td {
@@ -93,16 +93,16 @@ $brand-text: "SF Pro Text", $sans;
 			text-align: left;
 			padding: 0;
 			border: none;
-			color: var(--studio-gray-100, #101517);
+			color: var( --studio-gray-100, #101517 );
 
 			&:hover {
 				text-decoration: underline;
-				color: var(--studio-gray-100, #101517);
+				color: var( --studio-gray-100, #101517 );
 			}
 		}
 
 		span {
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			font-size: $font-body-extra-small;
 			font-weight: 400;
 		}
@@ -125,15 +125,14 @@ $brand-text: "SF Pro Text", $sans;
 
 		a {
 			text-decoration: underline;
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 		}
 	}
 
 	&__menu-item-danger {
-		color: var(--color-error);
+		color: var( --color-error );
 	}
 }
-
 
 .github-deployments-status {
 	display: inline-flex;
@@ -149,30 +148,30 @@ $brand-text: "SF Pro Text", $sans;
 
 	&__pending,
 	&__queued {
-		border: 1px solid var(--Gray-Gray-10, #c3c4c7);
-		color: var(--Gray-Gray-60, #50575e);
-		background-color: var(--studio-white);
+		border: 1px solid var( --Gray-Gray-10, #c3c4c7 );
+		color: var( --Gray-Gray-60, #50575e );
+		background-color: var( --studio-white );
 	}
 
 	&__success {
-		background-color: var(--Green-Green-5, #b8e6bf);
-		color: var(--Green-Green-80, #00450c);
+		background-color: var( --Green-Green-5, #b8e6bf );
+		color: var( --Green-Green-80, #00450c );
 	}
 
 	&__failed {
-		background-color: var(--Red-Red-5, #facfd2);
-		color: var(--Red-Red-80, #691c1c);
+		background-color: var( --Red-Red-5, #facfd2 );
+		color: var( --Red-Red-80, #691c1c );
 	}
 
 	&__running,
 	&__building {
-		background-color: var(--Blue-Blue-5, #bbe0fa);
-		color: var(--Blue-Blue-80, #02395c);
+		background-color: var( --Blue-Blue-5, #bbe0fa );
+		color: var( --Blue-Blue-80, #02395c );
 	}
 
 	&__warnings {
-		background-color: var(--Yellow-Yellow-5, #f5c4a1);
-		color: var(--Yellow-Yellow-80, #4f3500);
+		background-color: var( --Yellow-Yellow-5, #f5c4a1 );
+		color: var( --Yellow-Yellow-80, #4f3500 );
 	}
 
 	span {
@@ -189,7 +188,8 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-.github-deployments-delete-deployment-dialog {
+.github-deployments-delete-deployment-dialog,
+.github-deployments-production-deployment-dialog {
 	max-width: 560px;
 
 	p,
@@ -215,13 +215,13 @@ $brand-text: "SF Pro Text", $sans;
 
 .github-deployments {
 	.header-cake__back {
-		color: var(--studio-gray-60);
+		color: var( --studio-gray-60 );
 		font-size: $font-body-small;
 		padding: 0;
 		margin-bottom: 16px;
 		svg {
 			margin-right: 2px;
-			fill: var(--studio-gray-60);
+			fill: var( --studio-gray-60 );
 		}
 	}
 }
