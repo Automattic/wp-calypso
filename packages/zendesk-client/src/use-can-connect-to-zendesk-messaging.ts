@@ -38,12 +38,12 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			} );
 		}
 
-		recordTracksEvent( 'calypso_helpcenter_zendesk_config_request', {
-			status: query.status,
-			status_text: query.error?.message,
-			failure_count: query.failureCount,
-		} );
-	}, [ query.data, query.error, query.status, query.failureReason, query.failureCount ] );
+		// recordTracksEvent( 'calypso_helpcenter_zendesk_config_request', {
+		// 	status: query.status,
+		// 	status_text: query.error?.message,
+		// 	failure_count: query.failureCount,
+		// } );
+	}, [ query.data, query.error?.message, query.status, query.failureCount ] );
 
 	return query;
 }
