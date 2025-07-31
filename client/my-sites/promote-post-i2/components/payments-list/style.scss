@@ -27,6 +27,19 @@
 			th.payment-item__credits {
 				display: none;
 			}
+
+			th.payment-item__status{
+				width: 29%;
+			}
+			th.payment-item__date{
+				width: 33%;
+			}
+			th.payment-item__total{
+				width: 19%;
+			}
+			th.payment-item__actions{
+				width: 19%;
+			}
 		}
 
 		tbody {
