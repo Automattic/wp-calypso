@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack, ProgressBar } from '@wordpress/components';
+import clsx from 'clsx';
 import { TextSkeleton } from '../text-skeleton';
 import './style.scss';
 
@@ -58,7 +59,11 @@ export function Stat( {
 	strapline,
 }: StatProps ) {
 	return (
-		<div className={ `dashboard-stat--density-${ density }` }>
+		<div
+			className={ clsx( `dashboard-stat--density-${ density }`, {
+				'dashboard-stat--is-loading': isLoading,
+			} ) }
+		>
 			{ strapline && <div className="dashboard-stat__strapline">{ strapline }</div> }
 			<HStack
 				alignment="baseline"
@@ -77,7 +82,7 @@ export function Stat( {
 			{ progressValue !== undefined && (
 				<ProgressBar
 					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
-					value={ isLoading ? 0 : progressValue }
+					value={ progressValue }
 					aria-label={ progressLabel }
 					aria-hidden={ isLoading }
 				/>
