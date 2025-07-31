@@ -5,6 +5,9 @@
 
 .staging-site-card {
 	padding-bottom: 48px;
+	&.confirmation-input {
+		padding-bottom: 82px;
+	}
 	.card {
 		padding: 24px 22px;
 	}
@@ -291,7 +294,6 @@
 }
 
 .staging-site-card__footer {
-	border-top: 1px solid var(--studio-gray-5);
 	position: absolute;
 	bottom: 0;
 	width: 100%;
