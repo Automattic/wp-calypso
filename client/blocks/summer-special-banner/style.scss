@@ -1,14 +1,22 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.summer-special-banner-wrapper {
+	// Default: no height constraint
+
+	// When the banner is fixed, maintain space where it would be
+	&.summer-special-banner-wrapper--fixed {
+		min-height: 48px; // 12px padding top + 24px min-height + 12px padding bottom
+		margin: 0 20px 24px;
+
+		@media (min-width: 780px) {
+			margin: 0 0 24px;
+		}
+	}
+}
+
 .summer-special-banner {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	width: 100%;
-	margin: 0;
-	z-index: 100001;
+	margin: 0 20px 24px;
 	background: var(--color-neutral-100);
 	color: var(--color-text-inverted);
 	border-radius: 0;
@@ -16,6 +24,20 @@
 
 	// Remove default card padding and add custom
 	padding: 0;
+
+	@media (min-width: 780px) {
+		margin: 0 0 24px;
+	}
+
+	// Fixed positioning for signup version
+	&.summer-special-banner--fixed {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100001;
+		margin: 0;
+	}
 
 	.card {
 		background: transparent;
@@ -29,7 +51,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 12px;
+	padding: 12px 40px 12px 12px;
 	min-height: 24px;
 	position: relative;
 }

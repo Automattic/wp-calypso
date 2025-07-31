@@ -831,6 +831,7 @@ const PlansFeaturesMain = ( {
 								require="calypso/blocks/summer-special-banner"
 								placeholder={ null }
 								visiblePlans={ gridPlansForFeaturesGrid }
+								isFixed={ false }
 							/>
 						) }
 					</>
@@ -988,6 +989,7 @@ const PlansFeaturesMain = ( {
 					require="calypso/blocks/summer-special-banner"
 					placeholder={ null }
 					visiblePlans={ gridPlansForFeaturesGrid }
+					isFixed
 				/>
 			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
