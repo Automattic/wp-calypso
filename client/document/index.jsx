@@ -6,7 +6,6 @@ import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
 import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
@@ -298,15 +297,14 @@ function LoadingPlaceholder( {
 	isOneTapAuth,
 	showStepContainerV2Loader,
 } ) {
-	if ( isOneTapAuth ) {
-		return <OneTapAuthLoaderOverlay />;
-	}
-
 	const shouldNotShowLoadingLogo =
-		sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+		sectionName === 'checkout' ||
+		sectionName === 'stepper' ||
+		sectionName === 'signup' ||
+		isOneTapAuth;
 
 	if ( shouldNotShowLoadingLogo ) {
-		return showStepContainerV2Loader ? (
+		return showStepContainerV2Loader || isOneTapAuth ? (
 			<Step.Loading />
 		) : (
 			<Loading className="wpcom-loading__boot" />
