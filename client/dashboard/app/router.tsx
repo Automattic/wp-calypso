@@ -40,6 +40,7 @@ import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 interface RouteContext {
 	config?: AppConfig;
@@ -629,34 +630,54 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites ) {
-		children.push(
-			sitesRoute,
-			siteRoute.addChildren( [
-				siteOverviewRoute,
-				siteDeploymentsRoute,
-				sitePerformanceRoute,
-				siteMonitoringRoute,
-				siteLogsRoute,
-				siteBackupsRoute,
-				siteDomainsRoute,
-				siteEmailsRoute,
-				siteSettingsRoute,
-				siteSettingsSiteVisibilityRoute,
-				siteSettingsSubscriptionGiftingRoute,
-				siteSettingsDatabaseRoute,
-				siteSettingsWordPressRoute,
-				siteSettingsPHPRoute,
-				siteSettingsAgencyRoute,
-				siteSettingsHundredYearPlanRoute,
-				siteSettingsPrimaryDataCenterRoute,
-				siteSettingsStaticFile404Route,
-				siteSettingsCachingRoute,
-				siteSettingsDefensiveModeRoute,
-				siteSettingsTransferSiteRoute,
-				siteSettingsSftpSshRoute,
-				siteSettingsWebApplicationFirewallRoute,
-			] )
-		);
+		const siteChildren: AnyRoute[] = [
+			siteOverviewRoute,
+			siteSettingsRoute,
+			siteSettingsSiteVisibilityRoute,
+			siteSettingsSubscriptionGiftingRoute,
+			siteSettingsDatabaseRoute,
+			siteSettingsWordPressRoute,
+			siteSettingsPHPRoute,
+			siteSettingsAgencyRoute,
+			siteSettingsHundredYearPlanRoute,
+			siteSettingsPrimaryDataCenterRoute,
+			siteSettingsStaticFile404Route,
+			siteSettingsCachingRoute,
+			siteSettingsDefensiveModeRoute,
+			siteSettingsTransferSiteRoute,
+			siteSettingsSftpSshRoute,
+			siteSettingsWebApplicationFirewallRoute,
+		];
+
+		if ( config.supports.sites.deployments ) {
+			siteChildren.push( siteDeploymentsRoute );
+		}
+
+		if ( config.supports.sites.performance ) {
+			siteChildren.push( sitePerformanceRoute );
+		}
+
+		if ( config.supports.sites.monitoring ) {
+			siteChildren.push( siteMonitoringRoute );
+		}
+
+		if ( config.supports.sites.logs ) {
+			siteChildren.push( siteLogsRoute );
+		}
+
+		if ( config.supports.sites.backups ) {
+			siteChildren.push( siteBackupsRoute );
+		}
+
+		if ( config.supports.sites.domains ) {
+			siteChildren.push( siteDomainsRoute );
+		}
+
+		if ( config.supports.sites.emails ) {
+			siteChildren.push( siteEmailsRoute );
+		}
+
+		children.push( sitesRoute, siteRoute.addChildren( siteChildren ) );
 	}
 
 	if ( config.supports.domains ) {
