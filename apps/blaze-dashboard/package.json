@@ -33,7 +33,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@tanstack/react-query": "^5.15.5",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/data": "^10.23.0",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",

@@ -5,6 +5,7 @@ import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-c
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
 import a4aEventImage from 'calypso/assets/images/a8c-for-agencies/events/a4a-compliment-image.svg';
 import a4aLogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
+import billingSystemEventImage from 'calypso/assets/images/a8c-for-agencies/events/billing-system-event-image.svg';
 import wooEventImage from 'calypso/assets/images/a8c-for-agencies/events/woo-compliment-image.svg';
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
 import wordcampUsEventImage from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-us2025-image.svg';
@@ -34,6 +35,32 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
+			{
+				id: 'billing-system-2025-08-06',
+				date: {
+					from: moment( '2025-08-06' ),
+					to: moment( '2025-08-06' ),
+				},
+				title: translate( 'Phase 1 of our Billing System Enhancements Launch August 6' ),
+				subtitle: translate( 'Automattic for Agencies' ),
+				descriptions: [
+					translate(
+						"We're excited to announce that we're working towards supporting annual billing, 25 additional currencies, new payment methods, and more. We're achieving this by transitioning to a new billing system and will conduct the migration in 3 phases, starting with new client referrals in phase 1 on August 6th."
+					),
+					translate(
+						"See what's changing and when by visiting our FAQ in the Knowledge Base. Questions? Reach out to our support team anytime."
+					),
+				],
+				cta: {
+					label: translate( 'Read the billing migration FAQ ↗' ),
+					url: 'https://agencieshelp.automattic.com/knowledge-base/billing-migration-faq-for-agencies/',
+				},
+				logoUrl: a4aLogo,
+				imageUrl: billingSystemEventImage,
+				trackEventName: 'calypso_a4a_overview_events_billing_migration_faq_click',
+				dateClassName: 'a4a-event__date--a4a',
+				imageClassName: 'a4a-event__image--a4a a4a-event__image--billing-system',
+			},
 			{
 				id: 'woo-2025-07-14',
 				date: {

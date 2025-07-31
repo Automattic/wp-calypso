@@ -13,7 +13,7 @@ export const DomainSuggestionMatchReasons = ( { reasons }: DomainSuggestionMatch
 			{ reasons.map( ( reason ) => {
 				return (
 					<li key={ reason }>
-						<Text variant="muted" className="domain-suggestion-match-reason__text">
+						<Text className="domain-suggestion-match-reason__text">
 							<Icon icon={ check } className="domain-suggestion-match-reason__icon" />
 							{ reason }
 						</Text>

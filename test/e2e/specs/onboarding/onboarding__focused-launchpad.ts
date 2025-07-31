@@ -21,7 +21,8 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
+// We might want to re-enable this test for CIAB, so leaving here until EOY.
+describe.skip( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 	let page: Page;
 	let newSiteDetails: NewSiteResponse;
 	let siteCreatedFlag = false;

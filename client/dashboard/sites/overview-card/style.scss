@@ -13,6 +13,14 @@
 		display: flex;
 		flex-direction: column;
 	}
+
+	.dashboard-callout {
+		max-width: 100% !important;
+
+		.dashboard-callout__h-container {
+			padding: 24px;
+		}
+	}
 }
 
 .dashboard-overview-card__content {
@@ -110,10 +118,6 @@
 	}
 }
 
-.dashboard-callout {
-	max-width: 100% !important;
-
-	.dashboard-callout__h-container {
-		padding: 24px;
-	}
+.dashboard-overview-card__progress-bar {
+	width: 100% !important;
 }

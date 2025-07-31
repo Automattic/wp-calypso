@@ -1,11 +1,37 @@
+@import '@wordpress/base-styles/colors';
+
 .domain-suggestions-list-item__notice {
 	height: 1lh;
 	display: inline-block;
 	vertical-align: top;
 }
 
+.domain-suggestions-list-item__icon {
+	fill: #{$gray-700};
+	flex-shrink: 0;
+}
+
+.domain-suggestions-list-item__domain-name-container {
+	display: flex;
+	align-items: center;
+	row-gap: 4px;
+	column-gap: 12px;
+	flex-wrap: wrap;
+	line-height: inherit;
+}
+
+.domain-suggestions-list-item__domain-name {
+	word-break: break-all;
+	line-height: inherit;
+}
+
+.domain-suggestions-list-item__domain-name-tld {
+	white-space: nowrap;
+}
+
 .domain-suggestions-list-item__badges {
 	display: inline-flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	line-height: 1;
 }

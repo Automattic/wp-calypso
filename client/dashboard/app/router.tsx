@@ -40,6 +40,7 @@ import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 interface RouteContext {
 	config?: AppConfig;
@@ -146,7 +147,7 @@ const siteOverviewRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -157,6 +158,61 @@ const siteDeploymentsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteMonitoringRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'monitoring',
+} ).lazy( () =>
+	import( '../sites/monitoring' ).then( ( d ) =>
+		createLazyRoute( 'site-monitoring' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteLogsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'logs',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteBackupsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'backups',
+} ).lazy( () =>
+	import( '../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backups' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteDomainsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'domains',
+} ).lazy( () =>
+	import( '../sites/domains' ).then( ( d ) =>
+		createLazyRoute( 'site-domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteEmailsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'emails',
+} ).lazy( () =>
+	import( '../sites/emails' ).then( ( d ) =>
+		createLazyRoute( 'site-emails' )( {
 			component: d.default,
 		} )
 	)
@@ -574,29 +630,54 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites ) {
-		children.push(
-			sitesRoute,
-			siteRoute.addChildren( [
-				siteOverviewRoute,
-				siteDeploymentsRoute,
-				sitePerformanceRoute,
-				siteSettingsRoute,
-				siteSettingsSiteVisibilityRoute,
-				siteSettingsSubscriptionGiftingRoute,
-				siteSettingsDatabaseRoute,
-				siteSettingsWordPressRoute,
-				siteSettingsPHPRoute,
-				siteSettingsAgencyRoute,
-				siteSettingsHundredYearPlanRoute,
-				siteSettingsPrimaryDataCenterRoute,
-				siteSettingsStaticFile404Route,
-				siteSettingsCachingRoute,
-				siteSettingsDefensiveModeRoute,
-				siteSettingsTransferSiteRoute,
-				siteSettingsSftpSshRoute,
-				siteSettingsWebApplicationFirewallRoute,
-			] )
-		);
+		const siteChildren: AnyRoute[] = [
+			siteOverviewRoute,
+			siteSettingsRoute,
+			siteSettingsSiteVisibilityRoute,
+			siteSettingsSubscriptionGiftingRoute,
+			siteSettingsDatabaseRoute,
+			siteSettingsWordPressRoute,
+			siteSettingsPHPRoute,
+			siteSettingsAgencyRoute,
+			siteSettingsHundredYearPlanRoute,
+			siteSettingsPrimaryDataCenterRoute,
+			siteSettingsStaticFile404Route,
+			siteSettingsCachingRoute,
+			siteSettingsDefensiveModeRoute,
+			siteSettingsTransferSiteRoute,
+			siteSettingsSftpSshRoute,
+			siteSettingsWebApplicationFirewallRoute,
+		];
+
+		if ( config.supports.sites.deployments ) {
+			siteChildren.push( siteDeploymentsRoute );
+		}
+
+		if ( config.supports.sites.performance ) {
+			siteChildren.push( sitePerformanceRoute );
+		}
+
+		if ( config.supports.sites.monitoring ) {
+			siteChildren.push( siteMonitoringRoute );
+		}
+
+		if ( config.supports.sites.logs ) {
+			siteChildren.push( siteLogsRoute );
+		}
+
+		if ( config.supports.sites.backups ) {
+			siteChildren.push( siteBackupsRoute );
+		}
+
+		if ( config.supports.sites.domains ) {
+			siteChildren.push( siteDomainsRoute );
+		}
+
+		if ( config.supports.sites.emails ) {
+			siteChildren.push( siteEmailsRoute );
+		}
+
+		children.push( sitesRoute, siteRoute.addChildren( siteChildren ) );
 	}
 
 	if ( config.supports.domains ) {
@@ -652,9 +733,26 @@ export {
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
+	siteMonitoringRoute,
+	siteLogsRoute,
+	siteBackupsRoute,
+	siteDomainsRoute,
+	siteEmailsRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
 	siteSettingsSubscriptionGiftingRoute,
+	siteSettingsDatabaseRoute,
+	siteSettingsWordPressRoute,
+	siteSettingsPHPRoute,
+	siteSettingsAgencyRoute,
+	siteSettingsHundredYearPlanRoute,
+	siteSettingsPrimaryDataCenterRoute,
+	siteSettingsStaticFile404Route,
+	siteSettingsCachingRoute,
+	siteSettingsDefensiveModeRoute,
+	siteSettingsTransferSiteRoute,
+	siteSettingsSftpSshRoute,
+	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

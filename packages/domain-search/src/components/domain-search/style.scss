@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/colors';
 
 .domain-search {
+	--domain-search-v2-background-color: #fcfcfc;
 	--domain-search-secondary-action-color: #{$gray-900};
 	--domain-search-secondary-action-box-shadow-color: #{$gray-400};
 	--domain-search-input-size: 56px;

@@ -4,9 +4,9 @@
 	.components-card__body {
 		display: flex;
 		flex-direction: row;
-		justify-content: space-between;
 		align-items: center;
-		gap: 1rem;
+		justify-content: space-between;
+		gap: 1.5rem;
 	}
 
 	.subdomain-skip-suggestion__content {

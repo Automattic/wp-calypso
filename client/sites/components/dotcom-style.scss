@@ -276,6 +276,11 @@
 			margin-bottom: 0;
 		}
 
+		.dashboard-callout-overlay {
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, #FFF 100%);
+			backdrop-filter: blur(2px);
+		}
+
 		@media (max-width: $break-large) {
 			padding-top: 24px;
 			padding-left: 24px;

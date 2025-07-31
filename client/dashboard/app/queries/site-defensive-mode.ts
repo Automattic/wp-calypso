@@ -1,22 +1,22 @@
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	fetchEdgeCacheDefensiveModeSettings,
 	updateEdgeCacheDefensiveModeSettings,
 } from '../../data/site-hosting-edge-cache';
 import { queryClient } from '../query-client';
-import type {
-	DefensiveModeSettings,
-	DefensiveModeSettingsUpdate,
-} from '../../data/site-hosting-edge-cache';
+import type { DefensiveModeSettingsUpdate } from '../../data/site-hosting-edge-cache';
 
-export const siteDefensiveModeSettingsQuery = ( siteId: number ) => ( {
-	queryKey: [ 'site', siteId, 'defensive-mode' ],
-	queryFn: () => fetchEdgeCacheDefensiveModeSettings( siteId ),
-} );
+export const siteDefensiveModeSettingsQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'defensive-mode' ],
+		queryFn: () => fetchEdgeCacheDefensiveModeSettings( siteId ),
+	} );
 
-export const siteDefensiveModeSettingsMutation = ( siteId: number ) => ( {
-	mutationFn: ( data: DefensiveModeSettingsUpdate ) =>
-		updateEdgeCacheDefensiveModeSettings( siteId, data ),
-	onSuccess: ( data: DefensiveModeSettings ) => {
-		queryClient.setQueryData( siteDefensiveModeSettingsQuery( siteId ).queryKey, data );
-	},
-} );
+export const siteDefensiveModeSettingsMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( data: DefensiveModeSettingsUpdate ) =>
+			updateEdgeCacheDefensiveModeSettings( siteId, data ),
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( siteDefensiveModeSettingsQuery( siteId ).queryKey, data );
+		},
+	} );

@@ -503,19 +503,6 @@ body.is-section-signup {
 	.wp-login__main.main:has(.login form.is-blaze-pro) {
 		max-width: unset;
 	}
-
-	.wp-login__container {
-		.wp-login__login-block-footer {
-			text-align: center;
-		}
-
-		.login__lost-password-link {
-			font-family: $sfProText;
-			font-size: rem(18px);
-			font-weight: 500;
-			line-height: 24px;
-		}
-	}
 }
 
 // Hacks for Continue-as-a-user for Sign Up (but user is already logged in)

@@ -314,13 +314,14 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			productSaleCost,
 			premiumDomain,
+			flowName,
 		} = this.props;
 		const badges = [];
 
 		if ( isFeatured && this.isExactMatch() ) {
 			badges.push(
 				<DomainSuggestionBadge variation="success">
-					{ translate( 'It’s available!' ) }
+					{ translate( "It's available!" ) }
 				</DomainSuggestionBadge>
 			);
 		} else if ( isRecommended && isFeatured ) {
@@ -332,13 +333,15 @@ class DomainRegistrationSuggestion extends Component {
 		} else if ( isBestAlternative && isFeatured ) {
 			badges.push(
 				<DomainSuggestionBadge key="best-alternative">
-					{ translate( 'Best Alternative' ) }
+					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
 		}
 
+		const skipSaleBadge = isHundredYearPlanFlow( flowName );
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
-		if ( productSaleCost && paidDomain ) {
+		if ( productSaleCost && paidDomain && ! skipSaleBadge ) {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
@@ -357,6 +360,10 @@ class DomainRegistrationSuggestion extends Component {
 					domainName={ this.props.suggestion.domain_name }
 				/>
 			);
+		}
+
+		if ( badges.length === 0 ) {
+			return null;
 		}
 
 		return badges;

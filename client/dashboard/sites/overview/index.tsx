@@ -11,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { chartBar, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -28,8 +27,7 @@ import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import VisibilityCard from '../overview-visibility-card';
 import './style.scss';
-
-type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
+import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
 const SPACING = {
 	DEFAULT: 6,
@@ -66,13 +64,14 @@ function getGridLayout( {
 }
 
 function SiteOverview( {
+	siteSlug,
 	hideSitePreview = false,
 	breakpoints,
 }: {
-	hideSitePreview: boolean;
-	breakpoints?: { large: Breakpoint; small: Breakpoint };
+	siteSlug: string;
+	hideSitePreview?: boolean;
+	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
-	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
@@ -113,11 +112,11 @@ function SiteOverview( {
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<VStack className="site-overview-cards" spacing={ spacing }>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 						<VisibilityCard site={ site } />
 						<BackupCard site={ site } />
-					</VStack>
-					<VStack className="site-overview-cards" spacing={ spacing }>
+					</Grid>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 						{ site.is_a4a_dev_site ? (
 							<AgencySiteShareCard site={ site } />
 						) : (
@@ -130,7 +129,7 @@ function SiteOverview( {
 							/>
 						) }
 						<ScanCard site={ site } />
-					</VStack>
+					</Grid>
 					<PlanCard site={ site } />
 				</Grid>
 				<Divider

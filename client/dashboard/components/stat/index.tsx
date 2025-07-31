@@ -1,4 +1,6 @@
 import { __experimentalHStack as HStack, ProgressBar } from '@wordpress/components';
+import clsx from 'clsx';
+import { TextSkeleton } from '../text-skeleton';
 import './style.scss';
 
 interface StatProps {
@@ -14,9 +16,14 @@ interface StatProps {
 	description?: string;
 
 	/**
+	 * Obscure text while loading.
+	 */
+	isLoading?: boolean;
+
+	/**
 	 * The main value to display. Remember to include units.
 	 */
-	metric: string;
+	metric?: string;
 
 	/**
 	 * The color of the progress bar. If none is provided the admin theme colour
@@ -44,6 +51,7 @@ interface StatProps {
 export function Stat( {
 	density = 'low',
 	description,
+	isLoading = false,
 	metric,
 	progressColor,
 	progressValue,
@@ -51,21 +59,32 @@ export function Stat( {
 	strapline,
 }: StatProps ) {
 	return (
-		<div className={ `dashboard-stat--density-${ density }` }>
+		<div
+			className={ clsx( `dashboard-stat--density-${ density }`, {
+				'dashboard-stat--is-loading': isLoading,
+			} ) }
+		>
 			{ strapline && <div className="dashboard-stat__strapline">{ strapline }</div> }
 			<HStack
 				alignment="baseline"
 				spacing={ 2 }
 				justify={ progressValue === undefined ? 'start' : 'space-between' }
 			>
-				<div className="dashboard-stat__metric">{ metric }</div>
-				{ description && <div className="dashboard-stat__description">{ description }</div> }
+				<div className="dashboard-stat__metric">
+					{ isLoading ? <TextSkeleton length={ 5 } /> : metric }
+				</div>
+				{ description && ! isLoading && (
+					<div className="dashboard-stat__description">
+						{ isLoading ? <TextSkeleton length={ 8 } /> : description }
+					</div>
+				) }
 			</HStack>
 			{ progressValue !== undefined && (
 				<ProgressBar
 					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
 					value={ progressValue }
 					aria-label={ progressLabel }
+					aria-hidden={ isLoading }
 				/>
 			) }
 		</div>

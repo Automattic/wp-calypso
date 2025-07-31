@@ -14,7 +14,9 @@ export async function fetchProfile(): Promise< UserProfile > {
 	return await wpcom.req.get( '/me/settings' );
 }
 
-export async function updateProfile( data: Partial< UserProfile > ) {
+export async function updateProfile(
+	data: Partial< UserProfile >
+): Promise< Partial< UserProfile > > {
 	const saveableKeys = [ 'display_name', 'description', 'is_dev_account', 'user_URL' ];
 	for ( const key in data ) {
 		if ( ! saveableKeys.includes( key ) ) {

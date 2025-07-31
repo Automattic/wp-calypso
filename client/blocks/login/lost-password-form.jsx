@@ -73,6 +73,7 @@ const LostPasswordForm = ( {
 		if ( resp.status < 200 || resp.status >= 300 ) {
 			throw resp;
 		}
+
 		return await resp.text();
 	};
 
@@ -125,11 +126,39 @@ const LostPasswordForm = ( {
 					isJetpack: isWooJPC || isJetpack,
 				} )
 			);
-		} catch ( _httpError ) {
+		} catch ( response ) {
 			setBusy( false );
-			setError(
-				translate( 'There was an error sending the password reset email. Please try again.' )
+			const defaultError = translate(
+				'There was an error sending the password reset email. Please try again.'
 			);
+
+			/**
+			 * Check this is a network error first, so that we can run
+			 * Response.text() on it.
+			 */
+			if ( ! response?.text ) {
+				return setError( defaultError );
+			}
+
+			const result = await response.text();
+
+			/**
+			 * Check if DOMParser is available, in case it's missing in the
+			 * server-side rendering context.
+			 */
+			if ( typeof DOMParser === 'undefined' ) {
+				return setError( defaultError );
+			}
+
+			const parser = new DOMParser();
+			const resultHTML = parser.parseFromString( result, 'text/html' );
+
+			const wpDieMessage = resultHTML.querySelector( '.wp-die-message' );
+			if ( wpDieMessage ) {
+				return setError( wpDieMessage.textContent.trim() );
+			}
+
+			return setError( defaultError );
 		}
 	};
 

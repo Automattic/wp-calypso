@@ -1,12 +1,7 @@
 import page from '@automattic/calypso-router';
+import { isSameOrigin } from '@automattic/calypso-url';
 import { logmeinUrl } from 'calypso/lib/logmein';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
-
-// Using page() for cross origin navigations would throw a `History.pushState` exception
-// about creating state object with a cross-origin URL.
-export function isSameOrigin( path: string ): boolean {
-	return new URL( path, window.location.href ).origin === window.location.origin;
-}
 
 // Check if the current path is within Calypso's scope.
 // For example, the path "/home" is within Calypso's scope.

@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,
@@ -22,7 +23,6 @@ import {
 import { __, isRTL } from '@wordpress/i18n';
 import { error, chevronRight, chevronLeft } from '@wordpress/icons';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
@@ -57,6 +57,7 @@ const fileBrowserConfig: FileBrowserConfig = {
 	alwaysInclude: [ 'wp-config.php' ],
 	showHeaderButtons: false,
 	showFileCard: false,
+	showBackupTime: true,
 };
 
 const DirectionArrow = () => {
@@ -204,15 +205,12 @@ export default function SyncModal( {
 	const stagingSiteTitle = useSelector( ( state ) => getSiteTitle( state, stagingSiteId ) ) || '';
 
 	const targetSiteSlug = targetEnvironment === 'production' ? productionSiteSlug : stagingSiteSlug;
-	const sourceSiteSlug = sourceEnvironment === 'staging' ? stagingSiteSlug : productionSiteSlug;
 
 	const sourceSiteTitle = sourceEnvironment === 'staging' ? stagingSiteTitle : productionSiteTitle;
 	const targetSiteTitle =
 		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
 	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
-
-	const getDisplayDate = useGetDisplayDate( querySiteId );
 
 	const browserCheckList = useSelector( ( state ) =>
 		getBackupBrowserCheckList( state, querySiteId )
@@ -254,14 +252,16 @@ export default function SyncModal( {
 	}, [ wpContentNode, wpConfigNode ] );
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
-			// setSyncError( null );
+		onSuccess: ( _, options ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
+			);
 		},
-		onError: ( error ) => {
+		onError: ( error, options ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
 					code: error.code,
+					...options,
 				} )
 			);
 			// setSyncError( error.code );
@@ -269,14 +269,16 @@ export default function SyncModal( {
 	} );
 
 	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
-			// setSyncError( null );
+		onSuccess: ( _, options ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
+			);
 		},
-		onError: ( error ) => {
+		onError: ( error, options ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
 					code: error.code,
+					...options,
 				} )
 			);
 			// setSyncError( error.code );
@@ -371,10 +373,6 @@ export default function SyncModal( {
 	const isButtonDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
 		( browserCheckList.totalItems === 0 && browserCheckList.includeList.length === 0 );
-
-	const displayBackupDate = lastKnownBackupAttempt
-		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
-		: null;
 
 	return (
 		<Modal
@@ -474,22 +472,20 @@ export default function SyncModal( {
 							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-						<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)' } } />
+						<Tooltip
+							text={ __(
+								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+							) }
+						>
+							<span>
+								<Icon
+									icon={ error }
+									style={ { fill: 'var(--studio-orange-50)', display: 'flex' } }
+								/>
+							</span>
+						</Tooltip>
 					</HStack>
 					<VStack spacing={ 7 }>
-						<HStack alignment="left" spacing={ 1 }>
-							<Text color="var(--studio-gray-40)">
-								{ displayBackupDate
-									? createInterpolateElement( __( 'Backup contents from: <date />.' ), {
-											date: <span>{ displayBackupDate }</span>,
-									  } )
-									: __( 'There are no backups.' ) }{ ' ' }
-								<ExternalLink
-									href={ `/backup/${ sourceSiteSlug }` }
-									children={ __( 'Backup now' ) }
-								/>
-							</Text>
-						</HStack>
 						{ showWooCommerceWarning && (
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>

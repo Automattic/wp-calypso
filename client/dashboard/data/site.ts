@@ -34,6 +34,7 @@ export const SITE_OPTIONS = [
 	'admin_url',
 	'created_at',
 	'is_difm_lite_in_progress',
+	'is_summer_special_2025',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
@@ -68,6 +69,7 @@ export interface SiteOptions {
 	admin_url: string;
 	created_at?: string;
 	is_difm_lite_in_progress?: boolean;
+	is_summer_special_2025?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -88,7 +90,7 @@ export interface Site {
 	};
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;
-	subscribers_count: number;
+	subscribers_count?: number; // Can be undefined if query cache is prefilled from old Calypso Redux store.
 	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;

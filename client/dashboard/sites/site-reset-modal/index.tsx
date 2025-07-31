@@ -1,4 +1,4 @@
-import { useQuery, useMutation, Query } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -153,14 +153,12 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ error, setError ] = useState< string | null >( null );
 
-	const { data: siteContentSummary } = useQuery< SiteResetContentSummary >(
-		siteResetContentSummaryQuery( site.ID )
-	);
+	const { data: siteContentSummary } = useQuery( siteResetContentSummaryQuery( site.ID ) );
 
 	const statusQuery = {
 		...siteResetStatusQuery( site.ID ),
 		...( site.is_wpcom_atomic && {
-			refetchInterval: ( query: Query< SiteResetStatus > ) => {
+			refetchInterval: ( query: { state: { data?: SiteResetStatus } } ) => {
 				const { data } = query.state;
 
 				if ( data?.status === 'ready' || data?.status === 'completed' ) {
@@ -175,8 +173,7 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 		} ),
 	};
 
-	const { data: resetStatus, refetch: refetchResetStatus } =
-		useQuery< SiteResetStatus >( statusQuery );
+	const { data: resetStatus, refetch: refetchResetStatus } = useQuery( statusQuery );
 	const { mutate, isPending: isMutationPending } = useMutation( siteResetMutation( site.ID ) );
 
 	const showSuccessNotice = useCallback( () => {

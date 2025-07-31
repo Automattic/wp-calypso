@@ -9,7 +9,7 @@ export interface ProductionSite {
 	url: string;
 }
 
-type ProductionSiteOptions = Pick< UseQueryOptions, 'enabled' >;
+type ProductionSiteOptions = Pick< UseQueryOptions< ProductionSite >, 'enabled' >;
 
 interface ErrorResponse extends Error {
 	code?: string;

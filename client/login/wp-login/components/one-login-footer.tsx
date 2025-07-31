@@ -3,10 +3,20 @@ import { useSelector } from 'react-redux';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isVIPOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import './one-login-footer.scss';
 
-interface LoginFooterProps {
-	lostPasswordLink: JSX.Element;
-	loginLink: string;
+interface OneLoginFooterProps {
+	/**
+	 * when `isLoginView` is true, this is the "lost password" link
+	 */
+	lostPasswordLink?: JSX.Element;
+	/**
+	 * when `isLoginView` is false, this is the "back to login" link
+	 */
+	loginLink?: string;
+	/**
+	 * when true, this is the footer for the main login screen
+	 */
 	isLoginView?: boolean;
 }
 
@@ -14,24 +24,20 @@ const recordBackToWpcomLinkClick = () => {
 	recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 };
 
-const LoginBlockFooter = ( { lostPasswordLink, isLoginView, loginLink }: LoginFooterProps ) => {
+const OneLoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: OneLoginFooterProps ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
-	if ( ! lostPasswordLink ) {
-		return null;
-	}
-
 	if ( isLoginView ) {
 		return (
-			<div className="wp-login__login-block-footer">
+			<div className="one-login__footer">
 				{ lostPasswordLink }
 				{ isVIPClient && (
 					<LoggedOutFormBackLink
 						classes={ {
 							'logged-out-form__link-item': false,
 							'logged-out-form__back-link': false,
-							'wp-login__login-block-footer-back-link': true,
+							'one-login__footer-link': true,
 						} }
 						oauth2Client={ oauth2Client }
 						recordClick={ recordBackToWpcomLinkClick }
@@ -41,7 +47,7 @@ const LoginBlockFooter = ( { lostPasswordLink, isLoginView, loginLink }: LoginFo
 		);
 	}
 
-	return <div className="wp-login__login-block-footer">{ loginLink }</div>;
+	return <div className="one-login__footer">{ loginLink }</div>;
 };
 
-export default LoginBlockFooter;
+export default OneLoginFooter;

@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
@@ -153,13 +153,15 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	// Check if hosting features are supported
-	if ( ! areHostingFeaturesSupported( site ) ) {
+	if (
+		! areHostingFeaturesSupported( site ) &&
+		! isEnabled( 'hosting/hosting-features-callout' )
+	) {
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
 	// Additional check for staging sites with incomplete atomic transfer when redesign is enabled
-	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
+	const stagingSitesRedesign = isEnabled( 'hosting/staging-sites-redesign' );
 	if ( stagingSitesRedesign && site?.is_wpcom_staging_site ) {
 		// If staging site is in transition (transferring or reverting), redirect to hosting features
 		if ( getIsStagingSiteInTransition( state, site.ID ) ) {

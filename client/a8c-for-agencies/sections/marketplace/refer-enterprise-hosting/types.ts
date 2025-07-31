@@ -14,4 +14,6 @@ export type ReferEnterpriseHostingFormData = {
 	website: string;
 
 	opportunityDescription: string;
+	leadType: string;
+	isRfp: boolean;
 };
