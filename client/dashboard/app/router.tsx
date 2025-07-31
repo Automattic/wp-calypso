@@ -10,6 +10,7 @@ import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sites/features';
 import { hasHostingFeature } from '../utils/site-features';
+import { hasSiteTrialEnded } from '../utils/site-trials';
 import NotFound from './404';
 import UnknownError from './500';
 import { emailsQuery } from './queries/emails';
@@ -124,6 +125,17 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
+	beforeLoad: async ( { cause, params: { siteSlug }, location } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
+		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
+			throw redirect( { to: trialExpiredUrl } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
@@ -485,6 +497,27 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	)
 );
 
+const siteTrialEndedRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'trial-ended',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! hasSiteTrialEnded( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/trial-ended' ).then( ( d ) =>
+		createLazyRoute( 'site-trial-ended' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
@@ -652,6 +685,7 @@ const createRouteTree = ( config: AppConfig ) => {
 			siteSettingsTransferSiteRoute,
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
+			siteTrialEndedRoute,
 		];
 
 		if ( config.supports.sites.deployments ) {

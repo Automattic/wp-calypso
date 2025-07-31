@@ -26,6 +26,10 @@ export const SITE_FIELDS = [
 	'jetpack',
 	'jetpack_connection',
 	'jetpack_modules',
+	'was_ecommerce_trial',
+	'was_migration_trial',
+	'was_hosting_trial',
+	'was_upgraded_from_trial',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
@@ -112,6 +116,10 @@ export interface Site {
 	jetpack_connection: boolean;
 	jetpack_modules: string[] | null;
 	hosting_provider_guess?: string;
+	was_ecommerce_trial: boolean;
+	was_migration_trial: boolean;
+	was_hosting_trial: boolean;
+	was_upgraded_from_trial: boolean;
 }
 
 export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
