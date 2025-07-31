@@ -37,46 +37,63 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 		}
 	}, [ selectedSite, cart, subdomainSuggestion?.domain_name, onSkip ] );
 
+	let title;
+	if ( hasExistingSite ) {
+		title = translate( 'Current address' );
+	} else if ( subdomain ) {
+		title = translate( 'WordPress.com subdomain' );
+	} else {
+		title = translate( 'Skip domain search' );
+	}
+
+	let subtitle;
+	if ( hasExistingSite ) {
+		subtitle = translate(
+			'Keep {{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} as your site address',
+			{
+				args: {
+					subdomain: subdomain,
+					domainName: tlds.join( '.' ),
+				},
+				components: {
+					domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
+					strong: <strong style={ { whiteSpace: 'nowrap' } } />,
+				},
+			}
+		);
+	} else if ( subdomain ) {
+		subtitle = translate(
+			'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
+			{
+				args: {
+					subdomain: subdomain,
+					domainName: tlds.join( '.' ),
+				},
+				components: {
+					domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
+					strong: <strong style={ { whiteSpace: 'nowrap' } } />,
+				},
+			}
+		);
+	} else {
+		subtitle = translate( 'You can search for a custom domain later' );
+	}
+
+	let ctaLabel;
+	if ( hasExistingSite || subdomain ) {
+		ctaLabel = translate( 'Skip purchase' );
+	} else {
+		ctaLabel = translate( 'Skip' );
+	}
+
 	return (
 		<DomainSkipSkeleton
 			title={
 				<Heading level="4" weight="normal">
-					{ hasExistingSite
-						? translate( 'Current address' )
-						: translate( 'WordPress.com subdomain' ) }
+					{ title }
 				</Heading>
 			}
-			subtitle={
-				<Text>
-					{ hasExistingSite
-						? translate(
-								'Keep {{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} as your site address',
-								{
-									args: {
-										subdomain: subdomain,
-										domainName: tlds.join( '.' ),
-									},
-									components: {
-										domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
-										strong: <strong style={ { whiteSpace: 'nowrap' } } />,
-									},
-								}
-						  )
-						: translate(
-								'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
-								{
-									args: {
-										subdomain: subdomain,
-										domainName: tlds.join( '.' ),
-									},
-									components: {
-										domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
-										strong: <strong style={ { whiteSpace: 'nowrap' } } />,
-									},
-								}
-						  ) }
-				</Text>
-			}
+			subtitle={ <Text>{ subtitle }</Text> }
 			right={
 				<Button
 					className="subdomain-skip-suggestion__btn"
@@ -85,7 +102,7 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 					disabled={ cart.isBusy }
 					__next40pxDefaultSize
 				>
-					{ translate( 'Skip purchase' ) }
+					{ ctaLabel }
 				</Button>
 			}
 		/>
