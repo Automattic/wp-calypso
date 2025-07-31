@@ -160,10 +160,8 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
-	// Additional check for staging sites with incomplete atomic transfer when redesign is enabled
 	const stagingSitesRedesign = isEnabled( 'hosting/staging-sites-redesign' );
 	if ( stagingSitesRedesign && site?.is_wpcom_staging_site ) {
-		// If staging site is in transition (transferring or reverting), redirect to hosting features
 		if ( getIsStagingSiteInTransition( state, site.ID ) ) {
 			return page.redirect( `/hosting-features/${ site.slug }` );
 		}
