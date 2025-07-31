@@ -31,7 +31,7 @@ export interface OverviewCardProps {
 		label: string;
 		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
 	};
-	intent?: 'upsell' | 'success' | 'error';
+	intent?: 'upsell' | 'success' | 'warning' | 'error';
 	disabled?: boolean;
 	isLoading?: boolean;
 	link?: string;
