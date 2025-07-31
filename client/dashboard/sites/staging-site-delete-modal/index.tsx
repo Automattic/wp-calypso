@@ -38,6 +38,9 @@ export default function StagingSiteDeleteModal( {
 					type: 'snackbar',
 				} );
 			},
+			onSuccess: () => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
+			},
 		} );
 	};
 
