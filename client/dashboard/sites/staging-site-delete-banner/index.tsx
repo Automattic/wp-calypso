@@ -51,7 +51,7 @@ export default function StagingSiteDeleteBanner( { site }: { site: Site } ) {
 
 			// Staging site has been deleted, redirect to production site
 			router.navigate( {
-				to: '/$siteSlug',
+				to: '/overview/$siteSlug',
 				params: { siteSlug: productionSite.slug },
 			} );
 			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
