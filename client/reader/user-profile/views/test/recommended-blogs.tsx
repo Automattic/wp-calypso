@@ -61,7 +61,7 @@ describe( 'UserRecommendedBlogs', () => {
 		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: [],
 			isLoading: true,
-			isSuccess: false,
+			isFetched: false,
 		} );
 
 		render( <UserRecommendedBlogs user={ defaultUser } /> );
@@ -75,7 +75,7 @@ describe( 'UserRecommendedBlogs', () => {
 		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: [],
 			isLoading: false,
-			isSuccess: true,
+			isFetched: true,
 		} );
 
 		render( <UserRecommendedBlogs user={ defaultUser } /> );
@@ -102,7 +102,7 @@ describe( 'UserRecommendedBlogs', () => {
 		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: mockRecommendedBlogs,
 			isLoading: false,
-			isSuccess: true,
+			isFetched: true,
 		} );
 
 		render( <UserRecommendedBlogs user={ defaultUser } /> );
