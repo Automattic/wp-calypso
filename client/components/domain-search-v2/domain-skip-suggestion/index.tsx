@@ -48,7 +48,7 @@ const DomainSkipSuggestion = ( {
 	const hasExistingSite = !! selectedSite;
 	const hasSubdomainSuggestion = !! subdomainSuggestion;
 	const domain = hasExistingSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
-	const [ subdomain, ...tlds ] = domain?.split( '.' ) || [];
+	const [ subdomain, ...tlds ] = domain?.split( '.' ) ?? [];
 
 	useEffect( () => {
 		if ( ! hasExistingSite && ! hasSubdomainSuggestion ) {
@@ -64,9 +64,9 @@ const DomainSkipSuggestion = ( {
 		if ( selectedSite ) {
 			// Skip it when we have a selected site
 			onSkip();
-		} else {
+		} else if ( subdomainSuggestion?.domain_name ) {
 			// Add the subdomain suggestion to the cart and move to the next step
-			cart.onAddItem( subdomainSuggestion?.domain_name );
+			cart.onAddItem( subdomainSuggestion.domain_name );
 		}
 	}, [ selectedSite, cart, subdomainSuggestion?.domain_name, onSkip ] );
 
