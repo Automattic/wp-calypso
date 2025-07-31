@@ -357,16 +357,15 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton &&
-				( suggestionElements?.length > 0 || !! selectedSite ) && (
-					<DomainSkipSuggestion
-						selectedSite={ selectedSite }
-						subdomainSuggestion={ subdomainSuggestion }
-						flowName={ this.props.flowName }
-						query={ this.props.lastDomainSearched }
-						onSkip={ this.props.onSkip }
-					/>
-				);
+			domainSkipSuggestion = showSkipButton && (
+				<DomainSkipSuggestion
+					selectedSite={ selectedSite }
+					subdomainSuggestion={ subdomainSuggestion }
+					flowName={ this.props.flowName }
+					query={ this.props.lastDomainSearched }
+					onSkip={ this.props.onSkip }
+				/>
+			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;

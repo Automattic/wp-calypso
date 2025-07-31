@@ -46,8 +46,19 @@ const DomainSkipSuggestion = ( {
 	const { cart } = useDomainSearch();
 
 	const hasExistingSite = !! selectedSite;
+	const hasSubdomainSuggestion = !! subdomainSuggestion;
 	const domain = hasExistingSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
 	const [ subdomain, ...tlds ] = domain?.split( '.' ) || [];
+
+	useEffect( () => {
+		if ( ! hasExistingSite && ! hasSubdomainSuggestion ) {
+			recordTracksEvent( 'calypso_domain_search_skip_no_site_and_suggestion', {
+				query,
+				user_id: currentUser?.ID,
+				flow_name: flowName,
+			} );
+		}
+	}, [ hasExistingSite, hasSubdomainSuggestion, query, currentUser?.ID, flowName ] );
 
 	const onSkipClick = useCallback( () => {
 		if ( selectedSite ) {
@@ -58,16 +69,6 @@ const DomainSkipSuggestion = ( {
 			cart.onAddItem( subdomainSuggestion?.domain_name );
 		}
 	}, [ selectedSite, cart, subdomainSuggestion?.domain_name, onSkip ] );
-
-	useEffect( () => {
-		if ( ! selectedSite && ! subdomainSuggestion ) {
-			recordTracksEvent( 'calypso_domain_search_skip_no_site_and_suggestion', {
-				query,
-				user_id: currentUser?.ID,
-				flow_name: flowName,
-			} );
-		}
-	}, [ selectedSite, subdomainSuggestion, currentUser?.ID, flowName, query ] );
 
 	const translateArgs = {
 		args: {
@@ -99,7 +100,7 @@ const DomainSkipSuggestion = ( {
 		ctaLabel = translate( 'Skip purchase' );
 	}
 
-	if ( ! selectedSite && ! subdomainSuggestion ) {
+	if ( ! hasExistingSite && ! hasSubdomainSuggestion ) {
 		return null;
 	}
 
