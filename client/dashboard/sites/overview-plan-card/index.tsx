@@ -7,15 +7,10 @@ import {
 	Icon,
 	Tooltip,
 } from '@wordpress/components';
-import { cloneElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import filesize from 'filesize';
-import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
-import { siteMetricsQuery } from '../../app/queries/site-metrics';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
-import { Stat } from '../../components/stat';
 import { DotcomPlans } from '../../data/constants';
 import {
 	getJetpackProductsForSite,
@@ -23,30 +18,11 @@ import {
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { getSiteDisplayUrl } from '../../utils/site-url';
 import OverviewCard from '../overview-card';
+import SiteBandwidthStat from './site-bandwidth-stat';
+import SiteStorageStat from './site-storage-stat';
 import type { Site, Purchase } from '../../data/types';
-
 import './style.scss';
-
-const MINIMUM_DISPLAYED_USAGE = 2.5;
-const ALERT_PERCENT = 80;
-
-function getCurrentMonthRangeTimestamps() {
-	const now = new Date();
-	const firstDayOfMonth = new Date( now.getFullYear(), now.getMonth(), 1 );
-	const startInSeconds = Math.floor( firstDayOfMonth.getTime() / 1000 );
-
-	const today = new Date();
-	today.setMinutes( 59 );
-	today.setSeconds( 59 );
-	const endInSeconds = Math.floor( today.getTime() / 1000 );
-
-	return {
-		startInSeconds,
-		endInSeconds,
-	};
-}
 
 function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
 	if ( products.length === JETPACK_PRODUCTS.length ) {
@@ -119,91 +95,39 @@ function WpcomPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const { data: mediaStorage, isLoading: isLoadingMediaStorage } = useQuery(
-		siteMediaStorageQuery( site.ID )
-	);
-
-	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
-	const { data: bandwidth, isLoading: isLoadingBandwidth } = useQuery( {
-		...siteMetricsQuery( site.ID, {
-			start: startInSeconds,
-			end: endInSeconds,
-			metric: 'response_bytes_persec',
-		} ),
-		enabled: !! site.is_wpcom_atomic,
-		select: ( data ) => {
-			if ( ! data ) {
-				return data;
-			}
-			const domain = getSiteDisplayUrl( site );
-			return data.data.periods.reduce(
-				( acc, curr ) => acc + ( curr.dimension[ domain ] || 0 ),
-				0
-			);
-		},
-
-		// Don't update until page is refreshed
-		meta: { persist: false },
-		staleTime: Infinity,
-	} );
-
-	const storageUsagePercent = ! mediaStorage
-		? 0
-		: Math.round(
-				( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
-		  );
-
-	// Ensure that the displayed usage is never fully empty to avoid a confusing UI.
-	const progressBarValue = Math.max(
-		MINIMUM_DISPLAYED_USAGE,
-		Math.min( storageUsagePercent, 100 )
-	);
-
-	let storageWarningColor = undefined;
-	if ( storageUsagePercent > 100 ) {
-		storageWarningColor = 'alert-red' as const;
-	} else if ( storageUsagePercent > ALERT_PERCENT ) {
-		storageWarningColor = 'alert-yellow' as const;
-	}
-
-	const icon = cloneElement( wordpress, {
-		style: { color: 'var( --wp-admin-brand-color )' },
-	} );
-
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
-			icon={ icon }
+			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			tracksId="plan"
-			isLoading={ isLoading || isLoadingMediaStorage || isLoadingBandwidth }
 			link={ site.plan?.is_free ? undefined : '/v2/me/billing/active-subscriptions' }
+			tracksId="plan"
+			isLoading={ isLoading }
 			bottom={
 				<VStack spacing={ 4 }>
-					<Stat
-						density="high"
-						strapline={ __( 'Storage' ) }
-						metric={ mediaStorage && filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
-						description={ mediaStorage && filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
-						progressValue={ progressBarValue }
-						progressColor={ storageWarningColor }
-						progressLabel={ `${ storageUsagePercent }%` }
-						isLoading={ isLoadingMediaStorage }
-					/>
-					<Stat
-						density="high"
-						strapline={ __( 'Bandwidth' ) }
-						metric={
-							bandwidth && site.is_wpcom_atomic
-								? filesize( bandwidth, { round: 1 } )
-								: __( 'Unlimited' )
-						}
-						description={ site.is_wpcom_atomic ? __( 'Unlimited' ) : undefined }
-						progressValue={ 100 }
-						progressColor="alert-green"
-						isLoading={ isLoadingBandwidth }
-					/>
+					<SiteStorageStat site={ site } />
+					<SiteBandwidthStat site={ site } />
+				</VStack>
+			}
+		/>
+	);
+}
+
+function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
+	return (
+		<OverviewCard
+			title={ __( 'Development license' ) }
+			icon={ wordpress }
+			heading={ getSitePlanDisplayName( site ) }
+			description={ __( 'Managed by Automattic for Agencies' ) }
+			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
+			tracksId="plan"
+			isLoading={ isLoading }
+			bottom={
+				<VStack spacing={ 4 }>
+					<SiteStorageStat site={ site } />
+					<SiteBandwidthStat site={ site } />
 				</VStack>
 			}
 		/>
@@ -216,6 +140,10 @@ export default function PlanCard( { site }: { site: Site } ) {
 		...sitePurchaseQuery( site.ID, plan?.id ?? '' ),
 		enabled: !! plan?.id,
 	} );
+
+	if ( site.is_a4a_dev_site ) {
+		return <AgencyPlanCard site={ site } isLoading={ isLoadingPlan || isLoadingPurchase } />;
+	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		return (
