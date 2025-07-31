@@ -139,6 +139,20 @@ function getJetpackProducts( site: Site ) {
 	);
 }
 
+function getJetpackHeading( site: Site ) {
+	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
+		const products = getJetpackProducts( site );
+		if ( products.length === 1 ) {
+			return products[ 0 ].label;
+		}
+		if ( products.length > 1 ) {
+			return __( 'Jetpack' );
+		}
+	}
+
+	return site.plan?.product_name;
+}
+
 function JetpackPlanCard( {
 	site,
 	purchase,
@@ -149,15 +163,13 @@ function JetpackPlanCard( {
 	isLoading: boolean;
 } ) {
 	const products = getJetpackProducts( site );
-	const hasProducts = products.length > 0;
-	const productsToDisplay = hasProducts ? products : JETPACK_PRODUCTS;
-	const isPlanFreeAndHasProducts = site.plan?.is_free && hasProducts;
+	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
 	return (
 		<OverviewCard
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
-			heading={ isPlanFreeAndHasProducts ? __( 'Jetpack' ) : site.plan?.product_name_short }
+			heading={ getJetpackHeading( site ) }
 			description={ getCardDescription( site, purchase ) }
 			externalLink={ `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }` }
 			tracksId="plan"
