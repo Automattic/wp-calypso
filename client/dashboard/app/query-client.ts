@@ -1,5 +1,5 @@
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 
 export const queryClient = new QueryClient( {
@@ -32,11 +32,12 @@ const [ , persistPromise ] = persistQueryClient( {
 	buster: '3', // Bump when query data shape changes.
 	maxAge,
 	dehydrateOptions: {
-		shouldDehydrateQuery: ( { meta } ) => {
-			if ( meta?.persist === false ) {
+		shouldRedactErrors: () => false,
+		shouldDehydrateQuery: ( query ) => {
+			if ( query.meta?.persist === false ) {
 				return false;
 			}
-			return true;
+			return defaultShouldDehydrateQuery( query );
 		},
 	},
 } );
