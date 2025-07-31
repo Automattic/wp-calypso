@@ -46,34 +46,27 @@ const DomainSkipSuggestion = ( { selectedSite, subdomainSuggestion, onSkip }: Pr
 		title = translate( 'Skip domain search' );
 	}
 
+	const translateArgs = {
+		args: {
+			subdomain: subdomain,
+			domainName: tlds.join( '.' ),
+		},
+		components: {
+			domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
+			strong: <strong style={ { whiteSpace: 'nowrap' } } />,
+		},
+	};
+
 	let subtitle;
 	if ( hasExistingSite ) {
 		subtitle = translate(
 			'Keep {{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} as your site address',
-			{
-				args: {
-					subdomain: subdomain,
-					domainName: tlds.join( '.' ),
-				},
-				components: {
-					domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
-					strong: <strong style={ { whiteSpace: 'nowrap' } } />,
-				},
-			}
+			translateArgs
 		);
 	} else if ( subdomain ) {
 		subtitle = translate(
 			'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
-			{
-				args: {
-					subdomain: subdomain,
-					domainName: tlds.join( '.' ),
-				},
-				components: {
-					domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
-					strong: <strong style={ { whiteSpace: 'nowrap' } } />,
-				},
-			}
+			translateArgs
 		);
 	} else {
 		subtitle = translate( 'You can search for a custom domain later' );
