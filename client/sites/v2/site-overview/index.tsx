@@ -59,7 +59,9 @@ export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?
 		}
 
 		if ( site ) {
-			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
+			// The site type used by the hosting dashboard is slightly different, but _mostly_ compatible,
+			// so this is safe to copy in to the cache.
+			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
 	}, [ user, site ] );
 
