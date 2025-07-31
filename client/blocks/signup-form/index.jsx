@@ -36,7 +36,11 @@ import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { isCrowdsignalOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isGravatarOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -1063,7 +1067,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		const isUnifiedCreateAccount = this.props.isWoo;
+		const isUnifiedCreateAccount = this.props.isWoo || this.props.isA4A;
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
@@ -1071,7 +1075,8 @@ class SignupForm extends Component {
 			( 'wpcc' !== this.props.flowName && ! config.isEnabled( 'desktop' ) && this.isHorizontal() );
 
 		if (
-			( this.props.isPasswordless && ( 'wpcc' !== this.props.flowName || this.props.isWoo ) ) ||
+			( this.props.isPasswordless &&
+				( 'wpcc' !== this.props.flowName || isUnifiedCreateAccount ) ) ||
 			isGravatar
 		) {
 			let formProps = {
@@ -1087,7 +1092,7 @@ class SignupForm extends Component {
 						submitButtonLoadingLabel: this.props.translate( 'Continue' ),
 					};
 					break;
-				case this.props.isWoo:
+				case isUnifiedCreateAccount:
 					formProps = {
 						inputPlaceholder: null,
 						submitButtonLabel: this.props.translate( 'Continue' ),
@@ -1159,7 +1164,7 @@ class SignupForm extends Component {
 									handleResponse={ this.props.handleSocialResponse }
 									socialServiceResponse={ this.props.socialServiceResponse }
 									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-									compact={ this.props.isWoo }
+									compact={ isUnifiedCreateAccount }
 								/>
 							) }
 							{ this.props.footerLink || this.footerLink() }
@@ -1217,6 +1222,7 @@ export default connect(
 			isWooJPC,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			isBlazePro: getIsBlazePro( state ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
 		};
 	},
 	{

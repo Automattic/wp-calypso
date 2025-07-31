@@ -46,6 +46,7 @@ import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isA4AOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
@@ -871,7 +872,10 @@ class Signup extends Component {
 		}
 
 		const isUnifiedCreateAccount =
-			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && this.props.isWoo;
+			0 === this.getPositionInFlow() &&
+			! this.props.isLoggedIn &&
+			( this.props.isWoo || this.props.isA4A );
+
 		const showPageHeader = ! this.props.isGravatar && ! isUnifiedCreateAccount;
 		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
@@ -947,6 +951,7 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
 			isWoo: getIsWoo( state ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
 		};
 	},
 	{

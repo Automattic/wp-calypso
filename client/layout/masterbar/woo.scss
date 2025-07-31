@@ -468,7 +468,7 @@ $breakpoint-mobile: 660px;
 
 	.auth-form__separator::before,
 	.auth-form__separator::after {
-		border-block-start: $woo-form-divider-border;
+		border-block-start: $woo-form-divider-border; // TODO clk remove this. it's handled by .is-unified-create-account
 	}
 
 	.login__two-factor-footer {
@@ -495,7 +495,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form {
-		.auth-form__separator {
+		.auth-form__separator { // TODO clk remove this. it's handled by .is-unified-create-account
 			width: 100%;
 			margin-left: 0;
 			margin-right: 0;
@@ -936,7 +936,7 @@ $breakpoint-mobile: 660px;
 			margin-top: unset;
 		}
 
-		.signup-form,
+		.signup-form, // TODO clk remove this. it's handled by .is-unified-create-account
 		.login__body--continue-as-user {
 			width: 100%;
 			margin: 0 auto;
@@ -945,13 +945,13 @@ $breakpoint-mobile: 660px;
 			flex-direction: column;
 		}
 
-		.signup-form {
+		.signup-form { // TODO clk remove this. it's handled by .is-unified-create-account
 			input[type="email"].form-text-input {
 				margin-bottom: 0;
 			}
 		}
 
-		div.auth-form__separator {
+		div.auth-form__separator { // TODO clk remove this. it's handled by .is-unified-create-account
 			&::before,
 			&::after {
 				border-block-start-color: #e0e0e1;
