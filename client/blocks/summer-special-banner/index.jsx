@@ -20,7 +20,7 @@ export default function SummerSpecialBanner( { visiblePlans = [], isFixed = fals
 	const moment = useLocalizedMoment();
 
 	// Check if Premium or Personal plans are visible for the banner
-	const hasTargetPlan = visiblePlans.some(
+	const hasTargetPlan = visiblePlans?.some(
 		( { planSlug, isVisible } ) =>
 			isVisible && ( isPremiumPlan( planSlug ) || isPersonalPlan( planSlug ) )
 	);
