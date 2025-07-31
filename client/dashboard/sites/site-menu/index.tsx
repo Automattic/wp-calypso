@@ -16,6 +16,19 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 				{ __( 'Performance' ) }
 			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
+				{ __( 'Monitoring' ) }
+			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/logs` }>{ __( 'Logs' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
+				{ __( 'Backups' ) }
+			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+				{ __( 'Domains' ) }
+			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
+				{ __( 'Emails' ) }
+			</ResponsiveMenu.Item>
 			{ site.capabilities.manage_options && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
 					{ __( 'Settings' ) }

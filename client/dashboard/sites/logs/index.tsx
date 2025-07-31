@@ -1,8 +1,16 @@
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
+import { CalloutOverlay } from '../../components/callout-overlay';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from './logs-callout-illustration.svg';
 
 export function SiteLogsCallout( {
@@ -41,3 +49,24 @@ export function SiteLogsCallout( {
 		/>
 	);
 }
+
+function SiteLogs() {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+
+	if ( ! site ) {
+		return;
+	}
+
+	return (
+		<PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> }>
+			<CalloutOverlay
+				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
+				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
+				main={ null }
+			/>
+		</PageLayout>
+	);
+}
+
+export default SiteLogs;

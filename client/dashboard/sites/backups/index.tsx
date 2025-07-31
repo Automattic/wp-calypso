@@ -11,9 +11,9 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import illustrationUrl from './monitoring-callout-illustration.svg';
+import illustrationUrl from './backups-callout-illustration.svg';
 
-export function SiteMonitoringCallout( {
+export function SiteBackupsCallout( {
 	siteSlug,
 	titleAs = 'h1',
 }: {
@@ -23,14 +23,14 @@ export function SiteMonitoringCallout( {
 	return (
 		<Callout
 			icon={ chartBar }
-			title={ __( 'Monitor server stats' ) }
+			title={ __( 'Secure your content with Jetpack Backups' ) }
 			titleAs={ titleAs }
 			image={ illustrationUrl }
 			description={
 				<>
 					<Text as="p" variant="muted">
 						{ __(
-							'Track how your server responds to traffic, identify performance bottlenecks, and investigate error spikes to keep your site running smoothly.'
+							'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
 						) }
 					</Text>
 					<Text as="p" variant="muted">
@@ -41,7 +41,7 @@ export function SiteMonitoringCallout( {
 			actions={
 				<UpsellCTAButton
 					text={ __( 'Upgrade plan' ) }
-					tracksId="monitoring"
+					tracksId="backups"
 					variant="primary"
 					href={ `/checkout/${ siteSlug }/business` }
 				/>
@@ -50,7 +50,7 @@ export function SiteMonitoringCallout( {
 	);
 }
 
-function SiteMonitoring() {
+function SiteBackups() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
@@ -59,14 +59,14 @@ function SiteMonitoring() {
 	}
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> }>
+		<PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> }>
 			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.MONITOR ) }
-				callout={ <SiteMonitoringCallout siteSlug={ site.slug } /> }
+				showCallout={ ! hasHostingFeature( site, HostingFeatures.BACKUPS ) }
+				callout={ <SiteBackupsCallout siteSlug={ site.slug } /> }
 				main={ null }
 			/>
 		</PageLayout>
 	);
 }
 
-export default SiteMonitoring;
+export default SiteBackups;

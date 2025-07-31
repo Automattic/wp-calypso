@@ -9,7 +9,8 @@ import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { SitePlan } from '../../data/types';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from './deployments-callout-illustration.svg';
 import ghIconUrl from './gh-icon.svg';
 
@@ -58,12 +59,10 @@ function SiteDeployments() {
 		return;
 	}
 
-	const showIneligiblePlanCallout = ! site.plan || ! hasDeploymentsFeature( site.plan );
-
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> }>
 			<CalloutOverlay
-				showCallout={ showIneligiblePlanCallout }
+				showCallout={ ! hasHostingFeature( site, HostingFeatures.DEPLOYMENT ) }
 				callout={ <SiteDeploymentsCallout siteSlug={ site.slug } /> }
 				main={
 					<DataViewsCard>
@@ -73,10 +72,6 @@ function SiteDeployments() {
 			/>
 		</PageLayout>
 	);
-}
-
-function hasDeploymentsFeature( plan: SitePlan ) {
-	return plan.features.active.includes( 'atomic' );
 }
 
 export default SiteDeployments;
