@@ -37,7 +37,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 			onError: ( action ) => {
 				const defaultErrorMessage =
 					action.listSlug === 'recommended-blogs'
-						? translate( 'Unable to revmove recommendation.' )
+						? translate( 'Unable to remove recommendation.' )
 						: translate( 'Unable to remove feed from list.' );
 				// Support custom error messages
 				const errorMessage = action.errorMessage || defaultErrorMessage;
