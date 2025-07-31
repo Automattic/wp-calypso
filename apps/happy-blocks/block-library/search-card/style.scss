@@ -8,47 +8,88 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	background-size: contain;
 
 	flex-shrink: 0;
-	padding: 72px 24px;
+	padding: 0;
 
-	@media ( max-width: $breakpoint-mobile ) {
-		padding: 36px 16px;
+	&.navigation-only {
+		background: none;
+	}
+
+	.navigation-header {
+		padding: 0 24px;
+
+		@media ( max-width: $breakpoint-mobile ) {
+			padding: 0 16px;
+		}
 	}
 
 	.navigation {
 		display: flex;
 		align-items: center;
-		gap: 16px;
+		gap: 32px;
 		list-style: none;
 		margin: 0;
-		padding: 0;
-
-		li {
-			&.active {
-				color: #000;
-				font-weight: 600;
-			}
-			overflow: hidden;
-			color: #50575E;
-			text-align: justify;
-			text-overflow: ellipsis;
-			font-size: 13px;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px;
-
-			&.separator::before {
-				content: "|";
-				stroke: #ccc;
-			}
-		}
-	}
-
-	div.content {
+		padding: 16px 0;
 		max-width: 1260px;
 		margin-left: auto;
 		margin-right: auto;
 
 		@media ( max-width: $breakpoint-mobile ) {
+			gap: 16px;
+			padding: 12px 0;
+			overflow-x: auto;
+			white-space: nowrap;
+			scrollbar-width: none;
+			&::-webkit-scrollbar {
+				display: none;
+			}
+		}
+
+		li {
+			&.active {
+				color: #000;
+				font-weight: 500;
+				position: relative;
+			}
+			overflow: hidden;
+			color: #646970;
+			text-align: justify;
+			text-overflow: ellipsis;
+			font-size: 14px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px;
+			cursor: pointer;
+			transition: color 0.2s ease;
+
+			&:hover:not(.separator) {
+				color: #000;
+			}
+
+			&.separator::before {
+				content: "|";
+				color: #ddd;
+				font-weight: 300;
+			}
+
+			a {
+				color: inherit;
+				text-decoration: none;
+				
+				&:hover {
+					color: #000;
+				}
+			}
+		}
+	}
+
+	.content {
+		padding: 72px 24px;
+		max-width: 1260px;
+		margin-left: auto;
+		margin-right: auto;
+
+		@media ( max-width: $breakpoint-mobile ) {
+			padding: 36px 16px;
 			margin-left: 0;
 		}
 
