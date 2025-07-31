@@ -43,30 +43,30 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 	const {
 		data: recommendedFeeds,
 		isLoading: isLoadingRecommendedFeeds,
-		isSuccess: isSuccessRecommendedFeeds,
+		isFetched: isFetchedRecommendedFeeds,
 	} = useFeedRecommendationsQuery( userLogin, {
 		enabled: !! userLogin && enabled,
 	} );
 
 	const hasRecommendedFeeds = recommendedFeeds && recommendedFeeds.length > 0;
-	const shouldLoadRelatedSites = enabled && isSuccessRecommendedFeeds && ! hasRecommendedFeeds;
+	const shouldLoadRelatedSites = enabled && isFetchedRecommendedFeeds && ! hasRecommendedFeeds;
 
 	const {
 		data: relatedSites,
 		isLoading: isLoadingRelatedSites,
-		isSuccess: isSuccessRelatedSites,
+		isFetched: isFetchedRelatedSites,
 	} = useRelatedSites( siteId, postId, {
 		enabled: shouldLoadRelatedSites,
 	} );
 
 	const data = recommendedFeeds?.length > 0 ? recommendedFeeds : relatedSites;
 	const isLoading = isLoadingRecommendedFeeds || isLoadingRelatedSites;
-	const isSuccess = isSuccessRecommendedFeeds || isSuccessRelatedSites;
+	const isFetched = isFetchedRecommendedFeeds || isFetchedRelatedSites;
 
 	return {
-		data: isSuccess ? data : [],
+		data: isFetched ? data : [],
 		isLoading,
-		isSuccess,
+		isFetched,
 		resourceType: getResourceType( recommendedFeeds, relatedSites ),
 	};
 };

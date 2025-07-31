@@ -18,13 +18,13 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: [],
 			isLoading: false,
-			isSuccess: false,
+			isFetched: false,
 		} );
 
 		( useRelatedSites as jest.Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
-			isSuccess: false,
+			isFetched: false,
 		} );
 	} );
 
@@ -36,7 +36,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		expect( result.current ).toEqual( {
 			data: [],
 			isLoading: false,
-			isSuccess: false,
+			isFetched: false,
 			resourceType: null,
 		} );
 	} );
@@ -53,7 +53,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		expect( result.current ).toEqual( {
 			data: [],
 			isLoading: true,
-			isSuccess: false,
+			isFetched: false,
 			resourceType: null,
 		} );
 	} );
@@ -62,13 +62,13 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
-			isSuccess: false,
+			isFetched: false,
 		} );
 
 		( useRelatedSites as jest.Mock ).mockReturnValue( {
 			data: [],
 			isLoading: true,
-			isSuccess: false,
+			isFetched: false,
 		} );
 
 		const { result } = renderHook( () =>
@@ -78,7 +78,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		expect( result.current ).toEqual( {
 			data: [],
 			isLoading: true,
-			isSuccess: false,
+			isFetched: false,
 			resourceType: null,
 		} );
 	} );
@@ -95,7 +95,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
 			data: mockRecommendedFeeds,
 			isLoading: false,
-			isSuccess: true,
+			isFetched: true,
 		} );
 
 		const { result } = renderHook( () =>
@@ -105,7 +105,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		expect( result.current ).toEqual( {
 			data: mockRecommendedFeeds,
 			isLoading: false,
-			isSuccess: true,
+			isFetched: true,
 			resourceType: 'recommended',
 		} );
 	} );
@@ -122,13 +122,13 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
-			isSuccess: false,
+			isFetched: false,
 		} );
 
 		( useRelatedSites as jest.Mock ).mockReturnValue( {
 			data: mockRelatedSites,
 			isLoading: false,
-			isSuccess: true,
+			isFetched: true,
 		} );
 
 		const { result } = renderHook( () =>
@@ -138,8 +138,33 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		expect( result.current ).toEqual( {
 			data: mockRelatedSites,
 			isLoading: false,
-			isSuccess: true,
+			isFetched: true,
 			resourceType: 'related',
+		} );
+	} );
+
+	it( 'returns an empty array when there is no recommended or related sites', () => {
+		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		( useRelatedSites as jest.Mock ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useRecommendOrRelatedSitesQuery( { siteId: 123, postId: 456 } )
+		);
+
+		expect( result.current ).toEqual( {
+			data: [],
+			isLoading: false,
+			isFetched: true,
+			resourceType: null,
 		} );
 	} );
 } );

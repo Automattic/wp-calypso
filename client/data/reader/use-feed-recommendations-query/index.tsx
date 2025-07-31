@@ -107,6 +107,6 @@ export const useFeedRecommendationsQuery = ( userLogin?: string, options?: Query
 	return {
 		isLoading: isRequesting || needsRequest,
 		data: feedRecommendations ?? [],
-		isSuccess: ! isRequesting && hasRequested && ! needsRequest,
+		isFetched: ! isRequesting && hasRequested && ! needsRequest,
 	};
 };

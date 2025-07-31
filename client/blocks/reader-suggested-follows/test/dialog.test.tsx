@@ -28,7 +28,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 			data: [],
 			isLoading: true,
 			resourceType: null,
-			isSuccess: false,
+			isFetched: false,
 		} );
 	} );
 
@@ -44,12 +44,33 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
+	it( 'closes the modal automatically when all requests are completed and there are no results', () => {
+		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+			resourceType: null,
+			isFetched: true,
+		} );
+
+		const onClose = jest.fn();
+		render(
+			<ReaderSuggestedFollowsDialog
+				onClose={ onClose }
+				siteId={ 1 }
+				postId={ 2 }
+				isVisible
+				author={ { name: 'Test Author', username: 'test-author' } }
+			/>
+		);
+		expect( onClose ).toHaveBeenCalled();
+	} );
+
 	it( 'renders the loading state', () => {
 		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [],
 			isLoading: true,
 			resourceType: null,
-			isSuccess: false,
+			isFetched: false,
 		} );
 
 		render(
@@ -65,7 +86,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 			] as FeedRecommendation[],
 			isLoading: false,
 			resourceType: 'recommended',
-			isSuccess: true,
+			isFetched: true,
 		} );
 
 		render(
@@ -87,7 +108,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 			data: [ { global_ID: '1', name: 'Related blog' } ] as RelatedSite[],
 			isLoading: false,
 			resourceType: 'related',
-			isSuccess: true,
+			isFetched: true,
 		} );
 
 		render(

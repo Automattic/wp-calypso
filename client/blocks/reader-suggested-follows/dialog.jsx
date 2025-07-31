@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { SuggestedFollowItem } from 'calypso/blocks/reader-suggested-follows';
 import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
 import { useDispatch } from 'calypso/state';
@@ -30,22 +30,32 @@ const useHasScrolledContent = () => {
 	return { hasScrolledContent, onContentContainerScroll };
 };
 
-const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, author = {} } ) => {
+const ReaderSuggestedFollowsDialog = ( {
+	onClose,
+	siteId,
+	prefetch = false,
+	postId,
+	isVisible,
+	author = {},
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const userName = author?.name;
 	const { hasScrolledContent, onContentContainerScroll } = useHasScrolledContent();
-
-	const { data, isLoading, resourceType } = useRecommendOrRelatedSitesQuery(
-		{
+	const query = useMemo(
+		() => ( {
 			author,
 			siteId,
 			postId,
-		},
-		{
-			enabled: isVisible,
-		}
+		} ),
+		[ author, siteId, postId ]
 	);
+
+	const { data, isFetched, resourceType, isLoading } = useRecommendOrRelatedSitesQuery( query, {
+		enabled: prefetch || isVisible,
+	} );
+
+	const shouldCloseModal = isFetched && isVisible && data?.length === 0;
 
 	useEffect( () => {
 		if ( isVisible && resourceType ) {
@@ -57,10 +67,22 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 		}
 	}, [ isVisible, dispatch, resourceType ] );
 
-	// If we are no longer loading and no data available, don't show the dialog
-	if ( ! isLoading && resourceType === null ) {
-		return null;
-	}
+	const trackNoResults = useCallback( () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_suggested_follows_dialog_closed_no_results', {
+				author_name: userName,
+				site_id: siteId,
+				post_id: postId,
+			} )
+		);
+	}, [ dispatch, userName, siteId, postId ] );
+
+	useEffect( () => {
+		if ( shouldCloseModal ) {
+			trackNoResults();
+			onClose();
+		}
+	}, [ shouldCloseModal, onClose, trackNoResults ] );
 
 	const title =
 		resourceType === 'recommended'
@@ -102,12 +124,13 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible, aut
 						aria-busy="true"
 						aria-label={ translate( 'Loading suggested blogs' ) }
 					>
-						<span className="is-placeholder" />
-						<span className="is-placeholder" />
-						<span className="is-placeholder" />
-						<span className="is-placeholder" />
-						<span className="is-placeholder" />
-						<span className="is-placeholder" />
+						<span className="placeholder-title is-placeholder" />
+						<span className="placeholder-description is-placeholder" />
+						<span className="placeholder-item is-placeholder" />
+						<span className="placeholder-item is-placeholder" />
+						<span className="placeholder-item is-placeholder" />
+						<span className="placeholder-item is-placeholder" />
+						<span className="placeholder-item is-placeholder" />
 					</div>
 				) }
 				{ ! isLoading && (
