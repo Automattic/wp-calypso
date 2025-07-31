@@ -143,10 +143,18 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 
+	const [ fetchPaymentsForCurrentSite, setFetchPaymentsForCurrentSite ] = useState( false );
 	// TODO fix the values when we know them
 	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9-alpha', '0.8.0' );
 	/* query for payments */
-	const { data: payments, isLoading: isLoadingPayments } = usePaymentsQuery( arePaymentsEnabled );
+	const {
+		data: payments,
+		isLoading: isLoadingPayments,
+		isFetching: isFetchingPayments,
+	} = usePaymentsQuery(
+		arePaymentsEnabled,
+		fetchPaymentsForCurrentSite ? selectedSiteId : undefined
+	);
 
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
@@ -475,7 +483,10 @@ export default function PromotedPosts( { tab }: Props ) {
 						<PaymentsList
 							isLoading={ isLoadingPayments }
 							isError={ campaignError as DSPMessage }
+							isFetching={ isFetchingPayments }
 							payments={ payments?.payments }
+							selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
+							setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
 						/>
 					</>
 				) }

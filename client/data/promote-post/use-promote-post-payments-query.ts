@@ -28,7 +28,7 @@ export const usePaymentsQuery = ( hasPaymentsEnabled: boolean, siteId?: number )
 
 	const urlPartial = siteId ? `/?siteId=${ siteId }` : '';
 	return useQuery( {
-		queryKey: [ 'promote-post-payments-siteid', selectedSiteId ],
+		queryKey: [ 'promote-post-payments-siteid', selectedSiteId, siteId ],
 		queryFn: async () => {
 			if ( selectedSiteId ) {
 				const { total, payments } = await requestDSP< {

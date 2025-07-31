@@ -7,11 +7,16 @@ import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-que
 import EmptyPromotionList from 'calypso/my-sites/promote-post-i2/components/empty-promotion-list';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
 import PaymentItem from '../payment-item';
+import PaymentsFilter from '../payments-filter';
+import { DropdownOption } from '../search-bar';
 
 type Props = {
 	isLoading: boolean;
+	isFetching: boolean;
 	isError: DSPMessage | null;
 	payments?: Payment[];
+	selectedPaymentsFilter: boolean;
+	setFetchPaymentsForCurrentSite: ( flag: boolean ) => void;
 };
 
 const fetchErrorListMessage = translate(
@@ -25,7 +30,14 @@ const fetchErrorListMessage = translate(
 );
 
 export default function PaymentsList( props: Props ) {
-	const { isLoading, isError, payments } = props;
+	const {
+		isLoading,
+		isFetching,
+		isError,
+		payments,
+		selectedPaymentsFilter,
+		setFetchPaymentsForCurrentSite,
+	} = props;
 
 	const translate = useTranslate();
 
@@ -69,6 +81,19 @@ export default function PaymentsList( props: Props ) {
 		return columns;
 	};
 
+	const paymentFilterOptions: Array< DropdownOption > = [
+		{
+			value: 'unified',
+			label: translate( 'All' ),
+		},
+		{
+			value: 'currentSite',
+			label: translate( 'Current site only' ),
+		},
+	];
+
+	// const [paymentFilterOption, setPaymentFilterOption ] = useState()
+
 	if ( isError ) {
 		return (
 			<Notice
@@ -81,7 +106,6 @@ export default function PaymentsList( props: Props ) {
 			</Notice>
 		);
 	}
-
 	return (
 		<>
 			{ ! isLoading && payments?.length === 0 ? (
@@ -90,22 +114,36 @@ export default function PaymentsList( props: Props ) {
 				</div>
 			) : (
 				<>
-					<table className="promote-post-i2__table payments-list__table">
-						<thead>
-							<tr>
-								{ getHeaderColumns().map( ( item, key ) => (
-									<th className={ `payment-item__${ item.key }` } key={ key }>
-										{ item.title }
-									</th>
+					<PaymentsFilter
+						options={ paymentFilterOptions }
+						paymentsFilter={ selectedPaymentsFilter ? 'currentSite' : 'unified' }
+						handleChangeFilter={ ( event ) => {
+							setFetchPaymentsForCurrentSite( event );
+						} }
+					/>
+
+					{ isFetching ? (
+						<div className="promote-post-i2__aux-wrapper">
+							{ translate( 'Please wait. Loading orders.' ) }
+						</div>
+					) : (
+						<table className="promote-post-i2__table payments-list__table">
+							<thead>
+								<tr>
+									{ getHeaderColumns().map( ( item, key ) => (
+										<th className={ `payment-item__${ item.key }` } key={ key }>
+											{ item.title }
+										</th>
+									) ) }
+								</tr>
+							</thead>
+							<tbody>
+								{ payments?.map( ( payment ) => (
+									<PaymentItem payment={ payment } key={ payment.id } />
 								) ) }
-							</tr>
-						</thead>
-						<tbody>
-							{ payments?.map( ( payment ) => {
-								return <PaymentItem payment={ payment } key={ payment.id } />;
-							} ) }
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					) }
 				</>
 			) }
 		</>

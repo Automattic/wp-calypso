@@ -45,7 +45,7 @@ export default function PaymentItem( props: Props ) {
 				{ payment.status === paymentStatus.FAILED || payment.status === paymentStatus.PENDING ? (
 					<div className="payment-item__pay-action">
 						<ExternalLink href={ payment.payment_link } target="_blank">
-							{ translate( 'Pay now' ) }
+							{ translate( 'Pay' ) }
 							<span className="sr-only">
 								{ translate( 'Pay for order %(name)s', {
 									args: { name: payment.id },
@@ -60,7 +60,7 @@ export default function PaymentItem( props: Props ) {
 						onClick={ getReceipt }
 						className="payment-item__view-receipt-action"
 					>
-						<span aria-hidden="true">{ __( 'View receipt' ) }</span>
+						<span aria-hidden="true">{ __( 'Receipt' ) }</span>
 						<span className="sr-only">
 							{ translate( 'View receipt for payment %(name)s', {
 								args: { name: payment.id },
