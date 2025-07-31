@@ -79,7 +79,11 @@ export default function OverviewCard( {
 	};
 
 	const topContent = (
-		<HStack justify="space-between" className="dashboard-overview-card__content">
+		<HStack
+			className="dashboard-overview-card__content"
+			justify="space-between"
+			alignment="flex-start"
+		>
 			<VStack spacing={ 4 } style={ { flexGrow: 1 } }>
 				<HStack justify="space-between">
 					<HStack spacing={ 2 } alignment="center" expanded={ false }>
@@ -229,7 +233,12 @@ export default function OverviewCard( {
 				{ bottom && (
 					<>
 						<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
-						<VStack spacing={ 2 } className="dashboard-overview-card__content">
+						<VStack
+							className="dashboard-overview-card__content"
+							spacing={ 2 }
+							justify="flex-start"
+							style={ { flexGrow: 1 } }
+						>
 							{ bottom }
 						</VStack>
 					</>
