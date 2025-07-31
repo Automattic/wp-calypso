@@ -1,3 +1,4 @@
+import { isPremiumPlan, isPersonalPlan } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
@@ -12,10 +13,16 @@ import './style.scss';
 
 const SUMMER_SPECIAL_BANNER_PREFERENCE = 'dismissible-card-plugins-offer-2025';
 
-export default function SummerSpecialBanner( { hasTargetPlan = false } ) {
+export default function SummerSpecialBanner( { visiblePlans = [] } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
+
+	// Check if Premium or Personal plans are visible for the banner
+	const hasTargetPlan = visiblePlans.some(
+		( { planSlug, isVisible } ) =>
+			isVisible && ( isPremiumPlan( planSlug ) || isPersonalPlan( planSlug ) )
+	);
 
 	const isDismissed = useSelector( ( state ) => {
 		const preference = getPreference( state, SUMMER_SPECIAL_BANNER_PREFERENCE );

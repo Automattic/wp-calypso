@@ -4,7 +4,6 @@ import {
 	getPlan,
 	isFreePlan,
 	isPersonalPlan,
-	isPremiumPlan,
 	PLAN_PERSONAL,
 	PLAN_FREE,
 	type PlanSlug,
@@ -473,12 +472,6 @@ const PlansFeaturesMain = ( {
 		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
-	// Check if Premium or Personal plans are visible for the banner
-	const hasTargetPlan = gridPlansForFeaturesGrid?.some(
-		( { planSlug, isVisible } ) =>
-			isVisible && ( isPremiumPlan( planSlug ) || isPersonalPlan( planSlug ) )
-	);
-
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment();
 
@@ -819,19 +812,28 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
-					<PlanNotice
-						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
-						siteId={ siteId }
-						isInSignup={ isInSignup }
-						showLegacyStorageFeature={ showLegacyStorageFeature }
-						{ ...( coupon &&
-							discountEndDate && {
-								discountInformation: {
-									coupon,
-									discountEndDate,
-								},
-							} ) }
-					/>
+					<>
+						<PlanNotice
+							visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
+							siteId={ siteId }
+							isInSignup={ isInSignup }
+							showLegacyStorageFeature={ showLegacyStorageFeature }
+							{ ...( coupon &&
+								discountEndDate && {
+									discountInformation: {
+										coupon,
+										discountEndDate,
+									},
+								} ) }
+						/>
+						{ config.isEnabled( 'summer-special-2025' ) && ! isInSignup && (
+							<AsyncLoad
+								require="calypso/blocks/summer-special-banner"
+								placeholder={ null }
+								visiblePlans={ gridPlansForFeaturesGrid }
+							/>
+						) }
+					</>
 				) }
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
@@ -985,7 +987,7 @@ const PlansFeaturesMain = ( {
 				<AsyncLoad
 					require="calypso/blocks/summer-special-banner"
 					placeholder={ null }
-					hasTargetPlan={ hasTargetPlan }
+					visiblePlans={ gridPlansForFeaturesGrid }
 				/>
 			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
