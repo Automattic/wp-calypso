@@ -23,7 +23,7 @@ export const siteJetpackModuleMutation = ( siteId: number ) =>
 				: deactivateJetpackModule( siteId, module );
 		},
 		onSuccess: ( newData: unknown, variables: { module: string; value: boolean } ) => {
-			queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData ) => {
+			queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData = [] ) => {
 				if ( variables.value ) {
 					return [ ...oldData, variables.module ];
 				}
