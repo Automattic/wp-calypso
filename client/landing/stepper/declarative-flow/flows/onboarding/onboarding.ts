@@ -78,9 +78,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
-		const { signupDomainOrigin } = useSelect(
+		const { signupDomainOrigin, domainCartItem } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 			} ),
 			[]
 		);
@@ -207,6 +208,13 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
+
+					if ( pickedPlan && domainCartItem ) {
+						pickedPlan.extra = {
+							...pickedPlan.extra,
+							domain_to_bundle: domainCartItem.meta,
+						};
+					}
 
 					setPlanCartItem( pickedPlan );
 

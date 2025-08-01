@@ -758,7 +758,7 @@ class RenderDomainsStepComponent extends Component {
 			// TODO: remove productsToAdd
 			const productsToAdd =
 				! hasPlan( this.props.cart ) && this.props.multiDomainDefaultPlan
-					? [ registration, this.props.multiDomainDefaultPlan ]
+					? [ this.props.multiDomainDefaultPlan, registration ]
 					: [ registration ];
 
 			// Replace the products in the cart with the freshly sorted products.
@@ -793,17 +793,34 @@ class RenderDomainsStepComponent extends Component {
 					productsInCart = productsInCart.filter( ( product ) => {
 						return ! this.state.domainsWithMappingError.includes( product.meta );
 					} );
-					// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-					const sortedProducts = sortProductsByPriceDescending( productsInCart );
+
+					if ( this.props.multiDomainDefaultPlan && hasPlan( this.props.cart ) ) {
+						const sortedDomains = sortProductsByPriceDescending( productsInCart );
+
+						productsInCart = productsInCart.map( ( productInCart ) => {
+							if ( productInCart.product_slug === this.props.multiDomainDefaultPlan.product_slug ) {
+								return {
+									...productInCart,
+									extra: {
+										...productInCart.extra,
+										domain_to_bundle: sortedDomains[ 0 ].meta,
+									},
+								};
+							}
+
+							return productInCart;
+						} );
+					}
+
 					this.props.shoppingCartManager
-						.replaceProductsInCart( sortedProducts )
+						.replaceProductsInCart( productsInCart )
 						.then( () => {
 							this.setState( { replaceDomainFailedMessage: null } );
 							if ( this.state.domainAddingQueue?.length > 0 ) {
 								this.setState( ( state ) => ( {
 									domainAddingQueue: state.domainAddingQueue.filter(
 										( domainInQueue ) =>
-											! sortedProducts.find( ( item ) => item.meta === domainInQueue.meta )
+											! productsInCart.find( ( item ) => item.meta === domainInQueue.meta )
 									),
 								} ) );
 							}
@@ -811,7 +828,7 @@ class RenderDomainsStepComponent extends Component {
 								this.setState( ( state ) => ( {
 									temporaryCart: state.temporaryCart.filter(
 										( temporaryCart ) =>
-											! sortedProducts.find( ( item ) => item.meta === temporaryCart.meta )
+											! productsInCart.find( ( item ) => item.meta === temporaryCart.meta )
 									),
 								} ) );
 							}
@@ -960,7 +977,7 @@ class RenderDomainsStepComponent extends Component {
 		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
-		const domainCart = getDomainsInCart( this.props.cart );
+		const domainCart = sortProductsByPriceDescending( getDomainsInCart( this.props.cart ) );
 		const { suggestion } = step;
 		const isPurchasingItem =
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
