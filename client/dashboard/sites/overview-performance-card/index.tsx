@@ -122,6 +122,28 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
 	}
 
+	if ( site.launch_status === 'unlaunched' ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'No results' ) }
+				description={ __( 'Launch your site to test performance.' ) }
+				disabled
+			/>
+		);
+	}
+
+	if ( site.is_coming_soon || site.is_private ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'No results' ) }
+				description={ __( 'Make your site public to test performance.' ) }
+				disabled
+			/>
+		);
+	}
+
 	if ( ! settings.wpcom_performance_report_url ) {
 		return <PerformanceCardContentWithoutTests site={ site } />;
 	}
