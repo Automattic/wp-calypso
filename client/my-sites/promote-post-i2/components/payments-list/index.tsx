@@ -108,20 +108,19 @@ export default function PaymentsList( props: Props ) {
 	}
 	return (
 		<>
+			<PaymentsFilter
+				options={ paymentFilterOptions }
+				paymentsFilter={ selectedPaymentsFilter ? 'currentSite' : 'unified' }
+				handleChangeFilter={ ( event ) => {
+					setFetchPaymentsForCurrentSite( event );
+				} }
+			/>
 			{ ! isLoading && payments?.length === 0 ? (
 				<div className="promote-post-i2__aux-wrapper">
 					<EmptyPromotionList type="payments" />
 				</div>
 			) : (
 				<>
-					<PaymentsFilter
-						options={ paymentFilterOptions }
-						paymentsFilter={ selectedPaymentsFilter ? 'currentSite' : 'unified' }
-						handleChangeFilter={ ( event ) => {
-							setFetchPaymentsForCurrentSite( event );
-						} }
-					/>
-
 					{ isFetching ? (
 						<div className="promote-post-i2__aux-wrapper">
 							{ translate( 'Please wait. Loading orders.' ) }

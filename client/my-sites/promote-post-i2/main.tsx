@@ -145,7 +145,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const [ fetchPaymentsForCurrentSite, setFetchPaymentsForCurrentSite ] = useState( true );
 	// TODO fix the values when we know them
-	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9-alpha', '0.8.0' );
+	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '15', '0.8.0' );
 	/* query for payments */
 	const {
 		data: payments,
@@ -471,25 +471,22 @@ export default function PromotedPosts( { tab }: Props ) {
 			) }
 
 			{ /* Render payments tab */ }
-			{ selectedTab === 'payments' &&
-				! isLoadingPayments &&
-				typeof payments?.total === 'number' &&
-				payments.total > 0 && (
-					<>
-						<BlazePageViewTracker
-							path={ getAdvertisingDashboardPath( '/payments/:site' ) }
-							title="Advertising > Payments"
-						/>
-						<PaymentsList
-							isLoading={ isLoadingPayments }
-							isError={ campaignError as DSPMessage }
-							isFetching={ isFetchingPayments }
-							payments={ payments?.payments }
-							selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
-							setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
-						/>
-					</>
-				) }
+			{ selectedTab === 'payments' && (
+				<>
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/payments/:site' ) }
+						title="Advertising > Payments"
+					/>
+					<PaymentsList
+						isLoading={ isLoadingPayments }
+						isError={ campaignError as DSPMessage }
+						isFetching={ isFetchingPayments }
+						payments={ payments?.payments }
+						selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
+						setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
+					/>
+				</>
+			) }
 
 			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && selectedTab !== 'payments' && (
