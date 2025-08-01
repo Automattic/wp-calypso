@@ -1,5 +1,6 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/calypso-color-schemes";
+@import "@automattic/some-bad-import";
 
 .help-center.entry-point-button {
 	&.is-active {
