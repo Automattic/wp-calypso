@@ -34,7 +34,7 @@ const DomainName = ( {
 } ) => {
 	const siteSlug = site?.slug ?? domain.site_slug;
 	const domainManagementUrl = site
-		? `${ window.location.origin }/overview/site-domain/domain/${ domain.domain }/${ siteSlug }`
+		? `/v2/sites/${ siteSlug }/domains/${ domain.domain }`
 		: `${ window.location.origin }/domains/manage/all/overview/${ domain.domain }/${ siteSlug }`;
 
 	return (
