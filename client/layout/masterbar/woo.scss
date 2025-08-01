@@ -114,6 +114,7 @@ $breakpoint-mobile: 660px;
 		&:focus,
 		&:hover {
 			border-color: var(--woo-purple-50);
+			box-shadow: 0 0 0 2px var(--woo-purple-50);
 		}
 	}
 
