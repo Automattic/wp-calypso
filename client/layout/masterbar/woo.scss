@@ -337,7 +337,7 @@ $breakpoint-mobile: 660px;
 
 
 	&:not(.is-section-login) {
-		.card {
+		.card { // TODO clk remove this. it's handled by .is-unified-create-account
 			box-shadow: none;
 			background-color: initial;
 		}

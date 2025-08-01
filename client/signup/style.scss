@@ -65,17 +65,20 @@ body.is-section-signup {
 		}
 
 		.card.logged-out-form {
+			box-shadow: none;
+    		background-color: initial;
 			padding: 0;
 			.form-fieldset {
 				margin-bottom: 0;
 			}
 		}
 
-		.auth-form__social {
+		.card.auth-form__social {
 			margin: 0;
 			padding-top: 0;
 			padding-bottom: 0;
-
+			box-shadow: none;
+    		background-color: initial;
 		}
 
 		.auth-form__separator {
