@@ -805,8 +805,9 @@ const FEATURES_LIST: FeatureList = {
 						size={ 16 }
 						style={ {
 							fill: 'var(--studio-blue-50)',
-							verticalAlign: 'bottom',
+							verticalAlign: 'middle',
 							marginLeft: '2px',
+							marginTop: '-2px',
 						} }
 					/>
 				</span>
