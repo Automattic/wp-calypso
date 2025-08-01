@@ -960,7 +960,7 @@ class RenderDomainsStepComponent extends Component {
 		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
-		const domainCart = getDomainsInCart( this.props.cart );
+		const domainCart = sortProductsByPriceDescending( getDomainsInCart( this.props.cart ) );
 		const { suggestion } = step;
 		const isPurchasingItem =
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;

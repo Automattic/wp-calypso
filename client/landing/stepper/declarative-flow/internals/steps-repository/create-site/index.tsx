@@ -217,7 +217,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		if ( domainCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
+			await addProductsToCart( site.siteSlug, flow, domainCartItems );
 		}
 
 		return {
