@@ -23,27 +23,27 @@
 	@media (max-width: $break-medium) {
 		thead {
 			th.payment-item__payment-id,
+			th.payment-item__date,
 			th.payment-item__subtotal,
 			th.payment-item__credits {
 				display: none;
 			}
 
 			th.payment-item__status{
-				width: 29%;
+				width: 45%;
 			}
-			th.payment-item__date{
-				width: 33%;
-			}
+
 			th.payment-item__total{
-				width: 19%;
+				width: 30%;
 			}
 			th.payment-item__actions{
-				width: 19%;
+				width: 25%;
 			}
 		}
 
 		tbody {
 			td.payment-item__payment-id,
+			td.payment-item__date,
 			td.payment-item__subtotal,
 			td.payment-item__credits {
 				display: none;
