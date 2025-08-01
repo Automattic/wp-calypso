@@ -31,6 +31,9 @@ export function useFlowState() {
 
 	const { data: state } = useQuery< FlowStateManifest >( {
 		queryKey: [ PREFIX, flow, session, VERSION ],
+		queryFn: ( { client, queryKey } ) => {
+			return ( client.getQueryData( queryKey ) ?? {} ) as FlowStateManifest;
+		},
 		...PERSISTENCE_CONFIG,
 	} );
 
