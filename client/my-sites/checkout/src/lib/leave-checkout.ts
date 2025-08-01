@@ -88,6 +88,18 @@ export const leaveCheckout = ( {
 		return;
 	}
 
+	const referringHost = URL.canParse( document.referrer )
+		? new URL( document.referrer ).origin
+		: null;
+
+	/**
+	 * Please see https://github.com/Automattic/wp-calypso/issues/105027
+	 */
+	if ( history.length > 1 && referringHost === window.location.origin ) {
+		history.back();
+		return;
+	}
+
 	if ( forceCheckoutBackUrl ) {
 		window.location.href = forceCheckoutBackUrl;
 		return;
