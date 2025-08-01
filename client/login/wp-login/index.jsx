@@ -336,7 +336,15 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack } = this.props;
+		const {
+			locale,
+			translate,
+			isGenericOauth,
+			isGravPoweredClient,
+			isJetpack,
+			isFromAkismet,
+			action,
+		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
@@ -372,10 +380,18 @@ export class Login extends Component {
 			</Main>
 		);
 
+		const shouldHideCreateAccountLink =
+			action === 'lostpassword' || action === 'jetpack/lostpassword';
+
 		return (
 			<>
 				{ ! isGravPoweredClient && (
-					<OneLoginLayout isJetpack={ isJetpack } signupUrl={ this.props.signupUrl }>
+					<OneLoginLayout
+						isJetpack={ isJetpack }
+						isFromAkismet={ isFromAkismet }
+						signupUrl={ this.props.signupUrl }
+						shouldHideCreateAccountLink={ shouldHideCreateAccountLink }
+					>
 						{ mainContent }
 					</OneLoginLayout>
 				) }
