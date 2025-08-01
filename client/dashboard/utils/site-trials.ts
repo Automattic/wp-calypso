@@ -12,6 +12,7 @@ export function hasSiteTrialEnded( site: Site ) {
 	return (
 		( wasBusinessTrial( site ) || wasEcommerceTrial( site ) ) &&
 		! site.was_upgraded_from_trial &&
-		site.plan?.is_free
+		// The trial plan may have expired but can remain the current plan of the site for a short period before it's replaced by the free plan.
+		( site.plan?.expired || site.plan?.is_free )
 	);
 }
