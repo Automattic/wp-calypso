@@ -47,6 +47,7 @@ export enum JetpackFeatures {
 export enum JetpackModules {
 	MONITOR = 'monitor',
 	PROTECT = 'protect',
+	SSO = 'sso',
 	STATS = 'stats',
 	WAF = 'waf',
 }

@@ -536,7 +536,13 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wpcom-login',
 	loader: async ( { params: { siteSlug } } ) => {
-		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteJetpackSettingsQuery( site.ID ) ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-wpcom-login' ).then( ( d ) =>

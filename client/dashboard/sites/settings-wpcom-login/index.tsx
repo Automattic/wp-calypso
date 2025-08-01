@@ -9,6 +9,7 @@ import PageLayout from '../../components/page-layout';
 import { HostingFeatures } from '../../data/constants';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
+import SsoForm from './sso-form';
 
 export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -39,7 +40,7 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 				feature={ HostingFeatures.SECURITY_SETTINGS }
 				tracksFeatureId="settings-security"
 			>
-				{ site.slug }
+				<SsoForm site={ site } />
 			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
