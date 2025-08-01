@@ -18,10 +18,8 @@ const CARD_PROPS = {
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
-	return addQueryArgs(
-		`/sites/performance/${ site.slug }`,
-		device !== 'mobile' ? { initialTab: device } : {}
-	);
+	const url = `/sites/performance/${ site.slug }`;
+	return device && device !== 'mobile' ? addQueryArgs( url, { initialTab: device } ) : url;
 }
 
 function PerformanceCardContentWithoutTests( { site }: { site: Site } ) {
