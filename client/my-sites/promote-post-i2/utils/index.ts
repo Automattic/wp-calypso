@@ -435,7 +435,7 @@ export const getPaymentStatus = ( status?: string ) => {
 			return __( 'Failed' );
 		}
 		case paymentStatus.PENDING: {
-			return __( 'Pending' );
+			return __( 'Failed' );
 		}
 		case paymentStatus.ON_HOLD: {
 			return __( 'On hold' );

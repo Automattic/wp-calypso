@@ -143,7 +143,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 
-	const [ fetchPaymentsForCurrentSite, setFetchPaymentsForCurrentSite ] = useState( false );
+	const [ fetchPaymentsForCurrentSite, setFetchPaymentsForCurrentSite ] = useState( true );
 	// TODO fix the values when we know them
 	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9-alpha', '0.8.0' );
 	/* query for payments */
