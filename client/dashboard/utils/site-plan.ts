@@ -17,13 +17,13 @@ export const JETPACK_PRODUCTS = [
 	{
 		id: JetpackFeatures.STATS,
 		icon: chartBar,
-		label: __( 'Stats' ),
+		label: __( 'Jetpack Stats' ),
 		description: __( 'Clear, concise, and actionable analysis of your site performance.' ),
 	},
 	{
 		id: JetpackFeatures.BACKUPS,
 		icon: cloud,
-		label: __( 'VaultPress Backup' ),
+		label: __( 'Jetpack VaultPress Backup' ),
 		description: __(
 			'Real-time backups save every change, and one-click restores get you back online quickly.'
 		),
@@ -31,7 +31,7 @@ export const JETPACK_PRODUCTS = [
 	{
 		id: JetpackFeatures.SOCIAL_ENHANCED_PUBLISHING,
 		icon: megaphone,
-		label: __( 'Social' ),
+		label: __( 'Jetpack Social' ),
 		description: __(
 			'Auto‑share your posts to social networks and track engagement in one place.'
 		),
@@ -39,31 +39,31 @@ export const JETPACK_PRODUCTS = [
 	{
 		id: JetpackFeatures.CLOUD_CRITICAL_CSS,
 		icon: next,
-		label: __( 'Boost' ),
+		label: __( 'Jetpack Boost' ),
 		description: __( 'Improves your site speed and performance.' ),
 	},
 	{
 		id: JetpackFeatures.ANTISPAM,
 		icon: removeBug,
-		label: __( 'Akismet Anti-spam' ),
+		label: __( 'Jetpack Akismet Anti-spam' ),
 		description: __( 'Automatically clear spam from comments and forms.' ),
 	},
 	{
 		id: JetpackFeatures.SEARCH,
 		icon: search,
-		label: __( 'Search' ),
+		label: __( 'Jetpack Search' ),
 		description: __( 'Instantly deliver the most relevant results to your visitors.' ),
 	},
 	{
 		id: JetpackFeatures.SCAN,
 		icon: shield,
-		label: __( 'Scan' ),
+		label: __( 'Jetpack Scan' ),
 		description: __( 'Guard against malware and bad actors 24/7.' ),
 	},
 	{
 		id: JetpackFeatures.VIDEOPRESS,
 		icon: video,
-		label: __( 'VideoPress' ),
+		label: __( 'Jetpack VideoPress' ),
 		description: __( 'Powerful and flexible video hosting.' ),
 	},
 ];
