@@ -449,6 +449,7 @@ class DomainRegistrationSuggestion extends Component {
 
 		return (
 			<SuggestionComponent
+				isSingleFeaturedSuggestion={ this.props.isSingleFeaturedSuggestion }
 				badges={ badges }
 				uuid={ fullDomain }
 				domain={ domainName }
