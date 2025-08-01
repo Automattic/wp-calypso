@@ -799,7 +799,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 		getTitle: () => {
 			return (
-				<>
+				<span style={ { fontWeight: 500 } }>
 					{ i18n.translate( 'Install plugins' ) }
 					<Gridicon
 						icon="info-outline"
@@ -810,7 +810,7 @@ const FEATURES_LIST: FeatureList = {
 							marginLeft: '2px',
 						} }
 					/>
-				</>
+				</span>
 			);
 		},
 		getDescription: () =>
