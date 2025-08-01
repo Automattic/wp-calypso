@@ -92,7 +92,6 @@ export default function PaymentsList( props: Props ) {
 		},
 	];
 
-	// const [paymentFilterOption, setPaymentFilterOption ] = useState()
 
 	if ( isError ) {
 		return (
