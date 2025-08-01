@@ -1,7 +1,14 @@
+import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Icon,
+	Tooltip,
+} from '@wordpress/components';
 import { cloneElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import filesize from 'filesize';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
@@ -10,9 +17,17 @@ import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { Stat } from '../../components/stat';
 import { DotcomPlans } from '../../data/constants';
+import {
+	getJetpackProductsForSite,
+	getSitePlanDisplayName,
+	JETPACK_PRODUCTS,
+} from '../../utils/site-plan';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import OverviewCard from '../overview-card';
-import type { Site, Plan, Purchase } from '../../data/types';
+import type { Site, Purchase } from '../../data/types';
+
+import './style.scss';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 const ALERT_PERCENT = 80;
@@ -33,15 +48,81 @@ function getCurrentMonthRangeTimestamps() {
 	};
 }
 
-export default function PlanCard( { site }: { site: Site } ) {
-	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...sitePurchaseQuery( site.ID, plan?.id ?? '' ),
-		enabled: !! plan?.id,
-	} );
+function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
+	if ( products.length === JETPACK_PRODUCTS.length ) {
+		return __( 'The full Jetpack suite with everything you need to grow your business.' );
+	}
+
+	if ( products.length === 0 ) {
+		return __( 'Enhance your site with Jetpack security, performance, and growth tools.' );
+	}
+
+	if ( products.length === 1 ) {
+		return products[ 0 ].description;
+	}
+
+	return `${ products.map( ( product ) => product.label ).join( ', ' ) }.`;
+}
+
+function JetpackPlanCard( {
+	site,
+	purchase,
+	isLoading,
+}: {
+	site: Site;
+	purchase?: Purchase;
+	isLoading: boolean;
+} ) {
+	const products = getJetpackProductsForSite( site );
+	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
+
+	return (
+		<OverviewCard
+			title={ __( 'Subscriptions' ) }
+			icon={ <JetpackLogo /> }
+			heading={ getSitePlanDisplayName( site ) }
+			description={ getCardDescription( site, purchase ) }
+			externalLink={ `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }` }
+			tracksId="plan"
+			isLoading={ isLoading }
+			bottom={
+				<VStack spacing={ 3 }>
+					<Grid
+						className="jetpack-plan-card__icons"
+						columns={ 4 }
+						rows={ Math.ceil( productsToDisplay.length / 4 ) }
+						gap={ 2 }
+					>
+						{ productsToDisplay.map( ( product ) => (
+							<Tooltip key={ product.id } text={ product.label } placement="top">
+								<div tabIndex={ -1 }>
+									<Icon icon={ product.icon } />
+								</div>
+							</Tooltip>
+						) ) }
+					</Grid>
+					<Text variant="muted" lineHeight="16px" size={ 12 }>
+						{ getJetpackProductsDescription( products ) }
+					</Text>
+				</VStack>
+			}
+		/>
+	);
+}
+
+function WpcomPlanCard( {
+	site,
+	purchase,
+	isLoading,
+}: {
+	site: Site;
+	purchase?: Purchase;
+	isLoading: boolean;
+} ) {
 	const { data: mediaStorage, isLoading: isLoadingMediaStorage } = useQuery(
 		siteMediaStorageQuery( site.ID )
 	);
+
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 	const { data: bandwidth, isLoading: isLoadingBandwidth } = useQuery( {
 		...siteMetricsQuery( site.ID, {
@@ -93,12 +174,10 @@ export default function PlanCard( { site }: { site: Site } ) {
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ icon }
-			heading={ site.plan?.product_name_short }
-			description={ getCardDescription( plan, purchase ) }
+			heading={ getSitePlanDisplayName( site ) }
+			description={ getCardDescription( site, purchase ) }
 			tracksId="plan"
-			isLoading={
-				isLoadingPlan || isLoadingPurchase || isLoadingMediaStorage || isLoadingBandwidth
-			}
+			isLoading={ isLoading || isLoadingMediaStorage || isLoadingBandwidth }
 			link={ site.plan?.is_free ? undefined : '/v2/me/billing/active-subscriptions' }
 			bottom={
 				<VStack spacing={ 4 }>
@@ -131,10 +210,54 @@ export default function PlanCard( { site }: { site: Site } ) {
 	);
 }
 
-function getCardDescription( plan?: Plan, purchase?: Purchase ) {
-	if ( plan?.product_slug === DotcomPlans.FREE_PLAN ) {
+export default function PlanCard( { site }: { site: Site } ) {
+	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
+	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
+		...sitePurchaseQuery( site.ID, plan?.id ?? '' ),
+		enabled: !! plan?.id,
+	} );
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return (
+			<JetpackPlanCard
+				site={ site }
+				purchase={ purchase }
+				isLoading={ isLoadingPlan || isLoadingPurchase }
+			/>
+		);
+	}
+
+	return (
+		<WpcomPlanCard
+			site={ site }
+			purchase={ purchase }
+			isLoading={ isLoadingPlan || isLoadingPurchase }
+		/>
+	);
+}
+
+function getCardDescription( site: Site, purchase?: Purchase ) {
+	if ( site.plan?.product_slug === DotcomPlans.FREE_PLAN ) {
 		return __( 'Upgrade to access all hosting features.' );
 	}
 
-	return purchase?.expiry_message;
+	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
+		return getJetpackProductsForSite( site ).length > 0
+			? __( 'Manage subscriptions.' )
+			: __( 'Upgrade to access more Jetpack tools.' );
+	}
+
+	if ( purchase?.expiry_message ) {
+		return purchase.expiry_message;
+	}
+
+	if ( purchase?.partner_name ) {
+		return sprintf(
+			/* translators: %s: the partner name, e.g.: "Jetpack" */
+			__( 'Managed by %s.' ),
+			purchase.partner_name
+		);
+	}
+
+	return undefined;
 }

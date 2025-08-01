@@ -500,9 +500,9 @@ export class UserStep extends Component {
 			}
 
 			return (
-				<div className={ clsx( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( 'Create an account' ) }</h3>
-				</div>
+				<span className={ clsx( 'signup-form__woo-wrapper' ) }>
+					{ translate( 'Create an account' ) }
+				</span>
 			);
 		}
 

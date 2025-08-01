@@ -30,6 +30,7 @@ import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
@@ -311,7 +312,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 					__(
 						'Caching is managed for you on the %s plan. The cache is cleared automatically as you make changes to your site. <link>Learn more</link>'
 					),
-					site?.plan?.product_name_short
+					getSitePlanDisplayName( site )
 				),
 				{
 					link: <InlineSupportLink supportContext="hosting-edge-cache" />,

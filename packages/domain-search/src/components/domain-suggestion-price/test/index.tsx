@@ -25,7 +25,7 @@ describe( 'DomainSuggestionPrice', () => {
 	} );
 
 	it( 'renders the price and yearly renewal notice if renewPrice is different from the price', () => {
-		render(
+		const { container } = render(
 			<DomainSuggestionsList>
 				<DomainSuggestionPrice price="$15" renewPrice="$20" />
 			</DomainSuggestionsList>
@@ -33,7 +33,7 @@ describe( 'DomainSuggestionPrice', () => {
 
 		expect( screen.getByText( '$15' ) ).toBeInTheDocument();
 		expect( screen.queryByText( '/year' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'For first year. $20/year renewal.' ) ).toBeInTheDocument();
+		expect( container ).toHaveTextContent( 'For first year. $20/year renewal.' );
 	} );
 
 	it( 'renders the sale price when provided', () => {
@@ -48,7 +48,7 @@ describe( 'DomainSuggestionPrice', () => {
 	} );
 
 	it( 'renders the yearly renewal notice if there is a sale price, even if the initial price is the same as the renewal price', () => {
-		render(
+		const { container } = render(
 			<DomainSuggestionsList>
 				<DomainSuggestionPrice salePrice="$10" price="$15" renewPrice="$15" />
 			</DomainSuggestionsList>
@@ -57,6 +57,6 @@ describe( 'DomainSuggestionPrice', () => {
 		expect( screen.getByText( '$10' ) ).toBeInTheDocument();
 		expect( screen.getByText( '$15' ) ).toBeInTheDocument();
 		expect( screen.queryByText( '/year' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'For first year. $15/year renewal.' ) ).toBeInTheDocument();
+		expect( container ).toHaveTextContent( 'For first year. $15/year renewal.' );
 	} );
 } );

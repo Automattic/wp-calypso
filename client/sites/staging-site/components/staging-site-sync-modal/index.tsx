@@ -22,6 +22,7 @@ import {
 } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { error, chevronRight, chevronLeft } from '@wordpress/icons';
+import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
@@ -402,7 +403,11 @@ export default function SyncModal( {
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 
-				<div className="staging-site-card">
+				<div
+					className={ clsx( 'staging-site-card', {
+						'confirmation-input': showDomainConfirmation,
+					} ) }
+				>
 					<Tooltip
 						text={
 							shouldDisableGranularSync
@@ -462,7 +467,7 @@ export default function SyncModal( {
 							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							padding: '16px 0',
 							marginTop: '8px',
-							marginBottom: '20px',
+							marginBottom: '24px',
 						} }
 					>
 						<CheckboxControl
@@ -485,8 +490,8 @@ export default function SyncModal( {
 							</span>
 						</Tooltip>
 					</HStack>
-					<VStack spacing={ 7 }>
-						{ showWooCommerceWarning && (
+					{ showWooCommerceWarning && (
+						<VStack style={ { paddingBottom: '52px' } }>
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
@@ -505,42 +510,46 @@ export default function SyncModal( {
 									}
 								) }
 							</Notice>
-						) }
-						{ showDomainConfirmation && (
-							<VStack>
-								<InputControl
-									__next40pxDefaultSize
-									label={
-										<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
-											<Text>{ __( "Enter your site's name" ) }</Text>
-											<Text color="var(--studio-red-50)">{ productionSiteSlug }</Text>
-											<Text>{ __( 'to confirm.' ) }</Text>
-										</HStack>
-									}
-									onChange={ handleDomainConfirmation }
-								/>
-							</VStack>
-						) }
-					</VStack>
+						</VStack>
+					) }
 				</div>
-				<HStack className="staging-site-card__footer">
+				<VStack className="staging-site-card__footer" spacing={ 6 }>
+					{ showDomainConfirmation && (
+						<InputControl
+							__next40pxDefaultSize
+							label={
+								<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
+									<Text>
+										{ __( 'Enter your site‘s name' ) }{ ' ' }
+										<Text color="var(--studio-red-50)">{ productionSiteSlug }</Text>{ ' ' }
+										{ __( 'to confirm.' ) }
+									</Text>
+								</HStack>
+							}
+							onChange={ handleDomainConfirmation }
+						/>
+					) }
 					<HStack>
-						<Text className="staging-site-card__footer-text">
-							{ createInterpolateElement( syncConfig.learnMore, {
-								a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
-							} ) }
-						</Text>
-					</HStack>
+						<HStack>
+							<Text className="staging-site-card__footer-text">
+								{ createInterpolateElement( syncConfig.learnMore, {
+									a: (
+										<InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />
+									),
+								} ) }
+							</Text>
+						</HStack>
 
-					<HStack justify="flex-end" spacing={ 4 }>
-						<Button variant="tertiary" onClick={ onClose }>
-							{ __( 'Cancel' ) }
-						</Button>
-						<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
-							{ syncConfig.submit }
-						</Button>
+						<HStack justify="flex-end" spacing={ 4 }>
+							<Button variant="tertiary" onClick={ onClose }>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
+								{ syncConfig.submit }
+							</Button>
+						</HStack>
 					</HStack>
-				</HStack>
+				</VStack>
 			</VStack>
 		</Modal>
 	);

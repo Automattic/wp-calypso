@@ -1,9 +1,9 @@
 import {
-	DomainSuggestionPrice,
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSuggestionBadge,
 	DomainSuggestionCTA,
+	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -62,6 +62,7 @@ class DomainSearchResults extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		flowName: PropTypes.string,
 	};
 
 	renderDomainAvailability() {
@@ -272,7 +273,8 @@ class DomainSearchResults extends Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton, selectedSite } =
+			this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let domainSkipSuggestion;
@@ -355,9 +357,12 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton && subdomainSuggestion && (
+			domainSkipSuggestion = showSkipButton && (
 				<DomainSkipSuggestion
-					domain={ subdomainSuggestion.domain_name }
+					selectedSite={ selectedSite }
+					subdomainSuggestion={ subdomainSuggestion }
+					flowName={ this.props.flowName }
+					query={ this.props.lastDomainSearched }
 					onSkip={ this.props.onSkip }
 				/>
 			);

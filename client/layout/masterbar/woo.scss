@@ -109,53 +109,18 @@ $breakpoint-mobile: 660px;
 	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
 	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
 
-	input[type="text"].form-text-input,
-	input[type="email"].form-text-input,
-	input[type="password"].form-text-input,
-	input[type="tel"].form-text-input,
+	input.form-text-input, 
 	textarea.form-text-input {
-		&:not(.form-text-input-core-styles) {
-			background-color: #fff;
-			border: 1px solid #c3c4c7;
-			border-radius: $woo-radius-input;
-			box-sizing: border-box;
-			color: $woo-gray-100;
-			padding: 12px 16px;
-			transition: all ease-in-out 0.2s;
-			width: 100%;
-			font-weight: 400;
-			font-size: $woo-font-size-input;
-			line-height: 18px;
-			margin-bottom: 16px;
-
-			&:focus,
-			&:hover,
-			&:focus:hover {
-				border-color: var(--woo-purple-50);
-				outline: none;
-				box-shadow: 0 0 0 2px #e5cfe8;
-			}
+		&:focus,
+		&:hover {
+			border-color: var(--woo-purple-50);
+			box-shadow: 0 0 0 2px var(--woo-purple-50);
 		}
 	}
 
 	p {
 		margin-bottom: 0;
 		letter-spacing: 0;
-	}
-
-	a:not(.components-button),
-	.button {
-		color: $gray-50;
-		text-decoration: underline;
-
-		&:visited {
-			color: $gray-50;
-		}
-
-		&:hover,
-		&:focus {
-			color: $woo-gray-100;
-		}
 	}
 
 	.button {
@@ -370,48 +335,6 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.formatted-header__subtitle {
-		color: $gray-60;
-		font-size: $font-body;
-		padding-bottom: 0;
-		margin: 0;
-		line-height: 24px;
-		-webkit-font-smoothing: subpixel-antialiased;
-
-		a {
-			color: var(--woo-purple-70);
-			font-weight: 400;
-			font-size: 1rem;
-			text-decoration: none;
-
-			&:hover {
-				color: var(--woo-purple-40);
-			}
-		}
-
-		@media (max-width: $break-mobile) {
-			text-align: left;
-		}
-
-		@media (min-width: $break-large) {
-			br.hide-on-desktop {
-				display: none;
-			}
-		}
-	}
-
-	.step-wrapper {
-		max-width: 96%;
-		margin: 0 auto 50px;
-
-		@media screen and (min-width: 617px) {
-			max-width: 617px;
-		}
-
-		.formatted-header {
-			margin: 0;
-		}
-	}
 
 	&:not(.is-section-login) {
 		.card {
@@ -574,8 +497,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form {
-		padding-top: 32px;
-
 		.auth-form__separator {
 			width: 100%;
 			margin-left: 0;
@@ -681,14 +602,6 @@ $breakpoint-mobile: 660px;
 			max-width: 405px;
 			margin: 0 auto;
 			padding-top: 24px;
-
-			input.form-text-input {
-				border-color: #bbb;
-
-				&.is-valid {
-					border-color: #bbb;
-				}
-			}
 		}
 
 		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
@@ -859,19 +772,8 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		// Log in link on signup page
-		.formatted-header__subtitle a {
-			color: var(--wp-admin-theme-color);
-			line-height: inherit;
-		}
-
 		.form-input-validation {
 			padding: 8px 0 11px;
-
-			p,
-			a {
-				line-height: 16px;
-			}
 
 			// Hide form validation icon
 			svg {
@@ -920,9 +822,13 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
+		.signup-form__woo-wrapper, 
 		.wp-login__heading-text {
+			color: var(--studio-gray-100);
 			font-family: var(--woo-font-family-header);
 			font-feature-settings: "ss01" on, "salt" on;
+			text-align: center;
+			font-weight: 700;
 
 			* {
 				font-family: inherit;
@@ -938,34 +844,6 @@ $breakpoint-mobile: 660px;
 			font-weight: 700;
 			line-height: 39.6px;
 			letter-spacing: -0.72px;
-		}
-
-		input[type="text"].form-text-input,
-		input[type="email"].form-text-input,
-		input[type="password"].form-text-input,
-		input[type="tel"].form-text-input,
-		textarea.form-text-input {
-			&:not(.form-text-input-core-styles) {
-				border: 2px solid var(--studio-gray-10);
-				height: 48px;
-				padding: 8px 16px;
-				font-size: $woo-font-size-input;
-				font-style: normal;
-				line-height: 24px;
-				border-radius: $woo-radius-input;
-
-				&:focus,
-				&:hover,
-				&:focus:hover {
-					border: 2px solid var(--woo-purple-50);
-					box-shadow: none;
-				}
-
-				&:disabled {
-					border: 2px solid var(--studio-gray-5);
-					background: var(--studio-gray-0);
-				}
-			}
 		}
 
 		// Remove autofill styles.
@@ -1015,37 +893,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.form-input-validation.is-error {
-			color: #8a2424;
-			font-size: rem(14px);
-			font-style: normal;
-			font-weight: 400;
-			line-height: 21px;
-			padding: 0;
-			margin-top: 8px;
-
-			a {
-				line-height: 21px;
-			}
-
-			svg {
-				display: none;
-			}
-		}
-
-		.validation-fieldset {
-			&:has(.is-error) {
-				input {
-					border: 2px solid  #e26f56;
-				}
-			}
-		}
-
-		.step-wrapper,
-		.jetpack-connect__main-logo {
-			padding: 48px 0 0;
-		}
-
 		.formatted-header__title {
 			margin-bottom: 12px;
 
@@ -1056,7 +903,6 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.formatted-header__subtitle,
 		.verification-code-form__help-text,
 		.security-key-form__help-text {
 			font-size: $font-body-large;
@@ -1437,12 +1283,6 @@ $breakpoint-mobile: 660px;
 		.signup-form {
 			max-width: 327px;
 			margin-top: 48px;
-			label.form-label {
-				font-size: rem(11px);
-			}
-			input {
-				font-size: rem(13px);
-			}
 		}
 
 		.jetpack-connect__main-logo {
@@ -1614,25 +1454,6 @@ $breakpoint-mobile: 660px;
 			.masterbar__login-back-link {
 				margin-left: 15px;
 				font-weight: 400;
-			}
-		}
-	}
-
-	input[type="text"].form-text-input,
-	input[type="email"].form-text-input,
-	input[type="password"].form-text-input,
-	input[type="tel"].form-text-input,
-	textarea.form-text-input {
-		&:not(.form-text-input-core-styles) {
-			border: 1px solid var(--studio-gray-30);
-
-			&:focus,
-			&:focus-visible,
-			&:hover,
-			&:active {
-				border: 1px solid transparent;
-				box-shadow: inset 0 0 0 2px var(--woo-purple-40);
-				outline: none;
 			}
 		}
 	}

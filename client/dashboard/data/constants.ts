@@ -17,16 +17,35 @@ export enum DotcomPlans {
 export enum DotcomFeatures {
 	ATOMIC = 'atomic',
 	BACKUPS = 'backups',
-	SCAN = 'scan',
 	SUBSCRIPTION_GIFTING = 'subscription-gifting',
 	COPY_SITE = 'copy-site',
 	LEGACY_CONTACT = 'legacy-contact',
 	LOCKED_MODE = 'locked-mode',
+	SCAN = 'scan',
 	SECURITY_SETTINGS = 'security-settings',
 	SFTP = 'sftp',
 	SSH = 'ssh',
 	SITE_PREVIEW_LINKS = 'site-preview-links',
 	STAGING_SITES = 'staging-sites',
+}
+
+// Features that are used to identify the paid product.
+// Feature slug extracted from https://github.com/Automattic/jetpack/tree/trunk/projects/packages/my-jetpack/src/products.
+export enum JetpackFeatures {
+	ANTISPAM = 'antispam',
+	BACKUPS = 'backups',
+	CLOUD_CRITICAL_CSS = 'cloud-critical-css',
+	MONITOR = 'monitor',
+	SCAN = 'scan',
+	SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing',
+	STATS = 'stats-paid',
+	SEARCH = 'search',
+	VIDEOPRESS = 'videopress',
+}
+
+export enum JetpackModules {
+	MONITOR = 'monitor',
+	STATS = 'stats',
 }
 
 // Features that needs Atomic or self-hosted infrastructure,
@@ -48,9 +67,4 @@ export enum HostingFeatures {
 	SSH = DotcomFeatures.SSH,
 	STAGING_SITE = DotcomFeatures.STAGING_SITES,
 	STATIC_FILE_404 = DotcomFeatures.SFTP,
-}
-
-export enum JetpackModules {
-	STATS = 'stats',
-	MONITOR = 'monitor',
 }

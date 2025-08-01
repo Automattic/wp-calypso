@@ -7,6 +7,7 @@ import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordp
 import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -308,6 +309,11 @@ const onboarding: FlowV2< typeof initialize > = {
 				clearSignupCompleteSlug();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
+		// Load Survicate
+		useEffect( () => {
+			addSurvicate();
+		}, [] );
 	},
 };
 

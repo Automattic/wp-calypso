@@ -141,5 +141,6 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
 	"theme_color": "#1D2327",
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"survicate_enabled": true
 }

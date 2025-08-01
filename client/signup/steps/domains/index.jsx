@@ -300,6 +300,13 @@ class RenderDomainsStepComponent extends Component {
 
 		await this.props.saveSignupStep( stepData );
 
+		if ( this.props.shouldUseDomainSearchV2 && suggestion?.isSubDomainSuggestion ) {
+			this.setState( { isMiniCartContinueButtonBusy: true } );
+			await this.props.saveSignupStep( stepData );
+			await this.submitWithDomain( { signupDomainOrigin, position, suggestion } );
+			return;
+		}
+
 		if (
 			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
 			suggestion?.isSubDomainSuggestion
@@ -1363,7 +1370,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( ! stepSectionName ) {
-			if ( shouldUseDomainSearchV2 ) {
+			if ( shouldUseDomainSearchV2 && ! isDomainForGravatarFlow( flowName ) ) {
 				return translate( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 			}
 
@@ -1397,7 +1404,7 @@ class RenderDomainsStepComponent extends Component {
 			return translate( 'Your next big idea starts here' );
 		}
 
-		if ( shouldUseDomainSearchV2 ) {
+		if ( shouldUseDomainSearchV2 && ! isDomainForGravatarFlow( flowName ) ) {
 			return translate( 'Claim your space on the web' );
 		}
 
