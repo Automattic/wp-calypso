@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { isWpError, DashboardDataError } from './error';
 
 export const SITE_FIELDS = [
 	'ID',
@@ -33,6 +34,7 @@ export const SITE_OPTIONS = [
 	'admin_url',
 	'created_at',
 	'is_difm_lite_in_progress',
+	'is_summer_special_2025',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
@@ -67,6 +69,7 @@ export interface SiteOptions {
 	admin_url: string;
 	created_at?: string;
 	is_difm_lite_in_progress?: boolean;
+	is_summer_special_2025?: boolean;
 	is_wpforteams_site?: boolean;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -87,7 +90,7 @@ export interface Site {
 	};
 	plan?: SitePlan;
 	capabilities: SiteCapabilities;
-	subscribers_count: number;
+	subscribers_count?: number; // Can be undefined if query cache is prefilled from old Calypso Redux store.
 	options?: SiteOptions; // Can be undefined for deleted sites.
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
@@ -112,10 +115,17 @@ export interface Site {
 }
 
 export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
-	return await wpcom.req.get(
-		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
-	);
+	try {
+		return await wpcom.req.get(
+			{ path: `/sites/${ siteIdOrSlug }` },
+			{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
+		);
+	} catch ( error ) {
+		if ( isWpError( error ) && error.error === 'parse_error' ) {
+			throw new DashboardDataError( 'inaccessible_jetpack', error );
+		}
+		throw error;
+	}
 }
 
 export async function deleteSite( siteId: number ) {

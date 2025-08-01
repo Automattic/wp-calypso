@@ -160,12 +160,13 @@ class ReaderPostCard extends Component {
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/reader/conversations' );
-
+		const isDiscoverPage = currentRoute.startsWith( '/discover' );
 		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/reader/search` ).test(
 			currentRoute
 		);
 
 		const shouldShowPostCardComments = ! isConversations;
+		const showSuggestedFollows = isReaderSearchPage || isDiscoverPage;
 
 		const classes = clsx( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -269,7 +270,6 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const showSuggestedFollows = isReaderSearchPage;
 		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
@@ -282,6 +282,7 @@ class ReaderPostCard extends Component {
 						siteId={ +post.site_ID }
 						postId={ +post.ID }
 						isVisible={ this.state.isSuggestedFollowsModalOpen }
+						author={ post.author }
 					/>
 				) }
 				{ shouldShowPostCardComments && (

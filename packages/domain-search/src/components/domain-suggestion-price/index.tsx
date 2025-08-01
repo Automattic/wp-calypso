@@ -3,10 +3,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -14,14 +14,12 @@ interface DomainSuggestionPriceProps {
 	salePrice?: string;
 	price: string;
 	renewPrice?: string;
-	subText?: ReactNode;
 }
 
 export const DomainSuggestionPrice = ( {
 	salePrice,
 	price,
 	renewPrice,
-	subText: subTextProp,
 }: DomainSuggestionPriceProps ) => {
 	const { __ } = useI18n();
 	const containerContext = useDomainSuggestionContainerContext();
@@ -44,10 +42,6 @@ export const DomainSuggestionPrice = ( {
 	const priceSize = getPriceSize();
 
 	const getSubText = () => {
-		if ( subTextProp ) {
-			return subTextProp;
-		}
-
 		if ( ! renewPrice ) {
 			return null;
 		}
@@ -56,10 +50,13 @@ export const DomainSuggestionPrice = ( {
 			return null;
 		}
 
-		return sprintf(
-			// translators: %(price)s is the price of the domain.
-			__( 'For first year. %(price)s/year renewal.' ),
-			{ price: renewPrice }
+		return createInterpolateElement(
+			sprintf(
+				// translators: %(price)s is the price of the domain.
+				__( 'For first year. <span>%(price)s/year renewal.</span>' ),
+				{ price: renewPrice }
+			),
+			{ span: <span style={ { whiteSpace: 'nowrap' } } /> }
 		);
 	};
 

@@ -67,10 +67,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'About 1';
+		const patternName = 'About';
 
+		// Adds first pattern that matches `patternName` (not an exact match).
 		it( `Add ${ patternName } pattern`, async function () {
-			await editorPage.addPatternFromSidebar( patternName );
+			await editorPage.addPatternFromSidebar( patternName, false );
 		} );
 	} );
 

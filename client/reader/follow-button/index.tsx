@@ -17,10 +17,12 @@ interface ReaderFollowButtonProps {
 	railcar?: Railcar;
 	followSource?: string;
 	siteUrl: string;
+	className?: string;
 }
 
 export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JSX.Element {
-	const { onFollowToggle, railcar, followSource, hasButtonStyle, siteUrl, iconSize } = props;
+	const { onFollowToggle, railcar, followSource, hasButtonStyle, siteUrl, iconSize, className } =
+		props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -44,6 +46,7 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 	return (
 		<FollowButtonContainer
 			{ ...props }
+			className={ className }
 			onFollowToggle={ recordFollowToggle }
 			followIcon={ followIcon }
 			followingIcon={ followingIcon }

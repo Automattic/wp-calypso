@@ -15,10 +15,12 @@
 		height: 1.5rem;
 		min-width: 1.5rem;
 		position: absolute;
-		top: -1rem;
-		right: -1rem;
+		pointer-events: none;
+		top: 0;
+		right: 0;
+		transform: translate( 50%, -50% );
 		background: var( --wp-admin-theme-color );
-		border: solid 2px #fff;
+		border: solid 2px var( --domain-search-v2-background-color );
 		border-radius: 50%;
 		color: #fff;
 		font-size: 0.75rem;

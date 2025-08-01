@@ -15,8 +15,8 @@ const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
 };
 
 type Options = {
-	enabled?: UseQueryOptions[ 'enabled' ];
-	retry?: UseQueryOptions[ 'retry' ];
+	enabled?: UseQueryOptions< ApiResponse >[ 'enabled' ];
+	retry?: UseQueryOptions< ApiResponse >[ 'retry' ];
 };
 
 export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {

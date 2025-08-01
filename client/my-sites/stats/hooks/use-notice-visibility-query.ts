@@ -84,7 +84,7 @@ const useNoticesVisibilityQueryRaw = function < T >(
 	enabled?: boolean
 ) {
 	return useQuery( {
-		...getDefaultQueryParams< Notices >(),
+		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		queryFn: () => queryNotices( siteId ),
 		select,

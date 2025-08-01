@@ -1,16 +1,19 @@
 import {
-	DomainSuggestionPrice,
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
+	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -59,6 +62,7 @@ class DomainSearchResults extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		flowName: PropTypes.string,
 	};
 
 	renderDomainAvailability() {
@@ -82,6 +86,7 @@ class DomainSearchResults extends Component {
 			TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 			TLD_NOT_SUPPORTED_TEMPORARILY,
 			TRANSFERRABLE,
+			TRANSFERRABLE_PREMIUM,
 			UNKNOWN,
 		} = domainAvailability;
 
@@ -114,28 +119,34 @@ class DomainSearchResults extends Component {
 
 			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
 
+			const suggestion = this.props.suggestions.find(
+				( s ) => s.domain_name === lastDomainSearched
+			);
+
 			return (
-				<DomainSuggestion
+				<DomainSuggestion.Featured
 					badges={ badges }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					matchReasons={
+						this.props.hideMatchReasons
+							? undefined
+							: parseMatchReasons( lastDomainSearched, suggestion.match_reasons )
+					}
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
 							salePrice={ productSaleCost }
 							price={ premiumDomain.cost }
 							renewPrice={ premiumDomain.renew_cost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
 						/>
 					}
 				/>
@@ -149,6 +160,7 @@ class DomainSearchResults extends Component {
 			suggestions.length !== 0 &&
 			[
 				TRANSFERRABLE,
+				TRANSFERRABLE_PREMIUM,
 				MAPPABLE,
 				MAPPED,
 				RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
@@ -261,7 +273,8 @@ class DomainSearchResults extends Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton, selectedSite } =
+			this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let domainSkipSuggestion;
@@ -344,9 +357,12 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton && subdomainSuggestion && (
+			domainSkipSuggestion = showSkipButton && (
 				<DomainSkipSuggestion
-					domain={ subdomainSuggestion.domain_name }
+					selectedSite={ selectedSite }
+					subdomainSuggestion={ subdomainSuggestion }
+					flowName={ this.props.flowName }
+					query={ this.props.lastDomainSearched }
 					onSkip={ this.props.onSkip }
 				/>
 			);

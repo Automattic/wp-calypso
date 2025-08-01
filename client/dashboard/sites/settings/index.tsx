@@ -19,6 +19,7 @@ import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import WebApplicationFirewallSettingsSummary from '../settings-web-application-firewall/summary';
 import WordPressSettingsSummary from '../settings-wordpress/summary';
 import StagingSiteDeleteBanner from '../staging-site-delete-banner';
 import DangerZone from './danger-zone';
@@ -58,6 +59,12 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<PrimaryDataCenterSettingsSummary site={ site } />
 					<StaticFile404SettingsSummary site={ site } />
 					<CachingSettingsSummary site={ site } />
+				</SummaryButtonList>
+			</VStack>
+			<VStack spacing={ 3 }>
+				<SectionHeader title={ __( 'Security' ) } level={ 3 } />
+				<SummaryButtonList>
+					<WebApplicationFirewallSettingsSummary site={ site } />
 					<DefensiveModeSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>

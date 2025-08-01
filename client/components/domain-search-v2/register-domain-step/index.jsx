@@ -16,6 +16,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
+	NEW_HOSTED_SITE_FLOW,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -56,6 +57,7 @@ import {
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 	recordUseYourDomainButtonClick,
+	recordDomainClickMissing,
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'calypso/components/domains/register-domain-step/analytics';
@@ -516,11 +518,29 @@ class RegisterDomainStep extends Component {
 			} ),
 			total,
 			onAddItem: ( domain_name ) => {
+				// Try to find and add subdomain first
+				const subdomain = this.state.subdomainSearchResults?.find(
+					( suggestion ) => suggestion.domain_name === domain_name
+				);
+
+				if ( subdomain ) {
+					const position = this.state.subdomainSearchResults.indexOf( subdomain );
+					return this.onAddDomain( subdomain, position, false );
+				}
+
 				const suggestionPosition = searchResults.findIndex(
 					( result ) => result.domain_name === domain_name
 				);
 
 				if ( suggestionPosition === -1 ) {
+					// Not found in regular results, track it
+					this.props.recordDomainClickMissing(
+						domain_name,
+						this.props.analyticsSection,
+						this.props.flowName,
+						this.state.lastQuery,
+						'domain'
+					);
 					return;
 				}
 
@@ -608,7 +628,9 @@ class RegisterDomainStep extends Component {
 		const notices = this.renderGeneralNotices();
 
 		const showFreeDomainPromo =
-			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
+			this.props.showFreeDomainPromo === false
+				? false
+				: this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
 
 		const showHelperTerm =
 			this.state.helperTermSubmitted || ( this.state.hasSubmitted && ! this.state.lastQuery );
@@ -682,7 +704,7 @@ class RegisterDomainStep extends Component {
 					{ showFreeDomainPromo && <FreeDomainForAYearPromo /> }
 					{ this.renderContent() }
 				</VStack>
-				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } />
+				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } onSkip={ this.props.onSkip } />
 			</DomainSearch>
 		);
 	}
@@ -778,6 +800,7 @@ class RegisterDomainStep extends Component {
 			onSearch: this.onSearch,
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
+			disableAutoSearch: this.isInInitialState(),
 			isOnboarding: this.props.isOnboarding,
 			placeholderAnimation: ! this.state.searchResults,
 			childrenBeforeCloseButton:
@@ -897,13 +920,7 @@ class RegisterDomainStep extends Component {
 	};
 
 	isInInitialState = () => {
-		const domainsInCart = this.getDomainsInCart();
-
-		return (
-			! Array.isArray( this.state.searchResults ) &&
-			! this.state.loadingResults &&
-			! domainsInCart.length
-		);
+		return ! Array.isArray( this.state.searchResults ) && ! this.state.loadingResults;
 	};
 
 	save = () => {
@@ -1106,7 +1123,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
-		const loadingResults = Boolean( cleanedQuery );
+		const loadingResults = this.isInInitialState() ? false : Boolean( cleanedQuery );
 		const isInitialQueryActive = ! searchQuery || searchQuery === this.props.suggestion;
 
 		this.setState(
@@ -1740,15 +1757,25 @@ class RegisterDomainStep extends Component {
 	};
 
 	onHelperTermClick = ( term ) => {
-		this.setState( {
-			lastQuery: term,
-			helperTermSubmitted: true,
-			loadingResults: true,
-		} );
+		this.setState(
+			{
+				lastQuery: term,
+				helperTermSubmitted: true,
+			},
+			() => this.onSearch( term )
+		);
 	};
 
 	useYourDomainFunction = () => {
 		return this.goToUseYourDomainStep;
+	};
+
+	getUseYourDomainHandler = () => {
+		if ( [ NEW_HOSTED_SITE_FLOW, AI_SITE_BUILDER_FLOW ].includes( this.props.flowName ) ) {
+			return null;
+		}
+
+		return this.props.handleClickUseYourDomain ?? this.useYourDomainFunction();
 	};
 
 	renderSearchResults() {
@@ -1783,7 +1810,7 @@ class RegisterDomainStep extends Component {
 				onAddMapping={ onAddMapping }
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
-				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
+				onClickUseYourDomain={ this.getUseYourDomainHandler() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
@@ -1805,13 +1832,14 @@ class RegisterDomainStep extends Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
-				hideMatchReasons={ this.props.hideMatchReasons ?? this.props.isOnboarding }
+				hideMatchReasons={ this.props.hideMatchReasons }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
+				flowName={ this.props.flowName }
 			/>
 		);
 	}
@@ -1961,6 +1989,7 @@ export default connect(
 	{
 		recordDomainAvailabilityReceive,
 		recordDomainAddAvailabilityPreCheck,
+		recordDomainClickMissing,
 		recordFiltersReset,
 		recordFiltersSubmit,
 		recordMapDomainButtonClick,

@@ -38,6 +38,10 @@
 	--wp-components-color-foreground: #{$alert-green};
 }
 
+.dashboard-stat--is-loading .dashboard-stat__progress-bar > * {
+	display: none;
+}
+
 .dashboard-stat--density-low {
 	.dashboard-stat__metric {
 		font-size: $font-size-2x-large;

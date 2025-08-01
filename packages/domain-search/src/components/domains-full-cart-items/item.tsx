@@ -26,9 +26,13 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 				<VStack spacing={ 4 }>
 					<HStack alignment="top" justify="space-between" spacing={ 6 }>
 						<VStack spacing={ 2 } alignment="left">
-							<Text size="medium" aria-label={ `${ domain.domain }.${ domain.tld }` }>
+							<Text
+								size="medium"
+								aria-label={ `${ domain.domain }.${ domain.tld }` }
+								style={ { wordBreak: 'break-all' } }
+							>
 								{ domain.domain }
-								<Text size="inherit" weight={ 500 }>
+								<Text size="inherit" weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
 									.{ domain.tld }
 								</Text>
 							</Text>

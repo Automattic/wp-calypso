@@ -15,8 +15,8 @@ export const useTypedPlaceholder = ( phrases: string[], pauseAnimation = false )
 	const phraseIndexRef = useRef( 0 );
 	const timeoutIdRef = useRef< ReturnType< typeof setTimeout > >();
 
-	const timeBetweenChars = 70;
-	const timeBetweenPhrases = 2000;
+	const timeBetweenChars = 60;
+	const timeBetweenPhrases = 1500;
 
 	// Control animation state
 	useEffect( () => {

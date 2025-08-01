@@ -473,8 +473,10 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 
 export function resolveFeatureGroupsForFeaturesGrid( {
 	showSimplifiedFeatures,
+	isSummerSpecial,
 }: {
 	showSimplifiedFeatures?: boolean;
+	isSummerSpecial?: boolean;
 } = {} ): Partial< FeatureGroupMap > {
 	if ( showSimplifiedFeatures ) {
 		return {
@@ -488,12 +490,17 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
+			...( isSummerSpecial && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],
 			} ),
-			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			...( ! isSummerSpecial && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};

@@ -24,7 +24,10 @@ export async function fetchSiteSettings( siteId: number ): Promise< SiteSettings
 	return settings;
 }
 
-export async function updateSiteSettings( siteId: number, data: Partial< SiteSettings > ) {
+export async function updateSiteSettings(
+	siteId: number,
+	data: Partial< SiteSettings >
+): Promise< Partial< SiteSettings > > {
 	const { updated } = await wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/settings`,

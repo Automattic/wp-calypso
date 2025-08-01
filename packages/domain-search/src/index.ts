@@ -8,9 +8,10 @@ export { DomainSuggestionsList } from './components/domain-suggestions-list';
 export { DomainSuggestion } from './components/domain-suggestion';
 export { DomainSuggestionBadge } from './components/domain-suggestion-badge';
 export { DomainSuggestionPrice } from './components/domain-suggestion-price';
+export { DomainSuggestionCTA } from './components/domain-suggestion-cta';
 export { DomainSuggestionLoadMore } from './components/domain-suggestion-load-more';
 export { DomainSuggestionFilterReset } from './components/domain-suggestion-filter-reset';
 export * as DomainSearchControls from './components/domain-search-controls';
 
-export { useContainerQuery } from './hooks/use-container-query';
+export { useDomainSuggestionContainer } from './hooks/use-domain-suggestion-container';
 export { useTypedPlaceholder } from './hooks/use-typed-placeholder';

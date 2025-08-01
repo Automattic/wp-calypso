@@ -79,7 +79,7 @@ class MediaSettingsWriting extends Component {
 								label={ translate( 'Show photo metadata in carousel, when available' ) }
 							/>
 							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
-								{ translate( 'Background Color' ) }
+								{ translate( 'Background color' ) }
 							</FormLabel>
 							<FormSelect
 								name="carousel_background_color"

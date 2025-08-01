@@ -117,11 +117,13 @@ export default function ReaderFeedHeaderFollow( props ) {
 								</div>
 							) }
 						</div>
-						<RecommendButton
-							isLoading={ isRequestingRecommendedBlogs }
-							isRecommended={ isRecommended }
-							onClick={ toggleRecommended }
-						/>
+						{ ( following || isRecommended ) && (
+							<RecommendButton
+								isLoading={ isRequestingRecommendedBlogs }
+								isRecommended={ isRecommended }
+								onClick={ toggleRecommended }
+							/>
+						) }
 					</div>
 				) }
 			</div>

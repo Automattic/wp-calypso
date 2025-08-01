@@ -32,11 +32,13 @@
 		"checkout/google-pay": true,
 		"checkout/checkout-version": true,
 		"checkout/razorpay": false,
-		"current-site/domain-warning": true,
+		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2": true,
+		"dashboard/v2/backport/site-overview": false,
 		"dashboard/v2/backport/site-settings": true,
 		"dashboard/v2/backport/sites-list": true,
+		"dashboard/v2/security-settings": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
@@ -53,8 +55,10 @@
 		"help/gpt-response": true,
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
+		"hosting/hosting-features-callout": true,
 		"hosting/staging-sites-redesign": true,
 		"hosting-server-settings-enhancements": true,
+		"summer-special-2025": false,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,
 		"importer/unified": true,
@@ -172,5 +176,6 @@
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "wpcalypso",
 	"theme_color": "#1D2327",
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"survicate_enabled": true
 }

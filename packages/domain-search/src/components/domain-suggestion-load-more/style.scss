@@ -2,7 +2,8 @@
 
 .domain-suggestion-load-more__btn {
 	&.is-secondary {
-		color: var(--domain-search-secondary-action-color);
+		color: var( --domain-search-secondary-action-color );
 		box-shadow: inset 0 0 0 1px #{$gray-300};
+		background: $white;
 	}
 }

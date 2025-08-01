@@ -176,6 +176,19 @@ export function recordFiltersSubmit( filters, section, flowName ) {
 	);
 }
 
+export function recordDomainClickMissing( domain, section, flowName, query, type ) {
+	return composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Domain Click Missing from Results' ),
+		recordTracksEvent( 'calypso_domain_click_missing_from_results', {
+			domain,
+			section,
+			flow_name: flowName,
+			search_query: query,
+			type,
+		} )
+	);
+}
+
 let searchQueue = [];
 let searchStackTimer = null;
 let lastSearchTimestamp = null;

@@ -1,12 +1,14 @@
 import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -312,13 +314,14 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			productSaleCost,
 			premiumDomain,
+			flowName,
 		} = this.props;
 		const badges = [];
 
 		if ( isFeatured && this.isExactMatch() ) {
 			badges.push(
 				<DomainSuggestionBadge variation="success">
-					{ translate( 'It’s available!' ) }
+					{ translate( "It's available!" ) }
 				</DomainSuggestionBadge>
 			);
 		} else if ( isRecommended && isFeatured ) {
@@ -330,13 +333,15 @@ class DomainRegistrationSuggestion extends Component {
 		} else if ( isBestAlternative && isFeatured ) {
 			badges.push(
 				<DomainSuggestionBadge key="best-alternative">
-					{ translate( 'Best Alternative' ) }
+					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
 		}
 
+		const skipSaleBadge = isHundredYearPlanFlow( flowName );
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
-		if ( productSaleCost && paidDomain ) {
+		if ( productSaleCost && paidDomain && ! skipSaleBadge ) {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
@@ -357,6 +362,10 @@ class DomainRegistrationSuggestion extends Component {
 			);
 		}
 
+		if ( badges.length === 0 ) {
+			return null;
+		}
+
 		return badges;
 	}
 
@@ -370,7 +379,8 @@ class DomainRegistrationSuggestion extends Component {
 		if (
 			! Array.isArray( this.props.suggestion.match_reasons ) ||
 			hideMatchReasons ||
-			! isFeatured
+			! isFeatured ||
+			! this.isExactMatch()
 		) {
 			return null;
 		}
@@ -408,23 +418,20 @@ class DomainRegistrationSuggestion extends Component {
 					notice={ notice }
 					domain={ domainName }
 					tld={ tld.join( '.' ) }
-					disabled
+					cta={
+						<DomainSuggestionCTA.Primary
+							href="https://wordpress.com/help/contact"
+							label={ translate( 'Interested in this domain? Contact support' ) }
+							icon={ envelope }
+						>
+							{ translate( 'Contact support' ) }
+						</DomainSuggestionCTA.Primary>
+					}
 					price={
 						<DomainSuggestionPrice
 							salePrice={ productSaleCost }
 							price={ productCost }
 							renewPrice={ renewCost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
 						/>
 					}
 				/>

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -29,11 +30,16 @@ export default function StagingSiteDeleteModal( {
 	}
 
 	const handleDelete = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_click' );
 		mutation.mutate( undefined, {
 			onError: ( error: Error ) => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure' );
 				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
 					type: 'snackbar',
 				} );
+			},
+			onSuccess: () => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
 			},
 		} );
 	};

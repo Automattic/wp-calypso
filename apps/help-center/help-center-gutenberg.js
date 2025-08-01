@@ -41,7 +41,10 @@ function HelpCenterContent() {
 		return () => clearTimeout( timeout );
 	}, [] );
 
-	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+	const closeCallback = useCallback(
+		() => setShowHelpCenter( false, undefined, undefined, true ),
+		[ setShowHelpCenter ]
+	);
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 

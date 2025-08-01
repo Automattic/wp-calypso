@@ -19,7 +19,10 @@ type DomainSuggestionProps = {
 	price: React.ReactNode;
 	badges?: React.ReactNode;
 	notice?: React.ReactNode;
+	cta?: React.ReactNode;
 } & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
+
+const ICON_SIZE = 24;
 
 const DomainSuggestionComponent = ( {
 	uuid,
@@ -30,6 +33,7 @@ const DomainSuggestionComponent = ( {
 	notice,
 	onClick,
 	disabled,
+	cta,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
@@ -40,53 +44,58 @@ const DomainSuggestionComponent = ( {
 	const { activeQuery } = listContext;
 
 	const domainName = (
-		<span style={ { lineHeight: '24px' } }>
-			<Text
-				size={ activeQuery === 'large' ? 18 : 16 }
-				style={ {
-					verticalAlign: 'middle',
-					lineHeight: 'inherit',
-					marginRight: badges ? '12px' : undefined,
-				} }
+		<Text
+			size={ activeQuery === 'large' ? 18 : 16 }
+			className="domain-suggestions-list-item__domain-name-container"
+		>
+			<span
+				aria-label={ `${ domain }.${ tld }` }
+				className="domain-suggestions-list-item__domain-name"
 			>
-				<span
-					aria-label={ `${ domain }.${ tld }` }
-					style={ {
-						wordBreak: 'break-all',
-						// eslint-disable-next-line no-nested-ternary
-						marginRight: notice ? ( activeQuery === 'large' ? '8px' : '4px' ) : undefined,
-					} }
+				{ domain }
+				<Text
+					size="inherit"
+					lineHeight="inherit"
+					weight={ 500 }
+					className="domain-suggestions-list-item__domain-name-tld"
 				>
-					{ domain }
-					<Text size="inherit" weight={ 500 }>
-						.{ tld }
-					</Text>
-				</span>
+					.{ tld }
+				</Text>
 				{ notice && (
-					<span className="domain-suggestions-list-item__notice">
-						<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
-					</span>
+					<>
+						<span
+							aria-hidden="true"
+							style={ {
+								marginRight: activeQuery === 'large' ? '8px' : '4px',
+							} }
+						/>
+						<span className="domain-suggestions-list-item__notice">
+							<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
+						</span>
+					</>
 				) }
-			</Text>
+			</span>
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
-		</span>
-	);
-
-	const cta = (
-		<DomainSuggestionCTA onClick={ onClick } compact uuid={ uuid } disabled={ disabled } />
+		</Text>
 	);
 
 	const domainNameElement =
 		activeQuery === 'large' ? (
 			<HStack alignment="left" spacing={ 3 }>
-				<Icon icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
-				{ domainName }
+				<Icon icon={ globe } size={ ICON_SIZE } className="domain-suggestions-list-item__icon" />
+				<span style={ { lineHeight: `${ ICON_SIZE }px` } }>{ domainName }</span>
 			</HStack>
 		) : (
 			domainName
 		);
 
-	return <SuggestionSkeleton domainName={ domainNameElement } price={ price } cta={ cta } />;
+	return (
+		<SuggestionSkeleton
+			domainName={ domainNameElement }
+			price={ price }
+			cta={ cta ?? <DomainSuggestionCTA onClick={ onClick } uuid={ uuid } disabled={ disabled } /> }
+		/>
+	);
 };
 
 export const DomainSuggestion = ( props: DomainSuggestionProps ) => {

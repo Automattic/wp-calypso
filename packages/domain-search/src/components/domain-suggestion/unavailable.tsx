@@ -22,14 +22,15 @@ export interface UnavailableProps {
 	transferLink?: string;
 }
 
+const ICON_SIZE = 24;
+
 const UnavailableComponent = ( {
 	domain,
 	tld,
 	reason,
 	onTransferClick,
 	transferLink,
-	isWithinList,
-}: UnavailableProps & { isWithinList: boolean } ) => {
+}: UnavailableProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
@@ -42,13 +43,18 @@ const UnavailableComponent = ( {
 
 	const reasonText = useMemo( () => {
 		const styledTld = (
-			<Text size="inherit" weight={ 500 }>
+			<Text size="inherit" weight={ 500 } lineHeight="inherit" style={ { whiteSpace: 'nowrap' } }>
 				.{ tld }
 			</Text>
 		);
 
 		const styledDomain = (
-			<Text size="inherit" aria-label={ `${ domain }.${ tld }` }>
+			<Text
+				size="inherit"
+				lineHeight="inherit"
+				aria-label={ `${ domain }.${ tld }` }
+				style={ { wordBreak: 'break-all' } }
+			>
 				{ domain }
 				{ styledTld }
 			</Text>
@@ -85,7 +91,11 @@ const UnavailableComponent = ( {
 		throw new Error( `Unknown reason: ${ reason }` );
 	}
 
-	const reasonElement = <Text size={ activeQuery === 'large' ? 18 : 16 }>{ reasonText }</Text>;
+	const reasonElement = (
+		<Text size={ activeQuery === 'large' ? 18 : 16 } lineHeight="inherit">
+			{ reasonText }
+		</Text>
+	);
 
 	const onTransfer = ( onTransferClick || transferLink ) && (
 		<div
@@ -112,9 +122,15 @@ const UnavailableComponent = ( {
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
 			return (
-				<HStack alignment="left" spacing={ 3 }>
-					<Icon icon={ notAllowed } size={ 24 } style={ { flexShrink: 0 } } />
-					{ reasonElement }
+				<HStack alignment="left" spacing={ 6 }>
+					<HStack alignment="left" spacing={ 3 } style={ { width: 'auto' } }>
+						<Icon
+							icon={ notAllowed }
+							size={ ICON_SIZE }
+							className="domain-suggestions-list-item__icon"
+						/>
+						<span style={ { lineHeight: `${ ICON_SIZE }px` } }>{ reasonElement }</span>
+					</HStack>
 					{ onTransfer }
 				</HStack>
 			);
@@ -129,8 +145,11 @@ const UnavailableComponent = ( {
 	};
 
 	return (
-		<Card size={ activeQuery === 'large' ? 'medium' : 'small' }>
-			<CardBody style={ { borderRadius: 0 } } isShady={ isWithinList }>
+		<Card
+			size={ activeQuery === 'large' ? 'medium' : 'small' }
+			className="domain-suggestions-list-item-unavailable"
+		>
+			<CardBody style={ { borderRadius: 0 } } isShady>
 				{ getContent() }
 			</CardBody>
 		</Card>
@@ -143,10 +162,10 @@ export const Unavailable = ( props: UnavailableProps ) => {
 	if ( ! listContext ) {
 		return (
 			<DomainSuggestionsList>
-				<UnavailableComponent { ...props } isWithinList={ false } />
+				<UnavailableComponent { ...props } />
 			</DomainSuggestionsList>
 		);
 	}
 
-	return <UnavailableComponent { ...props } isWithinList />;
+	return <UnavailableComponent { ...props } />;
 };

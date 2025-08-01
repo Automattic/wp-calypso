@@ -229,3 +229,11 @@ export async function dashboardBackportSiteSettings( context: PageJSContext, nex
 
 	next();
 }
+
+export function redirectToSiteSettingsNewUrl( context: PageJSContext ) {
+	const { site, feature } = context.params;
+	if ( feature ) {
+		return page.redirect( `/sites/${ site }/settings/${ feature }` );
+	}
+	return page.redirect( `/sites/${ site }/settings` );
+}

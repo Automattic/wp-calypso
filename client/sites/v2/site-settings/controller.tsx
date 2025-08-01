@@ -7,7 +7,7 @@ export function redirectToHostingDashboardBackportIfEnabled(
 	next: () => void
 ) {
 	if ( isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
-		return page.redirect( `/sites/settings/v2/${ context.params.site }` );
+		return page.redirect( `/sites/${ context.params.site }/settings` );
 	}
 
 	next();

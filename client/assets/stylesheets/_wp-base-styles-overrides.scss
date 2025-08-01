@@ -10,30 +10,6 @@
 		--wp-admin-theme-color: var(--color-gray);
 	}
 
-	/* Woo */
-	.woo.is-woo-passwordless & {
-		&[type='text'],
-		&[type='password'] {
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 8px;
-			font-size: 1rem;
-			height: 48px;
-			padding: 8px 16px;
-
-			&:not(:focus, :disabled) {
-				border-color: var(--studio-gray-30);
-			}
-
-			&:focus {
-				border-width: 1.5px;
-			}
-
-			&:not(.is-error, .is-valid) {
-				--wp-admin-theme-color: var(--woo-purple-50);
-			}
-		}
-	}
-
 	/* Akismet */
 	.is-akismet &:not(.is-error, .is-valid) {
 		--wp-admin-theme-color: var(--color-akismet);

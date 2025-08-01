@@ -21,7 +21,17 @@ const textOverflowStyles = {
 
 const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
 
-const DomainName = ( { domain, site, value }: { domain: Domain; site?: Site; value: string } ) => {
+const DomainName = ( {
+	domain,
+	site,
+	value,
+	showPrimaryDomainBadge,
+}: {
+	domain: Domain;
+	site?: Site;
+	value: string;
+	showPrimaryDomainBadge?: boolean;
+} ) => {
 	const siteSlug = site?.slug ?? domain.site_slug;
 	const domainManagementUrl = site
 		? `${ window.location.origin }/overview/site-domain/domain/${ domain.domain }/${ siteSlug }`
@@ -29,9 +39,9 @@ const DomainName = ( { domain, site, value }: { domain: Domain; site?: Site; val
 
 	return (
 		<Link to={ domainManagementUrl } disabled={ domain.type === DomainTypes.WPCOM }>
-			<HStack alignment="center" spacing={ 1 }>
+			<HStack spacing={ 1 }>
 				<span style={ textOverflowStyles }>{ value }</span>
-				{ domain.primary_domain && (
+				{ showPrimaryDomainBadge && domain.primary_domain && (
 					<span style={ { flexShrink: 0 } }>
 						<Badge>{ __( 'Primary' ) }</Badge>
 					</span>
@@ -103,19 +113,36 @@ const DomainExpiry = ( {
 	);
 };
 
-export const useFields = ( { site }: { site?: Site } = {} ) => {
+export const useFields = ( {
+	site,
+	showPrimaryDomainBadge = true,
+}: {
+	site?: Site;
+	showPrimaryDomainBadge?: boolean;
+} = {} ) => {
 	const fields: Field< Domain >[] = useMemo(
 		() => [
 			{
 				id: 'domain',
-				label: __( 'Domains' ),
+				label: __( 'Domain' ),
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: Domain } ) => item.domain,
 				render: ( { field, item } ) => (
-					<DomainName domain={ item } site={ site } value={ field.getValue( { item } ) } />
+					<DomainName
+						domain={ item }
+						site={ site }
+						value={ field.getValue( { item } ) }
+						showPrimaryDomainBadge={ showPrimaryDomainBadge }
+					/>
 				),
+			},
+			{
+				id: 'is_primary_domain',
+				getValue: ( { item }: { item: Domain } ) => item.primary_domain,
+				render: ( { field, item } ) =>
+					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : null,
 			},
 			{
 				id: 'type',
@@ -169,7 +196,7 @@ export const useFields = ( { site }: { site?: Site } = {} ) => {
 				},
 			},
 		],
-		[ site ]
+		[ site, showPrimaryDomainBadge ]
 	);
 
 	return fields;

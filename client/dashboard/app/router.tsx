@@ -4,6 +4,7 @@ import {
 	createRootRoute,
 	redirect,
 	createLazyRoute,
+	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
@@ -17,11 +18,13 @@ import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
+import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
+import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
@@ -37,6 +40,7 @@ import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 interface RouteContext {
 	config?: AppConfig;
@@ -110,6 +114,7 @@ const siteRoute = createRoute( {
 			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
 	},
+	errorComponent: lazyRouteComponent( () => import( '../sites/site/error' ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -126,6 +131,7 @@ const siteOverviewRoute = createRoute( {
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteLastFiveActivityLogEntriesQuery( site.ID ) ),
 				hasHostingFeature( site, HostingFeatures.SCAN ) &&
 					queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 				hasHostingFeature( site, HostingFeatures.BACKUPS ) &&
@@ -141,7 +147,7 @@ const siteOverviewRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -152,6 +158,61 @@ const siteDeploymentsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteMonitoringRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'monitoring',
+} ).lazy( () =>
+	import( '../sites/monitoring' ).then( ( d ) =>
+		createLazyRoute( 'site-monitoring' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteLogsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'logs',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteBackupsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'backups',
+} ).lazy( () =>
+	import( '../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backups' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteDomainsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'domains',
+} ).lazy( () =>
+	import( '../sites/domains' ).then( ( d ) =>
+		createLazyRoute( 'site-domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteEmailsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'emails',
+} ).lazy( () =>
+	import( '../sites/emails' ).then( ( d ) =>
+		createLazyRoute( 'site-emails' )( {
 			component: d.default,
 		} )
 	)
@@ -396,6 +457,23 @@ const siteSettingsTransferSiteRoute = createRoute( {
 	)
 );
 
+const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/web-application-firewall',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-web-application-firewall' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-web-application-firewall' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
@@ -552,28 +630,54 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites ) {
-		children.push(
-			sitesRoute,
-			siteRoute.addChildren( [
-				siteOverviewRoute,
-				siteDeploymentsRoute,
-				sitePerformanceRoute,
-				siteSettingsRoute,
-				siteSettingsSiteVisibilityRoute,
-				siteSettingsSubscriptionGiftingRoute,
-				siteSettingsDatabaseRoute,
-				siteSettingsWordPressRoute,
-				siteSettingsPHPRoute,
-				siteSettingsAgencyRoute,
-				siteSettingsHundredYearPlanRoute,
-				siteSettingsPrimaryDataCenterRoute,
-				siteSettingsStaticFile404Route,
-				siteSettingsCachingRoute,
-				siteSettingsDefensiveModeRoute,
-				siteSettingsTransferSiteRoute,
-				siteSettingsSftpSshRoute,
-			] )
-		);
+		const siteChildren: AnyRoute[] = [
+			siteOverviewRoute,
+			siteSettingsRoute,
+			siteSettingsSiteVisibilityRoute,
+			siteSettingsSubscriptionGiftingRoute,
+			siteSettingsDatabaseRoute,
+			siteSettingsWordPressRoute,
+			siteSettingsPHPRoute,
+			siteSettingsAgencyRoute,
+			siteSettingsHundredYearPlanRoute,
+			siteSettingsPrimaryDataCenterRoute,
+			siteSettingsStaticFile404Route,
+			siteSettingsCachingRoute,
+			siteSettingsDefensiveModeRoute,
+			siteSettingsTransferSiteRoute,
+			siteSettingsSftpSshRoute,
+			siteSettingsWebApplicationFirewallRoute,
+		];
+
+		if ( config.supports.sites.deployments ) {
+			siteChildren.push( siteDeploymentsRoute );
+		}
+
+		if ( config.supports.sites.performance ) {
+			siteChildren.push( sitePerformanceRoute );
+		}
+
+		if ( config.supports.sites.monitoring ) {
+			siteChildren.push( siteMonitoringRoute );
+		}
+
+		if ( config.supports.sites.logs ) {
+			siteChildren.push( siteLogsRoute );
+		}
+
+		if ( config.supports.sites.backups ) {
+			siteChildren.push( siteBackupsRoute );
+		}
+
+		if ( config.supports.sites.domains ) {
+			siteChildren.push( siteDomainsRoute );
+		}
+
+		if ( config.supports.sites.emails ) {
+			siteChildren.push( siteEmailsRoute );
+		}
+
+		children.push( sitesRoute, siteRoute.addChildren( siteChildren ) );
 	}
 
 	if ( config.supports.domains ) {
@@ -629,9 +733,26 @@ export {
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
+	siteMonitoringRoute,
+	siteLogsRoute,
+	siteBackupsRoute,
+	siteDomainsRoute,
+	siteEmailsRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
 	siteSettingsSubscriptionGiftingRoute,
+	siteSettingsDatabaseRoute,
+	siteSettingsWordPressRoute,
+	siteSettingsPHPRoute,
+	siteSettingsAgencyRoute,
+	siteSettingsHundredYearPlanRoute,
+	siteSettingsPrimaryDataCenterRoute,
+	siteSettingsStaticFile404Route,
+	siteSettingsCachingRoute,
+	siteSettingsDefensiveModeRoute,
+	siteSettingsTransferSiteRoute,
+	siteSettingsSftpSshRoute,
+	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

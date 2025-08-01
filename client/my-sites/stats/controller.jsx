@@ -488,6 +488,7 @@ export function emailStats( context, next ) {
 }
 
 export function emailSummary( context, next ) {
+	const MAX_ITEM_COUNT = 30; // The backend support only up to 30 items.
 	const givenSiteId = context.params.site;
 
 	const selectedSite = getSite( context.store.getState(), givenSiteId );
@@ -509,7 +510,11 @@ export function emailSummary( context, next ) {
 	const date = moment().locale( 'en' );
 
 	context.primary = (
-		<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } context={ context } />
+		<StatsEmailSummary
+			period={ rangeOfPeriod( activeFilter.period, date ) }
+			context={ context }
+			query={ { quantity: MAX_ITEM_COUNT } }
+		/>
 	);
 
 	next();

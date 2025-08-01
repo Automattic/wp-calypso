@@ -18,7 +18,7 @@ export async function fetchSshAccessStatus( siteId: number ): Promise< SshAccess
 	} );
 }
 
-export async function enableSshAccess( siteId: number ) {
+export async function enableSshAccess( siteId: number ): Promise< SshAccessStatus > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/ssh-access`,
@@ -28,7 +28,7 @@ export async function enableSshAccess( siteId: number ) {
 	);
 }
 
-export async function disableSshAccess( siteId: number ) {
+export async function disableSshAccess( siteId: number ): Promise< SshAccessStatus > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/ssh-access`,
