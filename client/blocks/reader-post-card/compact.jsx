@@ -82,7 +82,7 @@ const CompactPost = ( props ) => {
 				site={ site }
 				teams={ teams }
 				post={ post }
-				showFollow
+				showFollow={ ! shouldShowFollowButton() }
 				openSuggestedFollows={ openSuggestedFollows }
 			/>
 		</div>
