@@ -1,19 +1,10 @@
-import {
-	DomainSuggestionsList,
-	DomainSuggestion,
-	DomainSuggestionBadge,
-	DomainSuggestionCTA,
-	DomainSuggestionPrice,
-} from '@automattic/domain-search';
-import { formatCurrency } from '@automattic/number-formatters';
+import { DomainSuggestionsList, DomainSuggestion } from '@automattic/domain-search';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { parseMatchReasons } from 'calypso/components/domain-search-v2/domain-registration-suggestion/utility';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -22,7 +13,6 @@ import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
-import PremiumBadge from '../domain-registration-suggestion/premium-badge';
 import DomainSkipSuggestion from '../domain-skip-suggestion';
 import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 
@@ -73,7 +63,6 @@ class DomainSearchResults extends Component {
 			lastDomainSearched,
 			lastDomainTld,
 			selectedSite,
-			translate,
 			isDomainOnly,
 		} = this.props;
 		const suggestions = this.props.suggestions || [];
@@ -89,69 +78,6 @@ class DomainSearchResults extends Component {
 			TRANSFERRABLE_PREMIUM,
 			UNKNOWN,
 		} = domainAvailability;
-
-		const premiumDomain = this.props.premiumDomains[ lastDomainSearched ];
-
-		if ( premiumDomain?.is_price_limit_exceeded ) {
-			const [ domainName, ...tld ] = lastDomainSearched.split( '.' );
-
-			const currentUserCurrencyCode =
-				premiumDomain.currency_code || this.props.currentUserCurrencyCode;
-
-			let productSaleCost;
-
-			const badges = [];
-
-			if ( premiumDomain.sale_cost ) {
-				productSaleCost = formatCurrency( premiumDomain.sale_cost, currentUserCurrencyCode, {
-					stripZeros: true,
-				} );
-
-				const saleBadgeText = translate( 'Sale', {
-					comment: 'Shown next to a domain that has a special discounted sale price',
-				} );
-				badges.push(
-					<DomainSuggestionBadge key="sale" variation="warning">
-						{ saleBadgeText }
-					</DomainSuggestionBadge>
-				);
-			}
-
-			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
-
-			const suggestion = this.props.suggestions.find(
-				( s ) => s.domain_name === lastDomainSearched
-			);
-
-			return (
-				<DomainSuggestion.Featured
-					badges={ badges }
-					domain={ domainName }
-					tld={ tld.join( '.' ) }
-					matchReasons={
-						this.props.hideMatchReasons
-							? undefined
-							: parseMatchReasons( lastDomainSearched, suggestion.match_reasons )
-					}
-					cta={
-						<DomainSuggestionCTA.Primary
-							href="https://wordpress.com/help/contact"
-							label={ translate( 'Interested in this domain? Contact support' ) }
-							icon={ envelope }
-						>
-							{ translate( 'Contact support' ) }
-						</DomainSuggestionCTA.Primary>
-					}
-					price={
-						<DomainSuggestionPrice
-							salePrice={ productSaleCost }
-							price={ premiumDomain.cost }
-							renewPrice={ premiumDomain.renew_cost }
-						/>
-					}
-				/>
-			);
-		}
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
@@ -290,9 +216,7 @@ class DomainSearchResults extends Component {
 					! suggestion.isSubDomainSuggestion
 			);
 			const featuredSuggestions = suggestions.filter(
-				( suggestion ) =>
-					( suggestion.isRecommended || suggestion.isBestAlternative ) &&
-					! this.props.premiumDomains[ suggestion.domain_name ]?.is_price_limit_exceeded
+				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative
 			);
 
 			featuredSuggestionElement = featuredSuggestions.length > 0 && (
