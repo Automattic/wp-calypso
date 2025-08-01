@@ -47,8 +47,4 @@ export interface CalloutProps {
 	 * Elements will be arranged in a VStack with consistent spacing.
 	 */
 	actions?: ReactNode;
-	/**
-	 * Whether to expand to the maximum available width.
-	 */
-	expanded?: boolean;
 }

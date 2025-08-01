@@ -128,7 +128,6 @@ const DomainUpsellCardContent = ( {
 					onClick={ handleUpsell }
 				/>
 			}
-			expanded
 		/>
 	);
 };

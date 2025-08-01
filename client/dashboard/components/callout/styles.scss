@@ -3,7 +3,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .dashboard-callout {
-	max-width: 600px;
 	overflow: hidden;
 
 	&.is-highlight {
@@ -18,10 +17,6 @@
 		.dashboard-callout__content {
 			padding: $grid-unit-30;
 		}
-	}
-
-	&.is-expanded {
-		max-width: unset;
 	}
 }
 
