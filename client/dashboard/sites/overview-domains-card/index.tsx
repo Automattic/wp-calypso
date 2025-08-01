@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
+import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { SectionHeader } from '../../components/section-header';
 import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -122,7 +123,7 @@ export default function DomainsCard( {
 	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
 
 	if ( ! sitePlan || ! siteDomains ) {
-		return null;
+		return <CalloutSkeleton />;
 	}
 
 	if (
