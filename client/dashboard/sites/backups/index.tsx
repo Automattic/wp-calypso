@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLastFiveActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
 import { siteRoute } from '../../app/router';
@@ -61,7 +62,7 @@ const fields: Field< ActivityLogEntry >[] = [
 	{
 		id: 'date',
 		label: __( 'Date' ),
-		getValue: ( { item } ) => (
+		render: ( { item } ) => (
 			<>
 				<strong>{ dateI18n( 'F j, Y', item.published ) }</strong>
 				&nbsp;
@@ -72,11 +73,13 @@ const fields: Field< ActivityLogEntry >[] = [
 	{
 		id: 'action',
 		label: __( 'Action' ),
-		getValue: ( { item } ) => (
+		getValue: ( { item } ) => `${ item.summary }: ${ item.content.text }`,
+		render: ( { item } ) => (
 			<>
 				<strong>{ item.summary }</strong>: { item.content.text }
 			</>
 		),
+		enableGlobalSearch: true,
 	},
 	{
 		id: 'user',
@@ -86,17 +89,17 @@ const fields: Field< ActivityLogEntry >[] = [
 ];
 
 function Backups( { site }: { site: Site } ) {
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		fields: [ 'date', 'action', 'user' ],
+	} );
+
 	const { data: activityLog, isLoading: isLoadingActivityLog } = useQuery(
 		siteLastFiveActivityLogEntriesQuery( site.ID )
 	);
 
-	const filteredData =
-		activityLog?.filter( ( item ) => item.name && item.name.startsWith( 'rewind__' ) ) || [];
-
-	const view: View = {
-		type: 'table',
-		fields: [ 'date', 'action', 'user' ],
-	};
+	const rawData = activityLog || [];
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( rawData, view, fields );
 
 	return (
 		<DataViewsCard>
@@ -105,10 +108,10 @@ function Backups( { site }: { site: Site } ) {
 				data={ filteredData }
 				fields={ fields }
 				view={ view }
-				onChangeView={ () => {} }
+				onChangeView={ setView }
 				isLoading={ isLoadingActivityLog }
 				defaultLayouts={ { table: {} } }
-				paginationInfo={ { totalItems: filteredData.length, totalPages: 1 } }
+				paginationInfo={ paginationInfo }
 				perPageSizes={ DEFAULT_PER_PAGE_SIZES }
 				searchLabel={ __( 'Search backups' ) }
 			/>
