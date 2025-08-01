@@ -27,6 +27,7 @@ export default function DomainTransferUpsellCard() {
 					variant="secondary"
 				/>
 			}
+			expanded
 		/>
 	);
 }

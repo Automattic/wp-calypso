@@ -5,6 +5,7 @@ import {
 	__experimentalText as Text,
 	Icon,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 import type { CalloutProps } from './types';
 import './styles.scss';
@@ -20,11 +21,17 @@ function UnforwardedCallout(
 		description,
 		actions,
 		variant = 'default',
+		expanded,
 	}: CalloutProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	return (
-		<Card ref={ ref } className={ `dashboard-callout is-${ variant } is-image-${ imageVariant }` }>
+		<Card
+			ref={ ref }
+			className={ clsx( `dashboard-callout is-${ variant } is-image-${ imageVariant }`, {
+				'is-expanded': expanded,
+			} ) }
+		>
 			<HStack
 				className="dashboard-callout__h-container"
 				spacing="6"

@@ -44,6 +44,7 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 					tracksId="difm"
 				/>
 			}
+			expanded
 		/>
 	);
 }
