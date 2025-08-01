@@ -9,25 +9,19 @@ import {
 } from '@wordpress/components';
 import { cloneElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import {
-	chartBar,
-	cloud,
-	megaphone,
-	next,
-	removeBug,
-	shield,
-	search,
-	video,
-	wordpress,
-} from '@wordpress/icons';
+import { wordpress } from '@wordpress/icons';
 import filesize from 'filesize';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { siteMetricsQuery } from '../../app/queries/site-metrics';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { Stat } from '../../components/stat';
-import { DotcomPlans, JetpackFeatures } from '../../data/constants';
-import { hasPlanFeature } from '../../utils/site-features';
+import { DotcomPlans } from '../../data/constants';
+import {
+	getJetpackProductsForSite,
+	getSitePlanDisplayName,
+	JETPACK_PRODUCTS,
+} from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import OverviewCard from '../overview-card';
@@ -37,69 +31,6 @@ import './style.scss';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 const ALERT_PERCENT = 80;
-
-const JETPACK_PRODUCTS = [
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-stats.php#L82
-		id: JetpackFeatures.STATS,
-		icon: chartBar,
-		label: __( 'Stats' ),
-		description: __( 'Clear, concise, and actionable analysis of your site performance.' ),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-backup.php#L80
-		id: JetpackFeatures.BACKUPS,
-		icon: cloud,
-		label: __( 'VaultPress Backup' ),
-		description: __(
-			'Real-time backups save every change, and one-click restores get you back online quickly.'
-		),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-social.php#L78
-		id: JetpackFeatures.SOCIAL_ENHANCED_PUBLISHING,
-		icon: megaphone,
-		label: __( 'Social' ),
-		description: __(
-			'Auto‑share your posts to social networks and track engagement in one place.'
-		),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-boost.php#L87
-		id: JetpackFeatures.CLOUD_CRITICAL_CSS,
-		icon: next,
-		label: __( 'Boost' ),
-		description: __( 'Improves your site speed and performance.' ),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-anti-spam.php#L51
-		id: JetpackFeatures.ANTISPAM,
-		icon: removeBug,
-		label: __( 'Akismet Anti-spam' ),
-		description: __( 'Automatically clear spam from comments and forms.' ),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-search.php#L94
-		id: JetpackFeatures.SEARCH,
-		icon: search,
-		label: __( 'Search' ),
-		description: __( 'Instantly deliver the most relevant results to your visitors.' ),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-scan.php#L46
-		id: JetpackFeatures.SCAN,
-		icon: shield,
-		label: __( 'Scan' ),
-		description: __( 'Guard against malware and bad actors 24/7.' ),
-	},
-	{
-		// See: https://github.com/Automattic/jetpack/blob/46e8a181299c296ac8e108daa2f2c6f9761a2d82/projects/packages/my-jetpack/src/products/class-videopress.php#L88
-		id: JetpackFeatures.VIDEOPRESS,
-		icon: video,
-		label: __( 'VideoPress' ),
-		description: __( 'Powerful and flexible video hosting.' ),
-	},
-];
 
 function getCurrentMonthRangeTimestamps() {
 	const now = new Date();
@@ -133,26 +64,6 @@ function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
 	return `${ products.map( ( product ) => product.label ).join( ', ' ) }.`;
 }
 
-function getJetpackProducts( site: Site ) {
-	return JETPACK_PRODUCTS.filter( ( product ) =>
-		hasPlanFeature( site, product.id as JetpackFeatures )
-	);
-}
-
-function getJetpackHeading( site: Site ) {
-	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
-		const products = getJetpackProducts( site );
-		if ( products.length === 1 ) {
-			return products[ 0 ].label;
-		}
-		if ( products.length > 1 ) {
-			return __( 'Jetpack' );
-		}
-	}
-
-	return site.plan?.product_name;
-}
-
 function JetpackPlanCard( {
 	site,
 	purchase,
@@ -162,14 +73,14 @@ function JetpackPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
-	const products = getJetpackProducts( site );
+	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
 	return (
 		<OverviewCard
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
-			heading={ getJetpackHeading( site ) }
+			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			externalLink={ `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }` }
 			tracksId="plan"
@@ -263,7 +174,7 @@ function WpcomPlanCard( {
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ icon }
-			heading={ site.plan?.product_name_short }
+			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			tracksId="plan"
 			isLoading={ isLoading || isLoadingMediaStorage || isLoadingBandwidth }
@@ -331,7 +242,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
-		return getJetpackProducts( site ).length > 0
+		return getJetpackProductsForSite( site ).length > 0
 			? __( 'Manage subscriptions.' )
 			: __( 'Upgrade to access more Jetpack tools.' );
 	}

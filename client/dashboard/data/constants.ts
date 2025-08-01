@@ -30,6 +30,7 @@ export enum DotcomFeatures {
 }
 
 // Features that are used to identify the paid product.
+// Feature slug extracted from https://github.com/Automattic/jetpack/tree/trunk/projects/packages/my-jetpack/src/products.
 export enum JetpackFeatures {
 	ANTISPAM = 'antispam',
 	BACKUPS = 'backups',
@@ -40,6 +41,11 @@ export enum JetpackFeatures {
 	STATS = 'stats-paid',
 	SEARCH = 'search',
 	VIDEOPRESS = 'videopress',
+}
+
+export enum JetpackModules {
+	MONITOR = 'monitor',
+	STATS = 'stats',
 }
 
 // Features that needs Atomic or self-hosted infrastructure,
@@ -57,9 +63,4 @@ export enum HostingFeatures {
 	SSH = DotcomFeatures.SSH,
 	STAGING_SITE = DotcomFeatures.STAGING_SITES,
 	STATIC_FILE_404 = DotcomFeatures.SFTP,
-}
-
-export enum JetpackModules {
-	MONITOR = 'monitor',
-	STATS = 'stats',
 }
