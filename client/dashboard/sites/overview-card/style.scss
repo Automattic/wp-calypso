@@ -15,8 +15,6 @@
 	}
 
 	.dashboard-callout {
-		max-width: 100% !important;
-
 		.dashboard-callout__h-container {
 			padding: 24px;
 		}
@@ -27,7 +25,7 @@
 	border-radius: $radius-large;
 	padding: 24px;
 	// HStacks are width 100% and will try to grow as wide as the card body.
-    // We need to ensure this new padding is included as part of that 100%.
+	// We need to ensure this new padding is included as part of that 100%.
 	box-sizing: border-box;
 }
 
