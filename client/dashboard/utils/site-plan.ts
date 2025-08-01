@@ -45,7 +45,7 @@ export const JETPACK_PRODUCTS = [
 	{
 		id: JetpackFeatures.ANTISPAM,
 		icon: removeBug,
-		label: __( 'Jetpack Akismet Anti-spam' ),
+		label: __( 'Akismet Anti-spam' ),
 		description: __( 'Automatically clear spam from comments and forms.' ),
 	},
 	{
