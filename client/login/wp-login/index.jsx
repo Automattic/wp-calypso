@@ -208,6 +208,17 @@ export class Login extends Component {
 		);
 	}
 
+	getSupportLink() {
+		return (
+			<a
+				className="one-login__footer-link"
+				href="/support/category/manage-your-account/account-settings/"
+			>
+				{ this.props.translate( 'Support' ) }
+			</a>
+		);
+	}
+
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -258,6 +269,7 @@ export class Login extends Component {
 							isLoginView={ isLoginView }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
+							supportLink={ this.getSupportLink() }
 						/>
 					)
 				}
