@@ -8,6 +8,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import StagingSiteTransferBanner from 'calypso/sites/staging-site/components/staging-site-transfer-banner';
 import { useSelector } from 'calypso/state';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import ItemViewContent from './item-view-content';
@@ -37,15 +38,6 @@ export const createFeaturePreview = (
 		preview: enabled ? preview : null,
 	};
 };
-
-const StagingSiteTransferBanner = () => (
-	<div className="hosting-dashboard-item-view__staging-transfer-banner">
-		<h2>Staging Site Transfer In Progress</h2>
-		<p>
-			Your staging site is currently being transferred. Please wait while this process completes.
-		</p>
-	</div>
-);
 
 export default function ItemView( {
 	features,
