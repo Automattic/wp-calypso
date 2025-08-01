@@ -10,6 +10,10 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	flex-shrink: 0;
 	padding: 0;
 
+	@media ( max-width: $breakpoint-mobile ) {
+		display: none;
+	}
+
 	&.navigation-only {
 		background: none;
 	}
@@ -67,7 +71,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			&.separator::before {
 				content: "|";
 				color: #ddd;
-				font-weight: 300;
+				font-weight: 400;
 			}
 
 			a {
