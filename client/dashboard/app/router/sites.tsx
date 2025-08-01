@@ -532,6 +532,20 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	)
 );
 
+export const siteSettingsWpcomLoginRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/wpcom-login',
+	loader: async ( { params: { siteSlug } } ) => {
+		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-wpcom-login' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-wpcom-login' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
@@ -612,6 +626,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsTransferSiteRoute,
 		siteSettingsSftpSshRoute,
 		siteSettingsWebApplicationFirewallRoute,
+		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 	];
