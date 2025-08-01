@@ -765,7 +765,7 @@ class Signup extends Component {
 		);
 	}
 
-	renderCurrentStep() {
+	renderCurrentStep( isUnifiedCreateAccount ) {
 		const { stepName, flowName } = this.props;
 
 		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
@@ -779,8 +779,6 @@ class Signup extends Component {
 			...flowStepProps,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
-		const isUnifiedCreateAccount =
-			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && this.props.isWoo;
 		const shouldRenderLocaleSuggestions =
 			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && ! isUnifiedCreateAccount;
 
@@ -872,7 +870,9 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showPageHeader = ! this.props.isGravatar;
+		const isUnifiedCreateAccount =
+			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && this.props.isWoo;
+		const showPageHeader = ! this.props.isGravatar && ! isUnifiedCreateAccount;
 		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
@@ -898,7 +898,7 @@ class Signup extends Component {
 							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
-					<div className="signup__steps">{ this.renderCurrentStep() }</div>
+					<div className="signup__steps">{ this.renderCurrentStep( isUnifiedCreateAccount ) }</div>
 					{ this.state.bearerToken && (
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + this.state.bearerToken }
