@@ -92,10 +92,19 @@ export const leaveCheckout = ( {
 		? new URL( document.referrer ).origin
 		: null;
 
+	const searchParams = new URLSearchParams( window.location.search );
+
 	/**
 	 * Please see https://github.com/Automattic/wp-calypso/issues/105027
 	 */
-	if ( history.length > 1 && referringHost === window.location.origin ) {
+	if (
+		history.length > 1 &&
+		referringHost === window.location.origin &&
+		/**
+		 * prioritizeHistoryWhenBacking means the browser's native history is preferred over the checkoutBackUrl and `cancel_to`.
+		 */
+		searchParams.has( 'prioritizeHistoryWhenBacking' )
+	) {
 		history.back();
 		return;
 	}
@@ -108,8 +117,6 @@ export const leaveCheckout = ( {
 	const closeUrl = getCloseURL( { userHasClearedCart, previousPath, siteSlug } );
 
 	try {
-		const searchParams = new URLSearchParams( window.location.search );
-
 		if ( searchParams.has( 'signup' ) ) {
 			clearSignupDestinationCookie();
 		}

@@ -268,6 +268,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									redirect_to: redirectTo,
 									signup: 1,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									// See: https://github.com/Automattic/wp-calypso/pull/105028
+									prioritizeHistoryWhenBacking: 1,
 									coupon,
 								} )
 							);

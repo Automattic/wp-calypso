@@ -58,6 +58,7 @@ const hundredYearDomainTransfer: Flow = {
 					);
 
 					// use replace instead of assign to remove the processing URL from history
+					// TODO: add `?prioritizeHistoryWhenBacking=1` param to fix going back.
 					return window.location.replace(
 						`/checkout/no-site?signup=1&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
 							checkoutBackURL.href
