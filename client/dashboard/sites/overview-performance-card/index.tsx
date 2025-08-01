@@ -27,7 +27,7 @@ function PerformanceCardContentWithoutTests( { site }: { site: Site } ) {
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Run a test' ) }
-			description={ __( 'Your site hasn’t been tested yet' ) }
+			description={ __( 'Your site hasn’t been tested yet.' ) }
 			link={ getPerformanceUrl( site ) }
 		/>
 	);
@@ -69,14 +69,14 @@ function PerformanceCardContentWithFinishedTests( {
 	if ( status === 'good' ) {
 		description = sprintf(
 			/* translators: %s: time since last test run */
-			__( 'Tested %s' ),
+			__( 'Tested %s.' ),
 			timeSinceLastTest
 		);
 	} else {
 		const recommendationCount = Object.keys( report.audits ).length;
 		description = sprintf(
 			// translators: %(days) is the number of days until the link expires.
-			_n( '%d recommendation available', '%d recommendations available', recommendationCount ),
+			_n( '%d recommendation available.', '%d recommendations available.', recommendationCount ),
 			recommendationCount
 		);
 	}
@@ -137,7 +137,7 @@ export default function PerformanceCard( { site }: { site: Site } ) {
 			featureIcon={ CARD_PROPS.icon }
 			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Run a test' ) }
-			upsellDescription={ __( 'Your site hasn’t been tested yet' ) }
+			upsellDescription={ __( 'Your site hasn’t been tested yet.' ) }
 			upsellExternalLink={ getPerformanceUrl( site ) }
 		>
 			<PerformanceCardContent site={ site } />
