@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 
@@ -17,7 +16,6 @@ const SUMMER_SPECIAL_BANNER_PREFERENCE = 'dismissible-card-plugins-offer-2025';
 export default function SummerSpecialBanner( { visiblePlans = [], isFixed = false } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 
 	// Check if Premium or Personal plans are visible for the banner
 	const hasTargetPlan = visiblePlans?.some(
@@ -60,7 +58,13 @@ export default function SummerSpecialBanner( { visiblePlans = [], isFixed = fals
 								// translate: %(date)s is a date string in the format of "August 25, 2025"
 								'One-time offer: Install plugins available in all paid plans. Valid until %(date)s!',
 								{
-									args: { date: moment( '2025-08-25' ).format( 'LL' ) },
+									args: {
+										date: new Intl.DateTimeFormat( translate.localeSlug || 'en-US', {
+											month: 'long',
+											day: 'numeric',
+											year: 'numeric',
+										} ).format( new Date( '2025-08-25' ) ),
+									},
 								}
 							) }
 						</span>
