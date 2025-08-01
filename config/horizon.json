@@ -37,7 +37,7 @@
 		"google-my-business": false,
 		"help": true,
 		"home/layout-dev": true,
-		"hosting/hosting-features-callout": false,
+		"hosting/hosting-features-callout": true,
 		"hosting-server-settings-enhancements": true,
 		"summer-special-2025": false,
 		"hosting/staging-sites-redesign": false,
