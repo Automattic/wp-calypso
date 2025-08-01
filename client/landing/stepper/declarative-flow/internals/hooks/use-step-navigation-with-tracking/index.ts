@@ -1,4 +1,4 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useMemo } from '@wordpress/element';
 import {
@@ -8,7 +8,7 @@ import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from 'calypso/landing/stepper/constants';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
@@ -23,7 +23,12 @@ interface Params {
 	navigate: Navigate;
 }
 
-export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigate }: Params ) => {
+export const useStepNavigationWithTracking = ( {
+	flow,
+	currentStepRoute,
+	navigate,
+	stepSlugs,
+}: Params ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
 	const stepNavigation: any = flow.useStepNavigation( currentStepRoute, navigate );
@@ -35,6 +40,11 @@ export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigat
 		};
 	}, [] );
 
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
+
 	/**
 	 * If the previous step is defined in the store, and the current step is not the first step, we can go back.
 	 * We need to make sure we're not at the first step because `previousStep` is persisted and can be a step from another flow or another run of the current flow.
@@ -42,7 +52,13 @@ export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigat
 	 * the next where the onboard store data has updated, but `currentStepRoute` hasn't yet because the step hasn't been rendered yet. This would cause the back button
 	 * to flash briefly while navigating.
 	 */
-	const canUserGoBack = canUseAutomaticGoBack();
+	const canUserGoBack =
+		( stepData?.previousStep &&
+			currentStepRoute !== stepSlugs[ 0 ] &&
+			history.length > 1 &&
+			stepData.previousStep !== currentStepRoute ) ||
+		canUseAutomaticGoBack();
+
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 	const handleRecordStepNavigation = useCallback(
 		( {
