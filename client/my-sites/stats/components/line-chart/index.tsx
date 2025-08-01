@@ -2,8 +2,8 @@ import {
 	LineChart,
 	ThemeProvider,
 	jetpackTheme,
-	EventHandlerParams,
-	DataPointDate,
+	type EventHandlerParams,
+	type DataPointDate,
 } from '@automattic/charts';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
