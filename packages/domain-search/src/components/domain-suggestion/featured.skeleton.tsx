@@ -68,7 +68,7 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 							{ title }
 						</VStack>
 						<VStack
-							spacing={ 6 }
+							spacing={ 5 }
 							alignment="right"
 							className="domain-suggestion-featured__price-info"
 						>
