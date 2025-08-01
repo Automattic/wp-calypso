@@ -18,7 +18,10 @@ const CARD_PROPS = {
 };
 
 function getPerformanceUrl( site: Site, device?: string ) {
-	const url = `/sites/performance/${ site.slug }`;
+	const url = window?.location?.pathname?.startsWith( '/v2' )
+		? `https://wordpress.com/sites/performance/${ site.slug }`
+		: `/sites/performance/${ site.slug }`;
+
 	return device && device !== 'mobile' ? addQueryArgs( url, { initialTab: device } ) : url;
 }
 
