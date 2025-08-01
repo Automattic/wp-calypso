@@ -25,7 +25,7 @@
 	// Remove default card padding and add custom
 	padding: 0;
 
-	@media (min-width: 780px) {
+	@media (min-width: 781px) {
 		margin: 0 0 24px;
 	}
 
@@ -37,6 +37,16 @@
 		right: 0;
 		z-index: 100001;
 		margin: 0;
+
+		.layout__secondary ~ .layout__primary & {
+			left: var(--sidebar-width-max);
+		}
+
+		@media (max-width: 781px) {
+			.layout.focus-content .layout__secondary ~ .layout__primary & {
+				left: 0;
+			}
+		}
 	}
 
 	.card {

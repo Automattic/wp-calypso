@@ -812,29 +812,19 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
-					<>
-						<PlanNotice
-							visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
-							siteId={ siteId }
-							isInSignup={ isInSignup }
-							showLegacyStorageFeature={ showLegacyStorageFeature }
-							{ ...( coupon &&
-								discountEndDate && {
-									discountInformation: {
-										coupon,
-										discountEndDate,
-									},
-								} ) }
-						/>
-						{ config.isEnabled( 'summer-special-2025' ) && ! isInSignup && (
-							<AsyncLoad
-								require="calypso/blocks/summer-special-banner"
-								placeholder={ null }
-								visiblePlans={ gridPlansForFeaturesGrid }
-								isFixed={ false }
-							/>
-						) }
-					</>
+					<PlanNotice
+						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
+						siteId={ siteId }
+						isInSignup={ isInSignup }
+						showLegacyStorageFeature={ showLegacyStorageFeature }
+						{ ...( coupon &&
+							discountEndDate && {
+								discountInformation: {
+									coupon,
+									discountEndDate,
+								},
+							} ) }
+					/>
 				) }
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
@@ -984,7 +974,7 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
-			{ config.isEnabled( 'summer-special-2025' ) && isInSignup && (
+			{ config.isEnabled( 'summer-special-2025' ) && (
 				<AsyncLoad
 					require="calypso/blocks/summer-special-banner"
 					placeholder={ null }
