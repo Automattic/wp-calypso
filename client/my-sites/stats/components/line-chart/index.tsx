@@ -1,5 +1,10 @@
-import { LineChart, ThemeProvider, jetpackTheme, EventHandlerParams } from '@automattic/charts';
-import { DataPointDate } from '@automattic/charts/src/types';
+import {
+	LineChart,
+	ThemeProvider,
+	jetpackTheme,
+	EventHandlerParams,
+	DataPointDate,
+} from '@automattic/charts';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
