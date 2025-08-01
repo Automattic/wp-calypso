@@ -1,3 +1,4 @@
+import Gridicon from '@automattic/components/src/gridicon';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
@@ -11,11 +12,17 @@ import TimeSince from '../../components/time-since';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { ActivityLogEntry, Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+import './style.scss';
 
 const fields: Field< ActivityLogEntry >[] = [
 	{
 		id: 'gridicon',
-		render: () => null, // TODO: render the gridicon
+		render: ( { item } ) => (
+			<Gridicon
+				icon={ item.gridicon }
+				className="dashboard-overview-latest-activity-card__gridicon"
+			/>
+		),
 	},
 	{
 		id: 'content_text',

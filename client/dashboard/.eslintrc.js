@@ -37,6 +37,7 @@ module.exports = {
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
 							'!@automattic/components/src/circular-progress-bar',
+							'!@automattic/components/src/gridicon',
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',

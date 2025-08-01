@@ -1,0 +1,11 @@
+@import "@wordpress/base-styles/colors";
+
+.dashboard-overview-latest-activity-card__gridicon {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    fill: $gray-700;
+}
