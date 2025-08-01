@@ -3,7 +3,6 @@ import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
-import moment from 'moment';
 import { MemoExoticComponent } from 'react';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
@@ -818,7 +817,13 @@ const FEATURES_LIST: FeatureList = {
 				// translators: %(date)s is a date string in the format of "August 25, 2025"
 				'One-time offer: Install plugins available in all paid plans. Valid until %(date)s!',
 				{
-					args: { date: moment( '2025-08-25' ).format( 'MMMM, Do' ) },
+					args: {
+						date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
+							month: 'long',
+							day: 'numeric',
+							year: 'numeric',
+						} ).format( new Date( '2025-08-25' ) ),
+					},
 				}
 			),
 	},
