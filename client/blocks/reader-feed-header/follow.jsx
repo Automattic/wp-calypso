@@ -46,31 +46,38 @@ export default function ReaderFeedHeaderFollow( props ) {
 		}
 	}, [ dispatch, hasRequestedRecommendedBlogs, isRequestingRecommendedBlogs, owner ] );
 
-	const { following, hasOrganization, isEmailBlocked, isWPForTeamsItem, subscriptionId } =
-		useSelector( ( state ) => {
-			let _siteId = siteId;
-			let _feedId = feed?.feed_ID;
-			let _feed = _feedId ? getFeed( state, _feedId ) : undefined;
-			let _site = _siteId ? getSite( state, _siteId ) : undefined;
+	const {
+		following,
+		hasOrganization,
+		isEmailBlocked,
+		isWPForTeamsItem,
+		subscriptionId,
+		blogOwner,
+	} = useSelector( ( state ) => {
+		let _siteId = siteId;
+		let _feedId = feed?.feed_ID;
+		let _feed = _feedId ? getFeed( state, _feedId ) : undefined;
+		let _site = _siteId ? getSite( state, _siteId ) : undefined;
 
-			if ( _feed && ! _siteId ) {
-				_siteId = _feed.blog_ID || undefined;
-				_site = _siteId ? getSite( state, _feed.blog_ID ) : undefined;
-			}
+		if ( _feed && ! _siteId ) {
+			_siteId = _feed.blog_ID || undefined;
+			_site = _siteId ? getSite( state, _feed.blog_ID ) : undefined;
+		}
 
-			if ( _site && ! _feedId ) {
-				_feedId = _site.feed_ID;
-				_feed = _feedId ? getFeed( state, _site.feed_ID ) : undefined;
-			}
+		if ( _site && ! _feedId ) {
+			_feedId = _site.feed_ID;
+			_feed = _feedId ? getFeed( state, _site.feed_ID ) : undefined;
+		}
 
-			return {
-				following: _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ),
-				hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
-				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-				isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
-				subscriptionId: _feed?.subscription_id,
-			};
-		}, shallowEqual );
+		return {
+			following: _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ),
+			hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
+			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
+			isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
+			subscriptionId: _feed?.subscription_id,
+			blogOwner: _feed?.blog_owner,
+		};
+	}, shallowEqual );
 
 	const openSuggestedFollowsModal = ( followClicked ) => {
 		setIsSuggestedFollowsModalOpen( followClicked );
@@ -147,6 +154,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 					onClose={ onCloseSuggestedFollowModal }
 					siteId={ +siteId }
 					isVisible={ isSuggestedFollowsModalOpen }
+					author={ blogOwner }
+					prefetch
 				/>
 			) }
 		</div>
