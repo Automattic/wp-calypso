@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-export function getStatus( score: number ): 'poor' | 'neutral' | 'good' {
+export function getPerformanceStatus( score: number ): 'poor' | 'neutral' | 'good' {
 	if ( score <= 49 ) {
 		return 'poor';
 	} else if ( score < 90 ) {
@@ -9,7 +9,7 @@ export function getStatus( score: number ): 'poor' | 'neutral' | 'good' {
 	return 'good';
 }
 
-export function getStatusText( status: 'poor' | 'neutral' | 'good' ) {
+export function getPerformanceStatusText( status: 'poor' | 'neutral' | 'good' ) {
 	return {
 		poor: __( 'Poor' ),
 		neutral: __( 'Needs improvement' ),

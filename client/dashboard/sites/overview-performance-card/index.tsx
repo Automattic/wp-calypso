@@ -6,7 +6,7 @@ import { usePerformanceData } from '../../app/hooks/site-performance';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { useTimeSince } from '../../components/time-since';
 import { HostingFeatures } from '../../data/constants';
-import { getStatus, getStatusText } from '../../utils/site-performance';
+import { getPerformanceStatus, getPerformanceStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
 import type { PerformanceReport, Site, UrlPerformanceInsights } from '../../data/types';
@@ -48,8 +48,8 @@ function PerformanceCardContentWithFinishedTests( {
 } ) {
 	const worseScore = Math.min( desktopScore, mobileScore );
 
-	const status = getStatus( worseScore );
-	const statusText = getStatusText( status );
+	const status = getPerformanceStatus( worseScore );
+	const statusText = getPerformanceStatusText( status );
 
 	const report =
 		desktopScore < mobileScore
