@@ -47,7 +47,7 @@ export default function PaymentItem( props: Props ) {
 						<ExternalLink href={ payment.payment_link } target="_blank">
 							{ translate( 'Pay' ) }
 							<span className="sr-only">
-								{ translate( 'Pay for order %(name)s', {
+								{ translate( 'Pay for %(name)s', {
 									args: { name: payment.id },
 								} ) }
 							</span>
