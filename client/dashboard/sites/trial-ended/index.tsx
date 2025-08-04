@@ -9,11 +9,13 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePlanBySlugQuery } from '../../app/queries/site-plans';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wasEcommerceTrial } from '../../utils/site-trials';
 import SiteDeleteModal from '../site-delete-modal';
 import type { Site } from '../../data/types';
@@ -50,6 +52,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const product = getProduct( site );
 	const { data: plan } = useQuery( sitePlanBySlugQuery( site.ID, product.slug ) );
+	const backUrl = window.location.href.replace( window.location.origin, '' );
 
 	if ( ! plan ) {
 		return null;
@@ -97,9 +100,15 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 								</VStack>
 							</HStack>
 							<HStack>
-								<Button variant="primary" href={ `/checkout/${ site.slug }/${ product.pathSlug }` }>
-									{ __( 'Purchase plan' ) }
-								</Button>
+								<UpsellCTAButton
+									text={ __( 'Purchase plan' ) }
+									tracksId="trial"
+									variant="primary"
+									href={ addQueryArgs( `/checkout/${ site.slug }/${ product.pathSlug }`, {
+										cancel_to: backUrl,
+										redirect_to: backUrl,
+									} ) }
+								/>
 							</HStack>
 						</VStack>
 					</CardBody>
