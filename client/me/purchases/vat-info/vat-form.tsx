@@ -25,7 +25,7 @@ import type { VatField, VatFormControlProps, VatFormData } from './types';
 function VatSelectControl( { data, field, onChange }: VatFormControlProps ) {
 	const translate = useTranslate();
 
-	const { elements, getValue, id, label, isDisabled, isVatAlreadySet } = field;
+	const { elements, getValue, id, label, isDisabled, isVatAlreadySet, canUserEdit } = field;
 
 	const options =
 		elements?.length === 0
@@ -35,7 +35,7 @@ function VatSelectControl( { data, field, onChange }: VatFormControlProps ) {
 		<SelectControl
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
-			disabled={ isDisabled || isVatAlreadySet || elements?.length === 0 }
+			disabled={ isDisabled || ( isVatAlreadySet && ! canUserEdit ) || elements?.length === 0 }
 			label={ label }
 			value={ getValue( { item: data } ) }
 			onChange={ ( value ) => onChange( { [ id ]: value } ) }
@@ -48,7 +48,7 @@ function VatIdControl( { data, field, onChange }: VatFormControlProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { getValue, id, isDisabled, isVatAlreadySet, label, taxName } = field;
+	const { getValue, id, isDisabled, isVatAlreadySet, canUserEdit, label, taxName } = field;
 	const { country } = data;
 
 	const vatIdHelp = translate(
@@ -74,7 +74,7 @@ function VatIdControl( { data, field, onChange }: VatFormControlProps ) {
 	return (
 		<InputControl
 			__next40pxDefaultSize
-			disabled={ isDisabled || isVatAlreadySet }
+			disabled={ isDisabled || ( isVatAlreadySet && ! canUserEdit ) }
 			help={ isVatAlreadySet && vatIdHelp }
 			label={ label }
 			onChange={ ( value ) => onChange( { [ id ]: value } ) }
@@ -106,6 +106,7 @@ export default function VatForm() {
 
 	const { isLoading, isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
 		useVatDetails();
+
 	const countryCodes = useDataFormCountryCodes();
 
 	const formData = useMemo( () => {
@@ -129,6 +130,7 @@ export default function VatForm() {
 
 	const isVatAlreadySet = !! vatDetails.id;
 	const isDisabled = isLoading || isUpdating;
+	const canUserEdit = vatDetails.can_user_edit ?? false;
 
 	const fields: VatField[] = [
 		{
@@ -137,6 +139,7 @@ export default function VatForm() {
 			id: 'country',
 			isDisabled,
 			isVatAlreadySet,
+			canUserEdit,
 			label: translate( 'Country' ),
 		},
 		{
@@ -144,6 +147,7 @@ export default function VatForm() {
 			id: 'id',
 			isDisabled,
 			isVatAlreadySet,
+			canUserEdit,
 			label: translate( 'VAT ID' ),
 			taxName,
 		},
