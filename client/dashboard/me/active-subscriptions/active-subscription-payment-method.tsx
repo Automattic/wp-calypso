@@ -33,7 +33,7 @@ export function ActiveSubscriptionPaymentMethod( {
 		! isDisconnectedSite
 	) {
 		return (
-			<div className="purchase-item__no-payment-method">
+			<div>
 				<a href={ getAddPaymentMethodUrlFor( purchase ) }>{ __( 'Add payment method' ) }</a>
 			</div>
 		);
@@ -45,7 +45,7 @@ export function ActiveSubscriptionPaymentMethod( {
 		isAutoRenewEnabled( purchase )
 	) {
 		return (
-			<div className="purchase-item__no-payment-method">
+			<div>
 				<span>{ __( 'You don’t have a payment method to renew this subscription' ) }</span>
 			</div>
 		);

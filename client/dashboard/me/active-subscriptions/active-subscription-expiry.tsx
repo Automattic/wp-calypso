@@ -64,14 +64,9 @@ export function ActiveSubscriptionExpiry( {
 	) {
 		return (
 			<>
-				<span className="purchase-item__is-error">
-					{ __( 'Activate your product license key' ) }
-				</span>
+				<span>{ __( 'Activate your product license key' ) }</span>
 				<br />
-				<ExternalLink
-					className="purchase-item__link"
-					href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
-				>
+				<ExternalLink href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/">
 					{ __( 'Learn more' ) }
 				</ExternalLink>
 			</>
@@ -85,14 +80,12 @@ export function ActiveSubscriptionExpiry( {
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 
 	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
-		return (
-			<span className="purchase-item__is-error">{ __( 'Disconnected from WordPress.com' ) }</span>
-		);
+		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
 	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType ) {
 		return (
-			<span className="purchase-item__is-error">
+			<span>
 				{ createInterpolateElement(
 					__(
 						'You no longer have access to this site and its purchases. <button>Contact support</button>'
@@ -138,7 +131,7 @@ export function ActiveSubscriptionExpiry( {
 				}
 			),
 			{
-				span: <span className="purchase-item__date" />,
+				span: <span />,
 				abbr: <abbr title={ excludeTaxStringTitle } />,
 			}
 		);
@@ -153,7 +146,7 @@ export function ActiveSubscriptionExpiry( {
 						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					} ),
 					{
-						span: <span className="purchase-item__date" />,
+						span: <span />,
 					}
 				) }
 			</span>
@@ -162,12 +155,12 @@ export function ActiveSubscriptionExpiry( {
 
 	const isRenewingOnDate = Boolean( isRenewing( purchase ) && purchase.renew_date );
 	if ( isRenewingOnDate && creditCardHasAlreadyExpired( purchase ) ) {
-		return <span className="purchase-item__is-error">{ __( 'Credit card expired' ) }</span>;
+		return <span>{ __( 'Credit card expired' ) }</span>;
 	}
 
 	if ( isRenewingOnDate && creditCardExpiresBeforeSubscription( purchase ) ) {
 		return (
-			<span className="purchase-item__is-warning">
+			<span>
 				{ createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date
@@ -177,7 +170,7 @@ export function ActiveSubscriptionExpiry( {
 						}
 					),
 					{
-						span: <span className="purchase-item__date" />,
+						span: <span />,
 					}
 				) }
 			</span>
@@ -195,7 +188,7 @@ export function ActiveSubscriptionExpiry( {
 		};
 		const translateComponents = {
 			abbr: <abbr title={ excludeTaxStringTitle } />,
-			span: <span className="purchase-item__date" />,
+			span: <span />,
 		};
 		switch ( purchase.bill_period_days ) {
 			case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
@@ -261,7 +254,7 @@ export function ActiveSubscriptionExpiry( {
 			),
 			{
 				abbr: <abbr title={ excludeTaxStringTitle } />,
-				span: <span className="purchase-item__date" />,
+				span: <span />,
 			}
 		);
 	}
@@ -280,7 +273,7 @@ export function ActiveSubscriptionExpiry( {
 						timeUntilExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
 						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					} ),
-					{ span: <span className="purchase-item__date" /> }
+					{ span: <span /> }
 				) }
 			</span>
 		);
@@ -293,7 +286,7 @@ export function ActiveSubscriptionExpiry( {
 				formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 			] ),
 			{
-				span: <span className="purchase-item__date" />,
+				span: <span />,
 			}
 		);
 	}
@@ -312,11 +305,7 @@ export function ActiveSubscriptionExpiry( {
 			timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
 		} );
 
-		return (
-			<span className="purchase-item__is-error">
-				{ isExpiredToday ? expiredTodayText : expiredFromNowText }
-			</span>
-		);
+		return <span>{ isExpiredToday ? expiredTodayText : expiredFromNowText }</span>;
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
