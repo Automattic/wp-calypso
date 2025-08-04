@@ -46,6 +46,7 @@ module.exports = {
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
+							'!@automattic/urls',
 							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
