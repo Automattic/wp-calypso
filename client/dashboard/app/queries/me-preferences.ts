@@ -5,7 +5,6 @@ import type { UserPreferences } from '../../data/me-preferences';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
-	'hosting-dashboard-overview-storage-notice-dismissed': null,
 };
 
 // Returns all user preferences, without applying any defaults.
