@@ -12,7 +12,6 @@ import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sit
 import { hasHostingFeature } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
-import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
@@ -40,6 +39,25 @@ import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
 import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
+import {
+	domainsRoute,
+	setSiteRoute,
+	siteDomainsRoute,
+	siteDomainRoute,
+	siteDomainChildRoutes,
+	siteDomainDnsRoute,
+	siteDomainDnsAddRoute,
+	siteDomainDnsEditRoute,
+	siteDomainForwardingRoute,
+	siteDomainForwardingAddRoute,
+	siteDomainForwardingEditRoute,
+	siteDomainContactInfoRoute,
+	siteDomainNameServersRoute,
+	siteDomainGlueRecordsRoute,
+	siteDomainDnssecRoute,
+	siteDomainTransferRoute,
+	setRootRoute,
+} from './routes/domain-routes';
 import type { AppConfig } from './context';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -192,17 +210,6 @@ const siteBackupsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainsRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains',
-} ).lazy( () =>
-	import( '../sites/domains' ).then( ( d ) =>
-		createLazyRoute( 'site-domains' )( {
 			component: d.default,
 		} )
 	)
@@ -478,150 +485,6 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	)
 );
 
-const siteDomainManagementRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains/$domainName',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-management' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainDnsRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'dns',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dns' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainDnsAddRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'dns/add',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dns-add' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainDnsEditRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'dns/edit',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dns-edit' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainForwardingRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'forwarding',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-forwarding' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainForwardingAddRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'forwarding/add',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-forwarding-add' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainForwardingEditRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'forwarding/edit',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-forwarding-edit' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainContactInfoRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'contact_info',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-contact-info' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainNameServersRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'name_servers',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-name-servers' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainGlueRecordsRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'glue_records',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-glue-records' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainDnssecRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'dnssec',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dnssec' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainTransferRoute = createRoute( {
-	getParentRoute: () => siteDomainManagementRoute,
-	path: 'transfer',
-} ).lazy( () =>
-	import( '../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-transfer' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const domainsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains',
-	loader: () => queryClient.ensureQueryData( domainsQuery() ),
-} ).lazy( () =>
-	import( '../domains' ).then( ( d ) =>
-		createLazyRoute( 'domains' )( {
-			component: d.default,
-		} )
-	)
-);
-
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
@@ -759,6 +622,11 @@ const notificationsRoute = createRoute( {
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
+	setRootRoute( rootRoute );
+
+	// Set up the siteRoute reference for domain routes
+	setSiteRoute( siteRoute );
+
 	children.push( indexRoute );
 
 	if ( config.supports.overview ) {
@@ -783,19 +651,6 @@ const createRouteTree = ( config: AppConfig ) => {
 			siteSettingsTransferSiteRoute,
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
-			siteDomainManagementRoute.addChildren( [
-				siteDomainDnsRoute,
-				siteDomainDnsAddRoute,
-				siteDomainDnsEditRoute,
-				siteDomainForwardingRoute,
-				siteDomainForwardingAddRoute,
-				siteDomainForwardingEditRoute,
-				siteDomainContactInfoRoute,
-				siteDomainNameServersRoute,
-				siteDomainGlueRecordsRoute,
-				siteDomainDnssecRoute,
-				siteDomainTransferRoute,
-			] ),
 		];
 
 		if ( config.supports.sites.deployments ) {
@@ -820,6 +675,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 		if ( config.supports.sites.domains ) {
 			siteChildren.push( siteDomainsRoute );
+			siteChildren.push( siteDomainRoute.addChildren( siteDomainChildRoutes ) );
 		}
 
 		if ( config.supports.sites.emails ) {
@@ -885,7 +741,6 @@ export {
 	siteMonitoringRoute,
 	siteLogsRoute,
 	siteBackupsRoute,
-	siteDomainsRoute,
 	siteEmailsRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
@@ -902,7 +757,8 @@ export {
 	siteSettingsTransferSiteRoute,
 	siteSettingsSftpSshRoute,
 	siteSettingsWebApplicationFirewallRoute,
-	siteDomainManagementRoute,
+	siteDomainsRoute,
+	siteDomainRoute,
 	siteDomainDnsRoute,
 	siteDomainDnsAddRoute,
 	siteDomainDnsEditRoute,
@@ -914,7 +770,6 @@ export {
 	siteDomainGlueRecordsRoute,
 	siteDomainDnssecRoute,
 	siteDomainTransferRoute,
-	domainsRoute,
 	emailsRoute,
 	meRoute,
 	profileRoute,
