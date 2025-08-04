@@ -1,7 +1,11 @@
 import { type Callback } from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import ClientSidebar from '../../components/sidebar-menu/client';
 import InvoicesOverview from '../purchases/invoices/invoices-overview';
 import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
@@ -10,6 +14,24 @@ import ClientLanding from './client-landing';
 import ClientCheckout from './primary/checkout';
 import ClientCheckoutV2 from './primary/checkout-v2';
 import SubscriptionsList from './primary/subscriptions-list';
+
+/**
+ * Component that serves the appropriate checkout version based on user's billing type.
+ * Redirects billingdragon users to checkout/v2, others get the standard checkout.
+ */
+const ClientCheckoutVersioned = () => {
+	const userBillingType = useSelector( getUserBillingType );
+	const isBillingTypeBD = userBillingType === 'billingdragon';
+
+	useEffect( () => {
+		if ( isBillingTypeBD ) {
+			page.redirect( '/client/checkout/v2' );
+		}
+	}, [ isBillingTypeBD ] );
+
+	// If not billingdragon, render the normal checkout
+	return <ClientCheckout />;
+};
 
 export const clientLandingContext: Callback = ( context, next ) => {
 	context.primary = <ClientLanding />;
@@ -70,7 +92,7 @@ export const clientCheckoutContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Client > Checkout" path={ context.path } />
-			<ClientCheckout />
+			<ClientCheckoutVersioned />
 		</>
 	);
 	next();
