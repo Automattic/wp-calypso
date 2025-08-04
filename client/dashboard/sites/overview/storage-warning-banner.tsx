@@ -1,17 +1,15 @@
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
+import filesize from 'filesize';
 import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/me-preferences';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import Notice from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { getStorageAlertLevel } from '../../utils/site-storage';
 import type { Site } from '../../data/types';
 
 export function StorageWarningBanner( { site }: { site: Site } ) {
-	const {
-		data: {
-			extra: { alertLevel, storageUsedDisplay, maxStorageDisplay },
-		},
-	} = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
@@ -21,6 +19,8 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 
 	// Optimistically hide the banner assuming the preference will get saved.
 	const isDismissed = isDismissedPersisted || isDismissing;
+
+	const alertLevel = getStorageAlertLevel( mediaStorage );
 
 	if ( alertLevel === 'none' || ( alertLevel === 'low' && isDismissed ) ) {
 		return null;
@@ -57,8 +57,8 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
 				),
 				{
-					used: storageUsedDisplay,
-					available: maxStorageDisplay,
+					used: filesize( mediaStorage.storage_used_bytes, { round: 0 } ),
+					available: filesize( mediaStorage.max_storage_bytes, { round: 0 } ),
 				}
 			) }
 		</Notice>
