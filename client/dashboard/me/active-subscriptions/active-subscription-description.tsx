@@ -93,112 +93,133 @@ export function ActiveSubscriptionDescription( {
 
 	if ( site ) {
 		if ( productType && site.name && site.slug ) {
-			return createInterpolateElement(
-				sprintf(
-					// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
-					__( '%(purchaseType)s for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)' ),
-					{
-						purchaseType: productType,
-						siteName: site.name,
-						siteDomain: site.slug,
-					}
-				),
-				{
-					button: (
-						<Link
-							to={ getUrlForSiteLevelView( site.ID ) }
-							title={
-								// translators: the siteName is the name of the site
-								sprintf( __( 'View subscriptions for %(siteName)s' ), {
-									siteName: site.name,
-								} )
+			return (
+				<div>
+					{ createInterpolateElement(
+						sprintf(
+							// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
+							__(
+								'%(purchaseType)s for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)'
+							),
+							{
+								purchaseType: productType,
+								siteName: site.name,
+								siteDomain: site.slug,
 							}
-						/>
-					),
-					link: (
-						<a
-							href={ 'https://' + site.slug }
-							target="_blank"
-							rel="noreferrer"
-							title={
-								// translators: the siteName is the name of the site
-								sprintf( __( 'View %(siteName)s' ), {
-									siteName: site.name,
-								} )
-							}
-						/>
-					),
-				}
+						),
+						{
+							button: (
+								<Link
+									to={ getUrlForSiteLevelView( site.ID ) }
+									title={
+										// translators: the siteName is the name of the site
+										sprintf( __( 'View subscriptions for %(siteName)s' ), {
+											siteName: site.name,
+										} )
+									}
+								/>
+							),
+							link: (
+								<a
+									href={ 'https://' + site.slug }
+									target="_blank"
+									rel="noreferrer"
+									title={
+										// translators: the siteName is the name of the site
+										sprintf( __( 'View %(siteName)s' ), {
+											siteName: site.name,
+										} )
+									}
+								/>
+							),
+						}
+					) }
+				</div>
 			);
 		}
 
 		if ( productType && site.slug ) {
-			return createInterpolateElement(
-				// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
-				sprintf( __( '%(purchaseType)s for <button>%(siteDomain)s</button>' ), {
-					purchaseType: productType,
-					siteDomain: site.slug,
-				} ),
-				{
-					button: (
-						<Link
-							to={ getUrlForSiteLevelView( site.ID ) }
-							title={
-								// translators: the siteDomain is the domain of the site
-								sprintf( __( 'View subscriptions for %(siteDomain)s' ), {
-									siteName: site.slug,
-								} )
-							}
-						/>
-					),
-				}
+			return (
+				<div>
+					{ createInterpolateElement(
+						// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
+						sprintf( __( '%(purchaseType)s for <button>%(siteDomain)s</button>' ), {
+							purchaseType: productType,
+							siteDomain: site.slug,
+						} ),
+						{
+							button: (
+								<Link
+									to={ getUrlForSiteLevelView( site.ID ) }
+									title={
+										// translators: the siteDomain is the domain of the site
+										sprintf( __( 'View subscriptions for %(siteDomain)s' ), {
+											siteName: site.slug,
+										} )
+									}
+								/>
+							),
+						}
+					) }
+				</div>
 			);
 		}
 
 		if ( site.name && site.slug ) {
-			return createInterpolateElement(
-				// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-				sprintf( __( 'for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)' ), {
-					siteName: site.name,
-					siteDomain: site.slug,
-				} ),
-				{
-					button: (
-						<Link
-							to={ getUrlForSiteLevelView( site.ID ) }
-							title={
-								// translators: the siteName is the name of the site
-								sprintf( __( 'View subscriptions for %(siteName)s' ), {
-									siteName: site.name,
-								} )
-							}
-						/>
-					),
-					link: (
-						<a
-							href={ 'https://' + site.slug }
-							target="_blank"
-							rel="noreferrer"
-							title={
-								// translators: the siteName is the name of the site
-								sprintf( __( 'View %(siteName)s' ), {
-									siteName: site.name,
-								} )
-							}
-						/>
-					),
-				}
+			return (
+				<div>
+					{ createInterpolateElement(
+						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
+						sprintf( __( 'for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)' ), {
+							siteName: site.name,
+							siteDomain: site.slug,
+						} ),
+						{
+							button: (
+								<Link
+									to={ getUrlForSiteLevelView( site.ID ) }
+									title={
+										// translators: the siteName is the name of the site
+										sprintf( __( 'View subscriptions for %(siteName)s' ), {
+											siteName: site.name,
+										} )
+									}
+								/>
+							),
+							link: (
+								<a
+									href={ 'https://' + site.slug }
+									target="_blank"
+									rel="noreferrer"
+									title={
+										// translators: the siteName is the name of the site
+										sprintf( __( 'View %(siteName)s' ), {
+											siteName: site.name,
+										} )
+									}
+								/>
+							),
+						}
+					) }
+				</div>
 			);
 		}
 	}
 
 	if ( ! site && productType ) {
-		// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
-		return sprintf( __( '%(purchaseType)s for %(site)s' ), {
-			purchaseType: productType,
-			site: purchase.domain,
-		} );
+		return (
+			<div>
+				{ sprintf(
+					// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
+					__( '%(purchaseType)s for %(site)s' ),
+					{
+						purchaseType: productType,
+						site: purchase.domain,
+					}
+				) }
+			</div>
+		);
 	}
 
-	return productType;
+	return <div>{ productType }</div>;
 }
