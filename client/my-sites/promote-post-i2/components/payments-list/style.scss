@@ -10,6 +10,17 @@
 		}
 	}
 	.promote-post-i2__table.payments-list__table {
+
+		tbody {
+			td.payment-item__status {
+				// Align vertical align of a payment status badge.
+				.badge {
+					height: 20px;
+					padding: 0 10px;
+				}
+			}
+		}
+
 		td.payment-item__actions {
 			text-align: right;
 
@@ -55,6 +66,8 @@
 				td.payment-item__credits {
 					display: none;
 				}
+
+
 			}
 
 		}
