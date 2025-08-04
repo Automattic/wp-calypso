@@ -40,8 +40,9 @@ import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
 import {
-	domainsRoute,
 	setSiteRoute,
+	setRootRoute,
+	domainsRoute,
 	siteDomainsRoute,
 	siteDomainRoute,
 	siteDomainChildRoutes,
@@ -56,7 +57,6 @@ import {
 	siteDomainGlueRecordsRoute,
 	siteDomainDnssecRoute,
 	siteDomainTransferRoute,
-	setRootRoute,
 } from './routes/domain-routes';
 import type { AppConfig } from './context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -622,6 +622,7 @@ const notificationsRoute = createRoute( {
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
+	// Set up the rootRoute reference for domain routes
 	setRootRoute( rootRoute );
 
 	// Set up the siteRoute reference for domain routes
@@ -741,6 +742,19 @@ export {
 	siteMonitoringRoute,
 	siteLogsRoute,
 	siteBackupsRoute,
+	siteDomainsRoute,
+	siteDomainRoute,
+	siteDomainDnsRoute,
+	siteDomainDnsAddRoute,
+	siteDomainDnsEditRoute,
+	siteDomainForwardingRoute,
+	siteDomainForwardingAddRoute,
+	siteDomainForwardingEditRoute,
+	siteDomainContactInfoRoute,
+	siteDomainNameServersRoute,
+	siteDomainGlueRecordsRoute,
+	siteDomainDnssecRoute,
+	siteDomainTransferRoute,
 	siteEmailsRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
@@ -757,19 +771,7 @@ export {
 	siteSettingsTransferSiteRoute,
 	siteSettingsSftpSshRoute,
 	siteSettingsWebApplicationFirewallRoute,
-	siteDomainsRoute,
-	siteDomainRoute,
-	siteDomainDnsRoute,
-	siteDomainDnsAddRoute,
-	siteDomainDnsEditRoute,
-	siteDomainForwardingRoute,
-	siteDomainForwardingAddRoute,
-	siteDomainForwardingEditRoute,
-	siteDomainContactInfoRoute,
-	siteDomainNameServersRoute,
-	siteDomainGlueRecordsRoute,
-	siteDomainDnssecRoute,
-	siteDomainTransferRoute,
+	domainsRoute,
 	emailsRoute,
 	meRoute,
 	profileRoute,
