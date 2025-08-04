@@ -1,4 +1,5 @@
 import { formatNumber } from '@automattic/number-formatters';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Popover, Icon } from '@wordpress/components';
 import { type SortDirection, type View, type Fields } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -151,13 +152,7 @@ function OwnerInfo( {
 				),
 				{
 					strong: <strong />,
-					link: (
-						<a
-							href="https://jetpack.com/contact-support/?rel=support"
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
+					link: <a href={ JETPACK_CONTACT_SUPPORT } target="_blank" rel="noopener noreferrer" />,
 				}
 			) }
 		</span>
