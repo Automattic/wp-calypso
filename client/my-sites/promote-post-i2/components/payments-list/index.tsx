@@ -1,5 +1,6 @@
 import './style.scss';
 import { CALYPSO_CONTACT } from '@automattic/urls';
+import { Spinner } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import Notice from 'calypso/components/notice';
@@ -121,7 +122,10 @@ export default function PaymentsList( props: Props ) {
 				<>
 					{ isFetching ? (
 						<div className="promote-post-i2__aux-wrapper">
-							{ translate( 'Please wait. Loading payments.' ) }
+							<div className="payments-list__loading">
+								<Spinner />
+								<p>{ translate( 'Please wait. Loading payments.' ) }</p>
+							</div>
 						</div>
 					) : (
 						<table className="promote-post-i2__table payments-list__table">
