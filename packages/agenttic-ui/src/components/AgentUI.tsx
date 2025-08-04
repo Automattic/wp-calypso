@@ -1,6 +1,7 @@
 import React from 'react';
 import type { AgentUIProps } from '../types';
 import { Chat } from './chat/Chat';
+import { cn } from '../utils/classNames';
 
 /**
  * AgentUI - Pure UI component for chat interface
@@ -60,6 +61,7 @@ import { Chat } from './chat/Chat';
  * @param props.clearSuggestions
  * @param props.messageRenderer
  * @param props.floatingChatState
+ * @param props.className         - Additional CSS classes to apply to the component
  */
 export const AgentUI: React.FC< AgentUIProps > = ( {
 	messages,
@@ -78,26 +80,29 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
+	className,
 } ) => {
 	return (
-		<Chat
-			messages={ messages }
-			isProcessing={ isProcessing }
-			error={ error }
-			onSubmit={ onSubmit }
-			variant={ variant }
-			triggerIcon={ triggerIcon }
-			placeholder={ placeholder }
-			notice={ notice }
-			emptyView={ emptyView }
-			onOpen={ onOpen }
-			onExpand={ onExpand }
-			onClose={ onClose }
-			floatingChatState={ floatingChatState }
-			suggestions={ suggestions }
-			clearSuggestions={ clearSuggestions }
-			messageRenderer={ messageRenderer }
-		/>
+		<div className={ cn( 'agenttic-ui', className ) }>
+			<Chat
+				messages={ messages }
+				isProcessing={ isProcessing }
+				error={ error }
+				onSubmit={ onSubmit }
+				variant={ variant }
+				triggerIcon={ triggerIcon }
+				placeholder={ placeholder }
+				notice={ notice }
+				emptyView={ emptyView }
+				onOpen={ onOpen }
+				onExpand={ onExpand }
+				onClose={ onClose }
+				floatingChatState={ floatingChatState }
+				suggestions={ suggestions }
+				clearSuggestions={ clearSuggestions }
+				messageRenderer={ messageRenderer }
+			/>
+		</div>
 	);
 };
 
