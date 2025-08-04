@@ -92,7 +92,6 @@ export default function PaymentsList( props: Props ) {
 		},
 	];
 
-
 	if ( isError ) {
 		return (
 			<Notice
@@ -122,7 +121,7 @@ export default function PaymentsList( props: Props ) {
 				<>
 					{ isFetching ? (
 						<div className="promote-post-i2__aux-wrapper">
-							{ translate( 'Please wait. Loading orders.' ) }
+							{ translate( 'Please wait. Loading payments.' ) }
 						</div>
 					) : (
 						<table className="promote-post-i2__table payments-list__table">
