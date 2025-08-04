@@ -373,11 +373,9 @@ async function* processAgentResponseStream(
 
 				// Only continue to agent if at least one tool wants to return
 				if ( shouldReturnToAgent ) {
-					// Create tool result message with only NEW conversation parts since initial message
-					// This avoids duplicating the conversation history that was already sent initially
-					const historyDataParts = withHistory
-						? conversationHistoryToDataParts( newConversationParts )
-						: [];
+					// For requests that require multiple tool calls, we need to send the conversation history
+					const historyDataParts =
+						conversationHistoryToDataParts( newConversationParts );
 
 					const toolResultMessage = createToolResultMessage(
 						toolResults,
