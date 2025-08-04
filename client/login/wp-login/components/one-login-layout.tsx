@@ -15,6 +15,9 @@ interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromAkismet: boolean;
 	children: React.ReactNode;
+	/**
+	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
+	 */
 	signupUrl?: string;
 }
 
