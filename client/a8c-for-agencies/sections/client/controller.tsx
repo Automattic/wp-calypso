@@ -19,15 +19,16 @@ import SubscriptionsList from './primary/subscriptions-list';
  * Component that serves the appropriate checkout version based on user's billing type.
  * Redirects billingdragon users to checkout/v2, others get the standard checkout.
  */
-const ClientCheckoutVersioned = () => {
+const ClientCheckoutVersioned = ( { queryParams = '' } ) => {
 	const userBillingType = useSelector( getUserBillingType );
 	const isBillingTypeBD = userBillingType === 'billingdragon';
 
 	useEffect( () => {
 		if ( isBillingTypeBD ) {
-			page.redirect( '/client/checkout/v2' );
+			// Redirect to v2 with the same query parameters
+			page.redirect( `/client/checkout/v2${ queryParams }` );
 		}
-	}, [ isBillingTypeBD ] );
+	}, [ isBillingTypeBD, queryParams ] );
 
 	// If not billingdragon, render the normal checkout
 	return <ClientCheckout />;
@@ -89,10 +90,13 @@ export const clientInvoicesContext: Callback = ( context, next ) => {
 };
 
 export const clientCheckoutContext: Callback = ( context, next ) => {
+	// Get the search parameters from the URL
+	const queryParams = context.querystring ? `?${ context.querystring }` : '';
+
 	context.primary = (
 		<>
 			<PageViewTracker title="Client > Checkout" path={ context.path } />
-			<ClientCheckoutVersioned />
+			<ClientCheckoutVersioned queryParams={ queryParams } />
 		</>
 	);
 	next();
