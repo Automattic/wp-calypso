@@ -26,6 +26,7 @@ import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
+import { siteMediaStorageQuery } from './queries/site-media-storage';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
@@ -160,6 +161,8 @@ const siteOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+		await queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) );
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),

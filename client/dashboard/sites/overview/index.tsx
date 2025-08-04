@@ -31,8 +31,9 @@ import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import VisibilityCard from '../overview-visibility-card';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
-import './style.scss';
+import { StorageWarningBanner } from './storage-warning-banner';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import './style.scss';
 
 const SPACING = {
 	DEFAULT: 6,
@@ -118,6 +119,7 @@ function SiteOverview( {
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
