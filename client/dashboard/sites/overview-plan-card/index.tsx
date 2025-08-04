@@ -111,7 +111,11 @@ function WpcomPlanCard( {
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			externalLink={ `/plans/${ site.slug }` }
+			externalLink={
+				site.plan?.is_free
+					? `/plans/${ site.slug }`
+					: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }`
+			}
 			tracksId="plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
