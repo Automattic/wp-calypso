@@ -75,6 +75,10 @@ export function getJetpackProductsForSite( site: Site ) {
 }
 
 export function getSitePlanDisplayName( site: Site ) {
+	if ( site.is_wpcom_staging_site ) {
+		return __( 'Staging site' );
+	}
+
 	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
 		const products = getJetpackProductsForSite( site );
 		if ( products.length === 1 ) {
