@@ -76,14 +76,14 @@
 
 .site-selector .site.is-highlighted {
 	background-color: var(--color-neutral-5);
-}
 
-.site-selector .site.is-highlighted .site__domain{
- color: var(--color-text-subtle);
-}
+	.site__title {
+		color: var(--color-text);
+	}
 
-.site-selector .site.is-highlighted .site__title {
-	color: var(--color-text);
+	.site__domain {
+		color: var(--color-text-subtle);
+	}
 }
 
 .notouch .site-selector.is-hover-enabled .site:hover,
