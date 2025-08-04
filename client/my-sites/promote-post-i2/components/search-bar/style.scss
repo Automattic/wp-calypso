@@ -240,14 +240,3 @@ $break-medium-expanded-menu: $break-medium + 272px;
 		@include blazepress-search-bar-mobile;
 	}
 }
-
-
-body.is-section-promote-post-i2:not(.is-sidebar-collapsed) .main.promote-post-i2 {
-	.promote-post-i2__search-bar-wrapper.payments {
-		margin-bottom: 32px;
-
-		.segmented-control {
-			margin-left: 0;
-		}
-	}
-}
