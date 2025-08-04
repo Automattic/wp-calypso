@@ -10,4 +10,8 @@
 	background: linear-gradient(180deg, rgba(252, 252, 252, 0.65) 0%, #FCFCFC 100%);
 	backdrop-filter: blur(3px);
 	z-index: 1;
+
+	.dashboard-callout {
+		max-width: 600px;
+	}
 }

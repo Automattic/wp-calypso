@@ -18,6 +18,7 @@ import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -79,7 +80,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		: sprintf(
 				/* translators: %s: plan name. Eg. 'Personal' */
 				__( 'Sites on the %s plan run on our recommended PHP version.' ),
-				site?.plan?.product_name_short
+				getSitePlanDisplayName( site )
 		  );
 
 	return (

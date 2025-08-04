@@ -17,10 +17,20 @@ interface SkeletonProps {
 	matchReasonsList?: React.ReactNode;
 	price: React.ReactNode;
 	cta: React.ReactNode;
+	isSingleFeaturedSuggestion?: boolean;
 }
 
 export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( props, ref ) => {
-	const { activeQuery, className, badges, title, matchReasonsList, price, cta } = props;
+	const {
+		activeQuery,
+		className,
+		badges,
+		title,
+		matchReasonsList,
+		price,
+		cta,
+		isSingleFeaturedSuggestion,
+	} = props;
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
@@ -40,6 +50,25 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 						</VStack>
 						<VStack
 							spacing={ 6 }
+							alignment="right"
+							className="domain-suggestion-featured__price-info"
+						>
+							{ price }
+							{ cta }
+						</VStack>
+					</HStack>
+				);
+			}
+
+			if ( isSingleFeaturedSuggestion ) {
+				return (
+					<HStack spacing={ 6 } className="domain-suggestion-featured__content">
+						<VStack spacing={ 3 } style={ { justifyContent: 'center', height: '100%' } }>
+							{ badges }
+							{ title }
+						</VStack>
+						<VStack
+							spacing={ 5 }
 							alignment="right"
 							className="domain-suggestion-featured__price-info"
 						>

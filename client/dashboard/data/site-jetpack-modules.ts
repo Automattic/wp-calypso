@@ -1,6 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 
-export async function fetchJetpackModules( siteId: number ) {
+export async function fetchJetpackModules( siteId: number ): Promise< string[] > {
 	const { data } = await wpcom.req.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
 		path: '/jetpack/v4/module/all/',
 	} );

@@ -189,7 +189,8 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-.github-deployments-delete-deployment-dialog {
+.github-deployments-delete-deployment-dialog,
+.github-deployments-production-deployment-dialog {
 	max-width: 560px;
 
 	p,

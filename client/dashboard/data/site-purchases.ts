@@ -5,6 +5,7 @@ export interface Purchase {
 	active: boolean;
 	expiry_message: string;
 	is_cancelable: boolean;
+	partner_name: string;
 	product_slug: string;
 	user_id: string;
 }

@@ -18,8 +18,11 @@ import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 import ReferEnterpriseHosting from './refer-enterprise-hosting';
 
-export const marketplaceContext: Callback = () => {
-	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
+export const marketplaceContext: Callback = ( context ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+	const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
+	page.redirect( A4A_MARKETPLACE_HOSTING_LINK + purchaseTypeURLQuery );
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
@@ -45,13 +48,19 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	if ( ! context.params.section ) {
 		const currentAgency = getActiveAgency( context.store.getState() );
+
+		const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
+
 		page.redirect(
 			// If the agency is managing less than 5 sites, then we make wpcom as default section.
-			currentAgency?.signup_meta?.number_sites === '1-5'
+			( currentAgency?.signup_meta?.number_sites === '1-5'
 				? A4A_MARKETPLACE_HOSTING_WPCOM_LINK
-				: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+				: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK ) + purchaseTypeURLQuery
 		);
 		return;
 	}
@@ -62,7 +71,7 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview section={ section } />
+			<HostingOverview section={ section } defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();

@@ -57,14 +57,16 @@ const infoCardItems: InfoCardItem[] = [
 	},
 	{
 		title: __( 'Delete staging site' ),
-		description: __( 'Remove staging sites and manage advanced configurations in the Settings.' ),
+		description: __(
+			'Remove staging sites and manage advanced configurations in the staging site Settings.'
+		),
 		mainIcon: {
 			icon: trash,
 			fill: '#CC1818',
 			backgroundColor: '#CC181814',
 		},
 		locationIcon: cog,
-		location: __( 'Available in settings' ),
+		location: __( 'Available in staging site settings' ),
 	},
 	{
 		title: __( 'Try selective sync' ),

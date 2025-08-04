@@ -20,6 +20,7 @@ import OverviewCard from '../overview-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
 import LatestActivityCard from '../overview-latest-activity-card';
+import MigrateSiteCard from '../overview-migrate-site-card';
 import PlanCard from '../overview-plan-card';
 import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
@@ -117,17 +118,23 @@ function SiteOverview( {
 						<BackupCard site={ site } />
 					</Grid>
 					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
-						{ site.is_a4a_dev_site ? (
-							<AgencySiteShareCard site={ site } />
-						) : (
-							<OverviewCard
-								title={ __( 'Performance' ) }
-								icon={ chartBar }
-								heading="TBA"
-								description="TBA"
-								disabled
-							/>
-						) }
+						{ ( () => {
+							if ( site.is_a4a_dev_site ) {
+								return <AgencySiteShareCard site={ site } />;
+							}
+							if ( site.is_wpcom_atomic ) {
+								return (
+									<OverviewCard
+										title={ __( 'Performance' ) }
+										icon={ chartBar }
+										heading="TBA"
+										description="TBA"
+										disabled
+									/>
+								);
+							}
+							return <MigrateSiteCard site={ site } />;
+						} )() }
 						<ScanCard site={ site } />
 					</Grid>
 					<PlanCard site={ site } />
