@@ -7,11 +7,6 @@
  * @package happy-blocks
  */
 
-/**
- * Load functions from the h4 theme, we're using localized_wpcom_url here.
- */
-require_once WP_CONTENT_DIR . '/themes/h4/landing/marketing/pages/_common/lib/functions.php';
-
 if ( ! isset( $args ) ) {
 	$args = array();
 }
