@@ -1,5 +1,6 @@
 import {
 	audio,
+	background,
 	backup,
 	blockTable,
 	caution,
@@ -59,5 +60,5 @@ const icons: Record< string, React.ReactElement > = {
 };
 
 export function gridiconToWordPressIcon( slug: string ): React.ReactElement {
-	return icons[ slug ] ?? homeButton;
+	return icons[ slug ] ?? background;
 }
