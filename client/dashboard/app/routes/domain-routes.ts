@@ -28,6 +28,8 @@ export const domainsRoute = createRoute( {
 	)
 );
 
+// TODO: Add all domains domain management routes here or figure out how to do that with the definitions below
+
 // Site domains route
 export const siteDomainsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
