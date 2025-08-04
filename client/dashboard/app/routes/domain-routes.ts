@@ -47,8 +47,8 @@ export const siteDomainRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'domains/$domainName',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-management' )( {
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+		createLazyRoute( 'site-domains' )( {
 			component: d.default,
 		} )
 	)
@@ -59,7 +59,7 @@ export const siteDomainDnsRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'dns',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-dns' )( {
 			component: d.default,
 		} )
@@ -70,7 +70,7 @@ export const siteDomainDnsAddRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'dns/add',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-dns-add' )( {
 			component: d.default,
 		} )
@@ -81,7 +81,7 @@ export const siteDomainDnsEditRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'dns/edit',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-dns-edit' )( {
 			component: d.default,
 		} )
@@ -93,7 +93,7 @@ export const siteDomainForwardingRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'forwarding',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-forwarding' )( {
 			component: d.default,
 		} )
@@ -104,7 +104,7 @@ export const siteDomainForwardingAddRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'forwarding/add',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-forwarding-add' )( {
 			component: d.default,
 		} )
@@ -115,19 +115,18 @@ export const siteDomainForwardingEditRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'forwarding/edit',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-forwarding-edit' )( {
 			component: d.default,
 		} )
 	)
 );
 
-// Site domain management routes
 export const siteDomainContactInfoRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'contact_info',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-contact-info' )( {
 			component: d.default,
 		} )
@@ -138,7 +137,7 @@ export const siteDomainNameServersRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'name_servers',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-name-servers' )( {
 			component: d.default,
 		} )
@@ -149,7 +148,7 @@ export const siteDomainGlueRecordsRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'glue_records',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-glue-records' )( {
 			component: d.default,
 		} )
@@ -160,7 +159,7 @@ export const siteDomainDnssecRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'dnssec',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-dnssec' )( {
 			component: d.default,
 		} )
@@ -171,7 +170,7 @@ export const siteDomainTransferRoute = createRoute( {
 	getParentRoute: () => siteDomainRoute,
 	path: 'transfer',
 } ).lazy( () =>
-	import( '../../sites/domain-management/placeholder' ).then( ( d ) =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'site-domain-transfer' )( {
 			component: d.default,
 		} )
