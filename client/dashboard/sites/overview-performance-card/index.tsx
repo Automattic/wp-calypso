@@ -157,8 +157,8 @@ export default function PerformanceCard( { site }: { site: Site } ) {
 			feature={ HostingFeatures.PERFORMANCE }
 			featureIcon={ CARD_PROPS.icon }
 			tracksFeatureId={ CARD_PROPS.tracksId }
-			upsellHeading={ __( 'Run a test' ) }
-			upsellDescription={ __( 'Your site hasn’t been tested yet.' ) }
+			upsellHeading={ __( 'Test site performance' ) }
+			upsellDescription={ __( 'Get detailed metrics and recommendations.' ) }
 			upsellExternalLink={ getPerformanceUrl( site ) }
 		>
 			<PerformanceCardContent site={ site } />

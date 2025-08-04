@@ -13,8 +13,6 @@ import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
-import { hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
@@ -137,10 +135,10 @@ function SiteOverview( {
 									/>
 								);
 							}
-							if ( hasPlanFeature( site, HostingFeatures.PERFORMANCE ) ) {
-								return <PerformanceCard site={ site } />;
+							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
+								return <MigrateSiteCard site={ site } />;
 							}
-							return <MigrateSiteCard site={ site } />;
+							return <PerformanceCard site={ site } />;
 						} )() }
 						<ScanCard site={ site } />
 					</Grid>
