@@ -6,12 +6,20 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState, type ReactNode } from 'react';
+import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
+import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
+import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
 import SiteIcon from '../../sites/site-icon';
 import { ActiveSubscriptionDescription } from './active-subscription-description';
 import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
 import { ActiveSubscriptionPaymentMethod } from './active-subscription-payment-method';
-import { isRenewing, isTransferredOwnership } from './util';
+import {
+	isRenewing,
+	isTransferredOwnership,
+	isAkismetTemporarySitePurchase,
+	isMarketplaceTemporarySitePurchase,
+} from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Site } from '../../data/site';
@@ -116,6 +124,72 @@ function InfoPopover( { children }: { children: ReactNode } ) {
 	);
 }
 
+function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: ActiveSubscription } ) {
+	const size = 36;
+
+	if (
+		purchase.product_type === 'jetpack' ||
+		purchase.is_jetpack_ai_product ||
+		purchase.is_jetpack_stats_product ||
+		purchase.is_free_jetpack_stats_product
+	) {
+		return (
+			<div>
+				<img
+					src={ jetpackIcon }
+					alt="Jetpack icon"
+					style={ { width: size, height: size, minWidth: size } }
+				/>
+			</div>
+		);
+	}
+
+	if (
+		isMarketplaceTemporarySitePurchase( purchase ) &&
+		purchase.product_slug.startsWith( 'passport' )
+	) {
+		return (
+			<div>
+				<img
+					src={ passportIcon }
+					alt="Passport icon"
+					style={ { width: size, height: size, minWidth: size } }
+				/>
+			</div>
+		);
+	}
+
+	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+		return (
+			<div>
+				<img
+					src={ akismetIcon }
+					alt="Akismet icon"
+					style={ { width: size, height: size, minWidth: size } }
+				/>
+			</div>
+		);
+	}
+
+	if ( ! site ) {
+		return (
+			<div>
+				<img
+					src={ jetpackIcon }
+					alt="No site icon"
+					style={ { width: size, height: size, minWidth: size } }
+				/>
+			</div>
+		);
+	}
+
+	return (
+		<div>
+			<SiteIcon site={ site } size={ size } />
+		</div>
+	);
+}
+
 function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
@@ -207,7 +281,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
-						{ site ? <SiteIcon site={ site } /> : item.blog_id },
+						<PurchaseItemSiteIcon purchase={ item } site={ site } />
 					</a>
 				);
 			},

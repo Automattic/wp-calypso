@@ -306,3 +306,15 @@ export function isTransferredOwnership(
 export function isA4ATemporarySitePurchase( purchase: ActiveSubscription ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
 }
+
+export function isAkismetTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet';
+}
+
+export function isMarketplaceTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
+}
+
+export function isJetpackTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
+}
