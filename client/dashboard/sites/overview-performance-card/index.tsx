@@ -52,10 +52,8 @@ function PerformanceCardContentWithFinishedTests( {
 	const status = getPerformanceStatus( worseScore );
 	const statusText = getPerformanceStatusText( status );
 
-	const report =
-		desktopScore < mobileScore
-			? ( performanceData.pagespeed.desktop as PerformanceReport )
-			: ( performanceData.pagespeed.mobile as PerformanceReport );
+	const device = desktopScore < mobileScore ? 'desktop' : 'mobile';
+	const report = performanceData.pagespeed[ device ] as PerformanceReport;
 
 	const timeSinceLastTest = useTimeSince( report.timestamp );
 
@@ -83,8 +81,6 @@ function PerformanceCardContentWithFinishedTests( {
 			recommendationCount
 		);
 	}
-
-	const device = desktopScore < mobileScore ? 'desktop' : 'mobile';
 
 	return (
 		<OverviewCard
