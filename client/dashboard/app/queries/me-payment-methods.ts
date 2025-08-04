@@ -1,3 +1,4 @@
+import { queryOptions } from '@tanstack/react-query';
 import {
 	fetchPaymentMethods,
 	type PaymentMethodRequestType,
@@ -37,12 +38,13 @@ export const paymentMethodsQuery = ( {
 	 * Defaults to 'false'
 	 */
 	isForBusiness?: boolean | null;
-} ) => ( {
-	queryKey: [ storedPaymentMethodsQueryKey, type, expired ],
-	queryFn: () => fetchPaymentMethods( type, expired ),
-	enabled: ! isLoggedOut,
-	select: ( data: undefined | Array< StoredPaymentMethod > ) =>
-		Array.isArray( data ) && isForBusiness
-			? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
-			: data,
-} );
+} ) =>
+	queryOptions( {
+		queryKey: [ storedPaymentMethodsQueryKey, type, expired ],
+		queryFn: () => fetchPaymentMethods( type, expired ),
+		enabled: ! isLoggedOut,
+		select: ( data: undefined | Array< StoredPaymentMethod > ) =>
+			Array.isArray( data ) && isForBusiness
+				? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
+				: data,
+	} );
