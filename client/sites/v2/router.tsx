@@ -3,7 +3,7 @@ import { Outlet, createRootRoute, createRoute } from '@tanstack/react-router';
 import { siteBySlugQuery } from 'calypso/dashboard/app/queries/site';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import { canManageSite } from 'calypso/dashboard/sites/features';
-import { hasSiteTrialEnded } from 'calypso/dashboard/utils/site-trials';
+import { hasSiteTrialEnded } from 'calypso/dashboard/utils/site-trial';
 import Root from './components/root';
 
 /**

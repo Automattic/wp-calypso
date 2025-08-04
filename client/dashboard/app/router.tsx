@@ -10,7 +10,7 @@ import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sites/features';
 import { hasHostingFeature } from '../utils/site-features';
-import { hasSiteTrialEnded } from '../utils/site-trials';
+import { hasSiteTrialEnded } from '../utils/site-trial';
 import NotFound from './404';
 import UnknownError from './500';
 import { emailsQuery } from './queries/emails';

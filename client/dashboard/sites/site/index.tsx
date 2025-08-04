@@ -8,7 +8,7 @@ import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { hasSiteTrialEnded } from '../../utils/site-trials';
+import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { canManageSite, canViewStagingSite } from '../features';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
-import { hasSiteTrialEnded } from '../../utils/site-trials';
+import { hasSiteTrialEnded } from '../../utils/site-trial';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
 import type { Site } from '../../data/types';
 

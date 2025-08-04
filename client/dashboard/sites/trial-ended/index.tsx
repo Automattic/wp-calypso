@@ -16,7 +16,7 @@ import { sitePlanBySlugQuery } from '../../app/queries/site-plans';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { wasEcommerceTrial } from '../../utils/site-trials';
+import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
 import type { Site } from '../../data/types';
 import './style.scss';
