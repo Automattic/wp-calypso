@@ -15,6 +15,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -384,7 +385,17 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
 							description: translate(
-								'The organization, if filled, will be made public and considered the legal domain owner'
+								'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
+								{
+									components: {
+										a: (
+											<InlineSupportLink
+												supportContext="domain-registrations-and-privacy"
+												showIcon={ false }
+											/>
+										),
+									},
+								}
 							),
 						},
 						{

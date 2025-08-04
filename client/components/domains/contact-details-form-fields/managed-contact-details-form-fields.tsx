@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import CountrySelectMenu from 'calypso/my-sites/checkout/src/components/country-select-menu';
@@ -359,7 +360,17 @@ export class ManagedContactDetailsFormFields extends Component<
 						text={ translate( '+ Add organization name' ) }
 						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
 						description={ translate(
-							'The organization, if filled, will be made public and considered the legal domain owner'
+							'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
+							{
+								components: {
+									a: (
+										<InlineSupportLink
+											supportContext="domain-registrations-and-privacy"
+											showIcon={ false }
+										/>
+									),
+								},
+							}
 						) }
 					/>
 				</div>
