@@ -11,7 +11,7 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$show_search = isset( $args['show-search'] ) && $args['show-search'] === true;
+$show_search = isset( $args['show-search'] ) && ( true === $args['show-search'] );
 $active_page = isset( $args['active_page'] ) ? $args['active_page'] : '';
 
 
@@ -35,13 +35,13 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 		<ul class="navigation">
 			<li class="active"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support' ) ); ?>"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></a></li>
 			<li class="separator"></li>
-			<li class="<?php echo ( $active_page === 'guides' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides' ) ); ?>"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
-			<li class="<?php echo ( $active_page === 'courses' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/courses' ) ); ?>"><?php echo esc_html( __( 'Courses', 'happy-blocks' ) ); ?></a></li>
-			<li class="<?php echo ( $active_page === 'forums' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
-			<li class="<?php echo ( $active_page === 'contact' ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact' ) ); ?>"><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( 'guides' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides' ) ); ?>"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( 'courses' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/courses' ) ); ?>"><?php echo esc_html( __( 'Courses', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( 'forums' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
+			<li class="<?php echo ( 'contact' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact' ) ); ?>"><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></a></li>
 		</ul>
 	</nav>
-	<?php if ( $show_search ): ?>
+	<?php if ( $show_search ) : ?>
 	<div class="content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form id="support-search-form" class="" role="search" method="get" action="">
