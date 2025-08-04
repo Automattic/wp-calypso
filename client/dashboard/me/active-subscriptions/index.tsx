@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -20,13 +20,13 @@ import { isTransferredOwnership } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
 export default function ActiveSubscriptions() {
-	const { data: activeSubscriptions, isLoading: isLoadingPurchases } = useSuspenseQuery(
+	const { data: activeSubscriptions, isLoading: isLoadingPurchases } = useQuery(
 		activeSubscriptionsQuery( {} )
 	);
-	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useSuspenseQuery(
+	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		transferredPurchasesQuery( {} )
 	);
-	const { data: sites } = useSuspenseQuery( sitesQuery() );
+	const { data: sites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -34,7 +34,7 @@ export default function ActiveSubscriptions() {
 			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
 		}
 	} );
-	const { data: paymentMethods } = useSuspenseQuery( paymentMethodsQuery( {} ) );
+	const { data: paymentMethods } = useQuery( paymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
 		paymentMethods: paymentMethods ?? [],
