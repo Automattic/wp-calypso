@@ -122,6 +122,10 @@ export default function DomainsCard( {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
 
+	if ( site.is_wpcom_staging_site ) {
+		return null;
+	}
+
 	if ( ! sitePlan || ! siteDomains ) {
 		return <CalloutSkeleton />;
 	}
