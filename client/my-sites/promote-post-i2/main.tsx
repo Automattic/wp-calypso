@@ -164,7 +164,8 @@ export default function PromotedPosts( { tab }: Props ) {
 		! data?.paymentsBlocked &&
 		data?.paymentLinks &&
 		data?.paymentLinks.length > 0 &&
-		parseFloat( data.debt ) > 0;
+		parseFloat( data.debt ) > 0 &&
+		selectedTab !== 'payments';
 
 	const {
 		has_more_pages: campaignsHasMorePages,
