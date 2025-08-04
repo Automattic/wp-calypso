@@ -4,6 +4,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { formatDate } from '../../utils/datetime';
+import { SubscriptionBillPeriod } from './constants';
 import {
 	isTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
@@ -19,10 +20,6 @@ import {
 	isWithinLast,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_TRIENNIAL_PERIOD,
 } from './util';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
@@ -201,7 +198,7 @@ export function ActiveSubscriptionExpiry( {
 			span: <span className="purchase-item__date" />,
 		};
 		switch ( purchase.bill_period_days ) {
-			case PLAN_MONTHLY_PERIOD:
+			case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
 				return createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
@@ -212,7 +209,7 @@ export function ActiveSubscriptionExpiry( {
 					),
 					translateComponents
 				);
-			case PLAN_ANNUAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
@@ -223,7 +220,7 @@ export function ActiveSubscriptionExpiry( {
 					),
 					translateComponents
 				);
-			case PLAN_BIENNIAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
@@ -234,7 +231,7 @@ export function ActiveSubscriptionExpiry( {
 					),
 					translateComponents
 				);
-			case PLAN_TRIENNIAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"

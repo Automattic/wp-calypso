@@ -1,55 +1,6 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { SubscriptionBillPeriod, AkismetPlans } from './constants';
 import type { ActiveSubscription } from '../../data/me-active-subscriptions';
-
-export const PLAN_MONTHLY_PERIOD = 31;
-export const PLAN_ANNUAL_PERIOD = 365;
-export const PLAN_BIENNIAL_PERIOD = 730;
-export const PLAN_TRIENNIAL_PERIOD = 1095;
-export const PLAN_QUADRENNIAL_PERIOD = 1460;
-export const PLAN_QUINQUENNIAL_PERIOD = 1825;
-export const PLAN_SEXENNIAL_PERIOD = 2190;
-export const PLAN_SEPTENNIAL_PERIOD = 2555;
-export const PLAN_OCTENNIAL_PERIOD = 2920;
-export const PLAN_NOVENNIAL_PERIOD = 3285;
-export const PLAN_DECENNIAL_PERIOD = 3650;
-export const PLAN_CENTENNIAL_PERIOD = 36500;
-
-export const PRODUCT_AKISMET_FREE = 'ak_free_yearly';
-export const PRODUCT_AKISMET_PERSONAL_MONTHLY = 'ak_personal_monthly';
-export const PRODUCT_AKISMET_PERSONAL_YEARLY = 'ak_personal_yearly';
-export const PRODUCT_AKISMET_PLUS_BI_YEARLY = 'ak_plus_bi_yearly_1';
-export const PRODUCT_AKISMET_PLUS_YEARLY = 'ak_plus_yearly_1';
-export const PRODUCT_AKISMET_PLUS_MONTHLY = 'ak_plus_monthly_1';
-export const PRODUCT_AKISMET_PLUS_20K_BI_YEARLY = 'ak_plus_bi_yearly_2';
-export const PRODUCT_AKISMET_PLUS_20K_YEARLY = 'ak_plus_yearly_2';
-export const PRODUCT_AKISMET_PLUS_20K_MONTHLY = 'ak_plus_monthly_2';
-export const PRODUCT_AKISMET_PLUS_30K_BI_YEARLY = 'ak_plus_bi_yearly_3';
-export const PRODUCT_AKISMET_PLUS_30K_YEARLY = 'ak_plus_yearly_3';
-export const PRODUCT_AKISMET_PLUS_30K_MONTHLY = 'ak_plus_monthly_3';
-export const PRODUCT_AKISMET_PLUS_40K_BI_YEARLY = 'ak_plus_bi_yearly_4';
-export const PRODUCT_AKISMET_PLUS_40K_YEARLY = 'ak_plus_yearly_4';
-export const PRODUCT_AKISMET_PLUS_40K_MONTHLY = 'ak_plus_monthly_4';
-export const PRODUCT_AKISMET_ENTERPRISE_BI_YEARLY = 'ak_ent_bi_yearly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_YEARLY = 'ak_ent_yearly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_MONTHLY = 'ak_ent_monthly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY = 'ak_ep350k_yearly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY = 'ak_ep350k_monthly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY = 'ak_ep2m_yearly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY = 'ak_ep2m_monthly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY = 'ak_epgt2m_yearly_1';
-export const PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY = 'ak_epgt2m_monthly_1';
-export const PRODUCT_AKISMET_PRO_500_MONTHLY = 'ak_pro5h_monthly';
-export const PRODUCT_AKISMET_PRO_500_YEARLY = 'ak_pro5h_yearly';
-export const PRODUCT_AKISMET_PRO_500_BI_YEARLY = 'ak_pro5h_bi_yearly';
-export const PRODUCT_AKISMET_BUSINESS_5K_MONTHLY = 'ak_bus5k_monthly';
-export const PRODUCT_AKISMET_BUSINESS_5K_YEARLY = 'ak_bus5k_yearly';
-export const PRODUCT_AKISMET_BUSINESS_5K_BI_YEARLY = 'ak_bus5k_bi_yearly';
-export const PRODUCT_AKISMET_ENTERPRISE_15K_MONTHLY = 'ak_ep15k_monthly';
-export const PRODUCT_AKISMET_ENTERPRISE_15K_YEARLY = 'ak_ep15k_yearly';
-export const PRODUCT_AKISMET_ENTERPRISE_15K_BI_YEARLY = 'ak_ep15k_bi_yearly';
-export const PRODUCT_AKISMET_ENTERPRISE_25K_MONTHLY = 'ak_ep25k_monthly';
-export const PRODUCT_AKISMET_ENTERPRISE_25K_YEARLY = 'ak_ep25k_yearly';
-export const PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY = 'ak_ep25k_bi_yearly';
 
 const msPerHour = 60 * 60 * 1000;
 const msPerDay = 24 * msPerHour;
@@ -231,8 +182,9 @@ export function isOneTimePurchase( purchase: ActiveSubscription ) {
 // to determine if it's free or not.
 export function isAkismetFreeProduct( product: ActiveSubscription ): boolean {
 	return (
-		PRODUCT_AKISMET_FREE === product.product_slug ||
-		( PRODUCT_AKISMET_ENTERPRISE_YEARLY === product.product_slug && product.amount === 0 )
+		AkismetPlans.PRODUCT_AKISMET_FREE === product.product_slug ||
+		( AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_YEARLY === product.product_slug &&
+			product.amount === 0 )
 	);
 }
 
@@ -247,7 +199,7 @@ export function isRecentMonthlyPurchase( purchase: ActiveSubscription ): boolean
 	return Boolean(
 		purchase.subscribed_date &&
 			isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
-			purchase.bill_period_days === PLAN_MONTHLY_PERIOD
+			purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 	);
 }
 
@@ -263,9 +215,9 @@ export function isCloseToExpiration( purchase: ActiveSubscription ): boolean {
 		return false;
 	}
 	const threshold =
-		purchase.bill_period_days === PLAN_MONTHLY_PERIOD
-			? PLAN_MONTHLY_PERIOD
-			: PLAN_MONTHLY_PERIOD * 3;
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+			? SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+			: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD * 3;
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
@@ -304,7 +256,10 @@ export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscriptio
 	// For 100 years plans, the credit card will probably always expire before
 	// the subscription so we should only consider this true if we are close to
 	// the expiration date.
-	if ( purchase.bill_period_days === PLAN_CENTENNIAL_PERIOD && ! isCloseToExpiration( purchase ) ) {
+	if (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
+		! isCloseToExpiration( purchase )
+	) {
 		return false;
 	}
 	if (
@@ -323,7 +278,10 @@ export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ): boo
 	// For 100 years plans, the credit card will probably always expire before
 	// the subscription so we should only consider this true if we are close to
 	// the expiration date.
-	if ( purchase.bill_period_days === PLAN_CENTENNIAL_PERIOD && ! isCloseToExpiration( purchase ) ) {
+	if (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
+		! isCloseToExpiration( purchase )
+	) {
 		return false;
 	}
 	if ( new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime() ) {
