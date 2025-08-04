@@ -23,7 +23,7 @@ function renderServiceNameDescription(
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
-	// Hide domains for siteless transactions (marketplace, A4A agency, and a4a purchases)
+	// Hide domains for siteless transactions (Passport URL (siteless.marketplace.wp.com), A4A agency, and a4a purchases)
 	// These are internal/system domains that don't represent user sites
 	const isSitelessDomain = /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
 		transaction.domain
