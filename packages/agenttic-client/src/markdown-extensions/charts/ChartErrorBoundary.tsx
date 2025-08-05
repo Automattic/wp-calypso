@@ -79,13 +79,6 @@ export class ChartErrorBoundary extends Component< Props, State > {
 				'The error has been logged to the console.',
 			];
 
-			if (
-				process.env.NODE_ENV === 'development' &&
-				this.state.error?.stack
-			) {
-				errorDetails.push( '', 'Stack trace:', this.state.error.stack );
-			}
-
 			return (
 				<ChartError
 					message={ errorMessage }
