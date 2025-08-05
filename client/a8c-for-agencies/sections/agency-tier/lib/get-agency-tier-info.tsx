@@ -202,14 +202,13 @@ const getAgencyTierInfo = (
 						"You've reached the highest tier and unlocked our most exclusive benefits:"
 					),
 					benefits: [
-						translate( 'Dedicated strategic partnership management and VIP support.' ),
+						translate( 'A dedicated partner manager and priority support access.' ),
 						translate(
-							'Exclusive access to executive leadership and strategic planning sessions.'
+							"Advanced sales training sessions at request to sharpen your team's expertise."
 						),
-						translate( 'Priority access to enterprise-level opportunities and referrals.' ),
-						translate( 'Co-branded marketing campaigns and joint go-to-market strategies.' ),
-						translate( 'Executive advisory board participation and product roadmap influence.' ),
-						translate( 'Custom partnership agreements and revenue sharing opportunities.' ),
+						translate( "Access to pre-qualified leads provided by Automattic's sales teams." ),
+						translate( 'Co-marketing opportunities.' ),
+						translate( 'Access to the Automattic for Agencies advisory board.' ),
 					],
 					image: StrategicAgencyPartnerBackground,
 					cta: translate( 'Explore your benefits' ),
