@@ -65,3 +65,11 @@ export async function fetchDomainSuggestions(
 
 	return suggestions;
 }
+
+export async function updateDNSSEC( domain: string, enabled: boolean ) {
+	return wpcom.req.post( {
+		path: `/domains/dnssec/${ domain }`,
+		apiNamespace: 'wpcom/v2',
+		...( ! enabled && { method: 'DELETE' } ),
+	} );
+}

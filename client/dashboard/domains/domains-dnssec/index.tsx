@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -6,10 +6,12 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainsQuery } from '../../app/queries/domains';
+import { domainsQuery, updateDNSSECMutation } from '../../app/queries/domains';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
@@ -37,6 +39,7 @@ export default function DomainPlaceholder() {
 
 	// get the current domain from the current route
 	const { domainName } = domainRoute.useParams();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// get the domain details using the site domain
 	const domain = allDomains.find( ( domain ) => domain.domain === domainName );
@@ -49,22 +52,38 @@ export default function DomainPlaceholder() {
 
 	const siteDomain = siteDomains.find( ( siteDomain ) => siteDomain.domain === domainName );
 
+	if ( ! siteDomain ) {
+		throw new Error( 'Site domain not found' );
+	}
+
+	const mutation = useMutation( updateDNSSECMutation( domainName, siteDomain.blog_id ) );
+
 	const [ formData, setFormData ] = useState< DNSSECFormData >( {
 		enabled: siteDomain?.is_dnssec_enabled ?? false,
 	} );
 
-	const isDirty = true;
-	const isPending = false;
+	const isDirty = formData.enabled !== siteDomain?.is_dnssec_enabled;
+	const { isPending } = mutation;
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		mutation.mutate( formData.enabled, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'DNSSEC setting saved.' ), { type: 'snackbar' } );
+			},
+			onError: () => {
+				createErrorNotice( __( 'Failed to save DNSSEC settings.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
+	};
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
 			<Card>
 				<CardBody>
-					<form
-						onSubmit={ ( e: React.FormEvent ) => {
-							e.preventDefault();
-						} }
-					>
+					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
 							<DataForm< DNSSECFormData >
 								data={ formData }
