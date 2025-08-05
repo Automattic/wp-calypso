@@ -47,9 +47,13 @@ export default function PaymentItem( props: Props ) {
 						<ExternalLink href={ payment.payment_link } target="_blank">
 							{ translate( 'Pay' ) }
 							<span className="sr-only">
-								{ translate( 'Pay for %(name)s', {
-									args: { name: payment.id },
-								} ) }
+								{
+									// Translators: This is a payment button. "Pay" is the call-to-action button
+									// text and the param %(name) is the payment ID.
+									translate( 'Pay for %(name)s', {
+										args: { name: payment.id },
+									} )
+								}
 							</span>
 						</ExternalLink>
 					</div>
@@ -62,9 +66,13 @@ export default function PaymentItem( props: Props ) {
 					>
 						<span aria-hidden="true">{ __( 'Receipt' ) }</span>
 						<span className="sr-only">
-							{ translate( 'View receipt for payment %(name)s', {
-								args: { name: payment.id },
-							} ) }
+							{
+								// Translators: Text for a button with action to view the receipt.
+								// "%(name)s" is the payment ID
+								translate( 'View receipt for payment %(name)s', {
+									args: { name: payment.id },
+								} )
+							}
 						</span>
 					</Button>
 				) }
