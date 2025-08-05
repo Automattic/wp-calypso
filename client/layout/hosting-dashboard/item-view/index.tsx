@@ -110,10 +110,7 @@ export default function ItemView( {
 
 	const shouldHideHeader = hideHeader || shouldShowBreadcrumbs;
 	const shouldHideNav =
-		( hideNavIfSingleTab && featureTabs.length <= 1 ) ||
-		isMobileApp ||
-		shouldShowBreadcrumbs ||
-		isStagingSiteDeletionInProgress;
+		( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp || shouldShowBreadcrumbs;
 
 	const renderHeader = () => {
 		if ( shouldHideHeader ) {
