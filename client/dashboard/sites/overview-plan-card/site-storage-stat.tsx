@@ -27,7 +27,7 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 	let storageWarningColor = undefined;
 	if ( alertLevel === 'exceeded' ) {
 		storageWarningColor = 'alert-red' as const;
-	} else if ( alertLevel === 'low' ) {
+	} else if ( alertLevel === 'warning' ) {
 		storageWarningColor = 'alert-yellow' as const;
 	}
 

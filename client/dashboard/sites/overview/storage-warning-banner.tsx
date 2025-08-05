@@ -22,12 +22,12 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 
 	const alertLevel = getStorageAlertLevel( mediaStorage );
 
-	if ( alertLevel === 'none' || ( alertLevel === 'low' && isDismissed ) ) {
+	if ( alertLevel === 'none' || ( alertLevel === 'warning' && isDismissed ) ) {
 		return null;
 	}
 
 	const noticeProps =
-		alertLevel === 'low'
+		alertLevel === 'warning'
 			? {
 					variant: 'warning' as const,
 					isDismissible: true,
@@ -40,7 +40,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					title: __( 'Your site is out of storage' ),
 			  };
 
-	const tracksId = alertLevel === 'low' ? 'storage-warning-low' : 'storage-warning-exceeded';
+	const tracksId = alertLevel === 'warning' ? 'storage-warning-low' : 'storage-warning-exceeded';
 
 	return (
 		<Notice
