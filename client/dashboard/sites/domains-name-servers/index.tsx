@@ -10,8 +10,8 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 import './styles.scss';
 
 export default function NameServers() {
