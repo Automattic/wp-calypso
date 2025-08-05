@@ -1,7 +1,7 @@
 import { Dropdown, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
-import SwitcherContent from './switcher-content';
-import type { PropsWithChildren, ReactNode } from 'react';
+import SwitcherContent, { type RenderItemIcon } from './switcher-content';
+import type { PropsWithChildren } from 'react';
 
 export default function Switcher< T >( {
 	items,
@@ -15,7 +15,7 @@ export default function Switcher< T >( {
 	value: T;
 	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
-	renderItemIcon: ( { item, size }: { item: T; size: number } ) => ReactNode;
+	renderItemIcon: RenderItemIcon< T >;
 } > ) {
 	return (
 		<Dropdown
@@ -27,7 +27,8 @@ export default function Switcher< T >( {
 					onClick={ () => onToggle() }
 				>
 					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-						{ renderItemIcon( { item: value, size: 16 } ) } { getItemName( value ) }
+						{ renderItemIcon( { item: value, context: 'dropdown', size: 16 } ) }
+						{ getItemName( value ) }
 					</div>
 				</Button>
 			) }

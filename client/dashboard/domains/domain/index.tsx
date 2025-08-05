@@ -10,6 +10,8 @@ import MenuDivider from '../../components/menu-divider';
 import Switcher from '../../components/switcher';
 import DomainMenu from '../domain-menu';
 
+import './style.scss';
+
 function Domain() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { domainName } = domainRoute.useParams();
@@ -30,7 +32,11 @@ function Domain() {
 							value={ domain }
 							getItemName={ ( domain ) => domain.domain }
 							getItemUrl={ ( domain ) => `/domains/${ domain.domain }` }
-							renderItemIcon={ ( { size } ) => <Icon icon={ globe } size={ size } /> }
+							renderItemIcon={ ( { context } ) =>
+								context === 'list' ? null : (
+									<Icon className="domain-icon" icon={ globe } size={ 24 } />
+								)
+							}
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }

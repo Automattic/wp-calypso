@@ -14,6 +14,12 @@ const DEFAULT_VIEW: View = {
 	sort: { field: 'name', direction: 'asc' },
 };
 
+export type RenderItemIcon< T > = ( props: {
+	item: T;
+	context: 'dropdown' | 'list';
+	size: number;
+} ) => ReactNode;
+
 export default function SwitcherContent< T >( {
 	items,
 	getItemName,
@@ -25,7 +31,7 @@ export default function SwitcherContent< T >( {
 	items?: T[];
 	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
-	renderItemIcon: ( { item, size }: { item: T; size: number } ) => ReactNode;
+	renderItemIcon: RenderItemIcon< T >;
 	onClose: () => void;
 } > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
@@ -63,7 +69,7 @@ export default function SwitcherContent< T >( {
 					return (
 						<RouterLinkMenuItem key={ itemUrl } to={ itemUrl } onClick={ onClose }>
 							<div style={ { display: 'flex', gap: '8px', alignItems: 'center', width: '100%' } }>
-								{ renderItemIcon( { item, size: 24 } ) }
+								{ renderItemIcon( { item, context: 'list', size: 24 } ) }
 								<span
 									style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
 								>
