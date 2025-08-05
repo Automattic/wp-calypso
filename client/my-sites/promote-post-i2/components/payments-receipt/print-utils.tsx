@@ -4,22 +4,7 @@ import * as ReactDOM from 'react-dom/client';
 import { DetailedPayment } from 'calypso/data/promote-post/use-promote-post-payment-details-query';
 import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import { Receipt } from './Receipt';
-
-function extractCssFromStylesheet() {
-	// Extract styles safely to inject into the iframe.
-	return Array.from( document.styleSheets )
-		.map( ( styleSheet ) => {
-			try {
-				return Array.from( styleSheet.cssRules || [] )
-					.map( ( rule ) => rule.cssText )
-					.join( '\n' );
-			} catch {
-				return '';
-			}
-		} )
-		.filter( Boolean )
-		.join( '\n' );
-}
+import './style.scss';
 
 // This is a new component that handles rendering and printing
 const PrintableReceipt = ( {
@@ -48,15 +33,36 @@ const PrintableReceipt = ( {
  * Utility function to handle printing of a receipt
  */
 export const printReceipt = ( payment: Payment | DetailedPayment, billingDetails: string ) => {
-	const styles = extractCssFromStylesheet();
-
-	// Minimal required styles
-	const printWrapperStyles = `
-			body { margin: 0; padding: 20px; background: white; font-family: system-ui, sans-serif; }
-			.payment-receipt { margin: 0 auto; box-shadow: none; }
-			@media print { body { padding: 0; } .payment-receipt { max-width: none; } }
-			.print-iframe { display: none; }
-		`;
+	const printReceiptStyles = `
+		body{margin:0;background:white;font-family:system-ui,sans-serif}
+		.print-iframe{display:none}
+		.payment-receipt{color:#1e1e1e;padding:24px 0;margin:20px auto 0}
+		.payment-receipt__section{margin-bottom:24px}
+		.payment-receipt__section-title{font-size:1.25rem;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #f0f0f0}
+		.payment-receipt__row{display:flex;justify-content:space-between;margin-bottom:8px}
+		.payment-receipt__header{display:flex;justify-content:space-between;margin-bottom:48px;align-items:flex-start}
+		.payment-receipt__organization-logo{width:65px;height:65px;flex-shrink:0}
+		.payment-receipt__organization-logo svg{width:100%;height:auto}
+		.payment-receipt__organization-details{margin-left:16px;flex-grow:1}
+		.payment-receipt__organization-name{font-weight:bold;font-size:1rem;margin-bottom:4px}
+		.payment-receipt__label{font-weight:bold;margin-right:16px}
+		.payment-receipt__value{color:#646970;font-size:0.875rem}
+		.payment-receipt__value-bold{font-weight:bold}
+		.payment-receipt__secondary-text{color:#646970;font-size:0.875rem}
+		.payment-receipt__date{text-align:right}
+		.payment-receipt__billing-details{margin-top:24px}
+		.payment-receipt__billing-text{line-height:1.5;white-space:pre-line;margin-top:8px}
+		.payment-receipt__payment-details{margin-bottom:16px}
+		.payment-receipt__payment-method{padding-bottom:16px;border-bottom:1px solid #f0f0f0;margin-bottom:16px}
+		.payment-receipt__payment-amounts{margin-top:16px}
+		.payment-receipt__list-item{display:flex;justify-content:space-between;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f0f0f0}
+		.payment-receipt__list-item:last-child{border-bottom:none}
+		.payment-receipt__item-content{flex-grow:1}
+		.components-spinner{display:inline-block;width:18px;height:18px;margin:0 8px 0 0;background-color:#949494;opacity:0.7;border-radius:100%}
+		.payment-receipt__inline-loading{display:flex;align-items:center;margin-bottom:16px}
+		.wpcom-print-logo{max-width:100%;max-height:100%}
+		.payment-receipt__print{display:none}
+	`;
 
 	// Create a hidden iframe for printing
 	const iframe = document.createElement( 'iframe' );
@@ -82,8 +88,7 @@ export const printReceipt = ( payment: Payment | DetailedPayment, billingDetails
 				) }</title>
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<style>${ styles }</style>
-				<style>${ printWrapperStyles }</style>
+				<style>${ printReceiptStyles }</style>
 			</head>
 			<body>
 				<div id="print-container" class="payment-receipt"></div>
