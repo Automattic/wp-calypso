@@ -175,5 +175,5 @@
 	"boom_analytics_key": "production",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": false
+	"survicate_enabled": true
 }
