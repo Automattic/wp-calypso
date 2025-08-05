@@ -562,9 +562,6 @@ $font-size: rem(14px);
 		}
 	}
 
-	//client/components/site-selector/style.scss
-	// Moved to proper selectors in site-selector file
-
 	// client/blocks/upsell-nudge/style.scss
 	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {
