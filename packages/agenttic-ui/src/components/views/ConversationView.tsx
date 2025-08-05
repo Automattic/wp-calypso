@@ -86,8 +86,8 @@ export function ConversationView( {
 				messageRenderer={ messageRenderer }
 			/>
 			<div
-				className={ styles.inputContainer }
 				data-slot="input-container"
+				className={ styles.inputContainer }
 			>
 				<Suggestions
 					suggestions={ suggestions }

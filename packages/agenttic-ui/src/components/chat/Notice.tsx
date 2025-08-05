@@ -43,10 +43,9 @@ export function Notice( {
 					<Button
 						className={ styles.dismissible }
 						onClick={ onDismiss }
-						variant="tertiary"
-						size="xxs"
-						iconSize="sm"
-						icon={ <XIcon strokeWidth={ 3 } /> }
+						variant="ghost"
+						size="sm"
+						icon={ <XIcon /> }
 					/>
 				) }
 			</div>

@@ -12,18 +12,11 @@ const meta = {
 	argTypes: {
 		variant: {
 			control: 'select',
-			options: [
-				'primary',
-				'secondary',
-				'tertiary',
-				'outline',
-				'link',
-				'icon',
-			],
+			options: [ 'primary', 'ghost', 'outline', 'link' ],
 		},
 		size: {
 			control: 'select',
-			options: [ 'sm', 'xxs', 'icon' ],
+			options: [ 'sm', 'icon' ],
 		},
 		disabled: {
 			control: 'boolean',
@@ -48,17 +41,10 @@ export const Primary: Story = {
 	},
 };
 
-export const Secondary: Story = {
+export const Ghost: Story = {
 	args: {
-		variant: 'secondary',
-		children: 'Secondary Button',
-	},
-};
-
-export const Tertiary: Story = {
-	args: {
-		variant: 'tertiary',
-		children: 'Tertiary Button',
+		variant: 'ghost',
+		children: 'Ghost Button',
 	},
 };
 
@@ -86,9 +72,8 @@ export const WithIcon: Story = {
 
 export const IconOnly: Story = {
 	args: {
-		variant: 'icon',
-		size: 'icon',
-		children: <ArrowUpIcon />,
+		variant: 'ghost',
+		icon: <ArrowUpIcon />,
 	},
 };
 
@@ -113,13 +98,10 @@ export const AllVariants: Story = {
 				} }
 			>
 				<Button variant="primary">Primary</Button>
-				<Button variant="secondary">Secondary</Button>
-				<Button variant="tertiary">Tertiary</Button>
+				<Button variant="ghost">Ghost</Button>
 				<Button variant="outline">Outline</Button>
 				<Button variant="link">Link</Button>
-				<Button variant="icon" size="icon">
-					<ArrowUpIcon />
-				</Button>
+				<Button variant="ghost" icon={ <ArrowUpIcon /> } />
 			</div>
 			<div
 				style={ {
@@ -131,12 +113,91 @@ export const AllVariants: Story = {
 				<Button variant="primary" disabled>
 					Primary Disabled
 				</Button>
-				<Button variant="secondary" disabled>
-					Secondary Disabled
+				<Button variant="ghost" disabled>
+					Ghost Disabled
 				</Button>
-				<Button variant="tertiary" disabled>
-					Tertiary Disabled
-				</Button>
+			</div>
+		</div>
+	),
+};
+
+export const IconVariations: Story = {
+	name: 'Icon Usage Patterns',
+	render: () => (
+		<div
+			style={ { display: 'flex', flexDirection: 'column', gap: '2rem' } }
+		>
+			<div>
+				<h4
+					style={ {
+						margin: '0 0 1rem',
+						fontSize: '14px',
+						fontWeight: '600',
+					} }
+				>
+					Auto-sizing
+				</h4>
+				<div
+					style={ {
+						display: 'flex',
+						gap: '1rem',
+						alignItems: 'center',
+					} }
+				>
+					<div style={ { textAlign: 'center' } }>
+						<Button variant="primary" icon={ <ArrowUpIcon /> } />
+						<p
+							style={ {
+								fontSize: '12px',
+								margin: '8px 0 0',
+								color: '#666',
+							} }
+						>
+							Icon only → auto size=&quot;icon&quot;
+						</p>
+					</div>
+					<div style={ { textAlign: 'center' } }>
+						<Button variant="primary" icon={ <ArrowUpIcon /> }>
+							Send
+						</Button>
+						<p
+							style={ {
+								fontSize: '12px',
+								margin: '8px 0 0',
+								color: '#666',
+							} }
+						>
+							Icon + text → default size
+						</p>
+					</div>
+				</div>
+			</div>
+			<div>
+				<h4
+					style={ {
+						margin: '0 0 1rem',
+						fontSize: '14px',
+						fontWeight: '600',
+					} }
+				>
+					Icon-only variants
+				</h4>
+				<div
+					style={ {
+						display: 'flex',
+						gap: '0.5rem',
+						alignItems: 'center',
+					} }
+				>
+					<Button variant="primary" icon={ <ArrowUpIcon /> } />
+					<Button variant="ghost" icon={ <ArrowUpIcon /> } />
+					<Button variant="outline" icon={ <ArrowUpIcon /> } />
+					<Button
+						variant="ghost"
+						icon={ <ArrowUpIcon /> }
+						size="sm"
+					/>
+				</div>
 			</div>
 		</div>
 	),

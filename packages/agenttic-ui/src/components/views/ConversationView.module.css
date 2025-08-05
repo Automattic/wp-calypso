@@ -17,6 +17,7 @@
 .inputContainer {
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-2);
+    background-color: var(--color-input);
     border-radius: calc( var(--radius-lg) + 1px); /* Accounts for the 1px shadow */
     position: relative;
     z-index: 10;

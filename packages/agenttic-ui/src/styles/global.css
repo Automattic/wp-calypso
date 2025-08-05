@@ -1,7 +1,6 @@
 @import './tokens.css';
 
 @layer base {
-	/* Reset & Box Model */
 	*, ::before, ::after, ::backdrop, ::file-selector-button {
 		box-sizing: border-box;
 		margin: 0;
@@ -9,16 +8,10 @@
 		border: 0 solid;
 	}
 
-	/* Default Border & Outline Colors */
 	* {
-		border-color: var(--color-border);
 		outline-color: var(--color-ring);
-		@supports (color: color-mix(in lab, red, red)) {
-			outline-color: color-mix(in oklab, var(--color-ring) 50%, transparent);
-		}
 	}
 
-	/* Form Elements Reset */
 	button, input, select, optgroup, textarea, ::file-selector-button {
 		font: inherit;
 		font-feature-settings: inherit;
@@ -28,7 +21,6 @@
 		opacity: 1;
 	}
 
-	/* Input elements should inherit color, but not buttons */
 	input, select, optgroup, textarea, ::file-selector-button {
 		color: inherit;
 		border-radius: 0;

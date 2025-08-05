@@ -48,10 +48,8 @@ export function CollapsedView( {
 				onMouseEnter={ onHover }
 				variant="link"
 				className={ styles.button }
-				size="icon"
-			>
-				{ icon }
-			</Button>
+				icon={ icon }
+			/>
 		</motion.div>
 	);
 }

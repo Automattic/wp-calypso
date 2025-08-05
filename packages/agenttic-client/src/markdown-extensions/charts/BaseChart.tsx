@@ -57,7 +57,7 @@ export const BaseChart: FC< BaseChartInternalProps > = ( {
 	error,
 } ) => {
 	const customTheme = useMemo( () => {
-		const primaryColor = getCSSVariable( '--primary', '#4F46E5' );
+		const primaryColor = getCSSVariable( '--color-accent', '#4F46E5' );
 
 		// TODO: Decide what other colors to include here
 		const colors = [ primaryColor, '#f0b849', '#00a32a', '#8c5e94' ];

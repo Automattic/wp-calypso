@@ -76,14 +76,12 @@ export function ChatInput( {
 				} }
 			>
 				<Button
-					className={ styles.submitButton }
+					className={ styles.button }
 					onClick={ onSubmit }
 					disabled={ ! canSubmit }
 					variant="primary"
-					size="icon"
-				>
-					{ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }
-				</Button>
+					icon={ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }
+				/>
 			</motion.div>
 		</div>
 	);

@@ -53,7 +53,6 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 										handleSuggestionClick( suggestion )
 									}
 									variant="outline"
-									size="sm"
 									className={ styles.button }
 								>
 									{ suggestion.label }

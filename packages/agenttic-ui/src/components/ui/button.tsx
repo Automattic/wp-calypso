@@ -4,15 +4,8 @@ import { cn } from '../../utils/classNames';
 import styles from './button.module.css';
 
 interface ButtonProps extends React.ComponentProps< 'button' > {
-	variant?:
-		| 'primary'
-		| 'secondary'
-		| 'tertiary'
-		| 'outline'
-		| 'link'
-		| 'icon';
-	size?: 'sm' | 'xxs' | 'icon';
-	iconSize?: 'sm';
+	variant?: 'primary' | 'ghost' | 'outline' | 'link' | 'icon';
+	size?: 'sm' | 'icon';
 	icon?: React.ReactNode;
 	asChild?: boolean;
 }
@@ -20,8 +13,7 @@ interface ButtonProps extends React.ComponentProps< 'button' > {
 function Button( {
 	className,
 	variant = 'primary',
-	size = 'sm',
-	iconSize,
+	size,
 	icon,
 	children,
 	asChild = false,
@@ -29,13 +21,11 @@ function Button( {
 }: ButtonProps ) {
 	const Comp = asChild ? Slot : 'button';
 
-	const hasIcon =
-		!! icon ||
-		( React.isValidElement( children ) &&
-			( children.type === 'svg' ||
-				( typeof children.type === 'function' &&
-					children.type.name &&
-					children.type.name.includes( 'Icon' ) ) ) );
+	const hasIcon = !! icon;
+
+	// Auto-detect size: if icon only (no children), use 'icon' size unless explicitly overridden
+	const effectiveSize =
+		size || ( hasIcon && ! children ? 'icon' : undefined );
 
 	return (
 		<Comp
@@ -43,20 +33,14 @@ function Button( {
 			className={ cn(
 				styles.button,
 				styles[ variant ],
-				styles[ size ],
-				hasIcon ? styles.buttonWithIcon : undefined,
-				iconSize &&
-					styles[
-						`iconSize${
-							iconSize.charAt( 0 ).toUpperCase() +
-							iconSize.slice( 1 )
-						}`
-					],
+				effectiveSize && styles[ effectiveSize ],
+				hasIcon && children ? styles.withTextAndIcon : undefined,
 				className
 			) }
 			{ ...props }
 		>
-			{ icon || children }
+			{ icon }
+			{ children }
 		</Comp>
 	);
 }

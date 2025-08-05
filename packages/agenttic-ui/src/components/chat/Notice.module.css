@@ -68,14 +68,13 @@
     display: block;
     width: var(--spacing-4);
     height: var(--spacing-4);
-    padding: 2px;
-    background-color: var(--color-secondary);
-    color: var(--color-secondary-foreground);
+    background-color: var(--color-muted-foreground);
+    color: var(--color-input);
     border-radius: inherit;
-    box-shadow: 0 0 0 2.5px var(--color-popover);
-    transition: var(--transition-all);
+    box-shadow: 0 0 0 2.5px var(--color-input);
+    opacity: 0.8;
 }
 
 .dismissible:hover svg {
-    background-color: var(--color-foreground);
+    opacity: 1;
 }

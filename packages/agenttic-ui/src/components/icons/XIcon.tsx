@@ -1,10 +1,9 @@
 interface XIconProps {
 	className?: string;
 	size?: number;
-	strokeWidth?: number;
 }
 
-export function XIcon( { className, size = 24, strokeWidth = 2 }: XIconProps ) {
+export function XIcon( { className, size = 24 }: XIconProps ) {
 	return (
 		<svg
 			className={ className }
@@ -12,13 +11,12 @@ export function XIcon( { className, size = 24, strokeWidth = 2 }: XIconProps ) {
 			height={ size }
 			viewBox="0 0 24 24"
 			fill="none"
-			stroke="currentColor"
-			strokeWidth={ strokeWidth }
-			strokeLinecap="round"
-			strokeLinejoin="round"
+			xmlns="http://www.w3.org/2000/svg"
 		>
-			<path d="m18 6-12 12" />
-			<path d="m6 6 12 12" />
+			<path
+				d="M12.0001 13.0607L16.4697 17.5304L17.5304 16.4697L13.0607 12.0001L17.5304 7.53039L16.4697 6.46973L12.0001 10.9394L7.5304 6.46973L6.46973 7.53039L10.9394 12.0001L6.46974 16.4697L7.5304 17.5304L12.0001 13.0607Z"
+				fill="currentColor"
+			/>
 		</svg>
 	);
 }

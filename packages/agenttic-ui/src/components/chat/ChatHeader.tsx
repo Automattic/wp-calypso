@@ -1,5 +1,6 @@
 import { Button } from '../ui/button';
-import { ChevronDown, X } from 'lucide-react';
+import { XIcon } from '../icons/XIcon';
+import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import styles from './ChatHeader.module.css';
 
 interface ChatHeaderProps {
@@ -14,24 +15,20 @@ export function ChatHeader( { onClose, onMinimize }: ChatHeaderProps ) {
 			data-draggable="true"
 			className={ styles.container }
 		>
-			{ onClose && (
-				<Button
-					variant="tertiary"
-					size="icon"
-					icon={ <X /> }
-					iconSize="sm"
-					onClick={ onClose }
-					aria-label="Clear conversation history"
-				/>
-			) }
 			{ onMinimize && (
 				<Button
-					variant="tertiary"
-					size="icon"
-					icon={ <ChevronDown /> }
-					iconSize="sm"
+					variant="ghost"
+					icon={ <ChevronDownIcon /> }
 					onClick={ onMinimize }
 					aria-label="Minimize conversation"
+				/>
+			) }
+			{ onClose && (
+				<Button
+					variant="ghost"
+					icon={ <XIcon /> }
+					onClick={ onClose }
+					aria-label="Close conversation"
 				/>
 			) }
 		</div>

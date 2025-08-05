@@ -16,7 +16,3 @@
 .container::-webkit-scrollbar {
   display: none;
 }
-
-.button {
-    border-radius: var(--radius-sm);
-}

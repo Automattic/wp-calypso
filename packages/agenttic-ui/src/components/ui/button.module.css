@@ -1,19 +1,21 @@
 .button {
   align-items: center;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
   font-weight: var(--font-weight-medium);
   font-size: var(--text-sm);
-  gap: var(--spacing);
+  gap: calc(var(--spacing) * 0.5);
   justify-content: center;
   outline: none;
   transition-duration: 100ms;
   transition: var(--transition-colors);
   letter-spacing: var(--text-base--tracking);
   white-space: nowrap;
+  height: var(--spacing-8);
+  padding: var(--spacing-2) var(--spacing-3);
 }
 
 .button:disabled {
@@ -26,89 +28,79 @@
   outline: 2px solid var(--color-ring);
   outline-offset: 1.5px;
 }
-
-/* ICON SIZE CLASSES */
-
-.button svg {
-  flex-shrink: 0;
-  pointer-events: none;
-  height: var(--spacing-6);
-  width: var(--spacing-6);
-}
-
-.iconSizeSm svg {
-    height: var(--spacing-5);
-    width: var(--spacing-5);
-}
-
-/* SIZE CLASSES */
-
-.icon {
-    border-radius: var(--radius-sm);
-    height: var(--spacing-8);
-    width: var(--spacing-8);
-}
-
-.xxs {
-    height: var(--spacing-6);
-    width: var(--spacing-6);
-    padding: var(--spacing-2);
-}
-
-.sm {
-    height: var(--spacing-8);
-    padding: var(--spacing-2) var(--spacing-3);
-}
-
-.sm.buttonWithIcon {
-    padding-left: var(--spacing-2);
-}
-
-/* VARIANT CLASSES */
+  
+/* VARIANTS */
 
 .primary {
-  background-color: var(--color-primary);
-  color: var(--color-primary-foreground);
+  background-color: var(--color-accent);
+  color: var(--color-accent-foreground);
 }
 
 .primary:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--color-primary) 85%, #000);
+  background-color: color-mix(in srgb, var(--color-accent) 85%, #000);
 }
 
-.secondary {
-    background-color: var(--color-secondary);
-    color: var(--color-secondary-foreground);
-  }
-  
-.secondary:hover:not(:disabled) {
-    background-color: color-mix(in srgb, var(--color-secondary) 85%, #000);
-}
-
-.tertiary {
+.ghost {
   background-color: transparent;
   color: var(--color-foreground);
 }
 
-.tertiary:hover:not(:disabled) {
-  color: var(--color-primary);
+.ghost:hover:not(:disabled) {
+  color: var(--color-accent);
+}
+
+.ghost:focus-visible {
+    outline-offset: 0;
 }
 
 .outline {
-    box-shadow: var(--shadow-stroke);
-    background-color: var(--color-popover);
+    box-shadow: var(--shadow-outline);
+    background-color: var(--color-background);
+    height: calc( var(--spacing-8) - 1px);
 }
   
 .outline:hover:not(:disabled) {
-    color: var(--color-primary);
+    color: var(--color-accent);
+}
+
+.outline:focus-visible {
+    outline-offset: 2.5px; /* Add +1px due to the --shadow-outline. */
 }
 
 .link {
     background-color: transparent;
-    color: var(--color-primary);
+    color: var(--color-accent);
     font-weight: var(--font-weight-medium);
 }
 
 .link:hover:not(:disabled) {
-    color: color-mix(in srgb, var(--color-primary) 85%, #000);
+    color: color-mix(in srgb, var(--color-accent) 85%, #000);
 }
 
+/* SIZES */
+
+.icon {
+    border-radius: var(--radius-xs);
+    height: var(--spacing-8);
+    width: var(--spacing-8);
+    padding: 0;
+}
+
+.sm {
+    height: var(--spacing-6);
+    width: var(--spacing-6);
+    padding: 0;
+}
+
+/* ICONS */
+
+.withTextAndIcon {
+    padding-left: var(--spacing-1);
+}
+  
+.button svg {
+    flex-shrink: 0;
+    pointer-events: none;
+    height: var(--spacing-6);
+    width: var(--spacing-6);
+  }

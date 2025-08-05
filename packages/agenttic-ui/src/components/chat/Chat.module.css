@@ -18,7 +18,7 @@
 }
 
 .container.floating .content {
-    background-color: var(--color-popover);
+    background-color: var(--color-background);
     color: var(--color-foreground);
     overflow: hidden;
     min-height: 56px;

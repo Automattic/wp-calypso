@@ -25,8 +25,8 @@ export function MessageActions( { message }: MessageActionsProps ) {
 						className={ styles.button }
 						icon={ action.icon }
 						onClick={ () => action.onClick( message ) }
-						variant="tertiary"
-						size="icon"
+						variant="ghost"
+						size="sm"
 						type="button"
 						disabled={ action.disabled }
 						title={ action.tooltip || action.label }

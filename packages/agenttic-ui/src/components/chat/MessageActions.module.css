@@ -9,17 +9,10 @@
 	display: none;
 }
 
-/* @todo: we should make this a default button variant (they need cleaning up) */
 .button {
-    height: var(--spacing-6);
-    width: var(--spacing-6);
     color: var(--color-muted-foreground);
 }
 
-.button:hover svg {
-    color: var(--color-foreground);
-}
-
-.button:disabled svg {
+.button:hover:not(:disabled) {
     color: var(--color-foreground);
 }
