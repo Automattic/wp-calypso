@@ -34,15 +34,11 @@ const DomainName = ( {
 	showPrimaryDomainBadge?: boolean;
 } ) => {
 	const siteSlug = site?.slug ?? domain.site_slug;
-	const domainManagementUrl = site
-		? domainOverviewRoute.fullPath
-		: `${ window.location.origin }/domains/manage/all/overview/${ domain.domain }/${ siteSlug }`;
-	const domainManagementParams = { siteSlug, domainName: domain.domain };
 
 	return (
 		<Link
-			to={ domainManagementUrl }
-			params={ domainManagementParams }
+			to={ domainOverviewRoute.fullPath }
+			params={ { siteSlug, domainName: domain.domain } }
 			disabled={ domain.type === DomainTypes.WPCOM }
 		>
 			<HStack spacing={ 1 }>
