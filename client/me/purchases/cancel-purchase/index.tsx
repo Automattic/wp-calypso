@@ -210,7 +210,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		page.redirect( redirectPath );
 	};
 
-	onCancelConfirmationStateChange = ( newState: CancelPurchaseState ) => {
+	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		this.setState( newState );
 	};
 
