@@ -177,7 +177,10 @@ const siteOverviewRoute = createRoute( {
 			} );
 		}
 		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-		await queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
