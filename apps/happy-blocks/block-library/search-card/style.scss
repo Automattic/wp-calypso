@@ -10,10 +10,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	flex-shrink: 0;
 	padding: 0;
 
-	@media ( max-width: $breakpoint-mobile ) {
-		display: none;
-	}
-
 	&.navigation-only {
 		background: none;
 	}
@@ -26,7 +22,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		}
 	}
 
-	.navigation {
+	.navigation.desktop-nav {
 		display: flex;
 		align-items: center;
 		gap: 32px;
@@ -37,16 +33,116 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		margin-right: auto;
 
 		@media ( max-width: $breakpoint-mobile ) {
-			gap: 16px;
-			padding: 12px 0;
-			overflow-x: auto;
-			white-space: nowrap;
-			scrollbar-width: none;
-			&::-webkit-scrollbar {
-				display: none;
+			display: none;
+		}
+	}
+
+	.mobile-nav-dropdown {
+		display: none;
+		position: relative;
+		
+		@media ( max-width: $breakpoint-mobile ) {
+			display: block;
+			padding: 16px 0;
+		}
+
+
+		.dropdown-trigger {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			background: transparent;
+			border: none;
+			font-size: 14px;
+			font-weight: 500;
+			transition: all 0.2s ease;
+
+			&[aria-expanded="true"] {
+				background: #f8f9fa;
+			}
+
+			&[aria-expanded="true"] .dropdown-arrow {
+				transform: rotate(180deg);
+			}
+
+			.dropdown-current {
+				font-weight: 500;
+				display: flex;
+				align-items: center;
+
+				.support-center-text {
+					color: #000;
+					font-weight: 600;
+					font-size: 16px;
+					margin-right: 8px;
+				}
+
+				.separator {
+					color: var(--gray-200, #E0E0E0);
+					font-weight: 400;
+				}
+
+				.active-page-text {
+					color: #646970;
+					position: relative;
+					margin-left: 8px;
+				}
+			}
+
+			.dropdown-arrow {
+				transition: transform 0.2s ease;
+				color: #646970;
 			}
 		}
 
+		.dropdown-menu {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			width: 100%;
+			background: #fff;
+			list-style: none;
+			margin: 0;
+			padding: 8px 0;
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(-10px);
+			transition: all 0.2s ease;
+			z-index: 1000;
+
+			&.show {
+				opacity: 1;
+				visibility: visible;
+				transform: translateY(0);
+			}
+
+			li {
+				a {
+					display: block;
+					padding: 12px 16px;
+					color: #000;
+					text-decoration: none;
+					font-size: 14px;
+					font-weight: 400;
+					line-height: 20px;
+					transition: all 0.2s ease;
+
+					&:hover {
+						background: #f8f9fa;
+					}
+
+					&.active {
+						color: #3858E9;
+						font-weight: 400;
+						background: none;
+					}
+				}
+			}
+		}
+	}
+
+	.navigation.desktop-nav {
 		li {
 			&.active {
 				color: #000;
