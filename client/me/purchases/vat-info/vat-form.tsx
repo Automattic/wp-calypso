@@ -106,7 +106,6 @@ export default function VatForm() {
 
 	const { isLoading, isUpdateSuccessful, isUpdating, setVatDetails, vatDetails, updateError } =
 		useVatDetails();
-
 	const countryCodes = useDataFormCountryCodes();
 
 	const formData = useMemo( () => {
