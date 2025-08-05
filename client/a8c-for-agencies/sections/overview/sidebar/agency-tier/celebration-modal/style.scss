@@ -108,6 +108,10 @@ $dark-golden-beige: #d8a55f;
 	}
 
 	&.strategic-agency-partner {
+		.a4a-themed-modal__sidebar-image {
+			width: 370px;
+		}
+
 		&.a4a-themed-modal .components-modal__content.hide-header {
 			background: $dark-golden-beige;
 		}
