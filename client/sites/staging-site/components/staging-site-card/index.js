@@ -185,7 +185,10 @@ export const StagingSiteCard = ( {
 	} );
 
 	useEffect( () => {
-		if ( stagingSiteStatus === StagingSiteStatus.COMPLETE ) {
+		if (
+			stagingSiteStatus === StagingSiteStatus.COMPLETE &&
+			! isEnabled( 'hosting/staging-sites-redesign' )
+		) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
 			dispatch(

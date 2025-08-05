@@ -1,5 +1,6 @@
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	READER_LIST_ITEMS_REQUEST,
@@ -40,6 +41,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 						path: `/read/lists/${ action.listOwner }/recommended-blogs/items`,
 						query: { meta: 'site,feed,tag', number: 2000 },
 						apiVersion: '1.2',
+						//TODO: Improve it to skip retries when the request returns 'list_not_found' error
+						retryPolicy: noRetry(),
 					},
 					action
 				),

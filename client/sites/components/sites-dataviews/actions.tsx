@@ -387,7 +387,7 @@ export function useActions( {
 				label: __( 'Prepare for launch' ),
 				callback: ( sites ) => {
 					const url = isEnabled( 'dashboard/v2/backport/site-settings' )
-						? `/sites/settings/v2/${ sites[ 0 ].slug }/site-visibility`
+						? `/sites/${ sites[ 0 ].slug }/settings/site-visibility`
 						: `/sites/settings/site/${ sites[ 0 ].ID }`;
 
 					page( url );

@@ -1,10 +1,5 @@
 @use '@wordpress/base-styles/colors';
 
-.domain-suggestion-cta-error-container {
-	margin-top: auto;
-	display: flex;
-}
-
 .domain-suggestion-cta {
 	justify-content: center !important;
 
@@ -24,4 +19,17 @@
 		background: var( --wp-components-color-foreground, #1e1e1e ) !important;
 		color: rgba( 255, 255, 255, 0.3 ) !important;
 	}
+}
+
+.domain-suggestion-cta--error {
+	flex: 1;
+}
+
+.domain-suggestion-cta-error {
+	margin-top: auto;
+	display: flex;
+}
+
+.domain-suggestion-cta-error__tooltip {
+	max-width: calc( var( --popover-available-width ) - 64px );
 }

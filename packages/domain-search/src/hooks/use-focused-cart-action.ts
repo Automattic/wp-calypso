@@ -1,6 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../components/domain-search';
 
+/**
+ * A hook that manages loading and error states for cart actions.
+ * It tracks whether the action was initiated by this component to avoid
+ * responding to cart updates from other sources.
+ *
+ * It is necessary because the cart operations aren't specific,
+ * so this is the workaround to 'know' which row triggered
+ * the operation and only show the message in it.
+ */
 export const useFocusedCartAction = ( action: () => void ) => {
 	const { cart } = useDomainSearch();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -8,7 +17,7 @@ export const useFocusedCartAction = ( action: () => void ) => {
 
 	const initiatedByThisComponent = useRef( false );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		if ( ! cart.errorMessage ) {
 			setErrorMessage( null );
 		}

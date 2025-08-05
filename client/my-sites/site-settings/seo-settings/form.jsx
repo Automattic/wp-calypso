@@ -393,7 +393,7 @@ export class SiteSettingsFormSEO extends Component {
 										) }
 									</p>
 									<FormLabel htmlFor="advanced_seo_front_page_description">
-										{ translate( 'Front Page Meta Description' ) }
+										{ translate( 'Front page meta description' ) }
 									</FormLabel>
 									<CountedTextarea
 										name="advanced_seo_front_page_description"

@@ -1,12 +1,14 @@
 import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
+	DomainSuggestionCTA,
 	DomainSuggestionPrice,
 } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
+import { envelope } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -312,13 +314,14 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			productSaleCost,
 			premiumDomain,
+			flowName,
 		} = this.props;
 		const badges = [];
 
 		if ( isFeatured && this.isExactMatch() ) {
 			badges.push(
 				<DomainSuggestionBadge variation="success">
-					{ translate( 'It’s available!' ) }
+					{ translate( "It's available!" ) }
 				</DomainSuggestionBadge>
 			);
 		} else if ( isRecommended && isFeatured ) {
@@ -330,13 +333,15 @@ class DomainRegistrationSuggestion extends Component {
 		} else if ( isBestAlternative && isFeatured ) {
 			badges.push(
 				<DomainSuggestionBadge key="best-alternative">
-					{ translate( 'Best Alternative' ) }
+					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
 		}
 
+		const skipSaleBadge = isHundredYearPlanFlow( flowName );
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
-		if ( productSaleCost && paidDomain ) {
+		if ( productSaleCost && paidDomain && ! skipSaleBadge ) {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
@@ -357,6 +362,10 @@ class DomainRegistrationSuggestion extends Component {
 			);
 		}
 
+		if ( badges.length === 0 ) {
+			return null;
+		}
+
 		return badges;
 	}
 
@@ -370,7 +379,8 @@ class DomainRegistrationSuggestion extends Component {
 		if (
 			! Array.isArray( this.props.suggestion.match_reasons ) ||
 			hideMatchReasons ||
-			! isFeatured
+			! isFeatured ||
+			! this.isExactMatch()
 		) {
 			return null;
 		}
@@ -384,7 +394,6 @@ class DomainRegistrationSuggestion extends Component {
 			productCost,
 			renewCost,
 			productSaleCost,
-			showStrikedOutPrice,
 			zeroCost,
 			flowName,
 			premiumDomain,
@@ -401,59 +410,56 @@ class DomainRegistrationSuggestion extends Component {
 
 		const matchReasons = this.renderMatchReasons();
 
+		const priceRule = this.getPriceRule();
+
+		let cta = null;
+		let price = null;
+		let onClick = null;
+
 		if ( premiumDomain?.is_price_limit_exceeded ) {
-			return (
-				<SuggestionComponent
-					badges={ badges }
-					matchReasons={ matchReasons }
-					notice={ notice }
-					domain={ domainName }
-					tld={ tld.join( '.' ) }
-					disabled
-					price={
-						<DomainSuggestionPrice
-							originalPrice={ renewCost }
-							price={ productSaleCost ?? productCost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
-						/>
-					}
+			cta = (
+				<DomainSuggestionCTA.Primary
+					href="https://wordpress.com/help/contact"
+					label={ translate( 'Interested in this domain? Contact support' ) }
+					icon={ envelope }
+				>
+					{ translate( 'Contact support' ) }
+				</DomainSuggestionCTA.Primary>
+			);
+
+			price = (
+				<DomainSuggestionPrice
+					salePrice={ productSaleCost }
+					price={ productCost }
+					renewPrice={ renewCost }
+				/>
+			);
+		} else {
+			onClick = this.onButtonClick;
+			price = ! isHundredYearPlanFlow( flowName ) && (
+				<DomainProductPrice
+					zeroCost={ zeroCost }
+					rule={ priceRule }
+					salePrice={ productSaleCost }
+					price={ productCost }
+					renewPrice={ renewCost }
 				/>
 			);
 		}
 
-		const priceRule = this.getPriceRule();
-
 		return (
 			<SuggestionComponent
+				isSingleFeaturedSuggestion={ this.props.isSingleFeaturedSuggestion }
 				badges={ badges }
 				uuid={ fullDomain }
 				domain={ domainName }
-				onClick={ this.onButtonClick }
 				isHighlighted={ isFeatured && this.isExactMatch() }
 				matchReasons={ matchReasons }
 				notice={ notice }
 				tld={ tld.join( '.' ) }
-				price={
-					! isHundredYearPlanFlow( flowName ) && (
-						<DomainProductPrice
-							zeroCost={ zeroCost }
-							rule={ priceRule }
-							price={ productSaleCost ?? productCost }
-							renewPrice={ renewCost }
-							showStrikedOutPrice={ showStrikedOutPrice }
-						/>
-					)
-				}
+				onClick={ onClick }
+				price={ price }
+				cta={ cta }
 			/>
 		);
 	}
@@ -464,7 +470,6 @@ const mapStateToProps = ( state, props ) => {
 	const productsList = props.products ?? getProductsList( state );
 	const currentUserCurrencyCode =
 		props.suggestion.currency_code || getCurrentUserCurrencyCode( state );
-	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 	const flowName = getCurrentFlowName( state );
 
@@ -477,26 +482,26 @@ const mapStateToProps = ( state, props ) => {
 		renewCost = props.premiumDomain?.renew_cost;
 		if ( props.premiumDomain?.sale_cost ) {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
-				stripZeros,
+				stripZeros: true,
 			} );
 		}
 	} else if ( HUNDRED_YEAR_DOMAIN_FLOW === flowName ) {
 		productCost = props.suggestion.cost;
 		renewCost = props.suggestion.renew_cost;
 	} else {
-		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, true );
 		// Renew cost is the same as the product cost for non-premium domains
 		renewCost = productCost;
 		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
-			stripZeros
+			true
 		);
 	}
 
 	return {
-		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros } ),
+		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros: true } ),
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,

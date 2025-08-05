@@ -71,6 +71,11 @@ const CompactPost = ( props ) => {
 					followSource={ READER_DISCOVER }
 					iconSize={ 20 }
 					followingLabel={ translate( 'Subscribed' ) }
+					onFollowToggle={ ( isFollowing ) => {
+						if ( isFollowing ) {
+							openSuggestedFollows();
+						}
+					} }
 				/>
 			) }
 			<ReaderPostEllipsisMenu

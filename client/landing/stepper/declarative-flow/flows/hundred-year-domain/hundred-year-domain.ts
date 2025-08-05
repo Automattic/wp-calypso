@@ -48,7 +48,7 @@ const HundredYearDomainFlow: Flow = {
 			const submittedDomainCartItem = domainRegistration( {
 				productSlug: productSlug as string,
 				domain: domainName as string,
-				extra: { is_hundred_year_domain: true },
+				extra: { is_hundred_year_domain: true, flow_name: HUNDRED_YEAR_DOMAIN_FLOW },
 				volume: 100,
 			} );
 

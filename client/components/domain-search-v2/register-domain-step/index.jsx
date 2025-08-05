@@ -3,9 +3,11 @@ import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import {
 	DomainSearch,
+	DomainSearchControls,
 	DomainSearchNotice,
 	DomainSuggestionLoadMore,
 	DomainSuggestionFilterReset,
+	DomainSearchAlreadyOwnDomainCTA,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -14,11 +16,14 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
 	isDomainForGravatarFlow,
+	NEW_HOSTED_SITE_FLOW,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -52,6 +57,7 @@ import {
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 	recordUseYourDomainButtonClick,
+	recordDomainClickMissing,
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'calypso/components/domains/register-domain-step/analytics';
@@ -198,7 +204,13 @@ class RegisterDomainStep extends Component {
 		this.state.lastFilters = this.getInitialFiltersState();
 
 		if ( props.initialState ) {
-			this.state = { ...this.state, ...props.initialState };
+			this.state = {
+				...this.state,
+				...props.initialState,
+				// Always reset these flags on mount
+				hasSubmitted: false,
+				helperTermSubmitted: false,
+			};
 
 			if ( props.initialState.searchResults ) {
 				this.state.loadingResults = false;
@@ -462,10 +474,10 @@ class RegisterDomainStep extends Component {
 	}
 
 	getCart = () => {
-		const { cart, onAddDomain, onRemoveDomain } = this.props;
+		const { cart, onRemoveDomain } = this.props;
 		const searchResults = this.state.searchResults || [];
 
-		const domainsInCart = getDomainsInCart( cart );
+		const domainsInCart = this.getDomainsInCart();
 
 		const total = formatCurrency(
 			domainsInCart.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
@@ -477,7 +489,7 @@ class RegisterDomainStep extends Component {
 		);
 
 		return {
-			isBusy: this.props.isMiniCartContinueButtonBusy,
+			isBusy: !! this.state.pendingCheckSuggestion || this.props.isMiniCartContinueButtonBusy,
 			errorMessage: this.props.replaceDomainFailedMessage,
 			items: domainsInCart.map( ( domain ) => {
 				const [ domainName, ...tld ] = domain.meta.split( '.' );
@@ -486,38 +498,58 @@ class RegisterDomainStep extends Component {
 					( override ) => ! override.does_override_original_cost
 				);
 
+				const currentPrice = formatCurrency( domain.item_subtotal_integer, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} );
+
+				const originalPrice = formatCurrency( domain.item_original_cost_integer, domain.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} );
+
 				return {
 					uuid: domain.uuid,
 					domain: domainName,
 					tld: tld.join( '.' ),
-					originalPrice: hasPromotion
-						? formatCurrency( domain.item_original_cost_integer, domain.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-						  } )
-						: undefined,
-					price: formatCurrency( domain.item_subtotal_integer, domain.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
+					salePrice: hasPromotion ? currentPrice : undefined,
+					price: hasPromotion ? originalPrice : currentPrice,
 				};
 			} ),
 			total,
 			onAddItem: ( domain_name ) => {
+				// Try to find and add subdomain first
+				const subdomain = this.state.subdomainSearchResults?.find(
+					( suggestion ) => suggestion.domain_name === domain_name
+				);
+
+				if ( subdomain ) {
+					const position = this.state.subdomainSearchResults.indexOf( subdomain );
+					return this.onAddDomain( subdomain, position, false );
+				}
+
 				const suggestionPosition = searchResults.findIndex(
 					( result ) => result.domain_name === domain_name
 				);
 
 				if ( suggestionPosition === -1 ) {
+					// Not found in regular results, track it
+					this.props.recordDomainClickMissing(
+						domain_name,
+						this.props.analyticsSection,
+						this.props.flowName,
+						this.state.lastQuery,
+						'domain'
+					);
 					return;
 				}
 
 				const suggestion = searchResults[ suggestionPosition ];
 
-				return onAddDomain( suggestion, suggestionPosition, false );
+				return this.onAddDomain( suggestion, suggestionPosition, false );
 			},
 			onRemoveItem: ( itemUuid ) => {
-				const domainInCart = cart.products.find( ( product ) => product.cart_item_id === itemUuid );
+				const domainInCart = domainsInCart.find( ( product ) => product.cart_item_id === itemUuid );
 
 				if ( ! domainInCart ) {
 					return;
@@ -526,7 +558,7 @@ class RegisterDomainStep extends Component {
 				return onRemoveDomain( domainInCart );
 			},
 			hasItem: ( domain_name ) => {
-				return cart.products.some( ( item ) => item.meta === domain_name );
+				return domainsInCart.some( ( item ) => item.meta === domain_name );
 			},
 		};
 	};
@@ -568,8 +600,24 @@ class RegisterDomainStep extends Component {
 		return notices;
 	}
 
+	renderAlreadyOwnADomainButton() {
+		const { handleClickUseYourDomain, shouldRenderUseYourDomain } = this.props;
+
+		if ( ! shouldRenderUseYourDomain ) {
+			return null;
+		}
+
+		return (
+			<div className="wpcom-domain-search-v2__sticky-bottom">
+				<DomainSearchAlreadyOwnDomainCTA
+					onClick={ handleClickUseYourDomain ?? this.useYourDomainFunction() }
+				/>
+			</div>
+		);
+	}
+
 	render() {
-		const { onContinue, isDomainAndPlanPackageFlow } = this.props;
+		const { onContinue, isDomainAndPlanPackageFlow, translate } = this.props;
 
 		const { trademarkClaimsNoticeInfo } = this.state;
 
@@ -580,7 +628,66 @@ class RegisterDomainStep extends Component {
 		const notices = this.renderGeneralNotices();
 
 		const showFreeDomainPromo =
-			this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
+			this.props.showFreeDomainPromo === false
+				? false
+				: this.props.isPlanSelectionAvailableInFlow || this.props.showFreeDomainPromo;
+
+		const showHelperTerm =
+			this.state.helperTermSubmitted || ( this.state.hasSubmitted && ! this.state.lastQuery );
+
+		if ( this.isInInitialState() ) {
+			return (
+				<DomainSearch
+					onContinue={ onContinue }
+					cart={ this.getCart() }
+					className="wpcom-domain-search-v2 initial-state"
+				>
+					<VStack spacing={ 8 }>
+						<VStack spacing={ 2 }>
+							<HStack spacing={ 4 } className="wpcom-domain-search-v2__empty-state-search-controls">
+								{ this.renderSearchBar() }
+								<DomainSearchControls.Submit
+									onClick={ () => {
+										const query = this.state.lastQuery;
+										this.setState( { hasSubmitted: true } );
+
+										if ( query ) {
+											this.onSearch( query );
+										}
+									} }
+								/>
+							</HStack>
+							{ showHelperTerm && (
+								<Text variant="muted">
+									{ translate(
+										'Try searching for a word like {{studioLink}}studio{{/studioLink}} or {{coffeeLink}}coffee{{/coffeeLink}} to get started.',
+										{
+											components: {
+												studioLink: (
+													<Button
+														variant="link"
+														onClick={ () => this.onHelperTermClick( 'studio' ) }
+														className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
+													/>
+												),
+												coffeeLink: (
+													<Button
+														variant="link"
+														onClick={ () => this.onHelperTermClick( 'coffee' ) }
+														className="wpcom-domain-search-v2__empty-state-search-controls-helper-text-link"
+													/>
+												),
+											},
+										}
+									) }
+								</Text>
+							) }
+						</VStack>
+						{ this.renderAlreadyOwnADomainButton() }
+					</VStack>
+				</DomainSearch>
+			);
+		}
 
 		return (
 			<DomainSearch
@@ -590,14 +697,14 @@ class RegisterDomainStep extends Component {
 			>
 				<VStack spacing={ 8 }>
 					<VStack spacing={ 4 }>
-						{ this.renderSearchBar() }
+						{ this.renderSearchControls() }
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 						{ notices && <VStack spacing={ 2 }>{ notices }</VStack> }
 					</VStack>
 					{ showFreeDomainPromo && <FreeDomainForAYearPromo /> }
 					{ this.renderContent() }
 				</VStack>
-				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } />
+				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } onSkip={ this.props.onSkip } />
 			</DomainSearch>
 		);
 	}
@@ -693,14 +800,20 @@ class RegisterDomainStep extends Component {
 			onSearch: this.onSearch,
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
+			disableAutoSearch: this.isInInitialState(),
 			isOnboarding: this.props.isOnboarding,
+			placeholderAnimation: ! this.state.searchResults,
 			childrenBeforeCloseButton:
 				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
+		return <DomainSearchInput { ...componentProps } />;
+	}
+
+	renderSearchControls() {
 		return (
 			<HStack spacing={ 4 }>
-				<DomainSearchInput { ...componentProps }></DomainSearchInput>
+				{ this.renderSearchBar() }
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</HStack>
 		);
@@ -793,20 +906,22 @@ class RegisterDomainStep extends Component {
 	renderContent() {
 		return (
 			<>
-				{ this.maybeRenderSearchResults() }
+				{ this.renderSearchResults() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
 			</>
 		);
 	}
 
-	maybeRenderSearchResults() {
-		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
-			return this.renderSearchResults();
-		}
+	getDomainsInCart = () => {
+		return ! shouldUseMultipleDomainsInCart( this.props.flowName )
+			? []
+			: getDomainsInCart( this.props.cart );
+	};
 
-		return null;
-	}
+	isInInitialState = () => {
+		return ! Array.isArray( this.state.searchResults ) && ! this.state.loadingResults;
+	};
 
 	save = () => {
 		this.props.onSave( this.state );
@@ -1008,7 +1123,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
-		const loadingResults = Boolean( cleanedQuery );
+		const loadingResults = this.isInInitialState() ? false : Boolean( cleanedQuery );
 		const isInitialQueryActive = ! searchQuery || searchQuery === this.props.suggestion;
 
 		this.setState(
@@ -1599,7 +1714,9 @@ class RegisterDomainStep extends Component {
 
 			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
-				.catch( () => [] )
+				.catch( () => {
+					this.setState( { pendingCheckSuggestion: null } );
+				} )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
 					this.props.recordDomainAddAvailabilityPreCheck(
@@ -1639,8 +1756,26 @@ class RegisterDomainStep extends Component {
 		}
 	};
 
+	onHelperTermClick = ( term ) => {
+		this.setState(
+			{
+				lastQuery: term,
+				helperTermSubmitted: true,
+			},
+			() => this.onSearch( term )
+		);
+	};
+
 	useYourDomainFunction = () => {
 		return this.goToUseYourDomainStep;
+	};
+
+	getUseYourDomainHandler = () => {
+		if ( [ NEW_HOSTED_SITE_FLOW, AI_SITE_BUILDER_FLOW ].includes( this.props.flowName ) ) {
+			return null;
+		}
+
+		return this.props.handleClickUseYourDomain ?? this.useYourDomainFunction();
 	};
 
 	renderSearchResults() {
@@ -1675,7 +1810,7 @@ class RegisterDomainStep extends Component {
 				onAddMapping={ onAddMapping }
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
-				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
+				onClickUseYourDomain={ this.getUseYourDomainHandler() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
@@ -1697,13 +1832,14 @@ class RegisterDomainStep extends Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
-				hideMatchReasons={ this.props.hideMatchReasons ?? this.props.isOnboarding }
+				hideMatchReasons={ this.props.hideMatchReasons }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
+				flowName={ this.props.flowName }
 			/>
 		);
 	}
@@ -1853,6 +1989,7 @@ export default connect(
 	{
 		recordDomainAvailabilityReceive,
 		recordDomainAddAvailabilityPreCheck,
+		recordDomainClickMissing,
 		recordFiltersReset,
 		recordFiltersSubmit,
 		recordMapDomainButtonClick,

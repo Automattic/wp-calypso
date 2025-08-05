@@ -65,6 +65,7 @@ function DomainSearchEmptyState( { onSearch }: { onSearch( query: string ): void
 						dir="ltr"
 						aria-describedby="domain-search-description"
 						onBlur={ () => {} }
+						onKeyDown={ () => {} }
 					/>
 					<Button __next40pxDefaultSize type="submit" variant="primary">
 						Search domains
@@ -115,6 +116,7 @@ function DomainSearchResults( { initialQuery }: { initialQuery: string } ) {
 							dir="ltr"
 							aria-describedby="domain-search-description"
 							onBlur={ () => {} }
+							onKeyDown={ () => {} }
 						/>
 						<DomainSearchControls.FilterButton count={ 3 } onClick={ () => {} } />
 					</HStack>

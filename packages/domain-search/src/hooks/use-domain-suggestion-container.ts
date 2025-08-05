@@ -12,8 +12,9 @@ export const useDomainSuggestionContainer = () => {
 
 interface DomainSuggestionContainerContextValue {
 	activeQuery: 'small' | 'large';
-	alignment?: 'left' | 'right';
+	priceAlignment?: 'left' | 'right';
 	priceSize?: number;
+	isFeatured?: boolean;
 }
 
 export const DomainSuggestionContainerContext = createContext<

@@ -48,13 +48,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( siteMigrationFlow, options, 'forward' );
 
-const runNavigationBack = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
-	runFlowNavigation( siteMigrationFlow, options, 'back' );
-
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
 		} );
 	} );
 
@@ -252,7 +249,7 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( window.location.assign ).toMatchURL( {
+				expect( window.location.replace ).toMatchURL( {
 					path: '/setup/site-setup/importList',
 					query: {
 						siteId: 123,
@@ -279,7 +276,7 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( window.location.assign ).toMatchURL( {
+				expect( window.location.replace ).toMatchURL( {
 					path: '/setup/site-setup/importerMedium',
 					query: {
 						from: 'https://example-to-be-migrated.com',
@@ -451,49 +448,6 @@ describe( 'Site Migration Flow', () => {
 					query: { from: 'https://site-to-be-migrated.com' },
 				} );
 			} );
-
-			describe( 'back', () => {
-				beforeEach( () => {
-					jest.clearAllMocks();
-				} );
-
-				it( 'redirects back to SITE_MIGRATION_IDENTIFY step', () => {
-					runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_IDENTIFY,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( window.location.assign ).toMatchURL( {
-						path: '/setup/site-setup/goals',
-						query: {
-							siteSlug: 'example.wordpress.com',
-							siteId: 123,
-						},
-					} );
-				} );
-
-				it( 'redirects back to the importer list when the entry point is wp-admin-importers-list', () => {
-					jest.mocked( useFlowState ).mockReturnValue( {
-						get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
-						set: jest.fn(),
-						sessionId: '123',
-					} );
-
-					runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_IDENTIFY,
-						dependencies: {},
-						query: {
-							siteSlug: 'example.wordpress.com',
-							siteId: 123,
-						},
-					} );
-
-					expect( window.location.assign ).toMatchURL( {
-						path: 'https://example.wpcomstaging.com/wp-admin/import.php',
-					} );
-				} );
-			} );
 		} );
 
 		describe( 'SITE_MIGRATION_IMPORT_OR_MIGRATE', () => {
@@ -564,50 +518,6 @@ describe( 'Site Migration Flow', () => {
 						engine: 'wordpress',
 						ref: 'site-migration',
 					},
-				} );
-			} );
-
-			describe( 'back', () => {
-				beforeEach( () => {
-					jest.clearAllMocks();
-				} );
-
-				it( 'redirects back to the SITE_MIGRATION_IDENTIFY step', () => {
-					jest.mocked( useFlowState ).mockReturnValue( {
-						get: jest.fn().mockReturnValueOnce( {} ),
-						set: jest.fn(),
-						sessionId: '123',
-					} );
-
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_IDENTIFY,
-					} );
-				} );
-
-				it( 'redirects back to import flow when the ref is calypso-importer', () => {
-					jest.mocked( useFlowState ).mockReturnValue( {
-						get: jest.fn().mockReturnValue( { entryPoint: 'calypso-importer' } ),
-						set: jest.fn(),
-						sessionId: '123',
-					} );
-					runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123, ref: 'calypso-importer' },
-					} );
-
-					expect( window.location.assign ).toMatchURL( {
-						path: '/import/example.wordpress.com',
-						query: {
-							ref: 'site-migration',
-						},
-					} );
 				} );
 			} );
 		} );
@@ -809,20 +719,6 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 			} );
-
-			describe( 'back', () => {
-				it( 'redirects back to SITE_MIGRATION_IMPORT_OR_MIGRATE step', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
-					} );
-				} );
-			} );
 		} );
 
 		describe( 'SITE_MIGRATION_UPGRADE_PLAN', () => {
@@ -848,22 +744,8 @@ describe( 'Site Migration Flow', () => {
 					from: 'https://site-to-be-migrated.com',
 					siteSlug: 'example.wordpress.com',
 					stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-					cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-				} );
-			} );
-
-			describe( 'back', () => {
-				it( 'redirects back to SITE_MIGRATION_HOW_TO_MIGRATE step', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
-					} );
+					historyBack: true,
 				} );
 			} );
 		} );
@@ -1046,45 +928,6 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 			} );
-
-			describe( 'back', () => {
-				it( 'redirects back to SITE_MIGRATION_HOW_TO_MIGRATE step', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_CREDENTIALS,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-				} );
-
-				it( 'redirects to WooCommerce admin when we were referred from the entrepreneur flow', () => {
-					( useFlowState as jest.Mock ).mockReturnValue( {
-						get: jest.fn().mockReturnValue( {
-							entryPoint: 'entrepreneur-signup',
-						} ),
-						set: jest.fn(),
-						sessionId: '12345',
-					} );
-
-					runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_CREDENTIALS,
-						dependencies: {},
-						query: {
-							siteSlug: 'example.wpcomstaging.com',
-							siteId: 123,
-							ref: 'entrepreneur-signup',
-						},
-					} );
-
-					expect( window.location.assign ).toHaveBeenCalledWith(
-						'https://example.wpcomstaging.com/wp-admin/admin.php?page=wc-admin&from-calypso=&sessionId=12345'
-					);
-				} );
-			} );
 		} );
 
 		describe( 'SITE_MIGRATION_FALLBACK_CREDENTIALS', () => {
@@ -1124,38 +967,6 @@ describe( 'Site Migration Flow', () => {
 					query: {
 						ref: 'site-migration',
 					},
-				} );
-			} );
-
-			describe( 'back', () => {
-				it( 'redirects back to SITE_MIGRATION_CREDENTIALS', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_CREDENTIALS,
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-				} );
-
-				it( 'redirects back to SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION when query backTo is set to this step', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
-						dependencies: {},
-						query: {
-							siteSlug: 'example.wordpress.com',
-							siteId: 123,
-							backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
-						},
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
 				} );
 			} );
 		} );
@@ -1204,25 +1015,6 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 						from: 'oldsite.com',
 					},
-				} );
-			} );
-
-			describe( 'back', () => {
-				it( 'redirects back to the SITE_MIGRATION_CREDENTIALS', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123, from: 'oldsite.com' },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_CREDENTIALS,
-						query: {
-							siteSlug: 'example.wordpress.com',
-							siteId: 123,
-							from: 'oldsite.com',
-						},
-					} );
 				} );
 			} );
 		} );
@@ -1290,21 +1082,6 @@ describe( 'Site Migration Flow', () => {
 					query: {
 						ref: 'site-migration',
 					},
-				} );
-			} );
-
-			describe( 'back', () => {
-				it( 'redirects back to the SITE_MIGRATION_CREDENTIALS', () => {
-					const destination = runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
-						dependencies: {},
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
-
-					expect( destination ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_CREDENTIALS,
-						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
-					} );
 				} );
 			} );
 		} );

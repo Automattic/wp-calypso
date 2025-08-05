@@ -6,11 +6,17 @@ import {
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
+import { ChooseDomainLater } from './choose-domain-later';
 import { HundredYearPromo } from './hundred-year-promo';
 
 import './style.scss';
 
-export const DomainCartV2 = ( { showFreeDomainPromo = false } ) => {
+interface Props {
+	showFreeDomainPromo?: boolean;
+	onSkip?: () => void;
+}
+
+export const DomainCartV2 = ( { showFreeDomainPromo = false, onSkip }: Props ) => {
 	const hasDomainInCartEligibleFor100YearDomainUpgrade = false;
 
 	return (
@@ -20,6 +26,11 @@ export const DomainCartV2 = ( { showFreeDomainPromo = false } ) => {
 				<VStack spacing={ 6 }>
 					{ showFreeDomainPromo && <FreeDomainForAYearPromo textOnly /> }
 					<DomainsFullCart.Items />
+					{ onSkip && (
+						<div>
+							<ChooseDomainLater onSkip={ onSkip } />
+						</div>
+					) }
 					{ hasDomainInCartEligibleFor100YearDomainUpgrade && (
 						<View>
 							<Spacer marginTop={ 4 }>

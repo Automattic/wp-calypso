@@ -1,14 +1,15 @@
+import { createSelector } from '@automattic/state-utils';
 import { BackupBrowserItem } from 'calypso/state/rewind/browser/types';
 import type { AppState } from 'calypso/types';
 
 /**
- * Retrieves a backup browser node by path array.
+ * Retrieves a backup browser node by path array (unmemoized).
  * @param state The application state.
  * @param siteId The site ID we're retrieving for.
  * @param pathList The path or array of paths leading to the node we want.
  * @returns A node in the backup browser state.
  */
-const getBackupBrowserNode = (
+const getBackupBrowserNodeUnmemoized = (
 	state: AppState,
 	siteId: number,
 	pathList: string[] | string
@@ -44,5 +45,16 @@ const getBackupBrowserNode = (
 	}
 	return currentNode;
 };
+
+/**
+ * Memoized version of getBackupBrowserNode to prevent unnecessary rerenders
+ */
+const getBackupBrowserNode = createSelector(
+	getBackupBrowserNodeUnmemoized,
+	( state: AppState, siteId: number, pathList: string[] | string ) => [
+		state.rewind[ siteId ]?.browser,
+		pathList,
+	]
+);
 
 export default getBackupBrowserNode;

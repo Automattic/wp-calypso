@@ -14,7 +14,7 @@ export default function getJetpackCheckoutRedirectUrl( state, siteId ) {
 	);
 
 	const redirectMap = {
-		jetpack: 'admin.php?page=jetpack#/recommendations',
+		jetpack: 'admin.php?page=my-jetpack',
 		'jetpack-backup': 'admin.php?page=jetpack-backup',
 		'jetpack-social': 'admin.php?page=jetpack-social',
 	};

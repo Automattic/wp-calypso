@@ -17,32 +17,65 @@ interface SkeletonProps {
 	matchReasonsList?: React.ReactNode;
 	price: React.ReactNode;
 	cta: React.ReactNode;
+	isSingleFeaturedSuggestion?: boolean;
 }
 
 export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( props, ref ) => {
-	const { activeQuery, className, badges, title, matchReasonsList, price, cta } = props;
+	const {
+		activeQuery,
+		className,
+		badges,
+		title,
+		matchReasonsList,
+		price,
+		cta,
+		isSingleFeaturedSuggestion,
+	} = props;
 
 	const getContent = () => {
 		if ( activeQuery === 'large' ) {
 			if ( matchReasonsList ) {
 				return (
-					<VStack spacing={ 3 } className="domain-suggestion-featured__content">
-						{ badges }
-						<HStack spacing={ 6 }>
-							<VStack spacing={ 3 } alignment="left">
+					<HStack spacing={ 6 } className="domain-suggestion-featured__content">
+						<VStack spacing={ 3 } style={ { justifyContent: 'flex-start', height: '100%' } }>
+							{ badges }
+							<VStack
+								spacing={ 3 }
+								alignment="left"
+								style={ { alignSelf: 'stretch', justifyContent: 'flex-start' } }
+							>
 								{ title }
 								{ matchReasonsList }
 							</VStack>
-							<VStack
-								spacing={ 6 }
-								alignment="right"
-								className="domain-suggestion-featured__price-info"
-							>
-								{ price }
-								{ cta }
-							</VStack>
-						</HStack>
-					</VStack>
+						</VStack>
+						<VStack
+							spacing={ 6 }
+							alignment="right"
+							className="domain-suggestion-featured__price-info"
+						>
+							{ price }
+							{ cta }
+						</VStack>
+					</HStack>
+				);
+			}
+
+			if ( isSingleFeaturedSuggestion ) {
+				return (
+					<HStack spacing={ 6 } className="domain-suggestion-featured__content">
+						<VStack spacing={ 3 } style={ { justifyContent: 'center', height: '100%' } }>
+							{ badges }
+							{ title }
+						</VStack>
+						<VStack
+							spacing={ 5 }
+							alignment="right"
+							className="domain-suggestion-featured__price-info"
+						>
+							{ price }
+							{ cta }
+						</VStack>
+					</HStack>
 				);
 			}
 
@@ -74,12 +107,13 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 	};
 
 	return (
-		<Card
-			ref={ ref }
-			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			className={ clsx( 'domain-suggestion-featured', className ) }
-		>
-			<CardBody className="domain-suggestion-featured__body">{ getContent() }</CardBody>
+		<Card ref={ ref } className={ clsx( 'domain-suggestion-featured', className ) }>
+			<CardBody
+				className="domain-suggestion-featured__body"
+				style={ { padding: activeQuery === 'large' ? '1.5rem' : '1rem' } }
+			>
+				{ getContent() }
+			</CardBody>
 		</Card>
 	);
 } );

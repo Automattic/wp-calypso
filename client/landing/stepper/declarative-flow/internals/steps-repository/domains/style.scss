@@ -2,6 +2,57 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '../hundred-year-plan-step-wrapper/mixins';
 
+.copy-site,
+.newsletter,
+.readymade-template,
+.reblogging,
+.start-writing,
+.domain-upsell {
+	&.domains.step-container {
+		&:has( .wpcom-domain-search-v2 ) {
+			padding: 0 16px;
+			margin: 0 auto;
+			box-sizing: content-box;
+
+			@include break-small {
+				padding: 0 24px;
+			}
+		}
+
+		.use-my-domain__page-heading {
+			padding-left: 24px;
+			padding-right: 24px;
+			text-align: center;
+		}
+
+		.use-my-domain,
+		.connect-domain-step,
+		.domain-transfer-or-connect__content {
+			background: transparent;
+			box-shadow: none;
+
+			.form-text-input {
+				height: 100%;
+			}
+
+			@include break-mobile {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
+}
+
+.hundred-year-plan-step-wrapper__step-container:has( .wpcom-domain-search-v2 ) {
+	width: 100%;
+
+	.domains__content {
+		padding: 0 16px;
+		margin: 0 auto;
+		max-width: 780px;
+	}
+}
+
 .domain-search-legacy--stepper {
 	.domains {
 		.step-container {

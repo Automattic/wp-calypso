@@ -1,0 +1,10 @@
+@import "@wordpress/base-styles/colors";
+
+.dashboard-overview-latest-activity-card__icon {
+    display: block;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    fill: $gray-700;
+}

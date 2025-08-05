@@ -9,9 +9,47 @@ import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { SitePlan } from '../../data/types';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from './deployments-callout-illustration.svg';
 import ghIconUrl from './gh-icon.svg';
+
+export function SiteDeploymentsCallout( {
+	siteSlug,
+	titleAs = 'h1',
+}: {
+	siteSlug: string;
+	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
+} ) {
+	return (
+		<Callout
+			icon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
+			title={ __( 'Deploy from GitHub' ) }
+			titleAs={ titleAs }
+			image={ illustrationUrl }
+			description={
+				<>
+					<Text as="p" variant="muted">
+						{ __(
+							'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+						) }
+					</Text>
+					<Text as="p" variant="muted">
+						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
+					</Text>
+				</>
+			}
+			actions={
+				<UpsellCTAButton
+					text={ __( 'Upgrade plan' ) }
+					tracksId="deployments"
+					variant="primary"
+					href={ `/checkout/${ siteSlug }/business` }
+				/>
+			}
+		/>
+	);
+}
 
 function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();
@@ -21,39 +59,11 @@ function SiteDeployments() {
 		return;
 	}
 
-	const showIneligiblePlanCallout = ! site.plan || ! hasDeploymentsFeature( site.plan );
-
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> }>
 			<CalloutOverlay
-				showCallout={ showIneligiblePlanCallout }
-				callout={
-					<Callout
-						icon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
-						title={ __( 'Deploy from GitHub' ) }
-						titleAs="h1"
-						image={ illustrationUrl }
-						description={
-							<>
-								<Text as="p" variant="muted">
-									{ __(
-										'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-									) }
-								</Text>
-								<Text as="p" variant="muted">
-									{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-								</Text>
-							</>
-						}
-						actions={
-							<UpsellCTAButton
-								text={ __( 'Upgrade plan' ) }
-								tracksId="deployments"
-								variant="primary"
-							/>
-						}
-					/>
-				}
+				showCallout={ ! hasHostingFeature( site, HostingFeatures.DEPLOYMENT ) }
+				callout={ <SiteDeploymentsCallout siteSlug={ site.slug } /> }
 				main={
 					<DataViewsCard>
 						<></>
@@ -62,10 +72,6 @@ function SiteDeployments() {
 			/>
 		</PageLayout>
 	);
-}
-
-function hasDeploymentsFeature( plan: SitePlan ) {
-	return plan.features.active.includes( 'atomic' );
 }
 
 export default SiteDeployments;

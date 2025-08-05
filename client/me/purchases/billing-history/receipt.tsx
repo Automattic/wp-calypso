@@ -742,7 +742,7 @@ function ReceiptLabels( { hideDetailsOnPrint }: { hideDetailsOnPrint?: boolean }
 	return (
 		<div className={ clsx( { 'receipt__no-print': hideDetailsOnPrint } ) }>
 			<FormLabel htmlFor="billing-history__billing-details-textarea">
-				{ translate( 'Billing Details' ) }
+				{ translate( 'Billing details' ) }
 			</FormLabel>
 			<div
 				className="billing-history__billing-details-description"

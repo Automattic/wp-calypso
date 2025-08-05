@@ -31,6 +31,7 @@ import { sshKeysQuery } from '../../app/queries/ssh';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
+import { isWpError } from '../../data/error';
 import type { SftpUser, SiteSshKey, UserSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -94,12 +95,10 @@ export default function SshCard( {
 } ) {
 	const { user } = useAuth();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
-	const { data: userSshKeys, error: userSshKeysError } = useQuery< UserSshKey[], { code: string } >(
-		{
-			...sshKeysQuery(),
-			enabled: sshEnabled,
-		}
-	);
+	const { data: userSshKeys, error: userSshKeysError } = useQuery( {
+		...sshKeysQuery(),
+		enabled: sshEnabled,
+	} );
 	const toggleSshAccessMutation = useMutation(
 		! sshEnabled ? siteSshAccessEnableMutation( siteId ) : siteSshAccessDisableMutation( siteId )
 	);
@@ -280,7 +279,7 @@ export default function SshCard( {
 		fields: [ 'connection_command', 'ssh_key' ],
 	};
 
-	if ( userSshKeysError?.code === 'reauthorization_required' ) {
+	if ( isWpError( userSshKeysError ) && userSshKeysError.code === 'reauthorization_required' ) {
 		const currentPath = window.location.pathname;
 		const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 		window.location.href = loginUrl;

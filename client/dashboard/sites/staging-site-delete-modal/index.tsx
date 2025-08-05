@@ -1,5 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -20,8 +20,7 @@ export default function StagingSiteDeleteModal( {
 	site: Site;
 	onClose: () => void;
 } ) {
-	const router = useRouter();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
@@ -31,15 +30,16 @@ export default function StagingSiteDeleteModal( {
 	}
 
 	const handleDelete = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_click' );
 		mutation.mutate( undefined, {
-			onSuccess: () => {
-				router.navigate( { to: '/sites' } );
-				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
-			},
 			onError: ( error: Error ) => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure' );
 				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
 					type: 'snackbar',
 				} );
+			},
+			onSuccess: () => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
 			},
 		} );
 	};

@@ -29,7 +29,6 @@ const GravPoweredLoginBlockHeader = ( {
 	socialConnect,
 	twoStepNonce,
 	twoFactorAuthType,
-	twoFactorEnabled,
 }: Props ) => {
 	const translate = useTranslate();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
@@ -42,7 +41,6 @@ const GravPoweredLoginBlockHeader = ( {
 		linkingSocialService,
 		action,
 		oauth2Client,
-		twoFactorEnabled,
 		currentQuery,
 		translate,
 		twoStepNonce,

@@ -6,12 +6,23 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,
+	Notice,
+	Tooltip,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback, useEffect } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+} from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { error, chevronRight, chevronLeft } from '@wordpress/icons';
+import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
@@ -29,10 +40,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
-// TODO: Temporary style for the PoC
 import './style.scss';
 
 const ROOT_PATH = '/';
@@ -47,6 +58,7 @@ const fileBrowserConfig: FileBrowserConfig = {
 	alwaysInclude: [ 'wp-config.php' ],
 	showHeaderButtons: false,
 	showFileCard: false,
+	showBackupTime: true,
 };
 
 const DirectionArrow = () => {
@@ -180,6 +192,7 @@ export default function SyncModal( {
 	const dispatch = useDispatch();
 	const syncConfig = getSyncConfig( syncType );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
+	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -213,11 +226,12 @@ export default function SyncModal( {
 	);
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
-	const getFilesAndFoldersNodesCheckState = useCallback( () => {
+	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
+	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
-			// If nodes don't exist yet, default to 'checked' since we set the root to checked by default
-			return 'checked';
+			// If nodes don't exist yet, default to 'unchecked' since we set the root to unchecked by default
+			return 'unchecked';
 		}
 
 		const checkedCount = nodes.filter( ( node ) => node?.checkState === 'checked' ).length;
@@ -238,24 +252,17 @@ export default function SyncModal( {
 		return 'mixed';
 	}, [ wpContentNode, wpConfigNode ] );
 
-	const filesAndFoldersNodesCheckState = getFilesAndFoldersNodesCheckState();
-
-	useEffect( () => {
-		dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
-		dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
-	}, [ dispatch, querySiteId ] );
-
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
-			// setSyncError( null );
+		onSuccess: ( _, options ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
+			);
 		},
-		onError: ( error ) => {
+		onError: ( error, options ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
 					code: error.code,
+					...options,
 				} )
 			);
 			// setSyncError( error.code );
@@ -263,14 +270,16 @@ export default function SyncModal( {
 	} );
 
 	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
-			// setSyncError( null );
+		onSuccess: ( _, options ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
+			);
 		},
-		onError: ( error ) => {
+		onError: ( error, options ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
 					code: error.code,
+					...options,
 				} )
 			);
 			// setSyncError( error.code );
@@ -283,10 +292,24 @@ export default function SyncModal( {
 	} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
+	const shouldDisableGranularSync = ! lastKnownBackupAttempt;
+
+	useEffect( () => {
+		if ( shouldDisableGranularSync ) {
+			dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+		}
+	}, [ dispatch, querySiteId, shouldDisableGranularSync ] );
+
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
-		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
+		if (
+			shouldDisableGranularSync ||
+			( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' )
+		) {
 			// Sync everything
 			include_paths = '';
 			exclude_paths = '';
@@ -314,6 +337,11 @@ export default function SyncModal( {
 		[ dispatch, querySiteId ]
 	);
 
+	const handleDomainConfirmation = useCallback(
+		( value: string | undefined ) => setDomainConfirmation( value || '' ),
+		[]
+	);
+
 	const onCheckboxChange = () => {
 		updateFilesAndFoldersCheckState(
 			filesAndFoldersNodesCheckState === 'checked' ? 'unchecked' : 'checked'
@@ -337,6 +365,15 @@ export default function SyncModal( {
 			updateFilesAndFoldersCheckState( 'checked' );
 		}
 	};
+
+	const showWooCommerceWarning =
+		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
+
+	const showDomainConfirmation = targetEnvironment === 'production';
+
+	const isButtonDisabled =
+		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
+		( browserCheckList.totalItems === 0 && browserCheckList.includeList.length === 0 );
 
 	return (
 		<Modal
@@ -366,35 +403,51 @@ export default function SyncModal( {
 				</HStack>
 				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 
-				<div className="staging-site-card">
-					<HStack spacing={ 2 } justify="space-between" alignment="center">
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ __( 'Files and folders' ) }
-							checked={ filesAndFoldersNodesCheckState === 'checked' }
-							indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
-							onChange={ onCheckboxChange }
-						/>
-						<SelectControl
-							value={ isFileBrowserVisible ? 'true' : 'false' }
-							variant="minimal"
-							options={ [
-								{
-									label: __( 'All files and folders' ),
-									value: 'false',
-								},
-								{
-									label: __( 'Specific files and folders' ),
-									value: 'true',
-								},
-							] }
-							onChange={ handleExpanderChange }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							aria-label={ __( 'Select files and folders to sync' ) }
-						/>
-					</HStack>
-
+				<div
+					className={ clsx( 'staging-site-card', {
+						'confirmation-input': showDomainConfirmation,
+					} ) }
+				>
+					<Tooltip
+						text={
+							shouldDisableGranularSync
+								? __( 'Selective Sync will be enabled automatically once your backup is complete.' )
+								: ''
+						}
+					>
+						<HStack spacing={ 2 } justify="space-between" alignment="center">
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Files and folders' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={
+									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+								}
+								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+								onChange={ onCheckboxChange }
+							/>
+							<SelectControl
+								style={ shouldDisableGranularSync ? { backgroundColor: 'white' } : {} }
+								value={ isFileBrowserVisible ? 'true' : 'false' }
+								variant="minimal"
+								disabled={ shouldDisableGranularSync }
+								options={ [
+									{
+										label: __( 'All files and folders' ),
+										value: 'false',
+									},
+									{
+										label: __( 'Specific files and folders' ),
+										value: 'true',
+									},
+								] }
+								onChange={ handleExpanderChange }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								aria-label={ __( 'Select files and folders to sync' ) }
+							/>
+						</HStack>
+					</Tooltip>
 					{ /*
 					 * Keep the FileBrowser component rendered (using a CSS 'hidden' class instead of conditional rendering)
 					 * to ensure its child nodes initialize properly and can be selected by default.
@@ -406,33 +459,97 @@ export default function SyncModal( {
 							fileBrowserConfig={ fileBrowserConfig }
 						/>
 					</div>
-					<div className="database-item">
+					<HStack
+						alignment="left"
+						spacing={ 2 }
+						style={ {
+							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							padding: '16px 0',
+							marginTop: '8px',
+							marginBottom: '24px',
+						} }
+					>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							checked={ ! sqlNode || sqlNode.checkState === 'checked' }
+							disabled={ shouldDisableGranularSync }
+							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-					</div>
+						<Tooltip
+							text={ __(
+								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+							) }
+						>
+							<span>
+								<Icon
+									icon={ error }
+									style={ { fill: 'var(--studio-orange-50)', display: 'flex' } }
+								/>
+							</span>
+						</Tooltip>
+					</HStack>
+					{ showWooCommerceWarning && (
+						<VStack style={ { paddingBottom: '52px' } }>
+							<Notice status="warning" isDismissible={ false }>
+								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
+									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
+								</Text>
+								{ createInterpolateElement(
+									__(
+										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+									),
+									{
+										a: (
+											<ExternalLink
+												href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+												children={ null }
+											/>
+										),
+									}
+								) }
+							</Notice>
+						</VStack>
+					) }
 				</div>
-				<HStack className="staging-site-card__footer">
+				<VStack className="staging-site-card__footer" spacing={ 6 }>
+					{ showDomainConfirmation && (
+						<InputControl
+							__next40pxDefaultSize
+							label={
+								<HStack style={ { textTransform: 'none' } } alignment="left" spacing={ 1 }>
+									<Text>
+										{ __( 'Enter your site‘s name' ) }{ ' ' }
+										<Text color="var(--studio-red-50)">{ productionSiteSlug }</Text>{ ' ' }
+										{ __( 'to confirm.' ) }
+									</Text>
+								</HStack>
+							}
+							onChange={ handleDomainConfirmation }
+						/>
+					) }
 					<HStack>
-						<Text className="staging-site-card__footer-text">
-							{ createInterpolateElement( syncConfig.learnMore, {
-								a: <InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />,
-							} ) }
-						</Text>
-					</HStack>
+						<HStack>
+							<Text className="staging-site-card__footer-text">
+								{ createInterpolateElement( syncConfig.learnMore, {
+									a: (
+										<InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />
+									),
+								} ) }
+							</Text>
+						</HStack>
 
-					<HStack justify="flex-end" spacing={ 4 }>
-						<Button variant="tertiary" onClick={ onClose }>
-							{ __( 'Cancel' ) }
-						</Button>
-						<Button variant="primary" onClick={ handleConfirm }>
-							{ syncConfig.submit }
-						</Button>
+						<HStack justify="flex-end" spacing={ 4 }>
+							<Button variant="tertiary" onClick={ onClose }>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
+								{ syncConfig.submit }
+							</Button>
+						</HStack>
 					</HStack>
-				</HStack>
+				</VStack>
 			</VStack>
 		</Modal>
 	);

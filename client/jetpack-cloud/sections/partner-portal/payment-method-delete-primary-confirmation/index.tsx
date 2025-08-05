@@ -17,7 +17,7 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 
 	const { data: recentCards, isFetching } = useRecentPaymentMethodsQuery();
 
-	const nextPrimaryPaymentMethod = ( recentCards?.items || [] ).find(
+	const nextPrimaryPaymentMethod = ( ( recentCards as any )?.items || [] ).find(
 		( card: PaymentMethod ) => card.id !== paymentMethod.id
 	);
 

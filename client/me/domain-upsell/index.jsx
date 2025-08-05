@@ -162,6 +162,9 @@ export function RenderDomainUpsell( {
 				domainRegistration( {
 					productSlug: domainSuggestionProductSlug,
 					domain: domainSuggestionName,
+					extra: {
+						flow_name: 'domain-upsell',
+					},
 				} ),
 			] );
 		} catch {

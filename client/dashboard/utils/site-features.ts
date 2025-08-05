@@ -1,8 +1,13 @@
-import { DotcomFeatures, HostingFeatures, JetpackModules } from '../data/constants';
+import {
+	DotcomFeatures,
+	HostingFeatures,
+	JetpackFeatures,
+	JetpackModules,
+} from '../data/constants';
 import type { Site } from '../data/types';
 
 // Returns whether the plan supports a specific feature.
-export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures }` ) {
+export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures | JetpackFeatures }` ) {
 	if ( ! site.plan ) {
 		return false;
 	}

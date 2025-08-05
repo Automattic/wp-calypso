@@ -108,7 +108,13 @@ const SiteMigrationImportOrMigrate: StepType< {
 			<DocumentHead title={ pageTitle } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 5 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
+				}
 				heading={ <Step.Heading text={ pageTitle } subText={ pageSubTitle } /> }
 				className="import-or-migrate-v2"
 			>

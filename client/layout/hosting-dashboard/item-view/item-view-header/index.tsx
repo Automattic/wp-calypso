@@ -142,7 +142,7 @@ export default function ItemViewHeader( {
 														className="hosting-dashboard-item-view__header-env-data-item-link"
 														href={
 															isEnabled( 'dashboard/v2/backport/site-settings' )
-																? `/sites/settings/v2/${ selectedSite?.domain }/wordpress`
+																? `/sites/${ selectedSite?.domain }/settings/wordpress`
 																: `/hosting-config/${ selectedSite?.domain }#wp`
 														}
 														onClick={ handleWpVersionClick }
@@ -161,7 +161,7 @@ export default function ItemViewHeader( {
 														onClick={ handlePhpVersionClick }
 														href={
 															isEnabled( 'dashboard/v2/backport/site-settings' )
-																? `/sites/settings/v2/${ selectedSite?.domain }/php`
+																? `/sites/${ selectedSite?.domain }/settings/php`
 																: `/hosting-config/${ selectedSite?.domain }#php`
 														}
 													>

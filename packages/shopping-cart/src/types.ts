@@ -959,6 +959,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	is_hundred_year_domain?: boolean;
 
 	/**
+	 * Tracks the flow from which a domain registration originated.
+	 */
+	flow_name?: string;
+
+	/**
 	 * A way to signal intent to the back end when included as an extra with
 	 * certain products.
 	 *

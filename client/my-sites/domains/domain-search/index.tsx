@@ -22,7 +22,7 @@ import {
 	domainRegistration,
 	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
-import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { isExternal } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
@@ -496,7 +496,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 }
 
 const StyleWrappedDomainSearch = ( props: DomainSearchProps ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( 'domains/add' );
+	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( 'domains/add' );
 
 	if ( isLoading ) {
 		return null;

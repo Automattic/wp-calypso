@@ -5,7 +5,8 @@ import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-c
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useCancelClientSubscription from 'calypso/a8c-for-agencies/data/client/use-cancel-client-subscription';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
-import { useDispatch } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { Subscription } from '../types';
@@ -22,6 +23,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	const { data: products, isFetching: isFetchingProductInfo } = useFetchClientProducts( false );
+	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
 
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {
@@ -52,7 +54,9 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 	};
 
 	const productName =
-		products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
+		isBillingTypeBD && subscription.subscription?.product_name
+			? subscription.subscription.product_name
+			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
 
 	return (
 		<>

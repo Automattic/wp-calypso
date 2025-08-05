@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-checkout",
-	"version": "1.0.1",
+	"version": "1.0.4",
 	"description": "Functions and components used by WordPress.com checkout.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -76,7 +76,6 @@
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
-		"@emotion/react": "^11.4.1",
-		"redux": "^5.0.1"
+		"@emotion/react": "^11.4.1"
 	}
 }

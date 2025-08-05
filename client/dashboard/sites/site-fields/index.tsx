@@ -24,6 +24,7 @@ import TimeSince from '../../components/time-since';
 import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
 import { canManageSite } from '../features';
@@ -265,7 +266,7 @@ export function MediaStorage( { site }: { site: Site } ) {
 
 	const value = mediaStorage ? (
 		`${
-			Math.round( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
 		}%`
 	) : (
 		<IneligibleIndicator />
@@ -407,10 +408,7 @@ export function Status( { site }: { site: Site } ) {
 }
 
 export function Plan( { site }: { site: Site } ) {
-	if ( site.is_wpcom_staging_site ) {
-		// translator: this is the label of a staging site.
-		return __( 'Staging' );
-	}
+	const planName = getSitePlanDisplayName( site );
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		if ( ! site.jetpack ) {
@@ -419,7 +417,7 @@ export function Plan( { site }: { site: Site } ) {
 		return (
 			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
 				<JetpackLogo size={ 16 } />
-				<span>{ site.plan?.product_name_short }</span>
+				<span>{ planName }</span>
 			</HStack>
 		);
 	}
@@ -431,7 +429,7 @@ export function Plan( { site }: { site: Site } ) {
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),
-						site.plan?.product_name_short
+						planName
 					) }
 				</Text>
 				<PlanRenewNag site={ site } source="plan" />
@@ -439,5 +437,5 @@ export function Plan( { site }: { site: Site } ) {
 		);
 	}
 
-	return site.plan?.product_name_short;
+	return planName;
 }

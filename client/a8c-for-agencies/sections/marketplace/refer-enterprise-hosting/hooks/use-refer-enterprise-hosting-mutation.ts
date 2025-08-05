@@ -27,6 +27,8 @@ function referEnterpriseHostingMutation(
 			email: details.email,
 			website: details.website,
 			opportunity_description: details.opportunityDescription,
+			lead_type: details.leadType,
+			is_rfp: details.isRfp,
 		},
 	} );
 }

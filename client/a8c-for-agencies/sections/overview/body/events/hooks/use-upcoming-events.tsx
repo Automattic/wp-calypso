@@ -3,10 +3,10 @@ import moment from 'moment';
 import { useMemo, useCallback } from 'react';
 import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-clipboard-button';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
-import a4aEventImage from 'calypso/assets/images/a8c-for-agencies/events/a4a-compliment-image.svg';
 import a4aLogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
-import wooEventImage from 'calypso/assets/images/a8c-for-agencies/events/woo-compliment-image.svg';
-import wooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
+import billingSystemEventImage from 'calypso/assets/images/a8c-for-agencies/events/billing-system-event-image.svg';
+import vipComplimentImage from 'calypso/assets/images/a8c-for-agencies/events/vip-compliment-image.svg';
+import vipLogo from 'calypso/assets/images/a8c-for-agencies/events/vip-logo.svg';
 import wordcampUsEventImage from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-us2025-image.svg';
 import wpOrgLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -35,66 +35,67 @@ export const useUpcomingEvents = () => {
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
 			{
-				id: 'woo-2025-07-14',
+				id: 'vip-webinar-2025-08-21',
 				date: {
-					from: moment( '2025-07-14' ),
-					to: moment( '2025-07-14' ),
+					from: moment( '2025-08-21' ),
+					to: moment( '2025-08-26' ),
 				},
-				title: translate( 'How are you preparing for the busiest time of year?' ),
-				subtitle: translate( 'Woo and Automattic for Agencies' ),
+				displayDate: translate( 'Thursday, August 21, 1:00 pm CDT (6:00 PM UTC)' ),
+				title: translate( 'Launched: The newest product solutions from WordPress VIP' ),
+				subtitle: translate( 'WordPress VIP' ),
 				descriptions: [
 					translate(
-						"As peak selling season approaches, Woo and Automattic for Agencies are conducting a survey to better understand how agencies are preparing for the busiest time of year. The insights gathered will inform actionable recommendations for Woo merchants and will be featured in upcoming thought leadership content on both Woo's website and the Automattic for Agencies blog."
+						'Get a closer look at the newest solutions for our Open & Intelligent Experience Builder in this one-hour webinar with WordPress VIP CMO Anne-Marie Goulet and CTO Brian Alvey.'
 					),
 					translate(
-						'{{b}}Select agencies may also be highlighted as thought leaders in these publications, showcasing your expertise to a wider audience.{{/b}}',
+						'After you register, help us spread the word about Launched 25.1 by using this {{a}}Partner Toolkit{{/a}}.',
 						{
 							components: {
-								b: <b />,
+								a: (
+									<a
+										href="https://docs.google.com/document/d/1_Pd3U6NkhK2_6P0d9tL4ydqLDMz31iXhbYdOaaUSFss/edit?tab=t.0"
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
 							},
 						}
 					),
 				],
 				cta: {
-					label: translate( 'Share your insights ↗' ),
-					url: 'https://2yp7yqymm1z.typeform.com/to/YC4Yw2VI',
+					label: translate( 'Register for the webinar ↗' ),
+					url: 'https://wpvip.com/event/launched-wordpress-vips-newest-product-solutions/?utm_source=partner_a4a&utm_medium=outbound&utm_campaign=2025_partner&utm_content=launched_webinar',
 				},
-				logoUrl: wooLogo,
-				imageUrl: wooEventImage,
-				trackEventName: 'calypso_a4a_overview_events_register_click_woo_marketing_2025_07_14',
-				dateClassName: 'a4a-event__date--woo',
-				imageClassName: 'a4a-event__image--woo',
+				logoUrl: vipLogo,
+				imageUrl: vipComplimentImage,
+				trackEventName: 'calypso_a4a_overview_events_vip_webinar_2025_08_21_click',
+				dateClassName: 'a4a-event__date--vip',
 			},
 			{
-				id: 'a4a-2025-07-25',
+				id: 'billing-system-2025-08-06',
 				date: {
-					from: moment( '2025-07-25' ),
-					to: moment( '2025-07-25' ),
+					from: moment( '2025-08-06' ),
+					to: moment( '2025-08-06' ),
 				},
-				title: translate( 'Automattic for Agencies Partner Empowerment Survey' ),
+				title: translate( 'Phase 1 of our Billing System Enhancements Launch August 6' ),
 				subtitle: translate( 'Automattic for Agencies' ),
 				descriptions: [
 					translate(
-						"Participate in the Automattic for Agencies Partner Empowerment Survey and directly influence the training and resources we develop to better support your agency's success with WordPress and Automattic products. Your feedback is essential in helping us understand your needs and identify opportunities for improvement."
+						"We're excited to announce that we're working towards supporting annual billing, 25 additional currencies, new payment methods, and more. We're achieving this by transitioning to a new billing system and will conduct the migration in 3 phases, starting with new client referrals in phase 1 on August 6th."
 					),
 					translate(
-						'{{b}}Share your insights by July 25th{{/b}} and play a key role in shaping our future offerings. Together, we can ensure that our programs and resources are tailored to help your agency thrive!',
-						{
-							components: {
-								b: <b />,
-							},
-						}
+						"See what's changing and when by visiting our FAQ in the Knowledge Base. Questions? Reach out to our support team anytime."
 					),
 				],
 				cta: {
-					label: translate( 'Share your insights ↗' ),
-					url: 'https://automattic.survey.fm/automattic-for-agencies-partner-empowerment-survey',
+					label: translate( 'Read the billing migration FAQ ↗' ),
+					url: 'https://agencieshelp.automattic.com/knowledge-base/billing-migration-faq-for-agencies/',
 				},
 				logoUrl: a4aLogo,
-				imageUrl: a4aEventImage,
-				trackEventName: 'calypso_a4a_overview_events_register_click_a4a_2025_07_25',
+				imageUrl: billingSystemEventImage,
+				trackEventName: 'calypso_a4a_overview_events_billing_migration_faq_click',
 				dateClassName: 'a4a-event__date--a4a',
-				imageClassName: 'a4a-event__image--a4a',
+				imageClassName: 'a4a-event__image--a4a a4a-event__image--billing-system',
 			},
 			{
 				id: 'wordcamp-us-2025-08-26',
