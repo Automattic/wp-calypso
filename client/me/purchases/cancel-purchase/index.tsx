@@ -121,9 +121,9 @@ export interface CancelPurchaseConnectedProps {
 }
 
 export interface CancelPurchaseProps {
-	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	purchaseId: number;
-	purchaseListUrl: string;
+	purchaseListUrl?: string;
 	siteSlug: string;
 }
 
@@ -144,11 +144,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		showDomainOptionsStep: false,
 		// Cancellation state moved from button component
 		showDialog: false,
-	};
-
-	static defaultProps = {
-		getManagePurchaseUrlFor: managePurchase,
-		purchaseListUrl: purchasesRoot,
 	};
 
 	componentDidMount() {
@@ -193,14 +188,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	redirect = () => {
 		const { purchase, siteSlug } = this.props;
-		let redirectPath = this.props.purchaseListUrl;
+		let redirectPath = this.props.purchaseListUrl ?? purchasesRoot;
 
 		if (
 			siteSlug &&
 			purchase &&
 			( ! canAutoRenewBeTurnedOff( purchase ) || isDomainTransfer( purchase ) )
 		) {
-			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
+			redirectPath = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+				siteSlug,
+				purchase.id
+			);
 		}
 
 		page.redirect( redirectPath );
@@ -335,7 +333,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			} else {
 				this.props.errorNotice( result.error );
 			}
@@ -407,7 +405,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			}
 		);
 	};
@@ -423,7 +421,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( res.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			}
 		} catch ( err ) {
 			this.props.errorNotice( ( err as Error ).message );
@@ -605,7 +603,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				disabled={ isDisabled }
 				siteSlug={ siteSlug }
 				cancelBundledDomain={ this.state.cancelBundledDomain }
-				purchaseListUrl={ purchaseListUrl }
+				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				onCancellationStart={ this.onCancellationStart }
 				onCancellationComplete={ this.onCancellationComplete }
@@ -628,7 +626,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		return (
 			<FormButton
 				isPrimary={ false }
-				href={ this.props.getManagePurchaseUrlFor( siteSlug, this.props.purchaseId ) }
+				href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+					siteSlug,
+					this.props.purchaseId
+				) }
 				onClick={ this.onKeepSubscriptionClick }
 			>
 				{ translate( 'Keep subscription' ) }
@@ -799,7 +800,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						disabled={ ! canContinue() }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ cancelBundledDomain }
-						purchaseListUrl={ this.props.purchaseListUrl }
+						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
 						onSurveyComplete={ this.onSurveyComplete }
@@ -885,7 +886,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					<div className="cancel-purchase__back">
 						<HeaderCakeBack
 							icon="chevron-left"
-							href={ this.props.getManagePurchaseUrlFor(
+							href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 								this.props.siteSlug,
 								this.props.purchaseId
 							) }

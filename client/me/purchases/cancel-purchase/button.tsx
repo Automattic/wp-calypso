@@ -40,7 +40,7 @@ export interface CancelPurchaseButtonConnectedProps {
 
 export interface CancelPurchaseButtonProps {
 	purchase: Purchases.Purchase;
-	purchaseListUrl: string;
+	purchaseListUrl?: string;
 	siteSlug: string;
 	cancelBundledDomain: boolean;
 	includedDomainPurchase: Purchases.Purchase;
@@ -75,11 +75,6 @@ class CancelPurchaseButton extends Component<
 	CancelPurchaseButtonAllProps,
 	CancelPurchaseButtonState
 > {
-	static defaultProps = {
-		purchaseListUrl: purchasesRoot,
-		showMarketplaceDialog: true,
-	};
-
 	state = {
 		disabled: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
@@ -124,13 +119,13 @@ class CancelPurchaseButton extends Component<
 		}
 
 		// Always redirect to purchases page when dialog is closed
-		page.redirect( this.props.purchaseListUrl );
+		page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 	};
 
 	shouldHandleMarketplaceSubscriptions() {
 		const { activeSubscriptions, showMarketplaceDialog } = this.props;
 
-		return activeSubscriptions?.length > 0 && showMarketplaceDialog;
+		return activeSubscriptions?.length > 0 && ( showMarketplaceDialog ?? true );
 	}
 
 	showMarketplaceDialog = () => {
@@ -226,7 +221,7 @@ class CancelPurchaseButton extends Component<
 					<CancelJetpackForm
 						disableButtons={ disableButtons }
 						purchase={ purchase }
-						purchaseListUrl={ purchaseListUrl }
+						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
@@ -240,7 +235,7 @@ class CancelPurchaseButton extends Component<
 					<DomainCancellationSurvey
 						disableButtons={ disableButtons }
 						purchase={ purchase }
-						purchaseListUrl={ purchaseListUrl }
+						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
