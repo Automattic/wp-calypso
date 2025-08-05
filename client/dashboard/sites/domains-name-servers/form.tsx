@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { validateHostname } from './utils';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
@@ -18,21 +19,79 @@ export default function NameServersForm() {
 	const [ nameServers, setNameServers ] = useState< string[] >(
 		new Array( MAX_NAMESERVER_LENGTH ).fill( '' )
 	);
+	const [ errors, setErrors ] = useState< string[] >(
+		new Array( MAX_NAMESERVER_LENGTH ).fill( '' )
+	);
+	const [ touchedFields, setTouchedFields ] = useState< boolean[] >(
+		new Array( MAX_NAMESERVER_LENGTH ).fill( false )
+	);
+
+	const isFormValid = () => {
+		// If custom nameservers are disabled, form is valid
+		if ( ! useCustomNameServers ) {
+			return true;
+		}
+
+		// Check if there are any errors
+		if ( errors.some( ( error ) => error !== '' ) ) {
+			return false;
+		}
+
+		// Check if minimum required nameservers are provided
+		const filledNameServers = nameServers.filter( ( ns ) => ns !== '' ).length;
+		return filledNameServers >= MIN_NAMESERVER_LENGTH;
+	};
+
+	const validateField = ( value: string, index: number ) => {
+		if ( value === '' ) {
+			if ( index < MIN_NAMESERVER_LENGTH ) {
+				return __( 'This field is required' );
+			}
+			return '';
+		}
+		if ( ! validateHostname( value ) ) {
+			return __( 'Please enter a valid hostname' );
+		}
+		return '';
+	};
 
 	const handleNameServerChange = ( index: number, value: string ) => {
 		const newNameServers = [ ...nameServers ];
+		const newErrors = [ ...errors ];
+
 		newNameServers[ index ] = value;
+
+		// Only validate if the field has been touched before
+		if ( touchedFields[ index ] ) {
+			newErrors[ index ] = validateField( value, index );
+		}
+
 		setNameServers( newNameServers );
+		setErrors( newErrors );
+	};
+
+	const handleNameServerBlur = ( index: number ) => {
+		if ( ! touchedFields[ index ] ) {
+			const newTouchedFields = [ ...touchedFields ];
+			newTouchedFields[ index ] = true;
+			setTouchedFields( newTouchedFields );
+
+			// Validate on first blur
+			const newErrors = [ ...errors ];
+			newErrors[ index ] = validateField( nameServers[ index ], index );
+			setErrors( newErrors );
+		}
 	};
 
 	const shouldShowNextInput = ( index: number ) => {
 		if ( index >= MAX_NAMESERVER_LENGTH ) {
 			return false;
-		}
-		if ( index < MIN_NAMESERVER_LENGTH ) {
+		} else if ( index < MIN_NAMESERVER_LENGTH ) {
 			return true;
 		}
-		return nameServers[ index - 1 ] !== ''; // Show next if previous has value
+
+		// Show next if previous has value
+		return nameServers[ index - 1 ] !== '';
 	};
 
 	return (
@@ -58,7 +117,11 @@ export default function NameServersForm() {
 										const index = rowIndex + colIndex;
 										return (
 											shouldShowNextInput( index ) && (
-												<div className="nameserver-input-container is-error">
+												<div
+													className={ `nameserver-input-container ${
+														errors[ index ] ? 'is-error' : ''
+													}` }
+												>
 													<InputControl
 														key={ index }
 														__next40pxDefaultSize
@@ -76,8 +139,11 @@ export default function NameServersForm() {
 														onChange={ ( value ) =>
 															handleNameServerChange( index, value as string )
 														}
+														onBlur={ () => handleNameServerBlur( index ) }
 													/>
-													<Text className="validation-msg">This is an error message example</Text>
+													{ errors[ index ] && (
+														<Text className="validation-msg">{ errors[ index ] }</Text>
+													) }
 												</div>
 											)
 										);
@@ -88,7 +154,7 @@ export default function NameServersForm() {
 					}
 				) }
 			<View>
-				<Button __next40pxDefaultSize variant="primary">
+				<Button __next40pxDefaultSize variant="primary" disabled={ ! isFormValid() }>
 					{ __( 'Save' ) }
 				</Button>
 			</View>
