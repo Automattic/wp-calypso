@@ -69,6 +69,8 @@ export default function StagingSiteSyncDropdown( {
 		onSyncStart();
 	};
 
+	// The sync is not allowed if the staging site is in a transition or is deleting.
+	// We should consider this when we start to rewrite the StagingSiteSyncModal.
 	if ( ! productionSiteId || ! stagingSiteId ) {
 		return null;
 	}
