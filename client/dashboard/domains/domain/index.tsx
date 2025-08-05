@@ -1,14 +1,14 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, notFound } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Dropdown, Button, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { chevronDownSmall, globe } from '@wordpress/icons';
+import { globe } from '@wordpress/icons';
 import { domainsQuery } from '../../app/queries/domains';
 import { domainRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
+import Switcher from '../../components/switcher';
 import DomainMenu from '../domain-menu';
-import Switcher from './switcher';
 
 function Domain() {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -25,20 +25,12 @@ function Domain() {
 			<HeaderBar>
 				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
 					<HeaderBar.Title>
-						<Dropdown
-							renderToggle={ ( { onToggle } ) => (
-								<Button
-									className="dashboard-menu__item active"
-									icon={ chevronDownSmall }
-									iconPosition="right"
-									onClick={ () => onToggle() }
-								>
-									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
-										<Icon icon={ globe } size={ 16 } /> { domain.domain }
-									</div>
-								</Button>
-							) }
-							renderContent={ ( { onClose } ) => <Switcher onClose={ onClose } /> }
+						<Switcher
+							items={ domains }
+							value={ domain }
+							getItemName={ ( domain ) => domain.domain }
+							getItemUrl={ ( domain ) => `/domains/${ domain.domain }` }
+							renderItemIcon={ ( { size } ) => <Icon icon={ globe } size={ size } /> }
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
