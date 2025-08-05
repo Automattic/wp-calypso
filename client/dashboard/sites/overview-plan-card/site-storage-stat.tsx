@@ -1,4 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
@@ -31,14 +32,19 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 	}
 
 	return (
-		<Stat
-			density="high"
-			strapline={ __( 'Storage' ) }
-			metric={ filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
-			description={ filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
-			progressValue={ progressBarValue }
-			progressColor={ storageWarningColor }
-			progressLabel={ `${ storageUsagePercent }%` }
-		/>
+		<VStack spacing={ 2 }>
+			<Stat
+				density="high"
+				strapline={ __( 'Storage' ) }
+				metric={ filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
+				description={ filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
+				progressValue={ progressBarValue }
+				progressColor={ storageWarningColor }
+				progressLabel={ `${ storageUsagePercent }%` }
+			/>
+			{ alertLevel !== 'none' && (
+				<ExternalLink href={ `/add-ons/${ site.slug }` }>{ __( 'Add more storage' ) }</ExternalLink>
+			) }
+		</VStack>
 	);
 }
