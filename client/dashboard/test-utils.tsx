@@ -3,14 +3,10 @@ import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-r
 import { render as testingLibraryRender } from '@testing-library/react';
 import { Suspense } from 'react';
 
-export function render( ui: React.ReactElement ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	} );
+function createTestRouter( ui: React.ReactElement ) {
 	const Component = () => ui;
-	const router = createRouter( {
+
+	return createRouter( {
 		routeTree: createRootRoute( {
 			pendingMs: 0,
 			component: () => (
@@ -20,9 +16,30 @@ export function render( ui: React.ReactElement ) {
 			),
 		} ),
 	} );
-	return testingLibraryRender(
+}
+
+type RenderResult = ReturnType< typeof testingLibraryRender > & {
+	router: ReturnType< typeof createTestRouter >;
+	queryClient: QueryClient;
+};
+
+export function render( ui: React.ReactElement ): RenderResult {
+	const queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: { retry: false },
+		},
+	} );
+	const router = createTestRouter( ui );
+
+	const testingLibraryResult = testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
 			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
 		</QueryClientProvider>
 	);
+
+	return {
+		...testingLibraryResult,
+		router,
+		queryClient,
+	};
 }

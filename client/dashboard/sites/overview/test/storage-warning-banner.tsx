@@ -44,37 +44,36 @@ function mockTestEndpoints( options: TestOptions ) {
 	return { mediaStorage, scope };
 }
 
-async function renderTestBanner() {
+function renderTestBanner() {
 	// The only site field used by the banner is ID.
 	const testSite = { ID: siteId };
-	render( <StorageWarningBanner site={ testSite as any } /> ); // eslint-disable-line @typescript-eslint/no-explicit-any
-
-	await waitFor( () => expect( screen.queryByTestId( 'loading' ) ).not.toBeInTheDocument() );
+	return render( <StorageWarningBanner site={ testSite as any } /> ); // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 afterEach( () => nock.cleanAll() );
 
-test( 'no banner when storage is not low', async () => {
-	mockTestEndpoints( {
-		storage_used_bytes: 100,
-		max_storage_bytes: 5000,
-	} );
-
-	await renderTestBanner();
-
-	await waitFor( () => expect( screen.queryByText( /storage/i ) ).not.toBeInTheDocument() );
-} );
-
-test( 'no banner when storage is low and banner dismissed', async () => {
+test( 'warning banner when storage is low, and no banner when storage is not low', async () => {
 	mockTestEndpoints( {
 		storage_used_bytes: 900,
 		max_storage_bytes: 1000,
-		isDismissed: true,
 	} );
 
-	await renderTestBanner();
+	const { queryClient } = renderTestBanner();
 
-	await waitFor( () => expect( screen.queryByText( /storage/i ) ).not.toBeInTheDocument() );
+	await waitFor( () =>
+		expect( screen.queryByText( 'Your site is low on storage' ) ).toBeInTheDocument()
+	);
+
+	mockTestEndpoints( {
+		storage_used_bytes: 100,
+		max_storage_bytes: 1000,
+	} );
+
+	queryClient.invalidateQueries();
+
+	await waitFor( () =>
+		expect( screen.queryByText( /Upgrade to continue storing media/ ) ).not.toBeInTheDocument()
+	);
 } );
 
 test( 'banner can not be dismissed when storage is exceeded', async () => {
@@ -83,7 +82,7 @@ test( 'banner can not be dismissed when storage is exceeded', async () => {
 		max_storage_bytes: 5000,
 	} );
 
-	await renderTestBanner();
+	renderTestBanner();
 
 	await waitFor( () =>
 		expect( screen.queryByText( 'Your site is out of storage' ) ).toBeInTheDocument()
@@ -100,7 +99,7 @@ test( 'banner can be dismissed when storage is over 80%', async () => {
 		isDismissed: false,
 	} );
 
-	await renderTestBanner();
+	renderTestBanner();
 
 	await waitFor( () =>
 		expect( screen.queryByText( 'Your site is low on storage' ) ).toBeInTheDocument()
