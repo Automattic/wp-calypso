@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isDomainRegistration } from '@automattic/calypso-products';
+import { Purchases } from '@automattic/data-stores';
 import i18n from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
@@ -13,11 +13,20 @@ import {
 } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
+export interface CancelPurchaseRefundInformationConnectedProps {
+	isGravatarRestrictedDomain: boolean;
+}
+
+export interface CancelPurchaseRefundInformationProps {
+	purchase: Purchases.Purchase;
+	isJetpackPurchase: boolean;
+}
+
 const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isGravatarRestrictedDomain,
 	isJetpackPurchase,
-} ) => {
+}: CancelPurchaseRefundInformationProps & CancelPurchaseRefundInformationConnectedProps ) => {
 	const { refundPeriodInDays } = purchase;
 	let text;
 
@@ -135,15 +144,7 @@ const CancelPurchaseRefundInformation = ( {
 	);
 };
 
-CancelPurchaseRefundInformation.propTypes = {
-	purchase: PropTypes.object.isRequired,
-	isJetpackPurchase: PropTypes.bool.isRequired,
-	cancelBundledDomain: PropTypes.bool,
-	confirmCancelBundledDomain: PropTypes.bool,
-	onCancelConfirmationStateChange: PropTypes.func,
-};
-
-export default connect( ( state, props ) => {
+export default connect( ( state, props: CancelPurchaseRefundInformationProps ) => {
 	const domains = getDomainsBySiteId( state, props.purchase.siteId );
 	const selectedDomainName = getName( props.purchase );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
