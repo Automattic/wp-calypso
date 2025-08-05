@@ -61,7 +61,7 @@ export default function SyncDropdown( {
 				) }
 				renderContent={ ( { onClose } ) => (
 					<div>
-						<MenuGroup>
+						<MenuGroup className={ className }>
 							<MenuItem
 								onClick={ () => {
 									onClose();
