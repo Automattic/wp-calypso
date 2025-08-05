@@ -6,7 +6,12 @@ import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-que
 import { Receipt } from './Receipt';
 import './style.scss';
 
-// This is a new component that handles rendering and printing
+/**
+ * This is the print version of the receipt; it basically uses the same component that's regular user sees
+ * It injects that component into an iframe, and then we trigger the print dialogue to run on the iframe.
+ * By moving only the content of the receipt into the iframe, we don't need to worry about the rest of the page changing over time.
+ *
+ */
 const PrintableReceipt = ( {
 	payment,
 	billingDetails,

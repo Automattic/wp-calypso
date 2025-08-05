@@ -29,7 +29,7 @@ export const PaymentReceipt = ( {
 	// Use detailed payment if available, otherwise fall back to the provided payment
 	const payment = detailedPayment || fallbackPayment;
 
-	// Initialize billing details with the current user's name
+	// Initialize billing details with the current user's name if available
 	useEffect( () => {
 		if ( currentUser && ! billingDetails ) {
 			setBillingDetails( currentUser.display_name || '' );
