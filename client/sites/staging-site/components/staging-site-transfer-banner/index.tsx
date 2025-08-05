@@ -58,7 +58,7 @@ export default function StagingSiteTransferBanner() {
 							</Text>
 						</HStack>
 					</VStack>
-					<img src={ stagingSiteTransferIllustration } alt={ __( 'Deleting staging site' ) } />
+					<img src={ stagingSiteTransferIllustration } alt={ __( 'Creating staging site' ) } />
 				</HStack>
 			</CardBody>
 		</Card>
