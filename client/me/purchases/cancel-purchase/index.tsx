@@ -211,7 +211,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
-		this.setState( newState );
+		this.setState( ( state ) => ( {
+			...state,
+			newState,
+		} ) );
 	};
 
 	onCancellationStart = () => {
@@ -772,8 +775,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return null;
 		}
 
-		const onCancelConfirmationStateChange = ( newState: CancelPurchaseState ) => {
-			this.setState( newState );
+		const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
+			this.setState( ( state ) => ( {
+				...state,
+				newState,
+			} ) );
 		};
 
 		const canContinue = () => {
