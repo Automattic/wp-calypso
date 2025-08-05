@@ -138,7 +138,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	&.mobile-dropdown-open {
 		@media ( max-width: $breakpoint-mobile ) {
 			.content {
-				background: rgba(0, 0, 0, 0.30);
 				filter: blur(10px);
 				pointer-events: none;
 				transition: filter 0.2s ease;
@@ -156,24 +155,13 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				color: #000;
 				font-weight: 500;
 				position: relative;
-				&::before {
-					content: "•";
-					position: absolute;
-					left: -12px;
-					top: 50%;
-					transform: translateY(-50%);
-				}
 			}
-			overflow: hidden;
 			color: #646970;
-			text-align: justify;
-			text-overflow: ellipsis;
-			font-size: 14px;
+			font-size: 13px;
 			font-style: normal;
 			font-weight: 400;
 			line-height: 20px;
 			cursor: pointer;
-			transition: color 0.2s ease;
 
 			&:hover:not(.separator) {
 				color: #000;
