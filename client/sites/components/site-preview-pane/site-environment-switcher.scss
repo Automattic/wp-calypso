@@ -6,9 +6,11 @@
 
 	.components-dropdown-menu__menu-item {
 		justify-content: flex-start;
+		padding-left: 10px
 	}
 
-	.components-dropdown-menu__menu-item.is-active {
+	.components-dropdown-menu__menu-item.is-active,
+	.components-dropdown-menu__menu-item.is-active:hover {
 		background-color: var( --color-primary );
 		color: var( --color-light-backdrop );
 	}
