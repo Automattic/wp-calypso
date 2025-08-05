@@ -14,13 +14,13 @@ export type Payment = {
 	payment_link?: string;
 	date: string;
 	credits_used: number;
-	campaigns?: {
+	campaigns?: Array< {
 		campaign_id: number;
-		campaign_name: string;
+		name: string;
 		impressions: number;
 		subtotal: number;
 		total: number;
-	};
+	} >;
 };
 
 export const usePaymentsQuery = ( hasPaymentsEnabled: boolean, siteId?: number ) => {

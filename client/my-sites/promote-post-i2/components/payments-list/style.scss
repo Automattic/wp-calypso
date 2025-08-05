@@ -1,3 +1,21 @@
+.payment-receipt-container {
+	padding: 0 24px 24px;
+	max-width: 1040px;
+	margin: 0 auto;
+
+	&__header {
+		margin-bottom: 24px;
+	}
+
+	&__back-button {
+		color: var( --color-accent );
+		background: none;
+		cursor: pointer;
+		font-size: 14px;
+		text-decoration: none;
+	}
+}
+
 .promote-post-i2 {
 	.payments-list__loading {
 		text-align: center;
@@ -9,6 +27,7 @@
 			color: var(--color-neutral-50);
 		}
 	}
+
 	.promote-post-i2__table.payments-list__table {
 
 		tbody {
@@ -67,10 +86,7 @@
 				td.payment-item__credits {
 					display: none;
 				}
-
-
 			}
-
 		}
 	}
 }

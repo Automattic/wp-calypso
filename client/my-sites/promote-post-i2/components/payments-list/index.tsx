@@ -39,7 +39,6 @@ export default function PaymentsList( props: Props ) {
 		selectedPaymentsFilter,
 		setFetchPaymentsForCurrentSite,
 	} = props;
-
 	const translate = useTranslate();
 
 	type PaymentColumn = {
@@ -48,7 +47,7 @@ export default function PaymentsList( props: Props ) {
 	};
 
 	const getHeaderColumns = (): PaymentColumn[] => {
-		const columns: PaymentColumn[] = [
+		return [
 			{
 				key: 'payment-id',
 				title: translate( 'Payment' ),
@@ -78,8 +77,6 @@ export default function PaymentsList( props: Props ) {
 				title: '',
 			},
 		];
-
-		return columns;
 	};
 
 	const paymentFilterOptions: Array< DropdownOption > = [
@@ -105,6 +102,7 @@ export default function PaymentsList( props: Props ) {
 			</Notice>
 		);
 	}
+
 	return (
 		<>
 			<PaymentsFilter
