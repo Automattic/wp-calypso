@@ -128,7 +128,7 @@ export const domainForwardingEditRoute = createRoute( {
 
 export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'contact_info',
+	path: 'contact-info',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
@@ -139,7 +139,7 @@ export const domainContactInfoRoute = createRoute( {
 
 export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'name_servers',
+	path: 'name-servers',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'domain-name-servers' )( {
@@ -150,7 +150,7 @@ export const domainNameServersRoute = createRoute( {
 
 export const domainGlueRecordsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'glue_records',
+	path: 'glue-records',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records' )( {
