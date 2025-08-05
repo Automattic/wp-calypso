@@ -246,22 +246,6 @@ export class UserStep extends Component {
 							}
 						);
 				}
-			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				subHeaderText = translate(
-					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							br: <br />,
-						},
-					}
-				);
 			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate( 'Create your new Blaze Pro account.' );
 			} else {
@@ -509,7 +493,7 @@ export class UserStep extends Component {
 		}
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up for Crowdsignal' );
+			return translate( 'Sign up for Crowdsignal with WordPress.com' );
 		}
 
 		if ( isWCCOM ) {
@@ -587,14 +571,23 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount, isA4A, isBlazePro } = this.props;
+		const {
+			oauth2Client,
+			isWCCOM,
+			isWoo,
+			isUnifiedCreateAccount,
+			isA4A,
+			isBlazePro,
+			isCrowdsignal,
+		} = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
 			isWoo ||
 			isA4A ||
-			isBlazePro;
+			isBlazePro ||
+			isCrowdsignal;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -751,7 +744,8 @@ const ConnectedUser = connect(
 		const isWoo = getIsWoo( state );
 		const isA4A = isA4AOAuth2Client( oauth2Client );
 		const isBlazePro = getIsBlazePro( state );
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro;
+		const isCrowdsignal = isCrowdsignalOAuth2Client( oauth2Client );
+		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -765,7 +759,8 @@ const ConnectedUser = connect(
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 			isUnifiedCreateAccount,
-			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isA4A,
+			isCrowdsignal,
 		};
 	},
 	{

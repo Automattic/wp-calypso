@@ -12,7 +12,11 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import { isA4AOAuth2Client, isBlazeProOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
+	isCrowdsignalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -98,10 +102,11 @@ class SocialSignupForm extends Component {
 			isWoo,
 			isA4A,
 			isBlazePro,
+			isCrowdsignal,
 			setCurrentStep,
 		} = this.props;
 
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro;
+		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
 
 		return (
 			<Card
@@ -148,15 +153,17 @@ export default connect(
 		const query = getCurrentQueryArguments( state );
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
 			recordTracksEvent: recordTracks,
 			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client: oauth2Client,
 			isDevAccount: isDevAccount,
 			isWoo: getIsWoo( state ),
-			isA4A: isA4AOAuth2Client( getCurrentOAuth2Client( state ) ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
 			isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
+			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 		};
 	},
 	{ showErrorNotice: errorNotice }
