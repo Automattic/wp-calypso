@@ -410,7 +410,7 @@ export const getPaymentStatusBadgeColor = ( status?: string ) => {
 			return 'error';
 		}
 		case paymentStatus.PENDING: {
-			return 'error';
+			return 'info';
 		}
 		case paymentStatus.ON_HOLD: {
 			return 'info-blue';
