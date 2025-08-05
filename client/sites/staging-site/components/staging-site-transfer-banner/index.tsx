@@ -10,10 +10,15 @@ import {
 import { __ } from '@wordpress/i18n';
 import stagingSiteTransferBackground from './staging-site-transfer-banner-background.svg';
 import stagingSiteTransferIllustration from './staging-site-transfer-banner-illustration.svg';
+import './style.scss';
 
 export default function StagingSiteTransferBanner() {
 	return (
-		<Card>
+		<Card
+			style={ {
+				margin: '40px',
+			} }
+		>
 			<CardBody
 				style={ {
 					padding: '40px',
@@ -40,19 +45,19 @@ export default function StagingSiteTransferBanner() {
 						</Text>
 
 						<HStack justify="start">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
 							<Text as="p" variant="muted">
 								{ __( 'Copying your existing site’s content' ) }
 							</Text>
 						</HStack>
 						<HStack justify="start">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
 							<Text as="p" variant="muted">
 								{ __( 'Moving settings, and structure' ) }
 							</Text>
 						</HStack>
 						<HStack justify="start">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
 							<Text as="p" variant="muted">
 								{ __( 'Creating a safe environment' ) }
 							</Text>
