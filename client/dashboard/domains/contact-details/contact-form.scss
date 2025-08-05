@@ -1,0 +1,110 @@
+.contact-form {
+	// Basic form spacing
+	.components-text-control,
+	.components-select-control,
+	.components-checkbox-control {
+		margin-block-end: 24px;
+	}
+
+	// Uppercase labels
+	.components-text-control__label,
+	.components-select-control__label {
+		text-transform: uppercase;
+		font-weight: 600;
+		font-size: 12px;
+		color: var(--studio-gray-80);
+		margin-block-end: 8px;
+	}
+
+	// Simple input styling
+	.components-text-control__input,
+	.components-select-control__input {
+		border: 1px solid var(--studio-gray-20);
+		border-radius: 4px;
+		padding: 12px;
+		font-size: 14px;
+		width: 100%;
+		background: var(--studio-white);
+
+		&:focus {
+			border-color: var(--studio-blue-50);
+			box-shadow: 0 0 0 1px var(--studio-blue-50);
+			outline: none;
+		}
+	}
+
+	// Checkbox styling
+	.components-checkbox-control {
+		margin-block-start: 32px;
+		margin-block-end: 32px;
+
+		.components-checkbox-control__label {
+			text-transform: none;
+			font-weight: 400;
+			font-size: 14px;
+			color: var(--studio-gray-70);
+		}
+	}
+
+	// Legal notice
+	&__legal-notice {
+		margin-block-end: 32px;
+
+		.components-notice__content {
+			padding: 0;
+		}
+
+		p {
+			margin: 0;
+			font-size: 14px;
+			line-height: 1.5;
+			color: var(--studio-gray-60);
+		}
+
+		.components-external-link {
+			color: var(--studio-blue-50);
+			text-decoration: underline;
+		}
+	}
+
+	// Action buttons
+	&__actions {
+		margin-block-start: 32px;
+		padding-block-start: 24px;
+		border-block-start: 1px solid var(--studio-gray-10);
+	}
+
+	&__submit-button,
+	&__cancel-button {
+		padding: 12px 24px;
+		border: 1px solid var(--studio-gray-20);
+		border-radius: 4px;
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.15s ease-in-out;
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+
+	&__submit-button {
+		background: var(--studio-gray-5);
+		color: var(--studio-gray-80);
+
+		&:hover:not(:disabled) {
+			background: var(--studio-gray-10);
+		}
+	}
+
+	&__cancel-button {
+		background: var(--studio-white);
+		color: var(--studio-gray-80);
+
+		&:hover:not(:disabled) {
+			background: var(--studio-gray-5);
+		}
+	}
+} 
