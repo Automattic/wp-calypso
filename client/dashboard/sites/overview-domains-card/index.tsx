@@ -121,23 +121,36 @@ export default function DomainsCard( {
 } ) {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
+	const filteredSiteDomains = useMemo( () => {
+		if ( ! siteDomains || ! siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+			return siteDomains;
+		}
+
+		return siteDomains.filter( ( domain ) => {
+			if ( domain.wpcom_domain ) {
+				return domain.is_wpcom_staging_domain;
+			}
+
+			return true;
+		} );
+	}, [ siteDomains ] );
 
 	if ( site.is_wpcom_staging_site ) {
 		return null;
 	}
 
-	if ( ! sitePlan || ! siteDomains ) {
+	if ( ! sitePlan || ! filteredSiteDomains ) {
 		return <CalloutSkeleton />;
 	}
 
 	if (
 		isSelfHostedJetpackConnected( site ) &&
-		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
+		filteredSiteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
 		return <DomainTransferUpsellCard />;
 	}
 
-	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if ( ! filteredSiteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
@@ -145,7 +158,7 @@ export default function DomainsCard( {
 		<SiteDomainDataViews
 			type={ isCompact ? 'list' : 'table' }
 			site={ site }
-			domains={ siteDomains }
+			domains={ filteredSiteDomains }
 		/>
 	);
 }
