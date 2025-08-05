@@ -104,6 +104,12 @@ export async function* parseSSEStream(
 
 			if ( events && Array.isArray( events ) ) {
 				for ( const event of events ) {
+					if ( event.error ) {
+						throw new Error(
+							`Streaming error: ${ event.error.message }`
+						);
+					}
+
 					if ( event.result && event.result.status ) {
 						const update: TaskUpdate = {
 							id: event.result.id,
