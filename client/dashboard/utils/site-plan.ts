@@ -79,7 +79,12 @@ export function getSitePlanDisplayName( site: Site ) {
 		return __( 'Staging site' );
 	}
 
-	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
+	const plan = site.plan;
+	if ( ! plan ) {
+		return '';
+	}
+
+	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
 		const products = getJetpackProductsForSite( site );
 		if ( products.length === 1 ) {
 			return products[ 0 ].label;
@@ -89,5 +94,11 @@ export function getSitePlanDisplayName( site: Site ) {
 		}
 	}
 
-	return site.plan?.product_name || site.plan?.product_name_short || '';
+	// Display the short name for WP.com plans.
+	// Determine if the plan is a WP.com plan by checking if the license key is empty.
+	if ( ! plan.license_key ) {
+		return plan.product_name_short;
+	}
+
+	return plan.product_name || plan.product_name_short;
 }

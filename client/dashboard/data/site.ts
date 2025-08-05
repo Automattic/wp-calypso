@@ -55,6 +55,7 @@ export interface SitePlan {
 	product_name_short: string;
 	expired: boolean;
 	is_free: boolean;
+	license_key: string;
 	billing_period: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
