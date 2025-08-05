@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { NameServerInput, validateField } from './form-field';
+import { NameServerInput, validateField } from './form-input';
 import { NameServerField, MIN_NAMESERVER_LENGTH, MAX_NAMESERVER_LENGTH } from './types';
 
 export default function NameServersForm() {
