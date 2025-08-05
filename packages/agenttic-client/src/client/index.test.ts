@@ -554,4 +554,36 @@ describe( 'Client', () => {
 			expect( capturedMessageIds[ 1 ] ).toBe( 'message-second' );
 		} );
 	} );
+
+	describe( 'SSE error handling', () => {
+		it( 'should throw error when SSE event contains error field', async () => {
+			const encoder = new TextEncoder();
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( { 'content-type': 'text/event-stream' } ),
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							encoder.encode(
+								`data: {"error":{"message":"API rate limit exceeded"}}\n\n`
+							)
+						);
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( { agentId: 'test-agent' } );
+
+			await expect( async () => {
+				const stream = client.sendMessageStream( {
+					message: createTextMessage( 'Hello' ),
+				} );
+				for await ( const update of stream ) {
+					// Should throw before yielding any updates
+				}
+			} ).rejects.toThrow( 'Streaming error: API rate limit exceeded' );
+		} );
+	} );
 } );
