@@ -9,14 +9,20 @@ export function render( ui: React.ReactElement ) {
 			queries: { retry: false },
 		},
 	} );
+	const Component = () => ui;
 	const router = createRouter( {
-		routeTree: createRootRoute( { component: () => ui } ),
+		routeTree: createRootRoute( {
+			pendingMs: 0,
+			component: () => (
+				<Suspense fallback={ <div data-testid="loading" /> }>
+					<Component />
+				</Suspense>
+			),
+		} ),
 	} );
 	return testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
-			<Suspense fallback={ <div>Loading...</div> }>
-				<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
-			</Suspense>
+			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
 		</QueryClientProvider>
 	);
 }
