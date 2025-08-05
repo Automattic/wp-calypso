@@ -138,7 +138,6 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	const isMobile = useBreakpoint( '<660px' );
 	const currentSite = useSelector( getSelectedSite );
 
-	// Get the staging site ID from the current production site
 	const stagingSiteId = currentSite?.options?.wpcom_staging_blog_ids?.[ 0 ];
 	const stagingSite = useSelector( ( state ) => getSite( state, stagingSiteId ) );
 
@@ -149,10 +148,10 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	const isCurrentSiteStaging = currentSite?.is_wpcom_staging_site;
 	const targetSite = isCurrentSiteStaging ? currentSite : stagingSite;
 
-	const siteSlug = targetSite?.URL ? urlToSlug( targetSite.URL ) : null;
-	const settingsLink = siteSlug ? `/sites/${ siteSlug }/settings` : undefined;
+	const settingsLink = targetSite?.URL
+		? `/sites/${ urlToSlug( targetSite.URL ) }/settings`
+		: undefined;
 
-	// Update the "Delete staging site" card to include the link only when staging site exists
 	const updatedInfoCardItems = infoCardItems.map( ( item ) => {
 		if ( item.locationIcon === cog && settingsLink ) {
 			return { ...item, link: settingsLink };
