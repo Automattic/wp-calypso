@@ -91,7 +91,7 @@
 }
 
 @media (max-width: 1455px) {
-	.layout__secondary ~ .layout__primary .summer-special-banner__content::before {
+	body:not(.is-sidebar-collapsed) .layout__secondary ~ .layout__primary .summer-special-banner__content::before {
 		min-width: 0;
 		background-position: -342px 0;
 	}
