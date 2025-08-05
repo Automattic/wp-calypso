@@ -11,7 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 
 const MIN_NAMESERVER_LENGTH = 2;
-const MAX_NAMESERVER_LENGTH = 7;
+const MAX_NAMESERVER_LENGTH = 4;
 
 export default function NameServersForm() {
 	const [ useCustomNameServers, setUseCustomNameServers ] = useState( true );
@@ -44,48 +44,51 @@ export default function NameServersForm() {
 					onChange={ () => setUseCustomNameServers( ! useCustomNameServers ) }
 				/>
 			</Text>
-			{ Array.from( { length: Math.ceil( MAX_NAMESERVER_LENGTH / 2 ) }, ( _, i ) => i * 2 ).map(
-				( rowIndex ) => {
-					// Check if either input in this row would be shown
-					const shouldShowRow =
-						shouldShowNextInput( rowIndex ) || shouldShowNextInput( rowIndex + 1 );
+			{ useCustomNameServers &&
+				Array.from( { length: Math.ceil( MAX_NAMESERVER_LENGTH / 2 ) }, ( _, i ) => i * 2 ).map(
+					( rowIndex ) => {
+						// Check if either input in this row would be shown
+						const shouldShowRow =
+							shouldShowNextInput( rowIndex ) || shouldShowNextInput( rowIndex + 1 );
 
-					return (
-						shouldShowRow && (
-							<HStack key={ rowIndex } spacing={ 4 } justify="space-between" alignment="top">
-								{ [ 0, 1 ].map( ( colIndex ) => {
-									const index = rowIndex + colIndex;
-									return (
-										shouldShowNextInput( index ) && (
-											<div className="nameserver-input-container">
-												<InputControl
-													key={ index }
-													__next40pxDefaultSize
-													disabled={ ! useCustomNameServers }
-													// translators: sd is the name server number
-													label={ sprintf( __( 'Custom name server %s' ), index + 1 ) }
-													placeholder={
-														index < MIN_NAMESERVER_LENGTH
-															? // translators: s% is the name server number
-															  sprintf( __( 'ns%s.domain.com' ), index + 1 )
-															: // translators: s% is the name server number
-															  sprintf( __( 'ns%s.domain.com (optional)' ), index + 1 )
-													}
-													value={ nameServers[ index ] }
-													onChange={ ( value ) => handleNameServerChange( index, value as string ) }
-												/>
-												<Text className="is-error">This is an error message example</Text>
-											</div>
-										)
-									);
-								} ) }
-							</HStack>
-						)
-					);
-				}
-			) }
+						return (
+							shouldShowRow && (
+								<HStack key={ rowIndex } spacing={ 4 } justify="space-between" alignment="top">
+									{ [ 0, 1 ].map( ( colIndex ) => {
+										const index = rowIndex + colIndex;
+										return (
+											shouldShowNextInput( index ) && (
+												<div className="nameserver-input-container is-error">
+													<InputControl
+														key={ index }
+														__next40pxDefaultSize
+														disabled={ ! useCustomNameServers }
+														// translators: sd is the name server number
+														label={ sprintf( __( 'Custom name server %s' ), index + 1 ) }
+														placeholder={
+															index < MIN_NAMESERVER_LENGTH
+																? // translators: s% is the name server number
+																  sprintf( __( 'ns%s.domain.com' ), index + 1 )
+																: // translators: s% is the name server number
+																  sprintf( __( 'ns%s.domain.com (optional)' ), index + 1 )
+														}
+														value={ nameServers[ index ] }
+														onChange={ ( value ) =>
+															handleNameServerChange( index, value as string )
+														}
+													/>
+													<Text className="validation-msg">This is an error message example</Text>
+												</div>
+											)
+										);
+									} ) }
+								</HStack>
+							)
+						);
+					}
+				) }
 			<View>
-				<Button variant="primary" disabled={ ! useCustomNameServers }>
+				<Button __next40pxDefaultSize variant="primary">
 					{ __( 'Save' ) }
 				</Button>
 			</View>
