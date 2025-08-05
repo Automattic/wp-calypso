@@ -22,5 +22,6 @@ export type * from './site-profiler';
 export type * from './site-purchases';
 export type * from './site-reset';
 export type * from './site-settings';
+export type * from './site-staging-site';
 export type * from './site-stats';
 export type * from './site-users';
