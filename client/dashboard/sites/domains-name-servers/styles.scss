@@ -1,6 +1,9 @@
 .domains-management__name-servers {
-	padding-top: 1.5rem;
-	padding-bottom: 1.5rem;
+
+	&.components-card__body {
+		padding-top: 1.5rem;
+		padding-bottom: 1.5rem;
+	}
 
 	.components-input-control {
 		width: 100%;
