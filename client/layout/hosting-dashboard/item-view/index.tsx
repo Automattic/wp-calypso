@@ -130,11 +130,11 @@ export default function ItemView( {
 		);
 	};
 
-	if ( isStagingSiteTransferInProgress ) {
+	if ( isStagingSiteTransferInProgress || isStagingSiteDeletionInProgress ) {
 		return (
 			<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
 				{ renderHeader() }
-				<StagingSiteTransferBanner />
+				<StagingSiteTransferBanner isDeletion={ isStagingSiteDeletionInProgress ?? false } />
 			</div>
 		);
 	}

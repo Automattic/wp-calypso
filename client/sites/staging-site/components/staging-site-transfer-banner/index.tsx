@@ -8,11 +8,21 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import createStagingSiteIllustration from './create-staging-site-illustration.svg';
+import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import stagingSiteTransferBackground from './staging-site-transfer-banner-background.svg';
-import stagingSiteTransferIllustration from './staging-site-transfer-banner-illustration.svg';
 import './style.scss';
 
-export default function StagingSiteTransferBanner() {
+type StagingSiteTransferBannerProps = {
+	isDeletion: boolean;
+};
+
+export default function StagingSiteTransferBanner( {
+	isDeletion,
+}: StagingSiteTransferBannerProps ) {
+	const illustration = isDeletion ? deleteStagingSiteIllustration : createStagingSiteIllustration;
+	const heading = isDeletion ? __( 'Deleting staging site' ) : __( 'Creating staging site' );
+
 	return (
 		<Card
 			style={ {
@@ -36,34 +46,49 @@ export default function StagingSiteTransferBanner() {
 				<HStack spacing={ 4 }>
 					<VStack>
 						<Heading level={ 1 } weight={ 500 }>
-							{ __( 'Creating staging site' ) }
+							{ heading }
 						</Heading>
-						<Text as="p" variant="muted">
-							{ __(
-								'We’re currently creating your staging site. This may take a few moments, depending on the size of your site. You’ll receive an email once it’s ready.'
-							) }
-						</Text>
+						{ isDeletion ? (
+							<>
+								<Text as="p" variant="muted">
+									{ __(
+										"We're permanently deleting your staging site. Your live site is safe and won't be affected."
+									) }
+								</Text>
+								<Text as="p" variant="muted">
+									{ __( 'Hang tight, this may take a few moments.' ) }
+								</Text>
+							</>
+						) : (
+							<>
+								<Text as="p" variant="muted">
+									{ __(
+										"We're currently creating your staging site. This may take a few moments, depending on the size of your site. You'll receive an email once it's ready."
+									) }
+								</Text>
 
-						<HStack justify="start">
-							<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
-							<Text as="p" variant="muted">
-								{ __( 'Copying your existing site’s content' ) }
-							</Text>
-						</HStack>
-						<HStack justify="start">
-							<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
-							<Text as="p" variant="muted">
-								{ __( 'Moving settings, and structure' ) }
-							</Text>
-						</HStack>
-						<HStack justify="start">
-							<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
-							<Text as="p" variant="muted">
-								{ __( 'Creating a safe environment' ) }
-							</Text>
-						</HStack>
+								<HStack justify="start">
+									<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
+									<Text as="p" variant="muted">
+										{ __( "Copying your existing site's content" ) }
+									</Text>
+								</HStack>
+								<HStack justify="start">
+									<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
+									<Text as="p" variant="muted">
+										{ __( 'Moving settings, and structure' ) }
+									</Text>
+								</HStack>
+								<HStack justify="start">
+									<Gridicon icon="checkmark" className="staging-site-transfer-banner__checkmark" />
+									<Text as="p" variant="muted">
+										{ __( 'Creating a safe environment' ) }
+									</Text>
+								</HStack>
+							</>
+						) }
 					</VStack>
-					<img src={ stagingSiteTransferIllustration } alt={ __( 'Creating staging site' ) } />
+					<img src={ illustration } alt={ heading } />
 				</HStack>
 			</CardBody>
 		</Card>
