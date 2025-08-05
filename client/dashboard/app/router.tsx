@@ -209,6 +209,11 @@ const siteMonitoringRoute = createRoute( {
 const siteLogsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+} );
+
+const siteLogsIndexRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs' )( {
@@ -216,6 +221,30 @@ const siteLogsRoute = createRoute( {
 		} )
 	)
 );
+
+const siteLogsPhpRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'php',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-php' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteLogsServerRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'server',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-server' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ];
 
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
@@ -702,7 +731,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		}
 
 		if ( config.supports.sites.logs ) {
-			siteChildren.push( siteLogsRoute );
+			siteChildren.push( siteLogsRoute.addChildren( siteLogsChildRoutes ) );
 		}
 
 		if ( config.supports.sites.backups ) {
