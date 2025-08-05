@@ -45,19 +45,20 @@ import {
 	setRootRoute,
 	domainsRoute,
 	siteDomainsRoute,
-	siteDomainRoute,
-	siteDomainChildRoutes,
-	siteDomainDnsRoute,
-	siteDomainDnsAddRoute,
-	siteDomainDnsEditRoute,
-	siteDomainForwardingRoute,
-	siteDomainForwardingAddRoute,
-	siteDomainForwardingEditRoute,
-	siteDomainContactInfoRoute,
-	siteDomainNameServersRoute,
-	siteDomainGlueRecordsRoute,
-	siteDomainDnssecRoute,
-	siteDomainTransferRoute,
+	domainRoute,
+	domainChildRoutes,
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainDnsAddRoute,
+	domainDnsEditRoute,
+	domainForwardingRoute,
+	domainForwardingAddRoute,
+	domainForwardingEditRoute,
+	domainContactInfoRoute,
+	domainNameServersRoute,
+	domainGlueRecordsRoute,
+	domainDnssecRoute,
+	domainTransferRoute,
 } from './routes/domain-routes';
 import type { AppConfig } from './context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -710,7 +711,6 @@ const createRouteTree = ( config: AppConfig ) => {
 
 		if ( config.supports.sites.domains ) {
 			siteChildren.push( siteDomainsRoute );
-			siteChildren.push( siteDomainRoute.addChildren( siteDomainChildRoutes ) );
 		}
 
 		if ( config.supports.sites.emails ) {
@@ -722,6 +722,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.domains ) {
 		children.push( domainsRoute );
+		children.push( domainRoute.addChildren( domainChildRoutes ) );
 	}
 
 	if ( config.supports.emails ) {
@@ -777,18 +778,6 @@ export {
 	siteLogsRoute,
 	siteBackupsRoute,
 	siteDomainsRoute,
-	siteDomainRoute,
-	siteDomainDnsRoute,
-	siteDomainDnsAddRoute,
-	siteDomainDnsEditRoute,
-	siteDomainForwardingRoute,
-	siteDomainForwardingAddRoute,
-	siteDomainForwardingEditRoute,
-	siteDomainContactInfoRoute,
-	siteDomainNameServersRoute,
-	siteDomainGlueRecordsRoute,
-	siteDomainDnssecRoute,
-	siteDomainTransferRoute,
 	siteEmailsRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
@@ -806,6 +795,19 @@ export {
 	siteSettingsSftpSshRoute,
 	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
+	domainRoute,
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainDnsAddRoute,
+	domainDnsEditRoute,
+	domainForwardingRoute,
+	domainForwardingAddRoute,
+	domainForwardingEditRoute,
+	domainContactInfoRoute,
+	domainNameServersRoute,
+	domainGlueRecordsRoute,
+	domainDnssecRoute,
+	domainTransferRoute,
 	emailsRoute,
 	meRoute,
 	profileRoute,
