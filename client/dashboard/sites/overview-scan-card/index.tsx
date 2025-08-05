@@ -34,7 +34,7 @@ function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ description }
-			description={ __( 'Auto fixes are available' ) }
+			description={ __( 'Auto fixes are available.' ) }
 			externalLink={ getScanURL( site ) }
 			intent="error"
 		/>
@@ -48,7 +48,7 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	if ( lastScanDate ) {
 		description = sprintf(
 			/* translators: %s: time since last scan */
-			__( 'Scanned %s' ),
+			__( 'Scanned %s.' ),
 			lastScanDate
 		);
 	}

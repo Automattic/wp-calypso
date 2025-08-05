@@ -153,7 +153,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ __( 'Managed by Automattic for Agencies' ) }
+			description={ __( 'Managed by Automattic for Agencies.' ) }
 			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
 			tracksId="plan"
 			isLoading={ isLoading }

@@ -58,7 +58,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				  }
 				: {
 						heading: __( 'Coming soon' ),
-						description: __( 'Finish setting up your site' ),
+						description: __( 'Finish setting up your site.' ),
 						externalLink: `/home/${ site.slug }`,
 				  } ) }
 			progress={ {
@@ -79,7 +79,7 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 			heading={ __( 'Coming soon' ) }
 			description={
 				site.is_wpcom_staging_site
-					? __( 'Visitors will see a coming soon page' )
+					? __( 'Visitors will see a coming soon page.' )
 					: __( 'Ready to go public?' )
 			}
 			link={ getVisibilityURL( site ) }
@@ -93,7 +93,7 @@ function VisibilityCardPrivate( { site }: { site: Site } ) {
 			{ ...CARD_PROPS }
 			icon={ lockOutline }
 			heading={ __( 'Private' ) }
-			description={ __( 'Only invited users can view your site' ) }
+			description={ __( 'Only invited users can view your site.' ) }
 			link={ getVisibilityURL( site ) }
 		/>
 	);
@@ -101,8 +101,8 @@ function VisibilityCardPrivate( { site }: { site: Site } ) {
 
 function VisibilityCardPublic( { site }: { site: Site } ) {
 	const description = site.is_wpcom_staging_site
-		? __( 'Anyone can view your staging site' )
-		: __( 'Anyone can view your site' );
+		? __( 'Anyone can view your staging site.' )
+		: __( 'Anyone can view your site.' );
 
 	return (
 		<OverviewCard
