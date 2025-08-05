@@ -54,10 +54,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			width: 100%;
 			background: transparent;
 			border: none;
-			font-size: 14px;
-			font-weight: 500;
 			padding: 0;
-			transition: all 0.2s ease;
 
 			&[aria-expanded="true"] .dropdown-arrow {
 				transform: rotate(180deg);
@@ -89,14 +86,12 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 			.dropdown-arrow {
 				transition: transform 0.2s ease;
-				color: #646970;
 			}
 		}
 
 		.dropdown-menu {
 			position: absolute;
 			top: 100%;
-			left: 0;
 			width: 100%;
 			background: #fff;
 			list-style: none;
@@ -120,11 +115,8 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				a {
 					display: block;
 					color: var(--gray-90, #1D2327);
-					font-size: 16px;
-					font-weight: 400;
 					line-height: 20px;
 					text-decoration: none;
-					transition: all 0.2s ease;
 
 					&.active {
 						color: var(--blue-50, #3858E9);
@@ -142,6 +134,22 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		}
 	}
 
+	// Blur backdrop for mobile dropdown
+	&.mobile-dropdown-open {
+		@media ( max-width: $breakpoint-mobile ) {
+			.content {
+				background: rgba(0, 0, 0, 0.30);
+				filter: blur(10px);
+				pointer-events: none;
+				transition: filter 0.2s ease;
+			}
+		}
+	}
+
+	.content {
+		transition: filter 0.2s ease;
+	}
+	
 	.navigation.desktop-nav {
 		li {
 			&.active {
@@ -317,6 +325,25 @@ $breakpoint-desktop: 1440px; //Desktop size.
 					}
 				}
 			}
+		}
+	}
+}
+
+// Global styles for mobile navigation blur effect
+body.mobile-nav-open {
+	@media ( max-width: 782px ) {
+		// Blur everything except the mobile dropdown and global nav
+		> *:not(.x-wpcom-global-nav):not(.happy-blocks-search-card) {
+			filter: blur(4px);
+			pointer-events: none;
+			transition: filter 0.2s ease;
+		}
+		
+		// Ensure global nav stays visible and interactive
+		.x-wpcom-global-nav {
+			filter: none !important;
+			pointer-events: auto !important;
+			z-index: 1001;
 		}
 	}
 }
