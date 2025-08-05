@@ -35,7 +35,7 @@ export default function StagingSiteTransferBanner() {
 						</Heading>
 						<Text as="p" variant="muted">
 							{ __(
-								'We’re currently creating your staging site. This may take a few moments, depending on the size of your site.'
+								'We’re currently creating your staging site. This may take a few moments, depending on the size of your site. You’ll receive an email once it’s ready.'
 							) }
 						</Text>
 
