@@ -23,11 +23,14 @@ import {
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
+import { usePaymentsQuery } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
+import PaymentsList from 'calypso/my-sites/promote-post-i2/components/payments-list';
 import PostsList, {
 	postsNotReadyErrorMessage,
 } from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -48,7 +51,8 @@ import PostsListBanner from './components/posts-list-banner';
 import TspBanner from './components/tsp-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
-export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
+
+export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits', 'payments' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
@@ -138,6 +142,20 @@ export default function PromotedPosts( { tab }: Props ) {
 	] );
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+
+	const [ fetchPaymentsForCurrentSite, setFetchPaymentsForCurrentSite ] = useState( true );
+	// TODO fix the values when we know them
+	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9-alpha', '0.8.0' );
+	/* query for payments */
+	const {
+		data: payments,
+		isLoading: isLoadingPayments,
+		isFetching: isFetchingPayments,
+	} = usePaymentsQuery(
+		arePaymentsEnabled,
+		fetchPaymentsForCurrentSite ? selectedSiteId : undefined
+	);
+
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const shouldDisplayDebtAndPaymentLinks =
@@ -146,7 +164,8 @@ export default function PromotedPosts( { tab }: Props ) {
 		! data?.paymentsBlocked &&
 		data?.paymentLinks &&
 		data?.paymentLinks.length > 0 &&
-		parseFloat( data.debt ) > 0;
+		parseFloat( data.debt ) > 0 &&
+		selectedTab !== 'payments';
 
 	const {
 		has_more_pages: campaignsHasMorePages,
@@ -201,6 +220,16 @@ export default function PromotedPosts( { tab }: Props ) {
 			label: translate( 'Campaigns' ),
 		},
 	];
+
+	if ( arePaymentsEnabled ) {
+		tabs.push( {
+			id: 'payments',
+			name: translate( 'Payments' ),
+			className: 'payments',
+			itemCount: payments?.total,
+			label: translate( 'Payments' ),
+		} );
+	}
 
 	const cookies = cookie.parse( document.cookie );
 	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
@@ -443,8 +472,26 @@ export default function PromotedPosts( { tab }: Props ) {
 				</>
 			) }
 
+			{ /* Render payments tab */ }
+			{ selectedTab === 'payments' && (
+				<>
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/payments/:site' ) }
+						title="Advertising > Payments"
+					/>
+					<PaymentsList
+						isLoading={ isLoadingPayments }
+						isError={ campaignError as DSPMessage }
+						isFetching={ isFetchingPayments }
+						payments={ payments?.payments }
+						selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
+						setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
+					/>
+				</>
+			) }
+
 			{ /* Render posts tab */ }
-			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
+			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && selectedTab !== 'payments' && (
 				<>
 					{ renderWarningNotices( postsWarnings ) }
 
