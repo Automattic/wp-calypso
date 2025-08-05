@@ -1,7 +1,11 @@
 import { type Callback } from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
+import { useEffect } from 'react';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import ClientSidebar from '../../components/sidebar-menu/client';
 import InvoicesOverview from '../purchases/invoices/invoices-overview';
 import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
@@ -10,6 +14,25 @@ import ClientLanding from './client-landing';
 import ClientCheckout from './primary/checkout';
 import ClientCheckoutV2 from './primary/checkout-v2';
 import SubscriptionsList from './primary/subscriptions-list';
+
+/**
+ * Component that serves the appropriate checkout version based on user's billing type.
+ * Redirects billingdragon users to checkout/v2, others get the standard checkout.
+ */
+const ClientCheckoutVersioned = ( { queryParams = '' } ) => {
+	const userBillingType = useSelector( getUserBillingType );
+	const isBillingTypeBD = userBillingType === 'billingdragon';
+
+	useEffect( () => {
+		if ( isBillingTypeBD ) {
+			// Redirect to v2 with the same query parameters
+			page.redirect( `/client/checkout/v2${ queryParams }` );
+		}
+	}, [ isBillingTypeBD, queryParams ] );
+
+	// If not billingdragon, render the normal checkout
+	return <ClientCheckout />;
+};
 
 export const clientLandingContext: Callback = ( context, next ) => {
 	context.primary = <ClientLanding />;
@@ -67,10 +90,13 @@ export const clientInvoicesContext: Callback = ( context, next ) => {
 };
 
 export const clientCheckoutContext: Callback = ( context, next ) => {
+	// Get the search parameters from the URL
+	const queryParams = context.querystring ? `?${ context.querystring }` : '';
+
 	context.primary = (
 		<>
 			<PageViewTracker title="Client > Checkout" path={ context.path } />
-			<ClientCheckout />
+			<ClientCheckoutVersioned queryParams={ queryParams } />
 		</>
 	);
 	next();

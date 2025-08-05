@@ -101,8 +101,7 @@ const SitePickerStep: Step< {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				hideBack
-				goBack={ navigation.goBack }
+				goBack={ () => history.back() }
 				stepContent={
 					<SitePicker
 						page={ page }

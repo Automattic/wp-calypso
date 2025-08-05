@@ -57,6 +57,12 @@
 		fill: $alert-red;
 	}
 
+	.dashboard-overview-card--warning & {
+		background-color: color-mix(in srgb, #b36100 8%, transparent);
+		color: #b36100;
+		fill: #b36100;
+	}
+
 	.dashboard-overview-card--disabled & {
 		color: $gray-600;
 		fill: $gray-600;
@@ -116,6 +122,9 @@
 .dashboard-overview-card__description {
 	.dashboard-overview-card--error & {
 		color: $alert-red;
+	}
+	.dashboard-overview-card--warning & {
+		color: #b36100;
 	}
 }
 

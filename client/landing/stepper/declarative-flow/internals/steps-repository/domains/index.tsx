@@ -21,7 +21,7 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -54,7 +54,7 @@ const DomainsStep: Step< {
 		  }
 		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
-	const [ , shouldUseDomainSearchV2 ] = useDomainSearchV2( flow );
+	const [ , shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( flow );
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -131,6 +131,7 @@ const DomainsStep: Step< {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
+				extra: { flow_name: flow },
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
@@ -366,7 +367,7 @@ const DomainsStep: Step< {
 };
 
 const StyleWrappedDomainsStep: typeof DomainsStep = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flow );
+	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flow );
 
 	if ( isLoading ) {
 		// TODO: Add a loading state to indicate that the experiment is loading.

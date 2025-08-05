@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { basicMetricsQuery, performanceInsightsQuery } from '../../app/queries/performance';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
-import { UrlPerformanceInsights } from '../../data/types';
+import { basicMetricsQuery, performanceInsightsQuery } from '../queries/performance';
+import { siteSettingsQuery } from '../queries/site-settings';
+import type { UrlPerformanceInsights } from '../../data/types';
 
 interface PerformanceData {
 	performanceData: UrlPerformanceInsights | undefined;

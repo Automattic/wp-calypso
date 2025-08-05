@@ -4,6 +4,7 @@ import { Moment } from 'moment';
 export type UpcomingEventProps = {
 	id: string;
 	date: { from: Moment; to: Moment };
+	displayDate?: string;
 	title: string;
 	subtitle: string;
 	descriptions: TranslateResult[];

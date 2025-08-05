@@ -65,6 +65,21 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 		expect( onClose ).toHaveBeenCalled();
 	} );
 
+	it( 'closes the modal automatically when all data returned is undefined', () => {
+		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+			data: undefined,
+			isLoading: false,
+			resourceType: null,
+			isFetched: true,
+		} );
+
+		const onClose = jest.fn();
+		render(
+			<ReaderSuggestedFollowsDialog onClose={ onClose } siteId={ 1 } postId={ 2 } isVisible />
+		);
+		expect( onClose ).toHaveBeenCalled();
+	} );
+
 	it( 'renders the loading state', () => {
 		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [],
@@ -98,6 +113,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 				isVisible
 			/>
 		);
+
 		expect( screen.getByText( 'Recommended blogs' ) ).toBeVisible();
 		expect( screen.getByText( /Test Author/ ) ).toBeVisible();
 		expect( screen.getByText( 'Nice Recommended Blog' ) ).toBeVisible();

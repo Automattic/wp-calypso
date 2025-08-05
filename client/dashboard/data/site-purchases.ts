@@ -3,6 +3,7 @@ import wpcom from 'calypso/lib/wp';
 export interface Purchase {
 	ID: string;
 	active: boolean;
+	expiry_status: 'manual-renew' | 'active' | 'expired';
 	expiry_message: string;
 	is_cancelable: boolean;
 	partner_name: string;

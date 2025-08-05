@@ -409,10 +409,6 @@ export function Status( { site }: { site: Site } ) {
 
 export function Plan( { site }: { site: Site } ) {
 	const planName = getSitePlanDisplayName( site );
-	if ( site.is_wpcom_staging_site ) {
-		// translator: this is the label of a staging site.
-		return __( 'Staging' );
-	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		if ( ! site.jetpack ) {

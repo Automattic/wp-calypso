@@ -174,7 +174,11 @@ class SiteOrDomain extends Component {
 		const domain = this.getDomainName();
 		const domainCart = this.getDomainCart();
 		const productSlug = getDomainProductSlug( domain );
-		const domainItem = domainRegistration( { productSlug, domain } );
+		const domainItem = domainRegistration( {
+			productSlug,
+			domain,
+			extra: { flow_name: this.props.flowName },
+		} );
 		const siteUrl = domain;
 
 		this.props.submitSignupStep(

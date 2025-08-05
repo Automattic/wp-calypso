@@ -369,6 +369,14 @@ $colophon-height: 50px;
 				color: var(--jp-gray-50, #646970);
 			}
 		}
+
+		.jetpack-connect__action--onboarding-disclaimer {
+			p {
+				padding-top: 20px;
+				color: var(--jp-gray-70, #757575);
+				text-align: start;
+			}
+		}
 	}
 }
 

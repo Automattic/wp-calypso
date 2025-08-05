@@ -17,7 +17,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'strategic-agency-partner',
+		],
 	},
 	{
 		title: translate( 'Earning opportunities' ),
@@ -26,7 +31,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'strategic-agency-partner',
+		],
 	},
 	{
 		title: translate( 'Support' ),
@@ -37,7 +47,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'strategic-agency-partner',
+		],
 	},
 	{
 		title: translate( 'Training & resources' ),
@@ -50,7 +65,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 			),
 		],
 		isComingSoon: true,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'strategic-agency-partner',
+		],
 	},
 	{
 		title: translate( 'Networking & community' ),
@@ -59,7 +79,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: true,
-		availableTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [
+			'emerging-partner',
+			'agency-partner',
+			'pro-agency-partner',
+			'strategic-agency-partner',
+		],
 	},
 	{
 		title: translate( 'Directory visibility & badging' ),
@@ -70,7 +95,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [ 'agency-partner', 'pro-agency-partner', 'strategic-agency-partner' ],
 	},
 	{
 		title: translate( 'Early access' ),
@@ -79,7 +104,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'agency-partner', 'pro-agency-partner' ],
+		availableTiers: [ 'agency-partner', 'pro-agency-partner', 'strategic-agency-partner' ],
 	},
 	{
 		title: translate( 'Co-marketing' ),
@@ -88,7 +113,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'strategic-agency-partner' ],
 	},
 	{
 		title: translate( 'Pre-qualified sales leads' ),
@@ -97,7 +122,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'strategic-agency-partner' ],
 	},
 	{
 		title: translate( 'Dedicated agency partner manager' ),
@@ -106,7 +131,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'strategic-agency-partner' ],
 	},
 	{
 		title: translate( 'Automattic advisory board' ),
@@ -115,7 +140,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		),
 		features: [],
 		isComingSoon: false,
-		availableTiers: [ 'pro-agency-partner' ],
+		availableTiers: [ 'pro-agency-partner', 'strategic-agency-partner' ],
 	},
 ];
 

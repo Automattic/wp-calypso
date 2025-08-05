@@ -32,11 +32,24 @@ export default function AgencyTierOverview() {
 	const currentAgencyTier = agency?.tier?.id;
 	const currentAgencyTierInfo = getAgencyTierInfo( currentAgencyTier, translate );
 
-	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
+	// Base tiers that are always available
+	// regardless of the current agency tier.
+	const baseTiers: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
-	// Show download badges button for Agency Partner and Pro Agency Partner tiers
+	// All tiers available to the current agency.
+	// If the current agency tier is 'strategic-agency-partner',
+	// include it in the list of tiers.
+	const ALL_TIERS: AgencyTier[] =
+		currentAgencyTier === 'strategic-agency-partner'
+			? [ ...baseTiers, 'strategic-agency-partner' ]
+			: baseTiers;
+
+	// Show download badges button for Agency Partner, Pro Agency Partner, and Strategic Agency Partner tiers
 	const showDownloadBadges =
-		currentAgencyTier && [ 'agency-partner', 'pro-agency-partner' ].includes( currentAgencyTier );
+		currentAgencyTier &&
+		[ 'agency-partner', 'pro-agency-partner', 'strategic-agency-partner' ].includes(
+			currentAgencyTier
+		);
 
 	return (
 		<Layout className="agency-tier-overview" title={ title } wide>
@@ -150,17 +163,25 @@ export default function AgencyTierOverview() {
 								<div className="agency-tier-overview__benefit-card-content">
 									<div className="agency-tier-overview__benefit-card-header">
 										<div className="agency-tier-overview__benefit-card-icons">
-											{ benefit.availableTiers.map( ( tier ) => {
-												const { logo } = getAgencyTierInfo( tier, translate );
-												return (
-													<img
-														key={ tier }
-														src={ logo }
-														alt={ tier }
-														className="agency-tier-overview__benefit-card-icon"
-													/>
-												);
-											} ) }
+											{ benefit.availableTiers
+												.filter( ( tier ) => {
+													// Hide strategic-agency-partner tier from users who are not strategic-agency-partner
+													return (
+														tier !== 'strategic-agency-partner' ||
+														currentAgencyTier === 'strategic-agency-partner'
+													);
+												} )
+												.map( ( tier ) => {
+													const { logo } = getAgencyTierInfo( tier, translate );
+													return (
+														<img
+															key={ tier }
+															src={ logo }
+															alt={ tier }
+															className="agency-tier-overview__benefit-card-icon"
+														/>
+													);
+												} ) }
 										</div>
 
 										{ benefit.isComingSoon && (

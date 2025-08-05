@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
+import { hasSiteTrialEnded } from '../../utils/site-trial';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
 import type { Site } from '../../data/types';
 
@@ -11,6 +12,16 @@ const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFe
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
+
+	if ( hasSiteTrialEnded( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
+					{ __( 'Trial ended' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
 
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>

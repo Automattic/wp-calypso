@@ -3,6 +3,12 @@
 .domain-search-controls__input {
 	width: 100%;
 
+	@supports ( -moz-appearance: none ) {
+		// Force hardware acceleration and sub-pixel alignment on Firefox.
+		transform: translateZ( 0 );
+		will-change: transform;
+	}
+
 	.components-input-base {
 		border-radius: var( --domain-search-input-border-radius );
 	}
