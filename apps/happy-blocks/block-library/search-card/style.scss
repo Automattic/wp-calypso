@@ -18,7 +18,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		padding: 0 24px;
 
 		@media ( max-width: $breakpoint-mobile ) {
-			padding: 0 16px;
+			padding: 0;
 		}
 	}
 
@@ -54,7 +54,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			width: 100%;
 			background: transparent;
 			border: none;
-			padding: 0;
+			padding: 0 16px;
 
 			&[aria-expanded="true"] .dropdown-arrow {
 				transform: rotate(180deg);
@@ -96,7 +96,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			background: #fff;
 			list-style: none;
 			margin: 0;
-			padding: 8px 0;
+			padding: 8px 16px;
 			opacity: 0;
 			visibility: hidden;
 			transform: translateY(-10px);

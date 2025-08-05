@@ -74,7 +74,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 				</svg>
 			</button>
 			<ul class="dropdown-menu" role="menu">
-				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support' ) ); ?>" class="<?php echo ( empty( $active_page ) ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support' ) ); ?>" class="<?php echo ( 'support' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></a></li>
 				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides' ) ); ?>" class="<?php echo ( 'guides' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
 				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/courses' ) ); ?>" class="<?php echo ( 'courses' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Courses', 'happy-blocks' ) ); ?></a></li>
 				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>" class="<?php echo ( 'forums' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
