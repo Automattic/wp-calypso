@@ -121,10 +121,6 @@ export interface CancelPurchaseConnectedProps {
 }
 
 export interface CancelPurchaseProps {
-	getConfirmCancelDomainUrlFor: (
-		targetSiteSlug: string,
-		targetPurchaseId: string | number
-	) => string;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 	purchaseId: number;
 	purchaseListUrl: string;
@@ -588,7 +584,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainPurchase,
 			siteSlug,
 			purchaseListUrl,
-			getConfirmCancelDomainUrlFor,
 			isDomainRegistrationPurchase,
 		} = this.props;
 
@@ -611,7 +606,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				siteSlug={ siteSlug }
 				cancelBundledDomain={ this.state.cancelBundledDomain }
 				purchaseListUrl={ purchaseListUrl }
-				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				onCancellationStart={ this.onCancellationStart }
 				onCancellationComplete={ this.onCancellationComplete }
