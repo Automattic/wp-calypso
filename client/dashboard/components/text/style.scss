@@ -1,7 +1,7 @@
 .dashboard-text--warning {
-	--wp-components-color-foreground: var(--dashboard__text-color-warning);
+	--wp-components-color-foreground: var(--dashboard__foreground-color-warning);
 }
 
 .dashboard-text--error {
-	--wp-components-color-foreground: var(--dashboard__text-color-error);
+	--wp-components-color-foreground: var(--dashboard__foreground-color-error);
 }
