@@ -203,10 +203,6 @@ class JetpackConnectSiteUrlInput extends Component {
 							id="siteSelection"
 							placeholder="Type your site"
 							onChange={ this.handleChange }
-							onSelect={ this.props.onSelect }
-							onSubmit={ this.handleFormSubmit }
-							isSubmitDisabled={ this.isFormSubmitDisabled() }
-							isSubmitBusy={ this.isFormSubmitBusy() }
 							suggestions={ candidateSites }
 							value={ url }
 						/>

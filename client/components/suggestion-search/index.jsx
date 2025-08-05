@@ -15,9 +15,6 @@ class SuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
 		onSelect: PropTypes.func,
-		onSubmit: PropTypes.func,
-		isSubmitDisabled: PropTypes.bool,
-		isSubmitBusy: PropTypes.bool,
 		suggestions: PropTypes.arrayOf(
 			PropTypes.shape( {
 				label: PropTypes.string.isRequired,
@@ -37,9 +34,6 @@ class SuggestionSearch extends Component {
 		placeholder: '',
 		onChange: noop,
 		onSelect: noop,
-		onSubmit: noop,
-		isSubmitDisabled: false,
-		isSubmitBusy: false,
 		suggestions: [],
 		value: '',
 		autoFocus: false,
@@ -60,9 +54,7 @@ class SuggestionSearch extends Component {
 		}
 	}
 
-	setSuggestionsRef = ( ref ) => {
-		this.suggestionsRef = ref;
-	};
+	setSuggestionsRef = ( ref ) => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { query: '' } );
 
@@ -74,29 +66,17 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionKeyDown = ( event ) => {
-		const { onSubmit, isSubmitDisabled, isSubmitBusy } = this.props;
-		const hasSuggestions = this.getSuggestions().length > 0;
-		const isEnter = event.key === 'Enter';
-
-		if ( isEnter ) {
+		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
 			event.preventDefault();
-
-			if ( hasSuggestions ) {
-				event.stopPropagation();
-				this.suggestionsRef.handleKeyEvent( event );
-			} else if ( onSubmit && ! isSubmitDisabled && ! isSubmitBusy ) {
-				onSubmit();
-			}
-		} else if ( hasSuggestions ) {
-			this.suggestionsRef.handleKeyEvent( event );
 		}
+
+		this.suggestionsRef.handleKeyEvent( event );
 	};
 
 	handleSuggestionMouseDown = ( suggestion, suggestionIndex ) => {
 		this.updateInputValue( suggestion.label );
 		this.hideSuggestions();
 		this.props.onChange( suggestion.label, true );
-		this.props.onSelect( suggestion );
 		const { railcar } = this.props;
 		if ( railcar ) {
 			const { action, id } = railcar;
@@ -113,6 +93,15 @@ class SuggestionSearch extends Component {
 		}
 
 		return this.props.suggestions;
+	}
+
+	getSuggestionLabel( suggestionPosition ) {
+		return this.suggestionsRef.props.suggestions[ suggestionPosition ].label;
+	}
+
+	updateFieldFromSuggestion( newValue ) {
+		this.updateInputValue( newValue );
+		this.props.onChange( newValue, true );
 	}
 
 	onSuggestionItemMount = ( { index, suggestionIndex } ) => {
