@@ -2,8 +2,15 @@ import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { getName, isRefundable } from 'calypso/lib/purchases';
+import type { Purchases } from '@automattic/data-stores';
 
-const CancelPurchaseFeatureList = ( { purchase, cancellationFeatures } ) => {
+const CancelPurchaseFeatureList = ( {
+	purchase,
+	cancellationFeatures,
+}: {
+	purchase: Purchases.Purchase;
+	cancellationFeatures: string[];
+} ) => {
 	const translate = useTranslate();
 
 	if ( ! cancellationFeatures.length ) {
