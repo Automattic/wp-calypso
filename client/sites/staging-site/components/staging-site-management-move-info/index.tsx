@@ -13,6 +13,10 @@ import {
 import { __ } from '@wordpress/i18n';
 import { arrowUp, cog, plus, chevronUpDown, trash, reusableBlock } from '@wordpress/icons';
 import { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import { urlToSlug } from 'calypso/lib/url';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface IconConfig {
 	icon: Parameters< typeof Icon >[ 0 ][ 'icon' ];
@@ -26,6 +30,7 @@ interface InfoCardItem {
 	mainIcon: IconConfig;
 	locationIcon: Parameters< typeof Icon >[ 0 ][ 'icon' ];
 	location: string;
+	link?: string;
 }
 
 const infoCardItems: InfoCardItem[] = [
@@ -112,7 +117,15 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 						<Text>{ item.description }</Text>
 						<HStack alignment="left" spacing={ 1 }>
 							<Icon icon={ item.locationIcon } size={ 16 } style={ { fill: '#757575' } } />
-							<Text variant="muted">{ item.location }</Text>
+							{ item.link ? (
+								<Text variant="muted">
+									<a href={ item.link } style={ { textDecoration: 'none', color: 'inherit' } }>
+										{ item.location }
+									</a>
+								</Text>
+							) : (
+								<Text variant="muted">{ item.location }</Text>
+							) }
 						</HStack>
 					</VStack>
 				</HStack>
@@ -123,6 +136,29 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 
 const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	const isMobile = useBreakpoint( '<660px' );
+	const currentSite = useSelector( getSelectedSite );
+
+	// Get the staging site ID from the current production site
+	const stagingSiteId = currentSite?.options?.wpcom_staging_blog_ids?.[ 0 ];
+	const stagingSite = useSelector( ( state ) => getSite( state, stagingSiteId ) );
+
+	// Determine the target site for settings link:
+	// - If current site is staging, use current site
+	// - If current site is production and has staging, use staging site
+	// - Otherwise, no link
+	const isCurrentSiteStaging = currentSite?.is_wpcom_staging_site;
+	const targetSite = isCurrentSiteStaging ? currentSite : stagingSite;
+
+	const siteSlug = targetSite?.URL ? urlToSlug( targetSite.URL ) : null;
+	const settingsLink = siteSlug ? `/sites/${ siteSlug }/settings` : undefined;
+
+	// Update the "Delete staging site" card to include the link only when staging site exists
+	const updatedInfoCardItems = infoCardItems.map( ( item ) => {
+		if ( item.locationIcon === cog && settingsLink ) {
+			return { ...item, link: settingsLink };
+		}
+		return item;
+	} );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -144,7 +180,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 				gap={ 6 }
 				style={ { maxWidth: '748px' } }
 			>
-				{ infoCardItems.map( ( item, index ) => (
+				{ updatedInfoCardItems.map( ( item, index ) => (
 					<Item key={ index } style={ { padding: '0' } }>
 						<InfoCard item={ item } />
 					</Item>
