@@ -1,4 +1,4 @@
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
 import { domainsQuery } from '../queries/domains';
 import { siteDomainsQuery } from '../queries/site-domains';
 import { queryClient } from '../query-client';
@@ -45,8 +45,20 @@ export const siteDomainsRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	// TODO: add the submenu nav components here
-} );
+	loader: async ( { params: { domainName } } ) => {
+		const domains = await queryClient.ensureQueryData( domainsQuery() );
+		const domain = domains.find( ( domain ) => domain.domain === domainName );
+		if ( ! domain ) {
+			throw notFound();
+		}
+	},
+} ).lazy( () =>
+	import( '../../domains/domain' ).then( ( d ) =>
+		createLazyRoute( 'domain' )( {
+			component: d.default,
+		} )
+	)
+);
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
