@@ -274,6 +274,16 @@ function HelpSearchResults( {
 		type: string
 	) => {
 		const { link, post_id, blog_id, source } = result;
+
+		recordTracksEvent( 'calypso_help_center_search_traintracks_interact', {
+			action: 'click',
+			railcar: result.railcar.railcar,
+			href: result.link,
+			search_type: ! contextSearch && ! searchQuery ? 'tailored' : 'search',
+			location,
+			section: sectionName,
+		} );
+
 		// check and catch admin section links.
 		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
