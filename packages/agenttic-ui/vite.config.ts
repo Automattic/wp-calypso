@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
@@ -20,7 +19,6 @@ export default defineConfig( {
 				'@automattic/agenttic-client',
 				'@radix-ui/react-scroll-area',
 				'@radix-ui/react-slot',
-				'@tailwindcss/typography',
 				'@visx/xychart',
 				'@wordpress/data',
 				'@wordpress/element',
@@ -30,7 +28,6 @@ export default defineConfig( {
 				'lucide-react',
 				'react-markdown',
 				'react-textarea-autosize',
-				'tailwind-merge',
 				// External dependencies that get bundled
 				'@emotion/is-prop-valid',
 				'@emotion/styled',
@@ -49,7 +46,7 @@ export default defineConfig( {
 			generateScopedName: '[name]_[local]',
 		},
 		postcss: {
-			plugins: [ tailwindcss(), autoprefixer() ],
+			plugins: [ autoprefixer() ],
 		},
 	},
 	plugins: [ libInjectCss() ],

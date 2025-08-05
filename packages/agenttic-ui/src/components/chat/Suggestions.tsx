@@ -1,7 +1,7 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { cn } from '../../utils/classNames';
 import type { Suggestion } from '../../types';
+import { cn } from '../../utils/classNames';
 import { Button } from '../ui/button';
 import { fastSpringWithDelay } from '../animations';
 import styles from './Suggestions.module.css';

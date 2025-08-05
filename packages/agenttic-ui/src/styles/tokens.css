@@ -62,7 +62,7 @@
   
   --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 0, 0.075);
   --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 2px 24px rgba(0, 0, 0, 0.075);
-    --shadow-stroke: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  --shadow-stroke: 0 0 0 1px rgba(0, 0, 0, 0.1);
   
   /* === TRANSITIONS === */
   

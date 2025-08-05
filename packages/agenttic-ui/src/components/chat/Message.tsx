@@ -3,7 +3,7 @@ import React from 'react';
 import Markdown from 'react-markdown';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
-import { cn } from '../../utils/utils';
+import { cn } from '../../utils/classNames';
 import { fadeVariants } from '../animations';
 import { MessageActions } from './MessageActions';
 import styles from './Message.module.css';

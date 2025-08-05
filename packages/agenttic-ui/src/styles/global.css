@@ -1,12 +1,5 @@
 @import './tokens.css';
 
-@tailwind components;
-@tailwind utilities;
-
-.agenttic-ui {
-	@tailwind base;
-}
-
 @layer base {
 	/* Reset & Box Model */
 	*, ::before, ::after, ::backdrop, ::file-selector-button {

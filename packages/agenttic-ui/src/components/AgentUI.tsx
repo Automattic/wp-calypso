@@ -1,7 +1,6 @@
 import React from 'react';
 import type { AgentUIProps } from '../types';
 import { Chat } from './chat/Chat';
-import { cn } from '../utils/classNames';
 
 /**
  * AgentUI - Pure UI component for chat interface
@@ -83,26 +82,24 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 	className,
 } ) => {
 	return (
-		<div className={ cn( 'agenttic-ui', className ) }>
-			<Chat
-				messages={ messages }
-				isProcessing={ isProcessing }
-				error={ error }
-				onSubmit={ onSubmit }
-				variant={ variant }
-				triggerIcon={ triggerIcon }
-				placeholder={ placeholder }
-				notice={ notice }
-				emptyView={ emptyView }
-				onOpen={ onOpen }
-				onExpand={ onExpand }
-				onClose={ onClose }
-				floatingChatState={ floatingChatState }
-				suggestions={ suggestions }
-				clearSuggestions={ clearSuggestions }
-				messageRenderer={ messageRenderer }
-			/>
-		</div>
+		<Chat
+			messages={ messages }
+			isProcessing={ isProcessing }
+			error={ error }
+			onSubmit={ onSubmit }
+			variant={ variant }
+			triggerIcon={ triggerIcon }
+			placeholder={ placeholder }
+			notice={ notice }
+			emptyView={ emptyView }
+			onOpen={ onOpen }
+			onExpand={ onExpand }
+			onClose={ onClose }
+			floatingChatState={ floatingChatState }
+			suggestions={ suggestions }
+			clearSuggestions={ clearSuggestions }
+			messageRenderer={ messageRenderer }
+		/>
 	);
 };
 
