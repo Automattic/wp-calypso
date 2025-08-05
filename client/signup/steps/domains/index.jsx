@@ -61,7 +61,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -1785,7 +1785,7 @@ class RenderDomainsStepComponent extends Component {
 }
 
 const StyleWrappedDomainsStepComponent = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flowName );
+	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flowName );
 
 	if ( isLoading ) {
 		if ( shouldUseStepContainerV2( props.flowName ) ) {

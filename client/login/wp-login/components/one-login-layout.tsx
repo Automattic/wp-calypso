@@ -1,10 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { useLoginContext } from 'calypso/login/login-context';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { useDispatch, useSelector } from 'calypso/state';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -14,6 +15,9 @@ interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromAkismet: boolean;
 	children: React.ReactNode;
+	/**
+	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
+	 */
 	signupUrl?: string;
 }
 
@@ -28,23 +32,27 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 
 	const SignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl = signupUrlProp
+		const signupUrl: string = signupUrlProp
 			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
 
+		const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
+			recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-layout' } );
+
+			if ( isLoggedIn ) {
+				event.preventDefault();
+				dispatch( redirectToLogout( signupUrl ) );
+			}
+		};
+
 		return (
-			<Step.LinkButton
-				href={ signupUrl }
-				key="sign-up-link"
-				onClick={ () => {
-					recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-layout' } );
-				} }
-				rel="external"
-			>
+			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
 				{ translate( 'Create an account' ) }
 			</Step.LinkButton>
 		);

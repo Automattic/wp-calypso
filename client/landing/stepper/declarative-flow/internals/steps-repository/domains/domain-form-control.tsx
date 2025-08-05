@@ -21,7 +21,7 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	retrieveSignupDestination,
@@ -62,7 +62,7 @@ export function DomainFormControl( {
 	isCartPendingUpdate,
 	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
-	const [ , isDomainSearchV2Enabled ] = useDomainSearchV2( flow ?? '' );
+	const [ , isDomainSearchV2Enabled ] = useIsDomainSearchV2Enabled( flow ?? '' );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const productsList = useSelector( getAvailableProductsList );

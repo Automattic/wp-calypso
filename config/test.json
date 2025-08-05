@@ -38,6 +38,7 @@
 		"current-site/notice": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"domains/ui-redesign": true,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": false,
 		"help": true,

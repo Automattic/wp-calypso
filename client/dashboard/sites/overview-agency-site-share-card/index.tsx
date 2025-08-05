@@ -13,7 +13,7 @@ export default function AgencySiteShareCard( { site }: { site: Site } ) {
 		<OverviewCard
 			icon={ link }
 			heading={ heading }
-			description={ __( 'Collaborators with the link can view your site' ) }
+			description={ __( 'Collaborators with the link can view your site.' ) }
 			link={ `/sites/${ site.slug }/settings/site-visibility` }
 			title={ __( 'Share' ) }
 			tracksId="agency-site-share"

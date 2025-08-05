@@ -9,6 +9,7 @@ import { dateI18n } from '@wordpress/date';
 import { sprintf, __ } from '@wordpress/i18n';
 import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
+import { siteDomainRoute } from '../../app/router';
 import { DomainTypes } from '../../data/domains';
 import type { Domain, Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
@@ -34,11 +35,16 @@ const DomainName = ( {
 } ) => {
 	const siteSlug = site?.slug ?? domain.site_slug;
 	const domainManagementUrl = site
-		? `${ window.location.origin }/overview/site-domain/domain/${ domain.domain }/${ siteSlug }`
+		? siteDomainRoute.fullPath
 		: `${ window.location.origin }/domains/manage/all/overview/${ domain.domain }/${ siteSlug }`;
+	const domainManagementParams = { siteSlug, domainName: domain.domain };
 
 	return (
-		<Link to={ domainManagementUrl } disabled={ domain.type === DomainTypes.WPCOM }>
+		<Link
+			to={ domainManagementUrl }
+			params={ domainManagementParams }
+			disabled={ domain.type === DomainTypes.WPCOM }
+		>
 			<HStack spacing={ 1 }>
 				<span style={ textOverflowStyles }>{ value }</span>
 				{ showPrimaryDomainBadge && domain.primary_domain && (

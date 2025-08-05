@@ -38,7 +38,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 			<OverviewCard
 				{ ...CARD_PROPS }
 				heading={ __( 'No backups yet' ) }
-				description={ __( 'Your first backup will be ready soon' ) }
+				description={ __( 'Your first backup will be ready soon.' ) }
 				externalLink={ getBackupUrl( site ) }
 			/>
 		);
@@ -63,7 +63,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 			featureIcon={ CARD_PROPS.icon }
 			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Back up your site' ) }
-			upsellDescription={ __( 'Get back online quickly with one-click restores' ) }
+			upsellDescription={ __( 'Get back online quickly with one-click restores.' ) }
 			upsellExternalLink={ getBackupUrl( site ) }
 		>
 			<BackupCardContent site={ site } />

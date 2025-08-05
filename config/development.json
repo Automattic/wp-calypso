@@ -64,7 +64,7 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domains/ui-redesign": false,
+		"domains/ui-redesign": true,
 		"email-accounts/enabled": true,
 		"global-styles/on-personal-plan": false,
 		"google-drive": true,

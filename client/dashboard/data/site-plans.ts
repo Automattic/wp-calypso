@@ -2,22 +2,21 @@ import wpcom from 'calypso/lib/wp';
 
 export interface Plan {
 	id?: string | null;
+	currency_code: string;
 	current_plan?: boolean;
 	expiry?: string;
+	formatted_price: string;
 	has_domain_credit?: boolean;
-	product_slug?: string;
+	product_name: string;
+	product_slug: string;
+	raw_price_integer: number;
 	subscribed_date?: string;
 	user_facing_expiry?: string;
 }
 
-export async function fetchCurrentSitePlan( siteId: number ): Promise< Plan > {
-	const plans: Record< string, Plan > = await wpcom.req.get( {
+export function fetchSitePlans( siteId: number ): Promise< Record< string, Plan > > {
+	return wpcom.req.get( {
 		path: `/sites/${ siteId }/plans`,
 		apiVersion: '1.3',
 	} );
-	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
-	if ( ! plan ) {
-		throw new Error( 'No current plan found' );
-	}
-	return plan;
 }

@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { siteByIdQuery } from '../../app/queries/site';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { DotcomPlans } from '../../data/constants';
@@ -38,6 +39,15 @@ function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
 	}
 
 	return `${ products.map( ( product ) => product.label ).join( ', ' ) }.`;
+}
+
+function SitePlanStats( { site }: { site: Site } ) {
+	return (
+		<VStack spacing={ 4 }>
+			<SiteStorageStat site={ site } />
+			<SiteBandwidthStat site={ site } />
+		</VStack>
+	);
 }
 
 function JetpackPlanCard( {
@@ -101,15 +111,38 @@ function WpcomPlanCard( {
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
-			link={ site.plan?.is_free ? undefined : '/v2/me/billing/active-subscriptions' }
+			externalLink={
+				site.plan?.is_free
+					? `/plans/${ site.slug }`
+					: `/purchases/subscriptions/${ site.slug }/${ purchase?.ID }`
+			}
 			tracksId="plan"
 			isLoading={ isLoading }
-			bottom={
-				<VStack spacing={ 4 }>
-					<SiteStorageStat site={ site } />
-					<SiteBandwidthStat site={ site } />
-				</VStack>
-			}
+			bottom={ <SitePlanStats site={ site } /> }
+		/>
+	);
+}
+
+function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
+	const { data: productionSite, isLoading: isLoadingProductionSite } = useQuery(
+		siteByIdQuery( site.options?.wpcom_production_blog_id ?? 0 )
+	);
+
+	const description = sprintf(
+		/* translators: %s: the site plan name */
+		__( 'Included with your %s plan.' ),
+		productionSite?.plan?.product_name_short
+	);
+
+	return (
+		<OverviewCard
+			title={ __( 'Plan' ) }
+			icon={ wordpress }
+			heading={ getSitePlanDisplayName( site ) }
+			description={ description }
+			tracksId="plan"
+			isLoading={ isLoadingProductionSite }
+			bottom={ <SitePlanStats site={ site } /> }
 		/>
 	);
 }
@@ -120,16 +153,11 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ __( 'Managed by Automattic for Agencies' ) }
+			description={ __( 'Managed by Automattic for Agencies.' ) }
 			externalLink={ `https://agencies.automattic.com/sites/overview/${ site.slug }` }
 			tracksId="plan"
 			isLoading={ isLoading }
-			bottom={
-				<VStack spacing={ 4 }>
-					<SiteStorageStat site={ site } />
-					<SiteBandwidthStat site={ site } />
-				</VStack>
-			}
+			bottom={ <SitePlanStats site={ site } /> }
 		/>
 	);
 }
@@ -153,6 +181,10 @@ export default function PlanCard( { site }: { site: Site } ) {
 				isLoading={ isLoadingPlan || isLoadingPurchase }
 			/>
 		);
+	}
+
+	if ( site.is_wpcom_staging_site ) {
+		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
 	return (

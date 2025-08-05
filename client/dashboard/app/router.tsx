@@ -10,9 +10,9 @@ import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sites/features';
 import { hasHostingFeature } from '../utils/site-features';
+import { hasSiteTrialEnded } from '../utils/site-trial';
 import NotFound from './404';
 import UnknownError from './500';
-import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
@@ -40,6 +40,25 @@ import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
 import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
+import {
+	setSiteRoute,
+	setRootRoute,
+	domainsRoute,
+	siteDomainsRoute,
+	siteDomainRoute,
+	siteDomainChildRoutes,
+	siteDomainDnsRoute,
+	siteDomainDnsAddRoute,
+	siteDomainDnsEditRoute,
+	siteDomainForwardingRoute,
+	siteDomainForwardingAddRoute,
+	siteDomainForwardingEditRoute,
+	siteDomainContactInfoRoute,
+	siteDomainNameServersRoute,
+	siteDomainGlueRecordsRoute,
+	siteDomainDnssecRoute,
+	siteDomainTransferRoute,
+} from './routes/domain-routes';
 import type { AppConfig } from './context';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -106,6 +125,17 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
+	beforeLoad: async ( { cause, params: { siteSlug }, location } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
+		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
+			throw redirect( { to: trialExpiredUrl } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
@@ -192,17 +222,6 @@ const siteBackupsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainsRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains',
-} ).lazy( () =>
-	import( '../sites/domains' ).then( ( d ) =>
-		createLazyRoute( 'site-domains' )( {
 			component: d.default,
 		} )
 	)
@@ -478,14 +497,23 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	)
 );
 
-const domainsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains',
-	loader: () => queryClient.ensureQueryData( domainsQuery() ),
+const siteTrialEndedRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'trial-ended',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! hasSiteTrialEnded( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
-	import( '../domains' ).then( ( d ) =>
-		createLazyRoute( 'domains' )( {
-			component: d.default,
+	import( '../sites/trial-ended' ).then( ( d ) =>
+		createLazyRoute( 'site-trial-ended' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -627,6 +655,12 @@ const notificationsRoute = createRoute( {
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
+	// Set up the rootRoute reference for domain routes
+	setRootRoute( rootRoute );
+
+	// Set up the siteRoute reference for domain routes
+	setSiteRoute( siteRoute );
+
 	children.push( indexRoute );
 
 	if ( config.supports.overview ) {
@@ -651,6 +685,7 @@ const createRouteTree = ( config: AppConfig ) => {
 			siteSettingsTransferSiteRoute,
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
+			siteTrialEndedRoute,
 		];
 
 		if ( config.supports.sites.deployments ) {
@@ -675,6 +710,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 		if ( config.supports.sites.domains ) {
 			siteChildren.push( siteDomainsRoute );
+			siteChildren.push( siteDomainRoute.addChildren( siteDomainChildRoutes ) );
 		}
 
 		if ( config.supports.sites.emails ) {
@@ -741,6 +777,18 @@ export {
 	siteLogsRoute,
 	siteBackupsRoute,
 	siteDomainsRoute,
+	siteDomainRoute,
+	siteDomainDnsRoute,
+	siteDomainDnsAddRoute,
+	siteDomainDnsEditRoute,
+	siteDomainForwardingRoute,
+	siteDomainForwardingAddRoute,
+	siteDomainForwardingEditRoute,
+	siteDomainContactInfoRoute,
+	siteDomainNameServersRoute,
+	siteDomainGlueRecordsRoute,
+	siteDomainDnssecRoute,
+	siteDomainTransferRoute,
 	siteEmailsRoute,
 	siteSettingsRoute,
 	siteSettingsSiteVisibilityRoute,
