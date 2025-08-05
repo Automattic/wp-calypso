@@ -16,7 +16,7 @@ export const validateField = ( value: string, index: number ): string => {
 	return '';
 };
 
-export interface Props {
+interface Props {
 	index: number;
 	field: NameServerField;
 	disabled: boolean;

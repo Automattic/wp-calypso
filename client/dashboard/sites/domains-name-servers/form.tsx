@@ -11,12 +11,21 @@ import { useCallback, useMemo, useState } from 'react';
 import { NameServerInput, validateField } from './form-input';
 import { NameServerField, MIN_NAMESERVER_LENGTH, MAX_NAMESERVER_LENGTH } from './types';
 
-export default function NameServersForm() {
-	const [ useCustomNameServers, setUseCustomNameServers ] = useState( true );
-	const [ nameServers, setNameServers ] = useState< NameServerField[] >(
+interface Props {
+	nameservers?: string[];
+	onSubmit: ( nameServers: string[] ) => void;
+}
+
+export default function NameServersForm( { nameservers = [], onSubmit }: Props ) {
+	const [ useCustomNameServers, setUseCustomNameServers ] = useState( nameservers.length > 0 );
+	const [ nameServerFields, setNameServerFields ] = useState< NameServerField[] >(
 		Array( MAX_NAMESERVER_LENGTH )
 			.fill( null )
-			.map( () => ( { value: '', error: '', touched: false } ) )
+			.map( ( _, index ) => ( {
+				value: nameservers[ index ] || '',
+				error: '',
+				touched: false,
+			} ) )
 	);
 
 	const isFormValid = useMemo( () => {
@@ -26,17 +35,17 @@ export default function NameServersForm() {
 		}
 
 		// Check if there are any errors
-		if ( nameServers.some( ( ns ) => ns.error !== '' ) ) {
+		if ( nameServerFields.some( ( ns ) => ns.error !== '' ) ) {
 			return false;
 		}
 
 		// Check if minimum required nameservers are provided
-		const filledNameServers = nameServers.filter( ( ns ) => ns.value !== '' ).length;
+		const filledNameServers = nameServerFields.filter( ( ns ) => ns.value !== '' ).length;
 		return filledNameServers >= MIN_NAMESERVER_LENGTH;
-	}, [ useCustomNameServers, nameServers ] );
+	}, [ useCustomNameServers, nameServerFields ] );
 
 	const handleNameServerChange = useCallback( ( index: number, value: string ) => {
-		setNameServers( ( current ) => {
+		setNameServerFields( ( current ) => {
 			const updated = [ ...current ];
 			updated[ index ] = {
 				...updated[ index ],
@@ -48,7 +57,7 @@ export default function NameServersForm() {
 	}, [] );
 
 	const handleNameServerBlur = useCallback( ( index: number ) => {
-		setNameServers( ( current ) => {
+		setNameServerFields( ( current ) => {
 			if ( current[ index ].touched ) {
 				return current;
 			}
@@ -71,9 +80,9 @@ export default function NameServersForm() {
 			}
 
 			// Show next if previous has value
-			return nameServers[ index - 1 ].value !== '';
+			return nameServerFields[ index - 1 ].value !== '';
 		},
-		[ nameServers ]
+		[ nameServerFields ]
 	);
 
 	return (
@@ -82,7 +91,14 @@ export default function NameServersForm() {
 				<CheckboxControl
 					label={ __( 'Use custom name servers' ) }
 					checked={ useCustomNameServers }
-					onChange={ () => setUseCustomNameServers( ( current ) => ! current ) }
+					onChange={ () => {
+						setUseCustomNameServers( ( current ) => ! current );
+						setNameServerFields(
+							Array( MAX_NAMESERVER_LENGTH )
+								.fill( null )
+								.map( () => ( { value: '', error: '', touched: false } ) )
+						);
+					} }
 				/>
 			</Text>
 			{ useCustomNameServers &&
@@ -102,7 +118,7 @@ export default function NameServersForm() {
 												<NameServerInput
 													key={ index }
 													index={ index }
-													field={ nameServers[ index ] }
+													field={ nameServerFields[ index ] }
 													disabled={ ! useCustomNameServers }
 													onChange={ handleNameServerChange }
 													onBlur={ handleNameServerBlur }
@@ -116,7 +132,16 @@ export default function NameServersForm() {
 					}
 				) }
 			<View>
-				<Button __next40pxDefaultSize variant="primary" disabled={ ! isFormValid }>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					disabled={ ! isFormValid }
+					onClick={ () =>
+						onSubmit(
+							nameServerFields.filter( ( ns ) => ns.value !== '' ).map( ( ns ) => ns.value )
+						)
+					}
+				>
 					{ __( 'Save' ) }
 				</Button>
 			</View>
