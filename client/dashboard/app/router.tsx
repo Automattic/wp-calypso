@@ -161,8 +161,6 @@ const siteOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-		await queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) );
 		if ( preload ) {
 			Promise.all( [
 				queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) ),
@@ -178,6 +176,8 @@ const siteOverviewRoute = createRoute( {
 				}
 			} );
 		}
+		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+		await queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
