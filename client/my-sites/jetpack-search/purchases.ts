@@ -10,7 +10,7 @@ export const hasJetpackSearchPurchaseOrPlan = (
 	}
 
 	const checkForSearchProductInPurchases = ( purchase: Purchase ) =>
-		purchase.active && isJetpackSearch( purchase );
+		purchase.subscriptionStatus === 'active' && isJetpackSearch( purchase );
 	return (
 		!! sitePurchases.find( checkForSearchProductInPurchases ) || planHasJetpackSearch( planSlug )
 	);

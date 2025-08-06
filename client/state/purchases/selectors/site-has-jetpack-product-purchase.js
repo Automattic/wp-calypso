@@ -13,6 +13,6 @@ import 'calypso/state/purchases/init';
 export const siteHasJetpackProductPurchase = ( state, siteId ) => {
 	return some(
 		getSitePurchases( state, siteId ),
-		( purchase ) => purchase.active && isJetpackProduct( purchase )
+		( purchase ) => purchase.subscriptionStatus === 'active' && isJetpackProduct( purchase )
 	);
 };

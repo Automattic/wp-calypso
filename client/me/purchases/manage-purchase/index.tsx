@@ -885,7 +885,12 @@ class ManagePurchase extends Component<
 	renderReinstall() {
 		const { purchase, productsList, translate } = this.props;
 		const { isReinstalling } = this.state;
-		if ( ! ( purchase?.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+		if (
+			! (
+				purchase?.subscriptionStatus === 'active' &&
+				hasMarketplaceProduct( productsList, purchase.productSlug )
+			)
+		) {
 			return null;
 		}
 
@@ -1302,7 +1307,8 @@ class ManagePurchase extends Component<
 
 		return purchases.filter(
 			( _purchase ) =>
-				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+				_purchase.subscriptionStatus === 'active' &&
+				hasMarketplaceProduct( productsList, _purchase.productSlug )
 		);
 	}
 

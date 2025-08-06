@@ -412,7 +412,8 @@ class CancelPurchase extends Component {
 
 		return purchases.filter(
 			( _purchase ) =>
-				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+				_purchase.subscriptionStatus === 'active' &&
+				hasMarketplaceProduct( productsList, _purchase.productSlug )
 		);
 	}
 
