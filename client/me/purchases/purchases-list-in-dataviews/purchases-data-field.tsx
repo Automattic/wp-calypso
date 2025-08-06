@@ -300,6 +300,7 @@ export function getPurchasesFieldDefinitions( {
 				return item.expiryDate + ' ' + item.expiryStatus;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = sites.find( ( site ) => site.ID === item.siteId );
 				return (
 					<PurchaseItemRowStatus
 						purchase={ item }
