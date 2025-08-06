@@ -83,7 +83,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 		</div>
 	</nav>
 	<?php if ( $show_search ) : ?>
-	<div class="content">
+	<div class="support-search-content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form id="support-search-form" class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">
