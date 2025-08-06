@@ -31,9 +31,6 @@ function renderServiceNameDescription(
 	const shouldShowDomain =
 		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
 
-	// const shouldShowDomain =
-	// 	transaction.domain && ! transaction.domain.startsWith( 'siteless.marketplace.wp.com' );
-
 	return (
 		<div>
 			<strong>{ plan }</strong>

@@ -566,7 +566,9 @@ function ReceiptLineItem( {
 		stripZeros: true,
 	} );
 
-	const isSitelessDomain = /^siteless\.(agencies\.automattic|a4a)\.com/.test( item.domain );
+	const isSitelessDomain = /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com/.test(
+		item.domain
+	);
 	const shouldShowDomain =
 		item.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( item.domain );
 
