@@ -3,6 +3,7 @@ import {
 	Card,
 	CardBody,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
@@ -80,44 +81,36 @@ export default function DomainDNSSEC() {
 		} );
 	};
 
-	if ( ! siteDomain.is_dnssec_supported ) {
-		return (
-			<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
-				<Card>
-					<CardBody>
-						<p>DNSSEC is not supported for this domain.</p>
-					</CardBody>
-				</Card>
-			</PageLayout>
-		);
-	}
-
 	return (
 		<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
 			<Card>
 				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<DataForm< DNSSECFormData >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< DNSSECFormData > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<HStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</HStack>
-						</VStack>
-					</form>
+					{ ! siteDomain.is_dnssec_supported ? (
+						<Text>{ __( 'DNSSEC is not supported for this domain.' ) }</Text>
+					) : (
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 4 }>
+								<DataForm< DNSSECFormData >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: Partial< DNSSECFormData > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<HStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</HStack>
+							</VStack>
+						</form>
+					) }
 				</CardBody>
 			</Card>
 		</PageLayout>

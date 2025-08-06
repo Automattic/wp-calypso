@@ -21,11 +21,11 @@ export interface Domain {
 		status: string;
 	};
 	expiry: string | false;
+	is_dnssec_enabled: boolean;
+	is_dnssec_supported: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
 	is_wpcom_staging_domain: boolean;
-	is_dnssec_enabled: boolean;
-	is_dnssec_supported: boolean;
 	primary_domain: boolean;
 	site_slug: string;
 	type: `${ DomainTypes }`;
