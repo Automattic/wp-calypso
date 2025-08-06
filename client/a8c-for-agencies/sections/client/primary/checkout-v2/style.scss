@@ -7,6 +7,10 @@
 
 .client-checkout-v2 {
 	min-height: 100vh;
+
+	.checkout-sidebar-content {
+		margin-top: 0;
+	}
 }
 .client-checkout-v2__top-bar {
 	position: absolute;
@@ -18,6 +22,7 @@
 	z-index: 1000;
 
 	@media (max-width: $break-large) {
+		position: relative;
 		justify-content: center;
 	}
 }
